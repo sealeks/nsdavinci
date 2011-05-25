@@ -1,0 +1,9 @@
+Trying to change property 'svn:ignore' from '.dep.inc
+' to 'moc_*.cpp
+.dep.ink
+.dep.inc
+',
+but the property has been locally changed from '.dep.inc
+' to '.dep.inc
+moc_*.cpp
+'.
