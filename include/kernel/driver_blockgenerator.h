@@ -1,0 +1,462 @@
+/* 
+ * File:   driver_blockgenerator.h
+ * Author: Serg
+ *
+ * Created on 19  test alexeev 16:48
+ *   from note 16:29*/
+
+#ifndef _DVNCI_KRNL_BLOCKGENERATOR_H
+#define	_DVNCI_KRNL_BLOCKGENERATOR_H
+
+#include <boost/bimap/multiset_of.hpp>
+
+#include <kernel/memfile.h>
+#include <kernel/proccesstmpl.h>
+
+namespace dvnci {
+    namespace driver {
+
+        static const size_t MAXDISTANSE = 0x1FFFFFFF;
+
+        static const num32 DV_NO_SPECIFICATOR = 0;
+        static const num32 DV_BCD_SPECIFICATOR = 1;
+
+
+         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*Базовый класс ячейки опроса*/
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        struct basis_block_item {
+            basis_block_item(std::string vl, tagtype tgtp, const metalink & mlnk);
+
+            virtual ~basis_block_item() {};
+
+            virtual size_t operator-(const basis_block_item & rs) const {
+                return MAXDISTANSE;};
+
+            virtual bool operator==(const basis_block_item & rs) const;
+
+            virtual bool operator!=(const basis_block_item & rs) const {
+                return !operator==(rs);};
+            virtual bool operator<(const basis_block_item & rs) const;
+
+            num32 devnum() const {
+                return devnum_;}
+
+            num32 type() const {
+                return type_;};
+
+            num32 chanel() const {
+                return chanel_;}
+
+            num32 addr() const {
+                return addr_;}
+
+            num32 tp() const {
+                return tp_;}
+
+            num32 indx() const {
+                return tp_;}
+
+            num32 specificator() const {
+                return specificator_;}
+
+            size_t size() const {
+                return size_;}
+
+            num32 protocol() const {
+                return protocol_;}
+
+            tagtype tgtype() const {
+                return tgtype_;}
+
+            ns_error error() const {
+                return error_;}
+
+            ns_error error(ns_error vl) {
+                return error_ = vl;}
+
+            bool isvalue() const {
+                return isvalue_;}
+            
+            bool iscorrect() const {
+                return iscorrect_;}
+            
+
+            virtual void getspecificator(std::string & vl) {
+                upper_and_trim(vl);
+                if (vl.find(":B") != std::string::npos) {
+                    specificator_ = specificator_ | DV_BCD_SPECIFICATOR;
+                    vl.replace(vl.find(":B"), 2, "");}}
+
+            bool is_bcd() const {
+                return ((DV_BCD_SPECIFICATOR & specificator_) != 0);}
+
+            
+            template<typename T> 
+            void value_cast(T val) {
+                if ((!is_bcd()) || ((is_bcd()) && (bcd_to_dec<T > (val)))) {
+                    value_=short_value(val);
+                    isvalue_ = true;
+                    error(0);} 
+                else {
+                    isvalue_ = false;
+                    error(ERROR_IO_DATA_CONV);}}
+            
+            template<typename T> 
+            T value_cast() const {
+                return (isvalue() && (!error())) ? value_.value<T>() : 0; }
+            
+                        
+            short_value value() const {
+                return (isvalue() && (!error())) ? value_ : short_value();}
+            
+            void value(const short_value& val) {
+                isvalue_ = true;
+                value_ = val;}
+
+            virtual std::string to_str();
+
+
+            void value_event(const datetime& dt, double vl);
+            
+            void value_event(const dt_val_pair& vl){
+                value_event(vl.first,vl.second);}
+            
+            dt_val_pair value_event() const;
+            
+            void set_report_val(const dt_val_map & dt);
+            bool get_report_val(dt_val_map & dt);
+            
+            void set_report_range(datetime start, datetime stop);
+            bool get_report_range(datetime& start, datetime & stop);
+
+            friend std::ostream & operator<<(std::ostream& os, const basis_block_item & ns) {
+                return os << "dev=" << ns.devnum() << " chanal=" << ns.chanel() << "  type=" << ns.type() << " addr=" << ns.addr();}
+
+        protected:
+            bool                      iscorrect_;
+            num32                     devnum_;
+            num32                     type_;
+            num32                     chanel_;
+            num32                     addr_;
+            num32                     tp_;
+            num32                     specificator_;
+            size_t                    size_;
+            num32                     protocol_;
+            tagtype                   tgtype_;
+            mutable ns_error          error_;
+            mutable bool              isvalue_;
+            mutable short_value       value_;
+            mutable datetime_val_ptr  eventvalue_;
+            mutable dt_val_map_ptr    reportvalue_;
+            mutable datetime_pair_ptr reportrange_;};
+            
+         template<> 
+         void basis_block_item::value_cast<double>(double val);
+         
+         template<> 
+         void basis_block_item::value_cast<float>(float val);
+
+
+
+       /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        typedef boost::shared_ptr<basis_block_item> parcel_ptr;
+
+        size_t calculate_blocksize(parcel_ptr msblk, parcel_ptr lsblk);
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*Базовый класс генератора блока опроса*/
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        class abstract_block_generator {
+        protected:
+
+            struct parcel_ptr_less {
+
+                bool operator() (parcel_ptr ls, parcel_ptr rs) const {
+                    if ((!ls) || (!rs)) return false;
+                    return (*ls)<(*rs);}};
+
+        public:
+
+            typedef boost::bimaps::set_of<indx, std::less<indx> > tags_setof;
+            typedef boost::bimaps::multiset_of<parcel_ptr, parcel_ptr_less > parcelptr_multisetof;
+            typedef boost::bimaps::bimap<parcelptr_multisetof, tags_setof > parcel_tags_map;
+            typedef parcel_tags_map::left_map parcels_map;
+            typedef parcel_tags_map::right_map tags_map;
+            typedef parcel_tags_map::left_iterator parcel_iterator;
+            typedef parcel_tags_map::left_const_iterator parcel_const_iterator;
+            typedef parcel_tags_map::left_map::data_type parcel;
+            typedef parcel_tags_map::right_iterator tags_iterator;
+            typedef parcel_tags_map::value_type parcel_tags_pair;
+
+            struct block {
+
+                block() : groupid_(0) {};
+
+                block(parcel_iterator strt, parcel_iterator stp, indx grpid, num32 tmout, num32 trycnt) :
+                start(strt), stop(stp), groupid_(grpid) {
+                    timout_ = in_bounded<num32 > (100, 600000, tmout);
+                    trycount_ = in_bounded<num32 > (1, 10, trycnt);
+                    curenttrycount_ = trycount_;}
+                parcel_iterator start;
+                parcel_iterator stop;
+
+                indx groupid() const {
+                    return groupid_;}
+
+                void groupid(indx vl) {
+                    groupid_ = vl;}
+
+                num32 timout() const {
+                    return timout_;}
+
+                void timout(num32 vl) {
+                    timout_ = in_bounded<num32 > (100, 600000, vl);}
+
+                num32 trycount() const {
+                    return trycount_;}
+
+                void trycount(num32 vl) {
+                    trycount_ = in_bounded<num32 > (1, 10, vl);}
+
+                num32 curenttrycount() const {
+                    return curenttrycount_;}
+
+                void curenttrycount(num32 vl) {
+                    curenttrycount_ = in_bounded<num32 > (1, 10, vl);}
+
+                void set_ok() const {
+                    curenttrycount_ = trycount_;};
+
+                void set_fail() const {
+                    if (curenttrycount_ > 1) curenttrycount_ = curenttrycount_ - 1;};
+
+            private:
+                indx groupid_;
+                num32 timout_;
+                num32 trycount_;
+                mutable num32 curenttrycount_;};
+
+            typedef std::vector<block> block_vector;
+            typedef std::vector<block>::const_iterator block_iterator;
+
+            typedef std::vector<parcel_ptr> parcels_vect;
+            typedef parcels_vect commands_vect;
+            typedef commands_vect::iterator commands_iterator;
+
+            abstract_block_generator(executor* execr, tagsbase_ptr inf, const metalink& mlnk) :
+            intf(inf), executr(execr), needgenerate(true), protocol(0), blocksize(0), archblocksize(0), eventblocksize(0) {
+                protocol = mlnk.protocol();
+                blocksize = static_cast<size_t> (mlnk.blocksize());
+                archblocksize = mlnk.archblocksize();
+                eventblocksize = mlnk.eventblocksize();};
+
+            virtual ~abstract_block_generator() {};
+
+            virtual bool next(block& blk);
+
+            virtual void read_fail() {
+                if (currentblockiteator != end()) currentblockiteator->set_fail();
+                currentblockiteator++;}
+
+            virtual bool command(commands_vect& cmdvect);
+
+            virtual void read_ok(block& blk);
+
+            virtual bool insert(indx id) = 0;
+            
+            virtual bool erase(indx id) = 0;
+
+            virtual bool check_parcel_active(parcel_iterator& prsl);
+
+            virtual bool check_block_active(block& blk, parcel_iterator& bgn, parcel_iterator& ed);
+
+
+
+        protected:
+
+            virtual block_iterator begin() = 0;
+
+            virtual block_iterator end() = 0;
+
+            void generate() {
+                if (!needgenerate) return;
+                blocks.clear();
+                generate_impl();}
+
+            virtual void generate_impl() = 0;
+
+
+            //indx_set err_set;
+            parcel_tags_map bmap;
+            block_vector blocks;
+            block_iterator currentblockiteator;
+            tagsbase_ptr intf;
+            executor* executr;
+            bool needgenerate;
+            num32 protocol;
+            size_t blocksize;
+            num32 archblocksize;
+            num32 eventblocksize;
+            indx_dtvalmap_map cash_reportval_map;
+            indx_set groupset_;};
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        typedef abstract_block_generator::parcel_tags_map parcel_tags_map;
+        typedef abstract_block_generator::parcels_map parcels_map;
+        typedef abstract_block_generator::block_iterator block_iterator;
+        typedef abstract_block_generator::parcel_iterator parcel_iterator;
+        typedef abstract_block_generator::parcel_const_iterator parcel_const_iterator;
+        typedef abstract_block_generator::block block;
+        typedef abstract_block_generator::parcels_vect parcels_vect;
+        typedef abstract_block_generator::commands_vect commands_vect;
+        typedef commands_vect::iterator commands_iterator;
+
+        std::ostream & operator<<(std::ostream& os, const block& ns);
+        parcels_vect & operator<<(parcels_vect& vct, const block& blk);
+        std::ostream & operator<<(std::ostream& os, const parcels_vect& ns);
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*Базовый шаблон генератора блока опроса для драйверов с линейной памятью, параметризованный типом ячейки опроса*/
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        template <typename BLOCKITEMTYPE>
+        class base_block_generator : public abstract_block_generator {
+        public:
+
+            base_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
+            abstract_block_generator(exectr, inf, mlnk) {};
+
+            virtual ~base_block_generator() {};
+
+            virtual bool insert(indx id) {
+                if (intf) {
+                    if ((intf->exists(id)) && (intf->groups()->exists(intf->group((id))))) {
+
+                        parcel_ptr tmpit = parcel_ptr(new BLOCKITEMTYPE(intf->binding(id),
+                                intf->type(id),
+                                intf->groups()->link(intf->group(id))));
+                        if (tmpit->iscorrect()) {
+                            tags_iterator it = bmap.right.find(id);
+                            if (it != bmap.right.end()) bmap.right.erase(it);
+                            bmap.insert(parcel_tags_pair(tmpit, id));
+                            needgenerate = true;
+                            return true;} else {
+                            executr->error(id, tmpit->error());
+                            intf->debugwarning("Error binding " + intf->binding(id));}}}
+                return false;}
+
+            virtual bool erase(indx id) {
+                if (intf) {
+                    tags_iterator it = bmap.right.find(id);
+                    if (it != bmap.right.end()) {
+                        bmap.right.erase(it);
+                        needgenerate = true;
+                        executr->error(id);
+                        return true;}}
+                return false;}
+
+
+        protected:
+
+            virtual block_iterator begin() {
+                if (needgenerate) generate();
+                return blocks.begin();}
+
+            virtual block_iterator end() {
+                return blocks.end();}
+
+            virtual void generate_impl();};
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        template <typename BLOCKITEMTYPE>
+        void base_block_generator<BLOCKITEMTYPE>::generate_impl() {
+            parcel_iterator its = bmap.left.begin();
+            if (its == bmap.left.end()) {
+                needgenerate = false;
+                return;}
+            block blkit(its, its, intf->group(its->second),
+                    intf->groups()->indicateto(intf->group(its->second)),
+                    intf->groups()->trycount(intf->group(its->second)));
+            for (parcel_iterator it = bmap.left.begin(); it != bmap.left.end(); ++it) {
+                if (calculate_blocksize(it->first, its->first) >= blocksize) {
+                    blocks.push_back(blkit);
+                    blkit.groupid(intf->group(it->second));
+                    blkit.timout(intf->groups()->indicateto(blkit.groupid()));
+                    blkit.trycount(intf->groups()->trycount(blkit.groupid()));
+                    blkit.start = it;
+                    blkit.stop = it;
+                    its = it;} else {
+                    blkit.stop = it;}}
+            blocks.push_back(blkit);
+            needgenerate = false;}
+
+
+
+       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*Базовый шаблон генератора блока опроса для драйверов с "ячеистой" памятью, параметризованный типом ячейки опроса*/
+       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        template <typename BLOCKITEMTYPE>
+        class parcel_block_generator : public base_block_generator<BLOCKITEMTYPE> {
+        public:
+
+            typedef base_block_generator<BLOCKITEMTYPE> basetype;
+            typedef abstract_block_generator::block block;
+            typedef abstract_block_generator::parcel_iterator parcel_iterator;
+
+            parcel_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
+            base_block_generator<BLOCKITEMTYPE>(exectr, inf, mlnk) {}
+
+        protected:
+
+            virtual void generate_impl();};
+
+
+       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        template <typename BLOCKITEMTYPE>
+        void parcel_block_generator<BLOCKITEMTYPE>::generate_impl() {
+            parcel_iterator its = basetype::bmap.left.begin();
+            if (its == basetype::bmap.left.end()) {
+                basetype::needgenerate = false;
+                return;}
+            block blkit(its, its, basetype::intf->group(its->second),
+                    basetype::intf->groups()->indicateto(basetype::intf->group(its->second)),
+                    basetype::intf->groups()->trycount(basetype::intf->group(its->second)));
+            its++;
+            if (its == basetype::bmap.left.end()) {
+                basetype::blocks.push_back(blkit);
+                return;}
+            num32 counter = 1;
+            for (parcel_iterator it = its; it != basetype::bmap.left.end(); ++it) {
+                if ((it->first->devnum() != its->first->devnum()) ||
+                        (it->first->type() != its->first->type()) ||
+                        (counter >= basetype::blocksize)) {
+                    counter = 1;
+                    basetype::blocks.push_back(blkit);
+                    blkit.groupid(basetype::intf->group(it->second));
+                    blkit.timout(basetype::intf->groups()->indicateto(blkit.groupid()));
+                    blkit.trycount(basetype::intf->groups()->trycount(blkit.groupid()));
+                    blkit.start = it;
+                    blkit.stop = it;
+                    its = it;} else {
+                    counter++;
+                    blkit.stop = it;}}
+            basetype::blocks.push_back(blkit);
+            basetype::needgenerate = false;}}}
+
+#endif	/* BLOCKGENERATOR_H */
+
