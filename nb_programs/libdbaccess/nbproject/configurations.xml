@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+    <itemPath>../../include/dbaccess/db_task_executor.cpp</itemPath>
+    <itemPath>../../include/dbaccess/db_task_executor.h</itemPath>
+    <itemPath>../../include/dbaccess/dbconnectionfactory.cpp</itemPath>
+    <itemPath>../../include/dbaccess/dbconnectionfactory.h</itemPath>
+    <itemPath>../../include/dbaccess/dbdriver.cpp</itemPath>
+    <itemPath>../../include/dbaccess/dbdriver.h</itemPath>
+    <itemPath>../../include/dbaccess/dbpsgrdriver.cpp</itemPath>
+    <itemPath>../../include/dbaccess/dbpsgrdriver.h</itemPath>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="nb_gcc_db_WIN32" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>MinGW|MinGW</compilerSet>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../../include</pElem>
+            <pElem>../../include/soci</pElem>
+          </incDir>
+          <commandLine>-mthreads -fno-strict-aliasing</commandLine>
+          <preprocessorList>
+            <Elem>DVNCI_DEDUG</Elem>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
+          </preprocessorList>
+        </ccTool>
+        <archiverTool>
+          <output>../../lib/${CND_CONF}/libdbaccess.a</output>
+        </archiverTool>
+      </compileType>
+    </conf>
+    <conf name="nb_gcc_rl_WIN32" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>MinGW|MinGW</compilerSet>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../../include</pElem>
+            <pElem>../../include/soci</pElem>
+          </incDir>
+          <commandLine>-mthreads -fno-strict-aliasing</commandLine>
+          <preprocessorList>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
+          </preprocessorList>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <archiverTool>
+          <output>../../lib/${CND_CONF}/libdbaccess.a</output>
+        </archiverTool>
+      </compileType>
+    </conf>
+    <conf name="nb_gcc_db_LIN64" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <architecture>2</architecture>
+          <incDir>
+            <pElem>../../include</pElem>
+            <pElem>../../include/soci</pElem>
+          </incDir>
+          <commandLine>-fno-strict-aliasing</commandLine>
+          <preprocessorList>
+            <Elem>DVNCI_DEDUG</Elem>
+          </preprocessorList>
+        </ccTool>
+        <archiverTool>
+          <output>../../lib/${CND_CONF}/libdbaccess.a</output>
+        </archiverTool>
+      </compileType>
+    </conf>
+    <conf name="nb_gcc_rl_LIN64" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <architecture>2</architecture>
+          <incDir>
+            <pElem>../../include</pElem>
+            <pElem>../../include/soci</pElem>
+          </incDir>
+          <commandLine>-fno-strict-aliasing</commandLine>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <archiverTool>
+          <output>../../lib/${CND_CONF}/libdbaccess.a</output>
+        </archiverTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
