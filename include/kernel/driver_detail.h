@@ -9,7 +9,7 @@
 #define	_DVNCI_KRNL_DRIVERIOSERVICE_H
 
 #include <kernel/basis_iostream.h>
-#include <kernel/driver_blockgenerator.h>
+#include <kernel/driver_blockmodel.h>
 
 namespace dvnci {
     namespace driver {
@@ -38,16 +38,6 @@ namespace dvnci {
         std::string binary_block_to_hexsequence(const std::string& vl);
 
         bool hexsequence_to_binary_block(const std::string& vl, std::string& rslt);
-
-        template <typename T> bool string_to_primtype(const std::string& dblk, T& vl) {
-            if (sizeof (vl) < dblk.size()) return false;
-            vl = *(reinterpret_cast<T*> (const_cast<char*> (dblk.data())));
-            return true;}
-
-        template <typename T> std::string primtype_to_string(T vl) {
-            return std::string(((const char*) &vl), sizeof (T));}
-
-
 
 
 
@@ -99,12 +89,12 @@ namespace dvnci {
         /*Базовый обработчик протокола*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class abstract_device_protocol {
+        class abstract_protocol {
         public:
 
-            abstract_device_protocol(basis_iostream_ptr io) : ios(io), lasterror(0) {}
+            abstract_protocol(basis_iostream_ptr io) : ios(io), lasterror(0) {}
 
-            virtual ~abstract_device_protocol() {};
+            virtual ~abstract_protocol() {};
 
             ns_error operator<<(block& blk);
 
@@ -172,7 +162,7 @@ namespace dvnci {
             ns_error lasterror;};
 
 
-        typedef boost::shared_ptr<abstract_device_protocol> ioprotocol_ptr;
+        typedef boost::shared_ptr<abstract_protocol> ioprotocol_ptr;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*Базовый установщик значении*/
@@ -235,10 +225,10 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template < typename VALUEMANAGER>
-        class templ_device_protocol : public abstract_device_protocol {
+        class templ_protocol : public abstract_protocol {
         public:
 
-            templ_device_protocol(basis_iostream_ptr io) : abstract_device_protocol(io) {}
+            templ_protocol(basis_iostream_ptr io) : abstract_protocol(io) {}
 
 
         protected:

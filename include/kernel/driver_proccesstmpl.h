@@ -10,7 +10,7 @@
 
 
 #include <kernel/proccesstmpl.h>
-#include <kernel/driver_blockgenerator.h>
+#include <kernel/driver_blockmodel.h>
 #include <kernel/driver_detail.h>
 
 
@@ -51,11 +51,11 @@ namespace dvnci {
                                 while ((io_error(*devicemanager << blk)) && ((tmptrycnt--)>0)) {}
                                 if (!io_error()) {
                                     set_group_state(blk.groupid(), 0);
-                                    blockgtor->read_ok(blk);}
+                                    blockgtor->ok(blk);}
                                 else {
                                     if (is_expire_group_timeout(blk.groupid(), blk.timout()))
                                         set_group_state(blk.groupid(), io_error(), FULL_VALID);
-                                    blockgtor->read_fail();}
+                                    blockgtor->fail();}
                                 return true;}}
                         catch (dvncierror& errd) {
                             if (errd.code() == ERROR_IO_SERVICE_LOCK) {
