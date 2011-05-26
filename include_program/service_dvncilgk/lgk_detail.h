@@ -28,16 +28,16 @@ namespace dvnci {
        /*?????? ?????? LGK*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        struct lgk_block_item : public basis_block_item {
+        struct lgk_req_parcel : public basis_req_parcel {
         public:
 
-            lgk_block_item(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_block_item(vl, tgtp, mlnk) {
+            lgk_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_req_parcel(vl, tgtp, mlnk) {
                 devnum_ = (mlnk.protocol() == LGKA_PROT_MEC) ? 0xFF : mlnk.devicenum();
                 iscorrect_ = checktagtype();
                 if (!iscorrect_) return;
                 iscorrect_ = parse(vl);}
 
-            virtual size_t operator-(const basis_block_item & rs) const  {
+            virtual size_t operator-(const basis_req_parcel & rs) const  {
                 if (type() == LGKA_TYPEITEM_ARRAY)
                     return (rs.addr() == addr()) ? dvnci::abs<size_t > (rs.tp() - tp()) : MAXDISTANSE;
                 return MAXDISTANSE;};
@@ -48,10 +48,10 @@ namespace dvnci {
 
             virtual void set_simpl_val_from_str(std::string val) {
                 val = strcomma_to_dot(val);
-                basis_block_item::set_simpl_val_from_str(val);}
+                basis_req_parcel::set_simpl_val_from_str(val);}
 
             virtual std::string val_as_str() {
-                return strdot_to_comma(basis_block_item::val_as_str());}
+                return strdot_to_comma(basis_req_parcel::val_as_str());}
 
             bool checktagtype() {
                 if (IN_EVENTSET(tgtype_)) {
@@ -63,7 +63,7 @@ namespace dvnci {
        /*????????? ????? LGK*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class lgk_block_generator : public base_block_generator<lgk_block_item> {
+        class lgk_block_generator : public base_block_generator<lgk_req_parcel> {
         public:
 
             typedef abstract_block_generator::block                            block;
@@ -71,7 +71,7 @@ namespace dvnci {
             typedef abstract_block_generator::parcel_iterator                  parcel_iterator;
 
             lgk_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_generator<lgk_block_item>(exectr, inf, mlnk) {
+            base_block_generator<lgk_req_parcel>(exectr, inf, mlnk) {
                 protocol = (mlnk.protocol() != LGKA_PROT_MEC) ? LGKA_PROT_SP : LGKA_PROT_MEC;
                 blocksize = (protocol == LGKA_PROT_MEC) ? 1 : in_bounded<size_t > (1, 30, mlnk.blocksize());
                 archblocksize  = (protocol == LGKA_PROT_MEC) ? 1 : in_bounded<num32 > (1, 30, mlnk.archblocksize());}

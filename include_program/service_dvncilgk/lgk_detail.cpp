@@ -2,7 +2,7 @@
  * File:   modbus_detail.cpp
  * Author: Serg
  * 
- * Created on 19 ќкт€брь 2010 г., 17:55
+ * Created on 19 ??????? 2010 ?., 17:55
  */
 
 #include "lgk_detail.h"
@@ -10,7 +10,7 @@
 namespace dvnci {
     namespace driver {
 
-        bool lgk_block_item::parse(std::string vl) {
+        bool lgk_req_parcel::parse(std::string vl) {
 
             /* [chNN:]nKK[:iLL]
 
@@ -39,7 +39,7 @@ namespace dvnci {
             error_ = ERROR_BINDING;
             return false;}
 
-        bool lgk_block_item::conformaddr(const std::string& vl, num32& tp, num32& ch, num32& nm, num32& arrnm) {
+        bool lgk_req_parcel::conformaddr(const std::string& vl, num32& tp, num32& ch, num32& nm, num32& arrnm) {
             size_= 1;
             boost::smatch rslt1;
             boost::regex rgx1("(?<=:I)[0-9]{1,3}");
