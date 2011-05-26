@@ -1480,7 +1480,7 @@ namespace dvnci {
        // alwactive  property           
         
         bool alwactive(size_type id) const {
-            return IN_ALWACTTYPESET(type(id)) ? 
+            return IN_ALWACTSET(type(id)) ? 
                 true : operator[](id)->alwactive();}
  
         void  alwactive(size_type id, bool value) {
@@ -1552,7 +1552,7 @@ namespace dvnci {
        // mineu  property   
         
          std::string mineu(size_type id) const {
-            return ((exists(id))  && (IN_SIMPLESET(type(id)))) ? 
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
                 operator[](id)->mineu_str() : "";}
         
 
@@ -1575,7 +1575,7 @@ namespace dvnci {
             return short_value(operator[](id)->maxeu64(), type(id) , FULL_VALID);}
         
         std::string maxeu(size_type id) const {
-            return ((exists(id))  && (IN_SIMPLESET(type(id)))) ? 
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
                 operator[](id)->maxeu_str() : "";}
 
 
@@ -1590,7 +1590,7 @@ namespace dvnci {
        // alarmconst  property
         
         std::string alarmconst(size_type id) const {
-            return ((exists(id))  && (IN_SIMPLESET(type(id)))) ? 
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
                 operator[](id)->alarmconst_str() : "";}
 
         void alarmconst(size_type id, const std::string& value) {
@@ -1605,7 +1605,7 @@ namespace dvnci {
        // minraw  property               
                 
         std::string minraw(size_type id) const {
-            return ((exists(id))  && (IN_SIMPLESET(type(id)))) ? 
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
                 operator[](id)->minraw_str() : "";}
         
         void minraw(size_type id, const std::string& value) {
@@ -1616,7 +1616,7 @@ namespace dvnci {
        // maxraw  property  
                     
         std::string maxraw(size_type id) const {
-            return ((exists(id))  && (IN_SIMPLESET(type(id)))) ? 
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
                 operator[](id)->maxraw_str() : "";}
               
         void maxraw(size_type id, const std::string& value) {
@@ -2270,7 +2270,7 @@ namespace dvnci {
 
         template<typename T>
         T alarmconst_prtd(size_type id) const {
-            return (IN_SIMPLESET(operator[](id)->type())) ? 
+            return (IN_NUMBERSET(operator[](id)->type())) ? 
                 operator[](id)->alarmconst<T > () : 0;}
         
                   
@@ -2567,7 +2567,7 @@ namespace dvnci {
             return valbuffers_;}        
         
         size_type logkey(size_type id) const {
-            return (IN_SIMPLESET(operator[](id)->type())) ? 
+            return (IN_NUMBERSET(operator[](id)->type())) ? 
                 operator[](id)->logkey() : npos;}
         
         void logkey(size_type id, size_type value) {
@@ -2849,7 +2849,7 @@ namespace dvnci {
 
     template<typename T>
     void tagsbase::write_val(size_type id, T val, vlvtype validlvl, const datetime& tm, ns_error err) {
-        if (exists(id) && (IN_SIMPLESET(type(id)))) {
+        if (exists(id) && (IN_NUMBERSET(type(id)))) {
             restore_eu_range(id, val);
             bool rstvalid = (valid(id) != (validlvl));
             bool rstvalue = (value<T > (id) != val);

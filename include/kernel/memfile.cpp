@@ -980,7 +980,7 @@ namespace dvnci {
     
     
     void tagsbase::type(size_type id, tagtype value) {
-        if ((exists(id)) && (ISDV_TYPE(value))) {
+        if ((exists(id)) && (IN_TYPESET(value))) {
             if (value != type(id)) {
                     bool old_isreport =IN_REPORTSET(type(id));
                     bool oldistext = IN_TEXTSET(type(id));
@@ -1270,12 +1270,12 @@ namespace dvnci {
 
 
     void tagsbase::incref(size_type id) {
-        if ((exists(id )) && (!IN_ALWACTTYPESET(type(id)))) {
+        if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
             operator[](id)->increfcnt();
             if (operator[](id)->refcnt() == 1)  registry()->notify_newref(id);}}
 
     void tagsbase::decref(size_type id) {
-        if ((exists(id )) && (!IN_ALWACTTYPESET(type(id)))) {
+        if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
             if (refcnt(id) > 0) {
                 operator[](id)->decrefcnt();
                 if (operator[](id)->refcnt() == 0) {
@@ -1660,7 +1660,7 @@ namespace dvnci {
 
     tagsbase::size_type tagsbase::add_logkey(size_type id) {
         size_type tmp = npos;
-        if ((valbuffers()) && logged(id) && (IN_SIMPLESET(type(id)))) {
+        if ((valbuffers()) && logged(id) && (IN_NUMBERSET(type(id)))) {
             switch (type(id)) {
                 case TYPE_NODEF:{
                     tmp = valbuffers()->regist<double>(mineu_prtd<double>(id), maxeu_prtd<double>(id));
@@ -1730,7 +1730,7 @@ namespace dvnci {
     
     bool tagsbase::restore_command_raw_range(commandstruct& cmd) {
             size_type id =cmd.tagid();
-            if ((exists(id)) && (IN_CMDTYPESET(type(id)))) {
+            if ((exists(id)) && (IN_COMMADSET(type(id)))) {
                  switch (cmd.type()) {
                  case TYPE_NODEF:{
                     double tmp = cmd.value_set<double>();

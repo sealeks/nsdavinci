@@ -225,7 +225,7 @@ namespace dvnci {
             allwaysactiv_helper_util();}
 
         altype alarmlevel() const {
-            return IN_ALARMTYPESET(type()) ?
+            return IN_ALARMEDSET(type()) ?
                     static_cast<altype> (alarmlevel_ & 0x3) : 0;}
         
         
@@ -245,7 +245,7 @@ namespace dvnci {
             allwaysactiv_helper_util();}
 
         bool logged() const {
-            return IN_SIMPLESET(type()) ?
+            return IN_NUMBERSET(type()) ?
                     static_cast<bool> (logged_) : false;}
         
         
@@ -255,7 +255,7 @@ namespace dvnci {
             allwaysactiv_helper_util();}
 
         bool onmsged() const {
-            return IN_SIMPLESET(type()) ?
+            return IN_NUMBERSET(type()) ?
                     static_cast<bool> (onmsged_) : false;}
         
         
@@ -265,27 +265,27 @@ namespace dvnci {
             allwaysactiv_helper_util();}
 
         bool offmsged() const {
-            return IN_SIMPLESET(type()) ?
+            return IN_NUMBERSET(type()) ?
                     static_cast<bool> (offmsged_) : false;}
         
         
 
         void alarmon(bool val) {
-            if (IN_ALARMTYPESET(type()))
+            if (IN_ALARMEDSET(type()))
                 alarmon_ = static_cast<num32> (val);}
 
         bool alarmon() const {
-            return IN_ALARMTYPESET(type()) ?
+            return IN_ALARMEDSET(type()) ?
                     static_cast<bool> (alarmon_) : false;}
         
         
 
         void alarmkvit(bool val) {
-            if (IN_ALARMTYPESET(type()))
+            if (IN_ALARMEDSET(type()))
                 alarmkvit_ = static_cast<num32> (val);}
 
         bool alarmkvit() const {
-            return IN_ALARMTYPESET(type()) ?
+            return IN_ALARMEDSET(type()) ?
                     static_cast<bool> (alarmkvit_) : false;}
         
         
@@ -312,7 +312,7 @@ namespace dvnci {
                 rwtype_ = 0;}
 
         acstgtype rwtype() const {
-            return IN_CMDTYPESET(type()) ?
+            return IN_COMMADSET(type()) ?
                     static_cast<acstgtype> (rwtype_ & 3) : rwReadOnly;}
         
         
@@ -407,7 +407,7 @@ namespace dvnci {
             return minraw_;}
 
         std::string minraw_str() const {
-            return (IN_SIMPLESET(static_cast<tagtype> (type_))) ? 
+            return (IN_NUMBERSET(static_cast<tagtype> (type_))) ? 
                 string_fromnum64_and_type(minraw_, static_cast<tagtype> (type_)) : "";}
 
         void minraw(const std::string & val) {
@@ -430,7 +430,7 @@ namespace dvnci {
             return maxraw_;}
 
         std::string maxraw_str() const {
-            return (IN_SIMPLESET(static_cast<tagtype> (type_))) ? 
+            return (IN_NUMBERSET(static_cast<tagtype> (type_))) ? 
                 string_fromnum64_and_type(maxraw_, static_cast<tagtype> (type_)) : "";}
 
         void maxraw(const std::string & val) {
@@ -453,7 +453,7 @@ namespace dvnci {
             return mineu_;}
 
         std::string mineu_str() const {
-            return (IN_SIMPLESET(static_cast<tagtype> (type_))) ? 
+            return (IN_NUMBERSET(static_cast<tagtype> (type_))) ? 
                 string_fromnum64_and_type(mineu_, static_cast<tagtype> (type_)) : "";}
 
         void mineu(const std::string & val) {
@@ -476,7 +476,7 @@ namespace dvnci {
             return maxeu_;}
 
         std::string maxeu_str() const {
-            return (IN_SIMPLESET(static_cast<tagtype> (type_))) ?
+            return (IN_NUMBERSET(static_cast<tagtype> (type_))) ?
                 string_fromnum64_and_type(maxeu_, static_cast<tagtype> (type_)) : "";}
 
         void maxeu(const std::string & val) {
@@ -505,7 +505,7 @@ namespace dvnci {
             return alarmconst_;}
 
         std::string alarmconst_str() const {
-            return (IN_SIMPLESET(static_cast<tagtype> (type_))) ? string_fromnum64_and_type(alarmconst_, static_cast<tagtype> (type_)) : "";}
+            return (IN_NUMBERSET(static_cast<tagtype> (type_))) ? string_fromnum64_and_type(alarmconst_, static_cast<tagtype> (type_)) : "";}
 
         void alarmconstr(const std::string & val) {
             num64 tmp = 0;
@@ -558,7 +558,7 @@ namespace dvnci {
 
         void allwaysactiv_helper_util() {
             allwaysactiv_helper_ = static_cast<num64> ((logged()) || (alarmlevel()) ||
-                    (onmsged()) || (offmsged()) || (alwactive()) || (IN_ALWACTTYPESET(type())));}
+                    (onmsged()) || (offmsged()) || (alwactive()) || (IN_ALWACTSET(type())));}
 
 
 
