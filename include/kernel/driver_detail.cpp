@@ -161,7 +161,7 @@ Table of CRC values for high–order byte */
         
         //////////////////////////////////////////////////////////////
         
-         ns_error abstract_device_protocol::operator<<(block& blk) {
+         ns_error abstract_protocol::operator<<(block& blk) {
                 if (!ios) return error(ERROR_IO_NOLINKSTREAM);
                 error(0);
                 if (!error(readblock(blk)))
@@ -170,7 +170,7 @@ Table of CRC values for high–order byte */
                     clearbuff();
                 return error();}
 
-         ns_error abstract_device_protocol::operator<<(commands_vect& comds) {
+         ns_error abstract_protocol::operator<<(commands_vect& comds) {
                 if (!ios) return error(ERROR_IO_NOLINKSTREAM);
                 error(0);
                 for (commands_vect::const_iterator it = comds.begin(); it != comds.end(); ++it) {
@@ -190,8 +190,8 @@ Table of CRC values for high–order byte */
 
         ns_error linemem_value_manager::set_value(const std::string& dbk, block& blk) {
             error(0);
-            parcel_const_iterator strtit = blk.start;
-            parcel_const_iterator endit = blk.stop;
+            parcel_const_iterator strtit = blk.begin();
+            parcel_const_iterator endit = blk.end();
             endit++;
             std::string vl;
             std::string::size_type adr_offset = 0;
@@ -217,62 +217,13 @@ Table of CRC values for high–order byte */
 
             if (!spec_protocol_convertion_out(val, bitn)) {
                 return error(0);}
-
-
             if (bitn != NULL_BIT_NUM) {
                 if (!val.empty()) {
                     prcl->value(static_cast<bool> ((val.at(0) & (0x01 << bitn))));}
                 else {
                     prcl->error(ERROR_IO_NO_DATA);}}
             else {
-                switch (prcl->tgtype()) {
-                    case TYPE_NUM64:{
-                        num64 tmp = 0;
-                        if (string_to_primtype<num64 > (val, tmp)) prcl->value_cast<num64 > (tmp);
-                        break;}
-                    case TYPE_UNUM64:{
-                        unum64 tmp = 0;
-                        if (string_to_primtype<unum64 > (val, tmp)) prcl->value_cast<unum64 > (tmp);
-                        break;}
-                    case TYPE_NUM32:{
-                        num32 tmp = 0;
-                        if (string_to_primtype<num32 > (val, tmp)) prcl->value_cast<num32 > (tmp);
-                        break;}
-                    case TYPE_UNUM32:{
-                        unum32 tmp = 0;
-                        if (string_to_primtype<unum32 > (val, tmp)) prcl->value_cast<unum32 > (tmp);
-                        break;}
-                    case TYPE_NUM16:{
-                        num16 tmp = 0;
-                        if (string_to_primtype<num16 > (val, tmp)) prcl->value_cast<num16 > (tmp);
-                        break;}
-                    case TYPE_UNUM16:{
-                        unum16 tmp = 0;
-                        if (string_to_primtype<unum16 > (val, tmp)) prcl->value_cast<unum16 > (tmp);
-                        break;}
-                    case TYPE_NUM8:{
-                        num8 tmp = 0;
-                        if (string_to_primtype<num8 > (val, tmp)) prcl->value_cast<num8 > (tmp);
-                        break;}
-                    case TYPE_UNUM8:{
-                        unum8 tmp = 0;
-                        if (string_to_primtype<unum8 > (val, tmp)) prcl->value_cast<unum8 > (tmp);
-                        break;}
-                    case TYPE_DOUBLE:{
-                        double tmp = 0;
-                        if (string_to_primtype<double>(val, tmp)) {
-                            prcl->value_cast<double>(tmp);}
-                        break;}
-                    case TYPE_FLOAT:{
-                        float tmp = 0;
-                        if (string_to_primtype<float>(val, tmp)) {
-                            prcl->value_cast<float>(tmp);}
-                        break;}
-                    default:{
-                        double tmp = 0;
-                        if (string_to_primtype<double>(val, tmp)) {
-                            prcl->value_cast<double>(tmp);}
-                        break;}}}
+                prcl->value_byte_seq(val);}
             return error(0);}
 
         bool linemem_value_manager::get_data_block(const std::string& dbk, std::string& vl, std::string::size_type offset, std::string::size_type dtsize) {

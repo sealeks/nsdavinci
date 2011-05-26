@@ -697,6 +697,11 @@ namespace dvnci {
     const tagtype  OLD_REPORTTYPE_30MIN          = 10;
     const tagtype  OLD_REPORTTYPE_QVART          = 11;
     const tagtype  OLD_REPORTTYPE_CUSTOM         = 12;
+    
+    
+    
+    
+  
 
     const tagtype  TYPE_NONE                     = 0x00;
     const tagtype  TYPE_SIMPL                    = 0x01;
@@ -747,12 +752,18 @@ namespace dvnci {
                 val < TYPE_NUM8  ? 2 :
                 val < TYPE_TEXT  ? 8 :
                 val < TYPE_EVENT  ? 254 : 8;}
+    
+    inline static   bool IN_SMPLSET(tagtype val)  {
+        return (val < TYPE_REPORT);};
+    
+    inline static   bool IN_NUMBERSET(tagtype val)  {
+        return (val <TYPE_TM);};
+    
+    inline static   bool IN_TEXTSET(tagtype val)  {
+        return (val == TYPE_TEXT);};
 
     inline static   bool IN_REPORTSET(tagtype val)  {
         return (val & TYPE_REPORT);};
-
-    inline static   bool IN_TEXTSET(tagtype val)  {
-        return (val == TYPE_TEXT);};
 
     inline static   bool IN_EVENTSET(tagtype val)  {
         return (val & TYPE_EVENT);};
@@ -760,22 +771,20 @@ namespace dvnci {
     inline static   bool IN_FLOATINGSET(tagtype val)  {
         return (val <= TYPE_FLOAT);};        
 
-    inline static   bool IN_SIMPLESET(tagtype val)  {
-        return (val <TYPE_TM);};
         
     inline static   bool IN_RANGESET(tagtype val)  {
         return (val <TYPE_DISCRET);};    
 
-    inline static   bool IN_ALWACTTYPESET(tagtype val)  {
+    inline static   bool IN_ALWACTSET(tagtype val)  {
         return (val >TYPE_TEXT);};
         
-    inline static   bool IN_ALARMTYPESET(tagtype val)  {
+    inline static   bool IN_ALARMEDSET(tagtype val)  {
         return !(val & TYPE_NO_ALARMED_MSK);};
         
-    inline static   bool IN_CMDTYPESET(tagtype val)  {
+    inline static   bool IN_COMMADSET(tagtype val)  {
         return val < TYPE_REPORT;};        
 
-    inline static   bool ISDV_TYPE(tagtype val)  {
+    inline static   bool IN_TYPESET(tagtype val)  {
         return ((val >= 0x00) && (val < EVENT_TYPE_OSC));};
             
     inline static   tagtype SUPER_TYPE(tagtype val){        
