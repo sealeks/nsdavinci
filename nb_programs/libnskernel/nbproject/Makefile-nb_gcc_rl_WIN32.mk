@@ -48,7 +48,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/431270180/interface_proccesstmpl.o \
 	${OBJECTDIR}/_ext/431270180/appath_win.o \
 	${OBJECTDIR}/_ext/431270180/expression.o \
-	${OBJECTDIR}/_ext/431270180/driver_blockgenerator.o \
+	${OBJECTDIR}/_ext/431270180/driver_blockmodel.o \
 	${OBJECTDIR}/_ext/431270180/driver_detail.o \
 	${OBJECTDIR}/_ext/431270180/string_base.o \
 	${OBJECTDIR}/_ext/431270180/proccesstmpl.o \
@@ -141,9 +141,9 @@ ${OBJECTDIR}/_ext/431270180/expression.o: ../../include/kernel/expression.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/expression.o ../../include/kernel/expression.cpp
 
-${OBJECTDIR}/_ext/431270180/driver_blockgenerator.o: ../../include/kernel/driver_blockgenerator.cpp 
+${OBJECTDIR}/_ext/431270180/driver_blockmodel.o: ../../include/kernel/driver_blockmodel.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/driver_blockgenerator.o ../../include/kernel/driver_blockgenerator.cpp
+	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/driver_blockmodel.o ../../include/kernel/driver_blockmodel.cpp
 
 ${OBJECTDIR}/_ext/431270180/driver_detail.o: ../../include/kernel/driver_detail.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180

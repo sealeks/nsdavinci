@@ -15,8 +15,8 @@
     <itemPath>../../include/kernel/constdef.cpp</itemPath>
     <itemPath>../../include/kernel/constdef.h</itemPath>
     <itemPath>../../include/kernel/cyclic_table_templ.h</itemPath>
-    <itemPath>../../include/kernel/driver_blockgenerator.cpp</itemPath>
-    <itemPath>../../include/kernel/driver_blockgenerator.h</itemPath>
+    <itemPath>../../include/kernel/driver_blockmodel.cpp</itemPath>
+    <itemPath>../../include/kernel/driver_blockmodel.h</itemPath>
     <itemPath>../../include/kernel/driver_detail.cpp</itemPath>
     <itemPath>../../include/kernel/driver_detail.h</itemPath>
     <itemPath>../../include/kernel/driver_proccesstmpl.h</itemPath>
