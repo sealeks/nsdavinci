@@ -84,12 +84,12 @@ namespace dvnci {
         /*Koyo ?????a ??????*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        struct koyo_block_item : public basis_block_item {
+        struct koyo_req_parcel : public basis_req_parcel {
         public:
 
-            koyo_block_item(std::string vl, tagtype tgtp, const metalink & mlnk);
+            koyo_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk);
 
-            virtual size_t operator-(const basis_block_item & rs) const;
+            virtual size_t operator-(const basis_req_parcel & rs) const;
 
             bool parse(std::string vl) {
                 if (parse_impl(vl)) {
@@ -115,11 +115,11 @@ namespace dvnci {
         /*Koyo ????????? ????? ??????*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class koyo_block_generator : public base_block_generator<koyo_block_item> {
+        class koyo_block_generator : public base_block_generator<koyo_req_parcel> {
         public:
 
             koyo_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_generator<koyo_block_item>(exectr, inf, mlnk) {
+            base_block_generator<koyo_req_parcel>(exectr, inf, mlnk) {
                 switch (def_koyo_protocol(mlnk)) {
                     case NT_KOYO_DIRECTNET_ECOM:{
                         blocksize = in_bounded<size_t > (8, MAX_ECOM_BLOCK_SIZE, static_cast<size_t> (mlnk.blocksize()));

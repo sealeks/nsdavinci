@@ -2,7 +2,7 @@
  * File:   modbus_detail.cpp
  * Author: Serg
  * 
- * Created on 19 ќкт€брь 2010 г., 17:55
+ * Created on 19 ??????? 2010 ?., 17:55
  */
 
 #include "koyo_detail.h"
@@ -22,7 +22,7 @@ namespace dvnci {
                 default:{
                     return -1;}}}
 
-        koyo_block_item::koyo_block_item(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_block_item(vl, tgtp, mlnk) {
+        koyo_req_parcel::koyo_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_req_parcel(vl, tgtp, mlnk) {
             protocol_ = def_koyo_protocol(mlnk);
             if (protocol_ < 0) {
                 iscorrect_ = false;
@@ -35,7 +35,7 @@ namespace dvnci {
             getspecificator(vl);
             iscorrect_ = parse(vl);}
 
-        size_t koyo_block_item::operator-(const basis_block_item & rs) const  {
+        size_t koyo_req_parcel::operator-(const basis_req_parcel & rs) const  {
             if (protocol() == NT_KOYO_MODBUS) {
                 if ((devnum() != rs.devnum()) || (type() != rs.type())) return MAXDISTANSE;
                 switch (type_) {
@@ -47,7 +47,7 @@ namespace dvnci {
                 return static_cast<size_t> (dvnci::abs<num32 > (addr() - rs.addr())) * 2;}
             return MAXDISTANSE;};
 
-        bool koyo_block_item::parse_impl(std::string vl) {
+        bool koyo_req_parcel::parse_impl(std::string vl) {
 
             /*XOOO  discret input
               Y000  discret output
@@ -144,7 +144,7 @@ namespace dvnci {
             error_ = ERROR_BINDING;
             return false;}
 
-        bool koyo_block_item::conform_bit_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt,  std::string rgxstr, num32& addr, size_t& bitnum) {
+        bool koyo_req_parcel::conform_bit_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt,  std::string rgxstr, num32& addr, size_t& bitnum) {
             boost::smatch rslt;
             boost::regex rgx(rgxstr);
             if (boost::regex_search(vl,  rslt, rgx)) {
@@ -157,7 +157,7 @@ namespace dvnci {
                             return true;};}}
             return false;}
 
-        bool koyo_block_item::conform_v_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt,  std::string rgxstr, num32& addr, size_t& bitnum) {
+        bool koyo_req_parcel::conform_v_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt,  std::string rgxstr, num32& addr, size_t& bitnum) {
             boost::smatch rslt;
             boost::regex rgx(rgxstr);
             if (boost::regex_search(vl,  rslt, rgx)) {
@@ -180,7 +180,7 @@ namespace dvnci {
                                     return true;};}}}
             return false;}
 
-        bool koyo_block_item::modbus_transform() {
+        bool koyo_req_parcel::modbus_transform() {
             if (indx() == NULL_BIT_NUM) {
                 type_ = HOLDING_REGISTER_MODBUS_TYPE;
                 addr_ += 0;
