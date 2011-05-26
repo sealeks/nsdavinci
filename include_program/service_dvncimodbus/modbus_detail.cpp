@@ -2,7 +2,7 @@
  * File:   modbus_detail.cpp
  * Author: Serg
  * 
- * Created on 19 ќкт€брь 2010 г., 17:55
+ * Created on 19 ??????? 2010 ?., 17:55
  */
 
 #include "modbus_detail.h"
@@ -12,7 +12,7 @@ namespace dvnci{
 
 
 
-        modbus_block_item::modbus_block_item(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_block_item(vl, tgtp, mlnk) {
+        modbus_req_parcel::modbus_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_req_parcel(vl, tgtp, mlnk) {
                 protocol_ = (mlnk.chanaltype() == NT_CHTP_RS232_4XX) ?
                         ((mlnk.protocol() == NT_MODBUS_ASCII) ? INTPR_RS_MODBUS_ASCII : INTPR_RS_MODBUS_RTU) : INTPR_TCP_MODBUS;
                 iscorrect_ = checktagtype();
@@ -21,7 +21,7 @@ namespace dvnci{
                 getspecificator(vl);
                 iscorrect_ = parse(vl);}
 
-        size_t modbus_block_item::operator-(const basis_block_item & rs) const  {
+        size_t modbus_req_parcel::operator-(const basis_req_parcel & rs) const  {
                 if ((devnum() != rs.devnum()) || (type() != rs.type())) return MAXDISTANSE;
                 switch (type_) {
                     case DISCRET_INPUT_MODBUS_TYPE: return static_cast<size_t> ((dvnci::abs<num32 > (addr() - rs.addr()) / 8 ) );
@@ -31,7 +31,7 @@ namespace dvnci{
                 return MAXDISTANSE;};
 
 
-        bool modbus_block_item::parse(std::string vl) {
+        bool modbus_req_parcel::parse(std::string vl) {
 
                 /*DNNNN  discret intut
                   CNNNN  coils
@@ -86,7 +86,7 @@ namespace dvnci{
                 error_ = ERROR_BINDING;
                 return false;}
 
-        bool modbus_block_item::conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr) {
+        bool modbus_req_parcel::conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr) {
                 bitnum = NULL_BIT_NUM;
                 boost::smatch rslt;
                 boost::regex rgx(rgxstr);

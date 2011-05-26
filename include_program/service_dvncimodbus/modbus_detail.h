@@ -20,12 +20,12 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        struct modbus_block_item : public basis_block_item {
+        struct modbus_req_parcel : public basis_req_parcel {
         public:
 
-            modbus_block_item(std::string vl, tagtype tgtp, const metalink & mlnk);
+            modbus_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk);
 
-            virtual size_t operator-(const basis_block_item & rs) const;
+            virtual size_t operator-(const basis_req_parcel & rs) const;
 
             bool parse(std::string vl);
 
@@ -44,11 +44,11 @@ namespace dvnci {
 
 
 
-        class modbus_block_generator : public base_block_generator<modbus_block_item> {
+        class modbus_block_generator : public base_block_generator<modbus_req_parcel> {
         public:
 
             modbus_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_generator<modbus_block_item>(exectr, inf, mlnk) {
+            base_block_generator<modbus_req_parcel>(exectr, inf, mlnk) {
                 blocksize = ((mlnk.protocol() == NT_MODBUS_ASCII) && (mlnk.chanaltype() != NT_CHTP_TCP_IP)) ?
                         in_bounded<size_t > (8, MAX_MODBUS_BLOCK_SIZE / 2, static_cast<size_t> (mlnk.blocksize())) :
                         in_bounded<size_t > (8, MAX_MODBUS_BLOCK_SIZE, static_cast<size_t> (mlnk.blocksize()));};} ;
