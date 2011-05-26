@@ -9,7 +9,7 @@
 #define	_DVNCI_KRNL_MODBUS_DETAIL_H
 
 #include <kernel/driver_proccesstmpl.h>
-#include <kernel/driver_blockgenerator.h>
+#include <kernel/driver_blockmodel.h>
 #include <driverspec/modbus_protocol.h>
 
 namespace dvnci {
@@ -33,7 +33,7 @@ namespace dvnci {
 
             bool checktagtype() {
                 if ((IN_REPORTSET(tgtype_)) || (IN_EVENTSET(tgtype_))) {
-                    error_ = ERROR_TYPENOPROCCESS;
+                    error(ERROR_TYPENOPROCCESS);
                     return false;}
                 return true;}} ;
 

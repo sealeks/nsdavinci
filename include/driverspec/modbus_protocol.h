@@ -103,10 +103,10 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename VALUEMANAGER = modbus_value_manager>
-                class basis_modbus_protocol : public templ_device_protocol<VALUEMANAGER> {
+                class basis_modbus_protocol : public templ_protocol<VALUEMANAGER> {
         private:
 
-            typedef templ_device_protocol<VALUEMANAGER> basetype;
+            typedef templ_protocol<VALUEMANAGER> basetype;
 
         public:
 
@@ -116,7 +116,7 @@ namespace dvnci {
             static const mdbdevn MAX_MODBUS_DEV_NUM = 247;
             static const mdbdevn NO_MODBUS_DEV_NUM = 0xFF;
 
-            basis_modbus_protocol(basis_iostream_ptr io) : templ_device_protocol<modbus_value_manager>(io) {}
+            basis_modbus_protocol(basis_iostream_ptr io) : templ_protocol<modbus_value_manager>(io) {}
 
 
 
@@ -124,8 +124,8 @@ namespace dvnci {
             
              virtual ns_error readblock(block& blk) {
                 basetype::error(0);
-                mdbdevn dvnum = ((blk.start->first->devnum() > 0) && (blk.start->first->devnum() <= MAX_MODBUS_DEV_NUM)) ?
-                        static_cast<mdbdevn> (blk.start->first->devnum()) : NO_MODBUS_DEV_NUM;
+                mdbdevn dvnum = ((blk.begin()->first->devnum() > 0) && (blk.begin()->first->devnum() <= MAX_MODBUS_DEV_NUM)) ?
+                        static_cast<mdbdevn> (blk.begin()->first->devnum()) : NO_MODBUS_DEV_NUM;
                 if (dvnum == NO_MODBUS_DEV_NUM) return basetype::error(ERROR_IO_NO_CORRECT_ADDR);
                 if (dvnum == 0) return basetype::error(ERROR_IO_NO_CORRECT_ADDR);
                 return read_impl(blk, dvnum);}
@@ -147,10 +147,10 @@ namespace dvnci {
 
             ns_error read_impl(const block& blk, mdbdevn dvnum) {
                 std::string req = "";
-                num32 tp = blk.start->first->type();
+                num32 tp = blk.begin()->first->type();
                 if (chek_type(tp)) return basetype::error();
-                num32 strtaddr = blk.start->first->addr();
-                size_t tst_cnt = calculate_blocksize(blk.stop->first, blk.start->first);
+                num32 strtaddr = blk.begin()->first->addr();
+                size_t tst_cnt = calculate_blocksize(blk.end()->first, blk.begin()->first);
                 size_t cnt = ((tp == INPUT_REGISTER_MODBUS_TYPE) || (tp == HOLDING_REGISTER_MODBUS_TYPE)) ? tst_cnt / 2 : tst_cnt * 8;
                 if (!basetype::error(generate_body_read(req, dvnum, read_fnc_by_type(tp), strtaddr, cnt))) {
                     std::string resp = "";

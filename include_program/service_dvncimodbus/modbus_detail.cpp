@@ -83,7 +83,7 @@ namespace dvnci{
                         addr_ = adress;
                         size_ = (tgtype_ == TYPE_NODEF) ? 2 : static_cast<num32> (GETDV_TYPESIZE(tgtype_));
                         return true;}}
-                error_ = ERROR_BINDING;
+                error(ERROR_BINDING);
                 return false;}
 
         bool modbus_req_parcel::conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr) {

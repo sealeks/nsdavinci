@@ -109,7 +109,7 @@ namespace dvnci {
         /*??????? ???????? KOYO*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class basis_koyo_protocol : public templ_device_protocol<directnet_value_manager> {
+        class basis_koyo_protocol : public templ_protocol<directnet_value_manager> {
         public:
 
             typedef unum8 koyodevn;
@@ -117,7 +117,7 @@ namespace dvnci {
             static const koyodevn MAX_KOYO_DEV_NUM = 90;
             static const koyodevn NO_KOYO_DEV_NUM = 0xFF;
 
-            basis_koyo_protocol(basis_iostream_ptr io) : templ_device_protocol<directnet_value_manager>(io) {}
+            basis_koyo_protocol(basis_iostream_ptr io) : templ_protocol<directnet_value_manager>(io) {}
 
 
         protected:
