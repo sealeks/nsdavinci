@@ -1339,12 +1339,7 @@ namespace dvnci {
             return itemex(id)->type();}  
         
         tagtype superstype(size_type id) const {
-            tagtype tp = type(id);
-            if ((tp & 0x80)) return TYPE_EVENT;
-            if ((tp & 0x40)) return TYPE_REPORT;
-            if ((tp & 0x20)) return TYPE_TEXT;
-            if ((tp & 0x10)) return TYPE_TIME;
-            return  TYPE_SIMPL;}
+            return  SUPER_TYPE(type(id));}
          
         void type(size_type id, tagtype value);
         

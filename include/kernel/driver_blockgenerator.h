@@ -27,19 +27,19 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        struct basis_block_item {
-            basis_block_item(std::string vl, tagtype tgtp, const metalink & mlnk);
+        struct basis_req_parcel {
+            basis_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk);
 
-            virtual ~basis_block_item() {};
+            virtual ~basis_req_parcel() {};
 
-            virtual size_t operator-(const basis_block_item & rs) const {
+            virtual size_t operator-(const basis_req_parcel & rs) const {
                 return MAXDISTANSE;};
 
-            virtual bool operator==(const basis_block_item & rs) const;
+            virtual bool operator==(const basis_req_parcel & rs) const;
 
-            virtual bool operator!=(const basis_block_item & rs) const {
+            virtual bool operator!=(const basis_req_parcel & rs) const {
                 return !operator==(rs);};
-            virtual bool operator<(const basis_block_item & rs) const;
+            virtual bool operator<(const basis_req_parcel & rs) const;
 
             num32 devnum() const {
                 return devnum_;}
@@ -132,7 +132,7 @@ namespace dvnci {
             void set_report_range(datetime start, datetime stop);
             bool get_report_range(datetime& start, datetime & stop);
 
-            friend std::ostream & operator<<(std::ostream& os, const basis_block_item & ns) {
+            friend std::ostream & operator<<(std::ostream& os, const basis_req_parcel & ns) {
                 return os << "dev=" << ns.devnum() << " chanal=" << ns.chanel() << "  type=" << ns.type() << " addr=" << ns.addr();}
 
         protected:
@@ -154,20 +154,21 @@ namespace dvnci {
             mutable datetime_pair_ptr reportrange_;};
             
          template<> 
-         void basis_block_item::value_cast<double>(double val);
+         void basis_req_parcel::value_cast<double>(double val);
          
          template<> 
-         void basis_block_item::value_cast<float>(float val);
+         void basis_req_parcel::value_cast<float>(float val);
 
 
 
        /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        typedef boost::shared_ptr<basis_block_item> parcel_ptr;
+        typedef boost::shared_ptr<basis_req_parcel> parcel_ptr;
 
         size_t calculate_blocksize(parcel_ptr msblk, parcel_ptr lsblk);
-
+        
+        
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,18 +185,29 @@ namespace dvnci {
                     return (*ls)<(*rs);}};
 
         public:
+            
+            struct block;
+            
+            typedef boost::bimaps::set_of<indx, std::less<indx> >                          tags_setof;
+            typedef boost::bimaps::multiset_of<parcel_ptr, parcel_ptr_less >               parcelptr_multisetof;
+            typedef boost::bimaps::bimap<parcelptr_multisetof, tags_setof >                parcel_tags_map;
+            typedef parcel_tags_map::left_map                                              parcels_map;
+            typedef parcel_tags_map::right_map                                             tags_map;
+            typedef parcel_tags_map::left_iterator                                         parcel_iterator;
+            typedef parcel_tags_map::left_const_iterator                                   parcel_const_iterator;
+            typedef parcel_tags_map::left_map::data_type                                   parcel;
+            typedef parcel_tags_map::right_iterator                                        tags_iterator;
+            typedef parcel_tags_map::value_type                                            parcel_tags_pair;
 
-            typedef boost::bimaps::set_of<indx, std::less<indx> > tags_setof;
-            typedef boost::bimaps::multiset_of<parcel_ptr, parcel_ptr_less > parcelptr_multisetof;
-            typedef boost::bimaps::bimap<parcelptr_multisetof, tags_setof > parcel_tags_map;
-            typedef parcel_tags_map::left_map parcels_map;
-            typedef parcel_tags_map::right_map tags_map;
-            typedef parcel_tags_map::left_iterator parcel_iterator;
-            typedef parcel_tags_map::left_const_iterator parcel_const_iterator;
-            typedef parcel_tags_map::left_map::data_type parcel;
-            typedef parcel_tags_map::right_iterator tags_iterator;
-            typedef parcel_tags_map::value_type parcel_tags_pair;
 
+
+            typedef std::vector<block>                                                     block_vector;
+            typedef std::vector<block>::const_iterator                                     block_iterator;
+
+            typedef std::vector<parcel_ptr>                                                parcels_vect;
+            typedef parcels_vect                                                           commands_vect;
+            typedef commands_vect::iterator                                                commands_iterator;
+            
             struct block {
 
                 block() : groupid_(0) {};
@@ -205,6 +217,9 @@ namespace dvnci {
                     timout_ = in_bounded<num32 > (100, 600000, tmout);
                     trycount_ = in_bounded<num32 > (1, 10, trycnt);
                     curenttrycount_ = trycount_;}
+                
+                virtual ~block(){};
+                
                 parcel_iterator start;
                 parcel_iterator stop;
 
@@ -243,13 +258,11 @@ namespace dvnci {
                 num32 timout_;
                 num32 trycount_;
                 mutable num32 curenttrycount_;};
+            
+            
 
-            typedef std::vector<block> block_vector;
-            typedef std::vector<block>::const_iterator block_iterator;
-
-            typedef std::vector<parcel_ptr> parcels_vect;
-            typedef parcels_vect commands_vect;
-            typedef commands_vect::iterator commands_iterator;
+            
+            
 
             abstract_block_generator(executor* execr, tagsbase_ptr inf, const metalink& mlnk) :
             intf(inf), executr(execr), needgenerate(true), protocol(0), blocksize(0), archblocksize(0), eventblocksize(0) {
@@ -294,19 +307,18 @@ namespace dvnci {
             virtual void generate_impl() = 0;
 
 
-            //indx_set err_set;
-            parcel_tags_map bmap;
-            block_vector blocks;
-            block_iterator currentblockiteator;
-            tagsbase_ptr intf;
-            executor* executr;
-            bool needgenerate;
-            num32 protocol;
-            size_t blocksize;
-            num32 archblocksize;
-            num32 eventblocksize;
+            parcel_tags_map   bmap;
+            block_vector      blocks;
+            block_iterator    currentblockiteator;
+            tagsbase_ptr      intf;
+            executor*         executr;
+            bool              needgenerate;
+            num32             protocol;
+            size_t            blocksize;
+            num32             archblocksize;
+            num32             eventblocksize;
             indx_dtvalmap_map cash_reportval_map;
-            indx_set groupset_;};
+            indx_set          groupset_;};
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
 

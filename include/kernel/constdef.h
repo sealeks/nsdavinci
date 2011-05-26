@@ -777,6 +777,13 @@ namespace dvnci {
 
     inline static   bool ISDV_TYPE(tagtype val)  {
         return ((val >= 0x00) && (val < EVENT_TYPE_OSC));};
+            
+    inline static   tagtype SUPER_TYPE(tagtype val){        
+            if ((val & 0x80)) return TYPE_EVENT;
+            if ((val & 0x40)) return TYPE_REPORT;
+            if ((val & 0x20)) return TYPE_TEXT;
+            if ((val & 0x10)) return TYPE_TIME;
+      return  TYPE_SIMPL;}
 
     tagtype oldtypetonew(tagtype val);
 
