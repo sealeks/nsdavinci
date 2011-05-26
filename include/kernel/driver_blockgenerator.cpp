@@ -10,14 +10,14 @@
 namespace dvnci {
     namespace driver {
 
-        basis_block_item::basis_block_item(std::string vl , tagtype tgtp , const metalink& mlnk) :
+        basis_req_parcel::basis_req_parcel(std::string vl , tagtype tgtp , const metalink& mlnk) :
         iscorrect_(false), devnum_(0), type_(tgtp), chanel_(0), addr_(0), tp_(0), specificator_(0), size_(0),
         protocol_(0), tgtype_(tgtp), error_(0), isvalue_(false), value_(0) {
             chanel_ = mlnk.chanaltype();
             devnum_ = mlnk.devicenum();
             protocol_ = mlnk.protocol();};
 
-        bool  basis_block_item::operator==(const basis_block_item& rs) const  {
+        bool  basis_req_parcel::operator==(const basis_req_parcel& rs) const  {
             if (devnum() != rs.devnum()) return false;
             if (type() != rs.type()) return false;
             if (chanel() != rs.chanel()) return false;
@@ -26,7 +26,7 @@ namespace dvnci {
             if (size() != rs.size()) return false;
             return true;};
 
-        bool  basis_block_item::operator<(const basis_block_item& rs) const {
+        bool  basis_req_parcel::operator<(const basis_req_parcel& rs) const {
             if (devnum() != rs.devnum()) return (devnum() < rs.devnum());
             if (type() != rs.type()) return (type() < rs.type());
             if (chanel() != rs.chanel()) return (chanel() < rs.chanel());
@@ -37,31 +37,31 @@ namespace dvnci {
         
         
        template<> 
-       void basis_block_item::value_cast<double>(double val) {
+       void basis_req_parcel::value_cast<double>(double val) {
               value_=short_value(val);
               isvalue_ = true;
               error(0);} 
        
        template<> 
-       void basis_block_item::value_cast<float>(float val) {
+       void basis_req_parcel::value_cast<float>(float val) {
               value_=short_value(val);
               isvalue_ = true;
               error(0);} 
 
 
-        std::string basis_block_item::to_str() {
+        std::string basis_req_parcel::to_str() {
             return string_fromnum64_and_type(value_.value64(), value_.type() );};
 
 
 
 
-        void  basis_block_item::value_event(const datetime& dt, double vl) {
+        void  basis_req_parcel::value_event(const datetime& dt, double vl) {
             eventvalue_.reset();
             isvalue_ = true;
             eventvalue_ = datetime_val_ptr( new dt_val_pair(dt, vl));
             error_ = 0;}
 
-        dt_val_pair  basis_block_item::value_event() const {
+        dt_val_pair  basis_req_parcel::value_event() const {
             if (isvalue_) {
                 if (eventvalue_) {
                     dt_val_pair tmp = *eventvalue_;
@@ -71,14 +71,14 @@ namespace dvnci {
             isvalue_ = false;
             return dt_val_pair(nill_time, NULL_DOUBLE);}
 
-        void  basis_block_item::set_report_val(const dt_val_map& dt) {
+        void  basis_req_parcel::set_report_val(const dt_val_map& dt) {
             reportvalue_.reset();
             isvalue_ = true;
             reportvalue_ = dt_val_map_ptr( new dt_val_map());
             *reportvalue_ = dt;
             error_ = 0;}
 
-        bool  basis_block_item::get_report_val(dt_val_map& dt) {
+        bool  basis_req_parcel::get_report_val(dt_val_map& dt) {
             dt.clear();
             if (isvalue_) {
                 if (reportvalue_) {
@@ -89,11 +89,11 @@ namespace dvnci {
             isvalue_ = false;
             return false;}
 
-        void basis_block_item::set_report_range(datetime start, datetime stop) {
+        void basis_req_parcel::set_report_range(datetime start, datetime stop) {
             reportrange_.reset();
             reportrange_ = datetime_pair_ptr( new datetime_pair(start, stop));}
 
-        bool basis_block_item::get_report_range(datetime& start, datetime& stop) {
+        bool basis_req_parcel::get_report_range(datetime& start, datetime& stop) {
             if (reportrange_) {
                 start = reportrange_->first;
                 stop = reportrange_->second;
@@ -152,7 +152,6 @@ namespace dvnci {
             command_vector cmds;
             cmdvect.clear();
             intf->select_commands(cmds, executr->groupset());
-            //DEBUG_STR_VAL_DVNCI(bkgrtr, cmds.size())
             if (!cmds.empty()) {
                 for (command_vector::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
                     tags_iterator itfnd = bmap.right.find(it->tagid());
@@ -170,29 +169,22 @@ namespace dvnci {
             num64 tmpval = 0;
             for (parcel_iterator it = blk.start; it != endit; ++it) {
                 if (it->first->isvalue()) {
-                    if (it->first->error()) {
-                        executr->error(it->second, it->first->error());}
-                    else {
-                        if (IN_REPORTSET(it->first->tgtype())) {
-                            dt_val_map tmprepmp;
-                            if (it->first->get_report_val(tmprepmp))
-                                executr->write_val_report(it->second, tmprepmp);}
-                        else {
-                            if (IN_EVENTSET(it->first->tgtype())) {
-                                if (it->first->isvalue())
-                                    executr->write_val_event(it->second,it->first->value_event());}
-                            else {
-                                if (it->first->error()) {
+                    if (!it->first->error()) {
+                        switch (SUPER_TYPE(it->first->tgtype())) {
+                            case TYPE_EVENT: {
+                                executr->write_val_event(it->second,it->first->value_event());
+                                break;}
+                            case TYPE_REPORT:{
+                                dt_val_map tmprepmp;
+                                if (it->first->get_report_val(tmprepmp)){
+                                     executr->write_val_report(it->second, tmprepmp);}
+                                else {
                                     executr->error(it->second, it->first->error());}
-                                else{
-                                    if (!it->first->error()) {
-                                         executr->write_val(it->second, it->first->value());}
-                                    else{
-                                         executr->error(it->second, it->first->error() ? it->first->error(): ERROR_IO_NO_DATA);
-									}}}}}} 
-				else{
-					if (it->first->error()) {
-						executr->error(it->second, it->first->error());}}}}
+                                break;}
+                            default:{
+                                executr->write_val(it->second, it->first->value());}}}}
+                 if (it->first->error()) {
+                            executr->error(it->second, it->first->error());}}}
 
         bool abstract_block_generator::check_parcel_active(parcel_iterator& prsl) {
             if (IN_REPORTSET(intf->type(prsl->second))) {
