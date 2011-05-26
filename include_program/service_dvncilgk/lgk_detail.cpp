@@ -158,24 +158,24 @@ namespace dvnci {
                         blkit.groupid(intf->group(it->second));
                         blkit.timout(intf->groups()->indicateto(blkit.groupid()));
                         blkit.trycount(intf->groups()->trycount(blkit.groupid()));
-                        blkit.start = it;
-                        blkit.stop = it;
+                        blkit.begin() = it;
+                        blkit.end() = it;
                         its = it;}
                     else {
                         counter++;
-                        blkit.stop = it;}}
+                        blkit.end() = it;}}
                 filltransitmap(transitmap, blkit);}
             generate_by_transitmap(transitmap);
             needgenerate = false;}
 
         void lgk_block_generator::filltransitmap(num32_dev_block_map& mp, const block& blk) {
-            num32_dev_block_iterator it = mp.find(blk.start->first->devnum());
+            num32_dev_block_iterator it = mp.find(blk.begin()->first->devnum());
             if (it==mp.end()) {
                 dev_block tmp;
-                tmp.add(blk.start->first->type(), blk);
-                mp.insert(num32_dev_block_pair(blk.start->first->devnum(), tmp));}
+                tmp.add(blk.begin()->first->type(), blk);
+                mp.insert(num32_dev_block_pair(blk.begin()->first->devnum(), tmp));}
             else {
-                it->second.add(blk.start->first->type(), blk);}}
+                it->second.add(blk.begin()->first->type(), blk);}}
 
         void lgk_block_generator::generate_by_transitmap(num32_dev_block_map& mp) {
             bool needfl = true;

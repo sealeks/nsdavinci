@@ -2,7 +2,7 @@
  * File:   mg_protocol.cpp
  * Author: Serg
  * 
- * Created on 16 Ноябрь 2010 г., 18:01
+ * Created on 16 ?????? 2010 ?., 18:01
  *
  *
  */
@@ -92,7 +92,7 @@ namespace dvnci {
 
         ns_error      iek1177_protocol::read_arh(parcel_ptr prcl) {
             datetime start, stop;
-            prcl->get_report_range(start, stop);
+            prcl->report_range(start, stop);
             std::string req = generate_arh(prcl->chanel(), prcl->addr(), start );
             std::string resp;
             if (!error(request(req, resp))) {

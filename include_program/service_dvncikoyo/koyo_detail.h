@@ -11,7 +11,7 @@
 
 #include <kernel/systemutil.h>
 #include <kernel/driver_proccesstmpl.h>
-#include <kernel/driver_blockgenerator.h>
+#include <kernel/driver_blockmodel.h>
 #include <driverspec/modbus_protocol.h>
 #include <driverspec/directnet_protocol.h>
 
@@ -95,7 +95,7 @@ namespace dvnci {
                 if (parse_impl(vl)) {
                     if (protocol() != NT_KOYO_MODBUS) return true;
                     if (modbus_transform()) return true;}
-                error_ = ERROR_BINDING;
+                error(ERROR_BINDING);
                 return false;}
 
             bool parse_impl(std::string vl);
@@ -106,7 +106,7 @@ namespace dvnci {
 
             bool checktagtype() {
                 if ((IN_REPORTSET(tgtype_)) || (IN_EVENTSET(tgtype_))) {
-                    error_ = ERROR_TYPENOPROCCESS;
+                    error(ERROR_TYPENOPROCCESS);
                     return false;}
                 return true;}};
 

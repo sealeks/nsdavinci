@@ -109,13 +109,13 @@ namespace dvnci {
             unum16 tmp = 0;
             if (bitn != NULL_BIT_NUM) {
                 if (string_to_primtype<unum16 > (val, tmp)) {
-                    prcl->set_simpl_val_cast(static_cast<bool> (tmp & (0x01 << (bitn))));}
+                    prcl->value_cast(static_cast<bool> (tmp & (0x01 << (bitn))));}
                 else {prcl->error(ERROR_IO_NO_DATA);}}
             else {
                 switch (prcl->tgtype()) {
                     case TYPE_NODEF:{
                         if (string_to_primtype<unum16 > (val, tmp))
-                            prcl->set_simpl_val_cast<unum16 > (tmp);
+                            prcl->value_cast<unum16 > (tmp);
                         else {
                             prcl->error(ERROR_IO_NO_PARSEDATA);};
                         break;}
@@ -126,15 +126,14 @@ namespace dvnci {
         ns_error directnet_value_manager::get_val(std::string& val, parcel_ptr cmd, size_t bitn ) {
             unum16 tmp = 0;
             if (bitn != NULL_BIT_NUM) {
-                num64 tmp = 0;
-                cmd->get_simpl_val(tmp);
-                val = (tmp != 0) ? "on" : "of";
+                bool tmp = cmd->value_cast<bool>();
+                val = (tmp) ? "on" : "of";
                 return error(0);}
             else {
                 switch (cmd->tgtype()) {
                     case TYPE_NODEF:{
-                        unum16 tmp = 0;
-                        if (cmd->get_simpl_val_cast<unum16 > (tmp, true)) {
+                        unum16 tmp =  cmd->value_cast<unum16>();;
+                        if (true) {
                             tmp = (tmp < 0) ? 0 : ((tmp > 65535) ? 65535 : tmp);
                             val = primtype_to_string<unum16 > (tmp);
                             return error(0);}
@@ -150,15 +149,15 @@ namespace dvnci {
 
         ns_error basis_koyo_protocol::readblock(block& blk) {
             error(0);
-            koyodevn dvnum = ((blk.start->first->devnum() > 0) && (blk.start->first->devnum() <= MAX_KOYO_DEV_NUM)) ? static_cast<num8> (blk.start->first->devnum()) : NO_KOYO_DEV_NUM;
+            koyodevn dvnum = ((blk.begin()->first->devnum() > 0) && (blk.begin()->first->devnum() <= MAX_KOYO_DEV_NUM)) ? static_cast<num8> (blk.begin()->first->devnum()) : NO_KOYO_DEV_NUM;
             if (dvnum == NO_KOYO_DEV_NUM) return error(ERROR_IO_NO_CORRECT_ADDR);
             return read_impl(blk, dvnum);}
 
         ns_error basis_koyo_protocol::read_impl(const block& blk, koyodevn dvnum) {
 
             std::string resp = "";
-            num32 strtaddr = blk.start->first->addr();
-            size_t cnt = calculate_blocksize(blk.stop->first, blk.start->first);
+            num32 strtaddr = blk.begin()->first->addr();
+            size_t cnt = calculate_blocksize(blk.end()->first, blk.begin()->first);
             return error(read_request(dvnum, strtaddr, cnt, resp));}
 
         ns_error basis_koyo_protocol::writecmd(const std::string& vl, parcel_ptr cmd) {

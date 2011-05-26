@@ -12,7 +12,7 @@
 #include <kernel/constdef.h>
 #include <kernel/systemutil.h>
 #include <kernel/driver_proccesstmpl.h>
-#include <kernel/driver_blockgenerator.h>
+#include <kernel/driver_blockmodel.h>
 #include <kernel/error.h>
 
 #include "mg_protocol.h"

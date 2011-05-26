@@ -2,7 +2,7 @@
  * File:   mg_protocol.cpp
  * Author: Serg
  * 
- * Created on 16 Ноябрь 2010 г., 18:01
+ * Created on 16 ?????? 2010 ?., 18:01
  *
  *
  */
@@ -84,7 +84,7 @@ namespace dvnci {
 
          ns_error mg_value_manager::set_value(const std::string& val, block& blk) {
                 clearerror();
-                num32 tp =    blk.start->first->type();
+                num32 tp =    blk.begin()->first->type();
                 switch (tp) {
                     case LGKA_TYPEITEM_SMPL:{
                         if  ((parse_vals(val)>0)) set_val(blk);
@@ -103,9 +103,9 @@ namespace dvnci {
                 return error(0);};
 
         void mg_value_manager::set_val(const block& blk) {
-            parcel_const_iterator endit = blk.stop;
+            parcel_const_iterator endit = blk.end();
             endit++;
-            for (parcel_const_iterator it = blk.start; it!=endit; ++it) {
+            for (parcel_const_iterator it = blk.begin(); it!=endit; ++it) {
                 set_val(it->first);}}
 
         void mg_value_manager::set_val(parcel_ptr prcl) {
@@ -115,7 +115,7 @@ namespace dvnci {
                 prcl->set_simpl_val_from_str(tmp);}}
 
         void mg_value_manager::set_arch(const block& blk) {
-            set_arch(blk.start->first);}
+            set_arch(blk.begin()->first);}
 
         void mg_value_manager::set_arch(parcel_ptr prcl) {
             parcel_addr_str_str_vect_map::iterator itval
@@ -134,7 +134,7 @@ namespace dvnci {
                             tmpdtvlmap.insert(dt_val_pair(mg_lgk_str_to_datetime(itdt->second), tmpval));}
                         else tmpdtvlmap.insert(dt_val_pair(mg_lgk_str_to_datetime(itdt->second), NULL_DOUBLE));}}
                 if (!tmpdtvlmap.empty())
-                    prcl->set_report_val(tmpdtvlmap);}}
+                    prcl->value_report(tmpdtvlmap);}}
 
         bool mg_value_manager::get_val(std::string& vl, num32 ch, num32 num, num32 inx) {
             parcel_addr_strval_map::const_iterator it = valuemap.find(parcel_addr(ch, num, inx));
@@ -212,8 +212,8 @@ namespace dvnci {
 
         ns_error mg_protocol::readblock(block& blk) {
                 clearerror();
-                num32 tp =    blk.start->first->type();
-                num8  dvnum = ((blk.start->first->devnum() >= 0) && (blk.start->first->devnum() <= MAX_NUM_MG)) ? static_cast<num8> (blk.start->first->devnum()) : -1;
+                num32 tp =    blk.begin()->first->type();
+                num8  dvnum = ((blk.begin()->first->devnum() >= 0) && (blk.begin()->first->devnum() <= MAX_NUM_MG)) ? static_cast<num8> (blk.begin()->first->devnum()) : -1;
                 if (dvnum==proxyaddr) dvnum = -1;
                 switch (tp) {
                     case LGKA_TYPEITEM_SMPL:    return  read_val(blk, dvnum);
@@ -267,10 +267,10 @@ namespace dvnci {
 
         std::string&  mg_protocol::generate_body_vals(std::string& vl, const block& blk, num8 dvnum) {
             vl = "";
-            parcel_const_iterator endit = blk.stop;
+            parcel_const_iterator endit = blk.end();
             endit++;
             parcel_ptr lastparcel;
-            for (parcel_const_iterator it = blk.start; it!=endit; ++it) {
+            for (parcel_const_iterator it = blk.begin(); it!=endit; ++it) {
                 if ((!lastparcel) || ((*lastparcel)!=(*(it->first))))
                     vl += generate_val(it->first->chanel(), it->first->addr());
                 lastparcel = it->first;}
@@ -290,10 +290,10 @@ namespace dvnci {
 
         std::string&  mg_protocol::generate_body_arrs(std::string& vl, const block& blk, num8 dvnum) {
             vl = "";
-            num32 cnt = blk.stop->first->tp() - blk.start->first->tp();
+            num32 cnt = blk.end()->first->tp() - blk.begin()->first->tp();
             cnt = dvnci::abs<num32>(cnt);
             cnt = cnt + 1;
-            vl = generate_arr(blk.start->first->chanel(), blk.start->first->addr(), blk.start->first->tp(), cnt);
+            vl = generate_arr(blk.begin()->first->chanel(), blk.begin()->first->addr(), blk.begin()->first->tp(), cnt);
             generate_envelope(generate_body(vl), MG_FC_RD_ARR_R, dvnum, (proxyaddr | 0x80));
             return vl;}
 
@@ -311,8 +311,8 @@ namespace dvnci {
         std::string&  mg_protocol::generate_body_arhs(std::string& vl, const block& blk, num8 dvnum) {
             vl = "";
             datetime strt, stp;
-            blk.start->first->get_report_range(strt , stp);
-            vl = generate_arh(blk.start->first->chanel(), blk.start->first->addr(), strt, stp);
+            blk.begin()->first->report_range(strt , stp);
+            vl = generate_arh(blk.begin()->first->chanel(), blk.begin()->first->addr(), strt, stp);
             generate_envelope(generate_body(vl), MG_FC_RD_ARH_R, dvnum, (proxyaddr | 0x80));
             return vl;}
 

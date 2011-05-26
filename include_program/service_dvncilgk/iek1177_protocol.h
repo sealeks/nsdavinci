@@ -62,20 +62,20 @@ namespace dvnci {
             virtual ns_error set_value(const std::string& val, block& blk) {
                 clearerror();
                 std::string tmpvl = "";
-                num32 tp =    blk.start->first->type();
+                num32 tp =    blk.begin()->first->type();
                 switch (tp) {
                     case LGKA_TYPEITEM_SMPL:{
-                        if (!parse_val(val, tmpvl)) blk.start->first->set_simpl_val_from_str(tmpvl);
+                        if (!parse_val(val, tmpvl)) blk.begin()->first->set_simpl_val_from_str(tmpvl);
                         return error();}
                     case LGKA_TYPEITEM_ARCHIVE:{
-                        if (!parse_val(val, tmpvl)) blk.start->first->set_simpl_val_from_str(tmpvl);
+                        if (!parse_val(val, tmpvl)) blk.begin()->first->set_simpl_val_from_str(tmpvl);
                         return error();}
                     case LGKA_TYPEITEM_ARRAY:{
                         datetime start, stop;
                         dt_val_map mp;
-                        blk.start->first->get_report_range(start, stop);
+                        blk.begin()->first->report_range(start, stop);
                         parse_arh(tmpvl, start, mp );
-                        blk.start->first->set_report_val(mp);
+                        blk.begin()->first->value_report(mp);
                         return error();}}
                 return 0;}
 
@@ -97,10 +97,10 @@ namespace dvnci {
                 mp.insert(dt_val_pair(dt, vl));
                 return error(0);}} ;
 
-        class iek1177_protocol : public templ_device_protocol<lgk_iek1177_value_manager> {
+        class iek1177_protocol : public templ_protocol<lgk_iek1177_value_manager> {
         public:
 
-            iek1177_protocol(basis_iostream_ptr io) : templ_device_protocol<lgk_iek1177_value_manager>(io) {}
+            iek1177_protocol(basis_iostream_ptr io) : templ_protocol<lgk_iek1177_value_manager>(io) {}
 
 
 
@@ -109,12 +109,12 @@ namespace dvnci {
             
             virtual ns_error readblock(block& blk) {
                 error(0);
-                num32 tp =    blk.start->first->type();
-                num8  dvnum = ((blk.start->first->devnum() >= 0) && (blk.start->first->devnum() <= 30)) ? static_cast<num8> (blk.start->first->devnum()) : -1;
+                num32 tp =    blk.begin()->first->type();
+                num8  dvnum = ((blk.begin()->first->devnum() >= 0) && (blk.begin()->first->devnum() <= 30)) ? static_cast<num8> (blk.begin()->first->devnum()) : -1;
                 switch (tp) {
-                    case LGKA_TYPEITEM_SMPL:    return    read_val(blk.start->first);
-                    case LGKA_TYPEITEM_ARCHIVE:   return  read_arh(blk.start->first);
-                    case LGKA_TYPEITEM_ARRAY:    return   read_arr(blk.start->first);}
+                    case LGKA_TYPEITEM_SMPL:    return    read_val(blk.begin()->first);
+                    case LGKA_TYPEITEM_ARCHIVE:   return  read_arh(blk.begin()->first);
+                    case LGKA_TYPEITEM_ARRAY:    return   read_arr(blk.begin()->first);}
                 return error();}
 
             virtual ns_error writecmd(const std::string& vl, parcel_ptr cmd) {

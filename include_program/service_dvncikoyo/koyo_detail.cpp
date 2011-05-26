@@ -27,7 +27,7 @@ namespace dvnci {
             if (protocol_ < 0) {
                 iscorrect_ = false;
                 if (protocol_ = NT_KOYO_DIRECTNET_ECOM)  devnum_ = 1;
-                error_ = ERROR_IO_LINK_NOT_SUPPORT;
+                error(ERROR_IO_LINK_NOT_SUPPORT);
                 return;}
             tp_ = NULL_BIT_NUM;
             iscorrect_ = checktagtype();
@@ -141,7 +141,7 @@ namespace dvnci {
                     tp_ = bitnum;
                     size_ = 2;
                     return true;}}
-            error_ = ERROR_BINDING;
+            error(ERROR_BINDING);
             return false;}
 
         bool koyo_req_parcel::conform_bit_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt,  std::string rgxstr, num32& addr, size_t& bitnum) {

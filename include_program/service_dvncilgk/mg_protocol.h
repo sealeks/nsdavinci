@@ -150,10 +150,10 @@ namespace dvnci {
 
             
 
-        class mg_protocol : public templ_device_protocol<mg_value_manager> {
+        class mg_protocol : public templ_protocol<mg_value_manager> {
         public:
 
-            mg_protocol(basis_iostream_ptr io) : templ_device_protocol<mg_value_manager>(io) {}
+            mg_protocol(basis_iostream_ptr io) : templ_protocol<mg_value_manager>(io) {}
 
             virtual bool init() { return (ios) && (!check_proxy());}
 
