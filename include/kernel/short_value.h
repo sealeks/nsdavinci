@@ -89,8 +89,9 @@ namespace dvnci {
         tagtype type() const {
             return static_cast<tagtype> (type_);}
 
-        void error(ns_error val) {
-            error_ = static_cast<num64> (val);}
+        ns_error error(ns_error val) {
+            error_ = static_cast<num64> (val);
+            return static_cast<ns_error> (error_);}
 
         ns_error error() const {
             return static_cast<ns_error> (error_);}
