@@ -17,7 +17,7 @@ namespace database {
                 return ((server() == "") && (port() == "")) ? ("dbname=" + database() + " user=" + user() + " password=" + password()) :
                         ((server() != "") && (port() == "")) ? ("host=" + server() + " dbname=" + database() + " user=" + user() + " password=" + password()) :
                         ((server() == "") && (port() != "")) ? ("dbname=" + database() + " user=" + user() + " password=" + password()) :
-                        ("host=" + to_upper_copy(server()) + /*" port=" + port() + */" dbname=" + database() + " user=" + user() + " password=" + password());}
+                        ("host=" + upper_copy(server()) + /*" port=" + port() + */" dbname=" + database() + " user=" + user() + " password=" + password());}
 
 
             void dbpsgrdriver::raisdisconnect(bool throwerr){

@@ -91,7 +91,7 @@ namespace dvnci {
                 return (state_ == st_connected);}
 
             std::string server() const {
-                return (to_trim_copy(server_).empty()) ? "localhost" : server_;}
+                return (trim_copy(server_).empty()) ? "localhost" : server_;}
 
             std::string user() const  {
                 return user_;}
@@ -335,7 +335,7 @@ namespace dvnci {
            bool read_property_by_name(std::string src, const std::string& prop, std::string& val);
 
            bool isnull_property(){
-                 return ((to_trim_copy(database_).empty()) || (server().empty())) ;}
+                 return ((trim_copy(database_).empty()) || (server().empty())) ;}
 
 
         private:
