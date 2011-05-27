@@ -42,13 +42,13 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/431270180/systemutil.o \
 	${OBJECTDIR}/_ext/431270180/utils.o \
 	${OBJECTDIR}/_ext/431270180/short_value.o \
-	${OBJECTDIR}/_ext/431270180/constdef.o \
 	${OBJECTDIR}/_ext/431270180/service.o \
+	${OBJECTDIR}/_ext/431270180/constdef.o \
 	${OBJECTDIR}/_ext/431270180/appath.o \
 	${OBJECTDIR}/_ext/431270180/interface_proccesstmpl.o \
+	${OBJECTDIR}/_ext/431270180/driver_blockmodel.o \
 	${OBJECTDIR}/_ext/431270180/appath_win.o \
 	${OBJECTDIR}/_ext/431270180/expression.o \
-	${OBJECTDIR}/_ext/431270180/driver_blockmodel.o \
 	${OBJECTDIR}/_ext/431270180/driver_detail.o \
 	${OBJECTDIR}/_ext/431270180/string_base.o \
 	${OBJECTDIR}/_ext/431270180/proccesstmpl.o \
@@ -117,13 +117,13 @@ ${OBJECTDIR}/_ext/431270180/short_value.o: ../../include/kernel/short_value.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/short_value.o ../../include/kernel/short_value.cpp
 
-${OBJECTDIR}/_ext/431270180/constdef.o: ../../include/kernel/constdef.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/constdef.o ../../include/kernel/constdef.cpp
-
 ${OBJECTDIR}/_ext/431270180/service.o: ../../include/kernel/service.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/service.o ../../include/kernel/service.cpp
+
+${OBJECTDIR}/_ext/431270180/constdef.o: ../../include/kernel/constdef.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
+	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/constdef.o ../../include/kernel/constdef.cpp
 
 ${OBJECTDIR}/_ext/431270180/appath.o: ../../include/kernel/appath.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
@@ -133,6 +133,10 @@ ${OBJECTDIR}/_ext/431270180/interface_proccesstmpl.o: ../../include/kernel/inter
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/interface_proccesstmpl.o ../../include/kernel/interface_proccesstmpl.cpp
 
+${OBJECTDIR}/_ext/431270180/driver_blockmodel.o: ../../include/kernel/driver_blockmodel.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
+	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/driver_blockmodel.o ../../include/kernel/driver_blockmodel.cpp
+
 ${OBJECTDIR}/_ext/431270180/appath_win.o: ../../include/kernel/appath_win.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/appath_win.o ../../include/kernel/appath_win.cpp
@@ -140,10 +144,6 @@ ${OBJECTDIR}/_ext/431270180/appath_win.o: ../../include/kernel/appath_win.cpp
 ${OBJECTDIR}/_ext/431270180/expression.o: ../../include/kernel/expression.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/expression.o ../../include/kernel/expression.cpp
-
-${OBJECTDIR}/_ext/431270180/driver_blockmodel.o: ../../include/kernel/driver_blockmodel.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/driver_blockmodel.o ../../include/kernel/driver_blockmodel.cpp
 
 ${OBJECTDIR}/_ext/431270180/driver_detail.o: ../../include/kernel/driver_detail.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
