@@ -47,19 +47,19 @@ bool provided_esd(num8 val){
 
 std::string binding_esd(num8 type,unum32 adr, std::string vw){
     std::string postfix="";
-    if (to_trim_copy(vw)=="bcd") postfix=":B";
-   // if (to_trim_copy(vw)=="real") postfix=":R";
+    if (trim_copy(vw)=="bcd") postfix=":B";
+   // if (trim_copy(vw)=="real") postfix=":R";
     switch (type){
-            case esd_type_v: return (to_trim_copy(boost::str( boost::format("V%o") % adr))+postfix);
-            case esd_type_x: return (to_trim_copy(boost::str( boost::format("X%o") % adr )));
-            case esd_type_y: return (to_trim_copy(boost::str( boost::format("Y%o") % adr )));
-            case esd_type_c: return (to_trim_copy(boost::str( boost::format("C%o") % adr )));
-            case esd_type_s: return (to_trim_copy(boost::str( boost::format("S%o") % adr )));
-            case esd_type_gx: return (to_trim_copy(boost::str( boost::format("V%o") % (040000+ (adr / 16))))+"."+
-                    (to_trim_copy(boost::str( boost::format("%d") % (adr % 16)))));
-            case esd_type_gy: return (to_trim_copy(boost::str( boost::format("V%o") % (040200+ (adr / 16))))+"."+
-                    (to_trim_copy(boost::str( boost::format("%d") % (adr % 16)))));
-            case esd_type_sp: return (to_trim_copy(boost::str( boost::format("SP%o") % adr )));
+            case esd_type_v: return (trim_copy(boost::str( boost::format("V%o") % adr))+postfix);
+            case esd_type_x: return (trim_copy(boost::str( boost::format("X%o") % adr )));
+            case esd_type_y: return (trim_copy(boost::str( boost::format("Y%o") % adr )));
+            case esd_type_c: return (trim_copy(boost::str( boost::format("C%o") % adr )));
+            case esd_type_s: return (trim_copy(boost::str( boost::format("S%o") % adr )));
+            case esd_type_gx: return (trim_copy(boost::str( boost::format("V%o") % (040000+ (adr / 16))))+"."+
+                    (trim_copy(boost::str( boost::format("%d") % (adr % 16)))));
+            case esd_type_gy: return (trim_copy(boost::str( boost::format("V%o") % (040200+ (adr / 16))))+"."+
+                    (trim_copy(boost::str( boost::format("%d") % (adr % 16)))));
+            case esd_type_sp: return (trim_copy(boost::str( boost::format("SP%o") % adr )));
 
             default: return "";
     };
@@ -169,9 +169,9 @@ void xml_loadtags(pugi::xml_node& val, base_data& base){
                 ((tagstruct*)&tmpstruct.tginfo)->devdb(str_to<double>(getchildval(tmp, "devdb", it) ? strcomma_to_dot(tmp): "0"));
                 ((tagstruct*)&tmpstruct.tginfo)->alarmlevel((getchildval(tmp, "alarmlevel", it)) ?    str_to<int>(tmp,0) : 0);
 
-                ((tagstruct*)&tmpstruct.tginfo)->logged(((getchildval(tmp, "log", it)) && (to_lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
-                ((tagstruct*)&tmpstruct.tginfo)->onmsged(((getchildval(tmp, "onmsg", it)) && (to_lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
-                ((tagstruct*)&tmpstruct.tginfo)->offmsged(((getchildval(tmp, "offmsg", it)) && (to_lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
+                ((tagstruct*)&tmpstruct.tginfo)->logged(((getchildval(tmp, "log", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
+                ((tagstruct*)&tmpstruct.tginfo)->onmsged(((getchildval(tmp, "onmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
+                ((tagstruct*)&tmpstruct.tginfo)->offmsged(((getchildval(tmp, "offmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
                 ((tagstruct*)&tmpstruct.tginfo)->alarmcase((getchildval(tmp, "alarmcase", it)) ? str_to<int>(tmp, 0) : 0);
                 ((tagstruct*)&tmpstruct.tginfo)->alarmconstr(getchildval(tmp, "alarmconst", it) ? strcomma_to_dot(tmp): "0");
                 ((tagstruct*)&tmpstruct.tginfo)->rwtype((getchildval(tmp, "rw", it)) ? str_to<int>(tmp, 0) : 0);
@@ -202,12 +202,12 @@ void xml_loadtags_old(pugi::xml_node& val, base_data& base){
                 ((tagstruct*)&tmpstruct.tginfo)->maxeu(getchildval(tmp, "maxeu", it) ? strcomma_to_dot(tmp): "0");
                 ((tagstruct*)&tmpstruct.tginfo)->logdb(str_to<double>(getchildval(tmp, "db", it) ? strcomma_to_dot(tmp): "0"));
                 ((tagstruct*)&tmpstruct.tginfo)->devdb(str_to<double>(getchildval(tmp, "devdb", it) ? strcomma_to_dot(tmp): "0"));
-                ((tagstruct*)&tmpstruct.tginfo)->alarmlevel(((getchildval(tmp, "alarmmsg", it)) && (to_lower_copy(tmp)!="false") && (tmp!="0")) ? altAccident :
-                     ((getchildval(tmp, "alarmlocalmsg", it)) && (to_lower_copy(tmp)!="false") && (tmp!="0")) ? altWarning: 0);
+                ((tagstruct*)&tmpstruct.tginfo)->alarmlevel(((getchildval(tmp, "alarmmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0")) ? altAccident :
+                     ((getchildval(tmp, "alarmlocalmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0")) ? altWarning: 0);
 
-                ((tagstruct*)&tmpstruct.tginfo)->logged(((getchildval(tmp, "log", it)) && (to_lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
-                ((tagstruct*)&tmpstruct.tginfo)->onmsged(((getchildval(tmp, "onmsg", it)) && (to_lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
-                ((tagstruct*)&tmpstruct.tginfo)->offmsged(((getchildval(tmp, "offmsg", it)) && (to_lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
+                ((tagstruct*)&tmpstruct.tginfo)->logged(((getchildval(tmp, "log", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
+                ((tagstruct*)&tmpstruct.tginfo)->onmsged(((getchildval(tmp, "onmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
+                ((tagstruct*)&tmpstruct.tginfo)->offmsged(((getchildval(tmp, "offmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
                 ((tagstruct*)&tmpstruct.tginfo)->alarmcase((getchildval(tmp, "alarmcase", it)) ? str_to<int>(tmp, 0) : 0);
                 ((tagstruct*)&tmpstruct.tginfo)->alarmconstr(getchildval(tmp, "alarmconst", it) ? strcomma_to_dot(tmp): "0");
                 ((tagstruct*)&tmpstruct.tginfo)->rwtype(0);
@@ -268,41 +268,41 @@ bool csv_getimportdata(std::string filepath, base_data& base,int& loc, std::stri
                    str_vect tmpitem;
                    split_str(*it,";",tmpitem);
                    if (tmpitem.size()>0){
-                       if ((to_trim_copy(tmpitem.at(0))!="") && ((it+1)!=tmprow.end())){
+                       if ((trim_copy(tmpitem.at(0))!="") && ((it+1)!=tmprow.end())){
                            tag_data tmpstruct;
-                           tmpstruct.name=to_trim_copy(tmpitem.at(0));
-                           tmpstruct.group=(group!="") ? group : (tmpitem.size()>1) ? to_trim_copy(tmpitem.at(1)) : "";
-                           tmpstruct.comment=(tmpitem.size()>3) ? to_trim_copy(tmpitem.at(3)) : "";
-                           tmpstruct.bind=(tmpitem.size()>2) ? to_trim_copy(tmpitem.at(2)) : "";
-                           tmpstruct.ue=(tmpitem.size()>21) ? to_trim_copy(tmpitem.at(21)) : "";
-                           tmpstruct.almsg=(tmpitem.size()>16) ? to_trim_copy(tmpitem.at(16)) : "";
-                           tmpstruct.offmsg=(tmpitem.size()>14) ? to_trim_copy(tmpitem.at(14)) : "";
-                           tmpstruct.onmsg=(tmpitem.size()>12) ? to_trim_copy(tmpitem.at(12)) : "";
-                           if (old) ((tagstruct*)&tmpstruct.tginfo)->type()==(tmpitem.size()>5) ?    oldtypetonew(str_to<int>(to_trim_copy(tmpitem.at(5)),0)) : 0;
-                           else ((tagstruct*)&tmpstruct.tginfo)->type()==(tmpitem.size()>5) ?    str_to<int>(to_trim_copy(tmpitem.at(5)),0) : 0;
-                           ((tagstruct*)&tmpstruct.tginfo)->minraw(to_trim_copy(tmpitem.at(7)));
-                           ((tagstruct*)&tmpstruct.tginfo)->maxraw(to_trim_copy(tmpitem.at(8)));
-                           ((tagstruct*)&tmpstruct.tginfo)->mineu(to_trim_copy(tmpitem.at(9)));
-                           ((tagstruct*)&tmpstruct.tginfo)->maxeu(to_trim_copy(tmpitem.at(10)));
-                           ((tagstruct*)&tmpstruct.tginfo)->logdb(str_to<double>(to_trim_copy(tmpitem.at(6))));
+                           tmpstruct.name=trim_copy(tmpitem.at(0));
+                           tmpstruct.group=(group!="") ? group : (tmpitem.size()>1) ? trim_copy(tmpitem.at(1)) : "";
+                           tmpstruct.comment=(tmpitem.size()>3) ? trim_copy(tmpitem.at(3)) : "";
+                           tmpstruct.bind=(tmpitem.size()>2) ? trim_copy(tmpitem.at(2)) : "";
+                           tmpstruct.ue=(tmpitem.size()>21) ? trim_copy(tmpitem.at(21)) : "";
+                           tmpstruct.almsg=(tmpitem.size()>16) ? trim_copy(tmpitem.at(16)) : "";
+                           tmpstruct.offmsg=(tmpitem.size()>14) ? trim_copy(tmpitem.at(14)) : "";
+                           tmpstruct.onmsg=(tmpitem.size()>12) ? trim_copy(tmpitem.at(12)) : "";
+                           if (old) ((tagstruct*)&tmpstruct.tginfo)->type()==(tmpitem.size()>5) ?    oldtypetonew(str_to<int>(trim_copy(tmpitem.at(5)),0)) : 0;
+                           else ((tagstruct*)&tmpstruct.tginfo)->type()==(tmpitem.size()>5) ?    str_to<int>(trim_copy(tmpitem.at(5)),0) : 0;
+                           ((tagstruct*)&tmpstruct.tginfo)->minraw(trim_copy(tmpitem.at(7)));
+                           ((tagstruct*)&tmpstruct.tginfo)->maxraw(trim_copy(tmpitem.at(8)));
+                           ((tagstruct*)&tmpstruct.tginfo)->mineu(trim_copy(tmpitem.at(9)));
+                           ((tagstruct*)&tmpstruct.tginfo)->maxeu(trim_copy(tmpitem.at(10)));
+                           ((tagstruct*)&tmpstruct.tginfo)->logdb(str_to<double>(trim_copy(tmpitem.at(6))));
                            if ((old) && (IN_REPORTSET(((tagstruct*)&tmpstruct.tginfo)->type()))){
-                               ((tagstruct*)&tmpstruct.tginfo)->minraw(to_trim_copy(tmpitem.at(6)));
+                               ((tagstruct*)&tmpstruct.tginfo)->minraw(trim_copy(tmpitem.at(6)));
                                if (tmpitem.size()>21)
-                                   ((tagstruct*)&tmpstruct.tginfo)->maxraw(to_trim_copy(to_trim_copy(tmpitem.at(21))));}
-                           ((tagstruct*)&tmpstruct.tginfo)->logged(((tmpitem.size()>4) && (to_lower_copy(to_trim_copy(tmpitem.at(4)))=="true")) ? true : false);
-                           ((tagstruct*)&tmpstruct.tginfo)->onmsged(((tmpitem.size()>11) && (to_lower_copy(to_trim_copy(tmpitem.at(11)))=="true")) ? true : false);
-                           ((tagstruct*)&tmpstruct.tginfo)->offmsged(((tmpitem.size()>13) && (to_lower_copy(to_trim_copy(tmpitem.at(13)))=="true")) ? true : false);
+                                   ((tagstruct*)&tmpstruct.tginfo)->maxraw(trim_copy(trim_copy(tmpitem.at(21))));}
+                           ((tagstruct*)&tmpstruct.tginfo)->logged(((tmpitem.size()>4) && (lower_copy(trim_copy(tmpitem.at(4)))=="true")) ? true : false);
+                           ((tagstruct*)&tmpstruct.tginfo)->onmsged(((tmpitem.size()>11) && (lower_copy(trim_copy(tmpitem.at(11)))=="true")) ? true : false);
+                           ((tagstruct*)&tmpstruct.tginfo)->offmsged(((tmpitem.size()>13) && (lower_copy(trim_copy(tmpitem.at(13)))=="true")) ? true : false);
 
                             if (old) 
-                                ((tagstruct*)&tmpstruct.tginfo)->alarmcase(((tmpitem.size()>18) && (to_lower_copy(to_trim_copy(tmpitem.at(18)))=="<")) ? 0 : 1);
+                                ((tagstruct*)&tmpstruct.tginfo)->alarmcase(((tmpitem.size()>18) && (lower_copy(trim_copy(tmpitem.at(18)))=="<")) ? 0 : 1);
                             else
-                                ((tagstruct*)&tmpstruct.tginfo)->alarmcase(((tmpitem.size()>18)) ?  str_to<int>(to_trim_copy(tmpitem.at(18)),0) : 0);
-                           if (((tmpitem.size()>19))) ((tagstruct*)&tmpstruct.tginfo)->alarmconstr(to_trim_copy(tmpitem.at(19)));
-                           if ((old) && ((tmpitem.size()>21))) ((tagstruct*)&tmpstruct.tginfo)->devdb(str_to<double>(to_trim_copy(tmpitem.at(21))));
-                           if (old) ((tagstruct*)&tmpstruct.tginfo)->alarmlevel(((tmpitem.size()>15) && (to_lower_copy(to_trim_copy(tmpitem.at(15)))!="true")) ? 0 :
-                                   ((tmpitem.size()>17) && (to_lower_copy(to_trim_copy(tmpitem.at(17)))=="600")) ? altAccident : altWarning);
-                           else ((tagstruct*)&tmpstruct.tginfo)->alarmlevel(str_to<int>(to_lower_copy(to_trim_copy(tmpitem.at(17))),0));
-                           if (!old) ((tagstruct*)&tmpstruct.tginfo)->rwtype((tmpitem.size()>21) ?    str_to<int>(to_trim_copy(tmpitem.at(21)),0) : 0);
+                                ((tagstruct*)&tmpstruct.tginfo)->alarmcase(((tmpitem.size()>18)) ?  str_to<int>(trim_copy(tmpitem.at(18)),0) : 0);
+                           if (((tmpitem.size()>19))) ((tagstruct*)&tmpstruct.tginfo)->alarmconstr(trim_copy(tmpitem.at(19)));
+                           if ((old) && ((tmpitem.size()>21))) ((tagstruct*)&tmpstruct.tginfo)->devdb(str_to<double>(trim_copy(tmpitem.at(21))));
+                           if (old) ((tagstruct*)&tmpstruct.tginfo)->alarmlevel(((tmpitem.size()>15) && (lower_copy(trim_copy(tmpitem.at(15)))!="true")) ? 0 :
+                                   ((tmpitem.size()>17) && (lower_copy(trim_copy(tmpitem.at(17)))=="600")) ? altAccident : altWarning);
+                           else ((tagstruct*)&tmpstruct.tginfo)->alarmlevel(str_to<int>(lower_copy(trim_copy(tmpitem.at(17))),0));
+                           if (!old) ((tagstruct*)&tmpstruct.tginfo)->rwtype((tmpitem.size()>21) ?    str_to<int>(trim_copy(tmpitem.at(21)),0) : 0);
                             tmpstruct.changeset=MASK_RT_EXPORT1;
                             base.tags.push_back(tmpstruct);}}}}}
 		delete[] data;
@@ -326,7 +326,7 @@ bool esd_getimportdata(std::string filepath, base_data& base, int& loc, std::str
                 boost::replace_all(name_, "%", "procent");
                 boost::replace_all(name_, ".", "dot");
                 tag_data tmpstruct;
-                tmpstruct.name=to_trim_copy(name_);
+                tmpstruct.name=trim_copy(name_);
                 tmpstruct.group=group;
                 std::string tmpcomment=std::string((char*)&esdfl->docV[i].Comment);
                 boost::replace_all(tmpcomment, "\n", "");

@@ -76,20 +76,20 @@ namespace dvnci {
             virtual void   logdb(const std::string& val) {
                 if (exists()) { 
                     double tmp=0;
-                    if (str_to(to_trim_copy(val), tmp))
+                    if (str_to(trim_copy(val), tmp))
                          intf->logdb(key_, tmp);}};
 
             virtual std::string logdb() const {
-                return exists() ? to_str_frmt( intf->logdb(key_), "%8.3f") : "";};
+                return exists() ? to_str( intf->logdb(key_), "%8.3f") : "";};
 
             virtual void   devdb(const std::string& val) {
                 if (exists()) { 
                     double tmp=0;
-                    if (str_to(to_trim_copy(val), tmp))
+                    if (str_to(trim_copy(val), tmp))
                          intf->devdb(key_, tmp);}};
 
             virtual std::string devdb() const  {
-                return exists() ? to_str_frmt(intf->devdb(key_), "%8.3f") : "";};
+                return exists() ? to_str(intf->devdb(key_), "%8.3f") : "";};
 
             virtual void   alarmconst(const std::string& val) {
                 if (exists()) intf->alarmconst(key_, val);};
