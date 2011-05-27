@@ -14,14 +14,14 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc
-CCC=g++
-CXX=g++
+CC=gcc.exe
+CCC=g++.exe
+CXX=g++.exe
 FC=gfortran
-AS=as
+AS=as.exe
 
 # Macros
-CND_PLATFORM=MinGW-Linux-x86
+CND_PLATFORM=MinGW-Windows
 CND_CONF=nb_gcc_db_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -57,9 +57,9 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncimodbus_db
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncimodbus_db.exe
 
-../../bin/${CND_CONF}/service_dvncimodbus_db: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvncimodbus_db.exe: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -mthreads -o ../../bin/${CND_CONF}/service_dvncimodbus_db ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
@@ -84,7 +84,7 @@ ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o: ../../include/driverspec/modbus_
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvncimodbus_db
+	${RM} ../../bin/${CND_CONF}/service_dvncimodbus_db.exe
 
 # Subprojects
 .clean-subprojects:
