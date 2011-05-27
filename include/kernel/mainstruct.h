@@ -37,7 +37,7 @@ namespace dvnci {
 
         template <typename T>
                 void value(T val) {
-            value_ = to_num64_value_and_type_cast<T > (val, static_cast<tagtype> (type_));}
+            value_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
 
         template <typename T >
                 T value() const {
@@ -50,21 +50,21 @@ namespace dvnci {
             value_ = vl;}
 
         std::string value_str() const {
-            return string_fromnum64_and_type(value_, static_cast<tagtype> (type_));}
+            return num64_and_type_cast<std::string>(value_, static_cast<tagtype> (type_));}
 
         std::string value_frmt() const {
-            return string_fromnum64_and_type_format(value_, static_cast<tagtype> (type_), landscape_range());}
+            return num64_and_type_cast(value_, static_cast<tagtype> (type_), landscape_range());}
 
         void value(const std::string & val) {
             num64 tmp = 0;
-            if (num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp)) {
+            if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
                 value_ = tmp;}}
         
         
 
         template <typename T>
                 void value_log(T val) {
-            value_log_ = to_num64_value_and_type_cast<T > (val, static_cast<tagtype> (type_));}
+            value_log_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
 
         template <typename T >
                 T value_log() const {
@@ -77,21 +77,21 @@ namespace dvnci {
             value_log_ = vl;}
 
         std::string value_log_str() const {
-            return string_fromnum64_and_type(value_log_, static_cast<tagtype> (type_));}
+            return num64_and_type_cast<std::string>(value_log_, static_cast<tagtype> (type_));}
 
         std::string value_log_frmt() const {
-            return string_fromnum64_and_type_format(value_log_, static_cast<tagtype> (type_), landscape_range());}
+            return num64_and_type_cast(value_log_, static_cast<tagtype> (type_), landscape_range());}
 
         void value_log(const std::string & val) {
             num64 tmp = 0;
-            if (num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp)) {
+            if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
                 value_log_ = tmp;}}
         
         
 
         template <typename T>
         void value_before(T val) {
-            value_before_ = to_num64_value_and_type_cast<T > (val, static_cast<tagtype> (type_));}
+            value_before_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
 
         template <typename T >
         T value_before() const {
@@ -104,14 +104,14 @@ namespace dvnci {
             value_before_ = vl;}
 
         std::string value_before_str() const {
-            return string_fromnum64_and_type(value_before_, static_cast<tagtype> (type_));}
+            return num64_and_type_cast<std::string>(value_before_, static_cast<tagtype> (type_));}
 
         std::string value_before_frmt() const {
-            return string_fromnum64_and_type_format(value_before_, static_cast<tagtype> (type_), landscape_range());}
+            return num64_and_type_cast(value_before_, static_cast<tagtype> (type_), landscape_range());}
 
         void value_before(const std::string & val) {
             num64 tmp = 0;
-            if (num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp)) {
+            if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
                 value_before_ = tmp;}}
         
         
@@ -397,7 +397,7 @@ namespace dvnci {
 
         template <typename T>
         void minraw(T val) {
-            minraw_ = to_num64_value_and_type_cast<T > (val, static_cast<tagtype> (type_));}
+            minraw_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
 
         template <typename T >
         T minraw() const {
@@ -408,19 +408,19 @@ namespace dvnci {
 
         std::string minraw_str() const {
             return (IN_NUMBERSET(static_cast<tagtype> (type_))) ? 
-                string_fromnum64_and_type(minraw_, static_cast<tagtype> (type_)) : "";}
+                num64_and_type_cast<std::string>(minraw_, static_cast<tagtype> (type_)) : "";}
 
         void minraw(const std::string & val) {
             num64 tmp = 0;
-            if (num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp)) {
-                minraw_ = num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp) ?
-                        tmp : num64_from_type_min(static_cast<tagtype> (type_));}}
+            if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
+                minraw_ = num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp) ?
+                        tmp : num64_for_type_min(static_cast<tagtype> (type_));}}
         
         
 
         template <typename T>
         void maxraw(T val) {
-            maxraw_ = to_num64_value_and_type_cast<T > (val, static_cast<tagtype> (type_));}
+            maxraw_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
 
         template <typename T >
         T maxraw() const {
@@ -431,19 +431,19 @@ namespace dvnci {
 
         std::string maxraw_str() const {
             return (IN_NUMBERSET(static_cast<tagtype> (type_))) ? 
-                string_fromnum64_and_type(maxraw_, static_cast<tagtype> (type_)) : "";}
+                num64_and_type_cast<std::string>(maxraw_, static_cast<tagtype> (type_)) : "";}
 
         void maxraw(const std::string & val) {
             num64 tmp = 0;
-            if (num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp)) {
-                maxraw_ = num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp) ? 
-                    tmp : num64_from_type_max(static_cast<tagtype> (type_));}}
+            if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
+                maxraw_ = num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp) ? 
+                    tmp : num64_for_type_max(static_cast<tagtype> (type_));}}
 
         
         
         template <typename T>
         void mineu(T val) {
-            mineu_ = to_num64_value_and_type_cast<T > (val, static_cast<tagtype> (type_));}
+            mineu_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
 
         template <typename T >
         T mineu() const {
@@ -454,19 +454,19 @@ namespace dvnci {
 
         std::string mineu_str() const {
             return (IN_NUMBERSET(static_cast<tagtype> (type_))) ? 
-                string_fromnum64_and_type(mineu_, static_cast<tagtype> (type_)) : "";}
+                num64_and_type_cast<std::string>(mineu_, static_cast<tagtype> (type_)) : "";}
 
         void mineu(const std::string & val) {
             num64 tmp = 0;
-            if (num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp)) {
-                mineu_ = num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp) ? 
-                    tmp : num64_from_type_min(static_cast<tagtype> (type_));}}
+            if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
+                mineu_ = num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp) ? 
+                    tmp : num64_for_type_min(static_cast<tagtype> (type_));}}
 
         
         
         template <typename T>
         void maxeu(T val) {
-            maxeu_ = to_num64_value_and_type_cast<T > (val, static_cast<tagtype> (type_));}
+            maxeu_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
 
         template <typename T >
          T maxeu() const {
@@ -477,13 +477,13 @@ namespace dvnci {
 
         std::string maxeu_str() const {
             return (IN_NUMBERSET(static_cast<tagtype> (type_))) ?
-                string_fromnum64_and_type(maxeu_, static_cast<tagtype> (type_)) : "";}
+                num64_and_type_cast<std::string>(maxeu_, static_cast<tagtype> (type_)) : "";}
 
         void maxeu(const std::string & val) {
             num64 tmp = 0;
-            if (num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp)) {
-                maxeu_ = num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp) ?
-                    tmp : num64_from_type_max(static_cast<tagtype> (type_));}}
+            if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
+                maxeu_ = num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp) ?
+                    tmp : num64_for_type_max(static_cast<tagtype> (type_));}}
 
         
         
@@ -495,7 +495,7 @@ namespace dvnci {
         
         template <typename T>
         void alarmconst(T val) {
-            alarmconst_ = to_num64_value_and_type_cast<T > (val, static_cast<tagtype> (type_));}
+            alarmconst_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
 
         template <typename T >
                 T alarmconst() const {
@@ -505,19 +505,19 @@ namespace dvnci {
             return alarmconst_;}
 
         std::string alarmconst_str() const {
-            return (IN_NUMBERSET(static_cast<tagtype> (type_))) ? string_fromnum64_and_type(alarmconst_, static_cast<tagtype> (type_)) : "";}
+            return (IN_NUMBERSET(static_cast<tagtype> (type_))) ? num64_and_type_cast<std::string>(alarmconst_, static_cast<tagtype> (type_)) : "";}
 
         void alarmconstr(const std::string & val) {
             num64 tmp = 0;
-            if (num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp)) {
-                alarmconst_ = num64_from_string_and_type_err(val, static_cast<tagtype> (type_), tmp) ? tmp : num64_from_type_null(static_cast<tagtype> (type_));}}
+            if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
+                alarmconst_ = num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp) ? tmp : num64_for_type_null(static_cast<tagtype> (type_));}}
 
         
         
         void devdb(double val) {
             if (val<0) val=0;
             if (val>100) val=100;
-            devdb_ =  to_num64_cast<double>(val);}
+            devdb_ =  num64_cast<double>(val);}
 
         double devdb() const {
             return in_bounded<double>(0.0, 100.0, from_num64_cast<double>(devdb_));}
@@ -529,7 +529,7 @@ namespace dvnci {
         void logdb(double val) {
             if (val<0) val=0;
             if (val>100) val=100;
-            logdb_ = to_num64_cast<double>(val);}
+            logdb_ = num64_cast<double>(val);}
 
         double logdb() const {
             return in_bounded<double>(0.0, 100.0, from_num64_cast<double>(logdb_));}
@@ -1003,7 +1003,7 @@ namespace dvnci {
             return in_bounded<double>(0, 100, from_num64_cast<double>(deadbound_));}
 
         void deadbound(double val) {
-            deadbound_ = to_num64_cast<double>(in_bounded<double>(0, 100, val));}
+            deadbound_ = num64_cast<double>(in_bounded<double>(0, 100, val));}
 
         num32 grouprate() const {
             return in_bounded<num32 > (0, 1000000, static_cast<num32> (grouprate_));}
@@ -1966,7 +1966,7 @@ namespace dvnci {
 
         template <typename T>
                 void value_before(T val) {
-            value_before_ = to_num64_cast<T > (val);}
+            value_before_ = num64_cast<T > (val);}
 
         template <typename T >
                 T value_before() const {
@@ -1974,7 +1974,7 @@ namespace dvnci {
 
         template <typename T>
                 void value_set(T val) {
-            value_set_ = to_num64_cast<T > (val);}
+            value_set_ = num64_cast<T > (val);}
 
         template <typename T >
                 T value_set() const {
@@ -2005,10 +2005,10 @@ namespace dvnci {
             return pascalstr_to_string((void*) (&strvalue_));}
 
         std::string value_before_str() const {
-            return string_fromnum64_and_type(value_before_, 0);}
+            return num64_and_type_cast<std::string>(value_before_, 0);}
 
         std::string value_str_set() const {
-            return istext() ? strvalue() : string_fromnum64_and_type(value_set_, 0);}
+            return istext() ? strvalue() : num64_and_type_cast<std::string>(value_set_, 0);}
 
         friend bool operator<(const commandstruct& ls, const commandstruct & rs) {
             return ls.guid_ < rs.guid_;}

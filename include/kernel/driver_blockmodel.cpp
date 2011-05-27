@@ -39,7 +39,7 @@ namespace dvnci {
         
 
         std::string basis_req_parcel::to_str() {
-            return string_fromnum64_and_type(value_.value64(), value_.type() );};
+            return num64_and_type_cast<std::string>(value_.value64(), value_.type() );};
             
             
 
@@ -262,7 +262,6 @@ namespace dvnci {
             currentblockiteator++;
             parcel_iterator endit = blk.end();
             endit++;
-            num64 tmpval = 0;
             for (parcel_iterator it = blk.begin(); it != endit; ++it) {
                 if (it->first->isvalue()) {
                     if (!it->first->error()) {
