@@ -14,8 +14,8 @@ namespace dvnci {
 
     tagstruct::tagstruct(indx mid, indx grp) : id_(mid) {
         type(TYPE_NODEF);
-        minraw<double>(0);
-        maxraw<double>(100);
+        minraw_=0;
+        maxraw_=0;
         mineu<double>(0);
         maxeu<double>(100);
         logdb(0.2);
@@ -130,7 +130,8 @@ namespace dvnci {
             dst.valid(NULL_VALID);} 
         else {
             dst.valid(FULL_VALID);}
-        monitor_=0;}
+        monitor_=0;
+        return dst;}
 
 
     ///////////////////////////////////////////////////////////////// 
@@ -267,7 +268,8 @@ namespace dvnci {
         dst.error(0);
         dst.active(firstcriteria ? 1 : 0);
         dst.valid(firstcriteria ? FULL_VALID : 0);
-        monitor_=0;}
+        monitor_=0;
+        return dst;}
 
     void groupstruct::clone(groupstruct& dst, const groupstruct& src) {
         dst.appid_ = src.appid_;

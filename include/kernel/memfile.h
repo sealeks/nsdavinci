@@ -1210,8 +1210,8 @@ namespace dvnci {
     public:
 
         tagsbase(const fspath& basepatht, appidtype app,
-                eventtypeset evnts = sIMMINone/*,
-                lock_nameexclusive ontimeinit = lock_nameexclusive(tagsbase::one_init())*/);
+                eventtypeset evnts = sIMMINone,
+                lock_nameexclusive ontimeinit = lock_nameexclusive(tagsbase::one_init()));
 
         virtual ~tagsbase();
         
@@ -1765,14 +1765,14 @@ namespace dvnci {
             return newind;}
 
         size_type insert_accessrule(std::string newname) {
-            newname = to_trim_copy(newname);
+            newname = trim_copy(newname);
             return accessrules()->add(newname);}
 
         size_type insert_accessrule() {
             return accessrules()->add();}
 
         size_type insert_user(std::string newname) {
-            newname = to_trim_copy(newname);
+            newname = trim_copy(newname);
             return users()->add(newname);}
 
         size_type insert_user() {
@@ -1829,27 +1829,27 @@ namespace dvnci {
             replace_agroup( agroups()->operator()(oldname), newname);}
 
         void replace_accessrule(size_type id, std::string newname) {
-            newname = to_trim_copy(newname);
+            newname = trim_copy(newname);
             if (!accessrules()->exists(id))
                 throw dvncierror(ERROR_ENTNOEXIST);
             accessrules()->name(id, newname);}
 
         void replace_accessrule(std::string oldname, std::string newname) {
-            newname = to_trim_copy(newname);
-            oldname = to_trim_copy(oldname);
+            newname = trim_copy(newname);
+            oldname = trim_copy(oldname);
             if (!accessrules()->exists(oldname))
                 throw dvncierror(ERROR_ENTNOEXIST, oldname);
             replace_agroup( accessrules()->operator()(oldname), newname);}
 
         void replace_user(size_type id, std::string newname) {
-            newname = to_trim_copy(newname);
+            newname = trim_copy(newname);
             if (!users()->exists(id))
                 throw dvncierror(ERROR_ENTNOEXIST);
             users()->name(id, newname);}
 
         void replace_user(std::string oldname, std::string newname) {
-            newname = to_trim_copy(newname);
-            oldname = to_trim_copy(oldname);
+            newname = trim_copy(newname);
+            oldname = trim_copy(oldname);
             if (!users()->exists(oldname))
                 throw dvncierror(ERROR_ENTNOEXIST, oldname);
             replace_user( users()->operator()(oldname), newname);}
@@ -2907,7 +2907,7 @@ namespace dvnci {
                     case NS_GROUP_SYSTEMCOUNT:{
                         break;}
                     default:{
-                        commands()->add(id, operator[](id)->value<num64 > (), to_num64_cast<T > (val), operator[](id)->type(), queue, clid);}}
+                        commands()->add(id, operator[](id)->value<num64 > (), num64_cast<T > (val), operator[](id)->type(), queue, clid);}}
                 insert_cmd_to_alarms<T > (id, val, val);}}}}
 
 #endif	/* _MEMFILE_H */

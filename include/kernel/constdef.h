@@ -235,17 +235,32 @@ namespace dvnci {
     #error Type not defined. Spec compiler and OS error
 #endif
 
-    /*union typed_union{
-         unum8   u8;
-         num8    n8;
-         unum16  u16;
-         num16   n16;
-         unum32  u32;
-         num32   n32;
-         unum64  u64;
-         num64   n64;
-         float   fl;
-         double  dbl;};*/
+    
+    typedef boost::posix_time::ptime datetime;
+
+    typedef union type_punned{
+        
+         type_punned(const unum8& vl) : u8(vl) {}
+         type_punned(const num8& vl) : n8(vl) {}
+         type_punned(const unum16& vl) : u16(vl) {}
+         type_punned(const num16& vl) : n16(vl) {}
+         type_punned(const unum32& vl) : u32(vl) {}
+         type_punned(const num32& vl) : n32(vl) {}
+         type_punned(const unum64& vl) : u64(vl) {}
+         type_punned(const num64& vl) : n64(vl) {}
+         type_punned(const float& vl) : fl(vl) {}
+         type_punned(const double& vl) : dbl(vl) {}
+         bool     bl;
+         unum8    u8;
+         num8     n8;
+         unum16   u16;
+         num16    n16;
+         unum32   u32;
+         num32    n32;
+         unum64   u64;
+         num64    n64;
+         float    fl;
+         double   dbl;} * ptype_punned;
 
     const indx npos              = static_cast<indx>(-1);
 
@@ -273,7 +288,6 @@ namespace dvnci {
     const   indx nill_ptr = 0;
     const   indx able_ptr = 1;
 
-    typedef boost::posix_time::ptime datetime;
     
     BOOST_STATIC_ASSERT(sizeof(num8) == 1);
     BOOST_STATIC_ASSERT(sizeof(unum8) == 1);

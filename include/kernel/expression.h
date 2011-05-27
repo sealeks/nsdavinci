@@ -325,7 +325,7 @@ namespace dvnci {
                 shv_.valid(val);}
 
             ns_error error() const {
-                shv_.error();}
+                return shv_.error();}
 
             void error(ns_error val)  {
                 shv_.error(val);}
@@ -379,7 +379,7 @@ namespace dvnci {
 
             std::string to_string() const {
                 if  (isoperation()) return "op" + to_str<int>(static_cast<int> (operation())) + " " ;
-                return operation() == expr ? to_str(id_) : string_fromnum64_and_type(value(), type());}
+                return operation() == expr ? to_str(id_) : num64_and_type_cast<std::string>(value(), type());}
 
             short_value to_valuetype() {
                 return shv_;}
@@ -979,7 +979,7 @@ namespace dvnci {
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::calc_token_factory(const std::string& val) {
-            return getoperation(to_trim_copy(val));}
+            return getoperation(trim_copy(val));}
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::assignexpr(const calc_token& it) {
