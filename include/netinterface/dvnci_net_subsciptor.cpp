@@ -24,7 +24,7 @@ namespace dvnci {
             for (indx_set::iterator it = add_req_items.begin(); it != add_req_items.end(); ++it) {
                 if (intf->exists(*it)){
                 client_item tmp = {*it, intf->binding(*it), intf->type(*it),
-                                    to_num64_cast<double>(intf[*it]->devdb())};
+                                    num64_cast<double>(intf[*it]->devdb())};
                 clientitems.push_back(tmp);}}
             return (!add_req_items.empty());}
 

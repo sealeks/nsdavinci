@@ -148,7 +148,7 @@ public:
                 tmpv.type=0;
                 tmpv.valid=100;
                 tmpv.time=castnum64_from_datetime(itv->first);
-                tmpv.val=to_num64_cast<double>(itv->second);
+                tmpv.val=num64_cast<double>(itv->second);
                 tmp.values.push_back(tmpv);}
            remove_report_task(it->first);
            reportvalues.push_back(tmp);
@@ -212,11 +212,11 @@ protected:
             return true;}
        else {
           key_deadbound_map::iterator itdb=dbmap.find(key);
-          bool diff_tmp= itdb!=dbmap.end() ? 
+          bool diff_tmp= true;/*itdb!=dbmap.end() ? 
                              bynum64_and_type_outbound(
                              intf[key]->mineu<num64>(), intf[key]->maxeu<num64>(),
                              it->second.val,   intf[key]->value<num64>(),
-                             intf->type(key), itdb->second ) : 0;
+                             intf->type(key), itdb->second ) : 0;*/
           if ((it->second.valid!=intf->valid(key)) || (secondsbetween(it->second.time,intf[key]->time_n64())>600) || (diff_tmp)){
                  it->second.val=intf[key]->value<num64>();
                  it->second.valid=intf->valid(key);
