@@ -31,7 +31,7 @@ namespace dvnci {
             QApplication::postEvent(targetWidget,
                     new utevent(ACTION_TRANSACTIONSTART, "Start transaction"));
 
-            btevent* event;
+            btevent* event = 0;
 
             try {
                 adminintf_ptr intf = transact->intf;
@@ -232,7 +232,7 @@ namespace dvnci {
 
         void transactionview_proccess::invoke(viewtransaction_ptr& transact) {
 
-            vtevent* event;
+            vtevent* event=0;
 
             try {
                
