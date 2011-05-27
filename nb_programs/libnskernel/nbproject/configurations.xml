@@ -120,7 +120,7 @@
           <incDir>
             <pElem>../../include</pElem>
           </incDir>
-          <commandLine>-mthreads -fno-strict-aliasing</commandLine>
+          <commandLine>-mthreads</commandLine>
           <preprocessorList>
             <Elem>_WIN32_WINNT=0x0501</Elem>
           </preprocessorList>
