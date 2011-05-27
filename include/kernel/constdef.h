@@ -240,6 +240,7 @@ namespace dvnci {
 
     typedef union type_punned{
         
+         type_punned(const bool& vl) : bl(vl) {}
          type_punned(const unum8& vl) : u8(vl) {}
          type_punned(const num8& vl) : n8(vl) {}
          type_punned(const unum16& vl) : u16(vl) {}
