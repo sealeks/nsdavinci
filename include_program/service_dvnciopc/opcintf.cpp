@@ -82,51 +82,51 @@ namespace dvnci {
             switch (vrt.vt) {
                 case VT_BOOL:{
                     tp = TYPE_DISCRET;
-                    val = to_num64_cast<bool>(vrt.boolVal);
+                    val = num64_cast<bool>(vrt.boolVal);
                     break;}
                 case VT_I8:{
                     tp = TYPE_NUM64;
-                    val = to_num64_cast<num64 > (vrt.llVal);
+                    val = num64_cast<num64 > (vrt.llVal);
                     break;}
                 case VT_UI8:{
                     tp = TYPE_UNUM64;
-                    val = to_num64_cast<unum64 > (vrt.ullVal);
+                    val = num64_cast<unum64 > (vrt.ullVal);
                     break;}
                 case VT_I4:{
                     tp = TYPE_NUM32;
-                    val = to_num64_cast<num32 > (vrt.lVal);
+                    val = num64_cast<num32 > (vrt.lVal);
                     break;}
                 case VT_UI4:{
                     tp = TYPE_UNUM32;
-                    val = to_num64_cast<unum32 > (vrt.ulVal);
+                    val = num64_cast<unum32 > (vrt.ulVal);
                     break;}
                 case VT_I2:{
                     tp = TYPE_NUM16;
-                    val = to_num64_cast<num16 > (vrt.iVal);
+                    val = num64_cast<num16 > (vrt.iVal);
                     break;}
                 case VT_UI2:{
                     tp = TYPE_UNUM16;
-                    val = to_num64_cast<unum16 > (vrt.uiVal);
+                    val = num64_cast<unum16 > (vrt.uiVal);
                     break;}
                 case VT_I1:{
                     tp = TYPE_NUM8;
-                    val = to_num64_cast<num8 > (vrt.cVal);
+                    val = num64_cast<num8 > (vrt.cVal);
                     break;}
                 case VT_UI1:{
                     tp = TYPE_UNUM8;
-                    val = to_num64_cast<unum8 > (vrt.bVal);
+                    val = num64_cast<unum8 > (vrt.bVal);
                     break;}
                 case VT_R8:{
                     tp = TYPE_DOUBLE;
-                    val = to_num64_cast<double>(vrt.dblVal);
+                    val = num64_cast<double>(vrt.dblVal);
                     break;}
                 case VT_R4:{
                     tp = TYPE_FLOAT;
-                    val = to_num64_cast<float>(vrt.fltVal);
+                    val = num64_cast<float>(vrt.fltVal);
                     break;}
                 default:{
                     tp = TYPE_NODEF;
-                    val = to_num64_cast<double>(vrt.dblVal);
+                    val = num64_cast<double>(vrt.dblVal);
                     break;}}
             return true;}
 

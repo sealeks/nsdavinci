@@ -68,10 +68,10 @@ const int REPORT_OPERATION = 10;
 const int MATH_OPERATION = 11;
 
 int operation(std::string& vl, const std::string& oper, int operid){
-    dvnci::to_lower_copy(vl);
+    dvnci::lower_copy(vl);
     std::string::size_type pos=vl.find(oper);
     if (pos!=std::string::npos) {
-       vl= dvnci::to_trim_copy((pos + oper.size()) < vl.size() ? to_trim_copy(vl.substr(pos+oper.size())) : "");
+       vl= dvnci::trim_copy((pos + oper.size()) < vl.size() ? trim_copy(vl.substr(pos+oper.size())) : "");
        std::cout << "_____________________________________________"  << std::endl;
        std::cout  << "execute command: " << oper  <<  " arguments: " << vl << std::endl;
        std::cout  <<  std::endl;
