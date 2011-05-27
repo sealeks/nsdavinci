@@ -19,7 +19,7 @@ namespace dvnci {
            switch (type_) {
                 case TYPE_TEXT:{
                     return (str_ptr) ? (*str_ptr) : "";}
-               default: { string_fromnum64_and_type(value_, type_);}}
+               default: { num64_and_type_cast<std::string>(value_, type_);}}
            return "";}
     
 

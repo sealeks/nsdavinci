@@ -56,16 +56,16 @@ namespace dvnci {
         boost::algorithm::to_lower(val);
         fulltrim(val);}
 
-    string to_upper_copy(const std::string&  val) {
+    string upper_copy(const std::string&  val) {
         return boost::algorithm::to_upper_copy(val);}
 
-    string to_lower_copy(const std::string&  val) {
+    string lower_copy(const std::string&  val) {
         return boost::algorithm::to_lower_copy(val);}
 
-    string to_trim_copy(const std::string&  val) {
+    string trim_copy(const std::string&  val) {
         return boost::algorithm::trim_copy(val);};
 
-    std::string to_freechar_copy(const std::string& val, const std::string& del){
+    std::string freechar_copy(const std::string& val, const std::string& del){
          return boost::algorithm::replace_all_copy(val, del, "");}
     
     size_t regex_tokin_parser(const std::string& val, str_vect& dst, const boost::regex& re){
@@ -76,8 +76,8 @@ namespace dvnci {
             dst.push_back(*it++);}
         return dst.size();}
 
-    std::string to_fulltrim_copy(const std::string&  val){
-        return to_freechar_copy(val, WSP_STRING );}
+    std::string fulltrim_copy(const std::string&  val){
+        return freechar_copy(val, WSP_STRING );}
 
     size_t split_str(const string& source, const string& delimit , str_vect& vectstr) {
         vectstr.clear();
@@ -233,12 +233,87 @@ namespace dvnci {
             return false;}
         return true;}
 
-     std::string to_str(datetime val) {
+     std::string to_str(const datetime& val) {
         return datetime_to_string(val);}
+     
+     template <> bool abs<bool>(const bool& v) {
+        return v;}
+     
+     template <> datetime abs<datetime>(const datetime& v) {
+        return v;}
 
+    template <> unum64 abs<unum64>(const unum64& v) {
+        return v;}
+    
+    template <> unum32 abs<unum32>(const unum32& v) {
+        return v;}
+    
+    template <> unum16 abs<unum16>(const unum16& v) {
+        return v;}
+    
+    template <> unum8 abs<unum8>(const unum8& v) {
+        return v;}
+    
+    template <> std::string abs<std::string>(const std::string& v) {
+        return v;}
+    
+    
+     
+     
+    template<>  const bool& from_num64_cast<bool>(const num64& val) {
+        return ((ptype_punned)(&val))->bl;}
+    
+    template<>  const num64& from_num64_cast<num64>(const num64& val) {
+        return ((ptype_punned)(&val))->n64;}
+    
+    template<>  const unum64& from_num64_cast<unum64>(const num64& val) {
+        return ((ptype_punned)(&val))->u64;}
+     
+    template<>  const num32& from_num64_cast<num32>(const num64& val) {
+        return ((ptype_punned)(&val))->n32;}
+    
+    template<>  const unum32& from_num64_cast<unum32>(const num64& val) {
+        return ((ptype_punned)(&val))->u32;}
+          
+    template<>  const num16& from_num64_cast<num16>(const num64& val) {
+        return ((ptype_punned)(&val))->n16;}
+    
+    template<>  const unum16& from_num64_cast<unum16>(const num64& val) {
+        return ((ptype_punned)(&val))->u16;}
+    
+    template<>  const num8& from_num64_cast<num8>(const num64& val) {
+        return ((ptype_punned)(&val))->n8;}
+    
+    template<>  const unum8& from_num64_cast<unum8>(const num64& val) {
+        return ((ptype_punned)(&val))->u8;}
+    
+    template<>  const float& from_num64_cast<float>(const num64& val) {
+        return ((ptype_punned)(&val))->fl;}
+    
+    template<>  const double& from_num64_cast<double>(const num64& val) {
+        return ((ptype_punned)(&val))->dbl;}
+    
+    template<>  const datetime& from_num64_cast<datetime>(const num64& val) {
+        return (*(datetime*)((char*)(&val)));}
+    
+    
 
+    
+    template<>  num64 num64_cast<datetime>(const datetime& val) {
+        return *((num64*)((char*)(&val)));}
+    
+    template<>  num64 num64_cast<std::string>(const std::string& val){
+        return 0;}
+    
+    
+    
+    
+    template<> datetime num64_and_type_cast<datetime>(const num64& value, tagtype type) {
+        return  (type==TYPE_TM) ? from_num64_cast<datetime>(value) : nill_time;}
 
-    string string_fromnum64_and_type(const num64& val, tagtype type) {
+    
+    
+    template<> std::string num64_and_type_cast<std::string>(const num64&  val, tagtype type) {
         num64* val_ = const_cast<num64*> (&val);
         switch (type) {
             case TYPE_NODEF:  return to_str(*reinterpret_cast<double*> (val_));
@@ -254,11 +329,12 @@ namespace dvnci {
             case TYPE_NUM8:   return to_str((num16)(*reinterpret_cast<num8*> (val_)));
             case TYPE_UNUM8: return to_str((unum16)(*reinterpret_cast<unum8*> (val_)));
             case TYPE_TM:    return datetime_to_string( val);
+            case TYPE_TEXT:    return "";
             default:  return to_str(*reinterpret_cast<double*> (val_));}
         return to_str(*reinterpret_cast<double*> (val_));
         return "";}
 
-    std::string string_fromnum64_and_type_format(const num64& val, tagtype type, const std::string& formt){
+    std::string num64_and_type_cast(const num64& val, tagtype type, const std::string& formt){
         try{
         num64* val_ = const_cast<num64*> (&val);
         switch (type) {
@@ -274,16 +350,26 @@ namespace dvnci {
             case TYPE_UNUM16: {boost::format format(formt.empty() ? "%u" : formt.c_str()); format % (*reinterpret_cast<unum16*> (val_)); return format.str();}
             case TYPE_NUM8:   {boost::format format(formt.empty() ? "%d" : formt.c_str()); format % (*reinterpret_cast<num8*> (val_)); return format.str();}
             case TYPE_UNUM8: {boost::format format(formt.empty() ? "%u" : formt.c_str()); format % (*reinterpret_cast<num8*> (val_)); return format.str();}
-            case TYPE_TM: string_fromnum64_and_type( val, type);
+            case TYPE_TM: num64_and_type_cast<std::string>( val, type);
             default: {boost::format format(formt.empty() ? "%8.2f" : formt.c_str()); format % (*reinterpret_cast<double*> (val_)); return format.str();}}}
         catch(...){}
         return "";}
+    
 
-   std::string string_fromnum64_and_type_format(const num64& val, tagtype type, onum ladsk){
+   std::string num64_and_type_cast(const num64& val, tagtype type, onum ladsk){
        return (ladsk>0) ? 
-           string_fromnum64_and_type_format(val, type, "%12."+ to_str(ladsk > 10 ? 10 : ladsk) + "f") : string_fromnum64_and_type(val, type);}
+           num64_and_type_cast(val, type, "%12."+ to_str(ladsk > 10 ? 10 : ladsk) + "f") : num64_and_type_cast<std::string>(val, type);}
+   
+   
+   
+   
+   
+    template<> num64 num64_from_vt_cast<datetime>(const datetime& val, tagtype type){
+        return  (type==TYPE_TM) ? num64_cast<datetime>(val) : 0;}
+   
 
-    num64 num64_from_string_and_type(const std::string& val, tagtype type, num64 def) {
+    template<> num64 num64_from_vt_cast<std::string>(const std::string& val, tagtype type) {
+        num64 def=0;
         num64 tmpresult = def;
         switch (type) {
             case TYPE_DISCRET: return val != "0" ? 1: 0;
@@ -325,8 +411,9 @@ namespace dvnci {
                 return str_to<double>(val, *tmp) ? tmpresult : def;}}
         double* tmp = reinterpret_cast<double*> (&tmpresult);
         return str_to<double>(val, *tmp) ? tmpresult : def;}
+    
 
-    bool num64_from_string_and_type_err(const std::string& val, tagtype type, num64& rslt) {
+    bool num64_from_vt_cast(const std::string& val, tagtype type, num64& rslt) {
 
         switch (type) {
             case TYPE_DISCRET:{
@@ -368,7 +455,7 @@ namespace dvnci {
         double* tmp = reinterpret_cast<double*> (&rslt);
         return str_to<double>(val, *tmp);}
 
-     num64 num64_from_type_min(tagtype type) {
+     num64 num64_for_type_min(tagtype type) {
 
         switch (type) {
             case TYPE_DISCRET:{
@@ -392,10 +479,10 @@ namespace dvnci {
             case TYPE_FLOAT:{
                 return static_cast<num64>(std::numeric_limits<float >::min());}
             default:{
-                return to_num64_value_and_type_cast<double>(0,0);}}
-            return to_num64_value_and_type_cast<double>(0,0);}
+                return num64_from_vt_cast<double>(0,0);}}
+            return num64_from_vt_cast<double>(0,0);}
 
-     num64 num64_from_type_max(tagtype type) {
+     num64 num64_for_type_max(tagtype type) {
 
         switch (type) {
             case TYPE_DISCRET:{
@@ -419,10 +506,10 @@ namespace dvnci {
             case TYPE_FLOAT:{
                 return static_cast<num64>(std::numeric_limits<float >::max());}
             default:{
-                return to_num64_value_and_type_cast<double>(100,0);}}
-            return to_num64_value_and_type_cast<double>(100,0);}
+                return num64_from_vt_cast<double>(100,0);}}
+            return num64_from_vt_cast<double>(100,0);}
 
-     num64 num64_from_type_null(tagtype type) {
+     num64 num64_for_type_null(tagtype type) {
 
         switch (type) {
             case TYPE_DISCRET:
@@ -436,54 +523,12 @@ namespace dvnci {
             case TYPE_UNUM8:{
                 return 0;}
             case TYPE_FLOAT:{
-                return to_num64_value_and_type_cast<double>(0,0);}
+                return num64_from_vt_cast<double>(0,0);}
             default:{
-                return to_num64_value_and_type_cast<double>(0,0);}}
-            return to_num64_value_and_type_cast<double>(0,0);}
+                return num64_from_vt_cast<double>(0,0);}}
+            return num64_from_vt_cast<double>(0,0);}
 
-    bool bynum64_and_type_outbound(num64 min, num64 max, num64 last, num64 present, tagtype type, double percent) {
-        int type_ = static_cast<int> (type);
-        if (percent == 0) return true;
-        if (min == max) return true;
-        switch (type_) {
-            case TYPE_DISCRET: return present != last;
-            case TYPE_NUM64:{
-                return (differ_in_percent<num64 > (min, max, last, present) >= percent);}
-            case TYPE_UNUM64:{
-                return (differ_in_percent<unum64 > (min, max, last, present) >= percent);}
-            case TYPE_NUM32:{
-                return (differ_in_percent<num32 > (min, max, last, present) >= percent);}
-            case TYPE_UNUM32:{
-                return (differ_in_percent<unum32 > (min, max, last, present) >= percent);}
-            case TYPE_NUM16:{
-                return (differ_in_percent<num16 > (min, max, last, present) >= percent);}
-            case TYPE_UNUM16:{
-                return (differ_in_percent<unum16 > (min, max, last, present) >= percent);}
-            case TYPE_NUM8:{
-                return (differ_in_percent<num8 > (min, max, last, present) >= percent);}
-            case TYPE_UNUM8:{
-                return (differ_in_percent<unum8 > (min, max, last, present) >= percent);}
-            case TYPE_DOUBLE:{
-                return (differ_in_percent<double>(min, max, last, present) >= percent);}
-            case TYPE_FLOAT:{
-                return (differ_in_percent<float>(min, max, last, present) >= percent);}
-            default:{
-                return (differ_in_percent<double>(min, max, last, present) >= percent);}}
-        return (differ_in_percent<double>(min, max, last, present) >= percent);}
 
-    num64   line_lanscape_convertion(num64 val,  tagtype tp, double minraw, double maxraw, double mineu, double maxeu) {
-        double vl = num64_and_type_cast<double>(val, tp);
-        if (minraw == maxraw) return to_num64_cast<double>(mineu);
-        if (vl <= minraw) return to_num64_cast<double>(mineu);
-        if (vl >= maxraw) return to_num64_cast<double>(maxeu);
-        return to_num64_cast<double>((mineu + (maxeu - mineu) / (maxraw - minraw) * (vl - minraw)));}
-
-    num64   line_lanscape_convertion_serv(num64 val,  double minraw, double maxraw, double mineu, double maxeu) {
-        double vl = num64_and_type_cast<double>(val, TYPE_NODEF);
-        if (minraw == maxraw) return static_cast<num64> (mineu);
-        if (vl <= minraw) return static_cast<num64> (mineu);
-        if (vl >= maxraw) return static_cast<num64> (maxeu);
-        return static_cast<num64> ((mineu + (maxeu - mineu) / (maxraw - minraw) * (vl - minraw)));}
 
     ////////////////////////////////////////////////////////////////////////////////////
 

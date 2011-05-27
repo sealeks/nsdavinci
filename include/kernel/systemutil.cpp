@@ -348,9 +348,8 @@ namespace dvnci {
         str_ = "";
         for (indx_set::const_iterator it = set_.begin();
                 it != set_.end(); ++it) {
-            std::string tmpstr;
-            if (to_str(*it, tmpstr)) {
+            std::string tmpstr=to_str(*it);
                 if (str_ == "") str_ += tmpstr;
                 else {
-                    str_ = str_ + ", " + tmpstr;};}}}}
+                    str_ = str_ + ", " + tmpstr;}}}}
 
