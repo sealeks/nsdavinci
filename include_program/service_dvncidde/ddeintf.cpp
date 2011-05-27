@@ -26,7 +26,7 @@ namespace dvnci {
 			 if (vl) {
 			    std::string vlstr((char*)vl,len-1);
 			    tp=0;
-			    val = num64_from_string_and_type(vlstr,static_cast<tagtype>(tp));
+			    val = to_num64_value_and_type_cast<std::string>(vlstr,static_cast<tagtype>(tp));
 			    DdeUnaccessData(dt);
                 DdeFreeDataHandle(dt);
                 return true;}
