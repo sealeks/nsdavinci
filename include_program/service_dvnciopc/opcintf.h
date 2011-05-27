@@ -372,14 +372,14 @@ namespace dvnci {
             bool setopcvalue(indx clid, num64 val, num64 valid, num64 time, num64 tp) {
                 opcclient_item itmtmp;
                 if (find_by_clid(clid, itmtmp)) {
-                    num64 conval= ((intf) && (intf->exists(clid)) && (intf->type(clid)==TYPE_NODEF)) ?
+                    num64 conval= 0;/*((intf) && (intf->exists(clid)) && (intf->type(clid)==TYPE_NODEF)) ?
                           line_lanscape_convertion(val,
 						     static_cast<tagtype>(tp),
                              intf->minraw<double>(clid),
                              intf->maxraw<double>(clid), 
                              intf->mineu<double>(clid),
                              intf->maxeu<double>(clid)) :
-                          val;
+                          val;*/
 			  tp = ((intf) && (intf->exists(clid)) && (intf->type(clid)==TYPE_NODEF)) ? TYPE_NODEF : tp;
                     opcvalue_item tmp = {itmtmp.outkey,conval, valid, 0,tp};
                     addvalmap(static_cast<indx> (itmtmp.outkey), tmp);
