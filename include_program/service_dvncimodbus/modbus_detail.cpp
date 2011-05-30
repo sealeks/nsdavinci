@@ -17,18 +17,18 @@ namespace dvnci{
                         ((mlnk.protocol() == NT_MODBUS_ASCII) ? INTPR_RS_MODBUS_ASCII : INTPR_RS_MODBUS_RTU) : INTPR_TCP_MODBUS;
                 iscorrect_ = checktagtype();
                 if (!iscorrect_) return;
-                tp_=NULL_BIT_NUM;
+                indx_=NULL_BIT_NUM;
                 getspecificator(vl);
                 iscorrect_ = parse(vl);}
 
         size_t modbus_req_parcel::operator-(const basis_req_parcel & rs) const  {
-                if ((devnum() != rs.devnum()) || (type() != rs.type())) return MAXDISTANSE;
-                switch (type_) {
+                if ((devnum() != rs.devnum()) || (kind() != rs.kind())) return BLOCKMAXDISTANCE;
+                switch (kind()) {
                     case DISCRET_INPUT_MODBUS_TYPE: return static_cast<size_t> ((dvnci::abs<num32 > (addr() - rs.addr()) / 8 ) );
                     case COIL_MODBUS_TYPE: return static_cast<size_t> ((dvnci::abs<num32 > (addr() - rs.addr())  / 8 ) );
                     case INPUT_REGISTER_MODBUS_TYPE: return static_cast<size_t> (dvnci::abs<num32 > (addr() - rs.addr())) * 2;
                     case HOLDING_REGISTER_MODBUS_TYPE: return static_cast<size_t> (dvnci::abs<num32 > (addr() - rs.addr())) * 2;}
-                return MAXDISTANSE;};
+                return BLOCKMAXDISTANCE;};
 
 
         bool modbus_req_parcel::parse(std::string vl) {
@@ -54,34 +54,34 @@ namespace dvnci{
                     if (conformaddr(vl, "(?<=D)[0-9]{1,6}",  adress, bitnum, 20000)) {
                         if (bitnum!=NULL_BIT_NUM)
                             return false;
-                        tp_=NULL_BIT_NUM;
-                        type_ = DISCRET_INPUT_MODBUS_TYPE;
+                        indx_=NULL_BIT_NUM;
+                        kind_ = DISCRET_INPUT_MODBUS_TYPE;
                         addr_ = adress;
                         size_ = 1;
                         return true;}
                     if (conformaddr(vl, "(?<=C)[0-9]{1,6}", adress, bitnum, 20000)) {
                         if (bitnum!=NULL_BIT_NUM)
                             return false;
-                        tp_=NULL_BIT_NUM;
-                        type_ = COIL_MODBUS_TYPE;
+                        indx_=NULL_BIT_NUM;
+                        kind_ = COIL_MODBUS_TYPE;
                         addr_ = adress;
                         size_ = 1;
                         return true;}
                     if (conformaddr(vl, "(?<=I)[0-9]{1,6}\\.{0,1}[0-9]{0,2}", adress, bitnum, 40000)) {
                         if ((bitnum!=NULL_BIT_NUM) && (bitnum>15))
                             return false;
-                        tp_=bitnum;
-                        type_ = INPUT_REGISTER_MODBUS_TYPE;
+                        indx_=bitnum;
+                        kind_ = INPUT_REGISTER_MODBUS_TYPE;
                         addr_ = adress;
-                        size_ = (tgtype_ == TYPE_NODEF) ? 2 : static_cast<num32> (GETDV_TYPESIZE(tgtype_));
+                        size_ = (type() == TYPE_NODEF) ? 2 : static_cast<num32> (GETDV_TYPESIZE(type()));
                         return true;}
                     if (conformaddr(vl, "(?<=H)[0-9]{1,6}\\.{0,1}[0-9]{0,2}", adress, bitnum, 40000)) {
                         if ((bitnum!=NULL_BIT_NUM) && (bitnum>15))
                             return false;
-                        tp_=bitnum;
-                        type_ = HOLDING_REGISTER_MODBUS_TYPE;
+                        indx_=bitnum;
+                        kind_ = HOLDING_REGISTER_MODBUS_TYPE;
                         addr_ = adress;
-                        size_ = (tgtype_ == TYPE_NODEF) ? 2 : static_cast<num32> (GETDV_TYPESIZE(tgtype_));
+                        size_ = (type() == TYPE_NODEF) ? 2 : static_cast<num32> (GETDV_TYPESIZE(type()));
                         return true;}}
                 error(ERROR_BINDING);
                 return false;}
