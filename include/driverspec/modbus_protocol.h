@@ -340,7 +340,7 @@ namespace dvnci {
             virtual ns_error generate_body_impl(std::string& vl) {
                 if (vl.size() > 1) {
                     if (insert_mdb_lrc(vl, 0)) {
-                        vl = binary_block_to_hexsequence(vl);
+                        binary_block_to_hexsequence(vl);
                         vl = MDB_ASCII_START_ENV + vl + CR + LF;
                         return basetype::error(0);}}
                 return basetype::error(ERROR_IO_NO_GENERATE_REQ);}};
