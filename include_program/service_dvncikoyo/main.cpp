@@ -24,7 +24,7 @@ std::string                   dvnci::dvnciservicename=NS_KOYO_SERVICE_NAME;
 fspath                        basepath;
 
 
-typedef device_link_executor< koyo_device_service, koyo_block_generator >                        koyo_executor;
+typedef device_link_executor< koyo_device_service, koyo_block_model >                        koyo_executor;
 typedef group_proccessor_templ< koyo_executor, TYPE_SIMPL >                                      groupkoyo;
 
 class koyo_service : public linkdriverservice<groupkoyo> {
