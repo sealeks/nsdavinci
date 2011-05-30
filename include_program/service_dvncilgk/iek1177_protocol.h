@@ -86,12 +86,12 @@ namespace dvnci {
         protected:
 
             ns_error parse_val(const std::string& vl, std::string& val) {
-                val = strcomma_to_dot(vl);
+                val = comma_to_point_copy(vl);
                 return error(0);}
 
             ns_error parse_arh(const std::string& val, const datetime& dt, dt_val_map& mp) {
                 mp.clear();
-                std::string strval = strcomma_to_dot(val);
+                std::string strval = comma_to_point_copy(val);
                 double vl = 0;
                 if (!str_to<double>(strval, vl)) vl = NULL_DOUBLE;
                 mp.insert(dt_val_pair(dt, vl));
@@ -197,7 +197,7 @@ namespace dvnci {
             ns_error  write_val(parcel_ptr cmd, const std::string& vlstr);
 
             std::string&  generate_write_body_val(std::string& vl, std::string vlstr, num32 ch, num32 nm) {
-                vl = MK1177_START_BODY_W +  generate_addr(LGKA_TYPEITEM_SMPL, MK1177_FC_WR_VAL, ch, nm) + strcomma_to_dot(vlstr) + ")" + ETX;
+                vl = MK1177_START_BODY_W +  generate_addr(LGKA_TYPEITEM_SMPL, MK1177_FC_WR_VAL, ch, nm) + comma_to_point_copy(vlstr) + ")" + ETX;
                 return vl;}
 
             ////////////////////////////////////////////////////////////////////////
@@ -205,7 +205,7 @@ namespace dvnci {
             ns_error  write_arr(parcel_ptr cmd, const std::string& vlstr);
 
             std::string&  generate_write_body_arr(std::string& vl, std::string vlstr, num32 ch, num32 nm, num32 ind) {
-                vl = MK1177_START_BODY_W +  generate_addr(LGKA_TYPEITEM_ARRAY, MK1177_FC_WR_ARR, ch, nm, ind)  + "(" + strcomma_to_dot(vlstr) +  ")" + ETX;
+                vl = MK1177_START_BODY_W +  generate_addr(LGKA_TYPEITEM_ARRAY, MK1177_FC_WR_ARR, ch, nm, ind)  + "(" + comma_to_point_copy(vlstr) +  ")" + ETX;
                 return vl;}
 
 } ;

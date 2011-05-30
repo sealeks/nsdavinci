@@ -32,13 +32,13 @@ namespace dvnci {
             std::string day_ = to_str(dt.date().day());
             std::string month_ = to_str(dt.date().month().as_number());
             std::string year_ = to_str((dt.date().year()) % 100);
-            return fill_first_null_digit(day_,2) + "-" + fill_first_null_digit(month_,2) + "-" + fill_first_null_digit(year_,2);}
+            return fill_first_null_digit_copy(day_,2) + "-" + fill_first_null_digit_copy(month_,2) + "-" + fill_first_null_digit_copy(year_,2);}
 
         std::string lgk_time_to_str (const datetime& dt) {
             std::string hour_ = to_str(dt.time_of_day().hours());
             std::string minute_ = to_str(dt.time_of_day().minutes());
             std::string second_ = to_str(dt.time_of_day().seconds());
-            return fill_first_null_digit(hour_,2) + "-" + fill_first_null_digit(minute_,2) + "-" + fill_first_null_digit(second_,2);}
+            return fill_first_null_digit_copy(hour_,2) + "-" + fill_first_null_digit_copy(minute_,2) + "-" + fill_first_null_digit_copy(second_,2);}
 
 
         datetime    mg_lgk_str_to_datetime (std::string src) {
@@ -126,7 +126,7 @@ namespace dvnci {
                 std::string tmpstrvl;
                 std::string tmpdt;
                 for (str_str_vect::const_iterator itdt = tmpvctdt.begin(); itdt!=tmpvctdt.end(); ++itdt) {
-                    tmpstrvl = strcomma_to_dot(itdt->first);
+                    tmpstrvl = comma_to_point_copy(itdt->first);
                     double tmpval = 0;
                     datetime tmpdt = mg_lgk_str_to_datetime(itdt->second);
                     if (!tmpdt.is_special()) {
