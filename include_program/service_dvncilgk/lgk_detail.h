@@ -47,11 +47,11 @@ namespace dvnci {
             bool conformaddr(const std::string& vl, num32& tp, num32& ch, num32& nm, num32 & arrnm);
 
             virtual void set_simpl_val_from_str(std::string val) {
-                val = strcomma_to_dot(val);
+                val = comma_to_point_copy(val);
                 basis_req_parcel::set_simpl_val_from_str(val);}
 
             virtual std::string val_as_str() {
-                return strdot_to_comma(basis_req_parcel::val_as_str());}
+                return point_to_comma_copy(basis_req_parcel::val_as_str());}
 
             bool checktagtype() {
                 if (IN_EVENTSET(tgtype_)) {

@@ -16,14 +16,14 @@ namespace dvnci {
         std::string iek1177_lgk_datetime_to_str (const datetime& dt) {
 
             std::string minutes_ = to_str<int>(dt.time_of_day().minutes());
-            minutes_ = fill_first_null_digit(minutes_, 2);
+            fill_first_null_digit(minutes_, 2);
             std::string hours_ = to_str<int>(dt.time_of_day().hours());
-            hours_ = fill_first_null_digit(hours_, 2);
+            fill_first_null_digit(hours_, 2);
 
             std::string month_ = to_str<int>(static_cast<int> (dt.date().month()));
-            month_ = fill_first_null_digit(month_, 2);
+            fill_first_null_digit(month_, 2);
             std::string days_ = to_str<int>(dt.date().day());
-            days_ = fill_first_null_digit(days_, 2);
+            fill_first_null_digit(days_, 2);
             return (days_ +month_ + hours_ + minutes_);}
 
 
