@@ -18,7 +18,7 @@
 namespace dvnci {
     namespace driver {
 
-        num32 def_koyo_protocol(const metalink& mlnk);
+        protocoltype def_koyo_protocol(const metalink& mlnk);
 
         const num32 NT_KOYO_GX_TYPE = 0xA;
         const num32 NT_KOYO_GY_TYPE = 0xB;
@@ -105,7 +105,7 @@ namespace dvnci {
             bool modbus_transform();
 
             bool checktagtype() {
-                if ((IN_REPORTSET(tgtype_)) || (IN_EVENTSET(tgtype_))) {
+                if ((IN_REPORTSET(type())) || (IN_EVENTSET(type()))) {
                     error(ERROR_TYPENOPROCCESS);
                     return false;}
                 return true;}};
@@ -115,11 +115,11 @@ namespace dvnci {
         /*Koyo ????????? ????? ??????*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class koyo_block_generator : public base_block_generator<koyo_req_parcel> {
+        class koyo_block_model : public base_block_model<koyo_req_parcel> {
         public:
 
-            koyo_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_generator<koyo_req_parcel>(exectr, inf, mlnk) {
+            koyo_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
+            base_block_model<koyo_req_parcel>(exectr, inf, mlnk) {
                 switch (def_koyo_protocol(mlnk)) {
                     case NT_KOYO_DIRECTNET_ECOM:{
                         blocksize = in_bounded<size_t > (8, MAX_ECOM_BLOCK_SIZE, static_cast<size_t> (mlnk.blocksize()));

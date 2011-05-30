@@ -10,7 +10,7 @@
 namespace dvnci {
     namespace driver {
 
-        num32 def_koyo_protocol(const metalink& mlnk) {
+        protocoltype def_koyo_protocol(const metalink& mlnk) {
             switch (mlnk.chanaltype()) {
                 case NT_CHTP_RS232_4XX:{
                     return (mlnk.protocol() <= NT_KOYO_DIRECTNET_ASCII) ? mlnk.protocol() : NT_KOYO_MODBUS;
@@ -29,7 +29,7 @@ namespace dvnci {
                 if (protocol_ = NT_KOYO_DIRECTNET_ECOM)  devnum_ = 1;
                 error(ERROR_IO_LINK_NOT_SUPPORT);
                 return;}
-            tp_ = NULL_BIT_NUM;
+            indx_ = NULL_BIT_NUM;
             iscorrect_ = checktagtype();
             if (!iscorrect_) return;
             getspecificator(vl);
@@ -37,15 +37,15 @@ namespace dvnci {
 
         size_t koyo_req_parcel::operator-(const basis_req_parcel & rs) const  {
             if (protocol() == NT_KOYO_MODBUS) {
-                if ((devnum() != rs.devnum()) || (type() != rs.type())) return MAXDISTANSE;
-                switch (type_) {
+                if ((devnum() != rs.devnum()) || (kind() != rs.kind())) return BLOCKMAXDISTANCE;
+                switch (kind()) {
                     case DISCRET_INPUT_MODBUS_TYPE: return static_cast<size_t> ((dvnci::abs<num32 > (addr() - rs.addr()) / 8 ) );
                     case COIL_MODBUS_TYPE: return static_cast<size_t> ((dvnci::abs<num32 > (addr() - rs.addr())  / 8 ) );
                     case INPUT_REGISTER_MODBUS_TYPE: return static_cast<size_t> (dvnci::abs<num32 > (addr() - rs.addr())) * 2;
                     case HOLDING_REGISTER_MODBUS_TYPE: return static_cast<size_t> (dvnci::abs<num32 > (addr() - rs.addr())) * 2;}}
             else {
                 return static_cast<size_t> (dvnci::abs<num32 > (addr() - rs.addr())) * 2;}
-            return MAXDISTANSE;};
+            return BLOCKMAXDISTANCE;};
 
         bool koyo_req_parcel::parse_impl(std::string vl) {
 
@@ -78,67 +78,67 @@ namespace dvnci {
                 num32 adress;
                 size_t bitnum = 0 ;
                 if (conform_v_koyo_addr(vl, NT_KOYO_V_START, NT_KOYO_V_COUNT, "(?<=V)[0-7]{1,5}\\.{0,1}[0-9]{0,2}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     if (bitnum == NULL_BIT_NUM)
-                        size_ = (tgtype_ == TYPE_NODEF) ? 2 : static_cast<num32> (GETDV_TYPESIZE(tgtype_));
+                        size_ = (type() == TYPE_NODEF) ? 2 : static_cast<num32> (GETDV_TYPESIZE(type()));
                     else
                         size_ = 2;
                     return true;}
 
                 if (conform_bit_koyo_addr(vl, NT_KOYO_X_START, NT_KOYO_X_COUNT, "(?<=X)[0-7]{1,4}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     size_ = 2;
                     return true;}
                 if (conform_bit_koyo_addr(vl, NT_KOYO_Y_START, NT_KOYO_Y_COUNT, "(?<=Y)[0-7]{1,4}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     size_ = 2;
                     return true;}
                 if (conform_bit_koyo_addr(vl, NT_KOYO_C_START, NT_KOYO_C_COUNT, "(?<=C)[0-7]{1,4}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     size_ = 2;
                     return true;}
                 if (conform_bit_koyo_addr(vl, NT_KOYO_SP_START, NT_KOYO_SP_COUNT, "(?<=SP)[0-7]{1,4}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     size_ = 2;
                     return true;}
                 if (conform_bit_koyo_addr(vl, NT_KOYO_T_START, NT_KOYO_T_COUNT, "(?<=T)[0-7]{1,4}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     size_ = 2;
                     return true;}
                 if (conform_bit_koyo_addr(vl, NT_KOYO_CT_START, NT_KOYO_CT_COUNT, "(?<=CT)[0-7]{1,4}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     size_ = 2;
                     return true;}
                 if (conform_bit_koyo_addr(vl, NT_KOYO_S_START, NT_KOYO_S_COUNT, "(?<=S)[0-7]{1,4}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     size_ = 2;
                     return true;}
                 if (conform_bit_koyo_addr(vl, NT_KOYO_GX_START, NT_KOYO_GX_COUNT, "(?<=GX)[0-7]{1,4}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     size_ = 2;
                     return true;}
                 if (conform_bit_koyo_addr(vl, NT_KOYO_GY_START, NT_KOYO_GY_COUNT, "(?<=GY)[0-7]{1,4}", adress, bitnum)) {
-                    type_ = 0;
+                    kind_ = 0;
                     addr_ = adress;
-                    tp_ = bitnum;
+                    indx_ = bitnum;
                     size_ = 2;
                     return true;}}
             error(ERROR_BINDING);
@@ -182,51 +182,51 @@ namespace dvnci {
 
         bool koyo_req_parcel::modbus_transform() {
             if (indx() == NULL_BIT_NUM) {
-                type_ = HOLDING_REGISTER_MODBUS_TYPE;
+                kind_ = HOLDING_REGISTER_MODBUS_TYPE;
                 addr_ += 0;
                 return true;}
             else {
                 if (indx() > 15) return false;
                 if ((addr() >= NT_KOYO_C_START) && (addr() <= NT_KOYO_C_STOP)) {
-                    type_ = COIL_MODBUS_TYPE;
+                    kind_ = COIL_MODBUS_TYPE;
                     size_ = 1;
                     addr_ = NT_KOYO_C_MODBUS  + (addr() - NT_KOYO_C_START) * 16 + indx();
                     return true;}
                 if ((addr() >= NT_KOYO_X_START) && (addr() <= NT_KOYO_X_STOP)) {
-                    type_ = DISCRET_INPUT_MODBUS_TYPE;
+                    kind_ = DISCRET_INPUT_MODBUS_TYPE;
                     size_ = 1;
                     addr_ = NT_KOYO_X_MODBUS +  (addr() - NT_KOYO_X_START) * 16 + indx();
                     return true;}
                 if ((addr() >= NT_KOYO_Y_START) && (addr() <= NT_KOYO_Y_STOP)) {
-                    type_ = COIL_MODBUS_TYPE;
+                    kind_ = COIL_MODBUS_TYPE;
                     addr_ = NT_KOYO_Y_MODBUS  +   (addr() - NT_KOYO_Y_START) * 16 + indx();
                     return true;}
                 if ((addr() >= NT_KOYO_SP_START) && (addr() <= NT_KOYO_SP_STOP)) {
-                    type_ = DISCRET_INPUT_MODBUS_TYPE;
+                    kind_ = DISCRET_INPUT_MODBUS_TYPE;
                     addr_ = NT_KOYO_SP_MODBUS  + (addr() - NT_KOYO_SP_START) * 16 + indx();
                     return true;}
                 if ((addr() >= NT_KOYO_T_START) && (addr() <= NT_KOYO_T_STOP)) {
-                    type_ = COIL_MODBUS_TYPE;
+                    kind_ = COIL_MODBUS_TYPE;
                     addr_ = NT_KOYO_T_MODBUS   + (addr() - NT_KOYO_T_START) * 16 + indx();
                     return true;}
                 if ((addr() >= NT_KOYO_CT_START) && (addr() <= NT_KOYO_CT_STOP)) {
-                    type_ = COIL_MODBUS_TYPE;
+                    kind_ = COIL_MODBUS_TYPE;
                     addr_ = NT_KOYO_CT_MODBUS +   (addr() - NT_KOYO_CT_START) * 16 + indx();
                     return true;}
                 if ((addr() >= NT_KOYO_S_START) && (addr() <= NT_KOYO_S_STOP)) {
-                    type_ = COIL_MODBUS_TYPE;
+                    kind_ = COIL_MODBUS_TYPE;
                     addr_ = NT_KOYO_S_MODBUS +   (addr() - NT_KOYO_S_START) * 16 + indx();
                     return true;}
                 if ((addr() >= NT_KOYO_GX_START) && (addr() <= NT_KOYO_GX_STOP)) {
-                    type_ = DISCRET_INPUT_MODBUS_TYPE;
+                    kind_ = DISCRET_INPUT_MODBUS_TYPE;
                     size_ = 1;
                     addr_ = NT_KOYO_GX_MODBUS +  (addr() - NT_KOYO_GX_START) * 16 + indx();
                     return true;}
                 if ((addr() >= NT_KOYO_GY_START) && (addr() <= NT_KOYO_GY_STOP)) {
-                    type_ = COIL_MODBUS_TYPE;
+                    kind_ = COIL_MODBUS_TYPE;
                     addr_ = NT_KOYO_GY_MODBUS  +   (addr() - NT_KOYO_GY_START) * 16 + indx();
                     return true;}}
-            type_ = HOLDING_REGISTER_MODBUS_TYPE;
+            kind_ = HOLDING_REGISTER_MODBUS_TYPE;
             return true;}
 
 

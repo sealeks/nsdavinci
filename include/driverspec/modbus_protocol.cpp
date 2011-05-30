@@ -2,7 +2,7 @@
  * File:   modbus_protocol.cpp
  * Author: Serg
  * 
- * Created on 18 Ноябрь 2010 г., 17:22
+ * Created on 18 ?????? 2010 ?., 17:22
  */
 
 #include <driverspec/modbus_protocol.h>
@@ -44,11 +44,11 @@ namespace dvnci {
             return false;}
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*Базовый  постановщик значений MODBUS*/
+        /*???????  ??????????? ???????? MODBUS*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ns_error modbus_value_manager::set_val(std::string& val, parcel_ptr prcl, size_t bitn) {
-            switch (prcl->type()) {
+            switch (prcl->kind()) {
                 case DISCRET_INPUT_MODBUS_TYPE:
                 case COIL_MODBUS_TYPE:{
                     if (!val.empty()) {
@@ -64,7 +64,7 @@ namespace dvnci {
                             if (string_to_primtype<unum16 > (val, tmp))
                                 prcl->value_cast(static_cast<bool> (tmp & (0x01 << bitn)));}}
                     else {
-                        switch (prcl->tgtype()) {
+                        switch (prcl->type()) {
                             case TYPE_NODEF:{
                                 unum16 tmp = 0;
                                 if (spec_protocol_convertion_out(val)) {
@@ -77,7 +77,7 @@ namespace dvnci {
             return error(0);}
 
         ns_error modbus_value_manager::get_val(std::string& val, parcel_ptr cmd, size_t bitn) {
-            switch (cmd->type()) {
+            switch (cmd->kind()) {
                 case DISCRET_INPUT_MODBUS_TYPE:
                 case COIL_MODBUS_TYPE:{
                     bool tmp = cmd->value_cast<bool>();
@@ -89,10 +89,10 @@ namespace dvnci {
                         bool tmp = cmd->value_cast<bool>();
                         val = primtype_to_string<num16 > (tmp ? ON_COIL_MODBUS_NM : OFF_COIL_MODBUS_NM);}
                     else {
-                        switch (cmd->tgtype()) {
+                        switch (cmd->type()) {
                             case TYPE_NODEF:{
-                                unum16 tmp = cmd->value_cast<unum16>();
-                                if (/*cmd->get_simpl_val_cast<unum16 > (tmp, true)*/true) {
+                                if (cmd->isvalue()) {
+									unum16 tmp = cmd->value_cast<unum16>();
                                     tmp = (tmp < 0) ? 0 : ((tmp > 65535) ? 65535 : tmp);
                                     val = primtype_to_string<unum16 > (tmp);
                                     spec_protocol_convertion_in(val);
