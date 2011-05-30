@@ -16,25 +16,25 @@ namespace dvnci {
         type(TYPE_NODEF);
         minraw_=0;
         maxraw_=0;
-        mineu<double>(0);
-        maxeu<double>(100);
+        mineu_=num64_cast<double>(0);;
+        maxeu_=num64_cast<double>(100);
         logdb(0.2);
         devdb(0.0);
-        alarmconst<double>(0);
-        namepos(0);
-        poscomment(0);
-        posbinding(0);
-        posonmsg(0);
-        posoffmsg(0);
-        posalarmmsg(0);
-        poseu(0);
-        alwactive(false);
+        alarmconst_=num64_cast<double>(0);
+        posname_=static_cast<num64>(0);
+        poscomment_=static_cast<num64>(0);
+        posbinding_=static_cast<num64>(0);
+        posonmsg_=static_cast<num64>(0);
+        posoffmsg_=static_cast<num64>(0);
+        posalarmmsg_=static_cast<num64>(0);
+        poseu_=static_cast<num64>(0);
+        alwactive_=static_cast<bool>(0);
         unusepos1_ = 0;
         unusepos2_ = 0;
-        allwaysactiv_helper_ = 0;
-        logged(false);
-        onmsged(false);
-        offmsged(false);
+        util_helper_ = 0;
+        logged_=static_cast<num64>(false);
+        onmsged_=static_cast<num64>(false);
+        offmsged_=static_cast<num64>(false);
         group(grp);
         agroup(npos);
         logkey(npos);
@@ -94,7 +94,7 @@ namespace dvnci {
         dst.alarmlevel_ = src.alarmlevel_;
         dst.alarmcase_ = src.alarmcase_;
         dst.alwactive_ = src.alwactive_;
-        dst.allwaysactiv_helper_ = src.allwaysactiv_helper_;
+        dst.util_helper_ = src.util_helper_;
         dst.type_ = src.type_;
         dst.logged_ = src.logged_;
         dst.onmsged_ = src.onmsged_;
@@ -132,6 +132,23 @@ namespace dvnci {
             dst.valid(FULL_VALID);}
         monitor_=0;
         return dst;}
+    
+    
+    void tagstruct::helper_util() {
+            num64 allwaysactiv_helper_tmp =  ((logged()) || (alarmlevel()) ||
+                    (onmsged()) || (offmsged()) || (alwactive()) || (IN_ALWACTSET(type()))) ? ALLWAYSACTIVE : 0;
+            num64 rangeble_helper_tmp = ((IN_RANGESET(type())) && (minraw_!=maxraw_) && (mineu_!=maxeu_)) ? RANGABLE : 0;
+            if ((rangeble_helper_tmp) && (IN_FLOATINGSET(type()))){
+                switch (type()){
+                        case TYPE_FLOAT:{
+                            rangeble_helper_tmp = ((mineu<float>()!=mineu<float>()) || (maxeu<float>()!=maxeu<float>()) ||
+                                    (minraw<float>()!=minraw<float>()) || (maxraw<float>()!=maxraw<float>())) ? 0 :rangeble_helper_tmp;
+                            break;}
+                        default: {
+                            rangeble_helper_tmp = ((mineu<double>()!=mineu<double>()) || (maxeu<double>()!=maxeu<double>()) ||
+                                    (minraw<double>()!=minraw<double>()) || (maxraw<double>()!=maxraw<double>())) ? 0 :rangeble_helper_tmp;}}}
+            
+            util_helper_= rangeble_helper_tmp | allwaysactiv_helper_tmp;}
 
 
     ///////////////////////////////////////////////////////////////// 

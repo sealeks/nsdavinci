@@ -42,39 +42,6 @@ namespace dvnci {
             return false;}
 
 
-        std::string binary_block_to_hexsequence(const std::string& vl) {
-            std::string rslt = "";
-            for (std::string::size_type it = 0; it < vl.size(); ++it) {
-                rslt = rslt  + num8_to_hexstr(vl.at(it));}
-            return rslt;}
-
-        std::string binary_block_to_hexsequence_debug(const std::string& vl) {
-            std::string rslt = "";
-            for (std::string::size_type it = 0; it < vl.size(); ++it) {
-                rslt = rslt + " " + num8_to_hexstr(vl.at(it));}
-            return rslt;}
-
-        bool hexsequence_to_binary_block(const std::string& vl, std::string& rslt) {
-            rslt = "";
-            num8 tmp = 0;
-            if ((vl.size() % 2) != 0) return false;
-            for (std::string::size_type i = 0; i < vl.size(); i = i + 2) {
-                if (hexstr_to<num8 > (vl.substr(i, 2), tmp))
-                    rslt = rslt + std::string(((const char*) &tmp), 1);
-                else return false;}
-            return true;}
-
-        bool be_le16_convert_string(std::string& vl) {
-            if ((vl.size() % 2) != 0) return false;
-            std::string vltmp = "";
-            num16 vltmp16 = 0;
-            for (std::string::size_type i = 0; i < vl.size(); i = i + 2) {
-                if (string_to_primtype<num16 > (vl.substr(i, 2), vltmp16)) {
-                    vltmp = vltmp + primtype_to_string<num16 > (be_le_convert_num16(vltmp16));}
-                else
-                    return false;}
-            vl = vltmp;
-            return true;}
 
 
 

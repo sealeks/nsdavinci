@@ -52,7 +52,7 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#pragma warning(disable: 4101 4800 4146 4804 4200)
+#pragma warning(disable: 4101  4146 )
 #endif
 
 
@@ -177,7 +177,7 @@
 #define DEBUGE_BASE_DVNCI(a,b)  a->logerror(#b);
 
 #ifdef _MSC_VER
-#pragma warning(disable: 4101 4800 4146 4804)
+#pragma warning(disable: 4200 4800)
 #endif
 
 #ifdef  _DVN_WIN_
@@ -240,7 +240,7 @@ namespace dvnci {
 
     typedef union type_punned{
         
-         type_punned(const bool& vl) : bl(vl) {}
+         type_punned(const bool& vl) : n64(vl ? 1 : 0) {}
          type_punned(const unum8& vl) : u8(vl) {}
          type_punned(const num8& vl) : n8(vl) {}
          type_punned(const unum16& vl) : u16(vl) {}

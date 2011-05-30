@@ -595,15 +595,15 @@ namespace dvnci {
 
             virtual void write_impl() {
                 boost::asio::async_write(serialport_, writebuffer,
-                        boost::bind(&basis_iostream::handle_write, basis_iostream::shared_from_this(),
+                        boost::bind(&rs_iostream<OPTIONSETTER>::handle_write, basis_iostream::shared_from_this(),
                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));}
 
             virtual void read_impl(size_t cnt) {
                 if (cnt == 0) boost::asio::async_read(serialport_, readbuffer, boost::asio::transfer_all(),
-                        boost::bind(&basis_iostream::handle_read, shared_from_this(), boost::asio::placeholders::error,
+                        boost::bind(&rs_iostream<OPTIONSETTER>::handle_read, shared_from_this(), boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));
                 else boost::asio::async_read(serialport_, readbuffer, boost::asio::transfer_at_least(cnt),
-                        boost::bind(&basis_iostream::handle_read, shared_from_this(), boost::asio::placeholders::error,
+                        boost::bind(&rs_iostream<OPTIONSETTER>::handle_read, shared_from_this(), boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));}
 
             virtual void cancel_impl() {
@@ -611,17 +611,17 @@ namespace dvnci {
 
             virtual void read_until_impl(const char criteria) {
                 boost::asio::async_read_until(serialport_, readbuffer, criteria,
-                        boost::bind(&basis_iostream::handle_read, shared_from_this(), boost::asio::placeholders::error,
+                        boost::bind(&rs_iostream<OPTIONSETTER>::handle_read, shared_from_this(), boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));}
 
             virtual void read_until_impl(const std::string& criteria) {
                 boost::asio::async_read_until(serialport_, readbuffer, criteria,
-                        boost::bind(&basis_iostream::handle_read, shared_from_this(), boost::asio::placeholders::error,
+                        boost::bind(&rs_iostream<OPTIONSETTER>::handle_read, shared_from_this(), boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));}
 
             virtual void read_until_impl(const boost::regex& criteria) {
                 boost::asio::async_read_until(serialport_, readbuffer, criteria,
-                        boost::bind(&basis_iostream::handle_read, shared_from_this(), boost::asio::placeholders::error,
+                        boost::bind(&rs_iostream<OPTIONSETTER>::handle_read, shared_from_this(), boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));}
 
             boost::asio::serial_port         serialport_;
