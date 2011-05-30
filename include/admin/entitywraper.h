@@ -113,6 +113,10 @@ namespace dvnci {
         class alarmcasepropertyeditor : public abstractpropertyeditor {
         public:
             alarmcasepropertyeditor();} ;
+            
+        class alarmcaseboolpropertyeditor : public abstractpropertyeditor {
+        public:
+            alarmcaseboolpropertyeditor();} ;    
 
         class alarmlevelpropertyeditor : public abstractpropertyeditor {
         public:
@@ -275,16 +279,19 @@ namespace dvnci {
             rwpropertyeditor         rwPrEdit;
             virtual  void addproprtyeditors_internal(abstractpropertymanager* mangr);} ;
 
-        class basereporttagwraper : public basetagwraper {
+        class basereportcnttagwraper : public basetagwraper {
         public:
-            basereporttagwraper(lcltype loc = NS_CODPAGE_UTF8);
+            basereportcnttagwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
             virtual std::string getProperty(indx id, propidtype prop);
         protected:
             reportstatistictagpropertyeditor statPrEdit;
 
             virtual  void addproprtyeditors_internal(abstractpropertymanager* mangr);} ;
-
+            
+        class basereporttagwraper : public basereportcnttagwraper {    
+        public:
+            basereporttagwraper(lcltype loc = NS_CODPAGE_UTF8);};
 
 
         class basenumerictagwraper : public basetagwraper {
@@ -293,13 +300,32 @@ namespace dvnci {
 
         class basebooltagwraper : public basetagwraper {
         public:
-            basebooltagwraper(lcltype loc = NS_CODPAGE_UTF8);} ;
+            basebooltagwraper(lcltype loc = NS_CODPAGE_UTF8);
+            virtual void setProperty(indx id, propidtype prop, std::string val);
+            virtual std::string getProperty(indx id, propidtype prop);
+        protected:
+            alarmcaseboolpropertyeditor  acaseboolPrEdit;
+            virtual  void addproprtyeditors_internal(abstractpropertymanager* mangr);} ;
+            
+            
 
         class eventtagwraper : public basetagwraper {
         public:
             eventtagwraper(lcltype loc = NS_CODPAGE_UTF8);
            virtual void setProperty(indx id, propidtype prop, std::string val);
             virtual std::string getProperty(indx id, propidtype prop);} ;
+            
+        //texttagwraper    
+            
+        class texttagwraper : public basetagwraper {
+        public:
+           texttagwraper(lcltype loc = NS_CODPAGE_UTF8);} ; 
+            
+        //timetagwraper
+           
+        class timetagwraper : public basetagwraper {
+        public:
+           timetagwraper(lcltype loc = NS_CODPAGE_UTF8);} ;
 
         // Базовый класс обертка для групп базы
 

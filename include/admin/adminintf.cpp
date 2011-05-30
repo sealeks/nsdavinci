@@ -618,8 +618,10 @@ namespace dvnci {
                     tag(id).type(((ptagstruct) & it->tginfo)->type());};
                 if ((changeset & MASK_RT_CHANGE_ALLEVEL) != 0) {
                     tag(id).alarmlevel(((ptagstruct) & it->tginfo)->alarmlevel());};
-                if ((changeset & MASK_RT_CHANGE_alwactive) != 0) {
+                if ((changeset & MASK_RT_CHANGE_ALWACTIVE) != 0) {
                     tag(id).alwactive(((ptagstruct) & it->tginfo)->alwactive());};
+                if ((changeset & MASK_RT_CHANGE_RANG) != 0) {
+                    tag(id).rangable(((ptagstruct) & it->tginfo)->rangable());};    
                 if ((changeset & MASK_RT_CHANGE_ALCASE) != 0) {
                     tag(id).alarmcase(((ptagstruct) & it->tginfo)->alarmcase());};
                 if ((changeset & MASK_RT_CHANGE_RW) != 0) {

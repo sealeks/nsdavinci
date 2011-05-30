@@ -34,6 +34,11 @@ namespace dvnci {
             addpropertylist(PROPERTY_ALARMCASE_TAG_LESS);
             addpropertylist(PROPERTY_ALARMCASE_TAG_MORE);
             addpropertylist(PROPERTY_ALARMCASE_TAG_EQUAL);}
+        
+        alarmcaseboolpropertyeditor::alarmcaseboolpropertyeditor() : abstractpropertyeditor(TYPE_PE_LIST, "AlarmCaseBool") {
+            addpropertylist(PROPERTY_ALARMCASE_TAG_LESS);
+            addpropertylist(PROPERTY_ALARMCASE_TAG_MORE);
+            addpropertylist(PROPERTY_ALARMCASE_TAG_EQUAL);}
 
         dbproviderpropertyeditor::dbproviderpropertyeditor() : abstractpropertyeditor(TYPE_PE_LIST, "DBProvider") {
             addpropertylist(PROPERTY_DB_PROVIDER_NONE);
@@ -201,7 +206,7 @@ namespace dvnci {
             propidtype propadd[] = {PROPERTY_NAME_TAG ,    PROPERTY_COMMENT_TAG,  PROPERTY_BIND_TAG,    PROPERTY_MINCONT_TAG,     PROPERTY_MAXCONT_TAG,    /*PROPERTY_DETHBOUNDCONT_TAG*/
                 PROPERTY_UEMIN_TAG,    PROPERTY_UEMAX_TAG,    PROPERTY_UETEXT_TAG,  PROPERTY_OFFMSG_TAG,      PROPERTY_OFFMSGTEXT_TAG, PROPERTY_ONMSG_TAG,
                 PROPERTY_ONMSGTEXT_TAG, PROPERTY_ALARMLEVEL_TAG, PROPERTY_SERVERDB_TAG, PROPERTY_ALARMMSGTEXT_TAG, PROPERTY_ALARMVAL_TAG,   PROPERTY_ALARMCASE_TAG,
-                PROPERTY_ARCH_TAG,     PROPERTY_ARCHDB_TAG,  PROPERTY_RW_TAG, PROPERTY_TAG_TYPE, PROPERTY_AL_TAG};
+                PROPERTY_ARCH_TAG,     PROPERTY_ARCHDB_TAG,  PROPERTY_RW_TAG, PROPERTY_TAG_TYPE, PROPERTY_AL_TAG, PROPERTY_ALWACTIVE_TAG, PROPERTY_RANGABLE_TAG};
             ADD_PROPERTYS(propadd);}
 
         void basetagwraper::excludegroupedit(propertysset& excl) {
@@ -210,6 +215,8 @@ namespace dvnci {
         void basetagwraper::addproprtyeditors_internal(abstractpropertymanager* mangr) {
             mangr->registpropertyeditor(PROPERTY_OFFMSG_TAG, &boolPrEdit);
             mangr->registpropertyeditor(PROPERTY_ONMSG_TAG, &boolPrEdit);
+            mangr->registpropertyeditor(PROPERTY_ALWACTIVE_TAG, &boolPrEdit);
+            mangr->registpropertyeditor(PROPERTY_RANGABLE_TAG, &boolPrEdit);
             mangr->registpropertyeditor(PROPERTY_ARCH_TAG, &boolPrEdit);
             mangr->registpropertyeditor(PROPERTY_ALARMCASE_TAG, &acasePrEdit);
             mangr->registpropertyeditor(PROPERTY_ALARMLEVEL_TAG, &alevelPrEdit);
@@ -244,14 +251,30 @@ namespace dvnci {
                     break;};
                 case PROPERTY_OFFMSG_TAG:{
                     int val_ = 0;
+                    bool old_offmsged=_interface->tag(id).offmsged();
                     if (str_to(val, val_)) _interface->tag(id).offmsged(val_) ;
+                    /*if (old_offmsged!=_interface->tag(id).offmsged()){
+                        if (old_offmsged) {
+                            propidtype propdel[] = {PROPERTY_OFFMSGTEXT_TAG};
+                            REMOVE_PROPERTYS(propdel);}
+                        else{
+                            propidtype propadd[] = {PROPERTY_OFFMSGTEXT_TAG};
+                            ADD_PROPERTYS(propdel);}}*/
                     break;};
                 case PROPERTY_OFFMSGTEXT_TAG:{
                     _interface->tag(id).offmsg(val);
                     break;};
                 case PROPERTY_ONMSG_TAG:{
                     int val_ = 0;
-                    if (str_to(val, val_))_interface->tag(id).onmsged(val_) ;
+                    bool old_onmsged=_interface->tag(id).onmsged();
+                    if (str_to(val, val_))_interface->tag(id).onmsged(val_);
+                    /*if (old_onmsged!=_interface->tag(id).onmsged()){
+                    if (old_onmsged) {
+                            propidtype propdel[] = {PROPERTY_OFFMSGTEXT_TAG};
+                            REMOVE_PROPERTYS(propdel);}
+                        else{
+                            propidtype propadd[] = {PROPERTY_OFFMSGTEXT_TAG};
+                            ADD_PROPERTYS(propdel);}}*/
                     break;};
                 case PROPERTY_ONMSGTEXT_TAG:{
                     _interface->tag(id).onmsg(val);
@@ -288,6 +311,14 @@ namespace dvnci {
                     int val_ = 0;
                     if (str_to(val, val_))_interface->tag(id).accesslevel(val_) ;
                     break;};
+                case PROPERTY_ALWACTIVE_TAG: {
+                    int val_ = 0;
+                    if (str_to(val, val_))_interface->tag(id).alwactive(val_) ;
+                    break;};
+                case PROPERTY_RANGABLE_TAG: {
+                    int val_ = 0;
+                    if (str_to(val, val_))_interface->tag(id).rangable(val_) ;
+                    break;};    
                 case PROPERTY_TAG_TYPE:{
                     int val_ = 0;
                     if (str_to(val, val_))_interface->tag(id).type(val_) ;
@@ -316,6 +347,8 @@ namespace dvnci {
                 case PROPERTY_ARCHDB_TAG:       return to_str(_interface->tag(id).logdb());
                 case PROPERTY_RW_TAG:           return to_str(_interface->tag(id).rwtype());
                 case PROPERTY_AL_TAG:           return to_str(_interface->tag(id).accesslevel());
+                case PROPERTY_ALWACTIVE_TAG:    return to_str(_interface->tag(id).alwactive());
+                case PROPERTY_RANGABLE_TAG:     return to_str(_interface->tag(id).rangable());
                 case PROPERTY_TAG_TYPE:         return to_str(_interface->tag(id).type());}
             return "";}
 
@@ -324,19 +357,20 @@ namespace dvnci {
 
         //basereporttagwraper
 
-        basereporttagwraper::basereporttagwraper(lcltype loc) : basetagwraper(loc) {
+        basereportcnttagwraper::basereportcnttagwraper(lcltype loc) : basetagwraper(loc) {
             propidtype propdel[] = {PROPERTY_MINCONT_TAG,    PROPERTY_MAXCONT_TAG,    PROPERTY_OFFMSG_TAG,       PROPERTY_OFFMSGTEXT_TAG, PROPERTY_ONMSG_TAG,
                                     PROPERTY_ONMSGTEXT_TAG,  PROPERTY_ALARMLEVEL_TAG, PROPERTY_ALARMMSGTEXT_TAG, PROPERTY_ALARMVAL_TAG,   PROPERTY_ALARMCASE_TAG,
-                                    PROPERTY_ARCH_TAG,       PROPERTY_ARCHDB_TAG,     PROPERTY_SERVERDB_TAG,  PROPERTY_RW_TAG, PROPERTY_AL_TAG};
+                                    PROPERTY_ARCH_TAG,       PROPERTY_ARCHDB_TAG,     PROPERTY_SERVERDB_TAG,  PROPERTY_RW_TAG, PROPERTY_AL_TAG,  PROPERTY_RANGABLE_TAG,
+                                    PROPERTY_UEMIN_TAG,    PROPERTY_UEMAX_TAG, PROPERTY_ALWACTIVE_TAG};
             REMOVE_PROPERTYS(propdel);
 
             propidtype propadd[] = {PROPERTY_PREDCOUNT_TAG, PROPERTY_DELTCOUNT_TAG, PROPERTY_REPSTATISIC_TAG};
             ADD_PROPERTYS(propadd);}
 
-        void basereporttagwraper::addproprtyeditors_internal(abstractpropertymanager* mangr) {
+        void basereportcnttagwraper::addproprtyeditors_internal(abstractpropertymanager* mangr) {
             mangr->registpropertyeditor(PROPERTY_REPSTATISIC_TAG, &statPrEdit);}
 
-        void basereporttagwraper::setProperty(indx id, propidtype prop, string val) {
+        void basereportcnttagwraper::setProperty(indx id, propidtype prop, string val) {
 
             switch (prop) {
                 case PROPERTY_PREDCOUNT_TAG:{
@@ -356,26 +390,61 @@ namespace dvnci {
                     break;};
                 default: basetagwraper::setProperty(id, prop, val);}}
 
-        std::string basereporttagwraper::getProperty(indx id, propidtype prop) {
+        std::string basereportcnttagwraper::getProperty(indx id, propidtype prop) {
 
             switch (prop) {
                 case PROPERTY_PREDCOUNT_TAG:    return  to_str(_interface->tag(id).reporthistory());
                 case PROPERTY_DELTCOUNT_TAG:    return  to_str(_interface->tag(id).reportsubdelt());
                 case PROPERTY_REPSTATISIC_TAG:  return  to_str(_interface->tag(id).reportstatistic());
                 default: return basetagwraper::getProperty(id, prop);}}
+        
+        //basereporttagwraper
+        
+        basereporttagwraper::basereporttagwraper(lcltype loc) : basereportcnttagwraper(loc) {
+            propidtype propdel[] = {PROPERTY_REPSTATISIC_TAG};
+            REMOVE_PROPERTYS(propdel);}
 
 
         //basenumerictagwraper
 
         basenumerictagwraper::basenumerictagwraper(lcltype loc) : basetagwraper(loc) {
-            propidtype propdel[] = {PROPERTY_MINCONT_TAG,     PROPERTY_MAXCONT_TAG };
-            REMOVE_PROPERTYS(propdel);}
+            /*propidtype propdel[] = { };
+            REMOVE_PROPERTYS(propdel);*/}
 
         //basebooltagwraper
 
         basebooltagwraper::basebooltagwraper(lcltype loc) : basetagwraper(loc) {
-            propidtype propdel[] = {PROPERTY_MINCONT_TAG,     PROPERTY_MAXCONT_TAG, PROPERTY_UEMIN_TAG,    PROPERTY_UEMAX_TAG,    PROPERTY_UETEXT_TAG };
-            REMOVE_PROPERTYS(propdel);}
+            propidtype propdel[] = {PROPERTY_RANGABLE_TAG, PROPERTY_ARCHDB_TAG, PROPERTY_MINCONT_TAG, PROPERTY_SERVERDB_TAG, 
+            PROPERTY_MAXCONT_TAG, PROPERTY_UEMIN_TAG,    PROPERTY_UEMAX_TAG,    PROPERTY_UETEXT_TAG, PROPERTY_ALARMVAL_TAG,
+            PROPERTY_ALARMCASE_TAG};
+            REMOVE_PROPERTYS(propdel);
+            propidtype propadd[] = {PROPERTY_ALARMVALBOOL_TAG, PROPERTY_ALARMCASEBOOL_TAG};
+            ADD_PROPERTYS(propadd);}
+        
+        void basebooltagwraper::addproprtyeditors_internal(abstractpropertymanager* mangr) {
+            mangr->registpropertyeditor(PROPERTY_ALARMVALBOOL_TAG, &boolPrEdit);
+            mangr->registpropertyeditor(PROPERTY_ALARMCASEBOOL_TAG, &acaseboolPrEdit);}
+        
+        void basebooltagwraper::setProperty(indx id, propidtype prop, string val) {
+
+            switch (prop) {
+                case PROPERTY_ALARMVALBOOL_TAG:{
+                    int val_ = 0;
+                    if (str_to(val, val_))_interface->tag(id).alarmconst(val_ ? "1" : "0") ;
+                    break;};
+                PROPERTY_ALARMCASEBOOL_TAG:{
+                    int val_ = 0;
+                    if (str_to(val, val_))_interface->tag(id).alarmcase(val_) ;
+                    break;}    
+                default: basetagwraper::setProperty(id, prop, val);}}
+
+        std::string basebooltagwraper::getProperty(indx id, propidtype prop) {
+
+            switch (prop) {
+                case PROPERTY_ALARMVALBOOL_TAG:    return  to_str(_interface->tag(id).alarmconst());
+                case PROPERTY_ALARMCASEBOOL_TAG:   return  to_str(_interface->tag(id).alarmcase());
+                default: return basetagwraper::getProperty(id, prop);}}
+        
 
         //baseeventtagwraper
 
@@ -383,7 +452,8 @@ namespace dvnci {
             propidtype propdel[] = {    PROPERTY_MINCONT_TAG,     PROPERTY_MAXCONT_TAG,    /*PROPERTY_DETHBOUNDCONT_TAG*/
                 PROPERTY_UEMIN_TAG,    PROPERTY_UEMAX_TAG,    PROPERTY_UETEXT_TAG,  PROPERTY_OFFMSG_TAG,      PROPERTY_OFFMSGTEXT_TAG, PROPERTY_ONMSG_TAG,
                 PROPERTY_ONMSGTEXT_TAG, PROPERTY_SERVERDB_TAG, PROPERTY_ALARMMSGTEXT_TAG, PROPERTY_ALARMVAL_TAG,   PROPERTY_ALARMCASE_TAG,
-                PROPERTY_ARCH_TAG,     PROPERTY_ARCHDB_TAG, PROPERTY_RW_TAG, PROPERTY_COMMENT_TAG, PROPERTY_AL_TAG};
+                PROPERTY_ARCH_TAG,     PROPERTY_ARCHDB_TAG, PROPERTY_RW_TAG, PROPERTY_COMMENT_TAG, PROPERTY_AL_TAG,
+                PROPERTY_ALWACTIVE_TAG,   PROPERTY_RANGABLE_TAG};
             REMOVE_PROPERTYS(propdel);
             propidtype propadd[] = {PROPERTY_EVENTTEXT_TAG};
             ADD_PROPERTYS(propadd);}
@@ -402,6 +472,32 @@ namespace dvnci {
                     _interface->tag(id).comment(val);
                     break;};
             default: basetagwraper::setProperty(id, prop, val);}}
+        
+                    
+        //texttagwraper
+        
+        texttagwraper::texttagwraper(lcltype loc) : basetagwraper(loc) {
+            propidtype propdel[] = {    PROPERTY_MINCONT_TAG,     PROPERTY_MAXCONT_TAG,    
+                PROPERTY_UEMIN_TAG,    PROPERTY_UEMAX_TAG,    PROPERTY_UETEXT_TAG,  PROPERTY_OFFMSG_TAG,      PROPERTY_OFFMSGTEXT_TAG, PROPERTY_ONMSG_TAG,
+                PROPERTY_ONMSGTEXT_TAG, PROPERTY_SERVERDB_TAG, PROPERTY_ALARMMSGTEXT_TAG, PROPERTY_ALARMVAL_TAG,   PROPERTY_ALARMCASE_TAG,
+                PROPERTY_ARCH_TAG,     PROPERTY_ARCHDB_TAG, PROPERTY_RW_TAG, PROPERTY_AL_TAG,
+                PROPERTY_RANGABLE_TAG, PROPERTY_ALARMLEVEL_TAG};
+            REMOVE_PROPERTYS(propdel);}
+        
+                    
+        //tinetagwraper
+        
+        timetagwraper::timetagwraper(lcltype loc) : basetagwraper(loc) {
+            propidtype propdel[] = {    PROPERTY_MINCONT_TAG,     PROPERTY_MAXCONT_TAG,    
+                PROPERTY_UEMIN_TAG,    PROPERTY_UEMAX_TAG,    PROPERTY_UETEXT_TAG,  PROPERTY_OFFMSG_TAG,      PROPERTY_OFFMSGTEXT_TAG, PROPERTY_ONMSG_TAG,
+                PROPERTY_ONMSGTEXT_TAG, PROPERTY_SERVERDB_TAG, PROPERTY_ALARMMSGTEXT_TAG, PROPERTY_ALARMVAL_TAG,   PROPERTY_ALARMCASE_TAG,
+                PROPERTY_ARCH_TAG,     PROPERTY_ARCHDB_TAG, PROPERTY_RW_TAG, PROPERTY_AL_TAG,
+                PROPERTY_RANGABLE_TAG, PROPERTY_ALARMLEVEL_TAG};
+            REMOVE_PROPERTYS(propdel);}
+        
+        
+        
+        
 
 
         //basegroupwraper

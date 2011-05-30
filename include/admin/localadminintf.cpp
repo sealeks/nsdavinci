@@ -544,7 +544,7 @@ namespace dvnci {
             pairpack.first= intf->duplicate_group(id, newname);
             if (pairpack.first!=npos) {
                 pairpack.second.name(newname);
-                pairpack.second.typeex(intf->groups()->appid(pairpack.first));}
+                pairpack.second.typeex(nodeinfotype(NT_GROUP,intf->groups()->appid(pairpack.first)));}
             return true;}
 
 
