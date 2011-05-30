@@ -26,17 +26,17 @@ namespace dvnci {
             boost::regex regexbind("(CH[0-9]{1,3}:)?N[0-9]{1,3}(:I[0-9]{1,3})?");
             boost::smatch rslt;
             if (boost::regex_match(vl,  rslt, regexbind)) {
-                num32 tp = 0;
-                num32 ch = 0;
-                num32 nm = 0;
-                num32 arrnm = 0;
+                parcelkind tp = 0;
+                num32      ch = 0;
+                num32      nm = 0;
+                num32      arrnm = 0;
                 if (conformaddr(vl, tp, ch, nm, arrnm)) {
-                    type_ = tp;
+                    kind_ = tp;
                     chanel_ = ch;
                     addr_ = nm;
-                    tp_ = arrnm;
+                    indx_ = arrnm;
                     return true;}}
-            error_ = ERROR_BINDING;
+            error(ERROR_BINDING);
             return false;}
 
         bool lgk_req_parcel::conformaddr(const std::string& vl, num32& tp, num32& ch, num32& nm, num32& arrnm) {
@@ -62,7 +62,7 @@ namespace dvnci {
                 if (rslt3.size()==1)
                     if (!str_to<num32>(rslt3[0], nm)) return false;}
 
-            bool isreport = IN_REPORTSET(tgtype_);
+            bool isreport = IN_REPORTSET(tgtype());
             if (isreport) {
                 if (tp==LGKA_TYPEITEM_ARRAY) return false;
                 tp = LGKA_TYPEITEM_ARCHIVE;}
@@ -148,9 +148,9 @@ namespace dvnci {
 				size_t counter = 1;
                 for (parcel_iterator it = its; it!=bmap.left.end(); ++it) {
                     if ((it->first->devnum()!=its->first->devnum()) ||
-                            (it->first->type()!=its->first->type()) ||
-                            (it->first->type()==LGKA_TYPEITEM_ARCHIVE) ||
-                            ((it->first->type()==LGKA_TYPEITEM_ARRAY) && ((*(it->first))-(*(its->first))>blocksize)) ||
+                            (it->first->kind()!=its->first->kind()) ||
+                            (it->first->kind()==LGKA_TYPEITEM_ARCHIVE) ||
+                            ((it->first->kind()==LGKA_TYPEITEM_ARRAY) && ((*(it->first))-(*(its->first))>blocksize)) ||
                             (counter>blocksize) ||
                             (it->first->protocol()==LGKA_PROT_MEC)) {
                         counter = 1;
@@ -172,10 +172,10 @@ namespace dvnci {
             num32_dev_block_iterator it = mp.find(blk.begin()->first->devnum());
             if (it==mp.end()) {
                 dev_block tmp;
-                tmp.add(blk.begin()->first->type(), blk);
+                tmp.add(blk.begin()->first->kind(), blk);
                 mp.insert(num32_dev_block_pair(blk.begin()->first->devnum(), tmp));}
             else {
-                it->second.add(blk.begin()->first->type(), blk);}}
+                it->second.add(blk.begin()->first->kind(), blk);}}
 
         void lgk_block_generator::generate_by_transitmap(num32_dev_block_map& mp) {
             bool needfl = true;
