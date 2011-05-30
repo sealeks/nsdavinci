@@ -39,7 +39,7 @@ namespace dvnci {
             error(ERROR_BINDING);
             return false;}
 
-        bool lgk_req_parcel::conformaddr(const std::string& vl, num32& tp, num32& ch, num32& nm, num32& arrnm) {
+        bool lgk_req_parcel::conformaddr(const std::string& vl, parcelkind& tp, num32& ch, num32& nm, num32& arrnm) {
             size_= 1;
             boost::smatch rslt1;
             boost::regex rgx1("(?<=:I)[0-9]{1,3}");
@@ -62,7 +62,7 @@ namespace dvnci {
                 if (rslt3.size()==1)
                     if (!str_to<num32>(rslt3[0], nm)) return false;}
 
-            bool isreport = IN_REPORTSET(tgtype());
+            bool isreport = IN_REPORTSET(type());
             if (isreport) {
                 if (tp==LGKA_TYPEITEM_ARRAY) return false;
                 tp = LGKA_TYPEITEM_ARCHIVE;}
@@ -71,7 +71,7 @@ namespace dvnci {
 
         ////////////////////////////////////////////////////////////////////////
 
-        void lgk_block_generator::dev_block::add(num32 tp, const block& val) {
+        void lgk_block_model::dev_block::add(parcelkind tp, const block& val) {
 
             switch (tp) {
                 case LGKA_TYPEITEM_SMPL:{
@@ -87,7 +87,7 @@ namespace dvnci {
                     arr_fl = false;
                     break;}}}
 
-        bool lgk_block_generator::dev_block::next(block& vl, bool& lpready) {
+        bool lgk_block_model::dev_block::next(block& vl, bool& lpready) {
             switch (curtype()) {
                 case LGKA_TYPEITEM_SMPL:{
                     return next_templ(vl, smpl_fl, lpready, simpl, smpl_it);}
@@ -99,7 +99,7 @@ namespace dvnci {
                     return false;}}
             return false;}
 
-        bool lgk_block_generator::dev_block::next_templ(block& vl, bool& fl, bool& lpready, block_vector& vct, block_vector::const_iterator& it) {
+        bool lgk_block_model::dev_block::next_templ(block& vl, bool& fl, bool& lpready, block_vector& vct, block_vector::const_iterator& it) {
             if (vct.begin()==vct.end()) return false;
             if (it==vct.end()) {
                 fl = true;
@@ -110,7 +110,7 @@ namespace dvnci {
                 lpready = true;
             return true;};
 
-        num32   lgk_block_generator::dev_block::curtype(num32 lev) {
+        parcelkind   lgk_block_model::dev_block::curtype(parcelkind lev) {
             if (lev<3) {
                 switch (curtype_) {
                     case LGKA_TYPEITEM_SMPL:{
@@ -132,7 +132,7 @@ namespace dvnci {
                             return LGKA_TYPEITEM_ARRAY;}}}}
             return -1;}
 
-        void lgk_block_generator::generate_impl() {
+        void lgk_block_model::generate_impl() {
             parcel_iterator its = bmap.left.begin();
             if (its==bmap.left.end()) {
                 needgenerate = false;
@@ -145,7 +145,7 @@ namespace dvnci {
             if (its==bmap.left.end()) {
                 filltransitmap(transitmap, blkit);}
             else {
-				size_t counter = 1;
+		size_t counter = 1;
                 for (parcel_iterator it = its; it!=bmap.left.end(); ++it) {
                     if ((it->first->devnum()!=its->first->devnum()) ||
                             (it->first->kind()!=its->first->kind()) ||
@@ -168,7 +168,7 @@ namespace dvnci {
             generate_by_transitmap(transitmap);
             needgenerate = false;}
 
-        void lgk_block_generator::filltransitmap(num32_dev_block_map& mp, const block& blk) {
+        void lgk_block_model::filltransitmap(num32_dev_block_map& mp, const block& blk) {
             num32_dev_block_iterator it = mp.find(blk.begin()->first->devnum());
             if (it==mp.end()) {
                 dev_block tmp;
@@ -177,7 +177,7 @@ namespace dvnci {
             else {
                 it->second.add(blk.begin()->first->kind(), blk);}}
 
-        void lgk_block_generator::generate_by_transitmap(num32_dev_block_map& mp) {
+        void lgk_block_model::generate_by_transitmap(num32_dev_block_map& mp) {
             bool needfl = true;
             block blktmp;
             for (num32_dev_block_iterator it = mp.begin(); it!=mp.end(); ++it) {
