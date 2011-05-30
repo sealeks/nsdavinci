@@ -12,13 +12,13 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <itemPath>../../include_program/service_dvncilgk/iek1177_protocol.cpp</itemPath>
-    <itemPath>../../include_program/service_dvncilgk/iek1177_protocol.h</itemPath>
+    <itemPath>../../include/driverspec/iek1177_protocol.cpp</itemPath>
+    <itemPath>../../include/driverspec/iek1177_protocol.h</itemPath>
     <itemPath>../../include_program/service_dvncilgk/lgk_detail.cpp</itemPath>
     <itemPath>../../include_program/service_dvncilgk/lgk_detail.h</itemPath>
     <itemPath>../../include_program/service_dvncilgk/main.cpp</itemPath>
-    <itemPath>../../include_program/service_dvncilgk/mg_protocol.cpp</itemPath>
-    <itemPath>../../include_program/service_dvncilgk/mg_protocol.h</itemPath>
+    <itemPath>../../include/driverspec/spbmg_protocol.cpp</itemPath>
+    <itemPath>../../include/driverspec/spbmg_protocol.h</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
