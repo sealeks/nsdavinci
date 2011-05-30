@@ -9,10 +9,12 @@
 #define	_MAINWINDOW_H
 
 
-#include <kernel/memfile.h>
-#include <kernel/mainstruct.h>
-#include <kernel/systemutil.h>
 
+
+
+
+
+#include <kernel/constdef.h>
 #include <admin/factory.h>
 #include <admin/importutil.h>
 
