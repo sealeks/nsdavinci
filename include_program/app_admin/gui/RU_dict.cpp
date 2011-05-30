@@ -85,6 +85,8 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.1391", "Таймаут индикации"));
             map_.insert(wstringtranslate_pair("properties.1408", "Кодировка"));
             map_.insert(wstringtranslate_pair("properties.1536", "Мертвая зона%"));
+            map_.insert(wstringtranslate_pair("properties.912", "Масштабировать"));
+            map_.insert(wstringtranslate_pair("properties.4736", "Всегда активный"));            
             map_.insert(wstringtranslate_pair("properties.1792", "Единицы изм. min"));
             map_.insert(wstringtranslate_pair("properties.2048", "Единицы изм. max"));
             map_.insert(wstringtranslate_pair("properties.2304", "Единицы изм."));
@@ -96,8 +98,10 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.3073", "Уровень тревожности"));
             map_.insert(wstringtranslate_pair("properties.3328", "Аварийное сообщение"));
             map_.insert(wstringtranslate_pair("properties.3584", "Текст аварийного/тревожного сообщения"));
-            map_.insert(wstringtranslate_pair("properties.3840", "Граничное значение тревожности"));
+            map_.insert(wstringtranslate_pair("properties.3840", "Значение тревожности"));
+            map_.insert(wstringtranslate_pair("properties.3841", "Значение тревожности"));
             map_.insert(wstringtranslate_pair("properties.4096", "Условие тревожности"));
+            map_.insert(wstringtranslate_pair("properties.4097", "Условие тревожности"));
             map_.insert(wstringtranslate_pair("properties.4352", "Архивирование"));
             map_.insert(wstringtranslate_pair("properties.4608", "Мертвая зона архивирования"));
             map_.insert(wstringtranslate_pair("properties.4704", "Уровень доступа"));
@@ -153,8 +157,12 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.21760", "Имя списка"));
             map_.insert(wstringtranslate_pair("AlarmCase.0", ">"));
             map_.insert(wstringtranslate_pair("AlarmCase.1", "<"));
-            map_.insert(wstringtranslate_pair("AlarmCase.2", "="));
+            map_.insert(wstringtranslate_pair("AlarmCase.2", "=="));
             map_.insert(wstringtranslate_pair("AlarmCase.", ""));
+            map_.insert(wstringtranslate_pair("AlarmCaseBool.0", "!="));
+            map_.insert(wstringtranslate_pair("AlarmCaseBool.1", "!="));
+            map_.insert(wstringtranslate_pair("AlarmCaseBool.2", "=="));
+            map_.insert(wstringtranslate_pair("AlarmCaseBool.", ""));
             map_.insert(wstringtranslate_pair("AlarmLevel.0", ""));
             map_.insert(wstringtranslate_pair("AlarmLevel.1", "Уведомление"));
             map_.insert(wstringtranslate_pair("AlarmLevel.2", "Тревога"));
