@@ -28,7 +28,7 @@ namespace dvnci {
             form_setvalue();
             virtual ~form_setvalue();
 
-            bool execs(indx key, std::string& val,  int& oper);
+            bool execs(indx key, std::string& val, guiaction& oper);
             void setstate(int operation_);
 
         public slots:

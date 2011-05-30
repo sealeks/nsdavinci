@@ -26,7 +26,6 @@ namespace dvnci {
 
             if (iconinit) return;
             nillIcon = new QIcon(":icon/icon/PrjSome.bmp");
-            ;
             filterIcon = new QIcon(":icon/icon/filter.bmp");
             iconmap.insert(icon_pair(nodeinfotype(NT_ROOT),  QIcon(":icon/icon/ntmainRoot.bmp")));
             iconmap.insert(icon_pair(nodeinfotype(NT_ROOT_SERVERS_NOTAVAIL), QIcon(":icon/icon/ntLocalServNA.bmp")));
@@ -100,26 +99,26 @@ namespace dvnci {
             iconmap.insert(icon_pair(nodeinfotype(NT_GROUP, NS_GROUP_LGKA), QIcon(":icon/icon/ntOLogika.bmp")));
 
 
-            iconmap.insert(icon_pair(NT_ATAG, QIcon(":icon/icon/ntTT.bmp")));
-            iconmap.insert(icon_pair(NT_MF_ROOT, QIcon(":icon/icon/cdtmeta.bmp")));
-            iconmap.insert(icon_pair(NT_MF_HOME, QIcon(":icon/icon/cdtHomeList.bmp")));
-            iconmap.insert(icon_pair(NT_MF_REPLIST, QIcon(":icon/icon/cdtReportList.bmp")));
-            iconmap.insert(icon_pair(NT_MF_TRENDLIST, QIcon(":icon/icon/cdtTrendList.bmp")));
-            iconmap.insert(icon_pair(NT_MF_MESSLIST, QIcon(":icon/icon/cdtMessageList.bmp")));
-            iconmap.insert(icon_pair(NT_MF_REPHEADER, QIcon(":icon/icon/cdtReportHeader.bmp")));
-            iconmap.insert(icon_pair(NT_MF_TRENDHEADER, QIcon(":icon/icon/cdtTrendHeader.bmp")));
-            iconmap.insert(icon_pair(NT_MF_MESSHEADER, QIcon(":icon/icon/cdtMessageHeader.bmp")));
-            iconmap.insert(icon_pair(NT_MF_REPARR, QIcon(":icon/icon/cdtReportArr.bmp")));
-            iconmap.insert(icon_pair(NT_MF_TRENDARR, QIcon(":icon/icon/cdtTrendArr.bmp")));
-            iconmap.insert(icon_pair(NT_MF_MESSARR, QIcon(":icon/icon/cdtMessageArr.bmp")));
-            iconmap.insert(icon_pair(NT_MF_UNIT, QIcon(":icon/icon/cdtunit.bmp")));
-            iconmap.insert(icon_pair(NT_MF_TREND, QIcon(":icon/icon/cdttrend.bmp")));
-            iconmap.insert(icon_pair(NT_MF_MESSAGE, QIcon(":icon/icon/cdtmsgtag.bmp")));
-            iconmap.insert(icon_pair(NT_UTIL_JOURNAL, QIcon(":icon/icon/ntAlarmTable.bmp")));
-            iconmap.insert(icon_pair(NT_UTIL_ALARM, QIcon(":icon/icon/ntActiveAlarmTable.bmp")));
-            iconmap.insert(icon_pair(NT_UTIL_FINDER, QIcon(":icon/icon/ntFinder.bmp")));
-            iconmap.insert(icon_pair(NT_UTIL_ACCESSRULES, QIcon(":icon/icon/ntAccessRules.bmp")));
-            iconmap.insert(icon_pair(NT_UTIL_CLIENTS, QIcon(":icon/icon/ntClients.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_ATAG, 0), QIcon(":icon/icon/ntTT.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_ROOT, 0), QIcon(":icon/icon/cdtmeta.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_HOME, 0), QIcon(":icon/icon/cdtHomeList.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_REPLIST, 0), QIcon(":icon/icon/cdtReportList.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_TRENDLIST, 0), QIcon(":icon/icon/cdtTrendList.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_MESSLIST, 0), QIcon(":icon/icon/cdtMessageList.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_REPHEADER, 0), QIcon(":icon/icon/cdtReportHeader.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_TRENDHEADER, 0), QIcon(":icon/icon/cdtTrendHeader.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_MESSHEADER, 0), QIcon(":icon/icon/cdtMessageHeader.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_REPARR, 0), QIcon(":icon/icon/cdtReportArr.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_TRENDARR, 0), QIcon(":icon/icon/cdtTrendArr.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_MESSARR, 0), QIcon(":icon/icon/cdtMessageArr.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_UNIT, 0), QIcon(":icon/icon/cdtunit.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_TREND, 0), QIcon(":icon/icon/cdttrend.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_MF_MESSAGE, 0), QIcon(":icon/icon/cdtmsgtag.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_UTIL_JOURNAL, 0), QIcon(":icon/icon/ntAlarmTable.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_UTIL_ALARM, 0), QIcon(":icon/icon/ntActiveAlarmTable.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_UTIL_FINDER, 0), QIcon(":icon/icon/ntFinder.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_UTIL_ACCESSRULES, 0), QIcon(":icon/icon/ntAccessRules.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_UTIL_CLIENTS, 0), QIcon(":icon/icon/ntClients.bmp")));
 
             rangmap.insert(noderang_pair(NT_ROOT,                   RANG_NODE_TYPE_0));
             rangmap.insert(noderang_pair(NT_ROOT_SERVERS_NOTAVAIL_R, RANG_NODE_TYPE_0));

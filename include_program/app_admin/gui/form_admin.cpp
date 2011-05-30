@@ -30,34 +30,34 @@ namespace dvnci {
 
         void registmainicon(icon_map* icons) {
             try {
-                icons->insert(icon_pair(NT_VIS_CASCADE,  QIcon(":icon/icon/cascadkind.png")));
-                icons->insert(icon_pair(NT_VIS_LINE, QIcon(":icon/icon/linekind.png")));
-                icons->insert(icon_pair(ACTION_ADDSERVER,  QIcon(":icon/icon/addserver.png")));
-                icons->insert(icon_pair(ACTION_REMOVESERVER, QIcon(":icon/icon/removeserver.png")));
-                icons->insert(icon_pair(ACTION_CONNECTSERVER, QIcon(":icon/icon/connectserver.png")));
-                icons->insert(icon_pair(ACTION_DISCONNECTSERVER, QIcon(":icon/icon/connectserver.png")));
-                icons->insert(icon_pair(ACTION_UNMAAPPROJECT, QIcon(":icon/icon/unmaproject.png")));
-                icons->insert(icon_pair(ACTION_MAPPROJECT, QIcon(":icon/icon/maproject.png")));
-                icons->insert(icon_pair(ACTION_NEWPROJECT, QIcon(":icon/icon/newproject.png")));
-                icons->insert(icon_pair(ACTION_SETFILTERED, QIcon(":icon/icon/addfilter.png")));
-                icons->insert(icon_pair(ACTION_SETFILTERED_ON, QIcon(":icon/icon/addfilter.png")));
-                icons->insert(icon_pair(ACTION_SETFILTERED_OFF, QIcon(":icon/icon/removefilter.png")));
+                icons->insert(icon_pair(nodeinfotype(NT_VIS_CASCADE, 0),  QIcon(":icon/icon/cascadkind.png")));
+                icons->insert(icon_pair(nodeinfotype(NT_VIS_LINE, 0), QIcon(":icon/icon/linekind.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_ADDSERVER, 0),  QIcon(":icon/icon/addserver.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_REMOVESERVER, 0), QIcon(":icon/icon/removeserver.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_CONNECTSERVER, 0), QIcon(":icon/icon/connectserver.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_DISCONNECTSERVER, 0), QIcon(":icon/icon/connectserver.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_UNMAAPPROJECT, 0), QIcon(":icon/icon/unmaproject.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_MAPPROJECT, 0), QIcon(":icon/icon/maproject.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_NEWPROJECT, 0), QIcon(":icon/icon/newproject.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_SETFILTERED, 0), QIcon(":icon/icon/addfilter.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_SETFILTERED_ON, 0), QIcon(":icon/icon/addfilter.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_SETFILTERED_OFF, 0), QIcon(":icon/icon/removefilter.png")));
 
-                icons->insert(icon_pair(ACTION_IMPORT, QIcon(":icon/icon/import.png")));
-                icons->insert(icon_pair(ACTION_EXPORT, QIcon(":icon/icon/export.png")));
-                icons->insert(icon_pair(ACTION_CREATEITEM, QIcon(":icon/icon/new.png")));
-                icons->insert(icon_pair(ACTION_DELETEITEM, QIcon(":icon/icon/delete.png")));
-                icons->insert(icon_pair(ACTION_CHANGEGROUP, QIcon(":icon/icon/changegroup.png")));
-                icons->insert(icon_pair(ACTION_CHANGEALARMGROUP, QIcon(":icon/icon/changeagroup.png")));
-                icons->insert(icon_pair(ACTION_DUPLICATEITEM, QIcon(":icon/icon/operation_clone.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_IMPORT, 0), QIcon(":icon/icon/import.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_EXPORT, 0), QIcon(":icon/icon/export.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_CREATEITEM, 0), QIcon(":icon/icon/new.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_DELETEITEM, 0), QIcon(":icon/icon/delete.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_CHANGEGROUP, 0), QIcon(":icon/icon/changegroup.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_CHANGEALARMGROUP, 0), QIcon(":icon/icon/changeagroup.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_DUPLICATEITEM, 0), QIcon(":icon/icon/operation_clone.png")));
 
-                icons->insert(icon_pair(ACTION_ERRORITEM, QIcon(":icon/icon/erroritem.png")));
-                icons->insert(icon_pair(ACTION_OKITEM, QIcon(":icon/icon/okitem.png")));
-                icons->insert(icon_pair(ACTION_LOGSCREANALL, QIcon(":icon/icon/logscreanall.png")));
-                icons->insert(icon_pair(ACTION_LOGSCREANERROR, QIcon(":icon/icon/logscreanerror.png")));
-                icons->insert(icon_pair(ACTION_LOGSCREANCLEAR, QIcon(":icon/icon/logscreanclear.png")));
-                icons->insert(icon_pair(ACTION_SET_STARTSERVICE, QIcon(":icon/icon/startservice.png")));
-                icons->insert(icon_pair(ACTION_SET_STOPSERVICE, QIcon(":icon/icon/stopservice.png")));}
+                icons->insert(icon_pair(nodeinfotype(ACTION_ERRORITEM, 0), QIcon(":icon/icon/erroritem.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_OKITEM, 0), QIcon(":icon/icon/okitem.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_LOGSCREANALL, 0), QIcon(":icon/icon/logscreanall.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_LOGSCREANERROR, 0), QIcon(":icon/icon/logscreanerror.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_LOGSCREANCLEAR, 0), QIcon(":icon/icon/logscreanclear.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_SET_STARTSERVICE, 0), QIcon(":icon/icon/startservice.png")));
+                icons->insert(icon_pair(nodeinfotype(ACTION_SET_STOPSERVICE, 0), QIcon(":icon/icon/stopservice.png")));}
             catch (...) {}}
 
         std::string namebynodetp(nodetype val) {
@@ -300,14 +300,14 @@ namespace dvnci {
             if (it != mediators->end()) mediator(it->second.get());}
 
         void form_admin::registicon(int tp, QIcon& icn) {
-            icons->insert(icon_pair((0xFFFF & tp), icn));}
+            icons->insert(icon_pair(nodeinfotype((0xFFFF & tp), 0), icn));}
 
         void form_admin::registicon(int* tp, size_t cnt, QIcon& icn) {
             for (size_t i = 0; i < cnt; i++) {
                 registicon(*tp, icn);}}
 
         QIcon form_admin::getIcon(int tp) {
-            icon_map::iterator it = icons->find(tp);
+            icon_map::iterator it = icons->find(nodeinfotype((onum)tp,0));
 
             if (it != icons->end()) {
                 return  it->second ;}
@@ -671,7 +671,7 @@ namespace dvnci {
                                 while (it1 != tmpintf->groupsmap().end()) {
 
                                     QAction* tmpchangegroup_menu = new QAction(qtstr_translate(QString::fromStdString(it1->second.name().c_str())), changegroup_menu);
-                                    tmpchangegroup_menu->setIcon(uiwidgetitem::icon(NT_GROUP));
+                                    tmpchangegroup_menu->setIcon(uiwidgetitem::icon(nodeinfotype(NT_GROUP,0)));
                                     tmpchangegroup_menu->setData(static_cast<int>(it1->first));
                                     changegroup_menu->addAction(tmpchangegroup_menu);
                                     tmpchangegroup_menu->setVisible(true);
@@ -685,7 +685,7 @@ namespace dvnci {
                                 while (it1 != tmpintf->agroupsmap().end()) {
 
                                     QAction* tmpchangeagroup_menu = new QAction(qtstr_translate(QString::fromStdString(it1->second.name().c_str())), changeagroup_menu);
-                                    tmpchangeagroup_menu->setIcon(uiwidgetitem::icon(NT_AGROUP));
+                                    tmpchangeagroup_menu->setIcon(uiwidgetitem::icon(nodeinfotype(NT_AGROUP,0)));
                                     changeagroup_menu->addAction(tmpchangeagroup_menu);
                                     tmpchangeagroup_menu->setData(static_cast<int>(it1->first));
                                     tmpchangeagroup_menu->setVisible(true);

@@ -31,7 +31,7 @@ namespace dvnci {
 
         form_setvalue::~form_setvalue() {}
 
-        bool form_setvalue::execs(indx key, std::string& val,  int& oper) {
+        bool form_setvalue::execs(indx key, std::string& val,  guiaction& oper) {
             setstate(oper);
             exec();
             bool result_ = (QDialog::Accepted == result());
