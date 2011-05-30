@@ -32,7 +32,7 @@ namespace dvnci {
             bool conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr = 1);
 
             bool checktagtype() {
-                if ((IN_REPORTSET(tgtype_)) || (IN_EVENTSET(tgtype_))) {
+                if ((IN_REPORTSET(type())) || (IN_EVENTSET(type()))) {
                     error(ERROR_TYPENOPROCCESS);
                     return false;}
                 return true;}} ;
@@ -44,11 +44,11 @@ namespace dvnci {
 
 
 
-        class modbus_block_generator : public base_block_generator<modbus_req_parcel> {
+        class modbus_block_model : public base_block_model<modbus_req_parcel> {
         public:
 
-            modbus_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_generator<modbus_req_parcel>(exectr, inf, mlnk) {
+            modbus_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
+            base_block_model<modbus_req_parcel>(exectr, inf, mlnk) {
                 blocksize = ((mlnk.protocol() == NT_MODBUS_ASCII) && (mlnk.chanaltype() != NT_CHTP_TCP_IP)) ?
                         in_bounded<size_t > (8, MAX_MODBUS_BLOCK_SIZE / 2, static_cast<size_t> (mlnk.blocksize())) :
                         in_bounded<size_t > (8, MAX_MODBUS_BLOCK_SIZE, static_cast<size_t> (mlnk.blocksize()));};} ;
