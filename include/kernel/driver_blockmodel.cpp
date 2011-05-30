@@ -11,41 +11,41 @@ namespace dvnci {
     namespace driver {
 
         basis_req_parcel::basis_req_parcel(std::string vl , tagtype tgtp , const metalink& mlnk) :
-        iscorrect_(false), devnum_(0), type_(tgtp), chanel_(0), addr_(0), tp_(0), specificator_(0), size_(0),
-        protocol_(0), tgtype_(tgtp), isvalue_(false), value_(0) {
+        iscorrect_(false), devnum_(0), kind_(0), chanel_(0), addr_(0), indx_(0), size_(0), type_(tgtp), protocol_(0), isbcd_(false),
+        isvalue_(false), value_(0) {
             chanel_ = mlnk.chanaltype();
             devnum_ = mlnk.devicenum();
             protocol_ = mlnk.protocol();};
 
         bool  basis_req_parcel::operator==(const basis_req_parcel& rs) const  {
             if (devnum() != rs.devnum()) return false;
-            if (type() != rs.type()) return false;
+            if (kind() != rs.kind()) return false;
             if (chanel() != rs.chanel()) return false;
             if (addr() != rs.addr()) return false;
-            if (tp() != rs.tp()) return false;
+            if (indx() != rs.indx()) return false;
             if (size() != rs.size()) return false;
             return true;};
 
         bool  basis_req_parcel::operator<(const basis_req_parcel& rs) const {
             if (devnum() != rs.devnum()) return (devnum() < rs.devnum());
-            if (type() != rs.type()) return (type() < rs.type());
+            if (kind() != rs.kind()) return (kind() < rs.kind());
             if (chanel() != rs.chanel()) return (chanel() < rs.chanel());
             if (addr() != rs.addr()) return (addr() < rs.addr());
-            if (tp() != rs.tp()) return (tp() < rs.tp());
+            if (indx() != rs.indx()) return (indx() < rs.indx());
             if (size() != rs.size()) return (size() < rs.size());
             return false;}
         
         
         
 
-        std::string basis_req_parcel::to_str() {
+        std::string basis_req_parcel::to_string() {
             return num64_and_type_cast<std::string>(value_.value64(), value_.type() );};
             
             
 
         template<>
         void basis_req_parcel::value_cast<double>(double val, const datetime& tm, vlvtype valid) {
-            if (IN_SMPLSET(tgtype_)) {
+            if (IN_SMPLSET(type())) {
                 value_ = short_value(val);
                 value_.time(tm);
                 value_.valid(valid);
@@ -56,7 +56,7 @@ namespace dvnci {
 
         template<>
         void basis_req_parcel::value_cast<float>(float val, const datetime& tm, vlvtype valid) {
-            if (IN_SMPLSET(tgtype_)) {
+            if (IN_SMPLSET(type())) {
                 value_ = short_value(val);
                 value_.time(tm);
                 value_.valid(valid);
@@ -68,7 +68,7 @@ namespace dvnci {
 
         template<>
         void basis_req_parcel::value_cast<std::string>(std::string val, const datetime& tm, vlvtype valid) {
-            if (IN_SMPLSET(tgtype_)) {
+            if (IN_SMPLSET(type())) {
                 value_ = short_value(val);
                 value_.time(tm);
                 value_.valid(valid);
@@ -78,8 +78,8 @@ namespace dvnci {
                 error(ERROR_IO_DATA_CONV);}}
         
         void basis_req_parcel::value_byte_seq(const std::string& val, const datetime& tm, vlvtype valid) {
-                if (IN_SMPLSET(tgtype_)) {
-                switch (tgtype_) {
+                if (IN_SMPLSET(type())) {
+                switch (type()) {
                     case TYPE_NUM64:{
                         num64 tmp = 0;
                         if (string_to_primtype<num64 > (val, tmp)){ 
@@ -150,14 +150,18 @@ namespace dvnci {
         short_value basis_req_parcel::value() const {
             isvalue_ = false;
             return value_;}
-        
-        
-        
-        
 
-        void basis_req_parcel::value(const short_value& val) {
-            isvalue_ = !val.error();
-            value_ = val;}
+
+        void basis_req_parcel::value(const short_value& vl) {    
+	    if (is_bcd()) {
+                short_value tmp= vl;
+		tmp.covert_to_bcd();
+                value_ = tmp;
+                isvalue_ = !tmp.error();
+                return;}
+            else{
+                value_ = vl;
+                isvalue_ = !vl.error();}}
 
         void  basis_req_parcel::value_event(const datetime& dt, double vl, ns_error err) {
             eventvalue_.reset();
@@ -196,7 +200,8 @@ namespace dvnci {
             return  (reportrange_) ? *reportrange_ : std::make_pair(nill_time, nill_time);}
 
         size_t  calculate_blocksize(parcel_ptr msblk, parcel_ptr lsblk) {
-            return ((*msblk)-(*lsblk)) == MAXDISTANSE ? MAXDISTANSE : std::max<size_t > (((*msblk)-(*lsblk)) + msblk->size(), lsblk->size());}
+            return ((*msblk)-(*lsblk)) == BLOCKMAXDISTANCE ? 
+                BLOCKMAXDISTANCE : std::max<size_t > (((*msblk)-(*lsblk)) + msblk->size(), lsblk->size());}
         
         
 
@@ -229,7 +234,7 @@ namespace dvnci {
         /*Базовый класс генератора блока опроса*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        bool abstract_block_generator::next(block& blk) {
+        bool abstract_block_model::next(block& blk) {
             if (needgenerate) {
                 currentblockiteator = begin();}
             if (blocks.empty()) return false;
@@ -244,7 +249,7 @@ namespace dvnci {
             currentblockiteator++;
             return false;}
 
-        bool abstract_block_generator::command(commands_vect& cmdvect) {
+        bool abstract_block_model::command(commands_vect& cmdvect) {
             command_vector cmds;
             cmdvect.clear();
             intf->select_commands(cmds, executr->groupset());
@@ -257,7 +262,7 @@ namespace dvnci {
                 return (!cmdvect.empty());}
             return false;}
 
-        void abstract_block_generator::ok(block& blk) {
+        void abstract_block_model::ok(block& blk) {
             if (currentblockiteator != end()) currentblockiteator->set_ok();
             currentblockiteator++;
             parcel_iterator endit = blk.end();
@@ -265,7 +270,7 @@ namespace dvnci {
             for (parcel_iterator it = blk.begin(); it != endit; ++it) {
                 if (it->first->isvalue()) {
                     if (!it->first->error()) {
-                        switch (SUPER_TYPE(it->first->tgtype())) {
+                        switch (SUPER_TYPE(it->first->type())) {
                             case TYPE_EVENT:{
                                 executr->write_val_event(it->second, it->first->value_event());
                                 break;}
@@ -277,7 +282,7 @@ namespace dvnci {
                 if (it->first->error()) {
                     executr->error(it->second, it->first->error());}}}
 
-        bool abstract_block_generator::check_parcel_active(parcel_iterator& prsl) {
+        bool abstract_block_model::check_parcel_active(parcel_iterator& prsl) {
             if (IN_REPORTSET(intf->type(prsl->second))) {
                 if (executr->requested(prsl->second)) {
                     datetime tmpstart = intf->time_log(prsl->second);
@@ -288,7 +293,7 @@ namespace dvnci {
                 else return false;}
             return executr->requested(prsl->second);}
 
-        bool abstract_block_generator::check_block_active(block& blk, parcel_iterator& bgn, parcel_iterator& ed) {
+        bool abstract_block_model::check_block_active(block& blk, parcel_iterator& bgn, parcel_iterator& ed) {
             if (!intf) return false;
             executr->push_all_report();
             parcel_iterator strt = blk.begin();;
