@@ -39,15 +39,15 @@ namespace dvnci {
 
             virtual size_t operator-(const basis_req_parcel & rs) const  {
                 if (kind() == LGKA_TYPEITEM_ARRAY)
-                    return (rs.addr() == addr()) ? dvnci::abs<size_t > (rs.indx() - indx()) : MAXDISTANSE;
-                return MAXDISTANSE;};
+                    return (rs.addr() == addr()) ? dvnci::abs<size_t > (rs.indx() - indx()) : BLOCKMAXDISTANCE;
+                return BLOCKMAXDISTANCE;};
 
             bool parse(std::string vl);
 
-            bool conformaddr(const std::string& vl, num32& tp, num32& ch, num32& nm, num32 & arrnm);
+            bool conformaddr(const std::string& vl, parcelkind& tp, num32& ch, num32& nm, num32 & arrnm);
 
             bool checktagtype() {
-                if (IN_EVENTSET(tgtype())) {
+                if (IN_EVENTSET(type())) {
                     error(ERROR_TYPENOPROCCESS);
                     return false;}
                 return true;}} ;
@@ -56,15 +56,15 @@ namespace dvnci {
        /*????????? ????? LGK*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class lgk_block_generator : public base_block_generator<lgk_req_parcel> {
+        class lgk_block_model : public base_block_model<lgk_req_parcel> {
         public:
 
-            typedef abstract_block_generator::block                            block;
-            typedef abstract_block_generator::block_vector                     block_vector;
-            typedef abstract_block_generator::parcel_iterator                  parcel_iterator;
+            typedef abstract_block_model::block                            block;
+            typedef abstract_block_model::block_vector                     block_vector;
+            typedef abstract_block_model::parcel_iterator                  parcel_iterator;
 
-            lgk_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_generator<lgk_req_parcel>(exectr, inf, mlnk) {
+            lgk_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
+            base_block_model<lgk_req_parcel>(exectr, inf, mlnk) {
                 protocol = (mlnk.protocol() != LGKA_PROT_MEC) ? LGKA_PROT_SP : LGKA_PROT_MEC;
                 blocksize = (protocol == LGKA_PROT_MEC) ? 1 : in_bounded<size_t > (1, 30, mlnk.blocksize());
                 archblocksize  = (protocol == LGKA_PROT_MEC) ? 1 : in_bounded<num32 > (1, 30, mlnk.archblocksize());}
@@ -79,20 +79,20 @@ namespace dvnci {
                     smpl_it = simpl.begin() ;
                     arch_it = arch.begin();
                     arr_it = arr.begin();}
-                void add(num32 tp, const block & val);
+                void add(parcelkind tp, const block & val);
                 bool next(block& vl, bool& lpready);
 
             private:
 
                 bool loop_is_ready() {
-                    return ((smpl_fl) && (arr_fl) && (arch_fl));}
-                bool next_templ(block& vl, bool& fl, bool& lpready, block_vector& vct, block_vector::const_iterator & it);
-                num32   curtype(num32 lev = 0);
+                           return ((smpl_fl) && (arr_fl) && (arch_fl));}
+                bool        next_templ(block& vl, bool& fl, bool& lpready, block_vector& vct, block_vector::const_iterator & it);
+                parcelkind  curtype(parcelkind lev = 0);
 
                 block_vector                  simpl, arch, arr;
                 block_vector::const_iterator  smpl_it, arr_it, arch_it;
                 bool                          smpl_fl, arr_fl, arch_fl;
-                num32                         curtype_;} ;
+                parcelkind                    curtype_;} ;
 
             typedef std::pair<num32 , dev_block>                                    num32_dev_block_pair;
             typedef std::map< num32, dev_block , std::less<num32>,

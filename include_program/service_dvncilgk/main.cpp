@@ -24,7 +24,7 @@ std::string                   dvnci::dvnciservicename=NS_MODBUS_SERVICE_NAME;
 fspath                        basepath;
 
 
-typedef device_link_executor <lgk_device_service, lgk_block_generator, lgk_metalink_checker  >    lgk_executor;
+typedef device_link_executor <lgk_device_service, lgk_block_model, lgk_metalink_checker  >        lgk_executor;
 typedef group_proccessor_templ< lgk_executor, TYPE_SIMPL | TYPE_REPORT >                          grouplgk;
 
 class modbus_service : public linkdriverservice<grouplgk> {
