@@ -429,11 +429,11 @@ namespace dvnci {
             virtual num32  devnum()    const           {
                 return exists() ? gets()->devnum() : 0;};
 
-            virtual void   protocol(num32 val)            {
+            virtual void   protocol(protocoltype val)            {
                 gets()->protocol(val);
                 in_cangeset(MASK_GR_CHANGE_DEVNUM);};
 
-            virtual num32  protocol()   const             {
+            virtual protocoltype  protocol()   const             {
                 return exists() ? gets()->protocol() : 0;};
 
             virtual void   config(void* val)               {

@@ -418,12 +418,11 @@ namespace dvnci {
             PROPERTY_MAXCONT_TAG, PROPERTY_UEMIN_TAG,    PROPERTY_UEMAX_TAG,    PROPERTY_UETEXT_TAG, PROPERTY_ALARMVAL_TAG,
             PROPERTY_ALARMCASE_TAG};
             REMOVE_PROPERTYS(propdel);
-            propidtype propadd[] = {PROPERTY_ALARMVALBOOL_TAG, PROPERTY_ALARMCASEBOOL_TAG};
+            propidtype propadd[] = {PROPERTY_ALARMVALBOOL_TAG};
             ADD_PROPERTYS(propadd);}
         
         void basebooltagwraper::addproprtyeditors_internal(abstractpropertymanager* mangr) {
-            mangr->registpropertyeditor(PROPERTY_ALARMVALBOOL_TAG, &boolPrEdit);
-            mangr->registpropertyeditor(PROPERTY_ALARMCASEBOOL_TAG, &acaseboolPrEdit);}
+            mangr->registpropertyeditor(PROPERTY_ALARMVALBOOL_TAG, &boolPrEdit);}
         
         void basebooltagwraper::setProperty(indx id, propidtype prop, string val) {
 
@@ -431,18 +430,13 @@ namespace dvnci {
                 case PROPERTY_ALARMVALBOOL_TAG:{
                     int val_ = 0;
                     if (str_to(val, val_))_interface->tag(id).alarmconst(val_ ? "1" : "0") ;
-                    break;};
-                PROPERTY_ALARMCASEBOOL_TAG:{
-                    int val_ = 0;
-                    if (str_to(val, val_))_interface->tag(id).alarmcase(val_) ;
-                    break;}    
+                    break;};    
                 default: basetagwraper::setProperty(id, prop, val);}}
 
         std::string basebooltagwraper::getProperty(indx id, propidtype prop) {
 
             switch (prop) {
                 case PROPERTY_ALARMVALBOOL_TAG:    return  to_str(_interface->tag(id).alarmconst());
-                case PROPERTY_ALARMCASEBOOL_TAG:   return  to_str(_interface->tag(id).alarmcase());
                 default: return basetagwraper::getProperty(id, prop);}}
         
 
