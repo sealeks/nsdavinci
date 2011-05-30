@@ -224,10 +224,18 @@ namespace dvnci {
 
             virtual void         alwactive(bool val)      {
                 if (exists()) gets()->alwactive(val);
-                in_cangeset(MASK_RT_CHANGE_alwactive);};
+                in_cangeset(MASK_RT_CHANGE_ALWACTIVE);};
 
             virtual bool         alwactive()  const        {
-                return exists() ? gets()->alwactive() : 0;};
+                return exists() ? gets()->alwactive() : false;};
+                
+            virtual void         rangable(bool val)      {
+                //if (exists()) gets()->rangable(val);
+                in_cangeset(MASK_RT_CHANGE_MINRAW);
+                in_cangeset(MASK_RT_CHANGE_MAXRAW);};
+
+            virtual bool         rangable()  const        {
+                return exists() ? gets()->rangable() : false;};                
 
             virtual ns_error     error() const           {
                 return exists() ? gets()->error() : 0;};

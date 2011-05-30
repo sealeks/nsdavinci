@@ -200,7 +200,13 @@ namespace dvnci {
                 if (exists()) intf->alwactive(key_, val);};
 
             virtual bool   alwactive() const {
-                return exists() ? intf->alwactive(key_) : 0;};
+                return exists() ? intf->alwactive(key_) : false;};
+                
+            virtual void   rangable(bool val) {
+                if (exists()) intf->rangable(key_, val);};
+                
+            virtual bool   rangable() const {
+                return exists() ? intf->rangable(key_) : false;};
 
             virtual ns_error  error() const {
                 return exists() ? intf->error(key_) : 0;};

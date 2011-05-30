@@ -37,9 +37,21 @@ namespace dvnci {
             registwraper( TYPE_FLOAT , NT_TAG, new basenumerictagwraper());
             registwraper( TYPE_DOUBLE , NT_TAG, new basenumerictagwraper());
             
+            registwraper( TYPE_TEXT , NT_TAG, new texttagwraper());
+            registwraper( TYPE_TIME , NT_TAG, new timetagwraper());
             registwraper( EVENT_TYPE_WITHTIME , NT_TAG, new eventtagwraper());
 
-
+            registwraper( NS_GROUP_SYSTEMREPORT, REPORTTYPE_YEAR , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_MIN , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_HOUR , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_DEC , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_DAY , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_MONTH , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_10MIN , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_30MIN , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_QVART , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_CUSTOM , NT_TAG, new basereportcnttagwraper());
+            registwraper( NS_GROUP_SYSTEMREPORT,  REPORTTYPE_NONE , NT_TAG, new basereportcnttagwraper());
 
 
             registwraper( NT_SERVICE, new nillwraper());

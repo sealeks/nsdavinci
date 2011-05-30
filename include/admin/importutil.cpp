@@ -161,19 +161,19 @@ void xml_loadtags(pugi::xml_node& val, base_data& base){
                 tmpstruct.offmsg=(getchildval(tmp, "offmsgtext", it)) ? tmp : "";
                 tmpstruct.onmsg=(getchildval(tmp, "onmsgtext", it)) ? tmp : "";
                 ((tagstruct*)&tmpstruct.tginfo)->type((getchildval(tmp, "type", it)) ? str_to<int>(tmp,0) : 0);
-                ((tagstruct*)&tmpstruct.tginfo)->minraw(getchildval(tmp, "minraw", it) ? strcomma_to_dot(tmp): "0");
-                ((tagstruct*)&tmpstruct.tginfo)->maxraw(getchildval(tmp, "maxraw", it) ? strcomma_to_dot(tmp): "0");
-                ((tagstruct*)&tmpstruct.tginfo)->mineu(getchildval(tmp, "mineu", it) ? strcomma_to_dot(tmp): "0");
-                ((tagstruct*)&tmpstruct.tginfo)->maxeu(getchildval(tmp, "maxeu", it) ? strcomma_to_dot(tmp): "0");
-                ((tagstruct*)&tmpstruct.tginfo)->logdb(str_to<double>(getchildval(tmp, "db", it) ? strcomma_to_dot(tmp): "0"));
-                ((tagstruct*)&tmpstruct.tginfo)->devdb(str_to<double>(getchildval(tmp, "devdb", it) ? strcomma_to_dot(tmp): "0"));
+                ((tagstruct*)&tmpstruct.tginfo)->minraw(getchildval(tmp, "minraw", it) ? comma_to_point_copy(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->maxraw(getchildval(tmp, "maxraw", it) ? comma_to_point_copy(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->mineu(getchildval(tmp, "mineu", it) ? comma_to_point_copy(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->maxeu(getchildval(tmp, "maxeu", it) ? comma_to_point_copy(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->logdb(str_to<double>(getchildval(tmp, "db", it) ? comma_to_point_copy(tmp): "0"));
+                ((tagstruct*)&tmpstruct.tginfo)->devdb(str_to<double>(getchildval(tmp, "devdb", it) ? comma_to_point_copy(tmp): "0"));
                 ((tagstruct*)&tmpstruct.tginfo)->alarmlevel((getchildval(tmp, "alarmlevel", it)) ?    str_to<int>(tmp,0) : 0);
 
                 ((tagstruct*)&tmpstruct.tginfo)->logged(((getchildval(tmp, "log", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
                 ((tagstruct*)&tmpstruct.tginfo)->onmsged(((getchildval(tmp, "onmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
                 ((tagstruct*)&tmpstruct.tginfo)->offmsged(((getchildval(tmp, "offmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
                 ((tagstruct*)&tmpstruct.tginfo)->alarmcase((getchildval(tmp, "alarmcase", it)) ? str_to<int>(tmp, 0) : 0);
-                ((tagstruct*)&tmpstruct.tginfo)->alarmconstr(getchildval(tmp, "alarmconst", it) ? strcomma_to_dot(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->alarmconstr(getchildval(tmp, "alarmconst", it) ? comma_to_point_copy(tmp): "0");
                 ((tagstruct*)&tmpstruct.tginfo)->rwtype((getchildval(tmp, "rw", it)) ? str_to<int>(tmp, 0) : 0);
                 tmpstruct.changeset=MASK_RT_EXPORT1;
                 base.tags.push_back(tmpstruct);}}}}
@@ -196,12 +196,12 @@ void xml_loadtags_old(pugi::xml_node& val, base_data& base){
                 tmpstruct.offmsg=(getchildval(tmp, "offmsgtext", it)) ? tmp : "";
                 tmpstruct.onmsg=(getchildval(tmp, "onmsgtext", it)) ? tmp : "";
                 ((tagstruct*)&tmpstruct.tginfo)->type(oldtypetonew((getchildval(tmp, "type", it)) ? str_to<int>(tmp,0) : 0));
-                ((tagstruct*)&tmpstruct.tginfo)->minraw(getchildval(tmp, "minraw", it) ? strcomma_to_dot(tmp): "0");
-                ((tagstruct*)&tmpstruct.tginfo)->maxraw(getchildval(tmp, "maxraw", it) ? strcomma_to_dot(tmp): "0");
-                ((tagstruct*)&tmpstruct.tginfo)->mineu(getchildval(tmp, "mineu", it) ? strcomma_to_dot(tmp): "0");
-                ((tagstruct*)&tmpstruct.tginfo)->maxeu(getchildval(tmp, "maxeu", it) ? strcomma_to_dot(tmp): "0");
-                ((tagstruct*)&tmpstruct.tginfo)->logdb(str_to<double>(getchildval(tmp, "db", it) ? strcomma_to_dot(tmp): "0"));
-                ((tagstruct*)&tmpstruct.tginfo)->devdb(str_to<double>(getchildval(tmp, "devdb", it) ? strcomma_to_dot(tmp): "0"));
+                ((tagstruct*)&tmpstruct.tginfo)->minraw(getchildval(tmp, "minraw", it) ? comma_to_point_copy(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->maxraw(getchildval(tmp, "maxraw", it) ? comma_to_point_copy(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->mineu(getchildval(tmp, "mineu", it) ? comma_to_point_copy(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->maxeu(getchildval(tmp, "maxeu", it) ? comma_to_point_copy(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->logdb(str_to<double>(getchildval(tmp, "db", it) ? comma_to_point_copy(tmp): "0"));
+                ((tagstruct*)&tmpstruct.tginfo)->devdb(str_to<double>(getchildval(tmp, "devdb", it) ? comma_to_point_copy(tmp): "0"));
                 ((tagstruct*)&tmpstruct.tginfo)->alarmlevel(((getchildval(tmp, "alarmmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0")) ? altAccident :
                      ((getchildval(tmp, "alarmlocalmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0")) ? altWarning: 0);
 
@@ -209,7 +209,7 @@ void xml_loadtags_old(pugi::xml_node& val, base_data& base){
                 ((tagstruct*)&tmpstruct.tginfo)->onmsged(((getchildval(tmp, "onmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
                 ((tagstruct*)&tmpstruct.tginfo)->offmsged(((getchildval(tmp, "offmsg", it)) && (lower_copy(tmp)!="false") && (tmp!="0"))  ?    true : false);
                 ((tagstruct*)&tmpstruct.tginfo)->alarmcase((getchildval(tmp, "alarmcase", it)) ? str_to<int>(tmp, 0) : 0);
-                ((tagstruct*)&tmpstruct.tginfo)->alarmconstr(getchildval(tmp, "alarmconst", it) ? strcomma_to_dot(tmp): "0");
+                ((tagstruct*)&tmpstruct.tginfo)->alarmconstr(getchildval(tmp, "alarmconst", it) ? comma_to_point_copy(tmp): "0");
                 ((tagstruct*)&tmpstruct.tginfo)->rwtype(0);
                 if (IN_REPORTSET(((tagstruct*)&tmpstruct.tginfo)->type())){
                                ((tagstruct*)&tmpstruct.tginfo)->minraw(0);

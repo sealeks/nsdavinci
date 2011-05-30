@@ -58,7 +58,7 @@ namespace dvnci {
         const num64 MASK_RT_CHANGE_TIMELOG =  0x1000000;
         const num64 MASK_RT_CHANGE_LOCALMSG = 0x2000000;
         const num64 MASK_RT_CHANGE_ALLEVEL =  0x4000000;
-        const num64 MASK_RT_CHANGE_alwactive =  0x8000000;
+        const num64 MASK_RT_CHANGE_ALWACTIVE =  0x8000000;
         const num64 MASK_RT_CHANGE_ERROR =    0x10000000;
         const num64 MASK_RT_CHANGE_GROUP =    0x20000000;
         const num64 MASK_RT_CHANGE_AGROUP =   0x40000000;
@@ -67,6 +67,7 @@ namespace dvnci {
         const num64 MASK_RT_CHANGE_DELT =     0x200000000LL;
         const num64 MASK_RT_CHANGE_STAT =     0x400000000LL;
         const num64 MASK_RT_CHANGE_ACCESSL =  0x800000000LL;
+        const num64 MASK_RT_CHANGE_RANG =    0x1000000000LL;
 
         const num64 MASK_RT_EXPORT1 =   0x86DEFE7F;
 
@@ -266,6 +267,8 @@ namespace dvnci {
             virtual altype   alarmlevel() const = 0;
             virtual void   alwactive(bool val) = 0;
             virtual bool   alwactive() const = 0;
+            virtual void   rangable(bool val) = 0;
+            virtual bool   rangable() const = 0;
             virtual ns_error  error() const = 0;
             virtual indx  group() const = 0;
             virtual void  group(indx val) = 0;
