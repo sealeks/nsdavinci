@@ -238,7 +238,7 @@ namespace dvnci {
 
                             name_with_type nwt;
                             nwt.name(name_);
-                            nwt.typeex(tmp_tp);
+                            nwt.typeex(nodeinfotype(tmp_tp,0));
                             mappack.insert(iteminfo_pair(tmpkey_, nwt));}
                         catch (...) {}}}
                 it++;}}
@@ -260,7 +260,7 @@ namespace dvnci {
                     name_ = at_nm.value();
                     name_with_type nwt;
                     nwt.name(name_);
-                    nwt.typeex(ittp);
+                    nwt.typeex(nodeinfotype(ittp,0));
                     mappack.insert(iteminfo_pair(*it, nwt));}}
             it++;}
         return true;}
@@ -391,7 +391,7 @@ namespace dvnci {
                         at.set_value(newname_.c_str());}
                     pair_.first = newkey_;
                     pair_.second.name(newname_);
-                    pair_.second.typeex(ittp);
+                    pair_.second.typeex(nodeinfotype(ittp,0));
                     num_xmlnode_map* tmpreg = registry(ittp);
                     if (tmpreg) {
                         tmpreg->insert(num_xmlnode_pair(newkey_, newnode));
@@ -401,7 +401,7 @@ namespace dvnci {
 
         pair_.first = npos;
         pair_.second.name("");
-        pair_.second.typeex(0);}
+        pair_.second.typeex(nodeinfotype(0,0));}
 
     ns_error meta::remove(nodetype ittp, indx_set& keyset_) {
 
