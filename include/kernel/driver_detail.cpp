@@ -199,74 +199,51 @@ Table of CRC values for high–order byte */
             return true;}
 
         ns_error linemem_value_manager::get_val(std::string& val, parcel_ptr cmd, size_t bitn) {
+            if (cmd->isvalue()){
             short_value tmp = cmd->value();
-            switch (cmd->tgtype()) {
+            switch (cmd->type()) {
                 case TYPE_NUM64:{
-                    if (true/*cmd->get_simpl_val_cast<num64 > (tmp)*/) {
                         val = primtype_to_string<num64 > (tmp.value<num64>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
                 case TYPE_UNUM64:{
-                    if (true/*cmd->get_simpl_val_cast<unum64 > (tmp)*/) {
                         val = primtype_to_string<unum64 > (tmp.value<unum64>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
                 case TYPE_NUM32:{
-                    if (true/*cmd->get_simpl_val_cast<num32 > (tmp)*/) {
-                        primtype_to_string<num64 > (tmp.value<num32>());
+                        val = primtype_to_string<num64 > (tmp.value<num32>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
                 case TYPE_UNUM32:{
-                    if (true/*cmd->get_simpl_val_cast<unum32 > (tmp)*/) {
-                        primtype_to_string<unum32 > (tmp.value<unum32>());
+                        val = primtype_to_string<unum32 > (tmp.value<unum32>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
                 case TYPE_NUM16:{
-                    if (true/*cmd->get_simpl_val_cast<num16 > (tmp)*/) {
-                        primtype_to_string<unum16 > (tmp.value<num16>());
+                        val = primtype_to_string<unum16 > (tmp.value<num16>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
                 case TYPE_UNUM16:{
-                    if (true/*cmd->get_simpl_val_cast<unum16 > (tmp)*/) {
-                        primtype_to_string<unum16 > (tmp.value<unum16>());
+                        val = primtype_to_string<unum16 > (tmp.value<unum16>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
                 case TYPE_NUM8:{
-                    if (true/*cmd->get_simpl_val_cast<num8 > (tmp)*/) {
-                        primtype_to_string<num8 > (tmp.value<num8>());
+                        val = primtype_to_string<num8 > (tmp.value<num8>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
                 case TYPE_UNUM8:{
-                    if (true/*cmd->get_simpl_val_cast<unum8 > (tmp)*/) {
-                        primtype_to_string<unum8 > (tmp.value<unum8>());
+                        val = primtype_to_string<unum8 > (tmp.value<unum8>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
+                case TYPE_NODEF:
                 case TYPE_DOUBLE:{
-                    if (true/*cmd->get_simpl_val_cast(tmp)*/) {
-                        primtype_to_string<double > (tmp.value<double>());
+                        val = primtype_to_string<double > (tmp.value<double>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
                 case TYPE_FLOAT:{
-                    if (true/*cmd->get_simpl_val_cast(tmp)*/) {
-                        primtype_to_string<float > (tmp.value<float>());
+                        val = primtype_to_string<float > (tmp.value<float>());
                         spec_protocol_convertion_in(val);
                         return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}
-                default:{
-                    if (true/*cmd->get_simpl_val_cast(tmp)*/) {
-                        primtype_to_string<double > (tmp.value<double>());
-                        spec_protocol_convertion_in(val);
-                        return error(0);}
-                    return error(ERROR_IO_NO_GENERATE_REQ);}}
+                default:{}}}
             return error(ERROR_IO_NO_GENERATE_REQ);}
         
      ///////////////////////////////////////////////////////////////////////////////////////////////////

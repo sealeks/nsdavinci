@@ -762,10 +762,10 @@ namespace dvnci {
                              
        // devnum property
         
-        num32 protocol(size_type id) const {
+        protocoltype protocol(size_type id) const {
             return operator[](id)->protocol();}
         
-        void protocol(size_type id, num32 val);
+        void protocol(size_type id, protocoltype val);
 
         
        // link property        
@@ -2328,6 +2328,8 @@ namespace dvnci {
         bool in_alarm(size_type id) const {
             if (valid(id)) return false;
             if (!alarmed(id)) return false;
+            if (type(id)==TYPE_DISCRET) {
+                return value<bool> (id) == alarmconst_prtd<bool> (id);}
             switch (alarmcase(id)) {
                 case alarmMore: return (value<T > (id) > alarmconst_prtd<T > (id));
                 case alarmLess: return (value<T > (id) < alarmconst_prtd<T > (id));

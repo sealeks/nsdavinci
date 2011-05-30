@@ -364,6 +364,8 @@ namespace dvnci {
     typedef unum64 guidtype;
     // confproptype provide type
     typedef onum confproptype;
+    // protocol type
+    typedef num32 protocoltype;
 
     typedef  boost::filesystem::path      fspath;
 
@@ -1125,13 +1127,13 @@ namespace dvnci {
     const num32    DEFAULT_ARCHBLOCK_SIZE = 10;
     const num32    DEFAULT_EVENTSBLOCK_SIZE = 10;
 
-    const num32    NT_MODBUS_RTU  = 0x0;
-    const num32    NT_MODBUS_ASCII  = 0x1;
+    const protocoltype    NT_MODBUS_RTU  = 0x0;
+    const protocoltype    NT_MODBUS_ASCII  = 0x1;
 
-    const num32    NT_KOYO_MODBUS           = 0x0;
-    const num32    NT_KOYO_DIRECTNET_HEX    = 0x1;
-    const num32    NT_KOYO_DIRECTNET_ASCII  = 0x2;
-    const num32    NT_KOYO_DIRECTNET_ECOM   = 0x3;
+    const protocoltype    NT_KOYO_MODBUS           = 0x0;
+    const protocoltype    NT_KOYO_DIRECTNET_HEX    = 0x1;
+    const protocoltype    NT_KOYO_DIRECTNET_ASCII  = 0x2;
+    const protocoltype    NT_KOYO_DIRECTNET_ECOM   = 0x3;
 
     const num32    DEFAULT_IOTIMOUT           = 3000;
     const num32    MINIMUM_IOTIMOUT           = 10;

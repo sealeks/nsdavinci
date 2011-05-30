@@ -1003,11 +1003,11 @@ namespace dvnci {
         num32 portnum() const {
             return static_cast<num32> (portnum_);}
 
-        void protocol(num32 val) {
+        void protocol(protocoltype val) {
             protocol_ = static_cast<num64> (val);}
 
-        num32 protocol() const {
-            return static_cast<num32> (protocol_);}
+        protocoltype protocol() const {
+            return static_cast<protocoltype> (protocol_);}
 
         num32 timeout() const {
             return in_bounded<num32 > (10, 100000, static_cast<num32> (timeout_));}
@@ -1323,7 +1323,7 @@ namespace dvnci {
         chnltype chanaltype() const {
             return chanaltype_;};
 
-        num32 protocol() const {
+        protocoltype protocol() const {
             return protocol_;};
 
         num32 blocksize() const {
@@ -1374,7 +1374,7 @@ namespace dvnci {
         num32 chanalnum_;
         num32 portnum_;
         num32 devnum_;
-        num32 protocol_;
+        protocoltype protocol_;
         num32 blocksize_;
         num32 archblocksize_;
         num32 eventblocksize_;

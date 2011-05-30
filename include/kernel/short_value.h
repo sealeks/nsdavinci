@@ -75,7 +75,6 @@ namespace dvnci {
         
         void value64(num64 vl) {
             value_=vl;}
-      
 
         void valid(vlvtype val) {
             valid_ = static_cast<num64> (val);}
@@ -107,6 +106,8 @@ namespace dvnci {
 
         num64 time_n64() const {
             return time_;}
+        
+        ns_error covert_to_bcd();
 
     private:
         num64      value_;

@@ -75,7 +75,7 @@ namespace dvnci {
     std::string generate_servinfo(const std::string& host, const std::string& port, unsigned int timout, const std::string& admin, const std::string& pass);
 
     template <typename T> bool string_to_primtype(const std::string& dblk, T& vl) {
-        if (sizeof (vl) < dblk.size()) return false;
+        if (sizeof (vl) > dblk.size()) return false;
         vl = *(reinterpret_cast<T*> (const_cast<char*> (dblk.data())));
         return true;}
 

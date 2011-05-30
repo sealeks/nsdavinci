@@ -17,12 +17,10 @@ namespace dvnci {
     namespace driver {
 
 
+      
+        typedef  onum      parcelkind;
         
-
-        static const size_t MAXDISTANSE = 0x1FFFFFFF;
-
-        static const num32 DV_NO_SPECIFICATOR = 0;
-        static const num32 DV_BCD_SPECIFICATOR = 1;
+        const  size_t BLOCKMAXDISTANCE = 0x1FFFFFFF;
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,13 +28,16 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         struct basis_req_parcel {
+
+            
+
+            
             basis_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk);
 
             virtual ~basis_req_parcel() {};
 
             virtual size_t operator-(const basis_req_parcel & rs) const {
-                return MAXDISTANSE;};
-
+                return BLOCKMAXDISTANCE;};
 
             virtual bool operator==(const basis_req_parcel & rs) const;
 
@@ -48,8 +49,8 @@ namespace dvnci {
             num32 devnum() const {
                 return devnum_;}
 
-            num32 type() const {
-                return type_;};
+            num32 kind() const {
+                return kind_;};
 
             num32 chanel() const {
                 return chanel_;}
@@ -57,23 +58,20 @@ namespace dvnci {
             num32 addr() const {
                 return addr_;}
 
-            num32 tp() const {
-                return tp_;}
+            num32 binnum() const {
+                return indx_;}
 
             num32 indx() const {
-                return tp_;}
-
-            num32 specificator() const {
-                return specificator_;}
+                return indx_;}
 
             size_t size() const {
                 return size_;}
 
-            num32 protocol() const {
+            protocoltype protocol() const {
                 return protocol_;}
 
-            tagtype tgtype() const {
-                return tgtype_;}
+            tagtype type() const {
+                return type_;}
 
             ns_error error() const {
                 return value_.error();}
@@ -91,22 +89,22 @@ namespace dvnci {
                 return iscorrect_;}
 
             bool is_bcd() const {
-                return ((DV_BCD_SPECIFICATOR & specificator_) != 0);}
+                return isbcd_;}
             
-            virtual std::string to_str();
+            virtual std::string to_string();
             
 
             template<typename T>
             void value_cast(T val, const datetime& tm = nill_time, vlvtype valid = FULL_VALID) {
-                if (IN_SMPLSET(tgtype_)) {
+                if (IN_SMPLSET(type())) {
                     if ((!is_bcd()) || ((is_bcd()) && (bcd_to_dec<T > (val)))) {
                         value_ = short_value(val);
                         value_.time(tm);
                         value_.valid(valid);
                         isvalue_ = true;
-                        error(0);}}
-                else {
-                    error(ERROR_IO_DATA_CONV);}}
+                        error(0);
+			return;}}
+                error(ERROR_IO_DATA_CONV);}
 
             template<typename T >
             T value_cast() const {
@@ -149,26 +147,27 @@ namespace dvnci {
                 return reportrange_;}
 
             friend std::ostream & operator<<(std::ostream& os, const basis_req_parcel & ns) {
-                return os << "dev=" << ns.devnum() << " chanal=" << ns.chanel() << "  type=" << ns.type() << " addr=" << ns.addr();}
+                return os << "dev=" << ns.devnum() << " chanal=" << ns.chanel() << "  type=" << ns.kind() << " addr=" << ns.addr();}
 
         protected:
 
             virtual void getspecificator(std::string & vl) {
                 upper_and_trim(vl);
                 if (vl.find(":B") != std::string::npos) {
-                    specificator_ = specificator_ | DV_BCD_SPECIFICATOR;
+                    isbcd_=true;
                     vl.replace(vl.find(":B"), 2, "");}}
+			
 
             bool                      iscorrect_;
             num32                     devnum_;
-            num32                     type_;
+            parcelkind                kind_;
             num32                     chanel_;
             num32                     addr_;
-            num32                     tp_;
-            num32                     specificator_;
+            num32                     indx_;
             size_t                    size_;
-            num32                     protocol_;
-            tagtype                   tgtype_;
+            tagtype                   type_;
+            protocoltype              protocol_;
+            bool                      isbcd_;
             mutable bool              isvalue_;
             mutable short_value       value_;
             mutable datetime_val_ptr  eventvalue_;
@@ -200,7 +199,7 @@ namespace dvnci {
         /*Базовый класс генератора блока опроса*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class abstract_block_generator {
+        class abstract_block_model {
         protected:
 
             struct parcel_ptr_less {
@@ -295,15 +294,18 @@ namespace dvnci {
                 num32           timout_;
                 num32           trycount_;
                 mutable num32   curenttrycount_;} ;
+                
+                
+                
 
-            abstract_block_generator(executor* execr, tagsbase_ptr inf, const metalink& mlnk) :
+            abstract_block_model(executor* execr, tagsbase_ptr inf, const metalink& mlnk) :
             intf(inf), executr(execr), needgenerate(true), protocol(0), blocksize(0), archblocksize(0), eventblocksize(0) {
                 protocol = mlnk.protocol();
                 blocksize = static_cast<size_t> (mlnk.blocksize());
                 archblocksize = mlnk.archblocksize();
                 eventblocksize = mlnk.eventblocksize();};
 
-            virtual ~abstract_block_generator() {};
+            virtual ~abstract_block_model() {};
 
             virtual bool next(block& blk);
 
@@ -345,7 +347,7 @@ namespace dvnci {
             tagsbase_ptr      intf;
             executor*         executr;
             bool              needgenerate;
-            num32             protocol;
+            protocoltype      protocol;
             size_t            blocksize;
             num32             archblocksize;
             num32             eventblocksize;
@@ -355,14 +357,14 @@ namespace dvnci {
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        typedef abstract_block_generator::parcel_tags_map                      parcel_tags_map;
-        typedef abstract_block_generator::parcels_map                          parcels_map;
-        typedef abstract_block_generator::block_iterator                       block_iterator;
-        typedef abstract_block_generator::parcel_iterator                      parcel_iterator;
-        typedef abstract_block_generator::parcel_const_iterator                parcel_const_iterator;
-        typedef abstract_block_generator::block                                block;
-        typedef abstract_block_generator::parcels_vect                         parcels_vect;
-        typedef abstract_block_generator::commands_vect                        commands_vect;
+        typedef abstract_block_model::parcel_tags_map                      parcel_tags_map;
+        typedef abstract_block_model::parcels_map                          parcels_map;
+        typedef abstract_block_model::block_iterator                       block_iterator;
+        typedef abstract_block_model::parcel_iterator                      parcel_iterator;
+        typedef abstract_block_model::parcel_const_iterator                parcel_const_iterator;
+        typedef abstract_block_model::block                                block;
+        typedef abstract_block_model::parcels_vect                         parcels_vect;
+        typedef abstract_block_model::commands_vect                        commands_vect;
         typedef commands_vect::iterator                                        commands_iterator;
 
         std::ostream & operator<<(std::ostream& os, const block& ns);
@@ -375,13 +377,13 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename BLOCKITEMTYPE>
-        class base_block_generator : public abstract_block_generator {
+        class base_block_model : public abstract_block_model {
         public:
 
-            base_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            abstract_block_generator(exectr, inf, mlnk) {};
+            base_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
+            abstract_block_model(exectr, inf, mlnk) {};
 
-            virtual ~base_block_generator() {};
+            virtual ~base_block_model() {};
 
             virtual bool insert(indx id) {
                 if (intf) {
@@ -427,7 +429,7 @@ namespace dvnci {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename BLOCKITEMTYPE>
-        void base_block_generator<BLOCKITEMTYPE>::generate_impl() {
+        void base_block_model<BLOCKITEMTYPE>::generate_impl() {
             parcel_iterator its = bmap.left.begin();
             if (its == bmap.left.end()) {
                 needgenerate = false;
@@ -456,15 +458,15 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename BLOCKITEMTYPE>
-        class parcel_block_generator : public base_block_generator<BLOCKITEMTYPE> {
+        class parcel_block_model : public base_block_model<BLOCKITEMTYPE> {
         public:
 
-            typedef base_block_generator<BLOCKITEMTYPE> basetype;
-            typedef abstract_block_generator::block block;
-            typedef abstract_block_generator::parcel_iterator parcel_iterator;
+            typedef base_block_model<BLOCKITEMTYPE> basetype;
+            typedef abstract_block_model::block block;
+            typedef abstract_block_model::parcel_iterator parcel_iterator;
 
-            parcel_block_generator(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_generator<BLOCKITEMTYPE>(exectr, inf, mlnk) {}
+            parcel_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
+            base_block_model<BLOCKITEMTYPE>(exectr, inf, mlnk) {}
 
         protected:
 
@@ -474,7 +476,7 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename BLOCKITEMTYPE>
-        void parcel_block_generator<BLOCKITEMTYPE>::generate_impl() {
+        void parcel_block_model<BLOCKITEMTYPE>::generate_impl() {
             parcel_iterator its = basetype::bmap.left.begin();
             if (its == basetype::bmap.left.end()) {
                 basetype::needgenerate = false;
@@ -489,7 +491,7 @@ namespace dvnci {
             num32 counter = 1;
             for (parcel_iterator it = its; it != basetype::bmap.left.end(); ++it) {
                 if ((it->first->devnum() != its->first->devnum()) ||
-                        (it->first->type() != its->first->type()) ||
+                        (it->first->kind() != its->first->kind()) ||
                         (counter >= basetype::blocksize)) {
                     counter = 1;
                     basetype::blocks.push_back(blkit);

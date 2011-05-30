@@ -549,7 +549,7 @@ namespace dvnci {
                 operator[](id)->devnum(val);}}}
     
     
-    void  groupsbase::protocol(size_type id, num32  val) {
+    void  groupsbase::protocol(size_type id, protocoltype  val) {
         if (exists(id)) {
             if (operator[](id)->protocol() != val) {
                 operator[](id)->protocol(val);}}}
@@ -1608,7 +1608,7 @@ namespace dvnci {
                     break;}
                 case TYPE_UNUM64:{
                     operator[](id)->minraw<unum64>(0);
-                    operator[](id)->minraw<unum64>(0);
+                    operator[](id)->maxraw<unum64>(0);
                     operator[](id)->mineu<unum64>(std::numeric_limits<unum64>::min());
                     operator[](id)->maxeu<unum64>(std::numeric_limits<unum64>::max());
                     operator[](id)->alarmconst<unum64>(0);
@@ -2028,7 +2028,7 @@ namespace dvnci {
 
     void tagsbase::write_val(size_type id, const short_value& val) {
         if (exists(id)) {
-            switch (val.type()) {
+            switch (type(id)) {
                 case TYPE_NONE:{
                     write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());
                     return;}
