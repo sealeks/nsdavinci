@@ -21,7 +21,7 @@
 namespace dvnci {
     namespace admin {
 
-        typedef int guiaction;
+        typedef onum guiaction;
 
         const guiaction ACTION_USERDEF = 1000;
         const guiaction ACTION_TRANSACTIONSTART = ACTION_USERDEF + 0x1;
