@@ -15,8 +15,8 @@
 #include <kernel/driver_blockmodel.h>
 #include <kernel/error.h>
 
-#include "mg_protocol.h"
-#include "iek1177_protocol.h"
+#include <driverspec/spbmg_protocol.h>
+#include <driverspec/iek1177_protocol.h>
 
 
 namespace dvnci {
@@ -38,24 +38,17 @@ namespace dvnci {
                 iscorrect_ = parse(vl);}
 
             virtual size_t operator-(const basis_req_parcel & rs) const  {
-                if (type() == LGKA_TYPEITEM_ARRAY)
-                    return (rs.addr() == addr()) ? dvnci::abs<size_t > (rs.tp() - tp()) : MAXDISTANSE;
+                if (kind() == LGKA_TYPEITEM_ARRAY)
+                    return (rs.addr() == addr()) ? dvnci::abs<size_t > (rs.indx() - indx()) : MAXDISTANSE;
                 return MAXDISTANSE;};
 
             bool parse(std::string vl);
 
             bool conformaddr(const std::string& vl, num32& tp, num32& ch, num32& nm, num32 & arrnm);
 
-            virtual void set_simpl_val_from_str(std::string val) {
-                val = comma_to_point_copy(val);
-                basis_req_parcel::set_simpl_val_from_str(val);}
-
-            virtual std::string val_as_str() {
-                return point_to_comma_copy(basis_req_parcel::val_as_str());}
-
             bool checktagtype() {
-                if (IN_EVENTSET(tgtype_)) {
-                    error_ = ERROR_TYPENOPROCCESS;
+                if (IN_EVENTSET(tgtype())) {
+                    error(ERROR_TYPENOPROCCESS);
                     return false;}
                 return true;}} ;
 
@@ -127,11 +120,11 @@ namespace dvnci {
                 switch (link.protocol()) {
                     case LGKA_PROT_MEC:{
                         set_rs232_baudrate(opt, link.inf().cominf.boundrate);
-                        set_rs232_comoption( 7,  NT_RS_EVENPARITY, NT_RS_ONESTOPBIT);
+                        set_rs232_comoption(opt, 7,  NT_RS_EVENPARITY, NT_RS_ONESTOPBIT);
 			break;}
                     default:{
                         set_rs232_baudrate(opt, link.inf().cominf.boundrate);
-                        set_rs232_comoption( 8, NT_RS_NOPARITY, NT_RS_ONESTOPBIT);}}
+                        set_rs232_comoption(opt, 8, NT_RS_NOPARITY, NT_RS_ONESTOPBIT);}}
                 return boost::system::error_code ();}
 
             virtual boost::system::error_code load(com_port_option&  opt, boost::system::error_code & ec) {
@@ -164,7 +157,7 @@ namespace dvnci {
                     ioprotocol_ptr();}
 
                 basis_iostream_ptr tmp_stream = basis_iostream_ptr(new lgk_rs_iostream(lnk,
-                        0, lnk.timeout(), lnk.chanalnum(), false));
+                        lnk.timeout(), lnk.chanalnum(), false));
 
                 switch (lnk.protocol()){
                     case LGKA_PROT_MEC: { return ioprotocol_ptr(new iek1177_protocol(tmp_stream));}
