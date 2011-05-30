@@ -1452,9 +1452,9 @@ namespace dvnci {
         alcstype alarmcase(size_type id) const {
             return  operator[](id)->alarmcase();}
         
-        void alarmcase(size_type id, acclevtype value) {
+        void alarmcase(size_type id, alcstype value) {
             if (exists(id)) 
-                operator[](id)->accesslevel(value);}
+                operator[](id)->alarmcase(value);}
 
        // alarmon  property
         
@@ -1475,6 +1475,13 @@ namespace dvnci {
         void accesslevel(size_type id, acclevtype value) {
             if (exists(id)) 
                 operator[](id)->accesslevel(value);}
+        
+               // accesslevel  property        
+   
+        bool rangable(size_type id) const {
+            return operator[](id)->rangable();} 
+        
+        void rangable(size_type id, bool value);
         
          
        // alwactive  property           

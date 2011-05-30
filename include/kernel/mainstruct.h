@@ -22,6 +22,9 @@ namespace dvnci {
 
     typedef struct tagstruct {
     public:
+        
+        static const num64 ALLWAYSACTIVE = 0x1;
+        static const num64 RANGABLE = 0x2;
 
         tagstruct(indx mid = nill_ptr, indx group = npos);
 
@@ -162,7 +165,7 @@ namespace dvnci {
 
         void type(tagtype val) {
             type_ = static_cast<num64> (0x1FF & val);
-            allwaysactiv_helper_util();}
+            helper_util();}
 
         tagtype type() const {
             return static_cast<tagtype> (0x1FF & type_);}
@@ -222,7 +225,7 @@ namespace dvnci {
 
         void alarmlevel(altype val) {
             alarmlevel_ = static_cast<num32> (val & 0x3);
-            allwaysactiv_helper_util();}
+            helper_util();}
 
         altype alarmlevel() const {
             return IN_ALARMEDSET(type()) ?
@@ -242,7 +245,7 @@ namespace dvnci {
 
         void logged(bool val) {
             logged_ = static_cast<num32> (val);
-            allwaysactiv_helper_util();}
+            helper_util();}
 
         bool logged() const {
             return IN_NUMBERSET(type()) ?
@@ -252,7 +255,7 @@ namespace dvnci {
 
         void onmsged(bool val) {
             onmsged_ = static_cast<num32> (val);
-            allwaysactiv_helper_util();}
+            helper_util();}
 
         bool onmsged() const {
             return IN_NUMBERSET(type()) ?
@@ -262,7 +265,7 @@ namespace dvnci {
 
         void offmsged(bool val) {
             offmsged_ = static_cast<num32> (val);
-            allwaysactiv_helper_util();}
+            helper_util();}
 
         bool offmsged() const {
             return IN_NUMBERSET(type()) ?
@@ -300,7 +303,7 @@ namespace dvnci {
 
         void alwactive(bool val) {
             alwactive_ = val;
-            allwaysactiv_helper_util();}
+            helper_util();}
 
         bool alwactive() const {
             return alwactive_;}
@@ -314,6 +317,11 @@ namespace dvnci {
         acstgtype rwtype() const {
             return IN_COMMADSET(type()) ?
                     static_cast<acstgtype> (rwtype_ & 3) : rwReadOnly;}
+        
+        
+
+        bool rangable() const {
+            return rangeble_helper();}
         
         
 
@@ -397,7 +405,8 @@ namespace dvnci {
 
         template <typename T>
         void minraw(T val) {
-            minraw_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
+            minraw_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));
+            helper_util();}
 
         template <typename T >
         T minraw() const {
@@ -414,13 +423,15 @@ namespace dvnci {
             num64 tmp = 0;
             if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
                 minraw_ = num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp) ?
-                        tmp : num64_for_type_min(static_cast<tagtype> (type_));}}
+                        tmp : num64_for_type_min(static_cast<tagtype> (type_));}
+            helper_util();}
         
         
 
         template <typename T>
         void maxraw(T val) {
-            maxraw_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
+            maxraw_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));
+            helper_util();}
 
         template <typename T >
         T maxraw() const {
@@ -437,13 +448,15 @@ namespace dvnci {
             num64 tmp = 0;
             if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
                 maxraw_ = num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp) ? 
-                    tmp : num64_for_type_max(static_cast<tagtype> (type_));}}
+                    tmp : num64_for_type_max(static_cast<tagtype> (type_));}
+            helper_util();}
 
         
         
         template <typename T>
         void mineu(T val) {
-            mineu_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
+            mineu_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));
+            helper_util();}
 
         template <typename T >
         T mineu() const {
@@ -460,13 +473,15 @@ namespace dvnci {
             num64 tmp = 0;
             if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
                 mineu_ = num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp) ? 
-                    tmp : num64_for_type_min(static_cast<tagtype> (type_));}}
+                    tmp : num64_for_type_min(static_cast<tagtype> (type_));}
+            helper_util();}
 
         
         
         template <typename T>
         void maxeu(T val) {
-            maxeu_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));}
+            maxeu_ = num64_from_vt_cast<T > (val, static_cast<tagtype> (type_));
+            helper_util();}
 
         template <typename T >
          T maxeu() const {
@@ -483,7 +498,8 @@ namespace dvnci {
             num64 tmp = 0;
             if (num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp)) {
                 maxeu_ = num64_from_vt_cast(val, static_cast<tagtype> (type_), tmp) ?
-                    tmp : num64_for_type_max(static_cast<tagtype> (type_));}}
+                    tmp : num64_for_type_max(static_cast<tagtype> (type_));}
+            helper_util();}
 
         
         
@@ -554,12 +570,12 @@ namespace dvnci {
         onum landscape_range() const;
 
         bool allwaysactiv_helper() const {
-            return static_cast<bool> (allwaysactiv_helper_);}
+            return static_cast<bool> (util_helper_ & ALLWAYSACTIVE);}
+        
+        bool rangeble_helper() const {
+            return static_cast<bool> (util_helper_ & RANGABLE);}
 
-        void allwaysactiv_helper_util() {
-            allwaysactiv_helper_ = static_cast<num64> ((logged()) || (alarmlevel()) ||
-                    (onmsged()) || (offmsged()) || (alwactive()) || (IN_ALWACTSET(type())));}
-
+        void helper_util();
 
 
         unum64 id_;
@@ -577,12 +593,12 @@ namespace dvnci {
         num64 logdb_;
         num64 devdb_;
         num64 alarmconst_;
-        num64 allwaysactiv_helper_;
+        num64 util_helper_;
         unum64 logkey_;
         unum64 group_;
         unum64 agroup_;
         num64 alwactive_;
-        num64 monitor_;
+        num64  monitor_;
         unum64 poscomment_;
         unum64 posbinding_;
         unum64 poseu_;
@@ -2143,10 +2159,10 @@ namespace dvnci {
         nodeinfotype() {
             basis = 0;}
 
-        //explicit nodeinfotype(num64 btp) {
-        //    basis = btp;}
+        explicit nodeinfotype(num64 btp) {
+            basis = btp;}
 
-        nodeinfotype(nodetype ntp, tagtype ttp = TYPE_NODEF, appidtype ptp = 0) {
+        nodeinfotype(nodetype ntp, tagtype ttp , appidtype ptp = 0) {
             basis = static_cast<appidtype> (ptp);
             basis = (basis << 16) | (static_cast<tagtype> (ttp) & 0xFFFF);
             basis = (basis << 16) | (static_cast<nodetype> (ntp) & 0xFFFF);}

@@ -22,22 +22,6 @@ namespace dvnci {
         bool insert_ibm_crc16(std::string& src, std::string::size_type strt);
         bool check_and_clear_ibm_crc16(std::string& src, std::string::size_type strt);
 
-        inline static num16 be_le_convert_num16(num16 vl) {
-            return (((vl >> 8) & 0xFF) | (0xFF00 & (vl << 8)));}
-
-        inline static num32 be_le_convert_num32(num32 vl) {
-            return (((vl >> 16) & 0xFFFF) | (0xFFFF0000 & (vl << 16)));}
-
-        inline static num64 be_le_convert_num64(num64 vl) {
-            return (((vl >> 32) & 0xFFFFFFFFLL) | (0xFFFFFFFF00000000LL & (vl << 32)));}
-
-        bool be_le16_convert_string(std::string& vl);
-
-        std::string binary_block_to_hexsequence_debug(const std::string& vl);
-
-        std::string binary_block_to_hexsequence(const std::string& vl);
-
-        bool hexsequence_to_binary_block(const std::string& vl, std::string& rslt);
 
 
 

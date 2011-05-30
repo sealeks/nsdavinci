@@ -16,13 +16,7 @@
 namespace dvnci {
     namespace driver {
 
-        template <typename T> bool string_to_primtype(const std::string& dblk, T& vl) {
-            if (sizeof (vl) < dblk.size()) return false;
-            vl = *(reinterpret_cast<T*> (const_cast<char*> (dblk.data())));
-            return true;}
 
-        template <typename T> std::string primtype_to_string(T vl) {
-            return std::string(((const char*) &vl), sizeof (T));}
         
 
         static const size_t MAXDISTANSE = 0x1FFFFFFF;

@@ -1266,6 +1266,65 @@ namespace dvnci {
                     operator[](it->first)->error(error);
                     operator[](it->first)->time(nill_time);
                     operator[](it->first)->time_log(nill_time);}}}}
+    
+    
+    void tagsbase::rangable(size_type id, bool value) {
+            if (exists(id)){ 
+                if (value!=rangable(id)){
+                    if (value){
+                      switch (type(id)) {
+                          case TYPE_NODEF:{
+                              operator[](id)->minraw<double>(0);
+                              operator[](id)->maxraw<double>(100);
+                              break;}
+                          case TYPE_DOUBLE:{
+                              operator[](id)->minraw<double>(-std::numeric_limits<double>::max());
+                              operator[](id)->maxraw<double>(std::numeric_limits<double>::max());
+                              break;}
+                          case TYPE_FLOAT:{
+                              operator[](id)->minraw<float>(-std::numeric_limits<float>::max());
+                              operator[](id)->maxraw<float>(std::numeric_limits<float>::max());
+                              break;}   
+                          case TYPE_DISCRET:{
+                              operator[](id)->minraw<bool>(false);
+                              operator[](id)->maxraw<bool>(true);
+                              break;}
+                          case TYPE_NUM64:{
+                              operator[](id)->minraw<num64>(std::numeric_limits<num64>::min());
+                              operator[](id)->maxraw<num64>(std::numeric_limits<num64>::max());
+                              break;}
+                           case TYPE_UNUM64:{
+                              operator[](id)->minraw<unum64>(std::numeric_limits<unum64>::min());
+                              operator[](id)->maxraw<unum64>(std::numeric_limits<unum64>::max());
+                              break;} 
+                           case TYPE_NUM32:{
+                              operator[](id)->minraw<num32>(std::numeric_limits<num32>::min());
+                              operator[](id)->maxraw<num32>(std::numeric_limits<num32>::max());
+                              break;}     
+                           case TYPE_UNUM32:{
+                              operator[](id)->minraw<unum32>(std::numeric_limits<unum32>::min());
+                              operator[](id)->maxraw<unum32>(std::numeric_limits<unum32>::max());
+                              break;} 
+                           case TYPE_NUM16:{
+                              operator[](id)->minraw<num16>(std::numeric_limits<num16>::min());
+                              operator[](id)->maxraw<num16>(std::numeric_limits<num16>::max());
+                              break;}     
+                           case TYPE_UNUM16:{
+                              operator[](id)->minraw<unum16>(std::numeric_limits<unum16>::min());
+                              operator[](id)->maxraw<unum16>(std::numeric_limits<unum16>::max());
+                              break;} 
+                            case TYPE_NUM8:{
+                              operator[](id)->minraw<num8>(std::numeric_limits<num8>::min());
+                              operator[](id)->maxraw<num8>(std::numeric_limits<num8>::max());
+                              break;}     
+                           case TYPE_UNUM8:{
+                              operator[](id)->minraw<unum8>(std::numeric_limits<unum8>::min());
+                              operator[](id)->maxraw<unum8>(std::numeric_limits<unum8>::max());
+                              break;}}}
+                    else{
+                       operator[](id)->minraw<num64>(0);
+                       operator[](id)->maxraw<num64>(0);}}}}
+        
 
 
 
@@ -1521,91 +1580,91 @@ namespace dvnci {
             switch (type(id)){
                 case TYPE_NODEF:{
                     operator[](id)->minraw<double>(0);
-                    operator[](id)->maxraw<double>(100);
+                    operator[](id)->maxraw<double>(0);
                     operator[](id)->mineu<double>(0);
-                    operator[](id)->maxeu<double>(4095);
+                    operator[](id)->maxeu<double>(100);
                     operator[](id)->alarmconst<double>(0);
                     break;}
                 case TYPE_DOUBLE:{
-                    operator[](id)->minraw<double>(std::numeric_limits<double>::min());
-                    operator[](id)->minraw<double>(std::numeric_limits<double>::max());
-                    operator[](id)->mineu<double>(std::numeric_limits<double>::min());
+                    operator[](id)->minraw<double>(0);
+                    operator[](id)->minraw<double>(0);
+                    operator[](id)->mineu<double>(-std::numeric_limits<double>::max());
                     operator[](id)->maxeu<double>(std::numeric_limits<double>::max());
                     operator[](id)->alarmconst<double>(0);
                     break;}
                 case TYPE_DISCRET:{
                     operator[](id)->minraw<bool>(0);
-                    operator[](id)->minraw<bool>(1);
+                    operator[](id)->minraw<bool>(0);
                     operator[](id)->mineu<bool>(0);
                     operator[](id)->maxeu<bool>(1);
                     operator[](id)->alarmconst<bool>(0);
                     break;}
                 case TYPE_NUM64:{
-                    operator[](id)->minraw<num64>(std::numeric_limits<num64>::min());
-                    operator[](id)->minraw<num64>(std::numeric_limits<num64>::max());
+                    operator[](id)->minraw<num64>(0);
+                    operator[](id)->minraw<num64>(0);
                     operator[](id)->mineu<num64>(std::numeric_limits<num64>::min());
                     operator[](id)->maxeu<num64>(std::numeric_limits<num64>::max());
                     operator[](id)->alarmconst<num64>(0);
                     break;}
                 case TYPE_UNUM64:{
-                    operator[](id)->minraw<unum64>(std::numeric_limits<unum64>::min());
-                    operator[](id)->minraw<unum64>(std::numeric_limits<unum64>::max());
+                    operator[](id)->minraw<unum64>(0);
+                    operator[](id)->minraw<unum64>(0);
                     operator[](id)->mineu<unum64>(std::numeric_limits<unum64>::min());
                     operator[](id)->maxeu<unum64>(std::numeric_limits<unum64>::max());
                     operator[](id)->alarmconst<unum64>(0);
                     break;}
                 case TYPE_NUM32:{
-                    operator[](id)->minraw<num32>(std::numeric_limits<num32>::min());
-                    operator[](id)->maxraw<num32>(std::numeric_limits<num32>::max());
+                    operator[](id)->minraw<num32>(0);
+                    operator[](id)->maxraw<num32>(0);
                     operator[](id)->mineu<num32>(std::numeric_limits<num32>::min());
                     operator[](id)->maxeu<num32>(std::numeric_limits<num32>::max());
                     operator[](id)->alarmconst<num32>(0);
                     break;}
                 case TYPE_UNUM32:{
-                    operator[](id)->minraw<unum32>(std::numeric_limits<unum32>::min());
-                    operator[](id)->maxraw<unum32>(std::numeric_limits<unum32>::max());
+                    operator[](id)->minraw<unum32>(0);
+                    operator[](id)->maxraw<unum32>(0);
                     operator[](id)->mineu<unum32>(std::numeric_limits<unum32>::min());
                     operator[](id)->maxeu<unum32>(std::numeric_limits<unum32>::max());
                     operator[](id)->alarmconst<unum32>(0);
                     break;}
                 case TYPE_NUM16:{
-                    operator[](id)->minraw<num16>(std::numeric_limits<num16>::min());
-                    operator[](id)->maxraw<num16>(std::numeric_limits<num16>::max());
+                    operator[](id)->minraw<num16>(0);
+                    operator[](id)->maxraw<num16>(0);
                     operator[](id)->mineu<num16>(std::numeric_limits<num16>::min());
                     operator[](id)->maxeu<num16>(std::numeric_limits<num16>::max());
                     operator[](id)->alarmconst<num16>(0);
                     break;}
                 case TYPE_UNUM16:{
-                    operator[](id)->minraw<unum16>(std::numeric_limits<unum16>::min());
-                    operator[](id)->maxraw<unum16>(std::numeric_limits<unum16>::max());
+                    operator[](id)->minraw<unum16>(0);
+                    operator[](id)->maxraw<unum16>(0);
                     operator[](id)->mineu<unum16>(std::numeric_limits<unum16>::min());
                     operator[](id)->maxeu<unum16>(std::numeric_limits<unum16>::max());
                     operator[](id)->alarmconst<unum16>(0);
                     break;}
                 case TYPE_NUM8:{
-                    operator[](id)->minraw<num8>(std::numeric_limits<num8>::min());
-                    operator[](id)->maxraw<num8>(std::numeric_limits<num8>::max());
+                    operator[](id)->minraw<num8>(0);
+                    operator[](id)->maxraw<num8>(0);
                     operator[](id)->mineu<num8>(std::numeric_limits<num8>::min());
                     operator[](id)->maxeu<num8>(std::numeric_limits<num8>::max());
                     operator[](id)->alarmconst<num8>(0);
                     break;}
                 case TYPE_UNUM8:{
-                    operator[](id)->minraw<unum8>(std::numeric_limits<unum8>::min());
-                    operator[](id)->maxraw<unum8>(std::numeric_limits<unum8>::max());
+                    operator[](id)->minraw<unum8>(0);
+                    operator[](id)->maxraw<unum8>(0);
                     operator[](id)->mineu<unum8>(std::numeric_limits<unum8>::min());
                     operator[](id)->maxeu<unum8>(std::numeric_limits<unum8>::max());
                     operator[](id)->alarmconst<unum8>(0);
                     break;}
                 case TYPE_FLOAT:{
-                    operator[](id)->minraw<float>(std::numeric_limits<float>::min());
-                    operator[](id)->maxraw<float>(std::numeric_limits<float>::max());
-                    operator[](id)->mineu<float>(std::numeric_limits<float>::min());
+                    operator[](id)->minraw<float>(0);
+                    operator[](id)->maxraw<float>(0);
+                    operator[](id)->mineu<float>(-std::numeric_limits<float>::max());
                     operator[](id)->maxeu<float>(std::numeric_limits<float>::max());
                     operator[](id)->alarmconst<float>(0);
                     break;}
                 default:{
-                    operator[](id)->minraw<num64>(std::numeric_limits<num64>::min());
-                    operator[](id)->maxraw<num64>(std::numeric_limits<num64>::max());
+                    operator[](id)->minraw<num64>(0);
+                    operator[](id)->maxraw<num64>(0);
                     operator[](id)->mineu<num64>(std::numeric_limits<num64>::min());
                     operator[](id)->maxeu<num64>(std::numeric_limits<num64>::max());
                     operator[](id)->alarmconst<num64>(0);
