@@ -356,10 +356,10 @@ namespace dvnci {
             virtual num32  devnum() const {
                 return exists() ? intf->groups()->devnum(key_) : 0;};
 
-            virtual void   protocol(num32 val)  {
+            virtual void   protocol(protocoltype val)  {
                 if (exists()) intf->groups()->protocol(key_, val);};
 
-            virtual num32  protocol()const {
+            virtual protocoltype  protocol()const {
                 return exists() ? intf->groups()->protocol(key_) : 0;};
 
             virtual void   config(void* val) {

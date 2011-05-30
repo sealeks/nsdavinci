@@ -326,8 +326,8 @@ namespace dvnci {
             virtual num32 portnum() const = 0;
             virtual void   devnum(num32 val) = 0;
             virtual num32 devnum() const = 0;
-            virtual void   protocol(num32 val) = 0;
-            virtual num32 protocol() const = 0;
+            virtual void   protocol(protocoltype val) = 0;
+            virtual protocoltype protocol() const = 0;
             virtual void   timeout(num32 val) = 0;
             virtual num32 timeout() const = 0;
             virtual void   deadbound(double val) = 0;
