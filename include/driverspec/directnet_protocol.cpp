@@ -112,7 +112,7 @@ namespace dvnci {
                     prcl->value_cast(static_cast<bool> (tmp & (0x01 << (bitn))));}
                 else {prcl->error(ERROR_IO_NO_DATA);}}
             else {
-                switch (prcl->tgtype()) {
+                switch (prcl->type()) {
                     case TYPE_NODEF:{
                         if (string_to_primtype<unum16 > (val, tmp))
                             prcl->value_cast<unum16 > (tmp);
@@ -130,7 +130,7 @@ namespace dvnci {
                 val = (tmp) ? "on" : "of";
                 return error(0);}
             else {
-                switch (cmd->tgtype()) {
+                switch (cmd->type()) {
                     case TYPE_NODEF:{
                         unum16 tmp =  cmd->value_cast<unum16>();;
                         if (true) {

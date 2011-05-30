@@ -20,16 +20,16 @@ namespace dvnci {
     namespace driver {
 
 
-        const num32 DISCRET_INPUT_MODBUS_TYPE = 1;
-        const num32 COIL_MODBUS_TYPE = 2;
-        const num32 INPUT_REGISTER_MODBUS_TYPE = 3;
-        const num32 HOLDING_REGISTER_MODBUS_TYPE = 4;
+        const parcelkind DISCRET_INPUT_MODBUS_TYPE    = 1;
+        const parcelkind COIL_MODBUS_TYPE             = 2;
+        const parcelkind INPUT_REGISTER_MODBUS_TYPE   = 3;
+        const parcelkind HOLDING_REGISTER_MODBUS_TYPE = 4;
 
         const size_t MAX_MODBUS_BLOCK_SIZE = 242;
 
-        const num32 INTPR_RS_MODBUS_ASCII = 0x1;
-        const num32 INTPR_RS_MODBUS_RTU = 0x0;
-        const num32 INTPR_TCP_MODBUS = 0x2;
+        const protocoltype INTPR_RS_MODBUS_ASCII = 0x1;
+        const protocoltype INTPR_RS_MODBUS_RTU = 0x0;
+        const protocoltype INTPR_TCP_MODBUS = 0x2;
 
         const num16 ON_COIL_MODBUS_NM = 0x00FF;
         const num16 OFF_COIL_MODBUS_NM = 0x0000;
@@ -84,7 +84,7 @@ namespace dvnci {
         protected:
 
             virtual size_t getbitnum(parcel_const_iterator strt, parcel_const_iterator stp) {
-                if ((strt->first->type() == DISCRET_INPUT_MODBUS_TYPE) || (strt->first->type() == COIL_MODBUS_TYPE)) {
+                if ((strt->first->kind() == DISCRET_INPUT_MODBUS_TYPE) || (strt->first->kind() == COIL_MODBUS_TYPE)) {
                     return (stp->first->addr() - strt->first->addr()) % 8;}
                 return stp->first->indx();}
 
@@ -147,7 +147,7 @@ namespace dvnci {
 
             ns_error read_impl(const block& blk, mdbdevn dvnum) {
                 std::string req = "";
-                num32 tp = blk.begin()->first->type();
+                parcelkind tp = blk.begin()->first->kind();
                 if (chek_type(tp)) return basetype::error();
                 num32 strtaddr = blk.begin()->first->addr();
                 size_t tst_cnt = calculate_blocksize(blk.end()->first, blk.begin()->first);
@@ -160,7 +160,7 @@ namespace dvnci {
 
             ns_error write_impl(parcel_ptr cmd, const std::string& vl, mdbdevn dvnum) {
                 std::string req = "";
-                num32 tp = cmd->type();
+                parcelkind tp = cmd->kind();
                 if (chek_write_type(tp)) return basetype::error();
                 num32 strtaddr = cmd->addr();
                 size_t bitnum = cmd->indx();
@@ -172,8 +172,6 @@ namespace dvnci {
                         if (!echo)
                             parse_envelope(resp, dvnum, write_fnc_by_type(tp, vl.size()));}}
                 return basetype::error();}
-
-            //ns_error write_impl_bit(parcel_ptr cmd, const std::string& vl, mdbdevn dvnum, size_t bitn) {return error();}
 
             virtual ns_error request(std::string& req, std::string& resp, bool echo = false) = 0;
 
