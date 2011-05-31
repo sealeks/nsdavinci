@@ -305,7 +305,7 @@ namespace dvnci {
                         ((groupstruct*) & tmp.groupinfo)->appid(group(it->first).appid());
                         ((groupstruct*) & tmp.groupinfo)->chanaltype(group(it->first).chanaltype());
                         ((groupstruct*) & tmp.groupinfo)->chanalnum(group(it->first).chanalnum());
-                        ((groupstruct*) & tmp.groupinfo)->portnum(group(it->first).portnum());
+                        //((groupstruct*) & tmp.groupinfo)->portnum(group(it->first).portnum());
                         ((groupstruct*) & tmp.groupinfo)->protocol(group(it->first).protocol());
                         tmp.changeset = MASK_GR_EXPORT1;
                         base.groups.push_back(tmp);}}
@@ -409,7 +409,7 @@ namespace dvnci {
                         group(pair_.first).chanaltype(((groupstruct*) & it->groupinfo)->chanaltype());
                         group(pair_.first).chanalnum(((groupstruct*) & it->groupinfo)->chanalnum());
                         group(pair_.first).chanaltype(((groupstruct*) & it->groupinfo)->chanaltype());
-                        group(pair_.first).portnum(((groupstruct*) & it->groupinfo)->portnum());
+                        //group(pair_.first).portnum(((groupstruct*) & it->groupinfo)->portnum());
                         group(pair_.first).protocol(((groupstruct*) & it->groupinfo)->protocol());
 
                         group(pair_.first).timeout(((groupstruct*) & it->groupinfo)->timeout());

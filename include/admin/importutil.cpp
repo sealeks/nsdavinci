@@ -116,7 +116,7 @@ void xml_loadgroups(pugi::xml_node& val, base_data& base){
                 ((groupstruct*)&tmpstruct.groupinfo)->appid((getchildval(tmp, "app", it)) ? str_to<int>(tmp,0) : 0);
                 ((groupstruct*)&tmpstruct.groupinfo)->chanaltype((getchildval(tmp, "chanaltype", it)) ? str_to<int>(tmp,0) : 0);
                 ((groupstruct*)&tmpstruct.groupinfo)->chanalnum((getchildval(tmp, "chanalnum", it)) ? str_to<int>(tmp,0) : 0);
-                ((groupstruct*)&tmpstruct.groupinfo)->portnum((getchildval(tmp, "port", it)) ? str_to<int>(tmp,0) : 0);
+                //((groupstruct*)&tmpstruct.groupinfo)->portnum((getchildval(tmp, "port", it)) ? str_to<int>(tmp,0) : 0);
                 ((groupstruct*)&tmpstruct.groupinfo)->protocol((getchildval(tmp, "device", it)) ? str_to<int>(tmp,0) : 0);
                 tmpstruct.changeset=MASK_GR_EXPORT1;
                 base.groups.push_back(tmpstruct); };}}}
@@ -407,7 +407,7 @@ bool xml_setexportdata(std::string filepath, base_data& base){
         setchildval(groupnode,"app",to_str(((groupstruct*)&it->groupinfo)->appid()));
         setchildval(groupnode,"chanaltype",to_str(((groupstruct*)&it->groupinfo)->chanaltype()));
         setchildval(groupnode,"chanalnum",to_str(((groupstruct*)&it->groupinfo)->chanalnum()));
-        setchildval(groupnode,"port",to_str(((groupstruct*)&it->groupinfo)->portnum()));
+        //setchildval(groupnode,"port",to_str(((groupstruct*)&it->groupinfo)->portnum()));
         setchildval(groupnode,"device",to_str(((groupstruct*)&it->groupinfo)->protocol()));}}
 
     if (base.agroups.size()>0){

@@ -374,18 +374,18 @@ namespace dvnci {
 
             switch (prop) {
                 case PROPERTY_PREDCOUNT_TAG:{
-                    num32 val_;
-                    if (str_to<num32 > (val, val_)) {
+                    reporthisttype val_;
+                    if (str_to<reporthisttype > (val, val_)) {
                         _interface->tag(id).reporthistory(val_);} ;
                     break;};
                 case PROPERTY_DELTCOUNT_TAG:{
-                    num32 val_;
-                    if (str_to<num32 > (val, val_)) {
+                    reporthistdelt val_;
+                    if (str_to<reporthistdelt > (val, val_)) {
                         _interface->tag(id).reportsubdelt(val_);} ;
                     break;};
                 case PROPERTY_REPSTATISIC_TAG:{
-                    onum val_;
-                    if (str_to<onum > (val, val_)) {
+                    repstattype val_;
+                    if (str_to<repstattype > (val, val_)) {
                         _interface->tag(id).reportstatistic(val_);} ;
                     break;};
                 default: basetagwraper::setProperty(id, prop, val);}}
@@ -528,10 +528,6 @@ namespace dvnci {
                 case PROPERTY_CHANALNUM_GROUP:{
                     int val_ = 0;
                     if (str_to(val, val_)) _interface->group(id).chanalnum(val_) ;
-                    break;};
-                case PROPERTY_CHANALPORT_GROUP:{
-                    int val_ = 0;
-                    if (str_to(val, val_)) _interface->group(id).portnum(val_) ;
                     break;};
                 case PROPERTY_DEVNUM_GROUP:{
                     int val_ = 0;

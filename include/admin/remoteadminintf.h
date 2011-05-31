@@ -268,18 +268,18 @@ namespace dvnci {
             virtual acstgtype    rwtype() const          {
                 return exists() ? gets()->rwtype() : 0;};
 
-            virtual void         reporthistory(num32 val) {
+            virtual void         reporthistory(reporthisttype val) {
                 if (exists()) gets()->reporthistory(val);
                 in_cangeset(MASK_RT_CHANGE_REPPER);}
 
-            virtual num32        reporthistory() const   {
+            virtual reporthisttype    reporthistory() const   {
                 return exists() ? gets()->reporthistory() : 0;};
 
-            virtual void         reportsubdelt(num32 val)  {
+            virtual void         reportsubdelt(reporthistdelt val)  {
                 if (exists()) gets()->reportsubdelt(val);
                 in_cangeset(MASK_RT_CHANGE_DELT);}
 
-            virtual num32        reportsubdelt()  const  {
+            virtual reporthistdelt        reportsubdelt()  const  {
                 return exists() ? gets()->reportsubdelt() : 0;};
 
             virtual void         reportstatistic(repstattype val) {
@@ -408,25 +408,18 @@ namespace dvnci {
             virtual chnltype chanaltype()  const           {
                 return exists() ? gets()->chanaltype() : 0;};
 
-            virtual void   chanalnum(num32 val)            {
+            virtual void   chanalnum(chnlnumtype val)            {
                 gets()->chanalnum(val);
                 in_cangeset(MASK_GR_CHANGE_CHNUM);};
 
-            virtual num32  chanalnum()   const             {
+            virtual chnlnumtype  chanalnum()   const             {
                 return exists() ? gets()->chanalnum() : 0;};
 
-            virtual void   portnum(num32 val)            {
-                gets()->portnum(val);
-                in_cangeset(MASK_GR_CHANGE_CONFIG);};
-
-            virtual num32  portnum()    const           {
-                return exists() ? gets()->portnum() : 0;};
-
-            virtual void   devnum(num32 val)            {
+            virtual void   devnum(devnumtype val)            {
                 gets()->devnum(val);
                 in_cangeset(MASK_GR_CHANGE_CHDEVNUM);};
 
-            virtual num32  devnum()    const           {
+            virtual devnumtype  devnum()    const           {
                 return exists() ? gets()->devnum() : 0;};
 
             virtual void   protocol(protocoltype val)            {
@@ -449,11 +442,11 @@ namespace dvnci {
             virtual ns_error error()  const                {
                 return exists() ? gets()->error() : 0;};
 
-            virtual void   timeout(num32 val)              {
+            virtual void   timeout(timeouttype val)              {
                 gets()->timeout(val);
                 in_cangeset(MASK_GR_CHANGE_TO);};
 
-            virtual num32  timeout() const                 {
+            virtual timeouttype  timeout() const                 {
                 return exists() ? gets()->timeout() : 0;};
 
             virtual void   deadbound(double val)           {
@@ -463,32 +456,32 @@ namespace dvnci {
             virtual double deadbound()  const              {
                 return exists() ? gets()->deadbound() : 0;};
 
-            virtual void   grouprate(num32 val)            {
+            virtual void   grouprate(gratetype val)            {
                 gets()->grouprate(val);
                 in_cangeset(MASK_GR_CHANGE_GR);};
 
-            virtual num32  grouprate() const               {
+            virtual gratetype  grouprate() const               {
                 return exists() ? gets()->grouprate() : 0;};
 
-            virtual void   trycount(num32 val)              {
+            virtual void   trycount(size_t val)              {
                 gets()->trycount(val);
                 in_cangeset(MASK_GR_CHANGE_TCNT);};
 
-            virtual num32  trycount() const                {
+            virtual size_t  trycount() const                {
                 return exists() ? gets()->trycount() : 0;};
 
-            virtual void   blocksize(num32 val)            {
+            virtual void   blocksize(blksizetype val)            {
                 gets()->blocksize(val);
                 in_cangeset(MASK_GR_CHANGE_BS);};
 
-            virtual num32  blocksize() const               {
+            virtual blksizetype  blocksize() const               {
                 return exists() ? gets()->blocksize() : 0;};
 
-            virtual void   archblocksize(num32 val)        {
+            virtual void   archblocksize(blksizetype val)        {
                 gets()->archblocksize(val);
                 in_cangeset(MASK_GR_CHANGE_ABS);};
 
-            virtual num32  archblocksize()  const          {
+            virtual blksizetype  archblocksize()  const          {
                 return exists() ? gets()->archblocksize() : 0;};
 
             virtual void   utiloperation(bool val)              {
@@ -498,11 +491,11 @@ namespace dvnci {
             virtual bool   utiloperation()  const               {
                 return exists() ? gets()->utiloperation() : 0;};
 
-            virtual void   indicateto(num32 val)           {
+            virtual void   indicateto(timeouttype val)           {
                 gets()->indicateto(val);
                 in_cangeset(MASK_GR_CHANGE_INDTO);};
 
-            virtual num32  indicateto()   const            {
+            virtual timeouttype  indicateto()   const            {
                 return exists() ? gets()->indicateto() : 0;};
 
             virtual lcltype local() const {
@@ -512,17 +505,17 @@ namespace dvnci {
                 gets()->local(val);
                 in_cangeset(MASK_GR_CHANGE_LOCAL);};
 
-            virtual num16 synctype() const  {
+            virtual intfsynctype synctype() const  {
                 return exists() ? gets()->synctype() : 0;};
 
-            virtual void synctype(num16 val ) {
+            virtual void synctype(intfsynctype val ) {
                 gets()->synctype(val);
                 in_cangeset(MASK_GR_CHANGE_SYNCTYPE);};
 
-            virtual num16 ver() const {
+            virtual intfvertype ver() const {
                 return exists() ? gets()->ver() : 0;};
 
-            virtual void ver(num16 val ) {
+            virtual void ver(intfvertype val ) {
                 gets()->ver(val);
                 in_cangeset(MASK_GR_CHANGE_VER);};
 
