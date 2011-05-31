@@ -15,8 +15,6 @@ namespace dvnci{
         modbus_req_parcel::modbus_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_req_parcel(vl, tgtp, mlnk) {
                 protocol_ = (mlnk.chanaltype() == NT_CHTP_RS232_4XX) ?
                         ((mlnk.protocol() == NT_MODBUS_ASCII) ? INTPR_RS_MODBUS_ASCII : INTPR_RS_MODBUS_RTU) : INTPR_TCP_MODBUS;
-                iscorrect_ = checktagtype();
-                if (!iscorrect_) return;
                 indx_=NULL_BIT_NUM;
                 getspecificator(vl);
                 iscorrect_ = parse(vl);}

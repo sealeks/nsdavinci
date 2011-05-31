@@ -29,13 +29,7 @@ namespace dvnci {
 
             bool parse(std::string vl);
 
-            bool conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr = 1);
-
-            bool checktagtype() {
-                if ((IN_REPORTSET(type())) || (IN_EVENTSET(type()))) {
-                    error(ERROR_TYPENOPROCCESS);
-                    return false;}
-                return true;}} ;
+            bool conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr = 1);} ;
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
