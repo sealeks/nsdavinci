@@ -12,7 +12,7 @@
 
 namespace dvnci {
 
-    const num32 DEFAULT_ARCHIVEBS = 15;
+    const blksizetype DEFAULT_ARCHIVEBS = 15;
 
     template <typename CLIENTITEM, typename SERVERITEM, typename ERRORITEM,
             typename SERVERKEYTYPE, typename VALUE, typename REPORTVALUES, typename REPORTVALUE,
@@ -67,7 +67,7 @@ namespace dvnci {
         boost::mutex* mtx_internal() {
             return &mutex;}
 
-        num32 archiveblocksize() const{
+        blksizetype archiveblocksize() const{
             return ((archiveblocksize_<1) || (archiveblocksize_>1000)) ? DEFAULT_ARCHIVEBS : archiveblocksize_;}
 
         /* add_items запрашивает айтемсы у сервера
@@ -84,9 +84,9 @@ namespace dvnci {
         virtual bool add_report_task(server_key_type key, datetime start, datetime stop) = 0;
 
     protected:
-        boost::mutex mutex;
-        intfstate _state;
-        num32  archiveblocksize_;
+        boost::mutex       mutex;
+        intfstate          _state;
+        blksizetype        archiveblocksize_;
         int_dvncierror_map errmap;};
 
     template<typename EXTERNALINTF, tagtype PROVIDETYPE = TYPE_SIMPL>
@@ -276,7 +276,7 @@ namespace dvnci {
                 datetime start = intf->time_log(id);
                 increporttime(start, intf->type(id), -1);
                 datetime stop= start;
-                increporttime(stop, intf->type(id), extinf->archiveblocksize());
+                increporttime(stop, intf->type(id), static_cast<reporthisttype>(extinf->archiveblocksize()));
                 stop = stop > now() ? now() : stop;
                 DEBUG_STR_DVNCI(add_report_task_remote);
                 DEBUG_VAL_DVNCI(id);
@@ -408,7 +408,7 @@ namespace dvnci {
         vct_server_key   req_remv;
         report_task_pair req_reptask;
 
-        vct_server_key activ_servid;};
+        vct_server_key   activ_servid;};
 
 
 }

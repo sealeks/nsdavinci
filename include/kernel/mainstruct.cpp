@@ -252,6 +252,15 @@ namespace dvnci {
         trycount(3);
         namepos(0);
         unusetype_ = static_cast<num64> (TYPE_DISCRET);
+        blocksize_=10;
+        archblocksize_=10;
+        trycount_=3;
+        devnum_=1;
+        protocol_=0;
+        timeout_=1000;
+        indicateto_=1000;
+        chanaltype_=0;
+        chanalnum_=0;
         time_n64(0);
         hostpos(0);
         serverpos(0);
@@ -297,7 +306,7 @@ namespace dvnci {
         dst.devspec_ = src.devspec_;
         dst.devnum_ = src.devnum_;
         dst.protocol_ = src.protocol_;
-        dst.portnum_ = src.portnum_;
+        dst.unuse6_ = src.unuse6_;
         dst.timeout_ = src.timeout_;
         dst.deadbound_ = src.deadbound_;
         dst.grouprate_ = src.grouprate_;
@@ -353,7 +362,6 @@ namespace dvnci {
         timeout_ = src.timeout();
         indicateto_ = src.indicateto();
         chanalnum_ = src.chanalnum();
-        portnum_ = src.portnum();
         devnum_ = src.devnum();
         switch (chanaltype_) {
             case NT_CHTP_RS232_4XX:{

@@ -36,7 +36,7 @@ namespace dvnci {
         public:
 
             device_link_executor(tagsbase_ptr inf, indx groupind, metalink lnk, tagtype provide_man = TYPE_SIMPL) :
-            executor(inf, provide_man), link(lnk), link_is_checked(false), link_checked_error(0), io_error_(0) {
+            executor(inf, provide_man), link(lnk),  link_checked_error(0), io_error_(0) {
                 meta_checker = metalink_checker_ptr(new METALINKCHACKER());};
 
             virtual bool operator()() {
@@ -47,7 +47,7 @@ namespace dvnci {
                             if (blockgtor->command(comds)) {
                                 io_error(*devicemanager << comds);}
                             if (blockgtor->next(blk)) {
-                                num32 tmptrycnt = blk.curenttrycount() + 1;
+                                size_t tmptrycnt = blk.curenttrycount() + 1;
                                 while ((io_error(*devicemanager << blk)) && ((tmptrycnt--)>0)) {}
                                 if (!io_error()) {
                                     set_group_state(blk.groupid(), 0);
@@ -82,19 +82,13 @@ namespace dvnci {
 
         protected:
             
-           ns_error checklink(bool recheck = false) {
+           ns_error checklink() {
             if ((meta_checker) && (intf)) {
-                if (recheck) {
-                    link_is_checked = true;
-                    link_checked_error = 0;}
-                else {
-                    if (link_is_checked) {
-                        return link_checked_error;}}
+                if (link_checked_error)  return link_checked_error;
                 metalink_vect mlvect;
                 util_devnum_set.clear();
                 intf->select_metalinks_vect_by_metalink(link, mlvect, util_devnum_set);
-                link_checked_error = meta_checker->operator ()(mlvect);
-                link_is_checked = true;}
+                link_checked_error = meta_checker->operator ()(mlvect);}
             return link_checked_error;}
                            
 
@@ -151,7 +145,6 @@ namespace dvnci {
             commands_vect                comds;
             metalink                     link;
             num32_set                    util_devnum_set;
-            bool                         link_is_checked;
             ns_error                     link_checked_error;
             ns_error                     io_error_;
             metalink_checker_ptr         meta_checker;

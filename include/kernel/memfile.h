@@ -738,26 +738,19 @@ namespace dvnci {
                              
        // chanalnum property
         
-        num32 chanalnum(size_type id) const {
+        chnlnumtype chanalnum(size_type id) const {
             return operator[](id)->chanalnum();}
         
-        void chanalnum(size_type id, num32 val); 
+        void chanalnum(size_type id, chnlnumtype val); 
          
-                             
-       // portnum property
-        
-        num32 portnum(size_type id) const {
-            return operator[](id)->portnum();}
-        
-        void portnum(size_type id, num32 val);
-         
+    
                              
        // devnum property
         
-        num32 devnum(size_type id) const {
+        devnumtype devnum(size_type id) const {
             return operator[](id)->devnum();}
         
-        void devnum(size_type id, num32 val);
+        void devnum(size_type id, devnumtype val);
           
                              
        // devnum property
@@ -780,15 +773,15 @@ namespace dvnci {
         num16 synctype(size_type id) const {
             return operator[](id)->synctype();}
         
-        void  synctype(size_type id, num16 val);
+        void  synctype(size_type id, intfsynctype val);
 
         
        // link property  
         
-        num16 ver(size_type id) const {
+        intfvertype ver(size_type id) const {
             return operator[](id)->ver();}
         
-        void  ver(size_type id, num16 val);
+        void  ver(size_type id, intfsynctype val);
 
         
        // local property          
@@ -811,40 +804,40 @@ namespace dvnci {
         
        // grouprate property   
         
-        num32 grouprate(size_type id) const {
+        gratetype grouprate(size_type id) const {
             return operator[](id)->grouprate();}        
 
-        void grouprate(size_type id, num32 val) {
+        void grouprate(size_type id, gratetype val) {
             if (exists(id))
                 operator[](id)->grouprate(val);}        
  
         
        // blocksize property
         
-        num32 blocksize(size_type id) const {
+        blksizetype blocksize(size_type id) const {
             return operator[](id)->blocksize();}
 
-        void blocksize(size_type id, num32 val) {
+        void blocksize(size_type id, blksizetype val) {
             if (exists(id))
                 operator[](id)->blocksize(val);}        
   
         
        // archblocksize property    
         
-        num32 archblocksize(size_type id) const {
+        blksizetype archblocksize(size_type id) const {
             return operator[](id)->archblocksize();}        
 
-        void archblocksize(size_type id, num32 val) {
+        void archblocksize(size_type id, blksizetype val) {
             if (exists(id))
                 operator[](id)->archblocksize(val);}
    
         
        // trycount property         
         
-        num32 trycount(size_type id) const {
+        size_t trycount(size_type id) const {
             return operator[](id)->trycount();}    
         
-        void trycount(size_type id, num32 val) {
+        void trycount(size_type id, size_t val) {
             if (exists(id))
                 operator[](id)->trycount(val);}
     
@@ -861,20 +854,20 @@ namespace dvnci {
         
        // indicateto property
         
-         num32 indicateto(size_type id) const {
+         timeouttype indicateto(size_type id) const {
             return operator[](id)->indicateto();}
          
-        void indicateto(size_type id, num32 val) {
+        void indicateto(size_type id, timeouttype val) {
             if (exists(id))
                 operator[](id)->indicateto(val);}  
       
         
        // timeout property       
         
-        num32 timeout(size_type id) const {
+        timeouttype timeout(size_type id) const {
             return operator[](id)->timeout();}
  
-        void timeout(size_type id, num32 val) {
+        void timeout(size_type id, timeouttype val) {
             if (exists(id))
                 operator[](id)->timeout(val);}
        
@@ -1526,21 +1519,21 @@ namespace dvnci {
        // reporthistory  property        
                 
         
-        num32 reporthistory(size_type id) const {
+        reporthisttype reporthistory(size_type id) const {
             return operator[](id)->reporthistory();}
         
                 
-        void reporthistory(size_type id, num32 val) {
+        void reporthistory(size_type id, reporthisttype val) {
             if (exists(id)) 
                 operator[](id)->reporthistory(val);}
                 
          
        // reportsubdelt  property        
         
-        num32 reportsubdelt(size_type id) const {
+        reporthistdelt reportsubdelt(size_type id) const {
             return operator[](id)->reportsubdelt();}
 
-        void reportsubdelt(size_type id, num32 val) {
+        void reportsubdelt(size_type id, reporthistdelt val) {
             if (exists(id)) 
                 operator[](id)->reportsubdelt(val);}
         

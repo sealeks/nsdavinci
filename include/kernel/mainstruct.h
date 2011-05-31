@@ -325,28 +325,28 @@ namespace dvnci {
         
         
 
-        void reporthistory(num32 val) {
-            num32 tmp = static_cast<num32> (val);
+        void reporthistory(reporthisttype val) {
+            reporthisttype tmp = static_cast<reporthisttype> (val);
             normilize_history_bound(type(), tmp);
-            reporthistory_ = static_cast<num64> (tmp);}
+            reporthistory_ = static_cast<num32> (tmp);}
 
-        num32 reporthistory() const {
+        reporthisttype reporthistory() const {
             if (IN_REPORTSET(type())) {
-                num32 tmp = static_cast<num32> (reporthistory_);
+                reporthisttype tmp = static_cast<reporthisttype> (reporthistory_);
                 normilize_history_bound(type(), tmp);
                 return tmp;}
             return 0;}
         
         
 
-        void reportsubdelt(num32 val) {
-            num32 tmp = static_cast<num32> (val);
+        void reportsubdelt(reporthistdelt val) {
+            reporthistdelt tmp = static_cast<reporthistdelt> (val);
             normilize_report_subperiod(type(), tmp);
-            reportsubdelt_ = static_cast<num64> (tmp);}
+            reportsubdelt_ = static_cast<num32> (tmp);}
 
-        num32 reportsubdelt() const {
+        reporthistdelt reportsubdelt() const {
             if (IN_REPORTSET(type())) {
-                num32 tmp = static_cast<num32> (reportsubdelt_);
+                reporthistdelt tmp = static_cast<reporthistdelt> (reportsubdelt_);
                 normilize_report_subperiod(type(), tmp);
                 return tmp;}
             return 0;}
@@ -979,29 +979,23 @@ namespace dvnci {
         chnltype chanaltype() const {
             return in_bounded<chnltype > (0, 4, static_cast<chnltype> (chanaltype_));}
 
-        void chanalnum(num32 val) {
+        void chanalnum(chnlnumtype val) {
             chanalnum_ = static_cast<num64> (val);}
 
-        num32 chanalnum() const {
-            return static_cast<num32> (chanalnum_);}
+        chnlnumtype chanalnum() const {
+            return static_cast<chnlnumtype> (chanalnum_);}
 
-        void devnum(num32 val) {
+        void devnum(devnumtype val) {
             devnum_ = static_cast<num64> (val);}
 
-        num32 devnum() const {
-            return static_cast<num32> (devnum_);}
+        devnumtype devnum() const {
+            return static_cast<devnumtype> (devnum_);}
 
-        void devspec(num32 val) {
+        void devspec(devspectype val) {
             devspec_ = static_cast<num64> (val);}
 
-        num32 devspec() const {
-            return static_cast<num32> (devspec_);}
-
-        void portnum(num32 val) {
-            portnum_ = static_cast<num64> (val);}
-
-        num32 portnum() const {
-            return static_cast<num32> (portnum_);}
+        devspectype devspec() const {
+            return static_cast<devspectype> (devspec_);}
 
         void protocol(protocoltype val) {
             protocol_ = static_cast<num64> (val);}
@@ -1009,11 +1003,11 @@ namespace dvnci {
         protocoltype protocol() const {
             return static_cast<protocoltype> (protocol_);}
 
-        num32 timeout() const {
-            return in_bounded<num32 > (10, 100000, static_cast<num32> (timeout_));}
+        timeouttype timeout() const {
+            return in_bounded<timeouttype > (0, 100000, static_cast<timeouttype> (timeout_));}
 
-        void timeout(num32 val) {
-            timeout_ = static_cast<num64> (in_bounded<num32 > (10, 1000000, val));}
+        void timeout(timeouttype val) {
+            timeout_ = static_cast<num64> (in_bounded<timeouttype > (10, 1000000, val));}
 
         double deadbound() const {
             return in_bounded<double>(0, 100, from_num64_cast<double>(deadbound_));}
@@ -1021,29 +1015,29 @@ namespace dvnci {
         void deadbound(double val) {
             deadbound_ = num64_cast<double>(in_bounded<double>(0, 100, val));}
 
-        num32 grouprate() const {
-            return in_bounded<num32 > (0, 1000000, static_cast<num32> (grouprate_));}
+        gratetype grouprate() const {
+            return in_bounded<gratetype > (0, 1000000, static_cast<gratetype> (grouprate_));}
 
-        void grouprate(num32 val) {
-            grouprate_ = static_cast<num64> (in_bounded<num32 > (0, 1000000, val));}
+        void grouprate(gratetype val) {
+            grouprate_ = static_cast<num64> (in_bounded<gratetype > (0, 1000000, val));}
 
-        num32 blocksize() const {
-            return in_bounded<num32 > (0, 1000000, static_cast<num32> (blocksize_));}
+        blksizetype blocksize() const {
+            return in_bounded<blksizetype > (0, 1000000, static_cast<blksizetype> (blocksize_));}
 
-        void blocksize(num32 val) {
-            blocksize_ = static_cast<num64> (in_bounded<num32 > (0, 1000000, val));}
+        void blocksize(blksizetype val) {
+            blocksize_ = static_cast<num64> (in_bounded<blksizetype > (0, 1000000, val));}
 
-        num32 archblocksize() const {
-            return in_bounded<num32 > (0, 1000000, static_cast<num32> (archblocksize_));}
+        blksizetype archblocksize() const {
+            return in_bounded<blksizetype > (0, 1000000, static_cast<blksizetype> (archblocksize_));}
 
-        void archblocksize(num32 val) {
-            archblocksize_ = static_cast<num64> (in_bounded<num32 > (0, 1000000, val));}
+        void archblocksize(blksizetype val) {
+            archblocksize_ = static_cast<num64> (in_bounded<blksizetype > (0, 1000000, val));}
 
-        num32 trycount() const {
-            return in_bounded<num32 > (1, 100, static_cast<num32> (trycount_));}
+        size_t trycount() const {
+            return in_bounded<num32 > (1, 100, static_cast<size_t> (trycount_));}
 
-        void trycount(num32 val) {
-            trycount_ = static_cast<num64> (in_bounded<num32 > (1, 100, val));}
+        void trycount(size_t val) {
+            trycount_ = static_cast<num64> (in_bounded<size_t > (1, 100, val));}
 
         bool utiloperation() const {
             return static_cast<bool> (utiloperation_);}
@@ -1051,11 +1045,11 @@ namespace dvnci {
         void utiloperation(bool val) {
             utiloperation_ = static_cast<num64> (val);}
 
-        num32 indicateto() const {
-            return in_bounded<num32 > (0, 1000000, static_cast<num32> (indicateto_));}
+        timeouttype indicateto() const {
+            return in_bounded<timeouttype > (0, 1000000, static_cast<timeouttype> (indicateto_));}
 
-        void indicateto(num32 val) {
-            indicateto_ = static_cast<num64> (in_bounded<num32 > (0, 1000000, val));}
+        void indicateto(timeouttype val) {
+            indicateto_ = static_cast<num64> (in_bounded<timeouttype > (0, 1000000, val));}
 
         lcltype local() const {
             return static_cast<lcltype> (local_ & 3);}
@@ -1063,17 +1057,17 @@ namespace dvnci {
         void local(lcltype val) {
             local_ = static_cast<num64> (val & 3);}
 
-        void synctype(num16 val) {
-            synctype_ = static_cast<num64> (in_bounded<num16 > (0, 2, val));}
+        void synctype(intfsynctype val) {
+            synctype_ = static_cast<num64> (in_bounded<intfsynctype > (0, 2, val));}
 
-        num16 synctype() const {
-            return in_bounded<num16 > (0, 2, static_cast<num16> (synctype_));}
+        intfsynctype synctype() const {
+            return in_bounded<intfsynctype > (0, 2, static_cast<intfsynctype> (synctype_));}
 
-        void ver(num16 val) {
+        void ver(intfvertype val) {
             ver_ = static_cast<num64> (val & 3);}
 
-        num16 ver() const {
-            return static_cast<num16> (ver_ & 3);}
+        intfvertype ver() const {
+            return static_cast<intfvertype> (ver_ & 3);}
 
         void supporttype(bool val) {
             supporttype_ = static_cast<num64> (val);}
@@ -1106,13 +1100,13 @@ namespace dvnci {
 
     private:
         unum64 id_;
-        num64 active_;
-        num64 time_;
-        num64 unusetype_;
-        num32 valid_;
-        num32 error_;
+        num64  active_;
+        num64  time_;
+        num64  unusetype_;
+        num32  valid_;
+        num32  error_;
         unum64 namepos_;
-        num64 appid_;
+        num64  appid_;
         unum64 hostpos_;
         unum64 serverpos_;
         unum64 userpos_;
@@ -1132,7 +1126,7 @@ namespace dvnci {
         num64 devspec_;
         num64 devnum_;
         num64 protocol_;
-        num64 portnum_;
+        num64 unuse6_;
         num64 timeout_;
         num64 deadbound_;
         num64 grouprate_;
@@ -1271,21 +1265,20 @@ namespace dvnci {
 
         struct nillinfo {};
 
-        //struct tcpinfo {
-        //num32      portnum;} ;
+
 
         struct comportinfo {
-            baudratetype boundrate;
-            rsparitytype parity;
+            baudratetype  boundrate;
+            rsparitytype  parity;
             rsstopbittype stopbit;
-            bool flowcontrol;
-            num32 flowcontrolbeforesleep;
-            num32 flowcontrolaftersleep;
-            num32 readinterval;
-            num32 rtm;
-            num32 rtc;
-            num32 wtm;
-            num32 wtc;};
+            bool          flowcontrol;
+            num32         flowcontrolbeforesleep;
+            num32         flowcontrolaftersleep;
+            num32         readinterval;
+            num32         rtm;
+            num32         rtc;
+            num32         wtm;
+            num32         wtc;};
 
         union info {
             nillinfo nilinf;
@@ -1295,11 +1288,11 @@ namespace dvnci {
         static const size_t struct_size = sizeof (indx) + sizeof (chnltype) + sizeof (num32) * 9;
 
         metalink() :
-        id_(nill_ptr), appid_(0), chanaltype_(0), chanalnum_(0), portnum_(0), protocol_(0),
+        id_(nill_ptr), appid_(0), chanaltype_(0), chanalnum_(0),  protocol_(0),
         blocksize_(0), archblocksize_(0), eventblocksize_(0), indicateto_(0), host_(""), port_("") {}
 
         metalink(chnltype tp) :
-        id_(nill_ptr), appid_(0), chanaltype_(tp), chanalnum_(0), portnum_(0), protocol_(0),
+        id_(nill_ptr), appid_(0), chanaltype_(tp), chanalnum_(0),  protocol_(0),
         blocksize_(0), archblocksize_(0), eventblocksize_(0), indicateto_(0), host_(""), port_("") {}
 
         metalink(const groupstruct & src, indx idn, const std::string& hst = "",
@@ -1326,25 +1319,25 @@ namespace dvnci {
         protocoltype protocol() const {
             return protocol_;};
 
-        num32 blocksize() const {
-            return (blocksize_ < 0) ? DEFAULT_BLOCK_SIZE : blocksize_;};
+        blksizetype blocksize() const {
+            return blocksize_;};
 
-        num32 archblocksize() const {
-            return (archblocksize_ < 0) ? DEFAULT_ARCHBLOCK_SIZE : archblocksize_;};
+        blksizetype archblocksize() const {
+            return archblocksize_;};
 
-        num32 eventblocksize() const {
+        blksizetype eventblocksize() const {
             return DEFAULT_EVENTSBLOCK_SIZE;};
 
-        num32 chanalnum() const {
+        chnlnumtype chanalnum() const {
             return chanalnum_;};
 
-        num32 indicateto() const {
+        timeouttype indicateto() const {
             return indicateto_;}
 
-        num32 timeout() const {
+        timeouttype timeout() const {
             return timeout_;}
 
-        num32 devicenum() const {
+        devnumtype devicenum() const {
             return devnum_;}
 
         bool echoresp() const {
@@ -1368,27 +1361,26 @@ namespace dvnci {
 
     private:
 
-        indx id_;
-        appidtype appid_;
-        chnltype chanaltype_;
-        num32 chanalnum_;
-        num32 portnum_;
-        num32 devnum_;
-        protocoltype protocol_;
-        num32 blocksize_;
-        num32 archblocksize_;
-        num32 eventblocksize_;
-        num32 indicateto_;
-        num32 timeout_;
-        info inf_;
-        std::string host_;
-        std::string user_;
-        std::string password_;
-        std::string server_;
-        std::string group_;
-        std::string port_;
-        std::string ether_;
-        std::string topic_;} pmetalink;
+        indx          id_;
+        appidtype     appid_;
+        chnltype      chanaltype_;
+        chnlnumtype   chanalnum_;
+        devnumtype    devnum_;
+        protocoltype  protocol_;
+        blksizetype   blocksize_;
+        blksizetype   archblocksize_;
+        blksizetype   eventblocksize_;
+        timeouttype   indicateto_;
+        timeouttype   timeout_;
+        info          inf_;
+        std::string   host_;
+        std::string   user_;
+        std::string   password_;
+        std::string   server_;
+        std::string   group_;
+        std::string   port_;
+        std::string   ether_;
+        std::string   topic_;} pmetalink;
 
 
 
@@ -1449,15 +1441,15 @@ namespace dvnci {
 
     private:
         unum64 id_;
-        num64 unusevalue_;
-        num64 unusetime_;
-        num64 unusetype_;
-        num32 unusevalid_;
-        num32 unuseerror_;
+        num64  unusevalue_;
+        num64  unusetime_;
+        num64  unusetype_;
+        num32  unusevalid_;
+        num32  unuseerror_;
         unum64 namepos_;
         unum64 headernamepos_;
-        num64 notuse1;
-        num64 notuse2;} *pagroupstruct;
+        num64  notuse1;
+        num64  notuse2;} *pagroupstruct;
 
     typedef struct agroupsstruct {
         typedef smplheader head_type;

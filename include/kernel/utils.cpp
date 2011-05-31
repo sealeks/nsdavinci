@@ -780,7 +780,7 @@ namespace dvnci {
     std::tm to_std_tm(datetime tm) {
         return boost::posix_time::to_tm(tm);}
 
-    bool incperiod(datetime& val, int type, num64 n) {
+    bool incperiod(datetime& val, int type, reporthisttype n) {
         using namespace boost::posix_time;
         if (val.is_special()) return false;
         switch (type) {
@@ -892,7 +892,7 @@ namespace dvnci {
             case REPORTTYPE_QVART: return normalizeperiod(val, QUART_TM);}
         return normalizeperiod(val, MINUTE_TM);}
 
-    bool increporttime(datetime& val, reporttype tp, num64 n) {
+    bool increporttime(datetime& val, reporttype tp, reporthisttype n) {
         switch (tp) {
             case REPORTTYPE_YEAR: return incperiod(val, YAER_TM, n);
             case REPORTTYPE_MIN: return incperiod(val, MINUTE_TM, n);

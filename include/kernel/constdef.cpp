@@ -37,7 +37,7 @@ namespace dvnci {
             case MSG_DVNCDBDISCONNECT: return "mDataBase_disconnect";}
         return "UndefMess";}
 
-    void normilize_history_bound(vlvtype type, num32& val) {
+    void normilize_history_bound(vlvtype type, reporthisttype& val) {
         switch (type) {
             case REPORTTYPE_YEAR:{
                 val = val < MIN_REPORTTYPE_YEAR ? MIN_REPORTTYPE_YEAR: val > MAX_REPORTTYPE_YEAR ? MAX_REPORTTYPE_YEAR: val;
@@ -68,7 +68,7 @@ namespace dvnci {
                 break;}
             default:  val = 0;}}
 
-    void normilize_report_subperiod(vlvtype type, num32& val) {
+    void normilize_report_subperiod(vlvtype type, reporthistdelt& val) {
         switch (type) {
             case REPORTTYPE_MIN:{
                 val = val < -59 ? -59: val > 59 ? 59: val;
