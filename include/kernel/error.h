@@ -107,23 +107,23 @@ namespace dvnci {
     const ns_error ERROR_IO_SERVICE_LOCK = 0x430;
     // ошибка генерации запроса к устройству
     const ns_error ERROR_IO_NO_GENERATE_REQ = 0x431;
-        // ошибка адреса устройства
+    // ошибка адреса устройства
     const ns_error ERROR_IO_NO_CORRECT_ADDR = 0x432;
     // ошибка рассхинхронизации настроек канала
     const ns_error ERROR_IO_NOSYNC_LINK = 0x433;
-	// ошибка инициализации генератора блока
+    // ошибка инициализации генератора блока
     const ns_error ERROR_IO_NOBLOCKGEN_LINK = 0x434;
-	// ошибка инициализации менеджера устройств
+    // ошибка инициализации менеджера устройств
     const ns_error ERROR_IO_NODEVMANAGER_LINK = 0x435;
-        // не инициализирова поток ввода ввывода
+    // не инициализирова поток ввода ввывода
     const ns_error ERROR_IO_NOLINKSTREAM = 0x436;
-	// ошибка адресации MODBUS или другая
+    // ошибка адресации MODBUS или другая
     const ns_error ERROR_IO_MODBUS_ERR = 0x437;
-	// устройство ответило NAK
+    // устройство ответило NAK
     const ns_error ERROR_IO_DEVICE_NAK = 0x438;
-        // пустой ответ
+    // пустой ответ
     const ns_error ERROR_IO_NO_DATA = 0x439;
-        // ошибка преобразования
+    // ошибка преобразования
     const ns_error ERROR_IO_DATA_CONV = 0x43A;
     // нет соединения с базой данных
     const ns_error ERROR_NO_DATABASE_CONN = 0x440;

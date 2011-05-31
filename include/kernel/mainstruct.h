@@ -24,7 +24,7 @@ namespace dvnci {
     public:
         
         static const num64 ALLWAYSACTIVE = 0x1;
-        static const num64 RANGABLE = 0x2;
+        static const num64 RANGABLE      = 0x2;
 
         tagstruct(indx mid = nill_ptr, indx group = npos);
 
@@ -515,7 +515,9 @@ namespace dvnci {
 
         template <typename T >
                 T alarmconst() const {
-            return num64_and_type_cast<T > (alarmconst_, static_cast<tagtype> (type_));}
+            return type_==TYPE_DISCRET ? 
+                !from_num64_cast<bool>(alarmconst_) : 
+                num64_and_type_cast<T > (alarmconst_, static_cast<tagtype> (type_));}
 
         num64 alarmconst64() const {
             return alarmconst_;}

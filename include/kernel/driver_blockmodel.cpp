@@ -128,6 +128,12 @@ namespace dvnci {
                             value_cast<unum8 > (tmp , tm, valid);
                             return;}
                         break;}
+                    case TYPE_DISCRET:{
+                        num8 tmp = 0;
+                        if (string_to_primtype<num8> (val, tmp)) {
+                            value_cast<bool > (tmp!=0 , tm, valid);
+                            return;}
+                        break;}
                     case TYPE_NODEF:
                     case TYPE_DOUBLE:{
                         double tmp = 0;

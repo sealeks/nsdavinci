@@ -37,11 +37,11 @@ namespace dvnci {
     class usersbase;
     class staticmemorymap;
     class filememorymap;
-    
+
     void test_immi_struct();
 
     typedef membase_sync_ptr_tmpl<tagsbase>                     tagsbase_ptr;
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////
     /// Ciclyc Structure
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +137,6 @@ namespace dvnci {
     ////////////////////////////////////////////////////////////////////////////
 
     class debugbase : public cyclicbasemem<debugsstruct> {
-        
         friend class tagsbase;
 
     public:
@@ -223,7 +222,8 @@ namespace dvnci {
     public:
 
         alarmsbase(ptagsbase intf_ptr, const std::string& mapnm, size_t maxcnt = MAX_NUM32_SIGNED) :
-        livebasemem< alarmssstruct>(mapnm, maxcnt), tgbs_ptr(intf_ptr){;}
+        livebasemem< alarmssstruct>(mapnm, maxcnt), tgbs_ptr(intf_ptr) {
+            ;}
 
         size_type tagid(size_type id) const {
             return operator[](id)->tagid();};
@@ -272,11 +272,11 @@ namespace dvnci {
             size_type i = npos;
             for (size_type j = 0; j < count(); ++j) {
                 i = reverse_index(j);
-                if ((!filtered) || ((grpindx == npos) && (agrpindx == npos)) || 
+                if ((!filtered) || ((grpindx == npos) && (agrpindx == npos)) ||
                         (grpindx = group(reverse_index(i))) || (agrpindx = agroup(reverse_index(i)))) {
                     datetime tm = time(i);
-                    T tmp = {*reinterpret_cast<B*> (&tm), tag (i) , text(i), 
-                    static_cast<B> (kvit(i)), static_cast<B> (level(i)), static_cast<B> (type(i)), value(i)};
+                    T tmp = {*reinterpret_cast<B*> (&tm), tag (i) , text(i),
+                        static_cast<B> (kvit(i)), static_cast<B> (level(i)), static_cast<B> (type(i)), value(i)};
                     vect.push_back(tmp);}}
             vers = version();
             return vect.size();}
@@ -302,7 +302,7 @@ namespace dvnci {
         void checkout();
 
         size_type find_by_tagid(size_type id);
-    
+
         ptagsbase tgbs_ptr;} ;
 
     ////////////////////////////////////////////////////////////////////////////
@@ -381,14 +381,14 @@ namespace dvnci {
                 i = reverse_index(j);
                 if ((!filtered) || (grpindx == npos) || (grpindx = group(i))) {
                     datetime tm = time(i);
-                    T tmp = {*reinterpret_cast<B*> (&tm), tag (i) , groupname(i), value_before_str(i), 
-                    value_str_set(i), user(i), host(i)};
+                    T tmp = {*reinterpret_cast<B*> (&tm), tag (i) , groupname(i), value_before_str(i),
+                        value_str_set(i), user(i), host(i)};
                     vect.push_back(tmp);}}
 
             vers = version();
             return vect.size();}
-            
-         ptagsbase tgbs_ptr;} ;
+
+        ptagsbase tgbs_ptr;} ;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -591,13 +591,13 @@ namespace dvnci {
             size_type i = npos;
             for (size_type j = 0; j < count(); ++j) {
                 i = reverse_index(j);
-                T tmp = {name(i), host(i), ip(i) , user(i), static_cast<B> (appid(i)),  
-                static_cast<B> (accesslevel(i)), static_cast<B> (ruleid(i))};
+                T tmp = {name(i), host(i), ip(i) , user(i), static_cast<B> (appid(i)),
+                    static_cast<B> (accesslevel(i)), static_cast<B> (ruleid(i))};
                 vect.push_back(tmp);}
 
             vers = version();
             return vect.size();}
-        
+
         ptagsbase                tgbs_ptr;
         mutex_ptr                mutex_;
         client_registrator_ptr   clientscls;} ;
@@ -606,9 +606,7 @@ namespace dvnci {
     /// Filepersistence Table Structure
     /////////////////////////////////////////////////////////////////////////////////////////////
 
-
     class groupsbase : public templatebase<groupsstruct> {
-        
         friend class tagsbase;
 
     public:
@@ -619,35 +617,35 @@ namespace dvnci {
         virtual ~groupsbase() {};
 
 
-              
+
         // active property
-        
+
         bool active(size_type id) const {
             return operator[](id)->active();}
-        
+
         void active(size_type id, bool val);
-        
-        
+
+
         // valid property
-        
+
         vlvtype valid(size_type id) const {
             return operator[](id)->valid();}
-        
+
         void valid(size_type id, vlvtype val);
-        
-           
+
+
         // valid property  
-        
+
         ns_error error(size_type id) const {
             return operator[](id)->error();}
-        
+
         void error(size_type id, ns_error val) {
             if (exists(id))
-                operator[](id)->error(val);}       
-        
-           
+                operator[](id)->error(val);}
+
+
         // valid property
-        
+
         datetime time(size_type id) const {
             return operator[](id)->time();}
 
@@ -656,297 +654,293 @@ namespace dvnci {
 
         void time(size_type id, datetime value) {
             if (exists(id)) operator[](id)->time(value);}
-        
-        
+
+
         // host property
 
         std::string host(size_type id) const {
             return stringbase_src(operator[](id)->hostpos());}
-              
+
         void host(size_type id, const std::string& val);
-        
-        
-       // user property        
-        
+
+
+        // user property        
+
         std::string user(size_type id) const {
             return stringbase_src(operator[](id)->userpos());}
-        
+
         void user(size_type id, const std::string& val);
-         
-        
-       // password property        
-        
+
+
+        // password property        
+
         std::string password(size_type id) const {
             return stringbase_src(operator[](id)->passpos());}
-        
+
         void password(size_type id, const std::string& val);
-         
-        
-       // server property         
-        
+
+
+        // server property         
+
         std::string server(size_type id) const {
             return stringbase_src(operator[](id)->serverpos());}
-                
+
         void server(size_type id, const std::string& val);
-        
-                 
-       // group property 
-        
+
+
+        // group property 
+
         std::string group(size_type id) const {
             return stringbase_src(operator[](id)->grouppos());}
-        
+
         void group(size_type id, const std::string& val);
-         
-                 
-       // group property        
-        
+
+
+        // group property        
+
         std::string port(size_type id) const {
             return stringbase_src(operator[](id)->portpos());}
-        
+
         void port(size_type id, const std::string& val);
-         
-                 
-       // ether property         
+
+
+        // ether property         
 
         std::string ether(size_type id) const {
             return stringbase_src(operator[](id)->etherpos());}
-        
-       void ether(size_type id, const std::string& val);
-       
-                             
-       // topic property   
-       
+
+        void ether(size_type id, const std::string& val);
+
+
+        // topic property   
+
         std::string topic(size_type id) const {
             return stringbase_src(operator[](id)->topicpos());}
-        
+
         void topic(size_type id, const std::string& val);
-        
-                             
-       // appid property        
+
+
+        // appid property        
 
         appidtype appid(size_type id) const {
-            return operator[](id)->appid();}     
-        
-                             
-       // chanaltype property
-        
+            return operator[](id)->appid();}
+
+
+        // chanaltype property
+
         chnltype chanaltype(size_type id) const {
             return operator[](id)->chanaltype();}
-       
+
         void chanaltype(size_type id, chnltype val);
-        
-                             
-       // chanalnum property
-        
+
+
+        // chanalnum property
+
         chnlnumtype chanalnum(size_type id) const {
             return operator[](id)->chanalnum();}
-        
-        void chanalnum(size_type id, chnlnumtype val); 
-         
-    
-                             
-       // devnum property
-        
+
+        void chanalnum(size_type id, chnlnumtype val);
+
+
+
+        // devnum property
+
         devnumtype devnum(size_type id) const {
             return operator[](id)->devnum();}
-        
+
         void devnum(size_type id, devnumtype val);
-          
-                             
-       // devnum property
-        
+
+
+        // devnum property
+
         protocoltype protocol(size_type id) const {
             return operator[](id)->protocol();}
-        
+
         void protocol(size_type id, protocoltype val);
 
-        
-       // link property        
-        
+
+        // link property        
+
         metalink  link(size_type id) const {
             return exists(id) ? metalink(*operator[](id), id , host(id), user(id), password(id), server(id),
-                                          group(id), port(id), ether(id), topic(id)) : metalink();}
-   
-        
-       // link property     
-        
+                    group(id), port(id), ether(id), topic(id)) : metalink();}
+
+
+        // link property     
+
         num16 synctype(size_type id) const {
             return operator[](id)->synctype();}
-        
+
         void  synctype(size_type id, intfsynctype val);
 
-        
-       // link property  
-        
+
+        // link property  
+
         intfvertype ver(size_type id) const {
             return operator[](id)->ver();}
-        
+
         void  ver(size_type id, intfsynctype val);
 
-        
-       // local property          
-        
+
+        // local property          
+
         lcltype local(size_type id) const {
             return operator[](id)->local();}
-        
+
         void local(size_type id, lcltype val);
 
-        
-       // deadbound property          
-        
+
+        // deadbound property          
+
         double deadbound(size_type id) const {
             return operator[](id)->deadbound();}
- 
+
         void deadbound(size_type id, double val) {
             if (exists(id))
                 operator[](id)->deadbound(val);}
- 
-        
-       // grouprate property   
-        
+
+
+        // grouprate property   
+
         gratetype grouprate(size_type id) const {
-            return operator[](id)->grouprate();}        
+            return operator[](id)->grouprate();}
 
         void grouprate(size_type id, gratetype val) {
             if (exists(id))
-                operator[](id)->grouprate(val);}        
- 
-        
-       // blocksize property
-        
+                operator[](id)->grouprate(val);}
+
+
+        // blocksize property
+
         blksizetype blocksize(size_type id) const {
             return operator[](id)->blocksize();}
 
         void blocksize(size_type id, blksizetype val) {
             if (exists(id))
-                operator[](id)->blocksize(val);}        
-  
-        
-       // archblocksize property    
-        
+                operator[](id)->blocksize(val);}
+
+
+        // archblocksize property    
+
         blksizetype archblocksize(size_type id) const {
-            return operator[](id)->archblocksize();}        
+            return operator[](id)->archblocksize();}
 
         void archblocksize(size_type id, blksizetype val) {
             if (exists(id))
                 operator[](id)->archblocksize(val);}
-   
-        
-       // trycount property         
-        
+
+
+        // trycount property         
+
         size_t trycount(size_type id) const {
-            return operator[](id)->trycount();}    
-        
+            return operator[](id)->trycount();}
+
         void trycount(size_type id, size_t val) {
             if (exists(id))
                 operator[](id)->trycount(val);}
-    
-        
-       // utiloperation property 
-        
+
+
+        // utiloperation property 
+
         bool utiloperation(size_type id) const {
             return operator[](id)->utiloperation();}
-        
+
         void utiloperation(size_type id, bool val) {
             if (exists(id))
-                operator[](id)->utiloperation(val);}        
-     
-        
-       // indicateto property
-        
-         timeouttype indicateto(size_type id) const {
+                operator[](id)->utiloperation(val);}
+
+
+        // indicateto property
+
+        timeouttype indicateto(size_type id) const {
             return operator[](id)->indicateto();}
-         
+
         void indicateto(size_type id, timeouttype val) {
             if (exists(id))
-                operator[](id)->indicateto(val);}  
-      
-        
-       // timeout property       
-        
+                operator[](id)->indicateto(val);}
+
+
+        // timeout property       
+
         timeouttype timeout(size_type id) const {
             return operator[](id)->timeout();}
- 
+
         void timeout(size_type id, timeouttype val) {
             if (exists(id))
                 operator[](id)->timeout(val);}
-       
-        
-       // supporttype property        
-            
+
+
+        // supporttype property        
+
         bool supporttype(size_type id) const {
             return operator[](id)->supporttype();}
-        
-        void  supporttype(size_type id, bool val);        
-        
-        
-       // config property
-        
+
+        void  supporttype(size_type id, bool val);
+
+
+        // config property
+
         const void* config(size_type id) const {
             return operator[](id)->config();}
-        
+
         void config(size_type id, void* val) {
             if (exists(id))
-                memcpy((operator[](id))->config(), val, GROP_CONFIG_SIZE);}        
+                memcpy((operator[](id))->config(), val, GROP_CONFIG_SIZE);}
 
 
 
     protected:
 
         static void writezero(const fspath& fpath);
-        
+
         //overloaded
-        
+
         virtual std::string nametemlete() const {
             return "group";};
-            
-            
+
+
         virtual bool checkname(const std::string& val, size_type parnt = npos);
-        
-        
+
         virtual bool write_criteria(size_type id) const {
-            return ((exists(id)) && ((appid(id)==NS_GROUP_SYSTEMVAR) || (appid(id)==NS_GROUP_SYSTEM)));}
-        
+            return ((exists(id)) && ((appid(id) == NS_GROUP_SYSTEMVAR) || (appid(id) == NS_GROUP_SYSTEM)));}
+
         virtual onum trigger_write_criteria(size_type id) const {
             return exists(id) ? appid(id) : 0;}
-        
+
         virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
 
         virtual void uninitstruct(size_type id);
-        
-        
+
+
         // triggers
-        
+
         virtual void trigger_add(size_type id, num64 numcriteria = -1);
 
         virtual void trigger_remove(size_type id, num64 numcriteria = -1);
-        
+
         virtual void trigger_write(size_type id);
-        
-        
-        
+
         virtual size_type parent_id(size_type id) {
             return static_cast<num64> (appid(id));}
-        
+
         void notify_tagmanage(qumsgtype mess, size_type id, size_type group);
 
         void notify_groupmanage(qumsgtype mess, size_type id, num32 some);
-        
+
         ///
-             
+
         void appid(size_type id, appidtype val);
-        
+
         size_type select_groups_by_appid(appidtype val);
-    
+
         void clone(size_type idsrc, size_type iddst);} ;
-            
-            
-     
-   
+
+
+
+
     ///   agroupsbase 
-        
+
     class agroupsbase : public templatebase<agroupsstruct> {
-        
         friend class tagsbase;
 
     public:
@@ -955,40 +949,39 @@ namespace dvnci {
         templatebase<agroupsstruct>(intf_ptr_, strbs, basepatht / ALARMGROUPS_FILE_NAME, ALARMGROUPS_MAP_NAME, EXTEND_MEMSHARE_AGRP_SIZE) {}
 
         virtual ~agroupsbase() {};
-        
-             
-       // headername property
-        
+
+
+        // headername property
+
         std::string headername(size_type id) const {
             return stringbase_src(operator[](id)->headernamepos());}
 
         void headername(size_type id, const std::string& val);
-        
+
 
     protected:
-        
+
         static void writezero(const fspath& fpath);
-                     
+
         //overloaded 
-        
+
         virtual std::string nametemlete() const {
             return "agroup";};
 
         virtual bool checkname(const std::string& val, size_type parnt = npos);
-        
+
 
         virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
 
-        virtual void uninitstruct(size_type id);};
-        
-  
-        
-        
-        
-     ///   accessrulesbase       
+        virtual void uninitstruct(size_type id);} ;
+
+
+
+
+
+    ///   accessrulesbase       
 
     class accessrulesbase : public templatebase<accessrulesstruct> {
-        
         friend class tagsbase;
 
     public:
@@ -997,44 +990,44 @@ namespace dvnci {
         templatebase<accessrulesstruct>(intf_ptr_, strbs, basepatht / ACCESSRULES_FILE_NAME, ACCESSRULES_MAP_NAME, EXTEND_MEMSHARE_ACCESSRUL_SIZE) {}
 
         virtual ~accessrulesbase() {};
-        
-             
-       // headername property        
+
+
+        // headername property        
 
         std::string cidr(size_type id) const {
             return stringbase_src(operator[](id)->cidrpos());}
 
         void cidr(size_type id, const std::string& val);
-        
-                 
-       // headername property
-        
+
+
+        // headername property
+
         std::string appname(size_type id) const {
             return stringbase_src(operator[](id)->apppos());}
 
         void appname(size_type id, const std::string& val);
-        
-                 
-       // headername property
-        
+
+
+        // headername property
+
         appidtype appid(size_type id) const {
             return operator[](id)->appid();}
 
         void appid(size_type id, appidtype val) {
             if (exists(id)) operator[](id)->appid(val);}
-        
-             
-       // headername property
-        
+
+
+        // headername property
+
         accessruletype rule(size_type id) const {
             return operator[](id)->rule();}
 
         void rule(size_type id, accessruletype val) {
             if (exists(id)) operator[](id)->rule(val);}
-        
-             
-       // headername property
-        
+
+
+        // headername property
+
         acclevtype accesslevel(size_type id) const {
             return operator[](id)->accesslevel();}
 
@@ -1044,32 +1037,30 @@ namespace dvnci {
 
     protected:
 
-        static void writezero(const fspath& fpath); 
-        
-            
+        static void writezero(const fspath& fpath);
+
+
         //overloaded 
-              
+
         virtual std::string nametemlete() const {
             return "rule";};
 
         virtual bool checkname(const std::string& val, size_type parnt = -1);
-        
+
 
         virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
 
         virtual void uninitstruct(size_type id);
-        
-        
+
         bool grant_access(appidtype app, const std::string& hst = "", const std::string& ipp = "", const std::string& usr = "",  const std::string& password = "") {
             return true;}} ;
-            
-   
-        
-        
-        
-     ///   usersbase
-            
-            
+
+
+
+
+
+    ///   usersbase
+
     class usersbase : public templatebase<usersstruct> {
         friend class tagsbase;
 
@@ -1079,11 +1070,11 @@ namespace dvnci {
         templatebase<usersstruct>(intf_ptr_, strbs, basepatht / OPERATOR_FILE_NAME, OPERATOR_MAP_NAME, EXTEND_MEMSHARE_USER_SIZE) {}
 
         virtual ~usersbase() {};
-        
-        
-                 
-       // headername property
-        
+
+
+
+        // headername property
+
         virtual std::string password(size_type id) const {
             return stringbase_src(operator[](id)->passpos());}
 
@@ -1092,9 +1083,9 @@ namespace dvnci {
                 size_t tmp = operator[](id)->passpos();
                 stringbase_src(tmp, val);
                 operator[](id)->passpos(tmp);}}
-        
-                 
-       // headername property        
+
+
+        // headername property        
 
         acclevtype accesslevel(size_type id) const {
             return  operator[](id)->accesslevel();}
@@ -1102,43 +1093,41 @@ namespace dvnci {
         void accesslevel(size_type id, acclevtype val) {
             if (exists(id)) {
                 operator[](id)->accesslevel(val);}}
-        
-                    
-       // headername property        
+
+
+        // headername property        
 
         bool changepassword(size_type id, const std::string&  newpass);
 
         bool changepassword(const std::string&  user, const std::string&  newpass);
-           
+
         bool registrateuser(const std::string&  user, const std::string&  pass);
 
         acclevtype useraccesslevel(const std::string&  user);
 
-    protected:             
+    protected:
 
         static void writezero(const fspath& fpath);
-        
-            
+
+
         //overloaded 
-        
+
         virtual std::string nametemlete() const {
             return "user";};
 
         virtual bool checkname(const std::string& val, size_type parnt = -1);
-        
+
 
         virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
 
         virtual void uninitstruct(size_type id);} ;
-        
-             
-   
-           
-     ///   tagsbase       
+
+
+
+
+    ///   tagsbase       
 
     class tagsbase : public templatebase<tagsstruct> {
-        
-        
         friend class groups;
         friend class agroups;
         friend class users;
@@ -1153,7 +1142,7 @@ namespace dvnci {
         friend class journalbase;
         friend class clientbase;
 
-        
+
         typedef membase_ptr_tmpl<groupsbase>                        groupsbase_ptr;
         typedef membase_ptr_tmpl<agroupsbase>                       agroupsbase_ptr;
         typedef membase_ptr_tmpl<accessrulesbase>                   accessrulesbase_ptr;
@@ -1165,7 +1154,7 @@ namespace dvnci {
         typedef boost::shared_ptr<registrybase>                     registrybase_ptr;
         typedef boost::shared_ptr<clientbase>                       clientbase_ptr;
         typedef boost::shared_ptr<stringvalue_base>                 stringvalue_base_ptr;
-        
+
         typedef valuebufferbase_templ<trend_logline>                valuebufferbase;
         typedef valuebufferbase_templ<report_logline>               reportbufferbase;
         typedef boost::shared_ptr<valuebufferbase>                  valuebufferbase_ptr;
@@ -1207,15 +1196,15 @@ namespace dvnci {
                 lock_nameexclusive ontimeinit = lock_nameexclusive(tagsbase::one_init()));
 
         virtual ~tagsbase();
-        
-        
+
+
         static void writezero(const fspath& basepatht, lcltype loc = NS_CODPAGE_UTF8);
 
         std::string conf_property(const confproptype& name) const;
-        
+
         template<typename T>
         T conf_numproperty(const confproptype& name) const {
-            return str_to<T> (conf_property(name), 0);}
+            return str_to<T > (conf_property(name), 0);}
 
         void conf_property(const confproptype& name, const std::string& val);
 
@@ -1244,42 +1233,41 @@ namespace dvnci {
                     prjcfg_opcport(to_str<int>(val));
                     return;}
                 default:{}}}
-         
-        
-           
-       // value property       
-        
+
+
+
+        // value property       
+
         template<typename T>
         T value(size_type id) const {
             return itemex(id)->value<T > ();}
-        
+
         short_value value_shv(size_type id) const {
             return short_value(itemex(id)->value64(), type(id), valid(id));}
 
         std::string value_frmt(size_type id) const {
-	    return (!IN_TEXTSET(type(id))) ? 
-                itemex(id)->value_frmt() : getvalstringvalue(operator[](id)->value<size_t > ());}
-            
-        
+            return (!IN_TEXTSET(type(id))) ?
+                    itemex(id)->value_frmt() : getvalstringvalue(operator[](id)->value<size_t > ());}
+
         void value(size_type id, const std::string& value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->value(value);}
-        
-                
-       // value property         
-                                  
+
+
+        // value property         
+
         datetime time(size_type id) const {
             return itemex(id)->time();}
 
         std::string time_str(size_type id) const {
-            return itemex(id)->time_str();} 
-        
+            return itemex(id)->time_str();}
+
         void time(size_type id, datetime value) {
             if (exists(id)) operator[](id)->time(value);}
-        
-                
-       // value property         
-                
+
+
+        // value property         
+
         template<typename T>
         T value_log(size_type id) const {
             return operator[](id)->value_log<T > ();}
@@ -1288,370 +1276,363 @@ namespace dvnci {
             return short_value(itemex(id)->value_log64(), type(id), valid(id));}
 
         std::string value_log_frmt(size_type id) const {
-            return itemex(id)->value_log_frmt();} 
-        
-                
-       // value property         
-        
+            return itemex(id)->value_log_frmt();}
+
+
+        // value property         
+
         datetime time_log(size_type id) const {
             return operator[](id)->time_log();}
 
         std::string time_log_str(size_type id) const {
             return operator[](id)->time_log_str();}
-        
+
         void time_log(size_type id, datetime value) {
             if (exists(id)) operator[](id)->time_log(value);}
-        
-           
-       // valid property 
-        
+
+
+        // valid property 
+
         vlvtype valid(size_type id) const {
             return itemex(id)->valid();}
-        
+
         vlvtype reportstate(size_type id) const;
-        
+
         bool valid_as_reportsource(size_type id) const;
-        
+
         bool reportbuffered(size_type id) const;
-                                
+
         void valid(size_type id, vlvtype valid);
 
-        
-           
-       // error property 
-        
+
+
+        // error property 
+
         ns_error error(size_type id) const {
             return itemex(id)->error();}
-        
+
         void error(size_type id, ns_error value);
-       
-           
-       // type property         
+
+
+        // type property         
 
         tagtype type(size_type id) const {
-            return itemex(id)->type();}  
-        
+            return itemex(id)->type();}
+
         tagtype superstype(size_type id) const {
             return  SUPER_TYPE(type(id));}
-         
+
         void type(size_type id, tagtype value);
-        
-           
-       // error property 
-        
+
+
+        // error property 
+
         size_type group(size_type id) const {
             return operator[](id)->group();}
-                       
-        void group(size_type id, size_type value, bool message = true); 
-        
-           
-       // error property 
-        
-        
+
+        void group(size_type id, size_type value, bool message = true);
+
+
+        // error property 
+
         size_type agroup(size_type id) const {
-             return operator[](id)->agroup();}
-        
+            return operator[](id)->agroup();}
+
         void agroup(size_type id, size_type value, bool message = true);
-        
-        
-       // comment property         
-        
+
+
+        // comment property         
+
         std::string comment(size_type id) const {
             return stringbase_src(operator[](id)->poscomment());}
-        
+
         void comment(size_type id, const std::string&  value);
-        
-                 
-       // binding property    
-        
+
+
+        // binding property    
+
         std::string binding(size_type id) const {
             return stringbase_src(operator[](id)->posbinding());}
-        
+
         void binding(size_type id, const std::string&  value, bool message = true);
-                
-                 
-       // binding property          
-        
+
+
+        // binding property          
+
         std::string eu(size_type id) const {
             return stringbase_src(operator[](id)->poseu());}
-      
+
         void eu(size_type id, const std::string&  value);
- 
-        
-       // onmsg property 
+
+
+        // onmsg property 
 
         std::string onmsg(size_type id) const {
             return stringbase_src(operator[](id)->posonmsg());}
-        
+
         void onmsg(size_type id, const std::string&  value);
-                         
-       // onmsged property 
-        
+
+        // onmsged property 
+
         bool onmsged(size_type id) const {
             return operator[](id)->onmsged();}
-        
+
         void onmsged(size_type id, bool value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->onmsged(value);}
-                           
-        
-       // offmsg property         
+
+
+        // offmsg property         
 
         std::string offmsg(size_type id) const {
             return stringbase_src(operator[](id)->posoffmsg());}
-        
+
         void offmsg(size_type id, const std::string& value);
-                             
-       // offmsged property 
-                
+
+        // offmsged property 
+
         bool offmsged(size_type id) const {
             return operator[](id)->offmsged();}
-        
+
         void offmsged(size_type id, bool value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->offmsged(value);}
-        
-        
-       // msged property 
-        
+
+
+        // msged property 
+
         bool msged(size_type id) const {
-            return (onmsged(id) || offmsged(id));}   
-        
-        
-       // alarmmsg property   
+            return (onmsged(id) || offmsged(id));}
+
+
+        // alarmmsg property   
 
         std::string alarmmsg(size_type id) const {
             return stringbase_src(operator[](id)->posalarmmsg());}
-        
+
         void alarmmsg(size_type id, const std::string&  value);
-        
-        
-       // alarmed property        
-        
+
+
+        // alarmed property        
+
         bool alarmed(size_type id) const {
             return operator[](id)->alarmlevel();}
-        
-       // accesslevel  property
-        
+
+        // accesslevel  property
+
         altype alarmlevel(size_type id) const {
-            return operator[](id)->alarmlevel();}       
-        
+            return operator[](id)->alarmlevel();}
+
         void alarmlevel(size_type id, altype value) {
-            if (exists(id)) 
-                operator[](id)->alarmlevel(value);} 
-        
-       // accesslevel  property        
+            if (exists(id))
+                operator[](id)->alarmlevel(value);}
+
+        // accesslevel  property        
 
         alcstype alarmcase(size_type id) const {
             return  operator[](id)->alarmcase();}
-        
+
         void alarmcase(size_type id, alcstype value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->alarmcase(value);}
 
-       // alarmon  property
-        
+        // alarmon  property
+
         bool alarmon(size_type id) const {
             return operator[](id)->alarmon();}
-         
-       // alarmon  property
-        
+
+        // alarmon  property
+
         bool alarmkvit(size_type id) const {
             return operator[](id)->alarmkvit();}
-        
-         
-       // accesslevel  property        
-   
+
+
+        // accesslevel  property        
+
         acclevtype accesslevel(size_type id) const {
-            return operator[](id)->accesslevel();} 
-        
+            return operator[](id)->accesslevel();}
+
         void accesslevel(size_type id, acclevtype value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->accesslevel(value);}
-        
-               // accesslevel  property        
-   
+
+        // accesslevel  property        
+
         bool rangable(size_type id) const {
-            return operator[](id)->rangable();} 
-        
+            return operator[](id)->rangable();}
+
         void rangable(size_type id, bool value);
-        
-         
-       // alwactive  property           
-        
+
+
+        // alwactive  property           
+
         bool alwactive(size_type id) const {
-            return IN_ALWACTSET(type(id)) ? 
-                true : operator[](id)->alwactive();}
- 
+            return IN_ALWACTSET(type(id)) ?
+                    true : operator[](id)->alwactive();}
+
         void  alwactive(size_type id, bool value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->alwactive(value);}
-        
-         
-       // rwtype  property
-        
+
+
+        // rwtype  property
+
         acstgtype rwtype(size_type id) const {
             return operator[](id)->rwtype();}
-        
+
         void rwtype(size_type id, acstgtype value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->rwtype(value);}
-                
-         
-       // refcnt  property
-        
+
+
+        // refcnt  property
+
         onum refcnt(size_type id) const {
             return operator[](id)->refcnt();}
-        
+
         void incref(size_type id);
 
         void decref(size_type id);
-                
-         
-       // logged  property        
-        
+
+
+        // logged  property        
+
         bool logged(size_type id) const {
             return operator[](id)->logged();}
-        
+
         void logged(size_type id, bool value);
-                
-         
-       // reporthistory  property        
-                
-        
+
+
+        // reporthistory  property        
+
         reporthisttype reporthistory(size_type id) const {
             return operator[](id)->reporthistory();}
-        
-                
+
         void reporthistory(size_type id, reporthisttype val) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->reporthistory(val);}
-                
-         
-       // reportsubdelt  property        
-        
+
+
+        // reportsubdelt  property        
+
         reporthistdelt reportsubdelt(size_type id) const {
             return operator[](id)->reportsubdelt();}
 
         void reportsubdelt(size_type id, reporthistdelt val) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->reportsubdelt(val);}
-        
-         
-       // reportstatistic  property        
-        
+
+
+        // reportstatistic  property        
+
         repstattype reportstatistic(size_type id) const {
             return operator[](id)->reportstatistic();}
 
         void reportstatistic(size_type id, repstattype val) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->reportstatistic(val);}
-        
-                
-         
-       // mineu  property   
-        
-         std::string mineu(size_type id) const {
-            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
-                operator[](id)->mineu_str() : "";}
-        
+
+
+
+        // mineu  property   
+
+        std::string mineu(size_type id) const {
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ?
+                    operator[](id)->mineu_str() : "";}
 
         void mineu(size_type id, const std::string& value) {
-            if (exists(id)){
+            if (exists(id)) {
                 operator[](id)->mineu(value);
-                if (logkey(id)!=npos){
+                if (logkey(id) != npos) {
                     valbuffers()->range( logkey(id), mineu_prtd<double>(id), maxeu_prtd<double>(id));}}}
-        
-     
+
         short_value mineu_shv(size_type id) const {
             return short_value(operator[](id)->mineu64(), type(id), FULL_VALID);}
-        
-   
-        
-       // maxeu  property           
 
+
+
+        // maxeu  property           
 
         short_value maxeu_shv(size_type id) const {
             return short_value(operator[](id)->maxeu64(), type(id) , FULL_VALID);}
-        
-        std::string maxeu(size_type id) const {
-            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
-                operator[](id)->maxeu_str() : "";}
 
+        std::string maxeu(size_type id) const {
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ?
+                    operator[](id)->maxeu_str() : "";}
 
         void maxeu(size_type id, const std::string& value) {
             if (exists(id)) {
                 operator[](id)->maxeu(value);
-                if (logkey(id)!=npos){
+                if (logkey(id) != npos) {
                     valbuffers()->range( logkey(id), mineu_prtd<double>(id), maxeu_prtd<double>(id));}}}
-        
-                
-        
-       // alarmconst  property
-        
+
+
+
+        // alarmconst  property
+
         std::string alarmconst(size_type id) const {
-            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
-                operator[](id)->alarmconst_str() : "";}
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ?
+                    operator[](id)->alarmconst_str() : "";}
 
         void alarmconst(size_type id, const std::string& value) {
             if (exists(id)) operator[](id)->alarmconstr(value);}
-        
+
         short_value alarmconst_shv(size_type id) const {
             return short_value(operator[](id)->alarmconst64(), type(id) , FULL_VALID);}
-        
-        
-        
-         
-       // minraw  property               
-                
+
+
+
+
+        // minraw  property               
+
         std::string minraw(size_type id) const {
-            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
-                operator[](id)->minraw_str() : "";}
-        
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ?
+                    operator[](id)->minraw_str() : "";}
+
         void minraw(size_type id, const std::string& value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->minraw(value);}
-        
-         
-       // maxraw  property  
-                    
+
+
+        // maxraw  property  
+
         std::string maxraw(size_type id) const {
-            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ? 
-                operator[](id)->maxraw_str() : "";}
-              
+            return ((exists(id))  && (IN_NUMBERSET(type(id)))) ?
+                    operator[](id)->maxraw_str() : "";}
+
         void maxraw(size_type id, const std::string& value) {
             if (exists(id)) operator[](id)->maxraw(value);}
 
-        
-   
-        
-       // logdb  property           
-                           
+
+
+
+        // logdb  property           
+
         double logdb(size_type id) const {
             return operator[](id)->logdb();}
-        
+
         void logdb(size_type id, double value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->logdb(value);}
-        
-        
-       // devdb  property           
-        
+
+
+        // devdb  property           
+
         double devdb(size_type id) const {
             return operator[](id)->devdb();}
-        
+
         void devdb(size_type id, double value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->devdb(value);}
 
 
-      
 
 
 
 
-        
-                     
+
+
+
 
         template<typename T>
         void write_val(size_type id, T val, vlvtype validlvl = FULL_VALID, const datetime& time = nill_time, ns_error error = 0);
@@ -1661,39 +1642,32 @@ namespace dvnci {
         void write_val(size_type id, const datetime& val, vlvtype validlvl = FULL_VALID, const datetime& tm = nill_time, ns_error err = 0);
 
         void write_val(size_type id, const short_value& val);
-        
-        
-        
-        
+
+
+
+
 
         void write_val_report(size_type id, datetime tm = nill_time, double val = NULL_DOUBLE, ns_error err = 0, bool onlybuffer = false);
 
         bool write_vals_report(size_type id, const dt_val_map& values, ns_error err = 0);
-        
-  
 
         void write_val_event(size_type id, datetime dt, double vl = NULL_DOUBLE) {
             if ((exists(id)) && (IN_EVENTSET(type(id)))) {
                 time(id, dt);
                 insert_evnt_to_journal(id, vl);}}
-        
-        void write_val_event(size_type id, const dt_val_pair& val){
+
+        void write_val_event(size_type id, const dt_val_pair& val) {
             write_val_event(id, val.first, val.second);}
-        
-                
-        
-        
+
+
+
+
         template<typename T>
         void send_command(size_type id, T val, bool queue = true, size_type clid = npos);
 
         void send_command(size_type id, const std::string& val, bool queue = true, size_type clid = npos);
 
         void send_command(size_type id, const short_value& val, bool queue = true, size_type clid = npos);
-        
-        
-        
-        
-
 
         void increpttime(size_type id) {
             if ((exists(id)) && (IN_REPORTSET(type(id)))) {
@@ -1718,11 +1692,9 @@ namespace dvnci {
                         valid(id, REPORT_NEEDREQUEST);}
                     else {
                         valid(id, REPORT_NORMAL);}}}}
-        
+
 
         //void off(size_type id);
-
-
 
         size_type insert_tag(std::string newname, size_type groupid) {
             lower_and_trim(newname);
@@ -1865,11 +1837,11 @@ namespace dvnci {
         size_type delete_tag(size_type id) {
             if (exists(id)) {
                 if (logbuffered(id)) {
-                    if (archtagcnt()){ 
+                    if (archtagcnt()) {
                         archtagcnt(archtagcnt() - 1);}
                     remove_logkey(id);}
-                if (reportbuffered(id)){
-                    if (reporttagcnt()){
+                if (reportbuffered(id)) {
+                    if (reporttagcnt()) {
                         reporttagcnt(reporttagcnt() - 1);}
                     remove_reportkey(id);}
                 if (IN_TEXTSET(type(id))) texttagcnt(texttagcnt() - 1);
@@ -2011,45 +1983,41 @@ namespace dvnci {
         bool select_trendbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
             return valbuffers()->select(logkey(id), vl, from_, to_, lgdb);}
 
-
         bool select_trendbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const {
             vl.clear();
             return select_trendbuff(operator ()(nm), vl, from_, to_, lgdb);}
-        
+
         datetime trend_history_toptime(size_type id) const {
             return valbuffers()->toptime(logkey(id));}
 
-
-       bool report_history_empty(size_type id) const {
-            return reportbuffers()->toptime(reportkey(id))<time_log(id);}
-
+        bool report_history_empty(size_type id) const {
+            return reportbuffers()->toptime(reportkey(id)) < time_log(id);}
 
         bool select_reportbuff_topvalue(size_type id, dt_val_pair& vl) const {
             return reportbuffers()->topvalue(reportkey(id), vl);}
 
-
         bool select_reportval_by_time(size_type id, const datetime& tm, dt_val_pair& vl) const {
             return reportbuffers()->value_by_time(reportkey(id), tm , vl);}
 
-
         bool select_reportvals_by_time(const datetime& tm, indx_double_map& vlmap) const {
             dt_val_pair vl;
-            for (indx_double_map::iterator it=vlmap.begin(); it!=vlmap.end();++it){
-                if (!select_reportval_by_time(it->first,tm, vl)){
+            for (indx_double_map::iterator it = vlmap.begin(); it != vlmap.end(); ++it) {
+                if (!select_reportval_by_time(it->first, tm, vl)) {
                     return false;}
-                else {it->second=vl.second;}}
+                else {
+                    it->second = vl.second;}}
             return true;}
 
         size_t select_reportbuff_count(size_type id) const {
             if ((reportbuffers())  && (reportkey(id) != npos)) {
-                  return reportbuffers()->count(reportkey(id));}
+                return reportbuffers()->count(reportkey(id));}
             return 0;}
 
         bool insert_to_reportbuff_init(size_type id, const dt_val_map& values, const datetime& lst = nill_time) {
-            if (!values.empty()){
-                  reportbuffers()->insert(reportkey(id), values);
-                  write_val_report(id, values.rbegin()->first, values.rbegin()->second, 0 , true);
-                  return true;}
+            if (!values.empty()) {
+                reportbuffers()->insert(reportkey(id), values);
+                write_val_report(id, values.rbegin()->first, values.rbegin()->second, 0 , true);
+                return true;}
             if (lst == nill_time) return false;
             write_val_report(id, lst, NULL_DOUBLE, true);
             return true;}
@@ -2057,7 +2025,7 @@ namespace dvnci {
         bool insert_to_reportbuff_init(size_type id) {
             if (select_reportbuff_count(id)) {
                 dt_val_pair value;
-                if (select_reportbuff_topvalue(id, value)){
+                if (select_reportbuff_topvalue(id, value)) {
                     write_val_report(id, value.first, value.second, 0, true);
                     DEBUG_STR_VAL_DVNCI(report_history_simple_init, reportkey(id))
                     return true;}}
@@ -2069,8 +2037,8 @@ namespace dvnci {
             return true;}
 
         bool select_reportbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
-             vl.clear();
-             return reportbuffers()->select(reportkey(id), vl, from_, to_);}
+            vl.clear();
+            return reportbuffers()->select(reportkey(id), vl, from_, to_);}
 
         bool select_reportbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
             vl.clear();
@@ -2079,8 +2047,8 @@ namespace dvnci {
         bool trendbuff_need_write(size_type id) const {
             return valbuffers()->needwrite(logkey(id));}
 
-        void trendbuff_need_write(size_type id, bool val){
-            valbuffers()->needwrite(logkey(id),val);}
+        void trendbuff_need_write(size_type id, bool val) {
+            valbuffers()->needwrite(logkey(id), val);}
 
         template<typename T, typename B>
         size_t select_journal(std::vector<T>& vect, guidtype& gid, size_t& curs, size_t& cnt) const {
@@ -2139,10 +2107,7 @@ namespace dvnci {
         size_t select_clients(std::vector<T>& vect) const {
             guidtype vers = 0;
             return clients()->get<T, B > (vect, vers);}
-        
-        
-        
-        
+
         void debug(const std::string& mess, debuglvtype lev = DEBUG_MESSAGE ) {
             debuglvtype clv = (*(ptagsstruct_hdr) data()).debuglevel();
             if (clv >= lev) {
@@ -2158,24 +2123,14 @@ namespace dvnci {
         void debugfatalerror(const std::string& mess) {
             debug(mess, DEBUG_FATALERROR);}
 
-
-        
-        
-
         bool select_commands(command_vector& vect_, size_type group = npos) {
             return commands()->select_commands(vect_, group);}
-        
 
         bool select_commands(command_vector& vect_, indx_set groups) {
             return commands()->select_commands(vect_, groups);}
-        
-        
-        
 
         bool clear_commands(size_type group = npos) {
             return commands()->clear_commands(group);}
-        
-
 
         groupsbase * const groups() const {
             return groups_.get();};
@@ -2188,27 +2143,25 @@ namespace dvnci {
 
         usersbase * const users() const {
             return users_.get();};
-            
-            
 
         mq_class_ptr getqueue() {
             return mq_class_ptr(proccess_queues::getqueue(registry()->selfhadle()));}
-        
-        
+
+
 
         void kvit(size_type id = npos);
-        
-        void kvit(const std::string& vl){
+
+        void kvit(const std::string& vl) {
             size_type idx = operator ()(vl);
             if (extendexists(idx)) {
                 kvit(idx);}}
 
         void resettag_for_group(size_type group, ns_error error = 0);
-        
+
         void allvalid(vlvtype vld) {
             for (size_type i = 0; i < count(); ++i)
                 if (exists(i)) valid(i, vld);}
-        
+
         void incallcounter(bool inc = true) {
             for (size_type i = 0; i < count(); ++i) {
                 inc ? incref(i) : decref(i);}}
@@ -2220,114 +2173,105 @@ namespace dvnci {
             registry()->notify_dbmanage(connectstate ? MSG_DVNCDBCONNECT : MSG_DVNCDBDISCONNECT);}
 
     protected:
-        
-        
-        
+
+
+
         // mineu  property         
 
         template<typename T>
         T mineu_prtd(size_type id) const {
             return exists(id) ? operator[](id)->mineu<T > () : 0;}
-        
-                
+
         template<typename T>
         void mineu_prtd(size_type id, T value) {
             if (exists(id)) {
                 operator[](id)->mineu<T > (value);
-                if (logkey(id)!=npos){
+                if (logkey(id) != npos) {
                     valbuffers()->range( logkey(id), mineu_prtd<double>(id), maxeu_prtd<double>(id));}}}
-        
-        
-        
+
+
+
         // maxeu  property         
-        
+
         template<typename T>
         T maxeu_prtd(size_type id) const {
-            return exists(id) ? 
-                operator[](id)->maxeu<T > () : 1;};
-                
-        
+            return exists(id) ?
+                    operator[](id)->maxeu<T > () : 1;};
+
         template<typename T>
         void maxeu_prtd(size_type id, T value) {
             if (exists(id)) {
                 operator[](id)->maxeu<T > (value);
-                if (logkey(id)!=npos){
-                    valbuffers()->range( logkey(id), mineu_prtd<double>(id), maxeu_prtd<double>(id));}}}   
-        
+                if (logkey(id) != npos) {
+                    valbuffers()->range( logkey(id), mineu_prtd<double>(id), maxeu_prtd<double>(id));}}}
+
         template<typename T>
         void restore_raw_range(size_type id, T& val);
-        
-        
+
+
         template<typename T>
         bool logdb_expired(size_type id, const T& val);
-        
-       
+
+
         bool restore_command_raw_range(commandstruct& cmd);
-        
-        
-        
+
+
+
         // alarmconst  property        
 
         template<typename T>
         T alarmconst_prtd(size_type id) const {
-            return (IN_NUMBERSET(operator[](id)->type())) ? 
-                operator[](id)->alarmconst<T > () : 0;}
-        
-                  
+            return (IN_NUMBERSET(operator[](id)->type())) ?
+                    operator[](id)->alarmconst<T > () : 0;}
+
         template<typename T>
         void alarmconst_prtd(size_type id, T value) {
             if (exists(id)) operator[](id)->alarmconst<T > (value);}
-        
-        
-        
+
+
+
         // minraw  property          
-        
+
         template<typename T>
         T minraw_prtd(size_type id) const {
             return operator[](id)->minraw<T > ();}
-  
+
         template<typename T>
         void minraw_prtd(size_type id, T value) {
-            if (exists(id)) 
+            if (exists(id))
                 operator[](id)->minraw<T > (value);}
-        
-        
-        
+
+
+
         // maxraw  property  
 
         template<typename T>
         T maxraw_prtd(size_type id) const {
             return operator[](id)->maxraw<T > ();}
-              
+
         template<typename T>
         void maxraw_prtd(size_type id, T value) {
             if (exists(id)) operator[](id)->maxraw<T > (value);}
-        
-        
+
+
         // is rangeed
-          
+
         template<typename T>
         void restore_eu_range(size_type id, T& val);
-              
-        
+
+
         void to_standart_range(size_type id);
-        
-        
-        
-        
-        
-               
+
         template<typename T>
         bool in_alarm(size_type id) const {
             if (valid(id)) return false;
             if (!alarmed(id)) return false;
-            if (type(id)==TYPE_DISCRET) {
+            if (type(id) == TYPE_DISCRET) {
                 return value<bool> (id) == alarmconst_prtd<bool> (id);}
             switch (alarmcase(id)) {
                 case alarmMore: return (value<T > (id) > alarmconst_prtd<T > (id));
                 case alarmLess: return (value<T > (id) < alarmconst_prtd<T > (id));
                 default: return (value<T > (id) == alarmconst_prtd<T > (id));}}
-        
 
         template<typename T>
         bool in_event(size_type id) const {
@@ -2337,30 +2281,28 @@ namespace dvnci {
 
         bool in_sysvar(size_type id) const {
             return ((groups()->appid(group(id)) == NS_GROUP_SYSTEMVAR));}
-    
-            
+
+
         //overloaded       
-        
+
         virtual std::string nametemlete() const {
             return "tag";};
-            
-            
-            
+
+
+
         virtual bool checkname(const std::string& val, size_type parnt = npos);
 
         bool checkname_ex(const std::string& val);
-        
-        
-        
+
         virtual bool write_criteria(size_type id) const {
-            return ((exists(id)) && ((groups()->appid(group(id)))==NS_GROUP_SYSTEMVAR));}
+            return ((exists(id)) && ((groups()->appid(group(id))) == NS_GROUP_SYSTEMVAR));}
 
         virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
 
         virtual void uninitstruct(size_type id);
-        
-        
-        
+
+
+
         // triggers
 
         virtual void trigger_add(size_type id, num64 numcriteria = -1);
@@ -2368,25 +2310,19 @@ namespace dvnci {
         virtual void trigger_remove(size_type id, num64 numcriteria = -1);
 
         virtual void trigger_rename(size_type id);
-        
-        
-        
+
         void notify_tagmanage(qumsgtype mess, size_type id, size_type group) {
             registry()->notify_tagmanage(mess, id, group);}
 
         void notify_groupmanage(qumsgtype mess, size_type id, num32 some) {
             registry()->notify_groupmanage(mess, id, some);}
-        
-
 
         virtual size_type parent_id(size_type id) {
-            return static_cast<num64> (group(id));} 
-        
+            return static_cast<num64> (group(id));}
+
         virtual size_t namepos(size_type id) const {
             return itemex(id)->namepos();};
-            
-            
-        
+
         virtual std::string parentname(size_type id) const {
             return exists(id) ? (groups()->name(group(id)) + NEMESPACEDELIMIT) : "";}
 
@@ -2395,32 +2331,32 @@ namespace dvnci {
             return ((*groups())(strcriteria));}
 
         virtual size_t optinal_pos(size_type id) {
-            return ((exists(id)) && (groups()->exists(group(id)))) ? 
-                groups()->namepos(group(id)) : 0;}
+            return ((exists(id)) && (groups()->exists(group(id)))) ?
+                    groups()->namepos(group(id)) : 0;}
 
         void changepos1(size_t oldpos1, size_t newpos1);
-        
-        
+
+
         //////////////////////
-        
-        
+
+
 
         virtual void buildindex();
 
         virtual void addindex(size_type id);
 
         virtual void removeindex(size_type id);
-        
-        
-        
+
+
+
         // конфигурирование базы
-        
+
         void texttagcnt(size_t val);
 
         void archtagcnt(size_t val);
 
         void reporttagcnt(size_t val);
-        
+
         size_t texttagcnt() const {
             return (*(ptagsstruct_hdr) data()).texttagcnt();}
 
@@ -2498,10 +2434,9 @@ namespace dvnci {
             return (*(ptagsstruct_hdr) data()).os_type();}
 
         void prjcfg_opcport(const std::string& value);
-        
-        
+
+
         //////////////////////////////////////////////////////////////////////////////////////////
-        
 
         tagstruct const * const itemex(size_type id) const {
             if (id < count() && (id != npos)) return operator[](id);
@@ -2510,9 +2445,6 @@ namespace dvnci {
             return operator[](id);}
 
         bool extendexists(size_type id) const;
-        
-        
-        
 
         journalbase * const journal() const {
             return journal_.get();};
@@ -2545,8 +2477,8 @@ namespace dvnci {
 
         bool grant_access(appidtype app, const std::string& hst = "", const std::string& ipp = "", const std::string& usr = "",  const std::string& password = "") {
             return accessrules()->grant_access(app, hst , ipp , usr , password);}
-        
-        
+
+
 
 
 
@@ -2555,27 +2487,22 @@ namespace dvnci {
         void addtags(str_indx_map& newnames, size_type groupid);
 
         void addindexmap(str_indx_map& mp);
-        
-        
-        
-        
-        
-        
+
         bool logbuffered(size_type id) const {
-            return ((logged(id)) && (logkey(id)!=npos)) ? 
-                operator[](id)->logged() : false;}
+            return ((logged(id)) && (logkey(id) != npos)) ?
+                    operator[](id)->logged() : false;}
 
         valuebufferbase_ptr   valbuffers() const {
-            return valbuffers_;}        
-        
+            return valbuffers_;}
+
         size_type logkey(size_type id) const {
-            return (IN_NUMBERSET(operator[](id)->type())) ? 
-                operator[](id)->logkey() : npos;}
-        
+            return (IN_NUMBERSET(operator[](id)->type())) ?
+                    operator[](id)->logkey() : npos;}
+
         void logkey(size_type id, size_type value) {
             if (exists(id)) operator[](id)->logkey(value);}
-        
-        
+
+
         void fill_logkeys();
 
         size_type add_logkey(size_type id);
@@ -2585,21 +2512,17 @@ namespace dvnci {
         size_type reset_logkey(size_type id) {
             remove_logkey(id);
             return add_logkey(id);}
-        
-        
-        
-
 
         reportbufferbase_ptr   reportbuffers() const {
-            return reportbuffers_;}        
+            return reportbuffers_;}
 
         size_type reportkey(size_type id) const {
-            return (IN_REPORTSET(operator[](id)->type())) ? 
-                operator[](id)->logkey() : npos;}
-             
+            return (IN_REPORTSET(operator[](id)->type())) ?
+                    operator[](id)->logkey() : npos;}
+
         void reportkey(size_type id, size_type value) {
-            if (exists(id)) operator[](id)->logkey(value);}    
-                
+            if (exists(id)) operator[](id)->logkey(value);}
+
         void fill_reportkeys();
 
         size_type add_reportkey(size_type id);
@@ -2609,7 +2532,7 @@ namespace dvnci {
         size_type reset_reportkey(size_type id) {
             remove_reportkey(id);
             return add_reportkey(id);}
-          
+
         template <typename T>
         void insert_to_trendbuff(size_type id, T val, const datetime& tm = nill_time) {
             size_type lk = logkey(id);
@@ -2625,11 +2548,6 @@ namespace dvnci {
             size_type lk = reportkey(id);
             if (lk != npos) {
                 reportbuffers()->insert<double>(lk, tm, val);}}
-        
-        
-        
-        
-        
 
         stringvalue_base_ptr valuestringbs() {
             return valstrb_;}
@@ -2653,13 +2571,7 @@ namespace dvnci {
         void valuestringreplace(size_t pos, bool to_sys) {
             if (to_sys) valuestringbs()->replace_to_sys(pos);
             else valuestringbs()->replace_from_sys(pos);}
-        
-        
 
-
-
-
-        
         void kvitall() {
             alarms()->kvitall();}
 
@@ -2674,10 +2586,10 @@ namespace dvnci {
         void kvit_group(size_type id) {
             if (groups()->exists(id))
                 alarms()->kvit_group(id);}
-        
 
-        
-        
+
+
+
 
         virtual void inputsysvargroups(size_type group, bool include);
 
@@ -2694,9 +2606,7 @@ namespace dvnci {
 
         void value_internal(size_type id, std::string value) {
             if (exists(id)) {
-                if (!IN_TEXTSET(type(id)))
-                    operator[](id)->value(value);
-                else {
+                if (IN_TEXTSET(type(id))){
                     size_t tmppos = operator[](id)->value<size_t > ();
                     setvalstringvalue(tmppos, value, in_sysvar(id));
                     if (tmppos != operator[](id)->value<size_t > ()) {
@@ -2715,10 +2625,7 @@ namespace dvnci {
 
 
         size_t globalmemsize() const;
-        
-        
-        
-        
+
         void notify_journal(size_type line) {
             registry()->notify_journal(line);}
 
@@ -2748,12 +2655,12 @@ namespace dvnci {
                 insert_to_journal(now(), id, msCmd);}
 
         void clone(size_type idsrc, size_type iddst);} ;
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
 
     template<>
     std::string tagsbase::value<std::string>(size_type id) const;
@@ -2772,8 +2679,8 @@ namespace dvnci {
 
     template<>
     std::string tagsbase::maxraw_prtd<std::string>(size_type id) const ;
-    
-    template<> 
+
+    template<>
     void tagsbase::restore_raw_range<bool>(size_type id, bool& val);
 
     template<>
@@ -2781,73 +2688,83 @@ namespace dvnci {
 
     template<>
     std::string tagsbase::maxeu_prtd<std::string>(size_type id) const;
-    
-     template<> 
-     void tagsbase::restore_eu_range<bool>(size_type id, bool& val);
 
-    
+    template<>
+    void tagsbase::restore_eu_range<bool>(size_type id, bool& val);
+
+
     template<>
     bool tagsbase::logdb_expired<bool>(size_type id, const bool& val);
 
     template<>
     std::string tagsbase::alarmconst_prtd<std::string>(size_type id) const;
-    
-
-    
 
     template<typename T>
-    void tagsbase::restore_eu_range(size_type id, T& val){
-            if (IN_RANGESET(type(id))) {
-                T max_raw = maxraw_prtd<T>(id);
-                T min_raw = minraw_prtd<T>(id);
-                T length_raw = max_raw > min_raw ? max_raw - min_raw : min_raw - max_raw;;
-                if (length_raw) {
-                  if (max_raw < min_raw)
+    void tagsbase::restore_eu_range(size_type id, T& val) {
+        if (IN_RANGESET(type(id))) {
+            T max_eu = maxeu_prtd<T > (id);
+            T min_eu = mineu_prtd<T > (id);
+            if (max_eu < min_eu)
+                std::swap(min_eu, max_eu);
+            T length_eu = max_eu - min_eu;
+            if (rangable(id) && (length_eu)) {
+                T max_raw = maxraw_prtd<T > (id);
+                T min_raw = minraw_prtd<T > (id);
+                if (max_raw < min_raw)
                     std::swap(min_raw, max_raw);
-                  T max_eu = maxeu_prtd<T>(id);
-                  T min_eu = mineu_prtd<T>(id); 
-                  T length_eu = max_eu > min_eu ? max_eu - min_eu : min_eu - max_eu;
-                  if (length_eu) {
-                      if (max_eu < min_eu)
-                         std::swap(min_eu, max_eu);
-                      if (val<min_raw) 
-                          val=min_raw;
-                      if (val>max_raw) 
-                          val=max_raw;
-                      val = (min_eu + ((1.0 *length_eu)
-                              /(1.0 *length_raw))* (val-min_raw));}}}}
-    
-    template<typename T>
-    void tagsbase::restore_raw_range(size_type id, T& val){
-            if (IN_RANGESET(type(id))) {
-                T max_eu = maxeu_prtd<T>(id);
-                T min_eu = mineu_prtd<T>(id);
-                T length_eu = max_eu > min_eu ? max_eu - min_eu : min_eu - max_eu;;
+                T length_raw = max_raw - min_raw;
+                if ((length_raw) && (length_eu)) {
+                    if (val < min_raw)
+                        val = min_raw;
+                    if (val > max_raw)
+                        val = max_raw;
+                    val = (min_eu + ((1.0 * length_eu)
+                                     / (1.0 * length_raw))* (val - min_raw));}}
+            else {
                 if (length_eu) {
-                  if (max_eu < min_eu)
-                    std::swap(min_eu, max_eu);
-                  T max_raw = maxraw_prtd<T>(id);
-                  T min_raw = minraw_prtd<T>(id); 
-                  T length_raw = max_raw > min_raw ? max_raw - min_raw : min_raw - max_raw;
-                  if (length_raw) {
-                      if (max_raw < min_raw)
-                         std::swap(min_raw, max_raw);
-                      if (val<min_eu) 
-                          val=min_eu;
-                      if (val>max_eu) 
-                          val=max_eu;
-                      val = (min_raw + ((1.0 *length_raw)
-                              /(1.0 *length_eu))* (val-min_eu));}}}}
-        
-        
-    
+                    if (val < min_eu) {
+                        val = min_eu;}
+                    else {
+                        if (val > max_eu)
+                            val = max_eu;}}}}}
+
     template<typename T>
-    bool tagsbase::logdb_expired(size_type id, const T& val){
-        T max_raw = maxraw_prtd<T>(id);
-        T min_raw = minraw_prtd<T>(id);
-        T logdbtmp= (max_raw > min_raw ? max_raw - min_raw : min_raw - max_raw) * logdb(id);
-        return (value_log<T > (id) > val) ? 
-            ((value_log<T > (id) - val) >= logdbtmp) :  ( val - (value_log<T > (id) ) >= logdbtmp);}
+    void tagsbase::restore_raw_range(size_type id, T& val) {
+        if (IN_RANGESET(type(id))) {
+            T max_eu = maxeu_prtd<T > (id);
+            T min_eu = mineu_prtd<T > (id);
+            if (max_eu < min_eu)
+                std::swap(min_eu, max_eu);
+            T length_eu = max_eu - min_eu;
+            if ((rangable(id)) && (length_eu)) {
+                T max_raw = maxraw_prtd<T > (id);
+                T min_raw = minraw_prtd<T > (id);
+                T length_raw = max_raw > min_raw ? max_raw - min_raw : min_raw - max_raw;
+                if (length_raw) {
+                    if (max_raw < min_raw)
+                        std::swap(min_raw, max_raw);
+                    if (val < min_eu)
+                        val = min_eu;
+                    if (val > max_eu)
+                        val = max_eu;
+                    val = (min_raw + ((1.0 * length_raw)
+                                      / (1.0 * length_eu))* (val - min_eu));}}
+            else {
+                if (length_eu) {
+                    if (val < min_eu) {
+                        val = min_eu;}
+                    else {
+                        if (val > max_eu)
+                            val = max_eu;}}}}}
+
+    template<typename T>
+    bool tagsbase::logdb_expired(size_type id, const T& val) {
+
+        T max_raw = maxraw_prtd<T > (id);
+        T min_raw = minraw_prtd<T > (id);
+        T logdbtmp = (max_raw > min_raw ? max_raw - min_raw : min_raw - max_raw) * logdb(id);
+        return (value_log<T > (id) > val) ?
+                ((value_log<T > (id) - val) >= logdbtmp) :  ( val - (value_log<T > (id) ) >= logdbtmp);}
 
     template<typename T>
     void tagsbase::write_val(size_type id, T val, vlvtype validlvl, const datetime& tm, ns_error err) {
@@ -2855,7 +2772,7 @@ namespace dvnci {
             restore_eu_range(id, val);
             bool rstvalid = (valid(id) != (validlvl));
             bool rstvalue = (value<T > (id) != val);
-            bool rstlogval = logdb_expired<T>(id, val);
+            bool rstlogval = logdb_expired<T > (id, val);
             bool rsttimelog = seconds_between_more_then(tm, time_log(id), 55);
             bool old_in_alarm = in_alarm<T > (id);
             bool old_in_msded = in_event<T > (id);
@@ -2866,16 +2783,16 @@ namespace dvnci {
             if ( (rstvalue) || (rstvalid) || (rsttimelog) || (rstlogval)) {
 
                 if ((logged(id)) && (valbuffers())) {
-                    if ((rstvalid) || (rstvalue)){
+                    if ((rstvalid) || (rstvalue)) {
                         if (validlvl == FULL_VALID)
                             insert_to_trendbuff<T > (id,  val ,  tm.is_special() ?  now() : tm);
                         else
-                            insert_to_trendbuff(id,   tm.is_special() ?  now() : tm);  
+                            insert_to_trendbuff(id,   tm.is_special() ?  now() : tm);
                         if (rstlogval || rsttimelog || rstvalid) {
 
-                           trendbuff_need_write(id, true);
-                           time_log(id, tm);
-                           value_log<T > (id, val);}}}
+                            trendbuff_need_write(id, true);
+                            time_log(id, tm);
+                            value_log<T > (id, val);}}}
 
                 if (msged(id)) {
                     if (valid(id) && (old_in_msded != in_event<T > (id))) {
@@ -2886,11 +2803,8 @@ namespace dvnci {
 
                 if (alarmed(id)) {
                     if ((in_alarm<T > (id) != old_in_alarm) && (valid(id))) {
-                        insert_to_alarms(id, in_alarm<T > (id));}}}}}
-    
-    
 
-        
+                        insert_to_alarms(id, in_alarm<T > (id));}}}}}
 
     template<typename T>
     void tagsbase::send_command(size_type id, T val, bool queue , size_type clid) {
