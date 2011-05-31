@@ -82,20 +82,20 @@ namespace database {
 
        // последние данные в таблице отчетов
 
-            bool dbdriver::select_lastreporttime(indx id, tagtype type, int present, dvnci::datetime& tm) {
+            bool dbdriver::select_lastreporttime(indx id, tagtype type, reporthisttype present, dvnci::datetime& tm) {
                 if (tm.is_special()) tm = dvnci::now();
-                dvnci::datetime tmtmp = tm;
-                dvnci::normilize_history_bound(type, present);
-                dvnci::datetime tm_reporttable = tm;
-                dvnci::normalizereporttime(tmtmp, type);
-                dvnci::increporttime(tmtmp, type, -present);
+                datetime tmtmp = tm;
+                normilize_history_bound(type, present);
+                datetime tm_reporttable = tm;
+                normalizereporttime(tmtmp, type);
+                increporttime(tmtmp, type, present);
                 if (id == npos) {
                     tm = tmtmp;
                     return false;}
                 while (tmtmp < tm_reporttable) {
                     if (select_lastreporttime_impl(static_cast<num32> (id), static_cast<num32> (type), tm_reporttable)) {
-                        dvnci::normalizereporttime(tm_reporttable, type);
-                        dvnci::increporttime(tm_reporttable, type, 1);
+                        normalizereporttime(tm_reporttable, type);
+                        increporttime(tm_reporttable, type, 1);
                         tm = tm_reporttable;
                         return true;}
                     if (!beforetabletime(tm_reporttable, type)) {
@@ -104,7 +104,7 @@ namespace database {
                 tm = tmtmp;
                 return true;}
 
-            bool dbdriver::select_lastreporttime(indx id, tagtype type, int present, dvnci::datetime& tm, dt_val_map& values, size_t cnt) {
+            bool dbdriver::select_lastreporttime(indx id, tagtype type, reporthisttype present, dvnci::datetime& tm, dt_val_map& values, size_t cnt) {
                 if (select_lastreporttime(id, type, present, tm)){
                     datetime starttime = tm;
                     datetime stoptime = tm;
