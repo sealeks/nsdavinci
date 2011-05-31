@@ -30,7 +30,6 @@ namespace dvnci {
                 error(ERROR_IO_LINK_NOT_SUPPORT);
                 return;}
             indx_ = NULL_BIT_NUM;
-            if (!iscorrect_) return;
             getspecificator(vl);
             iscorrect_ = parse(vl);}
 
@@ -227,6 +226,71 @@ namespace dvnci {
                     return true;}}
             kind_ = HOLDING_REGISTER_MODBUS_TYPE;
             return true;}
+        
+        
+        
+        //koyo_com_option_setter
+        
+        boost::system::error_code koyo_com_option_setter::store(com_port_option& opt, boost::system::error_code & ec) const {
+                reset_default_nill(opt);
+                switch (link.protocol()) {
+                    case NT_KOYO_DIRECTNET_HEX:{
+                        set_rs232_baudrate(opt, link.inf().cominf.boundrate);
+                        rsparitytype tmprty = (link.inf().cominf.parity > NT_RS_EVENPARITY) ? NT_RS_NOPARITY : link.inf().cominf.parity; 
+                        set_rs232_comoption(opt, 8, tmprty,
+                                      (tmprty == NT_RS_NOPARITY) ? NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);}
+                    case NT_KOYO_DIRECTNET_ASCII:{
+                        set_rs232_baudrate(opt, link.inf().cominf.boundrate);
+                        rsparitytype tmprty = (link.inf().cominf.parity > NT_RS_EVENPARITY) ? NT_RS_NOPARITY : link.inf().cominf.parity;
+                        set_rs232_comoption(opt, 8, tmprty,
+                                      (tmprty == NT_RS_NOPARITY) ? NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);}
+                    default:{
+                        set_rs232_baudrate(opt, link.inf().cominf.boundrate);
+                        rsparitytype tmprty = (link.inf().cominf.parity > NT_RS_EVENPARITY) ? NT_RS_NOPARITY : link.inf().cominf.parity;
+                        set_rs232_comoption(opt, 8, tmprty,
+                                      (tmprty == NT_RS_NOPARITY) ? NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);}}
+                return boost::system::error_code ();} 
+        
+        
+        
+       //koyo_protocol_factory
+        
+       ioprotocol_ptr koyo_protocol_factory::build(const metalink& lnk, ns_error & err) {
+
+                typedef rs_iostream<koyo_com_option_setter> koyo_rs_iostream;
+
+                switch (lnk.chanaltype()) {
+                    case NT_CHTP_TCP_IP:{
+                        basis_iostream_ptr tmp_stream = basis_iostream_ptr(
+                                new tcpip_iostream(lnk.timeout(), lnk.host(), MODBUS_TCP_PORT));
+                        return ioprotocol_ptr(new tcp_modbus_protocol<modbus_value_manager > (tmp_stream));}
+
+                    case NT_CHTP_UDP_IP:{
+                        basis_iostream_ptr tmp_stream = basis_iostream_ptr(
+                                new udpip_iostream(lnk.timeout(), lnk.host(), ECOM_UDP_PORT, ECOM_BUFF_SIZE));
+                        return ioprotocol_ptr(new ecom_protocol(tmp_stream));}
+
+                    case NT_CHTP_RS232_4XX:{
+
+
+                        basis_iostream_ptr tmp_stream = basis_iostream_ptr(new koyo_rs_iostream(lnk,
+                                lnk.timeout(), lnk.chanalnum(), false));
+
+                        switch (lnk.protocol()) {
+
+                            case NT_KOYO_DIRECTNET_HEX:{
+                                return ioprotocol_ptr(new hex_direcnet_protocol(tmp_stream));}
+                            case NT_KOYO_DIRECTNET_ASCII:{
+                                return ioprotocol_ptr(new ascii_direcnet_protocol(tmp_stream));}
+                            default:{
+                                return ioprotocol_ptr(new rtu_modbus_protocol<modbus_value_manager > (tmp_stream));}}}
+
+                    default:{}}
+
+
+                err = ERROR_IO_LINK_NOT_SUPPORT;
+                return ioprotocol_ptr();};
+        
 
 
 }}

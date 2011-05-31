@@ -9,6 +9,15 @@
 
 namespace dvnci {
     namespace driver {
+        
+        bool calculate_mdb_lrc (const std::string& src, num8& lrc, std::string::size_type strt) {
+            if (src.size() > strt) {
+                lrc = 0;
+                for (std::string::size_type it = strt; it < src.size(); ++it ) {
+                    lrc = lrc + (src.at(it));}
+                lrc = - lrc;
+                return true;}
+            return false;}
 
         bool insert_mdb_lrc (std::string& src, std::string::size_type strt) {
             num8 crc = 0;
@@ -17,7 +26,7 @@ namespace dvnci {
                 return true;}
             return false;}
 
-        bool check_mdb_lrc (std::string& src, std::string::size_type strt) {
+        bool check_and_clear_mdb_lrc (std::string& src, std::string::size_type strt) {
             if (src.size()<(strt + 2)) return false;
             num8 crc = 0;
             num8 reqcrc = 0;
@@ -34,17 +43,9 @@ namespace dvnci {
                         return true;}}
             return false;}
 
-        bool calculate_mdb_lrc (const std::string& src, num8& lrc, std::string::size_type strt) {
-            if (src.size() > strt) {
-                lrc = 0;
-                for (std::string::size_type it = strt; it < src.size(); ++it ) {
-                    lrc = lrc + (src.at(it));}
-                lrc = - lrc;
-                return true;}
-            return false;}
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*???????  ??????????? ???????? MODBUS*/
+        /*modbus_value_manager*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ns_error modbus_value_manager::set_val(std::string& val, parcel_ptr prcl, size_t bitn) {
@@ -92,9 +93,7 @@ namespace dvnci {
                         switch (cmd->type()) {
                             case TYPE_NODEF:{
                                 if (cmd->isvalue()) {
-									unum16 tmp = cmd->value_cast<unum16>();
-                                    tmp = (tmp < 0) ? 0 : ((tmp > 65535) ? 65535 : tmp);
-                                    val = primtype_to_string<unum16 > (tmp);
+                                    val = primtype_to_string<unum16 > (cmd->value_cast<unum16>());
                                     spec_protocol_convertion_in(val);
                                     return error(0);}
                                 return error(ERROR_IO_NO_GENERATE_REQ);}

@@ -99,6 +99,8 @@ namespace dvnci {
                 return false;}
 
             bool parse_impl(std::string vl);
+            
+         protected:     
 
             bool conform_bit_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt, std::string rgxstr, num32& addr, size_t & bitnum);
             bool conform_v_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt, std::string rgxstr, num32& addr, size_t & bitnum);
@@ -138,33 +140,14 @@ namespace dvnci {
 
             koyo_com_option_setter(const metalink & lnk) : com_option_setter(lnk) {};
 
-            virtual boost::system::error_code store(com_port_option& opt, boost::system::error_code & ec) const {
-                reset_default_nill(opt);
-                //opt.fRtsControl = 0;
-                switch (link.protocol()) {
-                    case NT_KOYO_DIRECTNET_HEX:{
-                        set_rs232_baudrate(opt, link.inf().cominf.boundrate);
-                        rsparitytype tmprty = (link.inf().cominf.parity > NT_RS_EVENPARITY) ? NT_RS_NOPARITY : link.inf().cominf.parity; 
-                        set_rs232_comoption(opt, 8, tmprty,
-                                      (tmprty == NT_RS_NOPARITY) ? NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);}
-                    case NT_KOYO_DIRECTNET_ASCII:{
-                        set_rs232_baudrate(opt, link.inf().cominf.boundrate);
-                        rsparitytype tmprty = (link.inf().cominf.parity > NT_RS_EVENPARITY) ? NT_RS_NOPARITY : link.inf().cominf.parity;
-                        set_rs232_comoption(opt, 8, tmprty,
-                                      (tmprty == NT_RS_NOPARITY) ? NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);}
-                    default:{
-                        set_rs232_baudrate(opt, link.inf().cominf.boundrate);
-                        rsparitytype tmprty = (link.inf().cominf.parity > NT_RS_EVENPARITY) ? NT_RS_NOPARITY : link.inf().cominf.parity;
-                        set_rs232_comoption(opt, 8, tmprty,
-                                      (tmprty == NT_RS_NOPARITY) ? NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);}}
-                return boost::system::error_code ();}
+            virtual boost::system::error_code store(com_port_option& opt, boost::system::error_code & ec) const;
 
             virtual boost::system::error_code load(com_port_option& opt, boost::system::error_code & ec) {
                 return boost::system::error_code();}};
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*????????????? ??????? ?????????? Koyo*/
+        /*koyo_metalink_checker*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         struct koyo_metalink_checker : public metalink_checker {
@@ -173,51 +156,15 @@ namespace dvnci {
                 return ((ls.inf().cominf.boundrate != rs.inf().cominf.boundrate)) ? ERROR_IO_NOSYNC_LINK : 0;}};
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*????????? ??????????  Koyo*/
+        /*koyo_device_service*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         struct koyo_protocol_factory : public protocol_factory {
 
-            virtual ioprotocol_ptr build(const metalink& lnk, ns_error & err) {
-
-                typedef rs_iostream<koyo_com_option_setter> koyo_rs_iostream;
-
-                switch (lnk.chanaltype()) {
-                    case NT_CHTP_TCP_IP:{
-                        basis_iostream_ptr tmp_stream = basis_iostream_ptr(
-                                new tcpip_iostream(lnk.timeout(), lnk.host(), MODBUS_TCP_PORT));
-                        return ioprotocol_ptr(new tcp_modbus_protocol<modbus_value_manager > (tmp_stream));}
-
-                    case NT_CHTP_UDP_IP:{
-                        basis_iostream_ptr tmp_stream = basis_iostream_ptr(
-                                new udpip_iostream(lnk.timeout(), lnk.host(), ECOM_UDP_PORT, ECOM_BUFF_SIZE));
-                        return ioprotocol_ptr(new ecom_protocol(tmp_stream));}
-
-                    case NT_CHTP_RS232_4XX:{
-
-
-                        basis_iostream_ptr tmp_stream = basis_iostream_ptr(new koyo_rs_iostream(lnk,
-                                lnk.timeout(), lnk.chanalnum(), false));
-
-                        switch (lnk.protocol()) {
-
-                            case NT_KOYO_DIRECTNET_HEX:{
-                                return ioprotocol_ptr(new hex_direcnet_protocol(tmp_stream));}
-                            case NT_KOYO_DIRECTNET_ASCII:{
-                                return ioprotocol_ptr(new ascii_direcnet_protocol(tmp_stream));}
-                            default:{
-                                return ioprotocol_ptr(new rtu_modbus_protocol<modbus_value_manager > (tmp_stream));}}}
-
-                    default:{
-                        err = ERROR_IO_LINK_NOT_SUPPORT;
-                        return ioprotocol_ptr();}}
-
-
-                err = ERROR_IO_LINK_NOT_SUPPORT;
-                return ioprotocol_ptr();};};
+            virtual ioprotocol_ptr build(const metalink& lnk, ns_error & err);};
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*???????? ?????????  Koyo*/
+        /*koyo_device_service*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class koyo_device_service : public templ_device_service<koyo_protocol_factory> {
@@ -225,7 +172,8 @@ namespace dvnci {
 
             koyo_device_service(const metalink& lnk) : templ_device_service<koyo_protocol_factory>(lnk) {
               util_interval(((lnk.protocol()==NT_KOYO_DIRECTNET_HEX) || ((lnk.protocol()==NT_KOYO_DIRECTNET_ASCII)) ||
-                              (lnk.chanaltype()==NT_CHTP_UDP_IP)) ? UTIL_INTERVAL_DAY : UTIL_INTERVAL_NONE);};};
+                              (lnk.chanaltype()==NT_CHTP_UDP_IP)) ? 
+                                  UTIL_INTERVAL_DAY : UTIL_INTERVAL_NONE);};};
 
 }}
 
