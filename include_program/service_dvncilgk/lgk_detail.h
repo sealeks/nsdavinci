@@ -33,7 +33,6 @@ namespace dvnci {
 
             lgk_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_req_parcel(vl, tgtp, mlnk) {
                 devnum_ = (mlnk.protocol() == LGKA_PROT_MEC) ? 0xFF : mlnk.devicenum();
-                iscorrect_ = checktagtype();
                 if (!iscorrect_) return;
                 iscorrect_ = parse(vl);}
 
@@ -44,13 +43,7 @@ namespace dvnci {
 
             bool parse(std::string vl);
 
-            bool conformaddr(const std::string& vl, parcelkind& tp, num32& ch, num32& nm, num32 & arrnm);
-
-            bool checktagtype() {
-                if (IN_EVENTSET(type())) {
-                    error(ERROR_TYPENOPROCCESS);
-                    return false;}
-                return true;}} ;
+            bool conformaddr(const std::string& vl, parcelkind& tp, num32& ch, num32& nm, num32 & arrnm);} ;
 
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
        /*????????? ????? LGK*/
