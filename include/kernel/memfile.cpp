@@ -122,12 +122,12 @@ namespace dvnci {
 
         size_type fned = find_by_tagid(id);
         if (msgtp == msNew) {
-            if (fned!=npos) {
+            if (fned != npos) {
                 kvit(fned, false);
                 incversion();
                 return;}}
         else {
-            if (fned!=npos) {
+            if (fned != npos) {
                 time(fned, tm);
                 tgbs_ptr->insert_to_journal( tgbs_ptr->time(id), id , msgtp, tgbs_ptr->alarmlevel(id), val);
                 incversion();
@@ -137,7 +137,7 @@ namespace dvnci {
 
         size_type newid = inc();
 
-        if (newid!=npos) {
+        if (newid != npos) {
             new (operator[](newid)) alarmsstruct( globalnum(), tm, id, msgtp,  tgbs_ptr->alarmlevel(id),
                     tgbs_ptr->group(id),  tgbs_ptr->agroup(id));
             if (msgtp != msNew) operator[](newid)->off(true);
@@ -147,7 +147,7 @@ namespace dvnci {
     void alarmsbase::remove(size_type id) {
         INP_EXCLUSIVE_LOCK(memlock());
         size_type tmp = find_by_tagid(id);
-        if (tmp!=npos) {
+        if (tmp != npos) {
             operator[](tmp)->off(true);
             checkout();}}
 
@@ -181,7 +181,7 @@ namespace dvnci {
     void       alarmsbase::kvit_tag(size_type id) {
         INP_EXCLUSIVE_LOCK(memlock());
         for (size_type i = 0; i < count(); ++i) {
-            if ((operator[](i)->tagid()==id) && (!(kvit(i)))) {
+            if ((operator[](i)->tagid() == id) && (!(kvit(i)))) {
                 tgbs_ptr->insert_to_journal(now(), operator[](i)->tagid() , msKvit, tgbs_ptr->alarmlevel(tagid(i)));
                 incversion();
                 operator[](i)->kvit(true);}}
@@ -221,7 +221,7 @@ namespace dvnci {
 
         if (!queue) {
             size_type tmp = find_by_tagid(id);
-            if (tmp!=npos) {
+            if (tmp != npos) {
                 operator[](id)->reset_commandstruct(val, clid);
                 incversion();
                 return acQueuedCommand;}}
@@ -239,7 +239,7 @@ namespace dvnci {
 
         if (!queue) {
             size_type tmp = find_by_tagid(id);
-            if (tmp!=npos) {
+            if (tmp != npos) {
                 operator[](id)->reset_commandstruct(val, clid);
                 incversion();
                 return acQueuedCommand;}}
@@ -263,7 +263,7 @@ namespace dvnci {
             if (((operator[](i))->group() == group) || (group == npos)) {
                 if (tmpmp.find(tagid(i)) == tmpmp.end()) {
                     (operator[](i))->executed(true);
-                    commandstruct tmp =*operator[](i);
+                    commandstruct tmp = *operator[](i);
                     if (tgbs_ptr->restore_command_raw_range(tmp))
                         vect_.push_back(tmp);
                     tmpmp.insert(tagid(i));
@@ -283,7 +283,7 @@ namespace dvnci {
             if (groups.find((operator[](i))->group()) != groups.end()) {
                 if (tmpmp.find(tagid(i)) == tmpmp.end()) {
                     (operator[](i))->executed(true);
-                    commandstruct tmp =*operator[](i);
+                    commandstruct tmp = *operator[](i);
                     if (tgbs_ptr->restore_command_raw_range(tmp))
                         vect_.push_back(tmp);
                     tmpmp.insert(tagid(i));
@@ -342,44 +342,44 @@ namespace dvnci {
                     evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMILog);
                     if (it == ev_mqs_map.end()) {
                         ev_mqs_map.insert(evst_indxmqmap_pair(sIMMILog, indx_mq_map()));
-			it = ev_mqs_map.find(sIMMILog);}
+                        it = ev_mqs_map.find(sIMMILog);}
                     if (it != ev_mqs_map.end()) {
                         it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}}
-                if (evset(i) & (sIMMIJournal)) {
-                    evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMIJournal);
-                    if (it == ev_mqs_map.end()) {
-                        ev_mqs_map.insert(evst_indxmqmap_pair(sIMMIJournal, indx_mq_map()));
-			it = ev_mqs_map.find(sIMMIJournal);}
-                    if (it != ev_mqs_map.end()) {
-                        it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}
-                if (evset(i) & (sIMMIGroupManage)) {
-                    evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMIGroupManage);
-                    if (it == ev_mqs_map.end()) {
-                        ev_mqs_map.insert(evst_indxmqmap_pair(sIMMIGroupManage, indx_mq_map()));
-                        it = ev_mqs_map.find(sIMMIGroupManage);}
-                    if (it != ev_mqs_map.end()) {
-                        it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}
-                if (evset(i) & (sIMMITagManage)) {
-                    evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMITagManage);
-                    if (it == ev_mqs_map.end()) {
-                        ev_mqs_map.insert(evst_indxmqmap_pair(sIMMITagManage, indx_mq_map()));
-			it = ev_mqs_map.find(sIMMITagManage);}
-                    if (it != ev_mqs_map.end()) {
-                        it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}
-                if (evset(i) & (sIMMIDBManage)) {
-                    evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMIDBManage);
-                    if (it == ev_mqs_map.end()) {
-                        ev_mqs_map.insert(evst_indxmqmap_pair(sIMMIDBManage, indx_mq_map()));
-			it = ev_mqs_map.find(sIMMIDBManage);}
-                    if (it != ev_mqs_map.end()) {
-                        it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}
-                if (evset(i) & (sIMMIDebug)) {
-                    evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMIDebug);
-                    if (it == ev_mqs_map.end()) {
-                        ev_mqs_map.insert(evst_indxmqmap_pair(sIMMIDebug, indx_mq_map()));
-			it = ev_mqs_map.find(sIMMIDebug);}
-                    if (it != ev_mqs_map.end()) {
-                        it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}}
+            if (evset(i) & (sIMMIJournal)) {
+                evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMIJournal);
+                if (it == ev_mqs_map.end()) {
+                    ev_mqs_map.insert(evst_indxmqmap_pair(sIMMIJournal, indx_mq_map()));
+                    it = ev_mqs_map.find(sIMMIJournal);}
+                if (it != ev_mqs_map.end()) {
+                    it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}
+            if (evset(i) & (sIMMIGroupManage)) {
+                evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMIGroupManage);
+                if (it == ev_mqs_map.end()) {
+                    ev_mqs_map.insert(evst_indxmqmap_pair(sIMMIGroupManage, indx_mq_map()));
+                    it = ev_mqs_map.find(sIMMIGroupManage);}
+                if (it != ev_mqs_map.end()) {
+                    it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}
+            if (evset(i) & (sIMMITagManage)) {
+                evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMITagManage);
+                if (it == ev_mqs_map.end()) {
+                    ev_mqs_map.insert(evst_indxmqmap_pair(sIMMITagManage, indx_mq_map()));
+                    it = ev_mqs_map.find(sIMMITagManage);}
+                if (it != ev_mqs_map.end()) {
+                    it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}
+            if (evset(i) & (sIMMIDBManage)) {
+                evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMIDBManage);
+                if (it == ev_mqs_map.end()) {
+                    ev_mqs_map.insert(evst_indxmqmap_pair(sIMMIDBManage, indx_mq_map()));
+                    it = ev_mqs_map.find(sIMMIDBManage);}
+                if (it != ev_mqs_map.end()) {
+                    it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}
+            if (evset(i) & (sIMMIDebug)) {
+                evst_indxmqmap_map::iterator it = ev_mqs_map.find(sIMMIDebug);
+                if (it == ev_mqs_map.end()) {
+                    ev_mqs_map.insert(evst_indxmqmap_pair(sIMMIDebug, indx_mq_map()));
+                    it = ev_mqs_map.find(sIMMIDebug);}
+                if (it != ev_mqs_map.end()) {
+                    it->second.insert(indx_mq_pair(i, getproccessqueue(queuehandle(i))));}}}
         removeproccessqueue(guids);
         lastguid_ = version();}
 
@@ -406,7 +406,7 @@ namespace dvnci {
         evst_indxmqmap_map::iterator it = ev_mqs_map.find(event);
         if (it != ev_mqs_map.end()) {
             for (indx_mq_map::iterator itevset = it->second.begin(); itevset != it->second.end(); ++itevset) {
-                if (itevset->second){
+                if (itevset->second) {
                     proccess_queues::try_send(itevset->second.get(), mess, id, some);}}}}
 
     // clients
@@ -439,20 +439,18 @@ namespace dvnci {
 
 
     // groups
-    
+
     void groupsbase::active(size_type id, bool val) {
-            if (exists(id)) {
-                if (operator[](id)->active() != val) {
-                    time(id, now());
-                    operator[](id)->active(val);}}}
-    
-    
-     void groupsbase::valid(size_type id, vlvtype val) {
-            if (exists(id)) {
-                if (operator[](id)->valid() != val) {
-                    time(id, now());
-                    operator[](id)->valid(val);}}}
-            
+        if (exists(id)) {
+            if (operator[](id)->active() != val) {
+                time(id, now());
+                operator[](id)->active(val);}}}
+
+    void groupsbase::valid(size_type id, vlvtype val) {
+        if (exists(id)) {
+            if (operator[](id)->valid() != val) {
+                time(id, now());
+                operator[](id)->valid(val);}}}
 
     void groupsbase::host(size_type id, const std::string& val) {
         if (exists(id)) {
@@ -461,7 +459,6 @@ namespace dvnci {
                 stringbase_src(tmp, val);
                 operator[](id)->hostpos(tmp);}}}
 
-    
     void groupsbase::user(size_type id, const std::string& val) {
         if (exists(id)) {
             if (user(id) != val) {
@@ -469,7 +466,6 @@ namespace dvnci {
                 stringbase_src(tmp, val);
                 operator[](id)->userpos(tmp);}}}
 
-    
     void groupsbase::password(size_type id, const std::string& val) {
         if (exists(id)) {
             if (password(id) != val) {
@@ -477,7 +473,6 @@ namespace dvnci {
                 stringbase_src(tmp, val);
                 operator[](id)->passpos(tmp);}}}
 
-    
     void groupsbase::server(size_type id, const std::string& val) {
         if (exists(id)) {
             if (server(id) != val) {
@@ -485,7 +480,6 @@ namespace dvnci {
                 stringbase_src(tmp, val);
                 operator[](id)->serverpos(tmp);}}}
 
-    
     void groupsbase::port(size_type id, const std::string& val) {
         if (exists(id)) {
             if (port(id) != val) {
@@ -493,7 +487,6 @@ namespace dvnci {
                 stringbase_src(tmp, val);
                 operator[](id)->portpos(tmp);}}}
 
-    
     void groupsbase::group(size_type id, const std::string& val) {
         if (exists(id)) {
             if (group(id) != val) {
@@ -501,7 +494,6 @@ namespace dvnci {
                 stringbase_src(tmp, val);
                 operator[](id)->grouppos(tmp);}}}
 
-    
     void groupsbase::topic(size_type id, const std::string& val) {
         if (exists(id)) {
             if (topic(id) != val) {
@@ -509,74 +501,63 @@ namespace dvnci {
                 stringbase_src(tmp, val);
                 operator[](id)->topicpos(tmp);}}}
 
-    
     void groupsbase::ether(size_type id, const std::string& val) {
         if (exists(id)) {
             if (ether(id) != val) {
                 size_t tmp = operator[](id)->etherpos();
                 stringbase_src(tmp, val);
                 operator[](id)->etherpos(tmp);}}}
-    
-    
+
     void  groupsbase::local(size_type id, lcltype val) {
         if (exists(id)) {
             if (operator[](id)->local() != val) {
                 operator[](id)->local(val);}}}
-
 
     void groupsbase::chanaltype(size_type id, chnltype  val) {
         if (exists(id)) {
             if (operator[](id)->chanaltype() != val) {
                 operator[](id)->chanaltype(val);}}}
 
-    
     void  groupsbase::chanalnum(size_type id, chnlnumtype val) {
         if (exists(id)) {
             if (operator[](id)->chanalnum() != val) {
                 operator[](id)->chanalnum(val);}}}
 
-    
+
     //void  groupsbase::portnum(size_type id, num32  val) {
     //    if (exists(id)) {
     //        if (operator[](id)->portnum() != val) {
     //            metalink oldlnk = link(id);
     //            operator[](id)->portnum(val);}}}
 
-    
     void  groupsbase::devnum(size_type id, devnumtype  val) {
         if (exists(id)) {
             if (operator[](id)->devnum() != val) {
                 operator[](id)->devnum(val);}}}
-    
-    
+
     void  groupsbase::protocol(size_type id, protocoltype  val) {
         if (exists(id)) {
             if (operator[](id)->protocol() != val) {
                 operator[](id)->protocol(val);}}}
 
-
     void  groupsbase::synctype(size_type id, intfsynctype val) {
         if (exists(id)) {
             if (operator[](id)->synctype() != val) {
                 operator[](id)->synctype(val);}}}
-    
 
     void  groupsbase::ver(size_type id, intfvertype val) {
         if (exists(id)) {
             if (operator[](id)->ver() != val) {
                 operator[](id)->ver(val);}}}
-    
 
     void  groupsbase::supporttype(size_type id, bool val) {
         if (exists(id)) {
             if (operator[](id)->supporttype() != val) {
                 operator[](id)->supporttype(val);}}}
-    
-    
+
     void groupsbase::writezero(const fspath&  fpath) {
         smplheader inhdr;
-        filestream::write(fpath / GROUPS_FILE_NAME, (num8*) &inhdr, 0, sizeof (smplheader));}
-    
+        filestream::write(fpath / GROUPS_FILE_NAME, (num8*) & inhdr, 0, sizeof (smplheader));}
 
     bool groupsbase::checkname(const string& val, size_type parnt)  {
         if ((operator [](val)))
@@ -586,14 +567,12 @@ namespace dvnci {
         boost::regex ex_xtagTemplete(EXCL_CORRECT_ENTETYNAME_REGEXTAMPL);
         if (boost::regex_match( val, ex_xtagTemplete)) throw dvncierror(ERROR_NAMEENTETY_CORRECT, val, 0);
         return true;}
-    
-    
-   void groupsbase::initstruct(size_type id, const std::string& newname, num64 numcriteria) {
+
+    void groupsbase::initstruct(size_type id, const std::string& newname, num64 numcriteria) {
         new ( &((pgroupsstruct) data())->items[id] ) groupstruct(able_ptr);
         name(id, newname, false);
         appid(id, 0);
         writetofile(id);}
-   
 
     void groupsbase::uninitstruct(size_type id) {
         host(id, "");
@@ -605,59 +584,51 @@ namespace dvnci {
         topic(id, "");
         ether(id, "");
         templatebase<groupsstruct>::uninitstruct(id);}
-    
-    
+
     void groupsbase::trigger_add(size_type id, num64 numcriteria) {
         notify_groupmanage(MSG_DVNCIGROUPNEW, id, 0);};
-        
 
     void groupsbase::trigger_remove(size_type id, num64 numcriteria) {
         notify_groupmanage(MSG_DVNCIGROUPDELETE, id, 0);};
-        
-        
+
     void groupsbase::trigger_write(size_type id) {
-        notify_groupmanage(MSG_DVNCIGROUPCHAPP, id, exists(id) ? appid(id) : 0);}  
-        
-        
+        notify_groupmanage(MSG_DVNCIGROUPCHAPP, id, exists(id) ? appid(id) : 0);}
 
     void groupsbase::notify_tagmanage(qumsgtype mess, size_type id, size_type group) {
-        if (systemnotifyer) 
+        if (systemnotifyer)
             systemnotifyer->notify_tagmanage(mess, id, group);}
-    
 
     void groupsbase::notify_groupmanage(qumsgtype mess, size_type id, num32 some) {
-        if (systemnotifyer) 
+        if (systemnotifyer)
             systemnotifyer->notify_groupmanage(mess, id, some);}
-    
-    
+
     void groupsbase::appid(size_type id, appidtype  val)  {
         if (exists(id)) {
             if (in_EXCLUSIVEGROUP(val))
-                if (select_groups_by_appid(val) != npos) 
+                if (select_groups_by_appid(val) != npos)
                     throw dvncierror(ERROR_ENTETYNOGHANETYPE_ISEXCLUSIVE, name(select_groups_by_appid(val)), 0);
             if (operator[](id)->appid() != val) {
                 formatmem_in_null(operator[](id)->config(), GROP_CONFIG_SIZE);
                 operator[](id)->appid(val);}}}
-    
-    groupsbase::size_type groupsbase::select_groups_by_appid(appidtype val) {
-            for (size_type i = 0; i < count(); ++i) {
-                if (exists(i))
-                    if (appid(i) == val) return i;}
-            return npos;}
-    
 
-    void groupsbase::clone(size_type idsrc, size_type iddst){
-            if ((!exists(idsrc)) || (!exists(iddst))) return;
-            groupstruct::clone(((pgroupsstruct) data())->items[idsrc],
-                           ((pgroupsstruct) data())->items[iddst]);
-            host(idsrc, host(iddst));
-            ether(idsrc, ether(iddst));
-            password(idsrc,  password(iddst));
-            port(idsrc,  port(iddst));
-            server(idsrc,  server(iddst));
-            topic(idsrc,  topic(iddst));
-            user(idsrc,  user(iddst));
-            writetofile(idsrc);}
+    groupsbase::size_type groupsbase::select_groups_by_appid(appidtype val) {
+        for (size_type i = 0; i < count(); ++i) {
+            if (exists(i))
+                if (appid(i) == val) return i;}
+        return npos;}
+
+    void groupsbase::clone(size_type idsrc, size_type iddst) {
+        if ((!exists(idsrc)) || (!exists(iddst))) return;
+        groupstruct::clone(((pgroupsstruct) data())->items[idsrc],
+                ((pgroupsstruct) data())->items[iddst]);
+        host(idsrc, host(iddst));
+        ether(idsrc, ether(iddst));
+        password(idsrc,  password(iddst));
+        port(idsrc,  port(iddst));
+        server(idsrc,  server(iddst));
+        topic(idsrc,  topic(iddst));
+        user(idsrc,  user(iddst));
+        writetofile(idsrc);}
 
 
 
@@ -670,13 +641,10 @@ namespace dvnci {
                 size_t tmp = operator[](id)->headernamepos();
                 stringbase_src(tmp, val);
                 operator[](id)->headernamepos(tmp);}}}
-   
-    
-    
+
     void agroupsbase::writezero(const fspath&  fpath) {
         smplheader inhdr;
-        filestream::write(fpath / ALARMGROUPS_FILE_NAME, (num8*) &inhdr, 0, sizeof (smplheader));}
-    
+        filestream::write(fpath / ALARMGROUPS_FILE_NAME, (num8*) & inhdr, 0, sizeof (smplheader));}
 
     bool agroupsbase::checkname(const string& val, size_type parnt)   {
         if ((operator [](val)))
@@ -696,7 +664,7 @@ namespace dvnci {
     void agroupsbase::uninitstruct(size_type id) {
         headername(id, "");
         templatebase<agroupsstruct>::uninitstruct(id);}
-    
+
 
 
 
@@ -708,7 +676,6 @@ namespace dvnci {
                 size_t tmp = operator[](id)->cidrpos();
                 stringbase_src(tmp, val);
                 operator[](id)->cidrpos(tmp);}}}
-    
 
     void accessrulesbase::appname(size_type id, const std::string&  val) {
         if (exists(id)) {
@@ -716,34 +683,29 @@ namespace dvnci {
                 size_t tmp = operator[](id)->apppos();
                 stringbase_src(tmp, val);
                 operator[](id)->apppos(tmp);}}}
-    
-    
+
     void accessrulesbase::writezero(const fspath&  fpath) {
         smplheader inhdr;
-        filestream::write(fpath / ACCESSRULES_FILE_NAME, (num8*) &inhdr, 0, sizeof (smplheader));}
-    
+        filestream::write(fpath / ACCESSRULES_FILE_NAME, (num8*) & inhdr, 0, sizeof (smplheader));}
 
     bool accessrulesbase::checkname(const string& val, size_type parnt)   {
         if ((operator [](val)))
             throw dvncierror(ERROR_NAMEENTETY_DUBLICATE, val, operator ()(val));
         return true;}
-    
 
     void accessrulesbase::initstruct(size_type id, const std::string& newname, num64 numcriteria) {
         new ( &((paccessrulesstruct) data())->items[id] ) accessrulestruct(able_ptr);
         name(id, newname, false);
         cidr(id, "");
         writetofile(id);}
-    
 
     void accessrulesbase::uninitstruct(size_type id) {
         cidr(id, "");
         templatebase<accessrulesstruct>::uninitstruct(id);}
-    
+
 
 
     // users
-
 
     bool usersbase::changepassword(size_type id, const std::string&  newpass) {
         if (exists(id)) {
@@ -765,9 +727,8 @@ namespace dvnci {
 
     void usersbase::writezero(const fspath&  fpath) {
         smplheader inhdr;
-        filestream::write(fpath / OPERATOR_FILE_NAME, (num8*) &inhdr, 0, sizeof (smplheader));}
-    
-    
+        filestream::write(fpath / OPERATOR_FILE_NAME, (num8*) & inhdr, 0, sizeof (smplheader));}
+
     bool usersbase::checkname(const string& val, size_type parnt)  {
         if ((operator [](val)))
             throw dvncierror(ERROR_NAMEENTETY_DUBLICATE, val, operator ()(val));
@@ -784,7 +745,7 @@ namespace dvnci {
         templatebase<usersstruct>::uninitstruct(id);}
 
 
-    
+
     // tagsbase
 
     interproc_namemutex* tagsbase::one_init_ = 0;
@@ -802,11 +763,11 @@ namespace dvnci {
         groups_        =  groupsbase_ptr(new groupsbase(stringbs_, this, basepatht));
         agroups_       =  agroupsbase_ptr(new agroupsbase(stringbs_, this, basepatht));
         size_t tmp = ((capacity() / sizeof (tagstruct)) * 2) +
-                     ((groups_->capacity() / sizeof (groupstruct))) +
-                     ((agroups_->capacity() / sizeof (agroupstruct))) + 10000;
+                ((groups_->capacity() / sizeof (groupstruct))) +
+                ((agroups_->capacity() / sizeof (agroupstruct))) + 10000;
         item_indexer = indexitem_ptr(new  index_base(stringbs_, MAIN_MAP_NAME + "_index", tmp));
         handle_ = 0;
-	registry_      =  registrybase_ptr(new registrybase(this, REGISTRATION_MAP_NAME));
+        registry_      =  registrybase_ptr(new registrybase(this, REGISTRATION_MAP_NAME));
         debug_           =  debugbase_ptr(new debugbase(DEBUGS_MAP_NAME));
         ((tagsstruct_hdr*) data())->os_type(NS_CURRENT_OS_TYPE);
         commands_      =  commandsbase_ptr(new commandsbase(this, COMMAND_MAP_NAME));
@@ -820,18 +781,18 @@ namespace dvnci {
             INP_EXCLUSIVE_LOCK(item_indexer->memlock())
             buildindex();}
 
-        
+
         valbuffers_ = valuebufferbase_ptr( new valuebufferbase(ANALOBUFF_MAP_NAME, archtagcnt()));
-            if ((valbuffers()) && (valbuffers()->isnew())) {
-                fill_logkeys();}
+        if ((valbuffers()) && (valbuffers()->isnew())) {
+            fill_logkeys();}
 
         reportbuffers_ = reportbufferbase_ptr( new reportbufferbase(REPORTBUFF_MAP_NAME, reporttagcnt()));
         if ((reportbuffers()) && (reportbuffers()->isnew())) {
-                fill_reportkeys();}
+            fill_reportkeys();}
 
-        debugwarning("Report count is "+ to_str(reporttagcnt()));
-        debugwarning("Achive count is "+ to_str(archtagcnt()));
-        debugwarning("Text count is "+ to_str(texttagcnt()));
+        debugwarning("Report count is " + to_str(reporttagcnt()));
+        debugwarning("Achive count is " + to_str(archtagcnt()));
+        debugwarning("Text count is " + to_str(texttagcnt()));
 
         reghandle(app, evnts);
 
@@ -860,12 +821,10 @@ namespace dvnci {
         if (reportbuffers()) debugwarning(reportbuffers()->mapname() + "  reportbuffers() size=" + to_str(reportbuffers()->mapsize() / 1024) + "kb");*/
         DEBUG_STR_DVNCI( "d_tor tagbase!!!!!")
 #endif
-        debug("d_tor tagbase  rank=" + to_str(handle_));
+                debug("d_tor tagbase  rank=" + to_str(handle_));
         unreghandle();
         debug("d_tor tagbase after unreg rank=" + to_str(handle_));}
-    
-    
-    
+
     void tagsbase::writezero(const fspath& basepatht, lcltype loc ) {
         num64 str_head = 1;
         char* str_ptr = (char*) &str_head;
@@ -884,9 +843,8 @@ namespace dvnci {
                 "<ReportList key=\"0\"></ReportList><TrendList key=\"0\"></TrendList>"
                 "<MessageList key=\"0\"></MessageList></meta>\n";
         filestream::write(basepatht / META_FILE_NAME, (char*) metanull.c_str(), 0, metanull.size());}
-    
-    
-   std::string tagsbase::conf_property(const confproptype& name) const {
+
+    std::string tagsbase::conf_property(const confproptype& name) const {
         switch (name) {
             case NS_CNFG_PATH: return fpath.string();
             case NS_CNFG_LOGLEVEL: return to_str<debuglvtype > (prjcfg_debuglevel());
@@ -907,7 +865,6 @@ namespace dvnci {
             case NS_CNFG_OSTYPE: return to_str<num32 > (prjcfg_ostype());
             default:{};}
         return "";}
-   
 
     void tagsbase::conf_property(const confproptype& name, const std::string& val) {
         switch (name) {
@@ -950,220 +907,196 @@ namespace dvnci {
             case NS_CNFG_OPCREMOTEPORT:{
                 prjcfg_opcport(val);
                 return;}
-            default : {};}}
-    
-    
+            default:{};}}
+
     void tagsbase::valid(size_type id, vlvtype vld) {
         if (exists(id)) {
             //bool  oldValid = valid(id);
             operator[](id)->valid(vld);
             /*if (wasValid != isvalid(id)) {
-                registry()->notify_valid(id);}*/}}
-    
+                registry()->notify_valid(id);}*/
+        }}
+
     bool tagsbase::reportbuffered(size_type id) const {
-            return ((reportkey(id)!=npos) && (operator[](id)->logged()));}
-    
-    
+        return ((reportkey(id) != npos) && (operator[](id)->logged()));}
+
     vlvtype tagsbase::reportstate(size_type id) const {
-            return ((exists(id)) && (IN_REPORTSET(type(id)))) ? operator[](id)->valid() : 1;}
-    
-    
+        return ((exists(id)) && (IN_REPORTSET(type(id)))) ? operator[](id)->valid() : 1;}
+
     bool tagsbase::valid_as_reportsource(size_type id) const {
-            return ((exists(id)) && (valid(id) == FULL_VALID) && 
-                    ((!IN_REPORTSET(type(id))) || (time_log(id) > now())));}
-    
-    
+        return ((exists(id)) && (valid(id) == FULL_VALID) &&
+                ((!IN_REPORTSET(type(id))) || (time_log(id) > now())));}
+
     void tagsbase::error(size_type id, ns_error value) {
-            if (exists(id)) {
-                if (value) valid(id, 0);
-                operator[](id)->error(value);}}
-    
-    
+        if (exists(id)) {
+            if (value) valid(id, 0);
+            operator[](id)->error(value);}}
+
     void tagsbase::type(size_type id, tagtype value) {
         if ((exists(id)) && (IN_TYPESET(value))) {
             if (value != type(id)) {
-                    bool old_isreport =IN_REPORTSET(type(id));
-                    bool oldistext = IN_TEXTSET(type(id));
-                    bool oldisreport = reportbuffered(id);
-                    bool oldislogged = logbuffered(id);
-                    tagstruct tmp_struct = *operator[](id);
-                    operator[](id)->type(value);
-                    to_standart_range(id);
-                    bool new_isreport =IN_REPORTSET(type(id));
-                    if ((logged(id))) {
-                        if (oldislogged) 
-                            reset_logkey(id);
-                        else{
-                            archtagcnt(archtagcnt()+1);
-                            add_logkey(id);
-                            registry()->notify_log(id, true);}}
-                    else{
-                        if (oldislogged)
-                            if (archtagcnt())
-                                archtagcnt(archtagcnt()-1);
-                            remove_logkey(id);
-                            registry()->notify_log(id, false);}
-                    if (IN_REPORTSET(value)){
-                        if (oldisreport) {
-                            reset_reportkey(id);}
-                        else{
-                            reporttagcnt(reporttagcnt()+1);
-                            add_reportkey(id);}
-                        operator[](id)->alarmlevel(0);}
-                    else{
-                        if (oldisreport) {
-                            if (reporttagcnt()) reporttagcnt(reporttagcnt()-1);
-                            remove_reportkey(id);}}
-                    if (value == TYPE_DISCRET) operator[](id)->logdb(0);
-
-                    if ((new_isreport) || (old_isreport)){
-                        if (old_isreport)
-                            notify_tagmanage(MSG_DVNCITAGREPORT, id, 0);
-                        if (new_isreport)
-                            notify_tagmanage(MSG_DVNCITAGREPORT, id, 1);}
-
-                    if ((oldistext) || (IN_TEXTSET(type(id)))) {
-                        if (oldistext)
-                            valuestringremove(operator[](id)->value<size_t > ());
-                        else
-                            operator[](id)->value<size_t > (0);
-                        texttagcnt(IN_TEXTSET(type(id)) ? texttagcnt() + 1 : (texttagcnt() ? texttagcnt() - 1 : 0));}
-                    notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
-                    notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}}}
-    
-
-    
-    
-    void tagsbase::group(size_type id, size_type value, bool message) {
-            if ((exists(id)) && (groups_->exists(value))) {
-                checkname(retremoved_namespace_delimit(name(id)), value);
-                size_type grnum = group(id);
-                if (grnum != value) {
-                    removeindex(id);
-                    operator[](id)->group(value);
-                    addindex(id);
-                    valid(id, (groups()->appid(value) == NS_GROUP_SYSTEMVAR) ? FULL_VALID : NULL_VALID);}
-                writetofile(id);
-                if (message) notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, grnum);
-                if (message) notify_tagmanage(MSG_DVNCTAGADDTOGR, id, value);}} 
-    
-    
-    void tagsbase::agroup(size_type id, size_type value, bool message) {
-            if ((exists(id)) && (agroups_->exists(value))) {
-                checkname(retremoved_namespace_delimit(name(id)), value);
-                size_type agrnum = operator[](id)->agroup();
-                if (agrnum != value) {
-                    operator[](id)->agroup(value);
-                    writetofile(id);}}}
-    
-    
-    void tagsbase::comment(size_type id, const std::string&  value) {
-            if (exists(id)) {
-                size_t tmp = operator[](id)->poscomment();
-                stringbase_src(tmp, value);
-                operator[](id)->poscomment(tmp);}}
-    
-    
-    void tagsbase::binding(size_type id, const std::string&  value, bool message) {
-            if (exists(id)) {
-                if (value != binding(id)) {
-                    size_t tmp = operator[](id)->posbinding();
-                    stringbase_src(tmp, value, DVNCI_DEFRES_NAMESIZE);
-                    operator[](id)->posbinding(tmp);
-                    if (message){
-                         notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
-                         notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}}}}
-    
-    
-    void  tagsbase::eu(size_type id, const std::string&  value) {
-            if (exists(id)) {
-                size_t tmp = operator[](id)->poseu();
-                stringbase_src(tmp, value, DVNCI_DEFRES_NAMESIZE);
-                operator[](id)->poseu(tmp);}}
-    
-    
-     void tagsbase::onmsg(size_type id, const std::string&  value) {
-            if (exists(id)) {
-                size_t tmp = operator[](id)->posonmsg();
-                stringbase_src(tmp, value);
-                operator[](id)->posonmsg(tmp);}}
-     
-     
-     void tagsbase::offmsg(size_type id, const std::string& value) {
-            if (exists(id)) {
-                size_t tmp = operator[](id)->posoffmsg();
-                stringbase_src(tmp, value);
-                operator[](id)->posoffmsg(tmp);}}
-     
-     
-     void tagsbase::alarmmsg(size_type id, const std::string&  value) {
-            if (exists(id)) {
-                size_t tmp = operator[](id)->posalarmmsg();
-                stringbase_src(tmp, value);
-                operator[](id)->posalarmmsg(tmp);}}
-     
-     
-     void tagsbase::logged(size_type id, bool value) {
-            if (exists(id)) {
-                if (operator[](id)->logged() != value) {
-                    operator[](id)->logged(value);
-                    if (value) {
+                bool old_isreport = IN_REPORTSET(type(id));
+                bool oldistext = IN_TEXTSET(type(id));
+                bool oldisreport = reportbuffered(id);
+                bool oldislogged = logbuffered(id);
+                tagstruct tmp_struct = *operator[](id);
+                operator[](id)->type(value);
+                to_standart_range(id);
+                bool new_isreport = IN_REPORTSET(type(id));
+                if ((logged(id))) {
+                    if (oldislogged)
+                        reset_logkey(id);
+                    else {
                         archtagcnt(archtagcnt() + 1);
                         add_logkey(id);
-                        registry()->notify_log(id, true);}
+                        registry()->notify_log(id, true);}}
+                else {
+                    if (oldislogged)
+                        if (archtagcnt())
+                            archtagcnt(archtagcnt() - 1);
+                    remove_logkey(id);
+                    registry()->notify_log(id, false);}
+                if (IN_REPORTSET(value)) {
+                    if (oldisreport) {
+                        reset_reportkey(id);}
                     else {
-                        archtagcnt( archtagcnt() ? archtagcnt() - 1 : archtagcnt());
-                        remove_logkey(id);
-                        registry()->notify_log(id, false);}}}}
-    
+                        reporttagcnt(reporttagcnt() + 1);
+                        add_reportkey(id);}
+                    operator[](id)->alarmlevel(0);}
+                else {
+                    if (oldisreport) {
+                        if (reporttagcnt()) reporttagcnt(reporttagcnt() - 1);
+                        remove_reportkey(id);}}
+                if (value == TYPE_DISCRET) operator[](id)->logdb(0);
+
+                if ((new_isreport) || (old_isreport)) {
+                    if (old_isreport)
+                        notify_tagmanage(MSG_DVNCITAGREPORT, id, 0);
+                    if (new_isreport)
+                        notify_tagmanage(MSG_DVNCITAGREPORT, id, 1);}
+
+                if ((oldistext) || (IN_TEXTSET(type(id)))) {
+                    if (oldistext)
+                        valuestringremove(operator[](id)->value<size_t > ());
+                    else
+                        operator[](id)->value<size_t > (0);
+                    texttagcnt(IN_TEXTSET(type(id)) ? texttagcnt() + 1 : (texttagcnt() ? texttagcnt() - 1 : 0));}
+                notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
+                notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}}}
+
+    void tagsbase::group(size_type id, size_type value, bool message) {
+        if ((exists(id)) && (groups_->exists(value))) {
+            checkname(retremoved_namespace_delimit(name(id)), value);
+            size_type grnum = group(id);
+            if (grnum != value) {
+                removeindex(id);
+                operator[](id)->group(value);
+                addindex(id);
+                valid(id, (groups()->appid(value) == NS_GROUP_SYSTEMVAR) ? FULL_VALID : NULL_VALID);}
+            writetofile(id);
+            if (message) notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, grnum);
+            if (message) notify_tagmanage(MSG_DVNCTAGADDTOGR, id, value);}}
+
+    void tagsbase::agroup(size_type id, size_type value, bool message) {
+        if ((exists(id)) && (agroups_->exists(value))) {
+            checkname(retremoved_namespace_delimit(name(id)), value);
+            size_type agrnum = operator[](id)->agroup();
+            if (agrnum != value) {
+                operator[](id)->agroup(value);
+                writetofile(id);}}}
+
+    void tagsbase::comment(size_type id, const std::string&  value) {
+        if (exists(id)) {
+            size_t tmp = operator[](id)->poscomment();
+            stringbase_src(tmp, value);
+            operator[](id)->poscomment(tmp);}}
+
+    void tagsbase::binding(size_type id, const std::string&  value, bool message) {
+        if (exists(id)) {
+            if (value != binding(id)) {
+                size_t tmp = operator[](id)->posbinding();
+                stringbase_src(tmp, value, DVNCI_DEFRES_NAMESIZE);
+                operator[](id)->posbinding(tmp);
+                if (message) {
+                    notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
+                    notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}}}}
+
+    void  tagsbase::eu(size_type id, const std::string&  value) {
+        if (exists(id)) {
+            size_t tmp = operator[](id)->poseu();
+            stringbase_src(tmp, value, DVNCI_DEFRES_NAMESIZE);
+            operator[](id)->poseu(tmp);}}
+
+    void tagsbase::onmsg(size_type id, const std::string&  value) {
+        if (exists(id)) {
+            size_t tmp = operator[](id)->posonmsg();
+            stringbase_src(tmp, value);
+            operator[](id)->posonmsg(tmp);}}
+
+    void tagsbase::offmsg(size_type id, const std::string& value) {
+        if (exists(id)) {
+            size_t tmp = operator[](id)->posoffmsg();
+            stringbase_src(tmp, value);
+            operator[](id)->posoffmsg(tmp);}}
+
+    void tagsbase::alarmmsg(size_type id, const std::string&  value) {
+        if (exists(id)) {
+            size_t tmp = operator[](id)->posalarmmsg();
+            stringbase_src(tmp, value);
+            operator[](id)->posalarmmsg(tmp);}}
+
+    void tagsbase::logged(size_type id, bool value) {
+        if (exists(id)) {
+            if (operator[](id)->logged() != value) {
+                operator[](id)->logged(value);
+                if (value) {
+                    archtagcnt(archtagcnt() + 1);
+                    add_logkey(id);
+                    registry()->notify_log(id, true);}
+                else {
+                    archtagcnt( archtagcnt() ? archtagcnt() - 1 : archtagcnt());
+                    remove_logkey(id);
+                    registry()->notify_log(id, false);}}}}
 
     void tagsbase::texttagcnt(size_t val) {
         if ((val + 1) == 0) return;
         INP_EXCLUSIVE_LOCK(memlock())
-        (*(ptagsstruct_hdr) data()).texttagcnt(val);
+                (*(ptagsstruct_hdr) data()).texttagcnt(val);
         writeheader();}
-    
 
     void tagsbase::archtagcnt(size_t val) {
         if ((val + 1) == 0) return;
         INP_EXCLUSIVE_LOCK(memlock())
-        (*(ptagsstruct_hdr) data()).archtagcnt(val);
+                (*(ptagsstruct_hdr) data()).archtagcnt(val);
         writeheader();}
-    
 
     void tagsbase::reporttagcnt(size_t val) {
         if ((val + 1) == 0) return;
         INP_EXCLUSIVE_LOCK(memlock())
-        (*(ptagsstruct_hdr) data()).reporttagcnt(val);
+                (*(ptagsstruct_hdr) data()).reporttagcnt(val);
         writeheader();}
-    
-    
 
     void tagsbase::prjcfg_debuglevel(debuglvtype val) {
         INP_EXCLUSIVE_LOCK(memlock())
                 (*(ptagsstruct_hdr) data()).debuglevel(val);
         writeheader();}
-    
 
     void tagsbase::prjcfg_dbprovider(dbprovtype val) {
         INP_EXCLUSIVE_LOCK(memlock())
-        if ((*(ptagsstruct_hdr) data()).dbprovider()!=val){
+        if ((*(ptagsstruct_hdr) data()).dbprovider() != val) {
             (*(ptagsstruct_hdr) data()).dbprovider(val);
             writeheader();
             registry()->notify_dbmanage(MSG_DVNCICONNSTRCH);}}
-    
 
     void tagsbase::prjcfg_analogbuf(bool val) {
         INP_EXCLUSIVE_LOCK(memlock())
                 (*(ptagsstruct_hdr) data()).analogbuf(val);
         writeheader();}
-    
 
     void tagsbase::prjcfg_bddepth(num32 val) {
         INP_EXCLUSIVE_LOCK(memlock())
-        (*(ptagsstruct_hdr) data()).bddepth(val);
+                (*(ptagsstruct_hdr) data()).bddepth(val);
         writeheader();}
-    
 
     void tagsbase::prjcfg_name(const std::string& value) {
         INP_EXCLUSIVE_LOCK(memlock())
@@ -1172,7 +1105,6 @@ namespace dvnci {
             stringbase_src(tmp, value);
             (*(ptagsstruct_hdr) data()).posname(tmp);
             writeheader();}}
-    
 
     void tagsbase::prjcfg_comment(const std::string& value) {
         INP_EXCLUSIVE_LOCK(memlock())
@@ -1181,7 +1113,6 @@ namespace dvnci {
             stringbase_src(tmp, value);
             (*(ptagsstruct_hdr) data()).poscomment(tmp);
             writeheader();}}
-    
 
     void tagsbase::prjcfg_dbstring(const std::string& value) {
         INP_EXCLUSIVE_LOCK(memlock())
@@ -1191,7 +1122,6 @@ namespace dvnci {
             (*(ptagsstruct_hdr) data()).posdbstring(tmp);
             writeheader();
             registry()->notify_dbmanage(MSG_DVNCICONNSTRCH);}}
-    
 
     void tagsbase::prjcfg_admin(const std::string& value) {
         INP_EXCLUSIVE_LOCK(memlock())
@@ -1200,7 +1130,6 @@ namespace dvnci {
             stringbase_src(tmp, value);
             (*(ptagsstruct_hdr) data()).posadmin(tmp);
             writeheader();}}
-    
 
     void tagsbase::prjcfg_password(const std::string& value) {
         INP_EXCLUSIVE_LOCK(memlock())
@@ -1209,7 +1138,6 @@ namespace dvnci {
             stringbase_src(tmp, value);
             (*(ptagsstruct_hdr) data()).pospass(tmp);
             writeheader();}}
-    
 
     void tagsbase::prjcfg_adminport(const std::string& value) {
         INP_EXCLUSIVE_LOCK(memlock())
@@ -1218,7 +1146,6 @@ namespace dvnci {
             stringbase_src(tmp, value);
             (*(ptagsstruct_hdr) data()).posadminport(tmp);
             writeheader();}}
-    
 
     void tagsbase::prjcfg_remoteport(const std::string& value) {
         INP_EXCLUSIVE_LOCK(memlock())
@@ -1236,7 +1163,6 @@ namespace dvnci {
             (*(ptagsstruct_hdr) data()).posopcport(tmp);
             writeheader();}}
 
-
     void tagsbase::inputsysvartag(size_type id, bool include) {
         if (exists(id)) {
             if (include) {
@@ -1252,7 +1178,6 @@ namespace dvnci {
             select_tags(tmp, group);
             for (iteminfo_map::iterator it = tmp.begin(); it != tmp.end(); ++it) {
                 inputsysvartag(it->first, include);}}}
-    
 
     void tagsbase::resettag_for_group(size_type group, ns_error error) {
         if (groups()->exists(group)) {
@@ -1266,67 +1191,63 @@ namespace dvnci {
                     operator[](it->first)->error(error);
                     operator[](it->first)->time(nill_time);
                     operator[](it->first)->time_log(nill_time);}}}}
-    
-    
+
     void tagsbase::rangable(size_type id, bool value) {
-            if (exists(id)){ 
-                if (value!=rangable(id)){
-                    if (value){
-                      switch (type(id)) {
-                          case TYPE_NODEF:{
-                              operator[](id)->minraw<double>(0);
-                              operator[](id)->maxraw<double>(100);
-                              break;}
-                          case TYPE_DOUBLE:{
-                              operator[](id)->minraw<double>(-std::numeric_limits<double>::max());
-                              operator[](id)->maxraw<double>(std::numeric_limits<double>::max());
-                              break;}
-                          case TYPE_FLOAT:{
-                              operator[](id)->minraw<float>(-std::numeric_limits<float>::max());
-                              operator[](id)->maxraw<float>(std::numeric_limits<float>::max());
-                              break;}   
-                          case TYPE_DISCRET:{
-                              operator[](id)->minraw<bool>(false);
-                              operator[](id)->maxraw<bool>(true);
-                              break;}
-                          case TYPE_NUM64:{
-                              operator[](id)->minraw<num64>(std::numeric_limits<num64>::min());
-                              operator[](id)->maxraw<num64>(std::numeric_limits<num64>::max());
-                              break;}
-                           case TYPE_UNUM64:{
-                              operator[](id)->minraw<unum64>(std::numeric_limits<unum64>::min());
-                              operator[](id)->maxraw<unum64>(std::numeric_limits<unum64>::max());
-                              break;} 
-                           case TYPE_NUM32:{
-                              operator[](id)->minraw<num32>(std::numeric_limits<num32>::min());
-                              operator[](id)->maxraw<num32>(std::numeric_limits<num32>::max());
-                              break;}     
-                           case TYPE_UNUM32:{
-                              operator[](id)->minraw<unum32>(std::numeric_limits<unum32>::min());
-                              operator[](id)->maxraw<unum32>(std::numeric_limits<unum32>::max());
-                              break;} 
-                           case TYPE_NUM16:{
-                              operator[](id)->minraw<num16>(std::numeric_limits<num16>::min());
-                              operator[](id)->maxraw<num16>(std::numeric_limits<num16>::max());
-                              break;}     
-                           case TYPE_UNUM16:{
-                              operator[](id)->minraw<unum16>(std::numeric_limits<unum16>::min());
-                              operator[](id)->maxraw<unum16>(std::numeric_limits<unum16>::max());
-                              break;} 
-                            case TYPE_NUM8:{
-                              operator[](id)->minraw<num8>(std::numeric_limits<num8>::min());
-                              operator[](id)->maxraw<num8>(std::numeric_limits<num8>::max());
-                              break;}     
-                           case TYPE_UNUM8:{
-                              operator[](id)->minraw<unum8>(std::numeric_limits<unum8>::min());
-                              operator[](id)->maxraw<unum8>(std::numeric_limits<unum8>::max());
-                              break;}}}
-                    else{
-                       operator[](id)->minraw<num64>(0);
-                       operator[](id)->maxraw<num64>(0);}}}}
-        
-
-
+        if (exists(id)) {
+            if (value != rangable(id)) {
+                if (value) {
+                    switch (type(id)) {
+                        case TYPE_NODEF:{
+                            operator[](id)->minraw<double>(0);
+                            operator[](id)->maxraw<double>(100);
+                            break;}
+                        case TYPE_DOUBLE:{
+                            operator[](id)->minraw<double>(-std::numeric_limits<double>::max());
+                            operator[](id)->maxraw<double>(std::numeric_limits<double>::max());
+                            break;}
+                        case TYPE_FLOAT:{
+                            operator[](id)->minraw<float>(-std::numeric_limits<float>::max());
+                            operator[](id)->maxraw<float>(std::numeric_limits<float>::max());
+                            break;}
+                        case TYPE_DISCRET:{
+                            operator[](id)->minraw<bool>(false);
+                            operator[](id)->maxraw<bool>(true);
+                            break;}
+                        case TYPE_NUM64:{
+                            operator[](id)->minraw<num64 > (std::numeric_limits<num64>::min());
+                            operator[](id)->maxraw<num64 > (std::numeric_limits<num64>::max());
+                            break;}
+                        case TYPE_UNUM64:{
+                            operator[](id)->minraw<unum64 > (std::numeric_limits<unum64>::min());
+                            operator[](id)->maxraw<unum64 > (std::numeric_limits<unum64>::max());
+                            break;}
+                        case TYPE_NUM32:{
+                            operator[](id)->minraw<num32 > (std::numeric_limits<num32>::min());
+                            operator[](id)->maxraw<num32 > (std::numeric_limits<num32>::max());
+                            break;}
+                        case TYPE_UNUM32:{
+                            operator[](id)->minraw<unum32 > (std::numeric_limits<unum32>::min());
+                            operator[](id)->maxraw<unum32 > (std::numeric_limits<unum32>::max());
+                            break;}
+                        case TYPE_NUM16:{
+                            operator[](id)->minraw<num16 > (std::numeric_limits<num16>::min());
+                            operator[](id)->maxraw<num16 > (std::numeric_limits<num16>::max());
+                            break;}
+                        case TYPE_UNUM16:{
+                            operator[](id)->minraw<unum16 > (std::numeric_limits<unum16>::min());
+                            operator[](id)->maxraw<unum16 > (std::numeric_limits<unum16>::max());
+                            break;}
+                        case TYPE_NUM8:{
+                            operator[](id)->minraw<num8 > (std::numeric_limits<num8>::min());
+                            operator[](id)->maxraw<num8 > (std::numeric_limits<num8>::max());
+                            break;}
+                        case TYPE_UNUM8:{
+                            operator[](id)->minraw<unum8 > (std::numeric_limits<unum8>::min());
+                            operator[](id)->maxraw<unum8 > (std::numeric_limits<unum8>::max());
+                            break;}}}
+                else {
+                    operator[](id)->minraw<num64 > (0);
+                    operator[](id)->maxraw<num64 > (0);}}}}
 
     void tagsbase::incref(size_type id) {
         if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
@@ -1340,50 +1261,48 @@ namespace dvnci {
                 if (operator[](id)->refcnt() == 0) {
                     registry()->notify_remref(id);}}}}
 
-
-
-    tagsbase::size_type tagsbase::duplicate_group(size_type id, std::string newname){
+    tagsbase::size_type tagsbase::duplicate_group(size_type id, std::string newname) {
         lower_and_trim(newname);
         checkname_ex(newname);
         if (!groups()->exists(id))
-                throw dvncierror(ERROR_ENTNOEXIST);
+            throw dvncierror(ERROR_ENTNOEXIST);
         size_type newgroupindx = groups()->add(newname);
         if (newgroupindx == npos) return npos;
         iteminfo_map tagsmap;
         select_tags(tagsmap, id);
         if (tagsmap.empty()) return newgroupindx;
         str_indx_map tagidsmap;
-        for (iteminfo_map::const_iterator it=tagsmap.begin(); it!=tagsmap.end(); ++it){
-           tagidsmap.insert(str_indx_pair(retremoved_namespace_delimit(it->second.name()), it->first));}
-        addtags(tagidsmap,newgroupindx);
+        for (iteminfo_map::const_iterator it = tagsmap.begin(); it != tagsmap.end(); ++it) {
+            tagidsmap.insert(str_indx_pair(retremoved_namespace_delimit(it->second.name()), it->first));}
+        addtags(tagidsmap, newgroupindx);
         duplicate_tags(tagsmap, groups()->name(newgroupindx));
         groups()->clone(newgroupindx, id);
         return newgroupindx;}
 
-    void tagsbase::duplicate_tags(const iteminfo_map& maptmpl, const std::string& grpnm){
-        for (iteminfo_map::const_iterator it=maptmpl.begin();it!=maptmpl.end(); ++it){
-            std::string tmpnm = grpnm+ NEMESPACEDELIMIT + retremoved_namespace_delimit(it->second.name());
+    void tagsbase::duplicate_tags(const iteminfo_map& maptmpl, const std::string& grpnm) {
+        for (iteminfo_map::const_iterator it = maptmpl.begin(); it != maptmpl.end(); ++it) {
+            std::string tmpnm = grpnm + NEMESPACEDELIMIT + retremoved_namespace_delimit(it->second.name());
             size_type tmpindx = operator ()(tmpnm);
-            if ((it->first!=npos) && (tmpindx!=npos)){
+            if ((it->first != npos) && (tmpindx != npos)) {
                 clone(tmpindx, it->first);}}}
 
-    void tagsbase::clone(size_type idsrc, size_type iddst){
-                if ((!exists(idsrc)) || (!exists(iddst))) return;
-                binding(idsrc, binding(iddst),false);
-                comment(idsrc,comment(iddst));
-                eu(idsrc,eu(iddst));
-                onmsg(idsrc,onmsg(iddst));
-                offmsg(idsrc,offmsg(iddst));
-                alarmmsg(idsrc,alarmmsg(iddst));
-                tagstruct::clone(((ptagsstruct) data())->items[idsrc],
-                                 ((ptagsstruct) data())->items[iddst]);
-                if (IN_REPORTSET(type(idsrc))){
-                    notify_tagmanage(MSG_DVNCITAGREPORT, idsrc, 1);
-                    add_reportkey(idsrc);}
-                if  (logged(idsrc)){
-                    add_logkey(idsrc);
-                    registry()->notify_log(idsrc,true);}
-                writetofile(idsrc);}
+    void tagsbase::clone(size_type idsrc, size_type iddst) {
+        if ((!exists(idsrc)) || (!exists(iddst))) return;
+        binding(idsrc, binding(iddst), false);
+        comment(idsrc, comment(iddst));
+        eu(idsrc, eu(iddst));
+        onmsg(idsrc, onmsg(iddst));
+        offmsg(idsrc, offmsg(iddst));
+        alarmmsg(idsrc, alarmmsg(iddst));
+        tagstruct::clone(((ptagsstruct) data())->items[idsrc],
+                ((ptagsstruct) data())->items[iddst]);
+        if (IN_REPORTSET(type(idsrc))) {
+            notify_tagmanage(MSG_DVNCITAGREPORT, idsrc, 1);
+            add_reportkey(idsrc);}
+        if  (logged(idsrc)) {
+            add_logkey(idsrc);
+            registry()->notify_log(idsrc, true);}
+        writetofile(idsrc);}
 
     void tagsbase::select_groups(iteminfo_map& val, const std::string& strcriteria  , num64 numcriteria) {
         val.clear();
@@ -1394,7 +1313,6 @@ namespace dvnci {
                         (filtered_.included(stringed_filterclass::NAME_CRITERIA, groups()->name(i)))) {
                     val.insert(iteminfo_pair(i, name_with_type(groups()->name(i), NT_GROUP,
                             static_cast<tagtype> (groups()->appid(i)))));};}}
-
 
     void tagsbase::select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria , num64 numcriteria) {
         val.clear();
@@ -1514,7 +1432,7 @@ namespace dvnci {
     void tagsbase::select_tags_by_appid(indx_set& val, appidtype appid) {
         val.clear();
         size_type indxtmp = groups()->select_groups_by_appid(appid);
-        if (indxtmp!=npos) {
+        if (indxtmp != npos) {
             iteminfo_map tmp;
             select_tags(tmp, indxtmp);
             for (iteminfo_map::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
@@ -1522,7 +1440,7 @@ namespace dvnci {
 
     void tagsbase::select_tags_by_groupid(indx_set& val, size_type group) {
         val.clear();
-        if (group!=npos) {
+        if (group != npos) {
             iteminfo_map tmp;
             select_tags(tmp, group);
             for (iteminfo_map::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
@@ -1573,11 +1491,10 @@ namespace dvnci {
             if ((groups()->exists(i)) && (groups()->appid(i) == app))
                 if (groups()->link(i) == lnk) {
                     val.insert(i);}}}
-    
-    
-    void tagsbase::to_standart_range(size_type id){
-            if (exists(id)){
-            switch (type(id)){
+
+    void tagsbase::to_standart_range(size_type id) {
+        if (exists(id)) {
+            switch (type(id)) {
                 case TYPE_NODEF:{
                     operator[](id)->minraw<double>(0);
                     operator[](id)->maxraw<double>(0);
@@ -1587,7 +1504,7 @@ namespace dvnci {
                     break;}
                 case TYPE_DOUBLE:{
                     operator[](id)->minraw<double>(0);
-                    operator[](id)->minraw<double>(0);
+                    operator[](id)->maxraw<double>(0);
                     operator[](id)->mineu<double>(-std::numeric_limits<double>::max());
                     operator[](id)->maxeu<double>(std::numeric_limits<double>::max());
                     operator[](id)->alarmconst<double>(0);
@@ -1600,60 +1517,60 @@ namespace dvnci {
                     operator[](id)->alarmconst<bool>(0);
                     break;}
                 case TYPE_NUM64:{
-                    operator[](id)->minraw<num64>(0);
-                    operator[](id)->minraw<num64>(0);
-                    operator[](id)->mineu<num64>(std::numeric_limits<num64>::min());
-                    operator[](id)->maxeu<num64>(std::numeric_limits<num64>::max());
-                    operator[](id)->alarmconst<num64>(0);
+                    operator[](id)->minraw<num64 > (0);
+                    operator[](id)->minraw<num64 > (0);
+                    operator[](id)->mineu<num64 > (std::numeric_limits<num64>::min());
+                    operator[](id)->maxeu<num64 > (std::numeric_limits<num64>::max());
+                    operator[](id)->alarmconst<num64 > (0);
                     break;}
                 case TYPE_UNUM64:{
-                    operator[](id)->minraw<unum64>(0);
-                    operator[](id)->maxraw<unum64>(0);
-                    operator[](id)->mineu<unum64>(std::numeric_limits<unum64>::min());
-                    operator[](id)->maxeu<unum64>(std::numeric_limits<unum64>::max());
-                    operator[](id)->alarmconst<unum64>(0);
+                    operator[](id)->minraw<unum64 > (0);
+                    operator[](id)->maxraw<unum64 > (0);
+                    operator[](id)->mineu<unum64 > (std::numeric_limits<unum64>::min());
+                    operator[](id)->maxeu<unum64 > (std::numeric_limits<unum64>::max());
+                    operator[](id)->alarmconst<unum64 > (0);
                     break;}
                 case TYPE_NUM32:{
-                    operator[](id)->minraw<num32>(0);
-                    operator[](id)->maxraw<num32>(0);
-                    operator[](id)->mineu<num32>(std::numeric_limits<num32>::min());
-                    operator[](id)->maxeu<num32>(std::numeric_limits<num32>::max());
-                    operator[](id)->alarmconst<num32>(0);
+                    operator[](id)->minraw<num32 > (0);
+                    operator[](id)->maxraw<num32 > (0);
+                    operator[](id)->mineu<num32 > (std::numeric_limits<num32>::min());
+                    operator[](id)->maxeu<num32 > (std::numeric_limits<num32>::max());
+                    operator[](id)->alarmconst<num32 > (0);
                     break;}
                 case TYPE_UNUM32:{
-                    operator[](id)->minraw<unum32>(0);
-                    operator[](id)->maxraw<unum32>(0);
-                    operator[](id)->mineu<unum32>(std::numeric_limits<unum32>::min());
-                    operator[](id)->maxeu<unum32>(std::numeric_limits<unum32>::max());
-                    operator[](id)->alarmconst<unum32>(0);
+                    operator[](id)->minraw<unum32 > (0);
+                    operator[](id)->maxraw<unum32 > (0);
+                    operator[](id)->mineu<unum32 > (std::numeric_limits<unum32>::min());
+                    operator[](id)->maxeu<unum32 > (std::numeric_limits<unum32>::max());
+                    operator[](id)->alarmconst<unum32 > (0);
                     break;}
                 case TYPE_NUM16:{
-                    operator[](id)->minraw<num16>(0);
-                    operator[](id)->maxraw<num16>(0);
-                    operator[](id)->mineu<num16>(std::numeric_limits<num16>::min());
-                    operator[](id)->maxeu<num16>(std::numeric_limits<num16>::max());
-                    operator[](id)->alarmconst<num16>(0);
+                    operator[](id)->minraw<num16 > (0);
+                    operator[](id)->maxraw<num16 > (0);
+                    operator[](id)->mineu<num16 > (std::numeric_limits<num16>::min());
+                    operator[](id)->maxeu<num16 > (std::numeric_limits<num16>::max());
+                    operator[](id)->alarmconst<num16 > (0);
                     break;}
                 case TYPE_UNUM16:{
-                    operator[](id)->minraw<unum16>(0);
-                    operator[](id)->maxraw<unum16>(0);
-                    operator[](id)->mineu<unum16>(std::numeric_limits<unum16>::min());
-                    operator[](id)->maxeu<unum16>(std::numeric_limits<unum16>::max());
-                    operator[](id)->alarmconst<unum16>(0);
+                    operator[](id)->minraw<unum16 > (0);
+                    operator[](id)->maxraw<unum16 > (0);
+                    operator[](id)->mineu<unum16 > (std::numeric_limits<unum16>::min());
+                    operator[](id)->maxeu<unum16 > (std::numeric_limits<unum16>::max());
+                    operator[](id)->alarmconst<unum16 > (0);
                     break;}
                 case TYPE_NUM8:{
-                    operator[](id)->minraw<num8>(0);
-                    operator[](id)->maxraw<num8>(0);
-                    operator[](id)->mineu<num8>(std::numeric_limits<num8>::min());
-                    operator[](id)->maxeu<num8>(std::numeric_limits<num8>::max());
-                    operator[](id)->alarmconst<num8>(0);
+                    operator[](id)->minraw<num8 > (0);
+                    operator[](id)->maxraw<num8 > (0);
+                    operator[](id)->mineu<num8 > (std::numeric_limits<num8>::min());
+                    operator[](id)->maxeu<num8 > (std::numeric_limits<num8>::max());
+                    operator[](id)->alarmconst<num8 > (0);
                     break;}
                 case TYPE_UNUM8:{
-                    operator[](id)->minraw<unum8>(0);
-                    operator[](id)->maxraw<unum8>(0);
-                    operator[](id)->mineu<unum8>(std::numeric_limits<unum8>::min());
-                    operator[](id)->maxeu<unum8>(std::numeric_limits<unum8>::max());
-                    operator[](id)->alarmconst<unum8>(0);
+                    operator[](id)->minraw<unum8 > (0);
+                    operator[](id)->maxraw<unum8 > (0);
+                    operator[](id)->mineu<unum8 > (std::numeric_limits<unum8>::min());
+                    operator[](id)->maxeu<unum8 > (std::numeric_limits<unum8>::max());
+                    operator[](id)->alarmconst<unum8 > (0);
                     break;}
                 case TYPE_FLOAT:{
                     operator[](id)->minraw<float>(0);
@@ -1663,54 +1580,52 @@ namespace dvnci {
                     operator[](id)->alarmconst<float>(0);
                     break;}
                 default:{
-                    operator[](id)->minraw<num64>(0);
-                    operator[](id)->maxraw<num64>(0);
-                    operator[](id)->mineu<num64>(std::numeric_limits<num64>::min());
-                    operator[](id)->maxeu<num64>(std::numeric_limits<num64>::max());
-                    operator[](id)->alarmconst<num64>(0);
+                    operator[](id)->minraw<num64 > (0);
+                    operator[](id)->maxraw<num64 > (0);
+                    operator[](id)->mineu<num64 > (std::numeric_limits<num64>::min());
+                    operator[](id)->maxeu<num64 > (std::numeric_limits<num64>::max());
+                    operator[](id)->alarmconst<num64 > (0);
                     return;}}}}
-         
-         
 
     void tagsbase::buildindex() {
-            size_type frinx = npos;
-            item_indexer->clear_index();
-            item_indexer->start_inserter();
-            for (size_type i = 0; i < count(); i++) {
-                if (exists(i)) {
-                    item_indexer->proccess_inserter(i, namepos(i), optinal_pos(i));}
-                else {
-                    if (frinx == npos) frinx = i;}}
-            for (size_type i = 0; i < groups()->count(); i++){
-                if (groups()->exists(i)) {
-                      item_indexer->proccess_inserter(GROUPMASK | i, groups()->namepos(i), 0);}}
-            for (size_type i = 0; i < agroups()->count(); i++){
-                if (agroups()->exists(i)) {
-                      item_indexer->proccess_inserter(AGROUPMASK | i, agroups()->namepos(i), 0);}}
-            item_indexer->stop_inserter();
-            item_indexer->freeindex((frinx == npos) ? count() : frinx);}
+        size_type frinx = npos;
+        item_indexer->clear_index();
+        item_indexer->start_inserter();
+        for (size_type i = 0; i < count(); i++) {
+            if (exists(i)) {
+                item_indexer->proccess_inserter(i, namepos(i), optinal_pos(i));}
+            else {
+                if (frinx == npos) frinx = i;}}
+        for (size_type i = 0; i < groups()->count(); i++) {
+            if (groups()->exists(i)) {
+                item_indexer->proccess_inserter(GROUPMASK | i, groups()->namepos(i), 0);}}
+        for (size_type i = 0; i < agroups()->count(); i++) {
+            if (agroups()->exists(i)) {
+                item_indexer->proccess_inserter(AGROUPMASK | i, agroups()->namepos(i), 0);}}
+        item_indexer->stop_inserter();
+        item_indexer->freeindex((frinx == npos) ? count() : frinx);}
 
-     bool tagsbase::extendexists(size_type id) const {
-            if (id==npos) return false;
-            if (id< count() && (id!=npos)) return exists(id);
-            if (id & GROUPMASK) return groups()->exists(id & RESETMASK);
-            if (id & AGROUPMASK) return agroups()->exists(id & RESETMASK);
-            return false;}
+    bool tagsbase::extendexists(size_type id) const {
+        if (id == npos) return false;
+        if (id < count() && (id != npos)) return exists(id);
+        if (id & GROUPMASK) return groups()->exists(id & RESETMASK);
+        if (id & AGROUPMASK) return agroups()->exists(id & RESETMASK);
+        return false;}
 
-     void tagsbase::addindex(size_type id) {
-            bool exsts = exists(id);
-            if ((exsts) ||(extendexists(id))) {
-                INP_EXCLUSIVE_LOCK(item_indexer->memlock())
-                item_indexer->insert(id, namepos(id), optinal_pos(id));
-                if (exsts) findfreeindex(id);}}
+    void tagsbase::addindex(size_type id) {
+        bool exsts = exists(id);
+        if ((exsts) || (extendexists(id))) {
+            INP_EXCLUSIVE_LOCK(item_indexer->memlock())
+            item_indexer->insert(id, namepos(id), optinal_pos(id));
+            if (exsts) findfreeindex(id);}}
 
-     void tagsbase::removeindex(size_type id) {
-            bool exsts = exists(id);
-            if ((exsts) ||(extendexists(id))) {
-                INP_EXCLUSIVE_LOCK(item_indexer->memlock())
-                item_indexer->erase(id, namepos(id), optinal_pos(id));
-                if ((exsts) && (item_indexer->freeindex() > id))
-                    item_indexer->freeindex(id);}}
+    void tagsbase::removeindex(size_type id) {
+        bool exsts = exists(id);
+        if ((exsts) || (extendexists(id))) {
+            INP_EXCLUSIVE_LOCK(item_indexer->memlock())
+            item_indexer->erase(id, namepos(id), optinal_pos(id));
+            if ((exsts) && (item_indexer->freeindex() > id))
+                item_indexer->freeindex(id);}}
 
     void tagsbase::fill_logkeys() {
         if (!valbuffers()) return;
@@ -1757,7 +1672,7 @@ namespace dvnci {
                 case TYPE_FLOAT:{
                     tmp = valbuffers()->regist<float>(mineu_prtd<float>(id), maxeu_prtd<float>(id));
                     break;}}
-            if (tmp!=npos) logkey(id, tmp);}
+            if (tmp != npos) logkey(id, tmp);}
         return tmp;}
 
     tagsbase::size_type tagsbase::remove_logkey(size_type id) {
@@ -1767,7 +1682,6 @@ namespace dvnci {
             logkey(id, npos);}
         return npos;}
 
-
     void tagsbase::fill_reportkeys() {
         if (!reportbuffers()) return;
         for (size_type i = 0; i < count(); i++) {
@@ -1776,8 +1690,8 @@ namespace dvnci {
     tagsbase::size_type tagsbase::add_reportkey(size_type id) {
         size_type tmp = npos;
         if ((reportbuffers()) && IN_REPORTSET(type(id))) {
-             tmp = reportbuffers()->regist();
-            if (tmp!=npos) reportkey(id, tmp);}
+            tmp = reportbuffers()->regist();
+            if (tmp != npos) reportkey(id, tmp);}
         return tmp;}
 
     tagsbase::size_type tagsbase::remove_reportkey(size_type id) {
@@ -1786,72 +1700,73 @@ namespace dvnci {
                 reportbuffers()->unregist(reportkey(id));
             reportkey(id, npos);}
         return npos;}
-    
+
     bool tagsbase::restore_command_raw_range(commandstruct& cmd) {
-            size_type id =cmd.tagid();
-            if ((exists(id)) && (IN_COMMADSET(type(id)))) {
-                 switch (cmd.type()) {
-                 case TYPE_NODEF:{
+        size_type id = cmd.tagid();
+        if ((exists(id)) && (IN_COMMADSET(type(id)))) {
+            switch (cmd.type()) {
+                case TYPE_NODEF:{
                     double tmp = cmd.value_set<double>();
-                    restore_raw_range<double>(id,tmp);
+                    restore_raw_range<double>(id, tmp);
                     cmd.value_set<double>(tmp);
                     return true;}
-                 case TYPE_DISCRET:{
+                case TYPE_DISCRET:{
                     bool tmp = cmd.value_set<bool>();
-                    restore_raw_range<bool>(id,tmp);
+                    restore_raw_range<bool>(id, tmp);
                     cmd.value_set<bool>(tmp);
                     return true;}
-                 case TYPE_NUM64:{
-                    num64 tmp = cmd.value_set<num64>();
-                    restore_raw_range<num64>(id,tmp);
-                    cmd.value_set<num64>(tmp);
+                case TYPE_NUM64:{
+                    num64 tmp = cmd.value_set<num64 > ();
+                    restore_raw_range<num64 > (id, tmp);
+                    cmd.value_set<num64 > (tmp);
                     return true;}
-                 case TYPE_UNUM64:{
-                    unum64 tmp = cmd.value_set<unum64>();
-                    restore_raw_range<unum64>(id,tmp);
-                    cmd.value_set<unum64>(tmp);
+                case TYPE_UNUM64:{
+                    unum64 tmp = cmd.value_set<unum64 > ();
+                    restore_raw_range<unum64 > (id, tmp);
+                    cmd.value_set<unum64 > (tmp);
                     return true;}
-                 case TYPE_NUM32:{
-                    num32 tmp = cmd.value_set<num32>();
-                    restore_raw_range<num32>(id,tmp);
-                    cmd.value_set<num32>(tmp);
+                case TYPE_NUM32:{
+                    num32 tmp = cmd.value_set<num32 > ();
+                    restore_raw_range<num32 > (id, tmp);
+                    cmd.value_set<num32 > (tmp);
                     return true;}
-                 case TYPE_UNUM32:{
-                    unum32 tmp = cmd.value_set<unum32>();
-                    restore_raw_range<unum32>(id,tmp);
-                    cmd.value_set<unum32>(tmp);
+                case TYPE_UNUM32:{
+                    unum32 tmp = cmd.value_set<unum32 > ();
+                    restore_raw_range<unum32 > (id, tmp);
+                    cmd.value_set<unum32 > (tmp);
                     return true;}
-                 case TYPE_NUM16:{
-                    num16 tmp = cmd.value_set<num16>();
-                    restore_raw_range<num16>(id,tmp);
-                    cmd.value_set<num16>(tmp);
+                case TYPE_NUM16:{
+                    num16 tmp = cmd.value_set<num16 > ();
+                    restore_raw_range<num16 > (id, tmp);
+                    cmd.value_set<num16 > (tmp);
                     return true;}
-                 case TYPE_UNUM16:{
-                    unum16 tmp = cmd.value_set<unum16>();
-                    restore_raw_range<unum16>(id,tmp);
-                    cmd.value_set<unum16>(tmp);
+                case TYPE_UNUM16:{
+                    unum16 tmp = cmd.value_set<unum16 > ();
+                    restore_raw_range<unum16 > (id, tmp);
+                    cmd.value_set<unum16 > (tmp);
                     return true;}
-                 case TYPE_NUM8:{
-                    num8 tmp = cmd.value_set<num8>();
-                    restore_raw_range<num8>(id,tmp);
-                    cmd.value_set<num8>(tmp);
+                case TYPE_NUM8:{
+                    num8 tmp = cmd.value_set<num8 > ();
+                    restore_raw_range<num8 > (id, tmp);
+                    cmd.value_set<num8 > (tmp);
                     return true;}
-                 case TYPE_UNUM8:{
-                    unum8 tmp = cmd.value_set<unum8>();;
-                    restore_raw_range<unum8>(id,tmp);
-                    cmd.value_set<unum8>(tmp);
+                case TYPE_UNUM8:{
+                    unum8 tmp = cmd.value_set<unum8 > ();
+                    ;
+                    restore_raw_range<unum8 > (id, tmp);
+                    cmd.value_set<unum8 > (tmp);
                     return true;}
-                 case TYPE_DOUBLE:{
+                case TYPE_DOUBLE:{
                     double tmp = cmd.value_set<double>();
-                    restore_raw_range<double>(id,tmp);
+                    restore_raw_range<double>(id, tmp);
                     cmd.value_set<double>(tmp);
                     return true;}
-                 case TYPE_FLOAT:{
+                case TYPE_FLOAT:{
                     float tmp = cmd.value_set<float>();
-                    restore_raw_range<float>(id,tmp);
+                    restore_raw_range<float>(id, tmp);
                     cmd.value_set<float>(tmp);
                     return true;}
-                 default: return true;}}
+                default: return true;}}
         return false;}
 
     void tagsbase::send_command(size_type id, const std::string& val, bool queue , size_type clid) {
@@ -2018,103 +1933,127 @@ namespace dvnci {
                     return;}}
             double tmp;
             if (str_to<double>(val, tmp)) write_val<double>(id, tmp, validlvl, tm, err);}}
-    
-    void tagsbase::write_val(size_type id, const datetime& val, vlvtype validlvl, const datetime& tm, ns_error err){
-            if (exists(id)){
-               operator[](id)->value64( castnum64_from_datetime(val));
-               time(id, ((tm == nill_time) ? now() : tm));
-               valid(id, validlvl);
-               error(id, err);}}
+
+    void tagsbase::write_val(size_type id, const datetime& val, vlvtype validlvl, const datetime& tm, ns_error err) {
+        if (exists(id)) {
+            operator[](id)->value64( castnum64_from_datetime(val));
+            time(id, ((tm == nill_time) ? now() : tm));
+            valid(id, validlvl);
+            error(id, err);}}
 
     void tagsbase::write_val(size_type id, const short_value& val) {
         if (exists(id)) {
+            bool istxt=(val.type()==TYPE_TEXT);
             switch (type(id)) {
                 case TYPE_NONE:{
                     write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_DISCRET:{
                     write_val<bool>(id, val.value<bool>(), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_NUM64:{
-                    write_val<num64 > (id, val.value<num64 >(), val.valid(), val.time(), val.error());
+                    write_val<num64 > (id, val.value<num64 > (), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_UNUM64:{
-                    write_val<unum64 > (id, val.value<unum64 >(), val.valid(), val.time(), val.error());
+                    write_val<unum64 > (id, val.value<unum64 > (), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_NUM32:{
-                    write_val<num32 > (id, val.value<num32>(), val.valid(), val.time(), val.error());
+                    write_val<num32 > (id, val.value<num32 > (), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_UNUM32:{
-                    write_val<unum32 > (id, val.value<unum32>(), val.valid(), val.time(), val.error());
+                    write_val<unum32 > (id, val.value<unum32 > (), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_NUM16:{
-                    write_val<num16 > (id, val.value<num16>(), val.valid(), val.time(), val.error());
+                    write_val<num16 > (id, val.value<num16 > (), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_UNUM16:{
-                    write_val<unum16 > (id, val.value<unum16 >(), val.valid(), val.time(), val.error());
+                    write_val<unum16 > (id, val.value<unum16 > (), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_NUM8:{
-                    write_val<num8 > (id, val.value<num8>(), val.valid(), val.time(), val.error());
+                    write_val<num8 > (id, val.value<num8 > (), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_UNUM8:{
-                    write_val<unum8 > (id, val.value<unum8>(), val.valid(), val.time(), val.error());
+                    write_val<unum8 > (id, val.value<unum8 > (), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_DOUBLE:{
                     write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}
                 case TYPE_TM:{
                     write_val(id, cast_datetime_fromnum64(val.value64()) , val.valid(), val.time(), val.error());
                     return;}
                 case TYPE_TEXT:{
-                    write_val(id, val.value<std::string>() , val.valid(), val.time(), val.error());
+                    write_val(id, val.value<std::string > () , val.valid(), val.time(), val.error());
                     return;}
                 case TYPE_FLOAT:{
                     write_val<float>(id, val.value<float>(), val.valid(), val.time(), val.error());
+                    if (istxt) 
+                        error( val.error());
                     return;}}
             write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());}}
+    
 
     void tagsbase::write_val_report(size_type id, datetime tm , double val , ns_error err, bool onlybuffer ) {
-            if ((exists(id)) && (IN_REPORTSET(type(id))) && (!tm.is_special())) {
-                insert_to_reportbuff(id, tm , val);
-                normalizeperiod(tm, type(id));
-                error(id, err);
-                if ((isNaN(val)) || (onlybuffer))
-                    increporttime(tm, type(id), 1);
-                if (!isNaN(val))
-                    value_internal<double>(id, val);
-                time_log(id, tm);
-                increporttime(tm, type(id), -1);
-                time(id, tm);
-                if (isNaN(val) || (onlybuffer)) {
-                    valid(id, time_log(id) > now() ? REPORT_NORMAL : REPORT_NEEDREQUEST);}
-                else {
-                    valid(id,  REPORT_DATA);}}}
-    
-    
-
-    bool tagsbase::write_vals_report(size_type id, const dt_val_map& values, ns_error err){
-        if ((IN_REPORTSET(type(id))) || (reportkey(id)==npos)) return false;
-                if (reportbuffers()->insert(reportkey(id), values)) {
-                    for (dt_val_map::const_iterator it=values.begin();it!=values.end();++it){
-                        if (!it->first.is_special()){
-                            value_internal<double>(id, it->second);
-                            valid(id, REPORT_DATA);
-                            error(id, err);
-                            return true;}}}
-        return false;}
-    
-    void tagsbase::kvit(size_type id) {
-            if (id == npos) kvitall();
+        if ((exists(id)) && (IN_REPORTSET(type(id))) && (!tm.is_special())) {
+            insert_to_reportbuff(id, tm , val);
+            normalizeperiod(tm, type(id));
+            error(id, err);
+            if ((isNaN(val)) || (onlybuffer))
+                increporttime(tm, type(id), 1);
+            if (!isNaN(val))
+                value_internal<double>(id, val);
+            time_log(id, tm);
+            increporttime(tm, type(id), -1);
+            time(id, tm);
+            if (isNaN(val) || (onlybuffer)) {
+                valid(id, time_log(id) > now() ? REPORT_NORMAL : REPORT_NEEDREQUEST);}
             else {
-                if (exists(id)) kvit_tag(id);
-                else {
-                    if ((id & GROUPMASK) && (groups()->exists(id & RESETMASK)))
-                        alarms()->kvit_group(id & RESETMASK);
-                    if ((id & AGROUPMASK) && (agroups()->exists(id & RESETMASK)))
-                        alarms()->kvit_agroup(id & RESETMASK);}}}
+                valid(id,  REPORT_DATA);}}}
+
+    bool tagsbase::write_vals_report(size_type id, const dt_val_map& values, ns_error err) {
+        if ((IN_REPORTSET(type(id))) || (reportkey(id) == npos)) return false;
+        if (reportbuffers()->insert(reportkey(id), values)) {
+            for (dt_val_map::const_iterator it = values.begin(); it != values.end(); ++it) {
+                if (!it->first.is_special()) {
+                    value_internal<double>(id, it->second);
+                    valid(id, REPORT_DATA);
+                    error(id, err);
+                    return true;}}}
+        return false;}
+
+    void tagsbase::kvit(size_type id) {
+        if (id == npos) kvitall();
+        else {
+            if (exists(id)) kvit_tag(id);
+            else {
+                if ((id & GROUPMASK) && (groups()->exists(id & RESETMASK)))
+                    alarms()->kvit_group(id & RESETMASK);
+                if ((id & AGROUPMASK) && (agroups()->exists(id & RESETMASK)))
+                    alarms()->kvit_agroup(id & RESETMASK);}}}
 
     bool tagsbase::checkname(const string& val, size_type parnt)  {
-        std::string fullnamed =groups()->name(parnt)+ NEMESPACEDELIMIT + val;
+        std::string fullnamed = groups()->name(parnt) + NEMESPACEDELIMIT + val;
         if (((operator [](fullnamed))) || (groups()->operator [](val)) || (agroups()->operator [](val)))
             throw dvncierror(ERROR_NAMEENTETY_DUBLICATE, val, operator ()(val));
         boost::regex xtagTemplete(CORRECT_ENTETYNAME_REGEXTAMPL);
@@ -2123,9 +2062,9 @@ namespace dvnci {
         if (boost::regex_match( val, ex_xtagTemplete)) throw dvncierror(ERROR_NAMEENTETY_CORRECT, val, 0);
         return true;}
 
-   bool tagsbase::checkname_ex(const std::string& val){
-       if (item_indexer->find(val, false)!=npos) throw dvncierror(ERROR_NAMEENTETY_DUBLICATE, val, 0);
-       return true;}
+    bool tagsbase::checkname_ex(const std::string& val) {
+        if (item_indexer->find(val, false) != npos) throw dvncierror(ERROR_NAMEENTETY_DUBLICATE, val, 0);
+        return true;}
 
     void tagsbase::trigger_add(size_type id, num64 numcriteria) {
         notify_tagmanage(MSG_DVNCTAGNEW, id, static_cast<size_type> (numcriteria));
@@ -2142,7 +2081,6 @@ namespace dvnci {
     void tagsbase::changepos1(size_t oldpos1, size_t newpos1) {
         INP_EXCLUSIVE_LOCK(item_indexer->memlock());
         buildindex();}
-
 
     void tagsbase::initstruct(size_type id, const std::string& newname, num64 numcriteria) {
 
@@ -2172,7 +2110,6 @@ namespace dvnci {
     void tagsbase::unreghandle() {
         if (handle_ ) registry()->unreghandle(handle_);
         handle_ = 0;}
-
 
     void tagsbase::addtags(str_indx_map& newnames, size_type groupid) {
         for (str_indx_map::iterator it = newnames.begin(); it != newnames.end(); ++it) {
@@ -2217,7 +2154,7 @@ namespace dvnci {
 
     template<>
     datetime tagsbase::value<datetime>(size_type id) const {
-        return (type(id)==TYPE_TM) ? cast_datetime_fromnum64(operator[](id)->value64()) : nill_time;}
+        return (type(id) == TYPE_TM) ? cast_datetime_fromnum64(operator[](id)->value64()) : nill_time;}
 
     template<>
     std::string tagsbase::value_log<std::string>(size_type id) const {
@@ -2226,7 +2163,7 @@ namespace dvnci {
 
     template<>
     datetime tagsbase::value_log<datetime>(size_type id) const {
-        return (type(id)==TYPE_TM) ? cast_datetime_fromnum64(operator[](id)->value_log64()) : nill_time;}
+        return (type(id) == TYPE_TM) ? cast_datetime_fromnum64(operator[](id)->value_log64()) : nill_time;}
 
     template<>
     std::string tagsbase::minraw_prtd<std::string>(size_type id) const {
@@ -2235,9 +2172,9 @@ namespace dvnci {
     template<>
     std::string tagsbase::maxraw_prtd<std::string>(size_type id) const {
         return exists(id) ? operator[](id)->maxraw_str() : "";}
-    
-    template<> 
-    void tagsbase::restore_raw_range<bool>(size_type id, bool& val){}
+
+    template<>
+    void tagsbase::restore_raw_range<bool>(size_type id, bool& val) {}
 
     template<>
     std::string tagsbase::mineu_prtd<std::string>(size_type id) const {
@@ -2246,19 +2183,18 @@ namespace dvnci {
     template<>
     std::string tagsbase::maxeu_prtd<std::string>(size_type id) const {
         return exists(id) ? operator[](id)->maxeu_str() : "";}
-    
-     template<> 
-     void tagsbase::restore_eu_range<bool>(size_type id, bool& val){}
 
-    
-     template<>
-     bool tagsbase::logdb_expired(size_type id, const bool& val){
-         return value_log<bool>(id) != val;}
+    template<>
+    void tagsbase::restore_eu_range<bool>(size_type id, bool& val) {}
+
+    template<>
+    bool tagsbase::logdb_expired(size_type id, const bool& val) {
+        return value_log<bool>(id) != val;}
 
     template<>
     std::string tagsbase::alarmconst_prtd<std::string>(size_type id) const {
-        return exists(id) ? 
-            operator[](id)->alarmconst_str() : "";}}
+        return exists(id) ?
+                operator[](id)->alarmconst_str() : "";}}
 
 
 

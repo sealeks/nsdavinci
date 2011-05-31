@@ -342,7 +342,7 @@ namespace dvnci {
             case TYPE_FLOAT:{
                 return static_cast<T> (from_num64_cast<float>(value));}
             case TYPE_TEXT:{
-                return 0;}
+                return static_cast<T> (from_num64_cast<unum64>(value));}
             case TYPE_TM:{
                 return 0;}}
         return static_cast<T> (from_num64_cast<double>(value));}
@@ -383,7 +383,8 @@ namespace dvnci {
                 return num64_cast<double>(static_cast<double> (value));};
             case TYPE_FLOAT:{
                 return num64_cast<float>(static_cast<float> (value));}
-            case TYPE_TEXT:
+			case TYPE_TEXT:{
+				return num64_cast<unum64>(static_cast<size_t> (value));}
             case TYPE_TM:{
                 return 0;}}
         return num64_cast<double>(static_cast<double> (value));}

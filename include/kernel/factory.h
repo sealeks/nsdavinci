@@ -24,8 +24,7 @@ namespace dvnci {
                     return tagsbase_ptr(tmp);}
                 catch (...) {
                     DEBUG_STR_DVNCI(ERROR_INIT_INTERFACE)
-                    return tagsbase_ptr();}}};
-    }}
+                    return tagsbase_ptr();}}};}}
 
 
 #endif	/* FACTORY_H */

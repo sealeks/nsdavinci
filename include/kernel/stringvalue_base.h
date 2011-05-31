@@ -23,13 +23,13 @@ namespace dvnci {
 
         struct headerstruct {
 
-            headerstruct() {
-                entetyfreeindex_ = 0;
-                entetycount_ = 0;
-                sessionfirst_ = 0;
-                sessionfreeindex_ = 0;
-                sessioncount_ = 0;
-                count_ = 0;}
+            headerstruct() :
+                entetyfreeindex_(0),
+                entetycount_(0),
+                sessionfirst_(0),
+                sessionfreeindex_(0),
+                sessioncount_(0),
+                count_(0){;}
 
             headerstruct(const headerstruct & src) {
                 entetyfreeindex_ = src.entetyfreeindex_;
@@ -134,11 +134,14 @@ namespace dvnci {
     public:
 
         stringvalue_base(const fspath& filepath, const std::string& mapname, size_t textcnt , size_t exsize) :
-        filememorymap(filepath , mapname, 2 * exsize +  textcnt * EXTEND_MEMSHARE_STRSTATIC) {
+        filememorymap(filepath , mapname, 2 * exsize +  textcnt * EXTEND_MEMSHARE_STRSTATIC + sizeof (valuestringitem)*2) {
             if (isnew()) {
                 INP_EXCLUSIVE_LOCK(memlock());
-                headerstruct::init( *((headerstruct*) data()) , (filesize() + exsize) / sizeof (headerstruct) ,
-                ((capacity()) / sizeof (headerstruct) - 2));;}};
+                size_t allignsz =  (sizeof (valuestringitem)% 8) ? 
+                       (sizeof (valuestringitem) / 8 + 1) * 8  : (sizeof (valuestringitem));
+                size_t sesssion_first = (filesize() + exsize) / allignsz;
+                size_t total_count = capacity() / allignsz;
+                headerstruct::init( *((headerstruct*) data()) , sesssion_first ,total_count );;}};
 
         virtual ~stringvalue_base() {};
 
@@ -215,6 +218,9 @@ namespace dvnci {
         void writeheader() {
             headerstruct tmp = *((headerstruct*) data());
             utilptr->writetofile(0, sizeof (headerstruct));}
+        
+        bool invalidpos(size_t vl) const{
+            return capacity()< ((vl+1) *  sizeof (valuestringitem));}
 
         interproc_mutex& memlock() const {
             return utilptr->memlock();}} ;}

@@ -14,12 +14,13 @@ namespace dvnci {
 
     std::string stringvalue_base::getstring(size_t pos) const {
         INP_SHARE_LOCK(memlock());
-        if ((pos >= count())) return "";
+        if ((!pos) || (pos >= count()) || (invalidpos(pos)) ) return "";
         return operator[](pos - 1)->value();}
 
     void stringvalue_base::setstring(size_t& pos, const std::string& value, bool ispersist) {
         INP_EXCLUSIVE_LOCK(memlock());
-        if (pos > count()) pos = 0;
+        if ((pos > count()) || (invalidpos(pos))){ 
+            pos = 0;}
         if (pos == 0) {
             if (ispersist) {
                 size_t freetmp = findfree(entetyfree(), entetycount());
