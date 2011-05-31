@@ -25,7 +25,7 @@ fspath                        basepath;
 
 
 typedef device_link_executor <lgk_device_service, lgk_block_model, lgk_metalink_checker  >        lgk_executor;
-typedef group_proccessor_templ< lgk_executor, TYPE_SIMPL | TYPE_REPORT >                          grouplgk;
+typedef group_proccessor_templ< lgk_executor, TYPE_SIMPL | TYPE_REPORT | TYPE_TEXT >              grouplgk;
 
 class modbus_service : public linkdriverservice<grouplgk> {
 

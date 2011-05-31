@@ -69,8 +69,8 @@ namespace dvnci {
                             blk.begin()->first->value_cast(tmpvl);
                         return error();}
                     case LGKA_TYPEITEM_ARCHIVE:{
-                        if (!parse_val(val, tmpvl)) 
-                            blk.begin()->first->value_cast(tmpvl);
+                        //if (!parse_val(val, tmpvl)) 
+                        //    blk.begin()->first->value_cast(tmpvl);
                         return error();}
                     case LGKA_TYPEITEM_ARRAY:{
                         datetime start, stop;

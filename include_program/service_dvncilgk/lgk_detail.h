@@ -33,7 +33,6 @@ namespace dvnci {
 
             lgk_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_req_parcel(vl, tgtp, mlnk) {
                 devnum_ = (mlnk.protocol() == LGKA_PROT_MEC) ? 0xFF : mlnk.devicenum();
-                if (!iscorrect_) return;
                 iscorrect_ = parse(vl);}
 
             virtual size_t operator-(const basis_req_parcel & rs) const  {
