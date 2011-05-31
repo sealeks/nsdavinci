@@ -16,11 +16,12 @@ namespace dvnci {
     namespace driver {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*Modbus ?????a ??????*/
+        /*modbus_req_parcel*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         struct modbus_req_parcel : public basis_req_parcel {
+            
         public:
 
             modbus_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk);
@@ -28,12 +29,14 @@ namespace dvnci {
             virtual size_t operator-(const basis_req_parcel & rs) const;
 
             bool parse(std::string vl);
+     
+        protected:             
 
             bool conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr = 1);} ;
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*Modbus ????????? ????? ??????*/
+        /*modbus_block_model*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -43,6 +46,7 @@ namespace dvnci {
 
             modbus_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
             base_block_model<modbus_req_parcel>(exectr, inf, mlnk) {
+                
                 blocksize = ((mlnk.protocol() == NT_MODBUS_ASCII) && (mlnk.chanaltype() != NT_CHTP_TCP_IP)) ?
                         in_bounded<size_t > (8, MAX_MODBUS_BLOCK_SIZE / 2, static_cast<size_t> (mlnk.blocksize())) :
                         in_bounded<size_t > (8, MAX_MODBUS_BLOCK_SIZE, static_cast<size_t> (mlnk.blocksize()));};} ;
@@ -50,36 +54,21 @@ namespace dvnci {
 
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-       /*?????????? ???????? Com ????? modbus*/
+       /*com_option_setter*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         struct modbus_com_option_setter : public com_option_setter {
 
             modbus_com_option_setter(const metalink & lnk) : com_option_setter(lnk) {};
 
-            virtual boost::system::error_code store(com_port_option&  opt, boost::system::error_code & ec) const {
-                reset_default_nill(opt);
-                //opt.fRtsControl = 0;
-		switch (link.protocol()){
-		    case NT_MODBUS_ASCII: {
-			set_rs232_baudrate(opt, link.inf().cominf.boundrate);
-                        rsparitytype tmprty = (link.inf().cominf.parity > NT_RS_EVENPARITY) ?  NT_RS_NOPARITY : link.inf().cominf.parity;
-                        set_rs232_comoption(opt,7, tmprty,
-                                      (tmprty  == NT_RS_NOPARITY) ? NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);
-			break;}
-		    default :{
-                        set_rs232_baudrate(opt, link.inf().cominf.boundrate);
-                        rsparitytype tmprty = (link.inf().cominf.parity > NT_RS_EVENPARITY) ?  NT_RS_NOPARITY : link.inf().cominf.parity;
-                        set_rs232_comoption(opt,8, tmprty, 
-                                      (tmprty  == NT_RS_NOPARITY) ? NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);}}
-			return boost::system::error_code();}
+            virtual boost::system::error_code store(com_port_option&  opt, boost::system::error_code & ec) const;
 
             virtual boost::system::error_code load(com_port_option&  opt, boost::system::error_code & ec) {
                 return boost::system::error_code();}};
 
 
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-       /*????????????? ??????? ?????????? Modbus*/
+       /*modbus_metalink_checker*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
      struct modbus_metalink_checker : public metalink_checker {
@@ -88,42 +77,17 @@ namespace dvnci {
                 return ((ls.inf().cominf.boundrate!=rs.inf().cominf.boundrate)) ?  ERROR_IO_NOSYNC_LINK : 0;}};
 
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-       /*????????? ??????????  Modbus*/
+       /*modbus_protocol_factory*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
      struct modbus_protocol_factory : public protocol_factory {
 
-            virtual ioprotocol_ptr build(const metalink& lnk, ns_error & err) {
-
-                typedef rs_iostream<modbus_com_option_setter> modbus_rs_iostream;
-
-                switch(lnk.chanaltype()){
-                    case NT_CHTP_TCP_IP: {
-                        
-                        basis_iostream_ptr tmp_stream = basis_iostream_ptr( new tcpip_iostream( lnk.timeout(), lnk.host(), MODBUS_TCP_PORT));
-                        
-                        return ioprotocol_ptr( new tcp_modbus_protocol<modbus_value_manager>(tmp_stream));}
-
-                    case NT_CHTP_RS232_4XX:{
-                        
-                        basis_iostream_ptr tmp_stream = basis_iostream_ptr(new modbus_rs_iostream(lnk,  lnk.timeout(), lnk.chanalnum(), false));
-
-                        switch (lnk.protocol()){
-
-                            case NT_MODBUS_ASCII: { return ioprotocol_ptr(new ascii_modbus_protocol<modbus_value_manager>(tmp_stream));}
-                            default : {return ioprotocol_ptr(new rtu_modbus_protocol<modbus_value_manager>(tmp_stream));}}}
-
-                    default: {
-                        err = ERROR_IO_LINK_NOT_SUPPORT;
-                        return ioprotocol_ptr();}}
-
-
-                err = ERROR_IO_LINK_NOT_SUPPORT;
-                return ioprotocol_ptr();};};
+            virtual ioprotocol_ptr build(const metalink& lnk, ns_error & err);};
+            
 
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-       /*???????? ?????????  Modbus*/
+       /*modbus_device_service*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
