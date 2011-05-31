@@ -259,7 +259,7 @@ namespace dvnci {
                 is_timout      = true;
                 is_data_ready  = false;
                 is_connect     = false;
-                tmout_timer_.expires_from_now(boost::posix_time::milliseconds(timout_ < 1 ? 1000 : timout_));
+                tmout_timer_.expires_from_now(boost::posix_time::milliseconds( timout_ ? timout_ : 1000  ));
                 tmout_timer_.async_wait(boost::bind(
                         &basis_iostream::io_handle_timout_expire, shared_from_this(),
                         boost::asio::placeholders::error));}
@@ -335,7 +335,7 @@ namespace dvnci {
 
                     //DEBUG_STR_DVNCI(SET ASYNCTIME)
 
-                    tmout_timer_.expires_from_now(boost::posix_time::milliseconds(tmout < 1 ? timout() : tmout));
+                    tmout_timer_.expires_from_now(boost::posix_time::milliseconds(tmout ? tmout : timout()  ));
                     tmout_timer_.async_wait(boost::bind(
                             &basis_iostream::io_handle_timout_expire, shared_from_this(),
                             boost::asio::placeholders::error));
@@ -397,7 +397,7 @@ namespace dvnci {
 
                     //DEBUG_STR_DVNCI(SET ASYNCTIME)
 
-                    tmout_timer_.expires_from_now(boost::posix_time::milliseconds( (!tmout) ? timout() : tmout));
+                    tmout_timer_.expires_from_now(boost::posix_time::milliseconds( tmout ?  tmout : timout()));
                     tmout_timer_.async_wait(boost::bind(
                             &basis_iostream::io_handle_timout_expire, shared_from_this(),
                             boost::asio::placeholders::error));
