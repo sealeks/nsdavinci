@@ -366,7 +366,27 @@ namespace dvnci {
     typedef onum confproptype;
     // protocol type
     typedef num32 protocoltype;
-
+    // devnumtype type
+    typedef size_t devnumtype;
+    // blksizetype type
+    typedef size_t blksizetype;
+    // blksizetype type
+    typedef size_t chnlnumtype;
+    // blksizetype type
+    typedef size_t timeouttype;
+    //grouprate type
+    typedef size_t gratetype;
+    //devspec type
+    typedef num32 devspectype;
+    //intfsynctype type
+    typedef num32 intfsynctype;
+    //intfvertype type
+    typedef num32 intfvertype;
+    //reporthisttype type
+    typedef num32 reporthisttype;
+    //reporthistdelt type
+    typedef num32 reporthistdelt;
+    
     typedef  boost::filesystem::path      fspath;
 
     const int SERVICE_OPEATION_INSTALL = 0x1;
@@ -838,8 +858,8 @@ namespace dvnci {
     const num32  MAX_REPORTTYPE_NONE             = 0;
 
     // нормализация периода предыстории
-    void normilize_history_bound(vlvtype  type, num32& val);
-    void normilize_report_subperiod(vlvtype  type, num32& val);
+    void normilize_history_bound(vlvtype  type, reporthisttype& val);
+    void normilize_report_subperiod(vlvtype  type, reporthistdelt& val);
 
     const repstattype  REPORT_STATISTIC_NONE           = 0;
     const repstattype  REPORT_STATISTIC_AVER           = 1;

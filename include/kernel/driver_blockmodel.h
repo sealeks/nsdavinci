@@ -46,10 +46,10 @@ namespace dvnci {
 
             virtual bool operator<(const basis_req_parcel & rs) const;
 
-            num32 devnum() const {
+            devnumtype devnum() const {
                 return devnum_;}
 
-            num32 kind() const {
+            parcelkind kind() const {
                 return kind_;};
 
             num32 chanel() const {
@@ -159,7 +159,7 @@ namespace dvnci {
 			
 
             bool                      iscorrect_;
-            num32                     devnum_;
+            devnumtype                devnum_;
             parcelkind                kind_;
             num32                     chanel_;
             num32                     addr_;
@@ -236,10 +236,10 @@ namespace dvnci {
 
                 block() : groupid_(0) {};
 
-                block(parcel_iterator strt, parcel_iterator stp, indx grpid, num32 tmout, num32 trycnt) :
+                block(parcel_iterator strt, parcel_iterator stp, indx grpid, timeouttype tmout, size_t trycnt) :
                 start_(strt), stop_(stp), groupid_(grpid) {
-                    timout_ = in_bounded<num32 > (100, 600000, tmout);
-                    trycount_ = in_bounded<num32 > (1, 10, trycnt);
+                    timout_ = in_bounded<timeouttype > (10, 600000, tmout);
+                    trycount_ = in_bounded<size_t > (1, 10, trycnt);
                     curenttrycount_ = trycount_;}
 
                 virtual ~block() {};
@@ -250,11 +250,11 @@ namespace dvnci {
                 void groupid(indx vl) {
                     groupid_ = vl;}
 
-                num32 timout() const {
+                timeouttype timout() const {
                     return timout_;}
 
-                void timout(num32 vl) {
-                    timout_ = in_bounded<num32 > (100, 600000, vl);}
+                void timout(timeouttype vl) {
+                    timout_ = in_bounded<timeouttype > (10, 600000, vl);}
                 
                 parcel_iterator begin() const{
                     return start_;}
@@ -268,17 +268,17 @@ namespace dvnci {
                 void end(const parcel_iterator& val){
                     stop_=val;}
 
-                num32 trycount() const {
+                size_t trycount() const {
                     return trycount_;}
 
-                void trycount(num32 vl) {
-                    trycount_ = in_bounded<num32 > (1, 10, vl);}
+                void trycount(size_t vl) {
+                    trycount_ = in_bounded<size_t > (1, 10, vl);}
 
-                num32 curenttrycount() const {
+                size_t curenttrycount() const {
                     return curenttrycount_;}
 
-                void curenttrycount(num32 vl) {
-                    curenttrycount_ = in_bounded<num32 > (1, 10, vl);}
+                void curenttrycount(size_t vl) {
+                    curenttrycount_ = in_bounded<size_t > (1, 10, vl);}
 
                 void set_ok() const {
                     curenttrycount_ = trycount_;};
@@ -291,9 +291,9 @@ namespace dvnci {
                 parcel_iterator start_;
                 parcel_iterator stop_;
                 indx            groupid_;
-                num32           timout_;
-                num32           trycount_;
-                mutable num32   curenttrycount_;} ;
+                timeouttype     timout_;
+                size_t          trycount_;
+                mutable size_t  curenttrycount_;} ;
                 
                 
                 
@@ -301,7 +301,7 @@ namespace dvnci {
             abstract_block_model(executor* execr, tagsbase_ptr inf, const metalink& mlnk) :
             intf(inf), executr(execr), needgenerate(true), protocol(0), blocksize(0), archblocksize(0), eventblocksize(0) {
                 protocol = mlnk.protocol();
-                blocksize = static_cast<size_t> (mlnk.blocksize());
+                blocksize = mlnk.blocksize();
                 archblocksize = mlnk.archblocksize();
                 eventblocksize = mlnk.eventblocksize();};
 
@@ -349,8 +349,8 @@ namespace dvnci {
             bool              needgenerate;
             protocoltype      protocol;
             size_t            blocksize;
-            num32             archblocksize;
-            num32             eventblocksize;
+            size_t            archblocksize;
+            size_t            eventblocksize;
             indx_dtvalmap_map cash_reportval_map;
             indx_set          groupset_;} ;
 
@@ -488,7 +488,7 @@ namespace dvnci {
             if (its == basetype::bmap.left.end()) {
                 basetype::blocks.push_back(blkit);
                 return;}
-            num32 counter = 1;
+            size_t counter = 1;
             for (parcel_iterator it = its; it != basetype::bmap.left.end(); ++it) {
                 if ((it->first->devnum() != its->first->devnum()) ||
                         (it->first->kind() != its->first->kind()) ||

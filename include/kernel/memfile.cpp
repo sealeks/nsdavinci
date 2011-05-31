@@ -530,20 +530,20 @@ namespace dvnci {
                 operator[](id)->chanaltype(val);}}}
 
     
-    void  groupsbase::chanalnum(size_type id, num32 val) {
+    void  groupsbase::chanalnum(size_type id, chnlnumtype val) {
         if (exists(id)) {
             if (operator[](id)->chanalnum() != val) {
                 operator[](id)->chanalnum(val);}}}
 
     
-    void  groupsbase::portnum(size_type id, num32  val) {
-        if (exists(id)) {
-            if (operator[](id)->portnum() != val) {
-                metalink oldlnk = link(id);
-                operator[](id)->portnum(val);}}}
+    //void  groupsbase::portnum(size_type id, num32  val) {
+    //    if (exists(id)) {
+    //        if (operator[](id)->portnum() != val) {
+    //            metalink oldlnk = link(id);
+    //            operator[](id)->portnum(val);}}}
 
     
-    void  groupsbase::devnum(size_type id, num32  val) {
+    void  groupsbase::devnum(size_type id, devnumtype  val) {
         if (exists(id)) {
             if (operator[](id)->devnum() != val) {
                 operator[](id)->devnum(val);}}}
@@ -555,13 +555,13 @@ namespace dvnci {
                 operator[](id)->protocol(val);}}}
 
 
-    void  groupsbase::synctype(size_type id, num16 val) {
+    void  groupsbase::synctype(size_type id, intfsynctype val) {
         if (exists(id)) {
             if (operator[](id)->synctype() != val) {
                 operator[](id)->synctype(val);}}}
     
 
-    void  groupsbase::ver(size_type id, num16 val) {
+    void  groupsbase::ver(size_type id, intfvertype val) {
         if (exists(id)) {
             if (operator[](id)->ver() != val) {
                 operator[](id)->ver(val);}}}

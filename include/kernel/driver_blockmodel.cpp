@@ -287,7 +287,7 @@ namespace dvnci {
                 if (executr->requested(prsl->second)) {
                     datetime tmpstart = intf->time_log(prsl->second);
                     datetime tmpstop = tmpstart;
-                    increporttime(tmpstop, intf->type(prsl->second), archblocksize);
+                    increporttime(tmpstop, intf->type(prsl->second), static_cast<reporthisttype>(archblocksize));
                     prsl->first->report_range(tmpstart, tmpstop);
                     return true;}
                 else return false;}

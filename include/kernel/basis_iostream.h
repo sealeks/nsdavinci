@@ -79,7 +79,7 @@ namespace dvnci {
             enum connectionstate {
                 connected, disconnected} ;
 
-            basis_iostream(num32 tout, bool echor = false);
+            basis_iostream(timeouttype tout, bool echor = false);
 
             virtual ~basis_iostream() {};
 
@@ -94,16 +94,16 @@ namespace dvnci {
                 return (state() == connected);}
 
 
-            virtual ns_error write(const std::string& vl, num32 tmout = 0);
-            virtual ns_error read(std::string& vl, size_t cnt = 0, num32 tmout = 0);
+            virtual ns_error write(const std::string& vl, timeouttype tmout = 0);
+            virtual ns_error read(std::string& vl, size_t cnt = 0, timeouttype tmout = 0);
 
-            virtual ns_error read_until(std::string& vl, const char delim, num32 tmout = 0) {
+            virtual ns_error read_until(std::string& vl, const char delim, timeouttype tmout = 0) {
                 return read_until_tmpl<const char>(vl, delim, tmout);}
 
-            virtual ns_error read_until(std::string& vl, const std::string& delim, num32 tmout = 0) {
+            virtual ns_error read_until(std::string& vl, const std::string& delim, timeouttype tmout = 0) {
                 return read_until_tmpl<const std::string&>(vl, delim, tmout);}
 
-            virtual ns_error read_until(std::string& vl, const boost::regex& rgx, num32 tmout = 0) {
+            virtual ns_error read_until(std::string& vl, const boost::regex& rgx, timeouttype tmout = 0) {
                 return read_until_tmpl<const boost::regex&>(vl, rgx, tmout);}
 
             virtual bool char_silence(double charcout) {
@@ -115,12 +115,12 @@ namespace dvnci {
             ns_error error(ns_error err) {
                 return error_cod = err;}
 
-            num32 timout() const {
+            timeouttype timout() const {
                 return timout_;}
 
             void clearbuff();
 
-            virtual size_t clearbuff_deep(num32 tmo = 10, size_t cnt = 1);
+            virtual size_t clearbuff_deep(timeouttype tmo = 10, size_t cnt = 1);
 
         protected:
 
@@ -142,14 +142,14 @@ namespace dvnci {
             virtual void read_until_impl(const std::string& criteria) = 0;
             virtual void read_until_impl(const boost::regex& criteria) = 0;
 
-            bool timout_sec(num32 sec);
-            bool timout_millisec(num32 mls);
-            bool timout_micsec(num32 mcs);
+            bool timout_sec(timeouttype sec);
+            bool timout_millisec(timeouttype mls);
+            bool timout_micsec(timeouttype mcs);
 
             virtual void checkerror(const boost::system::error_code& err) {};
 
             template <typename criteriatype>
-            ns_error read_until_tmpl(std::string& vl, criteriatype criteria, num32 tmout = 0) {
+            ns_error read_until_tmpl(std::string& vl, criteriatype criteria, timeouttype tmout = 0) {
 
                 checkconnect();
 
@@ -172,7 +172,7 @@ namespace dvnci {
 
                         //DEBUG_STR_DVNCI(SET ASYNCTIME)
 
-                        tmout_timer_.expires_from_now(boost::posix_time::milliseconds(tmout < 1 ? timout() : tmout));
+                        tmout_timer_.expires_from_now(boost::posix_time::milliseconds( (!tmout) ? timout() : tmout));
                         tmout_timer_.async_wait(boost::bind(
                                 &basis_iostream::io_handle_timout_expire, shared_from_this(),
                                 boost::asio::placeholders::error));
@@ -242,7 +242,7 @@ namespace dvnci {
             volatile bool               is_error;
             volatile ns_error           error_cod;
             volatile connectionstate    state_;
-            num32                       timout_;
+            timeouttype                 timout_;
             bool                        echorespopse_;
             boost::asio::streambuf      readbuffer;
             boost::asio::streambuf      writebuffer;} ;
@@ -267,7 +267,7 @@ namespace dvnci {
 
         public:
 
-            ip_iostream(num32 tout, std::string hst, std::string prt) :
+            ip_iostream(timeouttype tout, std::string hst, std::string prt) :
             basis_iostream(tout, false), socket_(io_service_), host(hst), port(prt) {}
 
             boost::shared_ptr<ip_iostream> shared_from_this() {
@@ -351,7 +351,7 @@ namespace dvnci {
 
             virtual bool connect_impl() {
                 if (isconnected()) return true;
-                num32 tim_out = in_bounded<num32 > (50, 600000, timout());
+                timeouttype tim_out = in_bounded<timeouttype > (50, 600000, timout());
                 DEBUG_STR_DVNCI(ioclient connect)
                 DEBUG_VAL_DVNCI(host)
                 DEBUG_VAL_DVNCI(port)
@@ -418,7 +418,7 @@ namespace dvnci {
         class tcpip_iostream : public ip_iostream<boost::asio::ip::tcp::socket> {
         public:
 
-            tcpip_iostream(num32 tout, std::string hst, std::string prt) :
+            tcpip_iostream(timeouttype tout, std::string hst, std::string prt) :
             ip_iostream<boost::asio::ip::tcp::socket>(tout, hst, prt) {}
 
             boost::shared_ptr<tcpip_iostream> shared_from_this() {
@@ -463,7 +463,7 @@ namespace dvnci {
         class udpip_iostream : public ip_iostream<boost::asio::ip::udp::socket> {
         public:
 
-            udpip_iostream(num32 tout, std::string hst, std::string prt, size_t defbuffsz = 1024) :
+            udpip_iostream(timeouttype tout, std::string hst, std::string prt, size_t defbuffsz = 1024) :
             ip_iostream<boost::asio::ip::udp::socket>( tout, hst, prt), defbuffsize_(defbuffsz)/*,
 				udpreadbufs(readbuffer.prepare(defbuffsize_)) */ {
                 ;}
@@ -511,8 +511,8 @@ namespace dvnci {
         class rs_iostream : public basis_iostream {
         public:
 
-            rs_iostream(const metalink& lnk, num32 tout, num32 portnm, bool echor = false) :
-            basis_iostream(tout, echor), serialport_(io_service_), serialport_io_sevice(io_service_), portnum_(portnm), optsetter(lnk) {}
+            rs_iostream(const metalink& lnk, timeouttype tout, chnlnumtype chnum, bool echor = false) :
+            basis_iostream(tout, echor), serialport_(io_service_), serialport_io_sevice(io_service_), chnum_(chnum), optsetter(lnk) {}
 
             boost::shared_ptr<rs_iostream> shared_from_this() {
                 return boost::static_pointer_cast<rs_iostream > (basis_iostream::shared_from_this());}
@@ -529,7 +529,7 @@ namespace dvnci {
                 double silenseto_tmp = (boundrate_ * 1.0) / 8;
                 if (silenseto_tmp <= 10) return false;
                 silenseto_tmp = 1000.0 / silenseto_tmp * charcout;
-                num32 silenseto_msec = static_cast<num32> (silenseto_tmp);
+                timeouttype silenseto_msec = static_cast<timeouttype> (silenseto_tmp);
                 return timout_millisec(silenseto_msec);}
 
 
@@ -537,18 +537,18 @@ namespace dvnci {
 
             virtual bool  connect_impl() {
                 if (isconnected()) return true;
-                num32 timout = in_bounded<num32 > (50, 600000, timout_);
+                timeouttype timout = in_bounded<timeouttype > (10, 600000, timout_);
                 DEBUG_STR_DVNCI(ioclient connect)
-                DEBUG_VAL_DVNCI(portnum_)
+                DEBUG_VAL_DVNCI(chnum_)
                 DEBUG_VAL_DVNCI(timout)
-                if (portnum_ < 1) {
+                if (!chnum_) {
                     state_ = disconnected;
                     error_cod = ERROR_IO_CHANNOOPEN;
                     return false;}
 #if defined(_DVN_WIN_) 
-                std::string device = "\\\\.\\COM" + to_str(portnum_);
+                std::string device = "\\\\.\\COM" + to_str(chnum_);
 #elif defined(_DVN_LIN_)
-                std::string device = "/dev/ttyS" + to_str(portnum_ - 1);
+                std::string device = "/dev/ttyS" + to_str(chnum_ - 1);
 #endif                
 
                 try {
@@ -626,7 +626,7 @@ namespace dvnci {
 
             boost::asio::serial_port         serialport_;
             boost::asio::serial_port_service serialport_io_sevice;
-            num32                            portnum_;
+            chnlnumtype                      chnum_;
             bool                             flowcontrol_;
             OPTIONSETTER                     optsetter;
             baudratetype                     boundrate_;} ;}}

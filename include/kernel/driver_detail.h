@@ -138,8 +138,8 @@ namespace dvnci {
                 return ios ? ios : basis_iostream_ptr();}
 
             basis_iostream_ptr ios;
-            std::string readdata;
-            std::string writedata;
+            std::string        readdata;
+            std::string        writedata;
 
         private:
 

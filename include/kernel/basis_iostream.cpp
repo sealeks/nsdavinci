@@ -171,7 +171,7 @@ namespace dvnci {
 
         //basis_iostream
 
-        basis_iostream::basis_iostream(num32 tout, bool echor) : io_service_(), tmout_timer_(io_service_),
+        basis_iostream::basis_iostream(timeouttype tout, bool echor) : io_service_(), tmout_timer_(io_service_),
         is_data_ready(false), is_timout(false), is_connect(false), is_error(false), error_cod(0),
         state_(disconnected),   timout_(tout <= MINIMUM_IOTIMOUT ? DEFAULT_IOTIMOUT : tout), echorespopse_(echor) {};
 
@@ -192,7 +192,7 @@ namespace dvnci {
             clear_wb();
             clear_rb();}
 
-        size_t basis_iostream::clearbuff_deep(num32 tmo, size_t cnt) {
+        size_t basis_iostream::clearbuff_deep(timeouttype tmo, size_t cnt) {
             std::string tmp = "1";
             if (state() != connected) return 0;
             size_t cnttmp = 0;
@@ -204,7 +204,7 @@ namespace dvnci {
                 error_cod = 0;}
             return tmp.size();}
 
-        bool basis_iostream::timout_sec(num32 sec) {
+        bool basis_iostream::timout_sec(timeouttype sec) {
             //DEBUG_STR_DVNCI(START ASYNC TIMER)
             sec = sec < 1 ? 0 : sec;
             is_timout    = false;
@@ -219,7 +219,7 @@ namespace dvnci {
                 return false;}
             return is_timout;}
 
-        bool basis_iostream::timout_millisec(num32 mls) {
+        bool basis_iostream::timout_millisec(timeouttype mls) {
             //DEBUG_STR_DVNCI(START ASYNC TIMER)
             mls = mls < 1 ? 1 : mls;
             is_timout    = false;
@@ -234,7 +234,7 @@ namespace dvnci {
                 return false;}
             return is_timout;}
 
-        bool basis_iostream::timout_micsec(num32 mcs) {
+        bool basis_iostream::timout_micsec(timeouttype mcs) {
             //DEBUG_STR_DVNCI(START ASYNC TIMER)
             mcs = mcs < 1 ? 1 : mcs;
             is_timout    = false;
@@ -313,7 +313,7 @@ namespace dvnci {
                 io_service_.stop();
                 is_data_ready  = false;}}
 
-        ns_error basis_iostream::write(const std::string& vl, num32 tmout) {
+        ns_error basis_iostream::write(const std::string& vl, timeouttype tmout) {
             checkconnect();
             if (state_ == connected) {
 
@@ -364,7 +364,7 @@ namespace dvnci {
                 return 0;}
             return ERROR_IO_LINK_NOT_CONNECTION;}
 
-        ns_error basis_iostream::read(std::string& vl,  size_t cnt, num32 tmout  ) {
+        ns_error basis_iostream::read(std::string& vl,  size_t cnt, timeouttype tmout  ) {
 
             checkconnect();
 
@@ -397,7 +397,7 @@ namespace dvnci {
 
                     //DEBUG_STR_DVNCI(SET ASYNCTIME)
 
-                    tmout_timer_.expires_from_now(boost::posix_time::milliseconds(tmout < 1 ? timout() : tmout));
+                    tmout_timer_.expires_from_now(boost::posix_time::milliseconds( (!tmout) ? timout() : tmout));
                     tmout_timer_.async_wait(boost::bind(
                             &basis_iostream::io_handle_timout_expire, shared_from_this(),
                             boost::asio::placeholders::error));

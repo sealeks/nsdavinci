@@ -449,12 +449,12 @@ namespace dvnci {
 
     std::tm to_std_tm(datetime tm);
 
-    bool incperiod(datetime& val, int type, num64 n = 1);
+    bool incperiod(datetime& val, int type, reporthisttype n = 1);
     bool normalizeperiod(datetime& val_, int type);
 
     bool beforetabletime(datetime& tm, reporttype tp);
     bool normalizereporttime(datetime& val, reporttype tp);
-    bool increporttime(datetime& val, reporttype tp, num64 n = 1);
+    bool increporttime(datetime& val, reporttype tp, reporthisttype n = 1);
 
     struct statistic_functor {
 
