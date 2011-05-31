@@ -25,7 +25,7 @@ namespace dvnci {
         const parcelkind INPUT_REGISTER_MODBUS_TYPE   = 3;
         const parcelkind HOLDING_REGISTER_MODBUS_TYPE = 4;
 
-        const size_t MAX_MODBUS_BLOCK_SIZE = 242;
+        const blksizetype MAX_MODBUS_BLOCK_SIZE = 242;
 
         const protocoltype INTPR_RS_MODBUS_ASCII = 0x1;
         const protocoltype INTPR_RS_MODBUS_RTU = 0x0;
@@ -213,7 +213,7 @@ namespace dvnci {
                         return basetype::error(0);}}
                 return basetype::error(ERROR_IO_PARSERESP);}
 
-            std::string read_fnc_by_type(num32 tp) {
+            std::string read_fnc_by_type(parcelkind tp) {
                 switch (tp) {
                     case DISCRET_INPUT_MODBUS_TYPE:{
                         return MDB_FC_READ_D;}
@@ -225,7 +225,7 @@ namespace dvnci {
                         return MDB_FC_READ_H;}}
                 return "";}
 
-            std::string write_fnc_by_type(num32 tp, std::string::size_type sz, size_t binnum = NULL_BIT_NUM) {
+            std::string write_fnc_by_type(parcelkind tp, std::string::size_type sz, size_t binnum = NULL_BIT_NUM) {
                 switch (tp) {
                     case COIL_MODBUS_TYPE:{
                         return MDB_FC_WRITE_SC;};
@@ -253,12 +253,12 @@ namespace dvnci {
                         return basetype::error(0);}}
                 return basetype::error(ERROR_IO_PARSERESP);}
 
-            ns_error chek_type(num32 tp) {
+            ns_error chek_type(parcelkind tp) {
                 if ((tp < DISCRET_INPUT_MODBUS_TYPE) || (tp > HOLDING_REGISTER_MODBUS_TYPE))
                     return basetype::error(ERROR_IO_NO_GENERATE_REQ);
                 return basetype::error(0);}
 
-            ns_error chek_write_type(num32 tp) {
+            ns_error chek_write_type(parcelkind tp) {
                 if ((tp == COIL_MODBUS_TYPE) || (tp == HOLDING_REGISTER_MODBUS_TYPE))
                     return basetype::error(0);
                 return basetype::error(ERROR_IO_NO_GENERATE_REQ);}};

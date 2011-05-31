@@ -20,7 +20,7 @@ namespace dvnci {
     namespace driver {
 
 
-        const size_t MAX_KOYO_BLOCK_SIZE = 246;
+        const blksizetype MAX_KOYO_BLOCK_SIZE = 246;
 
         bool insert_hex_koyo_lrc(std::string& src);
 
@@ -50,14 +50,14 @@ namespace dvnci {
 
         const std::string DIRECTNET_O_DTTP = "\x33";
 
-        const num32 DIRECTNET_TIMEOUT1 = 800;
+        const timeouttype DIRECTNET_TIMEOUT1 = 800;
 
-        const num32 DIRECTNET_TIMEOUT2 = 2000;
+        const timeouttype DIRECTNET_TIMEOUT2 = 2000;
 
 
         // ECOM spec
 
-        const size_t MAX_ECOM_BLOCK_SIZE = 128;
+        const blksizetype MAX_ECOM_BLOCK_SIZE = 128;
 
         const std::string ECOM_UDP_PORT = "28784";
 
