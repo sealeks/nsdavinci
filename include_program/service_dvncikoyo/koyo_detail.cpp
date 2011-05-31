@@ -30,7 +30,6 @@ namespace dvnci {
                 error(ERROR_IO_LINK_NOT_SUPPORT);
                 return;}
             indx_ = NULL_BIT_NUM;
-            iscorrect_ = checktagtype();
             if (!iscorrect_) return;
             getspecificator(vl);
             iscorrect_ = parse(vl);}

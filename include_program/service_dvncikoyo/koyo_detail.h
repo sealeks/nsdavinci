@@ -102,13 +102,7 @@ namespace dvnci {
 
             bool conform_bit_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt, std::string rgxstr, num32& addr, size_t & bitnum);
             bool conform_v_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt, std::string rgxstr, num32& addr, size_t & bitnum);
-            bool modbus_transform();
-
-            bool checktagtype() {
-                if ((IN_REPORTSET(type())) || (IN_EVENTSET(type()))) {
-                    error(ERROR_TYPENOPROCCESS);
-                    return false;}
-                return true;}};
+            bool modbus_transform();};
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
