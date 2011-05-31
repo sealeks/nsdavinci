@@ -102,7 +102,7 @@ namespace dvnci {
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*??????? ?????????? ???????? DIRECTNET*/
+        /*directnet_value_manager*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ns_error directnet_value_manager::set_val(std::string& val, parcel_ptr prcl, size_t bitn) {
@@ -126,16 +126,14 @@ namespace dvnci {
         ns_error directnet_value_manager::get_val(std::string& val, parcel_ptr cmd, size_t bitn ) {
             unum16 tmp = 0;
             if (bitn != NULL_BIT_NUM) {
-                bool tmp = cmd->value_cast<bool>();
-                val = (tmp) ? "on" : "of";
+                val = cmd->value_cast<bool>() ? "on" : "of";
                 return error(0);}
             else {
                 switch (cmd->type()) {
                     case TYPE_NODEF:{
                         unum16 tmp =  cmd->value_cast<unum16>();;
-                        if (true) {
-                            tmp = (tmp < 0) ? 0 : ((tmp > 65535) ? 65535 : tmp);
-                            val = primtype_to_string<unum16 > (tmp);
+                        if (cmd->isvalue()) {
+                            val = primtype_to_string<unum16 > (cmd->value_cast<unum16>());
                             return error(0);}
                         return error(ERROR_IO_NO_GENERATE_REQ);}
                     default:{
@@ -144,12 +142,13 @@ namespace dvnci {
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*??????? ??????? DIRECTNET*/
+        /*basis_koyo_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ns_error basis_koyo_protocol::readblock(block& blk) {
             error(0);
-            koyodevn dvnum = ((blk.begin()->first->devnum() > 0) && (blk.begin()->first->devnum() <= MAX_KOYO_DEV_NUM)) ? static_cast<num8> (blk.begin()->first->devnum()) : NO_KOYO_DEV_NUM;
+            koyodevn dvnum = ((blk.begin()->first->devnum() > 0) && (blk.begin()->first->devnum() <= MAX_KOYO_DEV_NUM)) ? 
+                static_cast<num8> (blk.begin()->first->devnum()) : NO_KOYO_DEV_NUM;
             if (dvnum == NO_KOYO_DEV_NUM) return error(ERROR_IO_NO_CORRECT_ADDR);
             return read_impl(blk, dvnum);}
 
@@ -162,9 +161,10 @@ namespace dvnci {
 
         ns_error basis_koyo_protocol::writecmd(const std::string& vl, parcel_ptr cmd) {
             error(0);
-            koyodevn dvnum = ((cmd->devnum() >= 0) && (cmd->devnum() <= MAX_KOYO_DEV_NUM)) ? static_cast<num8> (cmd->devnum()) : -1;
-            if (dvnum == NO_KOYO_DEV_NUM) return error(ERROR_IO_NO_CORRECT_ADDR);
-            //DEBUG_VAL_DVNCI(binary_block_to_hexsequence_debug(vl))
+            koyodevn dvnum = ((cmd->devnum() >= 0) && (cmd->devnum() <= MAX_KOYO_DEV_NUM)) ? 
+                static_cast<num8> (cmd->devnum()) : -1;
+            if (dvnum == NO_KOYO_DEV_NUM) 
+                return error(ERROR_IO_NO_CORRECT_ADDR);
             write_impl(cmd, vl, dvnum);
             DEBUG_VAL_DVNCI(error())
             return error();}
@@ -447,7 +447,6 @@ namespace dvnci {
                             if (resp.substr(0, 1) == ECOM_ACK) {
                                 if (!error(ccm_response(resp))) {
                                     if (!error(check_envelope(resp, cnt))) {
-                                        //DEBUG_VAL_DVNCI(binary_block_to_hexsequence_debug(resp));
                                         readdata = resp;
                                         return error(0);}}}}}}}
             return error(ERROR_IO_PARSERESP);}

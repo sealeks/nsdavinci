@@ -20,27 +20,21 @@ namespace dvnci {
     namespace driver {
 
 
-        const parcelkind DISCRET_INPUT_MODBUS_TYPE    = 1;
-        const parcelkind COIL_MODBUS_TYPE             = 2;
-        const parcelkind INPUT_REGISTER_MODBUS_TYPE   = 3;
-        const parcelkind HOLDING_REGISTER_MODBUS_TYPE = 4;
+        const parcelkind  DISCRET_INPUT_MODBUS_TYPE    = 1;
+        const parcelkind  COIL_MODBUS_TYPE             = 2;
+        const parcelkind  INPUT_REGISTER_MODBUS_TYPE   = 3;
+        const parcelkind  HOLDING_REGISTER_MODBUS_TYPE = 4;
 
-        const blksizetype MAX_MODBUS_BLOCK_SIZE = 242;
+        const blksizetype MAX_MODBUS_BLOCK_SIZE        = 242;
 
-        const protocoltype INTPR_RS_MODBUS_ASCII = 0x1;
-        const protocoltype INTPR_RS_MODBUS_RTU = 0x0;
-        const protocoltype INTPR_TCP_MODBUS = 0x2;
+        const protocoltype INTPR_RS_MODBUS_ASCII       = 0x1;
+        const protocoltype INTPR_RS_MODBUS_RTU         = 0x0;
+        const protocoltype INTPR_TCP_MODBUS            = 0x2;
 
-        const num16 ON_COIL_MODBUS_NM = 0x00FF;
-        const num16 OFF_COIL_MODBUS_NM = 0x0000;
+        const num16 ON_COIL_MODBUS_NM                  = 0x00FF;
+        const num16 OFF_COIL_MODBUS_NM                 = 0x0000;
 
-        const std::string MODBUS_TCP_PORT = "502";
-
-        bool insert_mdb_lrc(std::string& src, std::string::size_type strt);
-
-        bool check_mdb_lrc(std::string& src, std::string::size_type strt);
-
-        bool calculate_mdb_lrc(const std::string& src, num8& lrc, std::string::size_type strt);
+        const std::string MODBUS_TCP_PORT              = "502";
 
         /* RTU Version*/
 
@@ -71,9 +65,17 @@ namespace dvnci {
         const std::string MDB_TCP_GARBIDGE_ENV = "\x0";
 
         const std::string ASCII_MDB_RESPONSE_REGEX_TMPL = ":[0-9A-F]{4,}" + CR + LF;
+        
+        
+        
+        bool insert_mdb_lrc(std::string& src, std::string::size_type strt);
+
+        bool check_and_clear_mdb_lrc(std::string& src, std::string::size_type strt);
+
+        
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*???????  ??????????? ???????? MODBUS*/
+        /*modbus_value_manager*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class modbus_value_manager : public linemem_value_manager {
@@ -99,7 +101,7 @@ namespace dvnci {
             virtual ns_error get_val(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*??????? ??????? MODBUS*/
+        /*basis_modbus_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename VALUEMANAGER = modbus_value_manager>
@@ -112,13 +114,10 @@ namespace dvnci {
 
             typedef unum8 mdbdevn;
 
-
             static const mdbdevn MAX_MODBUS_DEV_NUM = 247;
             static const mdbdevn NO_MODBUS_DEV_NUM = 0xFF;
 
             basis_modbus_protocol(basis_iostream_ptr io) : templ_protocol<modbus_value_manager>(io) {}
-
-
 
         protected:
             
@@ -266,7 +265,7 @@ namespace dvnci {
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*??????? MODBUS RTU*/
+        /*rtu_modbus_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename VALUEMANAGER = modbus_value_manager>
@@ -302,7 +301,7 @@ namespace dvnci {
                 return basetype::error(ERROR_IO_NO_GENERATE_REQ);}};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*??????? MODBUS ASCII*/
+        /*class ascii_modbus_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename VALUEMANAGER = modbus_value_manager>
@@ -328,7 +327,7 @@ namespace dvnci {
                     if (!basetype::error(basetype::ios->read_until(resp, boost::regex(ASCII_MDB_RESPONSE_REGEX_TMPL)))) {
                         if (resp.size() < 4) return basetype::error(ERROR_IO_PARSERESP);
                         resp = resp.substr(1, resp.size() - 3);
-                        basetype::error(check_mdb_lrc(resp, 0) ? 0 : ERROR_IO_CRC);
+                        basetype::error(check_and_clear_mdb_lrc(resp, 0) ? 0 : ERROR_IO_CRC);
                         if (!basetype::error()) {
                             if (resp.size() < 2) return basetype::error(ERROR_IO_PARSERESP);
                             std::string tmpresp = resp;
@@ -344,7 +343,7 @@ namespace dvnci {
                 return basetype::error(ERROR_IO_NO_GENERATE_REQ);}};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*??????? MODBUS TCP*/
+        /*tcp_modbus_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename VALUEMANAGER = modbus_value_manager>
@@ -387,7 +386,6 @@ namespace dvnci {
                     vl = primtype_to_string<num16 > (be_le_convert_num16(/*trasactcnt++*/0)) +
                             primtype_to_string<num16 > (0) + primtype_to_string<num8 > (0) +
                             primtype_to_string<unum8 > (static_cast<unum8> (vl.size())) + vl;
-                    /*trasactcnt++;*/
                     return basetype::error(0);}
                 return basetype::error(ERROR_IO_NO_GENERATE_REQ);}
 
