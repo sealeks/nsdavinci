@@ -233,16 +233,16 @@ namespace dvnci {
             virtual acstgtype  rwtype() const {
                 return exists() ? intf->rwtype(key_) : 0;};
 
-            virtual void   reporthistory(num32 val)  {
+            virtual void   reporthistory(reporthisttype val)  {
                 if (exists()) intf->reporthistory(key_, val);}
 
-            virtual num32  reporthistory() const {
+            virtual reporthisttype  reporthistory() const {
                 return exists() ? intf->reporthistory(key_) : 0;};
 
-            virtual void   reportsubdelt(num32 val)  {
+            virtual void   reportsubdelt(reporthistdelt val)  {
                 if (exists()) intf->reportsubdelt(key_, val);}
 
-            virtual num32  reportsubdelt() const {
+            virtual reporthistdelt  reportsubdelt() const {
                 return exists() ? intf->reportsubdelt(key_) : 0;};
 
             virtual void   reportstatistic(repstattype val) {
@@ -338,22 +338,16 @@ namespace dvnci {
             virtual chnltype chanaltype() const {
                 return exists() ? intf->groups()->chanaltype(key_) : 0;};
 
-            virtual void   chanalnum(num32 val)  {
+            virtual void   chanalnum(chnlnumtype val)  {
                 if (exists()) intf->groups()->chanalnum(key_, val);};
 
-            virtual num32  chanalnum()  const  {
+            virtual chnlnumtype  chanalnum()  const  {
                 return exists() ? intf->groups()->chanalnum(key_) : 0;};
 
-            virtual void   portnum(num32 val) {
-                if (exists()) intf->groups()->portnum(key_, val);};
-
-            virtual num32  portnum() const {
-                return exists() ? intf->groups()->portnum(key_) : 0;};
-
-            virtual void   devnum(num32 val) {
+            virtual void   devnum(devnumtype val) {
                 if (exists()) intf->groups()->devnum(key_, val);};
 
-            virtual num32  devnum() const {
+            virtual devnumtype  devnum() const {
                 return exists() ? intf->groups()->devnum(key_) : 0;};
 
             virtual void   protocol(protocoltype val)  {
@@ -374,10 +368,10 @@ namespace dvnci {
             virtual ns_error   error() const {
                 return exists() ? intf->groups()->error(key_) : 0;};
 
-            virtual void   timeout(num32 val)    {
+            virtual void   timeout(timeouttype val)    {
                 if (exists()) intf->groups()->timeout(key_, val);};
 
-            virtual num32   timeout() const {
+            virtual timeouttype   timeout() const {
                 return exists() ? intf->groups()->timeout(key_) : 0;};
 
             virtual void   deadbound(double val)  {
@@ -386,28 +380,28 @@ namespace dvnci {
             virtual double deadbound() const {
                 return exists() ? intf->groups()->deadbound(key_) : 0;};
 
-            virtual void   grouprate(num32 val) {
+            virtual void   grouprate(gratetype val) {
                 if (exists()) intf->groups()->grouprate(key_, val);};
 
-            virtual num32  grouprate() const {
+            virtual gratetype  grouprate() const {
                 return exists() ? intf->groups()->grouprate(key_) : 0;};
 
-            virtual void   trycount(num32 val)   {
+            virtual void   trycount(size_t val)   {
                 if (exists()) intf->groups()->trycount(key_, val);};
 
-            virtual num32  trycount() const {
+            virtual size_t  trycount() const {
                 return exists() ? intf->groups()->trycount(key_) : 0;};
 
-            virtual void   blocksize(num32 val)  {
+            virtual void   blocksize(blksizetype val)  {
                 if (exists()) intf->groups()->blocksize(key_, val);};
 
-            virtual num32  blocksize() const {
+            virtual blksizetype  blocksize() const {
                 return exists() ? intf->groups()->blocksize(key_) : 0;};
 
-            virtual void   archblocksize(num32 val) {
+            virtual void   archblocksize(blksizetype val) {
                 if (exists()) intf->groups()->archblocksize(key_, val);};
 
-            virtual num32  archblocksize() const {
+            virtual blksizetype  archblocksize() const {
                 return exists() ? intf->groups()->archblocksize(key_) : 0;};
 
             virtual void   utiloperation(bool val) {
@@ -416,10 +410,10 @@ namespace dvnci {
             virtual bool   utiloperation() const {
                 return exists() ? intf->groups()->utiloperation(key_) : false;};
 
-            virtual void   indicateto(num32 val)  {
+            virtual void   indicateto(timeouttype val)  {
                 if (exists()) intf->groups()->indicateto(key_, val);};
 
-            virtual num32  indicateto() const {
+            virtual timeouttype  indicateto() const {
                 return exists() ? intf->groups()->indicateto(key_) : 0;};
 
             virtual lcltype local() const {
@@ -428,16 +422,16 @@ namespace dvnci {
             virtual void local(lcltype val ) {
                 if (exists()) intf->groups()->local(key_, val);};
 
-            virtual num16 synctype() const  {
+            virtual intfsynctype synctype() const  {
                 return exists() ? intf->groups()->synctype(key_) : 0;};
 
-            virtual void synctype(num16 val ) {
+            virtual void synctype(intfsynctype val ) {
                 if (exists()) intf->groups()->synctype(key_, val);};
 
-            virtual num16 ver() const {
+            virtual intfvertype ver() const {
                 return exists() ? intf->groups()->ver(key_) : 0;};
 
-            virtual void ver(num16 val ) {
+            virtual void ver(intfvertype val ) {
                 if (exists()) intf->groups()->ver(key_, val);};
 
             virtual bool supporttype() const {
