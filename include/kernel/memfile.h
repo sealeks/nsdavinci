@@ -1296,7 +1296,7 @@ namespace dvnci {
         vlvtype valid(size_type id) const {
             return itemex(id)->valid();}
 
-        vlvtype reportstate(size_type id) const;
+        vlvtype reportstate(size_type id);
 
         bool valid_as_reportsource(size_type id) const;
 
@@ -1630,10 +1630,6 @@ namespace dvnci {
 
 
 
-
-
-
-
         template<typename T>
         void write_val(size_type id, T val, vlvtype validlvl = FULL_VALID, const datetime& time = nill_time, ns_error error = 0);
 
@@ -1682,17 +1678,6 @@ namespace dvnci {
                         valid(id, REPORT_NEEDREQUEST);}
                     else {
                         valid(id, REPORT_NORMAL);}}}}
-
-        void checkreporttime(size_type id) {
-            if ((exists(id)) && (IN_REPORTSET(type(id)))) {
-                datetime tm = time_log(id);
-                if (!tm.is_special()) {
-                    normalizeperiod(tm, type(id));
-                    if (tm < now()) {
-                        valid(id, REPORT_NEEDREQUEST);}
-                    else {
-                        valid(id, REPORT_NORMAL);}}}}
-
 
         //void off(size_type id);
 
@@ -1976,7 +1961,7 @@ namespace dvnci {
 
         void select_metalinks_set_by_appid(appidtype appid, metalink_set& val);
 
-        void select_metalinks_vect_by_metalink(const metalink& lnk, metalink_vect& val, num32_set& utilset);
+        void select_metalinks_vect_by_metalink(const metalink& lnk, metalink_vect& val, devnum_set& utilset);
 
         void select_groups_by_metalink(const metalink& lnk, appidtype app, indx_set& val);
 
@@ -1991,7 +1976,8 @@ namespace dvnci {
             return valbuffers()->toptime(logkey(id));}
 
         bool report_history_empty(size_type id) const {
-            return reportbuffers()->toptime(reportkey(id)) < time_log(id);}
+			datetime tmpdt =reportbuffers()->toptime(reportkey(id));
+            return ((tmpdt==nill_time) || (reportbuffers()->toptime(reportkey(id)) < time_log(id)));}
 
         bool select_reportbuff_topvalue(size_type id, dt_val_pair& vl) const {
             return reportbuffers()->topvalue(reportkey(id), vl);}
@@ -2477,6 +2463,18 @@ namespace dvnci {
 
         bool grant_access(appidtype app, const std::string& hst = "", const std::string& ipp = "", const std::string& usr = "",  const std::string& password = "") {
             return accessrules()->grant_access(app, hst , ipp , usr , password);}
+        
+       
+        
+        void checkreporttime(size_type id) {
+            if ((exists(id)) && (IN_REPORTSET(type(id)))) {
+                datetime tm = time_log(id);
+                if (!tm.is_special()) {
+                    normalizeperiod(tm, type(id));
+                    if (tm < now()) {
+                        valid(id, REPORT_NEEDREQUEST);}
+                    else {
+                        valid(id, REPORT_NORMAL);}}}}
 
 
 

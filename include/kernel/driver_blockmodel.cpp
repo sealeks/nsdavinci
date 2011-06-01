@@ -301,7 +301,6 @@ namespace dvnci {
 
         bool abstract_block_model::check_block_active(block& blk, parcel_iterator& bgn, parcel_iterator& ed) {
             if (!intf) return false;
-            executr->push_all_report();
             parcel_iterator strt = blk.begin();;
             parcel_iterator stpit = blk.end();
             if (blk.begin() == stpit) {

@@ -144,7 +144,7 @@ namespace dvnci {
             block                        blk;
             commands_vect                comds;
             metalink                     link;
-            num32_set                    util_devnum_set;
+            devnum_set                   util_devnum_set;
             ns_error                     link_checked_error;
             ns_error                     io_error_;
             metalink_checker_ptr         meta_checker;

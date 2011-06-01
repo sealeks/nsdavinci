@@ -211,22 +211,11 @@ namespace dvnci {
         boost::mutex              mtx;
         bool                      isconnected_;
         tagtype                   provide_;
-        // читается через         getreportvalue
-        indx_dtvalmap_map         reportvalues_map;
         indx_set                  active_set;
         indx_set                  errors_set;
         indx_dt_map               timout_map;
         indx_set                  tag_errorset;
-        indx_set                  groupset_;
-        
-        // карта отчетных значений по данному тегу пуста
-        bool buffer_of_reporttag_empty(indx id);
-        // чтение отчетного значения из внутреннего хранилища
-        bool getreportvalue(indx id, dt_val_pair& value);
-        // удаление крайнего отчетого значения тега из карты
-        void remove_firstreporvalue_from_map(indx id);
-        // удаление всех отчетных значений тега из карты
-        void remove_reporvalue_from_map(indx id);} ;
+        indx_set                  groupset_;} ;
 
     typedef intrusive_sync_share_ptr_tmpl<executor> executor_ptr;
 

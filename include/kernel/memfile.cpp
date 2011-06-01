@@ -911,17 +911,24 @@ namespace dvnci {
 
     void tagsbase::valid(size_type id, vlvtype vld) {
         if (exists(id)) {
-            //bool  oldValid = valid(id);
-            operator[](id)->valid(vld);
-            /*if (wasValid != isvalid(id)) {
-                registry()->notify_valid(id);}*/
-        }}
+            operator[](id)->valid(vld);}}
 
     bool tagsbase::reportbuffered(size_type id) const {
-        return ((reportkey(id) != npos) && (operator[](id)->logged()));}
+        return (reportkey(id) != npos);}
 
-    vlvtype tagsbase::reportstate(size_type id) const {
-        return ((exists(id)) && (IN_REPORTSET(type(id)))) ? operator[](id)->valid() : 1;}
+    vlvtype tagsbase::reportstate(size_type id){
+        if ((exists(id)) && (IN_REPORTSET(type(id)))){
+            switch (operator[](id)->valid()){
+                 case REPORT_NODATA:{
+                        increpttime(id);
+                        break;}
+                 case REPORT_NORMAL:{
+                        checkreporttime(id);
+                        break;}
+                 case REPORT_NOACTIVE:{
+					 operator[](id)->valid(REPORT_NEEDKHOWDEEP);}}
+				return operator[](id)->valid();}
+            return 1;}
 
     bool tagsbase::valid_as_reportsource(size_type id) const {
         return ((exists(id)) && (valid(id) == FULL_VALID) &&
@@ -1475,7 +1482,7 @@ namespace dvnci {
             if (groups()->exists(i))
                 if (groups()->appid(i) == appid) val.insert(groups()->link(i));}}
 
-    void tagsbase::select_metalinks_vect_by_metalink(const metalink& lnk, metalink_vect& val, num32_set& utilset) {
+    void tagsbase::select_metalinks_vect_by_metalink(const metalink& lnk, metalink_vect& val, devnum_set& utilset) {
         val.clear();
         utilset.clear();
         for (size_type i = 0; i < groups()->count(); i++) {
@@ -2015,7 +2022,7 @@ namespace dvnci {
     
 
     void tagsbase::write_val_report(size_type id, datetime tm , double val , ns_error err, bool onlybuffer ) {
-        if ((exists(id)) && (IN_REPORTSET(type(id))) && (!tm.is_special())) {
+        if ((exists(id)) && (!tm.is_special())) {
             insert_to_reportbuff(id, tm , val);
             normalizeperiod(tm, type(id));
             error(id, err);
@@ -2032,7 +2039,7 @@ namespace dvnci {
                 valid(id,  REPORT_DATA);}}}
 
     bool tagsbase::write_vals_report(size_type id, const dt_val_map& values, ns_error err) {
-        if ((IN_REPORTSET(type(id))) || (reportkey(id) == npos)) return false;
+        if ((reportkey(id) == npos)) return false;
         if (reportbuffers()->insert(reportkey(id), values)) {
             for (dt_val_map::const_iterator it = values.begin(); it != values.end(); ++it) {
                 if (!it->first.is_special()) {

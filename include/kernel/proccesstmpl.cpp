@@ -86,96 +86,25 @@ namespace dvnci {
 
     void executor::write_val_report(indx id, const dt_val_map& values) {
         if (intf->reportbuffered(id)) {
-            intf->write_vals_report(id, values);}
-        else{
-            indx_dtvalmap_map::iterator it = reportvalues_map.find(id);
-            if (it==reportvalues_map.end())
-                  reportvalues_map.insert(indx_dtvalmap_pair(id, values));
-            else it->second.insert(values.begin(), values.end());}}
+            intf->write_vals_report(id, values);}}
 
     void executor::write_val_report(indx id, datetime tm , double val) {
-        if (intf->reportbuffered(id)){
-             intf->write_val_report(id, tm, val);}
-        else{
              dt_val_map tmp;
              tmp.insert(dt_val_pair(tm, val));
-             write_val_report(id, tmp);}}
+             write_val_report(id, tmp);}
 
-
-    // чтение отчетного значения из внутреннего хранилища
-
-    bool executor::getreportvalue(indx id, dt_val_pair& value) {
-        if (reportvalues_map.empty()) return false;
-        indx_dtvalmap_map::iterator it = reportvalues_map.find(id);
-        if (it!=reportvalues_map.end()) {
-            dt_val_map tmpreportline = it->second;
-            if (tmpreportline.empty()) return false;
-            dt_val_map::iterator itval = tmpreportline.begin();
-            if (itval==tmpreportline.end()) return false;
-            value.first = itval->first;
-            value.second = itval->second;
-            return true;}
-        return false;}
-
-    bool executor::buffer_of_reporttag_empty(indx id) {
-        if (reportvalues_map.empty()) return true;
-        indx_dtvalmap_map::iterator it = reportvalues_map.find(id);
-        if (it==reportvalues_map.end()) return true;
-        return it->second.empty();}
 
     // необходим опрос по отчетному итемсу
 
     bool executor::report_requested(indx id) {
-        if (intf->reportbuffered(id)) {
-            return ((IN_REPORTSET(intf->type(id))) && (intf->report_history_empty(id)) && (intf->time_log(id) < now()));}
-        else{
-        if (!buffer_of_reporttag_empty(id)) {
-            dt_val_pair tmpval;
-            if (getreportvalue(id, tmpval)) {
-                switch (intf->valid(id)) {
-                    case REPORT_NEEDREQUEST:
-                    case REPORT_WAITSOURCE:{
-                        intf->write_val_report(id, tmpval.first, tmpval.second);
-                        remove_firstreporvalue_from_map(id);
-                        break;}
-                    case REPORT_NOACTIVE: {
-                        remove_reporvalue_from_map(id);
-                        intf->valid(id, REPORT_NEEDKHOWDEEP);
-                        break;}}}
-            return false;}
-        if (intf->valid(id)==REPORT_NOACTIVE) {
-            intf->valid(id, REPORT_NEEDKHOWDEEP);
-            return false;}}
-        return ((IN_REPORTSET(intf->type(id))) && ((intf->valid(id)==REPORT_NEEDREQUEST)));}
+            return ((intf->reportbuffered(id)) &&
+                    (intf->report_history_empty(id)) && 
+                    (intf->reportstate(id)==REPORT_NEEDREQUEST));}
 
 
     // удаление крайнего отчетого значения итемса из карты
 
-    void executor::remove_firstreporvalue_from_map(indx id) {
-        if (reportvalues_map.empty()) return;
-        indx_dtvalmap_map::iterator it = reportvalues_map.find(id);
-        if (it!=reportvalues_map.end()) {
-            if (it->second.empty()) return;
-            dt_val_map::iterator itval = it->second.begin();
-            if (itval==it->second.end()) return;
-            it->second.erase(itval);}}
 
-    // удаление всех отчетных значений итемса из карты
-
-    void executor::remove_reporvalue_from_map(indx id) {
-        if (reportvalues_map.empty()) return;
-        indx_dtvalmap_map::iterator it = reportvalues_map.find(id);
-        if (it!=reportvalues_map.end()) {
-            reportvalues_map.erase(it);}}
-
-    bool executor::push_all_report(indx id) {
-        if (reportvalues_map.empty()) return false;
-        indx_set idset;
-        for (indx_dtvalmap_map::iterator it = reportvalues_map.begin(); it!=reportvalues_map.end(); ++it) {
-            idset.insert(it->first);}
-        if (!idset.empty()) {
-            for (indx_set::iterator it = idset.begin(); it!=idset.end(); ++it) report_requested(*it);}
-        return (idset.find(id)!=idset.end());}
 
 
     void executor::set_group_state(indx id, ns_error err , vlvtype valid) {

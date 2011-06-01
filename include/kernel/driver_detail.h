@@ -97,7 +97,7 @@ namespace dvnci {
                 return error( ios ? ios->close() : 0);}
             
            
-            virtual bool utiloperation(const num32_set& vl){
+            virtual bool utiloperation(const devnum_set& vl){
                 return true;}
 
 
@@ -274,7 +274,7 @@ namespace dvnci {
             ns_error error(ns_error err) {
                 return (lasterror = err);};
                 
-            void  util_device(num32_set& val){
+            void  util_device(devnum_set& val){
                 util_device_set_=val;}
 
 
@@ -309,7 +309,7 @@ namespace dvnci {
 
         private:
             ns_error             lasterror;
-            num32_set            util_device_set_;};
+            devnum_set           util_device_set_;};
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
