@@ -50,12 +50,6 @@ namespace dvnci {
                                 dbdriver->insert_report(intf(expression_), intf->type(id), intf->value<double>(id), intf->time_log(id));}
                             intf->increpttime(id);}
                         break;}
-                    case REPORT_NODATA:{
-                        intf->increpttime(id);
-                        break;}
-                    case REPORT_NORMAL:{
-                        intf->checkreporttime(id);
-                        break;}
                     default:{}}}}}
 
 
