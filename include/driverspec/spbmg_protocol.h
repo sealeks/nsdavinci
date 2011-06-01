@@ -159,9 +159,9 @@ namespace dvnci {
 
 
 
-            virtual bool utiloperation(const num32_set& vl){
+            virtual bool utiloperation(const devnum_set& vl){
                 DEBUG_STR_DVNCI(UTILOPERATION)
-                for (num32_set::const_iterator it=vl.begin();it!=vl.end();++it){
+                for (devnum_set::const_iterator it=vl.begin();it!=vl.end();++it){
                     sync_time_device(*it);
                     DEBUG_VAL_DVNCI(*it);}
                 return true;}
