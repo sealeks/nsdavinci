@@ -516,6 +516,8 @@ namespace dvnci {
     typedef std::set<num32 , std::less<num32>, std::allocator<num32> >    num32_set;
 
     typedef boost::shared_ptr<std::string>                                stdstr_ptr;
+    
+    typedef std::set<devnumtype , std::less<devnumtype>, std::allocator<devnumtype> >    devnum_set;
 
     typedef std::pair<indx, ns_error > errorinfo_pair;
     typedef std::map<indx, ns_error, std::less<indx>, std::allocator<errorinfo_pair > >                errorinfo_map;
