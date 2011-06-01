@@ -89,9 +89,8 @@ namespace dvnci {
             intf->write_vals_report(id, values);}}
 
     void executor::write_val_report(indx id, datetime tm , double val) {
-             dt_val_map tmp;
-             tmp.insert(dt_val_pair(tm, val));
-             write_val_report(id, tmp);}
+        if (intf->reportbuffered(id)) {
+             intf->write_val_report(id, tm, val);}}
 
 
     // необходим опрос по отчетному итемсу
