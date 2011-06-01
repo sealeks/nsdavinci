@@ -88,7 +88,7 @@ namespace database {
                 normilize_history_bound(type, present);
                 datetime tm_reporttable = tm;
                 normalizereporttime(tmtmp, type);
-                increporttime(tmtmp, type, present);
+                increporttime(tmtmp, type, -present);
                 if (id == npos) {
                     tm = tmtmp;
                     return false;}
