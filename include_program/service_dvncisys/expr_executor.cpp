@@ -79,7 +79,7 @@ namespace dvnci {
                         if (!dbdriver->isconnected()) {
                             DEBUG_STR_DVNCI(FIND_DISCONNECTION)
                             executr->set_group_state(npos, ERROR_NO_DATABASE_CONN, FULL_VALID);
-							return;}}
+			    return;}}
                     executr->set_group_state(npos, 0);
                     if ((checkredy()) && (executr->report_requested(idex))) {
                         readvalue();}}}}}
