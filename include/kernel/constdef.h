@@ -835,29 +835,29 @@ namespace dvnci {
 
     tagtype oldtypetonew(tagtype val);
 
-    const num32  MIN_REPORTTYPE_YEAR             = 1;
-    const num32  MIN_REPORTTYPE_MIN              = 100;
-    const num32  MIN_REPORTTYPE_HOUR             = 100;
-    const num32  MIN_REPORTTYPE_DEC              = 100;
-    const num32  MIN_REPORTTYPE_DAY              = 31;
-    const num32  MIN_REPORTTYPE_MONTH            = 12;
-    const num32  MIN_REPORTTYPE_10MIN            = 100;
-    const num32  MIN_REPORTTYPE_30MIN            = 100;
-    const num32  MIN_REPORTTYPE_QVART            = 4;
-    const num32  MIN_REPORTTYPE_CUSTOM           = 0;
-    const num32  MIN_REPORTTYPE_NONE             = 0;
+    const reporthisttype  MIN_REPORTTYPE_YEAR             = 1;
+    const reporthisttype  MIN_REPORTTYPE_MIN              = 100;
+    const reporthisttype  MIN_REPORTTYPE_HOUR             = 100;
+    const reporthisttype  MIN_REPORTTYPE_DEC              = 100;
+    const reporthisttype  MIN_REPORTTYPE_DAY              = 31;
+    const reporthisttype  MIN_REPORTTYPE_MONTH            = 12;
+    const reporthisttype  MIN_REPORTTYPE_10MIN            = 100;
+    const reporthisttype  MIN_REPORTTYPE_30MIN            = 100;
+    const reporthisttype  MIN_REPORTTYPE_QVART            = 4;
+    const reporthisttype  MIN_REPORTTYPE_CUSTOM           = 0;
+    const reporthisttype  MIN_REPORTTYPE_NONE             = 0;
 
-    const num32  MAX_REPORTTYPE_YEAR             = 30;
-    const num32  MAX_REPORTTYPE_MIN              = 1200;
-    const num32  MAX_REPORTTYPE_HOUR             = 5000;
-    const num32  MAX_REPORTTYPE_DEC              = 1000;
-    const num32  MAX_REPORTTYPE_DAY              = 1000;
-    const num32  MAX_REPORTTYPE_MONTH            = 300;
-    const num32  MAX_REPORTTYPE_10MIN            = 1200;
-    const num32  MAX_REPORTTYPE_30MIN            = 1200;
-    const num32  MAX_REPORTTYPE_QVART            = 100;
-    const num32  MAX_REPORTTYPE_CUSTOM           = 0;
-    const num32  MAX_REPORTTYPE_NONE             = 0;
+    const reporthisttype  MAX_REPORTTYPE_YEAR             = 30;
+    const reporthisttype  MAX_REPORTTYPE_MIN              = 4800;
+    const reporthisttype  MAX_REPORTTYPE_HOUR             = 4800;
+    const reporthisttype  MAX_REPORTTYPE_DEC              = 1000;
+    const reporthisttype  MAX_REPORTTYPE_DAY              = 1000;
+    const reporthisttype  MAX_REPORTTYPE_MONTH            = 300;
+    const reporthisttype  MAX_REPORTTYPE_10MIN            = 4800;
+    const reporthisttype  MAX_REPORTTYPE_30MIN            = 4800;
+    const reporthisttype  MAX_REPORTTYPE_QVART            = 100;
+    const reporthisttype  MAX_REPORTTYPE_CUSTOM           = 0;
+    const reporthisttype  MAX_REPORTTYPE_NONE             = 0;
 
     // нормализация периода предыстории
     void normilize_history_bound(vlvtype  type, reporthisttype& val);
