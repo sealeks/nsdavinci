@@ -313,9 +313,10 @@ namespace dvnci {
 
         std::string&  mg_protocol::generate_body_arhs(std::string& vl, const block& blk, num8 dvnum) {
             vl = "";
-            datetime strt, stp;
-            blk.begin()->first->report_range(strt , stp);
-            vl = generate_arh(blk.begin()->first->chanel(), blk.begin()->first->addr(), strt, stp);
+            datetime_pair timerange=blk.begin()->first->report_range();
+			DEBUG_STR_VAL_DVNCI(startrepot, timerange.first)
+			DEBUG_STR_VAL_DVNCI(stoprepot, timerange.second)
+            vl = generate_arh(blk.begin()->first->chanel(), blk.begin()->first->addr(), timerange.first, timerange.second);
             generate_envelope(generate_body(vl), MG_FC_RD_ARH_R, dvnum, (proxyaddr | 0x80));
             return vl;}
 
