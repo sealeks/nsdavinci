@@ -340,7 +340,6 @@ namespace dvnci {
                             &basis_iostream::io_handle_timout_expire, shared_from_this(),
                             boost::asio::placeholders::error));
 
-                    //DEBUG_STR_DVNCI(SET RUN)
 
                     io_service_.run();}
                 catch (dvncierror& errd) {

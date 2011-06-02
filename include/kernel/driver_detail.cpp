@@ -132,7 +132,7 @@ Table of CRC values for high–order byte */
                 if (!ios) return error(ERROR_IO_NOLINKSTREAM);
                 error(0);
                 if (!error(readblock(blk)))
-                    set_value(rdata(), blk);
+                    parse_response(rdata(), blk);
                 else
                     clearbuff();
                 return error();}
@@ -143,7 +143,7 @@ Table of CRC values for high–order byte */
                 for (commands_vect::const_iterator it = comds.begin(); it != comds.end(); ++it) {
                     error(0);
                     std::string tmpvl;
-                    if (!get_value(tmpvl, *it)) {
+                    if (!preapare_cmd_request(tmpvl, *it)) {
                         DEBUG_VAL_DVNCI(tmpvl)
                         if (!tmpvl.empty()) {
                             if (error(writecmd(tmpvl, *it))) {
@@ -155,7 +155,7 @@ Table of CRC values for high–order byte */
         /*Установщик значении линейного отображения памяти*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ns_error linemem_value_manager::set_value(const std::string& dbk, block& blk) {
+        ns_error flatmemory_value_manager::parse_response(const std::string& dbk, block& blk) {
             error(0);
             parcel_const_iterator strtit = blk.begin();
             parcel_const_iterator endit = blk.end();
@@ -169,18 +169,18 @@ Table of CRC values for high–order byte */
                 dt_size = it->first->size();
                 bitnm = getbitnum(strtit, it);
                 if (get_data_block(dbk, vl, adr_offset, dt_size)) {
-                    set_val(vl, it->first, bitnm);}
+                    parse_response_impl(vl, it->first, bitnm);}
                 else {
                     it->first->error(ERROR_IO_NO_DATA);}}
             return error(0);}
 
-        ns_error linemem_value_manager::get_value(std::string& val, parcel_ptr cmd) {
+        ns_error flatmemory_value_manager::preapare_cmd_request(std::string& val, parcel_ptr cmd) {
             error(0);
             size_t bitnm = cmd->indx();
-            get_val(val, cmd, bitnm );
+            preapare_cmd_request_impl(val, cmd, bitnm );
             return error(0);}
 
-        ns_error linemem_value_manager::set_val(std::string& val, parcel_ptr prcl, size_t bitn) {
+        ns_error flatmemory_value_manager::parse_response_impl(std::string& val, parcel_ptr prcl, size_t bitn) {
 
             if (!spec_protocol_convertion_out(val, bitn)) {
                 return error(0);}
@@ -193,12 +193,12 @@ Table of CRC values for high–order byte */
                 prcl->value_byte_seq(val);}
             return error(0);}
 
-        bool linemem_value_manager::get_data_block(const std::string& dbk, std::string& vl, std::string::size_type offset, std::string::size_type dtsize) {
+        bool flatmemory_value_manager::get_data_block(const std::string& dbk, std::string& vl, std::string::size_type offset, std::string::size_type dtsize) {
             if ((offset + dtsize) > dbk.size()) return false;
             vl = dbk.substr(offset, dtsize);
             return true;}
 
-        ns_error linemem_value_manager::get_val(std::string& val, parcel_ptr cmd, size_t bitn) {
+        ns_error flatmemory_value_manager::preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn) {
             if (cmd->isvalue()){
             short_value tmp = cmd->value();
             switch (cmd->type()) {

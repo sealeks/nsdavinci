@@ -34,14 +34,13 @@ namespace dvnci {
             if (indx() != rs.indx()) return (indx() < rs.indx());
             if (size() != rs.size()) return (size() < rs.size());
             return false;}
-        
-        
-        
 
         std::string basis_req_parcel::to_string() {
-            return num64_and_type_cast<std::string>(value_.value64(), value_.type() );};
-            
-            
+            return num64_and_type_cast<std::string > (value_.value64(), value_.type() );};
+
+        template<>
+        std::string basis_req_parcel::value_cast<std::string>() const {
+            return (isvalue()) ? value_.value<std::string > () : "";}
 
         template<>
         void basis_req_parcel::value_cast<double>(double val, const datetime& tm, vlvtype valid) {
@@ -64,7 +63,6 @@ namespace dvnci {
                 error(0);}
             else {
                 error(ERROR_IO_DATA_CONV);}}
-        
 
         template<>
         void basis_req_parcel::value_cast<std::string>(std::string val, const datetime& tm, vlvtype valid) {
@@ -76,25 +74,25 @@ namespace dvnci {
                 error(0);}
             else {
                 error(ERROR_IO_DATA_CONV);}}
-        
+
         void basis_req_parcel::value_byte_seq(const std::string& val, const datetime& tm, vlvtype valid) {
-                if (IN_SMPLSET(type())) {
+            if (IN_SMPLSET(type())) {
                 switch (type()) {
                     case TYPE_NUM64:{
                         num64 tmp = 0;
-                        if (string_to_primtype<num64 > (val, tmp)){ 
+                        if (string_to_primtype<num64 > (val, tmp)) {
                             value_cast<num64 > (tmp , tm, valid);
                             return;}
                         break;}
                     case TYPE_UNUM64:{
                         unum64 tmp = 0;
-                        if (string_to_primtype<unum64 > (val, tmp)){
+                        if (string_to_primtype<unum64 > (val, tmp)) {
                             value_cast<unum64 > (tmp , tm, valid);
                             return;}
                         break;}
                     case TYPE_NUM32:{
                         num32 tmp = 0;
-                        if (string_to_primtype<num32 > (val, tmp)){
+                        if (string_to_primtype<num32 > (val, tmp)) {
                             value_cast<num32 > (tmp , tm, valid);
                             return;}
                         break;}
@@ -106,7 +104,7 @@ namespace dvnci {
                         break;}
                     case TYPE_NUM16:{
                         num16 tmp = 0;
-                        if (string_to_primtype<num16 > (val, tmp)){
+                        if (string_to_primtype<num16 > (val, tmp)) {
                             value_cast<num16 > (tmp , tm, valid);
                             return;}
                         break;}
@@ -130,8 +128,8 @@ namespace dvnci {
                         break;}
                     case TYPE_DISCRET:{
                         num8 tmp = 0;
-                        if (string_to_primtype<num8> (val, tmp)) {
-                            value_cast<bool > (tmp!=0 , tm, valid);
+                        if (string_to_primtype<num8 > (val, tmp)) {
+                            value_cast<bool > (tmp != 0 , tm, valid);
                             return;}
                         break;}
                     case TYPE_NODEF:
@@ -148,24 +146,24 @@ namespace dvnci {
                             return;}
                         break;}
                     case TYPE_TEXT:{
-                        value_cast<std::string>(val);
+                        value_cast<std::string > (val);
                         return;}
-                    default:{;}}}
-              error(ERROR_IO_DATA_CONV);}
+                    default:{
+                        ;}}}
+            error(ERROR_IO_DATA_CONV);}
 
         short_value basis_req_parcel::value() const {
             isvalue_ = false;
             return value_;}
 
-
-        void basis_req_parcel::value(const short_value& vl) {    
-	    if (is_bcd()) {
-                short_value tmp= vl;
-		tmp.covert_to_bcd();
+        void basis_req_parcel::value(const short_value& vl) {
+            if (is_bcd()) {
+                short_value tmp = vl;
+                tmp.covert_to_bcd();
                 value_ = tmp;
                 isvalue_ = !tmp.error();
                 return;}
-            else{
+            else {
                 value_ = vl;
                 isvalue_ = !vl.error();}}
 
@@ -184,10 +182,6 @@ namespace dvnci {
                     return tmp;}}
             isvalue_ = false;
             return dt_val_pair(nill_time, NULL_DOUBLE);}
-        
-        
-        
-        
 
         void  basis_req_parcel::value_report(const dt_val_map & dt, ns_error err) {
             reportvalue_ = dt;
@@ -206,10 +200,8 @@ namespace dvnci {
             return  (reportrange_) ? *reportrange_ : std::make_pair(nill_time, nill_time);}
 
         size_t  calculate_blocksize(parcel_ptr msblk, parcel_ptr lsblk) {
-            return ((*msblk)-(*lsblk)) == BLOCKMAXDISTANCE ? 
-                BLOCKMAXDISTANCE : std::max<size_t > (((*msblk)-(*lsblk)) + msblk->size(), lsblk->size());}
-        
-        
+            return ((*msblk)-(*lsblk)) == BLOCKMAXDISTANCE ?
+                    BLOCKMAXDISTANCE : std::max<size_t > (((*msblk)-(*lsblk)) + msblk->size(), lsblk->size());}
 
         std::ostream & operator<< (std::ostream& os, const block& ns) {
             os << " parsels_line [ ";
@@ -263,7 +255,10 @@ namespace dvnci {
                 for (command_vector::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
                     tags_iterator itfnd = bmap.right.find(it->tagid());
                     if (itfnd != bmap.right.end()) {
-                        itfnd->second->value(short_value(it->value_set<num64 > (), it->type()));
+                        if (it->type() != TYPE_TEXT)
+                            itfnd->second->value(short_value(it->value_set<num64 > (), it->type()));
+                        else
+                            itfnd->second->value(short_value(it->strvalue()));
                         cmdvect.push_back(itfnd->second);}}
                 return (!cmdvect.empty());}
             return false;}
@@ -293,7 +288,7 @@ namespace dvnci {
                 if (executr->requested(prsl->second)) {
                     datetime tmpstart = intf->time_log(prsl->second);
                     datetime tmpstop = tmpstart;
-                    increporttime(tmpstop, intf->type(prsl->second), static_cast<reporthisttype>(archblocksize));
+                    increporttime(tmpstop, intf->type(prsl->second), static_cast<reporthisttype> (archblocksize));
                     prsl->first->report_range(tmpstart, tmpstop);
                     return true;}
                 else return false;}
@@ -301,7 +296,8 @@ namespace dvnci {
 
         bool abstract_block_model::check_block_active(block& blk, parcel_iterator& bgn, parcel_iterator& ed) {
             if (!intf) return false;
-            parcel_iterator strt = blk.begin();;
+            parcel_iterator strt = blk.begin();
+            ;
             parcel_iterator stpit = blk.end();
             if (blk.begin() == stpit) {
                 return check_parcel_active(strt);}
@@ -314,8 +310,5 @@ namespace dvnci {
                             if (!check_parcel_active(it)) ed--;
                             else return true;}}
                     return true;}}
-            return false;}
-
-
-}}
+            return false;}}}
 

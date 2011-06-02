@@ -17,9 +17,9 @@ namespace dvnci {
     namespace driver {
 
 
-      
-        typedef  onum      parcelkind;
-        
+
+        typedef  onum                    parcelkind;
+
         const  size_t BLOCKMAXDISTANCE = 0x1FFFFFFF;
 
 
@@ -28,10 +28,6 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         struct basis_req_parcel {
-
-            
-
-            
             basis_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk);
 
             virtual ~basis_req_parcel() {};
@@ -79,8 +75,6 @@ namespace dvnci {
             ns_error error(ns_error vl) {
                 if (vl) isvalue_ = false;
                 return value_.error(vl);}
-            
-            
 
             bool isvalue() const {
                 return isvalue_;}
@@ -90,12 +84,11 @@ namespace dvnci {
 
             bool is_bcd() const {
                 return isbcd_;}
-            
+
             virtual std::string to_string();
-            
 
             template<typename T>
-            void value_cast(T val, const datetime& tm = nill_time, vlvtype valid = FULL_VALID) {
+                    void value_cast(T val, const datetime& tm = nill_time, vlvtype valid = FULL_VALID) {
                 if (IN_SMPLSET(type())) {
                     if ((!is_bcd()) || ((is_bcd()) && (bcd_to_dec<T > (val)))) {
                         value_ = short_value(val);
@@ -103,14 +96,14 @@ namespace dvnci {
                         value_.valid(valid);
                         isvalue_ = true;
                         error(0);
-			return;}}
+                        return;}}
                 error(ERROR_IO_DATA_CONV);}
 
             template<typename T >
-            T value_cast() const {
+                    T value_cast() const {
                 return (isvalue()) ? value_.value<T > () : 0;}
-            
-           
+
+
             void value_byte_seq(const std::string& val, const datetime& tm = nill_time, vlvtype valid = FULL_VALID);
 
 
@@ -154,9 +147,9 @@ namespace dvnci {
             virtual void getspecificator(std::string & vl) {
                 upper_and_trim(vl);
                 if (vl.find(":B") != std::string::npos) {
-                    isbcd_=true;
+                    isbcd_ = true;
                     vl.replace(vl.find(":B"), 2, "");}}
-			
+
 
             bool                      iscorrect_;
             devnumtype                devnum_;
@@ -173,6 +166,9 @@ namespace dvnci {
             mutable datetime_val_ptr  eventvalue_;
             mutable dt_val_map        reportvalue_;
             mutable datetime_pair_ptr reportrange_;} ;
+
+        template<>
+        std::string basis_req_parcel::value_cast<std::string>() const;
 
         template<>
         void basis_req_parcel::value_cast<double>(double val, const datetime& tm, vlvtype valid);
@@ -255,18 +251,18 @@ namespace dvnci {
 
                 void timout(timeouttype vl) {
                     timout_ = in_bounded<timeouttype > (10, 600000, vl);}
-                
-                const parcel_iterator& begin() const{
+
+                const parcel_iterator & begin() const {
                     return start_;}
-                
-                const parcel_iterator& end() const{
+
+                const parcel_iterator & end() const {
                     return stop_;}
-                
-                void begin(const parcel_iterator& val) {
-                    start_=val;}
-                
-                void end(const parcel_iterator& val){
-                    stop_=val;}
+
+                void begin(const parcel_iterator & val) {
+                    start_ = val;}
+
+                void end(const parcel_iterator & val) {
+                    stop_ = val;}
 
                 size_t trycount() const {
                     return trycount_;}
@@ -287,16 +283,13 @@ namespace dvnci {
                     if (curenttrycount_ > 1) curenttrycount_ = curenttrycount_ - 1;};
 
             private:
-                
+
                 parcel_iterator start_;
                 parcel_iterator stop_;
                 indx            groupid_;
                 timeouttype     timout_;
                 size_t          trycount_;
                 mutable size_t  curenttrycount_;} ;
-                
-                
-                
 
             abstract_block_model(executor* execr, tagsbase_ptr inf, const metalink& mlnk) :
             intf(inf), executr(execr), needgenerate(true), protocol(0), blocksize(0), archblocksize(0), eventblocksize(0) {
@@ -377,13 +370,13 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename BLOCKITEMTYPE>
-        class base_block_model : public abstract_block_model {
+        class flatmemory_block_model : public abstract_block_model {
         public:
 
-            base_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
+            flatmemory_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
             abstract_block_model(exectr, inf, mlnk) {};
 
-            virtual ~base_block_model() {};
+            virtual ~flatmemory_block_model() {};
 
             virtual bool insert(indx id) {
                 if (intf) {
@@ -429,7 +422,7 @@ namespace dvnci {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename BLOCKITEMTYPE>
-        void base_block_model<BLOCKITEMTYPE>::generate_impl() {
+        void flatmemory_block_model<BLOCKITEMTYPE>::generate_impl() {
             parcel_iterator its = bmap.left.begin();
             if (its == bmap.left.end()) {
                 needgenerate = false;
@@ -458,15 +451,15 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         template <typename BLOCKITEMTYPE>
-        class parcel_block_model : public base_block_model<BLOCKITEMTYPE> {
+        class parcel_block_model : public flatmemory_block_model<BLOCKITEMTYPE> {
         public:
 
-            typedef base_block_model<BLOCKITEMTYPE> basetype;
+            typedef flatmemory_block_model<BLOCKITEMTYPE> basetype;
             typedef abstract_block_model::block block;
             typedef abstract_block_model::parcel_iterator parcel_iterator;
 
             parcel_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_model<BLOCKITEMTYPE>(exectr, inf, mlnk) {}
+            flatmemory_block_model<BLOCKITEMTYPE>(exectr, inf, mlnk) {}
 
         protected:
 
