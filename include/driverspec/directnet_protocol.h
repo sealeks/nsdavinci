@@ -90,10 +90,10 @@ namespace dvnci {
         /*directnet_value_manager*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class directnet_value_manager : public linemem_value_manager {
+        class directnet_value_manager : public flatmemory_value_manager {
         public:
 
-            directnet_value_manager() : linemem_value_manager() {}
+            directnet_value_manager() : flatmemory_value_manager() {}
 
         protected:
 
@@ -103,9 +103,9 @@ namespace dvnci {
                 return NULL_BIT_NUM;}
 
 
-            virtual ns_error set_val(std::string& val, parcel_ptr prcl, size_t bitn = NULL_BIT_NUM);
+            virtual ns_error parse_response_impl(std::string& val, parcel_ptr prcl, size_t bitn = NULL_BIT_NUM);
 
-            virtual ns_error get_val(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);};
+            virtual ns_error preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*basis_koyo_protocol*/

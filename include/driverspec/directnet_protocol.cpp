@@ -105,7 +105,7 @@ namespace dvnci {
         /*directnet_value_manager*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ns_error directnet_value_manager::set_val(std::string& val, parcel_ptr prcl, size_t bitn) {
+        ns_error directnet_value_manager::parse_response_impl(std::string& val, parcel_ptr prcl, size_t bitn) {
             unum16 tmp = 0;
             if (bitn != NULL_BIT_NUM) {
                 if (string_to_primtype<unum16 > (val, tmp)) {
@@ -120,10 +120,10 @@ namespace dvnci {
                             prcl->error(ERROR_IO_NO_PARSEDATA);};
                         break;}
                     default:{
-                        return linemem_value_manager::set_val(val, prcl);}}}
+                        return flatmemory_value_manager::parse_response_impl(val, prcl);}}}
             return error(0);}
 
-        ns_error directnet_value_manager::get_val(std::string& val, parcel_ptr cmd, size_t bitn ) {
+        ns_error directnet_value_manager::preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn ) {
             unum16 tmp = 0;
             if (bitn != NULL_BIT_NUM) {
                 val = cmd->value_cast<bool>() ? "on" : "of";
@@ -137,7 +137,7 @@ namespace dvnci {
                             return error(0);}
                         return error(ERROR_IO_NO_GENERATE_REQ);}
                     default:{
-                        return linemem_value_manager::get_val( val, cmd);}}}
+                        return flatmemory_value_manager::preapare_cmd_request_impl( val, cmd);}}}
             return error(ERROR_IO_NO_GENERATE_REQ);}
 
 
