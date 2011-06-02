@@ -137,7 +137,7 @@ namespace dvnci {
             if (its==bmap.left.end()) {
                 needgenerate = false;
                 return;}
-            num32_dev_block_map transitmap;
+            devnum_block_map transitmap;
             block blkit(its, its, intf->group(its->second),
                     intf->groups()->indicateto(intf->group(its->second)),
                     intf->groups()->trycount(intf->group(its->second)));
@@ -158,32 +158,32 @@ namespace dvnci {
                         blkit.groupid(intf->group(it->second));
                         blkit.timout(intf->groups()->indicateto(blkit.groupid()));
                         blkit.trycount(intf->groups()->trycount(blkit.groupid()));
-                        blkit.begin() = it;
-                        blkit.end() = it;
+                        blkit.begin(it);
+                        blkit.end(it);
                         its = it;}
                     else {
                         counter++;
-                        blkit.end() = it;}}
+                        blkit.end(it);}}
                 filltransitmap(transitmap, blkit);}
             generate_by_transitmap(transitmap);
             needgenerate = false;}
 
-        void lgk_block_model::filltransitmap(num32_dev_block_map& mp, const block& blk) {
-            num32_dev_block_iterator it = mp.find(blk.begin()->first->devnum());
+        void lgk_block_model::filltransitmap(devnum_block_map& mp, const block& blk) {
+            devnum_block_iterator it = mp.find(blk.begin()->first->devnum());
             if (it==mp.end()) {
                 dev_block tmp;
                 tmp.add(blk.begin()->first->kind(), blk);
-                mp.insert(num32_dev_block_pair(blk.begin()->first->devnum(), tmp));}
+                mp.insert(devnum_block_pair(blk.begin()->first->devnum(), tmp));}
             else {
                 it->second.add(blk.begin()->first->kind(), blk);}}
 
-        void lgk_block_model::generate_by_transitmap(num32_dev_block_map& mp) {
+        void lgk_block_model::generate_by_transitmap(devnum_block_map& mp) {
             bool needfl = true;
             block blktmp;
-            for (num32_dev_block_iterator it = mp.begin(); it!=mp.end(); ++it) {
+            for (devnum_block_iterator it = mp.begin(); it!=mp.end(); ++it) {
                 it->second.def_iterator();}
             while (needfl) {
                 needfl = false;
-                for (num32_dev_block_iterator it = mp.begin(); it!=mp.end(); ++it) {
+                for (devnum_block_iterator it = mp.begin(); it!=mp.end(); ++it) {
                     if (it->second.next(blktmp, needfl)) blocks.push_back(blktmp);}}}}}
 
