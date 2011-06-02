@@ -1,5 +1,5 @@
 /* 
- * File:   mg_protocol.cpp
+ * File:   spblgkmg_protocol.cpp
  * Author: Serg
  * 
  * Created on 16 ?????? 2010 ?., 18:01
@@ -29,6 +29,14 @@ namespace dvnci {
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        bool calculate_iek_lrc (const std::string& src, num8& crc, std::string::size_type strt) {
+            if (src.size()>strt) {
+                for (std::string::size_type it = strt; it<src.size(); ++it ) {
+                    crc = (it==strt) ? (0xFF & (src.at(it))) : (crc ^ (0xFF & (src.at(it))));}
+                return true;}
+            return false;}
+        
+        
         bool insert_iek_lrc (std::string& src, std::string::size_type strt) {
             num8 crc = 0;
             if (calculate_iek_lrc(src, crc, strt)) {
@@ -36,7 +44,7 @@ namespace dvnci {
                 return true;}
             return false;}
 
-        bool check_iek_lrc (std::string& src, std::string::size_type strt) {
+        bool check_and_clear_iek_lrc (std::string& src, std::string::size_type strt) {
             if (src.size()<(strt+1)) return false;
             num8 crc = 0;
             std::string::size_type it = src.size()-1;
@@ -47,12 +55,6 @@ namespace dvnci {
                     return true;}}
             return false;}
 
-        bool calculate_iek_lrc (const std::string& src, num8& crc, std::string::size_type strt) {
-            if (src.size()>strt) {
-                for (std::string::size_type it = strt; it<src.size(); ++it ) {
-                    crc = (it==strt) ? (0xFF & (src.at(it))) : (crc ^ (0xFF & (src.at(it))));}
-                return true;}
-            return false;}
 
         ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -91,9 +93,8 @@ namespace dvnci {
         //////////////////////////////////////////////////////////////////////////////////////////////////
 
         ns_error      iek1177_protocol::read_arh(parcel_ptr prcl) {
-            datetime start, stop;
-            prcl->report_range(start, stop);
-            std::string req = generate_arh(prcl->chanel(), prcl->addr(), start );
+            datetime_pair timerange= prcl->report_range();
+            std::string req = generate_arh(prcl->chanel(), prcl->addr(), timerange.first );
             std::string resp;
             if (!error(request(req, resp))) {
                 error(parce_arch(resp));}

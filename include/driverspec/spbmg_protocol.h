@@ -1,5 +1,5 @@
 /* 
- * File:   mg_protocol.h
+ * File:   spblgkmg_protocol.h
  * Author: Serg
  *
  * Created on 16 ?????? 2010 ?., 18:01
@@ -25,22 +25,22 @@ namespace dvnci {
 
         const protocoltype LGKA_PROT_SP    = 0;
         const protocoltype LGKA_PROT_MEC   = 1;
+        
+        const blksizetype  LGKA_MAX_BLOCKSIZE = 25;
 
-        // ????????????? ????????
-        // ???????  ( ???? ?????? - ?????)
-        // ?????? ????????
+
         const std::string MG_FC_RD_VAL_R =  "\x1D";
         const std::string MG_FC_RD_VAL_A =  "\x03";
-        // ?????? ????????
+
         const std::string MG_FC_WR_VAL_R =  "\x03";
         const std::string MG_FC_WR_VAL_A =  "\x16";
-        // ?????? ???????
+
         const std::string MG_FC_RD_ARR_R =  "\x0C";
         const std::string MG_FC_RD_ARR_A =  "\x14";
-        // ?????? ???????
+
         const std::string MG_FC_WR_ARR_R =  "\x14";
         const std::string MG_FC_WR_ARR_A =  "\x7F";
-        //?????? ??????
+
         const std::string MG_FC_RD_ARH_R =  "\x0E";
         const std::string MG_FC_RD_ARH_A =  "\x16";
 
@@ -50,7 +50,7 @@ namespace dvnci {
         const std::string MG_START_BODY  =  DLE + STX;
         const std::string MG_END_BODY    =  DLE + ETX;
 
-        // Regex ????????? ?????????????? ?????????
+        // Regex 
 
         const std::string MG_RD_VAL_RESP       = MG_START_ENV + ".{0,2}?" + MG_FUNC_ENV + MG_FC_RD_VAL_A +  MG_START_BODY + ".{0,}" + MG_END_BODY + ".{2,2}";
         const std::string MG_RD_ARR_RESP       = MG_START_ENV + ".{0,2}?" + MG_FUNC_ENV + MG_FC_RD_ARR_A +  MG_START_BODY + ".{0,}" + MG_END_BODY + ".{2,2}";
@@ -63,14 +63,14 @@ namespace dvnci {
 
         const num32   MAX_NUM_MG = 30;
 
-        std::string mg_lgk_datetime_to_str ( const datetime& dt);
-        std::string mg_lgk_date_to_str ( const datetime& dt);
-        std::string mg_lgk_time_to_str (const datetime& dt);
-        std::string lgk_date_to_str ( const datetime& dt);
-        std::string lgk_time_to_str (const datetime& dt);
-        datetime    mg_lgk_str_to_datetime (std::string vl);
+        std::string  mg_lgk_datetime_to_str ( const datetime& dt);
+        std::string  mg_lgk_date_to_str ( const datetime& dt);
+        std::string  mg_lgk_time_to_str (const datetime& dt);
+        std::string  lgk_date_to_str ( const datetime& dt);
+        std::string  lgk_time_to_str (const datetime& dt);
+        datetime     mg_lgk_str_to_datetime (std::string vl);
 
-        class mg_value_manager : public abstract_value_manager {
+        class spblgkmg_value_manager : public abstract_value_manager {
 
             struct parcel_addr {
 
@@ -108,25 +108,25 @@ namespace dvnci {
 
         public:
 
-            mg_value_manager() :  abstract_value_manager() {}
+            spblgkmg_value_manager() :  abstract_value_manager() {}
 
-            virtual ns_error set_value(const std::string& val, block& blk);
+            virtual ns_error parse_response(const std::string& val, block& blk);
 
-            virtual ns_error get_value(std::string& val, parcel_ptr cmd);
+            virtual ns_error preapare_cmd_request(std::string& val, parcel_ptr cmd);
 
         protected:
 
             ////////////////////////////////////////////////////////////////////////////////////
 
-            void set_val(const block& blk);
+            void parse_response_impl(const block& blk);
 
-            void set_val(parcel_ptr prcl);
+            void parse_response_impl(parcel_ptr prcl);
 
             void set_arch(const block& blk);
 
             void set_arch(parcel_ptr prcl);
 
-            bool get_val(std::string& vl, num32 ch, num32 num, num32 inx);
+            bool preapare_cmd_request_impl(std::string& vl, num32 ch, num32 num, num32 inx);
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -150,13 +150,12 @@ namespace dvnci {
 
             
 
-        class mg_protocol : public templ_protocol<mg_value_manager> {
+        class spblgkmg_protocol : public templ_protocol<spblgkmg_value_manager> {
         public:
 
-            mg_protocol(basis_iostream_ptr io) : templ_protocol<mg_value_manager>(io) {}
+            spblgkmg_protocol(basis_iostream_ptr io) : templ_protocol<spblgkmg_value_manager>(io) {}
 
             virtual bool init() { return (ios) && (!check_proxy());}
-
 
 
             virtual bool utiloperation(const devnum_set& vl){
@@ -247,7 +246,7 @@ namespace dvnci {
                 insert_ccitt_crc(vl, 2);
                 return vl;}
 
-            ns_error  sync_time_device(num32 devnum);
+            ns_error  sync_time_device(devnumtype devnum);
 
             str_vect   tmpvct;
             num8    proxyaddr;} ;
