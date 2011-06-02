@@ -86,16 +86,16 @@ namespace dvnci {
                 bool                          smpl_fl, arr_fl, arch_fl;
                 parcelkind                    curtype_;} ;
 
-            typedef std::pair<num32 , dev_block>                                    num32_dev_block_pair;
-            typedef std::map< num32, dev_block , std::less<num32>,
-            std::allocator<num32_dev_block_pair > >                                 num32_dev_block_map;
-            typedef num32_dev_block_map::iterator                                   num32_dev_block_iterator;
+            typedef std::pair<devnumtype , dev_block>                               devnum_block_pair;
+            typedef std::map< devnumtype, dev_block , std::less<devnumtype>,
+            std::allocator<devnum_block_pair > >                                    devnum_block_map;
+            typedef devnum_block_map::iterator                                      devnum_block_iterator;
 
 
 
             virtual void generate_impl();
-            void filltransitmap(num32_dev_block_map& mp, const block& blk);
-            void generate_by_transitmap(num32_dev_block_map& mp);};
+            void filltransitmap(devnum_block_map& mp, const block& blk);
+            void generate_by_transitmap(devnum_block_map& mp);};
 
 
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
