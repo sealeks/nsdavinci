@@ -202,6 +202,7 @@ namespace dvnci {
                 return select_report_impl(static_cast<num32> (id), static_cast<num32> (type), starttime, stoptime, datamap, cnt);}
 
             virtual bool select_reports(tagtype type, const datetime& tm, indx_double_map& vlmap) {
+                vlmap.clear();
                 return select_reports_impl(type, tm, vlmap);}
 
             virtual bool select_trend(indx id, const datetime& starttime, const datetime& stoptime, dt_val_map& datamap){
@@ -212,7 +213,7 @@ namespace dvnci {
            // последние данные в таблице отчетов
 
             bool select_lastreporttime(indx id, tagtype type, reporthisttype present, dvnci::datetime& tm);
-            bool select_lastreporttime(indx id, tagtype type, reporthisttype present, dvnci::datetime& tm, dt_val_map& values, size_t cnt = REPORT_BUFFER_SIZE);
+            bool select_lastreporttime(indx id, tagtype type, reporthisttype present, dt_val_map& values, size_t cnt = REPORT_BUFFER_SIZE);
 
             //отчетная статистика по параметру  на основе данных по графикам
 
