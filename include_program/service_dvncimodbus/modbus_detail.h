@@ -41,11 +41,11 @@ namespace dvnci {
 
 
 
-        class modbus_block_model : public base_block_model<modbus_req_parcel> {
+        class modbus_block_model : public flatmemory_block_model<modbus_req_parcel> {
         public:
 
             modbus_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_model<modbus_req_parcel>(exectr, inf, mlnk) {
+            flatmemory_block_model<modbus_req_parcel>(exectr, inf, mlnk) {
                 
                 blocksize = ((mlnk.protocol() == NT_MODBUS_ASCII) && (mlnk.chanaltype() != NT_CHTP_TCP_IP)) ?
                         in_bounded<size_t > (8, MAX_MODBUS_BLOCK_SIZE / 2, static_cast<size_t> (mlnk.blocksize())) :
