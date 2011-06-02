@@ -37,7 +37,7 @@ namespace dvnci {
     void expr_executor::parse (std::string val) {
         DEBUG_STR_VAL_DVNCI(PARSE, val)
         expressionptr = expression_ptr(new expression(val, intf));
-        if (iserror(expressionptr->testerror()))
+        if (error(expressionptr->testerror()))
             intf->debugwarning("Binding error id=" + intf->name(id) + " bind=" + val);}
 
     bool expr_executor::rebuild_if_need(indx id) {
@@ -69,7 +69,7 @@ namespace dvnci {
 
     void sysreport_executor::execute_impl(indx idex) {
         if (executr) {
-            if (iserror()) {
+            if (error()) {
                 executr->error(idex, error());}
             else {
                 if (dbdriver) {
@@ -87,23 +87,18 @@ namespace dvnci {
     void sysreport_executor::parse (std::string val) {
         error(0);
         DEBUG_VAL_DVNCI(val)
-        if ((!intf) || (!intf->exists(id))) {
+        if ((!intf) || (!intf->exists(id)) || (!intf->exists(val))) {
             sourseid = npos;
             type = 0;
-            error(ERROR_TAGNOEXIST);
+            error(ERROR_BINDING);
             return;}
         else {
-            if (!intf->exists(val)) {
-                sourseid = npos;
-                error(ERROR_TAGNOEXIST);
-                return;}
-            else {
-                sourseid = intf(val);
-                soursetype = intf->type(sourseid);
-                type = intf->type(id);
-                if (!checktypes()) {
-                    DEBUG_STR_VAL_DVNCI(SUSCCESSBIND, id);
-                    DEBUG_STR_VAL_DVNCI(BIND, val);}}}}
+            sourseid = intf(val);
+            soursetype = intf->type(sourseid);
+            type = intf->type(id);
+            if (!checktypes()) {
+                DEBUG_STR_VAL_DVNCI(SUSCCESSBIND, id);
+                DEBUG_STR_VAL_DVNCI(BIND, val);}}}
 
     void sysreport_executor::readvalue() {
         if (dbdriver->isconnected()) {
@@ -160,7 +155,8 @@ namespace dvnci {
                             else
                                 ++it;}
                         if (tmpvals.empty()) return true;
-                        statistic_functor stfctr(intf->reportstatistic(id) == REPORT_STATISTIC_INTEG ? REPORT_STATISTIC_SUM : intf->reportstatistic(id));
+                        statistic_functor stfctr(intf->reportstatistic(id) == REPORT_STATISTIC_INTEG ?
+                            REPORT_STATISTIC_SUM : intf->reportstatistic(id));
                         std::for_each<dt_val_map::const_iterator, statistic_functor&>(tmpvals.begin(), tmpvals.end(), stfctr);
                         rslt = stfctr.countedvalue();
                         DEBUG_STR_VAL_DVNCI(COUNTBYLOCALBUFFER REPORT, rslt);
@@ -280,7 +276,7 @@ namespace dvnci {
 
     void sysreportcnt_executor::execute_impl(indx idex) {
         if (executr) {
-            if (iserror()) {
+            if (error()) {
                 executr->error(idex, error());}
             else {
                 if (dbdriver) {
@@ -299,11 +295,11 @@ namespace dvnci {
         DEBUG_STR_VAL_DVNCI(PARSEREPORTCOUNT, val)
         if ((!intf) || (!intf->exists(id))) {
             type = 0;
-            error(ERROR_TAGNOEXIST);
+            error( ERROR_BINDING);
             return ;}
         type=intf->type(id);
         expressionptr = expression_ptr(new expression(val, intf));
-        if ((checktypes()) || (iserror(expressionptr->testerror()))) {
+        if ((checktypes()) || (error(expressionptr->testerror()))) {
             intf->debugwarning("Binding error id=" + intf->name(id) + " bind=" + val);}}
 
     void sysreportcnt_executor::readvalue() {

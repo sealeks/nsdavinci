@@ -84,7 +84,7 @@ namespace dvnci {
         tagtype                                 type;
         indx                                    sourseid;
         tagtype                                 soursetype;
-        reportsrctype                           counttype; /* REP_COUNT_BY_LOG, REP_COUNT_BY_REP*/
+        reportsrctype                           counttype; 
         static dvnci::database::dbdriver_ptr    dbdriver;};
 
 
