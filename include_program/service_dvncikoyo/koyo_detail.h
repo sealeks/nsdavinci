@@ -111,11 +111,11 @@ namespace dvnci {
         /*Koyo ????????? ????? ??????*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class koyo_block_model : public base_block_model<koyo_req_parcel> {
+        class koyo_block_model : public flatmemory_block_model<koyo_req_parcel> {
         public:
 
             koyo_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            base_block_model<koyo_req_parcel>(exectr, inf, mlnk) {
+            flatmemory_block_model<koyo_req_parcel>(exectr, inf, mlnk) {
                 switch (def_koyo_protocol(mlnk)) {
                     case NT_KOYO_DIRECTNET_ECOM:{
                         blocksize = in_bounded<size_t > (8, MAX_ECOM_BLOCK_SIZE, static_cast<size_t> (mlnk.blocksize()));

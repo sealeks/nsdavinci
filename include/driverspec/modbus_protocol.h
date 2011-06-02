@@ -78,10 +78,10 @@ namespace dvnci {
         /*modbus_value_manager*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class modbus_value_manager : public linemem_value_manager {
+        class modbus_value_manager : public flatmemory_value_manager {
         public:
 
-            modbus_value_manager() : linemem_value_manager() {}
+            modbus_value_manager() : flatmemory_value_manager() {}
 
         protected:
 
@@ -96,9 +96,9 @@ namespace dvnci {
             virtual bool spec_protocol_convertion_in(std::string& val, size_t bitn = NULL_BIT_NUM) {
                 return be_le16_convert_string(val);}
 
-            virtual ns_error set_val(std::string& val, parcel_ptr prcl, size_t bitn = NULL_BIT_NUM);
+            virtual ns_error parse_response_impl(std::string& val, parcel_ptr prcl, size_t bitn = NULL_BIT_NUM);
 
-            virtual ns_error get_val(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);};
+            virtual ns_error preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*basis_modbus_protocol*/
