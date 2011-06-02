@@ -183,7 +183,7 @@ namespace dvnci {
 
             //отчетная статистика по параметру
 
-            bool select_statistic(num32 typecount, indx id, tagtype type, dvnci::datetime starttime, dvnci::datetime stoptime, num32 stat, double& val) {
+            bool select_statistic(reportsrctype typecount, indx id, tagtype type, dvnci::datetime starttime, dvnci::datetime stoptime, num32 stat, double& val) {
                 if ((typecount != REP_COUNT_BY_LOG) && (typecount != REP_COUNT_BY_REP)) return false;
                 if (id == npos) return false;
                 switch (typecount) {
