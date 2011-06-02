@@ -386,6 +386,8 @@ namespace dvnci {
     typedef num32 reporthisttype;
     //reporthistdelt type
     typedef num32 reporthistdelt;
+    //reportsrctype type       
+    typedef  onum   reportsrctype;
     
     typedef  boost::filesystem::path      fspath;
 
@@ -874,9 +876,10 @@ namespace dvnci {
 
     const size_t RESET_LOG_TIME = 55;
 
-    const num32 REP_COUNT_NODEF  = 0;
-    const num32 REP_COUNT_BY_LOG = 1;
-    const num32 REP_COUNT_BY_REP = 2;
+    
+    const reportsrctype REP_COUNT_NODEF  = 0;
+    const reportsrctype REP_COUNT_BY_LOG = 1;
+    const reportsrctype REP_COUNT_BY_REP = 2;
 
 
     const dbprovtype PROPERTY_DB_PROVIDER_NONE = 0x0000;
