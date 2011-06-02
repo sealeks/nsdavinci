@@ -185,5 +185,50 @@ namespace dvnci {
             while (needfl) {
                 needfl = false;
                 for (devnum_block_iterator it = mp.begin(); it!=mp.end(); ++it) {
-                    if (it->second.next(blktmp, needfl)) blocks.push_back(blktmp);}}}}}
+                    if (it->second.next(blktmp, needfl)) blocks.push_back(blktmp);}}}
+    
+        
+        
+    
+       // lgk_com_option_setter
+    
+       boost::system::error_code lgk_com_option_setter::store(com_port_option&  opt, boost::system::error_code & ec) const {
+                reset_default_nill(opt);
+                switch (link.protocol()) {
+                    case LGKA_PROT_MEC:{
+                        
+                        set_rs232_baudrate(opt, link.inf().cominf.boundrate);
+                        set_rs232_comoption(opt, 7,  NT_RS_EVENPARITY, NT_RS_ONESTOPBIT);                        
+			break;}
+                    
+                    default:{
+                        set_rs232_baudrate(opt, link.inf().cominf.boundrate);
+                        set_rs232_comoption(opt, 8, NT_RS_NOPARITY, NT_RS_ONESTOPBIT);}}
+                return boost::system::error_code ();}  
+       
+       
+       
+       
+       //lgk_protocol_factory
+          
+       ioprotocol_ptr lgk_protocol_factory::build(const metalink& lnk, ns_error & err) {
+
+                typedef rs_iostream<lgk_com_option_setter> lgk_rs_iostream;
+
+                if (lnk.chanaltype() != NT_CHTP_RS232_4XX){
+                    err = ERROR_IO_LINK_NOT_SUPPORT;
+                    ioprotocol_ptr();}
+
+                basis_iostream_ptr tmp_stream = basis_iostream_ptr(new lgk_rs_iostream(lnk,
+                        lnk.timeout(), lnk.chanalnum(), false));
+
+                switch (lnk.protocol()){
+                    case LGKA_PROT_MEC: { return ioprotocol_ptr(new iek1177_protocol(tmp_stream));}
+                    default : {return ioprotocol_ptr(new spblgkmg_protocol(tmp_stream));}}
+
+                err = ERROR_IO_LINK_NOT_SUPPORT;
+                return ioprotocol_ptr();}
+    
+    
+    }}
 

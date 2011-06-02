@@ -1,5 +1,5 @@
 /* 
- * File:   mg_protocol.h
+ * File:   spblgkmg_protocol.h
  * Author: Serg
  *
  * Created on 16 ?????? 2010 ?., 18:01
@@ -17,7 +17,7 @@ namespace dvnci {
 
         //////////////////////////////////////////////////////////////////////////////////
 
-        // ??? ????????
+
 
         const std::string MK1177_FC_R =  "R";
         const std::string MK1177_FC_W =  "W";
@@ -30,15 +30,14 @@ namespace dvnci {
         const std::string MK1177_START_BODY_R   =  MK1177_START_ENV_R + STX;
         const std::string MK1177_START_BODY_W    = MK1177_START_ENV_W + STX;
 
-        // ?????? ????????
         const std::string MK1177_FC_RD_VAL =  "035";
-        // ?????? ????????
+
         const std::string MK1177_FC_WR_VAL =  "003";
-        // ?????? ???????
+
         const std::string MK1177_FC_RD_ARR =  "014";
-        // ?????? ???????
+
         const std::string MK1177_FC_WR_ARR =  "024";
-        //?????? ??????
+
         const std::string MK1177_FC_RD_ARH =  "016";
 
         const std::string MK1177_RESP      =  "((" + STX + "\\(.{0,}\\)" + ETX + ".{1,1})|" + NAK + "|" + ACK + ")";
@@ -49,40 +48,33 @@ namespace dvnci {
 
         std::string iek1177_lgk_datetime_to_str (const datetime& dt);
 
-
-        bool calculate_iek_lrc (const std::string& src, num8& crc, std::string::size_type strt);
         bool insert_iek_lrc (std::string& src, std::string::size_type strt);
-        bool check_iek_lrc (std::string& src, std::string::size_type strt);
+        bool check_and_clear_iek_lrc (std::string& src, std::string::size_type strt);
 
         class lgk_iek1177_value_manager : public abstract_value_manager {
         public:
 
             lgk_iek1177_value_manager() :  abstract_value_manager() {}
 
-            virtual ns_error set_value(const std::string& val, block& blk) {
+            virtual ns_error parse_response(const std::string& val, block& blk) {
                 error(0);
-                std::string tmpvl = "";
-                parcelkind tp =    blk.begin()->first->kind();
-                switch (tp) {
+                switch (blk.begin()->first->kind()) {
+                    case LGKA_TYPEITEM_ARRAY:
                     case LGKA_TYPEITEM_SMPL:{
-                        if (!parse_val(val, tmpvl)) 
+                        std::string tmpvl = "";
+                        if (!parse_val(val, tmpvl))
                             blk.begin()->first->value_cast(tmpvl);
                         return error();}
                     case LGKA_TYPEITEM_ARCHIVE:{
-                        //if (!parse_val(val, tmpvl)) 
-                        //    blk.begin()->first->value_cast(tmpvl);
-                        return error();}
-                    case LGKA_TYPEITEM_ARRAY:{
-                        datetime start, stop;
+                        datetime_pair timerange = blk.begin()->first->report_range();
                         dt_val_map mp;
-                        blk.begin()->first->report_range(start, stop);
-                        parse_arh(tmpvl, start, mp );
-                        blk.begin()->first->value_report(mp);
+                        if (!parse_arh(val, timerange.first, mp ))
+                            blk.begin()->first->value_report(mp);
                         return error();}}
-                return 0;}
+                return error();}
 
-            virtual ns_error get_value(std::string& val, parcel_ptr cmd) {
-                val = cmd->value_cast<std::string>();
+            virtual ns_error preapare_cmd_request(std::string& val, parcel_ptr cmd) {
+                val = cmd->value_cast<std::string > ();
                 return 0;};
 
         protected:
@@ -98,6 +90,11 @@ namespace dvnci {
                 if (!str_to<double>(strval, vl)) vl = NULL_DOUBLE;
                 mp.insert(dt_val_pair(dt, vl));
                 return error(0);}} ;
+                
+                
+                
+                
+                
 
         class iek1177_protocol : public templ_protocol<lgk_iek1177_value_manager> {
         public:
@@ -108,10 +105,11 @@ namespace dvnci {
 
 
         protected:
-            
+
             virtual ns_error readblock(block& blk) {
                 error(0);
-                num8  dvnum = ((blk.begin()->first->devnum() >= 0) && (blk.begin()->first->devnum() <= 30)) ? static_cast<num8> (blk.begin()->first->devnum()) : -1;
+                num8  dvnum = ((blk.begin()->first->devnum() >= 0) && (blk.begin()->first->devnum() <= 30)) ? 
+                    static_cast<num8> (blk.begin()->first->devnum()) : -1;
                 switch (blk.begin()->first->kind()) {
                     case LGKA_TYPEITEM_SMPL:    return    read_val(blk.begin()->first);
                     case LGKA_TYPEITEM_ARCHIVE:   return  read_arh(blk.begin()->first);
@@ -131,7 +129,7 @@ namespace dvnci {
                 insert_iek_lrc(req, 1);
                 if (!error(ios->write(req))) {
                     if (!error(ios->read_until(resp, boost::regex(MK1177_RESP)))) {
-                        error(check_iek_lrc(resp, 1) ? 0 : ERROR_IO_CRC);}}
+                        error(check_and_clear_iek_lrc(resp, 1) ? 0 : ERROR_IO_CRC);}}
                 return error();}
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -207,9 +205,7 @@ namespace dvnci {
             std::string&  generate_write_body_arr(std::string& vl, std::string vlstr, num32 ch, num32 nm, num32 ind) {
                 vl = MK1177_START_BODY_W +  generate_addr(LGKA_TYPEITEM_ARRAY, MK1177_FC_WR_ARR, ch, nm, ind)  + "(" + comma_to_point_copy(vlstr) +  ")" + ETX;
                 return vl;}
-
 } ;
-
 }}
 
 #endif	/* MG_PROTOCOL_H */
