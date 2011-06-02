@@ -1969,14 +1969,13 @@ namespace dvnci {
             return valbuffers()->select(logkey(id), vl, from_, to_, lgdb);}
 
         bool select_trendbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const {
-            vl.clear();
             return select_trendbuff(operator ()(nm), vl, from_, to_, lgdb);}
 
         datetime trend_history_toptime(size_type id) const {
             return valbuffers()->toptime(logkey(id));}
 
         bool report_history_empty(size_type id) const {
-			datetime tmpdt =reportbuffers()->toptime(reportkey(id));
+	    datetime tmpdt =reportbuffers()->toptime(reportkey(id));
             return ((tmpdt==nill_time) || (reportbuffers()->toptime(reportkey(id)) < time_log(id)));}
 
         bool select_reportbuff_topvalue(size_type id, dt_val_pair& vl) const {
@@ -1995,17 +1994,19 @@ namespace dvnci {
             return true;}
 
         size_t select_reportbuff_count(size_type id) const {
-            if ((reportbuffers())  && (reportkey(id) != npos)) {
+            if (reportbuffers()) {
                 return reportbuffers()->count(reportkey(id));}
             return 0;}
 
-        bool insert_to_reportbuff_init(size_type id, const dt_val_map& values, const datetime& lst = nill_time) {
+        bool insert_to_reportbuff_init(size_type id, const dt_val_map& values) {
             if (!values.empty()) {
                 reportbuffers()->insert(reportkey(id), values);
                 write_val_report(id, values.rbegin()->first, values.rbegin()->second, 0 , true);
                 return true;}
-            if (lst == nill_time) return false;
-            write_val_report(id, lst, NULL_DOUBLE, true);
+            datetime tm = dvnci::now();
+            normalizereporttime(tm, type(id));
+            increporttime(tm, type(id), -reporthistory(id));
+            write_val_report(id, tm, NULL_DOUBLE, true);
             return true;}
 
         bool insert_to_reportbuff_init(size_type id) {
@@ -2023,11 +2024,9 @@ namespace dvnci {
             return true;}
 
         bool select_reportbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
-            vl.clear();
             return reportbuffers()->select(reportkey(id), vl, from_, to_);}
 
         bool select_reportbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
-            vl.clear();
             return select_reportbuff(operator ()(nm), vl, from_, to_);}
 
         bool trendbuff_need_write(size_type id) const {
