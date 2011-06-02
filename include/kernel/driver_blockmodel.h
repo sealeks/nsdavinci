@@ -256,10 +256,10 @@ namespace dvnci {
                 void timout(timeouttype vl) {
                     timout_ = in_bounded<timeouttype > (10, 600000, vl);}
                 
-                parcel_iterator begin() const{
+                const parcel_iterator& begin() const{
                     return start_;}
                 
-                parcel_iterator end() const{
+                const parcel_iterator& end() const{
                     return stop_;}
                 
                 void begin(const parcel_iterator& val) {
