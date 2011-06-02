@@ -42,7 +42,7 @@ public:
 
     archiveservice() : basisservice(basepath,
             (sIMMILog | sIMMITagManage | sIMMIGroupManage | sIMMIDBManage ),
-            NS_PERSISTENCE_SERVICE) , provider_database(0), connection_string(""), dbdrv() {}
+            NS_PERSISTENCE_SERVICE, true) , provider_database(0), connection_string(""), dbdrv() {}
 
 protected:
 

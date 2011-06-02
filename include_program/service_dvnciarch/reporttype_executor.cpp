@@ -14,7 +14,7 @@ namespace dvnci {
     dbdriver_ptr reporttype_executor::dbdriver = dbdriver_ptr();
 
     void reporttype_executor::execute_impl(indx id) {
-        if (iserror()) {
+        if (error()) {
             intf->error(id, error());
             return;}
         if (dbdriver) {
@@ -26,13 +26,10 @@ namespace dvnci {
                     case REPORT_NEEDKHOWDEEP:{
                         DEBUG_VAL_DVNCI(intf->select_reportbuff_count(id))
                         if (!intf->insert_to_reportbuff_init(id)){
-                            dvnci::datetime tm;
+                            dvnci::datetime tm = nill_time;
                             dt_val_map tmpvlmap;
-                            if (dbdriver->select_lastreporttime(intf(expression_), intf->type(id) , intf->reporthistory(id), tm, tmpvlmap)) {
-                               DEBUG_STR_VAL_DVNCI(init report history, tm)
-                               DEBUG_STR_VAL_DVNCI(init report history, tmpvlmap.size())
-                               intf->insert_to_reportbuff_init(id, tmpvlmap, tm);
-                               DEBUG_STR_DVNCI(report_history_exit)};}
+                            dbdriver->select_lastreporttime(intf(expression_), intf->type(id) , intf->reporthistory(id), tmpvlmap);
+                            intf->insert_to_reportbuff_init(id, tmpvlmap);}
                         break;}
                     case REPORT_DATA:{
                         DEBUG_STR_DVNCI(REPORT_DATA)
