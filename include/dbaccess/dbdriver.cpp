@@ -83,7 +83,6 @@ namespace database {
        // последние данные в таблице отчетов
 
             bool dbdriver::select_lastreporttime(indx id, tagtype type, reporthisttype present, dvnci::datetime& tm) {
-                if (tm.is_special()) tm = dvnci::now();
                 datetime tmtmp = tm;
                 normilize_history_bound(type, present);
                 datetime tm_reporttable = tm;
@@ -102,9 +101,11 @@ namespace database {
                         tm = tmtmp;
                         return true;}}
                 tm = tmtmp;
-                return true;}
+                return false;}
 
-            bool dbdriver::select_lastreporttime(indx id, tagtype type, reporthisttype present, dvnci::datetime& tm, dt_val_map& values, size_t cnt) {
+            bool dbdriver::select_lastreporttime(indx id, tagtype type, reporthisttype present, dt_val_map& values, size_t cnt) {
+                values.clear();
+                datetime tm = dvnci::now();
                 if (select_lastreporttime(id, type, present, tm)){
                     datetime starttime = tm;
                     datetime stoptime = tm;
