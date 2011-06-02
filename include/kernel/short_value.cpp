@@ -22,7 +22,7 @@ namespace dvnci {
             case TYPE_TEXT:{
                 return (str_ptr) ? (*str_ptr) : "";}
             default:{
-                num64_and_type_cast<std::string > (value_, type_);}}
+                return num64_and_type_cast<std::string > (value_, type_);}}
         return "";}
     
     

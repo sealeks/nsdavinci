@@ -27,12 +27,6 @@ namespace dvnci {
             ns_error  error() const {
                 return error_;}
 
-            bool iserror() const {
-                return ((error_) && (error_!=ERROR_EXPRMATH));}
-
-            bool  matherror() const {
-                return (error_ == ERROR_EXPRMATH);}
-
             std::string expressionstr() const {
                 return expression_;}
 
@@ -47,10 +41,7 @@ namespace dvnci {
             
             ns_error  error(ns_error err){
                 return error_=err;}
-            
-           bool iserror(ns_error err)  {
-                return ((error_=err) && (error_!=ERROR_EXPRMATH));}
-
+           
             virtual void expressionstr(std::string val) {
                 lower_and_fulltrim(val);
                 if (val != expression_) {
