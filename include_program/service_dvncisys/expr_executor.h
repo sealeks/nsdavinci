@@ -16,6 +16,8 @@
 #include <dbaccess/dbconnectionfactory.h>
 
 namespace dvnci {
+    
+
 
     ////////////////////////////////////////////////////
     /* expr_executor */
@@ -60,7 +62,8 @@ namespace dvnci {
     public:
 
         sysreport_executor(executor* exectr, base_ptr inf, indx id = npos) :
-        system_tag(exectr, inf, id), type(0), sourseid (npos), soursetype(0), counttype(0){
+        system_tag(exectr, inf, id), type(0), 
+                sourseid (npos), soursetype(0), counttype(REP_COUNT_NODEF){
             if (intf) expressionstr(intf->binding(id));};
 
         virtual bool rebuild_if_need(indx idsrc = npos);
@@ -78,10 +81,10 @@ namespace dvnci {
         bool count_from_localsourse(const datetime& strt, const datetime& stp , double& rslt);
 
     private:
-        tagtype                type;
-        indx                   sourseid;
-        tagtype                soursetype;
-        int                    counttype; /* REP_COUNT_BY_LOG, REP_COUNT_BY_REP*/
+        tagtype                                 type;
+        indx                                    sourseid;
+        tagtype                                 soursetype;
+        reportsrctype                           counttype; /* REP_COUNT_BY_LOG, REP_COUNT_BY_REP*/
         static dvnci::database::dbdriver_ptr    dbdriver;};
 
 
