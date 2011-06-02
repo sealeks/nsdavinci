@@ -114,9 +114,9 @@ namespace dvnci {
 
             virtual ns_error writecmd(const std::string& vl, parcel_ptr cmd) = 0;
                      
-            virtual ns_error set_value(const std::string& val, block& blk) = 0;
+            virtual ns_error parse_response(const std::string& val, block& blk) = 0;
 
-            virtual ns_error get_value(std::string& val, parcel_ptr cmd) = 0;    
+            virtual ns_error preapare_cmd_request(std::string& val, parcel_ptr cmd) = 0;    
             
             const std::string& rdata() const {
                 return readdata;}
@@ -158,8 +158,8 @@ namespace dvnci {
             abstract_value_manager() : lasterror(0) {}
 
             virtual ~abstract_value_manager() {};
-            virtual ns_error set_value(const std::string& val, block& blk) = 0;
-            virtual ns_error get_value(std::string& val, parcel_ptr cmd) = 0;
+            virtual ns_error parse_response(const std::string& val, block& blk) = 0;
+            virtual ns_error preapare_cmd_request(std::string& val, parcel_ptr cmd) = 0;
 
             ns_error error() const {
                 return lasterror;};
@@ -176,14 +176,14 @@ namespace dvnci {
         /*Установщик значении линейного отображения памяти*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class linemem_value_manager : public abstract_value_manager {
+        class flatmemory_value_manager : public abstract_value_manager {
         public:
 
-            linemem_value_manager() : abstract_value_manager() {}
+            flatmemory_value_manager() : abstract_value_manager() {}
 
-            virtual ns_error set_value(const std::string& dbk, block& blk);
+            virtual ns_error parse_response(const std::string& dbk, block& blk);
 
-            virtual ns_error get_value(std::string& val, parcel_ptr cmd);
+            virtual ns_error preapare_cmd_request(std::string& val, parcel_ptr cmd);
 
         protected:
 
@@ -196,11 +196,11 @@ namespace dvnci {
             virtual bool spec_protocol_convertion_in(std::string& val, size_t bitn = NULL_BIT_NUM) {
                 return true;}
 
-            virtual ns_error set_val(std::string& val, parcel_ptr prcl, size_t bitn = NULL_BIT_NUM);
+            virtual ns_error parse_response_impl(std::string& val, parcel_ptr prcl, size_t bitn = NULL_BIT_NUM);
 
             bool get_data_block(const std::string& dbk, std::string& vl, std::string::size_type offset, std::string::size_type dtsize);
 
-            virtual ns_error get_val(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);};
+            virtual ns_error preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);};
 
 
 
@@ -218,11 +218,11 @@ namespace dvnci {
         protected:
             
             
-            virtual ns_error set_value(const std::string& val, block& blk) {
-                return valmanager.set_value(val, blk);}
+            virtual ns_error parse_response(const std::string& val, block& blk) {
+                return valmanager.parse_response(val, blk);}
 
-            virtual ns_error get_value(std::string& val, parcel_ptr cmd) {
-                return valmanager.get_value(val, cmd);}
+            virtual ns_error preapare_cmd_request(std::string& val, parcel_ptr cmd) {
+                return valmanager.preapare_cmd_request(val, cmd);}
             
             VALUEMANAGER valmanager;};
 
