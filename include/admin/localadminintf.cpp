@@ -417,7 +417,7 @@ namespace dvnci {
             return intf->insert_group(name);}
 
         indx localadminintf::createagroup( string name, num64 numcriteria) {
-            return intf->create_agroup(name);}
+            return intf->insert_agroup(name);}
 
         indx localadminintf::createuser( string name, num64 numcriteria) {
             return intf->insert_user(name);}
