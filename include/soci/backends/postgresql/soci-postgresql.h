@@ -31,6 +31,15 @@
 #pragma warning(disable:4512 4511)
 #endif
 
+#ifdef _WIN32
+char const * const   formatspec= "%I64d%n";
+#elif _WIN64
+char const * const   formatspec= "%I64d%n"
+#else
+char const * const  formatspec= "%lld%n";
+#endif
+
+
 
 namespace soci
 {
