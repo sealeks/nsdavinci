@@ -82,35 +82,49 @@ namespace database {
 
        // последние данные в таблице отчетов
 
-            bool dbdriver::select_lastreporttime(indx id, tagtype type, reporthisttype present, dvnci::datetime& tm) {
-                datetime tmtmp = tm;
+            datetime dbdriver::select_lastreporttime(indx id, tagtype type, reporthisttype present) {
+                if (id == npos) 
+                    return nill_time;
+                
                 normilize_history_bound(type, present);
-                datetime tm_reporttable = tm;
-                normalizereporttime(tmtmp, type);
-                increporttime(tmtmp, type, -present);
-                if (id == npos) {
-                    tm = tmtmp;
-                    return false;}
-                while (tmtmp < tm_reporttable) {
-                    if (select_lastreporttime_impl(static_cast<num32> (id), static_cast<num32> (type), tm_reporttable)) {
-                        normalizereporttime(tm_reporttable, type);
-                        increporttime(tm_reporttable, type, 1);
-                        tm = tm_reporttable;
-                        return true;}
-                    if (!beforetabletime(tm_reporttable, type)) {
-                        tm = tmtmp;
-                        return true;}}
-                tm = tmtmp;
-                return false;}
+                
+                datetime tm = now();
+                normalizereporttime(tm, type);
+                           
+                datetime tmleft = tm;
+                datetime tmlefttbl = tm;
+                
+                increporttime(tmleft, type, -present);
+
+                if (beforetabletime(tmlefttbl, type)){
+                    tmlefttbl = tmlefttbl<tmleft ? tmlefttbl : tmleft;}
+                else{
+                    tmlefttbl = tmleft;}
+                
+                increporttime(tmlefttbl, type, -1);
+
+                while (tmlefttbl < tm) {
+                    datetime rst = tm;
+                    if (select_lastreporttime_impl(static_cast<num32> (id), static_cast<num32> (type), rst)) {
+                        //if (tmleft>rst) 
+                        //    return nill_time;
+                        normalizereporttime(rst, type);
+                        increporttime(rst, type, 1);
+                        return rst;}
+                    if (!beforetabletime(tm, type)) {
+                        return nill_time;}}
+                
+                return nill_time;}
 
             bool dbdriver::select_lastreporttime(indx id, tagtype type, reporthisttype present, dt_val_map& values, size_t cnt) {
                 values.clear();
-                datetime tm = dvnci::now();
-                if (select_lastreporttime(id, type, present, tm)){
+                datetime tm = select_lastreporttime(id, type, present);
+                if (tm!=nill_time){
                     datetime starttime = tm;
                     datetime stoptime = tm;
-                    if (beforetabletime(starttime, type)){
-                         if (select_report(id, type, starttime, stoptime, values, cnt)){}
+                    if (!beforetabletime(starttime, type)){
+                         increporttime(starttime, type, -1000);}
+                    if (select_report(id, type, starttime, stoptime, values, cnt)){
                          return true;}}
                 return false;}
 
