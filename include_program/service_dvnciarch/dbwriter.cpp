@@ -9,11 +9,12 @@
 
 
 namespace dvnci {
-    namespace database {
         
       /*
       *  db_writer
       */
+    
+        using namespace dvnci::database;
 
 
         dbdriver_ptr db_writer::dbdrv = dbdriver_ptr();
@@ -161,4 +162,4 @@ namespace dvnci {
         bool trend_observer::uninitialize() {
                 THD_EXCLUSIVE_LOCK(*mtx);
                 keyset.clear();
-                return true;}}}
+                return true;}}

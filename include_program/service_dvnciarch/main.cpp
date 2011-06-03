@@ -35,8 +35,8 @@ class archiveservice : public basisservice {
    typedef system_executor<reporttype_executor>                                       report_executor;
    typedef group_proccessor_templ<report_executor,    TYPE_REPORT>                    allreporttag;
 
-   typedef callable_shared_ptr<dvnci::database::db_writer>                            dbwriter_ptr;
-   typedef callable_shared_ptr<dvnci::database::trend_observer>                       observer_ptr;
+   typedef callable_shared_ptr<db_writer>                                             dbwriter_ptr;
+   typedef callable_shared_ptr<trend_observer>                                        observer_ptr;
 
 public:
 
@@ -55,10 +55,10 @@ protected:
        if (!dbdrv->isconnected()) dbdrv->connect();
        if (!dbdrv->isconnected()) return false;
 
-       writer = dbwriter_ptr(new dvnci::database::db_writer(intf));
+       writer = dbwriter_ptr(new db_writer(intf));
        th_writer=boost::thread(writer);
 
-       observer = observer_ptr(new dvnci::database::trend_observer(intf,writer.operator ->()));
+       observer = observer_ptr(new trend_observer(intf,writer.operator ->()));
        th_observer = boost::thread(observer);
 
        group_proccessor_ptr tmp=group_proccessor_ptr(new allreporttag(intf));
