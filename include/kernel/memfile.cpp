@@ -916,19 +916,19 @@ namespace dvnci {
     bool tagsbase::reportbuffered(size_type id) const {
         return (reportkey(id) != npos);}
 
-    vlvtype tagsbase::reportstate(size_type id){
-        if ((exists(id)) && (IN_REPORTSET(type(id)))){
-            switch (operator[](id)->valid()){
-                 case REPORT_NODATA:{
-                        increpttime(id);
-                        break;}
-                 case REPORT_NORMAL:{
-                        checkreporttime(id);
-                        break;}
-                 case REPORT_NOACTIVE:{
-					 operator[](id)->valid(REPORT_NEEDKHOWDEEP);}}
-				return operator[](id)->valid();}
-            return 1;}
+    vlvtype tagsbase::reportstate(size_type id) {
+        if ((exists(id)) && (IN_REPORTSET(type(id)))) {
+            switch (operator[](id)->valid()) {
+                case REPORT_NODATA:{
+                    increpttime(id);
+                    break;}
+                case REPORT_NORMAL:{
+                    checkreporttime(id);
+                    break;}
+                case REPORT_NOACTIVE:{
+                    operator[](id)->valid(REPORT_NEEDKHOWDEEP);}}
+            return operator[](id)->valid();}
+        return 1;}
 
     bool tagsbase::valid_as_reportsource(size_type id) const {
         return ((exists(id)) && (valid(id) == FULL_VALID) &&
@@ -1064,6 +1064,321 @@ namespace dvnci {
                     archtagcnt( archtagcnt() ? archtagcnt() - 1 : archtagcnt());
                     remove_logkey(id);
                     registry()->notify_log(id, false);}}}}
+    
+    
+    void tagsbase::group_appid(size_type id, appidtype val) {
+            if (groups()->exists(id)) {
+                appidtype old_appid = groups()->appid(id);
+                if (val != groups()->appid(id)) {
+                    groups()->appid(id, val);
+                    if (old_appid == NS_GROUP_SYSTEMVAR) inputsysvargroups(id, false);
+                    if (val == NS_GROUP_SYSTEMVAR) inputsysvargroups(id, true);}}}
+    
+    
+    
+    
+    
+
+    void tagsbase::write_val(size_type id, const std::string& val, vlvtype validlvl,  const datetime& tm, ns_error err ) {
+        if (exists(id)) {
+            switch (type(id)) {
+                case TYPE_TEXT:{
+                    value_internal(id, val);
+                    time(id, ((tm == nill_time) ? now() : tm));
+                    valid(id, validlvl);
+                    error(id, err);
+                    return;}
+                case TYPE_DISCRET:{
+                    val != "0" ? write_val<bool>(id, 1, validlvl, tm, err) : write_val<bool>(id, 0, validlvl, tm, err);
+                    return;}
+                case TYPE_NUM64:{
+                    num64 tmp;
+                    if (str_to<num64 > (val, tmp)) write_val<num64 > (id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_UNUM64:{
+                    unum64 tmp;
+                    if (str_to<unum64 > (val, tmp)) write_val<unum64 > (id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_NUM32:{
+                    num32 tmp;
+                    if (str_to<num32 > (val, tmp)) write_val<num32 > (id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_UNUM32:{
+                    unum32 tmp;
+                    if (str_to<unum32 > (val, tmp)) write_val<unum32 > (id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_NUM16:{
+                    num16 tmp;
+                    if (str_to<num16 > (val, tmp)) write_val<num16 > (id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_UNUM16:{
+                    unum16 tmp;
+                    if (str_to<unum16 > (val, tmp)) write_val<unum16 > (id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_NUM8:{
+                    num8 tmp;
+                    if (str_to<num8 > (val, tmp)) write_val<num8 > (id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_UNUM8:{
+                    unum8 tmp;
+                    if (str_to<unum8 > (val, tmp)) write_val<unum8 > (id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_DOUBLE:{
+                    double tmp;
+                    if (str_to<double>(val, tmp)) write_val<double>(id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_FLOAT:{
+                    float tmp;
+                    if (str_to<float>(val, tmp)) write_val<float>(id, tmp, validlvl, tm, err);
+                    return;}}
+            double tmp;
+            if (str_to<double>(val, tmp)) write_val<double>(id, tmp, validlvl, tm, err);}}
+
+    void tagsbase::write_val(size_type id, const datetime& val, vlvtype validlvl, const datetime& tm, ns_error err) {
+        if (exists(id)) {
+            operator[](id)->value64( castnum64_from_datetime(val));
+            time(id, ((tm == nill_time) ? now() : tm));
+            valid(id, validlvl);
+            error(id, err);}}
+
+    void tagsbase::write_val(size_type id, const short_value& val) {
+        if (exists(id)) {
+            bool istxt = (val.type() == TYPE_TEXT);
+            switch (type(id)) {
+                case TYPE_NONE:{
+                    write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_DISCRET:{
+                    write_val<bool>(id, val.value<bool>(), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_NUM64:{
+                    write_val<num64 > (id, val.value<num64 > (), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_UNUM64:{
+                    write_val<unum64 > (id, val.value<unum64 > (), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_NUM32:{
+                    write_val<num32 > (id, val.value<num32 > (), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_UNUM32:{
+                    write_val<unum32 > (id, val.value<unum32 > (), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_NUM16:{
+                    write_val<num16 > (id, val.value<num16 > (), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_UNUM16:{
+                    write_val<unum16 > (id, val.value<unum16 > (), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_NUM8:{
+                    write_val<num8 > (id, val.value<num8 > (), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_UNUM8:{
+                    write_val<unum8 > (id, val.value<unum8 > (), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_DOUBLE:{
+                    write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}
+                case TYPE_TM:{
+                    write_val(id, cast_datetime_fromnum64(val.value64()) , val.valid(), val.time(), val.error());
+                    return;}
+                case TYPE_TEXT:{
+                    write_val(id, val.value<std::string > () , val.valid(), val.time(), val.error());
+                    return;}
+                case TYPE_FLOAT:{
+                    write_val<float>(id, val.value<float>(), val.valid(), val.time(), val.error());
+                    if (istxt)
+                        error( val.error());
+                    return;}}
+            write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());}}
+    
+    
+    
+
+    void tagsbase::write_val_report(size_type id, datetime tm , double val , ns_error err, bool onlybuffer ) {
+        if ((exists(id)) && (!tm.is_special())) {
+            insert_to_reportbuff(id, tm , val);
+            normalizeperiod(tm, type(id));
+            error(id, err);
+            if ((isNaN(val)) || (onlybuffer))
+                increporttime(tm, type(id), 1);
+            if (!isNaN(val))
+                value_internal<double>(id, val);
+            time_log(id, tm);
+            increporttime(tm, type(id), -1);
+            time(id, tm);
+            if (isNaN(val) || (onlybuffer)) {
+                valid(id, time_log(id) > now() ? REPORT_NORMAL : REPORT_NEEDREQUEST);}
+            else {
+                valid(id,  REPORT_DATA);}}}
+
+    bool tagsbase::write_vals_report(size_type id, const dt_val_map& values, ns_error err) {
+        if ((reportkey(id) == npos)) return false;
+        if (reportbuffers()->insert(reportkey(id), values)) {
+            for (dt_val_map::const_iterator it = values.begin(); it != values.end(); ++it) {
+                if (!it->first.is_special()) {
+                    value_internal<double>(id, it->second);
+                    valid(id, REPORT_DATA);
+                    error(id, err);
+                    return true;}}}
+        return false;}
+    
+    
+    
+
+    void tagsbase::write_val_event(size_type id, datetime dt, double vl) {
+        if ((exists(id)) && (IN_EVENTSET(type(id)))) {
+            time(id, dt);
+            insert_evnt_to_journal(id, vl);}}
+    
+    
+
+    void tagsbase::send_command(size_type id, const std::string& val, bool queue , size_type clid) {
+        if (exists(id)) {
+            switch (type(id)) {
+                case TYPE_TEXT:{
+                    send_command_str(id, val, queue, clid);
+                    return;}
+                case TYPE_DISCRET:{
+                    bool tmp = false;
+                    if (str_to<bool>(val, tmp)) send_command<bool>(id, tmp, queue, clid);
+                    return;}
+                case TYPE_NUM64:{
+                    num64 tmp = 0;
+                    if (str_to<num64 > (val, tmp)) send_command<num64 > (id, tmp, queue, clid);
+                    return;}
+                case TYPE_UNUM64:{
+                    unum64 tmp = 0;
+                    if (str_to<unum64 > (val, tmp)) send_command<unum64 > (id, tmp, queue, clid);
+                    return;}
+                case TYPE_NUM32:{
+                    num32 tmp = 0;
+                    if (str_to<num32 > (val, tmp)) send_command<num32 > (id, tmp, queue, clid);
+                    return;}
+                case TYPE_UNUM32:{
+                    unum32 tmp = 0;
+                    if (str_to<unum32 > (val, tmp)) send_command<unum32 > (id, tmp, queue, clid);
+                    return;}
+                case TYPE_NUM16:{
+                    num16 tmp = 0;
+                    if (str_to<num16 > (val, tmp)) send_command<num16 > (id, tmp, queue, clid);
+                    return;}
+                case TYPE_UNUM16:{
+                    unum16 tmp = 0;
+                    if (str_to<unum16 > (val, tmp)) send_command<unum16 > (id, tmp, queue, clid);
+                    return;};
+                case TYPE_NUM8:{
+                    num8 tmp = 0;
+                    if (str_to<num8 > (val, tmp)) send_command<num8 > (id, tmp, queue, clid);
+                    return;}
+                case TYPE_UNUM8:{
+                    unum8 tmp = 0;
+                    if (str_to<unum8 > (val, tmp)) send_command<unum8 > (id, tmp, queue, clid);
+                    return;}
+                case TYPE_DOUBLE:{
+                    double tmp = 0;
+                    if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, clid);
+                    return;}
+                case TYPE_FLOAT:{
+                    float tmp = 0;
+                    if (str_to<float>(val, tmp)) send_command<float>(id, tmp, queue, clid);
+                    return;}}
+            double tmp = 0;
+            if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, clid);}}
+    
+    
+    
+
+    void tagsbase::send_command(size_type id, const short_value& val , bool queue , size_type clid) {
+        if (exists(id)) {
+            switch (type(id)) {
+                case TYPE_TEXT:{
+                    return;}
+                case TYPE_DISCRET:{
+                    send_command<bool>(id, val.value<bool>(), queue, clid);
+                    return;}
+                case TYPE_NUM64:{
+                    send_command<num64 > (id, val.value<num64 > (), queue, clid);
+                    return;}
+                case TYPE_UNUM64:{
+                    send_command<unum64 > (id, val.value<unum64 > (), queue, clid);
+                    return;}
+                case TYPE_NUM32:{
+                    send_command<num32 > (id, val.value<num32 > (), queue, clid);
+                    return;}
+                case TYPE_UNUM32:{
+                    send_command<unum32 > (id, val.value<unum32 > (), queue, clid);
+                    return;}
+                case TYPE_NUM16:{
+                    send_command<num16 > (id, val.value<num16 > (), queue, clid);
+                    return;}
+                case TYPE_UNUM16:{
+                    send_command<unum16 > (id, val.value<unum16 > (), queue, clid);
+                    return;}
+                case TYPE_NUM8:{
+                    send_command<num8 > (id, val.value<num8 > (), queue, clid);
+                    return;}
+                case TYPE_UNUM8:{
+                    send_command<unum8 > (id, val.value<unum8 > (), queue, clid);
+                    return;}
+                case TYPE_DOUBLE:{
+                    send_command<double>(id, val.value<double>(), queue, clid);
+                    return;}
+                case TYPE_FLOAT:{
+                    send_command<float>(id, val.value<float>(), queue, clid);
+                    return;}}
+            send_command<double>(id, val.value<double>(), queue, clid);}}
+    
+    
+    void tagsbase::kvit(size_type id) {
+        if (id == npos) kvitall();
+        else {
+            if (exists(id)) kvit_tag(id);
+            else {
+                if ((id & GROUPMASK) && (groups()->exists(id & RESETMASK)))
+                    alarms()->kvit_group(id & RESETMASK);
+                if ((id & AGROUPMASK) && (agroups()->exists(id & RESETMASK)))
+                    alarms()->kvit_agroup(id & RESETMASK);}}}
+    
+    
+    
+    void tagsbase::kvit(const std::string& vl) {
+            size_type idx = operator ()(vl);
+            if (extendexists(idx)) {
+                kvit(idx);}}
+    
+    
+    
+    
+    void tagsbase::debug(const std::string& mess, debuglvtype lev) {
+        debuglvtype clv = (*(ptagsstruct_hdr) data()).debuglevel();
+        if (clv >= lev) {
+            if (DEBUGLEVEL_LOW < clv) registry()->notify_debug();
+            debug()->add(now(), mess, lev, appid_);}}
+    
+    
+    
 
     void tagsbase::texttagcnt(size_t val) {
         if ((val + 1) == 0) return;
@@ -1292,6 +1607,12 @@ namespace dvnci {
             size_type tmpindx = operator ()(tmpnm);
             if ((it->first != npos) && (tmpindx != npos)) {
                 clone(tmpindx, it->first);}}}
+    
+    size_t tagsbase::group_childcount( size_type id) {
+            if (!groups()->exists(id)) return 0;
+            iteminfo_map tmp;
+            select_tags(tmp, id);
+            return tmp.size();}
 
     void tagsbase::clone(size_type idsrc, size_type iddst) {
         if ((!exists(idsrc)) || (!exists(iddst))) return;
@@ -1498,6 +1819,15 @@ namespace dvnci {
             if ((groups()->exists(i)) && (groups()->appid(i) == app))
                 if (groups()->link(i) == lnk) {
                     val.insert(i);}}}
+
+    bool tagsbase::select_reportvals_by_time(const datetime& tm, indx_double_map& vlmap) const {
+        dt_val_pair vl;
+        for (indx_double_map::iterator it = vlmap.begin(); it != vlmap.end(); ++it) {
+            if (!select_reportval_by_time(it->first, tm, vl)) {
+                return false;}
+            else {
+                it->second = vl.second;}}
+        return true;}
 
     void tagsbase::to_standart_range(size_type id) {
         if (exists(id)) {
@@ -1776,99 +2106,6 @@ namespace dvnci {
                 default: return true;}}
         return false;}
 
-    void tagsbase::send_command(size_type id, const std::string& val, bool queue , size_type clid) {
-        if (exists(id)) {
-            switch (type(id)) {
-                case TYPE_TEXT:{
-                    send_command_str(id, val, queue, clid);
-                    return;}
-                case TYPE_DISCRET:{
-                    bool tmp = false;
-                    if (str_to<bool>(val, tmp)) send_command<bool>(id, tmp, queue, clid);
-                    return;}
-                case TYPE_NUM64:{
-                    num64 tmp = 0;
-                    if (str_to<num64 > (val, tmp)) send_command<num64 > (id, tmp, queue, clid);
-                    return;}
-                case TYPE_UNUM64:{
-                    unum64 tmp = 0;
-                    if (str_to<unum64 > (val, tmp)) send_command<unum64 > (id, tmp, queue, clid);
-                    return;}
-                case TYPE_NUM32:{
-                    num32 tmp = 0;
-                    if (str_to<num32 > (val, tmp)) send_command<num32 > (id, tmp, queue, clid);
-                    return;}
-                case TYPE_UNUM32:{
-                    unum32 tmp = 0;
-                    if (str_to<unum32 > (val, tmp)) send_command<unum32 > (id, tmp, queue, clid);
-                    return;}
-                case TYPE_NUM16:{
-                    num16 tmp = 0;
-                    if (str_to<num16 > (val, tmp)) send_command<num16 > (id, tmp, queue, clid);
-                    return;}
-                case TYPE_UNUM16:{
-                    unum16 tmp = 0;
-                    if (str_to<unum16 > (val, tmp)) send_command<unum16 > (id, tmp, queue, clid);
-                    return;};
-                case TYPE_NUM8:{
-                    num8 tmp = 0;
-                    if (str_to<num8 > (val, tmp)) send_command<num8 > (id, tmp, queue, clid);
-                    return;}
-                case TYPE_UNUM8:{
-                    unum8 tmp = 0;
-                    if (str_to<unum8 > (val, tmp)) send_command<unum8 > (id, tmp, queue, clid);
-                    return;}
-                case TYPE_DOUBLE:{
-                    double tmp = 0;
-                    if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, clid);
-                    return;}
-                case TYPE_FLOAT:{
-                    float tmp = 0;
-                    if (str_to<float>(val, tmp)) send_command<float>(id, tmp, queue, clid);
-                    return;}}
-            double tmp = 0;
-            if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, clid);}}
-
-    void tagsbase::send_command(size_type id, const short_value& val , bool queue , size_type clid) {
-        if (exists(id)) {
-            switch (type(id)) {
-                case TYPE_TEXT:{
-                    return;}
-                case TYPE_DISCRET:{
-                    send_command<bool>(id, val.value<bool>(), queue, clid);
-                    return;}
-                case TYPE_NUM64:{
-                    send_command<num64 > (id, val.value<num64 > (), queue, clid);
-                    return;}
-                case TYPE_UNUM64:{
-                    send_command<unum64 > (id, val.value<unum64 > (), queue, clid);
-                    return;}
-                case TYPE_NUM32:{
-                    send_command<num32 > (id, val.value<num32 > (), queue, clid);
-                    return;}
-                case TYPE_UNUM32:{
-                    send_command<unum32 > (id, val.value<unum32 > (), queue, clid);
-                    return;}
-                case TYPE_NUM16:{
-                    send_command<num16 > (id, val.value<num16 > (), queue, clid);
-                    return;}
-                case TYPE_UNUM16:{
-                    send_command<unum16 > (id, val.value<unum16 > (), queue, clid);
-                    return;}
-                case TYPE_NUM8:{
-                    send_command<num8 > (id, val.value<num8 > (), queue, clid);
-                    return;}
-                case TYPE_UNUM8:{
-                    send_command<unum8 > (id, val.value<unum8 > (), queue, clid);
-                    return;}
-                case TYPE_DOUBLE:{
-                    send_command<double>(id, val.value<double>(), queue, clid);
-                    return;}
-                case TYPE_FLOAT:{
-                    send_command<float>(id, val.value<float>(), queue, clid);
-                    return;}}
-            send_command<double>(id, val.value<double>(), queue, clid);}}
-
     void tagsbase::send_command_str(size_type id, const std::string& val, bool queue , size_type clid) {
         if (IN_TEXTSET(type(id))) {
             if ((groups()->exists(group(id)))) {
@@ -1886,178 +2123,9 @@ namespace dvnci {
                         commands()->add(id, val, queue, clid);}}
                 journal()->add(now(), id, msCmd, 0);}}}
 
-    void tagsbase::write_val(size_type id, const std::string& val, vlvtype validlvl,  const datetime& tm, ns_error err ) {
-        if (exists(id)) {
-            switch (type(id)) {
-                case TYPE_TEXT:{
-                    value_internal(id, val);
-                    time(id, ((tm == nill_time) ? now() : tm));
-                    valid(id, validlvl);
-                    error(id, err);
-                    return;}
-                case TYPE_DISCRET:{
-                    val != "0" ? write_val<bool>(id, 1, validlvl, tm, err) : write_val<bool>(id, 0, validlvl, tm, err);
-                    return;}
-                case TYPE_NUM64:{
-                    num64 tmp;
-                    if (str_to<num64 > (val, tmp)) write_val<num64 > (id, tmp, validlvl, tm, err);
-                    return;}
-                case TYPE_UNUM64:{
-                    unum64 tmp;
-                    if (str_to<unum64 > (val, tmp)) write_val<unum64 > (id, tmp, validlvl, tm, err);
-                    return;}
-                case TYPE_NUM32:{
-                    num32 tmp;
-                    if (str_to<num32 > (val, tmp)) write_val<num32 > (id, tmp, validlvl, tm, err);
-                    return;}
-                case TYPE_UNUM32:{
-                    unum32 tmp;
-                    if (str_to<unum32 > (val, tmp)) write_val<unum32 > (id, tmp, validlvl, tm, err);
-                    return;}
-                case TYPE_NUM16:{
-                    num16 tmp;
-                    if (str_to<num16 > (val, tmp)) write_val<num16 > (id, tmp, validlvl, tm, err);
-                    return;}
-                case TYPE_UNUM16:{
-                    unum16 tmp;
-                    if (str_to<unum16 > (val, tmp)) write_val<unum16 > (id, tmp, validlvl, tm, err);
-                    return;}
-                case TYPE_NUM8:{
-                    num8 tmp;
-                    if (str_to<num8 > (val, tmp)) write_val<num8 > (id, tmp, validlvl, tm, err);
-                    return;}
-                case TYPE_UNUM8:{
-                    unum8 tmp;
-                    if (str_to<unum8 > (val, tmp)) write_val<unum8 > (id, tmp, validlvl, tm, err);
-                    return;}
-                case TYPE_DOUBLE:{
-                    double tmp;
-                    if (str_to<double>(val, tmp)) write_val<double>(id, tmp, validlvl, tm, err);
-                    return;}
-                case TYPE_FLOAT:{
-                    float tmp;
-                    if (str_to<float>(val, tmp)) write_val<float>(id, tmp, validlvl, tm, err);
-                    return;}}
-            double tmp;
-            if (str_to<double>(val, tmp)) write_val<double>(id, tmp, validlvl, tm, err);}}
 
-    void tagsbase::write_val(size_type id, const datetime& val, vlvtype validlvl, const datetime& tm, ns_error err) {
-        if (exists(id)) {
-            operator[](id)->value64( castnum64_from_datetime(val));
-            time(id, ((tm == nill_time) ? now() : tm));
-            valid(id, validlvl);
-            error(id, err);}}
 
-    void tagsbase::write_val(size_type id, const short_value& val) {
-        if (exists(id)) {
-            bool istxt=(val.type()==TYPE_TEXT);
-            switch (type(id)) {
-                case TYPE_NONE:{
-                    write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_DISCRET:{
-                    write_val<bool>(id, val.value<bool>(), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_NUM64:{
-                    write_val<num64 > (id, val.value<num64 > (), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_UNUM64:{
-                    write_val<unum64 > (id, val.value<unum64 > (), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_NUM32:{
-                    write_val<num32 > (id, val.value<num32 > (), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_UNUM32:{
-                    write_val<unum32 > (id, val.value<unum32 > (), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_NUM16:{
-                    write_val<num16 > (id, val.value<num16 > (), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_UNUM16:{
-                    write_val<unum16 > (id, val.value<unum16 > (), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_NUM8:{
-                    write_val<num8 > (id, val.value<num8 > (), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_UNUM8:{
-                    write_val<unum8 > (id, val.value<unum8 > (), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_DOUBLE:{
-                    write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}
-                case TYPE_TM:{
-                    write_val(id, cast_datetime_fromnum64(val.value64()) , val.valid(), val.time(), val.error());
-                    return;}
-                case TYPE_TEXT:{
-                    write_val(id, val.value<std::string > () , val.valid(), val.time(), val.error());
-                    return;}
-                case TYPE_FLOAT:{
-                    write_val<float>(id, val.value<float>(), val.valid(), val.time(), val.error());
-                    if (istxt) 
-                        error( val.error());
-                    return;}}
-            write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());}}
-    
 
-    void tagsbase::write_val_report(size_type id, datetime tm , double val , ns_error err, bool onlybuffer ) {
-        if ((exists(id)) && (!tm.is_special())) {
-            insert_to_reportbuff(id, tm , val);
-            normalizeperiod(tm, type(id));
-            error(id, err);
-            if ((isNaN(val)) || (onlybuffer))
-                increporttime(tm, type(id), 1);
-            if (!isNaN(val))
-                value_internal<double>(id, val);
-            time_log(id, tm);
-            increporttime(tm, type(id), -1);
-            time(id, tm);
-            if (isNaN(val) || (onlybuffer)) {
-                valid(id, time_log(id) > now() ? REPORT_NORMAL : REPORT_NEEDREQUEST);}
-            else {
-                valid(id,  REPORT_DATA);}}}
-
-    bool tagsbase::write_vals_report(size_type id, const dt_val_map& values, ns_error err) {
-        if ((reportkey(id) == npos)) return false;
-        if (reportbuffers()->insert(reportkey(id), values)) {
-            for (dt_val_map::const_iterator it = values.begin(); it != values.end(); ++it) {
-                if (!it->first.is_special()) {
-                    value_internal<double>(id, it->second);
-                    valid(id, REPORT_DATA);
-                    error(id, err);
-                    return true;}}}
-        return false;}
-
-    void tagsbase::kvit(size_type id) {
-        if (id == npos) kvitall();
-        else {
-            if (exists(id)) kvit_tag(id);
-            else {
-                if ((id & GROUPMASK) && (groups()->exists(id & RESETMASK)))
-                    alarms()->kvit_group(id & RESETMASK);
-                if ((id & AGROUPMASK) && (agroups()->exists(id & RESETMASK)))
-                    alarms()->kvit_agroup(id & RESETMASK);}}}
 
     bool tagsbase::checkname(const string& val, size_type parnt)  {
         std::string fullnamed = groups()->name(parnt) + NEMESPACEDELIMIT + val;
@@ -2154,6 +2222,55 @@ namespace dvnci {
         if (valbuffers_) tmp += valbuffers_->mapsize();
         if (reportbuffers_) tmp += reportbuffers_->mapsize();
         return (globalmemsize_ = tmp);}
+
+    void tagsbase::checkreporttime(size_type id) {
+        if ((exists(id)) && (IN_REPORTSET(type(id)))) {
+            datetime tm = time_log(id);
+            if (!tm.is_special()) {
+                normalizeperiod(tm, type(id));
+                if (tm < now()) {
+                    valid(id, REPORT_NEEDREQUEST);}
+                else {
+                    valid(id, REPORT_NORMAL);}}}}
+
+    void tagsbase::increpttime(size_type id) {
+        if ((exists(id)) && (IN_REPORTSET(type(id)))) {
+            datetime tm = time_log(id);
+            if (!tm.is_special()) {
+                normalizeperiod(tm, type(id));
+                if (tm < now()) {
+                    time(id, tm);
+                    increporttime(tm, type(id), 1);
+                    time_log(id, tm);}
+                if (tm < now()) {
+                    valid(id, REPORT_NEEDREQUEST);}
+                else {
+                    valid(id, REPORT_NORMAL);}}}}
+
+    bool tagsbase::insert_to_reportbuff_init(size_type id, const dt_val_map& values) {
+        if (!values.empty()) {
+            reportbuffers()->insert(reportkey(id), values);
+            write_val_report(id, values.rbegin()->first, values.rbegin()->second, 0 , true);
+            return true;}
+        datetime tm = dvnci::now();
+        normalizereporttime(tm, type(id));
+        increporttime(tm, type(id), -reporthistory(id));
+        write_val_report(id, tm, NULL_DOUBLE, true);
+        return true;}
+
+    bool tagsbase::insert_to_reportbuff_init(size_type id) {
+        if (select_reportbuff_count(id)) {
+            dt_val_pair value;
+            if (select_reportbuff_topvalue(id, value)) {
+                write_val_report(id, value.first, value.second, 0, true);
+                DEBUG_STR_VAL_DVNCI(report_history_simple_init, reportkey(id))
+                return true;}}
+        return false;}
+
+    bool tagsbase::insert_to_reportbuff_init(size_type id, const datetime& lst) {
+        if (lst == nill_time) return false;
+        write_val_report(id, lst, NULL_DOUBLE, 0, true);
+        return true;}
 
     template<>
     std::string tagsbase::value<std::string>(size_type id) const {
