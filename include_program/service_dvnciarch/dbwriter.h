@@ -15,7 +15,8 @@
 
 
 namespace dvnci {
-    namespace database {
+
+
 
 
 
@@ -92,23 +93,23 @@ namespace dvnci {
                 return false;}
 
         private:
-            guidtype            j_guid;
-            size_t              j_cursor;
-            size_t              j_count;
-            guidtype            d_guid;
-            size_t              d_cursor;
-            size_t              d_count;
-            volatile  bool      trendupdated;
-            num32               lasttrday;
-            datetime            last_j_time;
-            datetime            last_d_time;
-            datetime            last_t_time;
-            tagsbase_ptr        intf;
-            mutex_ptr           mtx;
-            journal_item_vect   journal_vect;
-            debug_item_vect     debug_vect;
-            dt_val_deque        trend_dqu;
-            static dbdriver_ptr dbdrv;};
+            guidtype                             j_guid;
+            size_t                               j_cursor;
+            size_t                               j_count;
+            guidtype                             d_guid;
+            size_t                               d_cursor;
+            size_t                               d_count;
+            volatile  bool                       trendupdated;
+            num32                                lasttrday;
+            datetime                             last_j_time;
+            datetime                             last_d_time;
+            datetime                             last_t_time;
+            tagsbase_ptr                         intf;
+            mutex_ptr                            mtx;
+            dvnci::database::journal_item_vect   journal_vect;
+            dvnci::database::debug_item_vect     debug_vect;
+            dt_val_deque                         trend_dqu;
+            static dvnci::database::dbdriver_ptr dbdrv;};
 
 
 
@@ -152,7 +153,7 @@ namespace dvnci {
 
 
 
-    }}
+    }
 
 #endif	/* DBWRITER_H */
 
