@@ -1986,6 +1986,16 @@ namespace dvnci {
 
 
 
+
+
+        bool select_reportbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
+            return reportbuffers()->select(reportkey(id), vl, from_, to_);}
+
+        bool select_reportbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
+            return select_reportbuff(operator ()(nm), vl, from_, to_);}
+        
+        
+        
         bool report_history_empty(size_type id) const {
 	    datetime tmpdt =reportbuffers()->toptime(reportkey(id));
             return ((tmpdt==nill_time) || (tmpdt < time_log(id)));}
@@ -2000,13 +2010,6 @@ namespace dvnci {
 
         size_t select_reportbuff_count(size_type id) const {
                 return reportbuffers() ? reportbuffers()->count(reportkey(id)) : 0;}
-
-
-        bool select_reportbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
-            return reportbuffers()->select(reportkey(id), vl, from_, to_);}
-
-        bool select_reportbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
-            return select_reportbuff(operator ()(nm), vl, from_, to_);}
         
         
 
