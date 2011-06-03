@@ -212,7 +212,7 @@ namespace dvnci {
 
            // последние данные в таблице отчетов
 
-            bool select_lastreporttime(indx id, tagtype type, reporthisttype present, dvnci::datetime& tm);
+            datetime select_lastreporttime(indx id, tagtype type, reporthisttype present);
             bool select_lastreporttime(indx id, tagtype type, reporthisttype present, dt_val_map& values, size_t cnt = REPORT_BUFFER_SIZE);
 
             //отчетная статистика по параметру  на основе данных по графикам
