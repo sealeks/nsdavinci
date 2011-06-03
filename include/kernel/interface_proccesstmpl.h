@@ -93,42 +93,43 @@ namespace dvnci {
     class abstract_subscriptor : public executor {
     public:
 
-        typedef EXTERNALINTF extintf;
-        typedef intrusive_sync_share_ptr_tmpl<extintf> extintf_ptr;
-        typedef typename extintf::server_key_type server_key_type;
-        typedef typename extintf::client_key_type client_key_type;
-        typedef typename extintf::reportvalues_type reportvalues_type;
-        typedef typename extintf::reportvalue_type reportvalue_type;
-        typedef typename extintf::vct_client_item vct_client_item;
-        typedef typename extintf::vct_server_item vct_server_item;
-        typedef typename vct_server_item::const_iterator vct_server_item_const_iterator;
-        typedef typename extintf::vct_command vct_command;
-        typedef typename extintf::vct_server_key vct_server_key;
-        typedef typename vct_server_key::const_iterator vct_server_key_const_iterator;
-        typedef typename extintf::vct_error_item vct_error_item;
-        typedef typename vct_error_item::const_iterator vct_error_item_const_iterator;
-        typedef typename extintf::vct_value vct_value;
-        typedef typename vct_value::const_iterator vct_value_const_iterator;
-        typedef typename extintf::vct_reportvalue vct_reportvalue;
-        typedef typename vct_reportvalue::const_iterator vct_reportvalue_const_iterator;
-        typedef typename extintf::vct_reportvalues vct_reportvalues;
-        typedef typename vct_reportvalues::const_iterator vct_reportvalues_const_iterator;
-        typedef typename extintf::vct_eventvalue vct_eventvalue;
-        typedef typename vct_eventvalue::const_iterator vct_eventvalue_const_iterator;
+        typedef EXTERNALINTF                                                    extintf;
+        typedef intrusive_sync_share_ptr_tmpl<extintf>                          extintf_ptr;
+        typedef typename extintf::server_key_type                               server_key_type;
+        typedef typename extintf::client_key_type                               client_key_type;
+        typedef typename extintf::reportvalues_type                             reportvalues_type;
+        typedef typename extintf::reportvalue_type                              reportvalue_type;
+        typedef typename extintf::vct_client_item                               vct_client_item;
+        typedef typename extintf::vct_server_item                               vct_server_item;
+        typedef typename vct_server_item::const_iterator                        vct_server_item_const_iterator;
+        typedef typename extintf::vct_command                                   vct_command;
+        typedef typename extintf::vct_server_key                                vct_server_key;
+        typedef typename vct_server_key::const_iterator                         vct_server_key_const_iterator;
+        typedef typename extintf::vct_error_item                                vct_error_item;
+        typedef typename vct_error_item::const_iterator                         vct_error_item_const_iterator;
+        typedef typename extintf::vct_value                                     vct_value;
+        typedef typename vct_value::const_iterator                              vct_value_const_iterator;
+        typedef typename extintf::vct_reportvalue                               vct_reportvalue;
+        typedef typename vct_reportvalue::const_iterator                        vct_reportvalue_const_iterator;
+        typedef typename extintf::vct_reportvalues                              vct_reportvalues;
+        typedef typename vct_reportvalues::const_iterator                       vct_reportvalues_const_iterator;
+        typedef typename extintf::vct_eventvalue                                vct_eventvalue;
+        typedef typename vct_eventvalue::const_iterator                         vct_eventvalue_const_iterator;
 
-        typedef bidirectinal_map_one_to_many<server_key_type, client_key_type> serverid_clienid_map;
+        typedef bidirectinal_map_one_to_many<server_key_type, client_key_type>  serverid_clienid_map;
 
         abstract_subscriptor(tagsbase_ptr inf, indx grp, metalink lnk, tagtype provide_man = TYPE_SIMPL) :
                           executor(inf, provide_man), group(grp) {};
 
         virtual bool operator()() {
 
-            if (!intf) return false;
+            if (intf) {
             if (invokereq()) {
                 for (indx_set::const_iterator it = all_items.begin();
                         it != all_items.end(); ++it) {
                     check_item_in_active(*it);}}
             return true;}
+            return false;}
 
     protected:
 
@@ -252,7 +253,6 @@ namespace dvnci {
                    if (active_items.find(id) != active_items.end()) {
                        active_items.erase(id);
                        del_req_items.insert(id);
-                       //remove_reporvalue_from_map(id);
                        DEBUG_STR_VAL_DVNCI(resetactiv, id);}
                    return false;}}
             return false;}
