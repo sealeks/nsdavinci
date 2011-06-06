@@ -676,7 +676,7 @@ namespace dvnci {
                 PROPERTY_GR_SYNCT, PROPERTY_GR_BS, PROPERTY_GR_ABS, PROPERTY_GR_TCNT, PROPERTY_CHANALPORT_GROUP, PROPERTY_GR_INDTO};
             REMOVE_PROPERTYS(propdel);
             propidtype propadd[] = {PROPERTY_CHANALHOST_GROUP, /*PROPERTY_CHANALUSER_GROUP, PROPERTY_CHANALPASSWORD_GROUP,*/
-                PROPERTY_OPCNAME_GROUP, PROPERTY_OPCGROUP_GROUP, PROPERTY_OPCVER_GROUP, PROPERTY_OPCCONTYPE_GROUP, PROPERTY_OPCUSEHDA_GROUP, PROPERTY_GR_LOCALE };
+                PROPERTY_OPCNAME_GROUP, PROPERTY_OPCGROUP_GROUP, PROPERTY_OPCVER_GROUP, PROPERTY_OPCCONTYPE_GROUP, PROPERTY_OPCUSEHDA_GROUP, PROPERTY_GR_LOCALE, PROPERTY_SERVER_NAME };
             ADD_PROPERTYS(propadd);}
 
         void opcgroupwraper::addproprtyeditors_internal(abstractpropertymanager* mangr) {
@@ -687,6 +687,9 @@ namespace dvnci {
         void opcgroupwraper::setProperty(indx id, propidtype prop, string val) {
 
             switch (prop) {
+                case PROPERTY_SERVER_NAME:{
+                    _interface->group(id).server(val);
+                    break;};                
                 case PROPERTY_CHANALHOST_GROUP:{
                     _interface->group(id).host(val);
                     break;};
@@ -725,6 +728,7 @@ namespace dvnci {
         std::string opcgroupwraper::getProperty(indx id, propidtype prop) {
 
             switch (prop) {
+                case PROPERTY_SERVER_NAME:    return  _interface->group(id).server();
                 case PROPERTY_CHANALHOST_GROUP:    return  _interface->group(id).host();
                 case PROPERTY_CHANALUSER_GROUP:    return  _interface->group(id).user();
                 case PROPERTY_CHANALPASSWORD_GROUP: return  _interface->group(id).password();
@@ -743,7 +747,7 @@ namespace dvnci {
             propidtype propdel[] = {PROPERTY_CHANALTYPE_GROUP, PROPERTY_CHANALNUM_GROUP, PROPERTY_CHANALPORT_GROUP, PROPERTY_DEVNUM_GROUP, PROPERTY_GR_TO, PROPERTY_GR_DB ,
                 PROPERTY_GR_GR, PROPERTY_GR_SYNCT, PROPERTY_GR_BS, PROPERTY_GR_ABS, PROPERTY_GR_TCNT, PROPERTY_GR_INDTO};
             REMOVE_PROPERTYS(propdel);
-            propidtype propadd[] = {PROPERTY_CHANALHOST_GROUP, PROPERTY_DDESERVER_NAME, PROPERTY_DDESERVER_TOPIC, PROPERTY_GR_LOCALE };
+            propidtype propadd[] = {PROPERTY_CHANALHOST_GROUP, PROPERTY_SERVER_NAME, PROPERTY_DDESERVER_TOPIC, PROPERTY_GR_LOCALE };
             ADD_PROPERTYS(propadd);}
 
 
@@ -753,7 +757,7 @@ namespace dvnci {
                 case PROPERTY_CHANALHOST_GROUP:{
                     _interface->group(id).host(val);
                     break;};
-                case PROPERTY_DDESERVER_NAME:{
+                case PROPERTY_SERVER_NAME:{
                     _interface->group(id).server(val);
                     break;};
                 case PROPERTY_DDESERVER_TOPIC:{
@@ -769,7 +773,7 @@ namespace dvnci {
 
             switch (prop) {
                 case PROPERTY_CHANALHOST_GROUP:    return  _interface->group(id).host();
-                case PROPERTY_DDESERVER_NAME:    return  _interface->group(id).server();
+                case PROPERTY_SERVER_NAME:    return  _interface->group(id).server();
                 case PROPERTY_DDESERVER_TOPIC: return  _interface->group(id).topic();
                 case PROPERTY_GR_LOCALE:   return to_str<lcltype>(_interface->group(id).local());
                 default: return basegroupwraper::getProperty(id, prop);}}
