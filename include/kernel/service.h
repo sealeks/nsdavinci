@@ -224,6 +224,8 @@ namespace dvnci {
                 appidtype newappid = intf->groups()->exists(id) ? intf->groups()->appid(id) : 0;
                 metalink  newlnk = intf->groups()->exists(id) ? intf->groups()->link(id) : metalink();
 		bool      newlink_no_empty=threads_map.find(newlnk)!=threads_map.end();
+                intf->debugerror(" check_thread find change CHECK");
+                intf->debugerror(" check_thread find change CHECK id="+ to_str(id));
                 for (idtype_threads_map_iteator it = threads_map.begin();it!=threads_map.end();++it){
                    if (it->second->group_included(id)) {
                       intf->debugerror(" check_thread find change");

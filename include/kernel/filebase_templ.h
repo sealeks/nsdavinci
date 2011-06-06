@@ -2,7 +2,7 @@
  * File:   filebase_templ.h
  * Author: sealeks@mail.ru
  *
- * Created on 18 Май 2011 г., 0:21
+ * Created on 18 РњР°Р№ 2011 Рі., 0:21
  */
 
 #ifndef _KERNEL_FILEBASE_TEMPL_H
@@ -60,7 +60,6 @@ namespace dvnci {
         virtual ~templatebase() {}
         
         
-
         size_type count() const {
             return static_cast<size_type> ((*(structs_type_ptr) data()).header.count());}
               
@@ -73,7 +72,6 @@ namespace dvnci {
             return ((id < count()) && (((structs_type_ptr) data())->items[id].id() != nill_ptr)) ?
                     &((structs_type_ptr) data())->items[id] : &static_cast<structs_type_ptr> (data())->items[count()];}
         
-
         bool operator[] (std::string  vl) {
             return (item_indexer->find(vl) != npos);}
         
@@ -109,34 +107,20 @@ namespace dvnci {
 
     protected:
 
-   
-        virtual std::string nametemlete() const = 0;
-        
-        
+
+
         virtual bool checkname(const std::string& val, size_type parnt = npos) = 0;
-        
-          
+                
         virtual bool checkdelete(size_type id) {
             return true;} 
+
         
-        
-        virtual struct_type writestruct(size_type id) {
-            
-            if ((id < count()) && (exists(id))) 
-                return ((structs_type_ptr) data())->items[id].get_for_write_to_file(write_criteria(id));
-            else
-                return struct_type();}
-        
-        virtual bool write_criteria(size_type id) const {
-            return false;}
-        
-        
-        virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1) {
+        virtual void initstruct(size_type id, const std::string& newname, size_type parent = npos) {
             struct_type tmp;
             tmp.id(able_ptr);
             ((structs_type_ptr) data())->items[id] = tmp;
             name(id, newname, false);
-            writetofile(id);}
+            writetofile(id, false);}
         
 
         virtual void uninitstruct(size_type id) {
@@ -145,46 +129,31 @@ namespace dvnci {
             ((structs_type_ptr) data())->items[id].id(nill_ptr);
             writetofile(id);}
         
+        
+        
+        virtual struct_type struct_for_write(size_type id) {         
+            if ((id < count()) && (exists(id))) 
+                return ((structs_type_ptr) data())->items[id].get_for_write_to_file(trigger_write_criteria(id));
+            else
+                return struct_type();}
+                  
+        virtual bool trigger_write_criteria(size_type id) const {
+            return false;}        
+
+        
+        
         // triggers
         
+        virtual void trigger_util(size_type id, const struct_type& oldst,  const struct_type& newst){}
+         
+        virtual void trigger_add(size_type id , size_type opt = npos) {};
         
-        virtual void trigger_add(size_type id, num64 numcriteria = -1) {};
-        
-        virtual void trigger_remove(size_type id, num64 numcriteria = -1) {};
+        virtual void trigger_remove(size_type id, size_type opt = npos) {};
         
         virtual void trigger_rename(size_type id) {};
         
-        virtual void trigger_write(size_type id) {};
-        
-        
-        
-        
-        
-        
-        
-        virtual size_type parent_id(size_type id) {
-            return npos;}
-        
-        
-        virtual std::string parentname(size_type id) const {
-            return "";}
-        
-                virtual size_t namepos(size_type id) const {
-            return operator[](id)->namepos();}
-        
 
-        virtual void namepos(size_type id, size_t vl) {
-            if ((exists(id)) && (vl != namepos(id)))
-                operator[](id)->namepos(vl);}
-
-
-        virtual size_type string_to_numcriteria(const std::string&  strcriteria) {
-            return npos;}
-
-        
-        virtual size_t optinal_pos(size_type id) {
-            return 0;}
-        
+    
                 
         virtual void buildindex() {
             size_type frinx = npos;
@@ -197,6 +166,7 @@ namespace dvnci {
                     if (frinx == npos) frinx = i;}}
             item_indexer->stop_inserter();
             item_indexer->freeindex((frinx == npos) ? count() : frinx);}
+        
         
 
         virtual void addindex(size_type id) {
@@ -212,10 +182,29 @@ namespace dvnci {
                 item_indexer->erase(id, namepos(id), optinal_pos(id));
                 if (item_indexer->freeindex() > id)
                     item_indexer->freeindex(id);}}
+                
+        virtual size_t optinal_pos(size_type id) {
+            return 0;}
         
         
         
         /// impl
+        
+
+        
+        virtual size_t namepos(size_type id) const {
+            return operator[](id)->namepos();}
+        
+
+        void namepos(size_type id, size_t vl) {
+            if ((exists(id)) && (vl != namepos(id)))
+                operator[](id)->namepos(vl);}
+        
+        virtual size_type parentid(size_type id) {
+            return npos;}
+        
+        virtual std::string parentname(size_type id) const {
+            return "";}
         
         
         
@@ -241,31 +230,18 @@ namespace dvnci {
             return utilptr->memlock();};
             
 
-        stringbase_ptr stringbs() {
-            return stringbs_;}
         
-
-        stringbase_ptr stringbs() const {
-            return stringbs_;}
-        
-
         std::string stringbase_src(size_t pos) const {
-            return stringbs()->getstring(pos);}
+            return stringbs_->getstring(pos);}
         
 
         void  stringbase_src(size_t& pos, const std::string& value, size_t resevmem = DVNCI_DEFRES_STRINGSIZE) {
-            stringbs()->setstring(pos, value, resevmem);}
+            stringbs_->setstring(pos, value, resevmem);}
+        
         
 
-        size_type add() {
-            std::string str_tmp = nametemlete();
-            size_type i = 0;
-            while (exists(str_tmp + to_str(i))) i++;
-            return add(str_tmp + to_str(i));}
-        
 
-        size_type add(const std::string& newname, const std::string& groupnm)  {
-            return add(newname, string_to_numcriteria(groupnm));}
+        
         
 
         virtual size_type add(const std::string& newname, size_type parnt = npos, bool indexed = true) {
@@ -279,14 +255,14 @@ namespace dvnci {
             initstruct(freeitem , newname, parnt);
             if (indexed) {
                 addindex(freeitem);
-                trigger_add(freeitem, static_cast<num64> (parnt));}
+                trigger_add(freeitem, parnt);}
             return (freeitem);}
         
 
    
         virtual void name(size_type id, std::string val, bool message = true) {
             remove_namespace_delimit(val);
-            checkname(val, parent_id(id));
+            checkname(val, parentid(id));
             if (exists(id)) {
                 if (name(id) != val) {
                     size_t oldpos = namepos(id);
@@ -303,41 +279,46 @@ namespace dvnci {
         virtual size_type remove(size_type id, bool indexed = true) {
             if (!exists(id)) return npos;
             checkdelete(id);
-            num64 ncrt = static_cast<size_type> (parent_id(id));
+            size_type parent = static_cast<size_type> (parentid(id));
             if (indexed) removeindex(id);
             uninitstruct(id);
-            trigger_remove(id, ncrt);
+            trigger_remove(id, parent);
             return id;}
         
 
         size_type remove(std::string val) {
             return remove((*this)(val));}
         
+        
+        
 
         virtual void writeheader() {
             header_type tmp = (*(header_type_ptr) data());
-            writestructtodisk( (void*) & tmp, 0 , sizeof (header_type));}
+            utilptr->writestructtofile( (void*) & tmp, 0 , sizeof (header_type));}
         
 
-        virtual void writetofile(size_type id) {
-            struct_type tmp = writestruct(id);
-            writestructtodisk( (void*) &tmp, itemsoffset(id), sizeof (struct_type));
+        virtual void writetofile(size_type id, bool triggered = true) {
+            if (triggered) {
+                struct_type tmpold = readstructfromdisk(id);
+                struct_type tmpnew = struct_for_write(id);
+                writestructtodisk(tmpnew, id);
+                trigger_util(id, tmpold,tmpnew);}
+            else{    
+                struct_type tmpnew = struct_for_write(id);
+                writestructtodisk(tmpnew, id);}
             if (exists(id))
-                operator[](id)->incmonitor();
-            trigger_write(id);}
+                operator[](id)->incmonitor();}
         
 
-        virtual void writetofileall() {
-            for (size_type i = 0 ; i < count() ; i++)
-                writetofile(i);}
+     
+        size_t writestructtodisk(const struct_type& dst, size_type id) {
+            return utilptr->writestructtofile((const void*) &dst, itemsoffset(id), sizeof (struct_type));}
         
-
-        size_t writetodisk(size_t offset = 0, size_t sz = 0) {
-            return utilptr->writetofile(offset, sz);}
-        
-
-        size_t writestructtodisk(void* dt, size_t offset = 0, size_t sz = 0) {
-            return utilptr->writestructtofile(dt, offset, sz);}
+                
+        struct_type readstructfromdisk(size_t id) {
+            struct_type tmp;
+            utilptr->readstructfromfile((void*)&tmp, itemsoffset(id), sizeof (struct_type));
+            return tmp;}
         
 
         void findfreeindex(size_type id) {

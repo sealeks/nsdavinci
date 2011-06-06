@@ -895,33 +895,28 @@ namespace dvnci {
 
         //overloaded
 
-        virtual std::string nametemlete() const {
-            return "group";};
-
 
         virtual bool checkname(const std::string& val, size_type parnt = npos);
 
-        virtual bool write_criteria(size_type id) const {
+        virtual bool trigger_write_criteria(size_type id) const {
             return ((exists(id)) && ((appid(id) == NS_GROUP_SYSTEMVAR) || (appid(id) == NS_GROUP_SYSTEM)));}
 
-        virtual onum trigger_write_criteria(size_type id) const {
-            return exists(id) ? appid(id) : 0;}
-
-        virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
+        virtual void initstruct(size_type id, const std::string& newname, size_type parent = npos);
 
         virtual void uninitstruct(size_type id);
 
 
         // triggers
 
-        virtual void trigger_add(size_type id, num64 numcriteria = -1);
+        virtual void trigger_add(size_type id, size_type opt = npos);
 
-        virtual void trigger_remove(size_type id, num64 numcriteria = -1);
+        virtual void trigger_remove(size_type id, size_type opt = npos);
 
-        virtual void trigger_write(size_type id);
+        virtual void trigger_util(size_type id, const groupstruct& oldst, const groupstruct& newst);
 
-        virtual size_type parent_id(size_type id) {
+        virtual size_type parentid(size_type id) {
             return static_cast<num64> (appid(id));}
+
 
         void notify_tagmanage(qumsgtype mess, size_type id, size_type group);
 
@@ -965,13 +960,11 @@ namespace dvnci {
 
         //overloaded 
 
-        virtual std::string nametemlete() const {
-            return "agroup";};
 
         virtual bool checkname(const std::string& val, size_type parnt = npos);
 
 
-        virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
+        virtual void initstruct(size_type id, const std::string& newname, size_type parent = npos);
 
         virtual void uninitstruct(size_type id);} ;
 
@@ -1042,13 +1035,11 @@ namespace dvnci {
 
         //overloaded 
 
-        virtual std::string nametemlete() const {
-            return "rule";};
 
-        virtual bool checkname(const std::string& val, size_type parnt = -1);
+        virtual bool checkname(const std::string& val, size_type parnt = npos);
 
 
-        virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
+        virtual void initstruct(size_type id, const std::string& newname, size_type parent = npos);
 
         virtual void uninitstruct(size_type id);
 
@@ -1112,13 +1103,10 @@ namespace dvnci {
 
         //overloaded 
 
-        virtual std::string nametemlete() const {
-            return "user";};
 
-        virtual bool checkname(const std::string& val, size_type parnt = -1);
+        virtual bool checkname(const std::string& val, size_type parnt = npos);
 
-
-        virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
+        virtual void initstruct(size_type id, const std::string& newname, size_type parent = npos);
 
         virtual void uninitstruct(size_type id);} ;
 
@@ -1144,6 +1132,7 @@ namespace dvnci {
         friend class db_writer;
         friend class reporttype_executor;
         friend class trend_observer;
+        friend class executor;
 
 
         typedef membase_ptr_tmpl<groupsbase>                        groupsbase_ptr;
@@ -1250,7 +1239,7 @@ namespace dvnci {
 
         std::string value_frmt(size_type id) const {
             return (!IN_TEXTSET(type(id))) ?
-                    itemex(id)->value_frmt() : getvalstringvalue(operator[](id)->value<size_t > ());}
+                    itemex(id)->value_frmt() : valstringvalue(operator[](id)->value<size_t > ());}
 
         void value(size_type id, const std::string& value) {
             if (exists(id))
@@ -1357,7 +1346,7 @@ namespace dvnci {
         std::string binding(size_type id) const {
             return stringbase_src(operator[](id)->posbinding());}
 
-        void binding(size_type id, const std::string&  value, bool message = true);
+        void binding(size_type id, const std::string&  value, bool triggered = true);
 
 
         // binding property          
@@ -1545,9 +1534,7 @@ namespace dvnci {
 
         void mineu(size_type id, const std::string& value) {
             if (exists(id)) {
-                operator[](id)->mineu(value);
-                if (logkey(id) != npos) {
-                    valbuffers()->range( logkey(id), mineu_prtd<double>(id), maxeu_prtd<double>(id));}}}
+                operator[](id)->mineu(value);}}
 
         short_value mineu_shv(size_type id) const {
             return short_value(operator[](id)->mineu64(), type(id), FULL_VALID);}
@@ -1565,9 +1552,7 @@ namespace dvnci {
 
         void maxeu(size_type id, const std::string& value) {
             if (exists(id)) {
-                operator[](id)->maxeu(value);
-                if (logkey(id) != npos) {
-                    valbuffers()->range( logkey(id), mineu_prtd<double>(id), maxeu_prtd<double>(id));}}}
+                operator[](id)->maxeu(value);}}
 
 
 
@@ -1627,19 +1612,10 @@ namespace dvnci {
         void devdb(size_type id, double value) {
             if (exists(id))
                 operator[](id)->devdb(value);}
-        
-        
+
+
         // devdb  property      
         void group_appid(size_type id, appidtype val);
-        
-        
-        //size_t group_childcount( size_type id) {
-        //    if (!groups()->exists(id)) return 0;
-        //    iteminfo_map tmp;
-        //    select_tags(tmp, id);
-        //    return tmp.size();}
-
-
 
 
 
@@ -1661,10 +1637,12 @@ namespace dvnci {
 
         bool write_vals_report(size_type id, const dt_val_map& values, ns_error err = 0);
 
+
+
+
         void write_val_event(size_type id, datetime dt, double vl = NULL_DOUBLE);
 
-        void write_val_event(size_type id, const dt_val_pair& val) {
-            write_val_event(id, val.first, val.second);}
+        void write_val_event(size_type id, const dt_val_pair& val);
 
 
 
@@ -1675,15 +1653,15 @@ namespace dvnci {
         void send_command(size_type id, const std::string& val, bool queue = true, size_type clid = npos);
 
         void send_command(size_type id, const short_value& val, bool queue = true, size_type clid = npos);
-        
-        
-        
+
+
+
         void kvit(size_type id = npos);
 
         void kvit(const std::string& vl);
-        
-        
-        
+
+
+
         void debug(const std::string& mess, debuglvtype lev = DEBUG_MESSAGE );
 
         void debugwarning(const std::string& mess) {
@@ -1694,8 +1672,9 @@ namespace dvnci {
 
         void debugfatalerror(const std::string& mess) {
             debug(mess, DEBUG_FATALERROR);}
-
-
+        
+        
+        
 
         size_type insert_tag(std::string newname, size_type groupid) {
             lower_and_trim(newname);
@@ -1706,7 +1685,7 @@ namespace dvnci {
             lower_and_trim(groupnm);
             if (!groups()->exists(groupnm))
                 throw dvncierror(NS_ERROR_NOPARENT, groupnm);
-            return add(newname, groupnm);}
+            return add(newname, groups()->operator ()(groupnm));}
 
         void insert_tags(str_indx_map& newnames , size_type groupid) {
             return addtags(newnames, groupid);}
@@ -1715,10 +1694,6 @@ namespace dvnci {
             if (!groups()->exists(groupnm))
                 throw dvncierror(NS_ERROR_NOPARENT, groupnm);
             insert_tags(newnames, groupnm);}
-        
-        size_type insert_tag() {
-            return add();}
-        
 
         size_type insert_group(std::string newname) {
             lower_and_trim(newname);
@@ -1728,7 +1703,6 @@ namespace dvnci {
                 addindex(newind | GROUPMASK);
                 trigger_rename(newind | GROUPMASK);}
             return newind;}
-        
 
         size_type insert_agroup(std::string newname) {
             lower_and_trim(newname);
@@ -1743,17 +1717,9 @@ namespace dvnci {
             newname = trim_copy(newname);
             return accessrules()->add(newname);}
 
-        size_type insert_accessrule() {
-            return accessrules()->add();}
-
         size_type insert_user(std::string newname) {
             newname = trim_copy(newname);
             return users()->add(newname);}
-
-        size_type insert_user() {
-            return users()->add();}
-        
-        
 
         void replace_tag(size_type id, std::string newname) {
             if (!exists(id))
@@ -1778,7 +1744,7 @@ namespace dvnci {
             groups()->name(id, newname);
             changepos1(oldpos, groups()->namepos(id));
             trigger_rename(id | GROUPMASK);
-            group_rename_notify(id);}
+            trigger_group_rename(id);}
 
         void replace_group(std::string oldname, std::string newname) {
             lower_and_trim(newname);
@@ -1829,24 +1795,12 @@ namespace dvnci {
             if (!users()->exists(oldname))
                 throw dvncierror(ERROR_ENTNOEXIST, oldname);
             replace_user( users()->operator()(oldname), newname);}
-        
-        
-
 
         size_type delete_tag(size_type id) {
             if (exists(id)) {
-                if (logbuffered(id)) {
-                    if (archtagcnt()) {
-                        archtagcnt(archtagcnt() - 1);}
-                    remove_logkey(id);}
-                if (reportbuffered(id)) {
-                    if (reporttagcnt()) {
-                        reporttagcnt(reporttagcnt() - 1);}
-                    remove_reportkey(id);}
-                if (IN_TEXTSET(type(id))) texttagcnt(texttagcnt() - 1);
-                valuestringremove_iftexttag(id);
+                trigger_remove(id);
                 return remove(id);}
-            return -1;}
+            return npos;}
 
         size_type delete_tag(const std::string& delname) {
             if (exists(delname)) {
@@ -1892,72 +1846,57 @@ namespace dvnci {
         size_type delete_user(const std::string& delname) {
             return users()->remove(delname);}
 
+
+
         size_type duplicate_group(size_type id, std::string newname);
+        
+        size_type duplicate_group(std::string grp, std::string newname);
+        
 
         void merge_tag(size_type id) {
             writetofile(id);}
 
-        void merge_tags() {
-            writetofileall();}
-
         void merge_group(size_type id) {
             groups()->writetofile(id);}
-
-        void merge_groups() {
-            groups()->writetofileall();}
 
         void merge_agroup(size_type id) {
             agroups()->writetofile(id);}
 
-        void merge_agroups() {
-            agroups()->writetofileall();}
-
         void merge_accessrule(size_type id) {
             accessrules()->writetofile(id);}
-
-        void merge_accessrules() {
-            accessrules()->writetofileall();}
 
         void merge_user(size_type id) {
             users()->writetofile(id);}
 
-        void merge_users() {
-            users()->writetofileall();}
-
-        size_type duplicate_group(std::string grp, std::string newname) {
-            lower_and_trim(grp);
-            lower_and_trim(newname);
-            if (!groups()->exists(grp))
-                throw dvncierror(ERROR_ENTNOEXIST, grp);
-            return duplicate_group( groups()->operator ()(grp), newname);}
 
 
 
-        void select_groups(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = -1);
 
-        void select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_groups(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
 
-        void select_agroups(iteminfo_map& val, const std::string& strcriteria, num64 numcriteria = -1);
+        void select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
 
-        void select_agroups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria, num64 numcriteria = -1);
+        void select_agroups(iteminfo_map& val, const std::string& strcriteria, num64 numcriteria = npos);
 
-        void select_users(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_agroups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria, num64 numcriteria = npos);
 
-        void select_users(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_users(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
 
-        void select_accessrules(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_users(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
 
-        void select_accessrules(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_accessrules(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
 
-        void select_tags(iteminfo_map& val, size_type group, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_accessrules(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
 
-        void select_tags(iteminfo_map& val, std::string group, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_tags(iteminfo_map& val, size_type group, const std::string& strcriteria = "", num64 numcriteria = npos);
 
-        void select_tags(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_tags(iteminfo_map& val, std::string group, const std::string& strcriteria = "", num64 numcriteria = npos);
 
-        void select_atags(iteminfo_map& val, size_type agroup, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_tags(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
 
-        void select_atags(iteminfo_map& val, std::string agroup, const std::string& strcriteria = "", num64 numcriteria = -1);
+        void select_atags(iteminfo_map& val, size_type agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
+
+        void select_atags(iteminfo_map& val, std::string agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
 
         void select_tags_by_appid(indx_set& val, appidtype appid);
 
@@ -1974,9 +1913,6 @@ namespace dvnci {
         void select_metalinks_vect_by_metalink(const metalink& lnk, metalink_vect& val, devnum_set& utilset);
 
         void select_groups_by_metalink(const metalink& lnk, appidtype app, indx_set& val);
-        
-        
-        
 
         bool select_trendbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
             return valbuffers()->select(logkey(id), vl, from_, to_, lgdb);}
@@ -1984,23 +1920,13 @@ namespace dvnci {
         bool select_trendbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const {
             return select_trendbuff(operator ()(nm), vl, from_, to_, lgdb);}
 
-
-
-
-
         bool select_reportbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
             return reportbuffers()->select(reportkey(id), vl, from_, to_);}
 
         bool select_reportbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
             return select_reportbuff(operator ()(nm), vl, from_, to_);}
-        
-        
-        
-        bool report_history_empty(size_type id) const {
-	    datetime tmpdt =reportbuffers()->toptime(reportkey(id));
-            return ((tmpdt==nill_time) || (tmpdt < time_log(id)));}
 
-        bool select_reportbuff_topvalue(size_type id, dt_val_pair& vl) const {
+        bool select_reportval_top(size_type id, dt_val_pair& vl) const {
             return reportbuffers()->topvalue(reportkey(id), vl);}
 
         bool select_reportval_by_time(size_type id, const datetime& tm, dt_val_pair& vl) const {
@@ -2008,10 +1934,12 @@ namespace dvnci {
 
         bool select_reportvals_by_time(const datetime& tm, indx_double_map& vlmap) const;
 
-        size_t select_reportbuff_count(size_type id) const {
-                return reportbuffers() ? reportbuffers()->count(reportkey(id)) : 0;}
-        
-        
+        bool report_history_empty(size_type id) const {
+            datetime tmpdt = reportbuffers()->toptime(reportkey(id));
+            return ((tmpdt == nill_time) || (tmpdt < time_log(id)));}
+
+        size_t report_history_count(size_type id) const {
+            return reportbuffers() ? reportbuffers()->count(reportkey(id)) : 0;}
 
         template<typename T, typename B>
         size_t select_journal(std::vector<T>& vect, guidtype& gid, size_t& curs, size_t& cnt) const {
@@ -2071,8 +1999,6 @@ namespace dvnci {
             guidtype vers = 0;
             return clients()->get<T, B > (vect, vers);}
 
-
-
         bool select_commands(command_vector& vect_, size_type group = npos) {
             return commands()->select_commands(vect_, group);}
 
@@ -2081,8 +2007,6 @@ namespace dvnci {
 
         bool clear_commands(size_type group = npos) {
             return commands()->clear_commands(group);}
-        
-        
 
         groupsbase * const groups() const {
             return groups_.get();};
@@ -2098,12 +2022,6 @@ namespace dvnci {
 
         mq_class_ptr getqueue() {
             return mq_class_ptr(proccess_queues::getqueue(registry()->selfhadle()));}
-
-
-
-
-
-        void resettag_for_group(size_type group, ns_error error = 0);
 
         void allvalid(vlvtype vld) {
             for (size_type i = 0; i < count(); ++i)
@@ -2122,6 +2040,7 @@ namespace dvnci {
     protected:
 
 
+        size_t globalmemsize() const;
 
         // mineu  property         
 
@@ -2232,19 +2151,15 @@ namespace dvnci {
 
         //overloaded       
 
-        virtual std::string nametemlete() const {
-            return "tag";};
-
-
 
         virtual bool checkname(const std::string& val, size_type parnt = npos);
 
         bool checkname_ex(const std::string& val);
 
-        virtual bool write_criteria(size_type id) const {
+        virtual bool trigger_write_criteria(size_type id) const {
             return ((exists(id)) && ((groups()->appid(group(id))) == NS_GROUP_SYSTEMVAR));}
 
-        virtual void initstruct(size_type id, const std::string& newname, num64 numcriteria = -1);
+        virtual void initstruct(size_type id, const std::string& newname, size_type parent = npos);
 
         virtual void uninitstruct(size_type id);
 
@@ -2252,11 +2167,29 @@ namespace dvnci {
 
         // triggers
 
-        virtual void trigger_add(size_type id, num64 numcriteria = -1);
+        virtual void trigger_add(size_type id, size_type opt = npos);
 
-        virtual void trigger_remove(size_type id, num64 numcriteria = -1);
+        virtual void trigger_remove(size_type id, size_type opt = npos);
 
         virtual void trigger_rename(size_type id);
+
+        void trigger_bind(size_type id);
+
+        void trigger_group_rename(size_type id);
+
+
+
+        virtual void trigger_util(size_type id, const tagstruct& oldst, const tagstruct& newst);
+
+        void trigger_trendlog(size_type id, bool state);
+
+        void trigger_report(size_type id, tagtype oldtype, tagtype newtype);
+
+        void trigger_texttype(size_type id, bool state);
+
+        void trigger_range(size_type id, bool state);
+
+        void trigger_systemtype(size_type id, bool state);
 
         void notify_tagmanage(qumsgtype mess, size_type id, size_type group) {
             registry()->notify_tagmanage(mess, id, group);}
@@ -2264,24 +2197,18 @@ namespace dvnci {
         void notify_groupmanage(qumsgtype mess, size_type id, num32 some) {
             registry()->notify_groupmanage(mess, id, some);}
 
-        virtual size_type parent_id(size_type id) {
-            return static_cast<num64> (group(id));}
-
         virtual size_t namepos(size_type id) const {
             return itemex(id)->namepos();};
 
         virtual std::string parentname(size_type id) const {
             return exists(id) ? (groups()->name(group(id)) + NEMESPACEDELIMIT) : "";}
 
-        virtual size_type string_to_numcriteria(const std::string& strcriteria) {
-            if (!groups()->exists(strcriteria)) return npos;
-            return ((*groups())(strcriteria));}
-
-        virtual size_t optinal_pos(size_type id) {
-            return ((exists(id)) && (groups()->exists(group(id)))) ?
-                    groups()->namepos(group(id)) : 0;}
+        virtual size_type parentid(size_type id) {
+            return  group(id);}
 
         void changepos1(size_t oldpos1, size_t newpos1);
+
+
 
 
         //////////////////////
@@ -2293,6 +2220,8 @@ namespace dvnci {
         virtual void addindex(size_type id);
 
         virtual void removeindex(size_type id);
+
+        virtual size_t optinal_pos(size_type id);
 
 
 
@@ -2410,29 +2339,22 @@ namespace dvnci {
 
         clientbase * const clients() const {
             return clients_.get();};
-            
+
         size_t group_childcount( size_type id);
 
 
 
         void duplicate_tags(const iteminfo_map& maptmpl, const std::string& grpnm);
 
-        void group_rename_notify(indx id) {
-            iteminfo_map mapgr;
-            select_tags(mapgr , id);
-            if (!mapgr.empty()) {
-                for (iteminfo_map::const_iterator it = mapgr.begin(); it != mapgr.end(); ++it)
-                    trigger_rename(it->first);}}
-
         bool grant_access(appidtype app, const std::string& hst = "", const std::string& ipp = "", const std::string& usr = "",  const std::string& password = "") {
             return accessrules()->grant_access(app, hst , ipp , usr , password);}
-        
-       
-        
+
+
+
         void checkreporttime(size_type id);
-        
+
         void increpttime(size_type id);
-        
+
         datetime trend_history_toptime(size_type id) const {
             return valbuffers()->toptime(logkey(id));}
 
@@ -2442,13 +2364,29 @@ namespace dvnci {
         bool insert_to_reportbuff_init(size_type id);
 
         bool insert_to_reportbuff_init(size_type id, const datetime& lst);
-        
-        
+
         bool trendbuff_need_write(size_type id) const {
             return valbuffers()->needwrite(logkey(id));}
 
         void trendbuff_need_write(size_type id, bool val) {
             valbuffers()->needwrite(logkey(id), val);}
+
+        template <typename T>
+        void insert_to_trendbuff(size_type id, T val, const datetime& tm = nill_time) {
+            size_type lk = logkey(id);
+            if (lk != npos) {
+                valbuffers()->insert<T > (lk, tm != nill_time ? tm : now(), val);}}
+
+        void insert_to_trendbuff(size_type id, datetime tm) {
+            size_type lk = logkey(id);
+            if (lk != npos) {
+                valbuffers()->insert(lk, tm);}}
+
+        void insert_to_reportbuff(size_type id, const datetime&  tm, double val =  NULL_DOUBLE) {
+            size_type lk = reportkey(id);
+            if (lk != npos) {
+                reportbuffers()->insert<double>(lk, tm, val);}}
+
 
 
 
@@ -2503,44 +2441,16 @@ namespace dvnci {
             remove_reportkey(id);
             return add_reportkey(id);}
 
-        template <typename T>
-        void insert_to_trendbuff(size_type id, T val, const datetime& tm = nill_time) {
-            size_type lk = logkey(id);
-            if (lk != npos) {
-                valbuffers()->insert<T > (lk, tm != nill_time ? tm : now(), val);}}
+        std::string valstringvalue(size_t pos) const {
+            return valstrb_->getstring(pos);}
 
-        void insert_to_trendbuff(size_type id, datetime tm) {
-            size_type lk = logkey(id);
-            if (lk != npos) {
-                valbuffers()->insert(lk, tm);}}
+        void  valstringvalue(size_t& pos, const std::string& value, bool persist) {
+            valstrb_->setstring(pos, value, persist);}
 
-        void insert_to_reportbuff(size_type id, const datetime&  tm, double val =  NULL_DOUBLE) {
-            size_type lk = reportkey(id);
-            if (lk != npos) {
-                reportbuffers()->insert<double>(lk, tm, val);}}
+        void valuestringremove(size_type id) {
+            valstrb_->remove(operator[](id)->value<size_t > ());}
 
-        stringvalue_base_ptr valuestringbs() {
-            return valstrb_;}
-
-        stringvalue_base_ptr valuestringbs() const {
-            return valstrb_;}
-
-        std::string getvalstringvalue(size_t pos) const {
-            return valuestringbs()->getstring(pos);}
-
-        void  setvalstringvalue(size_t& pos, const std::string& value, bool persist) {
-            valuestringbs()->setstring(pos, value, persist);}
-
-        void valuestringremove_iftexttag(size_type id) {
-            if (IN_TEXTSET(type(id)))
-                valuestringremove(operator[](id)->value<size_t > ());}
-
-        void valuestringremove(size_t pos) {
-            valuestringbs()->remove(pos);}
-
-        void valuestringreplace(size_t pos, bool to_sys) {
-            if (to_sys) valuestringbs()->replace_to_sys(pos);
-            else valuestringbs()->replace_from_sys(pos);}
+        void valuestringreplace(size_type id, bool to_sys);
 
         void kvitall() {
             alarms()->kvitall();}
@@ -2559,11 +2469,14 @@ namespace dvnci {
 
 
 
+        void resettag_for_group(size_type group, ns_error error = 0);
 
 
         virtual void inputsysvargroups(size_type group, bool include);
 
         void inputsysvartag(size_type id, bool include);
+
+
 
         void reghandle(appidtype app, eventtypeset evts);
 
@@ -2574,14 +2487,7 @@ namespace dvnci {
             if (exists(id)) {
                 operator[](id)->value<T > (value);}}
 
-        void value_internal(size_type id, std::string value) {
-            if (exists(id)) {
-                if (IN_TEXTSET(type(id))){
-                    size_t tmppos = operator[](id)->value<size_t > ();
-                    setvalstringvalue(tmppos, value, in_sysvar(id));
-                    if (tmppos != operator[](id)->value<size_t > ()) {
-                        operator[](id)->value<size_t > (tmppos);
-                        writetofile(id);}}}}
+        void value_internal(size_type id, const std::string& value);
 
         template<typename T>
         void value_log(size_type id, T value) {
@@ -2591,10 +2497,6 @@ namespace dvnci {
         void value_log(size_type id, std::string value) {
             if (exists(id)) {
                 operator[](id)->value_log(value);}}
-
-
-
-        size_t globalmemsize() const;
 
         void notify_journal(size_type line) {
             registry()->notify_journal(line);}
