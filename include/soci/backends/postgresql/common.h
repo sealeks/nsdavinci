@@ -28,7 +28,13 @@ T string_to_integer(char const * buf)
 {
     long long t;
     int n;
-    int const converted = sscanf(buf, formatspec, &t, &n);
+#ifdef  _WIN32    
+    int const converted = sscanf(buf, "%I64d%n", &t, &n);
+#elif  _WIN64
+    int const converted = sscanf(buf, "%I64u%n", &t, &n);
+#else     
+    int const converted = sscanf(buf, "%lld%n", &t, &n);
+#endif       
     if (converted == 1 && static_cast<std::size_t>(n) == strlen(buf))
     {
         // successfully converted to long long
@@ -73,7 +79,13 @@ T string_to_unsigned_integer(char const * buf)
 {
     unsigned long long t(0);
     int n(0);
-    int const converted = sscanf(buf, formatspec, &t, &n);
+#ifdef _WIN32     
+    int const converted = sscanf(buf, "%I64u%n", &t, &n);
+#elif  _WIN64
+    int const converted = sscanf(buf, "%I64u%n", &t, &n);
+#else     
+    int const converted = sscanf(buf, "%lld%n", &t, &n);
+#endif       
     if (converted == 1 && static_cast<std::size_t>(n) == strlen(buf))
     {
         // successfully converted to unsigned long long
