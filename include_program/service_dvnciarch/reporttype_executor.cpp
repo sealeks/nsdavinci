@@ -24,7 +24,7 @@ namespace dvnci {
             if (dbdriver->isconnected()) {
                 switch (intf->valid(id)) {
                     case REPORT_NEEDKHOWDEEP:{
-                        DEBUG_VAL_DVNCI(intf->select_reportbuff_count(id))
+                        DEBUG_VAL_DVNCI(intf->report_history_count(id))
                         if (!intf->insert_to_reportbuff_init(id)){
                             dvnci::datetime tm = nill_time;
                             dt_val_map tmpvlmap;
