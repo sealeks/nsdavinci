@@ -24,7 +24,7 @@
 namespace dvnci {
     namespace opc {
 
-short_value& operator<<(short_value& lv, const opcvalue_item&  rv);
+        const short_value& operator<<(short_value& lv, const opcvalue_item&  rv);
 
         class dvnci_opc_subsciptor : public abstract_subscriptor<opcintf, TYPE_SIMPL> {
         public:
@@ -56,14 +56,8 @@ short_value& operator<<(short_value& lv, const opcvalue_item&  rv);
                                 DEBUG_STR_VAL_DVNCI(TGID, it->tagid())
                                 DEBUG_STR_VAL_DVNCI(SERVKEY, servkey)
                                 if ((intf->exists(it->tagid())) && (servkey>-1)) {
-                                    num64 convval = 0;/*intf->type(it->tagid())==TYPE_NODEF ?
-                                              line_lanscape_convertion_serv(it->value_set<num64>(),
-                                                    intf->mineu<double>(it->tagid()),
-                                                    intf->maxeu<double>(it->tagid()),
-                                                    intf->minraw<double>(it->tagid()),
-                                                    intf->maxraw<double>(it->tagid())) :
-                                              it->value_set<num64>();*/
-                                    opccommand_item tmp = { servkey, convval , intf->type(it->tagid()), true, "", ""};
+                                    opccommand_item tmp = { servkey, it->value_set<num64>() , 
+                                                                     it->type(), true, "", ""};
                                     cmditems.push_back(tmp);}}}
                       return (!cmditems.empty());}
 

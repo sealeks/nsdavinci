@@ -10,6 +10,10 @@
 namespace dvnci {
     namespace opc {
 
-short_value& operator<<(short_value& lv, const opcvalue_item&  rv){
-    return lv;/*short_value(rv.val,rv.type, rv.valid, 0, rv.time);*/} }
-}
+const short_value& operator<<(short_value& lv, const opcvalue_item&  rv){
+    lv.value64(rv.val);
+    lv.type(rv.type);  
+    lv.valid(rv.valid);
+    lv.time_n64(rv.time);
+    return lv;};
+    }}
