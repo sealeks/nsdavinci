@@ -387,10 +387,11 @@ namespace database {
                     double val = 0.0;
                     soci::statement stmnt = (sql.prepare << "insert into " + tn + " (cod, tm, val) values (:cod, :tm, :val)", soci::use(id), soci::use(tmp_tm), soci::use(val));
                     for (dt_val_map::const_iterator it = values.begin(); it != values.end(); ++it) {
-                        tmp_tm = castnum64_from_datetime(it->first);
-                        cod = static_cast<num32> (id);
-                        val = it->second;
-                        stmnt.execute(true);}
+                        if ((it->second==it->second) && (it->first!=nill_time)) {
+                            tmp_tm = castnum64_from_datetime(it->first);
+                            cod = static_cast<num32> (id);
+                            val = it->second;
+                            stmnt.execute(true);}}
                     return true;}
                 catch (soci::soci_error const & e) {
                     DEBUG_STR_VAL_DVNCI(ERRORRRCOD, e.code());
