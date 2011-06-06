@@ -33,7 +33,13 @@ int generate_pg_error(bool rslt, const char* errcd, const char* msg){
             throw soci_error(static_cast<int>(0x8000), "Connection error");}
         long long t = 0;
         if (errcd) {
-        if (sscanf(errcd, formatspec, &t)!=1) t =0 ;
+#ifdef _WIN32            
+        if (sscanf(errcd, "%I64d", &t)!=1) t =0 ;
+#elif  _WIN64
+        if (sscanf(errcd, "%I64d", &t)!=1) t =0 ;
+#else        
+        if (sscanf(errcd, "%lld%n", &t)!=1) t =0 ;
+#endif        
         if (t){
             throw soci_error(static_cast<int>(t), msg);}}
         else{
