@@ -184,7 +184,7 @@ namespace dvnci {
          * @param size размер отображаемого блока, 0 - весь файл с учетом смещения
          * @return число записанных байт
          */
-        static size_t write(const fspath& filename, void* addr, size_t offset = 0, size_t size = 0);} ;
+        static size_t write(const fspath& filename, const void* addr, size_t offset = 0, size_t size = 0);} ;
 
     /**
      * Работа с разделяемой памятью и файлолами отображаемыми в
@@ -323,7 +323,9 @@ namespace dvnci {
 
         size_t writetofile(size_t offset = 0, size_t sz = 0);
 
-        size_t writestructtofile(void* dt, size_t offset = 0, size_t sz = 0);
+        size_t writestructtofile(const void* dt, size_t offset = 0, size_t sz = 0);
+        
+        size_t readstructfromfile(void* dt, size_t offset = 0 , size_t sz = 0);
 
         size_t filesize() const {
             return filestream::filesize(filename().string());}

@@ -41,8 +41,8 @@ namespace dvnci {
             std::ifstream ifs( filename.string().c_str() , std::ios::binary );
             if (!ifs)
                 return 0;
-            if (!offset)
-                ifs.seekg(offset, std::ofstream::beg);
+            if (offset)
+				ifs.seekg(offset, std::ofstream::beg);
 
             if (!size) size = fsz - offset;
             size_t rsz = (fsz < (offset + size)) ?  fsz - offset :  size;
@@ -51,7 +51,7 @@ namespace dvnci {
             return rsz;}
         else return 0;}
 
-    size_t filestream::write(const fspath& filename, void* addr, size_t offset , size_t size ) {
+    size_t filestream::write(const fspath& filename, const void* addr, size_t offset , size_t size ) {
         if (!size) return 0;
         size_t fsz = filestream::filesize(filename.string());
         std::ios_base::openmode mode = std::ios::binary | std::ios::in;
@@ -151,10 +151,15 @@ namespace dvnci {
         INP_EXCLUSIVE_LOCK(filelock());
         return filestream::write(filename().string(), (char*) get_address() + offset , offset, sz);}
 
-    size_t util_filemapmemory::writestructtofile(void* dt, size_t offset , size_t sz ) {
+    size_t util_filemapmemory::writestructtofile(const void* dt, size_t offset , size_t sz ) {
         if (!sz) return 0;
         INP_EXCLUSIVE_LOCK(filelock());
-        return filestream::write(filename().string(), (num8*) dt , offset, sz);}
+        return filestream::write(filename().string(), (const num8*) dt , offset, sz);}
+    
+    size_t util_filemapmemory::readstructfromfile(void* dt, size_t offset , size_t sz ) {
+        if (!sz) return 0;
+        INP_EXCLUSIVE_LOCK(filelock());
+        return filestream::read(filename().string(), (num8*) dt , offset, sz);}
 
     size_t util_filemapmemory::writenosave_to_end(size_t sz) {
         if (!sz) return 0;
