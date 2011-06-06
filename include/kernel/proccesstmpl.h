@@ -173,8 +173,6 @@ namespace dvnci {
         // управлене ошибочными состояниями
         void error(indx id, ns_error err = 0);
 
-        // запись всех ожидающих в буфере отчетных значений
-        bool push_all_report(indx id = npos);
 
         virtual ns_error checklink(bool recheck = false){
             return 0;}

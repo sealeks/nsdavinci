@@ -568,7 +568,7 @@ namespace dvnci {
         if (boost::regex_match( val, ex_xtagTemplete)) throw dvncierror(ERROR_NAMEENTETY_CORRECT, val, 0);
         return true;}
 
-    void groupsbase::initstruct(size_type id, const std::string& newname, num64 numcriteria) {
+    void groupsbase::initstruct(size_type id, const std::string& newname, size_type parent) {
         new ( &((pgroupsstruct) data())->items[id] ) groupstruct(able_ptr);
         name(id, newname, false);
         appid(id, 0);
@@ -585,14 +585,14 @@ namespace dvnci {
         ether(id, "");
         templatebase<groupsstruct>::uninitstruct(id);}
 
-    void groupsbase::trigger_add(size_type id, num64 numcriteria) {
+    void groupsbase::trigger_add(size_type id, size_type opt) {
         notify_groupmanage(MSG_DVNCIGROUPNEW, id, 0);};
 
-    void groupsbase::trigger_remove(size_type id, num64 numcriteria) {
+    void groupsbase::trigger_remove(size_type id, size_type opt) {
         notify_groupmanage(MSG_DVNCIGROUPDELETE, id, 0);};
 
-    void groupsbase::trigger_write(size_type id) {
-        notify_groupmanage(MSG_DVNCIGROUPCHAPP, id, exists(id) ? appid(id) : 0);}
+    void groupsbase::trigger_util(size_type id, const struct_type& oldst,  const struct_type& newst) {
+        notify_groupmanage(MSG_DVNCIGROUPCHAPP, id , static_cast<num32> (newst.id() ? newst.appid() : 0));}
 
     void groupsbase::notify_tagmanage(qumsgtype mess, size_type id, size_type group) {
         if (systemnotifyer)
@@ -604,9 +604,6 @@ namespace dvnci {
 
     void groupsbase::appid(size_type id, appidtype  val)  {
         if (exists(id)) {
-            if (in_EXCLUSIVEGROUP(val))
-                if (select_groups_by_appid(val) != npos)
-                    throw dvncierror(ERROR_ENTETYNOGHANETYPE_ISEXCLUSIVE, name(select_groups_by_appid(val)), 0);
             if (operator[](id)->appid() != val) {
                 formatmem_in_null(operator[](id)->config(), GROP_CONFIG_SIZE);
                 operator[](id)->appid(val);}}}
@@ -655,7 +652,7 @@ namespace dvnci {
         if (boost::regex_match( val, ex_xtagTemplete)) throw dvncierror(ERROR_NAMEENTETY_CORRECT, val, 0);
         return true;}
 
-    void agroupsbase::initstruct(size_type id, const std::string& newname, num64 numcriteria) {
+    void agroupsbase::initstruct(size_type id, const std::string& newname, size_type parent) {
         new  ( &((pagroupsstruct) data())->items[id] ) agroupstruct(able_ptr);
         name(id, newname, false);
         headername(id, "");
@@ -693,7 +690,7 @@ namespace dvnci {
             throw dvncierror(ERROR_NAMEENTETY_DUBLICATE, val, operator ()(val));
         return true;}
 
-    void accessrulesbase::initstruct(size_type id, const std::string& newname, num64 numcriteria) {
+    void accessrulesbase::initstruct(size_type id, const std::string& newname, size_type parent) {
         new ( &((paccessrulesstruct) data())->items[id] ) accessrulestruct(able_ptr);
         name(id, newname, false);
         cidr(id, "");
@@ -734,7 +731,7 @@ namespace dvnci {
             throw dvncierror(ERROR_NAMEENTETY_DUBLICATE, val, operator ()(val));
         return true;}
 
-    void usersbase::initstruct(size_type id, const std::string& newname, num64 numcriteria) {
+    void usersbase::initstruct(size_type id, const std::string& newname, size_type parent) {
         new ( &((pusersstruct) data())->items[id]) userstruct (able_ptr);
         name(id, newname, false);
         password(id, "");
@@ -942,54 +939,8 @@ namespace dvnci {
     void tagsbase::type(size_type id, tagtype value) {
         if ((exists(id)) && (IN_TYPESET(value))) {
             if (value != type(id)) {
-                bool old_isreport = IN_REPORTSET(type(id));
-                bool oldistext = IN_TEXTSET(type(id));
-                bool oldisreport = reportbuffered(id);
-                bool oldislogged = logbuffered(id);
-                tagstruct tmp_struct = *operator[](id);
                 operator[](id)->type(value);
-                to_standart_range(id);
-                bool new_isreport = IN_REPORTSET(type(id));
-                if ((logged(id))) {
-                    if (oldislogged)
-                        reset_logkey(id);
-                    else {
-                        archtagcnt(archtagcnt() + 1);
-                        add_logkey(id);
-                        registry()->notify_log(id, true);}}
-                else {
-                    if (oldislogged)
-                        if (archtagcnt())
-                            archtagcnt(archtagcnt() - 1);
-                    remove_logkey(id);
-                    registry()->notify_log(id, false);}
-                if (IN_REPORTSET(value)) {
-                    if (oldisreport) {
-                        reset_reportkey(id);}
-                    else {
-                        reporttagcnt(reporttagcnt() + 1);
-                        add_reportkey(id);}
-                    operator[](id)->alarmlevel(0);}
-                else {
-                    if (oldisreport) {
-                        if (reporttagcnt()) reporttagcnt(reporttagcnt() - 1);
-                        remove_reportkey(id);}}
-                if (value == TYPE_DISCRET) operator[](id)->logdb(0);
-
-                if ((new_isreport) || (old_isreport)) {
-                    if (old_isreport)
-                        notify_tagmanage(MSG_DVNCITAGREPORT, id, 0);
-                    if (new_isreport)
-                        notify_tagmanage(MSG_DVNCITAGREPORT, id, 1);}
-
-                if ((oldistext) || (IN_TEXTSET(type(id)))) {
-                    if (oldistext)
-                        valuestringremove(operator[](id)->value<size_t > ());
-                    else
-                        operator[](id)->value<size_t > (0);
-                    texttagcnt(IN_TEXTSET(type(id)) ? texttagcnt() + 1 : (texttagcnt() ? texttagcnt() - 1 : 0));}
-                notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
-                notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}}}
+                to_standart_range(id);}}}
 
     void tagsbase::group(size_type id, size_type value, bool message) {
         if ((exists(id)) && (groups_->exists(value))) {
@@ -1018,15 +969,14 @@ namespace dvnci {
             stringbase_src(tmp, value);
             operator[](id)->poscomment(tmp);}}
 
-    void tagsbase::binding(size_type id, const std::string&  value, bool message) {
+    void tagsbase::binding(size_type id, const std::string&  value, bool triggered) {
         if (exists(id)) {
             if (value != binding(id)) {
                 size_t tmp = operator[](id)->posbinding();
                 stringbase_src(tmp, value, DVNCI_DEFRES_NAMESIZE);
                 operator[](id)->posbinding(tmp);
-                if (message) {
-                    notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
-                    notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}}}}
+                if (triggered) {
+                    trigger_bind(id);}}}}
 
     void  tagsbase::eu(size_type id, const std::string&  value) {
         if (exists(id)) {
@@ -1055,29 +1005,30 @@ namespace dvnci {
     void tagsbase::logged(size_type id, bool value) {
         if (exists(id)) {
             if (operator[](id)->logged() != value) {
-                operator[](id)->logged(value);
-                if (value) {
-                    archtagcnt(archtagcnt() + 1);
-                    add_logkey(id);
-                    registry()->notify_log(id, true);}
-                else {
-                    archtagcnt( archtagcnt() ? archtagcnt() - 1 : archtagcnt());
-                    remove_logkey(id);
-                    registry()->notify_log(id, false);}}}}
+                operator[](id)->logged(value);}}}
     
     
+
+    void tagsbase::incref(size_type id) {
+        if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
+            operator[](id)->increfcnt();
+            if (operator[](id)->refcnt() == 1)  registry()->notify_newref(id);}}
+
+    void tagsbase::decref(size_type id) {
+        if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
+            if (refcnt(id) > 0) {
+                operator[](id)->decrefcnt();
+                if (operator[](id)->refcnt() == 0) {
+                    registry()->notify_remref(id);}}}}    
+    
+
     void tagsbase::group_appid(size_type id, appidtype val) {
-            if (groups()->exists(id)) {
-                appidtype old_appid = groups()->appid(id);
-                if (val != groups()->appid(id)) {
-                    groups()->appid(id, val);
-                    if (old_appid == NS_GROUP_SYSTEMVAR) inputsysvargroups(id, false);
-                    if (val == NS_GROUP_SYSTEMVAR) inputsysvargroups(id, true);}}}
-    
-    
-    
-    
-    
+        if (groups()->exists(id)) {
+            appidtype old_appid = groups()->appid(id);
+            if (val != groups()->appid(id)) {
+                groups()->appid(id, val);
+                if (old_appid == NS_GROUP_SYSTEMVAR) inputsysvargroups(id, false);
+                if (val == NS_GROUP_SYSTEMVAR) inputsysvargroups(id, true);}}}
 
     void tagsbase::write_val(size_type id, const std::string& val, vlvtype validlvl,  const datetime& tm, ns_error err ) {
         if (exists(id)) {
@@ -1212,9 +1163,6 @@ namespace dvnci {
                         error( val.error());
                     return;}}
             write_val<double>(id, val.value<double>(), val.valid(), val.time(), val.error());}}
-    
-    
-    
 
     void tagsbase::write_val_report(size_type id, datetime tm , double val , ns_error err, bool onlybuffer ) {
         if ((exists(id)) && (!tm.is_special())) {
@@ -1243,16 +1191,14 @@ namespace dvnci {
                     error(id, err);
                     return true;}}}
         return false;}
-    
-    
-    
 
     void tagsbase::write_val_event(size_type id, datetime dt, double vl) {
         if ((exists(id)) && (IN_EVENTSET(type(id)))) {
             time(id, dt);
             insert_evnt_to_journal(id, vl);}}
-    
-    
+
+    void tagsbase::write_val_event(size_type id, const dt_val_pair& val) {
+        write_val_event(id, val.first, val.second);}
 
     void tagsbase::send_command(size_type id, const std::string& val, bool queue , size_type clid) {
         if (exists(id)) {
@@ -1306,9 +1252,6 @@ namespace dvnci {
                     return;}}
             double tmp = 0;
             if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, clid);}}
-    
-    
-    
 
     void tagsbase::send_command(size_type id, const short_value& val , bool queue , size_type clid) {
         if (exists(id)) {
@@ -1349,8 +1292,7 @@ namespace dvnci {
                     send_command<float>(id, val.value<float>(), queue, clid);
                     return;}}
             send_command<double>(id, val.value<double>(), queue, clid);}}
-    
-    
+
     void tagsbase::kvit(size_type id) {
         if (id == npos) kvitall();
         else {
@@ -1360,17 +1302,12 @@ namespace dvnci {
                     alarms()->kvit_group(id & RESETMASK);
                 if ((id & AGROUPMASK) && (agroups()->exists(id & RESETMASK)))
                     alarms()->kvit_agroup(id & RESETMASK);}}}
-    
-    
-    
+
     void tagsbase::kvit(const std::string& vl) {
-            size_type idx = operator ()(vl);
-            if (extendexists(idx)) {
-                kvit(idx);}}
-    
-    
-    
-    
+        size_type idx = operator ()(vl);
+        if (extendexists(idx)) {
+            kvit(idx);}}
+
     void tagsbase::debug(const std::string& mess, debuglvtype lev) {
         debuglvtype clv = (*(ptagsstruct_hdr) data()).debuglevel();
         if (clv >= lev) {
@@ -1379,210 +1316,13 @@ namespace dvnci {
     
     
     
-
-    void tagsbase::texttagcnt(size_t val) {
-        if ((val + 1) == 0) return;
-        INP_EXCLUSIVE_LOCK(memlock())
-                (*(ptagsstruct_hdr) data()).texttagcnt(val);
-        writeheader();}
-
-    void tagsbase::archtagcnt(size_t val) {
-        if ((val + 1) == 0) return;
-        INP_EXCLUSIVE_LOCK(memlock())
-                (*(ptagsstruct_hdr) data()).archtagcnt(val);
-        writeheader();}
-
-    void tagsbase::reporttagcnt(size_t val) {
-        if ((val + 1) == 0) return;
-        INP_EXCLUSIVE_LOCK(memlock())
-                (*(ptagsstruct_hdr) data()).reporttagcnt(val);
-        writeheader();}
-
-    void tagsbase::prjcfg_debuglevel(debuglvtype val) {
-        INP_EXCLUSIVE_LOCK(memlock())
-                (*(ptagsstruct_hdr) data()).debuglevel(val);
-        writeheader();}
-
-    void tagsbase::prjcfg_dbprovider(dbprovtype val) {
-        INP_EXCLUSIVE_LOCK(memlock())
-        if ((*(ptagsstruct_hdr) data()).dbprovider() != val) {
-            (*(ptagsstruct_hdr) data()).dbprovider(val);
-            writeheader();
-            registry()->notify_dbmanage(MSG_DVNCICONNSTRCH);}}
-
-    void tagsbase::prjcfg_analogbuf(bool val) {
-        INP_EXCLUSIVE_LOCK(memlock())
-                (*(ptagsstruct_hdr) data()).analogbuf(val);
-        writeheader();}
-
-    void tagsbase::prjcfg_bddepth(num32 val) {
-        INP_EXCLUSIVE_LOCK(memlock())
-                (*(ptagsstruct_hdr) data()).bddepth(val);
-        writeheader();}
-
-    void tagsbase::prjcfg_name(const std::string& value) {
-        INP_EXCLUSIVE_LOCK(memlock())
-        size_t tmp = (*(ptagsstruct_hdr) data()).posname();
-        if (stringbase_src(tmp) != value) {
-            stringbase_src(tmp, value);
-            (*(ptagsstruct_hdr) data()).posname(tmp);
-            writeheader();}}
-
-    void tagsbase::prjcfg_comment(const std::string& value) {
-        INP_EXCLUSIVE_LOCK(memlock())
-        size_t tmp = (*(ptagsstruct_hdr) data()).poscomment();
-        if (stringbase_src(tmp) != value) {
-            stringbase_src(tmp, value);
-            (*(ptagsstruct_hdr) data()).poscomment(tmp);
-            writeheader();}}
-
-    void tagsbase::prjcfg_dbstring(const std::string& value) {
-        INP_EXCLUSIVE_LOCK(memlock())
-        size_t tmp = (*(ptagsstruct_hdr) data()).posdbstring();
-        if (stringbase_src(tmp) != value) {
-            stringbase_src(tmp, value);
-            (*(ptagsstruct_hdr) data()).posdbstring(tmp);
-            writeheader();
-            registry()->notify_dbmanage(MSG_DVNCICONNSTRCH);}}
-
-    void tagsbase::prjcfg_admin(const std::string& value) {
-        INP_EXCLUSIVE_LOCK(memlock())
-        size_t tmp = (*(ptagsstruct_hdr) data()).posadmin();
-        if (stringbase_src(tmp) != value) {
-            stringbase_src(tmp, value);
-            (*(ptagsstruct_hdr) data()).posadmin(tmp);
-            writeheader();}}
-
-    void tagsbase::prjcfg_password(const std::string& value) {
-        INP_EXCLUSIVE_LOCK(memlock())
-        size_t tmp = (*(ptagsstruct_hdr) data()).pospass();
-        if (stringbase_src(tmp) != value) {
-            stringbase_src(tmp, value);
-            (*(ptagsstruct_hdr) data()).pospass(tmp);
-            writeheader();}}
-
-    void tagsbase::prjcfg_adminport(const std::string& value) {
-        INP_EXCLUSIVE_LOCK(memlock())
-        size_t tmp = (*(ptagsstruct_hdr) data()).posadminport();
-        if (stringbase_src(tmp) != value) {
-            stringbase_src(tmp, value);
-            (*(ptagsstruct_hdr) data()).posadminport(tmp);
-            writeheader();}}
-
-    void tagsbase::prjcfg_remoteport(const std::string& value) {
-        INP_EXCLUSIVE_LOCK(memlock())
-        size_t tmp = (*(ptagsstruct_hdr) data()).posremoteport();
-        if (stringbase_src(tmp) != value) {
-            stringbase_src(tmp, value);
-            (*(ptagsstruct_hdr) data()).posremoteport(tmp);
-            writeheader();}}
-
-    void tagsbase::prjcfg_opcport(const std::string& value) {
-        INP_EXCLUSIVE_LOCK(memlock())
-        size_t tmp = (*(ptagsstruct_hdr) data()).posopcport();
-        if (stringbase_src(tmp) != value) {
-            stringbase_src(tmp, value);
-            (*(ptagsstruct_hdr) data()).posopcport(tmp);
-            writeheader();}}
-
-    void tagsbase::inputsysvartag(size_type id, bool include) {
-        if (exists(id)) {
-            if (include) {
-                operator[](id)->valid(FULL_VALID);
-                writetofile(id);}
-            else {
-                operator[](id)->valid(NULL_VALID);
-                writetofile(id);}}}
-
-    void tagsbase::inputsysvargroups(size_type group, bool include) {
-        if (groups()->exists(group)) {
-            iteminfo_map tmp;
-            select_tags(tmp, group);
-            for (iteminfo_map::iterator it = tmp.begin(); it != tmp.end(); ++it) {
-                inputsysvartag(it->first, include);}}}
-
-    void tagsbase::resettag_for_group(size_type group, ns_error error) {
-        if (groups()->exists(group)) {
-            iteminfo_map tmp;
-            select_tags(tmp, group);
-            for (iteminfo_map::iterator it = tmp.begin(); it != tmp.end(); ++it) {
-                if (exists(it->first)) {
-                    valid(it->first, 0);
-                    operator[](it->first)->value(0);
-                    operator[](it->first)->value_log(0);
-                    operator[](it->first)->error(error);
-                    operator[](it->first)->time(nill_time);
-                    operator[](it->first)->time_log(nill_time);}}}}
-
-    void tagsbase::rangable(size_type id, bool value) {
-        if (exists(id)) {
-            if (value != rangable(id)) {
-                if (value) {
-                    switch (type(id)) {
-                        case TYPE_NODEF:{
-                            operator[](id)->minraw<double>(0);
-                            operator[](id)->maxraw<double>(100);
-                            break;}
-                        case TYPE_DOUBLE:{
-                            operator[](id)->minraw<double>(-std::numeric_limits<double>::max());
-                            operator[](id)->maxraw<double>(std::numeric_limits<double>::max());
-                            break;}
-                        case TYPE_FLOAT:{
-                            operator[](id)->minraw<float>(-std::numeric_limits<float>::max());
-                            operator[](id)->maxraw<float>(std::numeric_limits<float>::max());
-                            break;}
-                        case TYPE_DISCRET:{
-                            operator[](id)->minraw<bool>(false);
-                            operator[](id)->maxraw<bool>(true);
-                            break;}
-                        case TYPE_NUM64:{
-                            operator[](id)->minraw<num64 > (std::numeric_limits<num64>::min());
-                            operator[](id)->maxraw<num64 > (std::numeric_limits<num64>::max());
-                            break;}
-                        case TYPE_UNUM64:{
-                            operator[](id)->minraw<unum64 > (std::numeric_limits<unum64>::min());
-                            operator[](id)->maxraw<unum64 > (std::numeric_limits<unum64>::max());
-                            break;}
-                        case TYPE_NUM32:{
-                            operator[](id)->minraw<num32 > (std::numeric_limits<num32>::min());
-                            operator[](id)->maxraw<num32 > (std::numeric_limits<num32>::max());
-                            break;}
-                        case TYPE_UNUM32:{
-                            operator[](id)->minraw<unum32 > (std::numeric_limits<unum32>::min());
-                            operator[](id)->maxraw<unum32 > (std::numeric_limits<unum32>::max());
-                            break;}
-                        case TYPE_NUM16:{
-                            operator[](id)->minraw<num16 > (std::numeric_limits<num16>::min());
-                            operator[](id)->maxraw<num16 > (std::numeric_limits<num16>::max());
-                            break;}
-                        case TYPE_UNUM16:{
-                            operator[](id)->minraw<unum16 > (std::numeric_limits<unum16>::min());
-                            operator[](id)->maxraw<unum16 > (std::numeric_limits<unum16>::max());
-                            break;}
-                        case TYPE_NUM8:{
-                            operator[](id)->minraw<num8 > (std::numeric_limits<num8>::min());
-                            operator[](id)->maxraw<num8 > (std::numeric_limits<num8>::max());
-                            break;}
-                        case TYPE_UNUM8:{
-                            operator[](id)->minraw<unum8 > (std::numeric_limits<unum8>::min());
-                            operator[](id)->maxraw<unum8 > (std::numeric_limits<unum8>::max());
-                            break;}}}
-                else {
-                    operator[](id)->minraw<num64 > (0);
-                    operator[](id)->maxraw<num64 > (0);}}}}
-
-    void tagsbase::incref(size_type id) {
-        if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
-            operator[](id)->increfcnt();
-            if (operator[](id)->refcnt() == 1)  registry()->notify_newref(id);}}
-
-    void tagsbase::decref(size_type id) {
-        if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
-            if (refcnt(id) > 0) {
-                operator[](id)->decrefcnt();
-                if (operator[](id)->refcnt() == 0) {
-                    registry()->notify_remref(id);}}}}
-
+    tagsbase::size_type tagsbase::duplicate_group(std::string grp, std::string newname) {
+            lower_and_trim(grp);
+            lower_and_trim(newname);
+            if (!groups()->exists(grp))
+                throw dvncierror(ERROR_ENTNOEXIST, grp);
+            return duplicate_group( groups()->operator ()(grp), newname);}
+    
     tagsbase::size_type tagsbase::duplicate_group(size_type id, std::string newname) {
         lower_and_trim(newname);
         checkname_ex(newname);
@@ -1599,40 +1339,10 @@ namespace dvnci {
         addtags(tagidsmap, newgroupindx);
         duplicate_tags(tagsmap, groups()->name(newgroupindx));
         groups()->clone(newgroupindx, id);
-        return newgroupindx;}
-
-    void tagsbase::duplicate_tags(const iteminfo_map& maptmpl, const std::string& grpnm) {
-        for (iteminfo_map::const_iterator it = maptmpl.begin(); it != maptmpl.end(); ++it) {
-            std::string tmpnm = grpnm + NEMESPACEDELIMIT + retremoved_namespace_delimit(it->second.name());
-            size_type tmpindx = operator ()(tmpnm);
-            if ((it->first != npos) && (tmpindx != npos)) {
-                clone(tmpindx, it->first);}}}
+        return newgroupindx;} 
     
-    size_t tagsbase::group_childcount( size_type id) {
-            if (!groups()->exists(id)) return 0;
-            iteminfo_map tmp;
-            select_tags(tmp, id);
-            return tmp.size();}
-
-    void tagsbase::clone(size_type idsrc, size_type iddst) {
-        if ((!exists(idsrc)) || (!exists(iddst))) return;
-        binding(idsrc, binding(iddst), false);
-        comment(idsrc, comment(iddst));
-        eu(idsrc, eu(iddst));
-        onmsg(idsrc, onmsg(iddst));
-        offmsg(idsrc, offmsg(iddst));
-        alarmmsg(idsrc, alarmmsg(iddst));
-        tagstruct::clone(((ptagsstruct) data())->items[idsrc],
-                ((ptagsstruct) data())->items[iddst]);
-        if (IN_REPORTSET(type(idsrc))) {
-            notify_tagmanage(MSG_DVNCITAGREPORT, idsrc, 1);
-            add_reportkey(idsrc);}
-        if  (logged(idsrc)) {
-            add_logkey(idsrc);
-            registry()->notify_log(idsrc, true);}
-        writetofile(idsrc);}
-
-    void tagsbase::select_groups(iteminfo_map& val, const std::string& strcriteria  , num64 numcriteria) {
+    
+        void tagsbase::select_groups(iteminfo_map& val, const std::string& strcriteria  , num64 numcriteria) {
         val.clear();
         stringed_filterclass filtered_(strcriteria);
         for (size_type i = 0; (i < (*groups()).count()); i++)
@@ -1828,6 +1538,238 @@ namespace dvnci {
             else {
                 it->second = vl.second;}}
         return true;}
+    
+
+    void tagsbase::texttagcnt(size_t val) {
+        if ((val + 1) == 0) return;
+        INP_EXCLUSIVE_LOCK(memlock())
+                (*(ptagsstruct_hdr) data()).texttagcnt(val);
+        writeheader();}
+
+    void tagsbase::archtagcnt(size_t val) {
+        if ((val + 1) == 0) return;
+        INP_EXCLUSIVE_LOCK(memlock())
+                (*(ptagsstruct_hdr) data()).archtagcnt(val);
+        writeheader();}
+
+    void tagsbase::reporttagcnt(size_t val) {
+        if ((val + 1) == 0) return;
+        INP_EXCLUSIVE_LOCK(memlock())
+                (*(ptagsstruct_hdr) data()).reporttagcnt(val);
+        writeheader();}
+
+    void tagsbase::prjcfg_debuglevel(debuglvtype val) {
+        INP_EXCLUSIVE_LOCK(memlock())
+                (*(ptagsstruct_hdr) data()).debuglevel(val);
+        writeheader();}
+
+    void tagsbase::prjcfg_dbprovider(dbprovtype val) {
+        INP_EXCLUSIVE_LOCK(memlock())
+        if ((*(ptagsstruct_hdr) data()).dbprovider() != val) {
+            (*(ptagsstruct_hdr) data()).dbprovider(val);
+            writeheader();
+            registry()->notify_dbmanage(MSG_DVNCICONNSTRCH);}}
+
+    void tagsbase::prjcfg_analogbuf(bool val) {
+        INP_EXCLUSIVE_LOCK(memlock())
+                (*(ptagsstruct_hdr) data()).analogbuf(val);
+        writeheader();}
+
+    void tagsbase::prjcfg_bddepth(num32 val) {
+        INP_EXCLUSIVE_LOCK(memlock())
+                (*(ptagsstruct_hdr) data()).bddepth(val);
+        writeheader();}
+
+    void tagsbase::prjcfg_name(const std::string& value) {
+        INP_EXCLUSIVE_LOCK(memlock())
+        size_t tmp = (*(ptagsstruct_hdr) data()).posname();
+        if (stringbase_src(tmp) != value) {
+            stringbase_src(tmp, value);
+            (*(ptagsstruct_hdr) data()).posname(tmp);
+            writeheader();}}
+
+    void tagsbase::prjcfg_comment(const std::string& value) {
+        INP_EXCLUSIVE_LOCK(memlock())
+        size_t tmp = (*(ptagsstruct_hdr) data()).poscomment();
+        if (stringbase_src(tmp) != value) {
+            stringbase_src(tmp, value);
+            (*(ptagsstruct_hdr) data()).poscomment(tmp);
+            writeheader();}}
+
+    void tagsbase::prjcfg_dbstring(const std::string& value) {
+        INP_EXCLUSIVE_LOCK(memlock())
+        size_t tmp = (*(ptagsstruct_hdr) data()).posdbstring();
+        if (stringbase_src(tmp) != value) {
+            stringbase_src(tmp, value);
+            (*(ptagsstruct_hdr) data()).posdbstring(tmp);
+            writeheader();
+            registry()->notify_dbmanage(MSG_DVNCICONNSTRCH);}}
+
+    void tagsbase::prjcfg_admin(const std::string& value) {
+        INP_EXCLUSIVE_LOCK(memlock())
+        size_t tmp = (*(ptagsstruct_hdr) data()).posadmin();
+        if (stringbase_src(tmp) != value) {
+            stringbase_src(tmp, value);
+            (*(ptagsstruct_hdr) data()).posadmin(tmp);
+            writeheader();}}
+
+    void tagsbase::prjcfg_password(const std::string& value) {
+        INP_EXCLUSIVE_LOCK(memlock())
+        size_t tmp = (*(ptagsstruct_hdr) data()).pospass();
+        if (stringbase_src(tmp) != value) {
+            stringbase_src(tmp, value);
+            (*(ptagsstruct_hdr) data()).pospass(tmp);
+            writeheader();}}
+
+    void tagsbase::prjcfg_adminport(const std::string& value) {
+        INP_EXCLUSIVE_LOCK(memlock())
+        size_t tmp = (*(ptagsstruct_hdr) data()).posadminport();
+        if (stringbase_src(tmp) != value) {
+            stringbase_src(tmp, value);
+            (*(ptagsstruct_hdr) data()).posadminport(tmp);
+            writeheader();}}
+
+    void tagsbase::prjcfg_remoteport(const std::string& value) {
+        INP_EXCLUSIVE_LOCK(memlock())
+        size_t tmp = (*(ptagsstruct_hdr) data()).posremoteport();
+        if (stringbase_src(tmp) != value) {
+            stringbase_src(tmp, value);
+            (*(ptagsstruct_hdr) data()).posremoteport(tmp);
+            writeheader();}}
+
+    void tagsbase::prjcfg_opcport(const std::string& value) {
+        INP_EXCLUSIVE_LOCK(memlock())
+        size_t tmp = (*(ptagsstruct_hdr) data()).posopcport();
+        if (stringbase_src(tmp) != value) {
+            stringbase_src(tmp, value);
+            (*(ptagsstruct_hdr) data()).posopcport(tmp);
+            writeheader();}}
+
+    void tagsbase::inputsysvartag(size_type id, bool include) {
+        if (exists(id)) {
+            if (include) {
+                operator[](id)->valid(FULL_VALID);
+                if (IN_TEXTSET(type(id)))
+                    valuestringreplace(id, true);
+                writetofile(id);}
+            else {
+                operator[](id)->valid(NULL_VALID);
+                if (IN_TEXTSET(type(id)))
+                    valuestringreplace(id, false);
+                writetofile(id);}}}
+
+    void tagsbase::inputsysvargroups(size_type group, bool include) {
+        if (groups()->exists(group)) {
+            iteminfo_map tmp;
+            select_tags(tmp, group);
+            for (iteminfo_map::iterator it = tmp.begin(); it != tmp.end(); ++it) {
+                inputsysvartag(it->first, include);}}}
+
+    void tagsbase::resettag_for_group(size_type group, ns_error error) {
+        if (groups()->exists(group)) {
+            iteminfo_map tmp;
+            select_tags(tmp, group);
+            for (iteminfo_map::iterator it = tmp.begin(); it != tmp.end(); ++it) {
+                if (exists(it->first)) {
+                    valid(it->first, 0);
+                    operator[](it->first)->value(0);
+                    operator[](it->first)->value_log(0);
+                    operator[](it->first)->error(error);
+                    operator[](it->first)->time(nill_time);
+                    operator[](it->first)->time_log(nill_time);}}}}
+
+    void tagsbase::rangable(size_type id, bool value) {
+        if (exists(id)) {
+            if (value != rangable(id)) {
+                if (value) {
+                    switch (type(id)) {
+                        case TYPE_NODEF:{
+                            operator[](id)->minraw<double>(0);
+                            operator[](id)->maxraw<double>(100);
+                            break;}
+                        case TYPE_DOUBLE:{
+                            operator[](id)->minraw<double>(-std::numeric_limits<double>::max());
+                            operator[](id)->maxraw<double>(std::numeric_limits<double>::max());
+                            break;}
+                        case TYPE_FLOAT:{
+                            operator[](id)->minraw<float>(-std::numeric_limits<float>::max());
+                            operator[](id)->maxraw<float>(std::numeric_limits<float>::max());
+                            break;}
+                        case TYPE_DISCRET:{
+                            operator[](id)->minraw<bool>(false);
+                            operator[](id)->maxraw<bool>(true);
+                            break;}
+                        case TYPE_NUM64:{
+                            operator[](id)->minraw<num64 > (std::numeric_limits<num64>::min());
+                            operator[](id)->maxraw<num64 > (std::numeric_limits<num64>::max());
+                            break;}
+                        case TYPE_UNUM64:{
+                            operator[](id)->minraw<unum64 > (std::numeric_limits<unum64>::min());
+                            operator[](id)->maxraw<unum64 > (std::numeric_limits<unum64>::max());
+                            break;}
+                        case TYPE_NUM32:{
+                            operator[](id)->minraw<num32 > (std::numeric_limits<num32>::min());
+                            operator[](id)->maxraw<num32 > (std::numeric_limits<num32>::max());
+                            break;}
+                        case TYPE_UNUM32:{
+                            operator[](id)->minraw<unum32 > (std::numeric_limits<unum32>::min());
+                            operator[](id)->maxraw<unum32 > (std::numeric_limits<unum32>::max());
+                            break;}
+                        case TYPE_NUM16:{
+                            operator[](id)->minraw<num16 > (std::numeric_limits<num16>::min());
+                            operator[](id)->maxraw<num16 > (std::numeric_limits<num16>::max());
+                            break;}
+                        case TYPE_UNUM16:{
+                            operator[](id)->minraw<unum16 > (std::numeric_limits<unum16>::min());
+                            operator[](id)->maxraw<unum16 > (std::numeric_limits<unum16>::max());
+                            break;}
+                        case TYPE_NUM8:{
+                            operator[](id)->minraw<num8 > (std::numeric_limits<num8>::min());
+                            operator[](id)->maxraw<num8 > (std::numeric_limits<num8>::max());
+                            break;}
+                        case TYPE_UNUM8:{
+                            operator[](id)->minraw<unum8 > (std::numeric_limits<unum8>::min());
+                            operator[](id)->maxraw<unum8 > (std::numeric_limits<unum8>::max());
+                            break;}}}
+                else {
+                    operator[](id)->minraw<num64 > (0);
+                    operator[](id)->maxraw<num64 > (0);}}}}
+
+
+
+
+    void tagsbase::duplicate_tags(const iteminfo_map& maptmpl, const std::string& grpnm) {
+        for (iteminfo_map::const_iterator it = maptmpl.begin(); it != maptmpl.end(); ++it) {
+            std::string tmpnm = grpnm + NEMESPACEDELIMIT + retremoved_namespace_delimit(it->second.name());
+            size_type tmpindx = operator ()(tmpnm);
+            if ((it->first != npos) && (tmpindx != npos)) {
+                clone(tmpindx, it->first);}}}
+
+    size_t tagsbase::group_childcount( size_type id) {
+        if (!groups()->exists(id)) return 0;
+        iteminfo_map tmp;
+        select_tags(tmp, id);
+        return tmp.size();}
+
+    void tagsbase::clone(size_type idsrc, size_type iddst) {
+        if ((!exists(idsrc)) || (!exists(iddst))) return;
+        binding(idsrc, binding(iddst), false);
+        comment(idsrc, comment(iddst));
+        eu(idsrc, eu(iddst));
+        onmsg(idsrc, onmsg(iddst));
+        offmsg(idsrc, offmsg(iddst));
+        alarmmsg(idsrc, alarmmsg(iddst));
+        tagstruct::clone(((ptagsstruct) data())->items[idsrc],
+                ((ptagsstruct) data())->items[iddst]);
+        if (IN_REPORTSET(type(idsrc))) {
+            notify_tagmanage(MSG_DVNCITAGREPORT, idsrc, 1);
+            add_reportkey(idsrc);}
+        if  (logged(idsrc)) {
+            add_logkey(idsrc);
+            registry()->notify_log(idsrc, true);}
+        writetofile(idsrc);}
+
+
 
     void tagsbase::to_standart_range(size_type id) {
         if (exists(id)) {
@@ -1964,6 +1906,10 @@ namespace dvnci {
             if ((exsts) && (item_indexer->freeindex() > id))
                 item_indexer->freeindex(id);}}
 
+    size_t tagsbase::optinal_pos(size_type id) {
+        return ((exists(id)) && (groups()->exists(group(id)))) ?
+                groups()->namepos(group(id)) : 0;}
+
     void tagsbase::fill_logkeys() {
         if (!valbuffers()) return;
         for (size_type i = 0; i < count(); i++) {
@@ -2089,7 +2035,6 @@ namespace dvnci {
                     return true;}
                 case TYPE_UNUM8:{
                     unum8 tmp = cmd.value_set<unum8 > ();
-                    ;
                     restore_raw_range<unum8 > (id, tmp);
                     cmd.value_set<unum8 > (tmp);
                     return true;}
@@ -2123,10 +2068,6 @@ namespace dvnci {
                         commands()->add(id, val, queue, clid);}}
                 journal()->add(now(), id, msCmd, 0);}}}
 
-
-
-
-
     bool tagsbase::checkname(const string& val, size_type parnt)  {
         std::string fullnamed = groups()->name(parnt) + NEMESPACEDELIMIT + val;
         if (((operator [](fullnamed))) || (groups()->operator [](val)) || (agroups()->operator [](val)))
@@ -2141,25 +2082,110 @@ namespace dvnci {
         if (item_indexer->find(val, false) != npos) throw dvncierror(ERROR_NAMEENTETY_DUBLICATE, val, 0);
         return true;}
 
-    void tagsbase::trigger_add(size_type id, num64 numcriteria) {
-        notify_tagmanage(MSG_DVNCTAGNEW, id, static_cast<size_type> (numcriteria));
-        notify_tagmanage(MSG_DVNCTAGADDTOGR, id, static_cast<size_type> (numcriteria));};
+    void tagsbase::trigger_add(size_type id, size_type opt) {
+        notify_tagmanage(MSG_DVNCTAGNEW, id, static_cast<size_type> (opt));
+        notify_tagmanage(MSG_DVNCTAGADDTOGR, id, static_cast<size_type> (opt));};
 
-    void tagsbase::trigger_remove(size_type id, num64 numcriteria) {
+    void tagsbase::trigger_remove(size_type id, size_type opt) {
+        if (logbuffered(id)) {
+            if (archtagcnt()) {
+                archtagcnt(archtagcnt() - 1);}
+            remove_logkey(id);}
+        if (reportbuffered(id)) {
+            if (reporttagcnt()) {
+                reporttagcnt(reporttagcnt() - 1);}
+            remove_reportkey(id);}
+        if (IN_TEXTSET(type(id))) {
+            texttagcnt(texttagcnt() - 1);
+            valuestringremove(id);}
         notify_tagmanage(MSG_DVNCITAGREPORT, id, 0);
-        notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, static_cast<size_type> (numcriteria));
-        notify_tagmanage(MSG_DVNCTAGDELETE, id, static_cast<size_type> (numcriteria));};
+        notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, opt);
+        notify_tagmanage(MSG_DVNCTAGDELETE, id, opt);};
+        
 
     void tagsbase::trigger_rename(size_type id) {
         notify_tagmanage(MSG_DVNCTAGREPNAME, id, group(id));}
+    
+
+    void tagsbase::trigger_bind(size_type id) {
+        notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
+        notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}
+    
+
+    void tagsbase::trigger_group_rename(size_type id) {
+        iteminfo_map mapgr;
+        select_tags(mapgr , id);
+        if (!mapgr.empty()) {
+            for (iteminfo_map::const_iterator it = mapgr.begin(); it != mapgr.end(); ++it)
+                trigger_rename(it->first);}}
+    
+
+    void tagsbase::trigger_util(size_type id, const tagstruct& oldst, const tagstruct& newst) {
+        if (newst.id() != npos) {
+            bool change = false;
+
+            if (oldst.logged() != newst.logged()) {
+                trigger_trendlog(id, newst.logdb());}
+            if (newst.type() != oldst.type()) {
+                change = true;
+                if (IN_REPORTSET(oldst.type()) || IN_REPORTSET(newst.type())) {
+                    trigger_report(id , oldst.type(), newst.type());}
+                if (IN_TEXTSET(oldst.type()) || IN_TEXTSET(oldst.type())) {
+                    trigger_texttype(id , IN_TEXTSET(newst.type()));}}
+
+            if (IN_RANGESET(newst.type()) && (((oldst.mineu64() != newst.mineu64())
+                                               || (oldst.maxeu64() != newst.maxeu64()))) || (oldst.type() != newst.type())) {
+                trigger_range(id, newst.rangable());}
+
+            if (change) {
+                notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
+                notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}}};
+                
+
+    void tagsbase::trigger_trendlog(size_type id, bool state) {
+        if (state) {
+            archtagcnt(archtagcnt() + 1);
+            add_logkey(id);
+            registry()->notify_log(id, true);}
+        else {
+            archtagcnt( archtagcnt() ? archtagcnt() - 1 : archtagcnt());
+            remove_logkey(id);
+            registry()->notify_log(id, false);}};
+
+    void tagsbase::trigger_report(size_type id, tagtype oldtype, tagtype newtype) {
+        if (oldtype == newtype) return;
+        if (IN_REPORTSET(newtype)) {
+            if (IN_REPORTSET(oldtype)) {
+                reset_reportkey(id);}
+            else {
+                reporttagcnt(reporttagcnt() + 1);
+                add_reportkey(id);}}
+        else {
+            if (reporttagcnt())
+                reporttagcnt(reporttagcnt() - 1);
+            remove_reportkey(id);}};
+
+    void tagsbase::trigger_texttype(size_type id, bool state) {
+        if (!state)
+            valuestringremove(id);
+        else
+            operator[](id)->value<size_t > (0);
+
+        texttagcnt( state ? texttagcnt() + 1 : (texttagcnt() ? texttagcnt() - 1 : 0));}
+
+    void tagsbase::trigger_range(size_type id, bool state) {
+        if (logkey(id) != npos) {
+            valbuffers()->range( logkey(id), mineu_prtd<double>(id), maxeu_prtd<double>(id));}};
+
+    void tagsbase::trigger_systemtype(size_type id, bool state) {};
 
     void tagsbase::changepos1(size_t oldpos1, size_t newpos1) {
         INP_EXCLUSIVE_LOCK(item_indexer->memlock());
         buildindex();}
 
-    void tagsbase::initstruct(size_type id, const std::string& newname, num64 numcriteria) {
+    void tagsbase::initstruct(size_type id, const std::string& newname, size_type parent) {
 
-        new ( &((ptagsstruct) data())->items[id] ) tagstruct(able_ptr , static_cast<size_type> (numcriteria));
+        new ( &((ptagsstruct) data())->items[id] ) tagstruct(able_ptr , parent);
         name(id, newname, false);
         comment(id, "");
         binding(id, "", false);
@@ -2259,9 +2285,9 @@ namespace dvnci {
         return true;}
 
     bool tagsbase::insert_to_reportbuff_init(size_type id) {
-        if (select_reportbuff_count(id)) {
+        if (report_history_count(id)) {
             dt_val_pair value;
-            if (select_reportbuff_topvalue(id, value)) {
+            if (select_reportval_top(id, value)) {
                 write_val_report(id, value.first, value.second, 0, true);
                 DEBUG_STR_VAL_DVNCI(report_history_simple_init, reportkey(id))
                 return true;}}
@@ -2272,9 +2298,29 @@ namespace dvnci {
         write_val_report(id, lst, NULL_DOUBLE, 0, true);
         return true;}
 
+    void tagsbase::valuestringreplace(size_type id, bool to_sys) {
+        if (to_sys) {
+            size_t tmppos = operator[](id)->value<size_t > ();
+            valstrb_->replace_to_sys(tmppos);
+            operator[](id)->value<size_t > (tmppos);}
+        else {
+            size_t tmppos = operator[](id)->value<size_t > ();
+            valstrb_->replace_from_sys(tmppos);
+            operator[](id)->value<size_t > (tmppos);}}
+    
+    void tagsbase::value_internal(size_type id, const std::string& value) {
+            if (exists(id)) {
+                if (IN_TEXTSET(type(id))) {
+                    size_t tmppos = operator[](id)->value<size_t > ();
+                    valstringvalue(tmppos, value, in_sysvar(id));
+                    if (tmppos != operator[](id)->value<size_t > ()) {
+                        operator[](id)->value<size_t > (tmppos);
+                        if (groups()->appid(group(id))==NS_GROUP_SYSTEMVAR)
+                             writetofile(id);}}}}
+
     template<>
     std::string tagsbase::value<std::string>(size_type id) const {
-        return (!IN_TEXTSET(type(id))) ? itemex(id)->value_str() : getvalstringvalue(operator[](id)->value<size_t > ());}
+        return (!IN_TEXTSET(type(id))) ? itemex(id)->value_str() : valstringvalue(operator[](id)->value<size_t > ());}
 
     template<>
     datetime tagsbase::value<datetime>(size_type id) const {

@@ -134,13 +134,11 @@ namespace dvnci {
     protected:
 
         virtual void add_tags_impl(const indx_set& idset) {
-            for (indx_set::const_iterator it = idset.begin();
-                    it != idset.end(); ++it) {
+            for (indx_set::const_iterator it = idset.begin();it != idset.end(); ++it) {
                     add_item_in_all(*it);}}
 
         virtual void remove_tags_impl(const indx_set& idset) {
-            for (indx_set::const_iterator it = idset.begin();
-                    it != idset.end(); ++it) {
+            for (indx_set::const_iterator it = idset.begin();it != idset.end(); ++it) {
                 rem_item_from_all(*it);}}
 
         virtual bool initialize() {
