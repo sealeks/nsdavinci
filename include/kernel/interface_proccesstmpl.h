@@ -338,7 +338,7 @@ namespace dvnci {
                     for (indx_set::const_iterator itval = set_.begin(); itval != set_.end(); ++itval) {
                         short_value tmpval;
                         tmpval << (*it);
-                        if (!set_values_impl(*itval, tmpval))
+                        //if (!set_values_impl(*itval, tmpval))
                             write_val(*itval, tmpval);}}}}
 
         virtual bool set_values_impl(indx id, const short_value& value){ return false;}
