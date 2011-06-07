@@ -9,66 +9,66 @@
 #define	SUBSCRIPTGROUP_PROCCESSOR_TEMPLU_H
 
 #include <kernel/proccesstmpl.h>
+#include <kernel/constdef.h>
 
 namespace dvnci {
+    namespace external {
 
     const blksizetype DEFAULT_ARCHIVEBS = 15;
 
-    template <typename CLIENTITEM, typename SERVERITEM, typename ERRORITEM,
-            typename SERVERKEYTYPE, typename VALUE, typename REPORTVALUES, typename REPORTVALUE,
-            typename EVENTVALUE, typename COMMAND, typename CLIENTKEYTYPE = indx>
-            class externalintf {
+    
+    class externalintf {
+        
     public:
-
-        typedef CLIENTITEM client_item_type;
-        typedef SERVERITEM server_item_type;
-        typedef ERRORITEM error_item_type;
-        typedef SERVERKEYTYPE server_key_type;
-        typedef VALUE value_type;
-        typedef REPORTVALUES reportvalues_type;
-        typedef REPORTVALUE reportvalue_type;
-        typedef EVENTVALUE eventvalue_type;
-        typedef COMMAND command_type;
-        typedef CLIENTKEYTYPE client_key_type;
-
-        typedef std::vector<CLIENTITEM > vct_client_item;
-        typedef std::vector<SERVERITEM > vct_server_item;
-        typedef std::vector<ERRORITEM > vct_error_item;
-        typedef std::vector<SERVERKEYTYPE > vct_server_key;
-        typedef std::vector<VALUE > vct_value;
-        typedef std::vector<REPORTVALUES > vct_reportvalues;
-        typedef std::vector<REPORTVALUE > vct_reportvalue;
-        typedef std::vector<EVENTVALUE > vct_eventvalue;
-        typedef std::vector<COMMAND > vct_command;
-        typedef std::vector<CLIENTKEYTYPE > vct_client_key;
-
+  
         enum intfstate {
             disconnected, connected};
 
-        virtual bool islocal() {
-            return true;}
-
-        externalintf() : _state(disconnected), archiveblocksize_(DEFAULT_ARCHIVEBS) {};
+        externalintf(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNOPC) : 
+             state_(disconnected), intf(inf), exectr(exctr), group_(grp), provide_(provide_man), subsrcript_(subsrcr), error_(0)  {};
 
         virtual ~externalintf() {};
 
         virtual bool connect() = 0;
+        
         virtual bool disconnect() = 0;
 
-        intfstate state() {
-            return _state;}
+        intfstate state() const {
+            return state_;}
 
         bool isconnected() const {
-            return (_state == connected);}
+            return (state_ == connected);}
+        
+        virtual bool islocal() const {
+            return true;}
+        
+        indx group() const {
+            return group_;}
+        
+        tagtype provide() const {
+            return provide_;}
+        
+        subcripttype  subsrcript() const {
+            return subsrcript_;}
+        
+         virtual bool init() {return true;}
 
-        void clearerrors() {
-            errmap.clear();}
+
+         virtual bool uninit(){return true;}
+
 
         boost::mutex* mtx_internal() {
             return &mutex;}
-
-        blksizetype archiveblocksize() const{
-            return ((archiveblocksize_<1) || (archiveblocksize_>1000)) ? DEFAULT_ARCHIVEBS : archiveblocksize_;}
+        
+         ns_error  error() const {
+                return error_;}
+  
+        virtual bool operator()(){
+            return true;}
+        
+        virtual void insert(const indx_set& idset)= 0;
+    
+        virtual void remove(const indx_set& idset)= 0;
 
         /* add_items запрашивает айтемсы у сервера
          * @param clientitem вектор клиентских айтемсов
@@ -76,24 +76,90 @@ namespace dvnci {
          * @param errors вектор ошибок
          * @return  успешность выполнения
          */
-        virtual bool add_items(const vct_client_item& clientitem, vct_server_item& serveritem, vct_error_item& errors) = 0;
+        /*virtual bool add_items(const vct_client_item& clientitem, vct_server_item& serveritem, vct_error_item& errors) = 0;
         virtual bool read_values(const vct_server_key& servids, vct_value& values, vct_reportvalues& reportvalues, vct_eventvalue& eventvalues, vct_error_item& errors) = 0;
         virtual bool read_values(vct_value& values, vct_reportvalues& reportvalues, vct_eventvalue& eventvalues) = 0;
         virtual bool remove_items(const vct_server_key& delitem, vct_error_item& errors) = 0;
         virtual bool add_commands(const vct_command& commanditem, vct_error_item& errors) = 0;
-        virtual bool add_report_task(server_key_type key, datetime start, datetime stop) = 0;
+        virtual bool add_report_task(server_key_type key, datetime start, datetime stop) = 0;*/
 
     protected:
-        boost::mutex       mutex;
-        intfstate          _state;
-        blksizetype        archiveblocksize_;
-        int_dvncierror_map errmap;};
+        
+        ns_error  error(ns_error err){
+                return error_=err;}
+        
+        intfstate          state_;
+        tagsbase_ptr       intf;
+        executor*          exectr;
+        indx               group_;
+        tagtype            provide_;
+        subcripttype       subsrcript_;
+        ns_error           error_;
+        boost::mutex       mutex;};
+        
+        
+        
+        
+        
+        template < typename EXTERNALINTF>
+                class externalintf_executor : public executor {
+            
+            typedef boost::shared_ptr<EXTERNALINTF>    externintf_ptr;
 
-    template<typename EXTERNALINTF, tagtype PROVIDETYPE = TYPE_SIMPL>
-    class abstract_subscriptor : public executor {
+        public:
+
+            externalintf_executor(tagsbase_ptr inf, indx groupind, metalink lnk, tagtype provide_man = TYPE_SIMPL) :
+            executor(inf, provide_man) {};
+
+            virtual bool operator()() {
+                if (init()) {
+                    if (externmanager->isconnected()) {
+                        try {
+                                externmanager->operator()();
+                                return true;}
+                        catch (dvncierror& errd) {
+                                if (intf )
+                                    intf->debugerror("device_link_executor mainloop ERROR_IO_SERVICE_LOCK");
+                            return false;}
+                        catch (...) {
+                            if (intf )
+                                intf->debugerror("device_link_executor mainloop undef error");
+                            return false;}}
+                    else {
+                        set_group_state(npos, externmanager->error(), FULL_VALID);}}
+                return false;}
+                    
+        protected:
+            
+                      
+
+            virtual void add_tags_impl(const indx_set& idset) {
+                if (init()) {
+                    externmanager->insert(idset);}}
+
+            virtual void remove_tags_impl(const indx_set& idset) {
+                if (init()) {
+                    externmanager->remove(idset);}}
+
+            virtual bool initialize() {
+                if (!externmanager)
+                    externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, group()));
+                return true;}
+
+            virtual bool uninitialize() {
+                if (externmanager) {
+                    externmanager->uninit();
+                    externmanager.reset();}
+                group_state_off();
+                return true;}
+            
+            externintf_ptr               externmanager;} ;        
+
+    /*template<typename EXTERNALINTF, tagtype PROVIDETYPE = TYPE_SIMPL>
+    class subscriptor : public executor {
     public:
 
-        typedef EXTERNALINTF                                                    extintf;
+        /*typedef EXTERNALINTF                                                    extintf;
         typedef intrusive_sync_share_ptr_tmpl<extintf>                          extintf_ptr;
         typedef typename extintf::server_key_type                               server_key_type;
         typedef typename extintf::client_key_type                               client_key_type;
@@ -116,9 +182,9 @@ namespace dvnci {
         typedef typename extintf::vct_eventvalue                                vct_eventvalue;
         typedef typename vct_eventvalue::const_iterator                         vct_eventvalue_const_iterator;
 
-        typedef bidirectinal_map_one_to_many<server_key_type, client_key_type>  serverid_clienid_map;
+        //typedef bidirectinal_map_one_to_many<server_key_type, client_key_type>  serverid_clienid_map;
 
-        abstract_subscriptor(tagsbase_ptr inf, indx grp, metalink lnk, tagtype provide_man = TYPE_SIMPL) :
+        subscriptor(tagsbase_ptr inf, indx grp, metalink lnk, tagtype provide_man = TYPE_SIMPL) :
                           executor(inf, provide_man), group(grp) {};
 
         virtual bool operator()() {
@@ -406,10 +472,10 @@ namespace dvnci {
         vct_server_key   req_remv;
         report_task_pair req_reptask;
 
-        vct_server_key   activ_servid;};
+        vct_server_key   activ_servid;};*/
 
 
-}
+    }}
 
 #endif	/* SUBSCRIPTGROUP_PROCCESSOR_TEMPL_H */
 

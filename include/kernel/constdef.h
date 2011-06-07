@@ -388,6 +388,8 @@ namespace dvnci {
     typedef num32 reporthistdelt;
     //reportsrctype type       
     typedef  onum   reportsrctype;
+    //subcripttype
+    typedef  onum   subcripttype;    
     
     typedef  boost::filesystem::path      fspath;
 
@@ -416,25 +418,15 @@ namespace dvnci {
     const std::string DEFAULT_ADMIN_PORT = "8050";
 
     // типы соединения
-    const num16 CONTYPE_SUBSCROPC = 0;
-    const num16 CONTYPE_ASYNOPC   = 1;
-    const num16 CONTYPE_SYNOPC    = 2;
+    const subcripttype CONTYPE_SUBSCROPC = 0;
+    const subcripttype CONTYPE_ASYNOPC   = 1;
+    const subcripttype CONTYPE_SYNOPC    = 2;
 
 
     // политика доступа клиентов
     const accessruletype ACCESS_POLICY_AUTOTH = 0;
     const accessruletype ACCESS_POLICY_CREDIT = 1;
     const accessruletype ACCESS_POLICY_DENY   = 2;
-
-
-    // поддержка сервисами обработки тегов
-
-  /*  const providetype TYPE_SIMPL =  0x1; // только числовые типы
-    const providetype PROVIDE_TEXTCURRENT =  0x2; // только текстовые типы
-    const providetype PROVIDE_FULLCURRENT =  TYPE_SIMPL | PROVIDE_TEXTCURRENT;
-    const providetype PROVIDE_REPORT      =  0x4; // только отчетные
-    const providetype PROVIDE_EVENTS      =  0x8; // только события
-    const providetype PROVIDE_ALL         =  PROVIDE_FULLCURRENT | PROVIDE_REPORT | PROVIDE_EVENTS;*/
 
 
 
@@ -754,6 +746,7 @@ namespace dvnci {
     const tagtype  TYPE_FULL                    = TYPE_SIMPL | TYPE_TIME | TYPE_TEXT | TYPE_REPORT | TYPE_EVENT;
     
     const tagtype  TYPE_NO_ALARMED_MSK          = TYPE_TIME | TYPE_TEXT | TYPE_REPORT;
+    const tagtype  TYPE_SIMPLE_REQ              = TYPE_SIMPL | TYPE_TIME | TYPE_TEXT;
 
 
     const tagtype  TYPE_NODEF                  = 0x0;

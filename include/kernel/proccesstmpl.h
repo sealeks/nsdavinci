@@ -157,6 +157,7 @@ namespace dvnci {
 
         const indx_set&  groupset() const { return groupset_;};
         void  groupset(const indx_set& vl){ groupset_=vl;};
+        indx  group(){ return groupset_.empty() ? npos :  (*(groupset_.begin()));};
 
         bool requested(indx id);
         bool report_requested(indx id);
@@ -359,7 +360,7 @@ namespace dvnci {
         virtual void execute_impl() {
 
                 boost::xtime xt;
-                if (executr-> operator()())
+                if (/*executr-> operator()*/ true)
                     addmillisec_to_now(xt, 1);
                 else
                     addmillisec_to_now(xt, 50);
