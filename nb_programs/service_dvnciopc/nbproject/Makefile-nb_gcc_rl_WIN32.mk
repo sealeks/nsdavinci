@@ -34,7 +34,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/513511340/dvnci_opc_subsciptor.o \
 	${OBJECTDIR}/_ext/513511340/opcintf.o \
 	${OBJECTDIR}/_ext/513511340/main.o
 
@@ -62,11 +61,6 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 ../../bin/${CND_CONF}/service_dvnciopc.exe: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvnciopc ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/_ext/513511340/dvnci_opc_subsciptor.o: ../../include_program/service_dvnciopc/dvnci_opc_subsciptor.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/513511340
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513511340/dvnci_opc_subsciptor.o ../../include_program/service_dvnciopc/dvnci_opc_subsciptor.cpp
 
 ${OBJECTDIR}/_ext/513511340/opcintf.o: ../../include_program/service_dvnciopc/opcintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513511340
