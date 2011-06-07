@@ -16,21 +16,19 @@
 #include <boost/filesystem.hpp>
 
 
-#include "kernel/constdef.h"
-#include "kernel/utils.h"
-#include "kernel/systemutil.h"
-#include "kernel/serviceapp.h"
-#include "kernel/rpcioclient.h"
-#include "kernel/serviceapp.h"
-#include "kernel/service.h"
-#include "kernel/interface_proccesstmpl.h"
+#include <kernel/constdef.h>
+#include <kernel/systemutil.h>
+#include <kernel/serviceapp.h>
+#include <kernel/service.h>
+#include <kernel/interface_proccesstmpl.h>
 
-#include "dvnci_opc_subsciptor.h"
+#include "opcintf.h"
 
 
 using namespace std;
 using namespace dvnci;
-using namespace dvnci::opc;
+using namespace dvnci::external;
+using namespace dvnci::external::opc;
 
 
 
@@ -38,7 +36,7 @@ dvnci::executable_ptr         dvnci::mainserv;
 std::string                   dvnci::dvnciservicename=NS_OPC_SERVICE_NAME;
 fspath                        basepath;
 
-typedef group_proccessor_templ<dvnci_opc_subsciptor>     groupopc;
+typedef group_proccessor_templ<externalintf_executor<opcintf> >    groupopc;
 
 class opc_service : public uniintfservice<groupopc> {
 
