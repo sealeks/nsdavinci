@@ -1675,6 +1675,8 @@ namespace dvnci {
         
         
         
+        
+        
 
         size_type insert_tag(std::string newname, size_type groupid) {
             lower_and_trim(newname);
@@ -1694,6 +1696,9 @@ namespace dvnci {
             if (!groups()->exists(groupnm))
                 throw dvncierror(NS_ERROR_NOPARENT, groupnm);
             insert_tags(newnames, groupnm);}
+        
+        
+        
 
         size_type insert_group(std::string newname) {
             lower_and_trim(newname);
@@ -1703,6 +1708,8 @@ namespace dvnci {
                 addindex(newind | GROUPMASK);
                 trigger_rename(newind | GROUPMASK);}
             return newind;}
+        
+        
 
         size_type insert_agroup(std::string newname) {
             lower_and_trim(newname);
@@ -1712,14 +1719,25 @@ namespace dvnci {
                 addindex(newind | AGROUPMASK);
                 trigger_rename(newind | AGROUPMASK);}
             return newind;}
+        
+        
 
         size_type insert_accessrule(std::string newname) {
             newname = trim_copy(newname);
             return accessrules()->add(newname);}
+        
+        
 
         size_type insert_user(std::string newname) {
             newname = trim_copy(newname);
             return users()->add(newname);}
+        
+        
+        
+        
+        
+        
+        
 
         void replace_tag(size_type id, std::string newname) {
             if (!exists(id))
@@ -1733,6 +1751,8 @@ namespace dvnci {
             if (!exists(oldname))
                 throw dvncierror(ERROR_TAGNOEXIST, oldname);
             replace_tag( operator()(oldname), newname);}
+        
+        
 
         void replace_group(size_type id, std::string newname) {
             lower_and_trim(newname);
@@ -1752,6 +1772,8 @@ namespace dvnci {
             if (!groups()->exists(oldname))
                 throw dvncierror(ERROR_ENTNOEXIST, oldname);
             replace_group( groups()->operator()(oldname), newname);}
+        
+        
 
         void replace_agroup(size_type id, std::string newname) {
             lower_and_trim(newname);
@@ -1769,6 +1791,8 @@ namespace dvnci {
             if (!agroups()->exists(oldname))
                 throw dvncierror(ERROR_ENTNOEXIST, oldname);
             replace_agroup( agroups()->operator()(oldname), newname);}
+        
+        
 
         void replace_accessrule(size_type id, std::string newname) {
             newname = trim_copy(newname);
@@ -1782,6 +1806,8 @@ namespace dvnci {
             if (!accessrules()->exists(oldname))
                 throw dvncierror(ERROR_ENTNOEXIST, oldname);
             replace_agroup( accessrules()->operator()(oldname), newname);}
+        
+        
 
         void replace_user(size_type id, std::string newname) {
             newname = trim_copy(newname);
@@ -1795,7 +1821,13 @@ namespace dvnci {
             if (!users()->exists(oldname))
                 throw dvncierror(ERROR_ENTNOEXIST, oldname);
             replace_user( users()->operator()(oldname), newname);}
+        
+        
+        
 
+        
+        
+        
         size_type delete_tag(size_type id) {
             if (exists(id)) {
                 trigger_remove(id);
@@ -1805,6 +1837,8 @@ namespace dvnci {
         size_type delete_tag(const std::string& delname) {
             if (exists(delname)) {
                 return remove(operator()(delname));}}
+        
+        
 
         size_type delete_group(size_type id) {
             if (group_childcount(id))
@@ -1816,10 +1850,13 @@ namespace dvnci {
             if (rembaseid != npos)
                 trigger_rename(rembaseid);
             return remind;}
-
+        
+ 
         size_type delete_group(const std::string& delname) {
             size_type remind = groups()->operator ()(delname);
             return remind != npos ? delete_group(remind) : npos;}
+        
+        
 
         size_type delete_agroup(size_type id) {
             indx rembaseid = operator ()(agroups()->name(id));
@@ -1833,18 +1870,23 @@ namespace dvnci {
         size_type delete_agroup(const std::string& delname) {
             size_type remind = agroups()->operator ()(delname);
             return remind != npos ? delete_agroup(remind) : npos;}
+        
+        
 
         size_type delete_accessrule(size_type id) {
             return accessrules()->remove(id);}
 
         size_type delete_accessrule(const std::string& delname) {
             return accessrules()->remove(delname);}
+        
+        
 
         size_type delete_user(size_type id) {
             return users()->remove(id);}
 
         size_type delete_user(const std::string& delname) {
             return users()->remove(delname);}
+        
 
 
 
@@ -1852,7 +1894,10 @@ namespace dvnci {
         
         size_type duplicate_group(std::string grp, std::string newname);
         
+        
 
+        
+        
         void merge_tag(size_type id) {
             writetofile(id);}
 
@@ -1875,28 +1920,34 @@ namespace dvnci {
         void select_groups(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
 
         void select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
+        
 
         void select_agroups(iteminfo_map& val, const std::string& strcriteria, num64 numcriteria = npos);
 
         void select_agroups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria, num64 numcriteria = npos);
+        
 
         void select_users(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
 
         void select_users(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
+        
 
         void select_accessrules(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
 
         void select_accessrules(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
+        
 
         void select_tags(iteminfo_map& val, size_type group, const std::string& strcriteria = "", num64 numcriteria = npos);
 
         void select_tags(iteminfo_map& val, std::string group, const std::string& strcriteria = "", num64 numcriteria = npos);
 
         void select_tags(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
+        
 
         void select_atags(iteminfo_map& val, size_type agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
 
         void select_atags(iteminfo_map& val, std::string agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
+        
 
         void select_tags_by_appid(indx_set& val, appidtype appid);
 
@@ -1905,6 +1956,8 @@ namespace dvnci {
         void select_tags_report(indx_set& val);
 
         void select_tags_by_link(indx_set& val, appidtype app, const metalink& lnk);
+        
+        
 
         void select_groups_by_appid(appidtype appid, indx_set& val);
 
@@ -1913,6 +1966,9 @@ namespace dvnci {
         void select_metalinks_vect_by_metalink(const metalink& lnk, metalink_vect& val, devnum_set& utilset);
 
         void select_groups_by_metalink(const metalink& lnk, appidtype app, indx_set& val);
+        
+        
+        
 
         bool select_trendbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
             return valbuffers()->select(logkey(id), vl, from_, to_, lgdb);}
@@ -1920,6 +1976,7 @@ namespace dvnci {
         bool select_trendbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const {
             return select_trendbuff(operator ()(nm), vl, from_, to_, lgdb);}
 
+        
         bool select_reportbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
             return reportbuffers()->select(reportkey(id), vl, from_, to_);}
 
@@ -1941,12 +1998,14 @@ namespace dvnci {
         size_t report_history_count(size_type id) const {
             return reportbuffers() ? reportbuffers()->count(reportkey(id)) : 0;}
 
+        
         template<typename T, typename B>
         size_t select_journal(std::vector<T>& vect, guidtype& gid, size_t& curs, size_t& cnt) const {
             return journal()->get<T, B > (vect, gid, curs, cnt);}
 
         guidtype guid_journal() {
             return journal()->gloubnum();}
+        
 
         template<typename T, typename B>
         size_t select_debug(std::vector<T>& vect, guidtype& gid, size_t& curs, size_t& cnt) const {
@@ -1954,6 +2013,7 @@ namespace dvnci {
 
         guidtype guid_debug() {
             return debug()->gloubnum();}
+        
 
         template<typename T, typename B>
         size_t select_alarms(std::vector<T>& vect, guidtype& vers, std::string agrp , const std::string grp ) const {
@@ -1967,7 +2027,9 @@ namespace dvnci {
         size_t select_alarms(std::vector<T>& vect, size_type agrp = 1, size_type grp = npos ) const {
             guidtype vers = 0;
             return alarms()->get<T, B > (vect, vers, agrp, grp);}
+        
 
+        
         template<typename T, typename B>
         size_t select_commands(std::vector<T>& vect, guidtype& vers, const std::string grp) const {
             return commands()->get<T, B > (vect, vers, (*groups())(grp));}
@@ -1980,6 +2042,18 @@ namespace dvnci {
         size_t select_commands(std::vector<T>& vect, size_type grp = npos) const {
             guidtype vers = 0;
             return commands()->get<T, B > (vect, vers, grp);}
+        
+        bool select_commands(command_vector& vect_, size_type group = npos) {
+            return commands()->select_commands(vect_, group);}
+
+        bool select_commands(command_vector& vect_, indx_set groups) {
+            return commands()->select_commands(vect_, groups);}
+
+        bool clear_commands(size_type group = npos) {
+            return commands()->clear_commands(group);}    
+        
+        
+        
 
         template<typename T, typename B>
         size_t select_registry(std::vector<T>& vect, guidtype& vers) const {
@@ -1989,6 +2063,8 @@ namespace dvnci {
         size_t select_registry(std::vector<T>& vect) const {
             guidtype vers = 0;
             return registry()->get<T, B > (vect, vers);}
+        
+        
 
         template<typename T, typename B>
         size_t select_clients(std::vector<T>& vect, guidtype& vers) const {
@@ -1998,15 +2074,9 @@ namespace dvnci {
         size_t select_clients(std::vector<T>& vect) const {
             guidtype vers = 0;
             return clients()->get<T, B > (vect, vers);}
+        
+        
 
-        bool select_commands(command_vector& vect_, size_type group = npos) {
-            return commands()->select_commands(vect_, group);}
-
-        bool select_commands(command_vector& vect_, indx_set groups) {
-            return commands()->select_commands(vect_, groups);}
-
-        bool clear_commands(size_type group = npos) {
-            return commands()->clear_commands(group);}
 
         groupsbase * const groups() const {
             return groups_.get();};
@@ -2019,6 +2089,8 @@ namespace dvnci {
 
         usersbase * const users() const {
             return users_.get();};
+            
+            
 
         mq_class_ptr getqueue() {
             return mq_class_ptr(proccess_queues::getqueue(registry()->selfhadle()));}
@@ -2190,6 +2262,9 @@ namespace dvnci {
         void trigger_range(size_type id, bool state);
 
         void trigger_systemtype(size_type id, bool state);
+        
+        
+        
 
         void notify_tagmanage(qumsgtype mess, size_type id, size_type group) {
             registry()->notify_tagmanage(mess, id, group);}
