@@ -6,8 +6,6 @@
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <itemPath>../../include_program/service_dvnciopc/dvnci_opc_subsciptor.cpp</itemPath>
-    <itemPath>../../include_program/service_dvnciopc/dvnci_opc_subsciptor.h</itemPath>
     <itemPath>../../include_program/service_dvnciopc/main.cpp</itemPath>
     <itemPath>../../include_program/service_dvnciopc/opcintf.cpp</itemPath>
     <itemPath>../../include_program/service_dvnciopc/opcintf.h</itemPath>
