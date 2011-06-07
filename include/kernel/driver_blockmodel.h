@@ -217,7 +217,7 @@ namespace dvnci {
             typedef parcel_tags_map::left_const_iterator                                   parcel_const_iterator;
             typedef parcel_tags_map::left_map::data_type                                   parcel;
             typedef parcel_tags_map::right_iterator                                        tags_iterator;
-            typedef parcel_tags_map::value_type                                            parcel_tags_pair;
+            typedef parcel_tags_map::value_type                                            parcel_tag_pair;
 
 
 
@@ -388,7 +388,7 @@ namespace dvnci {
                         if (tmpit->iscorrect()) {
                             tags_iterator it = bmap.right.find(id);
                             if (it != bmap.right.end()) bmap.right.erase(it);
-                            bmap.insert(parcel_tags_pair(tmpit, id));
+                            bmap.insert(parcel_tag_pair(tmpit, id));
                             needgenerate = true;
                             return true;}
                         else {
