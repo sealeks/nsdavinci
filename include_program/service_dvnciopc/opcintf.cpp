@@ -541,11 +541,11 @@ namespace dvnci {
             std::wstring szGroupNamew = s2ws(szGroupName);
 
             ver = intf->groups()->ver(group);
-            //connecttype = static_cast<popcgroupstruct> (intf->groups()->config(group))->synctype();
+            connecttype = intf->groups()->synctype(group);
             //usehda = static_cast<popcgroupstruct> (intf->groups()->config(group))->usehda();
-            //deadband = static_cast<float> (intf->groups()->deadbound(group));
+            deadband = static_cast<float> (intf->groups()->deadbound(group));
             //updaterate = static_cast<DWORD> (intf->groups()->grouprate(group));
-            //maintimeout = static_cast<num32> (intf->groups()->timeout(group));
+            maintimeout = static_cast<num32> (intf->groups()->timeout(group));
             tracttimeout = maintimeout*9/10;
             if (updaterate<99) updaterate = 100;
 
