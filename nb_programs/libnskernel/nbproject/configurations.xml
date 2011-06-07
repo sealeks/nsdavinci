@@ -23,11 +23,11 @@
     <itemPath>../../include/kernel/error.h</itemPath>
     <itemPath>../../include/kernel/expression.cpp</itemPath>
     <itemPath>../../include/kernel/expression.h</itemPath>
+    <itemPath>../../include/kernel/extintf_wraper.h</itemPath>
     <itemPath>../../include/kernel/factory.h</itemPath>
     <itemPath>../../include/kernel/filebase_templ.h</itemPath>
     <itemPath>../../include/kernel/index_base.cpp</itemPath>
     <itemPath>../../include/kernel/index_base.h</itemPath>
-    <itemPath>../../include/kernel/interface_proccesstmpl.cpp</itemPath>
     <itemPath>../../include/kernel/interface_proccesstmpl.h</itemPath>
     <itemPath>../../include/kernel/mainstruct.cpp</itemPath>
     <itemPath>../../include/kernel/mainstruct.h</itemPath>
