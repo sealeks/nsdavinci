@@ -15,6 +15,7 @@
 #include "kernel/utils.h"
 #include "kernel/short_value.h"
 #include "kernel/interface_proccesstmpl.h"
+#include "kernel/extintf_wraper.h"
 
 
 #include <windows.h>
@@ -23,78 +24,18 @@
 #include <objbase.h>
 #include <olectl.h>
 #include <comcat.h>
+#include "opc/opcda.h"
+#include "opc/opcda_i.c"
+#include "opc/opcerror.h"
 
 
 namespace dvnci {
+    namespace external {
     namespace opc {
 
-        struct opcvalue_item {
-            indx  outkey;
-            num64 val;
-            num64 valid;
-            num64 time;
-            num64 type;} ;
 
-        typedef std::vector<opcvalue_item > vect_opcvalue_item;
 
-        typedef std::pair<indx, opcvalue_item > opcvalue_item_pair;
-        typedef std::map<indx, opcvalue_item, std::less<indx>,
-        std::allocator<opcvalue_item_pair > > opcvalue_item_map;
 
-        struct opcreport_value_item {
-          num64  val;
-          num64  valid;
-          num64  time;
-          num64  type;};
-
-        typedef std::vector<opcreport_value_item > vect_opcreport_value_item;
-
-        struct opcreport_value_items {
-          num64  outkey;
-          vect_opcreport_value_item  values;};
-
-        typedef std::vector<opcreport_value_items > vect_opcreport_value_items;
-
-        struct opcevent_value_item {
-         num64  outkey;
-         num64  val;
-         num64  time;};
-
-        typedef std::vector<opcevent_value_item > vect_opcevent_value_item;
-
-        struct opcclient_item {
-            indx  key;
-            indx  outkey;
-            num64 tpitem;
-            std::string name;
-            double dbound;
-            std::wstring bind;} ;
-
-        typedef std::vector<opcclient_item > vect_opcclient_item;
-
-        typedef std::pair<indx, opcclient_item > opcclient_item_pair;
-        typedef std::map<indx, opcclient_item, std::less<indx>,
-        std::allocator<opcclient_item_pair > > opcclient_item_map;
-
-        typedef std::pair<indx, opcclient_item > opcserver_item_pair;
-        typedef std::map<indx, opcclient_item, std::less<indx>,
-        std::allocator<opcserver_item_pair > > opcserver_item_map;
-
-        struct opcerror_item {
-            indx code;
-            indx key;} ;
-
-        typedef std::vector<opcerror_item > vect_opcerror_item;
-
-        struct opccommand_item {
-            indx  outkey;
-            num64 val;
-            num64 type;
-            num64 queue;
-            std::string user;
-            std::string pass;} ;
-
-        typedef std::vector<opccommand_item > vect_opccommand_item;
 
         class transaction_mng_map {
 
@@ -217,18 +158,18 @@ namespace dvnci {
 
         typedef boost::shared_ptr<abstract_opc_util> abstr_opc_util_ptr;
 
-        class opcintf  : public externalintf< opcclient_item, opcclient_item, opcerror_item,
-                                    indx , opcvalue_item, opcreport_value_items, opcreport_value_item, opcevent_value_item,
-                                    opccommand_item >{
+        class opcintf  : public extintf_wraper<OPCHANDLE> {
         public:
 
             static const size_t MAX_WRITE_TRANSACTION = 10;
             static const size_t MAX_READ_TRANSACTION = 1;
+            
+            friend  class Callback;
 
 
-            opcintf(tagsbase_ptr intf_, indx group_) : externalintf< opcclient_item, opcclient_item, opcerror_item,
-                indx , opcvalue_item, opcreport_value_items, opcreport_value_item, opcevent_value_item, opccommand_item >() ,
-               transactid_(1) , intf(intf_), group(group_), setadviceactive(false) {
+            opcintf(tagsbase_ptr intf_, executor* exctr, indx grp) : 
+             extintf_wraper<OPCHANDLE>(intf_, exctr, grp, TYPE_SIMPLE_REQ, intf_ ? intf_->groups()->synctype(grp) : CONTYPE_SYNOPC ) ,
+               transactid_(1) ,  setadviceactive(false) {
                update_dog();}
 
             virtual ~opcintf();
@@ -241,13 +182,8 @@ namespace dvnci {
                 return opc_spec ? opc_spec->native_ver() : 0;};
 
 
-            virtual bool add_items(const vect_opcclient_item& clientitem, vect_opcclient_item& serveritem, vect_opcerror_item& errors);
-            virtual bool read_values(const indx_vect& servids, vect_opcvalue_item& values, vect_opcreport_value_items& reportvalues,
-                                      vect_opcevent_value_item& eventvalues, vect_opcerror_item& errors);
-            virtual bool read_values(vect_opcvalue_item& values, vect_opcreport_value_items& reportvalues, vect_opcevent_value_item& eventvalues);
-            virtual bool remove_items(const indx_vect& delitem, vect_opcerror_item& errors);
-            virtual bool add_commands(const vect_opccommand_item& commanditem, vect_opcerror_item& errors);
-            virtual bool add_report_task(indx  key, datetime start, datetime stop) {return true;}
+            //virtual bool add_commands(const vect_opccommand_item& commanditem, vect_opcerror_item& errors);
+            //virtual bool add_report_task(indx  key, datetime start, datetime stop) {return true;}
 
             DWORD transactid() {
                 if (transactid_ > 0xFFFFFF) transactid_ = 1;
@@ -306,7 +242,7 @@ namespace dvnci {
                 THD_EXCLUSIVE_LOCK(mutex);
                 return writetractmap.expiretimout(tmo, tract);}
 
-            void addvalmap(indx sid, opcvalue_item& val) {
+ /*           void addvalmap(indx sid, opcvalue_item& val) {
                 opcvalue_item_map::iterator itval = valitemmap.find(sid);
                 if (itval != valitemmap.end())
                     itval->second = val;
@@ -364,16 +300,16 @@ namespace dvnci {
                 if (itm.bind == bnd) return false;
                 return true;}
 
-            bool setopcvalue(indx clid, num64 val, num64 valid, num64 time, num64 tp) {
+/*            bool setopcvalue(indx clid, num64 val, num64 valid, num64 time, num64 tp) {
                 opcclient_item itmtmp;
                 if (find_by_clid(clid, itmtmp)) {
 			  tp = ((intf) && (intf->exists(clid)) && (intf->type(clid)==TYPE_NODEF)) ? TYPE_NODEF : tp;
                     opcvalue_item tmp = {itmtmp.outkey,val, valid, 0, tp};
                     addvalmap(static_cast<indx> (itmtmp.outkey), tmp);
                     return true;}
-                return false;}
+                return false;}*/
 
-            boost::mutex mutex;
+//            boost::mutex mutex;
 
             void update_dog(){
                dogtm=utc_now();}
@@ -393,14 +329,28 @@ namespace dvnci {
 
 
         protected:
+            
+            
+            virtual ns_error add_request_impl();
+            
+            virtual ns_error remove_request_impl();
+            
+            virtual ns_error value_request_impl();
+            
+            virtual ns_error report_request_impl(){ return 0;}
+            
+            virtual ns_error event_request_impl(){ return 0;}
+            
+            virtual ns_error command_request_impl(const sidcmd_map& cmd);
+            
 
-            bool cnangeactiveItems(const indx_vect& chitem, vect_opcclient_item& serveritem, vect_opcerror_item& errors, bool active);
+            bool cnangeactiveItems();
 
-            bool read_valuesSync1(const indx_vect& servids, vect_opcvalue_item& values, vect_opcerror_item& errors);
-            bool read_valuesASync2(const indx_vect& servids, vect_opcvalue_item& values, vect_opcerror_item& errors);
+            bool read_valuesSync1();
+            bool read_valuesASync2();
 
-            bool setValuesSync1(const vect_opccommand_item& commanditem, vect_opcerror_item& errors);
-            bool setValuesASync2(const vect_opccommand_item& commanditem, vect_opcerror_item& errors);
+            bool setValuesSync1(const sidcmd_map& cmd);
+            bool setValuesASync2(const sidcmd_map& cmd);
 
             bool cancelTransact(DWORD tract);
 
@@ -409,24 +359,19 @@ namespace dvnci {
 
 
 
-            DWORD transactid_;
-            tagsbase_ptr intf;
-            indx group;
-            abstr_opc_util_ptr opc_spec;
-            opcvalue_item_map valitemmap;
-            opcclient_item_map  clt_servermap;
-            opcserver_item_map  srv_clientmap;
+            DWORD               transactid_;
+            abstr_opc_util_ptr  opc_spec;
             transaction_mng_map readtractmap;
             transaction_mng_map writetractmap;
-            num32 connecttype;
-            num32 ver;
-            num32 maintimeout;
-            num32 tracttimeout;
-            bool usehda;
-            float deadband;
-            bool  setadviceactive;
-            DWORD updaterate;
-            boost::xtime dogtm;} ;}}
+            num32               connecttype;
+            num32               ver;
+            num32               maintimeout;
+            num32               tracttimeout;
+            bool                usehda;
+            float               deadband;
+            bool                setadviceactive;
+            DWORD               updaterate;
+            boost::xtime        dogtm;} ;}}}
 
 #endif	/* NETINTF_H */
 

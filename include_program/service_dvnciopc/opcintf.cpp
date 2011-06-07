@@ -7,14 +7,13 @@
 
 #include "opcintf.h"
 
-#include "opc/opcda.h"
-#include "opc/opcda_i.c"
-#include "opc/opcerror.h"
+
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
 
 namespace dvnci {
+    namespace external {
     namespace opc {
 
         std::wstring s2ws(const std::string& s, UINT cp = CP_UTF8) {
@@ -150,10 +149,10 @@ namespace dvnci {
         num64 dvnci_dt_fromft(FILETIME tm) {
             return castnum64_from_datetime(boost::posix_time::from_ftime<boost::posix_time::ptime>(tm));}
 
-        num64 dvnci_quality(WORD q) {
+        vlvtype dvnci_quality(WORD q) {
             return (q==OPC_QUALITY_GOOD) ? 100 : 0;}
 
-		ns_error opcerror_to_dvncierror(HRESULT vl){
+	ns_error opcerror_to_dvncierror(HRESULT vl){
 			switch(vl){
 				case OPC_E_INVALIDITEMID: return ERROR_BINDING;
 				case OPC_E_UNKNOWNITEMID: return ERROR_NOFIND_REMOTEITEM;
@@ -163,7 +162,9 @@ namespace dvnci {
 
     const ns_error ERROR_NOFIND_REMOTEITEM = 0x20C;
  	// тип тега не может быть приведен к требуемому
-    const ns_error ERROR_TYPENOCAST = 0x20D;   
+    const ns_error ERROR_TYPENOCAST = 0x20D;
+    
+    
         class Callback : public IOPCDataCallback {
         public:
 
@@ -207,10 +208,13 @@ namespace dvnci {
                     WORD * pwQualities,
                     FILETIME * pftTimeStamps,
                     HRESULT * pErrors) {
-                THD_EXCLUSIVE_LOCK(opcsimpl->mutex);
+                //THD_EXCLUSIVE_LOCK(opcsimpl->mutex);
+                num64 tp=0;
+                num64 val=0;
                 for (DWORD i = 0; i < dwCount; i++) {
-                    opcsimpl->setopcvalue(phClientItems[i], pvValues[i].iVal, 100, 0, TYPE_NUM32);
-                    setval(phClientItems[i], pvValues[i], pwQualities[i], pftTimeStamps[i]);}
+                    if (cast_dvnci_by_oletype(pvValues[i], val, tp))
+                            opcsimpl->write_val_id(static_cast<indx>(phClientItems[i]),
+                            short_value(val , tp, dvnci_quality(pwQualities[i]), 0 ));}
                     opcsimpl->update_dog();
                 return S_OK;}
 
@@ -225,11 +229,13 @@ namespace dvnci {
                     WORD * pwQualities,
                     FILETIME * pftTimeStamps,
                     HRESULT * pErrors) {
-                if (opcsimpl->readtransaction_ok(dwTransid)) {
-                    THD_EXCLUSIVE_LOCK(opcsimpl->mutex);
-                    for (DWORD i = 0; i < dwCount; i++) {
-                        opcsimpl->setopcvalue(phClientItems[i], pvValues[i].iVal, 100, 0, TYPE_NUM32);
-                        setval(phClientItems[i], pvValues[i], pwQualities[i], pftTimeStamps[i]);}}
+                num64 tp=0;
+                num64 val=0;
+                for (DWORD i = 0; i < dwCount; i++) {
+                    if (cast_dvnci_by_oletype(pvValues[i], val, tp))
+                            opcsimpl->write_val_id(static_cast<indx>(phClientItems[i]),
+                            short_value(val , tp, dvnci_quality(pwQualities[i]), 0 ));}
+                    opcsimpl->update_dog();
                 return S_OK;}
 
             STDMETHODIMP OnWriteComplete(
@@ -251,13 +257,10 @@ namespace dvnci {
 
         private:
 
-            void setval(OPCHANDLE& id, VARIANT& pvValues, WORD& pwQualities, FILETIME& pftTimeStamps) {
-                num64 val, tp;
-                if (cast_dvnci_by_oletype(pvValues, val, tp))
-                    opcsimpl->setopcvalue(id, val, dvnci_quality(pwQualities) ,
-                        dvnci_dt_fromft(pftTimeStamps), tp);}
+
             opcintf * const opcsimpl;
             ULONG m_ulRefs;} ;
+
 
         class opc_util : public abstract_opc_util {
         public:
@@ -528,24 +531,24 @@ namespace dvnci {
         bool opcintf::connect() {
 
             if (!intf) return false;
-            if (!intf->groups()->exists(group)) return false;
+            if (!intf->groups()->exists(group())) return false;
 
 
-            DEBUG_VAL_DVNCI(intf->groups()->server(group))
+            DEBUG_VAL_DVNCI(intf->groups()->server(group()))
 
-            std::string szProgID = intf->groups()->server(group);
+            std::string szProgID = intf->groups()->server(group());
             std::wstring szProgIDw = s2ws(szProgID);
-            std::string szHostName = intf->groups()->host(group);
+            std::string szHostName = intf->groups()->host(group());
             std::wstring szHostNamew = s2ws(szHostName);
-            std::string szGroupName = intf->groups()->group(group);
+            std::string szGroupName = intf->groups()->group(group());
             std::wstring szGroupNamew = s2ws(szGroupName);
 
-            ver = intf->groups()->ver(group);
-            connecttype = intf->groups()->synctype(group);
+            ver = intf->groups()->ver(group());
+            connecttype = intf->groups()->synctype(group());
             //usehda = static_cast<popcgroupstruct> (intf->groups()->config(group))->usehda();
-            deadband = static_cast<float> (intf->groups()->deadbound(group));
+            deadband = static_cast<float> (intf->groups()->deadbound(group()));
             //updaterate = static_cast<DWORD> (intf->groups()->grouprate(group));
-            maintimeout = static_cast<num32> (intf->groups()->timeout(group));
+            maintimeout = static_cast<num32> (intf->groups()->timeout(group()));
             tracttimeout = maintimeout*9/10;
             if (updaterate<99) updaterate = 100;
 
@@ -587,20 +590,17 @@ namespace dvnci {
             DEBUG_VAL_DVNCI(updaterate)
             DEBUG_VAL_DVNCI(deadband)
 
-            _state = connected;
+            state_ = connected;
 
             return true;}
 
         bool opcintf::disconnect() {
 
-            if (_state == connected) {
+            if (state_ == connected) {
                 ver = 0;
                 if (opc_spec)
                     opc_spec.reset();
-                _state = disconnected;
-                valitemmap.clear();
-                srv_clientmap.clear();
-                clt_servermap.clear();}
+                state_ = disconnected;}
             return true;}
 
         bool opcintf::checkserverstatus() const{
@@ -614,17 +614,16 @@ namespace dvnci {
 
             if (status.dwServerState==OPC_STATUS_RUNNING) return true;
             return false;}
+        
+        
+        
 
-        bool opcintf::add_items(const vect_opcclient_item& clientitem, vect_opcclient_item& serveritem, vect_opcerror_item& errors) {
+        ns_error opcintf::add_request_impl() {
 
-            serveritem.clear();
-            errors.clear();
-
-            indx_vect activateclientitem;
 
             checkserverstatus();
 
-            DWORD dwCount = clientitem.size();
+            DWORD dwCount = need_add_set.size();
             OPCITEMDEF* pItems = (OPCITEMDEF*) CoTaskMemAlloc(dwCount * sizeof (OPCITEMDEF)); // need free
             OPCITEMRESULT* pResults = NULL; // need free
             HRESULT* pErrors = NULL; // need free
@@ -633,27 +632,26 @@ namespace dvnci {
 
             DWORD i = 0;
 
-            typedef std::vector<std::wstring> tempwstring;
+            //typedef std::vector<std::wstring> tempwstring;
 
-            tempwstring tmpwstr;
+            //wstring tmpwstr = L"";
 
-            for (vect_opcclient_item::const_iterator it = clientitem.begin(); it != clientitem.end(); ++it) {
-                if (intf->exists(it->key)) {
-                    opcclient_item itm;
-                    if (!find_by_clid(it->key, itm)) {
-                        tmpwstr.push_back(s2ws(it->name));
-                        pItems[i].szItemID = const_cast<wchar_t*> (tmpwstr.back().c_str());
-                        pItems[i].szAccessPath = NULL;
-                        pItems[i].bActive = TRUE;
-                        pItems[i].hClient = static_cast<OPCHANDLE> (it->key);
-                        pItems[i].vtRequestedDataType = oletype_by_dvncitype(it->tpitem);
-                        pItems[i].dwBlobSize = 0;
-                        pItems[i].pBlob = NULL;
-                        i++;}
+            for (indx_set::const_iterator it = need_add_set.begin(); it != need_add_set.end(); ++it) {
+                if (intf->exists(*it)) {
+//                   opcclient_item itm;
+//                    if (!find_by_clid(it->key, itm)) {
+                     //tmpwstr.push_back(s2ws(intf->binding(*it).));
+                     //pItems[i].szItemID = const_cast<wchar_t*> (tmpwstr.back().c_str());
+                     pItems[i].szAccessPath = NULL;
+                     pItems[i].bActive = TRUE;
+                     pItems[i].hClient = static_cast<OPCHANDLE> (*it);
+                     pItems[i].vtRequestedDataType = oletype_by_dvncitype(intf->type(*it));
+                     pItems[i].dwBlobSize = 0;
+                     pItems[i].pBlob = NULL;
+                     i++;}
                     else {
-                        activateclientitem.push_back(itm.outkey);
-                        dwCount--;}}
-                else dwCount--;}
+                     req_error(*it, ERROR_ENTNOEXIST);    
+                     dwCount--;}}
 
             if (dwCount > 0) {
                 HRESULT hResult = static_cast<opc_util*> (opc_spec.get())->IGRPMGT()->
@@ -668,12 +666,9 @@ namespace dvnci {
 
                 for (DWORD i = 0; i < dwCount; i++) {
                     if (pErrors[i] != S_OK) {
-                        opcerror_item tmp = {opcerror_to_dvncierror(pErrors[i]), pItems[i].hClient};
-                        errors.push_back(tmp);}
+                        /*req_error(*it, ERROR_ENTNOEXIST)*/;}
                     else {
-                        opcclient_item tmpitm = {pItems[i].hClient, pResults[i].hServer, 0};
-                        serveritem.push_back(tmpitm);
-                        additem(pResults[i].hServer, pItems[i].hClient, tmpitm);}
+                        add_simple(static_cast<indx>(pItems[i].hClient), pResults[i].hServer);}
                     if (pResults[i].dwBlobSize > 0) CoTaskMemFree(pResults[i].pBlob);}}
 
             CoTaskMemFree(pItems); // free
@@ -681,16 +676,16 @@ namespace dvnci {
             CoTaskMemFree(pErrors); // free
 
 
-            if (!activateclientitem.empty()) {
-                cnangeactiveItems(activateclientitem, serveritem, errors, true);}
+            //if (!activateclientitem.empty()) {
+            //    cnangeactiveItems(activateclientitem, serveritem, errors, true);}
 
             update_dog();
 
             return true;}
 
-        bool opcintf::cnangeactiveItems(const indx_vect& chitem, vect_opcclient_item& serveritem, vect_opcerror_item& errors, bool active) {
+        bool opcintf::cnangeactiveItems() {
 
-            DWORD dwCount = chitem.size();
+            /*DWORD dwCount = chitem.size();
             OPCHANDLE* phServer = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
             BOOL bActive = active ? TRUE : FALSE;
             HRESULT* pErrors = NULL; // need free
@@ -729,53 +724,38 @@ namespace dvnci {
                 dwCount = 0;}
 
             CoTaskMemFree(phServer); // free
-            CoTaskMemFree(pErrors); // free
+            CoTaskMemFree(pErrors); // free*/
             return true;}
 
-        bool opcintf::remove_items(const indx_vect& delitem, vect_opcerror_item& errors) {
-            errors.clear();
-            vect_opcclient_item serveritem;
-            return cnangeactiveItems(delitem, serveritem, errors, false);}
+        ns_error opcintf::remove_request_impl(){
+            return cnangeactiveItems();}
 
-        bool opcintf::read_values(vect_opcvalue_item& values, vect_opcreport_value_items& reportvalues, vect_opcevent_value_item& eventvalues) {
-            values.clear();
-            reportvalues.clear();
-            eventvalues.clear();
-            THD_EXCLUSIVE_LOCK(mutex);
-            for (opcvalue_item_map::iterator it = valitemmap.begin(); it != valitemmap.end(); ++it) {
-                values.push_back(it->second);}
-            return true;}
 
-        bool opcintf::read_values(const indx_vect& servids, vect_opcvalue_item& values, vect_opcreport_value_items& reportvalues, vect_opcevent_value_item& eventvalues, vect_opcerror_item& errors) {
-            bool tmpres = false;
-            reportvalues.clear();
-            eventvalues.clear();
+        ns_error opcintf::value_request_impl(){
             if (ver == 1) {
-                tmpres = read_valuesSync1(servids, values, errors);}
+                read_valuesSync1();}
             else {
                 switch (connecttype) {
                     case CONTYPE_SYNOPC:{
-                        tmpres = read_valuesSync1(servids, values, errors);
+                        read_valuesSync1();
                         break;}
                     case CONTYPE_ASYNOPC:{
                         if (!isreadtransaction()) {
-                            tmpres = read_valuesASync2(servids, values, errors);}
+                            read_valuesASync2();}
                         else {
-                            tmpres = false;
                             DWORD tsttransact = 0;
                             if (isreadexpiretimout(tracttimeout, tsttransact)) {
                                 DEBUG_STR_DVNCI(NEEDCANCELEDREADTRANSACT);
                                 cancelTransact(tsttransact);}
                             else {
                                 ;}}
-                        break;}
-                    default: tmpres = true;}}
-            if (tmpres) read_values(values, reportvalues, eventvalues);
-            return tmpres;}
+                        break;}}}
+            return 0;}
+        
 
-        bool opcintf::read_valuesSync1(const indx_vect& servids, vect_opcvalue_item& values, vect_opcerror_item& errors) {
+        bool opcintf::read_valuesSync1() {
 
-            DWORD dwCount = servids.size();
+            DWORD dwCount = simple_req_map.left.size();
             OPCHANDLE* phServer = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
             OPCITEMSTATE* ppItemValues = NULL; // need free
             HRESULT* pErrors = NULL; // need free
@@ -784,12 +764,9 @@ namespace dvnci {
 
             DWORD i = 0;
 
-            for (indx_vect::const_iterator it = servids.begin(); it != servids.end(); ++it) {
-                if (find_by_sid(*it)) {
+            for (serverkey_const_iterator it = simple_req_map.left.begin(); it != simple_req_map.left.end(); ++it) {
                     //DEBUG_STR_DVNCI(ADDITEM SYNCREAD1);
-                    phServer[i++] = static_cast<OPCHANDLE> (*it);}
-                else {
-                    dwCount--;}}
+                    phServer[i++] = static_cast<OPCHANDLE> (it->first);}
 
             if (dwCount > 0) {
 
@@ -807,12 +784,14 @@ namespace dvnci {
                     return false;}
 
 
+                num64 tp=0;
+                num64 val=0;
                 for (DWORD i = 0; i < dwCount; i++) {
                     if (pErrors[i] == S_OK) {
-                        num64 val, tp;
                         if (cast_dvnci_by_oletype(ppItemValues[i].vDataValue, val, tp))
-                            setopcvalue(ppItemValues[i].hClient, val , dvnci_quality(ppItemValues[i].wQuality),
-                                dvnci_dt_fromft(ppItemValues[i].ftTimeStamp), tp);}}}
+                            write_val_id(static_cast<indx>(ppItemValues[i].hClient),
+                            short_value(val , tp, dvnci_quality(ppItemValues[i].wQuality), 0 /*,
+                                dvnci_dt_fromft(ppItemValues[i].ftTimeStamp)*/));}}}
 
             CoTaskMemFree(phServer); // free
             CoTaskMemFree(ppItemValues); // free
@@ -820,9 +799,9 @@ namespace dvnci {
             update_dog();
             return true;}
 
-        bool opcintf::read_valuesASync2(const indx_vect& servids, vect_opcvalue_item& values, vect_opcerror_item& errors) {
+        bool opcintf::read_valuesASync2() {
 
-            DWORD dwCount = servids.size();
+            DWORD dwCount = simple_req_map.left.size();
             OPCHANDLE* phServer = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
             DWORD      dwTransactionID = transactid();
             DWORD      pdwCancelID = 0;
@@ -833,12 +812,9 @@ namespace dvnci {
 
             DWORD i = 0;
 
-            for (indx_vect::const_iterator it = servids.begin(); it != servids.end(); ++it) {
-                if (find_by_sid(*it)) {
-                    //DEBUG_STR_DVNCI(ADDITEM ASYNCREAD2);
-                    phServer[i++] = static_cast<OPCHANDLE> (*it);}
-                else {
-                    dwCount--;}}
+            for (serverkey_const_iterator it = simple_req_map.left.begin(); it != simple_req_map.left.end(); ++it) {
+                    //DEBUG_STR_DVNCI(ADDITEM SYNCREAD1);
+                    phServer[i++] = static_cast<OPCHANDLE> (it->first);}
 
             if (dwCount > 0) {
 
@@ -868,34 +844,31 @@ namespace dvnci {
             CoTaskMemFree(pErrors); // free
             return true;}
 
-        bool opcintf::add_commands(const vect_opccommand_item& commanditem, vect_opcerror_item& errors) {
-            bool tmpres = false;
+        ns_error opcintf::command_request_impl(const sidcmd_map& cmd) {
             if (ver == 1) {
-                tmpres = setValuesSync1(commanditem, errors);}
+                setValuesSync1(cmd);}
             else {
                 switch (connecttype) {
                     case CONTYPE_SYNOPC:{
-                        tmpres = setValuesSync1(commanditem, errors);
+                        setValuesSync1(cmd);
                         break;}
                     case CONTYPE_SUBSCROPC:
                     case CONTYPE_ASYNOPC:{
                         if (!iswritetransaction()) {
-                           tmpres = setValuesASync2(commanditem, errors);}
+                           setValuesASync2(cmd);}
                         else{
-                            tmpres = false;
                             DWORD tsttransact = 0;
                             if (iswriteexpiretimout(tracttimeout, tsttransact)) {
                                 DEBUG_STR_DVNCI(NEEDCANCELEDREADTRANSACT);
                                 cancelTransact(tsttransact);}
                             else {
                                 ;}}
-                        break;}
-                    default: tmpres = true;}}
-            return tmpres;}
+                        break;};}}
+            return 0;}
 
-        bool opcintf::setValuesSync1(const vect_opccommand_item& commanditem, vect_opcerror_item& errors) {
+        bool opcintf::setValuesSync1(const sidcmd_map& cmd) {
 
-            DWORD dwCount = commanditem.size();
+            /*DWORD dwCount = commanditem.size();
             OPCHANDLE* phServer = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
             VARIANT* phItemValues = (VARIANT*) CoTaskMemAlloc(dwCount * sizeof (VARIANT)); // need free
             HRESULT* pErrors = NULL; // need free
@@ -937,13 +910,13 @@ namespace dvnci {
 
             CoTaskMemFree(phServer); //free
             CoTaskMemFree(phItemValues); //free
-            CoTaskMemFree(pErrors); //free
+            CoTaskMemFree(pErrors); //free*/
             update_dog();
             return true;}
 
-        bool opcintf::setValuesASync2(const vect_opccommand_item& commanditem, vect_opcerror_item& errors) {
+        bool opcintf::setValuesASync2(const sidcmd_map& cmd) {
 
-            DWORD dwCount = commanditem.size();
+            /*DWORD dwCount = commanditem.size();
             OPCHANDLE* phServer = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
             VARIANT* phItemValues = (VARIANT*) CoTaskMemAlloc(dwCount * sizeof (VARIANT)); // need free
             DWORD      dwTransactionID = transactid();
@@ -993,7 +966,7 @@ namespace dvnci {
 
             CoTaskMemFree(phServer); //free
             CoTaskMemFree(phItemValues); //free
-            CoTaskMemFree(pErrors); //free
+            CoTaskMemFree(pErrors); //free*/
             return true;}
 
         bool opcintf::cancelTransact(DWORD tract) {
@@ -1001,4 +974,4 @@ namespace dvnci {
             if (FAILED(hResult)) {
                 DEBUG_STR_DVNCI(FAIL CANCEL);}
             else DEBUG_STR_DVNCI(SUCCESS CANCEL);
-            return true;}}}
+            return true;}}}}
