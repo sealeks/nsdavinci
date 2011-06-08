@@ -79,7 +79,7 @@
 #include <stack>
 #include <exception>
 #include <limits>
-
+#include <iterator>
 
 #include <sys/types.h>
 #include <sys/stat.h>

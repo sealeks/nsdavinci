@@ -51,10 +51,23 @@ namespace dvnci {
         subcripttype  subsrcript() const {
             return subsrcript_;}
         
-         virtual bool init() {return true;}
+         virtual bool init() {
+             if (isconnected()){
+                 return true;}
+             else{
+                 if (connect()){
+                     if (isconnected()) 
+                             return true;}}
+             return false;}
 
-
-         virtual bool uninit(){return true;}
+         virtual bool uninit(){
+            if (!isconnected()){
+                 return true;}
+             else{
+                 if (disconnect()){
+                     if (isconnected()) 
+                             return false;}}
+             return true;}
 
 
         boost::mutex* mtx_internal() {
@@ -69,19 +82,6 @@ namespace dvnci {
         virtual void insert(const indx_set& idset)= 0;
     
         virtual void remove(const indx_set& idset)= 0;
-
-        /* add_items запрашивает айтемсы у сервера
-         * @param clientitem вектор клиентских айтемсов
-         * @param serveritem вектор серверных айтемсов
-         * @param errors вектор ошибок
-         * @return  успешность выполнения
-         */
-        /*virtual bool add_items(const vct_client_item& clientitem, vct_server_item& serveritem, vct_error_item& errors) = 0;
-        virtual bool read_values(const vct_server_key& servids, vct_value& values, vct_reportvalues& reportvalues, vct_eventvalue& eventvalues, vct_error_item& errors) = 0;
-        virtual bool read_values(vct_value& values, vct_reportvalues& reportvalues, vct_eventvalue& eventvalues) = 0;
-        virtual bool remove_items(const vct_server_key& delitem, vct_error_item& errors) = 0;
-        virtual bool add_commands(const vct_command& commanditem, vct_error_item& errors) = 0;
-        virtual bool add_report_task(server_key_type key, datetime start, datetime stop) = 0;*/
 
     protected:
         
