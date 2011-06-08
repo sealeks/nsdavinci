@@ -638,11 +638,11 @@ namespace dvnci {
 
             typedef std::vector<std::wstring> tempwstring;
 
-
+		     tempwstring tmpwstr;
 
             for (indx_set::const_iterator it = need_add_set.begin(); it != need_add_set.end(); ++it) {
                 if (intf->exists(*it)) {
-		     tempwstring tmpwstr;
+
                      tmpwstr.push_back(s2ws(intf->binding(*it)));
                      pItems[i].szItemID = const_cast<wchar_t*> (tmpwstr.back().c_str());
                      pItems[i].szAccessPath = NULL;
@@ -669,7 +669,7 @@ namespace dvnci {
 
                 for (DWORD i = 0; i < dwCount; i++) {
                     if (pErrors[i] != S_OK) {
-                        req_error(static_cast<indx>(pItems[i].hClient), ERROR_ENTNOEXIST);}
+                        req_error(static_cast<indx>(pItems[i].hClient), opcerror_to_dvncierror(pErrors[i]));}
                     else {
                         add_simple(static_cast<indx>(pItems[i].hClient), pResults[i].hServer);}
                     if (pResults[i].dwBlobSize > 0) CoTaskMemFree(pResults[i].pBlob);}}
