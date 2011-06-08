@@ -360,7 +360,7 @@ namespace dvnci {
         virtual void execute_impl() {
 
                 boost::xtime xt;
-                if (/*executr-> operator()*/ true)
+                if (executr->operator()())
                     addmillisec_to_now(xt, 1);
                 else
                     addmillisec_to_now(xt, 50);
