@@ -29,16 +29,13 @@ namespace dvnci {
 
         virtual ~externalintf() {};
 
-        virtual bool connect() = 0;
-        
-        virtual bool disconnect() = 0;
+        bool isconnected(){
+            return ((state_ == connected) || (!error(connect_impl())));};
+   
+        bool disconnect(){
+            return ((state_ != connected) || (!error(disconnect_impl())));}
 
-        intfstate state() const {
-            return state_;}
 
-        bool isconnected() const {
-            return (state_ == connected);}
-        
         virtual bool islocal() const {
             return true;}
         
@@ -50,25 +47,6 @@ namespace dvnci {
         
         subcripttype  subsrcript() const {
             return subsrcript_;}
-        
-         virtual bool init() {
-             if (isconnected()){
-                 return true;}
-             else{
-                 if (connect()){
-                     if (isconnected()) 
-                             return true;}}
-             return false;}
-
-         virtual bool uninit(){
-            if (!isconnected()){
-                 return true;}
-             else{
-                 if (disconnect()){
-                     if (isconnected()) 
-                             return false;}}
-             return true;}
-
 
         boost::mutex* mtx_internal() {
             return &mutex;}
@@ -84,6 +62,10 @@ namespace dvnci {
         virtual void remove(const indx_set& idset)= 0;
 
     protected:
+
+        virtual ns_error connect_impl() = 0;
+        
+        virtual ns_error disconnect_impl() = 0;
         
         ns_error  error(ns_error err){
                 return error_=err;}
@@ -115,11 +97,11 @@ namespace dvnci {
                 if (init()) {
                     if (externmanager->isconnected()) {
                         try {
-                                externmanager->operator()();
-                                return true;}
+                            externmanager->operator()();
+                           return true;}
                         catch (dvncierror& errd) {
-                                if (intf )
-                                    intf->debugerror("device_link_executor mainloop ERROR_IO_SERVICE_LOCK");
+                            if (intf )
+                                intf->debugerror("device_link_executor mainloop ERROR_IO_SERVICE_LOCK");
                             return false;}
                         catch (...) {
                             if (intf )
@@ -144,11 +126,11 @@ namespace dvnci {
             virtual bool initialize() {
                 if (!externmanager)
                     externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, group()));
-                return true;}
+                return externmanager;}
 
             virtual bool uninitialize() {
                 if (externmanager) {
-                    externmanager->uninit();
+                    externmanager->disconnect();
                     externmanager.reset();}
                 group_state_off();
                 return true;}

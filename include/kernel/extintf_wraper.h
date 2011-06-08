@@ -126,7 +126,7 @@ protected:
     
     ns_error value_request(){
         return ((subsrcript()==CONTYPE_SUBSCROPC) || 
-                (provide() & TYPE_SIMPLE_REQ) || 
+                (!(provide() & TYPE_SIMPLE_REQ)) || 
                 (simple_req_map.empty())) ? 
                     0 : value_request_impl();}
     
@@ -137,7 +137,7 @@ protected:
     //requests   report value       
     
     ns_error report_request(){
-        return ((provide() & TYPE_REPORT) || 
+        return ((!(provide() & TYPE_REPORT)) || 
                 (report_req_map.empty())) ? 
                     0 : report_request_impl();}
     
@@ -147,7 +147,7 @@ protected:
     //requests   report value       
     
     ns_error event_request(){
-         return ((provide() & TYPE_EVENT) || 
+         return ((!(provide() & TYPE_EVENT)) || 
                 (report_req_map.empty())) ? 
                     0 : event_request_impl();}
     
@@ -175,15 +175,30 @@ protected:
  
     
     void add_simple(indx id, serverkey_type sid){
+            indx_set::iterator it = need_add_set.find(id);
+            if (it!=need_add_set.end())
+                need_add_set.erase(it);
             simple_req_map.insert(serverkey_tag_pair(sid,id));}
     
     void add_report(indx id, serverkey_type sid){
+            indx_set::iterator it = need_add_set.find(id);
+            if (it!=need_add_set.end())
+                need_add_set.erase(it);
             report_req_map.isert(serverkey_tag_pair(sid,id));}
     
     void add_event(indx id, serverkey_type sid){
+            indx_set::iterator it = need_add_set.find(id);
+            if (it!=need_add_set.end())
+                need_add_set.erase(it);        
             event_req_map.isert(serverkey_tag_pair(sid,id));}  
     
     void req_error(indx id, ns_error err){
+        indx_set::iterator it = need_add_set.find(id);
+        if (it!=need_add_set.end())
+                need_add_set.erase(it);   
+        it = need_remove_set.find(id);
+        if (it!=need_remove_set.end())
+                need_remove_set.erase(it);        
         if (err) {
             if (error_set.find(id)!=error_set.end()){
                 error_set.insert(id);
