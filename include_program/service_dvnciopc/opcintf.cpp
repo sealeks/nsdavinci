@@ -7,6 +7,9 @@
 
 #include "opcintf.h"
 
+#include "opc/opcda_i.c"
+#include "opc/opcerror.h"
+
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -641,7 +644,7 @@ namespace dvnci {
 //                   opcclient_item itm;
 //                    if (!find_by_clid(it->key, itm)) {
                      //tmpwstr.push_back(s2ws(intf->binding(*it).));
-                     //pItems[i].szItemID = const_cast<wchar_t*> (tmpwstr.back().c_str());
+                     pItems[i].szItemID = const_cast<wchar_t*> (s2ws(intf->binding(*it)).c_str());
                      pItems[i].szAccessPath = NULL;
                      pItems[i].bActive = TRUE;
                      pItems[i].hClient = static_cast<OPCHANDLE> (*it);

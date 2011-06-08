@@ -25,16 +25,10 @@
 #include <olectl.h>
 #include <comcat.h>
 #include "opc/opcda.h"
-#include "opc/opcda_i.c"
-#include "opc/opcerror.h"
-
 
 namespace dvnci {
     namespace external {
     namespace opc {
-
-
-
 
 
         class transaction_mng_map {
@@ -136,8 +130,6 @@ namespace dvnci {
             static const int ASYNOPC = 2;
             static const int SYNOPC = 4;
 
-
-
             abstract_opc_util() {};
 
             virtual ~abstract_opc_util() {};
@@ -157,6 +149,10 @@ namespace dvnci {
             virtual bool isasync() = 0;} ;
 
         typedef boost::shared_ptr<abstract_opc_util> abstr_opc_util_ptr;
+        
+        
+        
+        
 
         class opcintf  : public extintf_wraper<OPCHANDLE> {
         public:
@@ -181,8 +177,6 @@ namespace dvnci {
             int native_ver() {
                 return opc_spec ? opc_spec->native_ver() : 0;};
 
-
-            //virtual bool add_commands(const vect_opccommand_item& commanditem, vect_opcerror_item& errors);
             //virtual bool add_report_task(indx  key, datetime start, datetime stop) {return true;}
 
             DWORD transactid() {
@@ -241,76 +235,7 @@ namespace dvnci {
                 DEBUG_STR_DVNCI(iswriteexpiretimout);
                 THD_EXCLUSIVE_LOCK(mutex);
                 return writetractmap.expiretimout(tmo, tract);}
-
- /*           void addvalmap(indx sid, opcvalue_item& val) {
-                opcvalue_item_map::iterator itval = valitemmap.find(sid);
-                if (itval != valitemmap.end())
-                    itval->second = val;
-                else
-                    valitemmap.insert(opcvalue_item_pair(sid, val));}
-
-            bool find_by_clid(indx clid, opcclient_item& itm) {
-                opcclient_item_map::iterator it = clt_servermap.find(clid);
-                if (it == clt_servermap.end()) return false;
-                itm = it->second;
-                return true;}
-
-            bool find_by_clid(indx clid) {
-                opcclient_item itm;
-                return find_by_clid(clid, itm);}
-
-            bool find_by_sid(indx sid, opcclient_item& itm) {
-                opcserver_item_map::iterator it = srv_clientmap.find(sid);
-                if (it == srv_clientmap.end()) return false;
-                itm = it->second;
-                return true;}
-
-            bool find_by_sid(indx sid) {
-                opcclient_item itm;
-                return find_by_sid(sid, itm);}
-
-            bool remove_by_clid(indx clid) {
-                opcclient_item_map::iterator it = clt_servermap.find(clid);
-                if (it == clt_servermap.end()) return false;
-                clt_servermap.erase(it);
-                return true;}
-
-            bool remove_by_sid(indx sid) {
-                opcserver_item_map::iterator it = srv_clientmap.find(sid);
-                if (it == srv_clientmap.end()) return false;
-                srv_clientmap.erase(it);
-                return true;}
-
-            bool additem(indx sid, indx clid, opcclient_item& itm) {
-                opcserver_item_map::iterator it = srv_clientmap.find(sid);
-                if (it == srv_clientmap.end())
-                    srv_clientmap.insert(opcserver_item_pair(sid, itm));
-                else
-                    it->second = itm;
-                opcclient_item_map::iterator it2 = clt_servermap.find(clid);
-                if (it2 == clt_servermap.end())
-                    clt_servermap.insert(opcclient_item_pair(clid, itm));
-                else
-                    it2->second = itm;
-                return true;}
-
-            bool needreqcheck(indx clid, const std::wstring& bnd) {
-                opcclient_item itm;
-                if (!find_by_clid(clid, itm)) return true;
-                if (itm.bind == bnd) return false;
-                return true;}
-
-/*            bool setopcvalue(indx clid, num64 val, num64 valid, num64 time, num64 tp) {
-                opcclient_item itmtmp;
-                if (find_by_clid(clid, itmtmp)) {
-			  tp = ((intf) && (intf->exists(clid)) && (intf->type(clid)==TYPE_NODEF)) ? TYPE_NODEF : tp;
-                    opcvalue_item tmp = {itmtmp.outkey,val, valid, 0, tp};
-                    addvalmap(static_cast<indx> (itmtmp.outkey), tmp);
-                    return true;}
-                return false;}*/
-
-//            boost::mutex mutex;
-
+  
             void update_dog(){
                dogtm=utc_now();}
 
