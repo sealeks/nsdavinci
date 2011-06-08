@@ -224,19 +224,19 @@ protected:
     
     void write_val_id(indx id, const short_value val){
        tag_const_iterator it = simple_req_map.right.find(id);
-       if (it == simple_req_map.right.end()){
-               exectr->write_val(it->second, val);}}
+       if (it != simple_req_map.right.end()){
+               exectr->write_val(it->first, val);}}
     
     void write_val_report_id(indx id, const dt_val_map& val){
        tag_const_iterator it = report_req_map.right.find(id);
-       if (it == report_req_map.right.end()){
-               exectr->write_val_report(it->second, val);
+       if (it != report_req_map.right.end()){
+               exectr->write_val_report(it->first, val);
                return;}}
     
     void write_val_event_id(indx id, const dt_val_pair& val){
        tag_const_iterator it = event_req_map.right.find(id);
-       if (it == simple_req_map.right.end()){
-               exectr->write_val_event(it->second, val);
+       if (it != simple_req_map.right.end()){
+               exectr->write_val_event(it->first, val);
                return;}}
 
 
