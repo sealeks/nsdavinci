@@ -10,6 +10,7 @@
 
 #include <kernel/interface_proccesstmpl.h>
 #include <kernel/constdef.h>
+#include <iterator>
 
 #include <boost/bimap/multiset_of.hpp>
 
@@ -24,13 +25,15 @@ public:
     typedef SERVERKEY                                                                      serverkey_type;
     typedef boost::bimaps::set_of<serverkey_type, std::less<serverkey_type> >              serverkeys_setof;
     typedef boost::bimaps::multiset_of<indx, std::less<indx> >                             tags_multisetof;
-    typedef boost::bimaps::bimap<serverkeys_setof, serverkeys_setof>                       serverkeys_tags_map;
+    typedef boost::bimaps::bimap<serverkeys_setof, tags_multisetof>                        serverkeys_tags_map;
     typedef typename serverkeys_tags_map::left_map                                         serverkeys_map;
     typedef typename serverkeys_tags_map::right_map                                        tags_map;
     typedef typename serverkeys_tags_map::left_iterator                                    serverkey_iterator;
     typedef typename serverkeys_tags_map::left_const_iterator                              serverkey_const_iterator;
     typedef typename serverkeys_tags_map::right_iterator                                   tag_iterator;
     typedef typename serverkeys_tags_map::right_const_iterator                             tag_const_iterator;
+    typedef typename tag_iterator::difference_type                                         tag_iterator_diff;
+    typedef typename tags_map::const_range_type                                            const_tag_range;
     typedef typename serverkeys_tags_map::value_type                                       serverkey_tag_pair;
     
     typedef std::pair<serverkey_type, short_value >                                        sidcmd_pair;
@@ -46,6 +49,7 @@ public:
     virtual void insert(const indx_set& idset) {
         for (indx_set::const_iterator it=idset.begin();it!=idset.end();++it){
             if ((error_set.find(*it)==error_set.end()) &&
+                (need_remove_set.find(*it)==need_remove_set.end()) &&
                 (simple_req_map.right.find(*it)==simple_req_map.right.end()) &&
                 (report_req_map.right.find(*it)==report_req_map.right.end()) &&
                 (event_req_map.right.find(*it)==event_req_map.right.end())){
@@ -58,10 +62,29 @@ public:
                 error_set.erase(*it);
                 exectr->error(*it, 0);}
             else{
-               if ((simple_req_map.right.find(*it)!=simple_req_map.right.end()) ||
-                   (report_req_map.right.find(*it)!=report_req_map.right.end()) ||
-                   (event_req_map.right.find(*it)!=event_req_map.right.end())){
-                need_remove_set.insert(*it);}}}}
+               bool finded =false;
+               if (simple_req_map.right.find(*it)!=simple_req_map.right.end()) {
+                   tag_const_iterator beg = simple_req_map.right.lower_bound(*it);
+                   tag_const_iterator end = simple_req_map.right.upper_bound(*it);
+                   tag_iterator_diff diff=std::distance(beg,end);
+                   if (diff){
+                       simple_req_map.right.erase(*it);
+                   finded = finded ?  finded : (diff==1);}}
+               if (report_req_map.right.find(*it)!=report_req_map.right.end()){
+                   tag_const_iterator beg = report_req_map.right.lower_bound(*it);
+                   tag_const_iterator end = report_req_map.right.upper_bound(*it);
+                   tag_iterator_diff diff=std::distance(beg,end);
+                   if (diff){
+                       report_req_map.right.erase(*it);
+                   finded = finded ?  finded : (diff==1);}}
+               if (event_req_map.right.find(*it)!=event_req_map.right.end()){
+                   tag_const_iterator beg = event_req_map.right.lower_bound(*it);
+                   tag_const_iterator end = event_req_map.right.upper_bound(*it);
+                   tag_iterator_diff diff=std::distance(beg,end);
+                   if (diff){
+                       event_req_map.right.erase(*it);
+                   finded = finded ?  finded : (diff==1);}}            
+                if (finded) need_remove_set.insert(*it);}}}
     
     
     virtual bool operator()(){
