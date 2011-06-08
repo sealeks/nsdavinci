@@ -24,7 +24,7 @@
 #include <objbase.h>
 #include <olectl.h>
 #include <comcat.h>
-#include "opc/opcda.h"
+#include <opc/opcda.h>
 
 namespace dvnci {
     namespace external {
@@ -170,10 +170,6 @@ namespace dvnci {
 
             virtual ~opcintf();
 
-            virtual bool connect();
-
-            virtual bool disconnect();
-
             int native_ver() {
                 return opc_spec ? opc_spec->native_ver() : 0;};
 
@@ -254,6 +250,10 @@ namespace dvnci {
 
 
         protected:
+            
+             virtual ns_error connect_impl();
+        
+             virtual ns_error disconnect_impl();
             
             
             virtual ns_error add_request_impl();
