@@ -7,8 +7,8 @@
 
 #include "opcintf.h"
 
-#include "opc/opcda_i.c"
-#include "opc/opcerror.h"
+#include <opc/opcda_i.c>
+#include <opc/opcerror.h>
 
 
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -531,11 +531,10 @@ namespace dvnci {
         opcintf::~opcintf() {
             disconnect();};
 
-        bool opcintf::connect() {
+        ns_error  opcintf::connect_impl() {
 
-            if (!intf) return false;
-            if (!intf->groups()->exists(group())) return false;
-
+            if (!intf) 
+                return  error(ERROR_NILLINF);
 
             DEBUG_VAL_DVNCI(intf->groups()->server(group()))
 
@@ -556,7 +555,8 @@ namespace dvnci {
             if (updaterate<99) updaterate = 100;
 
             abstr_opc_util_ptr tmpinf = abstr_opc_util_ptr(new opc_util(this, szProgIDw, szGroupNamew, szHostNamew, deadband, updaterate));
-            if (!tmpinf->setinit()) return false;
+            if (!tmpinf->setinit()) 
+                return error(ERROR_NOINTF_CONNECTED);
             opc_spec = tmpinf;
 
             if (ver == 0 )
@@ -595,16 +595,16 @@ namespace dvnci {
 
             state_ = connected;
 
-            return true;}
+            return 0;}
 
-        bool opcintf::disconnect() {
+        ns_error  opcintf::disconnect_impl() {
 
             if (state_ == connected) {
                 ver = 0;
                 if (opc_spec)
                     opc_spec.reset();
                 state_ = disconnected;}
-            return true;}
+            return 0;}
 
         bool opcintf::checkserverstatus() const{
             if ((!opc_spec) || (!static_cast<opc_util*> (opc_spec.get())->IGRPMGT())) return false;
@@ -635,16 +635,16 @@ namespace dvnci {
 
             DWORD i = 0;
 
-            //typedef std::vector<std::wstring> tempwstring;
 
-            //wstring tmpwstr = L"";
+            typedef std::vector<std::wstring> tempwstring;
+
+
 
             for (indx_set::const_iterator it = need_add_set.begin(); it != need_add_set.end(); ++it) {
                 if (intf->exists(*it)) {
-//                   opcclient_item itm;
-//                    if (!find_by_clid(it->key, itm)) {
-                     //tmpwstr.push_back(s2ws(intf->binding(*it).));
-                     pItems[i].szItemID = const_cast<wchar_t*> (s2ws(intf->binding(*it)).c_str());
+		     tempwstring tmpwstr;
+                     tmpwstr.push_back(s2ws(intf->binding(*it)));
+                     pItems[i].szItemID = const_cast<wchar_t*> (tmpwstr.back().c_str());
                      pItems[i].szAccessPath = NULL;
                      pItems[i].bActive = TRUE;
                      pItems[i].hClient = static_cast<OPCHANDLE> (*it);
@@ -669,7 +669,7 @@ namespace dvnci {
 
                 for (DWORD i = 0; i < dwCount; i++) {
                     if (pErrors[i] != S_OK) {
-                        /*req_error(*it, ERROR_ENTNOEXIST)*/;}
+                        req_error(static_cast<indx>(pItems[i].hClient), ERROR_ENTNOEXIST);}
                     else {
                         add_simple(static_cast<indx>(pItems[i].hClient), pResults[i].hServer);}
                     if (pResults[i].dwBlobSize > 0) CoTaskMemFree(pResults[i].pBlob);}}
