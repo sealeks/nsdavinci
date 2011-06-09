@@ -407,11 +407,11 @@ namespace dvnci {
     num64 nownum64();
     boost::xtime utc_now();
 
-    boost::xtime utc_now_plus_millsec(num32 tmout);
-    boost::xtime utc_now_plus_sec(num32 tmout);
+    boost::xtime utc_now_plus_millsec(timeouttype tmout);
+    boost::xtime utc_now_plus_sec(timeouttype tmout);
 
-    bool expire_from_utc_millsec(const boost::xtime& vl, num32 tmout);
-    bool expire_from_utc_sec(const boost::xtime& vl, num32 tmout);
+    bool expire_from_utc_millsec(const boost::xtime& vl, timeouttype tmout);
+    bool expire_from_utc_sec(const boost::xtime& vl, timeouttype tmout);
 
     /* Количество секунд между временными точками*/
     boost::posix_time::time_duration duration_between(datetime t1, datetime t2);
@@ -447,6 +447,8 @@ namespace dvnci {
 
     void addmillisec_to_now(boost::xtime& xt, num64 milsec = 1);
     void addmicrosec_to_now(boost::xtime& xt, num64 microsec = 1);
+    
+    datetime dt_from_filetime(const FILETIME& tm);
 
     std::tm to_std_tm(datetime tm);
 
@@ -456,6 +458,10 @@ namespace dvnci {
     bool beforetabletime(datetime& tm, reporttype tp);
     bool normalizereporttime(datetime& val, reporttype tp);
     bool increporttime(datetime& val, reporttype tp, reporthisttype n = 1);
+    
+    // нормализация периода предыстории
+    void normilize_history_bound(vlvtype  type, reporthisttype& val);
+    void normilize_report_subperiod(vlvtype  type, reporthistdelt& val);
 
     struct statistic_functor {
 

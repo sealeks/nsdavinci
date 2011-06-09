@@ -2115,7 +2115,7 @@ namespace dvnci {
             
 
         mq_class_ptr getqueue() {
-            return mq_class_ptr(proccess_queues::getqueue(registry()->selfhadle()));}
+            return mq_class_ptr(proccess_queues::getqueue(registry()->selfhadle(), false));}
 
         void allvalid(vlvtype vld) {
             for (size_type i = 0; i < count(); ++i)

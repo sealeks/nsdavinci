@@ -316,7 +316,7 @@ namespace dvnci {
         new (operator[](newid)) registrystruct(globalnum(), app,  evts, selfhadle_);
 
         if (selfhadle_ > 0) {
-            mq_class*  queue = proccess_queues::getqueue(selfhadle_, true);
+            mq_class*  queue = proccess_queues::getqueue(selfhadle_, true, tgbs_ptr->count() * 2 + EXTEND_MEMSHARE_TAGCNT / 4);
             if (queue) {
                 mq_class_ptr ptr(queue);
                 guid_mqs_mp.insert(guid_mq_pair(globalnum(), ptr));}}
@@ -387,7 +387,7 @@ namespace dvnci {
         if (val < 0) return mq_class_ptr();
         guid_mq_map::const_iterator it = guid_mqs_mp.find(val);
         if (it != guid_mqs_mp.end()) return it->second;
-        mq_class* tmp = proccess_queues::getqueue(val);
+        mq_class* tmp = proccess_queues::getqueue(val, false);
         if (!tmp) return mq_class_ptr();
         mq_class_ptr ptr(tmp);
         guid_mqs_mp.insert(guid_mq_pair(val, ptr));
@@ -952,8 +952,8 @@ namespace dvnci {
                 addindex(id);
                 valid(id, (groups()->appid(value) == NS_GROUP_SYSTEMVAR) ? FULL_VALID : NULL_VALID);}
             writetofile(id);
-            if (message) notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, grnum);
-            if (message) notify_tagmanage(MSG_DVNCTAGADDTOGR, id, value);}}
+            if ((message) && (refcnt(id))) notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, grnum);
+            if ((message) && (refcnt(id))) notify_tagmanage(MSG_DVNCTAGADDTOGR, id, value);}}
 
     void tagsbase::agroup(size_type id, size_type value, bool message) {
         if ((exists(id)) && (agroups_->exists(value))) {
@@ -2099,7 +2099,8 @@ namespace dvnci {
 
     void tagsbase::trigger_add(size_type id, size_type opt) {
         notify_tagmanage(MSG_DVNCTAGNEW, id, static_cast<size_type> (opt));
-        notify_tagmanage(MSG_DVNCTAGADDTOGR, id, static_cast<size_type> (opt));};
+        if (refcnt(id)) 
+            notify_tagmanage(MSG_DVNCTAGADDTOGR, id, static_cast<size_type> (opt));};
 
     void tagsbase::trigger_remove(size_type id, size_type opt) {
         if (logbuffered(id)) {
@@ -2123,8 +2124,9 @@ namespace dvnci {
     
 
     void tagsbase::trigger_bind(size_type id) {
+        if ((refcnt(id))){
         notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
-        notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}
+        notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}}
     
 
     void tagsbase::trigger_group_rename(size_type id) {
@@ -2156,7 +2158,7 @@ namespace dvnci {
                                                || (oldst.maxeu64() != newst.maxeu64()))) || (oldst.type() != newst.type())) {
                 trigger_range(id, newst.rangable());}
 
-            if (change) {
+            if (change && (refcnt(id))) {
                 notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
                 notify_tagmanage(MSG_DVNCTAGADDTOGR, id, group(id));}}};
                 

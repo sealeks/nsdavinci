@@ -37,64 +37,7 @@ namespace dvnci {
             case MSG_DVNCDBDISCONNECT: return "mDataBase_disconnect";}
         return "UndefMess";}
 
-    void normilize_history_bound(vlvtype type, reporthisttype& val) {
-        switch (type) {
-            case REPORTTYPE_YEAR:{
-                val = val < MIN_REPORTTYPE_YEAR ? MIN_REPORTTYPE_YEAR: val > MAX_REPORTTYPE_YEAR ? MAX_REPORTTYPE_YEAR: val;
-                break;};
-            case REPORTTYPE_MIN:{
-                val = val < MIN_REPORTTYPE_MIN ? MIN_REPORTTYPE_MIN: val > MAX_REPORTTYPE_MIN ? MAX_REPORTTYPE_MIN: val;
-                break;}
-            case REPORTTYPE_HOUR:{
-                val = val < MIN_REPORTTYPE_HOUR ? MIN_REPORTTYPE_HOUR: val > MAX_REPORTTYPE_HOUR ? MAX_REPORTTYPE_HOUR: val;
-                break;}
-            case REPORTTYPE_DEC:{
-                val = val < MIN_REPORTTYPE_DEC ? MIN_REPORTTYPE_DEC: val > MAX_REPORTTYPE_DEC ? MAX_REPORTTYPE_DEC: val;
-                break;}
-            case REPORTTYPE_DAY:{
-                val = val < MIN_REPORTTYPE_DAY ? MIN_REPORTTYPE_DAY: val > MAX_REPORTTYPE_DAY ? MAX_REPORTTYPE_DAY: val;
-                break;}
-            case REPORTTYPE_MONTH:{
-                val = val < MIN_REPORTTYPE_MONTH ? MIN_REPORTTYPE_MONTH: val > MAX_REPORTTYPE_MONTH ? MAX_REPORTTYPE_MONTH: val;
-                break;}
-            case REPORTTYPE_10MIN:{
-                val = val < MIN_REPORTTYPE_10MIN ? MIN_REPORTTYPE_10MIN: val > MAX_REPORTTYPE_10MIN ? MAX_REPORTTYPE_10MIN: val;
-                break;}
-            case REPORTTYPE_30MIN:{
-                val = val < MIN_REPORTTYPE_30MIN ? MIN_REPORTTYPE_30MIN: val > MAX_REPORTTYPE_30MIN ? MAX_REPORTTYPE_30MIN: val;
-                break;}
-            case REPORTTYPE_QVART:{
-                val = val < MIN_REPORTTYPE_QVART ? MIN_REPORTTYPE_QVART: val > MAX_REPORTTYPE_QVART ? MAX_REPORTTYPE_QVART: val;
-                break;}
-            default:  val = 0;}}
 
-    void normilize_report_subperiod(vlvtype type, reporthistdelt& val) {
-        switch (type) {
-            case REPORTTYPE_MIN:{
-                val = val < -59 ? -59: val > 59 ? 59: val;
-                break;}
-            case REPORTTYPE_HOUR:{
-                val = val < -23 ? -23: val > 23 ? 23: val;
-                break;}
-            case REPORTTYPE_DEC:{
-                val = val < -2 ? -2: val > 2 ? 2: val;
-                break;}
-            case REPORTTYPE_DAY:{
-                val = val < -27 ? -27: val > 27 ? 27: val;
-                break;}
-            case REPORTTYPE_MONTH:{
-                val = val < -11 ? -11: val > 11 ? 11: val;
-                break;}
-            case REPORTTYPE_10MIN:{
-                val = val < -5 ? -5: val > 5 ? 5: val;
-                break;}
-            case REPORTTYPE_30MIN:{
-                val = val < -1 ? -1: val > 1 ? 1: val;
-                break;}
-            case REPORTTYPE_QVART:{
-                val = val < -3 ? -3: val > 3 ? 3: val;
-                break;}
-            default:  val = 0;}}
 
     tagtype oldtypetonew(tagtype val) {
         switch (val) {
