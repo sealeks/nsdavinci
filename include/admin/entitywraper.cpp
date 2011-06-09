@@ -178,9 +178,9 @@ namespace dvnci {
             addpropertylist(3);}
 
         opccontypepertyeditor::opccontypepertyeditor() : abstractpropertyeditor(TYPE_PE_LIST, "Opccontypetype") {
-            addpropertylist(CONTYPE_SUBSCROPC);
-            addpropertylist(CONTYPE_ASYNOPC);
-            addpropertylist(CONTYPE_SYNOPC);}
+            addpropertylist(CONTYPE_SUBSCR);
+            addpropertylist(CONTYPE_ASYNC);
+            addpropertylist(CONTYPE_SYNC);}
 
 
         baselinkpropertyeditor::baselinkpropertyeditor() : abstractpropertyeditor(TYPE_PE_LIST, "BaseLinkbasetype") {
