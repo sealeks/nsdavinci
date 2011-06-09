@@ -540,7 +540,7 @@ namespace dvnci {
             if (operator[](id)->protocol() != val) {
                 operator[](id)->protocol(val);}}}
 
-    void  groupsbase::synctype(size_type id, intfsynctype val) {
+    void  groupsbase::synctype(size_type id, subcripttype val) {
         if (exists(id)) {
             if (operator[](id)->synctype() != val) {
                 operator[](id)->synctype(val);}}}
@@ -1012,14 +1012,16 @@ namespace dvnci {
     void tagsbase::incref(size_type id) {
         if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
             operator[](id)->increfcnt();
-            if (operator[](id)->refcnt() == 1)  registry()->notify_newref(id);}}
+            if (operator[](id)->refcnt() == 1)  
+                registry()->notify_newref(id, group(id));}}
 
     void tagsbase::decref(size_type id) {
         if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
-            if (refcnt(id) > 0) {
+            if (refcnt(id)) {
                 operator[](id)->decrefcnt();
-                if (operator[](id)->refcnt() == 0) {
-                    registry()->notify_remref(id);}}}}    
+                if (!operator[](id)->refcnt()) {
+                    offtag(id);
+                    registry()->notify_remref(id, group(id));}}}}    
     
 
     void tagsbase::group_appid(size_type id, appidtype val) {
@@ -1467,31 +1469,33 @@ namespace dvnci {
             return;}
         select_atags(val, agroups()->operator ()(agroup), strcriteria,  numcriteria);}
 
-    void tagsbase::select_tags_by_appid(indx_set& val, appidtype appid) {
+    void tagsbase::select_tags_by_appid(indx_set& val, appidtype appid, bool onlyactive) {
         val.clear();
         size_type indxtmp = groups()->select_groups_by_appid(appid);
         if (indxtmp != npos) {
             iteminfo_map tmp;
             select_tags(tmp, indxtmp);
             for (iteminfo_map::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
-                if (exists(it->first)) val.insert(it->first);}}}
+                if ((exists(it->first)) && (refcnt(it->first)))
+                    val.insert(it->first);}}}
 
-    void tagsbase::select_tags_by_groupid(indx_set& val, size_type group) {
+    void tagsbase::select_tags_by_groupid(indx_set& val, size_type group, bool onlyactive) {
         val.clear();
         if (group != npos) {
             iteminfo_map tmp;
             select_tags(tmp, group);
             for (iteminfo_map::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
-                if (exists(it->first)) val.insert(it->first);}}}
+                if ((exists(it->first)) && (refcnt(it->first))) 
+                    val.insert(it->first);}}}
 
-    void tagsbase::select_tags_by_link(indx_set& val, appidtype app, const metalink& lnk) {
+    void tagsbase::select_tags_by_link(indx_set& val, appidtype app, const metalink& lnk, bool onlyactive) {
         val.clear();
         if (lnk) {
             for (size_type i = 0; i < groups()->count(); i++) {
                 if ((groups()->exists(i)) && (groups()->appid(i) == app) && (groups()->link(i) == lnk)) {
                     indx_set tmpst;
                     tmpst.clear();
-                    select_tags_by_groupid(tmpst, i);
+                    select_tags_by_groupid(tmpst, i, onlyactive);
                     if (!tmpst.empty())
                         val.insert(tmpst.begin(), tmpst.end());}}}}
 
@@ -1665,18 +1669,29 @@ namespace dvnci {
             for (iteminfo_map::iterator it = tmp.begin(); it != tmp.end(); ++it) {
                 inputsysvartag(it->first, include);}}}
 
-    void tagsbase::resettag_for_group(size_type group, ns_error error) {
+    void tagsbase::offgroup(size_type group, ns_error err) {
         if (groups()->exists(group)) {
             iteminfo_map tmp;
             select_tags(tmp, group);
             for (iteminfo_map::iterator it = tmp.begin(); it != tmp.end(); ++it) {
-                if (exists(it->first)) {
-                    valid(it->first, 0);
-                    operator[](it->first)->value(0);
-                    operator[](it->first)->value_log(0);
-                    operator[](it->first)->error(error);
-                    operator[](it->first)->time(nill_time);
-                    operator[](it->first)->time_log(nill_time);}}}}
+                offtag(it->first, err);}}}
+    
+    void tagsbase::offtag(size_type id, ns_error err){
+            if ((exists(id))/*  && (IN_SMPLSET(type(id)))*/){
+                valid(id, 0);
+                switch (alarmcase(id)) {
+                case alarmEqual:{
+                    if (alarmconst_prtd<num64 >(id) == 0) {
+                        value_internal<num64 > (id, 1);} else {
+                        value_internal<num64 > (id, 0);}
+                    break;}
+                default:{
+                    value_internal<num64 > (id, alarmconst_prtd<num64 > (id));
+                    break;}}
+                    value_log<num64>(id, 0);
+                    error(id, err);
+                    time(id, nill_time);
+                    time_log(id, nill_time);}}
 
     void tagsbase::rangable(size_type id, bool value) {
         if (exists(id)) {
@@ -2132,7 +2147,11 @@ namespace dvnci {
                     trigger_report(id , oldst.type(), newst.type());}
                 if (IN_TEXTSET(oldst.type()) || IN_TEXTSET(oldst.type())) {
                     trigger_texttype(id , IN_TEXTSET(newst.type()));}}
-
+            if (newst.allwaysactiv_helper()!=oldst.allwaysactiv_helper()){
+                if ((newst.allwaysactiv_helper()) && (refcnt(id)==1))
+                    trigger_ref(id,true);
+                if ((!newst.allwaysactiv_helper()) && (!refcnt(id)))
+                    trigger_ref(id,false);}
             if (IN_RANGESET(newst.type()) && (((oldst.mineu64() != newst.mineu64())
                                                || (oldst.maxeu64() != newst.maxeu64()))) || (oldst.type() != newst.type())) {
                 trigger_range(id, newst.rangable());}
@@ -2176,6 +2195,12 @@ namespace dvnci {
     void tagsbase::trigger_range(size_type id, bool state) {
         if (logkey(id) != npos) {
             valbuffers()->range( logkey(id), mineu_prtd<double>(id), maxeu_prtd<double>(id));}};
+            
+    void tagsbase::trigger_ref(size_type id, bool state) {
+        if (state) {
+            registry()->notify_newref(id, group(id));}
+        else{
+            registry()->notify_remref(id, group(id));}};            
 
     void tagsbase::trigger_systemtype(size_type id, bool state) {};
 

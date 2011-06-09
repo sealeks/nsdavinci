@@ -24,7 +24,8 @@ namespace dvnci {
         indx_set tmp;
         tmp.insert(id);
         error(id,0);
-        remove_tags(tmp);}
+        remove_tags(tmp);
+        intf->offtag(id);}
 
     void executor::add_tags(const indx_set& idset) {
             if (provide_==TYPE_FULL)
@@ -127,7 +128,7 @@ namespace dvnci {
                     if (active_set.find(*it)!=active_set.end()) {
                         intf->groups()->active(*it, false);
                         intf->groups()->valid(*it, (valid==1) ? NULL_VALID : valid);
-			intf->resettag_for_group(*it);
+			intf->offgroup(*it);
                         active_set.erase(*it);}}}}
 
 
@@ -172,7 +173,7 @@ namespace dvnci {
                 intf->groups()->active(*it, false);
                 intf->groups()->valid(*it, NULL_VALID);
                 intf->groups()->error(*it, 0);
-                intf->resettag_for_group(*it);}}
+                intf->offgroup(*it);}}
 
      datetime executor::get_group_timeout(indx id) const {
             indx_dt_map::const_iterator it = timout_map.find(id);

@@ -378,8 +378,6 @@ namespace dvnci {
     typedef size_t gratetype;
     //devspec type
     typedef num32 devspectype;
-    //intfsynctype type
-    typedef num32 intfsynctype;
     //intfvertype type
     typedef num32 intfvertype;
     //reporthisttype type

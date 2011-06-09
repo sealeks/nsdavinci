@@ -565,17 +565,18 @@ namespace dvnci {
         static void clone(tagstruct& dst, const tagstruct & src);
 
         tagstruct get_for_write_to_file(bool firstcriteria = false);
+        
+        bool allwaysactiv_helper() const {
+            return static_cast<bool> (util_helper_ & ALLWAYSACTIVE);}
+        
+        bool rangeble_helper() const {
+            return static_cast<bool> (util_helper_ & RANGABLE);}
 
 
     private:
 
         onum landscape_range() const;
 
-        bool allwaysactiv_helper() const {
-            return static_cast<bool> (util_helper_ & ALLWAYSACTIVE);}
-        
-        bool rangeble_helper() const {
-            return static_cast<bool> (util_helper_ & RANGABLE);}
 
         void helper_util();
 
@@ -1059,11 +1060,11 @@ namespace dvnci {
         void local(lcltype val) {
             local_ = static_cast<num64> (val & 3);}
 
-        void synctype(intfsynctype val) {
-            synctype_ = static_cast<num64> (in_bounded<intfsynctype > (0, 2, val));}
+        void synctype(subcripttype val) {
+            synctype_ = static_cast<num64> (in_bounded<subcripttype > (0, 2, val));}
 
-        intfsynctype synctype() const {
-            return in_bounded<intfsynctype > (0, 2, static_cast<intfsynctype> (synctype_));}
+        subcripttype synctype() const {
+            return in_bounded<subcripttype> (0, 2, static_cast<subcripttype> (synctype_));}
 
         void ver(intfvertype val) {
             ver_ = static_cast<num64> (val & 3);}
