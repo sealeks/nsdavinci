@@ -188,13 +188,13 @@ namespace dvnci {
 
     /////////////////////////////////////////////////////////////////////////////
 
-    mq_class*   proccess_queues::getqueue(guidtype val, bool create) {
+    mq_class*   proccess_queues::getqueue(guidtype val, bool create , size_t sz) {
         std::string vl = get_mq_name(val);
         mq_class* mq;
         if (create) {
             try {
                 removequeue(val);
-                mq = new  mq_class(boost::interprocess::create_only , vl.c_str()  , messsage_queue_count  , sizeof (messagestruct));
+                mq = new  mq_class(boost::interprocess::create_only , vl.c_str()  , sz  , sizeof (messagestruct));
                 return mq;}
             catch (boost::interprocess::interprocess_exception &ex) {
                 return 0;};}

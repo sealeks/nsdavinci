@@ -45,7 +45,7 @@ public:
                      std::less<serverkey_type>, std::allocator<sidcmd_pair > >             sidcmd_map;
     
     
-    extintf_wraper(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNOPC) :  
+    extintf_wraper(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :  
     externalintf(inf,  exctr,  grp, provide_man, subsrcr){}      
     
     virtual ~extintf_wraper() {};
@@ -97,21 +97,23 @@ public:
                             need_remove_set.insert(deleted);}}}}}
     
     
-    virtual bool operator()(){
-        
-          
+    virtual bool operator()(){     
+            checkserverstatus();          
             remove_request();
             add_request();
             value_request();
             report_request();
             event_request();
-
+	    command_request();
             return true;}   
     
     
     
 protected:
     
+    
+    virtual ns_error checkserverstatus(){
+        return 0;}
     
     
     //requests   add
@@ -126,7 +128,7 @@ protected:
     //requests   remove    
     
     ns_error remove_request(){
-        return (need_remove_set.empty()) ? 0 : add_request_impl();}
+        return (need_remove_set.empty()) ? 0 : remove_request_impl();}
     
     virtual ns_error remove_request_impl()  = 0;
     
@@ -135,8 +137,7 @@ protected:
     //requests   simple value       
     
     ns_error value_request(){
-        return ((subsrcript()==CONTYPE_SUBSCROPC) || 
-                (!(provide() & TYPE_SIMPLE_REQ)) || 
+        return ((!(provide() & TYPE_SIMPLE_REQ)) || 
                 (simple_req_map.empty())) ? 
                     0 : value_request_impl();}
     
@@ -170,12 +171,12 @@ protected:
          if (!cmds.empty()) {
                 sidcmd_map sidcmds;
                 for (command_vector::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
-                    tag_const_iterator itfnd = simple_req_map.right.find(it->tagid());
-                    if (itfnd != simple_req_map.right.end()) {
+                    tag_const_iterator itsid = simple_req_map.right.find(it->tagid());
+                    if (itsid != simple_req_map.right.end()) {
                         if (it->type() != TYPE_TEXT)
-                            sidcmds.insert(0,short_value(it->value_set<num64 > (), it->type()));
+			    sidcmds.insert(std::make_pair(itsid->second,short_value(it->value_set<num64 > (), it->type())));
                         else
-                            sidcmds.insert(0, short_value(it->strvalue()));}}
+                            sidcmds.insert(std::make_pair(itsid->second, short_value(it->strvalue())));}}
                 return (sidcmds.empty()) ? 0 : command_request_impl(sidcmds) ;}
             return 0;}
 
@@ -206,11 +207,11 @@ protected:
         indx_set::iterator it = need_add_set.find(id);
         if (it!=need_add_set.end())
                 need_add_set.erase(it);   
-        it = need_remove_set.find(id);
-        if (it!=need_remove_set.end())
-                need_remove_set.erase(it);        
+        //it = need_remove_set.find(id);
+        //if (it!=need_remove_set.end())
+        //        need_remove_set.erase(it);        
         if (err) {
-            if (error_set.find(id)!=error_set.end()){
+            if (error_set.find(id)==error_set.end()){
                 error_set.insert(id);
                 exectr->error(id, err);}}} 
     
@@ -248,6 +249,29 @@ protected:
        if (it != simple_req_map.right.end()){
                exectr->write_val_event(it->first, val);
                return;}}
+    
+    
+    
+    ns_error faild_connection(){
+        need_add_set.clear();
+        for (tag_const_iterator it=simple_req_map.right.begin();it!=simple_req_map.right.end();++it){
+             need_add_set.insert(it->first);}
+        simple_req_map.clear();
+        for (tag_const_iterator it=report_req_map.right.begin();it!=report_req_map.right.end();++it){
+             need_add_set.insert(it->first);}
+        report_req_map.clear();
+        for (tag_const_iterator it=event_req_map.right.begin();it!=event_req_map.right.end();++it){
+             need_add_set.insert(it->first);}
+        event_req_map.clear();
+        error_set.clear();
+        need_remove_set.clear();
+        try{
+           disconnect();}
+        catch(...){}
+        state_=disconnected;
+        error(ERROR_FAILNET_CONNECTED);
+        throw dvncierror(error());}
+
 
 
     

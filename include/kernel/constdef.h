@@ -416,9 +416,9 @@ namespace dvnci {
     const std::string DEFAULT_ADMIN_PORT = "8050";
 
     // типы соединения
-    const subcripttype CONTYPE_SUBSCROPC = 0;
-    const subcripttype CONTYPE_ASYNOPC   = 1;
-    const subcripttype CONTYPE_SYNOPC    = 2;
+    const subcripttype CONTYPE_SUBSCR    = 0;
+    const subcripttype CONTYPE_ASYNC     = 1;
+    const subcripttype CONTYPE_SYNC      = 2;
 
 
     // политика доступа клиентов
@@ -509,13 +509,13 @@ namespace dvnci {
 
     typedef boost::shared_ptr<std::string>                                stdstr_ptr;
     
-    typedef std::set<devnumtype , std::less<devnumtype>, std::allocator<devnumtype> >    devnum_set;
+    typedef std::set<devnumtype , std::less<devnumtype>, std::allocator<devnumtype> >             devnum_set;
 
     typedef std::pair<indx, ns_error > errorinfo_pair;
-    typedef std::map<indx, ns_error, std::less<indx>, std::allocator<errorinfo_pair > >                errorinfo_map;
+    typedef std::map<indx, ns_error, std::less<indx>, std::allocator<errorinfo_pair > >           errorinfo_map;
 
     typedef std::pair<indx, datetime > indxdt_pair;
-    typedef std::map<indx, datetime, std::less<indx>, std::allocator<indxdt_pair > >                   indxdt_map;
+    typedef std::map<indx, datetime, std::less<indx>, std::allocator<indxdt_pair > >              indxdt_map;
 
     
     typedef std::pair<std::string, std::string > filtered_pair;
@@ -664,6 +664,8 @@ namespace dvnci {
 
     inline static   bool in_EXCLUSIVEGROUP(appidtype val)  {
         return ((val == NS_GROUP_SYSTEM) || (val == NS_GROUP_SYSTEMVAR));};
+        
+        
 
     const lcltype     NS_CODPAGE_LOC8 = 1;
     const lcltype     NS_CODPAGE_UTF8 = 0;
@@ -852,9 +854,7 @@ namespace dvnci {
     const reporthisttype  MAX_REPORTTYPE_CUSTOM           = 0;
     const reporthisttype  MAX_REPORTTYPE_NONE             = 0;
 
-    // нормализация периода предыстории
-    void normilize_history_bound(vlvtype  type, reporthisttype& val);
-    void normilize_report_subperiod(vlvtype  type, reporthistdelt& val);
+
 
     const repstattype  REPORT_STATISTIC_NONE           = 0;
     const repstattype  REPORT_STATISTIC_AVER           = 1;
@@ -981,7 +981,6 @@ namespace dvnci {
 
     const std::string  NS_ONETIMEINIT_MTXNAME  = "dvncisys_onetymeinit_mtx";
 
-    const num32 messsage_queue_count = 1000;
     
     const std::string WSP_STRING_WO_SP                     = "\x9\xD\xA";
     const std::string WSP_STRING                           = "\x20\x9\xD\xA";

@@ -432,7 +432,7 @@ namespace dvnci {
         static  std::string get_mq_name(guidtype val) {
             return val >= 0 ? (NS_MESSAGEQUEUE_NAME + to_str(val)) : "";}
 
-        static  mq_class*  getqueue(guidtype val, bool create = false);
+        static  mq_class*  getqueue(guidtype val, bool create , size_t sz = 1000);
 
         static  void   removequeue(guidtype val);
 

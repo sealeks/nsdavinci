@@ -597,7 +597,7 @@ namespace dvnci {
         boost::xtime_get(&xt, boost::TIME_UTC);
         return xt;}
 
-    boost::xtime utc_now_plus_millsec(num32 tmout) {
+    boost::xtime utc_now_plus_millsec(timeouttype tmout) {
         boost::xtime xt;
         boost::xtime_get(&xt, boost::TIME_UTC);
         xt.sec += tmout / 1000;
@@ -607,13 +607,13 @@ namespace dvnci {
             xt.nsec += ((tmout % 1000) * 1000000 + xt.nsec - 1000000000);}
         return xt;}
 
-    boost::xtime utc_now_plus_sec(num32 tmout) {
+    boost::xtime utc_now_plus_sec(timeouttype tmout) {
         boost::xtime xt;
         boost::xtime_get(&xt, boost::TIME_UTC);
         xt.sec += tmout;
         return xt;}
 
-    bool expire_from_utc_millsec(const boost::xtime& vl, num32 tmout) {
+    bool expire_from_utc_millsec(const boost::xtime& vl, timeouttype tmout) {
         boost::xtime xt;
         boost::xtime_get(&xt, boost::TIME_UTC);
         xt.sec -= tmout / 1000;
@@ -623,7 +623,7 @@ namespace dvnci {
             xt.nsec = 1000000000 - ((tmout % 1000) * 1000000 - xt.nsec);}
         return ((vl.sec < xt.sec) || ((vl.sec == xt.sec) && (vl.nsec < xt.nsec)));}
 
-    bool expire_from_utc_sec(const boost::xtime& vl, num32 tmout) {
+    bool expire_from_utc_sec(const boost::xtime& vl, timeouttype tmout) {
         boost::xtime xt;
         boost::xtime_get(&xt, boost::TIME_UTC);
         xt.sec -= tmout;
@@ -644,6 +644,9 @@ namespace dvnci {
             xt.nsec += (microsec % 1000000) * 1000;} else {
             xt.sec += 1;
             xt.nsec += ((microsec % 1000000) * 1000 + xt.nsec - 1000000000);}}
+    
+    datetime dt_from_filetime(const FILETIME& tm) {
+            return boost::posix_time::from_ftime<boost::posix_time::ptime>(tm);}
 
     num64 nownum64() {
         return castnum64_from_datetime(now());}
@@ -904,6 +907,65 @@ namespace dvnci {
             case REPORTTYPE_30MIN: return incperiod(val, MINUTE30_TM, n);
             case REPORTTYPE_QVART: return incperiod(val, QUART_TM, n);}
         return false;}
+    
+    void normilize_history_bound(vlvtype type, reporthisttype& val) {
+        switch (type) {
+            case REPORTTYPE_YEAR:{
+                val = val < MIN_REPORTTYPE_YEAR ? MIN_REPORTTYPE_YEAR: val > MAX_REPORTTYPE_YEAR ? MAX_REPORTTYPE_YEAR: val;
+                break;};
+            case REPORTTYPE_MIN:{
+                val = val < MIN_REPORTTYPE_MIN ? MIN_REPORTTYPE_MIN: val > MAX_REPORTTYPE_MIN ? MAX_REPORTTYPE_MIN: val;
+                break;}
+            case REPORTTYPE_HOUR:{
+                val = val < MIN_REPORTTYPE_HOUR ? MIN_REPORTTYPE_HOUR: val > MAX_REPORTTYPE_HOUR ? MAX_REPORTTYPE_HOUR: val;
+                break;}
+            case REPORTTYPE_DEC:{
+                val = val < MIN_REPORTTYPE_DEC ? MIN_REPORTTYPE_DEC: val > MAX_REPORTTYPE_DEC ? MAX_REPORTTYPE_DEC: val;
+                break;}
+            case REPORTTYPE_DAY:{
+                val = val < MIN_REPORTTYPE_DAY ? MIN_REPORTTYPE_DAY: val > MAX_REPORTTYPE_DAY ? MAX_REPORTTYPE_DAY: val;
+                break;}
+            case REPORTTYPE_MONTH:{
+                val = val < MIN_REPORTTYPE_MONTH ? MIN_REPORTTYPE_MONTH: val > MAX_REPORTTYPE_MONTH ? MAX_REPORTTYPE_MONTH: val;
+                break;}
+            case REPORTTYPE_10MIN:{
+                val = val < MIN_REPORTTYPE_10MIN ? MIN_REPORTTYPE_10MIN: val > MAX_REPORTTYPE_10MIN ? MAX_REPORTTYPE_10MIN: val;
+                break;}
+            case REPORTTYPE_30MIN:{
+                val = val < MIN_REPORTTYPE_30MIN ? MIN_REPORTTYPE_30MIN: val > MAX_REPORTTYPE_30MIN ? MAX_REPORTTYPE_30MIN: val;
+                break;}
+            case REPORTTYPE_QVART:{
+                val = val < MIN_REPORTTYPE_QVART ? MIN_REPORTTYPE_QVART: val > MAX_REPORTTYPE_QVART ? MAX_REPORTTYPE_QVART: val;
+                break;}
+            default:  val = 0;}}
+
+    void normilize_report_subperiod(vlvtype type, reporthistdelt& val) {
+        switch (type) {
+            case REPORTTYPE_MIN:{
+                val = val < -59 ? -59: val > 59 ? 59: val;
+                break;}
+            case REPORTTYPE_HOUR:{
+                val = val < -23 ? -23: val > 23 ? 23: val;
+                break;}
+            case REPORTTYPE_DEC:{
+                val = val < -2 ? -2: val > 2 ? 2: val;
+                break;}
+            case REPORTTYPE_DAY:{
+                val = val < -27 ? -27: val > 27 ? 27: val;
+                break;}
+            case REPORTTYPE_MONTH:{
+                val = val < -11 ? -11: val > 11 ? 11: val;
+                break;}
+            case REPORTTYPE_10MIN:{
+                val = val < -5 ? -5: val > 5 ? 5: val;
+                break;}
+            case REPORTTYPE_30MIN:{
+                val = val < -1 ? -1: val > 1 ? 1: val;
+                break;}
+            case REPORTTYPE_QVART:{
+                val = val < -3 ? -3: val > 3 ? 3: val;
+                break;}
+            default:  val = 0;}}    
 
     void statistic_functor::operator()(const dt_val_pair& vl) {
         switch (type) {
