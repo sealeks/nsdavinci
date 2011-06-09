@@ -505,10 +505,10 @@ namespace dvnci {
                 gets()->local(val);
                 in_cangeset(MASK_GR_CHANGE_LOCAL);};
 
-            virtual intfsynctype synctype() const  {
+            virtual subcripttype synctype() const  {
                 return exists() ? gets()->synctype() : 0;};
 
-            virtual void synctype(intfsynctype val ) {
+            virtual void synctype(subcripttype val ) {
                 gets()->synctype(val);
                 in_cangeset(MASK_GR_CHANGE_SYNCTYPE);};
 
