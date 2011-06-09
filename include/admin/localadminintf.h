@@ -422,10 +422,10 @@ namespace dvnci {
             virtual void local(lcltype val ) {
                 if (exists()) intf->groups()->local(key_, val);};
 
-            virtual intfsynctype synctype() const  {
+            virtual subcripttype synctype() const  {
                 return exists() ? intf->groups()->synctype(key_) : 0;};
 
-            virtual void synctype(intfsynctype val ) {
+            virtual void synctype(subcripttype val ) {
                 if (exists()) intf->groups()->synctype(key_, val);};
 
             virtual intfvertype ver() const {

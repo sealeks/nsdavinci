@@ -344,8 +344,8 @@ namespace dvnci {
             virtual timeouttype indicateto() const = 0;
             virtual lcltype local() const = 0;
             virtual void local(lcltype val ) = 0;
-            virtual intfsynctype synctype() const = 0;
-            virtual void synctype(intfsynctype val ) = 0;
+            virtual subcripttype synctype() const = 0;
+            virtual void synctype(subcripttype val ) = 0;
             virtual intfvertype ver() const = 0;
             virtual void ver(intfvertype val ) = 0;
             virtual bool supporttype() const = 0;
