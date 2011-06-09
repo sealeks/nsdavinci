@@ -442,11 +442,11 @@ namespace dvnci {
         void notify_commands(size_type id) {
             notify(MSG_DVNCICOMMAND, id, 0, sIMMICommand);}
 
-        void notify_newref(size_type id) {
-            notify(MSG_DVNCINEWREF, id, 0, sIMMIRef);}
+        void notify_newref(size_type id, size_type pid) {
+            notify(MSG_DVNCTAGADDTOGR, id, static_cast<num32> (pid), sIMMITagManage);}
 
-        void notify_remref(size_type id) {
-            notify(MSG_DVNCIREMREF, id, 0, sIMMIRef);}
+        void notify_remref(size_type id, size_type pid) {
+            notify(MSG_DVNCTAGDELFROMGR, id, static_cast<num32> (pid), sIMMITagManage);}
 
         void notify_debug() {
             notify(MSG_DVNCDEBUG, 0, 0, sIMMIDebug);}
@@ -768,10 +768,10 @@ namespace dvnci {
 
         // link property     
 
-        num16 synctype(size_type id) const {
+        subcripttype synctype(size_type id) const {
             return operator[](id)->synctype();}
 
-        void  synctype(size_type id, intfsynctype val);
+        void  synctype(size_type id, subcripttype val);
 
 
         // link property  
@@ -779,7 +779,7 @@ namespace dvnci {
         intfvertype ver(size_type id) const {
             return operator[](id)->ver();}
 
-        void  ver(size_type id, intfsynctype val);
+        void  ver(size_type id, intfvertype val);
 
 
         // local property          
@@ -1917,14 +1917,53 @@ namespace dvnci {
 
 
 
+        void select_tags(iteminfo_map& val, size_type group, const std::string& strcriteria = "", num64 numcriteria = npos);
+
+        void select_tags(iteminfo_map& val, std::string group, const std::string& strcriteria = "", num64 numcriteria = npos);
+
+        void select_tags(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
+        
+         
+        void select_tags_report(indx_set& val);       
+        
+        void select_tags_by_appid(indx_set& val, appidtype appid, bool onlyactive = true);
+
+        void select_tags_by_groupid(indx_set& val, size_type group, bool onlyactive = true);
+
+        void select_tags_by_link(indx_set& val, appidtype app, const metalink& lnk, bool onlyactive = true);
+        
+        
+        
+
+        void select_atags(iteminfo_map& val, size_type agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
+
+        void select_atags(iteminfo_map& val, std::string agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
+        
+        
+        
+        
         void select_groups(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
 
         void select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
         
 
+        
+        void select_groups_by_appid(appidtype appid, indx_set& val);
+               
+        void select_groups_by_metalink(const metalink& lnk, appidtype app, indx_set& val);
+
+        void select_metalinks_set_by_appid(appidtype appid, metalink_set& val);
+
+        void select_metalinks_vect_by_metalink(const metalink& lnk, metalink_vect& val, devnum_set& utilset);
+
+        
+        
+        
         void select_agroups(iteminfo_map& val, const std::string& strcriteria, num64 numcriteria = npos);
 
         void select_agroups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria, num64 numcriteria = npos);
+        
+        
         
 
         void select_users(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
@@ -1932,43 +1971,14 @@ namespace dvnci {
         void select_users(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
         
 
+        
+        
         void select_accessrules(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
 
         void select_accessrules(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
         
 
-        void select_tags(iteminfo_map& val, size_type group, const std::string& strcriteria = "", num64 numcriteria = npos);
-
-        void select_tags(iteminfo_map& val, std::string group, const std::string& strcriteria = "", num64 numcriteria = npos);
-
-        void select_tags(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
-        
-
-        void select_atags(iteminfo_map& val, size_type agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
-
-        void select_atags(iteminfo_map& val, std::string agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
-        
-
-        void select_tags_by_appid(indx_set& val, appidtype appid);
-
-        void select_tags_by_groupid(indx_set& val, size_type group);
-
-        void select_tags_report(indx_set& val);
-
-        void select_tags_by_link(indx_set& val, appidtype app, const metalink& lnk);
-        
-        
-
-        void select_groups_by_appid(appidtype appid, indx_set& val);
-
-        void select_metalinks_set_by_appid(appidtype appid, metalink_set& val);
-
-        void select_metalinks_vect_by_metalink(const metalink& lnk, metalink_vect& val, devnum_set& utilset);
-
-        void select_groups_by_metalink(const metalink& lnk, appidtype app, indx_set& val);
-        
-        
-        
+  
 
         bool select_trendbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
             return valbuffers()->select(logkey(id), vl, from_, to_, lgdb);}
@@ -1976,6 +1986,8 @@ namespace dvnci {
         bool select_trendbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const {
             return select_trendbuff(operator ()(nm), vl, from_, to_, lgdb);}
 
+        
+        
         
         bool select_reportbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
             return reportbuffers()->select(reportkey(id), vl, from_, to_);}
@@ -1998,6 +2010,8 @@ namespace dvnci {
         size_t report_history_count(size_type id) const {
             return reportbuffers() ? reportbuffers()->count(reportkey(id)) : 0;}
 
+    
+        
         
         template<typename T, typename B>
         size_t select_journal(std::vector<T>& vect, guidtype& gid, size_t& curs, size_t& cnt) const {
@@ -2005,6 +2019,8 @@ namespace dvnci {
 
         guidtype guid_journal() {
             return journal()->gloubnum();}
+ 
+        
         
 
         template<typename T, typename B>
@@ -2015,6 +2031,8 @@ namespace dvnci {
             return debug()->gloubnum();}
         
 
+        
+        
         template<typename T, typename B>
         size_t select_alarms(std::vector<T>& vect, guidtype& vers, std::string agrp , const std::string grp ) const {
             return alarms()->get<T, B > (vect, vers, (*agroups())(agrp), (*groups())(grp));}
@@ -2029,6 +2047,8 @@ namespace dvnci {
             return alarms()->get<T, B > (vect, vers, agrp, grp);}
         
 
+       
+        
         
         template<typename T, typename B>
         size_t select_commands(std::vector<T>& vect, guidtype& vers, const std::string grp) const {
@@ -2042,6 +2062,7 @@ namespace dvnci {
         size_t select_commands(std::vector<T>& vect, size_type grp = npos) const {
             guidtype vers = 0;
             return commands()->get<T, B > (vect, vers, grp);}
+      
         
         bool select_commands(command_vector& vect_, size_type group = npos) {
             return commands()->select_commands(vect_, group);}
@@ -2051,6 +2072,7 @@ namespace dvnci {
 
         bool clear_commands(size_type group = npos) {
             return commands()->clear_commands(group);}    
+        
         
         
         
@@ -2260,8 +2282,12 @@ namespace dvnci {
         void trigger_texttype(size_type id, bool state);
 
         void trigger_range(size_type id, bool state);
+        
+        void trigger_ref(size_type id, bool state); 
 
         void trigger_systemtype(size_type id, bool state);
+        
+        
         
         
         
@@ -2544,7 +2570,9 @@ namespace dvnci {
 
 
 
-        void resettag_for_group(size_type group, ns_error error = 0);
+        void offgroup(size_type group, ns_error error = 0);
+        
+        void offtag(size_type id, ns_error error = 0);
 
 
         virtual void inputsysvargroups(size_type group, bool include);

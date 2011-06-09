@@ -2,7 +2,7 @@
  * File:   extintf_wraper.h
  * Author: Alexeev
  *
- * Created on 7 Июнь 2011 г., 13:58
+ * Created on 7 Р�СЋРЅСЊ 2011 Рі., 13:58
  */
 
 #ifndef EXTINTF_WRAPER_H
@@ -36,6 +36,10 @@ public:
     typedef typename tags_map::const_range_type                                            const_tag_range;
     typedef typename serverkeys_tags_map::value_type                                       serverkey_tag_pair;
     
+    typedef std::set<serverkey_type , std::less<serverkey_type>, 
+    std::allocator<serverkey_type> >                                                       serverkey_set;
+    
+    
     typedef std::pair<serverkey_type, short_value >                                        sidcmd_pair;
     typedef std::map<serverkey_type, short_value, 
                      std::less<serverkey_type>, std::allocator<sidcmd_pair > >             sidcmd_map;
@@ -62,34 +66,40 @@ public:
                 error_set.erase(*it);
                 exectr->error(*it, 0);}
             else{
-               bool finded =false;
                if (simple_req_map.right.find(*it)!=simple_req_map.right.end()) {
                    tag_const_iterator beg = simple_req_map.right.lower_bound(*it);
                    tag_const_iterator end = simple_req_map.right.upper_bound(*it);
                    tag_iterator_diff diff=std::distance(beg,end);
                    if (diff){
+                       serverkey_type  deleted = beg->second;
                        simple_req_map.right.erase(*it);
-                   finded = finded ?  finded : (diff==1);}}
+                       if (diff==1){
+                            report_req_map.right.erase(*it);
+                            need_remove_set.insert(deleted);}}}
                if (report_req_map.right.find(*it)!=report_req_map.right.end()){
                    tag_const_iterator beg = report_req_map.right.lower_bound(*it);
                    tag_const_iterator end = report_req_map.right.upper_bound(*it);
                    tag_iterator_diff diff=std::distance(beg,end);
                    if (diff){
-                       report_req_map.right.erase(*it);
-                   finded = finded ?  finded : (diff==1);}}
+                       serverkey_type  deleted = beg->second;
+                       simple_req_map.right.erase(*it);
+                       if (diff==1){
+                            report_req_map.right.erase(*it);
+                            need_remove_set.insert(deleted);}}}
                if (event_req_map.right.find(*it)!=event_req_map.right.end()){
                    tag_const_iterator beg = event_req_map.right.lower_bound(*it);
                    tag_const_iterator end = event_req_map.right.upper_bound(*it);
                    tag_iterator_diff diff=std::distance(beg,end);
-                   if (diff){
-                       event_req_map.right.erase(*it);
-                   finded = finded ?  finded : (diff==1);}}            
-                if (finded) need_remove_set.insert(*it);}}}
+                       serverkey_type  deleted = beg->second;
+                       simple_req_map.right.erase(*it);
+                       if (diff==1){
+                            report_req_map.right.erase(*it);
+                            need_remove_set.insert(deleted);}}}}}
     
     
     virtual bool operator()(){
         
-        
+          
             remove_request();
             add_request();
             value_request();
@@ -242,7 +252,7 @@ protected:
 
     
     indx_set             need_add_set;
-    indx_set             need_remove_set;
+    serverkey_set        need_remove_set;
     indx_set             error_set;
     
     serverkeys_tags_map  simple_req_map;

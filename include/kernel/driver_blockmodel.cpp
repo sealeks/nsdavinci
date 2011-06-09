@@ -292,12 +292,13 @@ namespace dvnci {
                     prsl->first->report_range(tmpstart, tmpstop);
                     return true;}
                 else return false;}
-            return executr->requested(prsl->second);}
+            return true;}
 
-        bool abstract_block_model::check_block_active(block& blk, parcel_iterator& bgn, parcel_iterator& ed) {
-            if (!intf) return false;
+        bool abstract_block_model::check_block_active(block& blk, parcel_iterator& bgn, parcel_iterator& ed) {        
             parcel_iterator strt = blk.begin();
             parcel_iterator stpit = blk.end();
+            if (IN_SMPLSET(intf->type(strt->second))) 
+                return true;
             if (blk.begin() == stpit) {
                 return check_parcel_active(strt);}
             ++stpit;
