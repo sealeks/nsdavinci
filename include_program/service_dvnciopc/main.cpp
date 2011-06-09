@@ -36,7 +36,8 @@ dvnci::executable_ptr         dvnci::mainserv;
 std::string                   dvnci::dvnciservicename=NS_OPC_SERVICE_NAME;
 fspath                        basepath;
 
-typedef group_proccessor_templ<externalintf_executor<opcintf> >    groupopc;
+typedef externalintf_executor<opcintf>                                                 opcexecutor;
+typedef group_proccessor_templ<opcexecutor , TYPE_SIMPL | TYPE_REPORT | TYPE_TEXT >    groupopc;
 
 class opc_service : public uniintfservice<groupopc> {
 
