@@ -19,7 +19,7 @@ namespace dvnci {
     typedef struct short_value {
         typedef boost::shared_ptr<std::string>         string_ptr;
 
-        short_value() : value_(num64_cast<double > (NULL_DOUBLE)), valid_(0), time_(castnum64_from_datetime(nill_time)), type_(0), error_(0) {}
+        short_value() : value_(num64_cast<double > (NULL_DOUBLE)), valid_(0), time_(castnum64_from_datetime(nill_time)), type_(0), error_(ERROR_TAGNOEXIST) {}
 
         short_value(num64 val, tagtype tp, vlvtype vld = FULL_VALID, ns_error err = 0, const datetime& tm = nill_time) :
         value_(val), valid_(vld), time_(castnum64_from_datetime(tm == nill_time ? now() : tm)), type_(tp), error_(err) {}
@@ -60,8 +60,9 @@ namespace dvnci {
         short_value( const datetime & val) :
         value_(castnum64_from_datetime(val)),  valid_(FULL_VALID) , time_(0), type_(TYPE_TM), error_(0) {};
 
-        short_value(const std::string & val) :
-        value_(0),  valid_(FULL_VALID) , time_(0), type_(TYPE_TEXT), error_(0), str_ptr( new std::string(val)) {};
+        short_value(const std::string & val, vlvtype vld = FULL_VALID, ns_error err = 0, const datetime& tm = nill_time) :
+        value_(0),  valid_(vld) , time_(castnum64_from_datetime(tm == nill_time ? now() : tm)), 
+        type_(TYPE_TEXT), error_(err), str_ptr( new std::string(val)) {};
 
         template <typename T >
                 T value() const {
