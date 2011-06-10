@@ -224,8 +224,9 @@ vect_error_info  errors;
 struct data_item {
 num64  sid;
 num64  val;
+num64  vld;
 num64  time;
-num64  type_vld;
+num64  type;
 };
 
 struct req_data_item {
@@ -482,8 +483,9 @@ namespace serialization {
    void serialize(Archive& ar, data_item& g, const unsigned int version) {
         ar & g.sid;
         ar & g.val;
+        ar & g.vld;
         ar & g.time;
-        ar & g.type_vld;
+        ar & g.type;
    };
 
    template<class Archive>
