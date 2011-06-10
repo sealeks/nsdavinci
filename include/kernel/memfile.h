@@ -1233,9 +1233,16 @@ namespace dvnci {
         template<typename T>
         T value(size_type id) const {
             return itemex(id)->value<T > ();}
+        
 
         short_value value_shv(size_type id) const {
-            return short_value(itemex(id)->value64(), type(id), valid(id));}
+            return (!IN_TEXTSET(type(id))) ? 
+                short_value(itemex(id)->value64(), type(id), valid(id), error(id), time(id)) : 
+                short_value(valstringvalue(operator[](id)->value<size_t > ()), valid(id), error(id), time(id));}
+        
+        short_value value_shv(const std::string& id) const {
+            size_type ind = operator ()(id);
+            return (ind!=npos) ? value_shv(ind) : short_value();}
 
         std::string value_frmt(size_type id) const {
             return (!IN_TEXTSET(type(id))) ?
@@ -1250,6 +1257,10 @@ namespace dvnci {
 
         datetime time(size_type id) const {
             return itemex(id)->time();}
+        
+        datetime time(const std::string& id) const {
+            size_type ind = operator ()(id);
+            return (ind!=npos) ? time(ind) : nill_time;}
 
         std::string time_str(size_type id) const {
             return itemex(id)->time_str();}
@@ -1266,6 +1277,10 @@ namespace dvnci {
 
         short_value value_log_shv(size_type id) const {
             return short_value(itemex(id)->value_log64(), type(id), valid(id));}
+        
+        short_value value_log_shv(const std::string& id) const {
+            size_type ind = operator ()(id);
+            return (ind!=npos) ?  value_log_shv(ind) : short_value();}
 
         std::string value_log_frmt(size_type id) const {
             return itemex(id)->value_log_frmt();}
@@ -1275,6 +1290,10 @@ namespace dvnci {
 
         datetime time_log(size_type id) const {
             return operator[](id)->time_log();}
+        
+        datetime time_log(const std::string& id) const {
+            size_type ind = operator ()(id);
+            return exists(ind) ? time_log(ind) : nill_time;}
 
         std::string time_log_str(size_type id) const {
             return operator[](id)->time_log_str();}
@@ -1287,6 +1306,10 @@ namespace dvnci {
 
         vlvtype valid(size_type id) const {
             return itemex(id)->valid();}
+        
+        vlvtype valid(const std::string& id) const {
+            size_type ind = operator ()(id);
+            return exists(ind) ? valid(ind) : 0;}
 
         vlvtype reportstate(size_type id);
 
@@ -1302,6 +1325,9 @@ namespace dvnci {
 
         ns_error error(size_type id) const {
             return itemex(id)->error();}
+        
+        ns_error error(const std::string& id) const {
+            return valid(operator ()(id));}
 
         void error(size_type id, ns_error value);
 
@@ -1337,6 +1363,10 @@ namespace dvnci {
 
         std::string comment(size_type id) const {
             return stringbase_src(operator[](id)->poscomment());}
+        
+        std::string comment(const std::string& id) const {        
+            size_type ind = operator ()(id);
+            return exists(ind) ? comment(ind) : "";} 
 
         void comment(size_type id, const std::string&  value);
 
@@ -1353,6 +1383,10 @@ namespace dvnci {
 
         std::string eu(size_type id) const {
             return stringbase_src(operator[](id)->poseu());}
+        
+        std::string eu(const std::string& id) const {        
+            size_type ind = operator ()(id);
+            return exists(ind) ? eu(ind) : "";} 
 
         void eu(size_type id, const std::string&  value);
 
@@ -1432,11 +1466,19 @@ namespace dvnci {
 
         bool alarmon(size_type id) const {
             return operator[](id)->alarmon();}
+        
+        bool alarmon(const std::string& id ) const {
+            size_type ind = operator ()(id);
+            return exists(ind) ? alarmon(ind) : false;}
 
         // alarmon  property
 
         bool alarmkvit(size_type id) const {
             return operator[](id)->alarmkvit();}
+        
+        bool alarmkvit(const std::string& id ) const {
+            size_type ind = operator ()(id);
+            return exists(ind) ? alarmkvit(ind) : false;}        
 
 
         // accesslevel  property        
@@ -1483,8 +1525,12 @@ namespace dvnci {
             return operator[](id)->refcnt();}
 
         void incref(size_type id);
+        
+        void incref(const std::string& id);
 
         void decref(size_type id);
+        
+        void decref(const std::string& id);
 
 
         // logged  property        
@@ -1538,13 +1584,15 @@ namespace dvnci {
 
         short_value mineu_shv(size_type id) const {
             return short_value(operator[](id)->mineu64(), type(id), FULL_VALID);}
+        
+        short_value mineu_shv(const std::string& id) const {
+            size_type ind = operator ()(id);
+            return exists(ind) ?  mineu_shv(ind) :  short_value();}
 
 
 
         // maxeu  property           
 
-        short_value maxeu_shv(size_type id) const {
-            return short_value(operator[](id)->maxeu64(), type(id) , FULL_VALID);}
 
         std::string maxeu(size_type id) const {
             return ((exists(id))  && (IN_NUMBERSET(type(id)))) ?
@@ -1553,6 +1601,13 @@ namespace dvnci {
         void maxeu(size_type id, const std::string& value) {
             if (exists(id)) {
                 operator[](id)->maxeu(value);}}
+        
+        short_value maxeu_shv(size_type id) const {
+            return short_value(operator[](id)->maxeu64(), type(id) , FULL_VALID);}
+        
+        short_value maxeu_shv(const std::string& id) const {
+            size_type ind = operator ()(id);
+            return exists(ind) ?  maxeu_shv(ind) :  short_value();}
 
 
 
@@ -1653,6 +1708,8 @@ namespace dvnci {
         void send_command(size_type id, const std::string& val, bool queue = true, size_type clid = npos);
 
         void send_command(size_type id, const short_value& val, bool queue = true, size_type clid = npos);
+        
+        void send_command(const std::string& id, const short_value& val, bool queue = true, size_type clid = npos);
 
 
 

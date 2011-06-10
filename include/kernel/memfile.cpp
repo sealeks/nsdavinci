@@ -1014,6 +1014,11 @@ namespace dvnci {
             operator[](id)->increfcnt();
             if (operator[](id)->refcnt() == 1)  
                 registry()->notify_newref(id, group(id));}}
+    
+    void  tagsbase::incref(const std::string& id){
+             size_type ind = operator ()(id);
+             if (exists(ind)) 
+                 incref(ind);}  
 
     void tagsbase::decref(size_type id) {
         if ((exists(id )) && (!IN_ALWACTSET(type(id)))) {
@@ -1021,7 +1026,13 @@ namespace dvnci {
                 operator[](id)->decrefcnt();
                 if (!operator[](id)->refcnt()) {
                     offtag(id);
-                    registry()->notify_remref(id, group(id));}}}}    
+                    registry()->notify_remref(id, group(id));}}}} 
+    
+            
+    void tagsbase::decref(const std::string& id){
+             size_type ind = operator ()(id);
+             if (exists(ind)) 
+                 decref(ind);}  
     
 
     void tagsbase::group_appid(size_type id, appidtype val) {
@@ -1294,6 +1305,11 @@ namespace dvnci {
                     send_command<float>(id, val.value<float>(), queue, clid);
                     return;}}
             send_command<double>(id, val.value<double>(), queue, clid);}}
+    
+    void tagsbase::send_command(const std::string& id, const short_value& val, bool queue, size_type clid){
+             size_type ind = operator ()(id);
+             if (exists(ind))
+                 send_command(ind, val, queue, clid);}
 
     void tagsbase::kvit(size_type id) {
         if (id == npos) kvitall();

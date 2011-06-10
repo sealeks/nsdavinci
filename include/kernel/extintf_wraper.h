@@ -252,7 +252,8 @@ protected:
     
     
     
-    ns_error faild_connection(){
+    
+    void disconnect_util(){
         need_add_set.clear();
         for (tag_const_iterator it=simple_req_map.right.begin();it!=simple_req_map.right.end();++it){
              need_add_set.insert(it->first);}
@@ -264,7 +265,10 @@ protected:
              need_add_set.insert(it->first);}
         event_req_map.clear();
         error_set.clear();
-        need_remove_set.clear();
+        need_remove_set.clear();}
+    
+    
+    ns_error faild_connection(){
         try{
            disconnect();}
         catch(...){}
