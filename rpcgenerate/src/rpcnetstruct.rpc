@@ -1,0 +1,120 @@
+/* req_resp_tag  */
+
+
+struct error_outside {
+        _num64 error = 1;
+}
+
+
+struct req_items {
+        _num64 ver = 1;
+        array client_item cl_items = 2;
+}
+
+
+
+struct resp_items {
+	array server_item srv_items = 1;
+	array error_item errors = 4;
+}
+
+
+
+
+struct client_item {
+	_num64 key = 1;
+	string name = 2;
+	_num64 tpitem = 3;
+	_num64 dbound = 4;
+}
+
+struct server_item {
+	_num64 key = 1;
+	_num64 outkey = 2;
+	_num64 tpitem = 3;
+}
+
+
+struct error_item {
+	_num64 code = 1;
+        _num64 key = 2;
+}
+
+
+struct req_reporttask {
+        _num64 ver = 1;
+	_num64 key = 2;
+        _num64 start = 3;
+	_num64 stop = 4;
+}
+
+struct resp_reporttask {
+        _num64 error = 1;
+}
+
+
+
+/* req_resp_itdata  */
+
+struct req_values {
+        _num64 ver = 1;
+        array _num64 srv_ids = 2;
+}
+
+struct req_values_ex {
+        _num64 ver = 1;
+}
+
+struct resp_values {
+        array value_item items = 1;
+        array report_value_items repitems = 2;
+	array error_item errors = 3;
+}
+
+struct resp_values_ex {
+        array value_item items = 1;
+        array report_value_items repitems = 2;
+}
+
+struct value_item {
+	_num64 outkey = 1;
+        _num64 val    = 2;
+        _num64 valid  = 3;
+        _num64 time   = 4;
+        _num64 type   = 5;
+}
+
+
+struct report_value_items {
+        _num64 outkey    = 1;
+        array report_value_item values = 2;
+}
+
+
+
+struct req_remitems {
+        _num64 ver = 1;
+        array _num64 outkey = 2;
+}
+
+struct resp_remitems {
+	array error_item errors = 1;
+}
+
+struct req_commands {
+        _num64 ver = 1;
+        array command_item commands = 2;
+}
+
+struct resp_commands {
+        array error_item errors = 1;
+}
+
+struct command_item {
+        _num64 outkey = 1;
+        _num64 val = 2;
+        _num64 type = 3;
+        _num64 queue  = 4;
+        string user  =  5;
+        string pass  =  6;
+}
