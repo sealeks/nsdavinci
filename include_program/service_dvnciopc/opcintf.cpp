@@ -666,6 +666,7 @@ namespace dvnci {
                 return 0;}
 
             ns_error  opcintf::disconnect_impl() {
+                disconnect_util();
                 readtractmap.clear();
                 writetractmap.clear();
                 if (state_ == connected) {
