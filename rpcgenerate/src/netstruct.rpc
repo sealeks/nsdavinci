@@ -1,0 +1,307 @@
+/* req_resp_tag
+
+*/
+
+/* ошибки  */
+
+struct error_info {
+        num64 id  = 1;
+	num64 code = 2;
+}
+
+struct error_ex_info {
+        string cid = 1;
+	num64  code = 2;
+}
+
+struct error_outside {
+        num64 error = 1;
+}
+
+/* add_items( const vect<cid_key>&, vect<sid_key>&,  vect<error_info>&)    */
+
+
+struct cid_key {
+	num64  cid = 1;
+	string name = 2;
+	num64  type = 3;
+	num64  dbound = 4;
+}
+
+struct sid_key {
+	_num64 cid = 1;
+	_num64 sid = 2;
+}
+
+
+struct req_add_items {
+        array cid_key cids = 1;
+}
+
+
+struct resp_add_items {
+	array sid_key     sids = 1;
+	array error_item  errors = 2;
+}
+
+
+
+
+/* add_item_ex( const vect<cid_struct>&, vect<sid>&,  vect<error_item>&)    */
+
+struct cid_key_ex {
+	string cid = 1;
+	num64  dbound = 2;
+}
+
+struct sid_key_ex {
+	string cid = 1;
+	num64  sid = 2;
+	num64  val = 3;
+	num64  type = 4;
+	num64  time = 5;
+	num64  vld = 6;
+	num64  mineu = 7;
+	num64  maxeu = 8;
+	num64  alinf = 9;
+	string valstr = 10;
+	string comment = 11;
+	string eu = 12;
+}
+
+
+struct req_add_items_ex {
+        array cid_key_ex cids = 1;
+}
+
+
+struct resp_add_items {
+	array cid_key_ex  sids = 1;
+	array error_ex_info  errors = 2;
+}
+
+
+
+
+
+/* remove_item( const vect<sid>&, vect<sid>& ,vect<error_info>&)    */
+
+struct req_remove_items {
+        array num64 cids = 1;
+}
+
+
+struct resp_remove_items {
+        array num64 cids = 1;
+	array error_info  errors = 2;
+}
+
+
+
+/* req_data_item( const vect<sid>&, vect<data_item>& ,vect<error_info>&)    */
+/* req_data_item2( vect<data_item>& ,vect<error_info>&)    */
+
+struct data_item {
+	num64  sid = 1;
+	num64  val = 2;
+	num64  time = 3;
+	num64  type_vld = 4;
+}
+
+struct req_data_item {
+        num64 stub = 1;
+}
+
+struct req_data_item1 {
+        array num64 sids = 1;
+}
+
+struct resp_data_item {
+	array data_item  datas = 1;
+	array error_info  errors = 2;
+}
+
+/* req_data_item_ex( const vect<sid>&, vect<data_item>& ,vect<error_info>&)    */
+/* req_data_item2_ex( vect<data_item>& ,vect<error_info>&)    */
+
+
+struct req_data_item_ex {
+        num64 stub = 1;
+}
+
+struct req_data_item1_ex {
+        array num64 sids = 1;
+}
+
+
+struct resp_data_item_ex {
+	array data_item   datas = 1;
+	array sid_key_ex  fdatas = 2;
+	array error_info  errors = 3;
+}
+
+
+/* req_send_commands(const vect<command_data>& ,vect<error_info>&)    */
+
+struct command_data {
+        num64 sid = 1;
+        num64 val = 2;
+        num64 type = 3;
+        num64 queue  = 4;
+        string valstr  = 5;
+}
+
+struct req_send_commands {
+        array command_data cmds = 1;
+}
+
+struct resp_send_commands {
+	array error_info  errors = 1;
+}
+
+/* req_report(const vect<reporttask>& ,vect<report_value_data>&, vect<error_info>&)    */
+
+struct reporttask {
+	num64 sid = 1;
+        num64 start = 2;
+	num64 stop = 3;
+}
+
+struct report_value_item {
+        num64 val    = 1;
+        num64 time   = 2;
+}
+
+struct report_value_data {
+	num64 sid = 1;
+	array report_value_item  data = 2;
+}
+
+struct req_reporttask {
+	array reporttask tasks = 1;
+}
+
+struct resp_reporttask {
+	array report_value_data datas = 1;
+	array error_info  errors = 2;
+}
+
+
+/* req_event(const vect<eventtask>& ,vect<event_value_item>&, vect<error_info>&)    */
+
+
+
+struct event_value_item {
+	num64 sid    = 1;
+        num64 val    = 2;
+        num64 time   = 3;
+}
+
+struct eventtask {
+	num64 sid = 1;
+        num64 start = 2;
+}
+
+struct req_eventtask {
+	array eventtask tasks = 1;
+}
+
+struct resp_eventtask {
+	array event_value_item datas = 1;
+	array error_info  errors = 2;
+}
+
+
+/* req_trend(const vect<trendtask>& ,vect<report_value_data>&, vect<error_info>&)    */
+
+struct trendtask {
+	num64 sid = 1;
+        num64 start = 2;
+	num64 stop = 3;
+}
+
+struct trend_value_item {
+        num64 val    = 1;
+        num64 time   = 2;
+}
+
+struct trend_value_data {
+	num64 sid = 1;
+	array trend_value_item  data = 2;
+}
+
+struct req_trendtask {
+	array trendtask tasks = 1;
+}
+
+struct resp_trendtask {
+	array trend_value_data datas = 1;
+	array error_info  errors = 2;
+}
+
+
+
+/* req_alarms(const vect<command_data>& ,vect<error_info>&)    */
+
+struct alarms_data {
+	num64 time = 1;
+	string tag = 2;
+	string text = 3;
+        num64 kvit = 4;
+        num64 level = 5;
+        num64 type = 6;
+        string value = 7;
+}
+
+struct req_alarms {
+        unum64 vers = 1;
+}
+
+struct resp_alarms {
+        num64 err = 1;
+        unum64 vers = 2;
+	array alarms_data lines = 3;
+}
+
+
+
+
+/* req_journal(const vect<command_data>& ,vect<error_info>&) */
+
+struct journal_data {
+	num64 index = 1;
+	unum64 guid = 2;
+	num64 time = 3;
+	string tag = 4;
+	string text = 5;
+	string agroup = 6;
+        num64 type = 7;
+        num64 level = 8;
+        string value = 9;
+        string user = 10;
+}
+
+struct req_journal {
+	unum64 guid = 1;
+        unum64 cursor = 2;
+        unum64 cnt = 3;
+}
+
+struct resp_journal {
+	unum64 guid = 2;
+        unum64 cursor = 3;
+        unum64 cnt = 4;
+	array journal_data lines = 5;
+}
+
+
+
+
+
+
+
+
+
+
+
+

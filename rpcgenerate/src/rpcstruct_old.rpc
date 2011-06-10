@@ -1,0 +1,449 @@
+/* entitysig  */
+
+struct error_outside {
+        _num64 error = 1;
+}
+
+
+struct req_entitysigs {
+        _num64 ver = 1;
+	_num64 tpitem = 2;
+	_num64 parentid = 3;
+        string strcriteria = 4;
+        _num64 numcriteria = 5;
+}
+
+struct resp_entitysigs {
+	_num64 tpreq = 1;
+	_num64 err = 2;
+	array entitysig_data sigs = 3;
+}
+
+struct entitysig_data {
+	_num64 key = 1;
+	string name = 2;
+	_num64 tpitem = 3;
+}
+
+
+
+struct error_entity {
+	_num64 code = 1;
+        _num64 key = 2;
+        string str = 3;
+}
+
+/* deleteitem */
+
+struct req_removeentity {
+        _num64 ver = 1;
+        _num64 tpitem = 2;
+	array _num64 keys = 3;
+}
+
+struct resp_removeentity {
+        _num64 err = 1;
+        _num64 ver = 2;
+        array error_entity error = 3;
+}
+
+/* additem */
+
+struct req_addentity {
+        _num64 ver = 1;
+        _num64 tpitem = 2;
+	_num64 parentkey = 3;
+        string newname = 4;
+        _num64 numcriteria = 5;
+
+}
+
+struct resp_addentity {
+        _num64 err = 1;
+        _num64 ver = 2;
+        entitysig_data sig = 3;
+        array error_entity error = 4;
+}
+
+/* rtiteminfo */
+
+struct req_tags {
+        _num64 ver = 1;
+	array _num64 keys = 2;
+}
+
+struct req_sendtags {
+        _num64 ver = 1;
+	array tag_data tags = 2;
+
+}
+
+struct resp_tags {
+	_num64 err = 1;
+	array tag_data tags = 2;
+}
+
+struct resp_sendtags {
+	_num64 err = 1;
+	array tag_data tags = 2;
+        array error_entity error = 3;
+}
+
+struct tag_data {
+	_num64 key = 1;
+	bytes tginfo[360] = 2;
+	string name = 3;
+        string comment = 4;
+        string bind = 5;
+        string ue = 6;
+        string onmsg = 7;
+        string offmsg = 8;
+        string almsg = 9;
+	string group = 10;
+        _num64 changeset = 11;
+}
+
+/* groupinfo */
+
+struct req_groups {
+        _num64 ver = 1;
+	array _num64 keys = 2;
+       
+}
+
+struct req_sendgroups {
+        _num64 ver = 1;
+	array group_data groups = 2;
+       
+}
+
+struct resp_groups {
+	_num64 err = 1;
+	array group_data groups = 2;
+}
+
+struct resp_sendgroups {
+	_num64 err = 1;
+	array group_data groups = 2;
+        array error_entity error = 3;
+}
+
+struct group_data {
+	_num64 key = 1;
+	bytes groupinfo[708] = 2;
+	string name = 3;
+        _num64 changeset = 4;
+}
+
+/* alarmgroupinfo */
+
+struct req_agroups {
+        _num64 ver = 1;
+	array _num64 keys = 2;
+    
+}
+
+struct req_sendagroups {
+        _num64 ver = 1;
+	array agroup_data agroups = 2;
+  
+}
+
+struct resp_agroups {
+	_num64 err = 1;
+	array agroup_data agroups = 2;
+}
+
+struct resp_sendagroups {
+	_num64 err = 1;
+	array agroup_data agroups = 2;
+        array error_entity error = 3;
+}
+
+struct agroup_data {
+	_num64 key = 1;
+	bytes agroupinfo[276] = 2;
+	string name = 3;
+        _num64 changeset = 4;
+}
+
+
+/* userinfo */
+
+struct req_users {
+        _num64 ver = 1;
+	array _num64 keys = 2;
+    
+}
+
+struct req_sendusers {
+        _num64 ver = 1;
+	array user_data users = 2;
+       
+}
+
+struct resp_users {
+	_num64 err = 1;
+	array user_data users = 2;
+}
+
+struct resp_sendusers {
+	_num64 err = 1;
+	array user_data users = 2;
+        array error_entity error = 3;
+}
+
+struct user_data {
+	_num64 key = 1;
+	string name = 2;
+        string password = 3;
+        _num64 level = 4;
+        _num64 changeset = 5;
+}
+
+
+/* metainfo */
+
+struct req_metas {
+        _num64 ver = 1;
+        _num64 meta_type = 2;
+	array _num64 keys = 3;
+}
+
+struct req_sendmetas {
+        _num64 ver = 1;
+	array meta_data metas = 2;
+}
+
+struct resp_metas {
+	_num64 err = 1;
+	array meta_data metas = 2;
+}
+
+struct resp_sendmetas {
+	_num64 err = 1;
+	array meta_data metas = 2;
+        array error_entity error = 3;
+}
+
+struct meta_data {
+	_num64 key = 1;
+        _num64 meta_type = 2;
+        string str_data[19]  = 3;
+        _num64 changeset = 4;
+}
+
+/* regiteminfo */
+
+struct req_regs {
+        _num64 ver = 1;
+	array _num64 keys = 2;
+}
+
+
+struct resp_regs {
+	_num64 err = 1;
+	array reg_data regs = 2;
+}
+
+
+struct reg_data {
+	_num64 key = 1;
+	string name = 2;
+        _num64 appid = 3;
+        _num64 hndl = 4;
+        _num64 evst = 5;
+}
+
+
+
+
+/* viewmetainfo */
+
+struct req_viewcount {
+        _num64 ver = 1;
+        _num64 type = 2;
+        _num64 numcriteria = 3;
+        string strcriteria = 4;
+}
+
+
+struct resp_viewcount {
+	_num64 err = 1;
+        _num64 type = 2;
+        _num64 globalnum = 3;
+        _num64 count = 4;
+
+}
+
+
+
+
+
+/* viewiteminfo */
+
+struct req_views {
+        _num64 ver = 1;
+        _num64 type = 2;
+	array _num64 nums = 3;
+}
+
+
+struct resp_views {
+	_num64 err = 1;
+        _num64 type = 2;
+	array view_data views = 3;
+}
+
+
+struct view_data {
+	_num64 num = 1;
+	_num64 time = 2;
+        _num64 tgid = 3;
+        _num64 lev_type = 4;
+        _num64 exec_iskvit = 5;
+	_num64 isoff = 6;
+        _num64 val_before = 7;
+        _num64 val_set = 8;
+        _num64 unu1 = 9;
+        _num64 unu2 = 10;
+        string  mess_host = 11;
+        string  app_user = 12;
+        string  unu3 = 13;
+}
+
+/* conf_info */
+
+struct config_data {
+        string str_data[19]  = 1;
+        _num64 changeset = 2;
+}
+
+struct req_config {
+        _num64 ver = 1;
+}
+
+struct req_sendconfig {
+        _num64 ver = 1;
+	config_data config = 2;
+}
+
+struct resp_config {
+	_num64 err = 1;
+	config_data config = 2;
+}
+
+struct resp_sendconfig {
+	_num64 err = 1;
+	config_data config = 2;
+        array error_entity error = 3;
+}
+
+struct req_basedata {
+	_num64 ver = 1;
+	string strcriteria = 2;
+        _num64 numcriteria = 3;
+}
+
+struct resp_basedata {
+	_num64 err = 1;
+	array base_data base = 2;
+        array error_entity error = 3;
+}
+
+
+struct req_setbasedata {
+	_num64  ver = 1;
+	array base_data base = 2;
+}
+
+struct resp_setbasedata {
+	_num64 err = 1;
+	array error_entity error = 2;
+}
+
+struct base_data {
+	array group_data  groups = 1;
+	array tag_data  tags = 2;
+	array agroup_data  agroups = 3;
+	array user_data  users = 4;
+	_num64  options = 5;
+}
+
+struct req_adminoperation {
+	_num64  ver = 1;
+	_num64  numpar1 = 2;
+	_num64  numpar2 = 3;
+	_num64  numpar3 = 4;
+	string  strpar1 = 5;
+	string  strpar2 = 6;
+	string  strpar3 = 7;
+}
+
+struct resp_adminoperation {
+	_num64 err = 1;
+	array error_entity error = 2;
+}
+
+struct req_autorization {
+	_num64  ver = 1;
+	string  name = 2;
+	string  password = 3;
+}
+
+struct resp_autorization {
+	_num64 err = 1;
+        _num64 platform = 2;
+	_num64  ver = 3;
+	_num64  local = 4;
+}
+
+/* serviceinfo */
+
+struct req_services {
+        _num64 ver = 1;
+	array _num64 keys = 2;
+
+}
+
+struct req_sendservices {
+        _num64 ver = 1;
+	array service_data services = 2;
+
+}
+
+struct resp_services {
+	_num64 err = 1;
+	array service_data services = 2;
+}
+
+struct resp_sendservices {
+	_num64 err = 1;
+	array service_data services = 2;
+        array error_entity error = 3;
+}
+
+struct service_data {
+	_num64 key = 1;
+        string name = 2;
+        string path = 3;
+        string depend = 4;
+        string user = 5;
+        string pass = 6;
+        string unuse = 7;
+        _num64 starttype = 8;
+        _num64 status = 9;
+        _num64 unusenum1 = 10;
+        _num64 unusenum2 = 11;
+        _num64 changeset = 12;
+}
+
+
+
+
+
+
+
+
+
+
