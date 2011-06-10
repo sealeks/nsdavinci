@@ -104,8 +104,9 @@ struct resp_remove_items {
 struct data_item {
 	num64  sid = 1;
 	num64  val = 2;
-	num64  time = 3;
-	num64  type_vld = 4;
+	num64  vld = 3;
+	num64  time = 4;
+	num64  type = 5;
 }
 
 struct req_data_item {
