@@ -18,6 +18,11 @@ struct error_outside {
         num64 error = 1;
 }
 
+
+
+
+
+
 /* add_items( const vect<cid_key>&, vect<sid_key>&,  vect<error_info>&)    */
 
 
@@ -43,6 +48,9 @@ struct resp_add_items {
 	array sid_key     sids = 1;
 	array error_item  errors = 2;
 }
+
+
+
 
 
 
@@ -84,6 +92,8 @@ struct resp_add_items {
 
 
 
+
+
 /* remove_item( const vect<sid>&, vect<sid>& ,vect<error_info>&)    */
 
 struct req_remove_items {
@@ -95,6 +105,10 @@ struct resp_remove_items {
         array num64 cids = 1;
 	array error_info  errors = 2;
 }
+
+
+
+
 
 
 
@@ -122,6 +136,10 @@ struct resp_data_item {
 	array error_info  errors = 2;
 }
 
+
+
+
+
 /* req_data_item_ex( const vect<sid>&, vect<data_item>& ,vect<error_info>&)    */
 /* req_data_item2_ex( vect<data_item>& ,vect<error_info>&)    */
 
@@ -142,6 +160,10 @@ struct resp_data_item_ex {
 }
 
 
+
+
+
+
 /* req_send_commands(const vect<command_data>& ,vect<error_info>&)    */
 
 struct command_data {
@@ -159,6 +181,11 @@ struct req_send_commands {
 struct resp_send_commands {
 	array error_info  errors = 1;
 }
+
+
+
+
+
 
 /* req_report(const vect<reporttask>& ,vect<report_value_data>&, vect<error_info>&)    */
 
@@ -188,6 +215,9 @@ struct resp_reporttask {
 }
 
 
+
+
+
 /* req_event(const vect<eventtask>& ,vect<event_value_item>&, vect<error_info>&)    */
 
 
@@ -211,6 +241,10 @@ struct resp_eventtask {
 	array event_value_item datas = 1;
 	array error_info  errors = 2;
 }
+
+
+
+
 
 
 /* req_trend(const vect<trendtask>& ,vect<report_value_data>&, vect<error_info>&)    */
@@ -242,6 +276,10 @@ struct resp_trendtask {
 
 
 
+
+
+
+
 /* req_alarms(const vect<command_data>& ,vect<error_info>&)    */
 
 struct alarms_data {
@@ -263,6 +301,9 @@ struct resp_alarms {
         unum64 vers = 2;
 	array alarms_data lines = 3;
 }
+
+
+
 
 
 
