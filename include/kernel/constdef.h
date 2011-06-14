@@ -271,7 +271,6 @@ namespace dvnci {
 
     const size_t  DVNCI_MAXVALUESTRSIZE   = 0xFC;
 
-    const unsigned int DEFAULT_DVNCI_TIMOUT = 5000; //FFFFFFF
 
     const size_t  USERNAME_STRINGSIZE     = 100;
     const size_t  LOGMESSAGE_STRINGSIZE   = 400;
@@ -390,6 +389,10 @@ namespace dvnci {
     typedef  onum   subcripttype;    
     
     typedef  boost::filesystem::path      fspath;
+    
+    
+
+    const timeouttype DEFAULT_DVNCI_TIMOUT = 5000; //FFFFFFF    
 
     const int SERVICE_OPEATION_INSTALL = 0x1;
     const int SERVICE_OPEATION_UNINSTALL = 0x2;

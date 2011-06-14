@@ -448,7 +448,10 @@ namespace dvnci {
     void addmillisec_to_now(boost::xtime& xt, num64 milsec = 1);
     void addmicrosec_to_now(boost::xtime& xt, num64 microsec = 1);
     
+    
+#if defined(_WIN64) || defined(_WIN64)
     datetime dt_from_filetime(const FILETIME& tm);
+#endif    
 
     std::tm to_std_tm(datetime tm);
 
