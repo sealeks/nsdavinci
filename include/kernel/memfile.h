@@ -1245,7 +1245,7 @@ namespace dvnci {
             return (ind!=npos) ? value_shv(ind) : short_value();}
         
 
-        short_value value_n64(size_type id) const {
+        num64 value_n64(size_type id) const {
             return (!IN_TEXTSET(type(id))) ? 
                 itemex(id)->value64() : 0 ;}
         

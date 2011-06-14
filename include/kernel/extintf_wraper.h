@@ -219,19 +219,19 @@ protected:
     
     
     void write_val_sid(serverkey_type sid, const short_value val){
-       serverkey_const_iterator end = simple_req_map.left.upprer_bound(sid);
-       for (tag_const_iterator it=simple_req_map.left.lower_bound(sid);it!=end;++it){
-               exectr->write_val(*it, val);}}
+       serverkey_const_iterator end = simple_req_map.left.upper_bound(sid);
+       for (serverkey_const_iterator it=simple_req_map.left.lower_bound(sid);it!=end;++it){
+               exectr->write_val(it->second, val);}}
     
     void write_val_report_sid(serverkey_type sid, const dt_val_map& val){
-       serverkey_const_iterator end = report_req_map.left.upprer_bound(sid);
-       for (tag_const_iterator it=report_req_map.left.lower_bound(sid);it!=end;++it){
-               exectr->write_val(*it, val);}}
+       serverkey_const_iterator end = report_req_map.left.upper_bound(sid);
+       for (serverkey_const_iterator it=report_req_map.left.lower_bound(sid);it!=end;++it){
+               exectr->write_val(it->second, val);}}
     
     void write_val_event_sid(serverkey_type sid, const dt_val_pair& val){
-       serverkey_const_iterator end = event_req_map.left.upprer_bound(sid);
-       for (tag_const_iterator it=event_req_map.left.lower_bound(sid);it!=end;++it){
-               exectr->write_val(*it, val);}}
+       serverkey_const_iterator end = event_req_map.left.upper_bound(sid);
+       for (serverkey_const_iterator it=event_req_map.left.lower_bound(sid);it!=end;++it){
+               exectr->write_val(it->second, val);}}
     
     void write_val_id(indx id, const short_value val){
        tag_const_iterator it = simple_req_map.right.find(id);
