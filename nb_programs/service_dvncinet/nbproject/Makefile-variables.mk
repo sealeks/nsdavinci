@@ -7,7 +7,7 @@ CND_BASEDIR=`pwd`
 CND_BUILDDIR=build
 CND_DISTDIR=dist
 # nb_gcc_rl_WIN32 configuration
-CND_PLATFORM_nb_gcc_rl_WIN32=
+CND_PLATFORM_nb_gcc_rl_WIN32=MinGW-Windows
 CND_ARTIFACT_DIR_nb_gcc_rl_WIN32=../../bin/nb_gcc_rl_WIN32
 CND_ARTIFACT_NAME_nb_gcc_rl_WIN32=service_dvncinet
 CND_ARTIFACT_PATH_nb_gcc_rl_WIN32=../../bin/nb_gcc_rl_WIN32/service_dvncinet
@@ -15,7 +15,7 @@ CND_PACKAGE_DIR_nb_gcc_rl_WIN32=../../pkg/nb_gcc_rl_WIN32
 CND_PACKAGE_NAME_nb_gcc_rl_WIN32=servnsadminserver.tar
 CND_PACKAGE_PATH_nb_gcc_rl_WIN32=../../pkg/nb_gcc_rl_WIN32/servnsadminserver.tar
 # nb_gcc_db_WIN32 configuration
-CND_PLATFORM_nb_gcc_db_WIN32=
+CND_PLATFORM_nb_gcc_db_WIN32=MinGW-Windows
 CND_ARTIFACT_DIR_nb_gcc_db_WIN32=../../bin/nb_gcc_db_WIN32
 CND_ARTIFACT_NAME_nb_gcc_db_WIN32=service_dvncinet_db
 CND_ARTIFACT_PATH_nb_gcc_db_WIN32=../../bin/nb_gcc_db_WIN32/service_dvncinet_db
@@ -23,7 +23,7 @@ CND_PACKAGE_DIR_nb_gcc_db_WIN32=../../pkg/nb_gcc_db_WIN32
 CND_PACKAGE_NAME_nb_gcc_db_WIN32=servnsadminserver.tar
 CND_PACKAGE_PATH_nb_gcc_db_WIN32=../../pkg/nb_gcc_db_WIN32/servnsadminserver.tar
 # nb_gcc_db_LIN64 configuration
-CND_PLATFORM_nb_gcc_db_LIN64=GNU-Linux-x86
+CND_PLATFORM_nb_gcc_db_LIN64=
 CND_ARTIFACT_DIR_nb_gcc_db_LIN64=../../bin/nb_gcc_db_LIN64
 CND_ARTIFACT_NAME_nb_gcc_db_LIN64=service_dvncinet_db
 CND_ARTIFACT_PATH_nb_gcc_db_LIN64=../../bin/nb_gcc_db_LIN64/service_dvncinet_db
@@ -31,7 +31,7 @@ CND_PACKAGE_DIR_nb_gcc_db_LIN64=../../pkg/nb_gcc_db_LIN64
 CND_PACKAGE_NAME_nb_gcc_db_LIN64=servnsadminserver.tar
 CND_PACKAGE_PATH_nb_gcc_db_LIN64=../../pkg/nb_gcc_db_LIN64/servnsadminserver.tar
 # nb_gcc_rl_LIN64 configuration
-CND_PLATFORM_nb_gcc_rl_LIN64=GNU-Linux-x86
+CND_PLATFORM_nb_gcc_rl_LIN64=
 CND_ARTIFACT_DIR_nb_gcc_rl_LIN64=../../bin/nb_gcc_rl_LIN64
 CND_ARTIFACT_NAME_nb_gcc_rl_LIN64=service_dvncinet_db
 CND_ARTIFACT_PATH_nb_gcc_rl_LIN64=../../bin/nb_gcc_rl_LIN64/service_dvncinet_db
