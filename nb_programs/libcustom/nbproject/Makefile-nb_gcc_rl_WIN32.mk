@@ -35,7 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/217049176/netintf.o \
+	${OBJECTDIR}/_ext/217049176/extnetintf.o \
 	${OBJECTDIR}/_ext/217049176/remotenetintf.o \
+	${OBJECTDIR}/_ext/217049176/netsession.o \
 	${OBJECTDIR}/_ext/217049176/localnetintf.o
 
 
@@ -57,28 +59,38 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../lib/${CND_CONF}/libnsadmin.a
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../lib/${CND_CONF}/libcustom.a
 
-../../lib/${CND_CONF}/libnsadmin.a: ${OBJECTFILES}
+../../lib/${CND_CONF}/libcustom.a: ${OBJECTFILES}
 	${MKDIR} -p ../../lib/${CND_CONF}
-	${RM} ../../lib/${CND_CONF}/libnsadmin.a
-	${AR} -rv ../../lib/${CND_CONF}/libnsadmin.a ${OBJECTFILES} 
-	$(RANLIB) ../../lib/${CND_CONF}/libnsadmin.a
+	${RM} ../../lib/${CND_CONF}/libcustom.a
+	${AR} -rv ../../lib/${CND_CONF}/libcustom.a ${OBJECTFILES} 
+	$(RANLIB) ../../lib/${CND_CONF}/libcustom.a
 
 ${OBJECTDIR}/_ext/217049176/netintf.o: ../../include/custom/netintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netintf.o ../../include/custom/netintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netintf.o ../../include/custom/netintf.cpp
+
+${OBJECTDIR}/_ext/217049176/extnetintf.o: ../../include/custom/extnetintf.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
+	${RM} $@.d
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/extnetintf.o ../../include/custom/extnetintf.cpp
 
 ${OBJECTDIR}/_ext/217049176/remotenetintf.o: ../../include/custom/remotenetintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/remotenetintf.o ../../include/custom/remotenetintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/remotenetintf.o ../../include/custom/remotenetintf.cpp
+
+${OBJECTDIR}/_ext/217049176/netsession.o: ../../include/custom/netsession.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
+	${RM} $@.d
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netsession.o ../../include/custom/netsession.cpp
 
 ${OBJECTDIR}/_ext/217049176/localnetintf.o: ../../include/custom/localnetintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/localnetintf.o ../../include/custom/localnetintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/localnetintf.o ../../include/custom/localnetintf.cpp
 
 # Subprojects
 .build-subprojects:
@@ -86,7 +98,7 @@ ${OBJECTDIR}/_ext/217049176/localnetintf.o: ../../include/custom/localnetintf.cp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../lib/${CND_CONF}/libnsadmin.a
+	${RM} ../../lib/${CND_CONF}/libcustom.a
 
 # Subprojects
 .clean-subprojects:

@@ -12,10 +12,15 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>../../include/custom/extnetintf.cpp</itemPath>
+    <itemPath>../../include/custom/extnetintf.h</itemPath>
     <itemPath>../../include/custom/localnetintf.cpp</itemPath>
     <itemPath>../../include/custom/localnetintf.h</itemPath>
+    <itemPath>../../include/custom/netfactory.h</itemPath>
     <itemPath>../../include/custom/netintf.cpp</itemPath>
     <itemPath>../../include/custom/netintf.h</itemPath>
+    <itemPath>../../include/custom/netsession.cpp</itemPath>
+    <itemPath>../../include/custom/netsession.h</itemPath>
     <itemPath>../../include/custom/netstruct.h</itemPath>
     <itemPath>../../include/custom/remotenetintf.cpp</itemPath>
     <itemPath>../../include/custom/remotenetintf.h</itemPath>
@@ -42,12 +47,16 @@
           <incDir>
             <pElem>../../include</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
+            <Elem>DVNCI_DEDUG</Elem>
+          </preprocessorList>
         </ccTool>
         <asmTool>
           <developmentMode>5</developmentMode>
         </asmTool>
         <archiverTool>
-          <output>../../lib/${CND_CONF}/libnsadmin.a</output>
+          <output>../../lib/${CND_CONF}/libcustom.a</output>
         </archiverTool>
       </compileType>
     </conf>
@@ -70,12 +79,78 @@
           <incDir>
             <pElem>../../include</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
+          </preprocessorList>
         </ccTool>
         <asmTool>
           <developmentMode>5</developmentMode>
         </asmTool>
         <archiverTool>
-          <output>../../lib/${CND_CONF}/libnsadmin.a</output>
+          <output>../../lib/${CND_CONF}/libcustom.a</output>
+        </archiverTool>
+      </compileType>
+    </conf>
+    <conf name="nb_gcc_db_LIN64" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <incDir>
+            <pElem>../../include</pElem>
+          </incDir>
+          <commandLine>-mthreads -fno-strict-aliasing</commandLine>
+          <preprocessorList>
+            <Elem>DVNCI_DEDUG</Elem>
+          </preprocessorList>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>../../include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
+            <Elem>DVNCI_DEDUG</Elem>
+          </preprocessorList>
+        </ccTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <archiverTool>
+          <output>../../lib/${CND_CONF}/libcustom.a</output>
+        </archiverTool>
+      </compileType>
+    </conf>
+    <conf name="nb_gcc_rl_LIN64" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <incDir>
+            <pElem>../../include</pElem>
+          </incDir>
+          <commandLine>-mthreads -fno-strict-aliasing</commandLine>
+          <preprocessorList>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
+          </preprocessorList>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>../../include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
+          </preprocessorList>
+        </ccTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <archiverTool>
+          <output>../../lib/${CND_CONF}/libcustom.a</output>
         </archiverTool>
       </compileType>
     </conf>
