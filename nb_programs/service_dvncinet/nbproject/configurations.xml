@@ -41,7 +41,7 @@
             <pElem>../../lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>netinterface</linkerLibLibItem>
+            <linkerLibLibItem>custom</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>dbaccess</linkerLibLibItem>
             <linkerLibLibItem>soci</linkerLibLibItem>
@@ -58,8 +58,8 @@
             <linkerLibLibItem>ole32</linkerLibLibItem>
             <linkerLibLibItem>oleaut32</linkerLibLibItem>
             <linkerLibLibItem>uuid</linkerLibLibItem>
-            <linkerLibLibItem>wsnmp32</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
+            <linkerLibLibItem>ws2_32</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -106,7 +106,7 @@
             <pElem>../../lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>netinterface</linkerLibLibItem>
+            <linkerLibLibItem>custom</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>dbaccess</linkerLibLibItem>
             <linkerLibLibItem>soci</linkerLibLibItem>
@@ -172,13 +172,12 @@
             <pElem>../../lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
+            <linkerLibLibItem>custom</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
-            <linkerLibLibItem>netinterface</linkerLibLibItem>
             <linkerLibLibItem>dbaccess</linkerLibLibItem>
             <linkerLibLibItem>soci</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
-            <linkerLibLibItem>boost_prg_exec_monitor</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
             <linkerLibLibItem>boost_random</linkerLibLibItem>
             <linkerLibLibItem>boost_regex</linkerLibLibItem>
@@ -187,7 +186,11 @@
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
-            <linkerLibLibItem>rt</linkerLibLibItem>
+            <linkerLibLibItem>ole32</linkerLibLibItem>
+            <linkerLibLibItem>oleaut32</linkerLibLibItem>
+            <linkerLibLibItem>uuid</linkerLibLibItem>
+            <linkerLibLibItem>wsnmp32</linkerLibLibItem>
+            <linkerLibLibItem>wsock32</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -233,24 +236,25 @@
             <pElem>../../lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
+            <linkerLibLibItem>custom</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
-            <linkerLibLibItem>netinterface</linkerLibLibItem>
             <linkerLibLibItem>dbaccess</linkerLibLibItem>
             <linkerLibLibItem>soci</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
-            <linkerLibLibItem>boost_prg_exec_monitor</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
             <linkerLibLibItem>boost_random</linkerLibLibItem>
             <linkerLibLibItem>boost_regex</linkerLibLibItem>
             <linkerLibLibItem>boost_serialization</linkerLibLibItem>
             <linkerLibLibItem>boost_signals</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
-            <linkerLibLibItem>boost_test_exec_monitor</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
-            <linkerLibLibItem>boost_unit_test_framework</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
-            <linkerLibLibItem>rt</linkerLibLibItem>
+            <linkerLibLibItem>ole32</linkerLibLibItem>
+            <linkerLibLibItem>oleaut32</linkerLibLibItem>
+            <linkerLibLibItem>uuid</linkerLibLibItem>
+            <linkerLibLibItem>wsnmp32</linkerLibLibItem>
+            <linkerLibLibItem>wsock32</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
