@@ -19,6 +19,8 @@
 struct error_info;
 struct error_ex_info;
 struct error_outside;
+struct req_auth;
+struct resp_auth;
 struct cid_key;
 struct sid_key;
 struct req_add_items;
@@ -26,15 +28,16 @@ struct resp_add_items;
 struct cid_key_ex;
 struct sid_key_ex;
 struct req_add_items_ex;
-struct resp_add_items;
+struct resp_add_items_ex;
 struct req_remove_items;
 struct resp_remove_items;
 struct data_item;
+struct data_item_str;
 struct req_data_item;
 struct req_data_item1;
 struct resp_data_item;
 struct req_data_item_ex;
-struct req_data_item1_ex;
+struct req_data_item_ex1;
 struct resp_data_item_ex;
 struct command_data;
 struct req_send_commands;
@@ -63,50 +66,55 @@ struct resp_journal;
 const short RPC_OPERATION_ERROR_INFO=0x10;
 const short RPC_OPERATION_ERROR_EX_INFO=0x11;
 const short RPC_OPERATION_ERROR_OUTSIDE=0x12;
-const short RPC_OPERATION_CID_KEY=0x13;
-const short RPC_OPERATION_SID_KEY=0x14;
-const short RPC_OPERATION_REQ_ADD_ITEMS=0x15;
-const short RPC_OPERATION_RESP_ADD_ITEMS=0x16;
-const short RPC_OPERATION_CID_KEY_EX=0x17;
-const short RPC_OPERATION_SID_KEY_EX=0x18;
-const short RPC_OPERATION_REQ_ADD_ITEMS_EX=0x19;
-const short RPC_OPERATION_RESP_ADD_ITEMS=0x1A;
-const short RPC_OPERATION_REQ_REMOVE_ITEMS=0x1B;
-const short RPC_OPERATION_RESP_REMOVE_ITEMS=0x1C;
-const short RPC_OPERATION_DATA_ITEM=0x1D;
-const short RPC_OPERATION_REQ_DATA_ITEM=0x1E;
-const short RPC_OPERATION_REQ_DATA_ITEM1=0x1F;
-const short RPC_OPERATION_RESP_DATA_ITEM=0x20;
-const short RPC_OPERATION_REQ_DATA_ITEM_EX=0x21;
-const short RPC_OPERATION_REQ_DATA_ITEM1_EX=0x22;
-const short RPC_OPERATION_RESP_DATA_ITEM_EX=0x23;
-const short RPC_OPERATION_COMMAND_DATA=0x24;
-const short RPC_OPERATION_REQ_SEND_COMMANDS=0x25;
-const short RPC_OPERATION_RESP_SEND_COMMANDS=0x26;
-const short RPC_OPERATION_REPORTTASK=0x27;
-const short RPC_OPERATION_REPORT_VALUE_ITEM=0x28;
-const short RPC_OPERATION_REPORT_VALUE_DATA=0x29;
-const short RPC_OPERATION_REQ_REPORTTASK=0x2A;
-const short RPC_OPERATION_RESP_REPORTTASK=0x2B;
-const short RPC_OPERATION_EVENT_VALUE_ITEM=0x2C;
-const short RPC_OPERATION_EVENTTASK=0x2D;
-const short RPC_OPERATION_REQ_EVENTTASK=0x2E;
-const short RPC_OPERATION_RESP_EVENTTASK=0x2F;
-const short RPC_OPERATION_TRENDTASK=0x30;
-const short RPC_OPERATION_TREND_VALUE_ITEM=0x31;
-const short RPC_OPERATION_TREND_VALUE_DATA=0x32;
-const short RPC_OPERATION_REQ_TRENDTASK=0x33;
-const short RPC_OPERATION_RESP_TRENDTASK=0x34;
-const short RPC_OPERATION_ALARMS_DATA=0x35;
-const short RPC_OPERATION_REQ_ALARMS=0x36;
-const short RPC_OPERATION_RESP_ALARMS=0x37;
-const short RPC_OPERATION_JOURNAL_DATA=0x38;
-const short RPC_OPERATION_REQ_JOURNAL=0x39;
-const short RPC_OPERATION_RESP_JOURNAL=0x3A;
+const short RPC_OPERATION_REQ_AUTH=0x13;
+const short RPC_OPERATION_RESP_AUTH=0x14;
+const short RPC_OPERATION_CID_KEY=0x15;
+const short RPC_OPERATION_SID_KEY=0x16;
+const short RPC_OPERATION_REQ_ADD_ITEMS=0x17;
+const short RPC_OPERATION_RESP_ADD_ITEMS=0x18;
+const short RPC_OPERATION_CID_KEY_EX=0x19;
+const short RPC_OPERATION_SID_KEY_EX=0x1A;
+const short RPC_OPERATION_REQ_ADD_ITEMS_EX=0x1B;
+const short RPC_OPERATION_RESP_ADD_ITEMS_EX=0x1C;
+const short RPC_OPERATION_REQ_REMOVE_ITEMS=0x1D;
+const short RPC_OPERATION_RESP_REMOVE_ITEMS=0x1E;
+const short RPC_OPERATION_DATA_ITEM=0x1F;
+const short RPC_OPERATION_DATA_ITEM_STR=0x20;
+const short RPC_OPERATION_REQ_DATA_ITEM=0x21;
+const short RPC_OPERATION_REQ_DATA_ITEM1=0x22;
+const short RPC_OPERATION_RESP_DATA_ITEM=0x23;
+const short RPC_OPERATION_REQ_DATA_ITEM_EX=0x24;
+const short RPC_OPERATION_REQ_DATA_ITEM_EX1=0x25;
+const short RPC_OPERATION_RESP_DATA_ITEM_EX=0x26;
+const short RPC_OPERATION_COMMAND_DATA=0x27;
+const short RPC_OPERATION_REQ_SEND_COMMANDS=0x28;
+const short RPC_OPERATION_RESP_SEND_COMMANDS=0x29;
+const short RPC_OPERATION_REPORTTASK=0x2A;
+const short RPC_OPERATION_REPORT_VALUE_ITEM=0x2B;
+const short RPC_OPERATION_REPORT_VALUE_DATA=0x2C;
+const short RPC_OPERATION_REQ_REPORTTASK=0x2D;
+const short RPC_OPERATION_RESP_REPORTTASK=0x2E;
+const short RPC_OPERATION_EVENT_VALUE_ITEM=0x2F;
+const short RPC_OPERATION_EVENTTASK=0x30;
+const short RPC_OPERATION_REQ_EVENTTASK=0x31;
+const short RPC_OPERATION_RESP_EVENTTASK=0x32;
+const short RPC_OPERATION_TRENDTASK=0x33;
+const short RPC_OPERATION_TREND_VALUE_ITEM=0x34;
+const short RPC_OPERATION_TREND_VALUE_DATA=0x35;
+const short RPC_OPERATION_REQ_TRENDTASK=0x36;
+const short RPC_OPERATION_RESP_TRENDTASK=0x37;
+const short RPC_OPERATION_ALARMS_DATA=0x38;
+const short RPC_OPERATION_REQ_ALARMS=0x39;
+const short RPC_OPERATION_RESP_ALARMS=0x3A;
+const short RPC_OPERATION_JOURNAL_DATA=0x3B;
+const short RPC_OPERATION_REQ_JOURNAL=0x3C;
+const short RPC_OPERATION_RESP_JOURNAL=0x3D;
 
 typedef std::vector<error_info > vect_error_info;
 typedef std::vector<error_ex_info > vect_error_ex_info;
 typedef std::vector<error_outside > vect_error_outside;
+typedef std::vector<req_auth > vect_req_auth;
+typedef std::vector<resp_auth > vect_resp_auth;
 typedef std::vector<cid_key > vect_cid_key;
 typedef std::vector<sid_key > vect_sid_key;
 typedef std::vector<req_add_items > vect_req_add_items;
@@ -114,15 +122,16 @@ typedef std::vector<resp_add_items > vect_resp_add_items;
 typedef std::vector<cid_key_ex > vect_cid_key_ex;
 typedef std::vector<sid_key_ex > vect_sid_key_ex;
 typedef std::vector<req_add_items_ex > vect_req_add_items_ex;
-typedef std::vector<resp_add_items > vect_resp_add_items;
+typedef std::vector<resp_add_items_ex > vect_resp_add_items_ex;
 typedef std::vector<req_remove_items > vect_req_remove_items;
 typedef std::vector<resp_remove_items > vect_resp_remove_items;
 typedef std::vector<data_item > vect_data_item;
+typedef std::vector<data_item_str > vect_data_item_str;
 typedef std::vector<req_data_item > vect_req_data_item;
 typedef std::vector<req_data_item1 > vect_req_data_item1;
 typedef std::vector<resp_data_item > vect_resp_data_item;
 typedef std::vector<req_data_item_ex > vect_req_data_item_ex;
-typedef std::vector<req_data_item1_ex > vect_req_data_item1_ex;
+typedef std::vector<req_data_item_ex1 > vect_req_data_item_ex1;
 typedef std::vector<resp_data_item_ex > vect_resp_data_item_ex;
 typedef std::vector<command_data > vect_command_data;
 typedef std::vector<req_send_commands > vect_req_send_commands;
@@ -162,6 +171,15 @@ struct error_outside {
 num64  error;
 };
 
+struct req_auth {
+std::string  user;
+std::string  pass;
+};
+
+struct resp_auth {
+error_info  error;
+};
+
 struct cid_key {
 num64  cid;
 std::string  name;
@@ -170,8 +188,8 @@ num64  dbound;
 };
 
 struct sid_key {
-_num64  cid;
-_num64  sid;
+num64  cid;
+num64  sid;
 };
 
 struct req_add_items {
@@ -180,7 +198,7 @@ vect_cid_key  cids;
 
 struct resp_add_items {
 vect_sid_key  sids;
-vect_error_item  errors;
+vect_error_info  errors;
 };
 
 struct cid_key_ex {
@@ -192,12 +210,10 @@ struct sid_key_ex {
 std::string  cid;
 num64  sid;
 num64  val;
-num64  type;
 num64  time;
-num64  vld;
+num64  pack;
 num64  mineu;
 num64  maxeu;
-num64  alinf;
 std::string  valstr;
 std::string  comment;
 std::string  eu;
@@ -207,7 +223,7 @@ struct req_add_items_ex {
 vect_cid_key_ex  cids;
 };
 
-struct resp_add_items {
+struct resp_add_items_ex {
 vect_cid_key_ex  sids;
 vect_error_ex_info  errors;
 };
@@ -224,9 +240,15 @@ vect_error_info  errors;
 struct data_item {
 num64  sid;
 num64  val;
+num64  time;
+num64  pack;
+};
+
+struct data_item_str {
+num64  sid;
+std::string  val;
 num64  vld;
 num64  time;
-num64  type;
 };
 
 struct req_data_item {
@@ -238,7 +260,8 @@ vect_num64  sids;
 };
 
 struct resp_data_item {
-vect_data_item  datas;
+vect_data_item  lines;
+vect_data_item_str  linesstr;
 vect_error_info  errors;
 };
 
@@ -246,13 +269,14 @@ struct req_data_item_ex {
 num64  stub;
 };
 
-struct req_data_item1_ex {
+struct req_data_item_ex1 {
 vect_num64  sids;
 };
 
 struct resp_data_item_ex {
-vect_data_item  datas;
-vect_sid_key_ex  fdatas;
+vect_data_item  lines;
+vect_data_item  strlines;
+vect_sid_key_ex  fulllines;
 vect_error_info  errors;
 };
 
@@ -313,7 +337,7 @@ vect_eventtask  tasks;
 };
 
 struct resp_eventtask {
-vect_event_value_item  datas;
+vect_event_value_item  data;
 vect_error_info  errors;
 };
 
@@ -411,6 +435,17 @@ namespace serialization {
    };
 
    template<class Archive>
+   void serialize(Archive& ar, req_auth& g, const unsigned int version) {
+        ar & g.user;
+        ar & g.pass;
+   };
+
+   template<class Archive>
+   void serialize(Archive& ar, resp_auth& g, const unsigned int version) {
+        ar & g.error;
+   };
+
+   template<class Archive>
    void serialize(Archive& ar, cid_key& g, const unsigned int version) {
         ar & g.cid;
         ar & g.name;
@@ -446,12 +481,10 @@ namespace serialization {
         ar & g.cid;
         ar & g.sid;
         ar & g.val;
-        ar & g.type;
         ar & g.time;
-        ar & g.vld;
+        ar & g.pack;
         ar & g.mineu;
         ar & g.maxeu;
-        ar & g.alinf;
         ar & g.valstr;
         ar & g.comment;
         ar & g.eu;
@@ -463,7 +496,7 @@ namespace serialization {
    };
 
    template<class Archive>
-   void serialize(Archive& ar, resp_add_items& g, const unsigned int version) {
+   void serialize(Archive& ar, resp_add_items_ex& g, const unsigned int version) {
         ar & g.sids;
         ar & g.errors;
    };
@@ -483,9 +516,16 @@ namespace serialization {
    void serialize(Archive& ar, data_item& g, const unsigned int version) {
         ar & g.sid;
         ar & g.val;
+        ar & g.time;
+        ar & g.pack;
+   };
+
+   template<class Archive>
+   void serialize(Archive& ar, data_item_str& g, const unsigned int version) {
+        ar & g.sid;
+        ar & g.val;
         ar & g.vld;
         ar & g.time;
-        ar & g.type;
    };
 
    template<class Archive>
@@ -500,7 +540,8 @@ namespace serialization {
 
    template<class Archive>
    void serialize(Archive& ar, resp_data_item& g, const unsigned int version) {
-        ar & g.datas;
+        ar & g.lines;
+        ar & g.linesstr;
         ar & g.errors;
    };
 
@@ -510,14 +551,15 @@ namespace serialization {
    };
 
    template<class Archive>
-   void serialize(Archive& ar, req_data_item1_ex& g, const unsigned int version) {
+   void serialize(Archive& ar, req_data_item_ex1& g, const unsigned int version) {
         ar & g.sids;
    };
 
    template<class Archive>
    void serialize(Archive& ar, resp_data_item_ex& g, const unsigned int version) {
-        ar & g.datas;
-        ar & g.fdatas;
+        ar & g.lines;
+        ar & g.strlines;
+        ar & g.fulllines;
         ar & g.errors;
    };
 
@@ -590,7 +632,7 @@ namespace serialization {
 
    template<class Archive>
    void serialize(Archive& ar, resp_eventtask& g, const unsigned int version) {
-        ar & g.datas;
+        ar & g.data;
         ar & g.errors;
    };
 
