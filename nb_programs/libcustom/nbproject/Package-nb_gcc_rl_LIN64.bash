@@ -6,14 +6,14 @@
 
 # Macros
 TOP=`pwd`
-CND_PLATFORM=MinGW-Windows
-CND_CONF=nb_gcc_db_WIN32
+CND_PLATFORM=GNU-Linux-x86
+CND_CONF=nb_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
 NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=../../lib/${CND_CONF}/libcustom.a
-OUTPUT_BASENAME=libcustom.a
+OUTPUT_PATH=../../lib/${CND_CONF}/libnsadmin.a
+OUTPUT_BASENAME=libnsadmin.a
 PACKAGE_TOP_DIR=libcustom/
 
 # Functions

@@ -19,6 +19,14 @@
                     <name>nb_gcc_rl_WIN32</name>
                     <type>3</type>
                 </confElem>
+                <confElem>
+                    <name>nb_gcc_db_LIN64</name>
+                    <type>3</type>
+                </confElem>
+                <confElem>
+                    <name>nb_gcc_rl_LIN64</name>
+                    <type>3</type>
+                </confElem>
             </confList>
         </data>
     </configuration>

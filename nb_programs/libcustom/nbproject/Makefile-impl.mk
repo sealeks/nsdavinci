@@ -31,7 +31,7 @@ DEFAULTCONF=nb_gcc_db_WIN32
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=nb_gcc_db_WIN32 nb_gcc_rl_WIN32 
+ALLCONFS=nb_gcc_db_WIN32 nb_gcc_rl_WIN32 nb_gcc_db_LIN64 nb_gcc_rl_LIN64 
 
 
 # build
