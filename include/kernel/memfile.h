@@ -1243,6 +1243,16 @@ namespace dvnci {
         short_value value_shv(const std::string& id) const {
             size_type ind = operator ()(id);
             return (ind!=npos) ? value_shv(ind) : short_value();}
+        
+
+        short_value value_n64(size_type id) const {
+            return (!IN_TEXTSET(type(id))) ? 
+                itemex(id)->value64() : 0 ;}
+        
+        short_value value_n64(const std::string& id) const {
+            size_type ind = operator ()(id);
+            return (ind!=npos) ? value_n64(ind) : 0;}
+        
 
         std::string value_frmt(size_type id) const {
             return (!IN_TEXTSET(type(id))) ?
@@ -1251,6 +1261,9 @@ namespace dvnci {
         void value(size_type id, const std::string& value) {
             if (exists(id))
                 operator[](id)->value(value);}
+        
+        // value_expiered     
+        bool value_expiered(size_type id, const short_value& rs, double db = 0.0, timeouttype tmo = RESET_LOG_TIME ) const;
 
 
         // value property         
@@ -1671,7 +1684,7 @@ namespace dvnci {
 
         // devdb  property      
         void group_appid(size_type id, appidtype val);
-
+        
 
 
 

@@ -865,7 +865,7 @@ namespace dvnci {
     const repstattype  REPORT_STATISTIC_MOD            = 6;
 
 
-    const size_t RESET_LOG_TIME = 55;
+    const timeouttype RESET_LOG_TIME = 55;
 
     
     const reportsrctype REP_COUNT_NODEF  = 0;
