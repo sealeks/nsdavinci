@@ -5,47 +5,48 @@
  * Created on 9 Январь 2010 г., 1:20
  */
 
+#include <kernel/constdef.h>
 #include <kernel/systemutil.h>
 #include <kernel/serviceapp.h>
 #include <kernel/service.h>
-
 #include <kernel/interface_proccesstmpl.h>
 
+#include <custom/extnetintf.h>
 #include "netserver.h"
 
-using namespace dvnci;
+
 using namespace std;
-using namespace dvnci::net;
+using namespace dvnci;
+using namespace dvnci::external;
+using namespace dvnci::external::net;
 
-//std::string remote_port=DEFAULT_REMOTE_PORT;
 
-
-using boost::asio::ip::tcp;
 
 dvnci::executable_ptr         dvnci::mainserv;
 std::string                   dvnci::dvnciservicename=NS_NET_SERVICE_NAME;
 fspath                        basepath;
 
-typedef dvnci::net::dvnci_net_subsciptor                                         net_executor;
-typedef group_proccessor_templ<net_executor>                                     groupnet;
+
+typedef externalintf_executor<extnetintf>                                              netexecutor;
+typedef group_proccessor_templ<netexecutor , TYPE_SIMPL | TYPE_REPORT | TYPE_TEXT >    groupnet;
+
 
 class net_service : public uniintfservice < groupnet > {
 
 public:
     net_service() : uniintfservice<groupnet>(basepath,
-            (sIMMITagManage | sIMMIGroupManage),
             NS_NET_SERVICE){}
 
 protected:
 
-    virtual bool initialize_internal() {
-      server = executable_ptr(new net_server_service(intf));
+    virtual bool initialize_impl() {
+      server = executable_ptr(new dvnci::custom::net::net_server_service(intf));
       th_server=boost::thread(server);
-      //uniintfservice<groupnet>::initialize_internal();
+      uniintfservice<groupnet>::initialize_impl();
       return true;}
 
-    virtual bool uninitialize_internal() {
-        //uniintfservice<groupnet>::uninitialize_internal();
+    virtual bool uninitialize_impl() {
+        uniintfservice<groupnet>::uninitialize_impl();
         if (server) server->terminate();
         th_server.join();
         return true;}
