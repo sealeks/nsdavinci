@@ -224,7 +224,7 @@ vect_cid_key_ex  cids;
 };
 
 struct resp_add_items_ex {
-vect_cid_key_ex  sids;
+vect_sid_key_ex  sids;
 vect_error_ex_info  errors;
 };
 
@@ -275,7 +275,7 @@ vect_num64  sids;
 
 struct resp_data_item_ex {
 vect_data_item  lines;
-vect_data_item  strlines;
+vect_data_item_str  linesstr;
 vect_sid_key_ex  fulllines;
 vect_error_info  errors;
 };
@@ -558,7 +558,7 @@ namespace serialization {
    template<class Archive>
    void serialize(Archive& ar, resp_data_item_ex& g, const unsigned int version) {
         ar & g.lines;
-        ar & g.strlines;
+        ar & g.linesstr;
         ar & g.fulllines;
         ar & g.errors;
    };

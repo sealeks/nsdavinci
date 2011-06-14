@@ -90,7 +90,7 @@ struct req_add_items_ex {
 
 
 struct resp_add_items_ex {
-	array cid_key_ex  sids = 1;
+	array sid_key_ex  sids = 1;
 	array error_ex_info  errors = 2;
 }
 
@@ -169,7 +169,7 @@ struct req_data_item_ex1 {
 
 struct resp_data_item_ex {
 	array data_item   lines = 1;
-	array data_item   strlines = 2;
+	array data_item_str   linesstr = 2;
 	array sid_key_ex  fulllines = 3;
 	array error_info  errors = 4;
 }
