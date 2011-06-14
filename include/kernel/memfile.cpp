@@ -905,6 +905,51 @@ namespace dvnci {
                 prjcfg_opcport(val);
                 return;}
             default:{};}}
+    
+    
+    // value_expiered     
+    bool tagsbase::value_expiered(size_type id, const short_value& rs, double db, timeouttype tmo) const{
+        if (!exists(id)) return false;
+        short_value ls= value_shv(id);
+        if ((ls.valid()!=rs.valid()) || (ls.error()!=rs.error()) || (ls.type()!=rs.type())) 
+                return true;
+        if ((ls.time().is_special())!=(rs.time().is_special())) 
+                return true;
+        if ((!(ls.time().is_special())) && (tmo>0)) {
+             if (dvnci::abs(secondsbetween(ls.time(),rs.time()))>tmo) 
+                    return true;}
+        switch(type(id)) {
+               case TYPE_NODEF:{
+                    return (dvnci::abs(ls.value<double>()-rs.value<double>())>(dvnci::abs(maxeu_prtd<double>(id)-mineu_prtd<double>(id))) * db / 100);}
+               case TYPE_DISCRET:{
+                    return ls.value<bool>()!=rs.value<bool>();}
+               case TYPE_NUM64:{
+                    return dvnci::abs(ls.value<num64>()-rs.value<num64>())>((dvnci::abs(maxeu_prtd<num64>(id)-mineu_prtd<num64>(id))) * db / 100);}
+               case TYPE_UNUM64:{
+                    return dvnci::abs(ls.value<unum64>()-rs.value<unum64>())>((dvnci::abs(maxeu_prtd<unum64>(id)-mineu_prtd<unum64>(id))) * db / 100);}
+               case TYPE_NUM32:{
+                    return dvnci::abs(ls.value<num32>()-rs.value<num32>())>((dvnci::abs(maxeu_prtd<num32>(id)-mineu_prtd<num32>(id))) * db / 100);}
+               case TYPE_UNUM32:{
+                    return dvnci::abs(ls.value<unum32>()-rs.value<unum32>())>((dvnci::abs(maxeu_prtd<unum32>(id)-mineu_prtd<unum32>(id))) * db / 100);}
+               case TYPE_NUM16:{
+                    return dvnci::abs(ls.value<num16>()-rs.value<num16>())>((dvnci::abs(maxeu_prtd<num16>(id)-mineu_prtd<num16>(id))) * db / 100);}
+               case TYPE_UNUM16:{
+                    return dvnci::abs(ls.value<unum16>()-rs.value<unum16>())>((dvnci::abs(maxeu_prtd<unum16>(id)-mineu_prtd<unum16>(id))) * db / 100);}
+               case TYPE_NUM8:{
+                    return dvnci::abs(ls.value<num8>()-rs.value<num8>())>((dvnci::abs(maxeu_prtd<num8>(id)-mineu_prtd<num8>(id))) * db / 100);}
+               case TYPE_UNUM8:{
+                   return dvnci::abs(ls.value<unum8>()-rs.value<unum8>())>((dvnci::abs(maxeu_prtd<unum8>(id)-mineu_prtd<unum8>(id))) * db / 100);}
+               case TYPE_DOUBLE:{
+                    return (dvnci::abs(ls.value<double>()-rs.value<double>())>(dvnci::abs(maxeu_prtd<double>(id)-mineu_prtd<double>(id))) * db / 100);}
+               case TYPE_FLOAT:{
+                    return (dvnci::abs(ls.value<float>()-rs.value<float>())>(dvnci::abs(maxeu_prtd<float>(id)-mineu_prtd<float>(id))) * db / 100);}
+               case TYPE_TIME:{
+                    return true;}
+               case TYPE_TEXT:{
+                    return ls.value<std::string>()!=rs.value<std::string>();}
+            default:{
+                return false;}}
+            return false;}
 
     void tagsbase::valid(size_type id, vlvtype vld) {
         if (exists(id)) {
@@ -1046,12 +1091,6 @@ namespace dvnci {
     void tagsbase::write_val(size_type id, const std::string& val, vlvtype validlvl,  const datetime& tm, ns_error err ) {
         if (exists(id)) {
             switch (type(id)) {
-                case TYPE_TEXT:{
-                    value_internal(id, val);
-                    time(id, ((tm == nill_time) ? now() : tm));
-                    valid(id, validlvl);
-                    error(id, err);
-                    return;}
                 case TYPE_DISCRET:{
                     val != "0" ? write_val<bool>(id, 1, validlvl, tm, err) : write_val<bool>(id, 0, validlvl, tm, err);
                     return;}
@@ -1094,6 +1133,12 @@ namespace dvnci {
                 case TYPE_FLOAT:{
                     float tmp;
                     if (str_to<float>(val, tmp)) write_val<float>(id, tmp, validlvl, tm, err);
+                    return;}
+                case TYPE_TEXT:{
+                    value_internal(id, val);
+                    time(id, ((tm == nill_time) ? now() : tm));
+                    valid(id, validlvl);
+                    error(id, err);
                     return;}}
             double tmp;
             if (str_to<double>(val, tmp)) write_val<double>(id, tmp, validlvl, tm, err);}}

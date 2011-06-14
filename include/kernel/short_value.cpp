@@ -100,6 +100,15 @@ namespace dvnci {
             default:{
                 error(ERROR_IO_DATA_CONV);}}
         return error();}
+    
+        bool compare_short_value(const short_value& ls, const short_value& rs, double db, timeouttype tmo){
+            if ((ls.valid()!=rs.valid()) || (ls.error()!=rs.error()) || (ls.type()!=rs.type())) 
+                return true;
+            if ((ls.time().is_special())!=(rs.time().is_special())) 
+                return true;
+            if ((!(ls.time().is_special())) && (tmo>0)) {
+                if (dvnci::abs(secondsbetween(ls.time(),rs.time()))>tmo) 
+                    return true;}}
 
 } ;
 
