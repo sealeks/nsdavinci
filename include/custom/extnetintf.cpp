@@ -72,7 +72,7 @@ namespace dvnci {
                if (cids.empty()) return error(0);
                
                vect_sid_key sids;  
-               vect_error_info errors;
+               vect_error_item errors;
                
                
                error(netintf->add_items(cids,sids,errors));
@@ -80,7 +80,7 @@ namespace dvnci {
                for (vect_sid_key::const_iterator it = sids.begin(); it != sids.end(); ++it) {
                      add_simple(static_cast<indx> (it->cid), it->sid);}
                
-               for (vect_error_info::const_iterator it = errors.begin(); it != errors.end(); ++it) {
+               for (vect_error_item::const_iterator it = errors.begin(); it != errors.end(); ++it) {
                      req_error(static_cast<indx> (it->id), static_cast<ns_error>(it->code));} 
                
                
@@ -102,7 +102,7 @@ namespace dvnci {
                     return error(0);
                 
                 vect_num64 cids;  
-                vect_error_info errors;
+                vect_error_item errors;
                 
                 error(netintf->remove_items(sids,cids,errors));
                 
@@ -117,17 +117,21 @@ namespace dvnci {
                 
                 vect_data_item lines;
                 vect_data_item_str linesstr;
-                vect_error_info errors;
+                vect_error_item errors;
                 
                 error(netintf->read_values(lines , linesstr, errors));
        
                 for (vect_data_item::const_iterator it = lines.begin(); it != lines.end(); ++it) {
-                     write_val_sid(it->sid, short_value(it->val, unpacktagtype(it->pack), unpackvalid(it->pack), 0, from_num64_cast<datetime>(it->time)));}
+                     write_val_sid(it->sid, short_value(it->val, 
+                             unpacktagtype(it->pack), 
+                             unpackvalid(it->pack),
+                             unpackerror(it->pack),
+                             from_num64_cast<datetime>(it->time)));}
                       
                 for (vect_data_item_str::const_iterator it = linesstr.begin(); it != linesstr.end(); ++it) {
-                     write_val_sid(it->sid, short_value(it->val, static_cast<vlvtype>(it->vld), 0, from_num64_cast<datetime>(it->time)));}
+                     write_val_sid(it->sid, short_value(it->val, unpackvalid(it->pack), unpackerror(it->pack), from_num64_cast<datetime>(it->time)));}
                 
-                //for (vect_error_info::const_iterator it = errors.begin(); it != errors.end(); ++it) {
+                //for (vect_error_item::const_iterator it = errors.begin(); it != errors.end(); ++it) {
                 //     write_val_sid(it->sid, short_value(it->val, static_cast<vlvtype>(it->vld), 0, from_num64_cast<datetime>(time)));}
                 
                 

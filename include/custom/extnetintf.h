@@ -56,8 +56,7 @@ namespace dvnci {
 
         virtual ns_error event_request_impl();
         
-        dvnci::custom::net::netintf_ptr   netintf;
-};
+        dvnci::custom::net::netintf_ptr   netintf;};
 
 
         }}}
