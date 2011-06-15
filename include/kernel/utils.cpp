@@ -617,7 +617,7 @@ namespace dvnci {
         boost::xtime xt;
         boost::xtime_get(&xt, boost::TIME_UTC);
         xt.sec -= tmout / 1000;
-        if (xt.nsec > ((tmout % 1000) * 1000000)) {
+        if (static_cast<timeouttype>(xt.nsec) > ((tmout % 1000) * 1000000)) {
             xt.nsec -= ((tmout % 1000) * 1000000);} else {
             xt.sec -= 1;
             xt.nsec = 1000000000 - ((tmout % 1000) * 1000000 - xt.nsec);}
