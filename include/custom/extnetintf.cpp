@@ -26,7 +26,8 @@ namespace dvnci {
             ns_error extnetintf::connect_impl(){
                 try{
                     if (!netintf) {
-                           netintf= dvnci::custom::net::netintf_ptr( dvnci::custom::net::factory::build(intf->groups()->host(group()),/*intf->groups()->port(group())*/"9050",
+                           netintf= dvnci::custom::net::netintf_ptr( dvnci::custom::net::factory::build(intf->groups()->host(group()),
+                                                                                            intf->groups()->port(group()).empty() ? "9050" : intf->groups()->port(group()),
                                                                                             intf->groups()->user(group()),intf->groups()->password(group()),
                                                                                             intf->groups()->timeout(group())));}
                     if (!netintf) {
@@ -91,7 +92,8 @@ namespace dvnci {
 
             ns_error extnetintf::remove_request_impl() {
                 
-                if (need_remove_set.empty())  return error(0);
+                if (need_remove_set.empty())  
+                    return error(0);
 
                 vect_num64 sids;
                 
@@ -138,9 +140,28 @@ namespace dvnci {
                  return error();}    
             
             
-            ns_error extnetintf::command_request_impl(const sidcmd_map& cmd){
-                    return 0;}             
-            
+            ns_error extnetintf::command_request_impl(const sidcmd_map& cmds){
+                
+                error(0);
+                if (cmds.empty())  
+                    return error(0);
+                           
+                vect_command_data reqcmds; 
+                vect_error_item   errors;
+                
+                for (sidcmd_map::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
+                    if (it->second.type()!=TYPE_TEXT){
+                         command_data cmd = { it->first, it->second.value64(), static_cast<num64>(it->second.type()), 0, "" };
+                         reqcmds.push_back(cmd);}
+                    else {
+                         command_data cmd = { it->first, 0, static_cast<num64>(TYPE_TEXT), 0, it->second.value<std::string>() };
+                         reqcmds.push_back(cmd);}}
+                
+                if (reqcmds.empty())
+                    return error(ERROR_NODATA);
+                
+                return error(netintf->send_commands(reqcmds, errors));}
+                       
 
             ns_error extnetintf::report_request_impl() {
                     return 0;}

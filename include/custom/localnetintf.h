@@ -19,8 +19,13 @@
 namespace dvnci {
     namespace custom {
         namespace net {
+            
+            
 
             class localnetintf : public netintf {
+                
+                
+                static const size_t MAX_REPOR_TASK_SIZE = 0x1000;
 
                 struct deadbound_short_value {
 
@@ -47,6 +52,19 @@ namespace dvnci {
                 typedef std::pair<indx, deadbound_short_value >          indx_deadb_shv_pair;
                 typedef std::map<indx, deadbound_short_value,
                 std::less<indx>, std::allocator<indx_deadb_shv_pair > >  indx_deadb_shv_map;
+                
+                
+              struct report_task{
+                  datetime creatitime;
+                  datetime begin;
+                  datetime end;}; 
+                  
+              typedef std::pair<indx, report_task >                    indx_reporttask_pair;
+              typedef std::map<indx, report_task,
+              std::less<indx>, std::allocator<indx_reporttask_pair> >  indx_reporttask_map;                  
+                  
+                  
+                
 
 
             public:
@@ -76,9 +94,12 @@ namespace dvnci {
 
 
             private:
+                
+                ns_error execute_report(vect_report_value_data& dt, vect_error_item& errors);
 
-                tagsbase_ptr       intf;
-                indx_deadb_shv_map value_map;} ;}}}
+                tagsbase_ptr        intf;
+                indx_deadb_shv_map  value_map;
+                indx_reporttask_map report_task_map;} ;}}}
 
 #endif	/* NETINTF_H */
 

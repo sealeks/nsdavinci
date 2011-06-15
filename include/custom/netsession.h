@@ -27,8 +27,7 @@ namespace dvnci {
             public:
 
                 netsession(boost::asio::io_service& io_service, netintf_ptr inf)
-                : io(io_service), socket_(io_service) {
-                    intf = inf;
+                : io(io_service), socket_(io_service), netintf(inf) {
                     DEBUG_STR_DVNCI(client connected netsession);}
 
                 virtual ~netsession() {
@@ -37,15 +36,7 @@ namespace dvnci {
                 boost::asio::ip::tcp::socket& socket() {
                     return socket_;}
 
-                void setIntf(netintf_ptr inf) {
-                    intf = inf;}
-
-                bool isIntf() {
-                    return (intf);}
-
                 void start() {
-
-
                     boost::asio::async_read(socket_,
                             boost::asio::buffer(boost::asio::buffer(bufheader), dvnci::rpc::rpcmessage::header_length),
                             boost::bind(
@@ -109,35 +100,30 @@ namespace dvnci {
                         in_archive_stream.str(in_.message());
                         boost::archive::binary_iarchive in_archive(in_archive_stream);
                         in_archive >> reqstruct;
-                        num16 resptp = intf->generate_impl(reqstruct, respstruct);
+                        num16 resptp = netintf->generate_impl(reqstruct, respstruct);
                         boost::archive::binary_oarchive out_archive(out_archive_stream);
                         out_archive << respstruct;
                         out_string = out_archive_stream.str();
-
                         out_.build_message(out_string, resptp);}
                     catch (...) {
                         out_.build_message("", 0);
                         return false;}
-
                     return true;};
 
                 bool preparerequest(dvnci::rpc::rpcmessage& in, dvnci::rpc::rpcmessage& out);
 
-                static boost::mutex mutex;
-
-
             private:
                 boost::asio::io_service&     io;
                 boost::asio::ip::tcp::socket socket_;
+                netintf_ptr                  netintf;
                 dvnci::rpc::rpcmessage       read_msg_;
                 dvnci::rpc::rpcmessage       write_msg_;
                 std::string                  read_str;
                 std::string                  write_str;
                 boost::array<char, 10 >      bufheader;
-                boost::asio::streambuf       request;
-                netintf_ptr                  intf;} ;
+                boost::asio::streambuf       request;} ;
 
-            typedef boost::shared_ptr<netsession> ns_netsession_ptr;}}}
+            }}}
 
 #endif	/* _NS_ADMINSESSION_H */
 

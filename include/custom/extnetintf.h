@@ -50,7 +50,7 @@ namespace dvnci {
 
         virtual ns_error value_request_impl();
         
-        virtual ns_error command_request_impl(const sidcmd_map& cmd); 
+        virtual ns_error command_request_impl(const sidcmd_map& cmds); 
 
         virtual ns_error report_request_impl();
 
