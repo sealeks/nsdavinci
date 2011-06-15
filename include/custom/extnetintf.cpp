@@ -15,7 +15,7 @@ namespace dvnci {
             using namespace dvnci::custom::net;
             
             extnetintf::extnetintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
-            extintf_wraper<num64>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC ) {;}
+            extintf_wraper<num64>(intf_, exctr, grp, TYPE_SIMPLE_REQ | TYPE_REPORT | TYPE_EVENT , CONTYPE_SYNC ) {;}
 
             extnetintf::~extnetintf() {
                 disconnect();};
