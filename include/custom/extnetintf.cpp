@@ -235,7 +235,19 @@ namespace dvnci {
                 return error();}
 
             ns_error extnetintf::event_request_impl() {
-                    return 0;}               
+                    return 0;}  
+            
+            
+            void extnetintf::add_report_task(serverkey_type sid){
+                if (rep_tasks_set.find(sid)==rep_tasks_set.end())
+                     rep_tasks_set.insert(sid);}
+        
+            void extnetintf::remove_report_task(serverkey_type sid){
+                if (rep_tasks_set.find(sid)!=rep_tasks_set.end())
+                     rep_tasks_set.erase(sid);}
+        
+            bool extnetintf::is_report_task(serverkey_type sid) const{
+                 return (rep_tasks_set.find(sid)!=rep_tasks_set.end());}            
                 
                 
         }}}
