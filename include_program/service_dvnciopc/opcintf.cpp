@@ -836,7 +836,7 @@ namespace dvnci {
 
             bool opcintf::read_valuessync1() {
 
-                DWORD dwCount              = simple_req_map.left.size();
+                DWORD dwCount              = simple_req().left.size();
                 OPCHANDLE* phServer        = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
                 OPCITEMSTATE* ppItemValues = NULL; // need free
                 HRESULT* pErrors           = NULL; // need free
@@ -845,7 +845,7 @@ namespace dvnci {
 
                 DWORD i = 0;
 
-                for (serverkey_const_iterator it = simple_req_map.left.begin(); it != simple_req_map.left.end(); ++it) {
+                for (serverkey_const_iterator it = simple_req().left.begin(); it != simple_req().left.end(); ++it) {
                     //DEBUG_STR_DVNCI(ADDITEM SYNCREAD1);
                     phServer[i++] = static_cast<OPCHANDLE> (it->first);}
 
@@ -880,7 +880,7 @@ namespace dvnci {
 
             bool opcintf::read_valuesasync2() {
 
-                DWORD dwCount              = simple_req_map.left.size();
+                DWORD dwCount              = simple_req().left.size();
                 OPCHANDLE* phServer        = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
                 DWORD      dwTransactionID = transactid();
                 DWORD      pdwCancelID     = 0;
@@ -891,7 +891,7 @@ namespace dvnci {
 
                 DWORD i = 0;
 
-                for (serverkey_const_iterator it = simple_req_map.left.begin(); it != simple_req_map.left.end(); ++it) {
+                for (serverkey_const_iterator it = simple_req().left.begin(); it != simple_req().left.end(); ++it) {
                     //DEBUG_STR_DVNCI(ADDITEM SYNCREAD1);
                     phServer[i++] = static_cast<OPCHANDLE> (it->first);}
 
