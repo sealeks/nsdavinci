@@ -4,12 +4,12 @@
 
 /* ошибки  */
 
-struct error_info {
+struct error_item {
         num64 id  = 1;
 	num64 code = 2;
 }
 
-struct error_ex_info {
+struct error_ex_item {
         string cid = 1;
 	num64  code = 2;
 }
@@ -24,14 +24,16 @@ struct error_outside {
 struct req_auth {
 	string user = 1;
 	string pass = 2;
+	string ver = 3;
+        num64  intftp = 4;
 }
-
 
 struct resp_auth {
-	error_info  error = 1;
+	error_item  error = 1;
+        num64  rslt = 2;
 }
 
-/* add_items( const vect<cid_key>&, vect<sid_key>&,  vect<error_info>&)    */
+/* add_items( const vect<cid_key>&, vect<sid_key>&,  vect<error_item>&)    */
 
 
 struct cid_key {
@@ -54,7 +56,8 @@ struct req_add_items {
 
 struct resp_add_items {
 	array sid_key     sids = 1;
-	array error_info  errors = 2;
+	array error_item  errors = 2;
+        num64             rslt = 3;
 }
 
 
@@ -63,7 +66,7 @@ struct resp_add_items {
 
 
 
-/* add_items_ex( const vect<cid_key_ex>&, vect<sid_key_ex>&,  vect<error_ex_info>&)    */
+/* add_items_ex( const vect<cid_key_ex>&, vect<sid_key_ex>&,  vect<error_ex_item>&)    */
 
 struct cid_key_ex {
 	string cid = 1;
@@ -91,7 +94,8 @@ struct req_add_items_ex {
 
 struct resp_add_items_ex {
 	array sid_key_ex  sids = 1;
-	array error_ex_info  errors = 2;
+	array error_ex_item  errors = 2;
+        num64             rslt = 3;
 }
 
 
@@ -100,7 +104,7 @@ struct resp_add_items_ex {
 
 
 
-/* remove_item( const vect<sid>&, vect<sid>& ,vect<error_info>&)    */
+/* remove_item( const vect<sid>&, vect<sid>& ,vect<error_item>&)    */
 
 struct req_remove_items {
         array num64 cids = 1;
@@ -109,7 +113,8 @@ struct req_remove_items {
 
 struct resp_remove_items {
         array num64 cids = 1;
-	array error_info  errors = 2;
+	array error_item  errors = 2;
+        num64             rslt = 3;
 }
 
 
@@ -118,8 +123,8 @@ struct resp_remove_items {
 
 
 
-/* req_data_item( const vect<sid>&, vect<data_item>& , vect<data_item_str>& ,vect<error_info>&)    */
-/* req_data_item2( vect<data_item>& ,vect<error_info>&)    */
+/* req_data_item( const vect<sid>&, vect<data_item>& , vect<data_item_str>& ,vect<error_item>&)    */
+/* req_data_item2( vect<data_item>& ,vect<error_item>&)    */
 
 struct data_item {
 	num64  sid = 1;
@@ -131,8 +136,9 @@ struct data_item {
 struct data_item_str {
 	num64  sid = 1;
 	string  val = 2;
-	num64  vld = 3;
+	num64  pack = 3;
 	num64  time = 4;
+        num64  rslt = 5;
 }
 
 struct req_data_item {
@@ -144,17 +150,18 @@ struct req_data_item1 {
 }
 
 struct resp_data_item {
-	array data_item   lines = 1;
+	array data_item       lines = 1;
 	array data_item_str   linesstr = 2;
-	array error_info  errors = 3;
+	array error_item      errors = 3;
+        num64             rslt = 4;
 }
 
 
 
 
 
-/* req_data_item_ex( const vect<sid>&, vect<data_item>&, vect<data_item_str>& , vect<sid_key_ex>&, vect<error_info>&)    */
-/* req_data_item1_ex( vect<data_item>&, vect<data_item_str>& , vect<sid_key_ex>&, vect<error_info>&)    */
+/* req_data_item_ex( const vect<sid>&, vect<data_item>&, vect<data_item_str>& , vect<sid_key_ex>&, vect<error_item>&)    */
+/* req_data_item1_ex( vect<data_item>&, vect<data_item_str>& , vect<sid_key_ex>&, vect<error_item>&)    */
 
 
 
@@ -171,7 +178,8 @@ struct resp_data_item_ex {
 	array data_item   lines = 1;
 	array data_item_str   linesstr = 2;
 	array sid_key_ex  fulllines = 3;
-	array error_info  errors = 4;
+	array error_item  errors = 4;
+        num64             rslt = 5;
 }
 
 
@@ -179,7 +187,7 @@ struct resp_data_item_ex {
 
 
 
-/* req_send_commands(const vect<command_data>& ,vect<error_info>&)    */
+/* req_send_commands(const vect<command_data>& ,vect<error_item>&)    */
 
 struct command_data {
         num64 sid = 1;
@@ -194,7 +202,8 @@ struct req_send_commands {
 }
 
 struct resp_send_commands {
-	array error_info  errors = 1;
+	array error_item  errors = 1;
+        num64             rslt = 2;
 }
 
 
@@ -202,7 +211,7 @@ struct resp_send_commands {
 
 
 
-/* req_report(const vect<reporttask>& ,vect<report_value_data>&, vect<error_info>&)    */
+/* req_report(const vect<reporttask>& ,vect<report_value_data>&, vect<error_item>&)    */
 
 struct reporttask {
 	num64 sid = 1;
@@ -226,14 +235,15 @@ struct req_reporttask {
 
 struct resp_reporttask {
 	array report_value_data datas = 1;
-	array error_info  errors = 2;
+	array error_item  errors = 2;
+        num64             rslt = 3;
 }
 
 
 
 
 
-/* req_event(const vect<eventtask>& ,vect<event_value_item>&, vect<error_info>&)    */
+/* req_event(const vect<eventtask>& ,vect<event_value_item>&, vect<error_item>&)    */
 
 
 
@@ -254,7 +264,8 @@ struct req_eventtask {
 
 struct resp_eventtask {
 	array event_value_item data = 1;
-	array error_info  errors = 2;
+	array error_item  errors = 2;
+        num64             rslt = 3;
 }
 
 
@@ -262,7 +273,7 @@ struct resp_eventtask {
 
 
 
-/* req_trend(const vect<trendtask>& ,vect<report_value_data>&, vect<error_info>&)    */
+/* req_trend(const vect<trendtask>& ,vect<report_value_data>&, vect<error_item>&)    */
 
 struct trendtask {
 	num64 sid = 1;
@@ -286,7 +297,8 @@ struct req_trendtask {
 
 struct resp_trendtask {
 	array trend_value_data datas = 1;
-	array error_info  errors = 2;
+	array error_item  errors = 2;
+        num64             rslt = 3;
 }
 
 
@@ -315,6 +327,7 @@ struct resp_alarms {
         num64 err = 1;
         unum64 vers = 2;
 	array alarms_data lines = 3;
+        num64             rslt = 4;
 }
 
 
@@ -349,6 +362,7 @@ struct resp_journal {
         unum64 cursor = 3;
         unum64 cnt = 4;
 	array journal_data lines = 5;
+        num64             rslt = 6;
 }
 
 
