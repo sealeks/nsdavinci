@@ -16,25 +16,25 @@ namespace dvnci {
             void netintf::assign_req_items(req_add_items& req, const vect_cid_key& cids) {
                 req.cids = cids;}
 
-            ns_error netintf::assign_resp_items(const resp_add_items& resp, vect_sid_key& sids,  vect_error_item& errors) {
-                sids = resp.sids;
-                errors = resp.errors;
+            ns_error netintf::assign_resp_items( resp_add_items& resp, vect_sid_key& sids,  vect_error_item& errors) {
+                sids.swap(resp.sids);
+                errors.swap(resp.errors);
                 return static_cast<ns_error>(resp.rslt);}
 
             void netintf::assign_req_items(req_add_items_ex& req, const vect_cid_key_ex& cids) {
                 req.cids = cids;}
 
-            ns_error netintf::assign_resp_items(const resp_add_items_ex& resp, vect_sid_key_ex& sids,  vect_error_ex_item& errors) {
-                sids = resp.sids;
-                errors = resp.errors;
+            ns_error netintf::assign_resp_items( resp_add_items_ex& resp, vect_sid_key_ex& sids,  vect_error_ex_item& errors) {
+                sids.swap(resp.sids);
+                errors.swap(resp.errors);
                 return static_cast<ns_error>(resp.rslt);}                
 
             void netintf::assign_req_remitems(req_remove_items& req, const vect_num64& cids) {
                 req.cids = cids;}
 
-            ns_error netintf::assign_resp_remitems(const resp_remove_items& resp, vect_num64& succ_sids , vect_error_item& errors) {
-                succ_sids = resp.cids;
-                errors = resp.errors;
+            ns_error netintf::assign_resp_remitems( resp_remove_items& resp, vect_num64& succ_sids , vect_error_item& errors) {
+                succ_sids.swap(resp.cids);
+                errors.swap(resp.errors);
                 return static_cast<ns_error>(resp.rslt);}
 
             void netintf::assign_req_values(req_data_item& req) {
@@ -43,10 +43,10 @@ namespace dvnci {
             void netintf::assign_req_values(req_data_item1& req, const vect_num64& sids) {
                 req.sids = sids;}
 
-            ns_error netintf::assign_resp_values(const resp_data_item& resp, vect_data_item& lines , vect_data_item_str& linesstr, vect_error_item& errors) {
-                lines = resp.lines;
-                linesstr = resp.linesstr;
-                errors = resp.errors;
+            ns_error netintf::assign_resp_values( resp_data_item& resp, vect_data_item& lines , vect_data_item_str& linesstr, vect_error_item& errors) {
+                lines.swap(resp.lines);
+                linesstr.swap(resp.linesstr);
+                errors.swap(resp.errors);
                  return static_cast<ns_error>(resp.rslt);}           
 
             void netintf::assign_req_values(req_data_item_ex& req) {
@@ -55,49 +55,49 @@ namespace dvnci {
             void netintf::assign_req_values(req_data_item_ex1& req, const vect_num64& sids) {
                 req.sids = sids;}
 
-            ns_error netintf::assign_resp_values(const resp_data_item_ex& resp, vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_item& errors) {
-                lines = resp.lines;
-                linesstr = resp.linesstr;
-                sids = resp.fulllines;
-                errors = resp.errors;
+            ns_error netintf::assign_resp_values( resp_data_item_ex& resp, vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_item& errors) {
+                lines.swap(resp.lines);
+                linesstr.swap(resp.linesstr);
+                sids.swap(resp.fulllines);
+                errors.swap(resp.errors);
                 return static_cast<ns_error>(resp.rslt);}
 
             void netintf::assign_req_commands(req_send_commands& req, const vect_command_data& cmds) {
                 req.cmds = cmds;}
 
-            ns_error netintf::assign_resp_commands(const resp_send_commands& resp, vect_error_item& errors) {
-                errors = resp.errors;
+            ns_error netintf::assign_resp_commands( resp_send_commands& resp, vect_error_item& errors) {
+                errors.swap(resp.errors);
                 return static_cast<ns_error>(resp.rslt);}               
 
             void netintf::assign_req_reports(req_reporttask& req, const vect_reporttask& tasks) {
                 req.tasks = tasks;}
 
-            ns_error netintf::assign_resp_reports(const resp_reporttask& resp, vect_report_value_data& dt, vect_error_item& errors) {
-                dt = resp.datas;
-                errors = resp.errors;
+            ns_error netintf::assign_resp_reports( resp_reporttask& resp, vect_report_value_data& dt, vect_error_item& errors) {
+                dt.swap(resp.datas);
+                errors.swap(resp.errors);
                 return static_cast<ns_error>(resp.rslt);}               
 
             void netintf::assign_req_events(req_eventtask& req, const vect_eventtask& tasks) {
                 req.tasks = tasks;}
 
-            ns_error netintf::assign_resp_events(const resp_eventtask& resp, vect_event_value_item& dt, vect_error_item& errors) {
-                dt = resp.data;
-                errors = resp.errors;
+            ns_error netintf::assign_resp_events( resp_eventtask& resp, vect_event_value_item& dt, vect_error_item& errors) {
+                dt.swap(resp.data);
+                errors.swap(resp.errors);
                 return static_cast<ns_error>(resp.rslt);}
             
             void netintf::assign_req_trends(req_trendtask& req, const vect_trendtask& tasks) {
                 req.tasks = tasks;}
 
-            ns_error netintf::assign_resp_trends(const resp_trendtask& resp, vect_trend_value_data& dt , vect_error_item& errors) {
-                dt = resp.datas;
-                errors = resp.errors;
+            ns_error netintf::assign_resp_trends( resp_trendtask& resp, vect_trend_value_data& dt , vect_error_item& errors) {
+                dt.swap(resp.datas);
+                errors.swap(resp.errors);
                 return static_cast<ns_error>(resp.rslt);}               
 
             void netintf::assign_read_alarms(req_alarms& req, const unum64& guid) {
                 req.vers = guid;}
 
-            ns_error netintf::assign_resp_alarms(const resp_alarms& resp, vect_alarms_data& dt) {
-                dt = resp.lines;
+            ns_error netintf::assign_resp_alarms( resp_alarms& resp, vect_alarms_data& dt) {
+                dt.swap(resp.lines);
                 return static_cast<ns_error>(resp.rslt);}                
 
             void netintf::assign_read_journal(req_journal& req, const unum64& guid, const unum64& cursor, const unum64& cnt) {
@@ -105,8 +105,8 @@ namespace dvnci {
                 req.cursor = cursor;
                 req.cnt = cnt;}
 
-            ns_error netintf::assign_resp_journal(const resp_journal& resp, vect_journal_data& dt) {
-                dt = resp.lines;
+            ns_error netintf::assign_resp_journal( resp_journal& resp, vect_journal_data& dt) {
+                dt.swap(resp.lines);
                 return static_cast<ns_error>(resp.rslt);}
             
 

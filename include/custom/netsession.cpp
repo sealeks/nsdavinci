@@ -14,7 +14,6 @@ namespace dvnci {
             using boost::asio::ip::tcp;
             using namespace dvnci::rpc;
 
-            boost::mutex netsession::mutex;
 
             bool netsession::preparerequest(rpcmessage& in, rpcmessage& out) {
 
