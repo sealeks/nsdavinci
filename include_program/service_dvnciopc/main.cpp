@@ -6,15 +6,6 @@
  */
 
 
-#include <stdlib.h>
-
-#include <boost/bind.hpp>
-#include <boost/asio.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/xtime.hpp>
-#include <boost/filesystem.hpp>
-
 
 #include <kernel/constdef.h>
 #include <kernel/systemutil.h>

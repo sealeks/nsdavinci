@@ -32,6 +32,9 @@ namespace dvnci {
 
             vlvtype valid_from_quality(WORD q) {
                 return (q == OPC_QUALITY_GOOD) ? FULL_VALID : NULL_VALID;}
+            
+            datetime dt_from_filetime(const FILETIME& tm) {
+            return boost::posix_time::from_ftime<boost::posix_time::ptime>(tm);}
 
             VARTYPE oletype(tagtype tp) {
                 switch (tp) {
@@ -583,8 +586,9 @@ namespace dvnci {
                 disconnect();};
 
             ns_error opcintf::checkserverstatus() {
+                error(0);
                 if ((!opc_spec) || (!static_cast<opc_util*> (opc_spec.get())->IGRPMGT()))
-                    return faild_connection();
+                    return error(faild_connection());
 
                 OPCSERVERSTATUS status;
                 OPCSERVERSTATUS* pstatus = &status;
@@ -593,10 +597,10 @@ namespace dvnci {
                 if (FAILED(hResult)) {
                     return faild_connection();}
 
-                return 0;
+                return error();
 
                 //if (status.dwServerState == OPC_STATUS_RUNNING) return 0;
-                return faild_connection();}
+                return error(faild_connection());}
 
             ns_error  opcintf::connect_impl() {
 
@@ -678,7 +682,9 @@ namespace dvnci {
 
             ns_error opcintf::add_request_impl() {
 
-                if (need_add_set.empty()) return 0;
+                error(0);
+                if (need_add_set.empty()) 
+                    return error();
 
 
                 DWORD dwCount = need_add_set.size();
@@ -724,7 +730,7 @@ namespace dvnci {
                         CoTaskMemFree(pItems); // free
                         CoTaskMemFree(pResults); // free
                         CoTaskMemFree(pErrors); // free
-                        return from_opcerror(OPC_E_INVALIDHANDLE);}
+                        return error(from_opcerror(OPC_E_INVALIDHANDLE));}
 
 
                     for (i = 0; i < dwCount; i++) {
@@ -741,11 +747,12 @@ namespace dvnci {
 
                 update_dog();
 
-                return 0;}
+                return error();}
 
             ns_error opcintf::remove_request_impl() {
 
-                if (need_remove_set.empty()) return 0;
+                error(0);
+                if (need_remove_set.empty()) return error();
 
                 DWORD dwCount = need_remove_set.size();
                 OPCHANDLE * phServer = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
@@ -768,7 +775,7 @@ namespace dvnci {
                     if (FAILED(hResult)) {
                         CoTaskMemFree(phServer); // free
                         CoTaskMemFree(pErrors); // free
-                        return from_opcerror(OPC_E_INVALIDHANDLE);}
+                        return error(from_opcerror(OPC_E_INVALIDHANDLE));}
 
                     for (i = 0; i < dwCount; i++) {
                         if (pErrors[i] != S_OK) {
@@ -780,9 +787,10 @@ namespace dvnci {
                     CoTaskMemFree(pErrors); // free;
                     ;}
                 update_dog();
-                return 0;}
+                return error();}
 
             ns_error opcintf::value_request_impl() {
+                error(0);
                 if (ver == 1) {
                     read_valuessync1();}
                 else {
@@ -801,9 +809,10 @@ namespace dvnci {
                                 else {
                                     ;}}
                             break;}}}
-                return 0;}
+                return error();}
 
             ns_error opcintf::command_request_impl(const sidcmd_map& cmd) {
+                error(0);
                 if (ver == 1) {
                     setvaluessync1(cmd);}
                 else {
@@ -823,7 +832,7 @@ namespace dvnci {
                                 else {
                                     ;}}
                             break;};}}
-                return 0;}
+                return error();}
 
             bool opcintf::read_valuessync1() {
 
