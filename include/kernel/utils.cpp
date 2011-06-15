@@ -645,8 +645,6 @@ namespace dvnci {
             xt.sec += 1;
             xt.nsec += ((microsec % 1000000) * 1000 + xt.nsec - 1000000000);}}
     
-    datetime dt_from_filetime(const FILETIME& tm) {
-            return boost::posix_time::from_ftime<boost::posix_time::ptime>(tm);}
 
     num64 nownum64() {
         return castnum64_from_datetime(now());}
