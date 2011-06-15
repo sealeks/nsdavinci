@@ -83,6 +83,8 @@ namespace dvnci {
     const ns_error ERROR_TYPENOCAST = 0x20D;
     // пустой ответ
     const ns_error ERROR_NULLRESPONSE = 0x20E;
+    // источник занят, необходимо подождать
+    const ns_error ERROR_SOURSEBUSY = 0x20F;    
     // канал не определен
     const ns_error ERROR_IO_DEVICE_CHANAL_NOT_DEF = 0x420;
     // таймут истек
