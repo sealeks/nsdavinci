@@ -53,6 +53,7 @@ namespace dvnci {
         virtual ns_error connect_impl();
 
         virtual ns_error disconnect_impl();
+        
 
 
         virtual ns_error add_request_impl();
@@ -68,19 +69,15 @@ namespace dvnci {
         virtual ns_error event_request_impl();
         
         
-        void add_report_task(serverkey_type sid){
-            if (rep_tasks_set.find(sid)==rep_tasks_set.end())
-                rep_tasks_set.insert(sid);}
-        
-        void remove_report_task(serverkey_type sid){
-            if (rep_tasks_set.find(sid)!=rep_tasks_set.end())
-                rep_tasks_set.erase(sid);}
-        
-        bool is_report_task(serverkey_type sid) const{
-            return (rep_tasks_set.find(sid)!=rep_tasks_set.end());}
+
     
     private:
         
+        void add_report_task(serverkey_type sid);
+        
+        void remove_report_task(serverkey_type sid);
+        
+        bool is_report_task(serverkey_type sid) const;
         
         dvnci::custom::net::netintf_ptr   netintf;
         sid_rl_report_val_map             real_repval_map;
