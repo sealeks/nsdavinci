@@ -16,8 +16,8 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/version.hpp>
 
-struct error_info;
-struct error_ex_info;
+struct error_item;
+struct error_ex_item;
 struct error_outside;
 struct req_auth;
 struct resp_auth;
@@ -63,8 +63,8 @@ struct journal_data;
 struct req_journal;
 struct resp_journal;
 
-const short RPC_OPERATION_ERROR_INFO=0x10;
-const short RPC_OPERATION_ERROR_EX_INFO=0x11;
+const short RPC_OPERATION_ERROR_ITEM=0x10;
+const short RPC_OPERATION_ERROR_EX_ITEM=0x11;
 const short RPC_OPERATION_ERROR_OUTSIDE=0x12;
 const short RPC_OPERATION_REQ_AUTH=0x13;
 const short RPC_OPERATION_RESP_AUTH=0x14;
@@ -110,8 +110,8 @@ const short RPC_OPERATION_JOURNAL_DATA=0x3B;
 const short RPC_OPERATION_REQ_JOURNAL=0x3C;
 const short RPC_OPERATION_RESP_JOURNAL=0x3D;
 
-typedef std::vector<error_info > vect_error_info;
-typedef std::vector<error_ex_info > vect_error_ex_info;
+typedef std::vector<error_item > vect_error_item;
+typedef std::vector<error_ex_item > vect_error_ex_item;
 typedef std::vector<error_outside > vect_error_outside;
 typedef std::vector<req_auth > vect_req_auth;
 typedef std::vector<resp_auth > vect_resp_auth;
@@ -157,12 +157,12 @@ typedef std::vector<journal_data > vect_journal_data;
 typedef std::vector<req_journal > vect_req_journal;
 typedef std::vector<resp_journal > vect_resp_journal;
 
-struct error_info {
+struct error_item {
 num64  id;
 num64  code;
 };
 
-struct error_ex_info {
+struct error_ex_item {
 std::string  cid;
 num64  code;
 };
@@ -174,10 +174,13 @@ num64  error;
 struct req_auth {
 std::string  user;
 std::string  pass;
+std::string  ver;
+num64  intftp;
 };
 
 struct resp_auth {
-error_info  error;
+error_item  error;
+num64  rslt;
 };
 
 struct cid_key {
@@ -198,7 +201,8 @@ vect_cid_key  cids;
 
 struct resp_add_items {
 vect_sid_key  sids;
-vect_error_info  errors;
+vect_error_item  errors;
+num64  rslt;
 };
 
 struct cid_key_ex {
@@ -225,7 +229,8 @@ vect_cid_key_ex  cids;
 
 struct resp_add_items_ex {
 vect_sid_key_ex  sids;
-vect_error_ex_info  errors;
+vect_error_ex_item  errors;
+num64  rslt;
 };
 
 struct req_remove_items {
@@ -234,7 +239,8 @@ vect_num64  cids;
 
 struct resp_remove_items {
 vect_num64  cids;
-vect_error_info  errors;
+vect_error_item  errors;
+num64  rslt;
 };
 
 struct data_item {
@@ -247,8 +253,9 @@ num64  pack;
 struct data_item_str {
 num64  sid;
 std::string  val;
-num64  vld;
+num64  pack;
 num64  time;
+num64  rslt;
 };
 
 struct req_data_item {
@@ -262,7 +269,8 @@ vect_num64  sids;
 struct resp_data_item {
 vect_data_item  lines;
 vect_data_item_str  linesstr;
-vect_error_info  errors;
+vect_error_item  errors;
+num64  rslt;
 };
 
 struct req_data_item_ex {
@@ -277,7 +285,8 @@ struct resp_data_item_ex {
 vect_data_item  lines;
 vect_data_item_str  linesstr;
 vect_sid_key_ex  fulllines;
-vect_error_info  errors;
+vect_error_item  errors;
+num64  rslt;
 };
 
 struct command_data {
@@ -293,7 +302,8 @@ vect_command_data  cmds;
 };
 
 struct resp_send_commands {
-vect_error_info  errors;
+vect_error_item  errors;
+num64  rslt;
 };
 
 struct reporttask {
@@ -318,7 +328,8 @@ vect_reporttask  tasks;
 
 struct resp_reporttask {
 vect_report_value_data  datas;
-vect_error_info  errors;
+vect_error_item  errors;
+num64  rslt;
 };
 
 struct event_value_item {
@@ -338,7 +349,8 @@ vect_eventtask  tasks;
 
 struct resp_eventtask {
 vect_event_value_item  data;
-vect_error_info  errors;
+vect_error_item  errors;
+num64  rslt;
 };
 
 struct trendtask {
@@ -363,7 +375,8 @@ vect_trendtask  tasks;
 
 struct resp_trendtask {
 vect_trend_value_data  datas;
-vect_error_info  errors;
+vect_error_item  errors;
+num64  rslt;
 };
 
 struct alarms_data {
@@ -384,6 +397,7 @@ struct resp_alarms {
 num64  err;
 unum64  vers;
 vect_alarms_data  lines;
+num64  rslt;
 };
 
 struct journal_data {
@@ -410,6 +424,7 @@ unum64  guid;
 unum64  cursor;
 unum64  cnt;
 vect_journal_data  lines;
+num64  rslt;
 };
 
 
@@ -418,13 +433,13 @@ namespace serialization {
 
 
    template<class Archive>
-   void serialize(Archive& ar, error_info& g, const unsigned int version) {
+   void serialize(Archive& ar, error_item& g, const unsigned int version) {
         ar & g.id;
         ar & g.code;
    };
 
    template<class Archive>
-   void serialize(Archive& ar, error_ex_info& g, const unsigned int version) {
+   void serialize(Archive& ar, error_ex_item& g, const unsigned int version) {
         ar & g.cid;
         ar & g.code;
    };
@@ -438,11 +453,14 @@ namespace serialization {
    void serialize(Archive& ar, req_auth& g, const unsigned int version) {
         ar & g.user;
         ar & g.pass;
+        ar & g.ver;
+        ar & g.intftp;
    };
 
    template<class Archive>
    void serialize(Archive& ar, resp_auth& g, const unsigned int version) {
         ar & g.error;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -468,6 +486,7 @@ namespace serialization {
    void serialize(Archive& ar, resp_add_items& g, const unsigned int version) {
         ar & g.sids;
         ar & g.errors;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -499,6 +518,7 @@ namespace serialization {
    void serialize(Archive& ar, resp_add_items_ex& g, const unsigned int version) {
         ar & g.sids;
         ar & g.errors;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -510,6 +530,7 @@ namespace serialization {
    void serialize(Archive& ar, resp_remove_items& g, const unsigned int version) {
         ar & g.cids;
         ar & g.errors;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -524,8 +545,9 @@ namespace serialization {
    void serialize(Archive& ar, data_item_str& g, const unsigned int version) {
         ar & g.sid;
         ar & g.val;
-        ar & g.vld;
+        ar & g.pack;
         ar & g.time;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -543,6 +565,7 @@ namespace serialization {
         ar & g.lines;
         ar & g.linesstr;
         ar & g.errors;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -561,6 +584,7 @@ namespace serialization {
         ar & g.linesstr;
         ar & g.fulllines;
         ar & g.errors;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -580,6 +604,7 @@ namespace serialization {
    template<class Archive>
    void serialize(Archive& ar, resp_send_commands& g, const unsigned int version) {
         ar & g.errors;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -610,6 +635,7 @@ namespace serialization {
    void serialize(Archive& ar, resp_reporttask& g, const unsigned int version) {
         ar & g.datas;
         ar & g.errors;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -634,6 +660,7 @@ namespace serialization {
    void serialize(Archive& ar, resp_eventtask& g, const unsigned int version) {
         ar & g.data;
         ar & g.errors;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -664,6 +691,7 @@ namespace serialization {
    void serialize(Archive& ar, resp_trendtask& g, const unsigned int version) {
         ar & g.datas;
         ar & g.errors;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -687,6 +715,7 @@ namespace serialization {
         ar & g.err;
         ar & g.vers;
         ar & g.lines;
+        ar & g.rslt;
    };
 
    template<class Archive>
@@ -716,6 +745,7 @@ namespace serialization {
         ar & g.cursor;
         ar & g.cnt;
         ar & g.lines;
+        ar & g.rslt;
    };
 
 }
