@@ -55,20 +55,18 @@ namespace dvnci {
 
                 virtual  ~localnetintf() {};
 
-
-
                 virtual ns_error auth_req( const std::string& user, const std::string& pass);
-                virtual ns_error add_items( const vect_cid_key& cids, vect_sid_key& sids,  vect_error_info& errors);
-                virtual ns_error add_items_ex( const vect_cid_key_ex cids, vect_sid_key_ex& sids,  vect_error_ex_info& errors);
-                virtual ns_error remove_items( const vect_num64& sids,  vect_num64& succ_sids , vect_error_info& errors);
-                virtual ns_error read_values( const vect_num64& sids, vect_data_item& lines , vect_data_item_str& linesstr, vect_error_info& errors);
-                virtual ns_error read_values(vect_data_item& lines , vect_data_item_str& linesstr, vect_error_info& errors);
-                virtual ns_error read_values_ex(const vect_num64& rsids, vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_info& errors);
-                virtual ns_error read_values_ex(vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_info& errors);
-                virtual ns_error send_commands(const vect_command_data& cmds, vect_error_info& errors);
-                virtual ns_error read_report(const vect_reporttask& tasks , vect_report_value_data& dt, vect_error_info& errors);
-                virtual ns_error read_events(const vect_eventtask& tasks , vect_event_value_item& dt, vect_error_info& errors);
-                virtual ns_error read_trend(const vect_trendtask& tasks, vect_trend_value_data& dt , vect_error_info& errors);
+                virtual ns_error add_items( const vect_cid_key& cids, vect_sid_key& sids,  vect_error_item& errors);
+                virtual ns_error add_items_ex( const vect_cid_key_ex cids, vect_sid_key_ex& sids,  vect_error_ex_item& errors);
+                virtual ns_error remove_items( const vect_num64& sids,  vect_num64& succ_sids , vect_error_item& errors);
+                virtual ns_error read_values( const vect_num64& sids, vect_data_item& lines , vect_data_item_str& linesstr, vect_error_item& errors);
+                virtual ns_error read_values(vect_data_item& lines , vect_data_item_str& linesstr, vect_error_item& errors);
+                virtual ns_error read_values_ex(const vect_num64& rsids, vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_item& errors);
+                virtual ns_error read_values_ex(vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_item& errors);
+                virtual ns_error send_commands(const vect_command_data& cmds, vect_error_item& errors);
+                virtual ns_error read_report(const vect_reporttask& tasks , vect_report_value_data& dt, vect_error_item& errors);
+                virtual ns_error read_events(const vect_eventtask& tasks , vect_event_value_item& dt, vect_error_item& errors);
+                virtual ns_error read_trend(const vect_trendtask& tasks, vect_trend_value_data& dt , vect_error_item& errors);
                 virtual ns_error read_alarms(const unum64& guid, vect_alarms_data& dt);
                 virtual ns_error read_journal(const unum64& guid, const unum64& cursor, const unum64& cnt, vect_journal_data& dt);
                 
