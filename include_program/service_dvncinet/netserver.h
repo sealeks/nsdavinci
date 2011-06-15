@@ -30,8 +30,10 @@ using boost::asio::ip::tcp;
 
 
 class ns_netserver {
+    
+    typedef boost::shared_ptr<netsession> ns_netsession_ptr;
+    
 public:
-
 
 
     ns_netserver(boost::asio::io_service& io_service,
@@ -51,17 +53,16 @@ public:
             session->start();
             DEBUG_STR_DVNCI(Handle accepted);
 
-
-            netintf_ptr inf_tmp = netintf_ptr(dvnci::custom::net::factory::build(intf));
-            ns_netsession_ptr new_session(new netsession(io_service_, inf_tmp));
+            netintf_ptr infnet = netintf_ptr(dvnci::custom::net::factory::build(intf));
+            ns_netsession_ptr new_session(new netsession(io_service_, infnet));
             acceptor_.async_accept(new_session->socket(),
                     boost::bind(&ns_netserver::handle_accept, this, new_session,
                     boost::asio::placeholders::error));}}
 
 private:
-    dvnci::tagsbase_ptr intf;
+    dvnci::tagsbase_ptr      intf;
     boost::asio::io_service& io_service_;
-    tcp::acceptor acceptor_;};
+    tcp::acceptor            acceptor_;};
     
     
     
@@ -92,30 +93,19 @@ protected:
     virtual bool initialize() {
 
         if (!intf) return false;
-        DEBUG_STR_DVNCI(startinitnetserv1);
-        if (!intf) return false;
-        DEBUG_STR_DVNCI(intf);
-        //dbexec_ptr = dbtsk_exec_ptr(new dbtsk_exec(intf->conf_numproperty(NS_CNFG_DBMANAGER), intf->conf_property(NS_CNFG_DBCONSTR)));
-        //th_db = boost::thread(dbexec_ptr);
-        using namespace std; 
         std::string remote_prt = dvnci::to_str(intf->conf_property(NS_CNFG_REMOTEPORT));
         tcp::endpoint endpoint(tcp::v4(), atoi(remote_prt.c_str()));
         DEBUG_VAL_DVNCI(remote_prt);
         ns_netserver_ptr server(new ns_netserver(io_service, endpoint, intf));
-        DEBUG_STR_DVNCI(PRED_RUN);
         io_service.run();
-        DEBUG_STR_DVNCI(POSLE_RUN);
         return true;}
 
     virtual bool uninitialize() {
-        //if (dbexec_ptr) dbexec_ptr->terminate();
-        th_db.join();
         return true;}
 
 private:
     boost::asio::io_service io_service;
-    dvnci::tagsbase_ptr intf;
-    boost::thread th_db;};
+    dvnci::tagsbase_ptr     intf;};
     
     
 }}}
