@@ -46,7 +46,9 @@ public:
     
     
     extintf_wraper(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :  
-    externalintf(inf,  exctr,  grp, provide_man, subsrcr){}      
+    externalintf(inf,  exctr,  grp, provide_man, subsrcr){
+      next_event_iterator=event_req_map.left.end();
+      next_report_iterator=report_req_map.left.end();}      
     
     virtual ~extintf_wraper() {};
     
@@ -71,20 +73,19 @@ public:
                    tag_const_iterator end = simple_req_map.right.upper_bound(*it);
                    tag_iterator_diff diff=std::distance(beg,end);
                    if (diff){
-                       serverkey_type  deleted = beg->second;
-                       simple_req_map.right.erase(*it);
+                       serverkey_type  deleted = beg->second;   
                        if (diff==1){
-                            report_req_map.right.erase(*it);
+                            simple_req_map.right.erase(*it);
                             need_remove_set.insert(deleted);}}}
                if (report_req_map.right.find(*it)!=report_req_map.right.end()){
                    tag_const_iterator beg = report_req_map.right.lower_bound(*it);
                    tag_const_iterator end = report_req_map.right.upper_bound(*it);
-                   tag_iterator_diff diff=std::distance(beg,end);
+                   tag_iterator_diff diff=std::distance(beg,end);     
                    if (diff){
                        serverkey_type  deleted = beg->second;
-                       simple_req_map.right.erase(*it);
                        if (diff==1){
                             report_req_map.right.erase(*it);
+                            next_report_iterator=report_req_map.left.end();
                             need_remove_set.insert(deleted);}}}
                if (event_req_map.right.find(*it)!=event_req_map.right.end()){
                    tag_const_iterator beg = event_req_map.right.lower_bound(*it);
@@ -93,7 +94,8 @@ public:
                        serverkey_type  deleted = beg->second;
                        simple_req_map.right.erase(*it);
                        if (diff==1){
-                            report_req_map.right.erase(*it);
+                            event_req_map.right.erase(*it);
+                            next_event_iterator=event_req_map.left.end();
                             need_remove_set.insert(deleted);}}}}}
     
     
@@ -152,6 +154,9 @@ protected:
                 (report_req_map.empty())) ? 
                     0 : report_request_impl();}
     
+    bool report_requested(indx id) const{
+        return ((exectr) && (exectr->report_requested(id)));}
+    
     virtual ns_error report_request_impl() = 0; 
     
 
@@ -181,9 +186,22 @@ protected:
             return 0;}
 
     
-    virtual ns_error command_request_impl(const sidcmd_map& cmd) = 0;  
+    virtual ns_error command_request_impl(const sidcmd_map& cmd) = 0; 
+    
+    
+    
+
+    const serverkeys_tags_map&  simple_req(){
+        return simple_req_map;}
+
+    const serverkeys_tags_map&  report_req(){
+        return report_req_map;}
+    
+    const serverkeys_tags_map&  event_req(){
+        return event_req_map;}        
     
  
+    
     
     void add_simple(indx id, serverkey_type sid){
             indx_set::iterator it = need_add_set.find(id);
@@ -195,13 +213,15 @@ protected:
             indx_set::iterator it = need_add_set.find(id);
             if (it!=need_add_set.end())
                 need_add_set.erase(it);
-            report_req_map.isert(serverkey_tag_pair(sid,id));}
+            report_req_map.insert(serverkey_tag_pair(sid,id));
+            next_report_iterator=report_req_map.left.end();}
     
     void add_event(indx id, serverkey_type sid){
             indx_set::iterator it = need_add_set.find(id);
             if (it!=need_add_set.end())
                 need_add_set.erase(it);        
-            event_req_map.isert(serverkey_tag_pair(sid,id));}  
+            event_req_map.insert(serverkey_tag_pair(sid,id));
+            next_event_iterator=event_req_map.left.end();}  
     
     void req_error(indx id, ns_error err){
         indx_set::iterator it = need_add_set.find(id);
@@ -265,7 +285,9 @@ protected:
              need_add_set.insert(it->first);}
         event_req_map.clear();
         error_set.clear();
-        need_remove_set.clear();}
+        need_remove_set.clear();
+        next_event_iterator=event_req_map.left.end();
+        next_report_iterator=report_req_map.left.end();}
     
     
     ns_error faild_connection(){
@@ -275,19 +297,49 @@ protected:
         state_=disconnected;
         error(ERROR_FAILNET_CONNECTED);
         throw dvncierror(error());}
-
-
+    
+    
+     serverkey_const_iterator report_next(bool move = true) {
+            if (report_req_map.empty()) 
+                return report_req_map.left.end();
+            if (next_report_iterator==report_req_map.left.end())
+                next_report_iterator=report_req_map.left.begin();
+            serverkey_const_iterator it=next_report_iterator;
+            if (move) 
+                next_report_iterator++;
+            return it;}
+        
+     serverkey_const_iterator report_end() const{
+            return report_req_map.left.end();}
+     
+     
+     serverkey_const_iterator event_next(bool move = false) {
+            if (event_req_map.empty()) 
+                return event_req_map.left.end();
+            if (next_event_iterator==event_req_map.left.end())
+                next_event_iterator=event_req_map.left.begin();
+            serverkey_const_iterator it=next_event_iterator;
+            if (move) 
+                next_report_iterator++;
+            return it;}            
+        
+     serverkey_const_iterator event_end() const{
+            return event_req_map.left.end();}
 
     
     indx_set             need_add_set;
     serverkey_set        need_remove_set;
     indx_set             error_set;
     
+
+    private:
+        
     serverkeys_tags_map  simple_req_map;
     serverkeys_tags_map  report_req_map;
     serverkeys_tags_map  event_req_map;
     
-    
+    serverkey_const_iterator          next_report_iterator;
+    serverkey_const_iterator          next_event_iterator;
 
     
     
