@@ -25,6 +25,17 @@ namespace dvnci {
 
     class extnetintf  :  public extintf_wraper<num64>{
         
+        struct real_report_value{
+            double   value;
+            vlvtype  vld;
+            datetime tm;};
+            
+        typedef std::pair<serverkey_type, real_report_value >                          sid_rl_report_val_pair;
+        typedef std::map<serverkey_type, real_report_value ,
+                std::less<serverkey_type>, std::allocator<sid_rl_report_val_pair > >   sid_rl_report_val_map; 
+        
+        
+        
     public:
         
         extnetintf(tagsbase_ptr intf_, executor* exctr, indx grp);
@@ -56,7 +67,24 @@ namespace dvnci {
 
         virtual ns_error event_request_impl();
         
-        dvnci::custom::net::netintf_ptr   netintf;};
+        
+        void add_report_task(serverkey_type sid){
+            if (rep_tasks_set.find(sid)==rep_tasks_set.end())
+                rep_tasks_set.insert(sid);}
+        
+        void remove_report_task(serverkey_type sid){
+            if (rep_tasks_set.find(sid)!=rep_tasks_set.end())
+                rep_tasks_set.erase(sid);}
+        
+        bool is_report_task(serverkey_type sid) const{
+            return (rep_tasks_set.find(sid)!=rep_tasks_set.end());}
+    
+    private:
+        
+        
+        dvnci::custom::net::netintf_ptr   netintf;
+        sid_rl_report_val_map             real_repval_map;
+        serverkey_set                     rep_tasks_set;};
 
 
         }}}
