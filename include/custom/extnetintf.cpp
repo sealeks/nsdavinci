@@ -15,7 +15,7 @@ namespace dvnci {
             using namespace dvnci::custom::net;
             
             extnetintf::extnetintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
-            extintf_wraper<num64>(intf_, exctr, grp, TYPE_SIMPLE_REQ | TYPE_REPORT | TYPE_EVENT , CONTYPE_SYNC ) {;}
+            extintf_wraper<num64>(intf_, exctr, grp, TYPE_SIMPLE_REQ | TYPE_REPORT  , CONTYPE_SYNC ) {;}
             
 
             extnetintf::~extnetintf() {
@@ -250,7 +250,7 @@ namespace dvnci {
                 error(0);                
                 serverkey_const_iterator it=event_next();
                 if (it==event_end()) 
-                    return  error(ERROR_NODATA);
+                    return  error(0);
                 indx cid=it->second;
                 num64 sid=it->first;
                 
