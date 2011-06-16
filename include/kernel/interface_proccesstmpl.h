@@ -114,7 +114,7 @@ namespace dvnci {
                             return false;}}
                     else {
                         set_group_state(npos, externmanager->error(), FULL_VALID);}}
-                return false;}
+                return true;}
                     
         protected:
             

@@ -116,6 +116,8 @@ namespace dvnci {
                     break;}
                 case MSG_DVNCTAGDELFROMGR:
                 case MSG_DVNCTAGADDTOGR:
+                case MSG_DVNCINEWREF:
+                case MSG_DVNCIREMREF:                    
                 case MSG_DVNCITAGREPORT:{
                     addmessage(some, mess, id, some);
                     break;}

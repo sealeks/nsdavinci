@@ -47,10 +47,12 @@ public:
     
     extintf_wraper(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :  
     externalintf(inf,  exctr,  grp, provide_man, subsrcr){
+      next_simple_iterator=simple_req_map.left.end();
       next_event_iterator=event_req_map.left.end();
       next_report_iterator=report_req_map.left.end();}      
     
     virtual ~extintf_wraper() {};
+    
     
     virtual void insert(const indx_set& idset) {
         for (indx_set::const_iterator it=idset.begin();it!=idset.end();++it){
@@ -76,6 +78,7 @@ public:
                        serverkey_type  deleted = beg->second;   
                        if (diff==1){
                             simple_req_map.right.erase(*it);
+                            next_simple_iterator=simple_req_map.left.end();
                             need_remove_set.insert(deleted);}}}
                if (report_req_map.right.find(*it)!=report_req_map.right.end()){
                    tag_const_iterator beg = report_req_map.right.lower_bound(*it);
@@ -99,14 +102,25 @@ public:
                             need_remove_set.insert(deleted);}}}}}
     
     
-    virtual bool operator()(){     
+    virtual bool operator()(){
+        try{
             checkserverstatus();          
             remove_request();
             add_request();
             value_request();
             report_request();
             event_request();
-	    command_request();
+	    command_request();}
+        catch(dvncierror& errd){
+            if ((errd.code()==ERROR_IO_LINK_NOT_CONNECTION) || 
+                (errd.code()==ERROR_FAILNET_CONNECTED) || 
+                (errd.code()==ERROR_NONET_CONNECTED) ||
+                (errd.code()==ERROR_IO_SERVICE_LOCK)){
+                try{
+                    disconnect();}
+                catch(...){}}
+            error(errd.code());
+            throw errd;}    
             return true;}   
     
     
@@ -115,78 +129,41 @@ protected:
     
     
     virtual ns_error checkserverstatus(){
-        return 0;}
-    
+        return error(0);} 
     
     //requests   add
     
-    ns_error add_request(){
-        return (need_add_set.empty()) ? 0 : add_request_impl();}
-    
     virtual ns_error add_request_impl() = 0; 
-    
-    
+     
     
     //requests   remove    
     
-    ns_error remove_request(){
-        return (need_remove_set.empty()) ? 0 : remove_request_impl();}
-    
     virtual ns_error remove_request_impl()  = 0;
-    
     
 
     //requests   simple value       
-    
-    ns_error value_request(){
-        return ((!(provide() & TYPE_SIMPLE_REQ)) || 
-                (simple_req_map.empty())) ? 
-                    0 : value_request_impl();}
     
     virtual ns_error value_request_impl() = 0; 
     
     
   
-    //requests   report value       
+    //requests   report value         
     
-    ns_error report_request(){
-        return ((!(provide() & TYPE_REPORT)) || 
-                (report_req_map.empty())) ? 
-                    0 : report_request_impl();}
-    
+    virtual ns_error report_request_impl() = 0; 
+         
     bool report_requested(indx id) const{
         return ((exectr) && (exectr->report_requested(id)));}
     
-    virtual ns_error report_request_impl() = 0; 
-    
 
-    //requests   report value       
-    
-    ns_error event_request(){
-         return ((!(provide() & TYPE_EVENT)) || 
-                (report_req_map.empty())) ? 
-                    0 : event_request_impl();}
+    //requests   event value       
     
     virtual ns_error event_request_impl() = 0;
     
-    
-    ns_error command_request(){
-         command_vector cmds;
-         intf->select_commands(cmds, exectr->groupset());
-         if (!cmds.empty()) {
-                sidcmd_map sidcmds;
-                for (command_vector::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
-                    tag_const_iterator itsid = simple_req_map.right.find(it->tagid());
-                    if (itsid != simple_req_map.right.end()) {
-                        if (it->type() != TYPE_TEXT)
-			    sidcmds.insert(std::make_pair(itsid->second,short_value(it->value_set<num64 > (), it->type())));
-                        else
-                            sidcmds.insert(std::make_pair(itsid->second, short_value(it->strvalue())));}}
-                return (sidcmds.empty()) ? 0 : command_request_impl(sidcmds) ;}
-            return 0;}
 
+    //send   command value      
     
     virtual ns_error command_request_impl(const sidcmd_map& cmd) = 0; 
+    
     
     
     
@@ -198,16 +175,24 @@ protected:
         return report_req_map;}
     
     const serverkeys_tags_map&  event_req(){
-        return event_req_map;}        
+        return event_req_map;} 
     
- 
     
+    
+    const indx_set& need_add(){
+        return need_add_set;}
+    
+    const serverkey_set&  need_remove(){
+        return need_remove_set;}
+    
+
     
     void add_simple(indx id, serverkey_type sid){
             indx_set::iterator it = need_add_set.find(id);
             if (it!=need_add_set.end())
                 need_add_set.erase(it);
-            simple_req_map.insert(serverkey_tag_pair(sid,id));}
+            simple_req_map.insert(serverkey_tag_pair(sid,id));
+            next_event_iterator=simple_req_map.left.end();}
     
     void add_report(indx id, serverkey_type sid){
             indx_set::iterator it = need_add_set.find(id);
@@ -223,6 +208,10 @@ protected:
             event_req_map.insert(serverkey_tag_pair(sid,id));
             next_event_iterator=event_req_map.left.end();}  
     
+    void remove_custom(serverkey_type sid){
+        if (need_remove_set.find(sid)!=need_remove_set.end())
+            need_remove_set.erase(sid);}
+
     void req_error(indx id, ns_error err){
         indx_set::iterator it = need_add_set.find(id);
         if (it!=need_add_set.end())
@@ -253,6 +242,9 @@ protected:
        for (serverkey_const_iterator it=event_req_map.left.lower_bound(sid);it!=end;++it){
                exectr->write_val(it->second, val);}}
     
+    
+    
+    
     void write_val_id(indx id, const short_value val){
        tag_const_iterator it = simple_req_map.right.find(id);
        if (it != simple_req_map.right.end()){
@@ -272,8 +264,61 @@ protected:
     
     
     
+
+ 
     
-    void disconnect_util(){
+     serverkey_const_iterator simple_next(bool move = true) {
+            if (simple_req_map.empty()) 
+                return simple_req_map.left.end();
+            if (next_simple_iterator==simple_req_map.left.end())
+                next_simple_iterator=simple_req_map.left.begin();
+            serverkey_const_iterator it=next_simple_iterator;
+            if (move) 
+                next_simple_iterator++;
+            return it;}
+        
+     serverkey_const_iterator simple_end() const{
+            return simple_req_map.left.end();}  
+     
+     
+     
+    
+    
+     serverkey_const_iterator report_next(bool move = true) {
+            if (report_req_map.empty()) 
+                return report_req_map.left.end();
+            if (next_report_iterator==report_req_map.left.end())
+                next_report_iterator=report_req_map.left.begin();
+            serverkey_const_iterator it=next_report_iterator;
+            if (move) 
+                next_report_iterator++;
+            return it;}
+     
+     serverkey_const_iterator report_end() const{
+            return report_req_map.left.end();}
+     
+     
+     
+     
+     
+     serverkey_const_iterator event_next(bool move = false) {
+            if (event_req_map.empty()) 
+                return event_req_map.left.end();
+            if (next_event_iterator==event_req_map.left.end())
+                next_event_iterator=event_req_map.left.begin();
+            serverkey_const_iterator it=next_event_iterator;
+            if (move) 
+                next_event_iterator++;
+            return it;}            
+        
+     serverkey_const_iterator event_end() const{
+            return event_req_map.left.end();}
+     
+     
+     
+     
+      
+     void disconnect_util(){
         need_add_set.clear();
         for (tag_const_iterator it=simple_req_map.right.begin();it!=simple_req_map.right.end();++it){
              need_add_set.insert(it->first);}
@@ -286,60 +331,64 @@ protected:
         event_req_map.clear();
         error_set.clear();
         need_remove_set.clear();
+        next_simple_iterator=simple_req_map.left.end();
         next_event_iterator=event_req_map.left.end();
         next_report_iterator=report_req_map.left.end();}
-    
-    
-    ns_error faild_connection(){
-        try{
-           disconnect();}
-        catch(...){}
-        state_=disconnected;
-        error(ERROR_FAILNET_CONNECTED);
-        throw dvncierror(error());}
-    
-    
-     serverkey_const_iterator report_next(bool move = true) {
-            if (report_req_map.empty()) 
-                return report_req_map.left.end();
-            if (next_report_iterator==report_req_map.left.end())
-                next_report_iterator=report_req_map.left.begin();
-            serverkey_const_iterator it=next_report_iterator;
-            if (move) 
-                next_report_iterator++;
-            return it;}
-        
-     serverkey_const_iterator report_end() const{
-            return report_req_map.left.end();}
-     
-     
-     serverkey_const_iterator event_next(bool move = false) {
-            if (event_req_map.empty()) 
-                return event_req_map.left.end();
-            if (next_event_iterator==event_req_map.left.end())
-                next_event_iterator=event_req_map.left.begin();
-            serverkey_const_iterator it=next_event_iterator;
-            if (move) 
-                next_report_iterator++;
-            return it;}            
-        
-     serverkey_const_iterator event_end() const{
-            return event_req_map.left.end();}
 
-    
-    indx_set             need_add_set;
-    serverkey_set        need_remove_set;
-    indx_set             error_set;
-    
 
     private:
         
-    serverkeys_tags_map  simple_req_map;
-    serverkeys_tags_map  report_req_map;
-    serverkeys_tags_map  event_req_map;
+        
+    ns_error add_request(){
+        return (need_add_set.empty()) ? 0 : add_request_impl();}
+          
+    ns_error remove_request(){
+        return (need_remove_set.empty()) ? 0 : remove_request_impl();}
     
-    serverkey_const_iterator          next_report_iterator;
-    serverkey_const_iterator          next_event_iterator;
+    ns_error value_request(){
+        return ((!(provide() & TYPE_SIMPLE_REQ)) || 
+                (simple_req_map.empty())) ? 
+                    0 : value_request_impl();}
+    
+    ns_error report_request(){
+        return ((!(provide() & TYPE_REPORT)) || 
+                (report_req_map.empty())) ? 
+                    0 : report_request_impl();}
+    
+      
+    ns_error event_request(){
+         return ((!(provide() & TYPE_EVENT)) || 
+                (report_req_map.empty())) ? 
+                    0 : event_request_impl();}   
+    
+    
+    ns_error command_request(){
+         command_vector cmds;
+         intf->select_commands(cmds, exectr->groupset());
+         if (!cmds.empty()) {
+                sidcmd_map sidcmds;
+                for (command_vector::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
+                    tag_const_iterator itsid = simple_req_map.right.find(it->tagid());
+                    if (itsid != simple_req_map.right.end()) {
+                        if (it->type() != TYPE_TEXT)
+			    sidcmds.insert(std::make_pair(itsid->second,short_value(it->value_set<num64 > (), it->type())));
+                        else
+                            sidcmds.insert(std::make_pair(itsid->second, short_value(it->strvalue())));}}
+                return (sidcmds.empty()) ? 0 : command_request_impl(sidcmds) ;}
+            return 0;}    
+    
+        
+    indx_set                   need_add_set;
+    serverkey_set              need_remove_set;
+    indx_set                   error_set;    
+        
+    serverkeys_tags_map        simple_req_map;
+    serverkeys_tags_map        report_req_map;
+    serverkeys_tags_map        event_req_map;
+    
+    serverkey_const_iterator   next_simple_iterator;    
+    serverkey_const_iterator   next_report_iterator;
+    serverkey_const_iterator   next_event_iterator;
 
     
     

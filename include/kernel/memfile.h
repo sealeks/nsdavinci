@@ -443,10 +443,10 @@ namespace dvnci {
             notify(MSG_DVNCICOMMAND, id, 0, sIMMICommand);}
 
         void notify_newref(size_type id, size_type pid) {
-            notify(MSG_DVNCTAGADDTOGR, id, static_cast<num32> (pid), sIMMITagManage);}
+            notify(MSG_DVNCINEWREF, id, static_cast<num32> (pid), sIMMITagManage);}
 
         void notify_remref(size_type id, size_type pid) {
-            notify(MSG_DVNCTAGDELFROMGR, id, static_cast<num32> (pid), sIMMITagManage);}
+            notify(MSG_DVNCIREMREF, id, static_cast<num32> (pid), sIMMITagManage);}
 
         void notify_debug() {
             notify(MSG_DVNCDEBUG, 0, 0, sIMMIDebug);}
