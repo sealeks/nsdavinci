@@ -244,10 +244,12 @@ namespace dvnci {
                            default: {
                                if (selector->group_included(message.some)) {
                                   switch (message.mess) {
-                                       case MSG_DVNCTAGDELFROMGR:{
+                                       case MSG_DVNCTAGDELFROMGR:
+                                       case MSG_DVNCIREMREF:{
                                           removetag(message.id);
                                           break;}
-                                       case MSG_DVNCTAGADDTOGR:{
+                                       case MSG_DVNCTAGADDTOGR:
+                                       case MSG_DVNCINEWREF:{
                                           addtag(message.id);
                                           break;}
                                       default:{
