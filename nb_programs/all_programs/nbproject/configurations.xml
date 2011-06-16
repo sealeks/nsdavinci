@@ -93,6 +93,16 @@
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
                         OP="../../lib/${CND_CONF}/libnsadmin.a">
           </makeArtifact>
+          <makeArtifact PL="../libcustom"
+                        CT="3"
+                        CN="nb_gcc_db_WIN32"
+                        AC="true"
+                        BL="true"
+                        WD="../libcustom"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
+                        OP="../../lib/${CND_CONF}/libcustom.a">
+          </makeArtifact>
         </requiredProjects>
       </compileType>
     </conf>
@@ -169,6 +179,16 @@
                         BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
                         OP="../../lib/${CND_CONF}/libnsadmin.a">
+          </makeArtifact>
+          <makeArtifact PL="../libcustom"
+                        CT="3"
+                        CN="nb_gcc_rl_WIN32"
+                        AC="false"
+                        BL="true"
+                        WD="../libcustom"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
+                        OP="../../lib/${CND_CONF}/libcustom.a">
           </makeArtifact>
         </requiredProjects>
       </compileType>
@@ -249,6 +269,16 @@
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
                         OP="../../lib/${CND_CONF}/libnsadmin.a">
           </makeArtifact>
+          <makeArtifact PL="../libcustom"
+                        CT="3"
+                        CN="nb_gcc_db_LIN64"
+                        AC="false"
+                        BL="true"
+                        WD="../libcustom"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
+                        OP="../../lib/${CND_CONF}/libcustom.a">
+          </makeArtifact>
         </requiredProjects>
       </compileType>
     </conf>
@@ -327,6 +357,16 @@
                         BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
                         OP="../../lib/${CND_CONF}/libnsadmin.a">
+          </makeArtifact>
+          <makeArtifact PL="../libcustom"
+                        CT="3"
+                        CN="nb_gcc_rl_LIN64"
+                        AC="false"
+                        BL="true"
+                        WD="../libcustom"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
+                        OP="../../lib/${CND_CONF}/libcustom.a">
           </makeArtifact>
         </requiredProjects>
       </compileType>
