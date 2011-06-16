@@ -50,10 +50,12 @@ namespace dvnci {
             ns_error extnetintf::disconnect_impl(){
                 try{
                 disconnect_util();
+                real_repval_map.clear();;
+                rep_tasks_set.clear();
+                state_ = disconnected;
                 if (netintf->isconnected()){
                   netintf->disconnect();
-                  return error(0);}
-                state_ = disconnected;}
+                  return error(0);}}
                 catch(...){
                 state_ = disconnected;}
                 return error(0);}
@@ -61,14 +63,15 @@ namespace dvnci {
 
 
             ns_error extnetintf::add_request_impl() {
-                
-               if (need_add_set.empty()) return 0;
+               error(0); 
+               if (need_add().empty()) 
+                   return error();
                vect_cid_key cids;
-               for (indx_set::const_iterator it = need_add_set.begin(); it != need_add_set.end(); ++it) {
+               for (indx_set::const_iterator it = need_add().begin(); it != need_add().end(); ++it) {
                     if (intf->exists(*it)) {
                         cid_key tmp ={static_cast<num64>(*it),intf->binding(*it), 
                             static_cast<num64>(intf->type(*it)),  
-                            num64_cast<double>(intf->devdb(*it)) };
+                            num64_cast<double>(intf->devdb(*it))};
                         cids.push_back(tmp);}
                     else{
                         req_error(*it, ERROR_ENTNOEXIST);}}
@@ -104,12 +107,13 @@ namespace dvnci {
 
             ns_error extnetintf::remove_request_impl() {
                 
-                if (need_remove_set.empty())  
-                    return error(0);
+                error(0); 
+                if (need_remove().empty())  
+                    return error();
 
                 vect_num64 sids;
                 
-                for (serverkey_set::const_iterator it = need_remove_set.begin(); it != need_remove_set.end(); ++it) {
+                for (serverkey_set::const_iterator it = need_remove().begin(); it != need_remove().end(); ++it) {
                    sids.push_back(*it);}
 
                 if (sids.empty())  
@@ -123,7 +127,7 @@ namespace dvnci {
                 for (vect_num64::const_iterator it = sids.begin(); it != sids.end(); ++it) {
                    if (real_repval_map.find(*it)!=real_repval_map.end())
                        real_repval_map.erase(*it);
-                   need_remove_set.erase(*it);}
+                   remove_custom(*it);}
 
             return error();}
             
@@ -131,6 +135,8 @@ namespace dvnci {
             
             ns_error extnetintf::value_request_impl() {
                 
+                
+                error(0); 
                 vect_data_item lines;
                 vect_data_item_str linesstr;
                 vect_error_item errors;
@@ -169,7 +175,7 @@ namespace dvnci {
                 
                 error(0);
                 if (cmds.empty())  
-                    return error(0);
+                    return error();
                            
                 vect_command_data reqcmds; 
                 vect_error_item   errors;
