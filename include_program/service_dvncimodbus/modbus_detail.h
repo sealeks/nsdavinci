@@ -91,7 +91,7 @@ namespace dvnci {
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        class modbus_device_service : public templ_device_service<modbus_protocol_factory> {
+     class modbus_device_service : public templ_device_service<modbus_protocol_factory> {
         public:
             modbus_device_service(const metalink& lnk) : 
             templ_device_service<modbus_protocol_factory>(lnk) {};};
