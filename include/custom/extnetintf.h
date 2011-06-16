@@ -73,15 +73,16 @@ namespace dvnci {
     
     private:
         
-        void add_report_task(serverkey_type sid);
         
-        void remove_report_task(serverkey_type sid);
+        void add_report_task(indx cid);
         
-        bool is_report_task(serverkey_type sid) const;
+        void remove_report_task(indx cid);
+        
+        bool is_report_task(indx cid) const;
         
         dvnci::custom::net::netintf_ptr   netintf;
         sid_rl_report_val_map             real_repval_map;
-        serverkey_set                     rep_tasks_set;};
+        indx_set                          rep_tasks_set;};
 
 
         }}}

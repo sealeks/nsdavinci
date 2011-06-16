@@ -11,6 +11,37 @@
 namespace dvnci {
     namespace custom {
         namespace net {
+            
+            
+                        
+           ns_error remotenetintf::connect_impl(){
+               try{
+                if (!client_io) return error(ERROR_IO_DEVICE_CHANAL_NOT_DEF);
+                if (client_io->state() == client_io->connected){
+                    state_ = connected;
+                    return error(0);}
+                client_io->connect(host, port, tmout);
+                state_ = (client_io->state() == client_io->connected ) ? connected :  disconnected;
+                if (state_ == connected) {
+                     return error(0);}
+                else {
+                    state_ = disconnected;
+                    return error(ERROR_IO_LINK_NOT_CONNECTION);}}
+                catch (...) {}
+                state_ = disconnected;
+                return error(ERROR_BASENOTFOUND);}
+
+           ns_error remotenetintf::disconnect_impl(){
+               try{
+               if ((client_io) && (client_io->state() == client_io->connected)){
+                   client_io->disconnect();}}
+               catch (...) {}
+               state_ = disconnected;
+               return error(0);}       
+           
+           
+            
+            
 
             ns_error remotenetintf::auth_req( const std::string& user, const std::string& pass) {
                 return 0;}
@@ -262,31 +293,7 @@ namespace dvnci {
                     error(NS_ERROR_ERRRESP);}
                 return error();}
             
-            
-           ns_error remotenetintf::connect_impl(){
-               try{
-                if (!client_io) return error(ERROR_IO_DEVICE_CHANAL_NOT_DEF);
-                if (client_io->state() == client_io->connected){
-                    state_ = connected;
-                    return error(0);}
-                client_io->connect(host, port, tmout);
-                state_ = (client_io->state() == client_io->connected ) ? connected :  disconnected;
-                if (state_ == connected) {
-                     return error(0);}
-                else {
-                    state_ = disconnected;
-                    return error(ERROR_IO_LINK_NOT_CONNECTION);}}
-                catch (...) {}
-                state_ = disconnected;
-                return error(ERROR_BASENOTFOUND);}
-
-           ns_error remotenetintf::disconnect_impl(){
-               try{
-               if ((client_io) && (client_io->state() == client_io->connected)){
-                   client_io->disconnect();}}
-               catch (...) {}
-               state_ = disconnected;
-               return error(0);}           
+    
             
             
 }}}

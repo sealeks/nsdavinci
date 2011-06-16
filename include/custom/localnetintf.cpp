@@ -12,6 +12,21 @@
 namespace dvnci {
     namespace custom {
         namespace net {
+            
+            
+            ns_error localnetintf::connect_impl() {
+                if (intf) {
+                    state_ = connected;
+                    return error(0);}
+                return error(ERROR_NOINTF_CONNECTED);}
+
+            ns_error localnetintf::disconnect_impl() {
+                value_map.clear();
+                state_ = disconnected;
+                return error(0);}
+            
+            
+            
 
             ns_error localnetintf::auth_req( const std::string& user, const std::string& pass) {
                 return 0;}
@@ -83,8 +98,8 @@ namespace dvnci {
                         tagtype stype = intf->type(skey);
                         if (IN_TEXTSET(stype)) {
                             data_item_str vl = { *it, intf->value<std::string > (skey),
-                                 packdata(intf->valid(skey), intf->type(skey), intf->error(skey)),
-                                 num64_cast<datetime > (intf->time(skey))};
+                                packdata(intf->valid(skey), intf->type(skey), intf->error(skey)),
+                                num64_cast<datetime > (intf->time(skey))};
                             linesstr.push_back(vl);}
                         else {
                             data_item vl = { *it, intf->value_n64(skey), num64_cast<datetime > (intf->time(skey)),
@@ -93,7 +108,7 @@ namespace dvnci {
                     else {
                         error_item err = { *it , static_cast<num64> (ERROR_TYPENOCAST)};
                         errors.push_back(err);}}
-		return error();}
+                return error();}
 
             ns_error localnetintf::read_values(vect_data_item& lines , vect_data_item_str& linesstr, vect_error_item& errors) {
                 errors.clear();
@@ -119,14 +134,15 @@ namespace dvnci {
                     else {
                         error_item err = { static_cast<num64> (it->first) , static_cast<num64> (ERROR_TYPENOCAST)};
                         errors.push_back(err);}}
-		return error();}
+                return error();}
             
             
             
-            ns_error localnetintf::read_values_ex(const vect_num64& rsids, vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_item& errors){
+
+            ns_error localnetintf::read_values_ex(const vect_num64& rsids, vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_item& errors) {
                 return 0;}
-            
-            ns_error localnetintf::read_values_ex(vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_item& errors){
+
+            ns_error localnetintf::read_values_ex(vect_data_item& lines , vect_data_item_str& linesstr, vect_sid_key_ex& sids, vect_error_item& errors) {
                 return 0;}
             
             
@@ -148,45 +164,62 @@ namespace dvnci {
             ns_error localnetintf::read_report(const vect_reporttask& tasks , vect_report_value_data& dt, vect_error_item& errors) {
                 errors.clear();
                 dt.clear();
-                error(0); 
+                error(0);
                 for (vect_reporttask::const_iterator it = tasks.begin(); it != tasks.end(); ++it) {
                     indx skey = static_cast<indx> (it->sid);
-                    if (intf->exists(skey) && (IN_REPORTSET(intf->type(skey)))){
-                        if((MAX_REPOR_TASK_SIZE>report_task_map.size()) && (report_task_map.find(skey)==report_task_map.end())){
-                            report_task tmp = {now(), from_num64_cast<datetime>(it->start), from_num64_cast<datetime>(it->stop)};
+                    if (intf->exists(skey) && (IN_REPORTSET(intf->type(skey)))) {
+                        if ((MAX_REPOR_TASK_SIZE > report_task_map.size()) && (report_task_map.find(skey) == report_task_map.end())) {
+                            report_task tmp = {it->cid, now(), from_num64_cast<datetime > (it->start), from_num64_cast<datetime > (it->stop)};
                             report_task_map.insert(indx_reporttask_pair(skey, tmp));}
-                        else{
-                           error_item err = { it->sid , static_cast<num64> (ERROR_SOURSEBUSY)};
-                           errors.push_back(err);}}
-                    else{
-                        error_item err = { it->sid , static_cast<num64> (ERROR_TYPENOCAST)};
+                        else {
+                            error_item err = { it->cid , static_cast<num64> (ERROR_SOURSEBUSY)};
+                            errors.push_back(err);}}
+                    else {
+                        error_item err = { it->cid , static_cast<num64> (ERROR_TYPENOCAST)};
                         errors.push_back(err);}}
-                
-                
+
+
                 return error(execute_report(dt, errors));}
             
-                ns_error localnetintf::execute_report(vect_report_value_data& dt, vect_error_item& errors) {
+            
+
+            ns_error localnetintf::execute_report(vect_report_value_data& dt, vect_error_item& errors) {
                 if (report_task_map.empty())
                     return error();
-                for (indx_reporttask_map::iterator it=report_task_map.begin(); it!=report_task_map.end(); ++it){
-                     if (intf->exists(it->first) && (IN_REPORTSET(intf->type(it->first)))){
-                         dt_val_map vl;
-                         intf->select_reportbuff(it->first, vl, it->second.begin, it->second.end);
-                         report_value_data dttmp;
-                         dttmp.sid = static_cast<num64>(it->first);
-                         for (dt_val_map::const_iterator vit=vl.begin();vit!=vl.end(); ++vit){
-                             report_value_item pvl = {num64_cast<double>(vit->second), num64_cast<datetime>(vit->first)};
-                             dttmp.data.push_back(pvl);}
-                         dt.push_back(dttmp);
-                         report_task_map.erase(it);
-                         return error();}
-                    else{
-                        error_item err = { it->first , static_cast<num64> (ERROR_TYPENOCAST)};
+                for (indx_reporttask_map::iterator it = report_task_map.begin(); it != report_task_map.end(); ++it) {
+                    if (intf->exists(it->first) && (IN_REPORTSET(intf->type(it->first)))) {
+                        num64 tmtsk = dvnci::abs(secondsbetween(now(), it->second.creatitime));
+                        if (tmtsk < TASK_TIMOUT) {
+                            dt_val_map vl;
+                            intf->select_reportbuff(it->first, vl, it->second.begin, it->second.end);
+                            report_value_data dttmp;
+                            dttmp.cid = it->second.cid;
+                            if (!vl.empty()) {
+                                for (dt_val_map::const_iterator vit = vl.begin(); vit != vl.end(); ++vit) {
+                                    report_value_item pvl = {num64_cast<double>(vit->second), num64_cast<datetime > (vit->first)};
+                                    dttmp.data.push_back(pvl);}}
+                            else {
+                                datetime endtm = it->second.end;
+                                normalizereporttime(endtm, intf->type(it->first));
+                                if (endtm < now()) {
+                                    report_value_item pvl = {num64_cast<double>(NULL_DOUBLE), num64_cast<datetime > (endtm)};
+                                    dttmp.data.push_back(pvl);}}
+                            dt.push_back(dttmp);
+                            report_task_map.erase(it);
+                            return error();}
+                        else {
+                            error_item err = { it->second.cid , static_cast<num64> (ERROR_TASKTIMEOUT)};
+                            errors.push_back(err);
+                            report_task_map.erase(it);
+                            return error();}}
+                    else {
+                        error_item err = { it->second.cid , static_cast<num64> (ERROR_TYPENOCAST)};
                         errors.push_back(err);
                         report_task_map.erase(it);
                         return error();}}
-              
+                
                 return error();}
+            
 
             ns_error localnetintf::read_events(const vect_eventtask& tasks , vect_event_value_item& dt, vect_error_item& errors) {
                 return 0;}
@@ -201,15 +234,5 @@ namespace dvnci {
                 return 0;}
             
             
-            ns_error localnetintf::connect_impl(){
-                if (intf) {
-                    state_ = connected;
-                    return error(0);}
-                return error(ERROR_NOINTF_CONNECTED);}
-
-            ns_error localnetintf::disconnect_impl(){
-                value_map.clear();
-                state_ = disconnected;
-                return error(0);}
 }}}
 

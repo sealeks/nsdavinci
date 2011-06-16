@@ -203,7 +203,7 @@ namespace dvnci {
                 indx cid=it->second;
                 num64 sid=it->first;
                 
-                if ((report_requested(cid)) && (!is_report_task(sid))){
+                if ((report_requested(cid)) && (!is_report_task(cid))){
                     sid_rl_report_val_map::iterator rit=real_repval_map.find(sid);
                     if (rit!=real_repval_map.end()){
                         if ((rit->second.vld==FULL_VALID)){
@@ -224,36 +224,36 @@ namespace dvnci {
                                 increporttime(stoptm, intf->type(cid), 20);
                                 starttm = incsecond(starttm);                          
                                 
-                                reporttask tsk = { sid, num64_cast<datetime>(starttm), num64_cast<datetime>(stoptm) };
+                                reporttask tsk = { sid, static_cast<num64>(cid) , num64_cast<datetime>(starttm), num64_cast<datetime>(stoptm) };
                                 vect_reporttask tasks;
                                 tasks.push_back(tsk);
                                 error(netintf->read_report(tasks , dt, errors));
-                                add_report_task(sid);
+                                add_report_task(cid);
                                 
                                 for (vect_report_value_data::const_iterator rit=dt.begin(); rit!=dt.end(); ++rit){
-                                    remove_report_task(rit->sid);
+                                    remove_report_task(static_cast<indx>(rit->cid));
                                     dt_val_map repval;
                                     for (vect_report_value_item::const_iterator vit=rit->data.begin(); vit!=rit->data.end(); ++vit){
                                          repval.insert(dt_val_pair(from_num64_cast<datetime>(vit->time),from_num64_cast<double>(vit->val)));}
-                                    write_val_report_id(cid,repval);}
+                                    write_val_report_id(static_cast<indx>(rit->cid),repval);}
                                 for (vect_error_item::const_iterator eit=errors.begin(); eit!=errors.end(); ++eit){
-                                    remove_report_task(eit->id);}}}}}
+                                    remove_report_task(static_cast<indx>(eit->id));}}}}}
                 return error();}
 
             ns_error extnetintf::event_request_impl() {
                     return 0;}  
             
             
-            void extnetintf::add_report_task(serverkey_type sid){
-                if (rep_tasks_set.find(sid)==rep_tasks_set.end())
-                     rep_tasks_set.insert(sid);}
+            void extnetintf::add_report_task(indx cid){
+                if (rep_tasks_set.find(cid)==rep_tasks_set.end())
+                     rep_tasks_set.insert(cid);}
         
-            void extnetintf::remove_report_task(serverkey_type sid){
-                if (rep_tasks_set.find(sid)!=rep_tasks_set.end())
-                     rep_tasks_set.erase(sid);}
+            void extnetintf::remove_report_task(indx cid){
+                if (rep_tasks_set.find(cid)!=rep_tasks_set.end())
+                     rep_tasks_set.erase(cid);}
         
-            bool extnetintf::is_report_task(serverkey_type sid) const{
-                 return (rep_tasks_set.find(sid)!=rep_tasks_set.end());}            
+            bool extnetintf::is_report_task(indx cid) const{
+                 return (rep_tasks_set.find(cid)!=rep_tasks_set.end());}            
                 
                 
         }}}

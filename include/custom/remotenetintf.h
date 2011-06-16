@@ -48,6 +48,11 @@ namespace dvnci {
 
 
             protected:
+                
+                
+                virtual ns_error connect_impl();
+
+                virtual ns_error disconnect_impl();
 
                 template<class _REQSTRUCT, class _RESPSTRUCT, num16 _reqtp, num16 _resptp>
                 bool querytmpl(_REQSTRUCT& reqstruct_, _RESPSTRUCT& respstruct_) {
@@ -81,9 +86,7 @@ namespace dvnci {
                     return true;};
                     
                     
-                virtual ns_error connect_impl();
 
-                virtual ns_error disconnect_impl();
 
             private:
                 dvnci::rpc::rpcioclient_ptr   client_io;
