@@ -251,9 +251,11 @@ namespace dvnci {
                                           addtag(message.id);
                                           break;}
                                       default:{
-                                          optinalchangeid(message.id);}}}
+                                          if ((message.mess!=MSG_DVNCIREMREF) && (message.mess!=MSG_DVNCINEWREF))
+                                               optinalchangeid(message.id);}}}
                                else {
-                                  optinalchangeid(message.id);}
+                                  if ((message.mess!=MSG_DVNCIREMREF) && (message.mess!=MSG_DVNCINEWREF))
+                                       optinalchangeid(message.id);}
                                 break;}}}
                     execute_impl();
                     addmillisec_to_now(xt, 1);}
