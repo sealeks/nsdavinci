@@ -357,7 +357,7 @@ protected:
       
     ns_error event_request(){
          return ((!(provide() & TYPE_EVENT)) || 
-                (report_req_map.empty())) ? 
+                (event_req_map.empty())) ? 
                     0 : event_request_impl();}   
     
     
