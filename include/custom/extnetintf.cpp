@@ -16,12 +16,15 @@ namespace dvnci {
             
             extnetintf::extnetintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
             extintf_wraper<num64>(intf_, exctr, grp, TYPE_SIMPLE_REQ | TYPE_REPORT | TYPE_EVENT , CONTYPE_SYNC ) {;}
+            
 
             extnetintf::~extnetintf() {
                 disconnect();};
                 
             ns_error extnetintf::checkserverstatus(){
-                return 0;}
+                if ((!netintf->isconnected()))
+                    throw dvncierror(ERROR_FAILNET_CONNECTED);
+                return error(0);}
                 
             ns_error extnetintf::connect_impl(){
                 try{
@@ -52,6 +55,7 @@ namespace dvnci {
                 disconnect_util();
                 real_repval_map.clear();;
                 rep_tasks_set.clear();
+                evnt_tasks_set.clear();
                 state_ = disconnected;
                 if (netintf->isconnected()){
                   netintf->disconnect();
@@ -239,9 +243,33 @@ namespace dvnci {
                                 for (vect_error_item::const_iterator eit=errors.begin(); eit!=errors.end(); ++eit){
                                     remove_report_task(static_cast<indx>(eit->id));}}}}}
                 return error();}
+            
+            
 
             ns_error extnetintf::event_request_impl() {
-                    return 0;}  
+                error(0);                
+                serverkey_const_iterator it=event_next();
+                if (it==event_end()) 
+                    return  error(ERROR_NODATA);
+                indx cid=it->second;
+                num64 sid=it->first;
+                
+                if ((!is_event_task(cid))){
+                    
+                     vect_event_value_item dt;
+                     vect_error_item errors;
+                     
+                     datetime fromtm = intf->time(cid);
+                     eventtask tsk = { sid, static_cast<num64>(cid) , num64_cast<datetime>(fromtm) };
+                     vect_eventtask tasks;
+                     tasks.push_back(tsk);
+                     error(netintf->read_events(tasks , dt, errors));
+                     add_report_task(cid);
+                     for (vect_event_value_item::const_iterator rit=dt.begin(); rit!=dt.end(); ++rit){
+                          remove_event_task(static_cast<indx>(rit->cid));}
+                     for (vect_error_item::const_iterator eit=errors.begin(); eit!=errors.end(); ++eit){
+                          remove_event_task(static_cast<indx>(eit->id));}}
+                return error();}
             
             
             void extnetintf::add_report_task(indx cid){
@@ -253,7 +281,21 @@ namespace dvnci {
                      rep_tasks_set.erase(cid);}
         
             bool extnetintf::is_report_task(indx cid) const{
-                 return (rep_tasks_set.find(cid)!=rep_tasks_set.end());}            
+                 return (rep_tasks_set.find(cid)!=rep_tasks_set.end());}
+            
+            
+            
+            
+            void extnetintf::add_event_task(indx cid){
+                if (evnt_tasks_set.find(cid)==evnt_tasks_set.end())
+                     evnt_tasks_set.insert(cid);}
+        
+            void extnetintf::remove_event_task(indx cid){
+                if (evnt_tasks_set.find(cid)!=evnt_tasks_set.end())
+                     evnt_tasks_set.erase(cid);}
+        
+            bool extnetintf::is_event_task(indx cid) const{
+                 return (evnt_tasks_set.find(cid)!=evnt_tasks_set.end());}              
                 
                 
         }}}

@@ -28,8 +28,11 @@ namespace dvnci {
                 typedef boost::shared_ptr<refcounter>                                           refcounter_ptr;
                 
                 
-                static const size_t MAX_REPOR_TASK_SIZE = 0x1000;
+                static const size_t MAX_TASK_SIZE = 0x1000;
                 static const num64  TASK_TIMOUT = 1000;
+                
+                
+                
 
                 struct deadbound_short_value {
 
@@ -58,6 +61,9 @@ namespace dvnci {
                 std::less<indx>, std::allocator<indx_deadb_shv_pair > >  indx_deadb_shv_map;
                 
                 
+                
+                
+                
               struct report_task{
                   num64    cid;
                   datetime creatitime;
@@ -66,8 +72,19 @@ namespace dvnci {
                   
               typedef std::pair<indx, report_task >                    indx_reporttask_pair;
               typedef std::map<indx, report_task,
-              std::less<indx>, std::allocator<indx_reporttask_pair> >  indx_reporttask_map;                  
+              std::less<indx>, std::allocator<indx_reporttask_pair> >  indx_reporttask_map;
+              
+              
+              
+              
+              struct event_task{
+                  num64    cid;
+                  datetime creatitime;
+                  datetime from;}; 
                   
+              typedef std::pair<indx, event_task >                    indx_eventtask_pair;
+              typedef std::map<indx, event_task,
+              std::less<indx>, std::allocator<indx_eventtask_pair> >  indx_eventtask_map;                  
                   
                 
 
@@ -109,11 +126,14 @@ namespace dvnci {
             private:
                 
                 ns_error execute_report(vect_report_value_data& dt, vect_error_item& errors);
+                ns_error execute_event(vect_event_value_item& dt, vect_error_item& errors);
 
                 tagsbase_ptr        intf;
                 refcounter_ptr      refcntr;
                 indx_deadb_shv_map  value_map;
-                indx_reporttask_map report_task_map;} ;}}}
+                
+                indx_reporttask_map report_task_map;
+                indx_eventtask_map  event_task_map;} ;}}}
 
 #endif	/* NETINTF_H */
 

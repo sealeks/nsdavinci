@@ -22,6 +22,8 @@ namespace dvnci {
 
             ns_error localnetintf::disconnect_impl() {
                 value_map.clear();
+                event_task_map.clear();
+                report_task_map.clear();
                 state_ = disconnected;
                 return error(0);}
             
@@ -168,7 +170,7 @@ namespace dvnci {
                 for (vect_reporttask::const_iterator it = tasks.begin(); it != tasks.end(); ++it) {
                     indx skey = static_cast<indx> (it->sid);
                     if (intf->exists(skey) && (IN_REPORTSET(intf->type(skey)))) {
-                        if ((MAX_REPOR_TASK_SIZE > report_task_map.size()) && (report_task_map.find(skey) == report_task_map.end())) {
+                        if ((MAX_TASK_SIZE > report_task_map.size()) && (report_task_map.find(skey) == report_task_map.end())) {
                             report_task tmp = {it->cid, now(), from_num64_cast<datetime > (it->start), from_num64_cast<datetime > (it->stop)};
                             report_task_map.insert(indx_reporttask_pair(skey, tmp));}
                         else {
@@ -222,7 +224,38 @@ namespace dvnci {
             
 
             ns_error localnetintf::read_events(const vect_eventtask& tasks , vect_event_value_item& dt, vect_error_item& errors) {
-                return 0;}
+                errors.clear();
+                dt.clear();
+                error(0);
+                for (vect_eventtask::const_iterator it = tasks.begin(); it != tasks.end(); ++it) {
+                    indx skey = static_cast<indx> (it->sid);
+                    if (intf->exists(skey) && (IN_EVENTSET(intf->type(skey)))) {
+                        if ((MAX_TASK_SIZE > event_task_map.size()) && (event_task_map.find(skey) == event_task_map.end())) {
+                            event_task tmp = {it->cid, now(), from_num64_cast<datetime > (it->from)};
+                            event_task_map.insert(indx_eventtask_pair(skey, tmp));}
+                        else {
+                            error_item err = { it->cid , static_cast<num64> (ERROR_SOURSEBUSY)};
+                            errors.push_back(err);}}
+                    else {
+                        error_item err = { it->cid , static_cast<num64> (ERROR_TYPENOCAST)};
+                        errors.push_back(err);}}
+    
+
+                return error(execute_event(dt, errors));}
+            
+            
+             ns_error localnetintf::execute_event(vect_event_value_item& dt, vect_error_item& errors) {
+                if (event_task_map.empty())
+                    return error();
+                for (indx_eventtask_map::iterator it = event_task_map.begin(); it != event_task_map.end(); ++it) {
+                            error_item err = { it->second.cid , static_cast<num64> (ERROR_NODATA)};
+                            errors.push_back(err);
+                            event_task_map.erase(it);
+                            return error();}   
+                return error();}     
+             
+             
+             
 
             ns_error localnetintf::read_trend(const vect_trendtask& tasks, vect_trend_value_data& dt , vect_error_item& errors) {
                 return 0;}
