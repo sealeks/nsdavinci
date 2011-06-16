@@ -515,6 +515,9 @@ namespace dvnci {
                 case PROPERTY_NAME_GROUP:{
                     _interface->group(id).name(val);
                     break;};
+                case PROPERTY_CHANALPORT_GROUP:{
+                    _interface->group(id).port(val);
+                    break;};    
                 case PROPERTY_ENUM_GROUP:{
                     break;}
                 case PROPERTY_TYPE_GROUP:{
