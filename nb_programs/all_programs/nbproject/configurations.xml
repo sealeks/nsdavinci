@@ -371,7 +371,7 @@
         </requiredProjects>
       </compileType>
     </conf>
-    <conf name="all_gcc_db_WIN32" type="1">
+    <conf name="app_gcc_db_WIN32" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
@@ -384,66 +384,6 @@
           </incDir>
         </ccTool>
         <requiredProjects>
-          <makeArtifact PL="../libmeta"
-                        CT="3"
-                        CN="nb_gcc_db_WIN32"
-                        AC="true"
-                        BL="true"
-                        WD="../libmeta"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libmeta.a">
-          </makeArtifact>
-          <makeArtifact PL="../libsoci"
-                        CT="3"
-                        CN="nb_gcc_db_WIN32"
-                        AC="false"
-                        BL="true"
-                        WD="../libsoci"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libsoci.a">
-          </makeArtifact>
-          <makeArtifact PL="../lisocipg"
-                        CT="2"
-                        CN="nb_gcc_db_WIN32"
-                        AC="false"
-                        BL="true"
-                        WD="../lisocipg"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
-                        OP="../../bin/${CND_CONF}/libsoci_postgresql.dll">
-          </makeArtifact>
-          <makeArtifact PL="../libnskernel"
-                        CT="3"
-                        CN="nb_gcc_db_WIN32"
-                        AC="true"
-                        BL="true"
-                        WD="../libnskernel"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libnskernel.a">
-          </makeArtifact>
-          <makeArtifact PL="../libdbaccess"
-                        CT="3"
-                        CN="nb_gcc_db_WIN32"
-                        AC="false"
-                        BL="true"
-                        WD="../libdbaccess"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libdbaccess.a">
-          </makeArtifact>
-          <makeArtifact PL="../libnsadmin"
-                        CT="3"
-                        CN="nb_gcc_db_WIN32"
-                        AC="false"
-                        BL="true"
-                        WD="../libnsadmin"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libnsadmin.a">
-          </makeArtifact>
           <makeArtifact PL="../service_dvnciarch"
                         CT="1"
                         CN="nb_gcc_db_WIN32"
@@ -453,16 +393,6 @@
                         BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
                         OP="../../bin/${CND_CONF}/service_dvnciarch_db">
-          </makeArtifact>
-          <makeArtifact PL="../service_dvncimodbus"
-                        CT="1"
-                        CN="nb_gcc_db_WIN32"
-                        AC="false"
-                        BL="true"
-                        WD="../service_dvncimodbus"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
-                        OP="../../bin/${CND_CONF}/service_dvncimodbus_db">
           </makeArtifact>
           <makeArtifact PL="../service_dvncisys"
                         CT="1"
@@ -504,20 +434,60 @@
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
                         OP="../../bin/${CND_CONF}/app_test">
           </makeArtifact>
-          <makeArtifact PL="../app_admin"
-                        CT="4"
+          <makeArtifact PL="../service_dvnciopc"
+                        CT="1"
                         CN="nb_gcc_db_WIN32"
                         AC="true"
                         BL="true"
-                        WD="../app_admin"
+                        WD="../service_dvnciopc"
                         BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
-                        OP="../../bin/${CND_CONF}/app_admin">
+                        OP="../../bin/${CND_CONF}/service_dvnciopc_db">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncinet"
+                        CT="1"
+                        CN="nb_gcc_db_WIN32"
+                        AC="true"
+                        BL="true"
+                        WD="../service_dvncinet"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncinet_db">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncilgk"
+                        CT="1"
+                        CN="nb_gcc_db_WIN32"
+                        AC="true"
+                        BL="true"
+                        WD="../service_dvncilgk"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncilgk_db">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncikoyo"
+                        CT="1"
+                        CN="nb_gcc_db_WIN32"
+                        AC="false"
+                        BL="true"
+                        WD="../service_dvncikoyo"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncikoyo_db">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncimodbus"
+                        CT="1"
+                        CN="nb_gcc_db_WIN32"
+                        AC="false"
+                        BL="true"
+                        WD="../service_dvncimodbus"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncimodbus_db">
           </makeArtifact>
         </requiredProjects>
       </compileType>
     </conf>
-    <conf name="all_gcc_rl_WIN32" type="1">
+    <conf name="app_gcc_rl_WIN32" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
@@ -530,66 +500,6 @@
           </incDir>
         </ccTool>
         <requiredProjects>
-          <makeArtifact PL="../libmeta"
-                        CT="3"
-                        CN="nb_gcc_rl_WIN32"
-                        AC="false"
-                        BL="true"
-                        WD="../libmeta"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libmeta.a">
-          </makeArtifact>
-          <makeArtifact PL="../libsoci"
-                        CT="3"
-                        CN="nb_gcc_rl_WIN32"
-                        AC="true"
-                        BL="true"
-                        WD="../libsoci"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libsoci.a">
-          </makeArtifact>
-          <makeArtifact PL="../lisocipg"
-                        CT="2"
-                        CN="nb_gcc_rl_WIN32"
-                        AC="true"
-                        BL="true"
-                        WD="../lisocipg"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
-                        OP="../../bin/${CND_CONF}/libsoci_postgresql.dll">
-          </makeArtifact>
-          <makeArtifact PL="../libnskernel"
-                        CT="3"
-                        CN="nb_gcc_rl_WIN32"
-                        AC="false"
-                        BL="true"
-                        WD="../libnskernel"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libnskernel.a">
-          </makeArtifact>
-          <makeArtifact PL="../libdbaccess"
-                        CT="3"
-                        CN="nb_gcc_rl_WIN32"
-                        AC="true"
-                        BL="true"
-                        WD="../libdbaccess"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libdbaccess.a">
-          </makeArtifact>
-          <makeArtifact PL="../libnsadmin"
-                        CT="3"
-                        CN="nb_gcc_rl_WIN32"
-                        AC="true"
-                        BL="true"
-                        WD="../libnsadmin"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
-                        OP="../../lib/${CND_CONF}/libnsadmin.a">
-          </makeArtifact>
           <makeArtifact PL="../service_dvnciarch"
                         CT="1"
                         CN="nb_gcc_rl_WIN32"
@@ -599,16 +509,6 @@
                         BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
                         OP="../../bin/${CND_CONF}/service_dvnciarch">
-          </makeArtifact>
-          <makeArtifact PL="../service_dvncimodbus"
-                        CT="1"
-                        CN="nb_gcc_rl_WIN32"
-                        AC="false"
-                        BL="true"
-                        WD="../service_dvncimodbus"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
-                        OP="../../bin/${CND_CONF}/service_dvncimodbus">
           </makeArtifact>
           <makeArtifact PL="../service_dvncisys"
                         CT="1"
@@ -624,7 +524,7 @@
                         CT="1"
                         CN="nb_gcc_rl_WIN32"
                         AC="true"
-                        BL="false"
+                        BL="true"
                         WD="../service_dvnciadmin"
                         BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
@@ -650,20 +550,60 @@
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
                         OP="../../bin/${CND_CONF}/app_test">
           </makeArtifact>
-          <makeArtifact PL="../app_admin"
-                        CT="4"
+          <makeArtifact PL="../service_dvncimodbus"
+                        CT="1"
                         CN="nb_gcc_rl_WIN32"
                         AC="false"
                         BL="true"
-                        WD="../app_admin"
+                        WD="../service_dvncimodbus"
                         BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
-                        OP="../../bin/${CND_CONF}/app_admin">
+                        OP="../../bin/${CND_CONF}/service_dvncimodbus">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncinet"
+                        CT="1"
+                        CN="nb_gcc_rl_WIN32"
+                        AC="false"
+                        BL="true"
+                        WD="../service_dvncinet"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncinet">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncikoyo"
+                        CT="1"
+                        CN="nb_gcc_rl_WIN32"
+                        AC="false"
+                        BL="true"
+                        WD="../service_dvncikoyo"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncikoyo_db">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncilgk"
+                        CT="1"
+                        CN="nb_gcc_rl_WIN32"
+                        AC="false"
+                        BL="true"
+                        WD="../service_dvncilgk"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncilgk">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvnciopc"
+                        CT="1"
+                        CN="nb_gcc_rl_WIN32"
+                        AC="false"
+                        BL="true"
+                        WD="../service_dvnciopc"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_WIN32 clean"
+                        OP="../../bin/${CND_CONF}/service_dvnciopc">
           </makeArtifact>
         </requiredProjects>
       </compileType>
     </conf>
-    <conf name="all_gcc_db_LIN64" type="1">
+    <conf name="app_gcc_db_LIN64" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
@@ -676,66 +616,6 @@
           </incDir>
         </ccTool>
         <requiredProjects>
-          <makeArtifact PL="../libmeta"
-                        CT="3"
-                        CN="nb_gcc_db_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libmeta"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libmeta.a">
-          </makeArtifact>
-          <makeArtifact PL="../libsoci"
-                        CT="3"
-                        CN="nb_gcc_db_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libsoci"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libsoci.a">
-          </makeArtifact>
-          <makeArtifact PL="../lisocipg"
-                        CT="2"
-                        CN="nb_gcc_db_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../lisocipg"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
-                        OP="../../bin/${CND_CONF}/libsoci_postgresql.so">
-          </makeArtifact>
-          <makeArtifact PL="../libnskernel"
-                        CT="3"
-                        CN="nb_gcc_db_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libnskernel"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libnskernel.a">
-          </makeArtifact>
-          <makeArtifact PL="../libdbaccess"
-                        CT="3"
-                        CN="nb_gcc_db_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libdbaccess"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libdbaccess.a">
-          </makeArtifact>
-          <makeArtifact PL="../libnsadmin"
-                        CT="3"
-                        CN="nb_gcc_db_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libnsadmin"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libnsadmin.a">
-          </makeArtifact>
           <makeArtifact PL="../service_dvnciarch"
                         CT="1"
                         CN="nb_gcc_db_LIN64"
@@ -796,20 +676,40 @@
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
                         OP="../../bin/${CND_CONF}/app_test">
           </makeArtifact>
-          <makeArtifact PL="../app_admin"
-                        CT="4"
+          <makeArtifact PL="../service_dvncilgk"
+                        CT="1"
                         CN="nb_gcc_db_LIN64"
                         AC="false"
                         BL="true"
-                        WD="../app_admin"
+                        WD="../service_dvncilgk"
                         BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
-                        OP="../../bin/${CND_CONF}/app_admin">
+                        OP="../../bin/${CND_CONF}/service_dvncilgk_db">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncikoyo"
+                        CT="1"
+                        CN="nb_gcc_db_LIN64"
+                        AC="true"
+                        BL="true"
+                        WD="../service_dvncikoyo"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncikoyo_db">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncinet"
+                        CT="1"
+                        CN="nb_gcc_db_LIN64"
+                        AC="false"
+                        BL="true"
+                        WD="../service_dvncinet"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncinet_db">
           </makeArtifact>
         </requiredProjects>
       </compileType>
     </conf>
-    <conf name="all_gcc_rl_LIN64" type="1">
+    <conf name="app_gcc_rl_LIN64" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
@@ -822,66 +722,6 @@
           </incDir>
         </ccTool>
         <requiredProjects>
-          <makeArtifact PL="../libmeta"
-                        CT="3"
-                        CN="nb_gcc_rl_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libmeta"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libmeta.a">
-          </makeArtifact>
-          <makeArtifact PL="../libsoci"
-                        CT="3"
-                        CN="nb_gcc_rl_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libsoci"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libsoci.a">
-          </makeArtifact>
-          <makeArtifact PL="../lisocipg"
-                        CT="2"
-                        CN="nb_gcc_rl_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../lisocipg"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
-                        OP="../../bin/${CND_CONF}/libsoci_postgresql.so">
-          </makeArtifact>
-          <makeArtifact PL="../libnskernel"
-                        CT="3"
-                        CN="nb_gcc_rl_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libnskernel"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libnskernel.a">
-          </makeArtifact>
-          <makeArtifact PL="../libdbaccess"
-                        CT="3"
-                        CN="nb_gcc_rl_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libdbaccess"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libdbaccess.a">
-          </makeArtifact>
-          <makeArtifact PL="../libnsadmin"
-                        CT="3"
-                        CN="nb_gcc_rl_LIN64"
-                        AC="false"
-                        BL="true"
-                        WD="../libnsadmin"
-                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
-                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
-                        OP="../../lib/${CND_CONF}/libnsadmin.a">
-          </makeArtifact>
           <makeArtifact PL="../service_dvnciarch"
                         CT="1"
                         CN="nb_gcc_rl_LIN64"
@@ -942,15 +782,35 @@
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
                         OP="../../bin/${CND_CONF}/app_test">
           </makeArtifact>
-          <makeArtifact PL="../app_admin"
-                        CT="4"
+          <makeArtifact PL="../service_dvncinet"
+                        CT="1"
                         CN="nb_gcc_rl_LIN64"
                         AC="false"
                         BL="true"
-                        WD="../app_admin"
+                        WD="../service_dvncinet"
                         BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
                         CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
-                        OP="../../bin/${CND_CONF}/app_admin">
+                        OP="../../bin/${CND_CONF}/service_dvncinet_db">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncilgk"
+                        CT="1"
+                        CN="nb_gcc_rl_LIN64"
+                        AC="false"
+                        BL="true"
+                        WD="../service_dvncilgk"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncilgk_db">
+          </makeArtifact>
+          <makeArtifact PL="../service_dvncikoyo"
+                        CT="1"
+                        CN="nb_gcc_rl_LIN64"
+                        AC="false"
+                        BL="true"
+                        WD="../service_dvncikoyo"
+                        BC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64"
+                        CC="${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean"
+                        OP="../../bin/${CND_CONF}/service_dvncikoyo_db">
           </makeArtifact>
         </requiredProjects>
       </compileType>
