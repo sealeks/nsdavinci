@@ -22,7 +22,7 @@ AS=as.exe
 
 # Macros
 CND_PLATFORM=MinGW-Windows
-CND_CONF=all_gcc_db_WIN32
+CND_CONF=app_gcc_db_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
 
@@ -68,19 +68,16 @@ ${OBJECTDIR}/main.o: main.cpp
 
 # Subprojects
 .build-subprojects:
-	cd ../libmeta && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
-	cd ../libsoci && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
-	cd ../lisocipg && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
-	cd ../libnskernel && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
-	cd ../libdbaccess && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
-	cd ../libnsadmin && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
 	cd ../service_dvnciarch && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
-	cd ../service_dvncimodbus && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
 	cd ../service_dvncisys && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
 	cd ../service_dvnciadmin && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
 	cd ../test_poligon && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
 	cd ../app_test && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
-	cd ../app_admin && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
+	cd ../service_dvnciopc && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
+	cd ../service_dvncinet && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
+	cd ../service_dvncilgk && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
+	cd ../service_dvncikoyo && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
+	cd ../service_dvncimodbus && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
@@ -89,19 +86,16 @@ ${OBJECTDIR}/main.o: main.cpp
 
 # Subprojects
 .clean-subprojects:
-	cd ../libmeta && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
-	cd ../libsoci && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
-	cd ../lisocipg && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
-	cd ../libnskernel && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
-	cd ../libdbaccess && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
-	cd ../libnsadmin && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
 	cd ../service_dvnciarch && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
-	cd ../service_dvncimodbus && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
 	cd ../service_dvncisys && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
 	cd ../service_dvnciadmin && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
 	cd ../test_poligon && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
 	cd ../app_test && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
-	cd ../app_admin && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
+	cd ../service_dvnciopc && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
+	cd ../service_dvncinet && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
+	cd ../service_dvncilgk && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
+	cd ../service_dvncikoyo && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
+	cd ../service_dvncimodbus && ${MAKE}  -f Makefile CONF=nb_gcc_db_WIN32 clean
 
 # Enable dependency checking
 .dep.inc: .depcheck-impl

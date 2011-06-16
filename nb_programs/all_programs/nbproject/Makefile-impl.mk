@@ -31,7 +31,7 @@ DEFAULTCONF=lib_gcc_db_WIN32
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=lib_gcc_db_WIN32 lib_gcc_rl_WIN32 lib_gcc_db_LIN64 lib_gcc_rl_LIN64 all_gcc_db_WIN32 all_gcc_rl_WIN32 all_gcc_db_LIN64 all_gcc_rl_LIN64 
+ALLCONFS=lib_gcc_db_WIN32 lib_gcc_rl_WIN32 lib_gcc_db_LIN64 lib_gcc_rl_LIN64 app_gcc_db_WIN32 app_gcc_rl_WIN32 app_gcc_db_LIN64 app_gcc_rl_LIN64 
 
 
 # build
