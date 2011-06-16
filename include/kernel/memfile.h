@@ -2566,6 +2566,10 @@ namespace dvnci {
         void addtags(str_indx_map& newnames, size_type groupid);
 
         void addindexmap(str_indx_map& mp);
+        
+        
+        
+        
 
         bool logbuffered(size_type id) const {
             return ((logged(id)) && (logkey(id) != npos)) ?
@@ -2591,6 +2595,8 @@ namespace dvnci {
         size_type reset_logkey(size_type id) {
             remove_logkey(id);
             return add_logkey(id);}
+        
+        
 
         reportbufferbase_ptr   reportbuffers() const {
             return reportbuffers_;}
@@ -2611,6 +2617,8 @@ namespace dvnci {
         size_type reset_reportkey(size_type id) {
             remove_reportkey(id);
             return add_reportkey(id);}
+        
+        
 
         std::string valstringvalue(size_t pos) const {
             return valstrb_->getstring(pos);}
@@ -2622,6 +2630,8 @@ namespace dvnci {
             valstrb_->remove(operator[](id)->value<size_t > ());}
 
         void valuestringreplace(size_type id, bool to_sys);
+        
+        
 
         void kvitall() {
             alarms()->kvitall();}

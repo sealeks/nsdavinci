@@ -84,7 +84,9 @@ namespace dvnci {
     // пустой ответ
     const ns_error ERROR_NULLRESPONSE = 0x20E;
     // источник занят, необходимо подождать
-    const ns_error ERROR_SOURSEBUSY = 0x20F;    
+    const ns_error ERROR_SOURSEBUSY = 0x20F;
+    // задание удалено по таймауту
+    const ns_error ERROR_TASKTIMEOUT = 0x210;    
     // канал не определен
     const ns_error ERROR_IO_DEVICE_CHANAL_NOT_DEF = 0x420;
     // таймут истек
