@@ -588,19 +588,19 @@ namespace dvnci {
             ns_error opcintf::checkserverstatus() {
                 error(0);
                 if ((!opc_spec) || (!static_cast<opc_util*> (opc_spec.get())->IGRPMGT()))
-                    return error(faild_connection());
+                    throw dvncierror(ERROR_FAILNET_CONNECTED);
 
                 OPCSERVERSTATUS status;
                 OPCSERVERSTATUS* pstatus = &status;
                 HRESULT hResult = static_cast<opc_util*> (opc_spec.get())->ISRV()->GetStatus(&pstatus);
 
                 if (FAILED(hResult)) {
-                    return faild_connection();}
+                    throw dvncierror(ERROR_FAILNET_CONNECTED);}
 
                 return error();
 
                 //if (status.dwServerState == OPC_STATUS_RUNNING) return 0;
-                return error(faild_connection());}
+                throw dvncierror(ERROR_FAILNET_CONNECTED);}
 
             ns_error  opcintf::connect_impl() {
 
@@ -673,21 +673,21 @@ namespace dvnci {
                 disconnect_util();
                 readtractmap.clear();
                 writetractmap.clear();
+                state_ = disconnected;
                 if (state_ == connected) {
                     ver = 0;
                     if (opc_spec)
-                        opc_spec.reset();
-                    state_ = disconnected;}
+                        opc_spec.reset();}
                 return 0;}
 
             ns_error opcintf::add_request_impl() {
 
                 error(0);
-                if (need_add_set.empty()) 
+                if (need_add().empty()) 
                     return error();
 
 
-                DWORD dwCount = need_add_set.size();
+                DWORD dwCount = need_add().size();
                 OPCITEMDEF* pItems = (OPCITEMDEF*) CoTaskMemAlloc(dwCount * sizeof (OPCITEMDEF)); // need free
                 OPCITEMRESULT* pResults = NULL; // need free
                 HRESULT* pErrors = NULL; // need free
@@ -699,7 +699,7 @@ namespace dvnci {
 
                 tempwstring tmpwstr;
 
-                for (indx_set::const_iterator it = need_add_set.begin(); it != need_add_set.end(); ++it) {
+                for (indx_set::const_iterator it = need_add().begin(); it != need_add().end(); ++it) {
                     if (intf->exists(*it)) {
                         tmpwstr.push_back(string_to_wstring(intf->binding(*it)));}}
 
@@ -707,7 +707,7 @@ namespace dvnci {
 
                 DWORD i = 0;
 
-                for (indx_set::const_iterator it = need_add_set.begin(); it != need_add_set.end(); ++it) {
+                for (indx_set::const_iterator it = need_add().begin(); it != need_add().end(); ++it) {
                     if (intf->exists(*it)) {
                         pItems[i].szItemID = const_cast<wchar_t*> (wsit != tmpwstr.end() ? wsit->c_str() : L"");
                         pItems[i].szAccessPath = NULL;
@@ -752,9 +752,9 @@ namespace dvnci {
             ns_error opcintf::remove_request_impl() {
 
                 error(0);
-                if (need_remove_set.empty()) return error();
+                if (need_remove().empty()) return error();
 
-                DWORD dwCount = need_remove_set.size();
+                DWORD dwCount = need_remove().size();
                 OPCHANDLE * phServer = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
                 HRESULT* pErrors = NULL; // need free
 
@@ -762,7 +762,7 @@ namespace dvnci {
 
                 DWORD i = 0;
 
-                for (serverkey_set::const_iterator it = need_remove_set.begin(); it != need_remove_set.end(); ++it) {
+                for (serverkey_set::const_iterator it = need_remove().begin(); it != need_remove().end(); ++it) {
                     phServer[i++] = *it;}
 
 
@@ -779,9 +779,9 @@ namespace dvnci {
 
                     for (i = 0; i < dwCount; i++) {
                         if (pErrors[i] != S_OK) {
-                            need_remove_set.erase(phServer[i]);}
+                            remove_custom(phServer[i]);}
                         else {
-                            need_remove_set.erase(phServer[i]);}}
+                            remove_custom(phServer[i]);}}
 
                     CoTaskMemFree(phServer); // free
                     CoTaskMemFree(pErrors); // free;
