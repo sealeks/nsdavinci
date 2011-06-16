@@ -31,6 +31,8 @@ namespace dvnci {
                                     error_item err = { it->cid, static_cast<num64> (ERROR_TYPENOCAST)};
                                     errors.push_back(err);
                                     break;}}
+                            if (!IN_REPORTSET(stype))
+                                refcntr->add(skey);
                             indx_deadb_shv_map::iterator sit = value_map.find(skey);
                             if (sit != value_map.end()) {
                                 if (sit->second.db() > from_num64_cast<double>(it->dbound))
@@ -62,6 +64,7 @@ namespace dvnci {
                 for (vect_num64::const_iterator it = sids.begin(); it != sids.end(); ++it) {
                     indx_deadb_shv_map::iterator sit = value_map.find(static_cast<indx> (*it));
                     if (sit != value_map.end()) {
+                        refcntr->remove(static_cast<indx> (*it));
                         value_map.erase(sit);}
                     else {
                         error_item err = { *it , static_cast<num64> (ERROR_NODATA)};

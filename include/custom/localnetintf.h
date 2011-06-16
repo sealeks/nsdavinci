@@ -24,6 +24,9 @@ namespace dvnci {
 
             class localnetintf : public netintf {
                 
+                typedef refcounter_templ<tagsbase>                                              refcounter;
+                typedef boost::shared_ptr<refcounter>                                           refcounter_ptr;
+                
                 
                 static const size_t MAX_REPOR_TASK_SIZE = 0x1000;
 
@@ -69,7 +72,8 @@ namespace dvnci {
 
             public:
 
-                localnetintf(tagsbase_ptr inf) : netintf() , intf(inf)  {};
+                localnetintf(tagsbase_ptr inf) : netintf() , intf(inf)  {
+                     refcntr=refcounter_ptr(new refcounter(intf,true));};
 
                 virtual  ~localnetintf() {};
 
@@ -98,6 +102,7 @@ namespace dvnci {
                 ns_error execute_report(vect_report_value_data& dt, vect_error_item& errors);
 
                 tagsbase_ptr        intf;
+                refcounter_ptr      refcntr;
                 indx_deadb_shv_map  value_map;
                 indx_reporttask_map report_task_map;} ;}}}
 
