@@ -2218,6 +2218,10 @@ namespace dvnci {
             if (IN_RANGESET(newst.type()) && (((oldst.mineu64() != newst.mineu64())
                                                || (oldst.maxeu64() != newst.maxeu64()))) || (oldst.type() != newst.type())) {
                 trigger_range(id, newst.rangable());}
+            
+            if ((IN_NUMBERSET(newst.type())) && (IN_NUMBERSET(oldst.type()))){
+                if (newst.devdb()!=oldst.devdb())
+                    change=true;}
 
             if (change && (refcnt(id))) {
                 notify_tagmanage(MSG_DVNCTAGDELFROMGR, id, group(id));
@@ -2270,6 +2274,8 @@ namespace dvnci {
     void tagsbase::changepos1(size_t oldpos1, size_t newpos1) {
         INP_EXCLUSIVE_LOCK(item_indexer->memlock());
         buildindex();}
+    
+    
 
     void tagsbase::initstruct(size_type id, const std::string& newname, size_type parent) {
 
