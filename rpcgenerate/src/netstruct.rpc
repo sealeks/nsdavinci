@@ -215,8 +215,9 @@ struct resp_send_commands {
 
 struct reporttask {
 	num64 sid = 1;
-        num64 start = 2;
-	num64 stop = 3;
+	num64 cid = 2;
+        num64 start = 3;
+	num64 stop = 4;
 }
 
 struct report_value_item {
@@ -225,7 +226,7 @@ struct report_value_item {
 }
 
 struct report_value_data {
-	num64 sid = 1;
+	num64 cid = 1;
 	array report_value_item  data = 2;
 }
 
@@ -248,14 +249,15 @@ struct resp_reporttask {
 
 
 struct event_value_item {
-	num64 sid    = 1;
+	num64 cid    = 1;
         num64 val    = 2;
         num64 time   = 3;
 }
 
 struct eventtask {
 	num64 sid = 1;
-        num64 start = 2;
+	num64 cid = 2;
+        num64 from = 3;
 }
 
 struct req_eventtask {
