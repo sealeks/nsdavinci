@@ -73,32 +73,31 @@ public:
                if (simple_req_map.right.find(*it)!=simple_req_map.right.end()) {
                    tag_const_iterator beg = simple_req_map.right.lower_bound(*it);
                    tag_const_iterator end = simple_req_map.right.upper_bound(*it);
-                   tag_iterator_diff diff=std::distance(beg,end);
+                   tag_iterator_diff diff=dvnci::abs(std::distance(beg,end));
                    if (diff){
+                       simple_req_map.right.erase(*it);
+                       next_simple_iterator=simple_req_map.left.end();
                        serverkey_type  deleted = beg->second;   
                        if (diff==1){
-                            simple_req_map.right.erase(*it);
-                            next_simple_iterator=simple_req_map.left.end();
                             need_remove_set.insert(deleted);}}}
                if (report_req_map.right.find(*it)!=report_req_map.right.end()){
                    tag_const_iterator beg = report_req_map.right.lower_bound(*it);
                    tag_const_iterator end = report_req_map.right.upper_bound(*it);
-                   tag_iterator_diff diff=std::distance(beg,end);     
+                   tag_iterator_diff diff=dvnci::abs(std::distance(beg,end));     
                    if (diff){
-                       serverkey_type  deleted = beg->second;
+                       serverkey_type  deleted = beg->second;  
+                       report_req_map.right.erase(*it);
+                       next_report_iterator=report_req_map.left.end();
                        if (diff==1){
-                            report_req_map.right.erase(*it);
-                            next_report_iterator=report_req_map.left.end();
                             need_remove_set.insert(deleted);}}}
                if (event_req_map.right.find(*it)!=event_req_map.right.end()){
                    tag_const_iterator beg = event_req_map.right.lower_bound(*it);
                    tag_const_iterator end = event_req_map.right.upper_bound(*it);
-                   tag_iterator_diff diff=std::distance(beg,end);
+                   tag_iterator_diff diff=dvnci::abs(std::distance(beg,end));
                        serverkey_type  deleted = beg->second;
-                       simple_req_map.right.erase(*it);
+                       event_req_map.right.erase(*it);
+                       next_event_iterator=event_req_map.left.end();
                        if (diff==1){
-                            event_req_map.right.erase(*it);
-                            next_event_iterator=event_req_map.left.end();
                             need_remove_set.insert(deleted);}}}}}
     
     
