@@ -38,6 +38,7 @@ namespace dvnci {
         
     public:
         
+        
         extnetintf(tagsbase_ptr intf_, executor* exctr, indx grp);
 
         virtual ~extnetintf();
@@ -80,12 +81,17 @@ namespace dvnci {
         
         bool is_report_task(indx cid) const;
         
+        
+        void add_event_task(indx cid);
+        
+        void remove_event_task(indx cid);
+        
+        bool is_event_task(indx cid) const;        
+        
         dvnci::custom::net::netintf_ptr   netintf;
         sid_rl_report_val_map             real_repval_map;
-        indx_set                          rep_tasks_set;};
-
-
-        }}}
+        indx_set                          rep_tasks_set;
+        indx_set                          evnt_tasks_set;};}}}
 
 #endif	/* EXTNETINTF_H */
 
