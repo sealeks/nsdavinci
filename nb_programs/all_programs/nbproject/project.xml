@@ -16,6 +16,7 @@
                 <make-dep-project>../libsoci</make-dep-project>
                 <make-dep-project>../service_dvncisys</make-dep-project>
                 <make-dep-project>../app_admin</make-dep-project>
+                <make-dep-project>../libcustom</make-dep-project>
                 <make-dep-project>../test_poligon</make-dep-project>
                 <make-dep-project>../app_test</make-dep-project>
                 <make-dep-project>../lisocipg</make-dep-project>
