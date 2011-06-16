@@ -312,6 +312,7 @@ num64  rslt;
 
 struct reporttask {
 num64  sid;
+num64  cid;
 num64  start;
 num64  stop;
 };
@@ -322,7 +323,7 @@ num64  time;
 };
 
 struct report_value_data {
-num64  sid;
+num64  cid;
 vect_report_value_item  data;
 };
 
@@ -337,14 +338,15 @@ num64  rslt;
 };
 
 struct event_value_item {
-num64  sid;
+num64  cid;
 num64  val;
 num64  time;
 };
 
 struct eventtask {
 num64  sid;
-num64  start;
+num64  cid;
+num64  from;
 };
 
 struct req_eventtask {
@@ -616,6 +618,7 @@ namespace serialization {
    template<class Archive>
    void serialize(Archive& ar, reporttask& g, const unsigned int version) {
         ar & g.sid;
+        ar & g.cid;
         ar & g.start;
         ar & g.stop;
    };
@@ -628,7 +631,7 @@ namespace serialization {
 
    template<class Archive>
    void serialize(Archive& ar, report_value_data& g, const unsigned int version) {
-        ar & g.sid;
+        ar & g.cid;
         ar & g.data;
    };
 
@@ -646,7 +649,7 @@ namespace serialization {
 
    template<class Archive>
    void serialize(Archive& ar, event_value_item& g, const unsigned int version) {
-        ar & g.sid;
+        ar & g.cid;
         ar & g.val;
         ar & g.time;
    };
@@ -654,7 +657,8 @@ namespace serialization {
    template<class Archive>
    void serialize(Archive& ar, eventtask& g, const unsigned int version) {
         ar & g.sid;
-        ar & g.start;
+        ar & g.cid;
+        ar & g.from;
    };
 
    template<class Archive>

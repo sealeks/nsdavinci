@@ -29,6 +29,7 @@ namespace dvnci {
                 
                 
                 static const size_t MAX_REPOR_TASK_SIZE = 0x1000;
+                static const num64  TASK_TIMOUT = 1000;
 
                 struct deadbound_short_value {
 
@@ -58,6 +59,7 @@ namespace dvnci {
                 
                 
               struct report_task{
+                  num64    cid;
                   datetime creatitime;
                   datetime begin;
                   datetime end;}; 
@@ -76,6 +78,8 @@ namespace dvnci {
                      refcntr=refcounter_ptr(new refcounter(intf,true));};
 
                 virtual  ~localnetintf() {};
+                
+                
 
                 virtual ns_error auth_req( const std::string& user, const std::string& pass);
                 virtual ns_error add_items( const vect_cid_key& cids, vect_sid_key& sids,  vect_error_item& errors);
@@ -91,6 +95,11 @@ namespace dvnci {
                 virtual ns_error read_trend(const vect_trendtask& tasks, vect_trend_value_data& dt , vect_error_item& errors);
                 virtual ns_error read_alarms(const unum64& guid, vect_alarms_data& dt);
                 virtual ns_error read_journal(const unum64& guid, const unum64& cursor, const unum64& cnt, vect_journal_data& dt);
+                
+
+
+            protected:                
+                
                 
                 virtual ns_error connect_impl();
 
