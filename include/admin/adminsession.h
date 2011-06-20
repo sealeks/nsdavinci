@@ -62,7 +62,7 @@ namespace dvnci {
 
             void handle_prepare(const boost::system::error_code& error) {
                 DEBUG_STR_DVNCI(chat_session.handle_prepare);
-                read_msg_= dvnci::rpc::rpcmessage(request);
+                read_msg_.message(request);
 
                 if (!error) {
                     preparerequest(read_msg_, write_msg_);
