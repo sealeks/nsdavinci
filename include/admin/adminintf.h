@@ -110,6 +110,8 @@ namespace dvnci {
         const num64 MASK_USER_CHANGE_NAME =      0x1;
         const num64 MASK_USER_CHANGE_PASSWORD =  0x4;
         const num64 MASK_USER_CHANGE_LEVEL =     0x8;
+        const num64 MASK_USER_CHANGE_FILTER =    0x10;
+        const num64 MASK_USER_CHANGE_ROLE   =    0x20;
 
         const num64 MASK_USER_EXPORT1 =   0xF;
 
@@ -121,11 +123,14 @@ namespace dvnci {
 
 
         const num64 MASK_AR_CHANGE_NAME =     0x1;
-        const num64 MASK_AR_CHANGE_CIDR =    0x2;
-        const num64 MASK_AR_CHANGE_APPNAME =   0x4;
+        const num64 MASK_AR_CHANGE_USER =    0x2;
+        const num64 MASK_AR_CHANGE_HOST =   0x4;
         const num64 MASK_AR_CHANGE_APPID =    0x8;
         const num64 MASK_AR_CHANGE_RULE =   0x10;
         const num64 MASK_AR_CHANGE_AL =   0x20;
+        const num64 MASK_AR_CHANGE_FILTER =    0x40;
+        const num64 MASK_AR_CHANGE_ROLE =    0x80;
+        const num64 MASK_AR_CHANGE_PROT =    0x100;
 
 
         const num64 OPERATION_INCCOUNTALL = 0x32;
@@ -375,6 +380,7 @@ namespace dvnci {
             virtual std::string  headername() const = 0;} ;
 
         class userintf {
+            
             friend class adminintf;
             friend class remoteadminintf;
             friend class localadminintf;
@@ -390,10 +396,16 @@ namespace dvnci {
             virtual std::string  name() const = 0;
             virtual void   password(const std::string& val) = 0;
             virtual std::string  password() const = 0;
+            virtual void   filter(const std::string& val) = 0;
+            virtual std::string filter() const = 0; 
             virtual void   accesslevel(acclevtype val) = 0;
-            virtual acclevtype accesslevel() const = 0;} ;
+            virtual acclevtype accesslevel() const = 0;
+            virtual void   role(rolesettype val) = 0;
+            virtual rolesettype role() const = 0;};
+
 
         class accessruleintf {
+            
             friend class adminintf;
             friend class remoteadminintf;
             friend class localadminintf;
@@ -407,16 +419,25 @@ namespace dvnci {
             virtual indx key() const = 0;
             virtual void   name(const std::string& val) = 0;
             virtual std::string  name() const = 0;
-            virtual void   cidr(const std::string& val) = 0;
-            virtual std::string  cidr() const = 0;
-            virtual void   application(const std::string& val) = 0;
-            virtual std::string  application() const = 0;
+            virtual void   user(const std::string& val) = 0;
+            virtual std::string  user() const = 0;
+            virtual void   host(const std::string& val) = 0;
+            virtual std::string host() const = 0;
+            virtual void   filter(const std::string& val) = 0;
+            virtual std::string filter() const = 0;
             virtual void   appid(appidtype val) = 0;
             virtual appidtype appid() const = 0;
-            virtual void   rule(accessruletype val) = 0;
-            virtual accessruletype rule() const = 0;
+            virtual void   protocol(protocoltype val) = 0;
+            virtual protocoltype protocol() const = 0;
+            virtual void   accessrule(accessruletype val) = 0;
+            virtual accessruletype accessrule() const = 0;
             virtual void   accesslevel(acclevtype val) = 0;
-            virtual acclevtype accesslevel() const = 0;} ;
+            virtual acclevtype accesslevel() const = 0;
+            virtual void   role(rolesettype val) = 0;
+            virtual rolesettype role() const = 0;};
+            
+            
+            
 
         class metaintf {
             friend class adminintf;

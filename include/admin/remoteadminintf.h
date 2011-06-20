@@ -639,14 +639,33 @@ namespace dvnci {
 
             virtual std::string  password() const           {
                 return exists() ? gets_()->password : "";};
+                
+            virtual void         filter(const std::string& val) {
+                if (exists()) {
+                    gets_()->filter = val;
+                    in_cangeset(MASK_USER_CHANGE_PASSWORD);}};
 
+            virtual std::string  filter() const           {
+                return exists() ? gets_()->filter : "";};
+             
+                    
             virtual void         accesslevel(acclevtype val) {
                 if (exists()) {
-                    gets_()->level = static_cast<num64> (val);
+                    gets_()->accesslevel = static_cast<num64> (val);
                     in_cangeset(MASK_USER_CHANGE_LEVEL);}};
 
             virtual acclevtype   accesslevel() const        {
-                return exists() ? static_cast<acclevtype> (gets_()->level) : 0;};
+                return exists() ? static_cast<acclevtype> (gets_()->accesslevel) : 0;};                    
+                
+                
+
+            virtual void         role(rolesettype val) {
+                if (exists()) {
+                    gets_()->role = static_cast<num64> (val);
+                    in_cangeset(MASK_USER_CHANGE_ROLE);}};
+
+            virtual acclevtype   role() const        {
+                return exists() ? static_cast<rolesettype> (gets_()->role) : 0;};
 
         private:
 
@@ -691,21 +710,30 @@ namespace dvnci {
             virtual std::string  name() const {
                 return exists() ? gets_()->name : "";};
 
-            virtual void   cidr(const std::string& val) {
+            virtual void   user(const std::string& val) {
                 if (exists()) {
-                    gets_()->cidr = val;
-                    in_cangeset(MASK_AR_CHANGE_CIDR);}};
+                    gets_()->user = val;
+                    in_cangeset(MASK_AR_CHANGE_USER);}};
 
-            virtual std::string  cidr() const {
-               return exists() ? gets_()->cidr : "";};
+            virtual std::string  user() const {
+               return exists() ? gets_()->user : "";};
 
-            virtual void   application(const std::string& val) {
+            virtual void   host(const std::string& val) {
                 if (exists()) {
-                    gets_()->cidr = val;
-                    in_cangeset(MASK_AR_CHANGE_APPNAME);}};
+                    gets_()->host = val;
+                    in_cangeset(MASK_AR_CHANGE_HOST);}};
 
-            virtual std::string  application() const {
-               return exists() ? gets_()->appname : "";};
+            virtual std::string  host() const {
+               return exists() ? gets_()->host : "";};
+               
+            virtual void   filter(const std::string& val) {
+                if (exists()) {
+                    gets_()->filter = val;
+                    in_cangeset(MASK_AR_CHANGE_FILTER);}};
+
+            virtual std::string  filter() const {
+               return exists() ? gets_()->filter : "";};
+               
 
             virtual void   appid(appidtype val){
                 if (exists()) {
@@ -714,14 +742,23 @@ namespace dvnci {
 
             virtual appidtype appid()  const {
                return exists() ? static_cast<appidtype>(gets_()->appid) : 0;};
-
-            virtual void   rule(accessruletype val){
+               
+            virtual void   protocol(protocoltype val){
                 if (exists()) {
-                    gets_()->rule = static_cast<num64>(val);
+                    gets_()->protocol = static_cast<num64>(val);
+                    in_cangeset(MASK_AR_CHANGE_PROT);}};
+
+            virtual protocoltype protocol() const {
+               return exists() ? static_cast<protocoltype>(gets_()->protocol) : 0;};                
+               
+
+            virtual void   accessrule(accessruletype val){
+                if (exists()) {
+                    gets_()->accessrule = static_cast<num64>(val);
                     in_cangeset(MASK_AR_CHANGE_RULE);}};
 
-            virtual accessruletype rule() const {
-               return exists() ? static_cast<accessruletype>(gets_()->rule) : 0;};
+            virtual accessruletype accessrule() const {
+               return exists() ? static_cast<accessruletype>(gets_()->accessrule) : 0;};
 
             virtual void   accesslevel(acclevtype val){
                 if (exists()) {
@@ -730,6 +767,14 @@ namespace dvnci {
 
             virtual acclevtype accesslevel() const {
                return exists() ? static_cast<acclevtype>(gets_()->accesslevel) : 0;};
+               
+            virtual void   role(rolesettype val){
+                if (exists()) {
+                    gets_()->role = static_cast<num64>(val);
+                    in_cangeset(MASK_AR_CHANGE_ROLE);}};
+
+            virtual rolesettype role() const {
+               return exists() ? static_cast<rolesettype>(gets_()->role) : 0;};               
 
         private:
 

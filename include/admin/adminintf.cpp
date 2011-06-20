@@ -332,7 +332,7 @@ namespace dvnci {
                         user_data tmp;
                         tmp.name = user(it->first).name();
                         tmp.password = user(it->first).password();
-                        tmp.level = static_cast<num64> (user(it->first).accesslevel());
+                        tmp.accesslevel = static_cast<num64> (user(it->first).accesslevel());
                         tmp.changeset = MASK_USER_EXPORT1;
                         base.users.push_back(tmp);}}
                 if ((itemtype == NT_ROOT_SERVERS_AVAIL) || (NT_ROOT_SERVERS_AVAIL_R) ||
@@ -517,7 +517,7 @@ namespace dvnci {
                     pair_.first = newit_map.find(it->name) != newit_map.end() ? newit_map.find(it->name)->second : npos;
                     if (pair_.first!=npos) {
                         user(pair_.first).password(it->password);
-                        user(pair_.first).accesslevel(static_cast<acclevtype> (it->level));
+                        user(pair_.first).accesslevel(static_cast<acclevtype> (it->accesslevel));
                         entities_merge(NT_USER, pair_.first);}}}
 
             errmap.clear();
@@ -758,7 +758,9 @@ namespace dvnci {
                 tmpentity.changeset = 0;
                 tmpentity.name = user(*it).name();
                 tmpentity.password = user(*it).password();
-                tmpentity.level = static_cast<num64> (user(*it).accesslevel());
+                tmpentity.filter = user(*it).filter();
+                tmpentity.role = static_cast<num64> (user(*it).role());                
+                tmpentity.accesslevel = static_cast<num64> (user(*it).accesslevel());
                 val.push_back(tmpentity);}}
 
         void adminintf::assign_user_data(const num64_vect& keys, vect_user_data& val) const {
@@ -776,8 +778,12 @@ namespace dvnci {
                     user(id).name(it->name);};
                 if ((changeset & MASK_USER_CHANGE_PASSWORD) != 0) {
                     user(id).password(it->password);};
+                if ((changeset & MASK_USER_CHANGE_FILTER) != 0) {
+                    user(id).filter(it->filter);};    
+                if ((changeset & MASK_USER_CHANGE_ROLE) != 0) {
+                    user(id).role(static_cast<accessruletype>(it->role));};                       
                 if ((changeset & MASK_USER_CHANGE_LEVEL) != 0) {
-                    user(id).accesslevel(static_cast<acclevtype> (it->level));};
+                    user(id).accesslevel(static_cast<acclevtype> (it->accesslevel));};
                 if (changeset != 0) entities_merge(NT_USER, id);}}
 
 
@@ -788,11 +794,12 @@ namespace dvnci {
                 tmpentity.key = static_cast<num64> (*it);
                 tmpentity.changeset = 0;
                 tmpentity.name = accessrule(*it).name();
-                tmpentity.cidr = accessrule(*it).cidr();
-                tmpentity.appname = accessrule(*it).application();
+                tmpentity.user = accessrule(*it).user();
+                tmpentity.filter = accessrule(*it).filter();
                 tmpentity.appid  = static_cast<num64> (accessrule(*it).appid());
-                tmpentity.rule  = static_cast<num64> (accessrule(*it).rule());
+                tmpentity.accessrule  = static_cast<num64> (accessrule(*it).accessrule());
                 tmpentity.accesslevel = static_cast<num64> (accessrule(*it).accesslevel());
+                tmpentity.role = static_cast<num64>(accessrule(*it).role());  
                 val.push_back(tmpentity);}}
 
          void adminintf::assign_accessrule_data(const num64_vect& keys, vect_accessrule_data& val) const {
@@ -808,14 +815,18 @@ namespace dvnci {
                 idset.insert(id);
                 if ((changeset & MASK_AR_CHANGE_NAME) != 0) {
                     accessrule(id).name(it->name);};
-                if ((changeset & MASK_AR_CHANGE_CIDR) != 0) {
-                    accessrule(id).cidr(it->cidr);};
-                if ((changeset & MASK_AR_CHANGE_APPNAME) != 0) {
-                    accessrule(id).application(it->appname);};
+                if ((changeset & MASK_AR_CHANGE_USER) != 0) {
+                    accessrule(id).user(it->user);};
+                if ((changeset & MASK_AR_CHANGE_HOST) != 0) {
+                    accessrule(id).host(it->host);};
+                if ((changeset & MASK_AR_CHANGE_FILTER) != 0) {
+                    accessrule(id).filter(it->filter);};                    
                 if ((changeset & MASK_AR_CHANGE_APPID) != 0) {
                     accessrule(id).appid(static_cast<appidtype>(it->appid));};
                 if ((changeset & MASK_AR_CHANGE_RULE) != 0) {
-                    accessrule(id).rule(static_cast<accessruletype>(it->rule));};
+                    accessrule(id).accessrule(static_cast<accessruletype>(it->accessrule));};
+                if ((changeset & MASK_AR_CHANGE_ROLE) != 0) {
+                    accessrule(id).role(static_cast<accessruletype>(it->role));};                    
                 if ((changeset & MASK_AR_CHANGE_AL) != 0) {
                    accessrule(id).accesslevel(static_cast<acclevtype> (it->accesslevel));};
                 if (changeset != 0) entities_merge(NT_ACCESSRULE, id);}}

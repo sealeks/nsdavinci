@@ -456,7 +456,7 @@ bool xml_setexportdata(std::string filepath, base_data& base){
         usernode.set_name(NS_XML_USER_IMPORT.c_str());
         setattribute(usernode,"name",it->name);
         setattribute(usernode,"password",it->password);
-        setattribute(usernode,"level",to_str(it->level));}}
+        setattribute(usernode,"level",to_str(it->accesslevel));}}
 
     doc.save_file(filepath.c_str());
     return true;}
