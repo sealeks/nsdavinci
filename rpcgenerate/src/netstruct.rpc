@@ -24,7 +24,7 @@ struct error_outside {
 struct req_auth {
 	string user = 1;
 	string pass = 2;
-	string ver = 3;
+	num64 ver = 3;
         num64  intftp = 4;
 }
 
