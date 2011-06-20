@@ -37,6 +37,8 @@ namespace dvnci {
                     return socket_;}
 
                 void start() {
+
+                    netintf->setaddress(socket_.remote_endpoint().address());
                     boost::asio::async_read(socket_,
                             boost::asio::buffer(boost::asio::buffer(bufheader), dvnci::rpc::rpcmessage::header_length),
                             boost::bind(
@@ -112,6 +114,8 @@ namespace dvnci {
 
                 bool preparerequest(dvnci::rpc::rpcmessage& in, dvnci::rpc::rpcmessage& out);
 
+
+
             private:
                 boost::asio::io_service&     io;
                 boost::asio::ip::tcp::socket socket_;
@@ -121,7 +125,8 @@ namespace dvnci {
                 std::string                  read_str;
                 std::string                  write_str;
                 boost::array<char, 10 >      bufheader;
-                boost::asio::streambuf       request;} ;
+                boost::asio::streambuf       request;
+                netintf_ptr                  netintf;} ;
 
             }}}
 

@@ -24,6 +24,8 @@ namespace dvnci {
                 value_map.clear();
                 event_task_map.clear();
                 report_task_map.clear();
+                if (regclid){ 
+                    intf->unregclient(regclid);}
                 state_ = disconnected;
                 return error(0);}
             
@@ -31,7 +33,15 @@ namespace dvnci {
             
 
             ns_error localnetintf::auth_req( const std::string& user, const std::string& pass) {
-                return 0;}
+                if (!isautorizate_){
+                    regclid=intf->regclient(address.to_string(),"IP",user, pass);
+                    if (regclid) {
+                        isautorizate_=true;
+                        return error(0);}
+                    else{
+                      isautorizate_=false;
+                      error(ERROR_AUTORIZATION_FAIL);}}      
+                return error(0);}
 
             ns_error localnetintf::add_items( const vect_cid_key& cids, vect_sid_key& sids,  vect_error_item& errors) {
                 errors.clear();

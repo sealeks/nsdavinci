@@ -90,7 +90,7 @@ namespace dvnci {
                 virtual ns_error read_alarms(const unum64& giud, vect_alarms_data& dt) =  0;
                 virtual ns_error read_journal(const unum64& guid, const unum64& cursor, const unum64& cnt, vect_journal_data& dt) =  0;
 
-
+                virtual void setaddress(const boost::asio::ip::address& adr){}
 
             protected:
                 
@@ -108,7 +108,9 @@ namespace dvnci {
                 num16 generate_impl(req_trendtask& req, resp_trendtask& resp);
                 num16 generate_impl(req_alarms& req, resp_alarms& resp);
                 num16 generate_impl(req_journal& req, resp_journal& resp);
-
+                
+                void assign_req_auth(req_auth& req, num64 ver,  num64 intftp, const std::string& user, const std::string& pass);
+                ns_error assign_resp_auth(resp_auth& resp);
                 void assign_req_items(req_add_items& req, const vect_cid_key& cids);
                 ns_error assign_resp_items( resp_add_items& resp, vect_sid_key& sids,  vect_error_item& errors);
                 void assign_req_items(req_add_items_ex& req, const vect_cid_key_ex& cids);
