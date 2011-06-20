@@ -23,7 +23,12 @@ namespace dvnci {
                 client_io->connect(host, port, tmout);
                 state_ = (client_io->state() == client_io->connected ) ? connected :  disconnected;
                 if (state_ == connected) {
-                     return error(0);}
+                     if (!error(auth_req(user,password))){
+                        return error(0);}
+                     else{
+                        disconnect();
+                        state_ = disconnected;
+                        return(error());}}
                 else {
                     state_ = disconnected;
                     return error(ERROR_IO_LINK_NOT_CONNECTION);}}
@@ -44,7 +49,23 @@ namespace dvnci {
             
 
             ns_error remotenetintf::auth_req( const std::string& user, const std::string& pass) {
-                return 0;}
+                try {
+                    error(0);
+                    req_auth req;
+                    resp_auth resp;
+                    assign_req_auth(req, 1, 1, user, pass);
+                    if (querytmpl<req_auth, resp_auth, RPC_OPERATION_REQ_AUTH, RPC_OPERATION_RESP_AUTH > (req, resp)) {
+                        error(assign_resp_auth(resp));}
+                    else
+                        error(ERROR_IO_NO_DATA);}
+                catch (dvncierror& err_) {
+                    error(err_.code());
+                    if ((err_.code() == ERROR_FAILNET_CONNECTED) || 
+                            (err_.code() == ERROR_NONET_CONNECTED)) 
+                        throw err_;;}
+                catch (...) {
+                    error(NS_ERROR_ERRRESP);}
+                return error();}
 
             ns_error remotenetintf::add_items( const vect_cid_key& cids, vect_sid_key& sids,  vect_error_item& errors) {
                 try {

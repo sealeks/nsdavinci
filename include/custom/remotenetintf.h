@@ -54,22 +54,22 @@ namespace dvnci {
 
                 virtual ns_error disconnect_impl();
 
-                template<class _REQSTRUCT, class _RESPSTRUCT, num16 _reqtp, num16 _resptp>
-                bool querytmpl(_REQSTRUCT& reqstruct_, _RESPSTRUCT& respstruct_) {
+                template<class REQSTRUCT, class RESPSTRUCT, num16 reqtp, num16 resptp>
+                bool querytmpl(REQSTRUCT& reqstruct, RESPSTRUCT& respstruct) {
 
                     try {
                         std::ostringstream out_archive_stream(std::ostringstream::binary);
                         std::istringstream in_archive_stream(std::istringstream::binary);
                         boost::archive::binary_oarchive out_archive(out_archive_stream);
-                        out_archive << reqstruct_;
-                        dvnci::rpc::rpcmessage out_mess(out_archive_stream.str(), _reqtp);
+                        out_archive << reqstruct;
+                        dvnci::rpc::rpcmessage out_mess(out_archive_stream.str(), reqtp);
                         dvnci::rpc::rpcmessage in_mess;
                         client_io->req(out_mess, in_mess);
                         std::cout.flush();
-                        if (in_mess.type() == _resptp) {
+                        if (in_mess.type() == resptp) {
                             in_archive_stream.str(in_mess.message());
                             boost::archive::binary_iarchive in_archive(in_archive_stream);
-                            in_archive >> respstruct_;}
+                            in_archive >> respstruct;}
                         else {
                             if (in_mess.type() == RPC_OPERATION_ERROR_OUTSIDE) {
                                 error_outside tmperr;

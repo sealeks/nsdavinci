@@ -19,6 +19,9 @@ namespace dvnci {
 
 
                 switch (in.type()) {
+                    case RPC_OPERATION_REQ_AUTH:{
+                        generate<req_auth, resp_auth > (in, out);
+                        break;}
                     case RPC_OPERATION_REQ_ADD_ITEMS:{
                         generate<req_add_items, resp_add_items > (in, out);
                         break;}

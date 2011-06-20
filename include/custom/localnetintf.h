@@ -91,10 +91,13 @@ namespace dvnci {
 
             public:
 
-                localnetintf(tagsbase_ptr inf) : netintf() , intf(inf)  {
-                     refcntr=refcounter_ptr(new refcounter(intf,true));};
+                localnetintf(tagsbase_ptr inf) : netintf() , 
+                        intf(inf), isautorizate_(false), regclid(0)  {
+                     refcntr=refcounter_ptr(new refcounter(intf,true));
+				     isconnected();};
 
-                virtual  ~localnetintf() {};
+                virtual  ~localnetintf() {
+                   disconnect();};
                 
                 
 
@@ -114,6 +117,8 @@ namespace dvnci {
                 virtual ns_error read_journal(const unum64& guid, const unum64& cursor, const unum64& cnt, vect_journal_data& dt);
                 
 
+                virtual void setaddress(const boost::asio::ip::address& adr){
+                    address=adr;}
 
             protected:                
                 
@@ -128,12 +133,15 @@ namespace dvnci {
                 ns_error execute_report(vect_report_value_data& dt, vect_error_item& errors);
                 ns_error execute_event(vect_event_value_item& dt, vect_error_item& errors);
 
-                tagsbase_ptr        intf;
-                refcounter_ptr      refcntr;
-                indx_deadb_shv_map  value_map;
+                tagsbase_ptr              intf;
+                boost::asio::ip::address  address;
+                bool                      isautorizate_;
+                guidtype                  regclid;
+                refcounter_ptr            refcntr;
+                indx_deadb_shv_map        value_map;
                 
-                indx_reporttask_map report_task_map;
-                indx_eventtask_map  event_task_map;} ;}}}
+                indx_reporttask_map       report_task_map;
+                indx_eventtask_map        event_task_map;} ;}}}
 
 #endif	/* NETINTF_H */
 

@@ -12,6 +12,14 @@
 namespace dvnci {
     namespace custom {
         namespace net {
+            
+            void netintf::assign_req_auth(req_auth& req, num64 ver,  num64 intftp, const std::string& user, const std::string& pass) {
+                req.intftp= intftp;
+                req.user=user;
+                req.pass=pass;}
+
+            ns_error netintf::assign_resp_auth( resp_auth& resp) {
+                return static_cast<ns_error>(resp.rslt);}
 
             void netintf::assign_req_items(req_add_items& req, const vect_cid_key& cids) {
                 req.cids = cids;}
@@ -111,9 +119,7 @@ namespace dvnci {
             
 
             num16 netintf::generate_impl(req_auth& req, resp_auth& resp) {
-                ns_error err = auth_req(req.pass, req.user);
-                //error_item err = {0 , 0};
-                //resp.error = err;
+                resp.rslt = auth_req(req.pass, req.user);
                 return RPC_OPERATION_RESP_AUTH;}
 
             num16 netintf::generate_impl(req_add_items& req, resp_add_items& resp) {
