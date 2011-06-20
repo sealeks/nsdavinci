@@ -62,7 +62,7 @@ namespace dvnci {
                         generate<req_journal, resp_journal > (in, out);
                         break;}
                     default:{
-                        out.build_message("", 0);}}
+                        out=rpcmessage();}}
 
                 return true;}}}}
 

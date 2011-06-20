@@ -15,6 +15,7 @@ namespace dvnci {
             
             void netintf::assign_req_auth(req_auth& req, num64 ver,  num64 intftp, const std::string& user, const std::string& pass) {
                 req.intftp= intftp;
+                req.ver=ver;
                 req.user=user;
                 req.pass=pass;}
 
