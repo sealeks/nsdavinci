@@ -208,14 +208,17 @@ struct resp_sendaccessrules {
 }
 
 struct accessrule_data {
-	num64 key = 1;
+	num64  key = 1;
 	string name = 3;
-	string cidr = 4;
-	string appname = 5;
-	num64  appid = 6;
-	num64  rule = 7;
-	num64  accesslevel = 8;
-        num64 changeset = 9;
+	string user = 4;
+	string host = 5;
+	string filter = 6;
+	num64  appid = 7;
+	num64  protocol = 8;
+	num64  accessrule = 9;
+	num64  accesslevel = 10;
+	num64  role = 11;
+        num64 changeset = 12;
 }
 
 
@@ -246,8 +249,10 @@ struct user_data {
 	num64 key = 1;
 	string name = 2;
         string password = 3;
-        num64 level = 4;
-        num64 changeset = 5;
+        string filter = 4;
+        num64 accesslevel = 5;
+        num64 role = 6;
+        num64 changeset = 7;
 }
 
 /* journal */
