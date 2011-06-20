@@ -573,7 +573,10 @@ namespace dvnci {
 
 #define THD_EXCLUSIVE_LOCK(a)  boost::mutex::scoped_lock thlock( a );
 #define THD_EXCLUSIVE_LOCK2(a)  boost::mutex::scoped_lock thlock1( a );
-
+    
+#define THD_COND_EXCLUSIVE_LOCK(b, a)  boost::mutex::scoped_lock thlockc = b ? boost::mutex::scoped_lock(a) : boost::mutex::scoped_lock(); 
+#define THD_COND_EXCLUSIVE_LOCK1(b ,a)  boost::mutex::scoped_lock thlockc2 = b ? boost::mutex::scoped_lock(a) : boost::mutex::scoped_lock(); 
+    
     typedef boost::interprocess::interprocess_upgradable_mutex    interproc_mutex;
     typedef boost::interprocess::sharable_lock<interproc_mutex>   inp_lock_share;
     typedef boost::interprocess::scoped_lock<interproc_mutex>     inp_lock_exclusive;
