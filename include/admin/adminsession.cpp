@@ -101,7 +101,7 @@ namespace dvnci {
                     generate<req_clients, resp_clients >(in, out);
                     break;}
                 default:{
-                    out.build_message("", 0);}}
+                    out=rpcmessage();}}
 
             return true;}}}
 

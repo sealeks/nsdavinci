@@ -1046,8 +1046,8 @@ namespace dvnci {
 
         userwraper::userwraper(lcltype loc) : abstractwraper(loc) {
 
-            propidtype propadd[] = {PROPERTY_NAME_USER, PROPERTY_NAME_USERPASSWORD, PROPERTY_NAME_USERLEVEL  };
-            addinpropertyset((propidtype*) & propadd, 3);}
+            propidtype propadd[] = {PROPERTY_NAME_USER, PROPERTY_NAME_USERPASSWORD, PROPERTY_NAME_USERLEVEL, PROPERTY_USERFILTER, PROPERTY_USERROLE  };
+            ADD_PROPERTYS(propadd);}
 
         void userwraper::excludegroupedit(propertysset& excl) {
             excl.insert(PROPERTY_NAME_USER);}
@@ -1060,6 +1060,15 @@ namespace dvnci {
                 case PROPERTY_NAME_USERPASSWORD:{
                     _interface->user(id).password(val);
                     break;};
+                case PROPERTY_USERFILTER:{
+                    _interface->user(id).filter(val);
+                    break;};                                      
+                case PROPERTY_USERROLE:{
+                    rolesettype val_ = str_to_role(val);
+                    dvnci::lower_and_trim(val);
+                    if ((val_) || (val=="deny")) 
+                        _interface->user(id).role(val_) ;
+                    break;};                 
                 case PROPERTY_NAME_USERLEVEL:{
                     int val_ = 0;
                     if (str_to(val, val_)) _interface->user(id).accesslevel(val_) ;
@@ -1069,6 +1078,8 @@ namespace dvnci {
             switch (prop) {
                 case PROPERTY_NAME_USER:              return _interface->user(id).name();
                 case PROPERTY_NAME_USERPASSWORD:      return _interface->user(id).password();
+                case PROPERTY_USERFILTER:             return _interface->user(id).filter(); 
+                case PROPERTY_USERROLE:               return role_to_str(_interface->user(id).role()); 
                 case PROPERTY_NAME_USERLEVEL:         return to_str(_interface->user(id).accesslevel());}
             return "";}
 
@@ -1077,9 +1088,9 @@ namespace dvnci {
         
         accessrulewraper::accessrulewraper(lcltype loc) : abstractwraper(loc) {
 
-            propidtype propadd[] = {PROPERTY_ACCESSRULENAME, PROPERTY_ACCESSRULEAPP, PROPERTY_ACCESSRULECIDR,
-                                    PROPERTY_ACCESSRULEAPPID, PROPERTY_ACCESSRULERULE, PROPERTY_ACCESSRULELEV };
-            addinpropertyset((propidtype*) & propadd, 6);}
+            propidtype propadd[] = {PROPERTY_ACCESSRULENAME, PROPERTY_ACCESSRULEUSER,  PROPERTY_ACCESSRULEFILTER, PROPERTY_ACCESSRULEROLE,
+                                    PROPERTY_ACCESSRULELEV };
+            ADD_PROPERTYS(propadd);}
 
         void accessrulewraper::excludegroupedit(propertysset& excl) {
             excl.insert(PROPERTY_ACCESSRULENAME);}
@@ -1089,20 +1100,33 @@ namespace dvnci {
                 case PROPERTY_ACCESSRULENAME:{
                     _interface->accessrule(id).name(val);
                     break;};
-                case PROPERTY_ACCESSRULEAPP:{
-                    _interface->accessrule(id).application(val);
+                case PROPERTY_ACCESSRULEUSER:{
+                    _interface->accessrule(id).user(val);
                     break;};    
-                case PROPERTY_ACCESSRULECIDR:{
-                    _interface->accessrule(id).cidr(val);
-                    break;};    
+                case PROPERTY_ACCESSRULEHOST:{
+                    _interface->accessrule(id).host(val);
+                    break;};
+                case PROPERTY_ACCESSRULEFILTER:{
+                    _interface->accessrule(id).filter(val);
+                    break;};                                      
                 case PROPERTY_ACCESSRULEAPPID:{
                     appidtype val_ = 0;
                     if (str_to(val, val_)) _interface->accessrule(id).appid(val_) ;
                     break;};
                 case PROPERTY_ACCESSRULERULE:{
                     accessruletype val_ = 0;
-                    if (str_to(val, val_)) _interface->accessrule(id).rule(val_) ;
+                    if (str_to(val, val_)) _interface->accessrule(id).accessrule(val_) ;
                     break;};
+                case PROPERTY_ACCESSRULEROLE:{
+                    rolesettype val_ = str_to_role(val);
+                    dvnci::lower_and_trim(val);
+                    if ((val_) || (val=="deny")) 
+                        _interface->accessrule(id).role(val_) ;
+                    break;}; 
+                case PROPERTY_ACCESSRULEPROT:{
+                    protocoltype val_ = 0;
+                    if (str_to(val, val_)) _interface->accessrule(id).protocol(val_) ;
+                    break;};                    
                 case PROPERTY_ACCESSRULELEV:{
                     acclevtype val_ = 0;
                     if (str_to(val, val_)) _interface->accessrule(id).accesslevel(val_) ;
@@ -1111,11 +1135,14 @@ namespace dvnci {
         std::string accessrulewraper::getProperty(indx id, propidtype prop) {
             switch (prop) {
                 case PROPERTY_ACCESSRULENAME:         return _interface->accessrule(id).name();
-                case PROPERTY_ACCESSRULEAPP:      return _interface->accessrule(id).application();
-                case PROPERTY_ACCESSRULECIDR:      return _interface->accessrule(id).cidr();
-                case PROPERTY_ACCESSRULEAPPID:         return to_str(_interface->accessrule(id).appid());
-                case PROPERTY_ACCESSRULERULE:         return to_str(_interface->accessrule(id).rule());
-                case PROPERTY_ACCESSRULELEV:         return to_str(_interface->accessrule(id).accesslevel());}
+                case PROPERTY_ACCESSRULEUSER:         return _interface->accessrule(id).user();
+                case PROPERTY_ACCESSRULEHOST:         return _interface->accessrule(id).host();
+                case PROPERTY_ACCESSRULEFILTER:       return _interface->accessrule(id).filter();                
+                case PROPERTY_ACCESSRULEAPPID:        return to_str(_interface->accessrule(id).appid());
+                case PROPERTY_ACCESSRULERULE:         return to_str(_interface->accessrule(id).accessrule());
+                case PROPERTY_ACCESSRULEROLE:         return role_to_str(_interface->accessrule(id).role());   
+                case PROPERTY_ACCESSRULEPROT:         return to_str(_interface->accessrule(id).protocol());                
+                case PROPERTY_ACCESSRULELEV:          return to_str(_interface->accessrule(id).accesslevel());}
             return "";}
 
         void accessrulewraper::commit(indx id) {

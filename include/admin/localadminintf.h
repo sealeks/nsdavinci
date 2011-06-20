@@ -526,14 +526,28 @@ namespace dvnci {
 
             virtual std::string password() const {
                 return exists() ? intf->users()->password(key_) : "";};
+                
+            virtual void   filter(const std::string& val) {
+                if (exists()){
+                  ipfilter tst;
+                  if (ipfilter::ipfilter_from_str(tst,val)){
+                     intf->users()->filter(key_, tst);}}}
+
+            virtual std::string  filter() const {
+                return exists() ? intf->users()->filter(key_).to_string() : "";}                
 
             virtual void   accesslevel(acclevtype val) {
                 if (exists()) intf->users()->accesslevel(key_, val);};
 
             virtual acclevtype accesslevel() const {
                 return exists() ? intf->users()->accesslevel(key_) : 0;};
-
-
+                
+            virtual void   role(rolesettype val) {
+                if (exists()) intf->users()->role(key_, val);}
+            
+            virtual rolesettype role() const {
+                return exists() ? intf->users()->role(key_) : 0;}
+          
         private:
 
             void setintf(tagsbase* intf_) {
@@ -544,6 +558,8 @@ namespace dvnci {
             localadminintf* root;} ;
 
         class localaccessruleintf : public accessruleintf {
+            
+
             friend class localadminintf;
             friend class adminintf;
 
@@ -566,36 +582,58 @@ namespace dvnci {
 
             virtual std::string name() const {
                 return exists() ? intf->accessrules()->name(key_) : "";};
+                
+            virtual void   user(const std::string& val) {
+                if (exists()) intf->accessrules()->user(key_, val);}
 
-            virtual void   cidr(const std::string& val) {
-                if (exists()) intf->accessrules()->cidr(key_, val);}
+            virtual std::string  user() const {
+                return exists() ? intf->accessrules()->user(key_) : "";}                
 
-            virtual std::string  cidr() const {
-                return exists() ? intf->accessrules()->cidr(key_) : "";}
+            virtual void   host(const std::string& val) {
+                if (exists()) intf->accessrules()->host(key_, val);}
 
-            virtual void   application(const std::string& val) {
-                if (exists()) intf->accessrules()->appname(key_, val);}
+            virtual std::string  host() const {
+                return exists() ? intf->accessrules()->host(key_) : "";}
 
-            virtual std::string  application() const {
-                return exists() ? intf->accessrules()->appname(key_) : "";}
+            virtual void   filter(const std::string& val) {
+                if (exists()){
+                  ipfilter tst;
+                  if (ipfilter::ipfilter_from_str(tst,val)){
+                     intf->accessrules()->filter(key_, tst);}}}
+
+            virtual std::string  filter() const {
+                return exists() ? intf->accessrules()->filter(key_).to_string() : "";}
 
             virtual void   appid(appidtype val) {
                 if (exists()) intf->accessrules()->appid(key_, val);}
 
             virtual appidtype appid() const {
                 return exists() ? intf->accessrules()->appid(key_) : 0;}
+            
+             virtual void   protocol(protocoltype val) {
+                if (exists()) intf->accessrules()->protocol(key_, val);}
+            
+            virtual protocoltype protocol() const {
+                return exists() ? intf->accessrules()->protocol(key_) : 0;}            
 
-            virtual void   rule(accessruletype val) {
-                if (exists()) intf->accessrules()->rule(key_, val);}
+            virtual void   accessrule(accessruletype val) {
+                if (exists()) intf->accessrules()->accessrule(key_, val);}
 
-            virtual accessruletype rule() const {
-                return exists() ? intf->accessrules()->rule(key_) : 0;}
+            virtual accessruletype accessrule() const {
+                return exists() ? intf->accessrules()->accessrule(key_) : 0;}
 
             virtual void   accesslevel(acclevtype val) {
                 if (exists()) intf->accessrules()->accesslevel(key_, val);}
 
             virtual acclevtype accesslevel() const {
                 return exists() ? intf->accessrules()->accesslevel(key_) : 0;}
+            
+             virtual void   role(rolesettype val) {
+                if (exists()) intf->accessrules()->role(key_, val);}
+            
+            virtual rolesettype role() const {
+                return exists() ? intf->accessrules()->role(key_) : 0;}
+       
 
 
         private:
