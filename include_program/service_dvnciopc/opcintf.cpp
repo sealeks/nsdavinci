@@ -276,7 +276,6 @@ namespace dvnci {
                         WORD * pwQualities,
                         FILETIME * pftTimeStamps,
                         HRESULT * pErrors) {
-                    //THD_EXCLUSIVE_LOCK(opcsimpl->mutex);
                     for (DWORD i = 0; i < dwCount; i++) {
                         opcsimpl->write_val_id(static_cast<indx> (phClientItems[i]),
                                 from_oletype_cast(pvValues[i], pwQualities[i], pftTimeStamps[i] ));}
@@ -297,7 +296,8 @@ namespace dvnci {
                     for (DWORD i = 0; i < dwCount; i++) {
                         opcsimpl->write_val_id(static_cast<indx> (phClientItems[i]),
                                 from_oletype_cast(pvValues[i], pwQualities[i], pftTimeStamps[i] ));}
-                    opcsimpl->update_dog();
+					opcsimpl->readtransaction_ok(dwTransid);
+					opcsimpl->update_dog();
                     return S_OK;}
 
                 STDMETHODIMP OnWriteComplete(
@@ -327,7 +327,6 @@ namespace dvnci {
             // opc_util
 
             class opc_util : public abstract_opc_util {
-                typedef boost::shared_ptr<opc_callback>    opc_callback_ptr;
 
             public:
 
@@ -336,7 +335,7 @@ namespace dvnci {
                 abstract_opc_util(), opcsimpl(opcsimpl_), init_(false), advice_(false), name(nm),
                 group(grp), host(hst), db(db_), UpdateRate(UpdateRate_), dwAdvise(0), hGroup(0),
                 ISRV_(0), IGRPMGT_(0), SIO_(0), SIO2_(0), ASIO_(0), ASIO2_(0), ASIO3_(0),
-                ICONPTR_(0) {}
+                ICONPTR_(0), ipCallback(0) {}
 
                 virtual ~opc_util() {
                     uninit();}
@@ -516,12 +515,11 @@ namespace dvnci {
                     if (!init_) return false;
                     if (!ICONPTR_) return false;
                     if (advice_) return false;
-                    ipCallback = opc_callback_ptr(new opc_callback(opcsimpl));
+                    ipCallback = new opc_callback(opcsimpl);
                     dwAdvise = 0;
-                    HRESULT hResult = ICONPTR_->Advise(ipCallback.get(), &dwAdvise);
+                    HRESULT hResult = ICONPTR_->Advise(ipCallback, &dwAdvise);
                     if (FAILED(hResult)) {
                         if (ipCallback) ipCallback->Release();
-                        ipCallback.reset();
                         return false;}
                     if (ASIO2_) {
                         HRESULT hResultA = ASIO2_->SetEnable(actadv);
@@ -537,8 +535,7 @@ namespace dvnci {
                         ICONPTR_->Unadvise(dwAdvise);
                     dwAdvise = 0;
                     if (ipCallback) {
-                        ipCallback->Release();
-                        ipCallback.reset();}
+                        ipCallback->Release();}
                     if (ICONPTR_)
                         ICONPTR_->Release();
                     advice_ = false;
@@ -575,7 +572,7 @@ namespace dvnci {
                 IOPCAsyncIO2*     ASIO2_;
                 IOPCAsyncIO3*     ASIO3_;
                 IConnectionPoint* ICONPTR_;
-                opc_callback_ptr  ipCallback;} ;
+                opc_callback*     ipCallback;} ;
 
             opcintf::opcintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
             extintf_wraper<OPCHANDLE>(intf_, exctr, grp, TYPE_SIMPLE_REQ, intf_ ? intf_->groups()->synctype(grp) : CONTYPE_SYNC ) ,
@@ -583,7 +580,7 @@ namespace dvnci {
                 update_dog();}
 
             opcintf::~opcintf() {
-                disconnect();};
+				disconnect();};
 
             ns_error opcintf::checkserverstatus() {
                 error(0);
@@ -670,14 +667,14 @@ namespace dvnci {
                 return 0;}
 
             ns_error  opcintf::disconnect_impl() {
+		if (state_ == connected) {
                 disconnect_util();
                 readtractmap.clear();
                 writetractmap.clear();
                 state_ = disconnected;
-                if (state_ == connected) {
-                    ver = 0;
-                    if (opc_spec)
-                        opc_spec.reset();}
+		if (opc_spec)
+                        opc_spec.reset();
+			ver = 0;}
                 return 0;}
 
             ns_error opcintf::add_request_impl() {
@@ -698,7 +695,7 @@ namespace dvnci {
                 typedef std::vector<std::wstring> tempwstring;
 
                 tempwstring tmpwstr;
-
+                
                 for (indx_set::const_iterator it = need_add().begin(); it != need_add().end(); ++it) {
                     if (intf->exists(*it)) {
                         tmpwstr.push_back(string_to_wstring(intf->binding(*it)));}}
@@ -835,7 +832,7 @@ namespace dvnci {
                 return error();}
 
             bool opcintf::read_valuessync1() {
-
+                
                 DWORD dwCount              = simple_req().left.size();
                 OPCHANDLE* phServer        = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
                 OPCITEMSTATE* ppItemValues = NULL; // need free
@@ -879,7 +876,7 @@ namespace dvnci {
                 return true;}
 
             bool opcintf::read_valuesasync2() {
-
+                
                 DWORD dwCount              = simple_req().left.size();
                 OPCHANDLE* phServer        = (OPCHANDLE*) CoTaskMemAlloc(dwCount * sizeof (OPCHANDLE)); // need free
                 DWORD      dwTransactionID = transactid();
@@ -909,7 +906,7 @@ namespace dvnci {
                         CoTaskMemFree(pErrors); // free
                         return false;}
 
-                    addreadtransaction(dwTransactionID, pdwCancelID);
+                    //addreadtransaction(dwTransactionID, pdwCancelID);
 
                     DWORD errorcnt = 0;
 
