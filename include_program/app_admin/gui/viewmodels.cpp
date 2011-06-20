@@ -193,11 +193,11 @@ namespace dvnci {
 
                 switch (index.column()) {
                     case 0: return qtstr_from_str_loc(mainintf->accessrule(id).name());
-                    case 1: return qtstr_from_str_loc(mainintf->accessrule(id).cidr());
-                    case 2: return qtstr_from_str_loc(mainintf->accessrule(id).application());
-                    case 3: return (int) mainintf->accessrule(id).appid();
-                    case 4: return (int) mainintf->accessrule(id).rule();
-                    case 5: return (int) mainintf->accessrule(id).accesslevel();}}
+                    case 1: return qtstr_from_str_loc(mainintf->accessrule(id).filter());
+                    case 2: return qtstr_from_str_loc(mainintf->accessrule(id).user());
+                    case 3: return qtstr_from_str_loc(mainintf->accessrule(id).host());
+                    case 5: return qtstr_from_str_loc(role_to_str(mainintf->accessrule(id).role()));
+                    case 4: return (int) mainintf->accessrule(id).accesslevel();}}
 
             return QVariant();}
 
@@ -208,11 +208,11 @@ namespace dvnci {
                 return QAbstractItemModel::headerData(section, orientation, role);
             switch (section) {
                 case 0: return QVariant(qtstr_translate("accessrule.name"));
-                case 1: return QVariant(qtstr_translate("accessrule.cidr"));
-                case 2: return QVariant(qtstr_translate("accessrule.app"));
-                case 3: return QVariant(qtstr_translate("accessrule.appid"));
-                case 4: return QVariant(qtstr_translate("accessrule.rule"));
-                case 5: return QVariant(qtstr_translate("regtable.acceslev"));}
+                case 1: return QVariant(qtstr_translate("accessrule.filter"));
+                case 2: return QVariant(qtstr_translate("accessrule.user"));
+                case 3: return QVariant(qtstr_translate("accessrule.host"));
+                case 5: return QVariant(qtstr_translate("accessrule.role"));
+                case 4: return QVariant(qtstr_translate("accessrule.accesslev"));}
 
             return  QVariant();}
 
