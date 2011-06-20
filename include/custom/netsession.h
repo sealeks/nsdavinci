@@ -49,7 +49,7 @@ namespace dvnci {
 
 
                     if (!error) {
-                        read_msg_.setheader(bufheader.c_array());
+                        read_msg_.header(bufheader.c_array());
 
                         request.consume(request.size());
                         boost::asio::async_read(socket_,
@@ -60,7 +60,7 @@ namespace dvnci {
 
                 void handle_prepare(const boost::system::error_code& error) {
 
-                    read_msg_.setbody(request);
+                    read_msg_=dvnci::rpc::rpcmessage(request);
 
                     if (!error) {
                         preparerequest(read_msg_, write_msg_);
@@ -106,9 +106,9 @@ namespace dvnci {
                         boost::archive::binary_oarchive out_archive(out_archive_stream);
                         out_archive << respstruct;
                         out_string = out_archive_stream.str();
-                        out_.build_message(out_string, resptp);}
+                        out_ = dvnci::rpc::rpcmessage(out_string, resptp);}
                     catch (...) {
-                        out_.build_message("", 0);
+                        out_=dvnci::rpc::rpcmessage();
                         return false;}
                     return true;};
 

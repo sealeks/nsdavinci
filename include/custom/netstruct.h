@@ -178,7 +178,7 @@ num64  error;
 struct req_auth {
 std::string  user;
 std::string  pass;
-std::string  ver;
+num64  ver;
 num64  intftp;
 };
 
