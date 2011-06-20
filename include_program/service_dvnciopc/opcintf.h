@@ -130,7 +130,7 @@ namespace dvnci {
                 static const size_t MAX_WRITE_TRANSACTION = 10;
                 static const size_t MAX_READ_TRANSACTION  = 1;
 
-                friend  class opc_callback;
+                //friend  class opc_callback;
 
                 opcintf(tagsbase_ptr intf_, executor* exctr, indx grp);
 
@@ -138,6 +138,34 @@ namespace dvnci {
 
                 int native_ver() {
                     return opc_spec ? opc_spec->native_ver() : 0;};
+                    
+                void update_dog() {
+                    dogtm = utc_now();}   
+                
+                
+                
+                bool readtransaction_ok(DWORD ok_transact) {
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
+                    update_dog();
+                    return readtractmap.remove_by_ok(ok_transact);}                
+                
+                bool readtransaction_cancel(DWORD cancel_transact) {
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
+                    update_dog();
+                    return readtractmap.remove_by_cancel(cancel_transact);}
+                
+                bool writetransaction_ok(DWORD ok_transact) {
+                    DEBUG_STR_DVNCI(writetransaction_ok);
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
+                    update_dog();
+                    return writetractmap.remove_by_ok(ok_transact);}
+
+                bool writetransaction_cancel(DWORD cancel_transact) {
+                    DEBUG_STR_DVNCI(writetransaction_cancel);
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
+                    update_dog();
+                    return writetractmap.remove_by_cancel(cancel_transact);}
+                
 
             protected:
                 
@@ -184,59 +212,33 @@ namespace dvnci {
 
                 bool addreadtransaction(DWORD ok_transact, DWORD cancel_transact, boost::xtime tm = utc_now()) {
                     //DEBUG_STR_DVNCI(addreadtransaction);
-                    THD_EXCLUSIVE_LOCK(mutex);
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
                     return readtractmap.add(ok_transact, cancel_transact);}
 
-                bool readtransaction_ok(DWORD ok_transact) {
-                    DEBUG_STR_DVNCI(readtransaction_ok)
-                    THD_EXCLUSIVE_LOCK(mutex);
-                    update_dog();
-                    return readtractmap.remove_by_ok(ok_transact);}
-
-                bool readtransaction_cancel(DWORD cancel_transact) {
-                    THD_EXCLUSIVE_LOCK(mutex);
-                    update_dog();
-                    return readtractmap.remove_by_cancel(cancel_transact);}
-
                 bool isreadtransaction() {
-                    THD_EXCLUSIVE_LOCK(mutex);
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
                     //DEBUG_STR_VAL_DVNCI(isreadtransaction, readtractmap.size());
                     return (!readtractmap.empty());}
 
                 bool isreadexpiretimout(num32 tmo, DWORD& tract) {
-                    DEBUG_STR_DVNCI(isreadexpiretimout);
-                    THD_EXCLUSIVE_LOCK(mutex);
+                    //DEBUG_STR_DVNCI(isreadexpiretimout);
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
                     return readtractmap.expiretimout(tmo, tract);}
 
                 bool addwritetransaction(DWORD ok_transact, DWORD cancel_transact, boost::xtime tm = utc_now()) {
                     //DEBUG_STR_DVNCI(addwritetransaction);
-                    THD_EXCLUSIVE_LOCK(mutex);
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
                     return writetractmap.add(ok_transact, cancel_transact);}
 
-                bool writetransaction_ok(DWORD ok_transact) {
-                    DEBUG_STR_DVNCI(writetransaction_ok);
-                    THD_EXCLUSIVE_LOCK(mutex);
-                    update_dog();
-                    return writetractmap.remove_by_ok(ok_transact);}
-
-                bool writetransaction_cancel(DWORD cancel_transact) {
-                    //DEBUG_STR_DVNCI(writetransaction_cancel);
-                    THD_EXCLUSIVE_LOCK(mutex);
-                    update_dog();
-                    return writetractmap.remove_by_cancel(cancel_transact);}
-
                 bool iswritetransaction() {
-                    THD_EXCLUSIVE_LOCK(mutex);
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
                     DEBUG_STR_VAL_DVNCI(iswritetransaction, writetractmap.size());
                     return (writetractmap.size() >= MAX_WRITE_TRANSACTION);}
 
                 bool iswriteexpiretimout(num32 tmo, DWORD& tract) {
                     DEBUG_STR_DVNCI(iswriteexpiretimout);
-                    THD_EXCLUSIVE_LOCK(mutex);
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
                     return writetractmap.expiretimout(tmo, tract);}
-
-                void update_dog() {
-                    dogtm = utc_now();}
 
                 bool dog_time_expired(num32 tmout) {
                     return expire_from_utc_millsec(dogtm, tmout);}
@@ -245,7 +247,7 @@ namespace dvnci {
                     return expire_from_utc_millsec(dogtm, maintimeout);}
 
                 bool checkconnection() {
-                    THD_EXCLUSIVE_LOCK(mutex);
+                    THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
                     if (!dog_time_expired()) return true;
                     if (checkserverstatus()) return true;
                     throw dvncierror(ERROR_FAILNET_CONNECTED);
