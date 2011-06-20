@@ -33,13 +33,17 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.257", "Имя"));
             map_.insert(wstringtranslate_pair("properties.272", "Пользователь"));
             map_.insert(wstringtranslate_pair("properties.274", "Пароль"));
-            map_.insert(wstringtranslate_pair("properties.276", "Уровень доступа"));
+            map_.insert(wstringtranslate_pair("properties.275", "IP Фильтр"));            
+            map_.insert(wstringtranslate_pair("properties.276", "Роль"));
+            map_.insert(wstringtranslate_pair("properties.277", "Уровень доступа"));            
             map_.insert(wstringtranslate_pair("properties.288", "Имя"));
-            map_.insert(wstringtranslate_pair("properties.289", "Приложение"));
-            map_.insert(wstringtranslate_pair("properties.290", "Хост/CIDR"));
+            map_.insert(wstringtranslate_pair("properties.289", "Пользователь"));
+            map_.insert(wstringtranslate_pair("properties.290", "Хост"));
             map_.insert(wstringtranslate_pair("properties.291", "Appid"));
             map_.insert(wstringtranslate_pair("properties.292", "Доступ"));
             map_.insert(wstringtranslate_pair("properties.293", "Уровень доступа"));
+            map_.insert(wstringtranslate_pair("properties.294", "IP Фильтр"));
+            map_.insert(wstringtranslate_pair("properties.295", "Роль"));            
             map_.insert(wstringtranslate_pair("properties.512", "Коментарий"));
             map_.insert(wstringtranslate_pair("properties.592", "Сообщение"));
             map_.insert(wstringtranslate_pair("properties.4688", "Тип доступа"));
@@ -495,9 +499,22 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("activealarmtable.id", "Тэг"));
             map_.insert(wstringtranslate_pair("activealarmtable.kvit", "Квит."));
             map_.insert(wstringtranslate_pair("activealarmtable.off", "Выкл."));
+            
+            map_.insert(wstringtranslate_pair("accessrule.filter", "IP фильтр"));
+            map_.insert(wstringtranslate_pair("accessrule.name", "Имя правила"));            
+            map_.insert(wstringtranslate_pair("accessrule.user", "Пользователь")); 
+            map_.insert(wstringtranslate_pair("accessrule.host", "Хост"));            
+            map_.insert(wstringtranslate_pair("accessrule.rule", "Правило"));             
+            map_.insert(wstringtranslate_pair("accessrule.role", "Роль"));
+            map_.insert(wstringtranslate_pair("accessrule.accesslev", "Уровень доступа"));
+            
             map_.insert(wstringtranslate_pair("usertable.name", "Имя"));
             map_.insert(wstringtranslate_pair("usertable.password", "Пароль"));
             map_.insert(wstringtranslate_pair("usertable.level", "Уровень"));
+            map_.insert(wstringtranslate_pair("usertable.filter", "IP фильтр"));
+            map_.insert(wstringtranslate_pair("usertable.role", "Роль"));            
+            
+            
             map_.insert(wstringtranslate_pair("agrouptable.name", "Имя"));
             map_.insert(wstringtranslate_pair("valchtable.key", "Ключ"));
             map_.insert(wstringtranslate_pair("valchtable.name", "Черти че"));

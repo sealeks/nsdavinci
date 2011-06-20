@@ -608,7 +608,7 @@ namespace dvnci {
                             tmp = qtstr_from_str_loc(base_->users.at(id).password, loc);
                             break;}
                         case 3:{
-                            tmp = base_->users.at(id).level;
+                            tmp = base_->users.at(id).accesslevel;
                             break;}}}}
             return tmp;}
 
@@ -651,7 +651,7 @@ namespace dvnci {
                         base_->users.at(id).password = str_from_qtstr_loc(val.toString(), loc) ;
                         break;}
                     case 3:{
-                        base_->users.at(id).level = str_to<int>(val.toString().toStdString(), 0);
+                        base_->users.at(id).accesslevel = str_to<int>(val.toString().toStdString(), 0);
                         break;}}}
             return true;}
 
