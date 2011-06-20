@@ -1007,6 +1007,32 @@ namespace dvnci {
         DEBUG_STR_VAL_DVNCI(operatorii, value);
         DEBUG_STR_VAL_DVNCI(operatorii, cnt);
         return value;}
-
+    
+    std::string role_to_str(rolesettype vl){
+        if (vl==0) return "deny";
+        if (vl==0x1F) return "full";
+        if (vl==0x3) return "user";
+        if (vl==0xF) return "admin";
+        std::string rslt="";
+        if (0x1&vl) rslt+= rslt.empty() ? "ur" : "|ur";
+        if (0x2&vl) rslt+= rslt.empty() ? "uw" : "|uw";        
+        if (0x4&vl) rslt+= rslt.empty() ? "ar" : "|ar";
+        if (0x8&vl) rslt+= rslt.empty() ? "aw" : "|aw";  
+        if (0x10&vl) rslt+= rslt.empty() ? "aa" : "|aa";
+        return rslt;}
+    
+    rolesettype str_to_role(std::string vl){
+        dvnci::lower_and_trim(vl);
+        if (vl=="deny") return 0;
+        if (vl=="full") return 0x1F;
+        if (vl=="user") return 0x3;
+        if (vl=="admin") return 0xF;
+        rolesettype rslt=0;
+        if (vl.find("ur")!=std::string::npos) rslt+= 0x1;
+        if (vl.find("uw")!=std::string::npos) rslt+= 0x2;       
+        if (vl.find("ar")!=std::string::npos) rslt+= 0x4;
+        if (vl.find("aw")!=std::string::npos) rslt+= 0x8;  
+        if (vl.find("aa")!=std::string::npos) rslt+= 0x10; 
+        return rslt;}  
 }
 

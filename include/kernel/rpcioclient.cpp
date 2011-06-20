@@ -5,7 +5,7 @@
 namespace dvnci {
     namespace rpc {
 
-        rpcioclient::rpcioclient() : io_service_(), socket_(io_service_), tmout_timer(io_service_), error_cod(0) {
+        rpcioclient::rpcioclient() : io_service_(), socket_(io_service_), tmout_timer(io_service_), respmsg(""), error_cod(0) {
             state_ = disconnected;}
 
         rpcioclient::~rpcioclient() {
@@ -119,7 +119,7 @@ namespace dvnci {
                 resp = respmsg;
                 return true;}
             else {
-                resp.build_message("", 0);};
+                resp=rpcmessage("");};
             return false;}
 
         void rpcioclient::handle_resolve(const boost::system::error_code& err,
@@ -178,7 +178,7 @@ namespace dvnci {
 
         void rpcioclient::handle_readheader(const boost::system::error_code& err) {
             if (!err) {
-                respmsg.setheader(buf.c_array());
+                respmsg.header(buf.c_array());
                 DEBUG_VAL_DVNCI(respmsg.body_length())
                 boost::asio::async_read(socket_, response_body, boost::asio::transfer_at_least(respmsg.body_length()), boost::bind(&rpcioclient::handle_endreq, shared_from_this(),
                         boost::asio::placeholders::error));}
@@ -195,7 +195,7 @@ namespace dvnci {
             if (!err) {
                 io_service_.stop();
                 tmout_timer.cancel();
-                respmsg.setbody(response_body);
+                respmsg=rpcmessage(response_body);
                 is_timout      = false;
                 is_data_ready  = true;
                 is_error       = false;}

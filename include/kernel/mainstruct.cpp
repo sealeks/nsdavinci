@@ -429,10 +429,7 @@ namespace dvnci {
 
     // userstruct
 
-    userstruct::userstruct(indx mid) : id_(mid) {
-        accesslevel(0);
-        namepos(0);
-        passpos(0);}
+    userstruct::userstruct(indx mid) : id_(mid),  namepos_(0), passpos_(0), accesslevel_(0), role_(NS_BASE_USER_ROLE), filter_()  {}
 
     userstruct userstruct::get_for_write_to_file(bool firstcriteria) {
         return *this;}
@@ -440,15 +437,7 @@ namespace dvnci {
 
     // userstruct
 
-    accessrulestruct::accessrulestruct(indx mid) : id_(mid) {
-        namepos(0);
-        cidrpos(0);
-        apppos(0);
-        unusepos1_ = 0;
-        unusepos2_ = 0;
-        appid(0);
-        accesslevel(0);
-        rule(0);}
+    accessrulestruct::accessrulestruct(indx mid) : id_(mid), namepos_(0), userpos_(0), hostpos_(0), protocol_(0) , appid_(0), role_(NS_BASE_USER_ROLE), accesslevel_(0),  filter_(), accessrule_(0) {;}
 
     accessrulestruct accessrulestruct::get_for_write_to_file(bool firstcriteria) {
         return *this;}

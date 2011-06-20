@@ -17,7 +17,7 @@ namespace dvnci {
 
 
 #pragma  pack(push,4)
-
+    
     // tagstruct 
 
     typedef struct tagstruct {
@@ -1461,6 +1461,117 @@ namespace dvnci {
         smplheader header;
         agroupstruct items[];} *pagroupsstruct;
 
+       
+        
+        
+        
+        
+        
+    struct ipfilter{
+        
+        typedef unum16       iptype;
+        
+        static const iptype  IP_V4=0;
+        static const iptype  IP_V6=1;
+        
+        
+        ipfilter() : type_(0), addr1_(0), addr2_(0), addr3_(0), addr4_(0), range_(0) {}
+        
+        ipfilter(const boost::asio::ip::address_v4& ad, unum16 rng=32) { 
+               type(0);
+               range(rng);
+               v4(ad);}
+        
+        ipfilter(const boost::asio::ip::address_v6& ad, unum16 rng=128) { 
+               type(1);
+               range(rng);
+               v6(ad);}
+        
+        ipfilter(const boost::asio::ip::address& ad, unum16 rng=32) { 
+               type(ad.is_v4() ? 0 : 1);
+               range(rng);
+               if (ad.is_v4())
+                 v4(ad.to_v4());
+               else 
+                 v6(ad.to_v6());}
+        
+        ipfilter(const std::string& str) :
+                   type_(0), addr1_(0), addr2_(0), addr3_(0), addr4_(0), range_(0) {
+               ipfilter tst;
+               if (ipfilter_from_str(tst,str)){
+                   if (tst.type()){
+                      v6(tst.v6());}
+                   else{
+                      v4(tst.v4());};
+                   type_= tst.type(); }}
+               
+        iptype type() const {
+            return static_cast<iptype>(type_ & 0x1);}
+        
+        
+        unum16 range() const {
+            return type() ? 
+                static_cast<unum16>((range_<128) ? range_ : 128) : static_cast<unum16>((range_<32) ? range_ : 32);} 
+        
+        void range(unum16 vl ) {
+            range_ = type() ? 
+                static_cast<unum64>((vl<128) ? vl : 128) : static_cast<unum64>((vl<32) ? vl : 32);}   
+        
+        boost::asio::ip::address_v4 v4() const {
+            return boost::asio::ip::address_v4(*((boost::asio::ip::address_v4::bytes_type*)(num8*)(&addr1_)));} 
+        
+        void v4(const boost::asio::ip::address_v4& vl ) {
+            new ((num8*)(&addr1_)) boost::asio::ip::address_v4(vl);} 
+        
+        boost::asio::ip::address_v6 v6() const {
+            return boost::asio::ip::address_v6(*((boost::asio::ip::address_v6::bytes_type*)(num8*)(&addr1_)));} 
+        
+        void v6(const boost::asio::ip::address_v6& vl ) {
+            new ((num8*)(&addr1_)) boost::asio::ip::address_v6(vl);}  
+        
+        std::string to_string() const {
+            return  (type() ? v6().to_string() : v4().to_string()) + "/" + to_str(range());}
+        
+        static bool ipfilter_from_str(ipfilter& rslt, std::string vl){
+            try{
+                dvnci::upper_and_trim(vl);
+                std::string::size_type slpos = vl.find_last_of("/");
+                unum16 rng=0;
+                if (slpos!=std::string::npos){
+                    if ((!slpos) || (vl.size()==1)) 
+                        return false;
+                    std::string rngstr = vl.substr(slpos+1);
+                    vl = vl.substr(0, slpos);
+                    if (!str_to(rngstr,rng))
+                        return false;}
+                boost::system::error_code err;
+                boost::asio::ip::address ad=boost::asio::ip::address::from_string(vl,err);
+                if (err)
+                    return false;
+                rslt=ipfilter(ad,rng);
+                return true;}
+            catch(...){
+                return false;}
+            return false;}
+               
+        
+    private:
+        
+        void type(iptype  vl)  {
+            type_= static_cast<unum64>(vl & 0x1);}
+        
+        unum64 type_;
+        unum64 addr1_;
+        unum64 addr2_;
+        unum64 addr3_;
+        unum64 addr4_; 
+        unum64 range_;
+    };   
+    
+    
+    
+        
+        
 
     //userstruct
 
@@ -1492,8 +1603,21 @@ namespace dvnci {
             return in_bounded<acclevtype > (0, 10000, static_cast<acclevtype> (accesslevel_));}
 
         void accesslevel(acclevtype val) {
-            accesslevel_ = static_cast<num64> (in_bounded<acclevtype > (0, 100, val));}
+            accesslevel_ = static_cast<num64> (in_bounded<acclevtype > (0, 10000, val));}
         
+        rolesettype role() const {
+            return static_cast<rolesettype> (role_ & 0x1F);}
+
+        void role(rolesettype val) {
+            role_ = static_cast<num64> (val & 0x1F);}
+        
+        const ipfilter& filter() const {
+            return filter_;}
+
+        void filter(const ipfilter& val) {
+            filter_ = val;}
+        
+     
         void incmonitor() {}
 
         onum monitor() const {
@@ -1502,13 +1626,17 @@ namespace dvnci {
         userstruct get_for_write_to_file(bool firstcriteria = false);
 
     private:
-        unum64 id_;
-        unum64 namepos_;
-        unum64 passpos_;
-        num64 accesslevel_;
-        num64 notuse1;
-        num64 notuse2;
-        num64 notuse3;} *puserstruct;
+        unum64    id_;
+        unum64    namepos_;
+        unum64    passpos_;
+        num64     accesslevel_;
+        num64     role_;
+        ipfilter  filter_;
+        num64     notuse1;
+        num64     notuse2;
+        num64     notuse3;
+        num64     notuse4;
+        num64     notuse5;} *puserstruct;
 
     typedef struct usersstruct {
         typedef smplheader head_type;
@@ -1539,35 +1667,53 @@ namespace dvnci {
         size_t namepos() const {
             return static_cast<size_t> (namepos_);}
 
-        void cidrpos(size_t val) {
-            cidrpos_ = static_cast<unum64> (val);}
+        void userpos(size_t val) {
+            userpos_ = static_cast<unum64> (val);}
 
-        size_t cidrpos() const {
-            return static_cast<size_t> (cidrpos_);}
+        size_t userpos() const {
+            return static_cast<size_t> (userpos_);}
+        
+        void hostpos(size_t val) {
+            hostpos_ = static_cast<unum64> (val);}
 
-        void apppos(size_t val) {
-            apppos_ = static_cast<unum64> (val);}
-
-        size_t apppos() const {
-            return static_cast<size_t> (apppos_);}
+        size_t hostpos() const {
+            return static_cast<size_t> (hostpos_);}
 
         appidtype appid() const {
             return static_cast<appidtype> (appid_);}
 
         void appid(appidtype val) {
             appid_ = static_cast<num64> (val);}
+        
+        rolesettype role() const {
+            return static_cast<rolesettype> (role_ & 0x1F);}
 
-        accessruletype rule() const {
-            return in_bounded<accessruletype > (0, 2, static_cast<accessruletype> (rule_));}
-
-        void rule(accessruletype val) {
-            rule_ = static_cast<num64> (in_bounded<accessruletype > (0, 2, val));}
+        void role(rolesettype val) {
+            role_ = static_cast<num64> (val & 0x1F);}
 
         acclevtype accesslevel() const {
             return static_cast<acclevtype> (accesslevel_);}
 
         void accesslevel(acclevtype val) {
             accesslevel_ = static_cast<num64> (val);}
+        
+        accessruletype accessrule() const {
+            return static_cast<accessruletype> (accessrule_);}
+
+        void accessrule(accessruletype val) {
+            accessrule_ = static_cast<num64> (val);}
+        
+        protocoltype protocol() const {
+            return static_cast<protocoltype> (protocol_);}
+
+        void protocol(protocoltype val) {
+            protocol_ = static_cast<num64> (val);}        
+        
+        const ipfilter& filter() const {
+            return filter_;}
+
+        void filter(const ipfilter& val) {
+            filter_ = val;}
         
                 
         void incmonitor() {}
@@ -1580,21 +1726,20 @@ namespace dvnci {
 
 
     private:
-        unum64 id_;
-        unum64 namepos_;
-        unum64 cidrpos_;
-        unum64 apppos_;
-        unum64 unusepos1_;
-        unum64 unusepos2_;
-        num64 appid_;
-        num64 rule_;
-        num64 accesslevel_;
-        num64 notuse1;
-        num64 notuse2;
-        num64 notuse3;
-        num64 notuse4;
-        num64 notuse5;
-        num64 notuse6;} *paccessrulestruct;
+        unum64    id_;
+        unum64    namepos_;
+        unum64    userpos_;
+        unum64    hostpos_;
+        num64     protocol_;
+        num64     appid_;
+        num64     role_;
+        num64     accesslevel_;
+        ipfilter  filter_;
+        num64     accessrule_;
+        num64     notuse1;
+        num64     notuse2;
+        num64     notuse3;
+        num64     notuse4;} *paccessrulestruct;
 
     typedef struct accessrulesstruct {
         typedef smplheader head_type;
@@ -2316,86 +2461,7 @@ namespace dvnci {
     typedef std::map<indx, bind_servdb, std::less<indx>, std::allocator<itembinding_pair > > itembinding_map;
     
     
-    struct ipfilter{
-        
-        typedef unum16       iptype;
-        
-        static const iptype  IP_V4=0;
-        static const iptype  IP_V6=1;
-        
-        
-        ipfilter() : type_(0), addr1_(0), addr2_(0), addr3_(0), addr4_(0), range_(0) {}
-        
-        ipfilter(const boost::asio::ip::address_v4& ad, unum16 rng=32) { 
-               type(0);
-               range(rng);
-               v4(ad);}
-        
-        ipfilter(const boost::asio::ip::address_v6& ad, unum16 rng=128) { 
-               type(1);
-               range(rng);
-               v6(ad);}
-        
-        ipfilter(const boost::asio::ip::address& ad, unum16 rng=32) { 
-               type(ad.is_v4() ? 0 : 1);
-               range(rng);
-               if (ad.is_v4())
-                 v4(ad.to_v4());
-               else 
-                 v6(ad.to_v6());}
-        
-        ipfilter(const std::string& str, unum16 rng=32) :
-                   type_(0), addr1_(0), addr2_(0), addr3_(0), addr4_(0), range_(0) {
-            try{
-               boost::asio::ip::address ad=boost::asio::ip::address::from_string(str);
-               type(ad.is_v4() ? 0 : 1);
-               range(rng);
-               if (ad.is_v4())
-                 v4(ad.to_v4());
-               else 
-                 v6(ad.to_v6());}
-            catch(...){}}
-               
-        iptype type() const {
-            return static_cast<iptype>(type_ & 0x1);}
-        
-        
-        unum16 range() const {
-            return type() ? 
-                static_cast<unum16>((range_<128) ? range_ : 128) : static_cast<unum16>((range_<32) ? range_ : 32);} 
-        
-        void range(unum16 vl ) {
-            range_ = type() ? 
-                static_cast<unum64>((vl<128) ? vl : 128) : static_cast<unum64>((vl<32) ? vl : 32);}   
-        
-        boost::asio::ip::address_v4 v4() const {
-            return boost::asio::ip::address_v4(*((boost::asio::ip::address_v4::bytes_type*)(num8*)(&addr1_)));} 
-        
-        void v4(const boost::asio::ip::address_v4& vl ) {
-            new ((num8*)(&addr1_)) boost::asio::ip::address_v4(vl);} 
-        
-        boost::asio::ip::address_v6 v6() const {
-            return boost::asio::ip::address_v6(*((boost::asio::ip::address_v6::bytes_type*)(num8*)(&addr1_)));} 
-        
-        void v6(const boost::asio::ip::address_v6& vl ) {
-            new ((num8*)(&addr1_)) boost::asio::ip::address_v6(vl);}  
-        
-        std::string to_string() const {
-            return  (type() ? v6().to_string() : v4().to_string()) + "/" + to_str(range());}
-               
-        
-    private:
-        
-        void type(iptype  vl)  {
-            type_= static_cast<unum64>(vl & 0x1);}
-        
-        unum64 type_;
-        unum64 addr1_;
-        unum64 addr2_;
-        unum64 addr3_;
-        unum64 addr4_; 
-        unum64 range_;
-    };
+
 
 #pragma  pack(pop)
 
@@ -2403,8 +2469,8 @@ namespace dvnci {
     BOOST_STATIC_ASSERT(sizeof (tagsstruct_hdr) == 208);
     BOOST_STATIC_ASSERT(sizeof (groupstruct) == 512);
     BOOST_STATIC_ASSERT(sizeof (agroupstruct) == 72);
-    BOOST_STATIC_ASSERT(sizeof (userstruct) == 56);
-    BOOST_STATIC_ASSERT(sizeof (accessrulestruct) == 120);
+    BOOST_STATIC_ASSERT(sizeof (userstruct) == 128);
+    BOOST_STATIC_ASSERT(sizeof (accessrulestruct) == 152);
     BOOST_STATIC_ASSERT(sizeof (smplheader) == 8);
 
     ;}
