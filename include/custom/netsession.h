@@ -119,7 +119,6 @@ namespace dvnci {
             private:
                 boost::asio::io_service&     io;
                 boost::asio::ip::tcp::socket socket_;
-                netintf_ptr                  netintf;
                 dvnci::rpc::rpcmessage       read_msg_;
                 dvnci::rpc::rpcmessage       write_msg_;
                 std::string                  read_str;
