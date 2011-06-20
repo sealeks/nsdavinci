@@ -437,11 +437,14 @@ vect_error_entity  error;
 struct accessrule_data {
 num64  key;
 std::string  name;
-std::string  cidr;
-std::string  appname;
+std::string  user;
+std::string  host;
+std::string  filter;
 num64  appid;
-num64  rule;
+num64  protocol;
+num64  accessrule;
 num64  accesslevel;
+num64  role;
 num64  changeset;
 };
 
@@ -468,7 +471,9 @@ struct user_data {
 num64  key;
 std::string  name;
 std::string  password;
-num64  level;
+std::string  filter;
+num64  accesslevel;
+num64  role;
 num64  changeset;
 };
 
@@ -963,11 +968,14 @@ namespace serialization {
    void serialize(Archive& ar, accessrule_data& g, const unsigned int version) {
         ar & g.key;
         ar & g.name;
-        ar & g.cidr;
-        ar & g.appname;
+        ar & g.user;
+        ar & g.host;
+        ar & g.filter;
         ar & g.appid;
-        ar & g.rule;
+        ar & g.protocol;
+        ar & g.accessrule;
         ar & g.accesslevel;
+        ar & g.role;
         ar & g.changeset;
    };
 
@@ -999,7 +1007,9 @@ namespace serialization {
         ar & g.key;
         ar & g.name;
         ar & g.password;
-        ar & g.level;
+        ar & g.filter;
+        ar & g.accesslevel;
+        ar & g.role;
         ar & g.changeset;
    };
 
