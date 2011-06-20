@@ -195,7 +195,7 @@ namespace dvnci {
             if (!err) {
                 io_service_.stop();
                 tmout_timer.cancel();
-                respmsg=rpcmessage(response_body);
+                respmsg.message(response_body);
                 is_timout      = false;
                 is_data_ready  = true;
                 is_error       = false;}

@@ -33,8 +33,11 @@ namespace dvnci {
             rpcmessage(const boost::asio::streambuf& val) : body_(boost::asio::buffer_cast<const num8*>(val.data()), val.size()), body_length_(0), type_(0)  {
                 encode_header();}
 
-            const std::string& message() {
+            const std::string& message() const {
                 return body_;}
+
+	    void message(const boost::asio::streambuf& vl) {
+		body_=std::string(boost::asio::buffer_cast<const num8*>(vl.data()) , vl.size() < body_length() ? vl.size() : body_length() );}
 
             const size_t body_length() const {
                 return header().size() < header_length ? 0 : static_cast<size_t> (*((unum64*) (header().c_str())));}
