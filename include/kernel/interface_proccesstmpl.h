@@ -19,13 +19,16 @@ namespace dvnci {
     
     class externalintf {
         
+        typedef boost::shared_ptr<boost::mutex>    mutex_ptr;
+        
     public:
   
         enum intfstate {
             disconnected, connected};
 
         externalintf(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) : 
-             state_(disconnected), intf(inf), exectr(exctr), group_(grp), provide_(provide_man), subsrcript_(subsrcr), error_(0)  {};
+             state_(disconnected), intf(inf), exectr(exctr), group_(grp),
+             provide_(provide_man), subsrcript_(subsrcr), error_(0), mtx(new boost::mutex())  {};
 
         virtual ~externalintf() {};
 
@@ -45,9 +48,6 @@ namespace dvnci {
         subcripttype  subsrcript() const {
             return subsrcript_;}
 
-        boost::mutex* mtx_internal() {
-            return &mutex;}
-        
          ns_error  error() const {
                 return error_;}
   
@@ -57,6 +57,12 @@ namespace dvnci {
         virtual void insert(const indx_set& idset)= 0;
     
         virtual void remove(const indx_set& idset)= 0;
+        
+        boost::mutex* mtx_internal() const{
+            return mtx.get();}
+        
+        bool needsync() const{
+            return (subsrcript_!=CONTYPE_SYNC);}
 
     protected:
 
@@ -70,14 +76,14 @@ namespace dvnci {
         void  subsrcript(subcripttype val) {
             subsrcript_=val;}
         
-        intfstate          state_;
+        volatile intfstate state_;
         tagsbase_ptr       intf;
         executor*          exectr;
         indx               group_;
         tagtype            provide_;
         subcripttype       subsrcript_;
         ns_error           error_;
-        boost::mutex       mutex;};
+        mutex_ptr          mtx;};
         
         
         
@@ -135,8 +141,7 @@ namespace dvnci {
 
             virtual bool uninitialize() {
                 if (externmanager) {
-                    externmanager->disconnect();
-                    externmanager.reset();}
+                    externmanager->disconnect();}
                 group_state_off();
                 return true;}
             
