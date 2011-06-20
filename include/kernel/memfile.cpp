@@ -665,21 +665,21 @@ namespace dvnci {
 
 
 
-    //  accessrule
 
-    void accessrulesbase::cidr(size_type id, const std::string&  val) {
-        if (exists(id)) {
-            if (cidr(id) != val) {
-                size_t tmp = operator[](id)->cidrpos();
-                stringbase_src(tmp, val);
-                operator[](id)->cidrpos(tmp);}}}
 
-    void accessrulesbase::appname(size_type id, const std::string&  val) {
+    void accessrulesbase::user(size_type id, const std::string&  val) {
         if (exists(id)) {
-            if (appname(id) != val) {
-                size_t tmp = operator[](id)->apppos();
+            if (user(id) != val) {
+                size_t tmp = operator[](id)->userpos();
                 stringbase_src(tmp, val);
-                operator[](id)->apppos(tmp);}}}
+                operator[](id)->userpos(tmp);}}}
+    
+     void accessrulesbase::host(size_type id, const std::string&  val) {
+        if (exists(id)) {
+            if (host(id) != val) {
+                size_t tmp = operator[](id)->hostpos();
+                stringbase_src(tmp, val);
+                operator[](id)->hostpos(tmp);}}}   
 
     void accessrulesbase::writezero(const fspath&  fpath) {
         smplheader inhdr;
@@ -693,11 +693,11 @@ namespace dvnci {
     void accessrulesbase::initstruct(size_type id, const std::string& newname, size_type parent) {
         new ( &((paccessrulesstruct) data())->items[id] ) accessrulestruct(able_ptr);
         name(id, newname, false);
-        cidr(id, "");
+        user(id, "");
         writetofile(id);}
 
     void accessrulesbase::uninitstruct(size_type id) {
-        cidr(id, "");
+        user(id, "");
         templatebase<accessrulesstruct>::uninitstruct(id);}
 
 

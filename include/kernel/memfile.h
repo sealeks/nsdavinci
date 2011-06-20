@@ -985,20 +985,21 @@ namespace dvnci {
         virtual ~accessrulesbase() {};
 
 
-        // headername property        
 
-        std::string cidr(size_type id) const {
-            return stringbase_src(operator[](id)->cidrpos());}
+        // user property
 
-        void cidr(size_type id, const std::string& val);
+        std::string user(size_type id) const {
+            return stringbase_src(operator[](id)->userpos());}
 
-
+        void user(size_type id, const std::string& val);
+        
+        
         // headername property
 
-        std::string appname(size_type id) const {
-            return stringbase_src(operator[](id)->apppos());}
+        std::string host(size_type id) const {
+            return stringbase_src(operator[](id)->hostpos());}
 
-        void appname(size_type id, const std::string& val);
+        void host(size_type id, const std::string& val);        
 
 
         // headername property
@@ -1010,22 +1011,48 @@ namespace dvnci {
             if (exists(id)) operator[](id)->appid(val);}
 
 
-        // headername property
+        // role property
 
-        accessruletype rule(size_type id) const {
-            return operator[](id)->rule();}
+        rolesettype role(size_type id) const {
+            return operator[](id)->role();}
 
-        void rule(size_type id, accessruletype val) {
-            if (exists(id)) operator[](id)->rule(val);}
+        void role(size_type id, rolesettype val) {
+            if (exists(id)) operator[](id)->role(val);}
 
 
-        // headername property
+        // accesslevel property
 
         acclevtype accesslevel(size_type id) const {
             return operator[](id)->accesslevel();}
 
         void accesslevel(size_type id, acclevtype val) {
             if (exists(id)) operator[](id)->accesslevel(val);}
+        
+        // accessrule property
+
+        accessruletype accessrule(size_type id) const {
+            return operator[](id)->accessrule();}
+
+        void accessrule(size_type id, accessruletype val) {
+            if (exists(id)) operator[](id)->accessrule(val);}
+        
+        
+        // protocoltype property
+
+        protocoltype protocol(size_type id) const {
+            return operator[](id)->protocol();}
+
+        void protocol(size_type id, protocoltype val) {
+            if (exists(id)) operator[](id)->protocol(val);}  
+
+
+        // filter property        
+        
+        const ipfilter& filter(size_type id) const {
+            return operator[](id)->filter();}
+
+        void filter(size_type id, const ipfilter& val) {
+             if (exists(id)) operator[](id)->filter(val);}
 
 
     protected:
@@ -1084,6 +1111,27 @@ namespace dvnci {
         void accesslevel(size_type id, acclevtype val) {
             if (exists(id)) {
                 operator[](id)->accesslevel(val);}}
+        
+
+
+        // role property
+        
+        
+        rolesettype role(size_type id) const {
+            return operator[](id)->role();}
+
+        void role(size_type id, rolesettype val) {
+            if (exists(id)) operator[](id)->role(val);}
+        
+        
+        
+        // filter property        
+        
+        const ipfilter& filter(size_type id) const {
+            return operator[](id)->filter();}
+
+        void filter(size_type id, const ipfilter& val) {
+             if (exists(id)) operator[](id)->filter(val);}        
 
 
         // headername property        

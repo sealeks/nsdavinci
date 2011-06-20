@@ -21,69 +21,55 @@ namespace dvnci {
     namespace rpc {
 
         class rpcmessage {
+            
         public:
 
             enum {
                 header_length = 10} ;
 
-            rpcmessage(std::string vl, num16 _type = 0) {
-                body_length_ = 0;
-                body_ = vl;
-                type_ = _type;
+            rpcmessage(const std::string& vl = "", rpcmsgtype tp = 0) : body_(vl), body_length_(0), type_(tp)  {
                 encode_header();}
-
-            rpcmessage() {
-                body_length_ = 0;
-                type_ = 0;
+            
+            rpcmessage(const boost::asio::streambuf& val) : body_(boost::asio::buffer_cast<const num8*>(val.data()), val.size()), body_length_(0), type_(0)  {
                 encode_header();}
 
             const std::string& message() {
                 return body_;}
 
-            const std::string& header() const {
-                return header_;}
-
             const size_t body_length() const {
+                return header().size() < header_length ? 0 : static_cast<size_t> (*((unum64*) (header().c_str())));}
 
-                return header().size() < header_length ? 0 : static_cast<size_t> (*((num64*) (header().c_str())));}
-
-            const num16 type() const {
-                return header().size() < header_length ? 0 :  *((num16*) ((char*) header().c_str() + 8));}
-
-            void build_message(std::string mesg, num16 _type) {
-                body_ = mesg;
-                type_ = _type;
-                encode_header();}
-
-            void setheader(const char* val) {
+            const rpcmsgtype type() const {
+                return header().size() < header_length ? 0 :  *((rpcmsgtype*) ((num8*) header().c_str() + 8));}
+            
+            void header(const char* val) {
                 header_.clear();
                 header_.append(val, 10);
                 decode_header();}
-
-            void setbody(boost::asio::streambuf& val) {
-                body_.clear();
-                body_.append(boost::asio::buffer_cast<const char*>(val.data()), val.size());
-                encode_header();}
+            
+            const std::string& header() const {
+                return header_;}
 
 
         private:
+            
 
             void encode_header() {
                 header_.clear();
-                num64 tmp_length = body_.size();
+                unum64 tmp_length = body_.size();
                 body_length_ = body_.size();
                 header_.append((char*) &tmp_length, 8);
                 header_.append((char*) &type_, 2);}
 
             bool decode_header() {
-                body_length_ = static_cast<size_t> (*((num64*) header().c_str()));
-                type_ = *((num16*) ((char*) header().c_str() + 8));
+                body_length_ = static_cast<size_t> (*((unum64*) header().c_str()));
+                type_ = *((rpcmsgtype*) ((num8*) header().c_str() + 8));
                 return true;}
 
             std::string body_;
             std::string header_;
             size_t body_length_;
-            num16 type_;} ;
+            rpcmsgtype type_;} ;
 
 
 
@@ -106,7 +92,7 @@ namespace dvnci {
             connectionState state() {
                 return state_;}
 
-            void connect(std::string host, std::string port, unsigned int timout_ = DEFAULT_DVNCI_TIMOUT);
+            void connect(std::string host, std::string port, timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
             void disconnect();
             bool req(rpcmessage& msg, rpcmessage& resp);
 
@@ -132,7 +118,7 @@ namespace dvnci {
             boost::asio::ip::tcp::socket socket_;
             connectionState              state_;
             boost::asio::deadline_timer  tmout_timer;
-            unsigned int                 timout;
+            timeouttype                  timout;
 
 
             rpcmessage                   respmsg;

@@ -461,6 +461,11 @@ namespace dvnci {
     // нормализация периода предыстории
     void normilize_history_bound(vlvtype  type, reporthisttype& val);
     void normilize_report_subperiod(vlvtype  type, reporthistdelt& val);
+    
+    
+    std::string role_to_str(rolesettype vl);
+    
+    rolesettype str_to_role(std::string vl);  
 
     struct statistic_functor {
 

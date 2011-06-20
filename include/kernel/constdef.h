@@ -386,7 +386,11 @@ namespace dvnci {
     //reportsrctype type       
     typedef  onum   reportsrctype;
     //subcripttype
-    typedef  onum   subcripttype;    
+    typedef  onum   subcripttype;  
+    //rpcmsgtype
+    typedef  num16  rpcmsgtype;  
+    //rpcmsgtype
+    typedef  onum   rolesettype;
     
     typedef  boost::filesystem::path      fspath;
     
@@ -428,8 +432,6 @@ namespace dvnci {
     const accessruletype ACCESS_POLICY_AUTOTH = 0;
     const accessruletype ACCESS_POLICY_CREDIT = 1;
     const accessruletype ACCESS_POLICY_DENY   = 2;
-
-
 
     //  конфигурация проекта
 
@@ -667,6 +669,20 @@ namespace dvnci {
     const appidtype NS_GROUP_MODBUS   = 0x4020;
     const appidtype NS_GROUP_KOYO   = 0x4120;
     const appidtype NS_GROUP_LGKA   = 0x4150;
+    
+    
+    //  role type
+    
+    const rolesettype NS_BASE_READER_ROLE        = 0x1;
+    const rolesettype NS_BASE_WRITER_ROLE        = 0x2;
+    const rolesettype NS_BASE_ACCESSADMIN_ROLE   = 0x4;
+    const rolesettype NS_BASE_ADMINREADER_ROLE   = 0x8;
+    const rolesettype NS_BASE_ADMINWRITER_ROLE   = 0x10;  
+    
+    const rolesettype NS_BASE_USER_ROLE          = NS_BASE_READER_ROLE | NS_BASE_WRITER_ROLE;
+    const rolesettype NS_BASE_ADMIN_ROLE          = NS_BASE_USER_ROLE | NS_BASE_ACCESSADMIN_ROLE | NS_BASE_ADMINREADER_ROLE | NS_BASE_ADMINWRITER_ROLE;
+    
+
 
     inline static   bool in_EXCLUSIVEGROUP(appidtype val)  {
         return ((val == NS_GROUP_SYSTEM) || (val == NS_GROUP_SYSTEMVAR));};
