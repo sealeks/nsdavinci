@@ -2197,6 +2197,9 @@ namespace dvnci {
 
         guidtype regclient(const std::string& hst = "", const std::string& ipp = "", const std::string& usr = "",  const std::string& password = "") {
             return clients()->regclient(appid_, hst , ipp , usr , password);}
+        
+        void unregclient(guidtype clid) {
+            clients()->unregclient(clid);}
 
         void notify_dbmanage(bool connectstate) {
             registry()->notify_dbmanage(connectstate ? MSG_DVNCDBCONNECT : MSG_DVNCDBDISCONNECT);}

@@ -2314,6 +2314,88 @@ namespace dvnci {
 
     typedef std::pair<indx, bind_servdb > itembinding_pair;
     typedef std::map<indx, bind_servdb, std::less<indx>, std::allocator<itembinding_pair > > itembinding_map;
+    
+    
+    struct ipfilter{
+        
+        typedef unum16       iptype;
+        
+        static const iptype  IP_V4=0;
+        static const iptype  IP_V6=1;
+        
+        
+        ipfilter() : type_(0), addr1_(0), addr2_(0), addr3_(0), addr4_(0), range_(0) {}
+        
+        ipfilter(const boost::asio::ip::address_v4& ad, unum16 rng=32) { 
+               type(0);
+               range(rng);
+               v4(ad);}
+        
+        ipfilter(const boost::asio::ip::address_v6& ad, unum16 rng=128) { 
+               type(1);
+               range(rng);
+               v6(ad);}
+        
+        ipfilter(const boost::asio::ip::address& ad, unum16 rng=32) { 
+               type(ad.is_v4() ? 0 : 1);
+               range(rng);
+               if (ad.is_v4())
+                 v4(ad.to_v4());
+               else 
+                 v6(ad.to_v6());}
+        
+        ipfilter(const std::string& str, unum16 rng=32) :
+                   type_(0), addr1_(0), addr2_(0), addr3_(0), addr4_(0), range_(0) {
+            try{
+               boost::asio::ip::address ad=boost::asio::ip::address::from_string(str);
+               type(ad.is_v4() ? 0 : 1);
+               range(rng);
+               if (ad.is_v4())
+                 v4(ad.to_v4());
+               else 
+                 v6(ad.to_v6());}
+            catch(...){}}
+               
+        iptype type() const {
+            return static_cast<iptype>(type_ & 0x1);}
+        
+        
+        unum16 range() const {
+            return type() ? 
+                static_cast<unum16>((range_<128) ? range_ : 128) : static_cast<unum16>((range_<32) ? range_ : 32);} 
+        
+        void range(unum16 vl ) {
+            range_ = type() ? 
+                static_cast<unum64>((vl<128) ? vl : 128) : static_cast<unum64>((vl<32) ? vl : 32);}   
+        
+        boost::asio::ip::address_v4 v4() const {
+            return boost::asio::ip::address_v4(*((boost::asio::ip::address_v4::bytes_type*)(num8*)(&addr1_)));} 
+        
+        void v4(const boost::asio::ip::address_v4& vl ) {
+            new ((num8*)(&addr1_)) boost::asio::ip::address_v4(vl);} 
+        
+        boost::asio::ip::address_v6 v6() const {
+            return boost::asio::ip::address_v6(*((boost::asio::ip::address_v6::bytes_type*)(num8*)(&addr1_)));} 
+        
+        void v6(const boost::asio::ip::address_v6& vl ) {
+            new ((num8*)(&addr1_)) boost::asio::ip::address_v6(vl);}  
+        
+        std::string to_string() const {
+            return  (type() ? v6().to_string() : v4().to_string()) + "/" + to_str(range());}
+               
+        
+    private:
+        
+        void type(iptype  vl)  {
+            type_= static_cast<unum64>(vl & 0x1);}
+        
+        unum64 type_;
+        unum64 addr1_;
+        unum64 addr2_;
+        unum64 addr3_;
+        unum64 addr4_; 
+        unum64 range_;
+    };
 
 #pragma  pack(pop)
 

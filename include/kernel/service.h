@@ -131,7 +131,7 @@ namespace dvnci {
             appidtype                          appid;
             tagsbase_ptr                       intf;
             mq_class_ptr                       main_queue;
-            idtype_threads_map_map        threads_map;
+            idtype_threads_map_map             threads_map;
             idtype_thread_map                  th_map;
             fspath                             path;
             eventtypeset                       events;
@@ -155,9 +155,9 @@ namespace dvnci {
                 appidtype newappid = intf->groups()->exists(id) ?  intf->groups()->appid(id) : 0;;
                 idtype_threads_map_iteator it = threads_map.find(id);
                 if (it != threads_map.end()) {
-                if (newappid != appid) {
                     termitate_thread(id);
-                    return true;}}
+                    if (newappid != appid) {
+                        return true;}}
                 if (newappid == appid) {
                     execute_thread(id);}
                 return true;}

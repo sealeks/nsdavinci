@@ -818,9 +818,10 @@ namespace dvnci {
         if (reportbuffers()) debugwarning(reportbuffers()->mapname() + "  reportbuffers() size=" + to_str(reportbuffers()->mapsize() / 1024) + "kb");*/
         DEBUG_STR_DVNCI( "d_tor tagbase!!!!!")
 #endif
-                debug("d_tor tagbase  rank=" + to_str(handle_));
+        //debug("d_tor tagbase  rank=" + to_str(handle_));
         unreghandle();
-        debug("d_tor tagbase after unreg rank=" + to_str(handle_));}
+        //debug("d_tor tagbase after unreg rank=" + to_str(handle_))
+			;}
 
     void tagsbase::writezero(const fspath& basepatht, lcltype loc ) {
         num64 str_head = 1;
