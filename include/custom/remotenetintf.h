@@ -60,7 +60,7 @@ namespace dvnci {
                     try {
                         std::ostringstream out_archive_stream(std::ostringstream::binary);
                         std::istringstream in_archive_stream(std::istringstream::binary);
-                        boost::archive::binary_oarchive out_archive(out_archive_stream);
+                        prb_binary_oarchive out_archive(out_archive_stream);
                         out_archive << reqstruct;
                         dvnci::rpc::rpcmessage out_mess(out_archive_stream.str(), reqtp);
                         dvnci::rpc::rpcmessage in_mess;
@@ -68,13 +68,13 @@ namespace dvnci {
                         std::cout.flush();
                         if (in_mess.type() == resptp) {
                             in_archive_stream.str(in_mess.message());
-                            boost::archive::binary_iarchive in_archive(in_archive_stream);
+                            prb_binary_iarchive in_archive(in_archive_stream);
                             in_archive >> respstruct;}
                         else {
                             if (in_mess.type() == RPC_OPERATION_ERROR_OUTSIDE) {
                                 error_outside tmperr;
                                 in_archive_stream.str(in_mess.message());
-                                boost::archive::binary_iarchive in_archive(in_archive_stream);
+                                prb_binary_iarchive in_archive(in_archive_stream);
                                 in_archive >> tmperr;
                                 dvncierror err(static_cast<ns_error> (tmperr.error));
                             }}}
