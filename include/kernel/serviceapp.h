@@ -6,12 +6,16 @@
 #include <kernel/systemutil.h>
 
 namespace dvnci {
+    
+
 
     struct servicearraystruct {
         servidtype serviceid;
         std::string servicename;} ;
 
     const  int SERVICE_COUNT = 9;
+    
+    
 
     const  servicearraystruct  SERVICE_ARRAY[] = {{ NS_ADMIN_SERVICE, NS_ADMIN_SERVICE_NAME} ,
                                                   { NS_PERSISTENCE_SERVICE, NS_PERSISTENCE_SERVICE_NAME} ,
@@ -22,6 +26,8 @@ namespace dvnci {
                                                   { NS_MODBUS_SERVICE, NS_MODBUS_SERVICE_NAME},
                                                   { NS_KOYO_SERVICE, NS_KOYO_SERVICE_NAME},
                                                   { NS_LGKA_SERVICE, NS_LGKA_SERVICE_NAME}};
+    
+    
 
     struct sevicestatus {
 
@@ -37,6 +43,20 @@ namespace dvnci {
         std::string dysplayname;
         std::string path;
         std::string startname;} ;
+        
+        
+        
+        
+    int  startmain();
+    bool installservice(const std::string& pathservice, const std::string& nameservice);
+    bool uninstallservice(const std::string& nameservice);
+    bool startservice(const std::string& nameservice);
+    bool stopservice(const std::string& nameservice);
+    bool serviceconfig(const std::string& nameservice, sevicestatus& info);
+    bool setserviceconfig(const std::string& nameservice, sevicestatus& info);
+    int  servicestatus(const std::string& nameservice);
+    
+    
 
     typedef std::pair<servidtype, std::string >                      servidtype_stdstr_pair;
     typedef std::map< servidtype, std::string, std::less<servidtype>,
@@ -72,9 +92,9 @@ namespace dvnci {
 
         ns_error signature(iteminfo_map& map_);
 
-        bool serviceproperty(servidtype id, sevicestatus& val);
+        bool get_property(servidtype id, sevicestatus& val);
 
-        bool setserviceproperty(servidtype id, sevicestatus& val);
+        bool set_property(servidtype id, sevicestatus& val);
 
         int  status(servidtype id);
 
@@ -84,9 +104,9 @@ namespace dvnci {
 
     private:
 
-        bool internal_serviceproperty(servidtype id, sevicestatus& val);
+        bool get_property_impl(servidtype id, sevicestatus& val);
         
-        bool internal_setserviceproperty(servidtype id, sevicestatus val);
+        bool set_property_impl(servidtype id, sevicestatus val);
 
         servidtype_stdstr_map servicemap;} ;}
 
