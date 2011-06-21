@@ -52,8 +52,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/431270180/string_base.o \
 	${OBJECTDIR}/_ext/431270180/proccesstmpl.o \
 	${OBJECTDIR}/_ext/431270180/memfile.o \
-	${OBJECTDIR}/_ext/431270180/serviceapp_lin.o \
-	${OBJECTDIR}/_ext/431270180/serviceapp_win.o \
 	${OBJECTDIR}/_ext/431270180/index_base.o \
 	${OBJECTDIR}/_ext/431270180/mainstruct.o
 
@@ -173,16 +171,6 @@ ${OBJECTDIR}/_ext/431270180/memfile.o: ../../include/kernel/memfile.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/memfile.o ../../include/kernel/memfile.cpp
-
-${OBJECTDIR}/_ext/431270180/serviceapp_lin.o: ../../include/kernel/serviceapp_lin.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/serviceapp_lin.o ../../include/kernel/serviceapp_lin.cpp
-
-${OBJECTDIR}/_ext/431270180/serviceapp_win.o: ../../include/kernel/serviceapp_win.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/serviceapp_win.o ../../include/kernel/serviceapp_win.cpp
 
 ${OBJECTDIR}/_ext/431270180/index_base.o: ../../include/kernel/index_base.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180

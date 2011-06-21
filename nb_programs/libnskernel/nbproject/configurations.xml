@@ -41,8 +41,6 @@
     <itemPath>../../include/kernel/service.h</itemPath>
     <itemPath>../../include/kernel/serviceapp.cpp</itemPath>
     <itemPath>../../include/kernel/serviceapp.h</itemPath>
-    <itemPath>../../include/kernel/serviceapp_lin.cpp</itemPath>
-    <itemPath>../../include/kernel/serviceapp_win.cpp</itemPath>
     <itemPath>../../include/kernel/short_value.cpp</itemPath>
     <itemPath>../../include/kernel/short_value.h</itemPath>
     <itemPath>../../include/kernel/static_table_templ.h</itemPath>
