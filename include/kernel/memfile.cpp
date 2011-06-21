@@ -2217,7 +2217,7 @@ namespace dvnci {
                 if ((!newst.allwaysactiv_helper()) && (!refcnt(id)))
                     trigger_ref(id,false);}
             if (IN_RANGESET(newst.type()) && (((oldst.mineu64() != newst.mineu64())
-                                               || (oldst.maxeu64() != newst.maxeu64()))) || (oldst.type() != newst.type())) {
+                                               || (oldst.maxeu64() != newst.maxeu64())) || (oldst.type() != newst.type()))) {
                 trigger_range(id, newst.rangable());}
             
             if ((IN_NUMBERSET(newst.type())) && (IN_NUMBERSET(oldst.type()))){
