@@ -33,11 +33,11 @@
     <itemPath>../../include/kernel/mainstruct.h</itemPath>
     <itemPath>../../include/kernel/memfile.cpp</itemPath>
     <itemPath>../../include/kernel/memfile.h</itemPath>
-    <itemPath>../../include/kernel/portable_binary_archive.hpp</itemPath>
-    <itemPath>../../include/kernel/portable_binary_iarchive.cpp</itemPath>
-    <itemPath>../../include/kernel/portable_binary_iarchive.hpp</itemPath>
-    <itemPath>../../include/kernel/portable_binary_oarchive.cpp</itemPath>
-    <itemPath>../../include/kernel/portable_binary_oarchive.hpp</itemPath>
+    <itemPath>../../include/kernel/prb_binary_archive.hpp</itemPath>
+    <itemPath>../../include/kernel/prb_binary_iarchive.cpp</itemPath>
+    <itemPath>../../include/kernel/prb_binary_iarchive.hpp</itemPath>
+    <itemPath>../../include/kernel/prb_binary_oarchive.cpp</itemPath>
+    <itemPath>../../include/kernel/prb_binary_oarchive.hpp</itemPath>
     <itemPath>../../include/kernel/proccesstmpl.cpp</itemPath>
     <itemPath>../../include/kernel/proccesstmpl.h</itemPath>
     <itemPath>../../include/kernel/rpcioclient.cpp</itemPath>

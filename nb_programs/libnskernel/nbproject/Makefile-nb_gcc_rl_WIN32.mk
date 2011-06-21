@@ -35,7 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/431270180/appath_lin.o \
+	${OBJECTDIR}/_ext/431270180/prb_binary_oarchive.o \
 	${OBJECTDIR}/_ext/431270180/rpcioclient.o \
+	${OBJECTDIR}/_ext/431270180/prb_binary_iarchive.o \
 	${OBJECTDIR}/_ext/431270180/stringvalue_base.o \
 	${OBJECTDIR}/_ext/431270180/serviceapp.o \
 	${OBJECTDIR}/_ext/431270180/basis_iostream.o \
@@ -86,9 +88,17 @@ ${OBJECTDIR}/_ext/431270180/appath_lin.o: ../../include/kernel/appath_lin.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/appath_lin.o ../../include/kernel/appath_lin.cpp
 
+${OBJECTDIR}/_ext/431270180/prb_binary_oarchive.o: ../../include/kernel/prb_binary_oarchive.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
+	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/prb_binary_oarchive.o ../../include/kernel/prb_binary_oarchive.cpp
+
 ${OBJECTDIR}/_ext/431270180/rpcioclient.o: ../../include/kernel/rpcioclient.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/rpcioclient.o ../../include/kernel/rpcioclient.cpp
+
+${OBJECTDIR}/_ext/431270180/prb_binary_iarchive.o: ../../include/kernel/prb_binary_iarchive.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
+	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/prb_binary_iarchive.o ../../include/kernel/prb_binary_iarchive.cpp
 
 ${OBJECTDIR}/_ext/431270180/stringvalue_base.o: ../../include/kernel/stringvalue_base.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
