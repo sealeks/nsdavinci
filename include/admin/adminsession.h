@@ -102,12 +102,12 @@ namespace dvnci {
                     std::istringstream in_archive_stream(std::istringstream::binary);
                     std::string out_string;
                     in_archive_stream.str(in_.message());
-                    boost::archive::binary_iarchive in_archive(in_archive_stream);
+                    prb_binary_iarchive in_archive(in_archive_stream);
                     in_archive >> reqstruct;
 
                     num16 resptp = intf->generate_impl(reqstruct, respstruct);
 
-                    boost::archive::binary_oarchive out_archive(out_archive_stream);
+                    prb_binary_oarchive out_archive(out_archive_stream);
                     out_archive << respstruct;
                     out_string = out_archive_stream.str();
                     out_ = dvnci::rpc::rpcmessage(out_string, resptp);}
