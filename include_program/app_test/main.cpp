@@ -9,7 +9,7 @@
 #include <kernel/systemutil.h>
 #include <kernel/serviceapp.h>
 #include <kernel/service.h>
-#include <kernel/system_proccesstmpl.h>
+#include <kernel/proccesstmpl.h>
 
 using namespace dvnci;
 using namespace std;
