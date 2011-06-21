@@ -35,7 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/431270180/appath_lin.o \
+	${OBJECTDIR}/_ext/431270180/prb_binary_oarchive.o \
 	${OBJECTDIR}/_ext/431270180/rpcioclient.o \
+	${OBJECTDIR}/_ext/431270180/prb_binary_iarchive.o \
 	${OBJECTDIR}/_ext/431270180/stringvalue_base.o \
 	${OBJECTDIR}/_ext/431270180/serviceapp.o \
 	${OBJECTDIR}/_ext/431270180/basis_iostream.o \
@@ -45,7 +47,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/431270180/service.o \
 	${OBJECTDIR}/_ext/431270180/constdef.o \
 	${OBJECTDIR}/_ext/431270180/appath.o \
-	${OBJECTDIR}/_ext/431270180/interface_proccesstmpl.o \
 	${OBJECTDIR}/_ext/431270180/driver_blockmodel.o \
 	${OBJECTDIR}/_ext/431270180/appath_win.o \
 	${OBJECTDIR}/_ext/431270180/expression.o \
@@ -53,8 +54,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/431270180/string_base.o \
 	${OBJECTDIR}/_ext/431270180/proccesstmpl.o \
 	${OBJECTDIR}/_ext/431270180/memfile.o \
-	${OBJECTDIR}/_ext/431270180/serviceapp_lin.o \
-	${OBJECTDIR}/_ext/431270180/serviceapp_win.o \
 	${OBJECTDIR}/_ext/431270180/index_base.o \
 	${OBJECTDIR}/_ext/431270180/mainstruct.o
 
@@ -90,10 +89,20 @@ ${OBJECTDIR}/_ext/431270180/appath_lin.o: ../../include/kernel/appath_lin.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/appath_lin.o ../../include/kernel/appath_lin.cpp
 
+${OBJECTDIR}/_ext/431270180/prb_binary_oarchive.o: ../../include/kernel/prb_binary_oarchive.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
+	${RM} $@.d
+	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/prb_binary_oarchive.o ../../include/kernel/prb_binary_oarchive.cpp
+
 ${OBJECTDIR}/_ext/431270180/rpcioclient.o: ../../include/kernel/rpcioclient.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	${RM} $@.d
 	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/rpcioclient.o ../../include/kernel/rpcioclient.cpp
+
+${OBJECTDIR}/_ext/431270180/prb_binary_iarchive.o: ../../include/kernel/prb_binary_iarchive.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
+	${RM} $@.d
+	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/prb_binary_iarchive.o ../../include/kernel/prb_binary_iarchive.cpp
 
 ${OBJECTDIR}/_ext/431270180/stringvalue_base.o: ../../include/kernel/stringvalue_base.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
@@ -140,11 +149,6 @@ ${OBJECTDIR}/_ext/431270180/appath.o: ../../include/kernel/appath.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/appath.o ../../include/kernel/appath.cpp
 
-${OBJECTDIR}/_ext/431270180/interface_proccesstmpl.o: ../../include/kernel/interface_proccesstmpl.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/interface_proccesstmpl.o ../../include/kernel/interface_proccesstmpl.cpp
-
 ${OBJECTDIR}/_ext/431270180/driver_blockmodel.o: ../../include/kernel/driver_blockmodel.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	${RM} $@.d
@@ -179,16 +183,6 @@ ${OBJECTDIR}/_ext/431270180/memfile.o: ../../include/kernel/memfile.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	${RM} $@.d
 	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/memfile.o ../../include/kernel/memfile.cpp
-
-${OBJECTDIR}/_ext/431270180/serviceapp_lin.o: ../../include/kernel/serviceapp_lin.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/serviceapp_lin.o ../../include/kernel/serviceapp_lin.cpp
-
-${OBJECTDIR}/_ext/431270180/serviceapp_win.o: ../../include/kernel/serviceapp_win.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/serviceapp_win.o ../../include/kernel/serviceapp_win.cpp
 
 ${OBJECTDIR}/_ext/431270180/index_base.o: ../../include/kernel/index_base.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
