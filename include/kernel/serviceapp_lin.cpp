@@ -1,10 +1,8 @@
 
-#if defined(_DVN_LIN_)
 
-#include <stdio.h>
-#include <kernel/serviceapp.h>
 
-boost::thread th;
+
+
 
 
 namespace dvnci {
@@ -433,4 +431,4 @@ namespace dvnci {
 
 
 
-#endif
+

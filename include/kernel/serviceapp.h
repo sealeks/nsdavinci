@@ -43,8 +43,7 @@ namespace dvnci {
         std::string dysplayname;
         std::string path;
         std::string startname;} ;
-        
-    int serviceargumentparser(int argc, char** argv);       
+     
         
         
         
