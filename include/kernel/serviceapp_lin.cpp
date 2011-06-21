@@ -9,74 +9,10 @@ boost::thread th;
 
 namespace dvnci {
 
-    int  startmain();
-    bool installservice(const std::string& pathservice, const std::string& nameservice);
-    bool uninstallservice(const std::string& nameservice);
-    bool startservice(const std::string& nameservice);
-    bool stopservice(const std::string& nameservice);
-    bool serviceconfig(const std::string& nameservice, sevicestatus& info);
-    bool setserviceconfig(const std::string& nameservice, sevicestatus& info);
-    int  servicestatus(const std::string& nameservice);
+
     void servicemain(int argc, char** argv);
     void servicecontrol(int dwControlCode);
     void setsomeservicestatus(int dwCurrentState, int dwWin32ExitCode, int dwWaitHint);
-
-    int serviceargumentparser(int argc, char** argv) {
-        /*for (int i = 0; i < argc; ++i) {
-            switch (i) {
-                case 0:{
-                    boostapplicationpath = argv[0];
-                    break;}
-                case 1:{
-                    applicationservicespec = argv[1];
-                    break;}}}
-        applicationservicepath = boostapplicationpath.file_string();
-        applicationservicename = boostapplicationpath.filename();
-        DEBUG_VAL_DVNCI(applicationservicepath);
-        DEBUG_VAL_DVNCI(applicationservicename);
-        DEBUG_VAL_DVNCI(applicationservicespec);
-        int oper = getserviceoperation(applicationservicespec);
-        DEBUG_VAL_DVNCI(oper);
-        switch (oper) {
-            case SERVICE_OPEATION_INSTALL:{
-                installservice(applicationservicepath, dvnciservicename);
-                break;}
-            case SERVICE_OPEATION_UNINSTALL:{
-                uninstallservice(dvnciservicename);
-                break;}
-            case SERVICE_OPEATION_APP:{
-                return SERVICE_OPEATION_APP;}
-            case SERVICE_OPEATION_START:{
-                startmain();
-                break;}
-            default: startmain();}*/
-        return 0/*oper*/;}
-
-    int getserviceoperation(std::string val) {
-        /*lower_and_trim(val);
-        if (val == "/install") return SERVICE_OPEATION_INSTALL;
-        if (val == "/uninstall") return SERVICE_OPEATION_UNINSTALL;
-        if (val == "/stop") return SERVICE_OPEATION_STOP;
-        if (val == "/start") return SERVICE_OPEATION_START;
-        if (boost::algorithm::iends_with(val, "/app")) return SERVICE_OPEATION_APP;*/
-        return SERVICE_OPEATION_START;}
-
-    bool startservice() {
-
-        if (mainserv) {
-            th = boost::thread(mainserv);
-            th.join();}
-        return 1;}
-
-    bool stopservice() {
-
-        if (mainserv) {
-            mainserv.terminate();
-            th.join();}
-        return 1;}
-
-
-
 
     int  startmain() {
 
