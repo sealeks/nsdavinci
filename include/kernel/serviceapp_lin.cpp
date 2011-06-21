@@ -272,7 +272,7 @@ namespace dvnci {
         SC_HANDLE hSCManager;
         LPQUERY_SERVICE_CONFIG lpBufConfig;
         DWORD dwBytesNeeded;
-        DEBUG_STR_DVNCI(setserviceproperty(num64 id, sevicestatus & val))
+        DEBUG_STR_DVNCI(set_property(num64 id, sevicestatus & val))
         hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
         if (!hSCManager) {
             DEBUG_STR_DVNCI(Cant open Service Control Manager);
@@ -435,17 +435,17 @@ namespace dvnci {
                 map_.insert(iteminfo_pair(static_cast<indx> (it->first), tmp_inf));}
             return NS_ERROR_SUCCESS;}
 
-        bool servicemanager::serviceproperty(servidtype id, sevicestatus& val) {
+        bool servicemanager::get_property(servidtype id, sevicestatus& val) {
 
-            if (!internal_serviceproperty(id, val))
+            if (!get_serviceproperty_impl(id, val))
                 val = sevicestatus();
             return true;}
 
-        bool servicemanager::setserviceproperty(servidtype id, sevicestatus& val) {
+        bool servicemanager::set_property(servidtype id, sevicestatus& val) {
 
-            DEBUG_STR_DVNCI(setserviceproperty num64 id sevicestatus & val )
-            internal_setserviceproperty(id, val);
-            internal_serviceproperty(id, val);
+            DEBUG_STR_DVNCI(set_property num64 id sevicestatus & val )
+            set_property_impl(id, val);
+            get_property_impl(id, val);
             return true;}
 
         int  servicemanager::status(servidtype id) {
@@ -480,7 +480,7 @@ namespace dvnci {
             return (servicemap.find(id) != servicemap.end());}
 
 
-        bool servicemanager::internal_serviceproperty(servidtype id, sevicestatus& val) {
+        bool servicemanager::get_property_impl(servidtype id, sevicestatus& val) {
             servidtype_stdstr_map::iterator it = servicemap.find(id);
             DEBUG_VAL_DVNCI(id)
             if (it != servicemap.end()) {
@@ -488,8 +488,8 @@ namespace dvnci {
                 return serviceconfig(it->second, val);}
             return false;}
 
-        bool servicemanager::internal_setserviceproperty(servidtype id, sevicestatus val) {
-            DEBUG_STR_DVNCI(internal_setserviceproperty num64 id sevicestatus & val)
+        bool servicemanager::set_property_impl(servidtype id, sevicestatus val) {
+            DEBUG_STR_DVNCI(set_property_impl num64 id sevicestatus & val)
             servidtype_stdstr_map::iterator it = servicemap.find(id);
             if (it != servicemap.end()) {
                 return setserviceconfig(it->second, val);}

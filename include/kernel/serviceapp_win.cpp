@@ -6,86 +6,18 @@
 #include <kernel/serviceapp.h>
 
 #include <windows.h>
+
 DWORD dwErrCode;
 SERVICE_STATUS ss;
 SERVICE_STATUS_HANDLE ssHandle;
 
 
-
-boost::thread th;
-
-
-
 namespace dvnci {
     
-    int  startmain();
-    bool installservice(const std::string& pathservice, const std::string& nameservice);
-    bool uninstallservice(const std::string& nameservice);
-    bool startservice(const std::string& nameservice);
-    bool stopservice(const std::string& nameservice);
-    bool serviceconfig(const std::string& nameservice, sevicestatus& info);
-    bool setserviceconfig(const std::string& nameservice, sevicestatus& info);
-    int  servicestatus(const std::string& nameservice);
+
     void WINAPI servicemain(DWORD dwArgc, LPTSTR *lpszArgv);
     void WINAPI servicecontrol(DWORD dwControlCode);
     void setsomeservicestatus(DWORD dwCurrentState, DWORD dwWin32ExitCode, DWORD dwWaitHint);
-
-
-    int serviceargumentparser(int argc, char** argv) {
-        for (int i = 0; i < argc; ++i) {
-            switch (i) {
-                case 0:{
-                    boostapplicationpath = argv[0];
-                    break;}
-                case 1:{
-                    applicationservicespec = argv[1];
-                    break;}}}
-        applicationservicepath = boostapplicationpath.string();
-        applicationservicename = boostapplicationpath.string();
-        DEBUG_VAL_DVNCI(applicationservicepath);
-        DEBUG_VAL_DVNCI(applicationservicename);
-        DEBUG_VAL_DVNCI(applicationservicespec);
-        int oper = getserviceoperation(applicationservicespec);
-        DEBUG_VAL_DVNCI(oper);
-        switch (oper) {
-            case SERVICE_OPEATION_INSTALL:{
-                installservice(applicationservicepath, dvnciservicename);
-                break;}
-            case SERVICE_OPEATION_UNINSTALL:{
-                uninstallservice(dvnciservicename);
-                break;}
-            case SERVICE_OPEATION_APP:{
-                return SERVICE_OPEATION_APP;}
-            case SERVICE_OPEATION_START:{
-                startmain();
-                break;}
-            default: startmain();}
-        return oper;}
-
-    int getserviceoperation(std::string val) {
-        lower_and_trim(val);
-        if (val == "/install") return SERVICE_OPEATION_INSTALL;
-        if (val == "/uninstall") return SERVICE_OPEATION_UNINSTALL;
-        if (val == "/stop") return SERVICE_OPEATION_STOP;
-        if (val == "/start") return SERVICE_OPEATION_START;
-        if (boost::algorithm::iends_with(val, "/app")) return SERVICE_OPEATION_APP;
-        return SERVICE_OPEATION_START;}
-
-    bool startservice() {
-
-        if (mainserv) {
-            th = boost::thread(mainserv);
-            th.join();}
-        return TRUE;}
-
-    bool stopservice() {
-
-        if (mainserv) {
-            mainserv.terminate();
-            th.join();}
-        return TRUE;}
-
-
 
 
 
@@ -284,7 +216,7 @@ namespace dvnci {
         SC_HANDLE hSCManager;
         LPQUERY_SERVICE_CONFIG lpBufConfig;
         DWORD dwBytesNeeded;
-        DEBUG_STR_DVNCI(setserviceproperty(num64 id, sevicestatus & val))
+        DEBUG_STR_DVNCI(set_property(num64 id, sevicestatus & val))
         hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
         if (!hSCManager) {
             DEBUG_STR_DVNCI(Cant open Service Control Manager);
@@ -447,17 +379,17 @@ namespace dvnci {
                 map_.insert(iteminfo_pair(static_cast<indx> (it->first), tmp_inf));}
             return NS_ERROR_SUCCESS;}
 
-        bool servicemanager::serviceproperty(servidtype id, sevicestatus& val) {
+        bool servicemanager::get_property(servidtype id, sevicestatus& val) {
 
-            if (!internal_serviceproperty(id, val))
+            if (!get_property_impl(id, val))
                 val = sevicestatus();
             return true;}
 
-        bool servicemanager::setserviceproperty(servidtype id, sevicestatus& val) {
+        bool servicemanager::set_property(servidtype id, sevicestatus& val) {
 
-            DEBUG_STR_DVNCI(setserviceproperty num64 id sevicestatus & val )
-            internal_setserviceproperty(id, val);
-            internal_serviceproperty(id, val);
+            DEBUG_STR_DVNCI(set_property num64 id sevicestatus & val )
+            set_property_impl(id, val);
+            get_property_impl(id, val);
             return true;}
 
         int  servicemanager::status(servidtype id) {
@@ -492,7 +424,7 @@ namespace dvnci {
             return (servicemap.find(id) != servicemap.end());}
 
 
-        bool servicemanager::internal_serviceproperty(servidtype id, sevicestatus& val) {
+        bool servicemanager::get_property_impl(servidtype id, sevicestatus& val) {
             servidtype_stdstr_map::iterator it = servicemap.find(id);
             DEBUG_VAL_DVNCI(id)
             if (it != servicemap.end()) {
@@ -500,8 +432,8 @@ namespace dvnci {
                 return serviceconfig(it->second, val);}
             return false;}
 
-        bool servicemanager::internal_setserviceproperty(servidtype id, sevicestatus val) {
-            DEBUG_STR_DVNCI(internal_setserviceproperty num64 id sevicestatus & val)
+        bool servicemanager::set_property_impl(servidtype id, sevicestatus val) {
+            DEBUG_STR_DVNCI(set_property_impl num64 id sevicestatus & val)
             servidtype_stdstr_map::iterator it = servicemap.find(id);
             if (it != servicemap.end()) {
                 return setserviceconfig(it->second, val);}
