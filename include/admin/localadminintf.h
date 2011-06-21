@@ -833,21 +833,21 @@ namespace dvnci {
             virtual std::string   displayname() const {
                 if (exists()) {
                     sevicestatus tmpsvs;
-                    if (svm_.serviceproperty(number_, tmpsvs)) {
+                    if (svm_.get_property(number_, tmpsvs)) {
                         return tmpsvs.dysplayname;}};
                 return "";}
 
             virtual std::string   path() const {
                 if (exists()) {
                     sevicestatus tmpsvs;
-                    if (svm_.serviceproperty(number_, tmpsvs)) {
+                    if (svm_.get_property(number_, tmpsvs)) {
                         return tmpsvs.path;}};
                 return "";}
 
             virtual num64         starttype() const {
                 if (exists()) {
                     sevicestatus tmpsvs;
-                    if (svm_.serviceproperty(number_, tmpsvs)) {
+                    if (svm_.get_property(number_, tmpsvs)) {
                         return tmpsvs.runstate;}};
                 return SERVICE_RUNSTATE_NODEF;}
 
@@ -855,7 +855,7 @@ namespace dvnci {
                 if (exists()) {
                     sevicestatus tmpsvs;
                     tmpsvs.runstate = static_cast<int> (val);
-                    svm_.setserviceproperty(number_, tmpsvs);}}
+                    svm_.set_property(number_, tmpsvs);}}
 
             virtual num64         status() const   {
                 if (exists()) {
