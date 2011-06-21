@@ -11,8 +11,8 @@ namespace dvnci {
         rpcioclient::~rpcioclient() {
             if (state_ == connected) disconnect();}
 
-        void rpcioclient::connect(std::string host, std::string port, unsigned int timout_ ) {
-            timout = in_bounded<unsigned int>(50, 600000, timout_);
+        void rpcioclient::connect(std::string host, std::string port, timeouttype tmo ) {
+            timout = in_bounded<timeouttype>(50, 600000, tmo);
             DEBUG_STR_DVNCI(ioclient connect)
             DEBUG_VAL_DVNCI(host)
             DEBUG_VAL_DVNCI(port)
