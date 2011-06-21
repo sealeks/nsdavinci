@@ -44,6 +44,8 @@ namespace dvnci {
         std::string path;
         std::string startname;} ;
         
+    int serviceargumentparser(int argc, char** argv);       
+        
         
         
         
