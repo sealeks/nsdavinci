@@ -2,6 +2,7 @@
 #include <kernel/serviceapp.h>
 #include <stdio.h>
 
+namespace dvnci {
 boost::thread th;
 
 
@@ -62,7 +63,7 @@ boost::thread th;
 
 
 
-
+}
 
 
 
