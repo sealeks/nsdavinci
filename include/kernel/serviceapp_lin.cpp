@@ -371,7 +371,7 @@ namespace dvnci {
 
         bool servicemanager::get_property(servidtype id, sevicestatus& val) {
 
-            if (!get_serviceproperty_impl(id, val))
+            if (!get_property_impl(id, val))
                 val = sevicestatus();
             return true;}
 
