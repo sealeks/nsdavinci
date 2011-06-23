@@ -378,7 +378,7 @@ namespace dvnci {
 
         class regystry_viewmodel : public livetableview {
             Q_OBJECT
-            typedef iconmapper<servidtype>     iconmaptype;
+            typedef iconmapper<appidtype>     iconmaptype;
             typedef boost::shared_ptr<iconmaptype>    iconmaptype_ptr;
             typedef iconmaptype::type_icon_pair       iconmappair;
 
@@ -403,7 +403,7 @@ namespace dvnci {
             iconmaptype_ptr    iconmap;} ;
 
         class client_viewmodel : public livetableview {
-            typedef iconmapper<servidtype>     iconmaptype;
+            typedef iconmapper<appidtype>     iconmaptype;
             typedef boost::shared_ptr<iconmaptype>    iconmaptype_ptr;
             typedef iconmaptype::type_icon_pair       iconmappair;
             Q_OBJECT
