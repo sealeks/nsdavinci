@@ -819,10 +819,11 @@ namespace dvnci {
 
         public:
 
-            localserviceintf() : serviceintf() {};
+            localserviceintf() : serviceintf() {
+                   svm_=demon_entry_factory::build(""); };
 
             bool                  exists() const {
-                return svm_.exists(number_);}
+                return ((svm_) && (svm_->exists(number_)));}
 
             virtual void          number(indx val) {
                 number_ = val;};
@@ -832,42 +833,33 @@ namespace dvnci {
 
             virtual std::string   displayname() const {
                 if (exists()) {
-                    sevicestatus tmpsvs;
-                    if (svm_.get_property(number_, tmpsvs)) {
-                        return tmpsvs.dysplayname;}};
+                    return svm_->name(number_);};
                 return "";}
 
             virtual std::string   path() const {
-                if (exists()) {
-                    sevicestatus tmpsvs;
-                    if (svm_.get_property(number_, tmpsvs)) {
-                        return tmpsvs.path;}};
+                if (exists()) {}
                 return "";}
 
             virtual num64         starttype() const {
                 if (exists()) {
-                    sevicestatus tmpsvs;
-                    if (svm_.get_property(number_, tmpsvs)) {
-                        return tmpsvs.runstate;}};
+                    return svm_->starttype(number_);};
                 return SERVICE_RUNSTATE_NODEF;}
 
             virtual void          starttype(num64 val)  {
                 if (exists()) {
-                    sevicestatus tmpsvs;
-                    tmpsvs.runstate = static_cast<int> (val);
-                    svm_.set_property(number_, tmpsvs);}}
+                    return svm_->starttype(number_, static_cast<int>(val));};}
 
             virtual num64         status() const   {
                 if (exists()) {
-                    return svm_.status(number_);}
+                    return svm_->status(number_);};
                 return SERVICE_STATUS_NODEF;}
 
             virtual void          status(num64 val) {;}
 
         protected:
 
-            mutable               servicemanager svm_;
-            indx                  number_;} ;
+            mutable  servicemanager_ptr svm_;
+            indx                        number_;} ;
 
         class localadminintf : public adminintf {
             friend class localtagintf;
@@ -973,11 +965,13 @@ namespace dvnci {
             virtual ns_error operation_autorizate(const std::string& user = "", const std::string& password = "",
                                                   const std::string& hst = "localhost", const std::string& ipadr = "localhost");
 
-            virtual bool operation_startservice(servidtype val);
+            virtual bool operation_startservice(appidtype val);
 
-            virtual bool operation_stopservice(servidtype val);
+            virtual bool operation_stopservice(appidtype val);
 
         protected:
+            
+            servicemanager_ptr svm() const;
 
             virtual ns_error entities_internal_signature(nodetype ittp, indx_set& set_, iteminfo_map& mappack,
                     const std::string& strcriteria = "" , num64 numcriteria = -1);
@@ -1071,7 +1065,6 @@ namespace dvnci {
             appidtype appid;
             eventtypeset events;
             dvnci::meta metaintf_;
-            servicemanager svm_;
 
             void setintf(tagsbase* intf_);} ;}}
 

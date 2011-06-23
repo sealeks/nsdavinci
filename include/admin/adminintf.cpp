@@ -1158,10 +1158,10 @@ namespace dvnci {
                         operation_send_command(static_cast<indx> (req.numpar2), req.strpar1, req.numpar3 != 0);
                         break;}
                     case SERVICE_OPEATION_START:{
-                        operation_startservice(static_cast<servidtype> (req.numpar2));
+                        operation_startservice(static_cast<appidtype> (req.numpar2));
                         break;}
                     case SERVICE_OPEATION_STOP:{
-                        operation_stopservice(static_cast<servidtype> (req.numpar2));
+                        operation_stopservice(static_cast<appidtype> (req.numpar2));
                         break;}}}
             catch (...) {}
 

@@ -295,8 +295,10 @@ namespace dvnci {
 
         bool localadminintf::services(iteminfo_map& mappack, const std::string& strcriteria  , num64 numcriteria) {
             mappack.clear();
-            svm_.signature(mappack);
-            return true;}
+            if (svm()){ 
+                svm()->signature(mappack);
+                return true;}
+            return false;}
 
         ns_error localadminintf::entities_internal_signature(nodetype ittp, indx_set& set_, iteminfo_map& mappack,
                 const std::string& strcriteria  , num64 numcriteria) {{
@@ -673,12 +675,16 @@ namespace dvnci {
         ns_error localadminintf::operation_autorizate(const std::string& user, const std::string& password, const std::string& hst, const std::string& ipadr) {
             return (intf->regclient(hst, ipadr, user, password)) ? NS_ERROR_SUCCESS : ERROR_AUTORIZATION_FAIL;}
 
-        bool localadminintf::operation_startservice(servidtype val) {
+        bool localadminintf::operation_startservice(appidtype val) {
             OUTSTRVAL_DVNCI(operation_startservice, val) ;
-            return svm_.operation( val, SERVICE_OPEATION_START);}
+            return svm() ? svm()->operation( val, SERVICE_OPEATION_START) : false;}
 
-        bool localadminintf::operation_stopservice(servidtype val) {
-            return svm_.operation(val, SERVICE_OPEATION_STOP);}
+        bool localadminintf::operation_stopservice(appidtype val) {
+            return  svm() ? svm()->operation(val, SERVICE_OPEATION_STOP) : false;}
+        
+        servicemanager_ptr localadminintf::svm() const{
+            if (dynamic_cast<localdebugintf*> (serviceintf_.get()))
+                return dynamic_cast<localserviceintf*> (serviceintf_.get())->svm_;} 
 
         void localadminintf::setintf(tagsbase* intf_) {
             intf = intf_;
