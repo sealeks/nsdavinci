@@ -314,7 +314,7 @@ namespace dvnci {
     // application id type
     typedef tagtype appidtype;
     // service id type
-    typedef tagtype servidtype;
+    typedef tagtype appidtype;
     // report type
     typedef tagtype reporttype;
     //chanal type for group // RS232, TCP/ID, TCP/IPv6.....
@@ -396,7 +396,8 @@ namespace dvnci {
     
     
 
-    const timeouttype DEFAULT_DVNCI_TIMOUT = 5000; //FFFFFFF    
+    const timeouttype DEFAULT_DVNCI_TIMOUT = 5000; //FFFFFFF 
+    
 
     const int SERVICE_OPEATION_INSTALL = 0x1;
     const int SERVICE_OPEATION_UNINSTALL = 0x2;
@@ -622,35 +623,35 @@ namespace dvnci {
     const opsystemtype NS_CURRENT_OS_TYPE = NS_LIN64;
 #endif
 
-    const servidtype NS_ADMIN_APPLICATION   = 0x10;
+    const appidtype NS_ADMIN_APPLICATION   = 0x10;
 
-    const servidtype NS_ADMIN_SERVICE       = 0x11;
+    const appidtype NS_ADMIN_SERVICE       = 0x11;
     const std::string NS_ADMIN_SERVICE_NAME = "service_dvnciadmin";
 
-    const servidtype NS_PERSISTENCE_SERVICE = 0x1000; //[0x1000-0x107F]
+    const appidtype NS_PERSISTENCE_SERVICE = 0x1000; //[0x1000-0x107F]
     const std::string NS_PERSISTENCE_SERVICE_NAME = "service_dvnciarch";
-    const servidtype NS_SYSTEM_SERVICE      = 0x1001; //[0x1080-0x10FF]
+    const appidtype NS_SYSTEM_SERVICE      = 0x1001; //[0x1080-0x10FF]
     const std::string NS_SYSTEM_SERVICE_NAME = "service_dvncisys";
 
-    const servidtype NS_NET_SERVICE      = 0x2000; //[0x1080-0x10FF]
+    const appidtype NS_NET_SERVICE      = 0x2000; //[0x1080-0x10FF]
     const std::string NS_NET_SERVICE_NAME = "service_dvncinet";
 
-    const servidtype NS_OPC_SERVICE      = 0x2010; //[0x1080-0x10FF]
+    const appidtype NS_OPC_SERVICE      = 0x2010; //[0x1080-0x10FF]
     const std::string NS_OPC_SERVICE_NAME = "service_dvnciopc";
 
-    const servidtype NS_DDE_SERVICE      = 0x2020; //[0x1080-0x10FF]
+    const appidtype NS_DDE_SERVICE      = 0x2020; //[0x1080-0x10FF]
     const std::string NS_DDE_SERVICE_NAME = "service_dvncidde";
 
-    const servidtype NS_MODBUS_SERVICE      = 0x4020;
+    const appidtype NS_MODBUS_SERVICE      = 0x4020;
     const std::string NS_MODBUS_SERVICE_NAME = "service_dvncimodbus";
 
-    const servidtype NS_KOYO_SERVICE      = 0x4120;
+    const appidtype NS_KOYO_SERVICE      = 0x4120;
     const std::string NS_KOYO_SERVICE_NAME = "service_dvncikoyo";
 
-    const servidtype NS_LGKA_SERVICE      = 0x4150;
+    const appidtype NS_LGKA_SERVICE      = 0x4150;
     const std::string NS_LGKA_SERVICE_NAME = "service_dvncilgk";
 
-    const servidtype NS_TEST_SERVICE      = 10000; //[0x1080-0x10FF]
+    const appidtype NS_TEST_SERVICE      = 10000; //[0x1080-0x10FF]
     const std::string NS_TEST_SERVICE_NAME = "service_dvncitest";
 
 
@@ -999,6 +1000,7 @@ namespace dvnci {
     const std::string  OPERATOR_MAP_NAME       = SYSTEM_SHARE_SPEC + "dvncisys_operator_base";
     const std::string  ANALOBUFF_MAP_NAME      = SYSTEM_SHARE_SPEC + "dvncisys_analobuf_base";
     const std::string  REPORTBUFF_MAP_NAME     = SYSTEM_SHARE_SPEC + "dvncisys_report_base";
+    const std::string  DEMONENTRY_MAP_NAME     = SYSTEM_SHARE_SPEC + "dvncisys_demonentry_base";
     const std::string  NS_MESSAGEQUEUE_NAME    = "dvncisys_messag_queue_";
 
     const std::string  NS_ONETIMEINIT_MTXNAME  = "dvncisys_onetymeinit_mtx";
@@ -1051,6 +1053,7 @@ namespace dvnci {
     const fspath GROUPS_FILE_NAME     = "groupfile.mm";
     const fspath ALARMGROUPS_FILE_NAME = "alarmgroupfile.mm";
     const fspath ACCESSRULES_FILE_NAME = "accessrulefile.mm";
+    const fspath DEMONENTRY_FILE_NAME = "demonentry.mm";
     const fspath OPERATOR_FILE_NAME   = "operatorfile.mm";
     const fspath META_FILE_NAME       = "AppMetaInfo.xml";
     const fspath DVNCI_GLOBALPATH     = "DVNCI_GLOBALPATHU";
@@ -1172,9 +1175,9 @@ namespace dvnci {
     const protocoltype    NT_KOYO_DIRECTNET_ASCII  = 0x2;
     const protocoltype    NT_KOYO_DIRECTNET_ECOM   = 0x3;
 
-    const num32    DEFAULT_IOTIMOUT           = 3000;
-    const num32    MINIMUM_IOTIMOUT           = 10;
-    const num32    MAXIMUM_IOTIMOUT           = 1000000;
+    const timeouttype    DEFAULT_IOTIMOUT           = 3000;
+    const timeouttype    MINIMUM_IOTIMOUT           = 10;
+    const timeouttype    MAXIMUM_IOTIMOUT           = 1000000;
     
     
     const size_t  DVNCI_DEFRES_NAMESIZE   = 0x20;

@@ -10,7 +10,7 @@
 
 #include <ostream>
 #include <boost/detail/endian.hpp>
-#include <kernel/prb_binary_oarchive.hpp>
+#include <kernel/prb_binary_oarchive.h>
 
 namespace dvnci {
 

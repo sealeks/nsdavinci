@@ -16,9 +16,9 @@
 #include <kernel/utils.h>
 #include <kernel/error.h>
 #include <kernel/constdef.h>
-#include <kernel/prb_binary_archive.hpp>
-#include <kernel/prb_binary_iarchive.hpp>
-#include <kernel/prb_binary_oarchive.hpp>
+#include <kernel/prb_binary_archive.h>
+#include <kernel/prb_binary_iarchive.h>
+#include <kernel/prb_binary_oarchive.h>
 
 namespace dvnci {
     namespace rpc {
