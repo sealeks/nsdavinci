@@ -304,14 +304,14 @@ namespace dvnci {
             executeoperation(execute_op);
             return true;}
 
-        bool remoteadminintf::operation_startservice(servidtype val) {
+        bool remoteadminintf::operation_startservice(appidtype val) {
             req_adminoperation execute_op;
             execute_op.numpar1 = SERVICE_OPEATION_START;
             execute_op.numpar2 = val;
             executeoperation(execute_op);
             return true;}
 
-        bool remoteadminintf::operation_stopservice(servidtype val) {
+        bool remoteadminintf::operation_stopservice(appidtype val) {
             req_adminoperation execute_op;
             execute_op.numpar1 = SERVICE_OPEATION_STOP;
             execute_op.numpar2 = val;

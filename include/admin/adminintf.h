@@ -1360,9 +1360,9 @@ namespace dvnci {
             virtual bool     operation_send_command(indx id, std::string val, bool setqueue = true) {
                 return true;}
 
-            virtual bool     operation_startservice(servidtype val) = 0;
+            virtual bool     operation_startservice(appidtype val) = 0;
 
-            virtual bool     operation_stopservice(servidtype val) = 0;
+            virtual bool     operation_stopservice(appidtype val) = 0;
 
             virtual ns_error operation_autorizate(const std::string& user = "", const std::string& password = "",
                                                   const std::string& hst = "localhost", const std::string& ipadr = "localhost") = 0;

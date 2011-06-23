@@ -1090,9 +1090,9 @@ namespace dvnci {
 
             virtual bool operation_kvitagroup(indx id);
 
-            virtual bool operation_startservice(servidtype val);
+            virtual bool operation_startservice(appidtype val);
 
-            virtual bool operation_stopservice(servidtype val);
+            virtual bool operation_stopservice(appidtype val);
 
             virtual ns_error operation_autorizate(const std::string& user = "", const std::string& password = "",
                                                   const std::string& hst = "localhost", const std::string& ipadr = "localhost");
