@@ -27,6 +27,7 @@
 #include <kernel/utils.h>
 #include <kernel/memfile.h>
 #include <kernel/expression.h>
+#include <kernel/nix_demon_templ.h>
 
 using namespace dvnci;
 using namespace std;
@@ -41,6 +42,9 @@ std::ostream & operator<<(std::ostream& os, const dt_val_map& ns){
             os << "tm =" << it->first  << " value="  << it->second   << std::endl;}
        return os;}
 
+#if defined(_DVN_LIN_)
+    const fspath TESTDEMON_DIR       = "/home/sealeks/";
+#endif
 
 const std::string EXIT_OPERATION_STR = "quit";
 const std::string HISTORY_OPERATION_STR = "history ";
@@ -53,6 +57,10 @@ const std::string VIEWINDEX_OPERATION_STR = "viewindex";
 const std::string DUPLICATEGROUP_OPERATION_STR = "dupgroup ";
 const std::string EXPR_OPERATION_STR = "expr ";
 const std::string MATH_OPERATION_STR = "math";
+const std::string DEMONADD_OPERATION_STR = "demonadd ";
+const std::string DEMONREM_OPERATION_STR = "demonrem ";
+const std::string DEMONLST_OPERATION_STR = "demonlst";
+const std::string DEMONINS_OPERATION_STR = "demonins";
 
 const int DEFAULT_OPERATION = 0;
 const int EXIT_OPERATION = 1;
@@ -66,6 +74,10 @@ const int DUPLICATEGROUP_OPERATION = 8;
 const int EXPR_OPERATION = 9;
 const int REPORT_OPERATION = 10;
 const int MATH_OPERATION = 11;
+const int DEMONADD_OPERATION = 12;
+const int DEMONREM_OPERATION = 13;
+const int DEMONLST_OPERATION = 14;
+const int DEMONINS_OPERATION = 15;
 
 int operation(std::string& vl, const std::string& oper, int operid){
     dvnci::lower_copy(vl);
@@ -90,6 +102,10 @@ int getoperate(std::string& vl){
    if (operation(vl,EXPR_OPERATION_STR,EXPR_OPERATION)==EXPR_OPERATION) return EXPR_OPERATION;
    if (operation(vl,REPORT_OPERATION_STR,REPORT_OPERATION)==REPORT_OPERATION) return REPORT_OPERATION;
    if (operation(vl,MATH_OPERATION_STR,MATH_OPERATION)==MATH_OPERATION) return MATH_OPERATION;
+   if (operation(vl,DEMONADD_OPERATION_STR ,DEMONADD_OPERATION)==DEMONADD_OPERATION) return DEMONADD_OPERATION;
+   if (operation(vl,DEMONREM_OPERATION_STR ,DEMONREM_OPERATION)==DEMONREM_OPERATION) return DEMONREM_OPERATION;
+   if (operation(vl,DEMONLST_OPERATION_STR ,DEMONLST_OPERATION)==DEMONLST_OPERATION) return DEMONLST_OPERATION;
+   if (operation(vl,DEMONINS_OPERATION_STR ,DEMONINS_OPERATION)==DEMONINS_OPERATION) return DEMONINS_OPERATION; 
    std::cout << "_____________________________________________"  << std::endl;
    std::cout  << "No parse line " << vl  << " !" << std::endl;
    std::cout << "_____________________________________________"  << std::endl;
@@ -222,6 +238,53 @@ test_immi_struct();
               std::cout << "value " << expr << std::endl;
               std::cout << "error " << expr.error() << std::endl;
               break;}
+          
+#if defined(_DVN_LIN_)
+          case DEMONINS_OPERATION:{
+              std::cout << "DEMONINS_OPERATION "  <<  std::endl;
+              std::cout << demon_entry_factory::createstorige(TESTDEMON_DIR) << std::endl;
+          break;}     
+          
+          case DEMONADD_OPERATION :{
+              std::cout << "DEMONADD_OPERATION "  <<  std::endl;
+               appidtype app = str_to<appidtype>(quit_in,0);
+               if (!app){
+                   std::cout << "APPID = 0 "  <<  std::endl;
+                   break;}
+               demon_entry_ptr dms = demon_entry_factory::build(TESTDEMON_DIR);
+               if (!dms){
+                   std::cout << "NO CREATE MAP "  <<  std::endl;
+                   break;}
+               dms->install_demon(app, "test");
+               std::cout <<   (*dms);
+          break;}
+          
+          case DEMONREM_OPERATION :{
+              std::cout << "DEMONREM_OPERATION "  <<  std::endl;
+               appidtype app = str_to<appidtype>(quit_in,0);
+               if (!app){
+                   std::cout << "APPID = 0 "  <<  std::endl;
+                   break;}
+               demon_entry_ptr dms = demon_entry_factory::build(TESTDEMON_DIR);
+               if (!dms){
+                   std::cout << "NO CREATE MAP "  <<  std::endl;
+                   break;}
+               dms->uninstall_demon(app);
+               std::cout <<   (*dms);
+          break;}
+         case DEMONLST_OPERATION :{
+              std::cout << "DEMONLST_OPERATION "  <<  std::endl;
+
+              demon_entry_ptr dms = demon_entry_factory::build(TESTDEMON_DIR);
+              if (!dms){
+                   std::cout << "NO CREATE MAP "  <<  std::endl;
+                   break;}
+              std::cout << "TAB CNT " << dms->count() <<  std::endl; 
+               
+              std::cout <<   (*dms);
+          break;}
+          
+#endif          
           default:{}}
       std::cout << "_____________________________________________"  << std::endl;}
       catch (dvnci::dvncierror& er){
