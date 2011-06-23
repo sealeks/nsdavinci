@@ -32,7 +32,7 @@ namespace dvnci {
 
         typedef typename structs_type::item_type                struct_type;
         typedef typename structs_type::item_type const * const  const_struct_type_ptr;
-        typedef typename structs_type::item_type * const        struct_type_ptr;
+        typedef typename structs_type::item_type *              struct_type_ptr;
         typedef dvnci::indx                                     size_type;
         
         static  const size_type    npos = dvnci::npos;
@@ -72,7 +72,7 @@ namespace dvnci {
             return ((id < count()) && (((structs_type_ptr) data())->items[id].id() != nill_ptr)) ?
                     &((structs_type_ptr) data())->items[id] : &static_cast<structs_type_ptr> (data())->items[count()];}
         
-        bool operator[] (std::string  vl) {
+        bool operator[] (const std::string&  vl) {
             return (item_indexer->find(vl) != npos);}
         
 

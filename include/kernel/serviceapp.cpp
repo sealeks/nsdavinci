@@ -32,9 +32,9 @@ boost::thread th;
             case SERVICE_OPEATION_APP:{
                 return SERVICE_OPEATION_APP;}
             case SERVICE_OPEATION_START:{
-                startmain();
+                startmain(argc, argv);
                 break;}
-            default: startmain();}
+            default: startmain(argc, argv);}
         return oper;}
 
     int getserviceoperation(std::string val) {

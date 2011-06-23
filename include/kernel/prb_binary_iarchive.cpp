@@ -15,7 +15,7 @@
 #include <boost/serialization/throw_exception.hpp>
 #include <boost/archive/archive_exception.hpp>
 
-#include <kernel/prb_binary_iarchive.hpp>
+#include <kernel/prb_binary_iarchive.h>
 
 namespace dvnci {
 
