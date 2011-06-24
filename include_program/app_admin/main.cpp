@@ -7,8 +7,8 @@
 
 #include <QtGui/QApplication>
 #include "gui/form_admin.h"
-#include "kernel/memfile.h"
-#include "kernel/constdef.h"
+#include <kernel/constdef.h>
+#include <kernel/serviceapp.h>
 
 int main(int argc, char *argv[]) {
     // initialize resources, if needed
@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     using namespace dvnci;
     using namespace dvnci::admin;
+	appargumentparser(argc, argv);
     form_admin form;
     form.showMaximized();
     return app.exec();}
