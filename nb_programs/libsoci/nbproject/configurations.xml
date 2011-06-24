@@ -77,7 +77,7 @@
             <pElem>../../include/soci</pElem>
             <pElem>../../include</pElem>
           </incDir>
-          <commandLine>-mthreads -fno-strict-aliasing -fPIC</commandLine>
+          <commandLine>-mthreads -fno-strict-aliasing</commandLine>
         </ccTool>
         <archiverTool>
           <output>../../lib/${CND_CONF}/libsoci.a</output>
@@ -97,7 +97,7 @@
             <pElem>../../include/soci</pElem>
             <pElem>../../include</pElem>
           </incDir>
-          <commandLine>-mthreads -fPIC</commandLine>
+          <commandLine>-mthreads</commandLine>
           <warningLevel>2</warningLevel>
         </ccTool>
         <archiverTool>

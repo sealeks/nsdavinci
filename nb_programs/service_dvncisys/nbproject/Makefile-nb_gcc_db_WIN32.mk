@@ -65,12 +65,12 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 ${OBJECTDIR}/_ext/513515479/main.o: ../../include_program/service_dvncisys/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513515479
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513515479/main.o ../../include_program/service_dvncisys/main.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513515479/main.o ../../include_program/service_dvncisys/main.cpp
 
 ${OBJECTDIR}/_ext/513515479/expr_executor.o: ../../include_program/service_dvncisys/expr_executor.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513515479
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513515479/expr_executor.o ../../include_program/service_dvncisys/expr_executor.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513515479/expr_executor.o ../../include_program/service_dvncisys/expr_executor.cpp
 
 # Subprojects
 .build-subprojects:

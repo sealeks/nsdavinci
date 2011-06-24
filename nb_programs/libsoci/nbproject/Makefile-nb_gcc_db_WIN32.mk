@@ -57,8 +57,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-m32 -mthreads -fno-strict-aliasing -fPIC
-CXXFLAGS=-m32 -mthreads -fno-strict-aliasing -fPIC
+CCFLAGS=-m32 -mthreads -fno-strict-aliasing
+CXXFLAGS=-m32 -mthreads -fno-strict-aliasing
 
 # Fortran Compiler Flags
 FFLAGS=

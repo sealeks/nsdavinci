@@ -74,6 +74,7 @@ ${OBJECTDIR}/main.o: main.cpp
 	cd ../libnskernel && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64
 	cd ../libdbaccess && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64
 	cd ../libnsadmin && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64
+	cd ../libcustom && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
@@ -88,6 +89,7 @@ ${OBJECTDIR}/main.o: main.cpp
 	cd ../libnskernel && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean
 	cd ../libdbaccess && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean
 	cd ../libnsadmin && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean
+	cd ../libcustom && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean
 
 # Enable dependency checking
 .dep.inc: .depcheck-impl

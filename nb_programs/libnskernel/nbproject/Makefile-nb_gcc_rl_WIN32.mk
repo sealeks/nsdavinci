@@ -54,6 +54,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/431270180/string_base.o \
 	${OBJECTDIR}/_ext/431270180/proccesstmpl.o \
 	${OBJECTDIR}/_ext/431270180/memfile.o \
+	${OBJECTDIR}/_ext/431270180/nix_demon_templ.o \
 	${OBJECTDIR}/_ext/431270180/index_base.o \
 	${OBJECTDIR}/_ext/431270180/mainstruct.o
 
@@ -163,6 +164,10 @@ ${OBJECTDIR}/_ext/431270180/proccesstmpl.o: ../../include/kernel/proccesstmpl.cp
 ${OBJECTDIR}/_ext/431270180/memfile.o: ../../include/kernel/memfile.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/memfile.o ../../include/kernel/memfile.cpp
+
+${OBJECTDIR}/_ext/431270180/nix_demon_templ.o: ../../include/kernel/nix_demon_templ.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
+	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -o ${OBJECTDIR}/_ext/431270180/nix_demon_templ.o ../../include/kernel/nix_demon_templ.cpp
 
 ${OBJECTDIR}/_ext/431270180/index_base.o: ../../include/kernel/index_base.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
