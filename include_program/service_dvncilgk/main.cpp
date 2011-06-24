@@ -20,7 +20,8 @@ using namespace dvnci;
 using namespace dvnci::driver;
 
 dvnci::executable_ptr         dvnci::mainserv;
-std::string                   dvnci::dvnciservicename=NS_MODBUS_SERVICE_NAME;
+std::string                   dvnci::DVNCI_SERVICE_NAME=NS_LGKA_SERVICE_NAME;
+dvnci::appidtype              dvnci::DVNCI_SERVICE_APPID= NS_LGKA_SERVICE;
 fspath                        basepath;
 
 
