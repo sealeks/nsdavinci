@@ -23,7 +23,7 @@ using namespace dvnci::external::net;
 
 
 dvnci::executable_ptr         dvnci::mainserv;
-std::string                   dvnci::dvnciservicename=NS_NET_SERVICE_NAME;
+std::string                   dvnci::DVNCI_SERVICE_NAME=NS_NET_SERVICE_NAME;
 fspath                        basepath;
 
 
