@@ -10,6 +10,7 @@
 
 #include <kernel/constdef.h>
 #include <kernel/systemutil.h>
+#include <kernel/utils.h>
 
 namespace dvnci {
 

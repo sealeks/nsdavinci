@@ -15,20 +15,6 @@ namespace dvnci {
 
     
     const size_t  DEMON_EXECUTE_STRSIZE = 512;
-    
-    
-
-    /*const  servicearraystruct  SERVICE_ARRAY[] = {{ NS_ADMIN_SERVICE, NS_ADMIN_SERVICE_NAME} ,
-                                                  { NS_PERSISTENCE_SERVICE, NS_PERSISTENCE_SERVICE_NAME} ,
-                                                  { NS_SYSTEM_SERVICE, NS_SYSTEM_SERVICE_NAME},
-                                                  { NS_NET_SERVICE, NS_NET_SERVICE_NAME},
-                                                  { NS_OPC_SERVICE, NS_OPC_SERVICE_NAME},
-                                                  { NS_DDE_SERVICE, NS_DDE_SERVICE_NAME},
-                                                  { NS_MODBUS_SERVICE, NS_MODBUS_SERVICE_NAME},
-                                                  { NS_KOYO_SERVICE, NS_KOYO_SERVICE_NAME},
-                                                  { NS_LGKA_SERVICE, NS_LGKA_SERVICE_NAME}};*/
-    
-    
 
     int  startmain(int argc, char** argv);    
     bool installservice(appidtype app, const std::string& nameservice);
@@ -41,18 +27,21 @@ namespace dvnci {
                             std::allocator<appidtype_stdstr_pair > > appidtype_stdstr_map;
 
 
-
-    static fspath                       DVNCI_FULL_EXEC_PATH;
-    static fspath                       DVNCI_FULL_EXEC_DIR;
-    static std::string                  DVNCI_EXEC_FILE;   
-
     extern std::string                  DVNCI_SERVICE_NAME;
     extern dvnci::appidtype             DVNCI_SERVICE_APPID;
     
     extern executable_ptr               mainserv;
+    
+
+    fspath       FULL_EXEC_PATH(const fspath& fl="");
+    fspath       FULL_EXEC_DIR(const fspath& fl="");
+    std::string  EXEC_FILE(const std::string& fl="");
+
+
 
 
     int serviceargumentparser(int argc, char** argv);
+	int appargumentparser(int argc, char** argv);
     int getserviceoperation(std::string val);
 
     bool startservice();
@@ -63,10 +52,17 @@ namespace dvnci {
    
    struct demon_item{
        
-        demon_item(appidtype app, const std::string& nm, int stt = SERVICE_RUNSTATE_OFF) :  appid_(app), starttype_(stt), status_(0), pid_(0) {
+        static const int NO_WAIT_STATE = 0;
+        static const int RUN_WAIT_STATE = 1;
+        static const int TERM_WAIT_STATE = 2;
+        static const int RST_WAIT_STATE = 3;
+       
+        demon_item(appidtype app, const std::string& nm, int stt = SERVICE_RUNSTATE_OFF) :  appid_(app),
+        starttype_(stt), status_(0), pid_(0), waitstate_(0) {
             name(nm);}
         
-        demon_item() : appid_(0), starttype_(SERVICE_STATUS_NODEF), status_(SERVICE_RUNSTATE_OFF), pid_(0) {
+        demon_item() : appid_(0), starttype_(SERVICE_STATUS_NODEF), 
+        status_(SERVICE_RUNSTATE_OFF), pid_(0),  waitstate_(0) {
             name("");}
         
         ~demon_item(){}
@@ -85,16 +81,22 @@ namespace dvnci {
             return pid_;}
         
         void starttype(int val) {
-            starttype_ = val;}
+            starttype_ = ((val<SERVICE_RUNSTATE_NODEF) || (val>SERVICE_RUNSTATE_BOOT)) ? 0 : val;}
 
         int starttype() const {
-            return starttype_;} 
+            return ((starttype_<SERVICE_RUNSTATE_NODEF) || (starttype_>SERVICE_RUNSTATE_BOOT)) ? 0 : starttype_;} 
         
         void status(int val) {
-            status_ = val;}
+            status_ = (val & 0x3);}
 
         int status() const {
-            return status_;} 
+            return (status_& 0x3);} 
+        
+        void waitstate(int val) {
+            waitstate_ = (val & 0x3);}
+
+        int waitstate() const {
+            return (waitstate_& 0x3);}         
         
         
         void name(const std::string& val) {
@@ -107,6 +109,7 @@ namespace dvnci {
             demon_item tmp =*this;
             tmp.pid_=0;
             tmp.status_=SERVICE_STATUS_NODEF;
+            tmp.status_=0;
             return tmp;}
         
         friend bool operator<(const demon_item& ls, const demon_item& rs){
@@ -121,20 +124,28 @@ namespace dvnci {
        num8        name_[DEMON_EXECUTE_STRSIZE + 2]; 
        int         starttype_;
        int         status_;
-       int         pid_;};
+       int         pid_;
+       int         waitstate_;};
        
    struct demon_header { 
        
-      demon_header(size_t cnt = 0) : count_(cnt){} 
+      demon_header(size_t cnt = 0) : count_(cnt), monitor_(0) {} 
        
       void count(size_t val) {
             count_ = val;}
 
       size_t count() const {
             return count_;}
+      
+      void incmonitor() {
+            monitor_++;}
+
+      int monitor() const {
+            return monitor_;}
        
    private:
-       size_t      count_;};     
+       size_t      count_;
+       int         monitor_;};     
        
        
     typedef struct demon_proccess {
@@ -159,52 +170,41 @@ namespace dvnci {
 
     public:
 
-        typedef demon_proccess::item_type                struct_type;
-        typedef demon_proccess::item_type const * const  const_struct_type_ptr;
-        typedef demon_proccess::item_type *              struct_type_ptr;
-        typedef dvnci::indx                              size_type;
+        typedef demon_proccess::item_type                       struct_type;
+        typedef demon_proccess::item_type const * const         const_struct_type_ptr;
+        typedef demon_proccess::item_type *                     struct_type_ptr;
+        typedef dvnci::indx                                     size_type;
         
         static  const size_type    npos = dvnci::npos;
         
         
 
-        servicemanager(const fspath& filepath, const fspath& strtpath="") : 
-        filememorymap(filepath/ DEMONENTRY_FILE_NAME , DEMONENTRY_MAP_NAME , sizeof(demon_item)* 200) ,
-        starttpath_(strtpath.string().empty() ? filepath : strtpath){
-             ;}
+        servicemanager(const fspath& filepath, const fspath& strtpath="");
 
         virtual ~servicemanager() {}
         
         fspath starttpath() const {
             return starttpath_;}
-        
-        ns_error signature(iteminfo_map& map_){
-            INP_SHARE_LOCK(memlock());
-            map_.clear();
-            for (struct_type_ptr it=begin();it!=end();++it){
-                if (it->appid()){
-                    name_with_type tmp_inf(it->name(), NT_SERVICE , static_cast<tagtype>(it->status()));
-                map_.insert(iteminfo_pair(static_cast<indx> (it->appid()), tmp_inf));}
-            return NS_ERROR_SUCCESS;}}
-        
+                 
+        ns_error signature(iteminfo_map& map_);
         
         size_type count() const {
             INP_SHARE_LOCK(memlock());
-            return static_cast<size_type> ((*(structs_type_ptr) data()).header.count());}          
+            return static_cast<size_type> ((*(structs_type_ptr) data()).header.count());}
         
-        struct_type_ptr operator[] (appidtype app)   {
-            size_type it=find(app);
-            return ((it!=npos) && (app)) ? &((structs_type_ptr) data())->items[it] : end();}
-        
+        int monitor() const{
+            INP_SHARE_LOCK(memlock());
+            return ((*(structs_type_ptr) data()).header.monitor());}        
+            
 
         bool exists(appidtype app) const {
             size_type it=find(app);
             return ((app) && (it!=npos)) ;}
         
        
-        std::string name(appidtype app) const {
-            INP_SHARE_LOCK(memlock());
-            return exists(app) ? operator[](app)->name() : "";}
+        std::string name(appidtype app) const;
+        
+        std::string fullpath(appidtype app) const;
         
         int pid(appidtype app) const;
         
@@ -218,15 +218,20 @@ namespace dvnci {
         
         void status(appidtype app, int sts);
         
-
+        int waitstate(appidtype app) const{
+            INP_SHARE_LOCK(memlock());
+            return exists(app) ? operator[](app)->waitstate() : 0;}
+        
+    
+        void waitstate(appidtype app, int ws);
+        
         const_struct_type_ptr begin() const {
             return &static_cast<structs_type_ptr> (data())->items[0];};
             
-
         const_struct_type_ptr end() const {
-            return &static_cast<structs_type_ptr> (data())->items[static_cast<size_type> ((*(structs_type_ptr) data()).header.count())];};
-            
-            
+            return &static_cast<structs_type_ptr> (data())->items[static_cast<size_type> 
+                    ((*(structs_type_ptr) data()).header.count())];};
+                     
        interproc_mutex& memlock() const {
             return utilptr->memlock();};
             
@@ -240,14 +245,15 @@ namespace dvnci {
            return false;}
        
        static void writezero(const fspath&  fpath) {
-        demon_header inhdr;
-        filestream::write(fpath / DEMONENTRY_FILE_NAME, (num8*) & inhdr, 0, sizeof (demon_header));}
+            demon_header inhdr;
+            filestream::write(fpath / DEMONENTRY_FILE_NAME, (num8*) & inhdr, 0, sizeof (demon_header));}
        
        friend std::ostream & operator<<(std::ostream& os, servicemanager& tbl){
            INP_SHARE_LOCK(tbl.memlock());
            for (struct_type_ptr it=tbl.begin();it!=tbl.end();++it){
               return std::cout  << (it->appid()!=0) << " appid: " << it->appid() << " name: " << it->name() << " pid: " << it->pid() 
-                      << " starttype: " << it->starttype() << " status: " << it->status() << std::endl;}}
+                      << " starttype: " << it->starttype() << " status: " << it->status() << std::endl;}
+	      return os;}
 
 
     protected:
@@ -259,7 +265,6 @@ namespace dvnci {
             return false;}
         
         std::string platformspec() const;
-        
         
         bool operation_impl(appidtype app, int oper);
         
@@ -303,61 +308,28 @@ namespace dvnci {
             (*(structs_type_ptr) data()).header.count(value);}
         
 
-        const_struct_type_ptr operator[] (size_type id) const {
-            return id < static_cast<size_type> ((*(structs_type_ptr) data()).header.count()) ? &((structs_type_ptr) data())->items[id] : end();}
+        const_struct_type_ptr operator[] (appidtype app) const {
+            size_type it=find(app);
+            return ((it!=npos) && (it < static_cast<size_type> ((*(structs_type_ptr) data()).header.count()))) ?
+                &((structs_type_ptr) data())->items[it] : end();}
+        
+        
+        struct_type_ptr operator[] (appidtype app)   {
+            size_type it=find(app);
+            return ((it!=npos) && (app)) ? &((structs_type_ptr) data())->items[it] : end();}
         
         
         size_t itemsoffset(size_type id) {
             return (sizeof (header_type) + id * sizeof (struct_type));}
 
 
-        size_type add(appidtype app, const std::string& nm, int stt = SERVICE_RUNSTATE_OFF) {
-            if (app<=0) return npos;
-            INP_EXCLUSIVE_LOCK(memlock());
-            if (!static_cast<size_type> ((*(structs_type_ptr) data()).header.count())){
-                count(1);
-                initstruct(0, app, nm, stt);
-                writetofile();
-                return 0;}
-            else{
-                if (find(app)!=npos)
-                    return npos;
-                if (!((structs_type_ptr) data())->items[0].appid()){
-                   initstruct(0, app, nm, stt);
-                   sort();
-                   writetofile();
-                   return find(app);}
-                else{
-                   count(((*(structs_type_ptr) data()).header.count())+1);
-                   initstruct(((*(structs_type_ptr) data()).header.count() - 1), app, nm, stt);
-                   sort();
-                   writetofile();
-                   return find(app);}}
-            
-            return npos;}
+        size_type add(appidtype app, const std::string& nm, int stt = SERVICE_RUNSTATE_OFF);
         
-        size_type remove(appidtype app) {
-            if (app<=0) return npos;
-            INP_EXCLUSIVE_LOCK(memlock());
-            size_type it=find(app);
-            if (it==npos)
-                    return npos;
-            uninitstruct(it);
-            struct_type tmpfnd;
-            size_type newcnt = static_cast<size_type>(std::remove(begin(),end(), tmpfnd)-begin());
-            count(newcnt);
-            sort();
-            writetofile();
-            return it;}
+        size_type remove(appidtype app);
         
+        void writeheader();
 
-
-        void writetofile(size_type id = npos) { 
-            if (id != npos) {
-                struct_type tmpnew = struct_for_write(id);
-                writestructtodisk(tmpnew, id);}
-            else{
-                utilptr->writetofile(0,itemsoffset(static_cast<size_type> ((*(structs_type_ptr) data()).header.count())));}}
+        void writetofile(size_type id = npos);
          
         size_t writestructtodisk(const struct_type& dst, size_type id) {
             return utilptr->writestructtofile((const void*) &dst, itemsoffset(id), sizeof (struct_type));}
