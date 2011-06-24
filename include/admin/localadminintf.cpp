@@ -683,8 +683,9 @@ namespace dvnci {
             return  svm() ? svm()->operation(val, SERVICE_OPEATION_STOP) : false;}
         
         servicemanager_ptr localadminintf::svm() const{
-            if (dynamic_cast<localdebugintf*> (serviceintf_.get()))
-                return dynamic_cast<localserviceintf*> (serviceintf_.get())->svm_;} 
+            if (dynamic_cast<localserviceintf*> (serviceintf_.get()))
+                return dynamic_cast<localserviceintf*> (serviceintf_.get())->svm_;
+		    return servicemanager_ptr();} 
 
         void localadminintf::setintf(tagsbase* intf_) {
             intf = intf_;
