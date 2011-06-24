@@ -20,7 +20,8 @@ using namespace dvnci::driver;
 
 
 dvnci::executable_ptr         dvnci::mainserv;
-std::string                   dvnci::dvnciservicename=NS_KOYO_SERVICE_NAME;
+std::string                   dvnci::DVNCI_SERVICE_NAME=NS_KOYO_SERVICE_NAME;
+dvnci::appidtype              dvnci::DVNCI_SERVICE_APPID= NS_KOYO_SERVICE;
 fspath                        basepath;
 
 
