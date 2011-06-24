@@ -417,7 +417,6 @@ namespace dvnci {
     const int SERVICE_STATUS_RUN = 0x1;
     const int SERVICE_STATUS_STOPED = 0x2;
     const int SERVICE_STATUS_PENDING = 0x3;
-    const int SERVICE_STATUS_NOTINSTALL = 0x4;
 
     const std::string DEFAULT_OPC_PORT = "10200";
     const std::string DEFAULT_REMOTE_PORT = "9050";
