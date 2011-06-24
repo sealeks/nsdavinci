@@ -24,7 +24,8 @@ using namespace dvnci::external::opc;
 
 
 dvnci::executable_ptr         dvnci::mainserv;
-std::string                   dvnci::dvnciservicename=NS_OPC_SERVICE_NAME;
+std::string                   dvnci::DVNCI_SERVICE_NAME=NS_OPC_SERVICE_NAME;
+dvnci::appidtype              dvnci::DVNCI_SERVICE_APPID= NS_OPC_SERVICE;
 fspath                        basepath;
 
 typedef externalintf_executor<opcintf>                                                 opcexecutor;
