@@ -27,11 +27,15 @@
 #include <kernel/utils.h>
 #include <kernel/memfile.h>
 #include <kernel/expression.h>
-#include <kernel/nix_demon_templ.h>
+#include <kernel/serviceapp.h>
 
 using namespace dvnci;
 using namespace std;
 using namespace boost::interprocess;
+
+std::string  dvnci::DVNCI_SERVICE_NAME="";
+dvnci::appidtype dvnci::DVNCI_SERVICE_APPID=0;
+dvnci::executable_ptr         dvnci::mainserv;
 
 
 dvnci::tagsbase_ptr intf;
@@ -112,9 +116,9 @@ int getoperate(std::string& vl){
    return DEFAULT_OPERATION;}
 
 
-int main() 
+int main(int argc, char** argv) 
 {
-
+  appargumentparser(argc, argv);
   //typedef dvnci::expr::expression_calculator       expression;
   typedef dvnci::expr::expression_templ<tagsbase >   expression;
 
@@ -227,7 +231,7 @@ test_immi_struct();
                   double tst2 = 2;
                   tst2 = acos(tst2);
                   std::cout << "NO generate error  acos >1 vl="  << tst2 << std::endl;
-                  double tst3 = M_PI_2;
+                  double tst3 = 0;
                   tst3 = tan(tst3);
                   std::cout << "NO generate error  tan pi/2 vl="  << tst3 << std::endl;
                   }
@@ -243,11 +247,10 @@ test_immi_struct();
               std::cout << "value " << expr << std::endl;
               std::cout << "error " << expr.error() << std::endl;
               break;}
-          
-#if defined(_DVN_LIN_)
+
           case DEMONINS_OPERATION:{
               std::cout << "DEMONINS_OPERATION "  <<  std::endl;
-              std::cout << demon_entry_factory::createstorige(TESTDEMON_DIR) << std::endl;
+              std::cout << demon_entry_factory::createstorige(FULL_EXEC_DIR()) << std::endl;
           break;}     
           
           case DEMONADD_OPERATION :{
@@ -256,7 +259,7 @@ test_immi_struct();
                if (!app){
                    std::cout << "APPID = 0 "  <<  std::endl;
                    break;}
-               demon_entry_ptr dms = demon_entry_factory::build(TESTDEMON_DIR);
+               servicemanager_ptr dms = demon_entry_factory::build(FULL_EXEC_DIR());
                if (!dms){
                    std::cout << "NO CREATE MAP "  <<  std::endl;
                    break;}
@@ -270,7 +273,7 @@ test_immi_struct();
                if (!app){
                    std::cout << "APPID = 0 "  <<  std::endl;
                    break;}
-               demon_entry_ptr dms = demon_entry_factory::build(TESTDEMON_DIR);
+               servicemanager_ptr dms = demon_entry_factory::build(FULL_EXEC_DIR());
                if (!dms){
                    std::cout << "NO CREATE MAP "  <<  std::endl;
                    break;}
@@ -280,7 +283,7 @@ test_immi_struct();
          case DEMONLST_OPERATION :{
               std::cout << "DEMONLST_OPERATION "  <<  std::endl;
 
-              demon_entry_ptr dms = demon_entry_factory::build(TESTDEMON_DIR);
+              servicemanager_ptr dms = demon_entry_factory::build(FULL_EXEC_DIR());
               if (!dms){
                    std::cout << "NO CREATE MAP "  <<  std::endl;
                    break;}
@@ -288,8 +291,7 @@ test_immi_struct();
                
               std::cout <<   (*dms);
           break;}
-          
-#endif          
+         
           default:{}}
       std::cout << "_____________________________________________"  << std::endl;}
       catch (dvnci::dvncierror& er){
