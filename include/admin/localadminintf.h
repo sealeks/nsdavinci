@@ -14,6 +14,7 @@
 namespace dvnci {
     namespace admin {
 
+
         class localadminintf;
 
         class localtagintf : public tagintf {
@@ -820,7 +821,7 @@ namespace dvnci {
         public:
 
             localserviceintf() : serviceintf() {
-                   svm_=demon_entry_factory::build(""); };
+                   svm_=demon_entry_factory::build(FULL_EXEC_DIR()); };
 
             bool                  exists() const {
                 return ((svm_) && (svm_->exists(number_)));}
@@ -837,7 +838,8 @@ namespace dvnci {
                 return "";}
 
             virtual std::string   path() const {
-                if (exists()) {}
+                if (exists()) {
+                    return svm_->fullpath(number_);};
                 return "";}
 
             virtual num64         starttype() const {
