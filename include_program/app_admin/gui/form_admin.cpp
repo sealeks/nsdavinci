@@ -10,7 +10,7 @@
 
 dvnci::executable_ptr   dvnci::mainserv;
 std::string  dvnci::DVNCI_SERVICE_NAME="";
-dvnci::appid dvnci::DVNCI_SERVICE_APPID=0;
+dvnci::appidtype dvnci::DVNCI_SERVICE_APPID=0;
 
 #define REGIST_ADMIN_ACTION(act,actid,actname,btn)\
         act## = new QAction(getIcon(actid##),qtstr_translate(QString::fromStdString("#actname")), mainTreeMenue);\
