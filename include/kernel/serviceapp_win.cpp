@@ -14,6 +14,29 @@ SERVICE_STATUS_HANDLE ssHandle;
 
 namespace dvnci {
     
+    
+      struct sevicestatus {
+
+        sevicestatus() {
+            dysplayname = "nodef";
+            path = "";
+            runstate = SERVICE_RUNSTATE_NODEF;
+            servicetype = 0;
+            startname = "";}
+
+        int runstate;
+        int servicetype;
+        std::string dysplayname;
+        std::string path;
+        std::string startname;};
+        
+        
+
+    bool startservice(const std::string& nameservice);
+    bool stopservice(const std::string& nameservice);
+    bool serviceconfig(const std::string& nameservice, sevicestatus& info);
+    bool setserviceconfig(const std::string& nameservice, sevicestatus& info);
+    int  servicestatus(const std::string& nameservice);   
 
     void WINAPI servicemain(DWORD dwArgc, LPTSTR *lpszArgv);
     void WINAPI servicecontrol(DWORD dwControlCode);
@@ -21,24 +44,23 @@ namespace dvnci {
 
 
 
-    int  startmain() {
+    int  startmain(int argc, char** argv) {
 
-        SERVICE_TABLE_ENTRY DispatcherTable[] ={{ (CHAR*) dvnciservicename.c_str(),             
+        SERVICE_TABLE_ENTRY DispatcherTable[] ={{ (CHAR*) DVNCI_SERVICE_NAME.c_str(),             
                 (LPSERVICE_MAIN_FUNCTION) servicemain },
                 { NULL, NULL }};
-
-        //запуск диспетчера
+        
         if (!StartServiceCtrlDispatcher(DispatcherTable)) {
-            OUTSTRVAL_DVNCI(StartServiceCtrlDispatcher, dvnciservicename )
+            OUTSTRVAL_DVNCI(StartServiceCtrlDispatcher, DVNCI_SERVICE_NAME )
             _getch();
             return (EXIT_SUCCESS) ;}
         return (EXIT_SUCCESS) ;};
 
     void WINAPI servicemain(DWORD dwArgc, LPTSTR *lpszArgv) {
 
-        ssHandle = RegisterServiceCtrlHandler(dvnciservicename.c_str(), servicecontrol);
+        ssHandle = RegisterServiceCtrlHandler(DVNCI_SERVICE_NAME.c_str(), servicecontrol);
         if (!ssHandle) {
-            OUTSTRVAL_DVNCI(Error registering ServiceControl, dvnciservicename)
+            OUTSTRVAL_DVNCI(Error registering ServiceControl, DVNCI_SERVICE_NAME)
             _getch();
             return;}
         ss.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
@@ -47,7 +69,9 @@ namespace dvnci {
         startservice();
         return;}
 
-    bool installservice(const std::string& pathservice, const std::string& nameservice) {
+    bool installservice(appidtype app, const std::string& nameservice) {
+        
+        //servicemanager_ptr demon_entry_factory::build(const fspath& filepath)
         SC_HANDLE hService;
         SC_HANDLE hSCManager;
 
@@ -61,7 +85,7 @@ namespace dvnci {
                 nameservice.c_str(), SERVICE_ALL_ACCESS,
                 SERVICE_WIN32_OWN_PROCESS, SERVICE_DEMAND_START,
                 SERVICE_ERROR_NORMAL,
-                pathservice.c_str(),
+                DVNCI_FULL_EXEC_PATH.string().c_str(),
                 NULL, NULL, NULL, NULL, NULL);
         if (!hService) {
             OUTSTRVAL_DVNCI(Cant service fo install,  nameservice )
@@ -73,7 +97,7 @@ namespace dvnci {
         OUTSTRVAL_DVNCI(Service succesfull install, nameservice)
         return true;}
 
-    bool uninstallservice(const std::string& nameservice) {
+    bool uninstallservice(appidtype app) {
 
         SC_HANDLE hService;
         SC_HANDLE hSCManager;
@@ -83,7 +107,7 @@ namespace dvnci {
             DEBUG_STR_DVNCI(Cant open Service Control Manager);
             return false;}
 
-        hService = OpenService(hSCManager, nameservice.c_str(), SERVICE_STOP | DELETE);
+        hService = OpenService(hSCManager, DVNCI_SERVICE_NAME.c_str(), SERVICE_STOP | DELETE);
         if (!hService) {
             DEBUG_STR_VAL_DVNCI(Cant open service fo uninstall , nameservice)
             CloseServiceHandle(hSCManager);
@@ -92,13 +116,13 @@ namespace dvnci {
         if (!DeleteService(hService)) {
             CloseServiceHandle(hService);
             CloseServiceHandle(hSCManager);
-            OUTSTRVAL_DVNCI(Cant service fo uninstall,  nameservice )
+            OUTSTRVAL_DVNCI(Cant service fo uninstall,  DVNCI_SERVICE_NAME )
             return false;}
 
 
         CloseServiceHandle(hService);
         CloseServiceHandle(hSCManager);
-        OUTSTRVAL_DVNCI(Service succesfull uninstall, nameservice)
+        OUTSTRVAL_DVNCI(Service succesfull uninstall, DVNCI_SERVICE_NAME)
         return true;}
 
     bool startservice(const std::string& nameservice) {
@@ -364,80 +388,73 @@ namespace dvnci {
 
 ///////////////////////////////////////////////////
 
-        servicemanager::servicemanager() {
-            servicemap.clear();
-            for (int i = 0; i < SERVICE_COUNT; i++) {
-                servicemap.insert(servidtype_stdstr_pair(SERVICE_ARRAY[i].serviceid, SERVICE_ARRAY[i].servicename));}}
-
-
-        ns_error servicemanager::signature(iteminfo_map& map_) {
-
-            map_.clear();
-            for (servidtype_stdstr_map::iterator it = servicemap.begin();
-                    it != servicemap.end(); ++it) {
-                name_with_type tmp_inf(it->second, NT_SERVICE , static_cast<tagtype>(servicestatus(it->second)));
-                map_.insert(iteminfo_pair(static_cast<indx> (it->first), tmp_inf));}
-            return NS_ERROR_SUCCESS;}
-
-        bool servicemanager::get_property(servidtype id, sevicestatus& val) {
-
-            if (!get_property_impl(id, val))
-                val = sevicestatus();
-            return true;}
-
-        bool servicemanager::set_property(servidtype id, sevicestatus& val) {
-
-            DEBUG_STR_DVNCI(set_property num64 id sevicestatus & val )
-            set_property_impl(id, val);
-            get_property_impl(id, val);
-            return true;}
-
-        int  servicemanager::status(servidtype id) {
-            if (!exists(id)) return SERVICE_STATUS_NODEF;
-            servidtype_stdstr_map::iterator it = servicemap.find(id);
-            if (it != servicemap.end())
-                return servicestatus(it->second);
-            return SERVICE_STATUS_NODEF;}
-
-        bool  servicemanager::operation(servidtype id, int oper) {
-            DEBUG_VAL2_DVNCI(id, oper)
-            if (!exists(id)) return false;
-            DEBUG_VAL2_DVNCI(id, oper)
-            servidtype_stdstr_map::iterator it = servicemap.find(id);
-            std::string nm;
-
-            if (it != servicemap.end())
-                nm = it->second;
-            else return false;
+    
+        int servicemanager::pid(appidtype app) const {
+            return 0;}  
+        
+        void servicemanager::pid(appidtype app, int pd) {;}  
+        
+        
+        
+        int servicemanager::starttype(appidtype app) const {
+            INP_SHARE_LOCK(memlock());
+            if (exists(app)){
+                sevicestatus val;
+                if (serviceconfig(name(app), val))
+                   return val.runstate;}
+            return 0;}
+            
+            
+        
+        void servicemanager::starttype(appidtype app, int stt) {
+            INP_EXCLUSIVE_LOCK(memlock())
+            if (exists(app)){
+                sevicestatus val;
+                if (serviceconfig(name(app), val))
+                    val.runstate=stt;
+                    setserviceconfig(name(app), val);}}            
+        
+        
+        
+       int servicemanager::status(appidtype app) const {
+            INP_SHARE_LOCK(memlock());
+            if (exists(app)){
+                return servicestatus(name(app));}
+       return SERVICE_STATUS_NODEF;}  
+        
+       void servicemanager::status(appidtype app, int sts) {;}         
+        
+        
+        
+       bool servicemanager::install_demon(appidtype app, const std::string& nm, int stt){
+           if (demon_fileexists(nm+platformspec())) {
+                return (add(app, nm, stt)!=npos);}
+           return false;}
+       
+       bool servicemanager::uninstall_demon(appidtype app){
+           return (remove(app)!=npos);}      
+        
+        
+        std::string servicemanager::platformspec() const {
+            return "";}
+        
+        bool  servicemanager::operation_impl(appidtype app, int oper) {
+            
+            DEBUG_VAL2_DVNCI(app, oper)
+            INP_SHARE_LOCK(memlock());
+            if (exists(app)){
             switch (oper) {
                 case SERVICE_OPEATION_START:{
-                    DEBUG_VAL2_DVNCI(oper, nm)
-                    if (servicestatus(nm) != SERVICE_STATUS_STOPED) return false;
-                    DEBUG_VAL2_DVNCI(oper, nm)
-                    return startservice(nm);}
+                    DEBUG_VAL2_DVNCI(oper, name(app))
+                    if (servicestatus(name(app)) != SERVICE_STATUS_STOPED) return false;
+                    DEBUG_VAL2_DVNCI(oper, name(app))
+                    return startservice(name(app));}
                 case SERVICE_OPEATION_STOP:{
-                    if (servicestatus(nm) != SERVICE_STATUS_RUN) return false;
-                    return stopservice(nm);}}
+                    if (servicestatus(name(app)) != SERVICE_STATUS_RUN) return false;
+                    return stopservice(name(app));}}}
             return false;}
-
-        bool servicemanager::exists(servidtype id) {
-            return (servicemap.find(id) != servicemap.end());}
-
-
-        bool servicemanager::get_property_impl(servidtype id, sevicestatus& val) {
-            servidtype_stdstr_map::iterator it = servicemap.find(id);
-            DEBUG_VAL_DVNCI(id)
-            if (it != servicemap.end()) {
-                DEBUG_VAL_DVNCI(it->second)
-                return serviceconfig(it->second, val);}
-            return false;}
-
-        bool servicemanager::set_property_impl(servidtype id, sevicestatus val) {
-            DEBUG_STR_DVNCI(set_property_impl num64 id sevicestatus & val)
-            servidtype_stdstr_map::iterator it = servicemap.find(id);
-            if (it != servicemap.end()) {
-                return setserviceconfig(it->second, val);}
-            return false;}}
+        
+}
 
 
 
