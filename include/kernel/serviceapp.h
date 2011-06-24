@@ -10,10 +10,9 @@ namespace dvnci {
 
 
     struct servicearraystruct {
-        appidtype serviceid;
+        appidtype   serviceid;
         std::string servicename;} ;
 
-    const  int SERVICE_COUNT = 9;
     
     const size_t  DEMON_EXECUTE_STRSIZE = 512;
     
@@ -32,15 +31,10 @@ namespace dvnci {
     
 
     int  startmain(int argc, char** argv);    
-    bool installservice(const std::string& pathservice, const std::string& nameservice);
-    bool uninstallservice(const std::string& nameservice);    
-        
-        
-        
+    bool installservice(appidtype app, const std::string& nameservice);
+    bool uninstallservice(appidtype app);    
         
 
-    
-    
 
     typedef std::pair<appidtype, std::string >                      appidtype_stdstr_pair;
     typedef std::map< appidtype, std::string, std::less<appidtype>,
@@ -48,13 +42,13 @@ namespace dvnci {
 
 
 
-    static std::string applicationservicepath;
-    static std::string applicationservicename;
-    static std::string applicationservicespec;
-    static boost::filesystem::path boostapplicationpath;
+    static fspath                       DVNCI_FULL_EXEC_PATH;
+    static fspath                       DVNCI_FULL_EXEC_DIR;
+    static std::string                  DVNCI_EXEC_FILE;   
 
-
-    extern std::string                  dvnciservicename;
+    extern std::string                  DVNCI_SERVICE_NAME;
+    extern dvnci::appidtype             DVNCI_SERVICE_APPID;
+    
     extern executable_ptr               mainserv;
 
 
@@ -252,7 +246,7 @@ namespace dvnci {
        friend std::ostream & operator<<(std::ostream& os, servicemanager& tbl){
            INP_SHARE_LOCK(tbl.memlock());
            for (struct_type_ptr it=tbl.begin();it!=tbl.end();++it){
-              std::cout  << (it->appid()!=0) << " appid: " << it->appid() << " name: " << it->name() << " pid: " << it->pid() 
+              return std::cout  << (it->appid()!=0) << " appid: " << it->appid() << " name: " << it->name() << " pid: " << it->pid() 
                       << " starttype: " << it->starttype() << " status: " << it->status() << std::endl;}}
 
 
