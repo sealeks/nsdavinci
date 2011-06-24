@@ -15,7 +15,9 @@ using namespace dvnci;
 using namespace std;
 
 dvnci::executable_ptr     dvnci::mainserv;
-std::string               dvnci::dvnciservicename = NS_SYSTEM_SERVICE_NAME;
+std::string               dvnci::DVNCI_SERVICE_NAME = NS_TEST_SERVICE_NAME;
+dvnci::appidtype          dvnci::DVNCI_SERVICE_APPID= NS_TEST_SERVICE;
+
 fspath                    basepath;
 
 double timeval() {
