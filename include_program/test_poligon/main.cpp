@@ -171,6 +171,11 @@ test_immi_struct();
               break;}
           case TAGID_OPERATION:{
              std::cout << "tagname=" << quit_in  << " index=" << intf->operator ()(quit_in)   << std::endl;
+             boost::mutex mtxtest;
+             THD_COND_EXCLUSIVE_LOCK(true, mtxtest)
+             std::cout << "first lock "  << std::endl;
+             THD_COND_EXCLUSIVE_LOCK1(true, mtxtest)
+             std::cout << "second lock " << std::endl;        
              break;}
           case TAGVAL_OPERATION:{
              indx ind = intf->operator ()(quit_in);
