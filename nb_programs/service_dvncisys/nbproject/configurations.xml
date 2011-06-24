@@ -26,7 +26,6 @@
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
             <Elem>_WIN32_WINNT=0x0501</Elem>
-            <Elem>DVNCI_DEDUG</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
