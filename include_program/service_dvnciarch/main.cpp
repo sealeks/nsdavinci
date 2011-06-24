@@ -25,7 +25,9 @@ using namespace dvnci::database;
 dvnci::indx GPRSS_REPORTTYPE=-2;
 
 dvnci::executable_ptr         dvnci::mainserv;
-std::string                   dvnci::dvnciservicename=NS_PERSISTENCE_SERVICE_NAME;
+std::string                   dvnci::DVNCI_SERVICE_NAME=NS_PERSISTENCE_SERVICE_NAME;
+dvnci::appidtype              dvnci::DVNCI_SERVICE_APPID= NS_PERSISTENCE_SERVICE;
+
 fspath                        basepath;
 
 
