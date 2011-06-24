@@ -7,27 +7,17 @@ boost::thread th;
 
 
     int serviceargumentparser(int argc, char** argv) {
-        for (int i = 0; i < argc; ++i) {
-            switch (i) {
-                case 0:{
-                    boostapplicationpath = argv[0];
-                    break;}
-                case 1:{
-                    applicationservicespec = argv[1];
-                    break;}}}
-        applicationservicepath = boostapplicationpath.string();
-        applicationservicename = boostapplicationpath.string();
-        DEBUG_VAL_DVNCI(applicationservicepath);
+        DVNCI_FULL_EXEC_PATH = argc>0 ? argv[0] : "";
+        DEBUG_VAL_DVNCI(DVNCI_FULL_EXEC_PATH);
         DEBUG_VAL_DVNCI(applicationservicename);
-        DEBUG_VAL_DVNCI(applicationservicespec);
-        int oper = getserviceoperation(applicationservicespec);
+        int oper = getserviceoperation(argc>1 ? argv[1] : "");
         DEBUG_VAL_DVNCI(oper);
         switch (oper) {
             case SERVICE_OPEATION_INSTALL:{
-                installservice(applicationservicepath, dvnciservicename);
+                installservice(DVNCI_SERVICE_APPID, DVNCI_SERVICE_NAME);
                 break;}
             case SERVICE_OPEATION_UNINSTALL:{
-                uninstallservice(dvnciservicename);
+                uninstallservice(DVNCI_SERVICE_APPID);
                 break;}
             case SERVICE_OPEATION_APP:{
                 return SERVICE_OPEATION_APP;}
