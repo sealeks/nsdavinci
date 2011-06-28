@@ -12,8 +12,8 @@ CND_DISTDIR=dist
 CND_BUILDDIR=build
 NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=../../lib/${CND_CONF}/libnsadmin.a
-OUTPUT_BASENAME=libnsadmin.a
+OUTPUT_PATH=../../lib/${CND_CONF}/libcustom.a
+OUTPUT_BASENAME=libcustom.a
 PACKAGE_TOP_DIR=libcustom/
 
 # Functions
