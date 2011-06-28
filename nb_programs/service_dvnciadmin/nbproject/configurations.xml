@@ -227,7 +227,7 @@
           <commandLine>-fno-strict-aliasing</commandLine>
         </ccTool>
         <linkerTool>
-          <output>../../bin/${CND_CONF}/service_dvnciadmin_db</output>
+          <output>../../bin/${CND_CONF}/service_dvnciadmin</output>
           <linkerAddLib>
             <pElem>../../lib/boost/${CND_CONF}</pElem>
             <pElem>../../lib/${CND_CONF}</pElem>

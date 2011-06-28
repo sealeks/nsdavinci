@@ -12,8 +12,8 @@ CND_DISTDIR=dist
 CND_BUILDDIR=build
 NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=../../bin/${CND_CONF}/service_dvnciadmin_db
-OUTPUT_BASENAME=service_dvnciadmin_db
+OUTPUT_PATH=../../bin/${CND_CONF}/service_dvnciadmin
+OUTPUT_BASENAME=service_dvnciadmin
 PACKAGE_TOP_DIR=servnsadminserver/
 
 # Functions

@@ -197,7 +197,7 @@
           <warningLevel>2</warningLevel>
         </ccTool>
         <linkerTool>
-          <output>../../bin/${CND_CONF}/service_dvncilgk_db</output>
+          <output>../../bin/${CND_CONF}/service_dvncilgk</output>
           <linkerAddLib>
             <pElem>../../lib/boost/${CND_CONF}</pElem>
             <pElem>../../lib/${CND_CONF}</pElem>

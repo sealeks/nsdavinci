@@ -166,7 +166,7 @@
           <warningLevel>2</warningLevel>
         </ccTool>
         <linkerTool>
-          <output>../../bin/${CND_CONF}/service_dvnciarch_db</output>
+          <output>../../bin/${CND_CONF}/service_dvnciarch</output>
           <linkerAddLib>
             <pElem>../../lib/boost/${CND_CONF}</pElem>
             <pElem>../../lib/${CND_CONF}</pElem>

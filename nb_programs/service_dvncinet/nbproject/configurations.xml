@@ -186,11 +186,7 @@
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
-            <linkerLibLibItem>ole32</linkerLibLibItem>
-            <linkerLibLibItem>oleaut32</linkerLibLibItem>
-            <linkerLibLibItem>uuid</linkerLibLibItem>
-            <linkerLibLibItem>wsnmp32</linkerLibLibItem>
-            <linkerLibLibItem>wsock32</linkerLibLibItem>
+            <linkerLibLibItem>rt</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -225,12 +221,9 @@
             <pElem>../../include</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
-          <preprocessorList>
-            <Elem>DVNCI_DEDUG</Elem>
-          </preprocessorList>
         </ccTool>
         <linkerTool>
-          <output>../../bin/${CND_CONF}/service_dvncinet_db</output>
+          <output>../../bin/${CND_CONF}/service_dvncinet</output>
           <linkerAddLib>
             <pElem>../../lib/boost/${CND_CONF}</pElem>
             <pElem>../../lib/${CND_CONF}</pElem>
@@ -250,11 +243,7 @@
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
-            <linkerLibLibItem>ole32</linkerLibLibItem>
-            <linkerLibLibItem>oleaut32</linkerLibLibItem>
-            <linkerLibLibItem>uuid</linkerLibLibItem>
-            <linkerLibLibItem>wsnmp32</linkerLibLibItem>
-            <linkerLibLibItem>wsock32</linkerLibLibItem>
+            <linkerLibLibItem>rt</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
