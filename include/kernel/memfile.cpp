@@ -748,8 +748,10 @@ namespace dvnci {
     interproc_namemutex* tagsbase::one_init_ = 0;
 
     interproc_namemutex& tagsbase::one_init() {
+        boost::interprocess::permissions permis;
+        permis.set_unrestricted();
         if (!one_init_) one_init_ =
-                new interproc_namemutex(boost::interprocess::open_or_create, NS_ONETIMEINIT_MTXNAME.c_str());
+                new interproc_namemutex(boost::interprocess::open_or_create, NS_ONETIMEINIT_MTXNAME.c_str(), permis);
         return (*one_init_);}
 
     tagsbase::tagsbase(const fspath& basepatht, appidtype app, eventtypeset evnts , lock_nameexclusive ontimeinit) :
@@ -917,7 +919,7 @@ namespace dvnci {
         if ((ls.time().is_special())!=(rs.time().is_special())) 
                 return true;
         if ((!(ls.time().is_special())) && (tmo>0)) {
-             if (dvnci::abs(secondsbetween(ls.time(),rs.time()))>tmo) 
+             if (dvnci::abs(secondsbetween(ls.time(),rs.time()))>static_cast<num64>(tmo)) 
                     return true;}
         switch(type(id)) {
                case TYPE_NODEF:{

@@ -193,8 +193,10 @@ namespace dvnci {
         mq_class* mq;
         if (create) {
             try {
+                boost::interprocess::permissions prms;
+                prms.set_unrestricted();
                 removequeue(val);
-                mq = new  mq_class(boost::interprocess::create_only , vl.c_str()  , sz  , sizeof (messagestruct));
+                mq = new  mq_class(boost::interprocess::create_only , vl.c_str()  , sz  , sizeof (messagestruct), prms);
                 return mq;}
             catch (boost::interprocess::interprocess_exception &ex) {
                 return 0;};}
