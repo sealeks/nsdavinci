@@ -8,17 +8,26 @@
 #include <cstdlib>
 
 #include <kernel/constdef.h>
-#include <kernel/nix_demon_templ.h>
+#include <kernel/serviceapp.h>
+#include <kernel/templ.h>
+
 
 namespace dvnci{
 extern std::string LOG_DEMON_FILE;
 }
 
+#ifndef DVNCI_NUX_SVM
+#define DVNCI_NUX_SVM
+#endif
+
+dvnci::executable_ptr     dvnci::mainserv;
+std::string               dvnci::DVNCI_SERVICE_NAME = "serv_manager";
+dvnci::appidtype          dvnci::DVNCI_SERVICE_APPID= 0;
+
 
 using namespace dvnci;
     
    
-
 volatile int runflag = 1;
 
 /***************************************************************************/
@@ -33,72 +42,158 @@ void terminate_func() {
 
 
 
+
+namespace dvnci {
+
+        class svmservice : public executable {
+
+        public:
+
+
+            svmservice() :
+                    executable(), mntr(0) {};
+
+            virtual ~svmservice() {}
+
+            virtual bool operator()() {
+                boost::xtime xt;
+                while (!terminated()) {
+                    if (init()) {
+                        if  (terminated()) break;
+                        if (checksevices()) {
+                            writedemonlog("CHECKMAINLOOOOP");
+                            addmillisec_to_now(xt, 3);}
+                        else{
+                            addmillisec_to_now(xt, 100);}
+                        if (terminated()) break;}
+                    else{
+                        addmillisec_to_now(xt, 10000);}
+                boost::thread::sleep(xt);}
+                uninitialize();
+                return true;}
+
+        protected:
+
+
+            virtual bool initialize() {
+               svm_=demon_entry_factory::build(FULL_EXEC_DIR());
+               writedemonlog("INITSERVISE: " + FULL_EXEC_DIR().string());
+               if (!svm_) { 
+                   writedemonlog("FAILINIT INITSERVISE :" + FULL_EXEC_DIR().string());
+                   return false;}
+               startsevices();
+               mntr=svm_->monitor();
+               return true;}
+
+            virtual bool uninitialize() {
+                if (!svm_) return true;
+                stopsevices();
+                svm_.reset();
+                return true;}
+            
+            bool startsevices() {
+              INP_SHARE_LOCK(svm_->memlock());
+              for (servicemanager::struct_type_ptr it=svm_->begin();it!=svm_->end();++it){
+                  if ((it->appid()) && (it->starttype()==SERVICE_RUNSTATE_AUTO))
+                      startsevice(svm_->name(it->appid()));}
+              return true;}
+            
+            bool stopsevices() {
+              INP_SHARE_LOCK(svm_->memlock());
+              for (servicemanager::struct_type_ptr it=svm_->begin();it!=svm_->end();++it){
+                  if ((it->appid()) && (it->pid()))
+                      stopsevice(it->pid());}
+              return true;}
+            
+            bool startsevice(const std::string& nm) {
+                
+               writedemonlog("Start application" + nm);  
+               writedemonlog("Start FULL_EXEC_DIR :" + FULL_EXEC_DIR().string());
+               
+               std::string exc=(FULL_EXEC_DIR() / nm.c_str()).string();
+               if (!boost::filesystem::exists(exc.c_str())){
+                   writedemonlog("NO find exec =" + exc);
+                   return false;}
+               writedemonlog("Start application execl =" + exc);
+               int rslt = system(exc.c_str());
+               return !rslt;}
+            
+            bool stopsevice(pid_t pid) {
+              if (!pid) 
+                  return false; 
+              kill(pid, SIGTERM);
+              return true;}
+            
+            bool checksevices() {
+              INP_SHARE_LOCK(svm_->memlock());
+              if (mntr==svm_->monitor()) return false;
+              for (servicemanager::struct_type_ptr it=svm_->begin();it!=svm_->end();++it){
+                  if ((it->appid()) && (it->waitstate())){
+                      switch(it->waitstate()) {
+                         case demon_item::RUN_WAIT_STATE: {
+                             startsevice(svm_->name(it->appid()));}
+                         case demon_item::TERM_WAIT_STATE: {
+                             stopsevice(svm_->pid(it->appid()));}}
+                      svm_->waitstate(it->appid(),0);}}
+                      mntr=svm_->monitor();
+                      return true;}                                    
+
+        protected:
+            servicemanager_ptr svm_;
+            volatile int mntr;
+         };}
+
+
+
+
 int main(int argc, char** argv) {
     
-        
-        
-	sigset_t mask;
-	struct sigaction sa;
-	pthread_t tid;
-	process_signal_args thread_args;
 
-	std::string demon_execute_cmd = (NULL == strrchr(argv[0], '/')) ? argv[0] : strrchr(argv[0], '/')+1;
-        
-        std::string tmpdir="";
-        try{
-        tmpdir = boost::filesystem::temp_directory_path().string();}
-        catch(...){
-            tmpdir="";}
-        
-
-        
-                
-        dvnci::LOG_DEMON_FILE = (!tmpdir.empty()) ? tmpdir + "/" + demon_execute_cmd + ".log" : "";
-        
-        startdemonlog();        
-        writedemonlog("Start demonaze");
-	demonize(demon_execute_cmd);
-
-	if ( already_running(demon_execute_cmd) ) {
-		writedemonlog("daemon "+ demon_execute_cmd +" already running");
-		exit(EXIT_FAILURE);
-	}
-
-	sa.sa_handler = SIG_DFL;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-        
-	if ( sigaction(SIGHUP, &sa, NULL) < 0 ) {
-		writedemonlog("sigaction error");
-		exit(EXIT_FAILURE);}
-
-	sigfillset(&mask);
-	if ( 0 != pthread_sigmask(SIG_BLOCK, &mask, NULL) ) {
-		writedemonlog("pthread_sigmask error");
-		exit(EXIT_FAILURE);}
-
-	thread_args.mask = &mask;
-	thread_args.running = 1;
-	/**  */
-	thread_args.reread_func_t = reread_func;
-	/**  */
-	thread_args.terminate_func_t = terminate_func;
-	/**  */
-	if ( pthread_create(&tid, NULL, process_signal_thr, &thread_args) ) {
-		writedemonlog("can`t create thread");
-		exit(EXIT_FAILURE);
-	}
-
-	/* тут код программы */
-        
-        writedemonlog("start deamon test");
-
-    while(runflag) {
-
-        writedemonlog("test loop");
-        sleep(10);//ждем 10 минут до следующей итерации
-    }
     
-    writedemonlog("test stop loop");
+    std::string quit_in;
+    
+    std::string  SERVMAN_REALPATH="";
+    
+    fspath testpath = argc > 0 ? argv[0] : "";
+    
+    if ((!testpath.string().empty()) && (argc>0)) {
+        if (testpath.is_absolute()){
+            SERVMAN_REALPATH=testpath.string();}
+        else{
+            char buf[PATH_MAX];
+	    char *p;
+            if (!(p = realpath(argv[0], buf)))
+                {;}
+            else{
+                testpath=p;
+                SERVMAN_REALPATH=testpath.string();}
+                SERVMAN_REALPATH=SERVMAN_REALPATH;}}
+    else{
+        SERVMAN_REALPATH=testpath.string();}
+    
+    
+    char  *generatearg[]={(char*)SERVMAN_REALPATH.c_str(), argc > 1 ? argv[1] : NULL };
+    
 
-}
+    mainserv = executable_ptr(new svmservice());
+    
+#ifndef DVNCI_DEDUG
+    if (serviceargumentparser( (argc > 1 ? 2 : 1), (char**)&generatearg) == SERVICE_OPEATION_APP) {
+#else
+    appargumentparser((argc > 1 ? 2 : 1), (char**)&generatearg);
+#endif    
+        try {
+            DEBUG_STR_DVNCI(start app)
+            boost::thread th = boost::thread(mainserv);
+            while ((std::cin >> quit_in)  && ((quit_in != "q") && (quit_in != "Q")));
+            mainserv.terminate();
+            th.join();}
+        catch (std::exception& err) {
+            DEBUG_VAL_DVNCI(err.what());}
+#ifndef DVNCI_DEDUG
+    /**/;}
+#endif
+    DEBUG_STR_DVNCI(FIN)
+    return (EXIT_SUCCESS);}
+
+
