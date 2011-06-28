@@ -342,13 +342,7 @@ namespace dvnci {
             return false;}} ;
 
 
-    extern std::string LOG_DEMON_FILE;
 
-    struct process_signal_args {
-        void(*reread_func_t)();
-        void(*terminate_func_t)();
-        sigset_t* mask;
-        volatile int running;} ;
 
 
 
@@ -363,6 +357,16 @@ namespace dvnci {
 #include <sys/stat.h>
 #include <sys/resource.h>
 #include <sys/time.h>    
+
+
+    extern std::string LOG_DEMON_FILE;
+
+    struct process_signal_args {
+        void(*reread_func_t)();
+        void(*terminate_func_t)();
+        sigset_t* mask;
+        volatile int running;} ;
+
 
     int  startdemonlog();
     int  writedemonlog(const std::string& msg,  const std::string& opt = "");

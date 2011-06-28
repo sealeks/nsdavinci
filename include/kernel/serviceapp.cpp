@@ -961,9 +961,7 @@ namespace dvnci {
     void servicemanager::status(appidtype app, int sts) {}
 
     bool servicemanager::install_demon(appidtype app, const std::string& nm, int stt) {
-        // if (demon_fileexists(nm+platformspec())) {
         return (add(app, nm, stt) != npos);}
-    //return false;}
 
     bool servicemanager::uninstall_demon(appidtype app) {
         return (remove(app) != npos);}
