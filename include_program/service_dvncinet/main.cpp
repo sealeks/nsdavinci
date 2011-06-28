@@ -24,6 +24,7 @@ using namespace dvnci::external::net;
 
 dvnci::executable_ptr         dvnci::mainserv;
 std::string                   dvnci::DVNCI_SERVICE_NAME=NS_NET_SERVICE_NAME;
+dvnci::appidtype              dvnci::DVNCI_SERVICE_APPID= NS_NET_SERVICE;
 fspath                        basepath;
 
 

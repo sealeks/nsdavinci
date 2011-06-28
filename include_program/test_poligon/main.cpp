@@ -263,7 +263,7 @@ test_immi_struct();
                if (!dms){
                    std::cout << "NO CREATE MAP "  <<  std::endl;
                    break;}
-               dms->install_demon(app, "test");
+               dms->install_demon(NS_NET_SERVICE, NS_NET_SERVICE_NAME);
                std::cout <<   (*dms);
           break;}
           

@@ -25,7 +25,6 @@ using namespace dvnci::driver;
 dvnci::executable_ptr         dvnci::mainserv;
 std::string                   dvnci::DVNCI_SERVICE_NAME=NS_MODBUS_SERVICE_NAME;
 dvnci::appidtype              dvnci::DVNCI_SERVICE_APPID= NS_MODBUS_SERVICE;
-NS_MODBUS_SERVICE
 fspath                        basepath;
 
 
