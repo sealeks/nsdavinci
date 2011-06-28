@@ -34,8 +34,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/513508186/mg_protocol.o \
-	${OBJECTDIR}/_ext/513508186/iek1177_protocol.o \
+	${OBJECTDIR}/_ext/1232915786/spbmg_protocol.o \
+	${OBJECTDIR}/_ext/1232915786/iek1177_protocol.o \
 	${OBJECTDIR}/_ext/513508186/lgk_detail.o \
 	${OBJECTDIR}/_ext/513508186/main.o
 
@@ -64,15 +64,15 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncilgk_db ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/513508186/mg_protocol.o: ../../include_program/service_dvncilgk/mg_protocol.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/513508186
+${OBJECTDIR}/_ext/1232915786/spbmg_protocol.o: ../../include/driverspec/spbmg_protocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1232915786
 	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513508186/mg_protocol.o ../../include_program/service_dvncilgk/mg_protocol.cpp
+	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/spbmg_protocol.o ../../include/driverspec/spbmg_protocol.cpp
 
-${OBJECTDIR}/_ext/513508186/iek1177_protocol.o: ../../include_program/service_dvncilgk/iek1177_protocol.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/513508186
+${OBJECTDIR}/_ext/1232915786/iek1177_protocol.o: ../../include/driverspec/iek1177_protocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1232915786
 	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513508186/iek1177_protocol.o ../../include_program/service_dvncilgk/iek1177_protocol.cpp
+	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/iek1177_protocol.o ../../include/driverspec/iek1177_protocol.cpp
 
 ${OBJECTDIR}/_ext/513508186/lgk_detail.o: ../../include_program/service_dvncilgk/lgk_detail.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513508186

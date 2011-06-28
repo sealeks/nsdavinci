@@ -34,10 +34,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/431270180/prb_binary_archive.o \
 	${OBJECTDIR}/_ext/431270180/appath_lin.o \
-	${OBJECTDIR}/_ext/431270180/prb_binary_oarchive.o \
 	${OBJECTDIR}/_ext/431270180/rpcioclient.o \
-	${OBJECTDIR}/_ext/431270180/prb_binary_iarchive.o \
 	${OBJECTDIR}/_ext/431270180/stringvalue_base.o \
 	${OBJECTDIR}/_ext/431270180/serviceapp.o \
 	${OBJECTDIR}/_ext/431270180/basis_iostream.o \
@@ -54,7 +53,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/431270180/string_base.o \
 	${OBJECTDIR}/_ext/431270180/proccesstmpl.o \
 	${OBJECTDIR}/_ext/431270180/memfile.o \
-	${OBJECTDIR}/_ext/431270180/nix_demon_templ.o \
 	${OBJECTDIR}/_ext/431270180/index_base.o \
 	${OBJECTDIR}/_ext/431270180/mainstruct.o
 
@@ -85,25 +83,20 @@ LDLIBSOPTIONS=
 	${AR} -rv ../../lib/${CND_CONF}/libnskernel.a ${OBJECTFILES} 
 	$(RANLIB) ../../lib/${CND_CONF}/libnskernel.a
 
+${OBJECTDIR}/_ext/431270180/prb_binary_archive.o: ../../include/kernel/prb_binary_archive.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
+	${RM} $@.d
+	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/prb_binary_archive.o ../../include/kernel/prb_binary_archive.cpp
+
 ${OBJECTDIR}/_ext/431270180/appath_lin.o: ../../include/kernel/appath_lin.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	${RM} $@.d
 	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/appath_lin.o ../../include/kernel/appath_lin.cpp
 
-${OBJECTDIR}/_ext/431270180/prb_binary_oarchive.o: ../../include/kernel/prb_binary_oarchive.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/prb_binary_oarchive.o ../../include/kernel/prb_binary_oarchive.cpp
-
 ${OBJECTDIR}/_ext/431270180/rpcioclient.o: ../../include/kernel/rpcioclient.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	${RM} $@.d
 	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/rpcioclient.o ../../include/kernel/rpcioclient.cpp
-
-${OBJECTDIR}/_ext/431270180/prb_binary_iarchive.o: ../../include/kernel/prb_binary_iarchive.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/prb_binary_iarchive.o ../../include/kernel/prb_binary_iarchive.cpp
 
 ${OBJECTDIR}/_ext/431270180/stringvalue_base.o: ../../include/kernel/stringvalue_base.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
@@ -184,11 +177,6 @@ ${OBJECTDIR}/_ext/431270180/memfile.o: ../../include/kernel/memfile.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
 	${RM} $@.d
 	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/memfile.o ../../include/kernel/memfile.cpp
-
-${OBJECTDIR}/_ext/431270180/nix_demon_templ.o: ../../include/kernel/nix_demon_templ.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/431270180
-	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431270180/nix_demon_templ.o ../../include/kernel/nix_demon_templ.cpp
 
 ${OBJECTDIR}/_ext/431270180/index_base.o: ../../include/kernel/index_base.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431270180

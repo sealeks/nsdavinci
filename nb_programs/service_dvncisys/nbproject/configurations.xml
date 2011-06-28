@@ -26,6 +26,7 @@
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
             <Elem>_WIN32_WINNT=0x0501</Elem>
+            <Elem>DVNCI_DEDUG</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -165,7 +166,7 @@
           <warningLevel>2</warningLevel>
         </ccTool>
         <linkerTool>
-          <output>../../bin/${CND_CONF}/service_dvncisys_db</output>
+          <output>../../bin/${CND_CONF}/service_dvncisys</output>
           <linkerAddLib>
             <pElem>../../lib/boost/${CND_CONF}</pElem>
             <pElem>../../lib/${CND_CONF}</pElem>

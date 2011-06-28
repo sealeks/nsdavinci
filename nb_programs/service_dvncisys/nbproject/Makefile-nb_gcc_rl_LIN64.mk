@@ -56,11 +56,11 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncisys_db
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncisys
 
-../../bin/${CND_CONF}/service_dvncisys_db: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvncisys: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncisys_db ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncisys ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/_ext/513515479/main.o: ../../include_program/service_dvncisys/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513515479
@@ -78,7 +78,7 @@ ${OBJECTDIR}/_ext/513515479/expr_executor.o: ../../include_program/service_dvnci
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvncisys_db
+	${RM} ../../bin/${CND_CONF}/service_dvncisys
 
 # Subprojects
 .clean-subprojects:

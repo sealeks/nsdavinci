@@ -52,25 +52,25 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lnetinterface -ldbaccess -lsoci -lboost_date_time -lboost_filesystem -lboost_prg_exec_monitor -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_test_exec_monitor -lboost_thread -lboost_unit_test_framework -lboost_wserialization -lrt
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lcustom -lnskernel -ldbaccess -lsoci -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_wserialization -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncinet_db
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncinet
 
-../../bin/${CND_CONF}/service_dvncinet_db: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvncinet: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncinet_db ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncinet ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/_ext/513510055/netserver.o: ../../include_program/service_dvncinet/netserver.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513510055
 	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/netserver.o ../../include_program/service_dvncinet/netserver.cpp
+	$(COMPILE.cc) -g -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/netserver.o ../../include_program/service_dvncinet/netserver.cpp
 
 ${OBJECTDIR}/_ext/513510055/main.o: ../../include_program/service_dvncinet/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513510055
 	${RM} $@.d
-	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/main.o ../../include_program/service_dvncinet/main.cpp
+	$(COMPILE.cc) -g -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/main.o ../../include_program/service_dvncinet/main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -78,7 +78,7 @@ ${OBJECTDIR}/_ext/513510055/main.o: ../../include_program/service_dvncinet/main.
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvncinet_db
+	${RM} ../../bin/${CND_CONF}/service_dvncinet
 
 # Subprojects
 .clean-subprojects:
