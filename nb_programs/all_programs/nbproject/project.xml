@@ -15,15 +15,18 @@
                 <make-dep-project>../libdbaccess</make-dep-project>
                 <make-dep-project>../libsoci</make-dep-project>
                 <make-dep-project>../service_dvncisys</make-dep-project>
-                <make-dep-project>../app_admin</make-dep-project>
+                <make-dep-project>../service_dvncinet</make-dep-project>
                 <make-dep-project>../libcustom</make-dep-project>
                 <make-dep-project>../test_poligon</make-dep-project>
+                <make-dep-project>../service_dvncikoyo</make-dep-project>
+                <make-dep-project>../service_dvncilgk</make-dep-project>
                 <make-dep-project>../app_test</make-dep-project>
                 <make-dep-project>../lisocipg</make-dep-project>
                 <make-dep-project>../libnskernel</make-dep-project>
                 <make-dep-project>../service_dvnciarch</make-dep-project>
-                <make-dep-project>../libnsadmin</make-dep-project>
+                <make-dep-project>../service_dvnciopc</make-dep-project>
                 <make-dep-project>../service_dvncimodbus</make-dep-project>
+                <make-dep-project>../libnsadmin</make-dep-project>
             </make-dep-projects>
             <sourceRootList/>
             <confList>
@@ -44,19 +47,19 @@
                     <type>1</type>
                 </confElem>
                 <confElem>
-                    <name>all_gcc_db_WIN32</name>
+                    <name>app_gcc_db_WIN32</name>
                     <type>1</type>
                 </confElem>
                 <confElem>
-                    <name>all_gcc_rl_WIN32</name>
+                    <name>app_gcc_rl_WIN32</name>
                     <type>1</type>
                 </confElem>
                 <confElem>
-                    <name>all_gcc_db_LIN64</name>
+                    <name>app_gcc_db_LIN64</name>
                     <type>1</type>
                 </confElem>
                 <confElem>
-                    <name>all_gcc_rl_LIN64</name>
+                    <name>app_gcc_rl_LIN64</name>
                     <type>1</type>
                 </confElem>
             </confList>
