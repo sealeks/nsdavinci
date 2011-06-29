@@ -72,40 +72,6 @@ namespace dvnci {
 
     void
     prb_binary_iarchive::init(unsigned int flags) {
-        if (0 == (flags & boost::archive::no_header)) {
-            // read signature in an archive version independent manner
-            std::string file_signature;
-            * this >> file_signature;
-            if (file_signature != boost::archive::BOOST_ARCHIVE_SIGNATURE())
-                boost::serialization::throw_exception(
-                    boost::archive::archive_exception(
-                    boost::archive::archive_exception::invalid_signature
-                    )
-                    );
-            // make sure the version of the reading archive library can
-            // support the format of the archive being read
-            boost::archive::library_version_type input_library_version;
-            * this >> input_library_version;
-
-            // extra little .t is to get around borland quirk
-            if (boost::archive::BOOST_ARCHIVE_VERSION() < input_library_version)
-                boost::serialization::throw_exception(
-                    boost::archive::archive_exception(
-                    boost::archive::archive_exception::unsupported_version
-                    )
-                    );
-
-#if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3205))
-            this->set_library_version(input_library_version);
-            //#else
-            //#if ! BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
-            //detail::
-            //#endif
-            boost::archive::detail::basic_iarchive::set_library_version(
-                    input_library_version
-                    );
-#endif
-            ;}
         unsigned char x;
         load(x);
         m_flags = x << CHAR_BIT;}
@@ -158,17 +124,6 @@ namespace dvnci {
             boost::serialization::throw_exception(
                     prb_binary_oarchive_exception()
                     );}
-        if (0 == (flags & boost::archive::no_header)) {
-            // write signature in an archive version independent manner
-            const std::string file_signature(
-                    boost::archive::BOOST_ARCHIVE_SIGNATURE()
-                    );
-            * this << file_signature;
-            // write library version
-            const boost::archive::library_version_type v(
-                    boost::archive::BOOST_ARCHIVE_VERSION()
-                    );
-            * this << v;}
         save(static_cast<unsigned char> (m_flags >> CHAR_BIT));}}
 
 

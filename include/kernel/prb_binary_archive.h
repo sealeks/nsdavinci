@@ -199,7 +199,7 @@ namespace dvnci {
         void init(unsigned int flags);
     public:
 
-        prb_binary_iarchive(std::istream & is, unsigned flags = 0) :
+        prb_binary_iarchive(std::istream & is, unsigned flags = boost::archive::no_header) :
         primitive_base_t(
         * is.rdbuf(),
         0 != (flags & boost::archive::no_codecvt)
@@ -343,7 +343,7 @@ namespace dvnci {
         void init(unsigned int flags);
     public:
 
-        prb_binary_oarchive(std::ostream & os, unsigned flags = 0) :
+        prb_binary_oarchive(std::ostream & os, unsigned flags = boost::archive::no_header) :
         primitive_base_t(
         * os.rdbuf(),
         0 != (flags & boost::archive::no_codecvt)
