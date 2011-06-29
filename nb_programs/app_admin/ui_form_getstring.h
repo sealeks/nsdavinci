@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_getstring.ui'
 **
-** Created: Mon 20. Jun 18:25:02 2011
+** Created: Wed 29. Jun 16:14:15 2011
 **      by: Qt User Interface Compiler version 4.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
