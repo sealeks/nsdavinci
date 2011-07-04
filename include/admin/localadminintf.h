@@ -915,7 +915,7 @@ namespace dvnci {
             virtual void operation_newprj(std::string path_);
 
             virtual ns_error entities_signature(nodetype parenttp, indx parentid, iteminfo_map& mappack,
-                    const std::string& strcriteria = "" , num64 numcriteria = -1, bool clearer = true);
+                    const std::string& strcriteria = "" ,  bool clearer = true);
 
             virtual  ns_error entities_load(nodetype ittp,  indx_set& set_) {
                 clearerrors();
@@ -928,9 +928,9 @@ namespace dvnci {
             bool entities_merge(nodetype ittp, indx id);
 
             virtual ns_error entity_create(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
-                    std::string newnm = "" , num64 numcriteria = -1);
+                    std::string newnm = "" );
 
-            virtual ns_error entities_create(nodetype ittp, indx parentid, str_indx_map& mpnew, num64 numcriteria = -1);
+            virtual ns_error entities_create(nodetype ittp, indx parentid, str_indx_map& mpnew);
 
             virtual ns_error entities_erase(nodetype ittp, indx_set& idset);
 
@@ -976,60 +976,60 @@ namespace dvnci {
             servicemanager_ptr svm() const;
 
             virtual ns_error entities_internal_signature(nodetype ittp, indx_set& set_, iteminfo_map& mappack,
-                    const std::string& strcriteria = "" , num64 numcriteria = -1);
+                    const std::string& strcriteria = "" );
 
             bool changeparenttag( indx_set& idset, indx parentid);
 
             bool changeparentatag( indx_set& idset, indx parentid);
 
             //  возвращает карту всех тегов key - name для группы
-            bool tags(iteminfo_map& mappack, indx group, const std::string& strcriteria = "" , num64 numcriteria = -1);
+            bool tags(iteminfo_map& mappack, indx group, const std::string& strcriteria = "");
 
-            bool atags(iteminfo_map& mappack, indx agroup, const std::string& strcriteria = "" , num64 numcriteria = -1);
+            bool atags(iteminfo_map& mappack, indx agroup, const std::string& strcriteria = "");
 
-            bool groups(iteminfo_map& mappack, const std::string& strcriteria = "" , num64 numcriteria = -1);
+            bool groups(iteminfo_map& mappack, const std::string& strcriteria = "" );
 
-            bool agroups(iteminfo_map& mappack, const std::string& strcriteria = "" , num64 numcriteria = -1);
+            bool agroups(iteminfo_map& mappack, const std::string& strcriteria = "" );
 
-            bool users(iteminfo_map& mappack, const std::string& strcriteria = "" , num64 numcriteria = -1);
+            bool users(iteminfo_map& mappack, const std::string& strcriteria = "");
 
-            bool accessrules(iteminfo_map& mappack, const std::string& strcriteria = "" , num64 numcriteria = -1);
+            bool accessrules(iteminfo_map& mappack, const std::string& strcriteria = "");
 
-            bool clients(iteminfo_map& mappack, const std::string& strcriteria = "" , num64 numcriteria = -1);
+            bool clients(iteminfo_map& mappack, const std::string& strcriteria = "");
 
-            bool regs(iteminfo_map& mappack, const std::string& strcriteria = "" , num64 numcriteria = -1);
+            bool regs(iteminfo_map& mappack, const std::string& strcriteria = "");
 
-            bool services(iteminfo_map& mappack, const std::string& strcriteria = "" , num64 numcriteria = -1);
-
-
-
-            bool tags(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "" , num64 numcriteria = -1);
-
-            bool groups(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "" , num64 numcriteria = -1);
-
-            bool agroups(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "" , num64 numcriteria = -1);
-
-            bool users(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = -1);
-
-            bool accessrules(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = -1);
+            bool services(iteminfo_map& mappack, const std::string& strcriteria = "" );
 
 
-            indx createtag( std::string name, std::string group, num64 numcriteria = -1);
 
-            indx createtag( std::string name, indx group, num64 numcriteria = -1);
+            bool tags(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "");
 
-            indx creategroup( std::string name, num64 numcriteria = -1);
+            bool groups(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "" );
 
-            indx createagroup( std::string name, num64 numcriteria = -1);
+            bool agroups(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "" );
 
-            indx createuser( std::string name, num64 numcriteria = -1);
+            bool users(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "");
 
-            indx createaccessrule( std::string name, num64 numcriteria = -1);
+            bool accessrules(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "");
 
 
-            void createtags( str_indx_map& mpnew, std::string group, num64 numcriteria = -1);
+            indx createtag( std::string name, std::string group);
 
-            void createtags( str_indx_map& mpnew, indx group, num64 numcriteria = -1);
+            indx createtag( std::string name, indx group);
+
+            indx creategroup( std::string name);
+
+            indx createagroup( std::string name);
+
+            indx createuser( std::string name);
+
+            indx createaccessrule( std::string name);
+
+
+            void createtags( str_indx_map& mpnew, std::string group);
+
+            void createtags( str_indx_map& mpnew, indx group);
 
 
 

@@ -73,7 +73,7 @@ namespace dvnci {
             serviceintf_ = serviceintf_ptr(new remoteserviceintf(&services_map));}
 
         ns_error remoteadminintf::entities_internal_signature(nodetype ittp, indx_set& idset, iteminfo_map& mappack,
-                const std::string&  strcriteria, num64 numcriteria) {
+                const std::string&  strcriteria) {
 
             mappack.clear();
             switch (ittp) {
@@ -107,31 +107,31 @@ namespace dvnci {
                         return NS_ERROR_SUCCESS;}}}
             return NS_ERROR_SUCCESS;}
 
-        bool remoteadminintf::tags(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria , num64 numcriteria) {
+        bool remoteadminintf::tags(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria ) {
             mappack.clear();
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
                 mappack.insert(iteminfo_pair(*it, name_with_type(tag(*it).name(), NT_TAG,  tag(*it).type(), group(tag(*it).group()).appid())));}
             return true;}
 
-        bool remoteadminintf::groups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria , num64 numcriteria) {
+        bool remoteadminintf::groups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria ) {
             mappack.clear();
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
                 mappack.insert(iteminfo_pair(*it, name_with_type(group(*it).name(), NT_GROUP,  static_cast<appidtype> (group(*it).appid()))));}
             return true;}
 
-        bool remoteadminintf::agroups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria , num64 numcriteria) {
+        bool remoteadminintf::agroups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria) {
             mappack.clear();
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
                 mappack.insert(iteminfo_pair(*it, name_with_type(agroup(*it).name(), NT_AGROUP)));}
             return true;}
 
-        bool remoteadminintf::users(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria , num64 numcriteria) {
+        bool remoteadminintf::users(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria ) {
             mappack.clear();
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
                 mappack.insert(iteminfo_pair(*it, name_with_type(user(*it).name(), NT_USER)));}
             return true;}
 
-        bool remoteadminintf::metas(nodetype ittp, iteminfo_map& mappack, indx_set& idset, std::string  strcriteria , num64 numcriteria) {
+        bool remoteadminintf::metas(nodetype ittp, iteminfo_map& mappack, indx_set& idset, std::string  strcriteria) {
             mappack.clear();
             std::string  nm_attr = dvnci::meta::nameAttribute(ittp);
             if (nm_attr == "") return true;
@@ -361,7 +361,7 @@ namespace dvnci {
             return (_state == adminintf::disconnected);}
 
         ns_error remoteadminintf::entities_signature(nodetype parenttp, indx parentid, iteminfo_map& mappack,
-                const std::string& strcriteria , num64 numcriteria, bool clearer) {{
+                const std::string& strcriteria , bool clearer) {{
 
                 THD_EXCLUSIVE_LOCK(mutex);
                 if (clearer) clearerrors();
@@ -372,7 +372,7 @@ namespace dvnci {
 
                     tmpreq.tpitem = static_cast<num64> (parenttp);
                     tmpreq.parentid = static_cast<num64> (parentid);
-                    tmpreq.numcriteria = numcriteria;
+                    //tmpreq.numcriteria = numcriteria;
                     tmpreq.strcriteria = strcriteria;
 
                     if (querytmpl<req_entitysigs, resp_entitysigs, RPC_OPERATION_REQ_ENTITYSIGS, RPC_OPERATION_RESP_ENTITYSIGS > (tmpreq, tpmresp)) {
@@ -383,7 +383,7 @@ namespace dvnci {
                 catch (...) {
                     parseundeferror();}}
 
-            adminintf::entities_signature(parenttp, parentid,  mappack, strcriteria, numcriteria);
+            adminintf::entities_signature(parenttp, parentid,  mappack, strcriteria);
             return NS_ERROR_SUCCESS;}
 
         ns_error remoteadminintf::readtags(indx_set& idset) {
@@ -715,7 +715,7 @@ namespace dvnci {
             return NS_ERROR_SUCCESS;}
 
         ns_error remoteadminintf::entity_create(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
-                string newname_, num64 numcriteria) {{
+                string newname_) {{
                 THD_EXCLUSIVE_LOCK(mutex);
                 clearerrors();
                 try {
@@ -726,7 +726,7 @@ namespace dvnci {
                     tmpreq.tpitem = ittp;
                     tmpreq.parentkey = parentid;
                     tmpreq.newname = newname_;
-                    tmpreq.numcriteria = numcriteria;
+                    //tmpreq.numcriteria = numcriteria;
 
                     if (querytmpl<req_addentity, resp_addentity, RPC_OPERATION_REQ_ADDENTITY, RPC_OPERATION_RESP_ADDENTITY > (tmpreq, tpmresp)) {
 

@@ -954,7 +954,7 @@ namespace dvnci {
              * @see kernel/constdef.h nodetype
              */
             virtual ns_error entities_signature(nodetype parenttp, indx parentid, iteminfo_map& mappack,
-                    const std::string&  strcriteria = "" , num64 numcriteria = -1, bool clearer = true) {
+                    const std::string&  strcriteria = "" , bool clearer = true) {
                 if ((parenttp == NT_ROOT_NODEF) || (parenttp == NT_ROOT_SERVERS_AVAIL) || (parenttp == NT_ROOT_SERVERS_AVAIL_R) ||
                         (parenttp == NT_UTIL_MAINTABLE) ||  (parenttp == NT_UTIL_GROUPTABLE)
                         || (parenttp == NT_UTIL_FINDER)) {
@@ -971,13 +971,13 @@ namespace dvnci {
              * @return  успешность выполнения
              * @see
              */
-            virtual ns_error entities_find_signature(nodetype ittp, iteminfo_map& mappack,  std::string  strcriteria = "" , num64 numcriteria = 0) {
+            virtual ns_error entities_find_signature(nodetype ittp, iteminfo_map& mappack,  std::string  strcriteria = "" ) {
                 //THD_EXCLUSIVE_LOCK(mutex);
 
                 mappack.clear();
                 if (nodetp_paren_by_child(ittp) != 0) {
                     entities_signature(nodetp_paren_by_child(ittp), -1, mappack,
-                            strcriteria , numcriteria);}
+                            strcriteria );}
                 return NS_ERROR_SUCCESS;}
 
             /**
@@ -1029,7 +1029,7 @@ namespace dvnci {
              * @see kernel/constdef.h nodetype
              */
             virtual ns_error entity_create(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
-                    std::string  newnm = "" , num64 numcriteria = -1) {
+                    std::string  newnm = "" ) {
                 if (ittp == NT_GROUP) getgroupdata();
                 if (ittp == NT_AGROUP) getagroupdata();
                 return NS_ERROR_SUCCESS;}
@@ -1045,7 +1045,7 @@ namespace dvnci {
              * @return  успешность выполнения
              * @see kernel/constdef.h nodetype
              */
-            virtual ns_error entities_create(nodetype ittp, indx parentid, str_indx_map& mpnew, num64 numcriteria = -1) {
+            virtual ns_error entities_create(nodetype ittp, indx parentid, str_indx_map& mpnew) {
                 return NS_ERROR_SUCCESS;}
 
 
@@ -1254,7 +1254,7 @@ namespace dvnci {
              */
 
 
-            ns_error read_view(nodetype ittp, const std::string& = "" , num64 numcriteria = 0);
+            ns_error read_view(nodetype ittp, const std::string& = "" );
 
             bool iserror() const {
                 return (errmap.size() > 0);}
@@ -1278,7 +1278,7 @@ namespace dvnci {
              * @see kernel/constdef.h nodetype
              */
             bool getexportbase(base_data& base, nodetype itemtype,
-                    const std::string&  strcriteria , num64 numcriteria = -1);
+                    const std::string&  strcriteria );
             /**
              * Метод setimportbase импортирует в базу  информацию из переменной bаse
              * @param base структура для извлечения информации
@@ -1287,7 +1287,7 @@ namespace dvnci {
              * @return  успешность выполнения
              * @see kernel/constdef.h nodetype
              */
-            bool setimportbase(base_data& base, const std::string&  strcriteria = "" , num64 numcriteria = -1);
+            bool setimportbase(base_data& base, const std::string&  strcriteria = "");
 
             /**
              * Метод operation_setvalue устанавливает значение тега с индексом id
@@ -1402,25 +1402,25 @@ namespace dvnci {
               *
              */
             virtual ns_error entities_internal_signature(nodetype ittp, indx_set& idset, iteminfo_map& mappack,
-                    const std::string&  strcriteria = "" , num64 numcriteria = -1) = 0;
+                    const std::string&  strcriteria = "" ) = 0;
 
 
-            bool alarms_mf(const std::string& strcriteria = "" , num64 numcriteria = 0) {
+            bool alarms_mf(const std::string& strcriteria = "" ) {
                 return alarms_->load();}
 
-            bool commands_mf(const std::string& strcriteria = "" , num64 numcriteria = 0) {
+            bool commands_mf(const std::string& strcriteria = "") {
                 return command_->load();}
 
-            bool regs_mf(const std::string& strcriteria = "" , num64 numcriteria = 0) {
+            bool regs_mf(const std::string& strcriteria = "" ) {
                 return reg_->load();}
 
-            bool clients_mf(const std::string& strcriteria = "" , num64 numcriteria = 0) {
+            bool clients_mf(const std::string& strcriteria = "" ) {
                 return clients_->load();}
 
-            bool debug_mf(const std::string& strcriteria = "" , num64 numcriteria = 0) {
+            bool debug_mf(const std::string& strcriteria = "") {
                 return this->debug_->load();}
 
-            bool journal_mf(const std::string& strcriteria = "" , num64 numcriteria = 0) {
+            bool journal_mf(const std::string& strcriteria = "") {
                 return journal_->load();}
 
             void printerr() {}
@@ -1497,11 +1497,11 @@ namespace dvnci {
 
             void getgroupdata() {
                 if (state() == disconnected) return;
-                entities_signature(NT_ROOT_GROUPS, npos, groupsmap_, "", -1, false);}
+                entities_signature(NT_ROOT_GROUPS, npos, groupsmap_, "",  false);}
 
             void getagroupdata() {
                 if (state() == disconnected) return;
-                entities_signature(NT_ROOT_AGROUPS, npos, agroupsmap_, "", -1, false);}
+                entities_signature(NT_ROOT_AGROUPS, npos, agroupsmap_, "",  false);}
 
 
 
