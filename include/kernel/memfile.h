@@ -2034,6 +2034,9 @@ namespace dvnci {
 
 
 
+        
+        ns_error select_entities(nodetype parenttp, iteminfo_map& val, indx parentid, const std::string& strcriteria = "");
+        
 
         void select_tags(iteminfo_map& val, size_type group, const std::string& strcriteria = "");
 
