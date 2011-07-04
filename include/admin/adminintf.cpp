@@ -290,7 +290,7 @@ namespace dvnci {
 
             _state = disconnected;};
 
-        bool adminintf::getexportbase(base_data& base, nodetype itemtype, const std::string& strcriteri) {
+        bool adminintf::getexportbase(base_data& base, nodetype itemtype, const std::string& strcriteria, indx partid) {
             if (state() == connected) {
 
                 if ((itemtype == NT_ROOT_SERVERS_AVAIL) || (NT_ROOT_SERVERS_AVAIL_R) ||
@@ -365,8 +365,8 @@ namespace dvnci {
                         ((tagstruct*) & tmp.tginfo)->devdb(str_to<double>(tag(it->first).devdb()));
                         ((tagstruct*) & tmp.tginfo)->alarmlevel(tag(it->first).alarmlevel());
                         tmp.changeset = MASK_RT_EXPORT1;
-                        if ((itemtype != NT_GROUP)/* ||
-                                ((itemtype == NT_GROUP) && (tag(it->first).group() == numcriteria))*/)
+                        if ((itemtype != NT_GROUP) ||
+                                ((itemtype == NT_GROUP) && (tag(it->first).group() == partid)))
                             base.tags.push_back(tmp);}}
                 return true;}
             return false;}

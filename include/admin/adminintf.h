@@ -1278,7 +1278,7 @@ namespace dvnci {
              * @see kernel/constdef.h nodetype
              */
             bool getexportbase(base_data& base, nodetype itemtype,
-                    const std::string&  strcriteria );
+                    const std::string&  strcriteria,  indx partid );
             /**
              * Метод setimportbase импортирует в базу  информацию из переменной bаse
              * @param base структура для извлечения информации
