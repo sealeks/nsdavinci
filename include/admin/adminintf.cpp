@@ -245,27 +245,27 @@ namespace dvnci {
 
         ////////////////////////////////////////////////////////////////////
 
-        ns_error adminintf::read_view(nodetype ittp, const std::string&  strcriteria , num64 numcriteria) {
+        ns_error adminintf::read_view(nodetype ittp, const std::string&  strcriteria ) {
 
             THD_EXCLUSIVE_LOCK(mutex);
             switch (ittp) {
                 case NT_REGISTRY:{
-                    regs_mf(strcriteria , numcriteria);
+                    regs_mf(strcriteria);
                     break;};
                 case NT_ALARM:{
-                    alarms_mf(strcriteria , numcriteria);
+                    alarms_mf(strcriteria);
                     break;};
                 case NT_CLIENT:{
-                    clients_mf(strcriteria , numcriteria);
+                    clients_mf(strcriteria);
                     break;};
                 case NT_COMMAND:{
-                    commands_mf(strcriteria , numcriteria);
+                    commands_mf(strcriteria);
                     break;};
                 case NT_LOG:{
-                    debug_mf(strcriteria , numcriteria);
+                    debug_mf(strcriteria);
                     break;};
                 case NT_JOURNAL:{
-                    journal_mf(strcriteria , numcriteria);
+                    journal_mf(strcriteria);
                     break;};}
             return NS_ERROR_SUCCESS;};
 
@@ -290,7 +290,7 @@ namespace dvnci {
 
             _state = disconnected;};
 
-        bool adminintf::getexportbase(base_data& base, nodetype itemtype, const std::string& strcriteria , num64 numcriteria) {
+        bool adminintf::getexportbase(base_data& base, nodetype itemtype, const std::string& strcriteri) {
             if (state() == connected) {
 
                 if ((itemtype == NT_ROOT_SERVERS_AVAIL) || (NT_ROOT_SERVERS_AVAIL_R) ||
@@ -365,13 +365,13 @@ namespace dvnci {
                         ((tagstruct*) & tmp.tginfo)->devdb(str_to<double>(tag(it->first).devdb()));
                         ((tagstruct*) & tmp.tginfo)->alarmlevel(tag(it->first).alarmlevel());
                         tmp.changeset = MASK_RT_EXPORT1;
-                        if ((itemtype != NT_GROUP) ||
-                                ((itemtype == NT_GROUP) && (tag(it->first).group() == numcriteria)))
+                        if ((itemtype != NT_GROUP)/* ||
+                                ((itemtype == NT_GROUP) && (tag(it->first).group() == numcriteria))*/)
                             base.tags.push_back(tmp);}}
                 return true;}
             return false;}
 
-        bool adminintf::setimportbase(base_data& base, const std::string& strcriteria , num64 numcriteria) {
+        bool adminintf::setimportbase(base_data& base, const std::string& strcriteria) {
 
             int_dvncierror_map tmp_errmap;
             str_indx_map grp_map;
@@ -389,7 +389,7 @@ namespace dvnci {
             if (base.groups.size() > 0) {
                 for (vect_group_data::iterator it = base.groups.begin(); it != base.groups.end(); ++it) {
                     iteminfo_pair pair_;
-                    entity_create(NT_GROUP, 0, pair_, it->name, rewritetmp);
+                    entity_create(NT_GROUP, 0, pair_, it->name);
                     if (pair_.first!=npos) {
                         ent_set.insert(pair_.first);
                         newit_map.insert(str_indx_pair(it->name, pair_.first));
@@ -484,7 +484,7 @@ namespace dvnci {
             if (base.agroups.size() > 0) {
                 for (vect_agroup_data::iterator it = base.agroups.begin(); it != base.agroups.end(); ++it) {
                     iteminfo_pair pair_;
-                    entity_create(NT_AGROUP, 0, pair_, it->name, rewritetmp);
+                    entity_create(NT_AGROUP, 0, pair_, it->name);
                     if (pair_.first!=npos) {
                         ent_set.insert(pair_.first);}
                     else {
@@ -501,7 +501,7 @@ namespace dvnci {
             if (base.users.size() > 0) {
                 for (vect_user_data::iterator it = base.users.begin(); it != base.users.end(); ++it) {
                     iteminfo_pair pair_;
-                    entity_create(NT_USER, 0, pair_, it->name, rewritetmp);
+                    entity_create(NT_USER, 0, pair_, it->name);
                     if (pair_.first!=npos) {
                         ent_set.insert(pair_.first);
                         newit_map.insert(str_indx_pair(it->name, pair_.first));
@@ -925,7 +925,7 @@ namespace dvnci {
         num16 adminintf::generate_impl(req_entitysigs& req, resp_entitysigs& resp) {
 
             iteminfo_map mappack;
-            entities_signature(static_cast<nodetype> (req.tpitem), static_cast<indx> (req.parentid), mappack, req.strcriteria, req.numcriteria);
+            entities_signature(static_cast<nodetype> (req.tpitem), static_cast<indx> (req.parentid), mappack, req.strcriteria, 0);
             resp.err = 0;
             resp.tpreq = req.tpitem;
             assign_sig(mappack, resp.sigs);
@@ -1027,7 +1027,7 @@ namespace dvnci {
         num16 adminintf::generate_impl(req_addentity& req, resp_addentity& resp) {
             clearerrors();
             iteminfo_pair newentety;
-            entity_create(static_cast<nodetype> (req.tpitem), static_cast<indx> (req.parentkey), newentety, req.newname, req.numcriteria);
+            entity_create(static_cast<nodetype> (req.tpitem), static_cast<indx> (req.parentkey), newentety, req.newname);
             assign_vect_error_entity(resp.error);
             resp.sig.key = newentety.first;
             resp.sig.name = newentety.second.name();

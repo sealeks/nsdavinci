@@ -1048,14 +1048,14 @@ namespace dvnci {
                 return (_state == adminintf::disconnected);};
 
             virtual ns_error entities_signature(nodetype parenttp, indx parentid, iteminfo_map& mappack,
-                    const std::string&  strcriteria = "" , num64 numcriteria = -1, bool clearer = true);
+                    const std::string&  strcriteria = "" ,  bool clearer = true);
 
             virtual ns_error entities_load(nodetype ittp,  indx_set& idset);
 
             virtual ns_error entities_merge(nodetype ittp,  indx_set& idset, iteminfo_map& mappack);
 
             virtual ns_error entity_create(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
-                    std::string  newname_ = "" , num64 numcriteria = -1);
+                    std::string  newname_ = "" );
 
             virtual ns_error entities_erase(nodetype ittp, indx_set& idset);
 
@@ -1108,7 +1108,7 @@ namespace dvnci {
 
 
             virtual ns_error entities_internal_signature(nodetype ittp, indx_set& idset, iteminfo_map& mappack,
-                    const std::string&  strcriteria = "" , num64 numcriteria = -1);
+                    const std::string&  strcriteria = "");
 
             ns_error readtags(indx_set& idset);
 
@@ -1127,15 +1127,15 @@ namespace dvnci {
             ns_error readconfig(indx_set& idset);
 
 
-            bool tags(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "" , num64 numcriteria = -1);
+            bool tags(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "" );
 
-            bool groups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "" , num64 numcriteria = -1);
+            bool groups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "" );
 
-            bool agroups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "" , num64 numcriteria = -1) ;
+            bool agroups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "") ;
 
-            bool users(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "", num64 numcriteria = -1);
+            bool users(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "");
 
-            bool metas(nodetype ittp, iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "", num64 numcriteria = -1);
+            bool metas(nodetype ittp, iteminfo_map& mappack, indx_set& idset, std::string  strcriteria = "");
 
 
 

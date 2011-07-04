@@ -215,7 +215,7 @@ namespace dvnci {
             connect();};
 
         ns_error localadminintf::entities_signature(nodetype parenttp, indx parentid, iteminfo_map& mappack,
-                const std::string& strcriteria , num64 numcriteria, bool clearer ) {{
+                const std::string& strcriteria ,  bool clearer ) {{
                 THD_EXCLUSIVE_LOCK(mutex);
                 if (clearer) clearerrors();
                 mappack.clear();
@@ -228,27 +228,27 @@ namespace dvnci {
                         return NS_ERROR_SUCCESS;}
 
                     case NT_GROUP:{
-                        tags(mappack, parentid, strcriteria, numcriteria);
+                        tags(mappack, parentid, strcriteria);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_AGROUP:{
-                        atags(mappack, parentid, strcriteria, numcriteria);
+                        atags(mappack, parentid, strcriteria);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_ROOT_GROUPS:{
-                        groups(mappack, strcriteria, numcriteria);
+                        groups(mappack, strcriteria);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_ROOT_AGROUPS:{
-                        agroups(mappack, strcriteria, numcriteria);
+                        agroups(mappack, strcriteria);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_ROOT_USERS:{
-                        users(mappack, strcriteria, numcriteria);
+                        users(mappack, strcriteria);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_ROOT_ACCESSRULES:{
-                        accessrules(mappack, strcriteria, numcriteria);
+                        accessrules(mappack, strcriteria);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_ROOT_SERVICES:{
@@ -258,107 +258,107 @@ namespace dvnci {
                     default:{
                         if (nodetp_is_meta(parenttp)) {
                             if (metaintf_.state() == meta::connected) {
-                                metaintf_.sign(parenttp, parentid, mappack, strcriteria , numcriteria);
+                                metaintf_.sign(parenttp, parentid, mappack, strcriteria);
                                 return NS_ERROR_SUCCESS;}}}}}
-            adminintf::entities_signature(parenttp , parentid,  mappack, strcriteria, numcriteria);
+            adminintf::entities_signature(parenttp , parentid,  mappack, strcriteria);
             return NS_ERROR_SUCCESS;}
 
-        bool localadminintf::tags(iteminfo_map& mappack, indx group, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::tags(iteminfo_map& mappack, indx group, const std::string& strcriteria) {
             mappack.clear();
-            intf->select_tags(mappack, group,  strcriteria, numcriteria);
+            intf->select_tags(mappack, group,  strcriteria);
             return true;}
 
-        bool localadminintf::atags(iteminfo_map& mappack, indx agroup, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::atags(iteminfo_map& mappack, indx agroup, const std::string& strcriteria) {
             mappack.clear();
-            intf->select_atags(mappack, agroup,  strcriteria, numcriteria);
+            intf->select_atags(mappack, agroup,  strcriteria);
             return true;}
 
-        bool localadminintf::groups(iteminfo_map& mappack, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::groups(iteminfo_map& mappack, const std::string& strcriteria ) {
             mappack.clear();
-            intf->select_groups(mappack, strcriteria, numcriteria);
+            intf->select_groups(mappack, strcriteria);
             return true;}
 
-        bool localadminintf::agroups(iteminfo_map& mappack, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::agroups(iteminfo_map& mappack, const std::string& strcriteria) {
             mappack.clear();
-            intf->select_agroups(mappack, strcriteria, numcriteria);
+            intf->select_agroups(mappack, strcriteria);
             return true;}
 
-        bool localadminintf::users(iteminfo_map& mappack, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::users(iteminfo_map& mappack, const std::string& strcriteria) {
             mappack.clear();
-            intf->select_users(mappack, strcriteria, numcriteria);
+            intf->select_users(mappack, strcriteria);
             return true;}
 
-        bool localadminintf::accessrules(iteminfo_map& mappack, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::accessrules(iteminfo_map& mappack, const std::string& strcriteria) {
             mappack.clear();
-            intf->select_accessrules(mappack, strcriteria, numcriteria);
+            intf->select_accessrules(mappack, strcriteria);
             return true;}
 
-        bool localadminintf::services(iteminfo_map& mappack, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::services(iteminfo_map& mappack, const std::string& strcriteria) {
             mappack.clear();
             if (svm()){ 
                 svm()->signature(mappack);
                 return true;}
             return false;}
 
-        ns_error localadminintf::entities_internal_signature(nodetype ittp, indx_set& set_, iteminfo_map& mappack,
-                const std::string& strcriteria  , num64 numcriteria) {{
+        ns_error localadminintf::entities_internal_signature(nodetype ittp, indx_set& idset, iteminfo_map& mappack,
+                const std::string& strcriteria  ) {{
                 THD_EXCLUSIVE_LOCK(mutex);
                 mappack.clear();
                 switch (ittp) {
                     case NT_TAG:{
-                        tags(mappack, set_);
+                        tags(mappack, idset);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_ATAG:{
-                        tags(mappack, set_);
+                        tags(mappack, idset);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_GROUP:{
-                        groups(mappack, set_);
+                        groups(mappack, idset);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_AGROUP:{
-                        agroups(mappack, set_);
+                        agroups(mappack, idset);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_ACCESSRULE:{
-                        accessrules(mappack, set_);
+                        accessrules(mappack, idset);
                         return NS_ERROR_SUCCESS;}
 
                     case NT_USER:{
-                        users(mappack, set_);
+                        users(mappack, idset);
                         return NS_ERROR_SUCCESS;}
 
                     default:{
                         if (nodetp_is_meta(ittp)) {
                             if (metaintf_.state() == meta::connected) {
-                                metaintf_.sign(ittp, set_ , mappack );
+                                metaintf_.sign(ittp, idset , mappack );
                                 return NS_ERROR_SUCCESS;}}}}}
             return NS_ERROR_SUCCESS;}
 
-        bool localadminintf::tags(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::tags(iteminfo_map& mappack, indx_set& idset, const std::string& strcriteria  ) {
             mappack.clear();
-            intf->select_tags(mappack, set_,  strcriteria, numcriteria);
+            intf->select_tags(mappack, idset,  strcriteria);
             return true;}
 
-        bool localadminintf::groups(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::groups(iteminfo_map& mappack, indx_set& idset, const std::string& strcriteria ) {
             mappack.clear();
-            intf->select_groups(mappack, set_, strcriteria, numcriteria);
+            intf->select_groups(mappack, idset, strcriteria);
             return true;}
 
-        bool localadminintf::agroups(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria  , num64 numcriteria) {
+        bool localadminintf::agroups(iteminfo_map& mappack, indx_set& idset, const std::string& strcriteri) {
             mappack.clear();
-            intf->select_agroups(mappack, set_, strcriteria, numcriteria);
+            intf->select_agroups(mappack, idset);
             return true;}
 
-        bool localadminintf::users(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria , num64 numcriteria) {
+        bool localadminintf::users(iteminfo_map& mappack, indx_set& idset, const std::string& strcriteria) {
             mappack.clear();
-            intf->select_users(mappack, set_, strcriteria, numcriteria);
+            intf->select_users(mappack, idset, strcriteria);
             return true;}
 
-        bool localadminintf::accessrules(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria , num64 numcriteria) {
+        bool localadminintf::accessrules(iteminfo_map& mappack, indx_set& idset, const std::string& strcriteria ) {
             mappack.clear();
-            intf->select_accessrules(mappack, set_, strcriteria, numcriteria);
+            intf->select_accessrules(mappack, idset, strcriteria);
             return true;}
 
         ns_error localadminintf::entities_merge(nodetype ittp,  indx_set& idset, iteminfo_map& mappack) {
@@ -367,34 +367,34 @@ namespace dvnci {
             return NS_ERROR_SUCCESS;};
 
         ns_error localadminintf::entity_create(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
-                string newnm  , num64 numcriteria) {{
+                string newnm  ) {{
                 THD_EXCLUSIVE_LOCK(mutex);
                 clearerrors();
                 pairpack.first = npos;
                 try {
                     switch (ittp) {
                         case NT_TAG:{
-                            pairpack.first = createtag(newnm, parentid, numcriteria);
+                            pairpack.first = createtag(newnm, parentid);
                             pairpack.second = name_with_type(newnm, NT_TAG);
                             break;}
 
                         case NT_GROUP:{
-                            pairpack.first = creategroup(newnm, numcriteria);
+                            pairpack.first = creategroup(newnm);
                             pairpack.second = name_with_type(newnm, NT_GROUP);
                             break;}
 
                         case NT_AGROUP:{
-                            pairpack.first = createagroup(newnm, numcriteria);
+                            pairpack.first = createagroup(newnm);
                             pairpack.second = name_with_type(newnm, NT_AGROUP);
                             break;}
 
                         case NT_USER:{
-                            pairpack.first = createuser(newnm, numcriteria);
+                            pairpack.first = createuser(newnm);
                             pairpack.second = name_with_type(newnm, NT_USER);
                             break;}
 
                         case NT_ACCESSRULE:{
-                            pairpack.first = createaccessrule(newnm, numcriteria);
+                            pairpack.first = createaccessrule(newnm);
                             pairpack.second = name_with_type(newnm, NT_ACCESSRULE);
                             break;}
 
@@ -409,39 +409,39 @@ namespace dvnci {
             adminintf::entity_create(ittp, parentid, pairpack);
             return NS_ERROR_SUCCESS;};
 
-        indx localadminintf::createtag( string name, string group, num64 numcriteria) {
+        indx localadminintf::createtag( string name, string group) {
             return intf->insert_tag(name, group);}
 
-        indx localadminintf::createtag( string name, indx group, num64 numcriteria) {
+        indx localadminintf::createtag( string name, indx group) {
             return intf->insert_tag(name, group);}
 
-        indx localadminintf::creategroup( string name, num64 numcriteria) {
+        indx localadminintf::creategroup( string name) {
             return intf->insert_group(name);}
 
-        indx localadminintf::createagroup( string name, num64 numcriteria) {
+        indx localadminintf::createagroup( string name) {
             return intf->insert_agroup(name);}
 
-        indx localadminintf::createuser( string name, num64 numcriteria) {
+        indx localadminintf::createuser( string name) {
             return intf->insert_user(name);}
 
-        indx localadminintf::createaccessrule( string name, num64 numcriteria) {
+        indx localadminintf::createaccessrule( string name) {
             return intf->insert_accessrule(name);}
 
-        ns_error localadminintf::entities_create(nodetype ittp, indx parentid, str_indx_map& mpnew, num64 numcriteria) {
+        ns_error localadminintf::entities_create(nodetype ittp, indx parentid, str_indx_map& mpnew) {
             THD_EXCLUSIVE_LOCK(mutex);
             try {
                 switch (ittp) {
                     case NT_TAG:{
-                        createtags(mpnew, parentid, numcriteria);
+                        createtags(mpnew, parentid);
                         break;}}}
             catch (dvncierror& err_) {
                 adderror(err_);}
             return NS_ERROR_SUCCESS;}
 
-        void localadminintf::createtags( str_indx_map& mpnew, string group, num64 numcriteria) {
+        void localadminintf::createtags( str_indx_map& mpnew, string group) {
             intf->insert_tags(mpnew, group);}
 
-        void localadminintf::createtags( str_indx_map& mpnew, indx group, num64 numcriteria) {
+        void localadminintf::createtags( str_indx_map& mpnew, indx group) {
             intf->insert_tags(mpnew, group);}
 
         ns_error localadminintf::entities_erase(nodetype ittp, indx_set& idset) {{
