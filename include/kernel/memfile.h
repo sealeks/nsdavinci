@@ -2035,11 +2035,11 @@ namespace dvnci {
 
 
 
-        void select_tags(iteminfo_map& val, size_type group, const std::string& strcriteria = "", num64 numcriteria = npos);
+        void select_tags(iteminfo_map& val, size_type group, const std::string& strcriteria = "");
 
-        void select_tags(iteminfo_map& val, std::string group, const std::string& strcriteria = "", num64 numcriteria = npos);
+        void select_tags(iteminfo_map& val, std::string group, const std::string& strcriteria = "");
 
-        void select_tags(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
+        void select_tags(iteminfo_map& val, indx_set& idset, const std::string& strcriteria = "");
         
          
         void select_tags_report(indx_set& val);       
@@ -2053,16 +2053,16 @@ namespace dvnci {
         
         
 
-        void select_atags(iteminfo_map& val, size_type agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
+        void select_atags(iteminfo_map& val, size_type agroup, const std::string& strcriteria = "");
 
-        void select_atags(iteminfo_map& val, std::string agroup, const std::string& strcriteria = "", num64 numcriteria = npos);
+        void select_atags(iteminfo_map& val, std::string agroup, const std::string& strcriteria = "");
         
         
         
         
-        void select_groups(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
+        void select_groups(iteminfo_map& val, const std::string& strcriteria = "");
 
-        void select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
+        void select_groups(iteminfo_map& val, indx_set& idset, const std::string& strcriteria = "");
         
 
         
@@ -2077,23 +2077,23 @@ namespace dvnci {
         
         
         
-        void select_agroups(iteminfo_map& val, const std::string& strcriteria, num64 numcriteria = npos);
+        void select_agroups(iteminfo_map& val, const std::string& strcriteria = "");
 
-        void select_agroups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria, num64 numcriteria = npos);
+        void select_agroups(iteminfo_map& val, indx_set& idset, const std::string& strcriteria = "");
         
         
-        
-
-        void select_users(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
-
-        void select_users(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
         
 
-        
-        
-        void select_accessrules(iteminfo_map& val, const std::string& strcriteria = "", num64 numcriteria = npos);
+        void select_users(iteminfo_map& val, const std::string& strcriteria = "");
 
-        void select_accessrules(iteminfo_map& val, indx_set& set_, const std::string& strcriteria = "", num64 numcriteria = npos);
+        void select_users(iteminfo_map& val, indx_set& idset, const std::string& strcriteria = "");
+        
+
+        
+        
+        void select_accessrules(iteminfo_map& val, const std::string& strcriteria = "");
+
+        void select_accessrules(iteminfo_map& val, indx_set& idset, const std::string& strcriteria = "");
         
 
   

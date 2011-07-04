@@ -1408,7 +1408,7 @@ namespace dvnci {
         return newgroupindx;} 
     
     
-        void tagsbase::select_groups(iteminfo_map& val, const std::string& strcriteria  , num64 numcriteria) {
+        void tagsbase::select_groups(iteminfo_map& val, const std::string& strcriteria ) {
         val.clear();
         stringed_filterclass filtered_(strcriteria);
         for (size_type i = 0; (i < (*groups()).count()); i++)
@@ -1418,7 +1418,7 @@ namespace dvnci {
                     val.insert(iteminfo_pair(i, name_with_type(groups()->name(i), NT_GROUP,
                             static_cast<tagtype> (groups()->appid(i)))));};}}
 
-    void tagsbase::select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria , num64 numcriteria) {
+    void tagsbase::select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
         val.clear();
         indx_set::const_iterator it = set_.begin();
         while (it != set_.end()) {
@@ -1428,7 +1428,7 @@ namespace dvnci {
                         static_cast<tagtype> (groups()->appid(*it)))));}
             it++;}}
 
-    void tagsbase::select_agroups(iteminfo_map& val, const std::string& strcriteria  , num64 numcriteria) {
+    void tagsbase::select_agroups(iteminfo_map& val, const std::string& strcriteria) {
         val.clear();
         stringed_filterclass filtered_(strcriteria);
         for (size_type i = 0; (i < (*agroups()).count()); i++)
@@ -1437,7 +1437,7 @@ namespace dvnci {
                         (filtered_.included(stringed_filterclass::NAME_CRITERIA, agroups()->name(i)))) {
                     val.insert(iteminfo_pair(i, name_with_type(agroups()->name(i), NT_AGROUP)));}}}
 
-    void tagsbase::select_agroups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria , num64 numcriteria) {
+    void tagsbase::select_agroups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
         val.clear();
         indx_set::const_iterator it = set_.begin();
         while (it != set_.end()) {
@@ -1445,7 +1445,7 @@ namespace dvnci {
                 val.insert(iteminfo_pair(*it, name_with_type(agroups()->name(*it), NT_AGROUP)));}
             it++;}}
 
-    void tagsbase::select_users(iteminfo_map& val, const std::string& strcriteria  , num64 numcriteria) {
+    void tagsbase::select_users(iteminfo_map& val, const std::string& strcriteria) {
         val.clear();
         stringed_filterclass filtered_(strcriteria);
         for (size_type i = 0; (i < (*users()).count()); i++)
@@ -1454,7 +1454,7 @@ namespace dvnci {
                         (filtered_.included(stringed_filterclass::NAME_CRITERIA, users()->name(i)))) {
                     val.insert(iteminfo_pair(i, name_with_type(users()->name(i), NT_USER)));};}}
 
-    void tagsbase::select_users(iteminfo_map& val, indx_set& set_, const std::string& strcriteria , num64 numcriteria) {
+    void tagsbase::select_users(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
         val.clear();
         indx_set::const_iterator it = set_.begin();
         while (it != set_.end()) {
@@ -1462,7 +1462,7 @@ namespace dvnci {
                 val.insert(iteminfo_pair(*it, name_with_type(users()->name(*it), NT_USER)));}
             it++;}}
 
-    void tagsbase::select_accessrules(iteminfo_map& val, const std::string& strcriteria  , num64 numcriteria) {
+    void tagsbase::select_accessrules(iteminfo_map& val, const std::string& strcriteria) {
         val.clear();
         stringed_filterclass filtered_(strcriteria);
         for (size_type i = 0; (i < (*accessrules()).count()); i++)
@@ -1471,7 +1471,7 @@ namespace dvnci {
                         (filtered_.included(stringed_filterclass::NAME_CRITERIA, accessrules()->name(i)))) {
                     val.insert(iteminfo_pair(i, name_with_type(accessrules()->name(i), NT_ACCESSRULE)));};}}
 
-    void tagsbase::select_accessrules(iteminfo_map& val, indx_set& set_, const std::string& strcriteria , num64 numcriteria) {
+    void tagsbase::select_accessrules(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
         val.clear();
         indx_set::const_iterator it = set_.begin();
         while (it != set_.end()) {
@@ -1479,7 +1479,7 @@ namespace dvnci {
                 val.insert(iteminfo_pair(*it, name_with_type(accessrules()->name(*it), NT_ACCESSRULE)));}
             it++;}}
 
-    void tagsbase::select_tags(iteminfo_map& val, size_type grop, const std::string& strcriteria, num64 numcriteria) {
+    void tagsbase::select_tags(iteminfo_map& val, size_type grop, const std::string& strcriteria) {
         val.clear();
         stringed_filterclass filtered_(strcriteria);
         if (grop == npos) {
@@ -1505,13 +1505,13 @@ namespace dvnci {
                                  )) {
                             val.insert(iteminfo_pair(*it, name_with_type(name(*it), NT_TAG , type(*it), groups()->appid(group(*it)))));}}}}}}
 
-    void tagsbase::select_tags(iteminfo_map& val, string group, const std::string& strcriteria, num64 numcriteria) {
+    void tagsbase::select_tags(iteminfo_map& val, string group, const std::string& strcriteria) {
         if (!groups()->exists(group)) {
             val.clear();
             return;}
-        select_tags(val, groups()->operator ()(group), strcriteria,  numcriteria);}
+        select_tags(val, groups()->operator ()(group), strcriteria);}
 
-    void tagsbase::select_tags(iteminfo_map& val, indx_set& set_, const std::string& strcriteria , num64 numcriteria) {
+    void tagsbase::select_tags(iteminfo_map& val, indx_set& set_, const std::string& strcriteria ) {
         val.clear();
         indx_set::const_iterator it = set_.begin();
         while (it != set_.end()) {
@@ -1519,7 +1519,7 @@ namespace dvnci {
                 val.insert(iteminfo_pair(*it, name_with_type(name(*it), NT_TAG, type(*it), groups()->appid(group(*it)))));}
             it++;}}
 
-    void tagsbase::select_atags(iteminfo_map& val, size_type agrop, const std::string& strcriteria, num64 numcriteria) {
+    void tagsbase::select_atags(iteminfo_map& val, size_type agrop, const std::string& strcriteria) {
         val.clear();
         stringed_filterclass filtered_(strcriteria);
         for (size_type i = 0; i < count(); i++) {
@@ -1527,11 +1527,11 @@ namespace dvnci {
                 if ((!filtered_.isEnable()) || (filtered_.included("name", (*this).name(i)))) {
                     val.insert(iteminfo_pair(i, name_with_type(name(i), NT_ATAG, type(i))));};}}}
 
-    void tagsbase::select_atags(iteminfo_map& val, string agroup, const std::string& strcriteria, num64 numcriteria) {
+    void tagsbase::select_atags(iteminfo_map& val, string agroup, const std::string& strcriteria) {
         if (!agroups()->exists(agroup)) {
             val.clear();
             return;}
-        select_atags(val, agroups()->operator ()(agroup), strcriteria,  numcriteria);}
+        select_atags(val, agroups()->operator ()(agroup), strcriteria);}
 
     void tagsbase::select_tags_by_appid(indx_set& val, appidtype appid, bool onlyactive) {
         val.clear();
