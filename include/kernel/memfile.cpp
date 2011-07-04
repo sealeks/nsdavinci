@@ -1478,6 +1478,50 @@ namespace dvnci {
             if (accessrules()->exists(*it)) {
                 val.insert(iteminfo_pair(*it, name_with_type(accessrules()->name(*it), NT_ACCESSRULE)));}
             it++;}}
+    
+    
+    
+    
+    ns_error tagsbase::select_entities(nodetype parenttp, iteminfo_map& val, indx parentid, const std::string& strcriteria){
+
+                val.clear();
+                switch (parenttp) {
+
+                    case NT_TAG:
+                    case NT_ATAG:{
+                        return 0;}
+
+                    case NT_GROUP:{
+                        select_tags(val, parentid, strcriteria);
+                        return 0;}
+
+                    case NT_AGROUP:{
+                        select_atags(val, parentid, strcriteria);
+                        return 0;}
+
+                    case NT_ROOT_GROUPS:{
+                        select_groups(val, strcriteria);
+                        return 0;}
+
+                    case NT_ROOT_AGROUPS:{
+                        select_agroups(val, strcriteria);
+                        return 0;}
+
+                    case NT_ROOT_USERS:{
+                        select_users(val, strcriteria);
+                        return 0;}
+
+                    case NT_ROOT_ACCESSRULES:{
+                        select_accessrules(val, strcriteria);
+                        return 0;}
+                    
+                    default:{}}
+                
+                return 0;}    
+    
+    
+    
+    
 
     void tagsbase::select_tags(iteminfo_map& val, size_type grop, const std::string& strcriteria) {
         val.clear();
