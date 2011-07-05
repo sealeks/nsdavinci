@@ -191,7 +191,7 @@ struct cid_key {
 num64  cid;
 std::string  name;
 num64  type;
-num64  dbound;
+double  dbound;
 };
 
 struct sid_key {
@@ -211,14 +211,14 @@ num64  rslt;
 
 struct cid_key_ex {
 std::string  cid;
-num64  dbound;
+double  dbound;
 };
 
 struct sid_key_ex {
 std::string  cid;
 num64  sid;
 num64  val;
-num64  time;
+datetime  time;
 num64  pack;
 num64  mineu;
 num64  maxeu;
@@ -250,7 +250,7 @@ num64  rslt;
 struct data_item {
 num64  sid;
 num64  val;
-num64  time;
+datetime  time;
 num64  pack;
 };
 
@@ -258,8 +258,7 @@ struct data_item_str {
 num64  sid;
 std::string  val;
 num64  pack;
-num64  time;
-num64  rslt;
+datetime  time;
 };
 
 struct req_data_item {
@@ -313,13 +312,13 @@ num64  rslt;
 struct reporttask {
 num64  sid;
 num64  cid;
-num64  start;
-num64  stop;
+datetime  start;
+datetime  stop;
 };
 
 struct report_value_item {
-num64  val;
-num64  time;
+double  val;
+datetime  time;
 };
 
 struct report_value_data {
@@ -339,14 +338,14 @@ num64  rslt;
 
 struct event_value_item {
 num64  cid;
-num64  val;
-num64  time;
+double  val;
+datetime  time;
 };
 
 struct eventtask {
 num64  sid;
 num64  cid;
-num64  from;
+datetime  from;
 };
 
 struct req_eventtask {
@@ -361,13 +360,13 @@ num64  rslt;
 
 struct trendtask {
 num64  sid;
-num64  start;
-num64  stop;
+datetime  start;
+datetime  stop;
 };
 
 struct trend_value_item {
-num64  val;
-num64  time;
+double  val;
+datetime  time;
 };
 
 struct trend_value_data {
@@ -386,7 +385,7 @@ num64  rslt;
 };
 
 struct alarms_data {
-num64  time;
+datetime  time;
 std::string  tag;
 std::string  text;
 num64  kvit;
@@ -409,7 +408,7 @@ num64  rslt;
 struct journal_data {
 num64  index;
 unum64  guid;
-num64  time;
+datetime  time;
 std::string  tag;
 std::string  text;
 std::string  agroup;
@@ -555,7 +554,6 @@ namespace serialization {
         ar & g.val;
         ar & g.pack;
         ar & g.time;
-        ar & g.rslt;
    };
 
    template<class Archive>
