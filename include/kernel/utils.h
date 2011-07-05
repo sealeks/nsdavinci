@@ -61,6 +61,7 @@ namespace dvnci {
 
     bool remove_namespace_delimit(std::string& vl);
     std::string retremoved_namespace_delimit(const std::string& vl);
+    std::string get_namespace_delimit(std::string& vl);
 
 
 

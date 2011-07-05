@@ -31,6 +31,14 @@ namespace dvnci {
         std::string::size_type delimitpos = vl.find_first_of(NEMESPACEDELIMIT);
         if (delimitpos != std::string::npos) vl = vl.substr(delimitpos + 2);
         return (delimitpos != std::string::npos);}
+    
+    std::string get_namespace_delimit(std::string& vl) {
+        std::string rslt="";
+        std::string::size_type delimitpos = vl.find_first_of(NEMESPACEDELIMIT);
+        if (delimitpos != std::string::npos){
+            rslt= vl.substr(0,delimitpos);
+            vl = vl.substr(delimitpos + 2);}
+        return rslt;}
 
     std::string retremoved_namespace_delimit(const std::string& vl) {
         std::string::size_type delimitpos = vl.find_first_of(NEMESPACEDELIMIT);
