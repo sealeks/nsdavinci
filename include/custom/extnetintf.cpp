@@ -75,7 +75,7 @@ namespace dvnci {
                     if (intf->exists(*it)) {
                         cid_key tmp ={static_cast<num64>(*it),intf->binding(*it), 
                             static_cast<num64>(intf->type(*it)),  
-                            num64_cast<double>(intf->devdb(*it))};
+                            intf->devdb(*it)};
                         cids.push_back(tmp);}
                     else{
                         req_error(*it, ERROR_ENTNOEXIST);}}
@@ -157,16 +157,16 @@ namespace dvnci {
                              if (rit!=real_repval_map.end()){
                                  rit->second.value=from_num64_cast<double>(it->val);
                                  rit->second.vld=unpackvalid(it->pack);
-                                 rit->second.tm=from_num64_cast<datetime>(it->time);}
+                                 rit->second.tm=it->time;}
                              break;}
                          default: {write_val_sid(it->sid, short_value(it->val, 
                              unpacktagtype(it->pack), 
                              unpackvalid(it->pack),
                              unpackerror(it->pack),
-                             from_num64_cast<datetime>(it->time)));}}}
+                             it->time));}}}
                       
                 for (vect_data_item_str::const_iterator it = linesstr.begin(); it != linesstr.end(); ++it) {
-                     write_val_sid(it->sid, short_value(it->val, unpackvalid(it->pack), unpackerror(it->pack), from_num64_cast<datetime>(it->time)));}
+                     write_val_sid(it->sid, short_value(it->val, unpackvalid(it->pack), unpackerror(it->pack), it->time));}
                 
                 //for (vect_error_item::const_iterator it = errors.begin(); it != errors.end(); ++it) {
                 //     write_val_sid(it->sid, short_value(it->val, static_cast<vlvtype>(it->vld), 0, from_num64_cast<datetime>(time)));}
@@ -228,7 +228,7 @@ namespace dvnci {
                                 increporttime(stoptm, intf->type(cid), 20);
                                 starttm = incsecond(starttm);                          
                                 
-                                reporttask tsk = { sid, static_cast<num64>(cid) , num64_cast<datetime>(starttm), num64_cast<datetime>(stoptm) };
+                                reporttask tsk = { sid, static_cast<num64>(cid) , starttm, stoptm };
                                 vect_reporttask tasks;
                                 tasks.push_back(tsk);
                                 error(netintf->read_report(tasks , dt, errors));
@@ -238,7 +238,7 @@ namespace dvnci {
                                     remove_report_task(static_cast<indx>(rit->cid));
                                     dt_val_map repval;
                                     for (vect_report_value_item::const_iterator vit=rit->data.begin(); vit!=rit->data.end(); ++vit){
-                                         repval.insert(dt_val_pair(from_num64_cast<datetime>(vit->time),from_num64_cast<double>(vit->val)));}
+                                         repval.insert(dt_val_pair(vit->time,vit->val));}
                                     write_val_report_id(static_cast<indx>(rit->cid),repval);}
                                 for (vect_error_item::const_iterator eit=errors.begin(); eit!=errors.end(); ++eit){
                                     remove_report_task(static_cast<indx>(eit->id));}}}}}
@@ -260,7 +260,7 @@ namespace dvnci {
                      vect_error_item errors;
                      
                      datetime fromtm = intf->time(cid);
-                     eventtask tsk = { sid, static_cast<num64>(cid) , num64_cast<datetime>(fromtm) };
+                     eventtask tsk = { sid, static_cast<num64>(cid) , fromtm };
                      vect_eventtask tasks;
                      tasks.push_back(tsk);
                      error(netintf->read_events(tasks , dt, errors));

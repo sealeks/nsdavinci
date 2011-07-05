@@ -111,10 +111,10 @@ namespace dvnci {
                         if (IN_TEXTSET(stype)) {
                             data_item_str vl = { *it, intf->value<std::string > (skey),
                                 packdata(intf->valid(skey), intf->type(skey), intf->error(skey)),
-                                num64_cast<datetime > (intf->time(skey))};
+                                intf->time(skey)};
                             linesstr.push_back(vl);}
                         else {
-                            data_item vl = { *it, intf->value_n64(skey), num64_cast<datetime > (intf->time(skey)),
+                            data_item vl = { *it, intf->value_n64(skey), intf->time(skey),
                                 packdata(intf->valid(skey), intf->type(skey), intf->error(skey))};
                             lines.push_back(vl);}}
                     else {
@@ -134,12 +134,13 @@ namespace dvnci {
                         if (intf->value_expiered(skey, it->second.value(), it->second.db())) {
                             if (IN_TEXTSET(stype)) {
                                 data_item_str vl = { static_cast<num64> (it->first) , intf->value<std::string > (skey),
-                                    num64_cast<datetime > (intf->time(skey))};
+                                packdata(intf->valid(skey), intf->type(skey), intf->error(skey)),
+                                intf->time(skey)};
                                 it->second.value(intf->value_shv(skey));
-                                linesstr.push_back(vl);}
+								linesstr.push_back(vl);}
                             else {
                                 data_item vl = { static_cast<num64> (it->first) , intf->value_n64(skey),
-                                    num64_cast<datetime > (intf->time(skey)),
+                                    intf->time(skey),
                                     packdata(intf->valid(skey), intf->type(skey), intf->error(skey))};
                                 it->second.value(intf->value_shv(skey));
                                 lines.push_back(vl);}}}
@@ -181,7 +182,7 @@ namespace dvnci {
                     indx skey = static_cast<indx> (it->sid);
                     if (intf->exists(skey) && (IN_REPORTSET(intf->type(skey)))) {
                         if ((MAX_TASK_SIZE > report_task_map.size()) && (report_task_map.find(skey) == report_task_map.end())) {
-                            report_task tmp = {it->cid, now(), from_num64_cast<datetime > (it->start), from_num64_cast<datetime > (it->stop)};
+                            report_task tmp = {it->cid, now(), it->start, it->stop};
                             report_task_map.insert(indx_reporttask_pair(skey, tmp));}
                         else {
                             error_item err = { it->cid , static_cast<num64> (ERROR_SOURSEBUSY)};
@@ -208,13 +209,13 @@ namespace dvnci {
                             dttmp.cid = it->second.cid;
                             if (!vl.empty()) {
                                 for (dt_val_map::const_iterator vit = vl.begin(); vit != vl.end(); ++vit) {
-                                    report_value_item pvl = {num64_cast<double>(vit->second), num64_cast<datetime > (vit->first)};
+                                    report_value_item pvl = {vit->second, vit->first};
                                     dttmp.data.push_back(pvl);}}
                             else {
                                 datetime endtm = it->second.end;
                                 normalizereporttime(endtm, intf->type(it->first));
                                 if (endtm < now()) {
-                                    report_value_item pvl = {num64_cast<double>(NULL_DOUBLE), num64_cast<datetime > (endtm)};
+                                    report_value_item pvl = {NULL_DOUBLE, endtm};
                                     dttmp.data.push_back(pvl);}}
                             dt.push_back(dttmp);
                             report_task_map.erase(it);
@@ -241,7 +242,7 @@ namespace dvnci {
                     indx skey = static_cast<indx> (it->sid);
                     if (intf->exists(skey) && (IN_EVENTSET(intf->type(skey)))) {
                         if ((MAX_TASK_SIZE > event_task_map.size()) && (event_task_map.find(skey) == event_task_map.end())) {
-                            event_task tmp = {it->cid, now(), from_num64_cast<datetime > (it->from)};
+                            event_task tmp = {it->cid, now(), it->from};
                             event_task_map.insert(indx_eventtask_pair(skey, tmp));}
                         else {
                             error_item err = { it->cid , static_cast<num64> (ERROR_SOURSEBUSY)};
