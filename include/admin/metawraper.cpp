@@ -59,7 +59,7 @@ namespace dvnci {
             return "";}
 
         void basemetawraper::commit(indx id) {
-            _interface->entities_merge(NT_MF_ROOT, id);}
+            _interface->merge_entities(NT_MF_ROOT, id);}
 
         reparrrwraper::reparrrwraper(lcltype loc) : basemetawraper(loc) {
             propidtype propadd[] = {PROPERTY_NT_REPARR_NAME, PROPERTY_NT_REPARR_DELT, PROPERTY_NT_REPARR_GROUP, PROPERTY_NT_REPARR_WIDTH, PROPERTY_NT_REPARR_HEIGHT,

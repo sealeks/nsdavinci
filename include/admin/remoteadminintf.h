@@ -1047,24 +1047,24 @@ namespace dvnci {
                 disconnect_();
                 return (_state == adminintf::disconnected);};
 
-            virtual ns_error entities_signature(nodetype parenttp, indx parentid, iteminfo_map& mappack,
+            virtual ns_error select_entities(nodetype parenttp, iteminfo_map& mappack, indx parentid,
                     const std::string&  strcriteria = "" ,  bool clearer = true);
 
-            virtual ns_error entities_load(nodetype ittp,  indx_set& idset);
+            virtual ns_error load_entities(nodetype ittp,  indx_set& idset);
 
-            virtual ns_error entities_merge(nodetype ittp,  indx_set& idset, iteminfo_map& mappack);
+            virtual ns_error merge_entities(nodetype ittp,  indx_set& idset, iteminfo_map& mappack);
 
-            virtual ns_error entity_create(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
+            virtual ns_error insert_entity(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
                     std::string  newname_ = "" );
 
-            virtual ns_error entities_erase(nodetype ittp, indx_set& idset);
+            virtual ns_error delete_entities(nodetype ittp, const indx_set& idset);
 
-            virtual ns_error entity_duplicate(nodetype ittp,  indx id,  const std::string& newname, iteminfo_pair& pairpack);
+            virtual ns_error duplicate_entity(nodetype ittp,  indx id,  const std::string& newname, iteminfo_pair& pairpack);
 
-            virtual ns_error entities_merge(nodetype ittp,  indx_set& idset) {
+            virtual ns_error merge_entities(nodetype ittp,  const indx_set&  idset) {
                 return true;}
 
-            virtual ns_error entities_change_parent(nodetype ittp, indx_set& idset, indx parentid);
+            virtual ns_error change_parent_entities(nodetype ittp, indx_set& idset, indx parentid);
 
             virtual std::string  conf_property(const confproptype&  name) const ;
 

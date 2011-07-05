@@ -139,7 +139,7 @@ namespace dvnci {
                 mappack.insert(iteminfo_pair(*it, name_with_type(meta(ittp, *it).property(nm_attr), ittp)));}
             return true;}
 
-        ns_error remoteadminintf::entities_load(nodetype ittp,  indx_set& idset) {
+        ns_error remoteadminintf::load_entities(nodetype ittp,  indx_set& idset) {
             THD_EXCLUSIVE_LOCK(mutex);
             clearerrors();
             switch (ittp) {
@@ -155,7 +155,7 @@ namespace dvnci {
                 default: if (nodetp_is_meta(ittp)) return readmetas(ittp, idset);}
             return NS_ERROR_SUCCESS;}
 
-        ns_error remoteadminintf::entities_merge(nodetype ittp,  indx_set& idset, iteminfo_map& mappack) {{
+        ns_error remoteadminintf::merge_entities(nodetype ittp,  indx_set& idset, iteminfo_map& mappack) {{
                 THD_EXCLUSIVE_LOCK(mutex);
                 clearerrors();
                 switch (ittp) {
@@ -185,10 +185,10 @@ namespace dvnci {
                         break;}
                     default: if (nodetp_is_meta(ittp)) sendmetas(ittp, idset);}
                 entities_internal_signature(ittp, idset, mappack);}
-            adminintf::entities_merge(ittp, idset, mappack);
+            adminintf::merge_entities(ittp, idset, mappack);
             return NS_ERROR_SUCCESS;}
 
-        ns_error remoteadminintf::entities_change_parent(nodetype ittp, indx_set& idset, indx parentid) {
+        ns_error remoteadminintf::change_parent_entities(nodetype ittp, indx_set& idset, indx parentid) {
             THD_EXCLUSIVE_LOCK(mutex);
             clearerrors();
             try{
@@ -204,7 +204,7 @@ namespace dvnci {
                 default: return NS_ERROR_SUCCESS;}
             iteminfo_map tmpmap_;
 
-            entities_merge(ittp, idset, tmpmap_);}
+            merge_entities(ittp, idset, tmpmap_);}
             catch (dvncierror& err_) {
                   adderror(err_);}
 
@@ -360,7 +360,7 @@ namespace dvnci {
 
             return (_state == adminintf::disconnected);}
 
-        ns_error remoteadminintf::entities_signature(nodetype parenttp, indx parentid, iteminfo_map& mappack,
+        ns_error remoteadminintf::select_entities(nodetype parenttp,  iteminfo_map& mappack, indx parentid,
                 const std::string& strcriteria , bool clearer) {{
 
                 THD_EXCLUSIVE_LOCK(mutex);
@@ -383,7 +383,7 @@ namespace dvnci {
                 catch (...) {
                     parseundeferror();}}
 
-            adminintf::entities_signature(parenttp, parentid,  mappack, strcriteria);
+            adminintf::select_entities(parenttp,  mappack, parentid, strcriteria);
             return NS_ERROR_SUCCESS;}
 
         ns_error remoteadminintf::readtags(indx_set& idset) {
@@ -714,7 +714,7 @@ namespace dvnci {
 
             return NS_ERROR_SUCCESS;}
 
-        ns_error remoteadminintf::entity_create(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
+        ns_error remoteadminintf::insert_entity(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
                 string newname_) {{
                 THD_EXCLUSIVE_LOCK(mutex);
                 clearerrors();
@@ -739,11 +739,11 @@ namespace dvnci {
                 catch (...) {
                     parseundeferror();}}
 
-            adminintf::entity_create(ittp, parentid, pairpack);
+            adminintf::insert_entity(ittp, parentid, pairpack);
 
             return NS_ERROR_SUCCESS;}
 
-        ns_error remoteadminintf::entities_erase(nodetype ittp, indx_set& idset) {
+        ns_error remoteadminintf::delete_entities(nodetype ittp, const indx_set& idset) {
                 THD_EXCLUSIVE_LOCK(mutex);
                 clearerrors();
                 try {
@@ -762,11 +762,11 @@ namespace dvnci {
                 catch (...) {
                     parseundeferror();}
 
-            adminintf::entities_erase(ittp, idset);
+            adminintf::delete_entities(ittp, idset);
 
             return NS_ERROR_SUCCESS;};
 
-       ns_error remoteadminintf::entity_duplicate(nodetype ittp,  indx id,  const std::string& newname, iteminfo_pair& pairpack){
+       ns_error remoteadminintf::duplicate_entity(nodetype ittp,  indx id,  const std::string& newname, iteminfo_pair& pairpack){
                 THD_EXCLUSIVE_LOCK(mutex);
                 clearerrors();
                 try {
@@ -789,7 +789,7 @@ namespace dvnci {
                 catch (...) {
                     parseundeferror();}
 
-            //adminintf::entity_create(ittp, parentid, pairpack);
+            //adminintf::insert_entity(ittp, parentid, pairpack);
 
             return NS_ERROR_SUCCESS;}
 

@@ -297,8 +297,8 @@ namespace dvnci {
                         (itemtype == NT_ROOT_GROUPS) ||
                         (itemtype == NT_GROUP) || (itemtype == NT_UTIL_FINDER)) {
                     iteminfo_map groupmap_;
-                    entities_find_signature(NT_GROUP, groupmap_);
-                    entities_load(NT_GROUP, groupmap_);
+                    find_entities(NT_GROUP, groupmap_);
+                    load_entities(NT_GROUP, groupmap_);
                     for (iteminfo_map::iterator it = groupmap_.begin(); it != groupmap_.end(); ++it) {
                         group_data tmp;
                         tmp.name = group(it->first).name();
@@ -314,8 +314,8 @@ namespace dvnci {
                         (NT_ROOT_AGROUPS) ||
                         (itemtype == NT_AGROUP) ||  (itemtype == NT_UTIL_FINDER)) {
                     iteminfo_map agroupmap_;
-                    entities_find_signature(NT_AGROUP, agroupmap_);
-                    entities_load(NT_AGROUP, agroupmap_);
+                    find_entities(NT_AGROUP, agroupmap_);
+                    load_entities(NT_AGROUP, agroupmap_);
                     for (iteminfo_map::iterator it = agroupmap_.begin(); it != agroupmap_.end(); ++it) {
                         agroup_data tmp;
                         tmp.name = agroup(it->first).name();
@@ -326,8 +326,8 @@ namespace dvnci {
                         (itemtype == NT_ROOT_USERS) ||
                         (itemtype == NT_UTIL_FINDER)) {
                     iteminfo_map usermap_;
-                    entities_find_signature(NT_USER, usermap_);
-                    entities_load(NT_USER, usermap_);
+                    find_entities(NT_USER, usermap_);
+                    load_entities(NT_USER, usermap_);
                     for (iteminfo_map::iterator it = usermap_.begin(); it != usermap_.end(); ++it) {
                         user_data tmp;
                         tmp.name = user(it->first).name();
@@ -339,8 +339,8 @@ namespace dvnci {
                         (itemtype == NT_ROOT_GROUPS) ||
                         (itemtype == NT_GROUP) || (itemtype == NT_UTIL_FINDER)) {
                     iteminfo_map tagmap_;
-                    entities_find_signature(NT_TAG, tagmap_);
-                    entities_load(NT_TAG, tagmap_);
+                    find_entities(NT_TAG, tagmap_);
+                    load_entities(NT_TAG, tagmap_);
                     for (iteminfo_map::iterator it = tagmap_.begin(); it != tagmap_.end(); ++it) {
                         tag_data tmp;
                         tmp.name = tag(it->first).name();
@@ -389,16 +389,16 @@ namespace dvnci {
             if (base.groups.size() > 0) {
                 for (vect_group_data::iterator it = base.groups.begin(); it != base.groups.end(); ++it) {
                     iteminfo_pair pair_;
-                    entity_create(NT_GROUP, 0, pair_, it->name);
+                    insert_entity(NT_GROUP, 0, pair_, it->name);
                     if (pair_.first!=npos) {
                         ent_set.insert(pair_.first);
                         newit_map.insert(str_indx_pair(it->name, pair_.first));
-                        entities_merge(NT_GROUP, pair_.first);}
+                        merge_entities(NT_GROUP, pair_.first);}
                     else {
                         if (errmap.size() > 0)
                             tmp_errmap.insert(int_dvncierror_pair(tmp_errmap.size(), errmap.begin()->second));}}
 
-                entities_load(NT_GROUP, ent_set);
+                load_entities(NT_GROUP, ent_set);
 
                 for (vect_group_data::iterator it = base.groups.begin(); it != base.groups.end(); ++it) {
                     iteminfo_pair pair_;
@@ -421,14 +421,14 @@ namespace dvnci {
                         group(pair_.first).utiloperation(((groupstruct*) & it->groupinfo)->utiloperation());
                         group(pair_.first).indicateto(((groupstruct*) & it->groupinfo)->indicateto());
 
-                        entities_merge(NT_GROUP, pair_.first);}}
+                        merge_entities(NT_GROUP, pair_.first);}}
 
-                if (ent_set.size() > 0) entities_merge(NT_GROUP, ent_set, out_map);}
+                if (ent_set.size() > 0) merge_entities(NT_GROUP, ent_set, out_map);}
 
 
 
             ent_set.clear();
-            entities_find_signature(NT_GROUP, grpit_map);
+            find_entities(NT_GROUP, grpit_map);
             for (iteminfo_map::iterator it = grpit_map.begin(); it != grpit_map.end(); ++it) {
                 grp_map.insert(str_indx_pair(it->second.name(), it->first));}
 
@@ -442,12 +442,12 @@ namespace dvnci {
                     indxgr = grp_map.find(it->group)->second;
                     if (indxgr != npos) {
                         newit_map.insert(str_indx_pair(it->name, indxgr));}}
-                        entities_create(NT_TAG, indxgr, newit_map);
+                        insert_entities(NT_TAG, indxgr, newit_map);
                 for (str_indx_map::iterator it = newit_map.begin(); it != newit_map.end(); ++it) {
                     if (it->second != npos) ent_set.insert(it->second);
                     else tmp_errmap.insert(int_dvncierror_pair(tmp_errmap.size(), dvncierror(ERROR_PARENTENTETY_CORRECT, it->first)));}
 
-                entities_load(NT_TAG, ent_set);
+                load_entities(NT_TAG, ent_set);
 
                 for (vect_tag_data::iterator it = base.tags.begin(); it != base.tags.end(); ++it) {
                     iteminfo_pair pair_;
@@ -474,9 +474,9 @@ namespace dvnci {
                         tag(pair_.first).devdb("0");
                         tag(pair_.first).alarmcase(((tagstruct*) & it->tginfo)->alarmcase());
                         tag(pair_.first).alarmconst(((tagstruct*) & it->tginfo)->alarmconst_str());
-                        entities_merge(NT_TAG, pair_.first);}}
+                        merge_entities(NT_TAG, pair_.first);}}
 
-                if (ent_set.size() > 0) entities_merge(NT_TAG, ent_set, out_map);}
+                if (ent_set.size() > 0) merge_entities(NT_TAG, ent_set, out_map);}
 
 
             ent_set.clear();
@@ -484,14 +484,14 @@ namespace dvnci {
             if (base.agroups.size() > 0) {
                 for (vect_agroup_data::iterator it = base.agroups.begin(); it != base.agroups.end(); ++it) {
                     iteminfo_pair pair_;
-                    entity_create(NT_AGROUP, 0, pair_, it->name);
+                    insert_entity(NT_AGROUP, 0, pair_, it->name);
                     if (pair_.first!=npos) {
                         ent_set.insert(pair_.first);}
                     else {
                         if (errmap.size() > 0)
                             tmp_errmap.insert(int_dvncierror_pair(tmp_errmap.size(), errmap.begin()->second));}}
 
-                if (ent_set.size() > 0) entities_merge(NT_AGROUP, ent_set, out_map);}
+                if (ent_set.size() > 0) merge_entities(NT_AGROUP, ent_set, out_map);}
 
 
 
@@ -501,16 +501,16 @@ namespace dvnci {
             if (base.users.size() > 0) {
                 for (vect_user_data::iterator it = base.users.begin(); it != base.users.end(); ++it) {
                     iteminfo_pair pair_;
-                    entity_create(NT_USER, 0, pair_, it->name);
+                    insert_entity(NT_USER, 0, pair_, it->name);
                     if (pair_.first!=npos) {
                         ent_set.insert(pair_.first);
                         newit_map.insert(str_indx_pair(it->name, pair_.first));
-                        entities_merge(NT_USER, pair_.first);}
+                        merge_entities(NT_USER, pair_.first);}
                     else {
                         if (errmap.size() > 0)
                             tmp_errmap.insert(int_dvncierror_pair(tmp_errmap.size(), errmap.begin()->second));}}
 
-                entities_load(NT_USER, ent_set);
+                load_entities(NT_USER, ent_set);
 
                 for (vect_user_data::iterator it = base.users.begin(); it != base.users.end(); ++it) {
                     iteminfo_pair pair_;
@@ -518,7 +518,7 @@ namespace dvnci {
                     if (pair_.first!=npos) {
                         user(pair_.first).password(it->password);
                         user(pair_.first).accesslevel(static_cast<acclevtype> (it->accesslevel));
-                        entities_merge(NT_USER, pair_.first);}}}
+                        merge_entities(NT_USER, pair_.first);}}}
 
             errmap.clear();
             errmap.insert(tmp_errmap.begin(), tmp_errmap.end());
@@ -638,7 +638,7 @@ namespace dvnci {
                     tag(id).reportstatistic(((ptagstruct) & it->tginfo)->reportstatistic());};
                 if ((changeset & MASK_RT_CHANGE_ACCESSL) != 0) {
                     tag(id).reporthistory(((ptagstruct) & it->tginfo)->accesslevel());}
-                if (changeset != 0) entities_merge(NT_TAG, id);}
+                if (changeset != 0) merge_entities(NT_TAG, id);}
                 catch (dvncierror& err_) {
                   adderror(err_);}}}
 
@@ -718,7 +718,7 @@ namespace dvnci {
                     group(id).utiloperation(pgroupstruct(&it->groupinfo)->utiloperation());};
                 if ((changeset & MASK_GR_CHANGE_INDTO) != 0) {
                     group(id).indicateto(pgroupstruct(&it->groupinfo)->indicateto());};
-                if (changeset != 0) entities_merge(NT_GROUP, id);}}
+                if (changeset != 0) merge_entities(NT_GROUP, id);}}
 
         void adminintf::assign_agroup_data(const indx_set& idset, vect_agroup_data& val) const {
 
@@ -748,7 +748,7 @@ namespace dvnci {
                     agroup(id).name(it->name);};
                 if ((changeset & MASK_AGR_CHANGE_HEADNAME) != 0) {
                     agroup(id).headername(it->headername);};
-                if (changeset != 0) entities_merge(NT_GROUP, id);}}
+                if (changeset != 0) merge_entities(NT_GROUP, id);}}
 
         void adminintf::assign_user_data(const indx_set& idset, vect_user_data& val) const {
             val.clear();
@@ -784,7 +784,7 @@ namespace dvnci {
                     user(id).role(static_cast<accessruletype>(it->role));};                       
                 if ((changeset & MASK_USER_CHANGE_LEVEL) != 0) {
                     user(id).accesslevel(static_cast<acclevtype> (it->accesslevel));};
-                if (changeset != 0) entities_merge(NT_USER, id);}}
+                if (changeset != 0) merge_entities(NT_USER, id);}}
 
 
          void adminintf::assign_accessrule_data(const indx_set& idset, vect_accessrule_data& val) const {
@@ -829,7 +829,7 @@ namespace dvnci {
                     accessrule(id).role(static_cast<accessruletype>(it->role));};                    
                 if ((changeset & MASK_AR_CHANGE_AL) != 0) {
                    accessrule(id).accesslevel(static_cast<acclevtype> (it->accesslevel));};
-                if (changeset != 0) entities_merge(NT_ACCESSRULE, id);}}
+                if (changeset != 0) merge_entities(NT_ACCESSRULE, id);}}
 
         void adminintf::assign_service_data(const indx_set& idset, vect_service_data& val) const {
             val.clear();
@@ -856,7 +856,7 @@ namespace dvnci {
                 idset.insert(id);
                 if ((changeset & MASK_GR_CHANGE_STARTTP) != 0) {
                     service(id).starttype(it->starttype);};
-                if (changeset != 0) entities_merge(NT_SERVICE, id);}}
+                if (changeset != 0) merge_entities(NT_SERVICE, id);}}
 
         void adminintf::assign_meta_data(const indx_set& idset, nodetype metatp, vect_meta_data& val) const {
             val.clear();
@@ -888,25 +888,25 @@ namespace dvnci {
                     for (propertymeta_ids_map::const_iterator iti = tmp_regesty->begin(); iti != tmp_regesty->end(); ++iti) {
                         if (((changeset & (0x1LL << iti->second))) && (iti->second >= 0) && (iti->second < 20)) {
                             meta(static_cast<nodetype> (it->meta_type), id).property(iti->first, it->str_data[iti->second]);}}}
-                if (changeset != 0) entities_merge(static_cast<nodetype> (it->meta_type), id);}}
+                if (changeset != 0) merge_entities(static_cast<nodetype> (it->meta_type), id);}}
 
         void adminintf::assign_config_data(const indx_set& idset, config_data& val) const {
             for (confinfo_map::const_iterator it = config_map.begin(); it != config_map.end(); ++it) {
                 if (it->second < 20) val.str_data[it->second] = conf_property(it->first);}}
 
 
-        ns_error adminintf::entities_load(nodetype ittp,  iteminfo_map& mappack) {
+        ns_error adminintf::load_entities(nodetype ittp,  iteminfo_map& mappack) {
                 indx_set idset;
                 idset.clear();
                 for (iteminfo_map::iterator it = mappack.begin(); it != mappack.end(); ++it)
                     idset.insert(it->first);
-                return entities_load(ittp, idset);}
+                return load_entities(ittp, idset);}
 
-       ns_error adminintf::entity_load(nodetype ittp,  indx id) {
+       ns_error adminintf::load_entity(nodetype ittp,  indx id) {
                 indx_set idset;
                 idset.clear();
                 idset.insert(id);
-                return entities_load(ittp, idset);}
+                return load_entities(ittp, idset);}
 
         void adminintf::assign_config_data(const num64_vect& keys, config_data& val) const {
             indx_set tmp;
@@ -925,7 +925,7 @@ namespace dvnci {
         num16 adminintf::generate_impl(req_entitysigs& req, resp_entitysigs& resp) {
 
             iteminfo_map mappack;
-            entities_signature(static_cast<nodetype> (req.tpitem), static_cast<indx> (req.parentid), mappack, req.strcriteria, 0);
+            select_entities(static_cast<nodetype> (req.tpitem), mappack, static_cast<indx> (req.parentid), req.strcriteria, 0);
             resp.err = 0;
             resp.tpreq = req.tpitem;
             assign_sig(mappack, resp.sigs);
@@ -1027,7 +1027,7 @@ namespace dvnci {
         num16 adminintf::generate_impl(req_addentity& req, resp_addentity& resp) {
             clearerrors();
             iteminfo_pair newentety;
-            entity_create(static_cast<nodetype> (req.tpitem), static_cast<indx> (req.parentkey), newentety, req.newname);
+            insert_entity(static_cast<nodetype> (req.tpitem), static_cast<indx> (req.parentkey), newentety, req.newname);
             assign_vect_error_entity(resp.error);
             resp.sig.key = newentety.first;
             resp.sig.name = newentety.second.name();
@@ -1037,7 +1037,7 @@ namespace dvnci {
         num16 adminintf::generate_impl(req_dupentity& req, resp_dupentity& resp) {
             clearerrors();
             iteminfo_pair newentety;
-            entity_duplicate(static_cast<nodetype> (req.tpitem), static_cast<indx> (req.soursekey), req.newname, newentety);
+            duplicate_entity(static_cast<nodetype> (req.tpitem), static_cast<indx> (req.soursekey), req.newname, newentety);
             assign_vect_error_entity(resp.error);
             resp.sig.key = newentety.first;
             resp.sig.name = newentety.second.name();
@@ -1047,7 +1047,7 @@ namespace dvnci {
         num16 adminintf::generate_impl(req_removeentity& req, resp_removeentity& resp) {
             indx_set tmpset;
             req.keys >> tmpset;
-            entities_erase(static_cast<nodetype> (req.tpitem), tmpset);
+            delete_entities(static_cast<nodetype> (req.tpitem), tmpset);
             assign_vect_error_entity(resp.error);
             return RPC_OPERATION_RESP_REMOVEENTITY;}
 

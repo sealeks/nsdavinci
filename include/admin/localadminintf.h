@@ -477,7 +477,7 @@ namespace dvnci {
                 return exists() ? (*(intf->agroups()))[key_] : 0;};
 
             virtual void   name(const std::string& val) {
-                if (exists()) intf->replace_agroup(key_, val);};
+                if (exists()) intf->rename_agroup(key_, val);};
 
             virtual std::string name() const {
                 return exists() ? intf->agroups()->name(key_) : "";};
@@ -862,6 +862,11 @@ namespace dvnci {
 
             mutable  servicemanager_ptr svm_;
             indx                        number_;} ;
+            
+            
+            
+            
+            
 
         class localadminintf : public adminintf {
             friend class localtagintf;
@@ -903,40 +908,56 @@ namespace dvnci {
 
             virtual ~localadminintf () {
                 disconnect();};
+                
 
             virtual bool connect(const std::string& user = "", const std::string& password = "");
 
             virtual bool disconnect();
+            
 
             virtual void operation_mapprj(std::string path_);
 
             virtual void operation_unmapprj();
 
             virtual void operation_newprj(std::string path_);
+            
 
-            virtual ns_error entities_signature(nodetype parenttp, indx parentid, iteminfo_map& mappack,
+            virtual ns_error select_entities(nodetype parenttp, iteminfo_map& mappack, indx parentid,
                     const std::string& strcriteria = "" ,  bool clearer = true);
+            
+            
 
-            virtual  ns_error entities_load(nodetype ittp,  indx_set& set_) {
+            virtual  ns_error load_entities(nodetype ittp,  indx_set& set_) {
                 clearerrors();
                 return NS_ERROR_SUCCESS;};
+                
+                
 
-            virtual  ns_error entities_merge(nodetype ittp,  indx_set& set_, iteminfo_map& mappack);
-
-            virtual ns_error entities_merge(nodetype ittp,  indx_set& idset);
-
-            bool entities_merge(nodetype ittp, indx id);
-
-            virtual ns_error entity_create(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
+            virtual ns_error insert_entity(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
                     std::string newnm = "" );
 
-            virtual ns_error entities_create(nodetype ittp, indx parentid, str_indx_map& mpnew);
+            virtual ns_error insert_entities(nodetype ittp, indx parentid, str_indx_map& mpnew);
+            
+            
 
-            virtual ns_error entities_erase(nodetype ittp, indx_set& idset);
+            virtual ns_error delete_entities(nodetype ittp, const indx_set& idset);
+            
+            
 
-            virtual ns_error entities_change_parent(nodetype ittp, indx_set& idset, indx parentid);
+            virtual ns_error change_parent_entities(nodetype ittp, indx_set& idset, indx parentid);
+            
+            
 
-            virtual ns_error entity_duplicate(nodetype ittp,  indx id, const std::string& newname, iteminfo_pair& pairpack);
+            virtual ns_error duplicate_entity(nodetype ittp,  indx id, const std::string& newname, iteminfo_pair& pairpack);
+            
+            
+            virtual  ns_error merge_entities(nodetype ittp,  indx_set& set_, iteminfo_map& mappack);
+
+            virtual ns_error merge_entities(nodetype ittp,  const indx_set&  idset);
+
+            bool merge_entities(nodetype ittp, indx id);
+            
+            
 
             virtual std::string conf_property(const confproptype& name) const;
 
@@ -982,91 +1003,25 @@ namespace dvnci {
 
             bool changeparentatag( indx_set& idset, indx parentid);
 
-            //  возвращает карту всех тегов key - name для группы
-            bool tags(iteminfo_map& mappack, indx group, const std::string& strcriteria = "");
 
-            bool atags(iteminfo_map& mappack, indx agroup, const std::string& strcriteria = "");
-
-            bool groups(iteminfo_map& mappack, const std::string& strcriteria = "" );
-
-            bool agroups(iteminfo_map& mappack, const std::string& strcriteria = "" );
-
-            bool users(iteminfo_map& mappack, const std::string& strcriteria = "");
-
-            bool accessrules(iteminfo_map& mappack, const std::string& strcriteria = "");
-
-            bool clients(iteminfo_map& mappack, const std::string& strcriteria = "");
-
-            bool regs(iteminfo_map& mappack, const std::string& strcriteria = "");
-
-            bool services(iteminfo_map& mappack, const std::string& strcriteria = "" );
-
-
-
-            bool tags(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "");
-
-            bool groups(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "" );
-
-            bool agroups(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "" );
-
-            bool users(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "");
-
-            bool accessrules(iteminfo_map& mappack, indx_set& set_, const std::string& strcriteria = "");
-
-
-            indx createtag( std::string name, std::string group);
-
-            indx createtag( std::string name, indx group);
-
-            indx creategroup( std::string name);
-
-            indx createagroup( std::string name);
-
-            indx createuser( std::string name);
-
-            indx createaccessrule( std::string name);
-
-
+            
             void createtags( str_indx_map& mpnew, std::string group);
 
             void createtags( str_indx_map& mpnew, indx group);
-
-
-
-            bool deletetag(indx id);
-
-            bool deletegroup(indx id);
-
-            bool deleteagroup(indx id);
-
-            bool deleteuser(indx id);
-
-            bool deleteaccessrule(indx id);
-
 
 
             bool duplicategroup(indx id, const std::string& newname, iteminfo_pair& pairpack);
 
 
 
-            bool writetostoregetag(indx id);
-
-            bool writetostoregroup(indx id);
-
-            bool writetostoreagroup(indx id);
-
-            bool writetostoreuser(indx id);
-
-            bool writetostoreaccessrule(indx id);
-
-
         private:
-            tagsbase* intf;
+            
+            tagsbase*    intf;
             iteminfo_map key_name_map;
-            fspath path;
-            appidtype appid;
+            fspath       path;
+            appidtype    appid;
             eventtypeset events;
-            dvnci::meta metaintf_;
+            dvnci::meta  metaintf_;
 
             void setintf(tagsbase* intf_);} ;}}
 
