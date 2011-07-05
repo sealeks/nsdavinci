@@ -17,7 +17,7 @@
 #include <meta/meta.h>
 
 #include <admin/properties.h>
-#include <admin/rpcstruct.h>
+#include <admin/adminstruct.h>
 
 
 namespace dvnci {
@@ -530,7 +530,7 @@ namespace dvnci {
                 return exists() ? datetime_to_string(vect[viewindex()].time) : "";}
 
             num64 time_num64() const {
-                return exists() ? vect[viewindex()].time : 0;}
+                return exists() ? num64_cast<datetime>(vect[viewindex()].time) : 0;}
 
             std::string tag() const {
                 return exists() ? vect[viewindex()].tag : "";}
@@ -572,7 +572,7 @@ namespace dvnci {
                 return exists() ? datetime_to_string(vect[viewindex()].time) : "";}
 
             num64 time_num64() const {
-                return exists() ? vect[viewindex()].time : 0;}
+                return exists() ? num64_cast<datetime>(vect[viewindex()].time) : 0;}
 
             std::string tag() const {
                 return exists() ? vect[viewindex()].tag : "";}
@@ -765,7 +765,7 @@ namespace dvnci {
                 return exists() ? datetime_to_string(item()->time) : "";}
 
             num64 time_num64() const {
-                return exists() ? item()->time : 0;}
+                return exists() ? num64_cast<datetime>(item()->time) : 0;}
 
             std::string tag() const {
                 return exists() ? item()->tag : "";}
@@ -807,7 +807,7 @@ namespace dvnci {
                 return exists() ? datetime_to_string(item()->time) : "";}
 
             num64 time_num64() const {
-                return exists() ? item()->time : 0;}
+                return exists() ? num64_cast<datetime>(item()->time) : 0;}
 
             std::string  message() const {
                 return exists() ? item()->message : "";}
@@ -953,7 +953,7 @@ namespace dvnci {
              * @return  успешность выполнения / не используется
              * @see kernel/constdef.h nodetype
              */
-            virtual ns_error entities_signature(nodetype parenttp, indx parentid, iteminfo_map& mappack,
+            virtual ns_error select_entities(nodetype parenttp,  iteminfo_map& mappack,  indx parentid,
                     const std::string&  strcriteria = "" , bool clearer = true) {
                 if ((parenttp == NT_ROOT_NODEF) || (parenttp == NT_ROOT_SERVERS_AVAIL) || (parenttp == NT_ROOT_SERVERS_AVAIL_R) ||
                         (parenttp == NT_UTIL_MAINTABLE) ||  (parenttp == NT_UTIL_GROUPTABLE)
@@ -971,52 +971,15 @@ namespace dvnci {
              * @return  успешность выполнения
              * @see
              */
-            virtual ns_error entities_find_signature(nodetype ittp, iteminfo_map& mappack,  std::string  strcriteria = "" ) {
+            virtual ns_error find_entities(nodetype ittp, iteminfo_map& mappack,  std::string  strcriteria = "" ) {
                 //THD_EXCLUSIVE_LOCK(mutex);
 
                 mappack.clear();
                 if (nodetp_paren_by_child(ittp) != 0) {
-                    entities_signature(nodetp_paren_by_child(ittp), -1, mappack,
+                    select_entities(nodetp_paren_by_child(ittp),  mappack, npos,
                             strcriteria );}
                 return NS_ERROR_SUCCESS;}
-
-            /**
-             * Метод entities_load загружает в буфер полную информацию о айтемсах
-             * Реализуется только в удаленном интерфейсе, локальный работает с базой напрямую
-             * @param ittp тип  айтемса см. kernel/constdef.h
-             * @param strcriteria произвольный критерий фильтрации
-             * @param numcriteria произвольный критерий фильтрации
-             * @param idset_ множество уникальных индексов  айтемсов
-             * @return  успешность выполнения
-             * @see kernel/constdef.h nodetype
-             */
-            virtual ns_error entities_load(nodetype ittp,  indx_set& idset) = 0;
-
-            ns_error entities_load(nodetype ittp,  iteminfo_map& mappack);
-
-            ns_error entity_load(nodetype ittp,  indx id);
-
-            /**
-             * Метод entities_merge отправляет из буфер полную информацию о айтемсах
-             * Реализуется только в удаленном интерфейсе, локальный работает с базой напрямую
-             * @param ittp тип  айтемса см. kernel/constdef.h
-             * @param idset множество уникальных индексов  айтемсов
-             * @return  успешность выполнения
-             * @see kernel/constdef.h nodetype
-             */
-
-            virtual ns_error entities_merge(nodetype ittp,  indx_set& idset , iteminfo_map& mappack) {
-                if (ittp == NT_GROUP) getgroupdata();
-                if (ittp == NT_AGROUP) getagroupdata();
-                return NS_ERROR_SUCCESS;}
-
-            virtual ns_error entities_merge(nodetype ittp,  indx_set& idset) = 0;
-
-            ns_error entities_merge(nodetype ittp, indx id) {
-                indx_set tmp;
-                tmp.insert(id);
-                return entities_merge(ittp, tmp);}
-
+            
             /**
              * Метод entity_create добавляет новый айтемс в базу конфигурацмм
              * @param ittp тип  айтемса см. kernel/constdef.h
@@ -1028,7 +991,7 @@ namespace dvnci {
              * @return  успешность выполнения
              * @see kernel/constdef.h nodetype
              */
-            virtual ns_error entity_create(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
+            virtual ns_error insert_entity(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
                     std::string  newnm = "" ) {
                 if (ittp == NT_GROUP) getgroupdata();
                 if (ittp == NT_AGROUP) getagroupdata();
@@ -1045,8 +1008,46 @@ namespace dvnci {
              * @return  успешность выполнения
              * @see kernel/constdef.h nodetype
              */
-            virtual ns_error entities_create(nodetype ittp, indx parentid, str_indx_map& mpnew) {
+            virtual ns_error insert_entities(nodetype ittp, indx parentid, str_indx_map& mpnew) {
+                return NS_ERROR_SUCCESS;}            
+
+            /**
+             * Метод entities_load загружает в буфер полную информацию о айтемсах
+             * Реализуется только в удаленном интерфейсе, локальный работает с базой напрямую
+             * @param ittp тип  айтемса см. kernel/constdef.h
+             * @param strcriteria произвольный критерий фильтрации
+             * @param numcriteria произвольный критерий фильтрации
+             * @param idset_ множество уникальных индексов  айтемсов
+             * @return  успешность выполнения
+             * @see kernel/constdef.h nodetype
+             */
+            virtual ns_error load_entities(nodetype ittp,  indx_set& idset) = 0;
+
+            ns_error load_entities(nodetype ittp,  iteminfo_map& mappack);
+
+            ns_error load_entity(nodetype ittp,  indx id);
+
+            /**
+             * Метод entities_merge отправляет из буфер полную информацию о айтемсах
+             * Реализуется только в удаленном интерфейсе, локальный работает с базой напрямую
+             * @param ittp тип  айтемса см. kernel/constdef.h
+             * @param idset множество уникальных индексов  айтемсов
+             * @return  успешность выполнения
+             * @see kernel/constdef.h nodetype
+             */
+
+            virtual ns_error merge_entities(nodetype ittp,  const indx_set& idset , iteminfo_map& mappack) {
+                if (ittp == NT_GROUP) getgroupdata();
+                if (ittp == NT_AGROUP) getagroupdata();
                 return NS_ERROR_SUCCESS;}
+
+            virtual ns_error merge_entities(nodetype ittp,  const indx_set& idset) = 0;
+
+            ns_error merge_entities(nodetype ittp, indx id) {
+                indx_set tmp;
+                tmp.insert(id);
+                return merge_entities(ittp, tmp);}
+
 
 
             /**
@@ -1065,7 +1066,7 @@ namespace dvnci {
              * @see kernel/constdef.h nodetype
              */
 
-            virtual ns_error entities_erase(nodetype ittp, indx_set& idset) {
+            virtual ns_error delete_entities(nodetype ittp, const indx_set& idset) {
                 if (ittp == NT_GROUP) getgroupdata();
                 if (ittp == NT_AGROUP) getagroupdata();
                 return NS_ERROR_SUCCESS;}
@@ -1078,15 +1079,17 @@ namespace dvnci {
              * @see kernel/constdef.h nodetype
              */
 
-            virtual ns_error entities_change_parent(nodetype ittp, indx_set& idset, indx parentid) = 0;
+            virtual ns_error change_parent_entities(nodetype ittp, indx_set& idset, indx parentid) = 0;
 
 
             /**
-             * Метод entity_duplicate 
+             * Метод duplicate_entity( 
              * @see kernel/constdef.h nodetype
              */
 
-            virtual ns_error entity_duplicate(nodetype ittp,  indx id,  const std::string& newname, iteminfo_pair& pairpack) = 0;
+            virtual ns_error duplicate_entity(nodetype ittp,  indx id,  const std::string& newname, iteminfo_pair& pairpack) = 0;
+            
+            
 
             virtual void operation_mapprj(std::string path_) {}
 
@@ -1386,7 +1389,7 @@ namespace dvnci {
             void clearerrors() {
                 errmap.clear();}
 
-                        virtual void adderror(dvncierror& val) {
+            virtual void adderror(const dvncierror& val) {
                 if (errmap.size() > 1000) clearerrors();
                 errmap.insert(int_dvncierror_pair(errmap.size(), val));}
              /**
@@ -1497,11 +1500,11 @@ namespace dvnci {
 
             void getgroupdata() {
                 if (state() == disconnected) return;
-                entities_signature(NT_ROOT_GROUPS, npos, groupsmap_, "",  false);}
+                select_entities(NT_ROOT_GROUPS,  groupsmap_, npos, "",  false);}
 
             void getagroupdata() {
                 if (state() == disconnected) return;
-                entities_signature(NT_ROOT_AGROUPS, npos, agroupsmap_, "",  false);}
+                select_entities(NT_ROOT_AGROUPS, agroupsmap_, npos,  "",  false);}
 
 
 

@@ -353,7 +353,7 @@ namespace dvnci {
             return "";}
 
         void basetagwraper::commit(indx id) {
-            _interface->entities_merge(NT_TAG, id);}
+            _interface->merge_entities(NT_TAG, id);}
 
         //basereporttagwraper
 
@@ -589,7 +589,7 @@ namespace dvnci {
             return "";}
 
         void basegroupwraper::commit(indx id) {
-            _interface->entities_merge(NT_GROUP, id);}
+            _interface->merge_entities(NT_GROUP, id);}
 
         //systemgroupwraper
 
@@ -1042,7 +1042,7 @@ namespace dvnci {
             return "";}
 
         void agroupwraper::commit(indx id) {
-            _interface->entities_merge(NT_AGROUP, id);}
+            _interface->merge_entities(NT_AGROUP, id);}
 
         userwraper::userwraper(lcltype loc) : abstractwraper(loc) {
 
@@ -1084,7 +1084,7 @@ namespace dvnci {
             return "";}
 
         void userwraper::commit(indx id) {
-            _interface->entities_merge(NT_USER, id);}
+            _interface->merge_entities(NT_USER, id);}
         
         accessrulewraper::accessrulewraper(lcltype loc) : abstractwraper(loc) {
 
@@ -1146,7 +1146,7 @@ namespace dvnci {
             return "";}
 
         void accessrulewraper::commit(indx id) {
-            _interface->entities_merge(NT_ACCESSRULE, id);}
+            _interface->merge_entities(NT_ACCESSRULE, id);}
 
 
 
