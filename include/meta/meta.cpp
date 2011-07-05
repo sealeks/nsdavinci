@@ -403,11 +403,11 @@ namespace dvnci {
         pair_.second.name("");
         pair_.second.typeex(nodeinfotype(0,0));}
 
-    ns_error meta::remove(nodetype ittp, indx_set& keyset_) {
+    ns_error meta::remove(nodetype ittp,const indx_set& keyset_) {
 
         num_xmlnode_map* tmpreg = registry(ittp);
         if (tmpreg) {
-            indx_set::iterator it = keyset_.begin();
+            indx_set::const_iterator it = keyset_.begin();
             while (it != keyset_.end()) {
                 deleteNode(*tmpreg, *it);
                 it++;}}
