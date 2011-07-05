@@ -1381,6 +1381,203 @@ namespace dvnci {
             debug()->add(now(), mess, lev, appid_);}}
     
     
+    ns_error tagsbase::insert_entity(nodetype enttp , const std::string& newname, const std::string& parentid){
+           try{     
+             switch (enttp) {
+
+                    case NT_TAG:
+                    case NT_ATAG:{
+                        insert_tag(newname, parentid);
+                        return 0;}
+
+                    case NT_GROUP:{
+                        insert_group(newname);
+                        return 0;}
+
+                    case NT_AGROUP:{
+                        insert_agroup(newname);
+                        return 0;}
+
+                    case NT_USER:{
+                        insert_user(newname);
+                        return 0;}
+
+                    case NT_ACCESSRULE:{
+                        insert_accessrule(newname);
+                        return 0;}
+                    
+                    default:{}}}
+           catch(const dvncierror& err){
+               return err.code();}
+           catch(...){
+               return NS_ERROR_NODEF;}                    
+                return NS_ERROR_ENTITY_OPERATE;}
+    
+    ns_error tagsbase::insert_entity(nodetype enttp , const std::string& newname, size_type parentid){
+           try{     
+             switch (enttp) {
+
+                    case NT_TAG:
+                    case NT_ATAG:{
+                        insert_tag(newname, parentid);
+                        return 0;}
+
+                    case NT_GROUP:{
+                        insert_group(newname);
+                        return 0;}
+
+                    case NT_AGROUP:{
+                        insert_agroup(newname);
+                        return 0;}
+
+                    case NT_USER:{
+                        insert_user(newname);
+                        return 0;}
+
+                    case NT_ACCESSRULE:{
+                        insert_accessrule(newname);
+                        return 0;}
+                    
+                    default:{}}}
+           catch(const dvncierror& err){
+               return err.code();}
+           catch(...){
+               return NS_ERROR_NODEF;}                    
+                return NS_ERROR_ENTITY_OPERATE;}
+    
+    
+    
+    ns_error tagsbase::replace_entity(nodetype enttp , const std::string& id, const std::string& newname){
+           try{     
+             switch (enttp) {
+
+                    case NT_TAG:
+                    case NT_ATAG:{
+                        replace_tag(id, newname);
+                        return 0;}
+
+                    case NT_GROUP:{
+                        replace_group(id, newname);
+                        return 0;}
+
+                    case NT_AGROUP:{
+                        replace_agroup(id, newname);
+                        return 0;}
+
+                    case NT_USER:{
+                        replace_user(id, newname);
+                        return 0;}
+
+                    case NT_ACCESSRULE:{
+                        replace_accessrule(id, newname);
+                        return 0;}
+                    
+                    default:{}}}
+           catch(const dvncierror& err){
+               return err.code();}
+           catch(...){
+               return NS_ERROR_NODEF;}                    
+                return NS_ERROR_ENTITY_OPERATE;}
+    
+    
+    ns_error tagsbase::replace_entity(nodetype enttp , size_type id, const std::string& newname){
+           try{     
+             switch (enttp) {
+
+                    case NT_TAG:
+                    case NT_ATAG:{
+                        replace_tag(id, newname);
+                        return 0;}
+
+                    case NT_GROUP:{
+                        replace_group(id, newname);
+                        return 0;}
+
+                    case NT_AGROUP:{
+                        replace_agroup(id, newname);
+                        return 0;}
+
+                    case NT_USER:{
+                        replace_user(id, newname);
+                        return 0;}
+
+                    case NT_ACCESSRULE:{
+                        replace_accessrule(id, newname);
+                        return 0;}
+                    
+                    default:{}}}
+           catch(const dvncierror& err){
+               return err.code();}
+           catch(...){
+               return NS_ERROR_NODEF;}                    
+                return NS_ERROR_ENTITY_OPERATE;}   
+     
+    
+    
+    ns_error tagsbase::delete_entity(nodetype enttp , const std::string& id, const std::string& strcriteria){           
+           try{     
+             switch (enttp) {
+
+                    case NT_TAG:
+                    case NT_ATAG:{
+                        delete_tag(id);
+                        return 0;}
+
+                    case NT_GROUP:{
+                        delete_group(id);
+                        return 0;}
+
+                    case NT_AGROUP:{
+                        delete_agroup(id);
+                        return 0;}
+
+                    case NT_USER:{
+                        delete_user(id);
+                        return 0;}
+
+                    case NT_ACCESSRULE:{
+                        delete_accessrule(id);
+                        return 0;}
+                    
+                    default:{}}}
+           catch(const dvncierror& err){
+               return err.code();}
+           catch(...){
+               return NS_ERROR_NODEF;}                    
+                return NS_ERROR_ENTITY_OPERATE;}     
+    
+    
+    ns_error tagsbase::delete_entity(nodetype enttp , size_type id, const std::string& strcriteria){           
+           try{     
+             switch (enttp) {
+
+                    case NT_TAG:
+                    case NT_ATAG:{
+                        delete_tag(id);
+                        return 0;}
+
+                    case NT_GROUP:{
+                        delete_group(id);
+                        return 0;}
+
+                    case NT_AGROUP:{
+                        delete_agroup(id);
+                        return 0;}
+
+                    case NT_USER:{
+                        delete_user(id);
+                        return 0;}
+
+                    case NT_ACCESSRULE:{
+                        delete_accessrule(id);
+                        return 0;}
+                    
+                    default:{}}}
+           catch(const dvncierror& err){
+               return err.code();}
+           catch(...){
+               return NS_ERROR_NODEF;}                    
+                return NS_ERROR_ENTITY_OPERATE;}     
     
     tagsbase::size_type tagsbase::duplicate_group(std::string grp, std::string newname) {
             lower_and_trim(grp);
@@ -1408,120 +1605,113 @@ namespace dvnci {
         return newgroupindx;} 
     
     
-        void tagsbase::select_groups(iteminfo_map& val, const std::string& strcriteria ) {
-        val.clear();
-        stringed_filterclass filtered_(strcriteria);
-        for (size_type i = 0; (i < (*groups()).count()); i++)
-            if (groups()->exists(i)) {
-                if ((!filtered_.isEnable()) ||
-                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, groups()->name(i)))) {
-                    val.insert(iteminfo_pair(i, name_with_type(groups()->name(i), NT_GROUP,
-                            static_cast<tagtype> (groups()->appid(i)))));};}}
-
-    void tagsbase::select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
-        val.clear();
-        indx_set::const_iterator it = set_.begin();
-        while (it != set_.end()) {
-            pgroupstruct tmp = groups()->operator [](*it);
-            if ((tmp) && ((groups()->exists(*it)))) {
-                val.insert(iteminfo_pair(*it, name_with_type(groups()->name(*it), NT_GROUP,
-                        static_cast<tagtype> (groups()->appid(*it)))));}
-            it++;}}
-
-    void tagsbase::select_agroups(iteminfo_map& val, const std::string& strcriteria) {
-        val.clear();
-        stringed_filterclass filtered_(strcriteria);
-        for (size_type i = 0; (i < (*agroups()).count()); i++)
-            if (agroups()->exists(i)) {
-                if ((!filtered_.isEnable()) ||
-                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, agroups()->name(i)))) {
-                    val.insert(iteminfo_pair(i, name_with_type(agroups()->name(i), NT_AGROUP)));}}}
-
-    void tagsbase::select_agroups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
-        val.clear();
-        indx_set::const_iterator it = set_.begin();
-        while (it != set_.end()) {
-            if (agroups()->exists(*it)) {
-                val.insert(iteminfo_pair(*it, name_with_type(agroups()->name(*it), NT_AGROUP)));}
-            it++;}}
-
-    void tagsbase::select_users(iteminfo_map& val, const std::string& strcriteria) {
-        val.clear();
-        stringed_filterclass filtered_(strcriteria);
-        for (size_type i = 0; (i < (*users()).count()); i++)
-            if (users()->exists(i)) {
-                if ((!filtered_.isEnable()) ||
-                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, users()->name(i)))) {
-                    val.insert(iteminfo_pair(i, name_with_type(users()->name(i), NT_USER)));};}}
-
-    void tagsbase::select_users(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
-        val.clear();
-        indx_set::const_iterator it = set_.begin();
-        while (it != set_.end()) {
-            if (users()->exists(*it)) {
-                val.insert(iteminfo_pair(*it, name_with_type(users()->name(*it), NT_USER)));}
-            it++;}}
-
-    void tagsbase::select_accessrules(iteminfo_map& val, const std::string& strcriteria) {
-        val.clear();
-        stringed_filterclass filtered_(strcriteria);
-        for (size_type i = 0; (i < (*accessrules()).count()); i++)
-            if (accessrules()->exists(i)) {
-                if ((!filtered_.isEnable()) ||
-                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, accessrules()->name(i)))) {
-                    val.insert(iteminfo_pair(i, name_with_type(accessrules()->name(i), NT_ACCESSRULE)));};}}
-
-    void tagsbase::select_accessrules(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
-        val.clear();
-        indx_set::const_iterator it = set_.begin();
-        while (it != set_.end()) {
-            if (accessrules()->exists(*it)) {
-                val.insert(iteminfo_pair(*it, name_with_type(accessrules()->name(*it), NT_ACCESSRULE)));}
-            it++;}}
-    
-    
-    
-    
-    ns_error tagsbase::select_entities(nodetype parenttp, iteminfo_map& val, indx parentid, const std::string& strcriteria){
-
-                val.clear();
-                switch (parenttp) {
+    ns_error tagsbase::merge_entity(nodetype enttp , size_type id){           
+           try{     
+             switch (enttp) {
 
                     case NT_TAG:
                     case NT_ATAG:{
+                        merge_tag(id);
                         return 0;}
 
                     case NT_GROUP:{
-                        select_tags(val, parentid, strcriteria);
+                        merge_group(id);
                         return 0;}
 
                     case NT_AGROUP:{
+                        merge_agroup(id);
+                        return 0;}
+
+                    case NT_USER:{
+                        merge_user(id);
+                        return 0;}
+
+                    case NT_ACCESSRULE:{
+                        merge_accessrule(id);
+                        return 0;}
+                    
+                    default:{}}}
+           catch(const dvncierror& err){
+               return err.code();}
+           catch(...){
+               return NS_ERROR_NODEF;}                    
+                return NS_ERROR_ENTITY_OPERATE;} 
+    
+
+    
+    
+    ns_error tagsbase::select_entities(nodetype enttp, iteminfo_map& val, size_type parentid, const std::string& strcriteria){
+        try{
+                val.clear();
+                switch (enttp) {
+
+                    case NT_TAG:{
+                        select_tags(val, parentid, strcriteria);
+                        return 0;}
+                    
+                    case NT_ATAG:{
                         select_atags(val, parentid, strcriteria);
                         return 0;}
 
-                    case NT_ROOT_GROUPS:{
+                    case NT_GROUP:{
                         select_groups(val, strcriteria);
                         return 0;}
 
-                    case NT_ROOT_AGROUPS:{
+                    case NT_AGROUP:{
                         select_agroups(val, strcriteria);
                         return 0;}
 
-                    case NT_ROOT_USERS:{
+                    case NT_USER:{
                         select_users(val, strcriteria);
                         return 0;}
 
-                    case NT_ROOT_ACCESSRULES:{
+                    case NT_ACCESSRULE:{
                         select_accessrules(val, strcriteria);
                         return 0;}
                     
-                    default:{}}
-                
-                return 0;}    
+                    default:{}}}
+           catch(dvncierror& err){
+               return err.code();}
+           catch(...){
+               return NS_ERROR_NODEF;}                    
+                return NS_ERROR_ENTITY_OPERATE;} 
     
-    
-    
-    
+    ns_error tagsbase::select_entities(nodetype enttp, iteminfo_map& val, const std::string& parentid, const std::string& strcriteria){
+        try{
+                val.clear();
+                switch (enttp) {
+
+                    case NT_TAG:{
+                        select_tags(val, parentid, strcriteria);
+                        return 0;}
+                    
+                    case NT_ATAG:{
+                        select_atags(val, parentid, strcriteria);
+                        return 0;}
+
+                    case NT_GROUP:{
+                        select_groups(val, strcriteria);
+                        return 0;}
+
+                    case NT_AGROUP:{
+                        select_agroups(val, strcriteria);
+                        return 0;}
+
+                    case NT_USER:{
+                        select_users(val, strcriteria);
+                        return 0;}
+
+                    case NT_ACCESSRULE:{
+                        select_accessrules(val, strcriteria);
+                        return 0;}
+                    
+                    default:{}}}
+           catch(dvncierror& err){
+               return err.code();}
+           catch(...){
+               return NS_ERROR_NODEF;}                    
+                return NS_ERROR_ENTITY_OPERATE;}     
+
 
     void tagsbase::select_tags(iteminfo_map& val, size_type grop, const std::string& strcriteria) {
         val.clear();
@@ -1641,6 +1831,79 @@ namespace dvnci {
             if ((groups()->exists(i)) && (groups()->appid(i) == app))
                 if (groups()->link(i) == lnk) {
                     val.insert(i);}}}
+    
+    
+    void tagsbase::select_groups(iteminfo_map& val, const std::string& strcriteria ) {
+        val.clear();
+        stringed_filterclass filtered_(strcriteria);
+        for (size_type i = 0; (i < (*groups()).count()); i++)
+            if (groups()->exists(i)) {
+                if ((!filtered_.isEnable()) ||
+                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, groups()->name(i)))) {
+                    val.insert(iteminfo_pair(i, name_with_type(groups()->name(i), NT_GROUP,
+                            static_cast<tagtype> (groups()->appid(i)))));};}}
+
+    void tagsbase::select_groups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
+        val.clear();
+        indx_set::const_iterator it = set_.begin();
+        while (it != set_.end()) {
+            pgroupstruct tmp = groups()->operator [](*it);
+            if ((tmp) && ((groups()->exists(*it)))) {
+                val.insert(iteminfo_pair(*it, name_with_type(groups()->name(*it), NT_GROUP,
+                        static_cast<tagtype> (groups()->appid(*it)))));}
+            it++;}}
+
+    void tagsbase::select_agroups(iteminfo_map& val, const std::string& strcriteria) {
+        val.clear();
+        stringed_filterclass filtered_(strcriteria);
+        for (size_type i = 0; (i < (*agroups()).count()); i++)
+            if (agroups()->exists(i)) {
+                if ((!filtered_.isEnable()) ||
+                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, agroups()->name(i)))) {
+                    val.insert(iteminfo_pair(i, name_with_type(agroups()->name(i), NT_AGROUP)));}}}
+
+    void tagsbase::select_agroups(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
+        val.clear();
+        indx_set::const_iterator it = set_.begin();
+        while (it != set_.end()) {
+            if (agroups()->exists(*it)) {
+                val.insert(iteminfo_pair(*it, name_with_type(agroups()->name(*it), NT_AGROUP)));}
+            it++;}}
+
+    void tagsbase::select_users(iteminfo_map& val, const std::string& strcriteria) {
+        val.clear();
+        stringed_filterclass filtered_(strcriteria);
+        for (size_type i = 0; (i < (*users()).count()); i++)
+            if (users()->exists(i)) {
+                if ((!filtered_.isEnable()) ||
+                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, users()->name(i)))) {
+                    val.insert(iteminfo_pair(i, name_with_type(users()->name(i), NT_USER)));};}}
+
+    void tagsbase::select_users(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
+        val.clear();
+        indx_set::const_iterator it = set_.begin();
+        while (it != set_.end()) {
+            if (users()->exists(*it)) {
+                val.insert(iteminfo_pair(*it, name_with_type(users()->name(*it), NT_USER)));}
+            it++;}}
+
+    void tagsbase::select_accessrules(iteminfo_map& val, const std::string& strcriteria) {
+        val.clear();
+        stringed_filterclass filtered_(strcriteria);
+        for (size_type i = 0; (i < (*accessrules()).count()); i++)
+            if (accessrules()->exists(i)) {
+                if ((!filtered_.isEnable()) ||
+                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, accessrules()->name(i)))) {
+                    val.insert(iteminfo_pair(i, name_with_type(accessrules()->name(i), NT_ACCESSRULE)));};}}
+
+    void tagsbase::select_accessrules(iteminfo_map& val, indx_set& set_, const std::string& strcriteria) {
+        val.clear();
+        indx_set::const_iterator it = set_.begin();
+        while (it != set_.end()) {
+            if (accessrules()->exists(*it)) {
+                val.insert(iteminfo_pair(*it, name_with_type(accessrules()->name(*it), NT_ACCESSRULE)));}
+            it++;}}    
+    
 
     bool tagsbase::select_reportvals_by_time(const datetime& tm, indx_double_map& vlmap) const {
         dt_val_pair vl;

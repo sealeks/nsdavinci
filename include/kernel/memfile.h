@@ -1793,7 +1793,9 @@ namespace dvnci {
         
         
         
+        ns_error insert_entity(nodetype enttp , const std::string& newname, size_type parentid = npos);   
         
+        ns_error insert_entity(nodetype enttp , const std::string& newname, const std::string& parentid="");        
         
 
         size_type insert_tag(std::string newname, size_type groupid) {
@@ -1854,7 +1856,9 @@ namespace dvnci {
         
         
         
+        ns_error replace_entity(nodetype enttp , size_type id, const std::string& newname);   
         
+        ns_error replace_entity(nodetype enttp , const std::string& id, const std::string& newname);         
         
 
         void replace_tag(size_type id, std::string newname) {
@@ -1943,7 +1947,9 @@ namespace dvnci {
         
         
 
+        ns_error delete_entity(nodetype enttp , size_type id, const std::string& strcriteria = "");
         
+        ns_error delete_entity(nodetype enttp , const std::string& id, const std::string& strcriteria = "");
         
         
         size_type delete_tag(size_type id) {
@@ -2013,8 +2019,9 @@ namespace dvnci {
         size_type duplicate_group(std::string grp, std::string newname);
         
         
-
         
+
+        ns_error merge_entity(nodetype enttp , size_type id);        
         
         void merge_tag(size_type id) {
             writetofile(id);}
@@ -2033,11 +2040,14 @@ namespace dvnci {
 
 
 
-
         
-        ns_error select_entities(nodetype parenttp, iteminfo_map& val, indx parentid, const std::string& strcriteria = "");
         
 
+        
+        ns_error select_entities(nodetype enttp, iteminfo_map& val, size_type parentid, const std::string& strcriteria = "");
+        
+        ns_error select_entities(nodetype enttp, iteminfo_map& val, const std::string& parentid, const std::string& strcriteria = "");
+        
         void select_tags(iteminfo_map& val, size_type group, const std::string& strcriteria = "");
 
         void select_tags(iteminfo_map& val, std::string group, const std::string& strcriteria = "");
@@ -2450,7 +2460,7 @@ namespace dvnci {
 
 
 
-        // конфигурирование базы
+        // РєРѕРЅС„РёРіСѓСЂРёСЂРѕРІР°РЅРёРµ Р±Р°Р·С‹
 
         void texttagcnt(size_t val);
 
