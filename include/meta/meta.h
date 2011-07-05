@@ -77,7 +77,7 @@ public:
 
     void  add(nodetype ittp, indx parentid, iteminfo_pair& pair_,  std::string  newname_ = "");
    
-    ns_error remove(nodetype ittp, indx_set& keyset);
+    ns_error remove(nodetype ittp,const indx_set& keyset);
 
     bool merge();
 
