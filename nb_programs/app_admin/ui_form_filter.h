@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_filter.ui'
 **
-** Created: Mon 20. Jun 18:25:02 2011
+** Created: Tue 5. Jul 13:13:58 2011
 **      by: Qt User Interface Compiler version 4.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

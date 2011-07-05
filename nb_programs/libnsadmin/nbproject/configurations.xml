@@ -10,6 +10,7 @@
     <itemPath>../../include/admin/adminintf.h</itemPath>
     <itemPath>../../include/admin/adminsession.cpp</itemPath>
     <itemPath>../../include/admin/adminsession.h</itemPath>
+    <itemPath>../../include/admin/adminstruct.h</itemPath>
     <itemPath>../../include/admin/entitywraper.cpp</itemPath>
     <itemPath>../../include/admin/entitywraper.h</itemPath>
     <itemPath>../../include/admin/factory.h</itemPath>
@@ -31,7 +32,6 @@
     <itemPath>../../include/admin/propertymanager.h</itemPath>
     <itemPath>../../include/admin/remoteadminintf.cpp</itemPath>
     <itemPath>../../include/admin/remoteadminintf.h</itemPath>
-    <itemPath>../../include/admin/rpcstruct.h</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
