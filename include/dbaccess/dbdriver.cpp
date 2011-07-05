@@ -60,23 +60,23 @@ namespace database {
        
             bool dbdriver::insert_journal(const journal_item_vect& vctval) {
                 if (vctval.empty()) return true;
-                if ((vctval.size()==1) || (dt_to_journaltabelname(cast_datetime_fromnum64(vctval.begin()->time))==
-                          dt_to_journaltabelname(cast_datetime_fromnum64(vctval.rbegin()->time)))){
+                if ((vctval.size()==1) || (dt_to_journaltabelname(vctval.begin()->time)==
+                          dt_to_journaltabelname(vctval.rbegin()->time))){
                    return insert_journal_impl(vctval);}
                 else{
                    for(journal_item_vect::const_iterator it=vctval.begin();it!=vctval.end();++it){
-                       insert_journal(cast_datetime_fromnum64(it->time),it->tag,it->text,it->agroup,static_cast<msgtype>(it->type),static_cast<altype>(it->level),
+                       insert_journal(it->time,it->tag,it->text,it->agroup,static_cast<msgtype>(it->type),static_cast<altype>(it->level),
                                it->value, it->user, "");}}
                 return true;}
 
             bool dbdriver::insert_debug(const debug_item_vect& vctval) {
                 if (vctval.empty()) return false;
-                if ((vctval.size()==1) || (dt_to_debugtabelname(cast_datetime_fromnum64(vctval.begin()->time))==
-                          dt_to_debugtabelname(cast_datetime_fromnum64(vctval.rbegin()->time)))){
+                if ((vctval.size()==1) || (dt_to_debugtabelname(vctval.begin()->time)==
+                          dt_to_debugtabelname(vctval.rbegin()->time))){
                    return insert_debug_impl(vctval);}
                 else{
                    for(debug_item_vect::const_iterator it=vctval.begin();it!=vctval.end();++it){
-                       insert_debug(cast_datetime_fromnum64(it->time),it->message,static_cast<appidtype>(it->appid),static_cast<debuglvtype>(it->level));}}
+                       insert_debug(it->time,it->message,static_cast<appidtype>(it->appid),static_cast<debuglvtype>(it->level));}}
                 return true;}
 
 

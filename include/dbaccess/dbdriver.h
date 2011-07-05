@@ -26,7 +26,7 @@ namespace dvnci {
         struct journal_item {
             num64        index;
             unum64       guid;
-            num64        time;
+            datetime     time;
             std::string  tag;
             std::string  text;
             std::string  agroup;
@@ -38,9 +38,9 @@ namespace dvnci {
         typedef std::vector<journal_item>   journal_item_vect;
 
         struct debug_item {
-           num64  index;
+           num64   index;
            unum64  guid;
-           num64  time;
+           datetime   time;
            std::string  message;
            num64  level;
            num64  appid;};
