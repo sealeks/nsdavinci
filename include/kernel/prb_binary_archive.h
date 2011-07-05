@@ -182,9 +182,7 @@ namespace dvnci {
             this->primitive_base_t::load(t);}
 
         void load(datetime & t) {
-            num64 tmp=0;
-            this->primitive_base_t::load(tmp);
-            t=(*(datetime*)((char*)(&tmp)));}
+            this->primitive_base_t::load(t);}
         
         void load(num64 & t) {
             this->primitive_base_t::load(t);}
@@ -333,8 +331,7 @@ namespace dvnci {
             this->primitive_base_t::save(t);}
         
         void save(const datetime & t) {
-            num64 tmp=num64_cast<datetime>(t);
-            this->primitive_base_t::save(tmp);}
+            this->primitive_base_t::save(t);}
         
         void save(const num64 & t) {
             this->primitive_base_t::save(t);}
