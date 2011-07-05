@@ -12,7 +12,7 @@ namespace dvnci {
 
         using namespace std;
 
-        iteminfo_map & operator<<(iteminfo_map& ls, const resp_entitysigs rs) {
+        iteminfo_map & operator<<(iteminfo_map& ls, const resp_entitysigs& rs) {
             for (vect_entitysig_data::const_iterator it = rs.sigs.begin(); it != rs.sigs.end(); ++it) {
                 ls.insert(iteminfo_pair(static_cast<indx> (it->key),
                         name_with_type(it->name, nodeinfotype(it->tpitem))));}

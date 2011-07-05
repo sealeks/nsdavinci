@@ -150,7 +150,7 @@ namespace dvnci {
         const num64 OPERATION_SERVICE_STOP = 0x41;
 
 
-        iteminfo_map & operator<<(iteminfo_map& ls, const resp_entitysigs rs) ;
+        iteminfo_map & operator<<(iteminfo_map& ls, const resp_entitysigs& rs) ;
 
         typedef std::pair<indx, tag_data > indx_tags_pair;
         typedef std::map<indx, tag_data , std::less<indx>, std::allocator<indx_tags_pair > > indx_tags_map;
