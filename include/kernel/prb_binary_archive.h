@@ -47,6 +47,9 @@
 #include <boost/archive/basic_binary_oprimitive.hpp>
 #include <boost/archive/detail/common_oarchive.hpp>
 
+#include <kernel/constdef.h>
+#include <kernel/utils.h>
+
 namespace dvnci {
 
     enum prb_binary_archive_flags {
@@ -138,8 +141,6 @@ namespace dvnci {
         void load(T & t) {
             boost::intmax_t l;
             load_impl(l, sizeof (T));
-            // use cast to avoid compile time warning
-            //t = static_cast< T >(l);
             t = T(l);}
 
         void load(boost::serialization::item_version_type & t) {
@@ -179,9 +180,19 @@ namespace dvnci {
 
         void load(unsigned char & t) {
             this->primitive_base_t::load(t);}
-        // intermediate level to support override of operators
-        // fot templates in the absence of partial function 
-        // template ordering
+
+        void load(datetime & t) {
+            num64 tmp=0;
+            this->primitive_base_t::load(tmp);
+            t=(*(datetime*)((char*)(&tmp)));}
+        
+        void load(num64 & t) {
+            this->primitive_base_t::load(t);}
+        
+        void load(unum64 & t) {
+            this->primitive_base_t::load(t);}           
+        
+
         typedef boost::archive::detail::common_iarchive<prb_binary_iarchive>
         detail_common_iarchive;
 
@@ -226,7 +237,8 @@ namespace dvnci {
 
 
 
-
+        //template<>
+        //void prb_binary_iarchive::load<datetime>(datetime & t);
 
 
 
@@ -319,9 +331,18 @@ namespace dvnci {
 
         void save(const unsigned char & t) {
             this->primitive_base_t::save(t);}
+        
+        void save(const datetime & t) {
+            num64 tmp=num64_cast<datetime>(t);
+            this->primitive_base_t::save(tmp);}
+        
+        void save(const num64 & t) {
+            this->primitive_base_t::save(t);}
+        
+        void save(const unum64 & t) {
+            this->primitive_base_t::save(t);}         
 
-        // default processing - kick back to base class.  Note the
-        // extra stuff to get it passed borland compilers
+        
         typedef boost::archive::detail::common_oarchive<prb_binary_oarchive>
         detail_common_oarchive;
 
@@ -365,7 +386,22 @@ namespace dvnci {
         ),
         archive_base_t(flags),
         m_flags(0) {
-            init(flags);}} ;}
+            init(flags);}} ;
+
+        //template<>
+        //void prb_binary_oarchive::save<datetime>(const datetime & t);
+}
+
+namespace boost {
+namespace serialization {
+
+
+   using namespace dvnci;
+
+   template<class Archive>
+   void serialize(Archive& ar, datetime& g, const unsigned int version) {
+        num64 tmp=num64_cast<datetime>(g);
+        ar & tmp;}}}
 
 // required by export in boost version > 1.34
 #ifdef BOOST_SERIALIZATION_REGISTER_ARCHIVE

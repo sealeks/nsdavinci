@@ -124,7 +124,22 @@ namespace dvnci {
             boost::serialization::throw_exception(
                     prb_binary_oarchive_exception()
                     );}
-        save(static_cast<unsigned char> (m_flags >> CHAR_BIT));}}
+        save(static_cast<unsigned char> (m_flags >> CHAR_BIT));}
+    
+
+/*        template<>
+        void prb_binary_iarchive::load<datetime>(datetime & t) {
+            num64 tmp=0;
+            this->primitive_base_t::load(tmp);
+            t=(*(datetime*)((char*)(&tmp)));}
+        
+        template<>
+        void prb_binary_oarchive::save<datetime>(const datetime & t) {
+            num64 tmp=num64_cast<datetime>(t);
+            this->primitive_base_t::save(tmp);}*/
+}
+
+
 
 
 #include <boost/archive/impl/archive_serializer_map.ipp>
