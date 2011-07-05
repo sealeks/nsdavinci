@@ -23,6 +23,8 @@ namespace dvnci {
     const ns_error NS_ERROR_MAINFILENOTFOUND = 0x3;
     // некорректный ответ
     const ns_error NS_ERROR_ERRRESP = 0x4;
+    // ошибочная операция 
+    const ns_error NS_ERROR_ENTITY_OPERATE = 0x10E;    
     // новый объект не может быть размещен в разделяемой памяти, необходим ремапинг объектов памяти
     const ns_error RESERV_MEMSHARE_EXTEND = 0x10F;
     // строка слишком длинна
