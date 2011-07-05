@@ -185,13 +185,13 @@ namespace database {
             bool dbpsgrdriver::insert_journal_by_one_impl(const journal_item_vect& vctval){
                 bool rslt =true;
                 for(journal_item_vect::const_iterator it=vctval.begin();it!=vctval.end();++it){
-                       if (!insert_journal_impl(cast_datetime_fromnum64(it->time),it->tag,it->text,it->agroup,static_cast<msgtype>(it->type),static_cast<altype>(it->level),
+                       if (!insert_journal_impl(it->time,it->tag,it->text,it->agroup,static_cast<msgtype>(it->type),static_cast<altype>(it->level),
                                it->value, it->user, "")) rslt = false;}
                 return rslt;}
 
              bool dbpsgrdriver::insert_journal_impl(const journal_item_vect& vctval){
                  if (vctval.empty()) return true;
-                 datetime tm = cast_datetime_fromnum64(vctval[0].time);
+                 datetime tm = vctval[0].time;
                  try {
                     std::string tn = dt_to_journaltabelname(tm);
                     if ((tn != lastalarm) && (!tableexist(tn))) {
@@ -210,7 +210,7 @@ namespace database {
                             " values (:tm, :tag, :comment, :agroup, :type ,:level, :val, :user ,:host)",
                             use(tmp_tm), use(tg), use(comment), use(agroup), use(type), use(alevel), use(val) , use(user), use(host));
                     for (journal_item_vect::const_iterator it=vctval.begin();it!=vctval.end();++it){
-                         tmp_tm = it->time;
+                         tmp_tm =num64_cast<datetime>(it->time);
                          tg = it->tag;
                          comment = it->text;
                          agroup = it->agroup;
@@ -256,13 +256,13 @@ namespace database {
             bool dbpsgrdriver::insert_debug_by_one_imp(const debug_item_vect& vctval){
                 bool rslt =true;
                 for(debug_item_vect::const_iterator it=vctval.begin();it!=vctval.end();++it){
-                       if (!insert_debug_impl(cast_datetime_fromnum64(it->time),it->message,static_cast<appidtype>(it->appid),static_cast<debuglvtype>(it->level)))
+                       if (!insert_debug_impl(it->time,it->message,static_cast<appidtype>(it->appid),static_cast<debuglvtype>(it->level)))
                            rslt = false;}
                 return rslt;}
 
             bool dbpsgrdriver::insert_debug_impl(const debug_item_vect& vctval){
                  if (vctval.empty()) return true;
-                 datetime tm = cast_datetime_fromnum64(vctval[0].time);
+                 datetime tm = vctval[0].time;
                  try {
                     std::string tn = dt_to_debugtabelname(tm);
                     if ((tn != lastalarm) && (!tableexist(tn))) {
@@ -276,7 +276,7 @@ namespace database {
                             " values (:tm, :imessage, :app, :level)",
                             use(tmp_tm), use(message), use(app), use(lev));
                     for (debug_item_vect::const_iterator it=vctval.begin();it!=vctval.end();++it){
-                         tmp_tm = it->time;
+                         tmp_tm = num64_cast<datetime>(it->time);
                          message = it->message;
                          app = static_cast<num32>(it->appid);
                          lev = static_cast<num32>(it->level);
