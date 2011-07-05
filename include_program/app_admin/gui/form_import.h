@@ -10,7 +10,7 @@
 
 #include <kernel/memfile.h>
 
-#include <admin/rpcstruct.h>
+#include <admin/adminstruct.h>
 #include <admin/adminintf.h>
 #include <admin/importutil.h>
 

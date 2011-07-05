@@ -40,19 +40,19 @@ namespace dvnci {
                     switch (transact->transactid) {
 
                         case ACTION_SHORTITEMINFO:{
-                            intf->entities_signature(transact->entity_type, transact->entity_index,
-                                                               event->infomap, transact->parameter_str);
+                            intf->select_entities(transact->entity_type, event->infomap, transact->entity_index,
+                                                                transact->parameter_str);
                             break;}
 
                         case ACTION_SETFILTERED:{
                             if ((nodetp_child_by_parent(transact->entity_findertype)) && (!transact->filter_str.empty()))
-                                intf->entities_find_signature(nodetp_child_by_parent(transact->entity_findertype) ,
+                                intf->find_entities(nodetp_child_by_parent(transact->entity_findertype) ,
                                     event->infomap, transact->filter_str);
                             else event->infomap.clear();
                             break;}
 
                         case ACTION_FULLITEMINFO:{
-                            intf->entities_load(transact->entity_type, event->indexset);
+                            intf->load_entities(transact->entity_type, event->indexset);
                             propman.intf(intf);
                             propman.parsenodes(transact->nodesmap, event->property_map);
                             break;}
@@ -60,30 +60,30 @@ namespace dvnci {
                         case ACTION_SETFULLITEMINFO:{
                             propman.intf(intf);
                             propman.merge(transact->nodesmap, transact->propertymap);
-                            intf->entities_merge(transact->entity_type, event->indexset, event->infomap);
+                            intf->merge_entities(transact->entity_type, event->indexset, event->infomap);
                             break;}
 
                         case ACTION_CREATEITEM:{
-                            intf->entity_create(nodetp_child_by_parent(transact->entity_type),
+                            intf->insert_entity(nodetp_child_by_parent(transact->entity_type),
                                         transact->entity_index, event->infopair, transact->parameter_str);
                             break;}
 
                         case ACTION_DELETEITEM:{
-                            intf->entities_erase(transact->entity_type, event->indexset);
+                            intf->delete_entities(transact->entity_type, event->indexset);
                             break;}
 
                         case ACTION_CHANGEGROUP:{
-                            intf->entities_change_parent(NT_TAG, event->indexset, transact->parameter_index);
+                            intf->change_parent_entities(NT_TAG, event->indexset, transact->parameter_index);
                             event->parameter_index = transact->parameter_index;
                             break;}
 
                         case ACTION_CHANGEALARMGROUP:{
-                            intf->entities_change_parent(NT_ATAG, event->indexset, transact->parameter_index);
+                            intf->change_parent_entities(NT_ATAG, event->indexset, transact->parameter_index);
                             event->parameter_index = transact->parameter_index;
                             break;}
 
                         case ACTION_DUPLICATEITEM:{
-                            intf->entity_duplicate(NT_GROUP, transact->entity_index , transact->parameter_str, event->infopair);
+                            intf->duplicate_entity(NT_GROUP, transact->entity_index , transact->parameter_str, event->infopair);
                             event->parameter_index= transact->parameter_index;
                             break;}
 
@@ -243,18 +243,18 @@ namespace dvnci {
 
 
                         case ACTION_VIEWTAG:{
-                            intf->entities_find_signature(NT_TAG, event->infomap, transact->parameter_str);
-                            intf->entities_load(NT_TAG, transact->inputset);
+                            intf->find_entities(NT_TAG, event->infomap, transact->parameter_str);
+                            intf->load_entities(NT_TAG, transact->inputset);
                             break;}
 
                         case ACTION_VIEWGROUP:{
-                            intf->entities_find_signature(NT_GROUP, event->infomap, transact->parameter_str);
-                            intf->entities_load(NT_GROUP, transact->inputset);
+                            intf->find_entities(NT_GROUP, event->infomap, transact->parameter_str);
+                            intf->load_entities(NT_GROUP, transact->inputset);
                             break;}
 
                         case ACTION_VIEWACCESSRULE:{
-                            intf->entities_find_signature(NT_ACCESSRULE, event->infomap);
-                            intf->entities_load(NT_ACCESSRULE, transact->inputset);
+                            intf->find_entities(NT_ACCESSRULE, event->infomap);
+                            intf->load_entities(NT_ACCESSRULE, transact->inputset);
                             break;}
 
                         case ACTION_VIEWREGISTRY:{
