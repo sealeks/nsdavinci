@@ -182,7 +182,9 @@ namespace dvnci {
             this->primitive_base_t::load(t);}
 
         void load(datetime & t) {
-            this->primitive_base_t::load(t);}
+            num64 tmp=0;
+            this->primitive_base_t::load(tmp);
+            t = from_num64_cast<datetime>(tmp);}
         
         void load(num64 & t) {
             this->primitive_base_t::load(t);}
@@ -331,7 +333,8 @@ namespace dvnci {
             this->primitive_base_t::save(t);}
         
         void save(const datetime & t) {
-            this->primitive_base_t::save(t);}
+            num64 tmp=num64_cast<datetime>(t);
+            this->primitive_base_t::save(tmp);}
         
         void save(const num64 & t) {
             this->primitive_base_t::save(t);}
@@ -398,7 +401,8 @@ namespace serialization {
    template<class Archive>
    void serialize(Archive& ar, datetime& g, const unsigned int version) {
         num64 tmp=num64_cast<datetime>(g);
-        ar & tmp;}}}
+        ar & tmp;
+        g = from_num64_cast<datetime>(tmp);}}}
 
 // required by export in boost version > 1.34
 #ifdef BOOST_SERIALIZATION_REGISTER_ARCHIVE
