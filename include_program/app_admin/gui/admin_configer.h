@@ -46,7 +46,7 @@ namespace dvnci {
             bool removeserver(std::string serv) {
                 bool finded = false;
                 for (serverinfo_vector::iterator it = servers_.begin(); it != servers_.end(); ++it) {
-                    if ((*it) == serv) {
+                    if (dvnci::trim_copy(*it) == dvnci::trim_copy(serv)) {
                         finded = true;
                         servers_.erase(it);
                         break;}}
