@@ -164,13 +164,13 @@ public:
     maintype* ptr(){
         return sh_ptr.get();}
 
-    type_ptr    operator[]  (indx id){
+    type_ptr    operator[]  (indx id) const{
                             return ((sh_ptr) && (sh_ptr->operator[](id))) ? sh_ptr->operator[](id) : 0;}
 
-    bool        operator[]  (const std::string& vl){
+    bool        operator[]  (const std::string& vl) const {
                             return ((sh_ptr) && (sh_ptr->operator[](vl)));}
 
-    indx        operator()(const std::string& vl){
+    indx        operator()(const std::string& vl) const{
                             return ((sh_ptr) && (sh_ptr->operator[](vl))) ? sh_ptr->operator()(vl) : npos;}
 
     maintype& operator* () const {
@@ -182,7 +182,7 @@ public:
     maintype* get() const{
         return sh_ptr.operator ->();}
 
-    operator bool(){
+    operator bool() const {
         return sh_ptr;}
 
     operator mutex_ref(){
