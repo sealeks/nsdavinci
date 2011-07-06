@@ -40,7 +40,7 @@ public:
             const tcp::endpoint& endpoint, dvnci::tagsbase_ptr inf)
     : intf(inf),  io_service_(io_service),
     acceptor_(io_service, endpoint) {
-        netintf_ptr inf_tmp = netintf_ptr(dvnci::custom::net::factory::build(intf));
+        netintf_ptr inf_tmp = dvnci::custom::net::factory::build(intf);
         ns_netsession_ptr new_session(new netsession(io_service_, inf_tmp));
         acceptor_.async_accept(new_session->socket(),
                 boost::bind(&ns_netserver::handle_accept, this, new_session,
@@ -48,11 +48,9 @@ public:
 
     void handle_accept(ns_netsession_ptr session,
             const boost::system::error_code& error) {
-        DEBUG_VAL_DVNCI(error);
         if (!error) {
             session->start();
             DEBUG_STR_DVNCI(Handle accepted);
-
             netintf_ptr infnet = netintf_ptr(dvnci::custom::net::factory::build(intf));
             ns_netsession_ptr new_session(new netsession(io_service_, infnet));
             acceptor_.async_accept(new_session->socket(),
