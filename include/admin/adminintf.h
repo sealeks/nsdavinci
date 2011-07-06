@@ -925,7 +925,7 @@ namespace dvnci {
                 return "maintree.local";}
 
             virtual void fullnamed(const std::string& val) {
-                split_2str(val, ":", adminname, adminpassword);}
+                /*split_2str(val, ":", adminname, adminpassword);*/}
 
             virtual std::string fullnamed() const {
                 return (adminname + ":" + adminpassword);}
