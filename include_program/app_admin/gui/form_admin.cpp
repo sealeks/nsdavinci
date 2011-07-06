@@ -113,7 +113,7 @@ namespace dvnci {
 
             curitems_.clear();
 
-            mediators = new mediator_map();
+
             treewidgetsmap.insert(int_treewidget_pair(RANG_NODE_TYPE_0, widget.treeWidget));
             treewidgetsmap.insert(int_treewidget_pair(RANG_NODE_TYPE_1, widget.treeWidget1));
             treewidgetsmap.insert(int_treewidget_pair(RANG_NODE_TYPE_2, widget.treeWidget2));
@@ -201,6 +201,9 @@ namespace dvnci {
             delete filterIcon;
             delete mainTreeMenue;
             delete treeMenuList;
+			viewproccess.reset();
+			treewidgetsmap.clear();
+			mediators.clear();
             delete icons;}
 
         guiaction_action_map* form_admin::getactionregistry(nodetype val) {
@@ -277,16 +280,17 @@ namespace dvnci {
 
         void form_admin::select_and_loaditem(uiwidgetitem* item ) {
                 if (item) curitem_ = item;
-                item->treeWidget()->setCurrentItem(item);
+                curitem_->treeWidget()->setCurrentItem(curitem_);
                 proc_treeclick(curitem_, 0);}
 
         void form_admin::registmediator(nodetype tp, abstractmediator* medr) {
-            viewmediator_ptr ptr(medr);
-            mediators->insert(mediator_pair((0xFFFF & tp), ptr));}
+			viewmediator_ptr ptr(medr);
+            mediators.insert(mediator_pair((0xFFFF & tp), ptr));}
 
         void form_admin::registmediator(nodetype* tp, size_t cnt, abstractmediator* medr) {
-            for (size_t i = 0; i < cnt; i++) {
-                registmediator(*tp, medr);
+            viewmediator_ptr ptr(medr);
+			for (size_t i = 0; i < cnt; i++) {
+                mediators.insert(mediator_pair((0xFFFF & *tp), ptr));
                 tp++;}}
 
         void form_admin::mediator(abstractmediator* medr) {
@@ -298,8 +302,8 @@ namespace dvnci {
             currentmediator = medr;}
 
         void form_admin::mediator(nodetype tp) {
-            mediator_map::iterator it = mediators->find(0xFFFF & tp);
-            if (it != mediators->end()) mediator(it->second.get());}
+            mediator_map::iterator it = mediators.find(0xFFFF & tp);
+            if (it != mediators.end()) mediator(it->second.get());}
 
         void form_admin::registicon(int tp, QIcon& icn) {
             icons->insert(icon_pair(nodeinfotype((0xFFFF & tp), 0), icn));}
