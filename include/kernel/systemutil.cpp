@@ -134,10 +134,12 @@ namespace dvnci {
 
     bool util_static_size_shmemory::init_region() {
         map_utl( mainmem, mapname() , isnew_ , size_ + sizeof (intern_header));
-        intern_hdr = new (get_address_internal()) intern_header;
         if (isnew_) {
+            intern_hdr = new (get_address_internal()) intern_header;
             DEBUG_STR_VAL_DVNCI(FIRSTLOAD, mapname());
             size_internal(size_ + sizeof (intern_header));}
+        else{
+            intern_hdr = (intern_header*)get_address_internal();};
         INP_EXCLUSIVE_LOCK(memlock());
         intern_hdr->cnt++;
         return mainmem.get_address();}
@@ -152,15 +154,17 @@ namespace dvnci {
             sz += siz;
             sz += sizeof (intern_header);
             size_ = sz;
-            if (init_region()) {
-                intern_hdr = new (get_address_internal()) intern_header;
+            if (init_region()) {               
                 if (isnew()) {
+                    intern_hdr = new (get_address_internal()) intern_header;
                     INP_EXCLUSIVE_LOCK(filelock());
                     size_internal(size_);
                     if (!filestream::read(file.string(), get_address() , 0, siz)) {
-                        return;}};}
+                        return;}}
+                else{
+                    intern_hdr = (intern_header*)get_address_internal();}
             INP_EXCLUSIVE_LOCK(memlock());
-            intern_hdr->cnt++;}}
+            intern_hdr->cnt++;}}};
     
       util_filemapmemory::~util_filemapmemory() {{
             INP_EXCLUSIVE_LOCK(memlock());
