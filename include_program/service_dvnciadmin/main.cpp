@@ -15,6 +15,7 @@
 #include <kernel/memfile.h>
 #include <kernel/systemutil.h>
 #include <kernel/serviceapp.h>
+#include <kernel/factory.h>
 
 
 using namespace dvnci;
@@ -37,18 +38,13 @@ fspath                        basepath;
 class ns_adminserver {
 public:
 
-    void setIntf(adminintf_ptr intf_) {
-        intf = intf_;}
-
-    bool isIntf() {
-        return (intf);}
 
     ns_adminserver(boost::asio::io_service& io_service,
-            const tcp::endpoint& endpoint, adminintf_ptr intf_)
+            const tcp::endpoint& endpoint, tagsbase_ptr inf)
     : io_service_(io_service),
-    acceptor_(io_service, endpoint) {
-        intf = intf_;
-        ns_adminsession_ptr new_session(new adminsession(io_service_, intf_));
+    acceptor_(io_service, endpoint), intf(inf) {
+        adminintf_ptr inf_tmp = dvnci::admin::factory::build(intf);
+        ns_adminsession_ptr new_session(new adminsession(io_service_, inf_tmp));
         acceptor_.async_accept(new_session->socket(),
                 boost::bind(&ns_adminserver::handle_accept, this, new_session,
                 boost::asio::placeholders::error));}
@@ -58,15 +54,16 @@ public:
         if (!error) {
             session->start();
             DEBUG_STR_DVNCI(Handle accepted);
-            ns_adminsession_ptr new_session(new adminsession(io_service_, intf));
+            adminintf_ptr inf_tmp = dvnci::admin::factory::build(intf);
+            ns_adminsession_ptr new_session(new adminsession(io_service_, inf_tmp));
             acceptor_.async_accept(new_session->socket(),
                     boost::bind(&ns_adminserver::handle_accept, this, new_session,
                     boost::asio::placeholders::error));}}
 
 private:
     boost::asio::io_service& io_service_;
-    tcp::acceptor acceptor_;
-    adminintf_ptr intf;} ;
+    tcp::acceptor            acceptor_;
+    tagsbase_ptr             intf;} ;
 
 typedef boost::shared_ptr<ns_adminserver> ns_adminserver_ptr;
 
@@ -84,7 +81,6 @@ public:
                 boost::thread::sleep(xt_loop);
                 if  (!terminate_var) break;}}
 
-        intf.reset();
         return true;}
 
     virtual void terminate() {
@@ -94,11 +90,12 @@ public:
 protected:
 
     virtual bool initialize()  {
-        adminintf_ptr intf = factory::build(basepath,  NS_ADMIN_SERVICE);
+        intf = dvnci::krnl::factory::build(basepath,  NS_ADMIN_SERVICE);
         if (!intf) return false;
-        remote_port = to_str(intf->conf_numproperty(NS_CNFG_ADMINPORT));
+        remote_port = to_str(intf->conf_property(NS_CNFG_ADMINPORT));
         tcp::endpoint endpoint(tcp::v4(), str_to<int>(remote_port.c_str()));
-        ns_adminserver_ptr server(new ns_adminserver(io_service, endpoint, intf));
+        DEBUG_VAL_DVNCI(remote_port);
+        server = ns_adminserver_ptr(new ns_adminserver(io_service, endpoint, intf));
         io_service.run();
         return true;}
 
@@ -106,7 +103,8 @@ protected:
         return true;}
 
 private:
-    adminintf_ptr intf;} ;
+    tagsbase_ptr             intf;
+    ns_adminserver_ptr       server;} ;
 
 int main(int argc, char* argv[]) {
     std::string quit_in;
