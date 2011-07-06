@@ -193,6 +193,7 @@ namespace dvnci {
             widget.treeWidget->clear();
             widget.treeWidget1->clear();
             widget.treeWidget2->clear();
+			intf_vect.clear();
 
             thmain.join();
             thview.join();
@@ -715,7 +716,7 @@ namespace dvnci {
             if (curitem()) {
                 if (curitem()->nodetp() == NT_ROOT_SERVERS_AVAIL_R) {
                     curitem()->intf()->disconnect();}
-                configurator.removeserver(curitem()->intf()->fullnamed());
+				configurator.removeserver(dvnci::trim_copy(curitem()->intf()->named()));
                 curitem()->clear_child();
                 uiwidgetitem* parent_ = (uiwidgetitem*) curitem()->parent();
                 delete curitem();
