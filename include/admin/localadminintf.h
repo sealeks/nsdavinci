@@ -10,6 +10,7 @@
 
 
 #include <admin/adminintf.h>
+#include <kernel/memfile.h>
 
 namespace dvnci {
     namespace admin {
@@ -1016,12 +1017,12 @@ namespace dvnci {
 
         private:
             
-            tagsbase*    intf;
-            iteminfo_map key_name_map;
-            fspath       path;
-            appidtype    appid;
-            eventtypeset events;
-            dvnci::meta  metaintf_;
+            tagsbase_ptr              intf;
+            iteminfo_map              key_name_map;
+            fspath                    path;
+            appidtype                 appid;
+            eventtypeset              events;
+            dvnci::meta               metaintf_;
 
             void setintf(tagsbase* intf_);} ;}}
 
