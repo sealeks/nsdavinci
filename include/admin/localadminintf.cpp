@@ -177,6 +177,8 @@ namespace dvnci {
             if (_state == adminintf::connected) return true;
             try {
                 DEBUG_STR_VAL_DVNCI(opend local, path);
+                if (path.string().empty())
+                    return false;
                 intf = tagsbase_ptr (new tagsbase(path , appid, events));
                 _state = adminintf::connected;
                 setintf(intf.get());
