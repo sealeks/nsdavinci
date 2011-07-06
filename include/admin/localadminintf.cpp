@@ -150,9 +150,9 @@ namespace dvnci {
             if (_state == adminintf::connected) return true;
             try {
                 DEBUG_STR_VAL_DVNCI(opend local, path);
-                intf = new tagsbase(path , appid, events);
+                intf = tagsbase_ptr (new tagsbase(path , appid, events));
                 _state = adminintf::connected;
-                setintf(intf);
+                setintf(intf.get());
                 metaintf_.connect(path);
                 _error = 0;
                 adminname = conf_property(NS_CNFG_ADMINNAME);
@@ -179,7 +179,6 @@ namespace dvnci {
             if (_state == adminintf::disconnected) {
                 return true;}
             try {
-                if (intf) delete intf;
                 metaintf_.disconnect();
                 _state = adminintf::disconnected;
                 setintf(0);
@@ -521,18 +520,17 @@ namespace dvnci {
 		    return servicemanager_ptr();} 
 
         void localadminintf::setintf(tagsbase* intf_) {
-            intf = intf_;
-            dynamic_cast<localtagintf*> (tag_.get())->setintf(intf);
-            dynamic_cast<localgroupintf*> (group_.get())->setintf(intf);
-            dynamic_cast<localagroupintf*> (agroup_.get())->setintf(intf);
-            dynamic_cast<localuserintf*> (users_.get())->setintf(intf);
-            dynamic_cast<localaccessruleintf*> (accessrules_.get())->setintf(intf);
-            dynamic_cast<localclientsintf*> (clients_.get())->setintf(intf);
-            dynamic_cast<localjournalintf*> (journal_.get())->setintf(intf);
-            dynamic_cast<localalarmsintf*> (alarms_.get())->setintf(intf);
-            dynamic_cast<localregistryintf*> (reg_.get())->setintf(intf);
-            dynamic_cast<localcommandintf*> (command_.get())->setintf(intf);
-            dynamic_cast<localdebugintf*> (debug_.get())->setintf(intf);
+            dynamic_cast<localtagintf*> (tag_.get())->setintf(intf.get());
+            dynamic_cast<localgroupintf*> (group_.get())->setintf(intf.get());
+            dynamic_cast<localagroupintf*> (agroup_.get())->setintf(intf.get());
+            dynamic_cast<localuserintf*> (users_.get())->setintf(intf.get());
+            dynamic_cast<localaccessruleintf*> (accessrules_.get())->setintf(intf.get());
+            dynamic_cast<localclientsintf*> (clients_.get())->setintf(intf.get());
+            dynamic_cast<localjournalintf*> (journal_.get())->setintf(intf.get());
+            dynamic_cast<localalarmsintf*> (alarms_.get())->setintf(intf.get());
+            dynamic_cast<localregistryintf*> (reg_.get())->setintf(intf.get());
+            dynamic_cast<localcommandintf*> (command_.get())->setintf(intf.get());
+            dynamic_cast<localdebugintf*> (debug_.get())->setintf(intf.get());
             dynamic_cast<localmetaintf*> (clientmeta_.get())->setintf(&metaintf_);};}}
 
 
