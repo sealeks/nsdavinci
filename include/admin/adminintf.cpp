@@ -269,8 +269,7 @@ namespace dvnci {
                     break;};}
             return NS_ERROR_SUCCESS;};
 
-        adminintf::adminintf() : locale_(0) {
-            isautorizated_ = false;
+        adminintf::adminintf() : locale_(0), isautorizated_(false)  {
             config_map.insert(confinfo_pair(NS_CNFG_ROOT, 0));
             config_map.insert(confinfo_pair(NS_CNFG_PATH, 1));
             config_map.insert(confinfo_pair(NS_CNFG_NAME, 2));

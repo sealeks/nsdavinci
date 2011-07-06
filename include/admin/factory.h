@@ -28,6 +28,10 @@ public:
         adminintf* tmpintf= new localadminintf(path, appid_, events_);
         if (needconnect) tmpintf->connect();
          return adminintf_ptr(tmpintf);}
+    
+    static adminintf_ptr build(tagsbase_ptr inf){
+        adminintf* tmpintf= new localadminintf(inf);
+         return adminintf_ptr(tmpintf);}    
 
     
     static adminintf_ptr build(const char* host_, bool needconnect = false){

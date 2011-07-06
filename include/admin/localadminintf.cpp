@@ -129,8 +129,8 @@ namespace dvnci {
 
         /////////////////////////////////////////////////////////////////////////////
 
-        localadminintf::localadminintf(const fspath& pth, appidtype app, eventtypeset evts) : adminintf(), path(pth), appid(app), events(evts) {
-
+        localadminintf::localadminintf(const fspath& pth, appidtype app, eventtypeset evts) : adminintf(), path(pth), 
+                appid(app), events(evts),  regclid(0) {
             tag_ = tagintf_ptr(new localtagintf(this));
             group_ = groupintf_ptr(new localgroupintf(this));
             agroup_ = agroupintf_ptr(new localagroupintf(this));
@@ -144,6 +144,33 @@ namespace dvnci {
             debug_ = debugintf_ptr(new localdebugintf(this));
             clientmeta_ = metaintf_ptr(new localmetaintf(this));
             serviceintf_ = serviceintf_ptr(new localserviceintf());}
+        
+        localadminintf::localadminintf(tagsbase_ptr inf) : adminintf(), intf(inf),  
+                appid(0), events(0),  regclid(0){
+            if (intf) path=intf->path();
+            tag_ = tagintf_ptr(new localtagintf(this));
+            group_ = groupintf_ptr(new localgroupintf(this));
+            agroup_ = agroupintf_ptr(new localagroupintf(this));
+            users_ = userintf_ptr(new localuserintf(this));
+            accessrules_ = accessruleintf_ptr(new localaccessruleintf(this));
+            journal_ = journalintf_ptr(new localjournalintf(this));
+            alarms_ = alarmsintf_ptr(new localalarmsintf(this));
+            reg_ = registryintf_ptr(new localregistryintf(this));
+            clients_ = clientsintf_ptr(new localclientsintf(this));
+            command_ = commandintf_ptr(new localcommandintf(this));
+            debug_ = debugintf_ptr(new localdebugintf(this));
+            clientmeta_ = metaintf_ptr(new localmetaintf(this));
+            serviceintf_ = serviceintf_ptr(new localserviceintf());
+            if (intf) {
+                _state = adminintf::connected;
+                setintf(intf.get());
+                metaintf_.connect(path);
+                _error = 0;
+                adminname = conf_property(NS_CNFG_ADMINNAME);}
+            else{
+                setintf(0);
+                _error = 1;
+                _state = adminintf::disconnected;}}
 
         bool localadminintf::connect(const std::string& user, const std::string& password) {
             clearerrors();
@@ -176,6 +203,8 @@ namespace dvnci {
 
         bool localadminintf::disconnect() {
             clearerrors();
+            if (regclid){ 
+                    intf->unregclient(regclid);}
             if (_state == adminintf::disconnected) {
                 return true;}
             try {
@@ -504,8 +533,16 @@ namespace dvnci {
                 return true;}
             return false;}
 
-        ns_error localadminintf::operation_autorizate(const std::string& user, const std::string& password, const std::string& hst, const std::string& ipadr) {
-            return (intf->regclient(hst, ipadr, user, password)) ? NS_ERROR_SUCCESS : ERROR_AUTORIZATION_FAIL;}
+        ns_error localadminintf::operation_autorizate(const std::string& user, const std::string& password) {
+             if (!isautorizated_){
+                  regclid=intf->regclient(address.to_string(),"IP",user, password);
+                  if (regclid) {
+                       isautorizated_=true;
+                        return 0;}
+                    else{
+                      isautorizated_=false;
+                      return ERROR_AUTORIZATION_FAIL;}}      
+                return 0;}
 
         bool localadminintf::operation_startservice(appidtype val) {
             OUTSTRVAL_DVNCI(operation_startservice, val) ;

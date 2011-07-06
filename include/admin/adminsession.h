@@ -22,11 +22,8 @@ namespace dvnci {
         : public boost::enable_shared_from_this<adminsession> {
         public:
 
-            adminsession(boost::asio::io_service& io_service, adminintf_ptr intf_)
-            : io(io_service), socket_(io_service){
-
-                intf = intf_;
-                autorization_ = false;
+            adminsession(boost::asio::io_service& io_service, adminintf_ptr inf)
+            : io(io_service), socket_(io_service), adminintf(inf) {
                 DEBUG_STR_DVNCI(chat_session.chat_session);}
 
             virtual ~adminsession() {}
@@ -34,14 +31,10 @@ namespace dvnci {
             boost::asio::ip::tcp::socket& socket() {
                 return socket_;}
 
-            void setintf(adminintf_ptr intf_) {
-                intf = intf_;}
-
-            bool isIntf() {
-                return (intf);}
-
             void start() {
+                
                 DEBUG_STR_DVNCI(admin_session);
+                adminintf->setaddress(socket_.remote_endpoint().address());
                 boost::asio::async_read(socket_,
                         boost::asio::buffer(boost::asio::buffer(bufheader), dvnci::rpc::rpcmessage::header_length),
                         boost::bind(
@@ -105,7 +98,7 @@ namespace dvnci {
                     prb_binary_iarchive in_archive(in_archive_stream);
                     in_archive >> reqstruct;
 
-                    num16 resptp = intf->generate_impl(reqstruct, respstruct);
+                    num16 resptp = adminintf->generate_impl(reqstruct, respstruct);
 
                     prb_binary_oarchive out_archive(out_archive_stream);
                     out_archive << respstruct;
@@ -122,16 +115,15 @@ namespace dvnci {
 
 
         private:
-            boost::asio::io_service& io;
+            boost::asio::io_service&     io;
             boost::asio::ip::tcp::socket socket_;
-            dvnci::rpc::rpcmessage read_msg_;
-            dvnci::rpc::rpcmessage write_msg_;
-            std::string read_str;
-            std::string write_str;
-            boost::array<char, 10 > bufheader;
-            boost::asio::streambuf request;
-            adminintf_ptr intf;
-            bool autorization_;} ;
+            dvnci::rpc::rpcmessage       read_msg_;
+            dvnci::rpc::rpcmessage       write_msg_;
+            std::string                  read_str;
+            std::string                  write_str;
+            boost::array<char, 10 >      bufheader;
+            boost::asio::streambuf       request;
+            adminintf_ptr                adminintf;} ;
 
         typedef boost::shared_ptr<adminsession> ns_adminsession_ptr;}}
 
