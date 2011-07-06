@@ -912,6 +912,8 @@ namespace dvnci {
             adminintf();
 
             virtual ~adminintf() {};
+            
+            virtual void setaddress(const boost::asio::ip::address& adr){}
 
             bool isautorizated() const {
                 return isautorizated_;}
@@ -1367,8 +1369,7 @@ namespace dvnci {
 
             virtual bool     operation_stopservice(appidtype val) = 0;
 
-            virtual ns_error operation_autorizate(const std::string& user = "", const std::string& password = "",
-                                                  const std::string& hst = "localhost", const std::string& ipadr = "localhost") = 0;
+            virtual ns_error operation_autorizate(const std::string& user = "", const std::string& password = "") = 0;
 
             virtual void     host(std::string host_, std::string port_, unsigned int timout = DEFAULT_DVNCI_TIMOUT) {}
 

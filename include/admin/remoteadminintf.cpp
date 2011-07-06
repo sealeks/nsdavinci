@@ -915,7 +915,7 @@ namespace dvnci {
 
             return NS_ERROR_SUCCESS;}
 
-        ns_error remoteadminintf::operation_autorizate(const std::string& user, const std::string& password, const std::string& hst, const std::string& ipadr) {
+        ns_error remoteadminintf::operation_autorizate(const std::string& user, const std::string& password) {
             THD_EXCLUSIVE_LOCK(mutex);
             resp_autorization tpmresp;
             try {

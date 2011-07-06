@@ -870,6 +870,8 @@ namespace dvnci {
             
 
         class localadminintf : public adminintf {
+            
+            
             friend class localtagintf;
             friend class localgroupintf;
             friend class localagroupintf;
@@ -906,11 +908,15 @@ namespace dvnci {
         public:
 
             localadminintf(const fspath& pth, appidtype app = 0, eventtypeset evnts = 0);
+            
+            localadminintf(tagsbase_ptr inf);
 
             virtual ~localadminintf () {
                 disconnect();};
                 
-
+            virtual void setaddress(const boost::asio::ip::address& adr){
+                    address=adr;}
+                
             virtual bool connect(const std::string& user = "", const std::string& password = "");
 
             virtual bool disconnect();
@@ -986,8 +992,7 @@ namespace dvnci {
 
             virtual bool operation_send_command(indx id, std::string val, bool setqueue = true);
 
-            virtual ns_error operation_autorizate(const std::string& user = "", const std::string& password = "",
-                                                  const std::string& hst = "localhost", const std::string& ipadr = "localhost");
+            virtual ns_error operation_autorizate(const std::string& user = "", const std::string& password = "");
 
             virtual bool operation_startservice(appidtype val);
 
@@ -1023,6 +1028,8 @@ namespace dvnci {
             appidtype                 appid;
             eventtypeset              events;
             dvnci::meta               metaintf_;
+            boost::asio::ip::address  address;
+            guidtype                  regclid;
 
             void setintf(tagsbase* intf_);} ;}}
 

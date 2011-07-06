@@ -1094,8 +1094,7 @@ namespace dvnci {
 
             virtual bool operation_stopservice(appidtype val);
 
-            virtual ns_error operation_autorizate(const std::string& user = "", const std::string& password = "",
-                                                  const std::string& hst = "localhost", const std::string& ipadr = "localhost");
+            virtual ns_error operation_autorizate(const std::string& user = "", const std::string& password = "");
 
             virtual void host(std::string hst, std::string prt, unsigned int timout = DEFAULT_DVNCI_TIMOUT) {
                 host_ = hst;
