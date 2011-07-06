@@ -177,7 +177,7 @@ namespace dvnci {
             mutable indx_set viewset_;
             QMenu* mainTreeMenue;
             Ui::form_admin widget;
-            mediator_map* mediators;
+            mediator_map mediators;
             icon_map* icons;
             registry_filter_vect filter_vect;
             adminintf_vect intf_vect;
