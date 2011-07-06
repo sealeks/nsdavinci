@@ -244,15 +244,15 @@ namespace dvnci {
         struct intern_header {
 
             intern_header() : size(0) {};
-            unum64 size;
+            unum64          size;
+            unum64          cnt;
             interproc_mutex memlock;} ;
 
     public:
 
-        util_static_size_shmemory(std::string name, size_t sz) : util_memory(name, (sz + ADDITINAL_STATIC_MAPSIZIZE) ) {
-            init_region();}
+        util_static_size_shmemory(std::string name, size_t sz);
 
-        virtual ~util_static_size_shmemory() {}
+        virtual ~util_static_size_shmemory();
 
         virtual void* get_address() {
             return static_cast<void*> (static_cast<intern_header*> (get_address_internal()) + 1);}
@@ -294,6 +294,7 @@ namespace dvnci {
 
             intern_header() : size(0) {};
             unum64          size;
+            unum64          cnt;            
             interproc_mutex memlock;
             interproc_mutex filelock;} ;
 
@@ -301,7 +302,7 @@ namespace dvnci {
 
         util_filemapmemory(const std::string& name, const fspath& file, size_t sz);
 
-        virtual ~util_filemapmemory() {}
+        virtual ~util_filemapmemory();
 
         virtual void* get_address() {
             return static_cast<void*> (static_cast<intern_header*> (get_address_internal()) + 1);}

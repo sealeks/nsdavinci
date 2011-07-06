@@ -68,9 +68,12 @@ namespace dvnci {
     ///////////////////////////////////////////////////////////////           
 
     void util_memory::remove_main() {
-        try {
+#ifdef _DVN_LIN_ 
+        try {           
             boost::interprocess::shared_memory_object::remove(mapname().c_str());}
-        catch (...) {}}
+        catch (...) {}
+#endif    
+    ;}
 
     bool util_memory::map(boost::interprocess::mapped_region& rgn, std::string name, size_t size) {
         try {
@@ -119,6 +122,15 @@ namespace dvnci {
 
 
     // util_static_size_shmemory  
+    
+    util_static_size_shmemory::util_static_size_shmemory(std::string name, size_t sz) : util_memory(name, (sz + ADDITINAL_STATIC_MAPSIZIZE) ) {
+            init_region();}
+    
+    util_static_size_shmemory::~util_static_size_shmemory(){{            
+            INP_EXCLUSIVE_LOCK(memlock());
+            intern_hdr->cnt--;}
+            if (!intern_hdr->cnt){
+                remove_main();}}
 
     bool util_static_size_shmemory::init_region() {
         map_utl( mainmem, mapname() , isnew_ , size_ + sizeof (intern_header));
@@ -126,6 +138,8 @@ namespace dvnci {
             DEBUG_STR_VAL_DVNCI(FIRSTLOAD, mapname());
             intern_hdr = new (get_address_internal()) intern_header;
             size_internal(size_ + sizeof (intern_header));}
+        INP_EXCLUSIVE_LOCK(memlock());
+        intern_hdr->cnt++;
         return mainmem.get_address();}
 
 
@@ -144,7 +158,15 @@ namespace dvnci {
                     INP_EXCLUSIVE_LOCK(filelock());
                     size_internal(size_);
                     if (!filestream::read(file.string(), get_address() , 0, siz)) {
-                        return;}};}}}
+                        return;}};}
+            INP_EXCLUSIVE_LOCK(memlock());
+            intern_hdr->cnt++;}}
+    
+      util_filemapmemory::~util_filemapmemory() {{
+            INP_EXCLUSIVE_LOCK(memlock());
+            intern_hdr->cnt--;}
+            if (!intern_hdr->cnt){
+                remove_main();}}    
 
     size_t util_filemapmemory::writetofile(size_t offset , size_t sz ) {
         if (!sz) return 0;
