@@ -1236,6 +1236,9 @@ namespace dvnci {
                 lock_nameexclusive ontimeinit = lock_nameexclusive(tagsbase::one_init()));
 
         virtual ~tagsbase();
+        
+        fspath  path() const {
+            return fpath;};
 
 
         static void writezero(const fspath& basepatht, lcltype loc = NS_CODPAGE_UTF8);
