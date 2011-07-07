@@ -20,11 +20,11 @@
                     <type>1</type>
                 </confElem>
                 <confElem>
-                    <name>nb_gcc_rl_LIN64</name>
+                    <name>nb_gcc_db_LIN64</name>
                     <type>1</type>
                 </confElem>
                 <confElem>
-                    <name>nb_gcc_db_LIN64</name>
+                    <name>nb_gcc_rl_LIN64</name>
                     <type>1</type>
                 </confElem>
             </confList>

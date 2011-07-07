@@ -107,24 +107,17 @@
         </linkerTool>
       </compileType>
     </conf>
-    <conf name="nb_gcc_rl_LIN64" type="1">
+    <conf name="nb_gcc_db_LIN64" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>default</compilerSet>
+        <compilerSet>GNU|GNU</compilerSet>
       </toolsSet>
       <compileType>
-        <cTool>
-          <developmentMode>5</developmentMode>
-        </cTool>
         <ccTool>
-          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../../include</pElem>
+          </incDir>
         </ccTool>
-        <fortranCompilerTool>
-          <developmentMode>5</developmentMode>
-        </fortranCompilerTool>
-        <asmTool>
-          <developmentMode>5</developmentMode>
-        </asmTool>
         <linkerTool>
           <output>../../bin/${CND_CONF}/consol_admin</output>
           <linkerAddLib>
@@ -148,17 +141,24 @@
         </linkerTool>
       </compileType>
     </conf>
-    <conf name="nb_gcc_db_LIN64" type="1">
+    <conf name="nb_gcc_rl_LIN64" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
       </toolsSet>
       <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
         <ccTool>
-          <incDir>
-            <pElem>../../include</pElem>
-          </incDir>
+          <developmentMode>5</developmentMode>
         </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
         <linkerTool>
           <output>../../bin/${CND_CONF}/consol_admin</output>
           <linkerAddLib>
