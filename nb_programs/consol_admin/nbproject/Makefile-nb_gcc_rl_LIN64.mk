@@ -52,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lmeta -lnsadmin -lboost_thread -lboost_wserialization -lboost_system -lboost_serialization -lboost_regex -lboost_program_options -lboost_iostreams -lboost_filesystem -lboost_date_time
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -lmeta -lnskernel -lnsadmin -lboost_thread -lboost_wserialization -lboost_system -lboost_serialization -lboost_regex -lboost_program_options -lboost_filesystem -lboost_date_time -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
