@@ -71,6 +71,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <iterator>
 #include <set>
 #include <vector>
 #include <deque>
@@ -205,6 +206,7 @@ namespace dvnci {
     typedef unum32             ounum;
     typedef num32              onum;
     typedef std::size_t        indx;
+#define DVNCI_WCHAR16
 #elif defined(_DVN_WIN32_VC_)
     typedef unsigned char      unum8;
     typedef char               num8;
@@ -217,6 +219,7 @@ namespace dvnci {
     typedef unum32             ounum;
     typedef num32              onum;
     typedef std::size_t        indx;
+#define DVNCI_WCHAR16    
 #elif defined(_DVN_LIN64_GNU_)
     typedef unsigned char      unum8;
     typedef char               num8;
@@ -226,15 +229,21 @@ namespace dvnci {
     typedef int                num32;
     typedef unsigned long long unum64;
     typedef long long          num64;
-
     typedef unum64             ounum;
-    typedef num64              onum;
-   
-    typedef std::size_t        indx;    
+    typedef num64              onum;  
+    typedef std::size_t        indx;
+#define DVNCI_WCHAR32    
 #else    
     #error Type not defined. Spec compiler and OS error
 #endif
 
+#if defined(DVNCI_WCHAR16)
+    BOOST_STATIC_ASSERT(sizeof(wchar_t) == 2);
+#elif defined(DVNCI_WCHAR32)
+    BOOST_STATIC_ASSERT(sizeof(wchar_t) == 4);
+#else    
+    #error DVNCI_WCHAR16 or DVNCI_WCHAR32 not defined
+#endif    
     
     typedef boost::posix_time::ptime datetime;
 
@@ -485,7 +494,7 @@ namespace dvnci {
 
 
     const std::string NEMESPACEDELIMIT = "::";
-
+    const std::wstring WNEMESPACEDELIMIT = L"::";
 
     typedef num32 ns_error;
 
@@ -501,6 +510,8 @@ namespace dvnci {
     typedef std::vector<indx>                                             indx_vect;
 
     typedef std::vector<std::string>                                      str_vect;
+    
+    typedef std::vector<std::wstring>                                     wstr_vect;    
 
     typedef std::vector<num64>                                            num64_vect;
 
@@ -1007,6 +1018,9 @@ namespace dvnci {
     
     const std::string WSP_STRING_WO_SP                     = "\x9\xD\xA";
     const std::string WSP_STRING                           = "\x20\x9\xD\xA";
+    
+    const std::wstring WWSP_STRING_WO_SP                     = L"\x9\xD\xA";
+    const std::wstring WWSP_STRING                           = L"\x20\x9\xD\xA";    
 
     const std::string CORRECT_ENTETYNAME_REGEXTAMPL        = "[A-Za-z_\\$][A-Za-z_\\$0-9]*+";
     const std::string CORRECT_ENTETYFULLNAME_REGEXTAMPL    = CORRECT_ENTETYNAME_REGEXTAMPL + "::" + CORRECT_ENTETYNAME_REGEXTAMPL;
