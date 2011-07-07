@@ -28,11 +28,11 @@ using namespace boost::interprocess;
 typedef std::vector<std::string>                                  stdstr_vect;
 typedef num32                                                     commandid;
 
-typedef boost::shared_ptr<std::string>                            stdstr_ptr; 
-typedef std::pair<stdstr_ptr, commandid >                         str_cmd_pair;
+typedef boost::shared_ptr<std::wstring>                           wstdstr_ptr; 
+typedef std::pair<wstdstr_ptr, commandid >                        wstr_cmd_pair;
 
-typedef num64                      columnname; 
-typedef std::vector<columnname>    columnname_vect;
+typedef num64                                                     columnname; 
+typedef std::vector<columnname>                                   columnname_vect;
     
 const columnname CN_NO      = 0;
 const columnname CN_ALL     = 0x1;
@@ -66,7 +66,7 @@ public:
 
 
                
-    basic_command_executor(adminintf_ptr inf, const std::string& arg) : intf(inf), args(arg) {}
+    basic_command_executor(adminintf_ptr inf, const std::wstring& arg) : intf(inf), args(arg) {}
     
     virtual ~basic_command_executor(){}
     
@@ -78,16 +78,16 @@ protected:
     
     virtual void parse(){};
     virtual void execute_impl(){
-       std::cout << "Basis executed :" << std::endl;};
+       std::wcout << L"Basis executed :" << std::endl;};
     adminintf_ptr intf;
-    std::string   args;};
+    std::wstring   args;};
     
     
 typedef boost::shared_ptr<basic_command_executor> command_executor_ptr;  
 
 
-command_executor_ptr command_factory(adminintf_ptr inf, const std::string& cmd);
-bool column_factory(std::string& cmd);
+command_executor_ptr command_factory(adminintf_ptr inf, const std::wstring& cmd);
+bool column_factory(std::wstring& cmd);
 
 
     
@@ -104,16 +104,16 @@ public:
     
     virtual ~main_executor(){}
     
-    bool execute(const std::string& cmd){
+    bool execute(const std::wstring& cmd){
         if (intf) {
            command_executor_ptr ex = command_factory(intf, cmd);
            if (ex) {
                ex->execute();
                return true;}
            else{
-               std::cout << "No find command :" << cmd << std::endl;}
+               std::wcout << L": No find cmd: " << cmd << std::endl;}
            return true;}
-        std::cout << "No parse command :" << cmd << std::endl;
+        std::wcout << L"No parse cmd :" << cmd << std::endl;
         return false;}
     
     bool inited() const {
@@ -132,7 +132,7 @@ typedef boost::shared_ptr<main_executor> main_executor_ptr;
 
 class select_command_executor : public basic_command_executor{
 public:
-    select_command_executor(adminintf_ptr inf, const std::string& arg) : basic_command_executor(inf, arg) {}
+    select_command_executor(adminintf_ptr inf, const std::wstring& arg) : basic_command_executor(inf, arg) {}
 protected:
     virtual void parse(){
     
@@ -141,11 +141,11 @@ protected:
     virtual void execute_impl(){
        iteminfo_map tmp;
        if (!intf->select_entities(NT_GROUP,tmp,0)){
-           std::cout << "tag count : " << tmp.size() << std::endl;
+           std::wcout << L"count : " << tmp.size() << std::endl;
            for (iteminfo_map::const_iterator it=tmp.begin();it!=tmp.end();++it){
-               std::cout << "tag : id=" << it->first << " name="<<  it->second.name() << std::endl;}}
+               std::wcout << L"Tag : id=" << it->first << L" name="<<  dvnci::trim_copy(utf8_to_wstr(it->second.name())) << std::endl;}}
        else{
-          std::cout << "error reqest : " << args << std::endl;}};};
+          std::wcout << L"Error : " << args << std::endl;}};};
        
        
     

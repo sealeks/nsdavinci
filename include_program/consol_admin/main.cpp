@@ -35,7 +35,7 @@ dvnci::executable_ptr                  dvnci::mainserv;
 size_t argumetsparser(int argc, char** argv, stdstr_vect& val){
     val.clear();
     if (argc==1) return 0;
-    for (std::size_t i=1;i<argc;++i){
+    for (int i=1;i<argc;++i){
         val.push_back(std::string(argv[i]));}
     return val.size();}
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     
 
     stdstr_vect  arg;
-    std::string  quit_in;
+    std::wstring  quit_in;
     argumetsparser(argc, argv, arg);
     basepath = getlocalbasepath();
     
@@ -61,12 +61,12 @@ int main(int argc, char** argv) {
         executr=main_executor_ptr( new main_executor(arg));}
     
     while (true){
-        std::getline(std::cin,quit_in);
-        if (dvnci::lower_copy(dvnci::trim_copy(quit_in))=="q"){
+        std::getline(std::wcin,quit_in);
+        if (dvnci::lower_copy(dvnci::trim_copy(quit_in))==L"q"){
             return 0;}
         if (executr){
             executr->execute(quit_in);}
         else{
-            std::cout << "No inteface connected!" << std::endl;}}
+            std::wcout << "No inteface connected!" << std::endl;}}
     return 0;}
 
