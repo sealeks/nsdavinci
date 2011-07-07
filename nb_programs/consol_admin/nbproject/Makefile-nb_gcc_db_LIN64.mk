@@ -14,14 +14,14 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc.exe
-CCC=g++.exe
-CXX=g++.exe
+CC=gcc
+CCC=g++
+CXX=g++
 FC=gfortran
-AS=as.exe
+AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=GNU-Linux-x86
 CND_CONF=nb_gcc_db_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -56,9 +56,9 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/consol_admin.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/consol_admin
 
-../../bin/${CND_CONF}/consol_admin.exe: ${OBJECTFILES}
+../../bin/${CND_CONF}/consol_admin: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/consol_admin ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
@@ -78,7 +78,7 @@ ${OBJECTDIR}/_ext/148756256/adminconsol.o: ../../include_program/consol_admin/ad
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/consol_admin.exe
+	${RM} ../../bin/${CND_CONF}/consol_admin
 
 # Subprojects
 .clean-subprojects:
