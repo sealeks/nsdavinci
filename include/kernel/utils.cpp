@@ -6,6 +6,78 @@
 namespace dvnci {
 
     using namespace std;
+    
+     bool check_utf8(const std::string& val){
+       try{
+           return dvnci::utf8::is_valid(val.begin(), val.end());} 
+       catch(...){}
+       return false;}   
+    
+    std::wstring utf8_to_wstr(const std::string& val){
+        try{
+        string::const_iterator end_it = dvnci::utf8::find_invalid(val.begin(), val.end());
+        if (end_it != val.end()) {
+            return L"?-noUTF8";}
+        std::size_t length = dvnci::utf8::distance(val.begin(), end_it);
+        std::vector<wchar_t> unicodeline(length);
+#if defined(DVNCI_WCHAR16)
+        dvnci::utf8::utf8to16(val.begin(), end_it, back_inserter(unicodeline));
+#elif defined(DVNCI_WCHAR32)
+        dvnci::utf8::utf8to32(val.begin(), end_it, back_inserter(unicodeline));
+#else    
+        return L"?";
+#endif        
+        return std::wstring(unicodeline.begin(), unicodeline.end()); }
+        catch(...){}
+        return L"";}
+    
+    bool utf8_to_wstr(const std::string& val, std::wstring& rslt){
+        try{
+        string::const_iterator end_it = dvnci::utf8::find_invalid(val.begin(), val.end());
+        if (end_it != val.end()) {
+            return false;}
+        std::size_t length = dvnci::utf8::distance(val.begin(), end_it);
+        std::vector<wchar_t> unicodeline(length);
+#if defined(DVNCI_WCHAR16)
+        dvnci::utf8::utf8to16(val.begin(), end_it, back_inserter(unicodeline));
+#elif defined(DVNCI_WCHAR32)
+        dvnci::utf8::utf8to32(val.begin(), end_it, back_inserter(unicodeline));
+#else    
+    return false;
+#endif        
+        rslt=std::wstring(unicodeline.begin(), unicodeline.end());
+        return true;}
+        catch(...){}
+        return false;}
+    
+    std::string wstr_to_utf8(const std::wstring& val){
+        try{
+        std::string utf8line; 
+#if defined(DVNCI_WCHAR16)        
+        dvnci::utf8::utf16to8(val.begin(), val.end(), back_inserter(utf8line));
+#elif defined(DVNCI_WCHAR32) 
+        dvnci::utf8::utf32to8(val.begin(), val.end(), back_inserter(utf8line));
+#else    
+        return L"?";
+#endif        
+        return utf8line;}
+        catch(...){}
+        return "";}
+    
+    bool wstr_to_utf8(const std::wstring& val, std::string& rslt){
+        try{
+        std::string utf8line; 
+#if defined(DVNCI_WCHAR16)        
+        dvnci::utf8::utf16to8(val.begin(), val.end(), back_inserter(utf8line));
+#elif defined(DVNCI_WCHAR32) 
+        dvnci::utf8::utf32to8(val.begin(), val.end(), back_inserter(utf8line));
+#else    
+        return L"?";
+#endif        
+        rslt = utf8line;
+        return true;}
+        catch(...){}
+        return false;}   
 
     void string_to_pascalstr(void* val, const std::string& source, size_t len) {
         if (len < 2) return;
@@ -31,12 +103,25 @@ namespace dvnci {
         std::string::size_type delimitpos = vl.find_first_of(NEMESPACEDELIMIT);
         if (delimitpos != std::string::npos) vl = vl.substr(delimitpos + 2);
         return (delimitpos != std::string::npos);}
-    
+
+    bool remove_namespace_delimit(std::wstring& vl) {
+        std::wstring::size_type delimitpos = vl.find_first_of(WNEMESPACEDELIMIT);
+        if (delimitpos != std::wstring::npos) vl = vl.substr(delimitpos + 2);
+        return (delimitpos != std::wstring::npos);}
+
     std::string get_namespace_delimit(std::string& vl) {
-        std::string rslt="";
+        std::string rslt = "";
         std::string::size_type delimitpos = vl.find_first_of(NEMESPACEDELIMIT);
-        if (delimitpos != std::string::npos){
-            rslt= vl.substr(0,delimitpos);
+        if (delimitpos != std::string::npos) {
+            rslt = vl.substr(0, delimitpos);
+            vl = vl.substr(delimitpos + 2);}
+        return rslt;}
+
+    std::wstring get_namespace_delimit(std::wstring& vl) {
+        std::wstring rslt = L"";
+        std::wstring::size_type delimitpos = vl.find_first_of(WNEMESPACEDELIMIT);
+        if (delimitpos != std::wstring::npos) {
+            rslt = vl.substr(0, delimitpos);
             vl = vl.substr(delimitpos + 2);}
         return rslt;}
 
@@ -44,11 +129,23 @@ namespace dvnci {
         std::string::size_type delimitpos = vl.find_first_of(NEMESPACEDELIMIT);
         return (delimitpos != std::string::npos) ? vl.substr(delimitpos + 2) : vl;}
 
+    std::wstring retremoved_namespace_delimit(const std::wstring& vl) {
+        std::wstring::size_type delimitpos = vl.find_first_of(WNEMESPACEDELIMIT);
+        return (delimitpos != std::wstring::npos) ? vl.substr(delimitpos + 2) : vl;}
+
     void fulltrim(std::string& val) {
         boost::algorithm::replace_all(val, WSP_STRING, "");
         boost::algorithm::trim(val);}
 
+    void fulltrim(std::wstring& val) {
+        boost::algorithm::replace_all(val, WWSP_STRING, L"");
+        boost::algorithm::trim(val);}
+
     void upper_and_trim(string& val) {
+        boost::algorithm::to_upper(val);
+        boost::algorithm::trim(val);}
+
+    void upper_and_trim(wstring& val) {
         boost::algorithm::to_upper(val);
         boost::algorithm::trim(val);}
 
@@ -56,7 +153,15 @@ namespace dvnci {
         boost::algorithm::to_lower(val);
         boost::algorithm::trim(val);}
 
+    void lower_and_trim(wstring& val) {
+        boost::algorithm::to_lower(val);
+        boost::algorithm::trim(val);}
+
     void upper_and_fulltrim(string& val) {
+        boost::algorithm::to_upper(val);
+        fulltrim(val);}
+
+    void upper_and_fulltrim(wstring& val) {
         boost::algorithm::to_upper(val);
         fulltrim(val);}
 
@@ -64,16 +169,32 @@ namespace dvnci {
         boost::algorithm::to_lower(val);
         fulltrim(val);}
 
+    void lower_and_fulltrim(wstring& val) {
+        boost::algorithm::to_lower(val);
+        fulltrim(val);}
+
     string upper_copy(const std::string& val) {
+        return boost::algorithm::to_upper_copy(val);}
+
+    wstring upper_copy(const std::wstring& val) {
         return boost::algorithm::to_upper_copy(val);}
 
     string lower_copy(const std::string& val) {
         return boost::algorithm::to_lower_copy(val);}
 
+    wstring lower_copy(const std::wstring& val) {
+        return boost::algorithm::to_lower_copy(val);}
+
     string trim_copy(const std::string& val) {
         return boost::algorithm::trim_copy(val);};
 
+    wstring trim_copy(const std::wstring& val) {
+        return boost::algorithm::trim_copy(val);};
+
     std::string freechar_copy(const std::string& val, const std::string& del) {
+        return boost::algorithm::replace_all_copy(val, del, "");}
+
+    std::wstring freechar_copy(const std::wstring& val, const std::wstring& del) {
         return boost::algorithm::replace_all_copy(val, del, "");}
 
     size_t regex_tokin_parser(const std::string& val, str_vect& dst, const boost::regex& re) {
@@ -84,8 +205,19 @@ namespace dvnci {
             dst.push_back(*it++);}
         return dst.size();}
 
+    size_t regex_tokin_parser(const std::wstring& val, wstr_vect& dst, const boost::wregex& re) {
+        dst.clear();
+        boost::wsregex_token_iterator it(val.begin(), val.end(), re);
+        boost::wsregex_token_iterator end;
+        while (it != end) {
+            dst.push_back(*it++);}
+        return dst.size();}
+
     std::string fulltrim_copy(const std::string& val) {
         return freechar_copy(val, WSP_STRING);}
+
+    std::wstring fulltrim_copy(const std::wstring& val) {
+        return freechar_copy(val, WWSP_STRING);}
 
     std::string binary_block_to_hexsequence_copy(const std::string& vl) {
         std::string rslt = "";
@@ -119,7 +251,8 @@ namespace dvnci {
         num16 vltmp16 = 0;
         for (std::string::size_type i = 0; i < vl.size(); i = i + 2) {
             if (string_to_primtype<num16 > (vl.substr(i, 2), vltmp16)) {
-                vltmp = vltmp + primtype_to_string<num16 > (be_le_convert_num16(vltmp16));} else
+                vltmp = vltmp + primtype_to_string<num16 > (be_le_convert_num16(vltmp16));}
+            else
                 return false;}
         vl = vltmp;
         return true;}
@@ -147,9 +280,11 @@ namespace dvnci {
         if (split_str(source, delimit, vect) > 0) {
             if (vect.size() > 1) {
                 val1 = vect[0];
-                val2 = vect[1];} else {
+                val2 = vect[1];}
+            else {
                 val1 = vect[0];
-                val2 = "";}} else {
+                val2 = "";}}
+        else {
             val1 = source;
             val2 = "";}}
 
@@ -159,15 +294,18 @@ namespace dvnci {
             if (vect.size() > 2) {
                 val1 = vect[0];
                 val2 = vect[1];
-                val3 = vect[2];} else {
+                val3 = vect[2];}
+            else {
                 if (vect.size() > 1) {
                     val1 = vect[0];
                     val2 = vect[1];
-                    val3 = "";} else {
+                    val3 = "";}
+                else {
                     if (vect.size() > 1) {
                         val1 = vect[0];
                         val2 = "";
-                        val3 = "";} else {
+                        val3 = "";}
+                    else {
                         val1 = "";
                         val2 = "";
                         val3 = "";}}}}}
@@ -179,22 +317,26 @@ namespace dvnci {
                 val1 = vect[0];
                 val2 = vect[1];
                 val3 = vect[2];
-                val4 = vect[3];} else {
+                val4 = vect[3];}
+            else {
                 if (vect.size() > 2) {
                     val1 = vect[0];
                     val2 = vect[1];
                     val3 = vect[2];
-                    val4 = "";} else {
+                    val4 = "";}
+                else {
                     if (vect.size() > 1) {
                         val1 = vect[0];
                         val2 = vect[1];
                         val3 = "";
-                        val4 = "";} else {
+                        val4 = "";}
+                    else {
                         if (vect.size() > 1) {
                             val1 = vect[0];
                             val2 = "";
                             val3 = "";
-                            val4 = "";} else {
+                            val4 = "";}
+                        else {
                             val1 = "";
                             val2 = "";
                             val3 = "";
@@ -203,13 +345,25 @@ namespace dvnci {
     void comma_to_point(string& val) {
         boost::replace_all(val, ",", ".");}
 
+    void comma_to_point(wstring& val) {
+        boost::replace_all(val, L",", L".");}
+
     void point_to_comma(string& val) {
         boost::replace_all(val, ".", ",");}
+
+    void point_to_comma(wstring& val) {
+        boost::replace_all(val, L".", L",");}
 
     string comma_to_point_copy(const string& val) {
         return boost::replace_all_copy(val, ",", ".");}
 
+    wstring comma_to_point_copy(const wstring& val) {
+        return boost::replace_all_copy(val, L",", L".");}
+
     string point_to_comma_copy(const string& val) {
+        return boost::replace_all_copy(val, ".", ",");}
+
+    wstring point_to_comma_copy(const wstring& val) {
         return boost::replace_all_copy(val, ".", ",");}
 
     void parse_servinfo(const string& source, string& host, string& port, unsigned int& timout, string& admin, string& pass) {
@@ -227,18 +381,38 @@ namespace dvnci {
         string::size_type it = vl.find_first_not_of("0");
         vl = (it != string::npos) ? vl.substr(it) : "0";}
 
+    void clear_first_null_digit(wstring& vl) {
+        if (vl.empty()) return;
+        wstring::size_type it = vl.find_first_not_of(L"0");
+        vl = (it != wstring::npos) ? vl.substr(it) : L"0";}
+
     void fill_first_null_digit(string& vl, size_t needcsize) {
         if (vl.size() >= needcsize) return;
         while (vl.size() < needcsize) {
             vl = "0" + vl;}}
+
+    void fill_first_null_digit(wstring& vl, size_t needcsize) {
+        if (vl.size() >= needcsize) return;
+        while (vl.size() < needcsize) {
+            vl = L"0" + vl;}}
 
     std::string clear_first_null_digit_copy(const std::string& vl) {
         std::string val = vl;
         clear_first_null_digit(val);
         return val;}
 
+    std::wstring clear_first_null_digit_copy(const std::wstring& vl) {
+        std::wstring val = vl;
+        clear_first_null_digit(val);
+        return val;}
+
     std::string fill_first_null_digit_copy(const std::string& vl, size_t needcsize) {
         std::string val = vl;
+        fill_first_null_digit(val, needcsize);
+        return val;}
+
+    std::wstring fill_first_null_digit_copy(const std::wstring& vl, size_t needcsize) {
+        std::wstring val = vl;
         fill_first_null_digit(val, needcsize);
         return val;}
 
@@ -260,24 +434,51 @@ namespace dvnci {
 
     bool str_to(const std::string& val, datetime& result) {
         try {
-            result = boost::posix_time::time_from_string(val);}        catch (...) {
+            result = boost::posix_time::time_from_string(val);}
+        catch (...) {
+            return false;}
+        return true;}
+
+    bool str_to(const std::wstring& val, datetime& result) {
+        try {
+            result = boost::posix_time::time_from_string(wstr_to_utf8(val));}
+        catch (...) {
             return false;}
         return true;}
 
     void str_to(const std::string& val, const datetime& def, datetime& result) {
         result = def;
         try {
-            result = boost::posix_time::time_from_string(val);}        catch (...) {
+            result = boost::posix_time::time_from_string(val);}
+        catch (...) {
+            result = def;}}
+
+    void str_to(const std::wstring& val, const datetime& def, datetime& result) {
+        result = def;
+        try {
+            result = boost::posix_time::time_from_string(wstr_to_utf8(val));}
+        catch (...) {
             result = def;}}
 
     bool to_str(datetime val, std::string& result) {
         try {
-            result = datetime_to_string(val);}        catch (...) {
+            result = datetime_to_string(val);}
+        catch (...) {
+            return false;}
+        return true;}
+
+    bool to_str(datetime val, std::wstring& result) {
+        try {
+            result = datetime_to_wstring(val);}
+        catch (...) {
             return false;}
         return true;}
 
     std::string to_str(const datetime& val) {
         return datetime_to_string(val);}
+
+    std::wstring to_wstr(const datetime& val) {
+        return datetime_to_wstring(val);}
 
     template <> bool abs<bool>(const bool& v) {
         return v;}
@@ -300,51 +501,46 @@ namespace dvnci {
     template <> std::string abs<std::string>(const std::string& v) {
         return v;}
 
-
-
     template<>  const bool& from_num64_cast<bool>(const num64& val) {
-        return ((ptype_punned)(&val))->bl;}
+        return ((ptype_punned) (&val))->bl;}
 
     template<>  const num64& from_num64_cast<num64>(const num64& val) {
-        return ((ptype_punned)(&val))->n64;}
+        return ((ptype_punned) (&val))->n64;}
 
     template<>  const unum64& from_num64_cast<unum64>(const num64& val) {
-        return ((ptype_punned)(&val))->u64;}
+        return ((ptype_punned) (&val))->u64;}
 
     template<>  const num32& from_num64_cast<num32>(const num64& val) {
-        return ((ptype_punned)(&val))->n32;}
+        return ((ptype_punned) (&val))->n32;}
 
     template<>  const unum32& from_num64_cast<unum32>(const num64& val) {
-        return ((ptype_punned)(&val))->u32;}
+        return ((ptype_punned) (&val))->u32;}
 
     template<>  const num16& from_num64_cast<num16>(const num64& val) {
-        return ((ptype_punned)(&val))->n16;}
+        return ((ptype_punned) (&val))->n16;}
 
     template<>  const unum16& from_num64_cast<unum16>(const num64& val) {
-        return ((ptype_punned)(&val))->u16;}
+        return ((ptype_punned) (&val))->u16;}
 
     template<>  const num8& from_num64_cast<num8>(const num64& val) {
-        return ((ptype_punned)(&val))->n8;}
+        return ((ptype_punned) (&val))->n8;}
 
     template<>  const unum8& from_num64_cast<unum8>(const num64& val) {
-        return ((ptype_punned)(&val))->u8;}
+        return ((ptype_punned) (&val))->u8;}
 
     template<>  const float& from_num64_cast<float>(const num64& val) {
-        return ((ptype_punned)(&val))->fl;}
+        return ((ptype_punned) (&val))->fl;}
 
     template<>  const double& from_num64_cast<double>(const num64& val) {
-        return ((ptype_punned)(&val))->dbl;}
-    
-    template<>  const datetime& from_num64_cast<datetime>(const num64& val) {
-        return (*(datetime*)((char*)(&val)));}
-    
-    
+        return ((ptype_punned) (&val))->dbl;}
 
-    
+    template<>  const datetime& from_num64_cast<datetime>(const num64& val) {
+        return (*(datetime*) ((char*) (&val)));}
+
     template<>  num64 num64_cast<datetime>(const datetime& val) {
-        return *((num64*)((char*)(&val)));}
-    
-    template<>  num64 num64_cast<std::string>(const std::string& val){
+        return *((num64*) ((char*) (&val)));}
+
+    template<>  num64 num64_cast<std::string>(const std::string& val) {
         return 0;}
 
     template<> datetime num64_and_type_cast<datetime>(const num64& value, tagtype type) {
@@ -376,55 +572,56 @@ namespace dvnci {
             num64* val_ = const_cast<num64*> (&val);
             switch (type) {
                 case TYPE_NODEF:{
-                    boost::format format(formt.empty() ? "%8.2f": formt.c_str());
+                    boost::format format(formt.empty() ? "%8.2f" : formt.c_str());
                     format % (*reinterpret_cast<double*> (val_));
                     return format.str();}
                 case TYPE_DOUBLE:{
-                    boost::format format(formt.empty() ? "%8.2f": formt.c_str());
+                    boost::format format(formt.empty() ? "%8.2f" : formt.c_str());
                     format % (*reinterpret_cast<double*> (val_));
                     return format.str();}
                 case TYPE_FLOAT:{
-                    boost::format format(formt.empty() ? "%8.2f": formt.c_str());
+                    boost::format format(formt.empty() ? "%8.2f" : formt.c_str());
                     format % (*reinterpret_cast<float*> (val_));
                     return format.str();}
                 case TYPE_DISCRET: return val != 0 ? "1": "0";
                 case TYPE_NUM64:{
-                    boost::format format(formt.empty() ? "%d": formt.c_str());
+                    boost::format format(formt.empty() ? "%d" : formt.c_str());
                     format % (*reinterpret_cast<num64*> (val_));
                     return format.str();}
                 case TYPE_UNUM64:{
-                    boost::format format(formt.empty() ? "%u": formt.c_str());
+                    boost::format format(formt.empty() ? "%u" : formt.c_str());
                     format % (*reinterpret_cast<unum64*> (val_));
                     return format.str();}
                 case TYPE_NUM32:{
-                    boost::format format(formt.empty() ? "%d": formt.c_str());
+                    boost::format format(formt.empty() ? "%d" : formt.c_str());
                     format % (*reinterpret_cast<num32*> (val_));
                     return format.str();}
                 case TYPE_UNUM32:{
-                    boost::format format(formt.empty() ? "%u": formt.c_str());
+                    boost::format format(formt.empty() ? "%u" : formt.c_str());
                     format % (*reinterpret_cast<unum32*> (val_));
                     return format.str();}
                 case TYPE_NUM16:{
-                    boost::format format(formt.empty() ? "%d": formt.c_str());
+                    boost::format format(formt.empty() ? "%d" : formt.c_str());
                     format % (*reinterpret_cast<num16*> (val_));
                     return format.str();}
                 case TYPE_UNUM16:{
-                    boost::format format(formt.empty() ? "%u": formt.c_str());
+                    boost::format format(formt.empty() ? "%u" : formt.c_str());
                     format % (*reinterpret_cast<unum16*> (val_));
                     return format.str();}
                 case TYPE_NUM8:{
-                    boost::format format(formt.empty() ? "%d": formt.c_str());
+                    boost::format format(formt.empty() ? "%d" : formt.c_str());
                     format % (*reinterpret_cast<num8*> (val_));
                     return format.str();}
                 case TYPE_UNUM8:{
-                    boost::format format(formt.empty() ? "%u": formt.c_str());
+                    boost::format format(formt.empty() ? "%u" : formt.c_str());
                     format % (*reinterpret_cast<num8*> (val_));
                     return format.str();}
                 case TYPE_TM: num64_and_type_cast<std::string > (val, type);
                 default:{
                     boost::format format(formt.empty() ? "%8.2f" : formt.c_str());
                     format % (*reinterpret_cast<double*> (val_));
-                    return format.str();}}}        catch (...) {}
+                    return format.str();}}}
+        catch (...) {}
         return "";}
 
     std::string num64_and_type_cast(const num64& val, tagtype type, onum ladsk) {
@@ -610,7 +807,8 @@ namespace dvnci {
         boost::xtime_get(&xt, boost::TIME_UTC);
         xt.sec += tmout / 1000;
         if ((xt.nsec + (tmout % 1000) * 1000000) < 1000000000) {
-            xt.nsec += (tmout % 1000) * 1000000;} else {
+            xt.nsec += (tmout % 1000) * 1000000;}
+        else {
             xt.sec += 1;
             xt.nsec += ((tmout % 1000) * 1000000 + xt.nsec - 1000000000);}
         return xt;}
@@ -625,8 +823,9 @@ namespace dvnci {
         boost::xtime xt;
         boost::xtime_get(&xt, boost::TIME_UTC);
         xt.sec -= tmout / 1000;
-        if (static_cast<timeouttype>(xt.nsec) > ((tmout % 1000) * 1000000)) {
-            xt.nsec -= ((tmout % 1000) * 1000000);} else {
+        if (static_cast<timeouttype> (xt.nsec) > ((tmout % 1000) * 1000000)) {
+            xt.nsec -= ((tmout % 1000) * 1000000);}
+        else {
             xt.sec -= 1;
             xt.nsec = 1000000000 - ((tmout % 1000) * 1000000 - xt.nsec);}
         return ((vl.sec < xt.sec) || ((vl.sec == xt.sec) && (vl.nsec < xt.nsec)));}
@@ -641,7 +840,8 @@ namespace dvnci {
         boost::xtime_get(&xt, boost::TIME_UTC);
         xt.sec += milsec / 1000;
         if ((xt.nsec + (milsec % 1000) * 1000000) < 1000000000) {
-            xt.nsec += (milsec % 1000) * 1000000;} else {
+            xt.nsec += (milsec % 1000) * 1000000;}
+        else {
             xt.sec += 1;
             xt.nsec += ((milsec % 1000) * 1000000 + xt.nsec - 1000000000);}}
 
@@ -649,10 +849,10 @@ namespace dvnci {
         boost::xtime_get(&xt, boost::TIME_UTC);
         xt.sec += microsec / 1000000;
         if ((xt.nsec + (microsec % 1000000) * 1000) < 1000000000) {
-            xt.nsec += (microsec % 1000000) * 1000;} else {
+            xt.nsec += (microsec % 1000000) * 1000;}
+        else {
             xt.sec += 1;
             xt.nsec += ((microsec % 1000000) * 1000 + xt.nsec - 1000000000);}}
-    
 
     num64 nownum64() {
         return castnum64_from_datetime(now());}
@@ -689,7 +889,8 @@ namespace dvnci {
 
     datetime cast_datetime_fromnum64(num64 val) {
         try {
-            return val != 0 ? * reinterpret_cast<datetime*> (&val) : datetime();}        catch (...) {}
+            return val != 0 ? * reinterpret_cast<datetime*> (&val) : datetime();}
+        catch (...) {}
         return nill_time;}
 
     num64 castnum64_from_datetime(datetime val) {
@@ -717,35 +918,59 @@ namespace dvnci {
             if (withmsec) {
                 boost::format frmt("%02.2d:%02.2d:%02.2d.%03.3d");
                 frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds() % val.time_of_day().total_milliseconds();
-                tmp += frmt.str();} else {
+                tmp += frmt.str();}
+            else {
                 boost::format frmt("%02.2d:%02.2d:%02.2d");
                 frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds();
                 tmp += frmt.str();}
-            return tmp;}        catch (...) {}
+            return tmp;}
+        catch (...) {}
         return "null";}
+
+    std::wstring datetime_to_wstring(datetime val, bool withmsec) {
+        try {
+            if (val.is_special()) return L"";
+            std::wstring tmp = boost::gregorian::to_iso_extended_wstring(val.date()) + L" ";
+            if (withmsec) {
+                boost::wformat frmt(L"%02.2d:%02.2d:%02.2d.%03.3d");
+                frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds() % val.time_of_day().total_milliseconds();
+                tmp += frmt.str();}
+            else {
+                boost::wformat frmt(L"%02.2d:%02.2d:%02.2d");
+                frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds();
+                tmp += frmt.str();}
+            return tmp;}
+        catch (...) {}
+        return L"null";}
 
     std::string datetime_to_string(num64 val, bool withmsec) {
         return datetime_to_string(cast_datetime_fromnum64(val), withmsec);}
+
+    std::wstring datetime_to_wstring(num64 val, bool withmsec) {
+        return datetime_to_wstring(cast_datetime_fromnum64(val), withmsec);}
 
     std::string dt_to_journaltabelname(datetime tm) {
         try {
             boost::format frmt("journal%02.2d%04.4d");
             frmt % tm.date().month().as_number() % tm.date().year();
-            return frmt.str();}        catch (...) {}
+            return frmt.str();}
+        catch (...) {}
         return "nulljournal";}
 
     std::string dt_to_debugtabelname(datetime tm) {
         try {
             boost::format frmt("debug%02.2d%04.4d");
             frmt % tm.date().month().as_number() % tm.date().year();
-            return frmt.str();}        catch (...) {}
+            return frmt.str();}
+        catch (...) {}
         return "nulldebug";}
 
     std::string dt_to_trendtabelname(datetime tm) {
         try {
             boost::format frmt("trend%02.2d%02.2d%04.4d");
             frmt % tm.date().day() % tm.date().month().as_number() % tm.date().year();
-            return frmt.str();}        catch (...) {}
+            return frmt.str();}
+        catch (...) {}
         return "nulltrend";}
 
     std::string dt_to_reporttabelname(datetime tm, tagtype type) {
@@ -762,7 +987,8 @@ namespace dvnci {
 
             boost::format frmt("arch%02.2d%04.4d");
             frmt % tm.date().month().as_number() % tm.date().year();
-            return frmt.str();}        catch (...) {}
+            return frmt.str();}
+        catch (...) {}
         return "nullreport";}
 
     datetime incmillisecond(datetime tm, num64 delt) {
@@ -913,76 +1139,76 @@ namespace dvnci {
             case REPORTTYPE_30MIN: return incperiod(val, MINUTE30_TM, n);
             case REPORTTYPE_QVART: return incperiod(val, QUART_TM, n);}
         return false;}
-    
+
     void normilize_history_bound(vlvtype type, reporthisttype& val) {
         switch (type) {
             case REPORTTYPE_YEAR:{
-                val = val < MIN_REPORTTYPE_YEAR ? MIN_REPORTTYPE_YEAR: val > MAX_REPORTTYPE_YEAR ? MAX_REPORTTYPE_YEAR: val;
+                val = val < MIN_REPORTTYPE_YEAR ? MIN_REPORTTYPE_YEAR : val > MAX_REPORTTYPE_YEAR ? MAX_REPORTTYPE_YEAR : val;
                 break;};
             case REPORTTYPE_MIN:{
-                val = val < MIN_REPORTTYPE_MIN ? MIN_REPORTTYPE_MIN: val > MAX_REPORTTYPE_MIN ? MAX_REPORTTYPE_MIN: val;
+                val = val < MIN_REPORTTYPE_MIN ? MIN_REPORTTYPE_MIN : val > MAX_REPORTTYPE_MIN ? MAX_REPORTTYPE_MIN : val;
                 break;}
             case REPORTTYPE_HOUR:{
-                val = val < MIN_REPORTTYPE_HOUR ? MIN_REPORTTYPE_HOUR: val > MAX_REPORTTYPE_HOUR ? MAX_REPORTTYPE_HOUR: val;
+                val = val < MIN_REPORTTYPE_HOUR ? MIN_REPORTTYPE_HOUR : val > MAX_REPORTTYPE_HOUR ? MAX_REPORTTYPE_HOUR : val;
                 break;}
             case REPORTTYPE_DEC:{
-                val = val < MIN_REPORTTYPE_DEC ? MIN_REPORTTYPE_DEC: val > MAX_REPORTTYPE_DEC ? MAX_REPORTTYPE_DEC: val;
+                val = val < MIN_REPORTTYPE_DEC ? MIN_REPORTTYPE_DEC : val > MAX_REPORTTYPE_DEC ? MAX_REPORTTYPE_DEC : val;
                 break;}
             case REPORTTYPE_DAY:{
-                val = val < MIN_REPORTTYPE_DAY ? MIN_REPORTTYPE_DAY: val > MAX_REPORTTYPE_DAY ? MAX_REPORTTYPE_DAY: val;
+                val = val < MIN_REPORTTYPE_DAY ? MIN_REPORTTYPE_DAY : val > MAX_REPORTTYPE_DAY ? MAX_REPORTTYPE_DAY : val;
                 break;}
             case REPORTTYPE_MONTH:{
-                val = val < MIN_REPORTTYPE_MONTH ? MIN_REPORTTYPE_MONTH: val > MAX_REPORTTYPE_MONTH ? MAX_REPORTTYPE_MONTH: val;
+                val = val < MIN_REPORTTYPE_MONTH ? MIN_REPORTTYPE_MONTH : val > MAX_REPORTTYPE_MONTH ? MAX_REPORTTYPE_MONTH : val;
                 break;}
             case REPORTTYPE_10MIN:{
-                val = val < MIN_REPORTTYPE_10MIN ? MIN_REPORTTYPE_10MIN: val > MAX_REPORTTYPE_10MIN ? MAX_REPORTTYPE_10MIN: val;
+                val = val < MIN_REPORTTYPE_10MIN ? MIN_REPORTTYPE_10MIN : val > MAX_REPORTTYPE_10MIN ? MAX_REPORTTYPE_10MIN : val;
                 break;}
             case REPORTTYPE_30MIN:{
-                val = val < MIN_REPORTTYPE_30MIN ? MIN_REPORTTYPE_30MIN: val > MAX_REPORTTYPE_30MIN ? MAX_REPORTTYPE_30MIN: val;
+                val = val < MIN_REPORTTYPE_30MIN ? MIN_REPORTTYPE_30MIN : val > MAX_REPORTTYPE_30MIN ? MAX_REPORTTYPE_30MIN : val;
                 break;}
             case REPORTTYPE_QVART:{
-                val = val < MIN_REPORTTYPE_QVART ? MIN_REPORTTYPE_QVART: val > MAX_REPORTTYPE_QVART ? MAX_REPORTTYPE_QVART: val;
+                val = val < MIN_REPORTTYPE_QVART ? MIN_REPORTTYPE_QVART : val > MAX_REPORTTYPE_QVART ? MAX_REPORTTYPE_QVART : val;
                 break;}
             default:  val = 0;}}
 
     void normilize_report_subperiod(vlvtype type, reporthistdelt& val) {
         switch (type) {
             case REPORTTYPE_MIN:{
-                val = val < -59 ? -59: val > 59 ? 59: val;
+                val = val < -59 ? -59 : val > 59 ? 59 : val;
                 break;}
             case REPORTTYPE_HOUR:{
-                val = val < -23 ? -23: val > 23 ? 23: val;
+                val = val < -23 ? -23 : val > 23 ? 23 : val;
                 break;}
             case REPORTTYPE_DEC:{
-                val = val < -2 ? -2: val > 2 ? 2: val;
+                val = val < -2 ? -2 : val > 2 ? 2 : val;
                 break;}
             case REPORTTYPE_DAY:{
-                val = val < -27 ? -27: val > 27 ? 27: val;
+                val = val < -27 ? -27 : val > 27 ? 27 : val;
                 break;}
             case REPORTTYPE_MONTH:{
-                val = val < -11 ? -11: val > 11 ? 11: val;
+                val = val < -11 ? -11 : val > 11 ? 11 : val;
                 break;}
             case REPORTTYPE_10MIN:{
-                val = val < -5 ? -5: val > 5 ? 5: val;
+                val = val < -5 ? -5 : val > 5 ? 5 : val;
                 break;}
             case REPORTTYPE_30MIN:{
-                val = val < -1 ? -1: val > 1 ? 1: val;
+                val = val < -1 ? -1 : val > 1 ? 1 : val;
                 break;}
             case REPORTTYPE_QVART:{
-                val = val < -3 ? -3: val > 3 ? 3: val;
+                val = val < -3 ? -3 : val > 3 ? 3 : val;
                 break;}
-            default:  val = 0;}}    
+            default:  val = 0;}}
 
     void statistic_functor::operator()(const dt_val_pair& vl) {
         switch (type) {
             case REPORT_STATISTIC_MIN:{
                 if (vl.second == vl.second) {
-                    value = (value != value) ? vl.second: (value > vl.second ? vl.second: value);
+                    value = (value != value) ? vl.second : (value > vl.second ? vl.second : value);
                     cnt++;}
                 return;}
             case REPORT_STATISTIC_MAX:{
                 if (vl.second == vl.second) {
-                    value = (value != value) ? vl.second: (value < vl.second ? vl.second: value);
+                    value = (value != value) ? vl.second : (value < vl.second ? vl.second : value);
                     cnt++;}
                 return;}
             default:{
@@ -1015,32 +1241,31 @@ namespace dvnci {
         DEBUG_STR_VAL_DVNCI(operatorii, value);
         DEBUG_STR_VAL_DVNCI(operatorii, cnt);
         return value;}
-    
-    std::string role_to_str(rolesettype vl){
-        if (vl==0) return "deny";
-        if (vl==0x1F) return "full";
-        if (vl==0x3) return "user";
-        if (vl==0xF) return "admin";
-        std::string rslt="";
-        if (0x1&vl) rslt+= rslt.empty() ? "ur" : "|ur";
-        if (0x2&vl) rslt+= rslt.empty() ? "uw" : "|uw";        
-        if (0x4&vl) rslt+= rslt.empty() ? "ar" : "|ar";
-        if (0x8&vl) rslt+= rslt.empty() ? "aw" : "|aw";  
-        if (0x10&vl) rslt+= rslt.empty() ? "aa" : "|aa";
+
+    std::string role_to_str(rolesettype vl) {
+        if (vl == 0) return "deny";
+        if (vl == 0x1F) return "full";
+        if (vl == 0x3) return "user";
+        if (vl == 0xF) return "admin";
+        std::string rslt = "";
+        if (0x1 & vl) rslt += rslt.empty() ? "ur" : "|ur";
+        if (0x2 & vl) rslt += rslt.empty() ? "uw" : "|uw";
+        if (0x4 & vl) rslt += rslt.empty() ? "ar" : "|ar";
+        if (0x8 & vl) rslt += rslt.empty() ? "aw" : "|aw";
+        if (0x10 & vl) rslt += rslt.empty() ? "aa" : "|aa";
         return rslt;}
-    
-    rolesettype str_to_role(std::string vl){
+
+    rolesettype str_to_role(std::string vl) {
         dvnci::lower_and_trim(vl);
-        if (vl=="deny") return 0;
-        if (vl=="full") return 0x1F;
-        if (vl=="user") return 0x3;
-        if (vl=="admin") return 0xF;
-        rolesettype rslt=0;
-        if (vl.find("ur")!=std::string::npos) rslt+= 0x1;
-        if (vl.find("uw")!=std::string::npos) rslt+= 0x2;       
-        if (vl.find("ar")!=std::string::npos) rslt+= 0x4;
-        if (vl.find("aw")!=std::string::npos) rslt+= 0x8;  
-        if (vl.find("aa")!=std::string::npos) rslt+= 0x10; 
-        return rslt;}  
-}
+        if (vl == "deny") return 0;
+        if (vl == "full") return 0x1F;
+        if (vl == "user") return 0x3;
+        if (vl == "admin") return 0xF;
+        rolesettype rslt = 0;
+        if (vl.find("ur") != std::string::npos) rslt += 0x1;
+        if (vl.find("uw") != std::string::npos) rslt += 0x2;
+        if (vl.find("ar") != std::string::npos) rslt += 0x4;
+        if (vl.find("aw") != std::string::npos) rslt += 0x8;
+        if (vl.find("aa") != std::string::npos) rslt += 0x10;
+        return rslt;}}
 

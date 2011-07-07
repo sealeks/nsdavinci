@@ -9,6 +9,7 @@
 #define	_DVNCI_KRNL_NS_STRINGUTILS_H
 
 #include <kernel/constdef.h>
+#include <kernel/utf8.h>
 
 namespace dvnci {
 
@@ -35,7 +36,14 @@ namespace dvnci {
     struct short_value;
 
 
-
+    bool check_utf8(const std::string& val);
+    
+    std::wstring utf8_to_wstr(const std::string& val);
+    bool utf8_to_wstr(const std::string& val, std::wstring& rslt); 
+    std::string wstr_to_utf8(const std::wstring& val);
+    bool wstr_to_utf8(const std::wstring& val, std::string& rslt);
+    
+    
 
     void string_to_pascalstr(void* val, const std::string& source, size_t len);
     std::string pascalstr_to_string(void* dest);
@@ -43,26 +51,38 @@ namespace dvnci {
     void formatmem_in_null(void* ptr, size_t len);
 
     std::string lower_copy(const std::string& val);
+    std::wstring lower_copy(const std::wstring& val);
     std::string upper_copy(const std::string& val);
+    std::wstring upper_copy(const std::wstring& val);
     std::string trim_copy(const std::string& val);
+    std::wstring trim_copy(const std::wstring& val);
     std::string fulltrim_copy(const std::string& val);
+    std::wstring fulltrim_copy(const std::wstring& val);
     std::string freechar_copy(const std::string& val, const std::string& del = " ");
+    std::wstring freechar_copy(const std::wstring& val, const std::wstring& del = L" ");
 
     void fulltrim(std::string& val);
+    void fulltrim(std::wstring& val);
     void upper_and_trim(std::string& val);
+    void upper_and_trim(std::wstring& val);
     void lower_and_trim(std::string& val);
+    void lower_and_trim(std::wstring& val);
     void upper_and_fulltrim(std::string& val);
+    void upper_and_fulltrim(std::wstring& val);
     void lower_and_fulltrim(std::string& val);
-
+    void lower_and_fulltrim(std::wstring& val);
 
     size_t regex_tokin_parser(const std::string& val, str_vect& dst, const boost::regex& re);
+    size_t regex_tokin_parser(const std::wstring& val, wstr_vect& dst, const boost::wregex& re);
 
     bool instrincriteria(std::string nm, std::string strcriteria);
 
     bool remove_namespace_delimit(std::string& vl);
+    bool remove_namespace_delimit(std::wstring& vl);
     std::string retremoved_namespace_delimit(const std::string& vl);
+    std::wstring retremoved_namespace_delimit(const std::wstring& vl);
     std::string get_namespace_delimit(std::string& vl);
-
+    std::wstring get_namespace_delimit(std::wstring& vl);
 
 
 
@@ -103,16 +123,24 @@ namespace dvnci {
     bool hexsequence_to_binary_block(const std::string& vl, std::string& rslt);
 
     void comma_to_point(std::string& val);
+    void comma_to_point(std::wstring& val);
     void point_to_comma(std::string& val);
+    void point_to_comma(std::wstring& val);
 
     std::string comma_to_point_copy(const std::string& val);
+    std::wstring comma_to_point_copy(const std::wstring& val);
     std::string point_to_comma_copy(const std::string& val);
+    std::wstring point_to_comma_copy(const std::wstring& val);
 
     void clear_first_null_digit(std::string& vl);
+    void clear_first_null_digit(std::wstring& vl);
     void fill_first_null_digit(std::string& vl, size_t needcsize);
+    void fill_first_null_digit(std::wstring& vl, size_t needcsize);
 
     std::string clear_first_null_digit_copy(const std::string& vl);
+    std::wstring clear_first_null_digit_copy(const std::wstring& vl);
     std::string fill_first_null_digit_copy(const std::string& vl, size_t needcsize);
+    std::wstring fill_first_null_digit_copy(const std::wstring& vl, size_t needcsize);
 
     std::string num8_to_hexstr(num8 vl);
     std::string num16_to_hexstr(num16 vl);
@@ -213,8 +241,18 @@ namespace dvnci {
 
         std::string result = "";
         try {
-            result = boost::lexical_cast<std::string > (val);} catch (boost::bad_lexical_cast) {
+            result = boost::lexical_cast<std::string > (val);}
+        catch (boost::bad_lexical_cast) {
             return "";}
+        return result;}
+
+    template <typename T> std::wstring to_wstr(const T& val) {
+
+        std::wstring result = L"";
+        try {
+            result = boost::lexical_cast<std::wstring > (val);}
+        catch (boost::bad_lexical_cast) {
+            return L"";}
         return result;}
 
     template<typename T> std::string to_str(const T& vl, const std::string& frmt) {
@@ -222,36 +260,77 @@ namespace dvnci {
         try {
             boost::format f(frmt.c_str());
             f % vl;
-            return f.str();} catch (...) {}
+            return f.str();}
+        catch (...) {}
+        return to_str<T > (vl);}
+
+    template<typename T> std::wstring to_wstr(const T& vl, const std::wstring& frmt) {
+        if (frmt.empty()) return to_str<T > (vl);
+        try {
+            boost::format f(frmt.c_str());
+            f % vl;
+            return f.str();}
+        catch (...) {}
         return to_str<T > (vl);}
 
     std::string to_str(const datetime& val);
+    std::wstring to_wstr(const datetime& val);
 
     template <typename T> bool str_to(const std::string& val, T& result) {
 
         try {
-            result = boost::lexical_cast<T > (val);} catch (boost::bad_lexical_cast) {
+            result = boost::lexical_cast<T > (val);}
+        catch (boost::bad_lexical_cast) {
+            return false;}
+        return true;}
+
+    template <typename T> bool str_to(const std::wstring& val, T& result) {
+
+        try {
+            result = boost::lexical_cast<T > (val);}
+        catch (boost::bad_lexical_cast) {
             return false;}
         return true;}
 
     bool str_to(const std::string& val, datetime& result);
+    bool str_to(const std::wstring& val, datetime& result);
 
     template <typename T> T str_to(const std::string& val, const T& def = 0) {
 
         try {
-            return boost::lexical_cast<T > (val);} catch (boost::bad_lexical_cast) {
+            return boost::lexical_cast<T > (val);}
+        catch (boost::bad_lexical_cast) {
             return def;}}
 
+    template <typename T> T str_to(const std::wstring& val, const T& def = 0) {
+
+        try {
+            return boost::lexical_cast<T > (val);}
+        catch (boost::bad_lexical_cast) {
+            return def;}}
+
+
     datetime str_to(const std::string& val, const datetime& def = nill_time);
+    datetime str_to(const std::wstring& val, const datetime& def = nill_time);
 
     template <typename T> void str_to(const std::string& val, const T& def, T& result) {
 
         result = def;
         try {
-            result = boost::lexical_cast<T > (val);} catch (boost::bad_lexical_cast) {
+            result = boost::lexical_cast<T > (val);}
+        catch (boost::bad_lexical_cast) {
+            result = def;}}
+
+    template <typename T> void str_to(const std::wstring& val, const T& def, T& result) {
+
+        result = def;
+        try {
+            result = boost::lexical_cast<T > (val);}
+        catch (boost::bad_lexical_cast) {
             result = def;}}
 
     void str_to(const std::string& val, const datetime& def, datetime& result);
+    void str_to(const std::wstring& val, const datetime& def, datetime& result);
 
     template <typename T> T abs(const T& v) {
         return v >= 0 ? v : -v;}
@@ -277,10 +356,8 @@ namespace dvnci {
         val = max < val ? max : min > val ? min : val;
         return val;}
 
-
-
     template<typename T>  const T& from_num64_cast(const num64& val) {
-        return ((ptype_punned)(&val))->n64;}
+        return ((ptype_punned) (&val))->n64;}
 
     template<>  const bool& from_num64_cast<bool>(const num64& val);
 
@@ -299,13 +376,13 @@ namespace dvnci {
     template<>  const num8& from_num64_cast<num8>(const num64& val);
 
     template<>  const unum8& from_num64_cast<unum8>(const num64& val);
-    
+
     template<>  const float& from_num64_cast<float>(const num64& val);
-    
+
     template<>  const double& from_num64_cast<double>(const num64& val);
-    
+
     template<>  const datetime& from_num64_cast<datetime>(const num64& val);
-    
+
     //template<>  const std::string& from_num64_cast<std::string>(const num64& val);
 
     template<typename T> num64 num64_cast(const T& val) {
@@ -314,8 +391,6 @@ namespace dvnci {
     template<> num64 num64_cast<datetime>(const datetime& val);
 
     template<> num64 num64_cast<std::string>(const std::string& val);
-    
-    
 
     template<typename T> T num64_and_type_cast(const num64& value, tagtype type) {
 
@@ -343,7 +418,7 @@ namespace dvnci {
             case TYPE_FLOAT:{
                 return static_cast<T> (from_num64_cast<float>(value));}
             case TYPE_TEXT:{
-                return static_cast<T> (from_num64_cast<unum64>(value));}
+                return static_cast<T> (from_num64_cast<unum64 > (value));}
             case TYPE_TM:{
                 return 0;}}
         return static_cast<T> (from_num64_cast<double>(value));}
@@ -356,8 +431,6 @@ namespace dvnci {
     std::string num64_and_type_cast(const num64& val, tagtype type, const std::string& format);
 
     std::string num64_and_type_cast(const num64& val, tagtype type, onum ladsk);
-    
-    
 
     template<typename T> num64 num64_from_vt_cast(const T& value, tagtype type) {
 
@@ -384,8 +457,8 @@ namespace dvnci {
                 return num64_cast<double>(static_cast<double> (value));};
             case TYPE_FLOAT:{
                 return num64_cast<float>(static_cast<float> (value));}
-			case TYPE_TEXT:{
-				return num64_cast<unum64>(static_cast<size_t> (value));}
+            case TYPE_TEXT:{
+                return num64_cast<unum64 > (static_cast<size_t> (value));}
             case TYPE_TM:{
                 return 0;}}
         return num64_cast<double>(static_cast<double> (value));}
@@ -431,7 +504,9 @@ namespace dvnci {
     num64 datetime_to_epoch_hour(const datetime& val);
     num64 datetime_to_epoch_day(const datetime& val);
     std::string datetime_to_string(datetime val, bool withmsec = false);
+    std::wstring datetime_to_wstring(datetime val, bool withmsec = false);
     std::string datetime_to_string(num64 val, bool withmsec = false);
+    std::wstring datetime_to_wstring(num64 val, bool withmsec = false);
 
     std::string dt_to_journaltabelname(datetime tm);
     std::string dt_to_debugtabelname(datetime tm);
@@ -458,15 +533,15 @@ namespace dvnci {
     bool beforetabletime(datetime& tm, reporttype tp);
     bool normalizereporttime(datetime& val, reporttype tp);
     bool increporttime(datetime& val, reporttype tp, reporthisttype n = 1);
-    
+
     // нормализация периода предыстории
     void normilize_history_bound(vlvtype  type, reporthisttype& val);
     void normilize_report_subperiod(vlvtype  type, reporthistdelt& val);
-    
-    
+
+
     std::string role_to_str(rolesettype vl);
-    
-    rolesettype str_to_role(std::string vl);  
+
+    rolesettype str_to_role(std::string vl);
 
     struct statistic_functor {
 
@@ -480,7 +555,7 @@ namespace dvnci {
     private:
         repstattype type;
         size_t cnt;
-        double value;};
+        double value;} ;
 
     struct integr_statistic_functor {
 
@@ -494,7 +569,7 @@ namespace dvnci {
     private:
         dt_val_pair lstpoint;
         size_t cnt;
-        double value;};}
+        double value;} ;}
 
 #endif	/* _NS_STRINGUTILS_H */
 
