@@ -54,6 +54,7 @@
     <itemPath>../../include/kernel/systemutil.cpp</itemPath>
     <itemPath>../../include/kernel/systemutil.h</itemPath>
     <itemPath>../../include/kernel/templ.h</itemPath>
+    <itemPath>../../include/kernel/utf8.h</itemPath>
     <itemPath>../../include/kernel/utils.cpp</itemPath>
     <itemPath>../../include/kernel/utils.h</itemPath>
   </logicalFolder>
