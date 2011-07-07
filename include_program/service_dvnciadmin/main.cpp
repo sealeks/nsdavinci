@@ -28,7 +28,7 @@ std::string remote_port = DEFAULT_ADMIN_PORT;
 
 using boost::asio::ip::tcp;
 
-dvnci::executable_ptr   dvnci::mainserv;
+dvnci::executable_ptr         dvnci::mainserv;
 std::string                   dvnci::DVNCI_SERVICE_NAME = NS_ADMIN_SERVICE_NAME;
 dvnci::appidtype              dvnci::DVNCI_SERVICE_APPID= NS_ADMIN_SERVICE;
 
