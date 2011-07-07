@@ -125,8 +125,9 @@
             <pElem>../../lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>nsadmin</linkerLibLibItem>
             <linkerLibLibItem>meta</linkerLibLibItem>
+            <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>nsadmin</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
@@ -134,9 +135,9 @@
             <linkerLibLibItem>boost_serialization</linkerLibLibItem>
             <linkerLibLibItem>boost_regex</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
-            <linkerLibLibItem>boost_iostreams</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
+            <linkerLibLibItem>rt</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -166,8 +167,9 @@
             <pElem>../../lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>nsadmin</linkerLibLibItem>
             <linkerLibLibItem>meta</linkerLibLibItem>
+            <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>nsadmin</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
@@ -175,9 +177,9 @@
             <linkerLibLibItem>boost_serialization</linkerLibLibItem>
             <linkerLibLibItem>boost_regex</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
-            <linkerLibLibItem>boost_iostreams</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
+            <linkerLibLibItem>rt</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
