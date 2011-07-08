@@ -52,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lmeta -lnsadmin -lboost_thread -lboost_wserialization -lboost_system -lboost_serialization -lboost_regex -lboost_program_options -lboost_iostreams -lboost_filesystem -lboost_date_time -lws2_32 -lwsock32 -luuid
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -lmeta -lnskernel -lnsadmin -lboost_thread -lboost_wserialization -lboost_system -lboost_serialization -lboost_regex -lboost_program_options -lboost_iostreams -lboost_filesystem -lboost_date_time -lws2_32 -lwsock32 -luuid -lole32 -loleaut32
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -65,12 +65,12 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 ${OBJECTDIR}/_ext/148756256/main.o: ../../include_program/consol_admin/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/148756256
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/main.o ../../include_program/consol_admin/main.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/main.o ../../include_program/consol_admin/main.cpp
 
 ${OBJECTDIR}/_ext/148756256/adminconsol.o: ../../include_program/consol_admin/adminconsol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/148756256
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/adminconsol.o ../../include_program/consol_admin/adminconsol.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/adminconsol.o ../../include_program/consol_admin/adminconsol.cpp
 
 # Subprojects
 .build-subprojects:
