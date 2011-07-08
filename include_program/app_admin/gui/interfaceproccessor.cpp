@@ -117,7 +117,7 @@ namespace dvnci {
 
                         case ACTION_UNMAAPPROJECT:{
                             if (intf->state() ==adminintf::connected) {
-                                intf->disconnect();
+                                intf->operation_unmapprj();
                                 event->result = (intf->state() ==adminintf::disconnected);}
                             else event->result = false;
                             break;}
