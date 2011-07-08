@@ -71,6 +71,9 @@
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../../include</pElem>
+          </incDir>
           <preprocessorList>
             <Elem>_WIN32_WINNT=0x0501</Elem>
           </preprocessorList>
@@ -88,8 +91,9 @@
             <pElem>../../lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>nsadmin</linkerLibLibItem>
             <linkerLibLibItem>meta</linkerLibLibItem>
+            <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>nsadmin</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
@@ -103,6 +107,8 @@
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
             <linkerLibLibItem>uuid</linkerLibLibItem>
+            <linkerLibLibItem>ole32</linkerLibLibItem>
+            <linkerLibLibItem>oleaut32</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -153,6 +159,9 @@
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../../include</pElem>
+          </incDir>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
