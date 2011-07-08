@@ -16,6 +16,7 @@
 #include <admin/adminsession.h>
 #include "adminconsol.h"
 
+#include <locale>
 
 
 using namespace std;
@@ -60,6 +61,19 @@ int main(int argc, char** argv) {
     else{
         executr=main_executor_ptr( new main_executor(arg));}
     
+    setlocale(LC_ALL, "" );
+/*   
+#if defined(_DVN_WIN_)
+    setlocale(LC_ALL, "" );
+#elif defined(_DVN_LIN_)    
+    std::setlocale(LC_ALL, "ru_RU.utf8" );
+#else
+    std::setlocale(LC_ALL, "ru_RU.utf8" );
+#endif
+*/ 
+    
+    std::cout << "locale is " << std::wcout.getloc().name() << std::endl;
+            
     while (true){
         std::getline(std::wcin,quit_in);
         if (dvnci::lower_copy(dvnci::trim_copy(quit_in))==L"q"){

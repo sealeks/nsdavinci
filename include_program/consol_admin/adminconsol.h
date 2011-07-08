@@ -143,7 +143,7 @@ protected:
        if (!intf->select_entities(NT_GROUP,tmp,0)){
            std::wcout << L"count : " << tmp.size() << std::endl;
            for (iteminfo_map::const_iterator it=tmp.begin();it!=tmp.end();++it){
-               std::wcout << L"Tag : id=" << it->first << L" name="<<  dvnci::trim_copy(utf8_to_wstr(it->second.name())) << std::endl;}}
+               std::wcout << L"Tag : id=" << it->first << L" name="<<  utf8_to_wstr(it->second.name()) << L" comment=" << utf8_to_wstr(intf->tag(0).comment()) << std::endl;}}
        else{
           std::wcout << L"Error : " << args << std::endl;}};};
        
