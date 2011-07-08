@@ -177,7 +177,7 @@ namespace dvnci {
             if (_state == adminintf::connected) return true;
             try {
                 DEBUG_STR_VAL_DVNCI(opend local, path);
-                if (path.string().empty())
+                if ((path.string().empty()) || (!boost::filesystem::exists(path)))
                     return false;
                 intf = tagsbase_ptr (new tagsbase(path , appid, events));
                 _state = adminintf::connected;
@@ -213,6 +213,7 @@ namespace dvnci {
                 metaintf_.disconnect();
                 _state = adminintf::disconnected;
                 setintf(0);
+                intf.reset();
                 _error = 0;
                 return true;}
             catch (dvncierror& err) {
