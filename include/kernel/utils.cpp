@@ -19,7 +19,11 @@ namespace dvnci {
         if (end_it != val.end()) {
             return L"?-noUTF8";}
         std::size_t length = dvnci::utf8::distance(val.begin(), end_it);
-        std::vector<wchar_t> unicodeline(length);
+        std::vector<wchar_t> unicodeline;
+        if (length) 
+	    unicodeline.reserve(length);
+	else
+	    return L"";
 #if defined(DVNCI_WCHAR16)
         dvnci::utf8::utf8to16(val.begin(), end_it, back_inserter(unicodeline));
 #elif defined(DVNCI_WCHAR32)
@@ -37,7 +41,11 @@ namespace dvnci {
         if (end_it != val.end()) {
             return false;}
         std::size_t length = dvnci::utf8::distance(val.begin(), end_it);
-        std::vector<wchar_t> unicodeline(length);
+        std::vector<wchar_t> unicodeline;
+        if (length) 
+	    unicodeline.reserve(length);
+	else
+	    return L"";
 #if defined(DVNCI_WCHAR16)
         dvnci::utf8::utf8to16(val.begin(), end_it, back_inserter(unicodeline));
 #elif defined(DVNCI_WCHAR32)
