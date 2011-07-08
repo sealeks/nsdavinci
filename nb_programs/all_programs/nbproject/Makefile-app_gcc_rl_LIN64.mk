@@ -77,6 +77,7 @@ ${OBJECTDIR}/main.o: main.cpp
 	cd ../service_dvncinet && ${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64
 	cd ../service_dvncilgk && ${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64
 	cd ../service_dvncikoyo && ${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64
+	cd ../consol_admin && ${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
@@ -94,6 +95,7 @@ ${OBJECTDIR}/main.o: main.cpp
 	cd ../service_dvncinet && ${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean
 	cd ../service_dvncilgk && ${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean
 	cd ../service_dvncikoyo && ${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean
+	cd ../consol_admin && ${MAKE}  -f Makefile CONF=nb_gcc_rl_LIN64 clean
 
 # Enable dependency checking
 .dep.inc: .depcheck-impl

@@ -77,6 +77,7 @@ ${OBJECTDIR}/main.o: main.cpp
 	cd ../service_dvncinet && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64
 	cd ../test_poligon && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64
 	cd ../app_test && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64
+	cd ../consol_admin && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
@@ -94,6 +95,7 @@ ${OBJECTDIR}/main.o: main.cpp
 	cd ../service_dvncinet && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean
 	cd ../test_poligon && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean
 	cd ../app_test && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean
+	cd ../consol_admin && ${MAKE}  -f Makefile CONF=nb_gcc_db_LIN64 clean
 
 # Enable dependency checking
 .dep.inc: .depcheck-impl
