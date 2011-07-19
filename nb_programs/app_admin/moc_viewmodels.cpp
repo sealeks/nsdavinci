@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'viewmodels.h'
 **
-** Created: Wed 6. Jul 19:59:15 2011
+** Created: Fri 8. Jul 23:24:37 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.6.3)
 **
 ** WARNING! All changes made in this file will be lost!
