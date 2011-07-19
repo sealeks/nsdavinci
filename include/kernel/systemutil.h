@@ -444,15 +444,16 @@ namespace dvnci {
 
     //////////////////////////////////////////////////////////////////////////////////     
 
+    const std::string GROUP_CRITERIA = "group";
+    const std::string NAME_CRITERIA = "name";
+    const std::string BIND_CRITERIA = "bind";
+    const std::string COMMENT_CRITERIA = "comment";
+    const std::string TYPEGROUP_CRITERIA = "grouptype";
+    const std::string TYPERT_CRITERIA = "rttype";        
+        
     class stringed_filterclass {
     public:
         
-        static std::string GROUP_CRITERIA;
-        static std::string NAME_CRITERIA;
-        static std::string BIND_CRITERIA;
-        static std::string COMMENT_CRITERIA;
-        static std::string TYPEGROUP_CRITERIA;
-        static std::string TYPERT_CRITERIA;
 
         stringed_filterclass(std::string filter_) {
             criteria_ = filter_;

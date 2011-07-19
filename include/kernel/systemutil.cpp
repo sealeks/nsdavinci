@@ -10,21 +10,6 @@
 namespace dvnci {
     using namespace std;
 
-    //////////////////////  stringed_filterclass
-
-
-    std::string stringed_filterclass::GROUP_CRITERIA = "group";
-    std::string stringed_filterclass::NAME_CRITERIA = "name";
-    std::string stringed_filterclass::BIND_CRITERIA = "bind";
-    std::string stringed_filterclass::COMMENT_CRITERIA = "comment";
-    std::string stringed_filterclass::TYPEGROUP_CRITERIA = "grouptype";
-    std::string stringed_filterclass::TYPERT_CRITERIA = "rttype";
-    
-    
-    // filestream
-    
-
-
     // filestream
 
     size_t filestream::filesize(const fspath& filename) {
@@ -341,12 +326,12 @@ namespace dvnci {
             filterkeymap.insert(filteredkey_pair(name, tmpset));}}
 
     void stringed_filterclass::readcriterias() {
-        readcriteria(stringed_filterclass::NAME_CRITERIA);
-        readcriteria(stringed_filterclass::COMMENT_CRITERIA);
-        readcriteria(stringed_filterclass::BIND_CRITERIA);
-        readidxcriteria(stringed_filterclass::GROUP_CRITERIA);
-        readidxcriteria(stringed_filterclass::TYPEGROUP_CRITERIA);
-        readidxcriteria(stringed_filterclass::TYPERT_CRITERIA);}
+        readcriteria(NAME_CRITERIA);
+        readcriteria(COMMENT_CRITERIA);
+        readcriteria(BIND_CRITERIA);
+        readidxcriteria(GROUP_CRITERIA);
+        readidxcriteria(TYPEGROUP_CRITERIA);
+        readidxcriteria(TYPERT_CRITERIA);}
 
     string stringed_filterclass::findCriteria(string name) {
         boost::regex xfnTemplete(name + "=\"[*A-Za-z_$0-9, ]+\"\n");
