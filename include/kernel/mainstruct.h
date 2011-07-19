@@ -516,7 +516,7 @@ namespace dvnci {
         template <typename T >
                 T alarmconst() const {
             return type_==TYPE_DISCRET ? 
-                !from_num64_cast<bool>(alarmconst_) : 
+                from_num64_cast<bool>(alarmconst_) : 
                 num64_and_type_cast<T > (alarmconst_, static_cast<tagtype> (type_));}
 
         num64 alarmconst64() const {
@@ -2461,7 +2461,30 @@ namespace dvnci {
     typedef std::map<indx, bind_servdb, std::less<indx>, std::allocator<itembinding_pair > > itembinding_map;
     
     
-
+    struct alarms_row {
+      datetime  time;
+      std::string  tag;
+      std::string  text;
+      num64  kvit;
+      num64  level;
+      num64  type;
+      std::string  value;};
+      
+    typedef std::vector<alarms_row > vect_alarms_row; 
+    
+    struct journal_row {
+      num64  index;
+      unum64  guid;
+      datetime  time;
+      std::string  tag;
+      std::string  text;
+      std::string  agroup;
+      num64  type;
+      num64  level;
+      std::string  value;
+      std::string  user;}; 
+      
+    typedef std::vector<journal_row >  vect_journal_row;       
 
 #pragma  pack(pop)
 

@@ -1765,10 +1765,10 @@ namespace dvnci {
             for (size_type i = 0; i < count(); i++) {
                 if ((exists(i))) {
                     if ((!filtered_.isEnable()) ||
-                            ((filtered_.included(stringed_filterclass::NAME_CRITERIA,    name(i))) &&
-                             (filtered_.included(stringed_filterclass::BIND_CRITERIA,    binding(i))) &&
-                             (filtered_.included(stringed_filterclass::COMMENT_CRITERIA, comment(i))) &&
-                             (filtered_.includedidx(stringed_filterclass::GROUP_CRITERIA, group(i)))
+                            ((filtered_.included(NAME_CRITERIA,    name(i))) &&
+                             (filtered_.included(BIND_CRITERIA,    binding(i))) &&
+                             (filtered_.included(COMMENT_CRITERIA, comment(i))) &&
+                             (filtered_.includedidx(GROUP_CRITERIA, group(i)))
                              )) {
                         val.insert(iteminfo_pair(i, name_with_type(name(i), NT_TAG , type(i), groups()->appid(group(i)))));}}}}
         else {
@@ -1777,10 +1777,10 @@ namespace dvnci {
                 for (indx_set::const_iterator it = tmpset.begin(); it != tmpset.end(); ++it) {
                     if ((exists(*it))) {
                         if ((!filtered_.isEnable()) ||
-                                ((filtered_.included(stringed_filterclass::NAME_CRITERIA,    name(*it))) &&
-                                 (filtered_.included(stringed_filterclass::BIND_CRITERIA,    binding(*it))) &&
-                                 (filtered_.included(stringed_filterclass::COMMENT_CRITERIA, comment(*it))) &&
-                                 (filtered_.includedidx(stringed_filterclass::GROUP_CRITERIA, group(*it)))
+                                ((filtered_.included(NAME_CRITERIA,    name(*it))) &&
+                                 (filtered_.included(BIND_CRITERIA,    binding(*it))) &&
+                                 (filtered_.included(COMMENT_CRITERIA, comment(*it))) &&
+                                 (filtered_.includedidx(GROUP_CRITERIA, group(*it)))
                                  )) {
                             val.insert(iteminfo_pair(*it, name_with_type(name(*it), NT_TAG , type(*it), groups()->appid(group(*it)))));}}}}}}
 
@@ -1884,7 +1884,7 @@ namespace dvnci {
         for (size_type i = 0; (i < (*groups()).count()); i++)
             if (groups()->exists(i)) {
                 if ((!filtered_.isEnable()) ||
-                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, groups()->name(i)))) {
+                        (filtered_.included(NAME_CRITERIA, groups()->name(i)))) {
                     val.insert(iteminfo_pair(i, name_with_type(groups()->name(i), NT_GROUP,
                             static_cast<tagtype> (groups()->appid(i)))));};}}
 
@@ -1904,7 +1904,7 @@ namespace dvnci {
         for (size_type i = 0; (i < (*agroups()).count()); i++)
             if (agroups()->exists(i)) {
                 if ((!filtered_.isEnable()) ||
-                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, agroups()->name(i)))) {
+                        (filtered_.included(NAME_CRITERIA, agroups()->name(i)))) {
                     val.insert(iteminfo_pair(i, name_with_type(agroups()->name(i), NT_AGROUP)));}}}
 
     void tagsbase::select_agroups(iteminfo_map& val, const indx_set& idset, const std::string& strcriteria) {
@@ -1921,7 +1921,7 @@ namespace dvnci {
         for (size_type i = 0; (i < (*users()).count()); i++)
             if (users()->exists(i)) {
                 if ((!filtered_.isEnable()) ||
-                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, users()->name(i)))) {
+                        (filtered_.included(NAME_CRITERIA, users()->name(i)))) {
                     val.insert(iteminfo_pair(i, name_with_type(users()->name(i), NT_USER)));};}}
 
     void tagsbase::select_users(iteminfo_map& val, const indx_set& idset, const std::string& strcriteria) {
@@ -1938,7 +1938,7 @@ namespace dvnci {
         for (size_type i = 0; (i < (*accessrules()).count()); i++)
             if (accessrules()->exists(i)) {
                 if ((!filtered_.isEnable()) ||
-                        (filtered_.included(stringed_filterclass::NAME_CRITERIA, accessrules()->name(i)))) {
+                        (filtered_.included(NAME_CRITERIA, accessrules()->name(i)))) {
                     val.insert(iteminfo_pair(i, name_with_type(accessrules()->name(i), NT_ACCESSRULE)));};}}
 
     void tagsbase::select_accessrules(iteminfo_map& val, const indx_set& idset, const std::string& strcriteria) {

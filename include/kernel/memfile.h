@@ -2171,6 +2171,9 @@ namespace dvnci {
         template<typename T, typename B>
         size_t select_journal(std::vector<T>& vect, guidtype& gid, size_t& curs, size_t& cnt) const {
             return journal()->get<T, B > (vect, gid, curs, cnt);}
+        
+        size_t select_journal(vect_journal_row& vect, guidtype& gid, size_t& curs, size_t& cnt) const {
+            return journal()->get<journal_row, num64 > (vect, gid, curs, cnt);}
 
         guidtype guid_journal() {
             return journal()->gloubnum();}
@@ -2197,11 +2200,12 @@ namespace dvnci {
             return alarms()->get<T, B > (vect, vers, agrp, grp);}
 
         template<typename T, typename B>
-        size_t select_alarms(std::vector<T>& vect, size_type agrp = 1, size_type grp = npos ) const {
+        size_t select_alarms(std::vector<T>& vect, size_type agrp = npos, size_type grp = npos ) const {
             guidtype vers = 0;
             return alarms()->get<T, B > (vect, vers, agrp, grp);}
         
-
+        size_t select_alarms(vect_alarms_row& vect, guidtype& vers, size_type agrp = npos, size_type grp = npos ) const {
+            return alarms()->get<alarms_row, num64 > (vect, vers, agrp, grp);}
        
         
         
@@ -2382,7 +2386,7 @@ namespace dvnci {
 
         template<typename T>
         bool in_alarm(size_type id) const {
-            if (valid(id)) return false;
+            if (!valid(id)) return false;
             if (!alarmed(id)) return false;
             if (type(id) == TYPE_DISCRET) {
                 return value<bool> (id) == alarmconst_prtd<bool> (id);}
@@ -2393,7 +2397,7 @@ namespace dvnci {
 
         template<typename T>
         bool in_event(size_type id) const {
-            if (valid(id)) return false;
+            if (!valid(id)) return false;
             if (!msged(id)) return false;
             return (value<T > (id) != 0);}
 

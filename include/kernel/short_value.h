@@ -129,8 +129,6 @@ namespace dvnci {
 
     template <>
     std::string short_value::value<std::string>() const;
-    
-    bool compare_short_value(const short_value& ls, const short_value& rs, double db = 0.0, timeouttype tmo = RESET_LOG_TIME);
 
 } ;
 
