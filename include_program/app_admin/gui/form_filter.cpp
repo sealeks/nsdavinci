@@ -65,7 +65,7 @@ namespace dvnci {
             filtercl = new stringed_filterclass(tmp_str);
 
 
-            setGroupList(grp, filtercl->idxcriteria(stringed_filterclass::GROUP_CRITERIA));
+            setGroupList(grp, filtercl->idxcriteria(GROUP_CRITERIA));
             ;
             connectSlot();
 
@@ -94,7 +94,7 @@ namespace dvnci {
 
 
 
-            setGroupList(grp, filtercl->idxcriteria(stringed_filterclass::GROUP_CRITERIA));
+            setGroupList(grp, filtercl->idxcriteria(GROUP_CRITERIA));
 
             connectSlot();
 
@@ -113,13 +113,13 @@ namespace dvnci {
             return result_;}
 
         void form_filter::setEdit() {
-            widget.lineEditbyName->setText(qtstr_from_str_loc(filtercl->criteria(stringed_filterclass::NAME_CRITERIA)));
-            setStateFrame(widget.framebyName, filtercl->iscriteria(stringed_filterclass::NAME_CRITERIA));
-            widget.lineEditbyComment->setText(qtstr_from_str_loc(filtercl->criteria(stringed_filterclass::COMMENT_CRITERIA)));
-            setStateFrame(widget.framebyComment, filtercl->iscriteria(stringed_filterclass::COMMENT_CRITERIA));
-            widget.lineEditbyBind->setText(qtstr_from_str_loc(filtercl->criteria(stringed_filterclass::BIND_CRITERIA)));
-            setStateFrame(widget.framebyBind, filtercl->iscriteria(stringed_filterclass::BIND_CRITERIA));
-            setStateFrame(widget.framebyGroup, filtercl->isidxcriteria(stringed_filterclass::GROUP_CRITERIA));
+            widget.lineEditbyName->setText(qtstr_from_str_loc(filtercl->criteria(NAME_CRITERIA)));
+            setStateFrame(widget.framebyName, filtercl->iscriteria(NAME_CRITERIA));
+            widget.lineEditbyComment->setText(qtstr_from_str_loc(filtercl->criteria(COMMENT_CRITERIA)));
+            setStateFrame(widget.framebyComment, filtercl->iscriteria(COMMENT_CRITERIA));
+            widget.lineEditbyBind->setText(qtstr_from_str_loc(filtercl->criteria(BIND_CRITERIA)));
+            setStateFrame(widget.framebyBind, filtercl->iscriteria(BIND_CRITERIA));
+            setStateFrame(widget.framebyGroup, filtercl->isidxcriteria(GROUP_CRITERIA));
             adjustSizeAll();}
 
         void form_filter::setnodetp(nodetype val, bool  _nosteinbox ) {
@@ -268,12 +268,12 @@ namespace dvnci {
         void form_filter::UpdateGroupList() {
             for (int i = 0; i < this->widget.listWidgetbyGroup->count(); i++) {
                 if (widget.listWidgetbyGroup->item(i)->type() == -1) {
-                    widget.listWidgetbyGroup->item(i)->setCheckState (!filtercl->isidxcriteria(stringed_filterclass::GROUP_CRITERIA) ?
+                    widget.listWidgetbyGroup->item(i)->setCheckState (!filtercl->isidxcriteria(GROUP_CRITERIA) ?
                             Qt::Checked : Qt::Unchecked);}
                 else {
-                    widget.listWidgetbyGroup->item(i)->setCheckState (((filtercl->idxcriteria(stringed_filterclass::GROUP_CRITERIA) != NULL) &&
-                                                                 (filtercl->idxcriteria(stringed_filterclass::GROUP_CRITERIA)->find(widget.listWidgetbyGroup->item(i)->type())
-                                                                  != filtercl->idxcriteria(stringed_filterclass::GROUP_CRITERIA)->end())) ?
+                    widget.listWidgetbyGroup->item(i)->setCheckState (((filtercl->idxcriteria(GROUP_CRITERIA) != NULL) &&
+                                                                 (filtercl->idxcriteria(GROUP_CRITERIA)->find(widget.listWidgetbyGroup->item(i)->type())
+                                                                  != filtercl->idxcriteria(GROUP_CRITERIA)->end())) ?
                             Qt::Checked : Qt::Unchecked);}}}
 
         void form_filter::proc_itemGroupChanged( QListWidgetItem * item ) {
@@ -282,11 +282,11 @@ namespace dvnci {
 
             if (item->checkState() == Qt::Unchecked) {
                 if (item->type() != -1) {
-                    filtercl->removeidxcriteria(stringed_filterclass::GROUP_CRITERIA, item->type());}}
+                    filtercl->removeidxcriteria(GROUP_CRITERIA, item->type());}}
             else {
                 if (item->type() != -1) {
-                    filtercl->addidxcriteria(stringed_filterclass::GROUP_CRITERIA, item->type());}
-                else filtercl->clearidxcriteria(stringed_filterclass::GROUP_CRITERIA);}
+                    filtercl->addidxcriteria(GROUP_CRITERIA, item->type());}
+                else filtercl->clearidxcriteria(GROUP_CRITERIA);}
 
             UpdateGroupList();
             setEdit();};}}

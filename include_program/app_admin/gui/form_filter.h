@@ -85,14 +85,14 @@ namespace dvnci {
         public slots:
 
             void proc_lineEditbyName( const QString & text ) {
-                setStateFrame(widget.framebyName, editCriteria(stringed_filterclass::NAME_CRITERIA, text));
+                setStateFrame(widget.framebyName, editCriteria(NAME_CRITERIA, text));
                 ;}
 
             void proc_lineEditbyComment( const QString & text ) {
-                setStateFrame(widget.framebyComment, editCriteria(stringed_filterclass::COMMENT_CRITERIA, text));}
+                setStateFrame(widget.framebyComment, editCriteria(COMMENT_CRITERIA, text));}
 
             void proc_lineEditbyBind( const QString & text ) {
-                setStateFrame(widget.framebyBind, editCriteria(stringed_filterclass::BIND_CRITERIA, text));}
+                setStateFrame(widget.framebyBind, editCriteria(BIND_CRITERIA, text));}
 
             void proc_setnodetp(int index) {
                 setnodetypeIndex(index);
