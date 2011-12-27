@@ -102,7 +102,7 @@ namespace WebCore {
             class attribute_expression_listener : public dvnci::expression_listener {
             public:
 
-                attribute_expression_listener(AttributeObserverImpl * const lsnr, const std::wstring& deflt = L"") : listener(lsnr), stdvl(),defaultvalue(deflt.c_str(),deflt.size()) {
+                attribute_expression_listener(AttributeObserverImpl * const lsnr, const std::wstring& deflt = L"") : listener(lsnr), stdvl() {
                 }
 
                 virtual ~attribute_expression_listener() {
@@ -111,19 +111,18 @@ namespace WebCore {
                 virtual void event(const dvnci::short_value& val) {
                     stdvl = dvnci::utf8_to_wstr(val.value<std::string > ());
                     vl = String( stdvl.c_str(), stdvl.size());
-                    listener->setvalue( val.valid() ? vl : defaultvalue);
+                    listener->setvalue( val.valid() ? vl : listener->deflt());
                 }
 
             private:
                 AttributeObserverImpl * const listener;
                 std::wstring stdvl;
                 String vl;
-                String defaultvalue;
             };
 
         public:
 
-            AttributeObserverImpl(Attribute * const attr, const AtomicString& val, const std::wstring& deflt = L"") : AttributeObserver(attr, val) {
+            AttributeObserverImpl(Attribute * const attr, const AtomicString& val, const std::wstring& deflt = L"") : AttributeObserver(attr, val), defaultvalue("") {
                 registrate(elem, val);
             }
 
@@ -144,14 +143,20 @@ namespace WebCore {
             virtual bool valid() const {
                 return exrptr;
             }
+            
+            const String& deflt() const{
+                return defaultvalue;
+            }
 
 
         private:
 
             dvnci::expression_listener_ptr registrate(Element * const el, const AtomicString& val) {
                 std::wstring tmpw = std::wstring(val.characters(), val.length());
-                tmpw = dvnci::attribute_expression(tmpw);
                 std::wstring tmpdef = dvnci::attribute_default_expression(tmpw);
+                tmpw = dvnci::attribute_expression(tmpw);              
+                defaultvalue = String(tmpdef.c_str(),tmpdef.size());
+                setvalue(defaultvalue);
                 if (tmpw.empty()) {
                     return dvnci::expression_listener_ptr();
                 }
@@ -175,6 +180,7 @@ namespace WebCore {
             dvnci::expression_listener_ptr exrptr;
             dvnci::chrome_executor_ptr intf;
             std::string exprstr;
+            String defaultvalue;
         };
         
         
@@ -184,7 +190,7 @@ namespace WebCore {
             class text_expression_listener : public dvnci::expression_listener {
             public:
 
-                text_expression_listener(TextNodeObserverImpl * const lsnr, const std::wstring& deflt = L"") : listener(lsnr), stdvl(), vl(), defaultvalue(deflt.c_str(),deflt.size()) {
+                text_expression_listener(TextNodeObserverImpl * const lsnr, const std::wstring& deflt = L"") : listener(lsnr), stdvl(), vl() {
                 }
 
                 virtual ~text_expression_listener() {
@@ -193,19 +199,18 @@ namespace WebCore {
                 virtual void event(const dvnci::short_value& val) {
                     stdvl = dvnci::utf8_to_wstr(val.value<std::string > ());
                     vl = String( stdvl.c_str(), stdvl.size());
-                    listener->setvalue( val.valid() ? vl : defaultvalue);
+                    listener->setvalue( val.valid() ? vl : listener->deflt());
                 }
 
             private:
                 TextNodeObserverImpl * const listener;
                 std::wstring stdvl;
                 String vl;
-                String defaultvalue;
             };
 
         public:
 
-            TextNodeObserverImpl(Text * const txt, const String& val) : TextNodeObserver(txt, val) {
+            TextNodeObserverImpl(Text * const txt, const String& val) : TextNodeObserver(txt, val) , defaultvalue("") {
                 registrate(txt, val);
             }
 
@@ -223,6 +228,11 @@ namespace WebCore {
             virtual bool valid() const {
                 return exrptr;
             }
+            
+                        
+            const String& deflt() const{
+                return defaultvalue;
+            }
 
 
 
@@ -230,8 +240,10 @@ namespace WebCore {
 
             dvnci::expression_listener_ptr registrate(Text * const txt, const String& val) {
                 std::wstring tmpw = std::wstring(val.characters(), val.length());
-                tmpw = dvnci::attribute_expression(tmpw);
                 std::wstring tmpdef = dvnci::attribute_default_expression(tmpw);
+                tmpw = dvnci::attribute_expression(tmpw);
+                defaultvalue = String(tmpdef.c_str(),tmpdef.size());
+                setvalue(defaultvalue);
                 if (tmpw.empty()) {
                     return dvnci::expression_listener_ptr();
                 }
@@ -256,7 +268,7 @@ namespace WebCore {
             dvnci::expression_listener_ptr exrptr;
             dvnci::chrome_executor_ptr intf;
             std::string exprstr;
-            std::wstring defaultvalue;
+            String defaultvalue;
         };
 
         Observer::Observer(Attribute * const attr, const AtomicString& val) {
