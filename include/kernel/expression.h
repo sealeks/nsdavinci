@@ -1534,6 +1534,7 @@ namespace dvnci {
                                     case func_format:{
                                         if (!calcstack.empty()) {
                                             calc_token lsideit = prepareitem(calcstack.top());
+                                            vlvtype vld=lsideit.valid();
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
                                                 clearall();
@@ -1541,6 +1542,7 @@ namespace dvnci {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             std::string frmttmp=lsideit.value<std::string>();
                                             lsideit = rsideit.to_valuetype().format(frmttmp);
+                                            lsideit.valid(vld);
                                             calcstack.pop();
                                             calcstack.push(lsideit);}
                                             break;}
