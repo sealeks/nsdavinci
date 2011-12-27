@@ -64,6 +64,11 @@ void initdvnciMain(){
 
 namespace WebCore {
     namespace DVNCI {
+        
+        
+        
+
+        const String NULLDEFAULTSTRING = " ";
 
 
 
@@ -231,7 +236,7 @@ namespace WebCore {
             
                         
             const String& deflt() const{
-                return defaultvalue;
+				return defaultvalue.length() ? defaultvalue : NULLDEFAULTSTRING;
             }
 
 
@@ -242,8 +247,8 @@ namespace WebCore {
                 std::wstring tmpw = std::wstring(val.characters(), val.length());
                 std::wstring tmpdef = dvnci::attribute_default_expression(tmpw);
                 tmpw = dvnci::attribute_expression(tmpw);
-                defaultvalue = String(tmpdef.c_str(),tmpdef.size());
-                setvalue(defaultvalue);
+				defaultvalue = String(tmpdef.c_str(),tmpdef.size());
+                setvalue(deflt());
                 if (tmpw.empty()) {
                     return dvnci::expression_listener_ptr();
                 }
