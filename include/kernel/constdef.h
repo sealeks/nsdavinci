@@ -55,6 +55,9 @@
 #pragma warning(disable: 4101  4146 )
 #endif
 
+//#if defined(_DVN_WIN_) 
+//#include <winsock2.h>
+//#endif
 
 // set python styling
 // set formating Netbeans
@@ -988,10 +991,10 @@ namespace dvnci {
     const acstgtype rwWriteOnly = 0x02;
 
 
-
-    const addcmdtype acNullCommand = 0x00;
-    const addcmdtype acNewCommand = 0x01;
-    const addcmdtype acQueuedCommand = 0x02;
+    const addcmdtype acNullCommand = 0x01;
+    const addcmdtype acQueuedCommand = 0x01;
+    const addcmdtype acNewCommand = 0x02;
+    const addcmdtype acImpulseCommand = 0x03;
 
 
     const std::string  MAIN_MAP_NAME           = SYSTEM_SHARE_SPEC + "dvncisys_analogmem_base";
@@ -1036,7 +1039,9 @@ namespace dvnci {
 
 
     const std::string NUMBER_REGEXTAMPL                    = "[0-9]*[\\.]?[0-9]++";
-    const std::string OPERATORS_REGEXTAMPL                 = "\\(|\\)|\\*|/|%|\\+\\+?+|--?+|<<<|>>>|<<|>>|[<>!=]=?+|&?+&|\\^|\\|?\\||&?&|,|\\?|:|@|#";
+    const std::string STRING1_REGEXTAMPL                   = "'.*?'";
+    const std::string STRING2_REGEXTAMPL                   = "\".*?\"";    
+    const std::string OPERATORS_REGEXTAMPL                 = "\\(|\\)|\\*|/|%|\\+\\+?+|--?+|<<<|>>>|<<|>>|[<>!=]=?+|&?+&|\\^|\\|?\\||&?&|,|\\?|:|@@@|@@|@|#";
     const std::string SELECTOR_REGEXTAMPL                  = "\\.bool|\\.real|\\.num|\\.alarmack|\\.alarm|\\.ack|\\.mineu|\\.maxeu"
                                                              "|\\.time|\\.logtime|\\.error|\\.valid|\\.msc|\\.sec|\\.minute|\\.hour|\\.monthdays"
                                                              "|\\.dayweek|\\.dayyear|\\.day|\\.month|\\.year|\\.epochminute|\\.epochhour"
@@ -1044,14 +1049,16 @@ namespace dvnci {
     const std::string FUNCTION_REGEXTAMPL                  = "num(?=\\()|abs(?=\\()|real(?=\\()|bool(?=\\()|min(?=\\()|max(?=\\()"
                                                              "|sinh(?=\\()|cosh(?=\\()|tanh(?=\\()|asin(?=\\()|acos(?=\\()|atan(?=\\()|sin(?=\\()|cos(?=\\()|tan(?=\\()"
                                                              "|pow(?=\\()|sqrt(?=\\()|sqr(?=\\()|exp(?=\\()|log10(?=\\()|log(?=\\()|ln(?=\\()"
-                                                             "|rnd(?=\\()|now(?=\\()|e(?=\\()|pi(?=\\()|nan(?=\\()|floor(?=\\()|seil(?=\\()|round(?=\\()"
+                                                             "|rnd(?=\\()|now(?=\\()|e(?=\\()|pi(?=\\()|nan(?=\\()|floor(?=\\()|seil(?=\\()|round(?=\\()|format(?=\\()"
                                                              "|incday(?=\\()|inchour(?=\\()|incminute(?=\\()|incsec(?=\\()|incmsc(?=\\()";
     const std::string TYPECAST_REGEXTAMPL                 =  "\\(notype\\)|\\(num64\\)|\\(unum64\\)|\\(num32\\)|\\(unum32\\)|\\num16\\)"
-                                                             "|\\(unum16\\)|\\(num8\\)|\\(unum8\\)|\\(float\\)|\\(double\\)|\\(bool\\)"
+                                                             "|\\(unum16\\)|\\(num8\\)|\\(unum8\\)|\\(float\\)|\\(double\\)|\\(bool\\)|\\(vbool\\)"
                                                              "|\\(time\\)|\\(text\\)";
 
     const std::string FULLEXPR_REGEXTAMPL                 = "(" + FUNCTION_REGEXTAMPL + "|" +
                                                                   TYPECAST_REGEXTAMPL + "|" +
+                                                                  STRING1_REGEXTAMPL + "|" +
+                                                                  STRING2_REGEXTAMPL + "|" +    
                                                                   SELECTOR_REGEXTAMPL + "|" +
                                                                   CORRECT_ENTETYFULLNAME_REGEXTAMPL + "|" +
                                                                   CORRECT_ENTETYNAME_REGEXTAMPL + "|" +

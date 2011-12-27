@@ -74,6 +74,7 @@ namespace dvnci {
                     case oper_cast_float: return os << "(float)";
                     case oper_cast_double: return os << "(double)";
                     case oper_cast_bool: return os << "(bool)";
+                    case oper_cast_vbool: return os << "(vbool)";
                     case oper_cast_time: return os << "(time)";
                     case oper_cast_text: return os << "(text)";
                     case const_now: return os << "now";
@@ -122,6 +123,8 @@ namespace dvnci {
                     case oprt_logicor: return os << "||";
                     case oprt_condit: return os << "?";
                     case oprt_command: return os << "@";
+                    case oprt_command1: return os << "@@";
+                    case oprt_command2: return os << "@@@";                   
                     case oprt_kvit: return os << "#";
                     case oprt_postinc: return os << "post++";
                     case oprt_postdec: return os << "post--";
@@ -157,6 +160,7 @@ namespace dvnci {
                 case TYPE_UNUM8:    return (lside.value<unum8 > () + rside.value<unum8 > ());
                 case TYPE_DOUBLE:   return (lside.value<double>() + rside.value<double>());
                 case TYPE_FLOAT:    return (lside.value<float>() + rside.value<float>());
+                case TYPE_TEXT:    return (lside.value<std::string>() + rside.value<std::string>());
                 case TYPE_TM:       return NULL_DOUBLE;}
             return (lside.value<double>() + rside.value<double>());}
 
@@ -654,6 +658,8 @@ namespace dvnci {
                     return value<double>();}
                 case oper_cast_bool:{
                     return value<bool>();}
+                case oper_cast_text:{
+                    return value<std::string>();}
                 default:{
                     return value<double>();}}
             return value<double>();}

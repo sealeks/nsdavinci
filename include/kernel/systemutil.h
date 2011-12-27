@@ -175,6 +175,33 @@ namespace dvnci {
          * @return число прочитанных байт
          */
         static size_t read(const fspath& filename, void* addr, size_t offset = 0, size_t size = 0);
+        
+        
+        
+        static size_t write(const std::string& fn, const std::wstring& val){
+            fspath filename(freechar_copy(fn, "file:///"));
+            return write(filename, val);}
+        
+        static size_t write(const std::string& fn, const std::string& val){
+            fspath filename(freechar_copy(fn, "file:///"));
+            return write(filename, val);}       
+        
+        static size_t write(const std::wstring& fn, const std::wstring& val){
+            fspath filename(freechar_copy(fn, L"file:///"));
+            return write(filename, val);}
+        
+        static size_t write(const std::wstring& fn, const std::string& val){
+            fspath filename(freechar_copy(fn, L"file:///"));
+            return write(filename, val);}        
+        
+        static size_t write(const fspath& filename, const std::wstring& val){
+            std::string sval =wstr_to_utf8(val);
+            return writestr(filename, sval.data(), 0,  sval.size());}
+        
+        static size_t write(const fspath& filename, const std::string& val){
+            return writestr(filename, val.data(), 0,  val.size());}
+        
+        static size_t writestr(const fspath& filename, const void* addr, size_t offset , size_t size );
 
         /**
          * Запись памяти в файл
@@ -185,6 +212,7 @@ namespace dvnci {
          * @return число записанных байт
          */
         static size_t write(const fspath& filename, const void* addr, size_t offset = 0, size_t size = 0);} ;
+        
 
     /**
      * Работа с разделяемой памятью и файлолами отображаемыми в

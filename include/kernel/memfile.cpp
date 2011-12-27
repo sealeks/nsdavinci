@@ -6,6 +6,8 @@
  */
 
 #include <kernel/memfile.h>
+#undef min
+#undef max
 
 namespace dvnci {
 
@@ -215,41 +217,70 @@ namespace dvnci {
     std::string commandsbase::host(size_type id) const {
         return "";};
 
-    addcmdtype commandsbase::add(size_type id, num64 preval, num64 val, tagtype tp, bool queue, guidtype clid) {
+    addcmdtype commandsbase::add(size_type id, num64 preval, num64 val, tagtype tp, addcmdtype queue, guidtype clid) {
 
         INP_EXCLUSIVE_LOCK(memlock());
 
-        if (!queue) {
+        if (queue<=acQueuedCommand) {
             size_type tmp = find_by_tagid(id);
             if (tmp != npos) {
                 operator[](id)->reset_commandstruct(val, clid);
                 incversion();
                 return acQueuedCommand;}}
-        if (count() == maxcount()) pop_begin();
+        if ((queue==acImpulseCommand) && !((tp==TYPE_DISCRET) || (tp==TYPE_NODEF)))
+                return acNullCommand;
+        if (queue=!acImpulseCommand){
+        if (count() == maxcount()) pop_begin();  
         size_type newid = inc();
         if (( tgbs_ptr->exists(id)) && ((newid != npos))) {
             new (operator[](newid)) commandstruct(globalnum(), id, tgbs_ptr->group(id), preval, val, clid, tp );
             incversion();
-            return acNewCommand;}
+            return acNewCommand;}}
+        else{
+           if (count() == maxcount()) pop_begin();
+           size_type newid = inc();
+           if (( tgbs_ptr->exists(id)) && ((newid != npos))) {
+               new (operator[](newid)) commandstruct(globalnum(), id, tgbs_ptr->group(id), tp ? (val ? num64_cast<double>(1.0) : 0) : (val ? 1 : 0) , val, clid, tp );} 
+           if (count() == maxcount()) pop_begin();
+           newid = inc();
+           if (( tgbs_ptr->exists(id)) && ((newid != npos))) {
+               new (operator[](newid)) commandstruct(globalnum(), id, tgbs_ptr->group(id), tp ? (val ? 0 : num64_cast<double>(1.0)) : (val ? 0 : 1) , val, clid, tp );}           
+           incversion();
+           return acImpulseCommand;}
         return acNullCommand;}
 
-    addcmdtype commandsbase::add(size_type id, const std::string& val,  bool queue, guidtype clid) {
+    addcmdtype commandsbase::add(size_type id, const std::string& val,  addcmdtype queue, guidtype clid) {
 
         INP_EXCLUSIVE_LOCK(memlock());
+        
+        tagtype tp = tgbs_ptr->type(id);
 
-        if (!queue) {
+        if (queue<=acQueuedCommand) {
             size_type tmp = find_by_tagid(id);
             if (tmp != npos) {
                 operator[](id)->reset_commandstruct(val, clid);
                 incversion();
                 return acQueuedCommand;}}
-
+        if ((queue==acImpulseCommand) && !((tp==TYPE_DISCRET) || (tp==TYPE_NODEF)))
+                return acNullCommand;
+        if (queue=!acImpulseCommand){
         if (count() == maxcount()) pop_begin();
-        size_type newid = inc();
-        if (( tgbs_ptr->exists(id)) && ((newid != npos))) {
-            new (operator[](newid)) commandstruct(globalnum(), id, tgbs_ptr->group(id), val, clid );
-            incversion();
-            return acNewCommand;}
+            size_type newid = inc();
+            if (( tgbs_ptr->exists(id)) && ((newid != npos))) {
+                new (operator[](newid)) commandstruct(globalnum(), id, tgbs_ptr->group(id), val, clid );
+                incversion();
+                return acNewCommand;}}
+        else{
+           if (count() == maxcount()) pop_begin();
+           size_type newid = inc();
+           if (( tgbs_ptr->exists(id)) && ((newid != npos))) {
+               new (operator[](newid)) commandstruct(globalnum(), id, tgbs_ptr->group(id), val=="0" ? "1" : "0" ,  clid );} 
+           if (count() == maxcount()) pop_begin();
+           newid = inc();
+           if (( tgbs_ptr->exists(id)) && ((newid != npos))) {
+               new (operator[](newid)) commandstruct(globalnum(), id, tgbs_ptr->group(id), val=="0" ? "0" : "1" ,  clid );}           
+           incversion();
+           return acImpulseCommand;}
         return acNullCommand;}
 
     bool   commandsbase::select_commands(command_vector& vect_, size_type group) {
@@ -259,7 +290,7 @@ namespace dvnci {
         bool comlete = false;
         indx_set tmpmp;
         if ((!count()) || (!tgbs_ptr)) return false;
-        for (size_type i = count() - 1; ((i < count()) && (!comlete)) ; i--) {
+        for (size_type i = 0; ((i < count()) && (!comlete)) ; i++) {
             if (((operator[](i))->group() == group) || (group == npos)) {
                 if (tmpmp.find(tagid(i)) == tmpmp.end()) {
                     (operator[](i))->executed(true);
@@ -279,7 +310,7 @@ namespace dvnci {
         bool comlete = false;
         indx_set tmpmp;
         if ((!count()) || (!tgbs_ptr)) return false;
-        for (size_type i = count() - 1; ((i < count()) && (!comlete)) ; i--) {
+        for (size_type i = 0; ((i < count()) && (!comlete)) ; i++) {
             if (groups.find((operator[](i))->group()) != groups.end()) {
                 if (tmpmp.find(tagid(i)) == tmpmp.end()) {
                     (operator[](i))->executed(true);
@@ -754,7 +785,7 @@ namespace dvnci {
                 new interproc_namemutex(boost::interprocess::open_or_create, NS_ONETIMEINIT_MTXNAME.c_str(), permis);
         return (*one_init_);}
 
-    tagsbase::tagsbase(const fspath& basepatht, appidtype app, eventtypeset evnts , lock_nameexclusive ontimeinit) :
+    tagsbase::tagsbase(const fspath& basepatht, appidtype app, eventtypeset evnts/* , lock_nameexclusive ontimeinit*/) :
     templatebase<tagsstruct>(basepatht / MAIN_FILE_NAME , MAIN_MAP_NAME, EXTEND_MEMSHARE_TAG_SIZE ) , fpath(basepatht), globalmemsize_(0), appid_(app) {
 
         stringbs_ = stringbase_ptr(new stringbase(basepatht / STRING_FILE_NAME, STRING_MAP_NAME, EXTEND_MEMSHARE_STR_SIZE));
@@ -1261,7 +1292,7 @@ namespace dvnci {
     void tagsbase::write_val_event(size_type id, const dt_val_pair& val) {
         write_val_event(id, val.first, val.second);}
 
-    void tagsbase::send_command(size_type id, const std::string& val, bool queue , size_type clid) {
+    void tagsbase::send_command(size_type id, const std::string& val, addcmdtype queue , size_type clid) {
         if (exists(id)) {
             switch (type(id)) {
                 case TYPE_TEXT:{
@@ -1314,7 +1345,7 @@ namespace dvnci {
             double tmp = 0;
             if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, clid);}}
 
-    void tagsbase::send_command(size_type id, const short_value& val , bool queue , size_type clid) {
+    void tagsbase::send_command(size_type id, const short_value& val , addcmdtype queue , size_type clid) {
         if (exists(id)) {
             switch (type(id)) {
                 case TYPE_TEXT:{
@@ -1354,7 +1385,7 @@ namespace dvnci {
                     return;}}
             send_command<double>(id, val.value<double>(), queue, clid);}}
     
-    void tagsbase::send_command(const std::string& id, const short_value& val, bool queue, size_type clid){
+    void tagsbase::send_command(const std::string& id, const short_value& val, addcmdtype queue, size_type clid){
              size_type ind = operator ()(id);
              if (exists(ind))
                  send_command(ind, val, queue, clid);}

@@ -34,7 +34,7 @@ namespace dvnci {
          * косвенного обращения и разыменовывания (->, *), функции (), выделения элемента [], определения размера sizeof и постфикных ++, --
          *       Операция  определения адреса (&) изменяет смысл и действует таким образом , что операнд приобретает валидность.
          * Kроме того, вводятся дополнительные операции:
-         *          1. Операция @ - посылка команды.
+         *          1. Операция @  (@@, @@@) - посылка команды. (@@ с постановкой в очередь, @@@ - ресет )
          *          Вырважение tag @ expr означает посыку команды val.value. Команда не посылается в случае нулевой валидности expr
          *          Операция возвращает значение и в во многом (в том числе приоритетом) соответсвует присваиванию ( т.е "tag1 @ ((tag2 @ expr) + 1)" - корректно )
          *          2. Операция квитирования #
@@ -149,6 +149,7 @@ namespace dvnci {
             func_cosh = 1125,      /* cosh*/
             func_sinh = 1127,      /* sinh*/
             func_tanh = 1129,      /* tanh*/
+            func_format = 1131,      /* format*/            
             oprt_opnot = 2001,              // !  2
             oprt_opexnot = 2003,            // ~  2
             oprt_add_unary = 2005,          // +   2
@@ -168,6 +169,7 @@ namespace dvnci {
             oper_cast_bool      = 2043,      // (bool)
             oper_cast_time      = 2045,      // (time)
             oper_cast_text      = 2049,      // (text)
+            oper_cast_vbool     = 2051,      // (vbool)
             oprt_mult = 3000,               // *   3
             oprt_div = 3002,                // /  3
             oprt_modulo = 3004,             //  %  3
@@ -192,8 +194,10 @@ namespace dvnci {
             oprt_casedelim = 13058,          /* :*/
             oprt_command = 14000,           /* @*/
             oprt_kvit = 14051,               /* #*/
+            oprt_command1 = 14020,           /* @@*/
+            oprt_command2 = 14040,           /* @@@*/            
             oprt_postinc = 15000,           /* ++*/
-            oprt_postdec = 15002,           /* --*/
+            oprt_postdec = 15020,           /* --*/
         } ;
 
         class exprintf_stub {
@@ -254,7 +258,7 @@ namespace dvnci {
             bool            kvit(indx id = npos) {
                 return false;}
 
-            void            send_command(indx id, const short_value& vl, bool queue = true, indx clid = npos) {};
+            void            send_command(indx id, const short_value& vl, addcmdtype queue = acQueuedCommand, indx clid = npos) {};
 
             void            incref(indx id) {}
 
@@ -297,6 +301,8 @@ namespace dvnci {
             calc_token(const datetime& val) : shv_(val), id_(npos), operation_(constant) {};
 
             calc_token(const short_value& val, indx idx = npos) : shv_(val), id_(idx), operation_(constant) {};
+            
+            calc_token(const std::string& val) : shv_(val), id_(npos), operation_(constant) {};
 
             calc_token(const calc_operation& val) : shv_(),  id_(npos), operation_(val) {};
 
@@ -379,7 +385,7 @@ namespace dvnci {
 
             std::string to_string() const {
                 if  (isoperation()) return "op" + to_str<int>(static_cast<int> (operation())) + " " ;
-                return operation() == expr ? to_str(id_) : num64_and_type_cast<std::string>(value(), type());}
+                return operation() == expr ? to_str(id_) : shv_.value<std::string>();}
 
             short_value to_valuetype() {
                 return shv_;}
@@ -546,7 +552,7 @@ namespace dvnci {
 
             const indx_set& indexes() const {
                 return refcntr ? refcntr->indexes() : indexes_;}
-
+            
 
         protected:
 
@@ -697,9 +703,13 @@ namespace dvnci {
                 if (val == "||") return  calc_token(oprt_logicor);
                 if (val == "&&") return  calc_token(oprt_logicand);
                 if (val == "++") return  calc_token(oprt_prefinc);
-                if (val == "--") return  calc_token(oprt_prefdec);}
+                if (val == "--") return  calc_token(oprt_prefdec);
+                if (val == "''") return  calc_token("");
+                if (val == "@@") return  calc_token(oprt_command1);
+                if (val == "\"\"") return  calc_token("");}
             if (val == "<<<") return  calc_token(oprt_cyclbitleft);
             if (val == ">>>") return  calc_token(oprt_cyclbitright);
+            if (val == "@@@") return  calc_token(oprt_command2);
             if (val == "mod") return  calc_token(select_mod);
             if (val == ".mineu") return  calc_token(select_mineu);
             if (val == ".maxeu") return  calc_token(select_maxeu);
@@ -728,6 +738,7 @@ namespace dvnci {
             if (val == "acos") return  calc_token(func_acos);
             if (val == "asin") return  calc_token(func_asin);
             if (val == "atan") return  calc_token(func_atan);
+            if (val == "format") return  calc_token(func_format);
             if (val == "cosh") return  calc_token(func_cosh);
             if (val == "sinh") return  calc_token(func_sinh);
             if (val == "tanh") return  calc_token(func_tanh);
@@ -756,6 +767,7 @@ namespace dvnci {
             if (val == "(float)") return  calc_token(oper_cast_float);
             if (val == "(double)") return  calc_token(oper_cast_double);
             if (val == "(bool)") return  calc_token(oper_cast_bool);
+            if (val == "(vbool)") return  calc_token(oper_cast_vbool);
             if (val == "(time)") return  calc_token(oper_cast_time);
             if (val == "(text)") return  calc_token(oper_cast_text);
             if (val == "now") return  calc_token(const_now);
@@ -902,6 +914,15 @@ namespace dvnci {
                     default: calc_token(NULL_DOUBLE);}
                 return calc_token(NULL_DOUBLE);}
 
+            if (val.size()>=2) {
+                if (((*val.begin())=='"') || ((*val.begin())=='\'')) {
+                    if (((*val.begin())=='"') && ((*val.rbegin())=='"')){
+                        return calc_token(val.substr(1,val.size()-2));}
+                    if (((*val.begin())=='\'') && ((*val.rbegin())=='\'')){
+                        return calc_token(val.substr(1,val.size()-2));}
+                    calc_token(NULL_DOUBLE);}}           
+
+
             indx idtag = (intf) ? intf(val) : npos;
             if ((idtag != npos) && (refcntr)) refcntr->add(idtag);
             return calc_token(idtag,
@@ -1011,6 +1032,7 @@ namespace dvnci {
                             calcstack.pop();
                             if (caseswitch(it, nmidit)) {
                                 clearall();
+				changepoll = true;
                                 return error();};}
                         else {
                             clearall();
@@ -1160,7 +1182,9 @@ namespace dvnci {
                             case  func_rnd:{
                                 calcstack.push(calc_token((1.0 * rand()) / RAND_MAX));
                                 break;}
-                            case  oprt_command:{
+                            case  oprt_command:
+                            case  oprt_command1:                                
+                            case  oprt_command2:{
                                 if (calcstack.size() >= 2) {
                                     if ((calcstack.top().operation() == constant) && (calcstack.top().isnan())) {
                                         //calcstack.pop();
@@ -1174,23 +1198,27 @@ namespace dvnci {
                                     calcstack.pop();
                                     if ((intf) && (!calcstack.top().isnan()) && (calcstack.top().id() != npos)) {
                                         if (rsideit.valid() == FULL_VALID) {
-                                            intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), FULL_VALID ), false);}
-                                        calcstack.pop();
-                                        calcstack.push(rsideit);}
+                                            intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), FULL_VALID ),
+                                                    it->operation()==oprt_command ? acQueuedCommand : (it->operation()==oprt_command1 ? acNewCommand : acImpulseCommand));}
+                                        //calcstack.pop();
+                                        /*calcstack.push(rsideit);*/}
                                     else {
-                                        calcstack.pop();
-                                        calcstack.push(rsideit);}}
+                                        //calcstack.pop();
+                                        /*calcstack.push(rsideit);*/}}
                                 else {
                                     clearall();
                                     return error(ERROR_EXPRPARSE);}
                                 break;}
                             case  oprt_kvit:{
                                 if (!calcstack.empty()) {
-                                    if ((intf) && (calcstack.top().id() != npos)) {
+                                    if (calcstack.top().id() != npos) {
                                         intf->kvit(calcstack.top().id());}
                                     else {
-                                        clearall();
+                                        intf->kvit(calcstack.top().id());
                                         return error(ERROR_EXPRPARSE);}}
+                                else{
+                                    intf->kvit(); 
+                                    return error();}
                                 break;}
                             default:{
                                 switch (it->operation()) {
@@ -1489,6 +1517,33 @@ namespace dvnci {
                                             clearall();
                                             return error(ERROR_EXPRPARSE);}
                                         break;}
+                                    
+                                    case oper_cast_vbool:{
+                                        if (!calcstack.empty()) {
+                                            calc_token nmidit = prepareitem(calcstack.top());
+                                            calcstack.pop();
+                                            calc_token resultit = nmidit.gettypedval(it->operation());
+                                            resultit=resultit.value<bool>() && nmidit.valid();
+                                            resultit.valid(FULL_VALID);
+                                            calcstack.push(resultit);}
+                                        else {
+                                            clearall();
+                                            return error(ERROR_EXPRPARSE);}
+                                        break;}
+                                    
+                                    case func_format:{
+                                        if (!calcstack.empty()) {
+                                            calc_token lsideit = prepareitem(calcstack.top());
+                                            calcstack.pop();
+                                            if ((calcstack.empty())) {
+                                                clearall();
+                                                return error(ERROR_EXPRPARSE);}
+                                            calc_token rsideit = prepareitem(calcstack.top());
+                                            std::string frmttmp=lsideit.value<std::string>();
+                                            lsideit = rsideit.to_valuetype().format(frmttmp);
+                                            calcstack.pop();
+                                            calcstack.push(lsideit);}
+                                            break;}
 
                                     case oper_cast_time:
                                     case oper_cast_text:{
@@ -1590,10 +1645,10 @@ namespace dvnci {
         template<typename BASEINTF, typename REFCOUNTER>
         ns_error expression_templ<BASEINTF, REFCOUNTER>::caseswitch(polishline_iterator& iter, const calc_token& tkn) {
             bool fnd = false;
-            if ((tkn.valid() != FULL_VALID) || (tkn.isnan())) {
-                polline.clear();
-                polline.push_back(calc_token(NULL_DOUBLE));
-                return true;}
+            //if ((tkn.valid() != FULL_VALID) || (tkn.isnan())) {
+                //polline.clear();
+                //polline.push_back(calc_token(NULL_DOUBLE));
+                //return true;}
             bool cs = tkn.getbool().value();
             polishline_iterator it = iter;
             size_t cntr = 0;
@@ -1651,7 +1706,7 @@ namespace dvnci {
             size_t counter = 0;
             if (regex_tokin_parser(val, stringvector, FULLEXPR_REGEX)) {
                 for (exprstack::iterator it = stringvector.begin(); it != stringvector.end(); ++it) {
-                    DEBUG_VAL_DVNCI(*it)
+                    //DEBUG_VAL_DVNCI(*it)
                     calc_token tmpit = calc_token_factory(*it);
                     if (tmpit.iserror()) {
                         if  (tmpit.error() == ERROR_TAGNOEXIST) { // возможно появится
@@ -1743,7 +1798,7 @@ namespace dvnci {
                     else
                         polline.push_back(calcstack.top());
                     calcstack.pop();}}
-            print_line(polline);
+            //print_line(polline);
             savedpolline = polline;
             return error();}
 
