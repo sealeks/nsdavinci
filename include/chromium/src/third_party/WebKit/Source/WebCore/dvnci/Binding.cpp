@@ -284,6 +284,7 @@ namespace WebCore {
         Observer::Observer(Text * const txt, const String& val) {
             if (!val.isEmpty()) {
                 if ((txt) && (val.find("#{") != WTF::notFound) && (val.find("}") != WTF::notFound)) {
+                    initdvnciMain();
                     if (!valid()) {
                         if (impl)
                             impl = impl_reftype();
