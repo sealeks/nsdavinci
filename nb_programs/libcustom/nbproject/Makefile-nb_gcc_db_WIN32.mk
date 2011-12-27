@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/217049176/netintf.o \
+	${OBJECTDIR}/_ext/217049176/gui_executor.o \
 	${OBJECTDIR}/_ext/217049176/extnetintf.o \
 	${OBJECTDIR}/_ext/217049176/remotenetintf.o \
 	${OBJECTDIR}/_ext/217049176/netsession.o \
@@ -71,6 +72,11 @@ ${OBJECTDIR}/_ext/217049176/netintf.o: ../../include/custom/netintf.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
 	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netintf.o ../../include/custom/netintf.cpp
+
+${OBJECTDIR}/_ext/217049176/gui_executor.o: ../../include/custom/gui_executor.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
+	${RM} $@.d
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/gui_executor.o ../../include/custom/gui_executor.cpp
 
 ${OBJECTDIR}/_ext/217049176/extnetintf.o: ../../include/custom/extnetintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176

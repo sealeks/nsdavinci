@@ -54,7 +54,7 @@ ASFLAGS=
 LDLIBSOPTIONS=../../lib/nb_gcc_db_WIN32/libnsadmin.a ../../lib/nb_gcc_db_WIN32/libnskernel.a ../../lib/nb_gcc_db_WIN32/libnsadmin.a ../../lib/nb_gcc_db_WIN32/libmeta.a ../../lib/boost/nb_gcc_db_WIN32/libboost_date_time.a ../../lib/boost/nb_gcc_db_WIN32/libboost_filesystem.a ../../lib/boost/nb_gcc_db_WIN32/libboost_iostreams.a ../../lib/boost/nb_gcc_db_WIN32/libboost_program_options.a ../../lib/boost/nb_gcc_db_WIN32/libboost_random.a ../../lib/boost/nb_gcc_db_WIN32/libboost_regex.a ../../lib/boost/nb_gcc_db_WIN32/libboost_serialization.a ../../lib/boost/nb_gcc_db_WIN32/libboost_signals.a ../../lib/boost/nb_gcc_db_WIN32/libboost_system.a ../../lib/boost/nb_gcc_db_WIN32/libboost_thread.a ../../lib/boost/nb_gcc_db_WIN32/libboost_wserialization.a -lws2_32 -lwsock32 -lole32 -loleaut32
 
 nbproject/qt-${CND_CONF}.mk: nbproject/qt-${CND_CONF}.pro FORCE
-	${QMAKE} VPATH=. -spec win32-g++ -o qttmp-${CND_CONF}.mk nbproject/qt-${CND_CONF}.pro
+	${QMAKE} VPATH=. -spec qmake -o qttmp-${CND_CONF}.mk nbproject/qt-${CND_CONF}.pro
 	mv -f qttmp-${CND_CONF}.mk nbproject/qt-${CND_CONF}.mk
 	@sed -e 's/\/qt\/bin/\/qt\/bin\//g' nbproject/qt-${CND_CONF}.mk >nbproject/qt-${CND_CONF}.tmp
 	@mv -f nbproject/qt-${CND_CONF}.tmp nbproject/qt-${CND_CONF}.mk

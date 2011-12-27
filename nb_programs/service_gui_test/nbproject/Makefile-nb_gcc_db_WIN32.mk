@@ -64,7 +64,7 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lcustom -ln
 ${OBJECTDIR}/_ext/412949730/main.o: ../../include_program/service_gui_test/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/412949730
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/412949730/main.o ../../include_program/service_gui_test/main.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -D_DVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/412949730/main.o ../../include_program/service_gui_test/main.cpp
 
 # Subprojects
 .build-subprojects:
