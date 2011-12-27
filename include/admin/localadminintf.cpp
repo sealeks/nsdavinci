@@ -532,7 +532,7 @@ namespace dvnci {
 
         bool localadminintf::operation_send_command(indx id, std::string val, bool setqueue) {
             if (intf) {
-                intf->send_command(id, val, setqueue);
+                intf->send_command(id, val, setqueue ? acQueuedCommand : acNewCommand );
                 return true;}
             return false;}
 
