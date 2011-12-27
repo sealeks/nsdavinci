@@ -209,7 +209,12 @@ namespace dvnci {
                 std::string::size_type dfltpos=val.find(":default");
                 if (dfltpos!=std::string::npos) {
                     val = val.substr(0, dfltpos);
-                    boost::algorithm::trim(val);}
+                    boost::algorithm::trim(val);
+                    boost::algorithm::replace_all(val, "&apos;", "'");
+                    boost::algorithm::replace_all(val, "&quot;", "\"");
+                    boost::algorithm::replace_all(val, "&lt;", "<");
+                    boost::algorithm::replace_all(val, "&gt;", ">");
+                    boost::algorithm::replace_all(val, "&amp;", "&");}
                 return val;}
             }
         return "";}
@@ -223,7 +228,12 @@ namespace dvnci {
                 std::wstring::size_type dfltpos=val.find(L":default");
                 if (dfltpos!=std::wstring::npos) {
                     val = val.substr(0, dfltpos);
-                    boost::algorithm::trim(val);}
+                    boost::algorithm::trim(val);
+                    boost::algorithm::replace_all(val, L"&apos;", L"'");
+                    boost::algorithm::replace_all(val, L"&quot;", L"\"");
+                    boost::algorithm::replace_all(val, L"&lt;", L"<");
+                    boost::algorithm::replace_all(val, L"&gt;", L">");
+                    boost::algorithm::replace_all(val, L"&amp;", L"&");}
                 return val;}
             }
         return L"";}
