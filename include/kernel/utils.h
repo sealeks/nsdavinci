@@ -74,6 +74,7 @@ namespace dvnci {
 
     size_t regex_tokin_parser(const std::string& val, str_vect& dst, const boost::regex& re);
     size_t regex_tokin_parser(const std::wstring& val, wstr_vect& dst, const boost::wregex& re);
+    size_t regex_tokin_parser(const std::wstring& val, str_vect& dst, const boost::wregex& re);
 
     bool instrincriteria(std::string nm, std::string strcriteria);
 
@@ -83,7 +84,13 @@ namespace dvnci {
     std::wstring retremoved_namespace_delimit(const std::wstring& vl);
     std::string get_namespace_delimit(std::string& vl);
     std::wstring get_namespace_delimit(std::wstring& vl);
-
+    
+    
+    std::string attribute_expression(std::string val);
+    std::wstring attribute_expression(std::wstring val);
+    
+    std::string attribute_default_expression(std::string val);
+    std::wstring attribute_default_expression(std::wstring val);
 
 
     size_t split_str(const std::string& source, const std::string& delimit, str_vect& vectstr);
@@ -427,6 +434,8 @@ namespace dvnci {
     template<> datetime num64_and_type_cast<datetime>(const num64& val, tagtype type);
 
     template<> std::string num64_and_type_cast<std::string>(const num64& val, tagtype type);
+    
+    template<> std::wstring num64_and_type_cast<std::wstring>(const num64& val, tagtype type);
 
     std::string num64_and_type_cast(const num64& val, tagtype type, const std::string& format);
 

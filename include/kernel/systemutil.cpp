@@ -35,6 +35,18 @@ namespace dvnci {
             ifs.close();
             return rsz;}
         else return 0;}
+    
+    size_t filestream::writestr(const fspath& filename, const void* addr, size_t offset , size_t size ) {
+        if (!size) return 0;
+        std::ios_base::openmode mode = std::ios::binary | std::ios::trunc;
+        std::ofstream ofs( filename.string().c_str() , mode );
+        if (!ofs)
+            return 0;
+        if (offset)
+            ofs.seekp(offset, std::ofstream::beg);
+        ofs.write((char*) addr, size);
+        ofs.close();
+        return 0;};
 
     size_t filestream::write(const fspath& filename, const void* addr, size_t offset , size_t size ) {
         if (!size) return 0;

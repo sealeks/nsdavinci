@@ -55,7 +55,10 @@ namespace dvnci {
         value_(num64_cast<float> (val)),  valid_(FULL_VALID) , time_(0), type_(TYPE_FLOAT), error_(0) {};
 
         short_value( double val) :
-        value_(num64_cast<double> (val)),  valid_(FULL_VALID) , time_(0), type_(TYPE_DOUBLE), error_(0) {};
+        value_(num64_cast<double> (val)),  valid_(FULL_VALID), time_(0), type_(TYPE_DOUBLE), error_(0) {};
+        
+        short_value( double val, datetime dtm) :
+        value_(num64_cast<double> (val)),  valid_(FULL_VALID) , time_(0), type_(TYPE_DOUBLE), error_(0) {time(dtm);};
 
         short_value( const datetime & val) :
         value_(castnum64_from_datetime(val)),  valid_(FULL_VALID) , time_(0), type_(TYPE_TM), error_(0) {};
@@ -63,6 +66,10 @@ namespace dvnci {
         short_value(const std::string & val, vlvtype vld = FULL_VALID, ns_error err = 0, const datetime& tm = nill_time) :
         value_(0),  valid_(vld) , time_(castnum64_from_datetime(tm == nill_time ? now() : tm)), 
         type_(TYPE_TEXT), error_(err), str_ptr( new std::string(val)) {};
+        
+        short_value(const std::wstring & val, vlvtype vld = FULL_VALID, ns_error err = 0, const datetime& tm = nill_time) :
+        value_(0),  valid_(vld) , time_(castnum64_from_datetime(tm == nill_time ? now() : tm)), 
+        type_(TYPE_TEXT), error_(err), str_ptr( new std::string(wstr_to_utf8(val))) {};
 
         template <typename T >
                 T value() const {
@@ -112,6 +119,23 @@ namespace dvnci {
             return time_;}
 
         ns_error covert_to_bcd();
+        
+        std::string format(const std::string& frmt){
+           return  num64_and_type_cast(value_,type_, frmt);}
+        
+        friend bool operator!=(const short_value& ls, const short_value& rs){
+            if ((ls.type_==rs.type_) && (ls.valid_==rs.valid_)){
+                return (ls.type_==TYPE_TEXT) ?
+                       (((ls.str_ptr && rs.str_ptr) && (*ls.str_ptr!=*rs.str_ptr)) || (ls.str_ptr != rs.str_ptr)) :
+                       (ls.value_!=rs.value_);}
+            return true;}
+        
+        friend bool operator==(const short_value& ls, const short_value& rs){
+            return !(ls!=rs);}
+        
+        bool nan() const {
+            return ((!type_) && (value<double>()!=value<double>()));}
+        
          
 
     private:
@@ -129,6 +153,9 @@ namespace dvnci {
 
     template <>
     std::string short_value::value<std::string>() const;
+    
+    template <>
+    std::wstring short_value::value<std::wstring>() const;
 
 } ;
 

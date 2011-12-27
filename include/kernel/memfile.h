@@ -349,9 +349,9 @@ namespace dvnci {
 
     protected:
 
-        addcmdtype add(size_type id, num64 preval, num64 val, tagtype tp, bool queue, guidtype clid = 0);
+        addcmdtype add(size_type id, num64 preval, num64 val, tagtype tp, addcmdtype queue = acQueuedCommand, guidtype clid = 0);
 
-        addcmdtype add(size_type id, const std::string& val,  bool queue, guidtype clid = 0);
+        addcmdtype add(size_type id, const std::string& val,  addcmdtype queue = acQueuedCommand, guidtype clid = 0);
 
         bool select_commands(command_vector& vect_, size_type group = npos);
 
@@ -1232,8 +1232,8 @@ namespace dvnci {
     public:
 
         tagsbase(const fspath& basepatht, appidtype app,
-                eventtypeset evnts = sIMMINone,
-                lock_nameexclusive ontimeinit = lock_nameexclusive(tagsbase::one_init()));
+                eventtypeset evnts = sIMMINone/*,
+                lock_nameexclusive ontimeinit = lock_nameexclusive(tagsbase::one_init())*/);
 
         virtual ~tagsbase();
         
@@ -1767,13 +1767,13 @@ namespace dvnci {
 
 
         template<typename T>
-        void send_command(size_type id, T val, bool queue = true, size_type clid = npos);
+        void send_command(size_type id, T val, addcmdtype queue = acQueuedCommand, size_type clid = npos);
 
-        void send_command(size_type id, const std::string& val, bool queue = true, size_type clid = npos);
+        void send_command(size_type id, const std::string& val, addcmdtype queue = acQueuedCommand, size_type clid = npos);
 
-        void send_command(size_type id, const short_value& val, bool queue = true, size_type clid = npos);
+        void send_command(size_type id, const short_value& val, addcmdtype queue = acQueuedCommand, size_type clid = npos);
         
-        void send_command(const std::string& id, const short_value& val, bool queue = true, size_type clid = npos);
+        void send_command(const std::string& id, const short_value& val, addcmdtype queue = acQueuedCommand, size_type clid = npos);
 
 
 
@@ -2140,7 +2140,17 @@ namespace dvnci {
 
         bool select_trendbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const {
             return select_trendbuff(operator ()(nm), vl, from_, to_, lgdb);}
+        
+        bool select_trendbuff(size_type id, std::vector<short_value>& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
+            dt_val_map tmpvl;
+            vl.clear();
+            bool rslt=valbuffers()->select(logkey(id), tmpvl, from_, to_, lgdb);
+            for (dt_val_map::const_iterator it=tmpvl.begin(); it!=tmpvl.end();++it){
+              vl.push_back(short_value(it->second, it->first));}
+            return rslt;}
 
+        bool select_trendbuff(const std::string& nm, std::vector<short_value>& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
+            return select_trendbuff(operator ()(nm), vl, from_, to_, lgdb);}
         
         
         
@@ -2954,7 +2964,7 @@ namespace dvnci {
                         insert_to_alarms(id, in_alarm<T > (id));}}}}}
 
     template<typename T>
-    void tagsbase::send_command(size_type id, T val, bool queue , size_type clid) {
+    void tagsbase::send_command(size_type id, T val, addcmdtype queue , size_type clid) {
         if (IN_TEXTSET(type(id))) return;
         if (exists(id)) {
             if ((groups()->exists(group(id)))) {

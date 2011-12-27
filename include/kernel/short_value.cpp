@@ -25,6 +25,16 @@ namespace dvnci {
                 return num64_and_type_cast<std::string > (value_, type_);}}
         return "";}
     
+    template<>
+    std::wstring short_value::value<std::wstring>() const {
+        switch (type_) {
+            case TYPE_TEXT:{
+                return (str_ptr) ? utf8_to_wstr(*str_ptr) : L"";}
+            default:{
+                return num64_and_type_cast<std::wstring > (value_, type_);}}
+        return L"";}
+    
+    
     
     
 
