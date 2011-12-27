@@ -2,7 +2,7 @@
  * File:   main.cpp
  * Author: Serg
  *
- * Created on 19 ������� 2010 �., 12:18
+ * Created on 19 РїС—Р…РїС—Р…РїС—Р…РїС—Р…РїС—Р…РїС—Р…РїС—Р… 2010 РїС—Р…., 12:18
  */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,6 +41,8 @@ dvnci::executable_ptr         dvnci::mainserv;
 dvnci::tagsbase_ptr intf;
 fspath              basepath;
 
+
+
 std::ostream & operator<<(std::ostream& os, const dt_val_map& ns){
        for (dt_val_map::const_iterator it = ns.begin(); it!=ns.end(); ++it){
             os << "tm =" << it->first  << " value="  << it->second   << std::endl;}
@@ -49,6 +51,281 @@ std::ostream & operator<<(std::ostream& os, const dt_val_map& ns){
 #if defined(_DVN_LIN_)
     const fspath TESTDEMON_DIR       = "/home/sealeks/";
 #endif
+
+namespace dvnci {  
+    
+    
+    class expression_listener{
+    public:
+        virtual void event(const short_value& val)=0;};
+        
+    
+    template<typename INTF, typename LISTENER = expression_listener>
+    
+    class gui_executor : public executable {
+            
+    public:       
+        
+       typedef INTF                                                            interface_type;
+       typedef membase_sync_ptr_tmpl<interface_type>                           interface_type_ptr;
+       
+       typedef LISTENER                                                        listener_type;      
+       typedef boost::shared_ptr<listener_type>                                listener_type_ptr;
+       
+       typedef dvnci::expr::expression_templ<INTF>                             expression_type;
+       typedef boost::shared_ptr<expression_type>                              expression_type_ptr;
+       
+
+       struct listener_less : 
+            public binary_function<listener_type_ptr, listener_type_ptr , bool>{
+            bool operator()(const listener_type_ptr& ls, 
+                            const listener_type_ptr& rs) const
+              { return ((intptr_t)ls.get()) < ((intptr_t)rs.get()); }};
+      
+       typedef std::set<listener_type_ptr , listener_less >                    listener_set;
+       
+       typedef std::pair< short_value , listener_set>                          shv_listset_pair; 
+       
+       struct expression_less : 
+            public binary_function<expression_type_ptr, expression_type_ptr , bool>{
+            bool operator()(const expression_type_ptr& ls, 
+                            const expression_type_ptr& rs) const
+              { return ls->expressionstr() < rs->expressionstr(); }};       
+       
+       typedef std::pair<expression_type_ptr, shv_listset_pair>                expr_shvlsn_pair;
+       typedef std::map<expression_type_ptr, shv_listset_pair, 
+                        expression_less,
+                        std::allocator<expr_shvlsn_pair > >                    expr_shvlsn_map;
+       typedef typename expr_shvlsn_map::iterator                              expr_shvlsn_iterator;
+       typedef typename expr_shvlsn_map::const_iterator                        expr_shvlsn_const_iterator;
+       
+       
+
+        
+        gui_executor(interface_type_ptr inf) : executable() , intf(inf) {};
+        
+        virtual ~gui_executor(){};
+        
+        virtual bool operator()() {
+            return true;}
+        
+        bool regist(const std::string& expr, listener_type_ptr listener){
+            expression_type_ptr  extmp = expression_type_ptr( new expression_type(expr, intf));
+            expr_shvlsn_iterator it = expressions.find(extmp);
+            if (it==expressions.end()){
+                shv_listset_pair shvlst = std::make_pair(short_value(), listener_set());
+                expr_shvlsn_pair expr_shvlst = std::make_pair(extmp, shvlst);
+                expressions.insert(expr_shvlst);
+                it = expressions.find(extmp);
+                if (it==expressions.end())
+                    return false;}
+            it->second.second.insert(listener);
+            return false;}
+        
+        
+    protected:
+        
+        virtual bool    initialize() {
+            return intf;}
+        
+        virtual  bool   uninitialize() {
+            return true;}    
+        
+       interface_type_ptr   intf;
+       expr_shvlsn_map      expressions;
+    };
+    
+    
+    class select_filterclass {
+    public:
+        
+
+        select_filterclass(const std::string& filter_) {
+            criteria_ = filter_;
+            readcriterias();}
+
+        virtual ~select_filterclass() {};
+
+        operator std::string();
+
+        
+        
+        indx_set indx_criteria(const std::string& name) const {
+            return filterkeymap.find(name) != filterkeymap.end() ? 
+                filterkeymap.find(name)->second : indx_set();}
+        
+        void indx_criteria(const std::string& name, const indx_set& val);
+        
+        bool indx_included(const std::string& name, indx val) const;
+        
+        void indx_add_criteria(const std::string& name, const indx val);
+        
+        void indx_remove_criteria(const std::string& name, const indx val);
+        
+        void indx_clear_criteria(const std::string& name) {
+            if (filterkeymap.find(name) != filterkeymap.end()) 
+                filterkeymap.erase(filterkeymap.find(name));}
+         
+ 
+        
+        std::string criteria(const std::string& name) const {
+            return (filtermap.find(name) != filtermap.end()) ?
+                filtermap.find(name)->second : "";}
+        
+        void criteria(const std::string& name, const std::string& val);
+
+        bool included(const std::string& name, const std::string& val) const;
+        
+        void clear_criteria();
+        
+
+
+        bool isEnable() {
+            return ((filtermap.size() > 0) || (filterkeymap.size() > 0));}
+        
+
+
+    private:
+
+ 
+        void readcriteria(const std::string name);
+        void readidxcriteria(const std::string name);
+        void readcriterias();
+        std::string findcriteria(std::string name) const;
+        void getkeyswithstring(const std::string str_, indx_set& set_) const;
+        void setkeyswithstring(std::string& str_, const indx_set& set_);
+
+        filtered_map            filtermap;
+        mutable std::string     criteria_;
+        filteredkey_map         filterkeymap;};   
+    
+ 
+    select_filterclass::operator std::string() {
+        criteria_ = "";
+        filtered_map::const_iterator it = filtermap.begin();
+        while (it != filtermap.end()) {
+            criteria_ = criteria_ + it->first + "=\"" + it->second + "\"\n";
+            ++it;}
+        filteredkey_map::const_iterator it2 = filterkeymap.begin();
+        while (it2 != filterkeymap.end()) {
+            std::string tmpstr;
+            setkeyswithstring(tmpstr, it2->second);
+            if (tmpstr != "")
+                criteria_ = criteria_ + it2->first + "=\"" + tmpstr + "\"\n";
+            ++it2;}
+        return criteria_;}
+
+    void select_filterclass::criteria(const string& name, const string& val) {
+        if (filtermap.find(name) != filtermap.end()) filtermap.erase(filtermap.find(name));
+        if (val != "") filtermap.insert(filtered_pair(name, val));}
+
+    void select_filterclass::indx_add_criteria(const string& name, const indx val) {
+        indx_set tmp = indx_criteria(name);
+        indx_set newtmp;
+        if (!tmp.empty()) {
+            newtmp.insert(tmp.begin(), tmp.end());}
+        newtmp.insert(val);
+        indx_criteria(name, newtmp);}
+
+    void select_filterclass::indx_remove_criteria(const string& name, const indx val) {
+        indx_set tmp = indx_criteria(name);
+        indx_set newtmp;
+        if (!tmp.empty()) {
+            newtmp.insert(tmp.begin(), tmp.end());}
+        if (newtmp.find(val) != newtmp.end()) newtmp.erase(val);
+        indx_criteria(name, newtmp);}
+
+    bool select_filterclass::included(const std::string& name, const std::string& val) const  {
+        if (filtermap.find(name) == filtermap.end()) return true;
+        string tmpcriteria = findcriteria(name);
+        boost::trim(tmpcriteria);
+        if (tmpcriteria == "") return true;
+        boost::regex xfnTemplete(tmpcriteria);
+        std::string::const_iterator xItStart = val.begin();
+        std::string::const_iterator xItEnd = val.end();
+        boost::smatch xresults;
+        return boost::regex_search(xItStart, xItEnd, xresults, xfnTemplete);}
+
+    bool select_filterclass::indx_included(const string& name, indx val) const {
+        if (filterkeymap.find(name) == filterkeymap.end()) 
+            return true;
+        string tmpcriteria = findcriteria(name);
+        boost::trim(tmpcriteria);
+        if (tmpcriteria == "") return true;
+        indx_set set_;
+        getkeyswithstring(tmpcriteria, set_);
+        return (set_.find(val) != set_.end());}
+
+    void select_filterclass::clear_criteria() {
+        criteria_ = "";
+        filtermap.clear();
+        filterkeymap.clear();}
+
+    void select_filterclass::indx_criteria(const string& name, const indx_set& val) {
+        indx_clear_criteria(name);
+        if (!val.empty()) filterkeymap.insert(filteredkey_pair(name, val));}
+
+    void select_filterclass::readcriteria(const string name) {
+        string crittmp = findcriteria(name);
+        if (filtermap.find(name) != filtermap.end()) filtermap.erase(filtermap.find(name));
+        if (crittmp != "") filtermap.insert(filtered_pair(name, crittmp));}
+
+    void select_filterclass::readidxcriteria(const string name) {
+        string crittmp = findcriteria(name);
+
+        if (filterkeymap.find(name) != filterkeymap.end()) filterkeymap.erase(filterkeymap.find(name));
+        if (crittmp != "") {
+            indx_set tmpset;
+            getkeyswithstring(crittmp, tmpset);
+            filterkeymap.insert(filteredkey_pair(name, tmpset));}}
+
+    void select_filterclass::readcriterias() {
+        readcriteria(NAME_CRITERIA);
+        readcriteria(COMMENT_CRITERIA);
+        readcriteria(BIND_CRITERIA);
+        readidxcriteria(GROUP_CRITERIA);
+        readidxcriteria(TYPEGROUP_CRITERIA);
+        readidxcriteria(TYPERT_CRITERIA);}
+
+    std::string select_filterclass::findcriteria(string name) const {
+        boost::regex xfnTemplete(name + "=\"[*A-Za-z_$0-9, ]+\"\n");
+
+        boost::smatch xresults;
+        std::string::const_iterator xItStart = criteria_.begin();
+        std::string::const_iterator xItEnd = criteria_.end();
+        if (boost::regex_search(xItStart, xItEnd, xresults, xfnTemplete)) {
+            boost::smatch::iterator it = xresults.begin();
+            if (it != xresults.end()) {
+                string tmpresult = *it;
+                boost::replace_first(tmpresult, name + "=\"", "");
+                boost::replace_last(tmpresult, "\"\n", "");
+                boost::algorithm::trim(tmpresult);
+                return tmpresult;}}
+        return "";}
+
+    void select_filterclass::getkeyswithstring(const std::string str_, indx_set& set_) const {
+        set_.clear();
+        boost::char_separator<char> sep(",");
+        chartokenizer tokens(str_, sep);
+        for (chartokenizer::iterator tok_iter = tokens.begin();
+                tok_iter != tokens.end(); ++tok_iter) {
+            std::string tmpstr = *tok_iter;
+            boost::trim(tmpstr);
+            indx tmp;
+            if (str_to(tmpstr, tmp)) {
+                set_.insert(tmp);}}}
+
+    void select_filterclass::setkeyswithstring(std::string& str_, const indx_set& set_) {
+        indx_set::const_iterator it = set_.begin();
+        str_ = "";
+        for (indx_set::const_iterator it = set_.begin();
+                it != set_.end(); ++it) {
+            std::string tmpstr=to_str(*it);
+                if (str_ == "") str_ += tmpstr;
+                else {
+                    str_ = str_ + ", " + tmpstr;}}}    
+    
+}    
 
 const std::string EXIT_OPERATION_STR = "quit";
 const std::string HISTORY_OPERATION_STR = "history ";
@@ -121,6 +398,7 @@ int main(int argc, char** argv)
   appargumentparser(argc, argv);
   //typedef dvnci::expr::expression_calculator       expression;
   typedef dvnci::expr::expression_templ<tagsbase >   expression;
+  typedef gui_executor<tagsbase >                    test_gui_executor;
 
   std::string quit_in;
   basepath=dvnci::getlocalbasepath();
@@ -218,6 +496,7 @@ test_immi_struct();
              std::cout << "susccessfull duplicate group name = " <<  intf->groups()->name(ind)  << " id=" << ind << std::endl;
              break;}
           case VIEWINDEX_OPERATION:{
+              test_gui_executor expr(intf);
               //intf->test_list();;
               break;}
           case MATH_OPERATION:{
