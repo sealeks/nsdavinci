@@ -329,6 +329,12 @@ namespace dvnci {
 
             void valid(vlvtype val)  {
                 shv_.valid(val);}
+            
+            datetime time() const {
+                return shv_.time();}
+
+            void valid(datetime val)  {
+                shv_.time(val);}
 
             ns_error error() const {
                 return shv_.error();}
@@ -1540,9 +1546,11 @@ namespace dvnci {
                                                 return error(ERROR_EXPRPARSE);}
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             vlvtype vld=rsideit.valid();
+                                            datetime tm=rsideit.time();
                                             std::string frmttmp=lsideit.value<std::string>();
                                             lsideit = rsideit.to_valuetype().format(frmttmp);
                                             lsideit.valid(vld);
+                                            lsideit.time(tm);
                                             calcstack.pop();
                                             calcstack.push(lsideit);}
                                             break;}
