@@ -395,7 +395,8 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
 
 DOMWindow::DOMWindow(Frame* frame)
     : m_shouldPrintWhenFinishedLoading(false)
-    , m_frame(frame)
+    , m_frame(frame),
+	alarmeventlistener()
 {
 }
 
@@ -407,6 +408,7 @@ DOMWindow::~DOMWindow()
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);
 }
+
 
 ScriptExecutionContext* DOMWindow::scriptExecutionContext() const
 {
@@ -1580,6 +1582,17 @@ void DOMWindow::dispatchLoadEvent()
         ownerElement->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 
     InspectorInstrumentation::loadEventFired(frame(), url());
+}
+
+void DOMWindow::dispatchAlarmEvent(PassRefPtr<WebCore::DVNCI::alarmtable> value)
+{
+    RefPtr<Event> alarmEvent(DVNAlarmEvent::create(eventNames().alarmEvent, value, this));
+    dispatchEvent(alarmEvent, document());
+}
+
+
+void DOMWindow::setalarmlistener(bool vl){
+	alarmeventlistener = WebCore::DVNCI::AlarmObserver(vl ? this : 0);
 }
 
 bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)

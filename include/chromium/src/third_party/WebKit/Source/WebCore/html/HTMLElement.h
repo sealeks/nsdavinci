@@ -112,13 +112,13 @@ private:
 
 inline HTMLElement* toHTMLElement(Node* node)
 {
-    ASSERT(!node || node->isHTMLElement());
+   // ASSERT(!node || node->isHTMLElement());
     return static_cast<HTMLElement*>(node);
 }
 
 inline const HTMLElement* toHTMLElement(const Node* node)
 {
-    ASSERT(!node || node->isHTMLElement());
+    //ASSERT(!node || node->isHTMLElement());
     return static_cast<const HTMLElement*>(node);
 }
 

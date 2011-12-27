@@ -736,7 +736,7 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 
 PassRefPtr<Attribute> Element::createAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    return Attribute::create(name, value);
+    return Attribute::create(name, value, this);
 }
 
 void Element::attributeChanged(Attribute* attr, bool)
@@ -1440,6 +1440,16 @@ void Element::dispatchAttrAdditionEvent(Attribute*)
     dispatchScopedEvent(MutationEvent::create(DOMAttrModifiedEvent, true, attr, attr->value(),
         attr->value(), document()->attrName(attr->id()), MutationEvent::ADDITION), ec);
 #endif
+}
+
+void Element::dispatchTrendEvent(PassRefPtr<WebCore::DVNCI::trendtable> value)
+{
+    RefPtr<Event> trendEvent(DVNTrendEvent::create(eventNames().trendEvent, value, this));
+    dispatchScopedEvent(trendEvent);
+}
+
+void Element::settrendlistener(bool vl){
+	trendlistener = WebCore::DVNCI::TrendObserver(vl ? this : 0);
 }
 
 String Element::openTagStartToString() const

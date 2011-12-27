@@ -45,8 +45,11 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringHash.h>
 
-namespace WebCore {
+#include "dvnci/ScriptBinding.h"
 
+
+namespace WebCore {
+    
 
 V8BindingPerIsolateData::V8BindingPerIsolateData(v8::Isolate* isolate)
 {
@@ -539,7 +542,7 @@ v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate> 
 {
     desc->SetClassName(v8::String::New(interfaceName));
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
-    instance->SetInternalFieldCount(fieldCount);
+	instance->SetInternalFieldCount(fieldCount);
     if (!parentClass.IsEmpty())
         desc->Inherit(parentClass);
     if (attributeCount)
@@ -551,6 +554,9 @@ v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate> 
                                 defaultSignature,
                                 static_cast<v8::PropertyAttribute>(v8::DontDelete),
                                 callbacks, callbackCount);
+
+	dvnci_external_registrate(desc, interfaceName, instance);
+
     return defaultSignature;
 }
 

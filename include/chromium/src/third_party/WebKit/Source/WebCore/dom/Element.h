@@ -30,6 +30,10 @@
 #include "NamedNodeMap.h"
 #include "ScrollTypes.h"
 
+#include "Event.h"
+
+#include "dvnci/Binding.h"
+
 namespace WebCore {
 
 class Attribute;
@@ -41,6 +45,11 @@ class ElementRareData;
 class IntSize;
 class ShadowRoot;
 class WebKitAnimationList;
+class Element;
+
+
+
+
 
 enum SpellcheckAttributeState {
     SpellcheckAttributeTrue,
@@ -106,6 +115,8 @@ public:
 #if ENABLE(FULLSCREEN_API)
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenchange);
 #endif
+
+	DEFINE_ATTRIBUTE_EVENT_LISTENER(trend)
 
     virtual PassRefPtr<DocumentFragment> deprecatedCreateContextualFragment(const String&, FragmentScriptingPermission = FragmentScriptingAllowed);
 
@@ -247,6 +258,9 @@ public:
 
     void dispatchAttrRemovalEvent(Attribute*);
     void dispatchAttrAdditionEvent(Attribute*);
+    void dispatchTrendEvent(PassRefPtr<WebCore::DVNCI::trendtable> value);
+
+    void settrendlistener(bool vl);
 
     virtual void accessKeyAction(bool /*sendToAnyEvent*/) { }
 
@@ -435,6 +449,7 @@ private:
 
 private:
     mutable RefPtr<NamedNodeMap> m_attributeMap;
+	WebCore::DVNCI::TrendObserver trendlistener;
 };
     
 inline Element* toElement(Node* node)

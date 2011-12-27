@@ -1,17 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="79">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <logicalFolder name="SourceFiles"
-                   displayName="Исходные файлы "
-                   projectFiles="true">
-    </logicalFolder>
-    <logicalFolder name="HeaderFiles"
-                   displayName="Файлы заголовков"
-                   projectFiles="true">
-    </logicalFolder>
-    <logicalFolder name="ResourceFiles"
-                   displayName="Файлы ресурсов"
-                   projectFiles="true">
+    <logicalFolder name="chromium" displayName="chromium" projectFiles="true">
+      <logicalFolder name="src" displayName="src" projectFiles="true">
+        <logicalFolder name="chrome" displayName="chrome" projectFiles="true">
+          <logicalFolder name="app" displayName="app" projectFiles="true">
+            <itemPath>../../include/chromium/src/chrome/app/chrome_main.cc</itemPath>
+          </logicalFolder>
+          <logicalFolder name="browser" displayName="browser" projectFiles="true">
+            <itemPath>../../include/chromium/src/chrome/browser/browser_main.cc</itemPath>
+          </logicalFolder>
+          <logicalFolder name="nacl" displayName="nacl" projectFiles="true">
+            <itemPath>../../include/chromium/src/chrome/nacl/nacl_main.cc</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="content" displayName="content" projectFiles="true">
+          <logicalFolder name="browser" displayName="browser" projectFiles="true">
+            <itemPath>../../include/chromium/src/content/browser/utility_process_host.cc</itemPath>
+          </logicalFolder>
+          <logicalFolder name="common" displayName="common" projectFiles="true">
+            <itemPath>../../include/chromium/src/content/common/sandbox_init_wrapper_win.cc</itemPath>
+            <itemPath>../../include/chromium/src/content/common/section_util_win.cc</itemPath>
+          </logicalFolder>
+          <logicalFolder name="plugin" displayName="plugin" projectFiles="true">
+            <itemPath>../../include/chromium/src/content/plugin/plugin_main.cc</itemPath>
+          </logicalFolder>
+          <logicalFolder name="renderer" displayName="renderer" projectFiles="true">
+            <itemPath>../../include/chromium/src/content/renderer/renderer_main.cc</itemPath>
+            <itemPath>../../include/chromium/src/content/renderer/renderer_main_platform_delegate_win.cc</itemPath>
+          </logicalFolder>
+          <logicalFolder name="utility" displayName="utility" projectFiles="true">
+            <itemPath>../../include/chromium/src/content/utility/utility_main.cc</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="third_party" displayName="third_party" projectFiles="true">
+          <logicalFolder name="WebKit" displayName="WebKit" projectFiles="true">
+            <logicalFolder name="Source" displayName="Source" projectFiles="true">
+              <logicalFolder name="WebCore" displayName="WebCore" projectFiles="true">
+                <logicalFolder name="bindings" displayName="bindings" projectFiles="true">
+                  <logicalFolder name="v8" displayName="v8" projectFiles="true">
+                    <logicalFolder name="custum" displayName="custum" projectFiles="true">
+                      <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/custum/V8EventCustom.cpp</itemPath>
+                    </logicalFolder>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/V8Binding.cpp</itemPath>
+                  </logicalFolder>
+                </logicalFolder>
+                <logicalFolder name="dom" displayName="dom" projectFiles="true">
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Attribute.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Attribute.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Element.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Element.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventNames.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/StyledElement.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.h</itemPath>
+                </logicalFolder>
+                <logicalFolder name="dvnci" displayName="dvnci" projectFiles="true">
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/AlarmObserver.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/AlarmObserver.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Observer.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Observer.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ScriptBinding.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TrendObserver.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TrendObserver.h</itemPath>
+                </logicalFolder>
+                <logicalFolder name="html" displayName="html" projectFiles="true">
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/html/HTMLElement.h</itemPath>
+                </logicalFolder>
+                <logicalFolder name="loader" displayName="loader" projectFiles="true">
+                  <logicalFolder name="cache" displayName="cache" projectFiles="true">
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResource.cpp</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResource.h</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResourceLoader.cpp</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResourceLoader.h</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResourceRequest.cpp</itemPath>
+                  </logicalFolder>
+                </logicalFolder>
+                <logicalFolder name="page" displayName="page" projectFiles="true">
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/DOMWindow.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/DOMWindow.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/FrameView.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/SecurityOrigin.cpp</itemPath>
+                </logicalFolder>
+                <logicalFolder name="rendering" displayName="rendering" projectFiles="true">
+                  <logicalFolder name="svg" displayName="svg" projectFiles="true">
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGForeignObject.cpp</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGResourceFilter.cpp</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGShadowTreeRootContainer.cpp</itemPath>
+                  </logicalFolder>
+                </logicalFolder>
+                <logicalFolder name="svg" displayName="svg" projectFiles="true">
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGURIReference.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGURIReference.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGUseElement.cpp</itemPath>
+                </logicalFolder>
+              </logicalFolder>
+            </logicalFolder>
+          </logicalFolder>
+        </logicalFolder>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Файлы тестов"
@@ -25,6 +116,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include/chromium</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">

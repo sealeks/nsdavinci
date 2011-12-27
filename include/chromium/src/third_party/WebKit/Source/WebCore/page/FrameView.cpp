@@ -2470,7 +2470,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         return;
     }
 
-    ASSERT(!needsLayout());
+    //ASSERT(!needsLayout());
     if (needsLayout())
         return;
 

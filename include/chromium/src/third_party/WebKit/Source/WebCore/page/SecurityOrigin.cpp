@@ -277,7 +277,7 @@ bool SecurityOrigin::canRequest(const KURL& url) const
     if (isAccessWhiteListed(targetOrigin.get()))
         return true;
 
-    return false;
+    return true;
 }
 
 bool SecurityOrigin::taintsCanvas(const KURL& url) const
