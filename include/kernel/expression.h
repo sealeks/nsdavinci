@@ -333,7 +333,7 @@ namespace dvnci {
             datetime time() const {
                 return shv_.time();}
 
-            void valid(datetime val)  {
+            void time(datetime val)  {
                 shv_.time(val);}
 
             ns_error error() const {
