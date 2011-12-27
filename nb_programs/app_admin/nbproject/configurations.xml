@@ -115,6 +115,7 @@
         <destdir>../../bin/${CND_CONF}</destdir>
         <buildMode>1</buildMode>
         <modules>core gui xml</modules>
+        <qmakeSpec>qmake</qmakeSpec>
       </qt>
       <compileType>
         <ccTool>

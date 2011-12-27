@@ -77,52 +77,52 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lsoci ../..
 ${OBJECTDIR}/_ext/1445513634/session.o: ../../include/soci/backends/postgresql/session.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/session.o ../../include/soci/backends/postgresql/session.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/session.o ../../include/soci/backends/postgresql/session.cpp
 
 ${OBJECTDIR}/_ext/1445513634/vector-use-type.o: ../../include/soci/backends/postgresql/vector-use-type.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/vector-use-type.o ../../include/soci/backends/postgresql/vector-use-type.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/vector-use-type.o ../../include/soci/backends/postgresql/vector-use-type.cpp
 
 ${OBJECTDIR}/_ext/1445513634/standard-into-type.o: ../../include/soci/backends/postgresql/standard-into-type.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/standard-into-type.o ../../include/soci/backends/postgresql/standard-into-type.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/standard-into-type.o ../../include/soci/backends/postgresql/standard-into-type.cpp
 
 ${OBJECTDIR}/_ext/1445513634/statement.o: ../../include/soci/backends/postgresql/statement.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/statement.o ../../include/soci/backends/postgresql/statement.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/statement.o ../../include/soci/backends/postgresql/statement.cpp
 
 ${OBJECTDIR}/_ext/1445513634/row-id.o: ../../include/soci/backends/postgresql/row-id.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/row-id.o ../../include/soci/backends/postgresql/row-id.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/row-id.o ../../include/soci/backends/postgresql/row-id.cpp
 
 ${OBJECTDIR}/_ext/1445513634/blob.o: ../../include/soci/backends/postgresql/blob.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/blob.o ../../include/soci/backends/postgresql/blob.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/blob.o ../../include/soci/backends/postgresql/blob.cpp
 
 ${OBJECTDIR}/_ext/1445513634/factory.o: ../../include/soci/backends/postgresql/factory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/factory.o ../../include/soci/backends/postgresql/factory.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/factory.o ../../include/soci/backends/postgresql/factory.cpp
 
 ${OBJECTDIR}/_ext/1445513634/vector-into-type.o: ../../include/soci/backends/postgresql/vector-into-type.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/vector-into-type.o ../../include/soci/backends/postgresql/vector-into-type.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/vector-into-type.o ../../include/soci/backends/postgresql/vector-into-type.cpp
 
 ${OBJECTDIR}/_ext/1445513634/standard-use-type.o: ../../include/soci/backends/postgresql/standard-use-type.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/standard-use-type.o ../../include/soci/backends/postgresql/standard-use-type.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/standard-use-type.o ../../include/soci/backends/postgresql/standard-use-type.cpp
 
 ${OBJECTDIR}/_ext/1445513634/common.o: ../../include/soci/backends/postgresql/common.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1445513634
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/C/Program\ Files/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/common.o ../../include/soci/backends/postgresql/common.cpp
+	$(COMPILE.cc) -O2 -I/C/Program\ Files\ \(x86\)/PostgreSQL/8.3/include -I../../include -I../../include/soci  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1445513634/common.o ../../include/soci/backends/postgresql/common.cpp
 
 # Subprojects
 .build-subprojects:

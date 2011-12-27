@@ -64,7 +64,7 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 ${OBJECTDIR}/_ext/2048960737/main.o: ../../include_program/test_poligon/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2048960737
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2048960737/main.o ../../include_program/test_poligon/main.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2048960737/main.o ../../include_program/test_poligon/main.cpp
 
 # Subprojects
 .build-subprojects:
