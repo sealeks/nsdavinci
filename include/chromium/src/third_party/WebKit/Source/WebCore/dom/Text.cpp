@@ -197,6 +197,8 @@ bool Text::rendererIsNeeded(const NodeRenderingContext& context)
     if (!CharacterData::rendererIsNeeded(context))
         return false;
 
+
+
     bool onlyWS = containsOnlyWhitespace();
     if (!onlyWS)
         return true;
@@ -255,6 +257,8 @@ void Text::attach()
 {
     createRendererIfNeeded();
     CharacterData::attach();
+	if (!setter.valid())
+          setter = WebCore::DVNCI::Observer(this, data());
 }
 
 void Text::recalcStyle(StyleChange change)

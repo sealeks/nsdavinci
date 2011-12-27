@@ -257,6 +257,16 @@ bool Event::isStreamEvent() const
 }
 #endif
 
+bool Event::isDVNAlarmEvent() const
+{
+    return false;
+}
+
+bool Event::isDVNTrendEvent() const
+{
+    return false;
+}
+
 bool Event::storesResultAsString() const
 {
     return false;

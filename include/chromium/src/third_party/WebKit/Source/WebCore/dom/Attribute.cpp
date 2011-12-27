@@ -40,7 +40,7 @@ static AttributeAttrMap& attributeAttrMap()
 
 PassRefPtr<Attribute> Attribute::clone() const
 {
-    return adoptRef(new Attribute(m_name, m_value, m_isMappedAttribute, m_styleDecl.get()));
+    return adoptRef(new Attribute(elem, m_name, m_value, m_isMappedAttribute, m_styleDecl.get()));
 }
 
 Attr* Attribute::attr() const

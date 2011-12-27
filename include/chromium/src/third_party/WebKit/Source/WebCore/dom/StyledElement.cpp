@@ -124,7 +124,7 @@ StyledElement::~StyledElement()
 
 PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    return Attribute::createMapped(name, value);
+    return Attribute::createMapped(name, value, this);
 }
 
 void StyledElement::createInlineStyleDecl()

@@ -28,12 +28,24 @@
 #include "CSSMappedAttributeDeclaration.h"
 #include "QualifiedName.h"
 
+#include "dvnci/Binding.h"
+
+
+
 namespace WebCore {
 
 class Attr;
 class CSSStyleDeclaration;
 class Element;
 class NamedNodeMap;
+class Text;
+class Attribute;
+
+
+
+
+
+
 
 // This has no counterpart in DOM.
 // It is an internal representation of the node value of an Attr.
@@ -41,18 +53,20 @@ class NamedNodeMap;
 class Attribute : public RefCounted<Attribute> {
     friend class Attr;
     friend class NamedNodeMap;
+	
+
 public:
-    static PassRefPtr<Attribute> create(const QualifiedName& name, const AtomicString& value)
+    static PassRefPtr<Attribute> create(const QualifiedName& name, const AtomicString& value, Element* const el = 0)
     {
-        return adoptRef(new Attribute(name, value, false, 0));
+        return adoptRef(new Attribute(el, name, value, false, 0));
     }
-    static PassRefPtr<Attribute> createMapped(const QualifiedName& name, const AtomicString& value)
+    static PassRefPtr<Attribute> createMapped(const QualifiedName& name, const AtomicString& value, Element* const el = 0)
     {
-        return adoptRef(new Attribute(name, value, true, 0));
+        return adoptRef(new Attribute(el, name, value, true, 0));
     }
-    static PassRefPtr<Attribute> createMapped(const AtomicString& name, const AtomicString& value)
+    static PassRefPtr<Attribute> createMapped(const AtomicString& name, const AtomicString& value, Element* const el = 0)
     {
-        return adoptRef(new Attribute(name, value, true, 0));
+        return adoptRef(new Attribute(el, name, value, true, 0));
     }
 
     const AtomicString& value() const { return m_value; }
@@ -85,28 +99,35 @@ public:
 
     bool isMappedAttribute() { return m_isMappedAttribute; }
 
+	Element* element_ext() const {return elem;};
+
 private:
-    Attribute(const QualifiedName& name, const AtomicString& value, bool isMappedAttribute, CSSMappedAttributeDeclaration* styleDecl)
-        : m_isMappedAttribute(isMappedAttribute)
+    Attribute(Element* const el, const QualifiedName& name, const AtomicString& value, bool isMappedAttribute, CSSMappedAttributeDeclaration* styleDecl)
+        : elem(el)
+	    , m_isMappedAttribute(isMappedAttribute)
         , m_hasAttr(false)
         , m_name(name)
         , m_value(value)
         , m_styleDecl(styleDecl)
+		, setter(this, value)
     {
     }
 
-    Attribute(const AtomicString& name, const AtomicString& value, bool isMappedAttribute, CSSMappedAttributeDeclaration* styleDecl)
-        : m_isMappedAttribute(isMappedAttribute)
+    Attribute(Element* const el, const AtomicString& name, const AtomicString& value, bool isMappedAttribute, CSSMappedAttributeDeclaration* styleDecl)
+        : elem(el)
+	    , m_isMappedAttribute(isMappedAttribute)
         , m_hasAttr(false)
         , m_name(nullAtom, name, nullAtom)
         , m_value(value)
         , m_styleDecl(styleDecl)
+		, setter(this, value)
     {
     }
 
     void bindAttr(Attr*);
     void unbindAttr(Attr*);
 
+	Element* elem;
     // These booleans will go into the spare 32-bits of padding from RefCounted in 64-bit.
     bool m_isMappedAttribute;
     bool m_hasAttr;
@@ -114,7 +135,8 @@ private:
     QualifiedName m_name;
     AtomicString m_value;
     RefPtr<CSSMappedAttributeDeclaration> m_styleDecl;
-};
+	DVNCI::Observer setter;};
+
 
 } // namespace WebCore
 

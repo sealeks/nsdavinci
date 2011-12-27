@@ -150,6 +150,9 @@ namespace WebCore {
 #if ENABLE(MEDIA_STREAM)
         virtual bool isStreamEvent() const;
 #endif
+		virtual bool isDVNAlarmEvent() const;
+		virtual bool isDVNTrendEvent() const;
+
         bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
         bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 

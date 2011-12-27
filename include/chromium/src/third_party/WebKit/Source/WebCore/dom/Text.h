@@ -24,8 +24,10 @@
 #define Text_h
 
 #include "CharacterData.h"
+#include "Attribute.h"
 
 namespace WebCore {
+
     
 class Text : public CharacterData {
 public:
@@ -47,7 +49,7 @@ public:
 
 protected:
     Text(Document* document, const String& data)
-        : CharacterData(document, data, CreateText)
+        : CharacterData(document, data, CreateText), setter()
     {
     }
 
@@ -61,6 +63,8 @@ private:
     virtual bool childTypeAllowed(NodeType) const;
 
     virtual PassRefPtr<Text> virtualCreate(const String&);
+
+	WebCore::DVNCI::Observer setter;
 
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;

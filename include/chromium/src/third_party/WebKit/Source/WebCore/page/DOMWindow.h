@@ -30,7 +30,13 @@
 #include "EventTarget.h"
 #include "KURL.h"
 
+#include "Event.h"
+#include "v8.h"
+
+#include "dvnci/Binding.h"
+
 namespace WebCore {
+
 
     class BarInfo;
     class CSSRuleList;
@@ -94,6 +100,8 @@ namespace WebCore {
         void clear();
 
         PassRefPtr<MediaQueryList> matchMedia(const String&);
+
+		void setalarmlistener(bool vl);
 
         void setSecurityOrigin(SecurityOrigin*);
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
@@ -264,6 +272,7 @@ namespace WebCore {
         using EventTarget::dispatchEvent;
         bool dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget);
         void dispatchLoadEvent();
+		void dispatchAlarmEvent(PassRefPtr<WebCore::DVNCI::alarmtable> value);
         void dispatchTimedEvent(PassRefPtr<Event> event, Document* target, double* startTime, double* endTime);
 
         DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
@@ -331,6 +340,9 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(waiting);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitbeginfullscreen);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitendfullscreen);
+
+		DEFINE_ATTRIBUTE_EVENT_LISTENER(alarm);
+		DEFINE_ATTRIBUTE_EVENT_LISTENER(trend);
 
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationstart, webkitAnimationStart);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationiteration, webkitAnimationIteration);
@@ -480,6 +492,8 @@ namespace WebCore {
 #if ENABLE(QUOTA)
         mutable RefPtr<StorageInfo> m_storageInfo;
 #endif
+
+    WebCore::DVNCI::AlarmObserver alarmeventlistener;
     };
 
     inline String DOMWindow::status() const
