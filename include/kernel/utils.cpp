@@ -208,7 +208,7 @@ namespace dvnci {
                 val = val.substr(2, endpos - 2);
                 std::string::size_type dfltpos=val.find(":default");
                 if (dfltpos!=std::string::npos) {
-                    val = val.substr(dfltpos);
+                    val = val.substr(0, dfltpos);
                     boost::algorithm::trim(val);}
                 return val;}
             }
@@ -222,7 +222,7 @@ namespace dvnci {
                 val = val.substr(2, endpos - 2);
                 std::wstring::size_type dfltpos=val.find(L":default");
                 if (dfltpos!=std::wstring::npos) {
-                    val = val.substr(dfltpos);
+                    val = val.substr(0, dfltpos);
                     boost::algorithm::trim(val);}
                 return val;}
             }
@@ -237,7 +237,7 @@ namespace dvnci {
                 std::string::size_type dfltpos=val.find(":default");
                 if (dfltpos==std::string::npos)
                     return "";
-                val = val.substr(dfltpos+8, val.size()-8);
+                val = val.substr(dfltpos+8, val.size()-dfltpos-8);
                 boost::algorithm::trim(val);
                 return val;}}
         return "";}
@@ -251,7 +251,7 @@ namespace dvnci {
                 std::wstring::size_type dfltpos=val.find(L":default");
                 if (dfltpos==std::wstring::npos)
                     return L"";
-                val = val.substr(dfltpos+8, val.size()-8);
+                val = val.substr(dfltpos+8, val.size()-dfltpos-8);
                 boost::algorithm::trim(val);
                 return val;}}
         return L"";}
