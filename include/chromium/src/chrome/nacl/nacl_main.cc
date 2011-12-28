@@ -54,7 +54,7 @@ int NaClBrokerMain(const MainFunctionParams& parameters) {
       parameters.sandbox_info_.BrokerServices();
   if (broker_services) {
     sandbox::InitBrokerServices(broker_services);
-    if (!parsed_command_line.HasSwitch(switches::kNoSandbox)) {
+    if (/*!parsed_command_line.HasSwitch(switches::kNoSandbox)*/false) {
       bool use_winsta = !parsed_command_line.HasSwitch(
           switches::kDisableAltWinstation);
       // Precreate the desktop and window station used by the renderers.
@@ -108,7 +108,7 @@ int NaClMain(const MainFunctionParams& parameters) {
   NaClMainPlatformDelegate platform(parameters);
 
   platform.PlatformInitialize();
-  bool no_sandbox = parsed_command_line.HasSwitch(switches::kNoSandbox);
+  bool no_sandbox = true;//parsed_command_line.HasSwitch(switches::kNoSandbox);
   platform.InitSandboxTests(no_sandbox);
 
   if (!no_sandbox) {
