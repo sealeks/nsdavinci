@@ -30,6 +30,7 @@ void SandboxInitWrapper::SetServices(sandbox::SandboxInterfaceInfo* info) {
 
 bool SandboxInitWrapper::InitializeSandbox(const CommandLine& command_line,
                                            const std::string& process_type) {
+  return true;
   if (command_line.HasSwitch(switches::kNoSandbox))
     return true;
   if ((process_type == switches::kRendererProcess) ||
