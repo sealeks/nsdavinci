@@ -29,6 +29,47 @@
 #include <kernel/expression.h>
 #include <kernel/serviceapp.h>
 
+#ifdef _DVN_WIN_
+#include <windows.h>
+
+HANDLE getdvnConsol(){
+    static HANDLE chndl=GetStdHandle(STD_OUTPUT_HANDLE);
+    return chndl;
+}
+
+void setdvnDefault(){
+    SetConsoleTextAttribute(getdvnConsol(), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+}
+
+void setdvnError(){
+    SetConsoleTextAttribute(getdvnConsol(), FOREGROUND_RED | FOREGROUND_INTENSITY);
+}
+
+void setdvnValid(){
+    SetConsoleTextAttribute(getdvnConsol(), FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+}
+
+void setdvnInvalid(){
+    SetConsoleTextAttribute(getdvnConsol(), FOREGROUND_GREEN | FOREGROUND_BLUE);
+}
+
+#else
+
+
+void setdvnDefault(){
+}
+
+void setdvnError(){
+}
+
+void setdvnValid(){
+}
+
+void setdvnInvalid(){
+}
+
+#endif
+
 using namespace dvnci;
 using namespace std;
 using namespace boost::interprocess;
@@ -40,6 +81,8 @@ dvnci::executable_ptr         dvnci::mainserv;
 
 dvnci::tagsbase_ptr intf;
 fspath              basepath;
+
+
 
 
 
@@ -395,6 +438,7 @@ int getoperate(std::string& vl){
 
 int main(int argc, char** argv) 
 {
+  setdvnDefault();
   appargumentparser(argc, argv);
   //typedef dvnci::expr::expression_calculator       expression;
   typedef dvnci::expr::expression_templ<tagsbase >   expression;
@@ -520,11 +564,25 @@ test_immi_struct();
           case EXPR_OPERATION:{
               expression expr(quit_in, intf);
               //expression expr(quit_in);
-              std::cout << "exprtest "  <<  std::endl;
               std::cout << "expr "  << expr.expressionstr() << std::endl;
+
               expr.active(true);
-              std::cout << "value " << expr << std::endl;
-              std::cout << "error " << expr.error() << std::endl;
+              short_value shv =expr.value();
+              if (shv.error()){
+                  setdvnError();
+              } else{
+                  if (shv.valid()!=0){
+                      setdvnValid();
+                  }
+                  else {
+                    setdvnInvalid();
+                  }}
+          
+              std::cout << "value " << shv.value<std::string>() << std::endl;
+              if (expr.error()){
+              std::cout << "error " << shv.error() << std::endl;
+              }
+              setdvnDefault();
               break;}
 
           case DEMONINS_OPERATION:{
