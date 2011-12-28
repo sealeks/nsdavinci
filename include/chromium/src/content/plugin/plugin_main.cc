@@ -106,7 +106,7 @@ int PluginMain(const MainFunctionParams& parameters) {
            << parsed_command_line.command_line_string();
 
   HMODULE sandbox_test_module = NULL;
-  bool no_sandbox = parsed_command_line.HasSwitch(switches::kNoSandbox);
+  bool no_sandbox = true;//parsed_command_line.HasSwitch(switches::kNoSandbox);
 
   if (target_services && !no_sandbox) {
     // The command line might specify a test plugin to load.
