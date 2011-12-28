@@ -1042,8 +1042,8 @@ namespace dvnci {
     const std::string STRING1_REGEXTAMPL                   = "'.*?'";
     const std::string STRING2_REGEXTAMPL                   = "\".*?\"";    
     const std::string OPERATORS_REGEXTAMPL                 = "\\(|\\)|\\*|/|%|\\+\\+?+|--?+|<<<|>>>|<<|>>|[<>!=]=?+|&?+&|\\^|\\|?\\||&?&|,|\\?|:|@@@|@@|@|#";
-    const std::string SELECTOR_REGEXTAMPL                  = "\\.bool|\\.real|\\.num|\\.alarmack|\\.alarm|\\.ack|\\.mineu|\\.maxeu"
-                                                             "|\\.time|\\.logtime|\\.error|\\.valid|\\.msc|\\.sec|\\.minute|\\.hour|\\.monthdays"
+    const std::string SELECTOR_REGEXTAMPL                  = "\\.bool|\\.real|\\.num|\\.alarmmsg|\\.alarmack|\\.alarm|\\.ack|\\.mineu|\\.maxeu"
+                                                             "|\\.time|\\.logtime|\\.error|\\.valid|\\.comment|\\.eu|\\.binding|\\.msc|\\.sec|\\.minute|\\.hour|\\.monthdays"
                                                              "|\\.dayweek|\\.dayyear|\\.day|\\.month|\\.year|\\.epochminute|\\.epochhour"
                                                              "|\\.epochday|\\.epochmsc|\\.epoch|\\.lastvalue";
     const std::string FUNCTION_REGEXTAMPL                  = "num(?=\\()|abs(?=\\()|real(?=\\()|bool(?=\\()|min(?=\\()|max(?=\\()"
