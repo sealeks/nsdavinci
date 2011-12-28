@@ -74,7 +74,7 @@ void RendererMainPlatformDelegate::PlatformInitialize() {
   // Be mindful of what resources you acquire here. They can be used by
   // malicious code if the renderer gets compromised.
   const CommandLine& command_line = parameters_.command_line_;
-  bool no_sandbox = command_line.HasSwitch(switches::kNoSandbox);
+  bool no_sandbox = true;//command_line.HasSwitch(switches::kNoSandbox);
   EnableThemeSupportForRenderer(no_sandbox);
 
   if (!no_sandbox) {

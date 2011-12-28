@@ -174,7 +174,7 @@ int RendererMain(const MainFunctionParams& parameters) {
 
   platform.PlatformInitialize();
 
-  bool no_sandbox = parsed_command_line.HasSwitch(switches::kNoSandbox);
+  bool no_sandbox = true;//parsed_command_line.HasSwitch(switches::kNoSandbox);
   platform.InitSandboxTests(no_sandbox);
 
   // Initialize histogram statistics gathering system.
