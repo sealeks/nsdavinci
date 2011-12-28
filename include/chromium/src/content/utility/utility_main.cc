@@ -29,7 +29,7 @@ int UtilityMain(const MainFunctionParams& parameters) {
   utility_process.set_main_thread(new UtilityThread());
 
 #if defined(OS_WIN)
-  bool no_sandbox = parameters.command_line_.HasSwitch(switches::kNoSandbox);
+  bool no_sandbox = true;//parameters.command_line_.HasSwitch(switches::kNoSandbox);
   if (!no_sandbox) {
     sandbox::TargetServices* target_services =
         parameters.sandbox_info_.TargetServices();
