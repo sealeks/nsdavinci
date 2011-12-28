@@ -996,8 +996,8 @@ bool BrowserView::IsToolbarVisible() const {
   if (UseCompactNavigationBar()) {
     return false;
   } else {
-    return browser_->SupportsWindowFeature(Browser::FEATURE_TOOLBAR) ||
-           browser_->SupportsWindowFeature(Browser::FEATURE_LOCATIONBAR);
+	 return browser_->is_type_popup() ? false : (browser_->SupportsWindowFeature(Browser::FEATURE_TOOLBAR) ||
+           browser_->SupportsWindowFeature(Browser::FEATURE_LOCATIONBAR));
   }
 }
 
