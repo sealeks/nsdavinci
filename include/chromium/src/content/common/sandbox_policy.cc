@@ -355,10 +355,11 @@ base::ProcessHandle StartProcessWithAccess(CommandLine* cmd_line,
     VLOG(1) << "GPU sandbox is disabled";
   }
 
-  if (browser_command_line.HasSwitch(switches::kNoSandbox)) {
+  in_sandbox = false;
+  //if (browser_command_line.HasSwitch(switches::kNoSandbox)) {
     // The user has explicity opted-out from all sandboxing.
-    in_sandbox = false;
-  }
+    //in_sandbox = false;
+  //}
 
 #if !defined (GOOGLE_CHROME_BUILD)
   if (browser_command_line.HasSwitch(switches::kInProcessPlugins)) {
@@ -392,11 +393,12 @@ base::ProcessHandle StartProcessWithAccess(CommandLine* cmd_line,
   PROCESS_INFORMATION target = {0};
   sandbox::TargetPolicy* policy = g_broker_services->CreatePolicy();
 
-  if (type == ChildProcessInfo::PLUGIN_PROCESS &&
+  /*if (type == ChildProcessInfo::PLUGIN_PROCESS &&
       !browser_command_line.HasSwitch(switches::kNoSandbox) &&
       content::GetContentClient()->SandboxPlugin(cmd_line, policy)) {
     in_sandbox = true;
-  }
+  }*/
+
 
   if (!in_sandbox) {
     policy->Release();
