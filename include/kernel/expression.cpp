@@ -135,6 +135,11 @@ namespace dvnci {
                     case func_incminute: return os << "incminute";
                     case func_inchour: return os << "inchour";
                     case func_incday: return os << "incday";
+                    case func_format: return os << "format"; 
+                    case select_comment: return os << "comment";
+                    case select_binding: return os << "binding";
+                    case select_eu: return os << "eu";
+                    case select_alarmmsg: return os << "alarmmsg";
                     case oprt_allvalid_unary: return os << "allvld &";}
                 return os << "nodef";}
 

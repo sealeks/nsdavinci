@@ -149,7 +149,11 @@ namespace dvnci {
             func_cosh = 1125,      /* cosh*/
             func_sinh = 1127,      /* sinh*/
             func_tanh = 1129,      /* tanh*/
-            func_format = 1131,      /* format*/            
+            func_format = 1131,      /* format*/ 
+            select_comment = 1110,          /* .comment*/
+            select_binding = 1112,          /* .binding*/
+            select_eu = 1114,          /* .eu*/
+            select_alarmmsg = 1116,          /* .alarmmsg*/
             oprt_opnot = 2001,              // !  2
             oprt_opexnot = 2003,            // ~  2
             oprt_add_unary = 2005,          // +   2
@@ -615,6 +619,14 @@ namespace dvnci {
             virtual calc_token getack(const calc_token& it);
 
             virtual calc_token getalarmack(const calc_token& it);
+            
+            virtual calc_token getcomment(const calc_token& it);
+            
+            virtual calc_token getbinding(const calc_token& it);
+            
+            virtual calc_token geteu(const calc_token& it);
+            
+            virtual calc_token getalarmmsg(const calc_token& it);
 
             virtual calc_token calc_token_factory(const std::string& val);
 
@@ -745,6 +757,10 @@ namespace dvnci {
             if (val == "asin") return  calc_token(func_asin);
             if (val == "atan") return  calc_token(func_atan);
             if (val == "format") return  calc_token(func_format);
+            if (val == ".comment") return  calc_token(select_comment);
+            if (val == ".binding") return  calc_token(select_binding);
+            if (val == ".eu") return  calc_token(select_eu);
+            if (val == ".alarmmsg") return  calc_token(select_alarmmsg);                 
             if (val == "cosh") return  calc_token(func_cosh);
             if (val == "sinh") return  calc_token(func_sinh);
             if (val == "tanh") return  calc_token(func_tanh);
@@ -806,7 +822,7 @@ namespace dvnci {
             boost::regex ex(NUMBER_REGEXTAMPL_EXT);
             boost::smatch xResults;
             if (boost::regex_match(val,  xResults, ex)) {
-                DEBUG_STR_VAL_DVNCI(ISNUMERIC_CONST, val)
+                //DEBUG_STR_VAL_DVNCI(ISNUMERIC_CONST, val)
                 std::string::size_type posLong = val.find_last_of("l");
                 std::string::size_type posUnsign = val.find_last_of("u");
                 std::string::size_type posLongUnsign = val.find_first_of("lu");
@@ -823,9 +839,9 @@ namespace dvnci {
                 else if (posUnsign != std::string::npos) {
                     val = val.substr(0, posUnsign);}
 
-                DEBUG_VAL_DVNCI(isLong)
-                DEBUG_VAL_DVNCI(isUnsign)
-                DEBUG_VAL_DVNCI(val)
+                //DEBUG_VAL_DVNCI(isLong)
+                //DEBUG_VAL_DVNCI(isUnsign)
+                //DEBUG_VAL_DVNCI(val)
                 switch (parseconstype(val, isFloat)) {
                     case real_const:{
                         if  (isFloat) {
@@ -1003,6 +1019,35 @@ namespace dvnci {
                 tmp.valid(intf->valid(it.id()));
                 return tmp;}
             throw dvncierror(ERROR_NILLINF);}
+        
+        template<typename BASEINTF, typename REFCOUNTER>
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::getcomment(const calc_token& it) {
+            if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
+            if (intf) {
+                return intf->comment(it.id());}
+            throw dvncierror(ERROR_NILLINF);}
+        
+        template<typename BASEINTF, typename REFCOUNTER>
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::geteu(const calc_token& it) {
+            if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
+            if (intf) {
+                return intf->eu(it.id());}
+            throw dvncierror(ERROR_NILLINF);}
+        
+        template<typename BASEINTF, typename REFCOUNTER>
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::getbinding(const calc_token& it) {
+            if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
+            if (intf) {
+                return intf->binding(it.id());}
+            throw dvncierror(ERROR_NILLINF);}
+        
+        template<typename BASEINTF, typename REFCOUNTER>
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::getalarmmsg(const calc_token& it) {
+            if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
+            if (intf) {
+                return intf->alarmmsg(it.id());}
+            throw dvncierror(ERROR_NILLINF);}        
+        
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::calc_token_factory(const std::string& val) {
@@ -1554,6 +1599,23 @@ namespace dvnci {
                                             calcstack.pop();
                                             calcstack.push(lsideit);}
                                             break;}
+                                    
+                                    case select_comment:
+                                    case select_eu:
+                                    case select_binding:
+                                    case select_alarmmsg:{
+                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {
+                                            calc_token nmidit = calcstack.top();
+                                            calcstack.pop();
+                                            calc_token resultit = (it->operation() == select_comment) ? getcomment(nmidit) :
+                                                    (it->operation() == select_eu) ? geteu(nmidit) :
+                                                    (it->operation() == select_binding) ? getbinding(nmidit) :
+                                                    getalarmmsg(nmidit);
+                                            calcstack.push(resultit);}
+                                        else {
+                                            clearall();
+                                            return error(ERROR_EXPRPARSE);}
+                                        break;}
 
                                     case oper_cast_time:
                                     case oper_cast_text:{
@@ -1659,7 +1721,7 @@ namespace dvnci {
                 //polline.clear();
                 //polline.push_back(calc_token(NULL_DOUBLE));
                 //return true;}
-            bool cs = tkn.getbool().value();
+            bool cs = tkn.getbool().value() && tkn.valid();
             polishline_iterator it = iter;
             size_t cntr = 0;
             polishline_iterator strtit = cs ? it : polline.end();
