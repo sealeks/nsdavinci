@@ -178,6 +178,8 @@ namespace dvnci {
                 THD_EXCLUSIVE_LOCK(mtx);
                 listeners_iterator itb = expressions_map.right.lower_bound(listener);
                 listeners_iterator ite = expressions_map.right.upper_bound(listener);
+                if (updatedset.find(listener)!=updatedset.end())
+                    updatedset.erase(listener);
                 if (itb != ite) {
                     expressions_map.right.erase(itb->first);
                     return true;}
@@ -216,6 +218,8 @@ namespace dvnci {
                 THD_EXCLUSIVE_LOCK(mtx);
                 trendlisteners_iterator itb = trends_map.right.lower_bound(listener);
                 trendlisteners_iterator ite = trends_map.right.upper_bound(listener);
+                if (newtrendset.find(listener)!=newtrendset.end())
+                    newtrendset.erase(listener);
                 if (itb != ite) {
                     trends_map.right.erase(itb->first);
                     return true;}
