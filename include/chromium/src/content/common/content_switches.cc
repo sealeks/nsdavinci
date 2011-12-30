@@ -111,7 +111,7 @@ const char kDisableJavaScriptI18NAPI[]      = "disable-javascript-i18n-api";
 const char kDisableLocalStorage[]           = "disable-local-storage";
 
 // Force logging to be disabled.  Logging is enabled by default in debug
-// builds.f
+// builds.
 const char kDisableLogging[]                = "disable-logging";
 
 // Prevent plugins from running.
