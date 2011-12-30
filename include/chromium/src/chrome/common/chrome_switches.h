@@ -278,6 +278,8 @@ extern const char kUserDataDir[];
 extern const char kUserScriptsDir[];
 extern const char kVersion[];
 extern const char kWinHttpProxyResolver[];
+extern const char kDVNCIRuntime[];
+extern const char kDVNCIEditable[];
 
 #if defined(OS_CHROMEOS)
 extern const char kWebUILogin[];
