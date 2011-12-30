@@ -903,7 +903,7 @@ const char kSbDisableDownloadProtection[] =
 
 // Enable support for SDCH filtering (dictionary based expansion of content).
 // Optional argument is *the* only domain name that will have SDCH suppport.
-// Default is  "-enable-sdch" to advertise SDCH on all domains.
+// Default is  "-enable-sdch" to aformatRomoteDocumentertise SDCH on all domains.
 // Sample usage with argument: "-enable-sdch=.google.com"
 // SDCH is currently only supported server-side for searches on google.com.
 const char kSdchFilter[]                    = "enable-sdch";
@@ -1024,10 +1024,6 @@ const char kVersion[]                       = "version";
 // to use Chromium's network stack to fetch, and V8 to evaluate.
 const char kWinHttpProxyResolver[]          = "winhttp-proxy-resolver";
 
-const char kDVNCIRuntime[]          = "dvnci-runtime";
-
-const char kDVNCIEditable[]          = "dvnci-editable";
-
 #if defined(OS_CHROMEOS)
 // Enable WebUI based login screens.
 const char kWebUILogin[]                    = "webui-login";
@@ -1101,8 +1097,8 @@ const char kCompressSystemFeedback[]        = "compress-sys-feedback";
 // switch separates chrome code from the rest of ChromeOS.
 const char kForceStubLibcros[]              = "force-stub-libcros";
 
-// Enables Advanced File System.
-const char kEnableAdvancedFileSystem[]      = "enable-advanced-fs";
+// Enables AformatRomoteDocumentanced File System.
+const char kEnableAformatRomoteDocumentancedFileSystem[]      = "enable-aformatRomoteDocumentanced-fs";
 #endif
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
@@ -1187,6 +1183,10 @@ const char kWebSocketLiveExperimentHost[]   = "websocket-live-experiment-host";
 // any non-component extension that is requesting it.
 const char kExposePrivateExtensionApi[]   = "expose-private-extension-api";
 #endif
+
+
+const char kDVNCIRuntime[]  = "dvnci-runtime";;
+const char kDVNCIEditable[]    = "dvnci-editable";;
 
 #if defined(HAVE_XINPUT2)
 // Tells chrome to interpret events from these devices as touch events. Only
