@@ -1024,6 +1024,10 @@ const char kVersion[]                       = "version";
 // to use Chromium's network stack to fetch, and V8 to evaluate.
 const char kWinHttpProxyResolver[]          = "winhttp-proxy-resolver";
 
+const char kDVNCIRuntime[]          = "dvnci-runtime";
+
+const char kDVNCIEditable[]          = "dvnci-editable";
+
 #if defined(OS_CHROMEOS)
 // Enable WebUI based login screens.
 const char kWebUILogin[]                    = "webui-login";
