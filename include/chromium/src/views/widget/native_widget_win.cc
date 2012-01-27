@@ -383,7 +383,9 @@ NativeWidgetWin::NativeWidgetWin(internal::NativeWidgetDelegate* delegate)
       ignore_pos_changes_factory_(this),
       last_monitor_(NULL),
       is_right_mouse_pressed_on_caption_(false),
-      restored_enabled_(false) {
+      restored_enabled_(false),
+      undecorated_(false),
+      tooltip_(false){
 }
 
 NativeWidgetWin::~NativeWidgetWin() {
@@ -779,7 +781,7 @@ gfx::Rect NativeWidgetWin::GetClientAreaScreenBounds() const {
 gfx::Rect NativeWidgetWin::GetRestoredBounds() const {
   // If we're in fullscreen mode, we've changed the normal bounds to the monitor
   // rect, so return the saved bounds instead.
-  if (IsFullscreen())
+	if (IsFullscreen())
     return gfx::Rect(saved_window_info_.window_rect);
 
   gfx::Rect bounds;
@@ -1016,6 +1018,76 @@ void NativeWidgetWin::SetFullscreen(bool fullscreen) {
 
 bool NativeWidgetWin::IsFullscreen() const {
   return fullscreen_;
+}
+
+void NativeWidgetWin::SetWindowProperty(const std::wstring& pram){
+PushForceHidden();
+
+    internal::WindowParam param(pram);
+
+    saved_window_info_.style = GetWindowLong(GWL_STYLE);
+    saved_window_info_.ex_style = GetWindowLong(GWL_EXSTYLE);
+
+    MONITORINFO monitor_info;
+    monitor_info.cbSize = sizeof(monitor_info);
+    GetMonitorInfo(MonitorFromWindow(GetNativeView(), MONITOR_DEFAULTTONEAREST),
+                   &monitor_info);
+    gfx::Rect monitor_rect(monitor_info.rcMonitor);
+
+    gfx::Rect new_rect;
+    new_rect.set_x(param.Bounds(L"left",monitor_rect.width(),0));
+	new_rect.set_y(param.Bounds(L"top",monitor_rect.height(),0));
+	new_rect.set_height(param.Bounds(L"height",monitor_rect.height(),400));
+	new_rect.set_width(param.Bounds(L"width",monitor_rect.width(),200));
+
+	bool isCaption = !param.caption().empty();
+
+	if (isCaption)
+		this->SetWindowTitle(param.caption());
+
+	undecorated_=param.isUndecorated();
+	tooltip_=param.isToolTip();
+
+	bool isCanResize=param.isResizeble();
+	bool isAllwaysTop=param.isAllawaysTop();
+	bool isModal=param.isModal();
+	bool isMaximized=param.isMaximized();
+	bool isMinimized=param.isMinimized();
+
+	if (undecorated_){
+
+    SetWindowLong(GWL_STYLE,
+                  saved_window_info_.style & ~(WS_CAPTION | WS_THICKFRAME));
+	LONG exstyle_ = saved_window_info_.ex_style & ~(WS_EX_DLGMODALFRAME |
+                  WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE | WS_EX_APPWINDOW);
+	exstyle_= isAllwaysTop ? (saved_window_info_.ex_style | WS_EX_TOPMOST) : saved_window_info_.ex_style;
+
+    SetWindowLong(GWL_EXSTYLE,
+                  exstyle_);
+
+    SetWindowPos(isAllwaysTop ? HWND_TOPMOST : NULL, new_rect.x(), new_rect.y(), new_rect.width(),
+                 new_rect.height(),
+				 /*SWP_NOZORDER |*/ SWP_NOACTIVATE | SWP_FRAMECHANGED);}
+	else{
+
+    if (!isCanResize)
+        SetWindowLong(GWL_STYLE, saved_window_info_.style | WS_SYSMENU | WS_CAPTION & ~(WS_MINIMIZEBOX | WS_MINIMIZEBOX) & ~WS_THICKFRAME);
+	else
+        SetWindowLong(GWL_STYLE, saved_window_info_.style | WS_SYSMENU | WS_CAPTION & ~(WS_MINIMIZEBOX | WS_MINIMIZEBOX));
+
+	LONG exstyle_= isAllwaysTop ? (saved_window_info_.ex_style | WS_EX_TOPMOST) : saved_window_info_.ex_style;
+	exstyle_= tooltip_ ? (exstyle_ | WS_EX_TOOLWINDOW) : exstyle_;
+	exstyle_= exstyle_ & (~WS_EX_APPWINDOW);
+    SetWindowLong(GWL_EXSTYLE, exstyle_);
+	SetWindowPos(isAllwaysTop ? HWND_TOPMOST : NULL, new_rect.x(), new_rect.y(), new_rect.width(),
+                 new_rect.height(),
+				 /*SWP_NOZORDER |*/ SWP_NOACTIVATE | SWP_FRAMECHANGED);
+
+    if (isMaximized)
+      Maximize();
+	}
+
+PopForceHidden();
 }
 
 void NativeWidgetWin::SetOpacity(unsigned char opacity) {

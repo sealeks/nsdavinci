@@ -272,6 +272,9 @@ Page* ChromeClientImpl::createWindow(
     if (!m_webView->client())
         return 0;
 
+    if (!features.param.isEmpty())
+        m_webView->client()->windowFeatures(features.param.characters());
+
     WrappedResourceRequest request;
     if (!r.resourceRequest().isEmpty())
         request.bind(r.resourceRequest());
@@ -279,6 +282,9 @@ Page* ChromeClientImpl::createWindow(
         m_webView->client()->createView(WebFrameImpl::fromFrame(frame), request, features, r.frameName()));
     if (!newView)
         return 0;
+
+    if (!features.param.isEmpty())
+        newView->client()->windowFeatures(features.param.characters());
 
     return newView->page();
 }
@@ -340,6 +346,10 @@ void ChromeClientImpl::show()
         policy = WebNavigationPolicyNewBackgroundTab;
 
     m_webView->client()->show(policy);
+}
+
+void ChromeClientImpl::exitBrowser() {
+    m_webView->client()->Exit();
 }
 
 bool ChromeClientImpl::canRunModal()

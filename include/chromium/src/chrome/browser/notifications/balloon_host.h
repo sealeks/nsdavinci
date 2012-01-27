@@ -76,7 +76,8 @@ class BalloonHost : public RenderViewHostDelegate,
   virtual void ShowCreatedWindow(int route_id,
                                  WindowOpenDisposition disposition,
                                  const gfx::Rect& initial_pos,
-                                 bool user_gesture);
+                                 bool user_gesture,
+								 std::wstring param=L"");
   virtual void ShowCreatedWidget(int route_id,
                                  const gfx::Rect& initial_pos) {}
   virtual void ShowCreatedFullscreenWidget(int route_id) {}

@@ -58,6 +58,8 @@ using WebKit::WebInputEvent;
 using WebKit::WebMediaPlayerAction;
 using WebKit::WebTextDirection;
 
+void BrowserGlobalEntety_Exit(void*);
+
 namespace {
 
 // Delay to wait on closing the tab for a beforeunload/unload handler to fire.
@@ -662,6 +664,7 @@ bool RenderViewHost::OnMessageReceived(const IPC::Message& msg) {
     IPC_MESSAGE_HANDLER(ViewHostMsg_UpdateInspectorSetting,
                         OnUpdateInspectorSetting)
     IPC_MESSAGE_HANDLER(ViewHostMsg_Close, OnMsgClose)
+	IPC_MESSAGE_HANDLER(ViewHostMsg_BrowserExit,OnMsgExitBrowser)
     IPC_MESSAGE_HANDLER(ViewHostMsg_RequestMove, OnMsgRequestMove)
     IPC_MESSAGE_HANDLER(ViewHostMsg_DidStartLoading, OnMsgDidStartLoading)
     IPC_MESSAGE_HANDLER(ViewHostMsg_DidStopLoading, OnMsgDidStopLoading)
@@ -756,13 +759,18 @@ void RenderViewHost::CreateNewFullscreenWidget(int route_id) {
 void RenderViewHost::OnMsgShowView(int route_id,
                                    WindowOpenDisposition disposition,
                                    const gfx::Rect& initial_pos,
-                                   bool user_gesture) {
+                                   bool user_gesture,
+								   std::wstring param) {
   RenderViewHostDelegate::View* view = delegate_->GetViewDelegate();
   if (view) {
     if (!is_swapped_out_)
-      view->ShowCreatedWindow(route_id, disposition, initial_pos, user_gesture);
+      view->ShowCreatedWindow(route_id, disposition, initial_pos, user_gesture, param);
     Send(new ViewMsg_Move_ACK(route_id));
   }
+}
+
+void RenderViewHost::OnMsgExitBrowser() {
+BrowserGlobalEntety_Exit(0);
 }
 
 void RenderViewHost::OnMsgShowWidget(int route_id,

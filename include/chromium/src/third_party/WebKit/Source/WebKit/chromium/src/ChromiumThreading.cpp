@@ -38,9 +38,12 @@
 
 namespace WTF {
 
-void ChromiumThreading::callOnMainThread(void (*func)(void*), void* context)
+void ChromiumThreading::callOnMainThread(void (*func)(void*), void* context, int delay_ms)
 {
-    WebKit::webKitClient()->callOnMainThread(func, context);
+	if (delay_ms)
+         WebKit::webKitClient()->callOnMainThread(func, context, delay_ms);
+	else
+         WebKit::webKitClient()->callOnMainThread(func, context);
 }
 
 }  // namespace WTF

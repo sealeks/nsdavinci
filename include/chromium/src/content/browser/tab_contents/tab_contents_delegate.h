@@ -75,7 +75,8 @@ class TabContentsDelegate {
                               TabContents* new_contents,
                               WindowOpenDisposition disposition,
                               const gfx::Rect& initial_pos,
-                              bool user_gesture);
+                              bool user_gesture,
+							  const std::wstring& param=L"");
 
   // Selects the specified contents, bringing its container to the front.
   virtual void ActivateContents(TabContents* contents);

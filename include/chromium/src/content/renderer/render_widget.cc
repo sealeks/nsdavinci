@@ -984,6 +984,10 @@ void RenderWidget::show(WebNavigationPolicy) {
   SetPendingWindowRect(initial_pos_);
 }
 
+void RenderWidget::Exit(){
+	Send(new ViewHostMsg_BrowserExit(routing_id_));
+}
+
 void RenderWidget::didFocus() {
 }
 

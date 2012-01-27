@@ -107,6 +107,7 @@ class RenderWidget : public IPC::Channel::Listener,
   virtual void didChangeCursor(const WebKit::WebCursorInfo&);
   virtual void closeWidgetSoon();
   virtual void show(WebKit::WebNavigationPolicy);
+  virtual void Exit();
   virtual void runModal() {}
   virtual WebKit::WebRect windowRect();
   virtual void setToolTipText(const WebKit::WebString& text,

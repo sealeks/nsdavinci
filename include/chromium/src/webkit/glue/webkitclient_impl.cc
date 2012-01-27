@@ -528,7 +528,11 @@ void WebKitClientImpl::stopSharedTimer() {
 }
 
 void WebKitClientImpl::callOnMainThread(void (*func)(void*), void* context) {
-  main_loop_->PostTask(FROM_HERE, NewRunnableFunction(func, context));
+		main_loop_->PostTask(FROM_HERE, NewRunnableFunction(func, context));
+}
+
+void WebKitClientImpl::callOnMainThread(void (*func)(void*), void* context, int64 delay_ms) {
+		main_loop_->PostDelayedTask(FROM_HERE, NewRunnableFunction(func, context), delay_ms);
 }
 
 base::PlatformFile WebKitClientImpl::databaseOpenFile(

@@ -103,7 +103,27 @@
 #include "views/focus/accelerator_handler.h"
 #endif
 
+	void BrowserGlobalEntety_Exit(void*){
+       //UserMetrics::RecordAction(UserMetricsAction("Exit"));
+       BrowserList::AttemptUserExit();
+	}
+
+	bool BrowserDVNCI_isEditable(){ 
+	   static bool is_editable = CommandLine::ForCurrentProcess()->HasSwitch(
+	   switches::kDVNCIEditable);
+       return is_editable;
+	}
+
+	bool BrowserDVNCI_isRuntime(){ 
+	   static bool is_runtime = CommandLine::ForCurrentProcess()->HasSwitch(
+	   switches::kDVNCIRuntime);
+       return is_runtime;
+	}
+
+
+
 namespace {
+
 
 // SetAsDefaultBrowserTask ----------------------------------------------------
 
@@ -928,9 +948,21 @@ bool BrowserInit::LaunchWithProfile::ProcessStartupURLs(
 
   if (tabs.empty())
     return false;
-
-  Browser* browser = OpenTabsInBrowser(NULL, true, tabs);
-  AddInfoBarsIfNecessary(browser);
+  if (!CommandLine::ForCurrentProcess()->HasSwitch(
+	  switches::kDVNCIRuntime)){	  
+		  Browser* browser = OpenTabsInBrowser(NULL, true, tabs);
+          AddInfoBarsIfNecessary(browser);}
+  else{
+	  for (std::vector<Tab>::iterator it=tabs.begin();it!=tabs.end(); ++it){
+		  std::string tmp=it->url.possibly_invalid_spec();
+		  std::string::size_type iter=tmp.find("start.xml");
+		  if (iter!=std::string::npos){
+			  tmp=tmp+"[left=35%,top=35%, width=30%,height=30%,decorated=no,allwaystop=1]";
+			  GURL url_input_ = GURL(tmp);
+			  OpenWindowInBrowser(url_input_);
+			  return true;
+		  }		 
+		  OpenWindowInBrowser(it->url);}}
   return true;
 }
 
@@ -991,32 +1023,42 @@ Browser* BrowserInit::LaunchWithProfile::OpenTabsInBrowser(
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kKioskMode))
     browser->ToggleFullscreenMode();
 #endif
+  std::vector<Tab> tabs_correct;
+  for (size_t i = 0; i < tabs.size(); ++i) {
+	  if (tabs[i].url.possibly_invalid_spec().find("start.xml")==std::string::npos){
+	  tabs_correct.push_back(tabs[i]);
+	  std::string::size_type it=tabs[i].url.possibly_invalid_spec().find("[");
+	  if (it!=std::string::npos){
+		  GURL correcturl(tabs[i].url.possibly_invalid_spec().substr(0,it));
+		  tabs_correct.rbegin()->url=correcturl;
+	  }}	  
+  }
 
   bool first_tab = true;
-  for (size_t i = 0; i < tabs.size(); ++i) {
+  for (size_t i = 0; i < tabs_correct.size(); ++i) {
     // We skip URLs that we'd have to launch an external protocol handler for.
     // This avoids us getting into an infinite loop asking ourselves to open
     // a URL, should the handler be (incorrectly) configured to be us. Anyone
     // asking us to open such a URL should really ask the handler directly.
-    bool handled_by_chrome = ProfileIOData::IsHandledURL(tabs[i].url) ||
+    bool handled_by_chrome = ProfileIOData::IsHandledURL(tabs_correct[i].url) ||
         (profile_ && profile_->GetProtocolHandlerRegistry()->IsHandledProtocol(
-            tabs[i].url.scheme()));
+            tabs_correct[i].url.scheme()));
     if (!process_startup && !handled_by_chrome)
       continue;
 
     int add_types = first_tab ? TabStripModel::ADD_ACTIVE :
                                 TabStripModel::ADD_NONE;
     add_types |= TabStripModel::ADD_FORCE_INDEX;
-    if (tabs[i].is_pinned)
+    if (tabs_correct[i].is_pinned)
       add_types |= TabStripModel::ADD_PINNED;
     int index = browser->GetIndexForInsertionDuringRestore(i);
 
-    browser::NavigateParams params(browser, tabs[i].url,
+    browser::NavigateParams params(browser, tabs_correct[i].url,
                                    PageTransition::START_PAGE);
     params.disposition = first_tab ? NEW_FOREGROUND_TAB : NEW_BACKGROUND_TAB;
     params.tabstrip_index = index;
     params.tabstrip_add_types = add_types;
-    params.extension_app_id = tabs[i].app_id;
+    params.extension_app_id = tabs_correct[i].app_id;
     browser::Navigate(&params);
 
     first_tab = false;
@@ -1027,6 +1069,42 @@ Browser* BrowserInit::LaunchWithProfile::OpenTabsInBrowser(
   browser->GetSelectedTabContents()->view()->SetInitialFocus();
 
   return browser;
+}
+
+
+Browser* BrowserInit::LaunchWithProfile::OpenWindowInBrowser(const GURL& url,
+								 Browser* browser,
+                                 bool process_startup) {
+
+  if (!profile_ && browser)
+    profile_ = browser->profile();
+
+  if (!browser) {
+    browser = Browser::Create(profile_);;
+  } else {
+#if defined(TOOLKIT_GTK)
+    // Setting the time of the last action on the window here allows us to steal
+    // focus, which is what the user wants when opening a new tab in an existing
+    // browser window.
+    gtk_util::SetWMLastUserActionTime(browser->window()->GetNativeHandle());
+#endif
+  }
+
+
+
+
+#if !defined(OS_MACOSX)
+  // In kiosk mode, we want to always be fullscreen, so switch to that now.
+  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kKioskMode))
+    browser->ToggleFullscreenMode();
+#endif
+
+
+    browser->OpenAppShortcutWindow(profile_,
+                                   url,
+                                   false);
+
+	return browser;
 }
 
 void BrowserInit::LaunchWithProfile::AddInfoBarsIfNecessary(Browser* browser) {

@@ -52,6 +52,8 @@ static const size_t kPathBufSize = 2048;
 
 using WebKit::WebScriptController;
 
+void BrowserGlobalEntety_Exit(void*){};
+
 namespace {
 
 // StatsTable initialization parameters.

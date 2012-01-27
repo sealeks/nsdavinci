@@ -284,7 +284,8 @@ public:
     virtual void stopSharedTimer() { }
 
     // Callable from a background WebKit thread.
-    virtual void callOnMainThread(void (*func)(void*), void* context) { }
+	virtual void callOnMainThread(void (*func)(void*), void* context) { }
+    virtual void callOnMainThread(void (*func)(void*), void* context, int64 delay_ms) { }
 
     // WebGL --------------------------------------------------------------
 

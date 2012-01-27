@@ -105,6 +105,7 @@ namespace WebCore {
 
         Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) const;
         void show() const;
+		void exitBrowser() ;
 
         bool canRunModal() const;
         bool canRunModalNow() const;

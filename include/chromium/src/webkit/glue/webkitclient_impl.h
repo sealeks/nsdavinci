@@ -77,6 +77,7 @@ class WebKitClientImpl : public WebKit::WebKitClient {
   virtual void setSharedTimerFireTime(double fireTime);
   virtual void stopSharedTimer();
   virtual void callOnMainThread(void (*func)(void*), void* context);
+  virtual void callOnMainThread(void (*func)(void*), void* context, int64 delay_ms);
 
   void SuspendSharedTimer();
   void ResumeSharedTimer();

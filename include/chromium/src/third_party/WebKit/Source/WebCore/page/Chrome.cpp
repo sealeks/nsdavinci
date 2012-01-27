@@ -201,6 +201,11 @@ void Chrome::show() const
     m_client->show();
 }
 
+void Chrome::exitBrowser()
+{
+    m_client->exitBrowser();
+}
+
 bool Chrome::canRunModal() const
 {
     return m_client->canRunModal();

@@ -1005,7 +1005,7 @@ bool BrowserView::IsToolbarVisible() const {
   if (UseCompactNavigationBar()) {
     return false;
   } else {
-	 return /*browser_->is_type_popup() ? false :*/ (browser_->SupportsWindowFeature(Browser::FEATURE_TOOLBAR) ||
+	 return browser_->is_type_popup() ? false : (browser_->SupportsWindowFeature(Browser::FEATURE_TOOLBAR) ||
            browser_->SupportsWindowFeature(Browser::FEATURE_LOCATIONBAR));
   }
 }
@@ -2275,6 +2275,10 @@ bool BrowserView::UpdateChildViewAndLayout(views::View* new_view,
   }
   *old_view = new_view;
   return changed;
+}
+
+void BrowserView::SetWindowProperty(const std::wstring& param){
+   frame_->SetWindowProperty(param);
 }
 
 void BrowserView::ProcessFullscreen(bool fullscreen) {

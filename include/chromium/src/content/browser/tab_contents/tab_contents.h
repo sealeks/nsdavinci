@@ -289,7 +289,8 @@ class TabContents : public PageNavigator,
   void AddNewContents(TabContents* new_contents,
                       WindowOpenDisposition disposition,
                       const gfx::Rect& initial_pos,
-                      bool user_gesture);
+                      bool user_gesture,
+					  const std::wstring& param=L"");
 
   // Returns the number of constrained windows in this tab.  Used by tests.
   size_t constrained_window_count() { return child_windows_.size(); }

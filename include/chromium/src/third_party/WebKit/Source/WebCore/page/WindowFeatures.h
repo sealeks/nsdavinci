@@ -78,6 +78,8 @@ namespace WebCore {
 
         Vector<String> additionalFeatures;
 
+        String  param;
+
         // FIXME: We can make these functions private non-member functions once V8 showModalDialog is changed to use DOMWindow.
         typedef HashMap<String, String> DialogFeaturesMap;
         static void parseDialogFeatures(const String&, HashMap<String, String>&);

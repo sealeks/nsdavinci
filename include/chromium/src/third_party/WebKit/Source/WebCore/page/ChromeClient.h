@@ -103,6 +103,7 @@ namespace WebCore {
         // request could be fulfilled.  The ChromeClient should not load the request.
         virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) = 0;
         virtual void show() = 0;
+		virtual void exitBrowser() {}
 
         virtual bool canRunModal() = 0;
         virtual void runModal() = 0;

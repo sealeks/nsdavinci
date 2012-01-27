@@ -259,6 +259,9 @@ class NativeWidgetWin : public ui::WindowImpl,
   virtual void Restore() OVERRIDE;
   virtual void SetFullscreen(bool fullscreen) OVERRIDE;
   virtual bool IsFullscreen() const OVERRIDE;
+  virtual void SetWindowProperty(const std::wstring& param = L"") OVERRIDE;
+  virtual bool IsUndecorated() const { return undecorated_;}
+  virtual bool IsToolTip() const { return tooltip_;}
   virtual void SetOpacity(unsigned char opacity) OVERRIDE;
   virtual void SetUseDragFrame(bool use_drag_frame) OVERRIDE;
   virtual bool IsAccessibleWidget() const OVERRIDE;
@@ -667,6 +670,9 @@ class NativeWidgetWin : public ui::WindowImpl,
   scoped_refptr<ui::Compositor> compositor_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWidgetWin);
+
+  bool undecorated_;
+  bool tooltip_;
 };
 
 }  // namespace views

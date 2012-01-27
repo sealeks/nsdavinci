@@ -619,7 +619,8 @@ RenderWidgetHostView* ExtensionHost::CreateNewWidgetInternal(
 void ExtensionHost::ShowCreatedWindow(int route_id,
                                       WindowOpenDisposition disposition,
                                       const gfx::Rect& initial_pos,
-                                      bool user_gesture) {
+                                      bool user_gesture,
+                                      std::wstring param) {
   TabContents* contents = delegate_view_helper_.GetCreatedWindow(route_id);
   if (!contents)
     return;

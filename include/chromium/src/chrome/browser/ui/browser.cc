@@ -160,6 +160,23 @@
 
 using base::TimeDelta;
 
+
+	std::string getNativeURLext(const std::string& val){
+		std::string::size_type it=val.find_first_of("[");
+		return  (it==std::string::npos) ? val : val.substr(0,it);
+	}
+
+
+
+	std::string getNativeParameterext(const std::string& val){
+		std::string::size_type it=val.find_first_of("[");
+		std::string temp=(it==std::string::npos) ? "" : val.substr(it+1);
+		it=temp.find_first_of("]");
+	    if (it!=std::string::npos)
+	        temp=temp.substr(0,it);
+		return  temp;
+	}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace {
@@ -605,8 +622,11 @@ TabContents* Browser::OpenApplicationWindow(
     const Extension* extension,
     extension_misc::LaunchContainer container,
     const GURL& url_input,
-    Browser** app_browser) {
+    Browser** app_browser,
+	const std::wstring param) {
   GURL url;
+
+
   if (!url_input.is_empty()) {
     if (extension)
       DCHECK(extension->web_extent().MatchesURL(url_input));
@@ -638,11 +658,17 @@ TabContents* Browser::OpenApplicationWindow(
   if (app_browser)
     *app_browser = browser;
 
+
+
   TabContentsWrapper* wrapper =
       browser->AddSelectedTabWithURL(url, PageTransition::START_PAGE);
   TabContents* contents = wrapper->tab_contents();
   contents->GetMutableRendererPrefs()->can_accept_load_drops = false;
   contents->render_view_host()->SyncRendererPrefs();
+  if ((CommandLine::ForCurrentProcess()->HasSwitch(
+	  switches::kDVNCIRuntime)) && (!param.empty())){		  
+		  browser->window()->SetWindowProperty(param);
+	}
   browser->window()->Show();
 
   // TODO(jcampan): http://crbug.com/8123 we should not need to set the initial
@@ -654,13 +680,21 @@ TabContents* Browser::OpenApplicationWindow(
 TabContents* Browser::OpenAppShortcutWindow(Profile* profile,
                                             const GURL& url,
                                             bool update_shortcut) {
+
+
+  std::string tmpstr=getNativeParameterext(url.possibly_invalid_spec());
+  base::StringPiece tmp(tmpstr);
+  std::wstring parameter=UTF8ToUTF16(tmp);
+  GURL url_input_ = GURL(getNativeURLext(url.possibly_invalid_spec()));
+
   Browser* app_browser;
   TabContents* tab = OpenApplicationWindow(
       profile,
       NULL,  // this is a URL app.  No extension.
       extension_misc::LAUNCH_WINDOW,
-      url,
-      &app_browser);
+      url_input_,
+      &app_browser,
+	  parameter);
 
   if (!tab)
     return NULL;
@@ -1295,6 +1329,9 @@ void Browser::UseCompactNavigationBarChanged() {
 
 bool Browser::SupportsWindowFeatureImpl(WindowFeature feature,
                                         bool check_fullscreen) const {
+
+  if (CommandLine::ForCurrentProcess()->HasSwitch(
+          switches::kDVNCIRuntime)) return false;
   // On Mac, fullscreen mode has most normal things (in a slide-down panel). On
   // other platforms, we hide some controls when in fullscreen mode.
   bool hide_ui_for_fullscreen = false;
@@ -1637,7 +1674,6 @@ void Browser::ShowKeyboardOverlay() {
 #endif
 
 void Browser::Exit() {
-  UserMetrics::RecordAction(UserMetricsAction("Exit"));
   BrowserList::AttemptUserExit();
 }
 
@@ -3039,11 +3075,16 @@ void Browser::AddNewContents(TabContents* source,
                              TabContents* new_contents,
                              WindowOpenDisposition disposition,
                              const gfx::Rect& initial_pos,
-                             bool user_gesture) {
+                             bool user_gesture,
+							 const std::wstring& param) {
   // No code for this yet.
   DCHECK(disposition != SAVE_TO_DISK);
   // Can't create a new contents for the current tab - invalid case.
   DCHECK(disposition != CURRENT_TAB);
+
+  if (CommandLine::ForCurrentProcess()->HasSwitch(
+    switches::kDVNCIRuntime)) 
+	disposition=NEW_POPUP;
 
   TabContentsWrapper* source_wrapper = NULL;
   BlockedContentTabHelper* source_blocked_content = NULL;
@@ -3056,7 +3097,7 @@ void Browser::AddNewContents(TabContents* source,
     source_blocked_content = source_wrapper->blocked_content_tab_helper();
   }
 
-  if (source_wrapper) {
+  if ((false) && (source_wrapper)) {
     // Handle blocking of all contents.
     if (source_blocked_content->all_contents_blocked()) {
       source_blocked_content->AddTabContents(new_wrapper,
@@ -3090,8 +3131,13 @@ void Browser::AddNewContents(TabContents* source,
   params.disposition = disposition;
   params.window_bounds = initial_pos;
   params.window_action = browser::NavigateParams::SHOW_WINDOW;
-  params.user_gesture = user_gesture;
+  params.user_gesture = ((CommandLine::ForCurrentProcess()->HasSwitch(
+	  switches::kDVNCIRuntime)) && (!param.empty())) ? false : user_gesture;
   browser::Navigate(&params);
+  if ((/*CommandLine::ForCurrentProcess()->HasSwitch(
+	  switches::kDVNCIRuntime)*/true) && (!param.empty())){
+		  params.browser->window()->SetWindowProperty(param);
+	}
 
   if (source) {
     NotificationService::current()->Notify(
@@ -3114,7 +3160,9 @@ void Browser::DeactivateContents(TabContents* contents) {
 void Browser::LoadingStateChanged(TabContents* source) {
   window_->UpdateLoadingAnimations(
       tab_handler_->GetTabStripModel()->TabsAreLoading());
-  window_->UpdateTitleBar();
+  if (!CommandLine::ForCurrentProcess()->HasSwitch(
+	  switches::kDVNCIRuntime))
+      window_->UpdateTitleBar();
 
   TabContents* selected_contents = GetSelectedTabContents();
   if (source == selected_contents) {
@@ -4208,7 +4256,9 @@ void Browser::ProcessPendingUIUpdates() {
         command_updater_.UpdateCommandEnabled(IDC_CREATE_SHORTCUTS,
             web_app::IsValidUrl(contents->GetURL()));
 #endif
-        window_->UpdateTitleBar();
+  if (!CommandLine::ForCurrentProcess()->HasSwitch(
+	  switches::kDVNCIRuntime))
+      window_->UpdateTitleBar();
       }
     }
 
