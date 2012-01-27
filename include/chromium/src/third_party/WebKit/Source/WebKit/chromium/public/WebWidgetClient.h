@@ -108,7 +108,7 @@ public:
 
 protected:
     ~WebWidgetClient() { }
-	std::wstring windowFeatures_;
+    std::wstring windowFeatures_;
 };
 
 } // namespace WebKit
