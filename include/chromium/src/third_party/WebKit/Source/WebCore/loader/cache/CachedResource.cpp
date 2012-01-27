@@ -58,6 +58,10 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
 #endif
             return ResourceLoadPriorityHigh;
         case CachedResource::Script:
+#if ENABLE(SVG)
+        case CachedResource::SVGDocumentResource:
+            return ResourceLoadPriorityMedium;
+#endif
         case CachedResource::FontResource:
             return ResourceLoadPriorityMedium;
         case CachedResource::ImageResource:

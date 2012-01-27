@@ -63,6 +63,9 @@ public:
         CSSStyleSheet,
         Script,
         FontResource
+#if ENABLE(SVG)
+        , SVGDocumentResource
+#endif
 #if ENABLE(XSLT)
         , XSLStyleSheet
 #endif

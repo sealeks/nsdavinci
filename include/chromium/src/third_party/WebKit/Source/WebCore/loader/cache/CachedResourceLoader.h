@@ -26,7 +26,7 @@
 #ifndef CachedResourceLoader_h
 #define CachedResourceLoader_h
 
-#include "CachedResource.h"
+
 #include "CachedResourceHandle.h"
 #include "CachePolicy.h"
 #include "ResourceLoadPriority.h"
@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class CachedCSSStyleSheet;
+class CachedSVGDocument;
 class CachedFont;
 class CachedImage;
 class CachedScript;
@@ -63,6 +64,10 @@ public:
     CachedCSSStyleSheet* requestUserCSSStyleSheet(ResourceRequest&, const String& charset);
     CachedScript* requestScript(ResourceRequest&, const String& charset);
     CachedFont* requestFont(ResourceRequest&);
+    
+#if ENABLE(SVG)
+    CachedSVGDocument* requestSVGDocument(ResourceRequest&, const String&);
+#endif    
 
 #if ENABLE(XSLT)
     CachedXSLStyleSheet* requestXSLStyleSheet(ResourceRequest&);

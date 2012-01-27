@@ -55,6 +55,10 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
         return ResourceRequest::TargetIsStyleSheet;
     case CachedResource::Script: 
         return ResourceRequest::TargetIsScript;
+#if ENABLE(SVG)
+    case CachedResource::SVGDocumentResource:
+        return ResourceRequest::TargetIsSubresource;
+#endif
     case CachedResource::FontResource:
         return ResourceRequest::TargetIsFontResource;
     case CachedResource::ImageResource:
