@@ -31,6 +31,9 @@
 #include "config.h"
 #include "V8Event.h"
 
+#include "DOMWindow.h"
+#include "Element.h"
+
 #include "Clipboard.h"
 #include "ClipboardEvent.h"
 #include "CustomEvent.h"
@@ -75,9 +78,118 @@
 #include "V8OfflineAudioCompletionEvent.h"
 #endif
 
-#include "dvnci/Binding.h"
-
 namespace WebCore {
+
+	inline v8::Handle<v8::Value> toV8(WebCore::external::alarmrow* impl){
+
+	v8::HandleScope handle_scope;
+
+	v8::Handle<v8::Array> array = v8::Array::New(5);
+
+    if (array.IsEmpty())
+       return v8::Handle<v8::Array>();
+
+	if (impl){
+	array->Set(0, v8::Date::New(impl->time));
+	array->Set(1, v8::Integer::New(impl->level));
+	array->Set(2, v8::Integer::New(impl->kvit));
+	array->Set(3, impl->tag.data() ? v8::String::New(impl->tag.data()) : v8::Null());
+    array->Set(4, impl->text.data() ? v8::String::New(impl->text.data()) : v8::Null());
+	array->Set(5, impl->value.data() ? v8::String::New(impl->value.data()) : v8::Null());}
+	else{
+    array->Set(0, v8::Null());
+	array->Set(1, v8::Null());
+	array->Set(2, v8::Null());
+	array->Set(3, v8::Null());
+    array->Set(4, v8::Null());
+	array->Set(5, v8::Null());
+	}
+
+    // Return the value through Close.
+   return handle_scope.Close(array);}
+
+   inline v8::Handle<v8::Value> toV8(DVNAlarmEvent* impl)
+    {
+    if (!impl)
+        return v8::Null();
+
+	if (!impl->table())
+        return v8::Null();
+
+	if (impl->table()->size()==0)
+        return v8::Null();
+
+	v8::HandleScope handle_scope;
+
+	v8::Handle<v8::Array> array = v8::Array::New(impl->table()->size());
+
+    // Return an empty result if there was an error creating the array.
+    if (array.IsEmpty())
+       return v8::Handle<v8::Array>();
+
+     // Fill out the values
+	for (int i=0;i<impl->table()->size();++i){
+		   array->Set(i, toV8(impl->table()->get(i)));}
+	
+
+    // Return the value through Close.
+	return handle_scope.Close(array);}
+
+
+	inline v8::Handle<v8::Value> toV8(WebCore::external::trendrow* impl){
+
+	v8::HandleScope handle_scope;
+
+	v8::Handle<v8::Array> array = v8::Array::New(2);
+
+    if (array.IsEmpty())
+       return v8::Handle<v8::Array>();
+
+	if (impl){
+	array->Set(0, v8::Date::New(impl->time));
+	array->Set(1, v8::Number::New(impl->value));}
+	else{
+    array->Set(0, v8::Null());
+	array->Set(1, v8::Null());
+	}
+	return handle_scope.Close(array);}
+
+    inline v8::Handle<v8::Value> toV8(DVNTrendEvent* impl, v8::Handle<v8::Value> vl)
+    {
+    if (!impl)
+        return v8::Null();
+
+	if (!impl->table())
+        return v8::Null();
+
+	if (impl->table()->size()==0)
+        return v8::Null();
+
+	v8::HandleScope handle_scope;
+
+    v8::Handle<v8::Array> array = v8::Array::New(2);
+
+	    
+	if (array.IsEmpty())
+       return v8::Handle<v8::Array>();
+
+	v8::Handle<v8::Array> array2 = v8::Array::New(impl->table()->size());
+
+	if (array2.IsEmpty())
+       return v8::Handle<v8::Array>();
+
+
+     // Fill out the values
+	for (int i=0;i<impl->table()->size();++i){
+		array2->Set(i, toV8(impl->table()->get(i)));}
+
+	array->Set(0, impl->target() ? vl : v8::Null());
+	array->Set(1, array2);
+
+
+	return handle_scope.Close(array);}
+
+
 
 void V8Event::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
@@ -191,9 +303,9 @@ v8::Handle<v8::Value> toV8(Event* impl)
     if (impl->isStreamEvent())
         return toV8(static_cast<StreamEvent*>(impl));
 #endif
-    if (impl->isDVNAlarmEvent())
+	if (impl->isDVNAlarmEvent())
         return toV8(static_cast<DVNAlarmEvent*>(impl));
-    if (impl->isDVNTrendEvent())
+	if (impl->isDVNTrendEvent())
         return toV8(static_cast<DVNTrendEvent*>(impl), V8Event::wrap(impl));
     return V8Event::wrap(impl);
 }
