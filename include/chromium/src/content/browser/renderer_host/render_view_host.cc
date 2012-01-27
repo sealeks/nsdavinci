@@ -770,7 +770,7 @@ void RenderViewHost::OnMsgShowView(int route_id,
 }
 
 void RenderViewHost::OnMsgExitBrowser() {
-BrowserGlobalEntety_Exit(0);
+  BrowserGlobalEntety_Exit(0);
 }
 
 void RenderViewHost::OnMsgShowWidget(int route_id,
