@@ -985,7 +985,7 @@ void RenderWidget::show(WebNavigationPolicy) {
 }
 
 void RenderWidget::Exit(){
-	Send(new ViewHostMsg_BrowserExit(routing_id_));
+  Send(new ViewHostMsg_BrowserExit(routing_id_));
 }
 
 void RenderWidget::didFocus() {
