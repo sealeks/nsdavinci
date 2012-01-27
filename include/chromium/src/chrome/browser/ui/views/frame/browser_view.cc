@@ -979,18 +979,18 @@ void BrowserView::DestroyBrowser() {
 }
 
 bool BrowserView::IsBookmarkBarVisible() const {
-	  if (CommandLine::ForCurrentProcess()->HasSwitch(
+  if (CommandLine::ForCurrentProcess()->HasSwitch(
           switches::kDVNCIRuntime))
-  return false;
+    return false;
   return browser_->SupportsWindowFeature(Browser::FEATURE_BOOKMARKBAR) &&
       active_bookmark_bar_ &&
       (active_bookmark_bar_->GetPreferredSize().height() != 0);
 }
 
 bool BrowserView::IsBookmarkBarAnimating() const {
-	  if (CommandLine::ForCurrentProcess()->HasSwitch(
+  if (CommandLine::ForCurrentProcess()->HasSwitch(
           switches::kDVNCIRuntime))
-	return false;
+    return false;
   return bookmark_bar_view_.get() && bookmark_bar_view_->is_animating();
 }
 
@@ -1001,7 +1001,7 @@ bool BrowserView::IsTabStripEditable() const {
 bool BrowserView::IsToolbarVisible() const {
   if (CommandLine::ForCurrentProcess()->HasSwitch(
           switches::kDVNCIRuntime))
-	return false;
+    return false;
   if (UseCompactNavigationBar()) {
     return false;
   } else {
