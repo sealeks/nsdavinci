@@ -103,8 +103,8 @@ public:
     // reset the input method by cancelling any ongoing composition.
     virtual void resetInputMethod() { }
 
-	std::wstring windowFeatures() const { return windowFeatures_;}
-	void windowFeatures(const std::wstring& val) { windowFeatures_=val; }
+    std::wstring windowFeatures() const { return windowFeatures_;}
+    void windowFeatures(const std::wstring& val) { windowFeatures_=val; }
 
 protected:
     ~WebWidgetClient() { }
