@@ -28,6 +28,7 @@
 #include "CachedResourceLoader.h"
 
 #include "CachedCSSStyleSheet.h"
+#include "CachedSVGDocument.h"
 #include "CachedFont.h"
 #include "CachedImage.h"
 #include "CachedResourceRequest.h"
@@ -64,6 +65,10 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
         return new CachedCSSStyleSheet(request, charset);
     case CachedResource::Script:
         return new CachedScript(request, charset);
+#if ENABLE(SVG)
+    case CachedResource::SVGDocumentResource:
+        return new CachedSVGDocument(request, charset);
+#endif        
     case CachedResource::FontResource:
         return new CachedFont(request);
 #if ENABLE(XSLT)
@@ -183,6 +188,13 @@ CachedScript* CachedResourceLoader::requestScript(ResourceRequest& request, cons
     return static_cast<CachedScript*>(requestResource(CachedResource::Script, request, charset));
 }
 
+#if ENABLE(SVG)
+CachedSVGDocument* CachedResourceLoader::requestSVGDocument(ResourceRequest& request, const String& iri)
+{
+    return static_cast<CachedSVGDocument*>(requestResource(CachedResource::SVGDocumentResource, request, iri));
+}
+#endif
+
 #if ENABLE(XSLT)
 CachedXSLStyleSheet* CachedResourceLoader::requestXSLStyleSheet(ResourceRequest& request)
 {
@@ -203,6 +215,9 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 {
     switch (type) {
     case CachedResource::Script:
+#if ENABLE(SVG)
+        case CachedResource::SVGDocumentResource:
+#endif        
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
 #endif
@@ -250,6 +265,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::ImageResource:
     case CachedResource::CSSStyleSheet:
     case CachedResource::Script:
+#if ENABLE(SVG)
+    case CachedResource::SVGDocumentResource:
+#endif        
     case CachedResource::FontResource:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
@@ -294,6 +312,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         if (!m_document->contentSecurityPolicy()->allowImageFromSource(url))
             return false;
         break;
+#if ENABLE(SVG)
+    case CachedResource::SVGDocumentResource:
+#endif        
     case CachedResource::FontResource: {
         if (!m_document->contentSecurityPolicy()->allowFontFromSource(url))
             return false;
