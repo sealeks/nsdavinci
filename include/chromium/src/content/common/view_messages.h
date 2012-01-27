@@ -1232,7 +1232,7 @@ IPC_MESSAGE_ROUTED5(ViewHostMsg_ShowView,
                     WindowOpenDisposition /* disposition */,
                     gfx::Rect /* initial_pos */,
                     bool /* opened_by_user_gesture */,
-					std::wstring )
+                    std::wstring )
 
 IPC_MESSAGE_ROUTED2(ViewHostMsg_ShowWidget,
                     int /* route_id */,
