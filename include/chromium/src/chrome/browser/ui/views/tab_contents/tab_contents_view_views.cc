@@ -300,7 +300,7 @@ void TabContentsViewViews::ShowCreatedWindow(int route_id,
                                              WindowOpenDisposition disposition,
                                              const gfx::Rect& initial_pos,
                                              bool user_gesture,
-											 std::wstring param) {
+                                             std::wstring param) {
   delegate_view_helper_.ShowCreatedWindow(
       tab_contents_, route_id, disposition, initial_pos, user_gesture, param);
 }

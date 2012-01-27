@@ -80,7 +80,7 @@ class TabContentsViewViews : public views::Widget,
                                  WindowOpenDisposition disposition,
                                  const gfx::Rect& initial_pos,
                                  bool user_gesture,
-								 std::wstring param=L"") OVERRIDE;
+                                 std::wstring param=L"") OVERRIDE;
   virtual void ShowCreatedWidget(int route_id,
                                  const gfx::Rect& initial_pos) OVERRIDE;
   virtual void ShowCreatedFullscreenWidget(int route_id) OVERRIDE;
