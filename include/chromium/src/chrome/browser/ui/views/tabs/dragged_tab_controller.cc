@@ -439,7 +439,7 @@ void DraggedTabController::AddNewContents(TabContents* source,
                                           WindowOpenDisposition disposition,
                                           const gfx::Rect& initial_pos,
                                           bool user_gesture,
-										  const std::wstring& param) {
+                                          const std::wstring& param) {
   DCHECK_NE(CURRENT_TAB, disposition);
 
   // Theoretically could be called while dragging if the page tries to

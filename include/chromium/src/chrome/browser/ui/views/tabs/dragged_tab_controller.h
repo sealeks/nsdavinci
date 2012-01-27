@@ -140,7 +140,7 @@ class DraggedTabController : public TabContentsDelegate,
                               WindowOpenDisposition disposition,
                               const gfx::Rect& initial_pos,
                               bool user_gesture,
-							  const std::wstring& param=L"") OVERRIDE;
+                              const std::wstring& param=L"") OVERRIDE;
   virtual void LoadingStateChanged(TabContents* source) OVERRIDE;
   virtual bool ShouldSuppressDialogs() OVERRIDE;
   virtual content::JavaScriptDialogCreator*
