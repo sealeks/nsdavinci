@@ -34,7 +34,8 @@ void TabContentsDelegate::AddNewContents(TabContents* source,
                                          TabContents* new_contents,
                                          WindowOpenDisposition disposition,
                                          const gfx::Rect& initial_pos,
-                                         bool user_gesture) {
+                                         bool user_gesture,
+										 const std::wstring& param) {
 }
 
 void TabContentsDelegate::ActivateContents(TabContents* contents) {

@@ -133,6 +133,7 @@ class BrowserWindow {
   // Accessors for fullscreen mode state.
   virtual void SetFullscreen(bool fullscreen) = 0;
   virtual bool IsFullscreen() const = 0;
+  virtual void SetWindowProperty(const std::wstring& param = L"") {};
 
   // Returns true if the fullscreen bubble is visible.
   virtual bool IsFullscreenBubbleVisible() const = 0;

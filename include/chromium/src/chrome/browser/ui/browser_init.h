@@ -20,6 +20,10 @@ class GURL;
 class Profile;
 class TabContentsWrapper;
 
+void BrowserGlobalEntety_Exit(void*);
+bool BrowserDVNCI_isEditable();
+bool BrowserDVNCI_isRuntime();
+
 // class containing helpers for BrowserMain to spin up a new instance and
 // initialize the profile.
 class BrowserInit {
@@ -125,6 +129,11 @@ class BrowserInit {
     Browser* OpenTabsInBrowser(Browser* browser,
                                bool process_startup,
                                const std::vector<Tab>& tabs);
+
+	Browser* OpenWindowInBrowser(const GURL& url,
+								 Browser* browser = 0,
+                                 bool process_startup =true
+								 );
 
    private:
     FRIEND_TEST_ALL_PREFIXES(BrowserTest, RestorePinnedTabs);

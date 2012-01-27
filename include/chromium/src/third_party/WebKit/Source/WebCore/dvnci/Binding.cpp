@@ -33,22 +33,33 @@ namespace boost {
         throw e;
     }
 }
+
+bool BrowserDVNCI_isEditable();
+
 //#endif
+
+const int TICK_DVNCI_DURATION = 500;
 
 dvnci::chrome_executor_ptr getexecutordvnci() {
     static dvnci::fspath basepath = dvnci::getlocalbasepath();
     static dvnci::tagsbase_ptr kintf = dvnci::krnl::factory::build(basepath, 0);
     static dvnci::chrome_executor_ptr DVNCI_INTERFACE = dvnci::chrome_executor_ptr(new dvnci::chrome_gui_executor(kintf));
     static boost::thread dvnth = boost::thread(DVNCI_INTERFACE);
-    return DVNCI_INTERFACE;
+	return BrowserDVNCI_isEditable() ? dvnci::chrome_executor_ptr() : DVNCI_INTERFACE;
 }
 
 
 void dvnciMain(void* cntxt){
+	typedef boost::shared_ptr<dvnci::datetime> time_ptr;
+    static time_ptr tick = time_ptr( new dvnci::datetime());
     static dvnci::chrome_executor_ptr intf = getexecutordvnci();
-    if (intf)
-        intf->call();
-    WTF::callOnMainThread(dvnciMain, 0);
+
+	if (intf && ((tick->is_special()) || 
+		(dvnci::abs(dvnci::millisecondsbetween(*tick, dvnci::now()))>TICK_DVNCI_DURATION))){
+		tick.swap(time_ptr( new dvnci::datetime(dvnci::now())));
+		intf->call();
+	}
+    WTF::callOnMainThread(dvnciMain, 0, TICK_DVNCI_DURATION);
     
 }
 
@@ -57,7 +68,7 @@ void (*dvnciMainVar)(void*) = 0;
 void initdvnciMain(){
 	if (!dvnciMainVar){
 	    dvnciMainVar = dvnciMain;
-	    dvnciMainVar(0);}
+	    WTF::callOnMainThread(dvnciMain, 0);}
 }
 
 

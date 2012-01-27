@@ -1847,6 +1847,7 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
     windowFeatures.y = windowRect.y();
     windowFeatures.height = windowRect.height();
     windowFeatures.width = windowRect.width();
+	windowFeatures.param = windowFeaturesString;
 
     Frame* result = createWindow(urlString, frameName, windowFeatures, activeWindow, firstFrame, m_frame);
     return result ? result->domWindow() : 0;

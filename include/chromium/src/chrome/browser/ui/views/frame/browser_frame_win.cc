@@ -76,7 +76,7 @@ gfx::Insets BrowserFrameWin::GetClientAreaInsets() const {
   int border_thickness = GetSystemMetrics(SM_CXSIZEFRAME);
   // In fullscreen mode, we have no frame. In restored mode, we draw our own
   // client edge over part of the default frame.
-  if (IsFullscreen())
+  if (IsFullscreen() || IsUndecorated())
     border_thickness = 0;
   else if (!IsMaximized())
     border_thickness -= kClientEdgeThickness;

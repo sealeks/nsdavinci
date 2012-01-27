@@ -24,14 +24,39 @@
 #if ENABLE(SVG)
 #include "SVGElement.h"
 #include "XLinkNames.h"
+#include "CachedResourceClient.h"
+
+
 
 namespace WebCore {
 
 class Attribute;
+class CachedSVGDocument;    
+class Document;
 
-class SVGURIReference {
+class SVGURIReference  {
+
+	friend class CachedResourceURIClient;
+
+        class CachedResourceURIClient : public CachedResourceClient {
+        public:
+            CachedResourceURIClient(SVGURIReference * const ref, Attribute* att = 0);
+            ~CachedResourceURIClient();
+            Document* document();
+            virtual void notifyFinished(CachedResource*);
+            void request(const String& href, const String& url);
+            String resource() const;
+        private:
+            SVGURIReference * const reference;
+            CachedSVGDocument* m_cachedDocument;
+            Attribute* attr;
+        };
+
 public:
-    virtual ~SVGURIReference() { }
+    
+    SVGURIReference();
+    SVGURIReference(SVGElement * const);
+    virtual ~SVGURIReference();
 
     bool parseMappedAttribute(Attribute*);
     bool isKnownAttribute(const QualifiedName&);
@@ -40,7 +65,14 @@ public:
     static String getTarget(const String& url);
 
 protected:
-    virtual void setHrefBaseValue(const String&) = 0;
+
+	virtual void setHrefBaseValue(const String&) = 0;    
+
+
+ private:
+	
+	SVGElement * const       m_svgElement;
+    CachedResourceURIClient* m_observer;
 };
 
 } // namespace WebCore

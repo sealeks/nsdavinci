@@ -35,6 +35,7 @@
 #include "WebNavigationPolicy.h"
 #include "WebRect.h"
 #include "WebScreenInfo.h"
+#include <string>
 
 namespace WebKit {
 
@@ -74,6 +75,8 @@ public:
     // Called to show the widget according to the given policy.
     virtual void show(WebNavigationPolicy) { }
 
+	virtual void Exit() { }
+
     // Called to block execution of the current thread until the widget is
     // closed.
     virtual void runModal() { }
@@ -100,8 +103,12 @@ public:
     // reset the input method by cancelling any ongoing composition.
     virtual void resetInputMethod() { }
 
+	std::wstring windowFeatures() const { return windowFeatures_;}
+	void windowFeatures(const std::wstring& val) { windowFeatures_=val; }
+
 protected:
     ~WebWidgetClient() { }
+	std::wstring windowFeatures_;
 };
 
 } // namespace WebKit

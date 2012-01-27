@@ -49,9 +49,9 @@ void initializeMainThread()
     mainThreadIdentifier = currentThread();
 }
 
-void callOnMainThread(MainThreadFunction* function, void* context)
+void callOnMainThread(MainThreadFunction* function, void* context, int delay_ms)
 {
-    ChromiumThreading::callOnMainThread(function, context);
+    ChromiumThreading::callOnMainThread(function, context, delay_ms);
 }
 
 void callOnMainThreadAndWait(MainThreadFunction*, void*)

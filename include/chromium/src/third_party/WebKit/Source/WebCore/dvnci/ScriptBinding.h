@@ -9,6 +9,10 @@
 #define	V8DVNCIBINDING_H
 
 #include "DOMWindow.h"
+#include "V8BindingState.h"
+
+#include "Page.h"
+#include "Chrome.h"
 
 #include <winsock2.h>
 #include <custom/gui_executor.h>
@@ -17,7 +21,8 @@
 #include <kernel/systemutil.h>
 
 dvnci::chrome_executor_ptr getexecutordvnci();
-
+bool BrowserDVNCI_isEditable();
+bool BrowserDVNCI_isRuntime();
 
 namespace WebCore {
 
@@ -46,6 +51,8 @@ namespace WebCore {
         return v8::Undefined();
     }
 
+
+
     static v8::Handle<v8::Value> dvnci_exprtestCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_test");
         if (args.Length() > 0) {
@@ -72,6 +79,29 @@ namespace WebCore {
         }
 
         return v8::Boolean::New(rslt);
+    }
+
+	static v8::Handle<v8::Value> dvnci_exitCallback(const v8::Arguments& args) {
+
+        INC_STATS("DOM.DOMWindow.dvnci_exit");
+		V8BindingState* state = V8BindingState::Only();
+
+        DOMWindow* activeWindow = state->activeWindow();
+		if (activeWindow && activeWindow->frame() && activeWindow->frame()->page() && activeWindow->frame()->page()->chrome())
+          activeWindow->frame()->page()->chrome()->exitBrowser();
+        return v8::Undefined();
+    }
+
+	static v8::Handle<v8::Value> dvnci_isEditableCallback(const v8::Arguments& args) {
+
+        INC_STATS("DOM.DOMWindow.dvnci_isEditable");
+        return v8::Boolean::New(BrowserDVNCI_isEditable());
+    }
+
+	static v8::Handle<v8::Value> dvnci_isRuntimeCallback(const v8::Arguments& args) {
+
+        INC_STATS("DOM.DOMWindow.dvnci_isRuntime");
+        return v8::Boolean::New(BrowserDVNCI_isRuntime());
     }
 
     namespace DVNCI {
@@ -119,6 +149,9 @@ namespace WebCore {
         {"dvnci_value", dvnci_execCallback},
         {"dvnci_writefile", dvnci_writefileCallback},
         {"dvnci_test", dvnci_exprtestCallback},
+		{"dvnci_exit", dvnci_exitCallback},
+		{"dvnci_iseditable", dvnci_isEditableCallback},
+		{"dvnci_isruntime", dvnci_isRuntimeCallback},
     };
 
     static const BatchedAttribute ext_DOMWindowAttrs[] = {

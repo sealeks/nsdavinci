@@ -263,7 +263,8 @@ class Browser : public TabHandlerDelegate,
       const Extension* extension,
       extension_misc::LaunchContainer container,
       const GURL& url,
-      Browser** app_browser);
+      Browser** app_browser,
+      const std::wstring param=L"");
 
   // Open |url| in an app shortcut window.  If |update_shortcut| is true,
   // update the name, description, and favicon of the shortcut.
@@ -820,7 +821,8 @@ class Browser : public TabHandlerDelegate,
                               TabContents* new_contents,
                               WindowOpenDisposition disposition,
                               const gfx::Rect& initial_pos,
-                              bool user_gesture) OVERRIDE;
+                              bool user_gesture,
+							  const std::wstring& param=L"") OVERRIDE;
   virtual void ActivateContents(TabContents* contents) OVERRIDE;
   virtual void DeactivateContents(TabContents* contents) OVERRIDE;
   virtual void LoadingStateChanged(TabContents* source) OVERRIDE;

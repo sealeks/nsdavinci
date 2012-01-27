@@ -483,6 +483,10 @@ bool Widget::IsFullscreen() const {
   return native_widget_->IsFullscreen();
 }
 
+void Widget::SetWindowProperty(const std::wstring& param){
+    native_widget_->SetWindowProperty(param);
+}
+
 void Widget::SetOpacity(unsigned char opacity) {
   native_widget_->SetOpacity(opacity);
 }

@@ -1227,11 +1227,12 @@ IPC_SYNC_MESSAGE_CONTROL1_1(ViewHostMsg_CreateFullscreenWidget,
 //
 // FUTURE: there will probably be flags here to control if the result is
 // in a new window.
-IPC_MESSAGE_ROUTED4(ViewHostMsg_ShowView,
+IPC_MESSAGE_ROUTED5(ViewHostMsg_ShowView,
                     int /* route_id */,
                     WindowOpenDisposition /* disposition */,
                     gfx::Rect /* initial_pos */,
-                    bool /* opened_by_user_gesture */)
+                    bool /* opened_by_user_gesture */,
+					std::wstring )
 
 IPC_MESSAGE_ROUTED2(ViewHostMsg_ShowWidget,
                     int /* route_id */,
@@ -1260,6 +1261,8 @@ IPC_MESSAGE_ROUTED2(ViewHostMsg_RenderViewGone,
 // this message.  Otherwise, the browser will generates a ViewMsg_Close
 // message to close the view.
 IPC_MESSAGE_ROUTED0(ViewHostMsg_Close)
+
+IPC_MESSAGE_ROUTED0(ViewHostMsg_BrowserExit)
 
 // Sent by the renderer process to request that the browser move the view.
 // This corresponds to the window.resizeTo() and window.moveTo() APIs, and

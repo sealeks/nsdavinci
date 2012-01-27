@@ -271,6 +271,7 @@ class BrowserView : public BrowserBubbleHost,
   virtual bool IsMaximized() const OVERRIDE;
   virtual void SetFullscreen(bool fullscreen) OVERRIDE;
   virtual bool IsFullscreen() const OVERRIDE;
+  virtual void SetWindowProperty(const std::wstring& param = L"") OVERRIDE;
   virtual LocationBar* GetLocationBar() const OVERRIDE;
   virtual void SetFocusToLocationBar(bool select_all) OVERRIDE;
   virtual void UpdateReloadStopState(bool is_loading, bool force) OVERRIDE;
@@ -516,6 +517,8 @@ class BrowserView : public BrowserBubbleHost,
   // ask the window to change it's fullscreen state, then when we get
   // notification that it succeeded this method is invoked.
   void ProcessFullscreen(bool fullscreen);
+
+  
 
   // Copy the accelerator table from the app resources into something we can
   // use.

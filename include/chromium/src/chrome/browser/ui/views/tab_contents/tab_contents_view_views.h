@@ -79,7 +79,8 @@ class TabContentsViewViews : public views::Widget,
   virtual void ShowCreatedWindow(int route_id,
                                  WindowOpenDisposition disposition,
                                  const gfx::Rect& initial_pos,
-                                 bool user_gesture) OVERRIDE;
+                                 bool user_gesture,
+								 std::wstring param=L"") OVERRIDE;
   virtual void ShowCreatedWidget(int route_id,
                                  const gfx::Rect& initial_pos) OVERRIDE;
   virtual void ShowCreatedFullscreenWidget(int route_id) OVERRIDE;

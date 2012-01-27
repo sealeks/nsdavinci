@@ -76,6 +76,7 @@ END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
+	, SVGURIReference(this)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
     , m_width(LengthModeWidth)

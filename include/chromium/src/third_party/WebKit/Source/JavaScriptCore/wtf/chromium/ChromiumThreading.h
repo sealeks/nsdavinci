@@ -36,7 +36,7 @@ namespace WTF {
 // An interface to the embedding layer, which provides threading support.
 class ChromiumThreading {
 public:
-    static void callOnMainThread(void (*func)(void*), void* context);
+    static void callOnMainThread(void (*func)(void*), void* context, int delay_ms = 0);
 };
 
 } // namespace WTF

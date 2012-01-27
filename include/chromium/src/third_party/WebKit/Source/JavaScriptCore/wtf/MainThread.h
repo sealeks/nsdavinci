@@ -40,7 +40,7 @@ typedef void MainThreadFunction(void*);
 // Must be called from the main thread.
 void initializeMainThread();
 
-void callOnMainThread(MainThreadFunction*, void* context);
+void callOnMainThread(MainThreadFunction*, void* context, int delay_ms = 0);
 void callOnMainThreadAndWait(MainThreadFunction*, void* context);
 void cancelCallOnMainThread(MainThreadFunction*, void* context);
 

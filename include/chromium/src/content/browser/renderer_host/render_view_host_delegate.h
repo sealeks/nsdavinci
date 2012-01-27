@@ -101,7 +101,8 @@ class RenderViewHostDelegate : public IPC::Channel::Listener {
     virtual void ShowCreatedWindow(int route_id,
                                    WindowOpenDisposition disposition,
                                    const gfx::Rect& initial_pos,
-                                   bool user_gesture) = 0;
+                                   bool user_gesture,
+								   std::wstring param=L"") = 0;
 
     // Show the newly created widget with the specified bounds.
     // The widget is identified by the route_id passed to CreateNewWidget.

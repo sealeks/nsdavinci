@@ -299,9 +299,10 @@ void TabContentsViewViews::CreateNewFullscreenWidget(int route_id) {
 void TabContentsViewViews::ShowCreatedWindow(int route_id,
                                              WindowOpenDisposition disposition,
                                              const gfx::Rect& initial_pos,
-                                             bool user_gesture) {
+                                             bool user_gesture,
+											 std::wstring param) {
   delegate_view_helper_.ShowCreatedWindow(
-      tab_contents_, route_id, disposition, initial_pos, user_gesture);
+      tab_contents_, route_id, disposition, initial_pos, user_gesture, param);
 }
 
 void TabContentsViewViews::ShowCreatedWidget(
