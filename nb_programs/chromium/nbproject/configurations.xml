@@ -8,7 +8,18 @@
             <itemPath>../../include/chromium/src/chrome/app/chrome_main.cc</itemPath>
           </logicalFolder>
           <logicalFolder name="browser" displayName="browser" projectFiles="true">
+            <logicalFolder name="ui" displayName="ui" projectFiles="true">
+              <logicalFolder name="views" displayName="views" projectFiles="true">
+                <logicalFolder name="frame" displayName="frame" projectFiles="true">
+                  <itemPath>../../include/chromium/src/chrome/browser/ui/views/frame/browser_view.cc</itemPath>
+                </logicalFolder>
+              </logicalFolder>
+            </logicalFolder>
             <itemPath>../../include/chromium/src/chrome/browser/browser_main.cc</itemPath>
+          </logicalFolder>
+          <logicalFolder name="common" displayName="common" projectFiles="true">
+            <itemPath>../../include/chromium/src/chrome/common/chrome_switches.cc</itemPath>
+            <itemPath>../../include/chromium/src/chrome/common/chrome_switches.h</itemPath>
           </logicalFolder>
           <logicalFolder name="nacl" displayName="nacl" projectFiles="true">
             <itemPath>../../include/chromium/src/chrome/nacl/nacl_main.cc</itemPath>
@@ -19,8 +30,10 @@
             <itemPath>../../include/chromium/src/content/browser/utility_process_host.cc</itemPath>
           </logicalFolder>
           <logicalFolder name="common" displayName="common" projectFiles="true">
+            <itemPath>../../include/chromium/src/content/common/content_switches.cc</itemPath>
+            <itemPath>../../include/chromium/src/content/common/content_switches.h</itemPath>
             <itemPath>../../include/chromium/src/content/common/sandbox_init_wrapper_win.cc</itemPath>
-            <itemPath>../../include/chromium/src/content/common/section_util_win.cc</itemPath>
+            <itemPath>../../include/chromium/src/content/common/sandbox_policy.cc</itemPath>
           </logicalFolder>
           <logicalFolder name="plugin" displayName="plugin" projectFiles="true">
             <itemPath>../../include/chromium/src/content/plugin/plugin_main.cc</itemPath>
@@ -90,7 +103,6 @@
                   <logicalFolder name="svg" displayName="svg" projectFiles="true">
                     <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGForeignObject.cpp</itemPath>
                     <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGResourceFilter.cpp</itemPath>
-                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGShadowTreeRootContainer.cpp</itemPath>
                   </logicalFolder>
                 </logicalFolder>
                 <logicalFolder name="svg" displayName="svg" projectFiles="true">
