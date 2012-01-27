@@ -8,12 +8,47 @@
             <itemPath>../../include/chromium/src/chrome/app/chrome_main.cc</itemPath>
           </logicalFolder>
           <logicalFolder name="browser" displayName="browser" projectFiles="true">
+            <logicalFolder name="extentions" displayName="extentions" projectFiles="true">
+              <itemPath>../../include/chromium/src/chrome/browser/extentions/extension_host.cc</itemPath>
+              <itemPath>../../include/chromium/src/chrome/browser/extentions/extension_host.h</itemPath>
+            </logicalFolder>
+            <logicalFolder name="notifications"
+                           displayName="notifications"
+                           projectFiles="true">
+              <itemPath>../../include/chromium/src/chrome/browser/notifications/balloon_host.cc</itemPath>
+              <itemPath>../../include/chromium/src/chrome/browser/notifications/balloon_host.h</itemPath>
+            </logicalFolder>
+            <logicalFolder name="tab_contents"
+                           displayName="tab_contents"
+                           projectFiles="true">
+              <itemPath>../../include/chromium/src/chrome/browser/tab_contents/background_contents.cc</itemPath>
+              <itemPath>../../include/chromium/src/chrome/browser/tab_contents/background_contents.h</itemPath>
+              <itemPath>../../include/chromium/src/chrome/browser/tab_contents/render_view_host_delegate_helper.cc</itemPath>
+              <itemPath>../../include/chromium/src/chrome/browser/tab_contents/render_view_host_delegate_helper.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="ui" displayName="ui" projectFiles="true">
               <logicalFolder name="views" displayName="views" projectFiles="true">
                 <logicalFolder name="frame" displayName="frame" projectFiles="true">
+                  <itemPath>../../include/chromium/src/chrome/browser/ui/views/frame/browser_frame_win.cc</itemPath>
                   <itemPath>../../include/chromium/src/chrome/browser/ui/views/frame/browser_view.cc</itemPath>
+                  <itemPath>../../include/chromium/src/chrome/browser/ui/views/frame/browser_view.h</itemPath>
+                </logicalFolder>
+                <logicalFolder name="tab_contents"
+                               displayName="tab_contents"
+                               projectFiles="true">
+                  <itemPath>../../include/chromium/src/chrome/browser/ui/views/tab_contents/tab_contents_view_views.cc</itemPath>
+                  <itemPath>../../include/chromium/src/chrome/browser/ui/views/tab_contents/tab_contents_view_views.h</itemPath>
+                </logicalFolder>
+                <logicalFolder name="tabs" displayName="tabs" projectFiles="true">
+                  <itemPath>../../include/chromium/src/chrome/browser/ui/views/tabs/dragged_tab_controller.cc</itemPath>
+                  <itemPath>../../include/chromium/src/chrome/browser/ui/views/tabs/dragged_tab_controller.h</itemPath>
                 </logicalFolder>
               </logicalFolder>
+              <itemPath>../../include/chromium/src/chrome/browser/ui/browser.cc</itemPath>
+              <itemPath>../../include/chromium/src/chrome/browser/ui/browser.h</itemPath>
+              <itemPath>../../include/chromium/src/chrome/browser/ui/browser_init.cc</itemPath>
+              <itemPath>../../include/chromium/src/chrome/browser/ui/browser_init.h</itemPath>
+              <itemPath>../../include/chromium/src/chrome/browser/ui/browser_window.h</itemPath>
             </logicalFolder>
             <itemPath>../../include/chromium/src/chrome/browser/browser_main.cc</itemPath>
           </logicalFolder>
@@ -27,6 +62,22 @@
         </logicalFolder>
         <logicalFolder name="content" displayName="content" projectFiles="true">
           <logicalFolder name="browser" displayName="browser" projectFiles="true">
+            <logicalFolder name="renderer_host"
+                           displayName="renderer_host"
+                           projectFiles="true">
+              <itemPath>../../include/chromium/src/content/browser/renderer_host/render_view_host.cc</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/renderer_host/render_view_host.h</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/renderer_host/render_view_host_delegate.h</itemPath>
+            </logicalFolder>
+            <logicalFolder name="tab_contents"
+                           displayName="tab_contents"
+                           projectFiles="true">
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/interstitial_page.cc</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/tab_contents.cc</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/tab_contents.h</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/tab_contents_delegate.cc</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/tab_contents_delegate.h</itemPath>
+            </logicalFolder>
             <itemPath>../../include/chromium/src/content/browser/utility_process_host.cc</itemPath>
           </logicalFolder>
           <logicalFolder name="common" displayName="common" projectFiles="true">
@@ -34,11 +85,15 @@
             <itemPath>../../include/chromium/src/content/common/content_switches.h</itemPath>
             <itemPath>../../include/chromium/src/content/common/sandbox_init_wrapper_win.cc</itemPath>
             <itemPath>../../include/chromium/src/content/common/sandbox_policy.cc</itemPath>
+            <itemPath>../../include/chromium/src/content/common/view_messages.h</itemPath>
           </logicalFolder>
           <logicalFolder name="plugin" displayName="plugin" projectFiles="true">
             <itemPath>../../include/chromium/src/content/plugin/plugin_main.cc</itemPath>
           </logicalFolder>
           <logicalFolder name="renderer" displayName="renderer" projectFiles="true">
+            <itemPath>../../include/chromium/src/content/renderer/render_view.cc</itemPath>
+            <itemPath>../../include/chromium/src/content/renderer/render_widget.cc</itemPath>
+            <itemPath>../../include/chromium/src/content/renderer/render_widget.h</itemPath>
             <itemPath>../../include/chromium/src/content/renderer/renderer_main.cc</itemPath>
             <itemPath>../../include/chromium/src/content/renderer/renderer_main_platform_delegate_win.cc</itemPath>
           </logicalFolder>
@@ -49,11 +104,22 @@
         <logicalFolder name="third_party" displayName="third_party" projectFiles="true">
           <logicalFolder name="WebKit" displayName="WebKit" projectFiles="true">
             <logicalFolder name="Source" displayName="Source" projectFiles="true">
+              <logicalFolder name="JavaScriptCore"
+                             displayName="JavaScriptCore"
+                             projectFiles="true">
+                <logicalFolder name="wtf" displayName="wtf" projectFiles="true">
+                  <logicalFolder name="chromium" displayName="chromium" projectFiles="true">
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/chromium/ChromiumThreading.h</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/chromium/MainThreadChromium.cpp</itemPath>
+                  </logicalFolder>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/MainThread.h</itemPath>
+                </logicalFolder>
+              </logicalFolder>
               <logicalFolder name="WebCore" displayName="WebCore" projectFiles="true">
                 <logicalFolder name="bindings" displayName="bindings" projectFiles="true">
                   <logicalFolder name="v8" displayName="v8" projectFiles="true">
-                    <logicalFolder name="custum" displayName="custum" projectFiles="true">
-                      <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/custum/V8EventCustom.cpp</itemPath>
+                    <logicalFolder name="custom" displayName="custom" projectFiles="true">
+                      <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/custom/V8EventCustom.cpp</itemPath>
                     </logicalFolder>
                     <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/V8Binding.cpp</itemPath>
                   </logicalFolder>
@@ -94,10 +160,15 @@
                   </logicalFolder>
                 </logicalFolder>
                 <logicalFolder name="page" displayName="page" projectFiles="true">
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/Chrome.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/Chrome.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/ChromeClient.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/DOMWindow.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/DOMWindow.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/FrameView.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/SecurityOrigin.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/WindowFeatures.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/WindowFeatures.h</itemPath>
                 </logicalFolder>
                 <logicalFolder name="rendering" displayName="rendering" projectFiles="true">
                   <logicalFolder name="svg" displayName="svg" projectFiles="true">
@@ -111,6 +182,39 @@
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGUseElement.cpp</itemPath>
                 </logicalFolder>
               </logicalFolder>
+              <logicalFolder name="WebKit" displayName="WebKit" projectFiles="true">
+                <logicalFolder name="chromium" displayName="chromium" projectFiles="true">
+                  <logicalFolder name="public" displayName="public" projectFiles="true">
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/public/WebKitClient.h</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/public/WebWidgetClient.h</itemPath>
+                  </logicalFolder>
+                  <logicalFolder name="src" displayName="src" projectFiles="true">
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromeClientImpl.cpp</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromeClientImpl.h</itemPath>
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromiumThreading.cpp</itemPath>
+                  </logicalFolder>
+                </logicalFolder>
+              </logicalFolder>
+            </logicalFolder>
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="views" displayName="views" projectFiles="true">
+          <logicalFolder name="widget" displayName="widget" projectFiles="true">
+            <itemPath>../../include/chromium/src/views/widget/native_widget_private.h</itemPath>
+            <itemPath>../../include/chromium/src/views/widget/native_widget_win.cc</itemPath>
+            <itemPath>../../include/chromium/src/views/widget/native_widget_win.h</itemPath>
+            <itemPath>../../include/chromium/src/views/widget/widget.cc</itemPath>
+            <itemPath>../../include/chromium/src/views/widget/widget.h</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="webkit" displayName="webkit" projectFiles="true">
+          <logicalFolder name="glue" displayName="glue" projectFiles="true">
+            <itemPath>../../include/chromium/src/webkit/glue/webkitclient_impl.cc</itemPath>
+            <itemPath>../../include/chromium/src/webkit/glue/webkitclient_impl.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="tools" displayName="tools" projectFiles="true">
+            <logicalFolder name="test_shell" displayName="test_shell" projectFiles="true">
+              <itemPath>../../include/chromium/src/webkit/tools/test_shell/test_shell_main.cc</itemPath>
             </logicalFolder>
           </logicalFolder>
         </logicalFolder>
