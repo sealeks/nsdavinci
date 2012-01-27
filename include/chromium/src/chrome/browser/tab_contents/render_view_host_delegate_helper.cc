@@ -261,7 +261,7 @@ TabContents* RenderViewHostDelegateViewHelper::ShowCreatedWindow(
     WindowOpenDisposition disposition,
     const gfx::Rect& initial_pos,
     bool user_gesture,
-	const std::wstring& param) {
+    const std::wstring& param) {
   TabContents* contents = GetCreatedWindow(route_id);
   if (contents) {
     tab_contents->AddNewContents(
