@@ -151,7 +151,7 @@ void BalloonHost::ShowCreatedWindow(int route_id,
                                     WindowOpenDisposition disposition,
                                     const gfx::Rect& initial_pos,
                                     bool user_gesture,
-									std::wstring param) {
+                                    std::wstring param) {
   // Don't allow pop-ups from notifications.
   if (disposition == NEW_POPUP)
     return;
