@@ -75,7 +75,7 @@ public:
     // Called to show the widget according to the given policy.
     virtual void show(WebNavigationPolicy) { }
 
-	virtual void Exit() { }
+    virtual void Exit() { }
 
     // Called to block execution of the current thread until the widget is
     // closed.
