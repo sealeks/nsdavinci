@@ -149,9 +149,9 @@ namespace WebCore {
         {"dvnci_value", dvnci_execCallback},
         {"dvnci_writefile", dvnci_writefileCallback},
         {"dvnci_test", dvnci_exprtestCallback},
-		{"dvnci_exit", dvnci_exitCallback},
-		{"dvnci_iseditable", dvnci_isEditableCallback},
-		{"dvnci_isruntime", dvnci_isRuntimeCallback},
+	{"dvnci_exit", dvnci_exitCallback},
+	{"dvnci_iseditable", dvnci_isEditableCallback},
+	{"dvnci_isruntime", dvnci_isRuntimeCallback},
     };
 
     static const BatchedAttribute ext_DOMWindowAttrs[] = {
