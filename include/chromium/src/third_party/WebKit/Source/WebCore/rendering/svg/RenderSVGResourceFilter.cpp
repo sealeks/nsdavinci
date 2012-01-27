@@ -230,6 +230,8 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     }
 
     absoluteDrawingRegion.scale(scale.width(), scale.height());
+	absoluteDrawingRegion.setWidth(absoluteDrawingRegion.width()*1.01);
+	absoluteDrawingRegion.setHeight(absoluteDrawingRegion.height()*1.01);
 
     OwnPtr<ImageBuffer> sourceGraphic;
     if (!SVGImageBufferTools::createImageBuffer(absoluteDrawingRegion, absoluteDrawingRegion, sourceGraphic, ColorSpaceLinearRGB)) {
