@@ -1025,13 +1025,15 @@ Browser* BrowserInit::LaunchWithProfile::OpenTabsInBrowser(
 #endif
   std::vector<Tab> tabs_correct;
   for (size_t i = 0; i < tabs.size(); ++i) {
-	  if (tabs[i].url.possibly_invalid_spec().find("start.xml")==std::string::npos){
 	  tabs_correct.push_back(tabs[i]);
+	  if (tabs[i].url.possibly_invalid_spec().find("start.xml")!=std::string::npos)
+          tabs_correct.rbegin()->url=GURL("chrome://settings/browser");  
 	  std::string::size_type it=tabs[i].url.possibly_invalid_spec().find("[");
 	  if (it!=std::string::npos){
 		  GURL correcturl(tabs[i].url.possibly_invalid_spec().substr(0,it));
 		  tabs_correct.rbegin()->url=correcturl;
-	  }}	  
+	  }
+
   }
 
   bool first_tab = true;
