@@ -81,7 +81,7 @@ class RenderViewHostDelegateViewHelper : public NotificationObserver {
                                  WindowOpenDisposition disposition,
                                  const gfx::Rect& initial_pos,
                                  bool user_gesture,
-								 const std::wstring& param=L"");
+                                 const std::wstring& param=L"");
   RenderWidgetHostView* ShowCreatedWidget(TabContents* tab_contents,
                                           int route_id,
                                           const gfx::Rect& initial_pos);
