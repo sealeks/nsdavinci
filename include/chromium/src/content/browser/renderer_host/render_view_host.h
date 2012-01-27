@@ -404,7 +404,7 @@ class RenderViewHost : public RenderWidgetHost {
                      WindowOpenDisposition disposition,
                      const gfx::Rect& initial_pos,
                      bool user_gesture,
-					 std::wstring param=L"");
+                     std::wstring param=L"");
   void OnMsgExitBrowser();
   void OnMsgShowWidget(int route_id, const gfx::Rect& initial_pos);
   void OnMsgShowFullscreenWidget(int route_id);

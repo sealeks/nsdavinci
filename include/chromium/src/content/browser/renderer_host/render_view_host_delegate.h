@@ -102,7 +102,7 @@ class RenderViewHostDelegate : public IPC::Channel::Listener {
                                    WindowOpenDisposition disposition,
                                    const gfx::Rect& initial_pos,
                                    bool user_gesture,
-								   std::wstring param=L"") = 0;
+                                   std::wstring param=L"") = 0;
 
     // Show the newly created widget with the specified bounds.
     // The widget is identified by the route_id passed to CreateNewWidget.
