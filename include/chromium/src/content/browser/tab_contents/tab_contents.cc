@@ -633,7 +633,7 @@ void TabContents::AddNewContents(TabContents* new_contents,
                                  WindowOpenDisposition disposition,
                                  const gfx::Rect& initial_pos,
                                  bool user_gesture,
-								 const std::wstring& param) {
+                                 const std::wstring& param) {
   if (!delegate_)
     return;
 
