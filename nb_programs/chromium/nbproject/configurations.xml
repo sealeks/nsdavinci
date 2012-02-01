@@ -69,6 +69,15 @@
               <itemPath>../../include/chromium/src/content/browser/renderer_host/render_view_host.h</itemPath>
               <itemPath>../../include/chromium/src/content/browser/renderer_host/render_view_host_delegate.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="tab_contents"
+                           displayName="tab_contents"
+                           projectFiles="true">
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/interstitial_page.cc</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/tab_contents.cc</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/tab_contents.h</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/tab_contents_delegate.cc</itemPath>
+              <itemPath>../../include/chromium/src/content/browser/tab_contents/tab_contents_delegate.h</itemPath>
+            </logicalFolder>
             <itemPath>../../include/chromium/src/content/browser/utility_process_host.cc</itemPath>
           </logicalFolder>
           <logicalFolder name="common" displayName="common" projectFiles="true">
