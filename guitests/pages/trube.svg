@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="1920px" height="1080px" viewBox="0 0 1920 1080" enable-background="new 0 0 1920 1080" xml:space="preserve" onload="init_red(document)">
+<script xmlns="http://www.w3.org/2000/svg" xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" type="text/javascript" xlink:href="../mainlib/js/redactor.js"/>
+<style type="text/css" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/TR/xhtml1" xmlns="http://www.w3.org/2000/svg">
+ .on
+{
+  stroke: black;
+  fill: #ffcc00;
+}
+
+.alarm
+{
+  stroke: black;
+  fill: red;
+}
+
+.off
+{
+  stroke: black;
+  fill: gray;
+}
+
+.non
+{
+  stroke: black;
+  fill: white;
+}
+
+use:hover {
+ opacity: 0.6;
+ outline: 1px solid #666;
+}
+
+.redactor_selected {
+ opacity: 0.8;
+ outline: 1px solid red;
+}
+
+
+
+            </style>
+<g>
+	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="225.3682" y1="0.4995" x2="225.3682" y2="76.6948">
+		<stop  offset="0" style="stop-color:#E5E1DF"/>
+		<stop  offset="0" style="stop-color:#EEEDEE"/>
+		<stop  offset="0" style="stop-color:#F1F1F2"/>
+		<stop  offset="0" style="stop-color:#FFFFFF"/>
+		<stop  offset="0.0333" style="stop-color:#F9F9FA"/>
+		<stop  offset="0.0778" style="stop-color:#E8EAEA"/>
+		<stop  offset="0.1284" style="stop-color:#CCD0D1"/>
+		<stop  offset="0.1742" style="stop-color:#ADB3B5"/>
+		<stop  offset="0.3315" style="stop-color:#E2E4E5"/>
+		<stop  offset="0.4944" style="stop-color:#F1F1F2"/>
+		<stop  offset="0.8319" style="stop-color:#ACB1B5"/>
+		<stop  offset="0.9157" style="stop-color:#9AA0A5"/>
+	</linearGradient>
+	<rect x="2.177" y="0.5" fill="url(#SVGID_1_)" width="446.383" height="76.195"/>
+	<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="120.8062" y1="1.0693" x2="120.8062" y2="77.2642">
+		<stop  offset="0.0225" style="stop-color:#F7E3E4"/>
+		<stop  offset="0.034" style="stop-color:#F5BCBF"/>
+		<stop  offset="0.0526" style="stop-color:#F28488"/>
+		<stop  offset="0.0699" style="stop-color:#EF575D"/>
+		<stop  offset="0.0852" style="stop-color:#ED373E"/>
+		<stop  offset="0.098" style="stop-color:#EC232B"/>
+		<stop  offset="0.1067" style="stop-color:#EC1C24"/>
+		<stop  offset="0.2059" style="stop-color:#EE686D"/>
+		<stop  offset="0.3031" style="stop-color:#EFACAF"/>
+		<stop  offset="0.3483" style="stop-color:#F0C7C9"/>
+		<stop  offset="0.4133" style="stop-color:#E49194"/>
+		<stop  offset="0.4831" style="stop-color:#D95D62"/>
+		<stop  offset="0.544" style="stop-color:#D1373E"/>
+		<stop  offset="0.5928" style="stop-color:#CC2027"/>
+		<stop  offset="0.6236" style="stop-color:#CA181F"/>
+		<stop  offset="0.9326" style="stop-color:#A9141A"/>
+		<stop  offset="1" style="stop-color:#EC1C24"/>
+	</linearGradient>
+	<rect x="2.559" y="1.069" fill="url(#SVGID_2_)" width="236.495" height="76.195"/>
+</g>
+<defs>
+<filter id="MyFilter" >
+<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+<feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
+<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+<fePointLight x="-5000" y="-10000" z="20000"/>
+</feSpecularLighting>
+<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint">
+<!--animate id="a1" attributeType="XML" attributeName="k4" from="0" to="0" dur="4000ms"   repeatCount="indefinite" calcMode = "linear"/>
+<animate id="a2" attributeType="XML" attributeName="k3" from="0" to="0" dur="40000ms"   repeatCount="indefinite" calcMode = "linear"/>
+<animate id="a3" attributeType="XML" attributeName="k2" from="0" to="1" dur="20000ms"   repeatCount="indefinite" calcMode = "linear"/>
+<animate id="a4" attributeType="XML" attributeName="k1" from="0" to="1" dur="40000ms"   repeatCount="indefinite" calcMode = "linear"/-->
+</feComposite>    
+<feMerge>
+<!--feMergeNode in="offsetBlur"/-->
+<feMergeNode in="litPaint"/>
+</feMerge>
+</filter>
+</defs>
+<g filter="url(#MyFilter)">
+<path id="path1" fill="none" stroke="yellow" stroke-width="5" d="M176.794,376.324c6.108-31.277,9.857-57.493,39.738-75.671
+	c15.43-9.387,32.103-10.963,49.567-14.628c10.531-2.21,30.74-3.248,37.636-12.611c12.805-17.404-0.363-44.199-12.19-57.941
+	c-15.683-18.222-39.744-26.624-61.176-35.869c-33.699-14.536-78.208-14.187-103.477,15.11c-18.18,21.079-17.087,54.441-7.203,78.617
+	c9.547,23.353,30.094,54.063,31.219,79.498c0.558,12.614-7.759,16.039-10.869,27.109c-2.279,8.114-3.388,1.549,0.234,9.206
+	c5.054,10.682,10.308,8.764,11.606,23.248c2.408,26.865-3.399,51.656,15.744,74.108c22.409,26.283,56.397,37.656,85.366,54.436
+	c46.483,26.925,103.343,53.96,157.113,60.196c30.605,3.55,63.248,4.282,93.89,1.238c17.138-1.703,34.357-5.289,51.139-9.077
+	c13.65-3.08,26.539-2.836,37.612-11.928c12.026-9.876,22.955-24.492,31.43-37.432c7.44-11.36,10.112-23.64,15.867-35.939
+	c6.622-14.153,15.769-27.571,22.21-41.47c9.782-21.105,13.083-45.542,17.744-68.066c4.859-23.486,9.376-42.533,0.848-65.313
+	c-4.156-11.1-9.296-23.515-0.989-33.946c8.147-10.23,36.35-12.331,47.791-14.509c24.626-4.689,51.25-5.643,76.16-2.424
+	c53.591,6.925,114.975,31.893,118.963,92.354c1.744,26.431,3.221,51.656-2.384,77.214c-3.287,14.986-11.45,26.854-8.362,42.692
+	c2.623,13.45,8.394,25.95,12.159,39.069c4.323,15.063,5,19.159-9.472,26.057c-21.909,10.442-44.744,19.935-67.211,29.36
+	c-28.044,11.764-55.312,24.516-84.918,32.178c-24.283,6.283-49.414,8.919-74.111,13.009c-70.45,11.669-140.569,26.21-211.063,37.191
+	c-59.127,9.21-120.808,16.225-178.351,32.896c-18.523,5.367-37.542,9.628-56.374,13.214" />
+   
+
+  <path id="path2" fill="none" stroke="#000000" stroke-width="2" d="M176.794,376.324c6.108-31.277,9.857-57.493,39.738-75.671
+	c15.43-9.387,32.103-10.963,49.567-14.628c10.531-2.21,30.74-3.248,37.636-12.611c12.805-17.404-0.363-44.199-12.19-57.941
+	c-15.683-18.222-39.744-26.624-61.176-35.869c-33.699-14.536-78.208-14.187-103.477,15.11c-18.18,21.079-17.087,54.441-7.203,78.617
+	c9.547,23.353,30.094,54.063,31.219,79.498c0.558,12.614-7.759,16.039-10.869,27.109c-2.279,8.114-3.388,1.549,0.234,9.206
+	c5.054,10.682,10.308,8.764,11.606,23.248c2.408,26.865-3.399,51.656,15.744,74.108c22.409,26.283,56.397,37.656,85.366,54.436
+	c46.483,26.925,103.343,53.96,157.113,60.196c30.605,3.55,63.248,4.282,93.89,1.238c17.138-1.703,34.357-5.289,51.139-9.077
+	c13.65-3.08,26.539-2.836,37.612-11.928c12.026-9.876,22.955-24.492,31.43-37.432c7.44-11.36,10.112-23.64,15.867-35.939
+	c6.622-14.153,15.769-27.571,22.21-41.47c9.782-21.105,13.083-45.542,17.744-68.066c4.859-23.486,9.376-42.533,0.848-65.313
+	c-4.156-11.1-9.296-23.515-0.989-33.946c8.147-10.23,36.35-12.331,47.791-14.509c24.626-4.689,51.25-5.643,76.16-2.424
+	c53.591,6.925,114.975,31.893,118.963,92.354c1.744,26.431,3.221,51.656-2.384,77.214c-3.287,14.986-11.45,26.854-8.362,42.692
+	c2.623,13.45,8.394,25.95,12.159,39.069c4.323,15.063,5,19.159-9.472,26.057c-21.909,10.442-44.744,19.935-67.211,29.36
+	c-28.044,11.764-55.312,24.516-84.918,32.178c-24.283,6.283-49.414,8.919-74.111,13.009c-70.45,11.669-140.569,26.21-211.063,37.191
+	c-59.127,9.21-120.808,16.225-178.351,32.896c-18.523,5.367-37.542,9.628-56.374,13.214" />  
+</g>
+</svg>
