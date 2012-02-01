@@ -104,6 +104,12 @@ namespace WebCore {
         return v8::Boolean::New(BrowserDVNCI_isRuntime());
     }
 
+    static v8::Handle<v8::Value> dvnci_GlobalObject(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_globalobject");
+	static v8::Persistent<v8::Object>  global = v8::Persistent<v8::Object>::New(v8::Object::New());
+        return global->ToObject();
+    }
+
     namespace DVNCI {
 
         static v8::Handle<v8::Value> onalarmeventAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info) {
@@ -149,9 +155,10 @@ namespace WebCore {
         {"dvnci_value", dvnci_execCallback},
         {"dvnci_writefile", dvnci_writefileCallback},
         {"dvnci_test", dvnci_exprtestCallback},
-	{"dvnci_exit", dvnci_exitCallback},
-	{"dvnci_iseditable", dvnci_isEditableCallback},
-	{"dvnci_isruntime", dvnci_isRuntimeCallback},
+        {"dvnci_exit", dvnci_exitCallback},
+        {"dvnci_iseditable", dvnci_isEditableCallback},
+        {"dvnci_isruntime", dvnci_isRuntimeCallback},
+		{"dvnci_globalobject", dvnci_GlobalObject},
     };
 
     static const BatchedAttribute ext_DOMWindowAttrs[] = {
