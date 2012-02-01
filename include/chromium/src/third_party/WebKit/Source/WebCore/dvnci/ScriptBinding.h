@@ -81,24 +81,24 @@ namespace WebCore {
         return v8::Boolean::New(rslt);
     }
 
-	static v8::Handle<v8::Value> dvnci_exitCallback(const v8::Arguments& args) {
+    static v8::Handle<v8::Value> dvnci_exitCallback(const v8::Arguments& args) {
 
         INC_STATS("DOM.DOMWindow.dvnci_exit");
-		V8BindingState* state = V8BindingState::Only();
+        V8BindingState* state = V8BindingState::Only();
 
         DOMWindow* activeWindow = state->activeWindow();
-		if (activeWindow && activeWindow->frame() && activeWindow->frame()->page() && activeWindow->frame()->page()->chrome())
-          activeWindow->frame()->page()->chrome()->exitBrowser();
+        if (activeWindow && activeWindow->frame() && activeWindow->frame()->page() && activeWindow->frame()->page()->chrome())
+            activeWindow->frame()->page()->chrome()->exitBrowser();
         return v8::Undefined();
     }
 
-	static v8::Handle<v8::Value> dvnci_isEditableCallback(const v8::Arguments& args) {
+    static v8::Handle<v8::Value> dvnci_isEditableCallback(const v8::Arguments& args) {
 
         INC_STATS("DOM.DOMWindow.dvnci_isEditable");
         return v8::Boolean::New(BrowserDVNCI_isEditable());
     }
 
-	static v8::Handle<v8::Value> dvnci_isRuntimeCallback(const v8::Arguments& args) {
+    static v8::Handle<v8::Value> dvnci_isRuntimeCallback(const v8::Arguments& args) {
 
         INC_STATS("DOM.DOMWindow.dvnci_isRuntime");
         return v8::Boolean::New(BrowserDVNCI_isRuntime());
@@ -106,7 +106,7 @@ namespace WebCore {
 
     static v8::Handle<v8::Value> dvnci_GlobalObject(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_globalobject");
-	static v8::Persistent<v8::Object>  global = v8::Persistent<v8::Object>::New(v8::Object::New());
+        static v8::Persistent<v8::Object> global = v8::Persistent<v8::Object>::New(v8::Object::New());
         return global->ToObject();
     }
 
