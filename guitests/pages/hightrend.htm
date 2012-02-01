@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+    <head>
+        <script type="text/javascript" src="../mainlib/js_ext/hightchart/jquery.min.js"></script>
+        <script type="text/javascript" src="../mainlib/js_ext/hightchart/highcharts.js"></script>
+        <script type="text/javascript" src="../mainlib/js_ext/hightchart/exporting.js"></script>
+        <script type="text/javascript" src="../mainlib/js/hightrend.js"></script>
+        <script type="text/javascript">
+            
+           function initform() {
+                registratetrend("testtrenddiv", "r1::a");
+                registratetrend("testtrenddiv1", "r6::a");}
+		                                     
+        </script>
+    </head>
+    <body onload="initform()">
+        <div id="testtrenddiv" style="width: 600px; height: 300px; margin: 0 auto"></div>
+        <div id="testtrenddiv1" style="width: 600px; height: 300px; margin: 0 auto"></div>
+    </body>
+</html>

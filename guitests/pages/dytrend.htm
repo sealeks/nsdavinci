@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+    <head>
+        <script type="text/javascript" src="../mainlib/js_ext/dychart/dygraph-dev.js"></script>
+        <script type="text/javascript" src="../mainlib/js/dytrend.js"></script>
+        <script type="text/javascript">
+        function initform() {
+            registratetrend("testtrenddiv", "r1::a");
+            registratetrend("testtrenddiv1", "r6::a");}
+        </script>
+    </head>
+    <body onload="initform()">
+        <div>
+        <!--div> #{ format(r1::a, '%8.1f') }</div-->
+        <div id="testtrenddiv" style="width: 600px; height: 300px; margin: 0 auto"></div>
+        </div>
+        <div>
+        <!--div> #{ format(r6::a, '%8.1f') }</div-->
+        <div id="testtrenddiv1" style="width: 600px; height: 300px; margin: 0 auto"></div>
+        </div>
+        </div>
+    </body>
+</html>
