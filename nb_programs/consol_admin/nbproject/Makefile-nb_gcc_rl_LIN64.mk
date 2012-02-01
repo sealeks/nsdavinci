@@ -65,12 +65,12 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -l
 ${OBJECTDIR}/_ext/148756256/main.o: ../../include_program/consol_admin/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/148756256
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/main.o ../../include_program/consol_admin/main.cpp
+	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/main.o ../../include_program/consol_admin/main.cpp
 
 ${OBJECTDIR}/_ext/148756256/adminconsol.o: ../../include_program/consol_admin/adminconsol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/148756256
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/adminconsol.o ../../include_program/consol_admin/adminconsol.cpp
+	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/adminconsol.o ../../include_program/consol_admin/adminconsol.cpp
 
 # Subprojects
 .build-subprojects:
