@@ -134,18 +134,11 @@ namespace dvnci {
             virtual ~gui_executor() {};
 
             virtual bool operator()() {
-                bool rslt_e = true;
-                bool rslt_a = true;
-                bool rslt_t = true;
                 while (!terminated()) {
                     if (init()) {
                         if (terminated()) break;
                         boost::xtime xt_loop;
-                        rslt_e = internal_expr_exec();
-                        if (rslt_e || rslt_a || rslt_t)
-                            addmillisec_to_now(xt_loop, 100);
-                        else
-                            addmillisec_to_now(xt_loop, 500);
+                        addmillisec_to_now(xt_loop, internal_expr_exec() ? 200 : 600);
                         boost::thread::sleep(xt_loop);}
                     if (terminated()) break;}
                 return true;}
