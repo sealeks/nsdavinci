@@ -22,6 +22,8 @@
 #include "views/widget/widget.h"
 #include "views/window/non_client_view.h"
 
+#include "base/win/windows_version.h"
+
 // static
 static const int kClientEdgeThickness = 3;
 static const int kTabDragWindowAlpha = 200;
@@ -176,12 +178,15 @@ void BrowserFrameWin::UpdateDWMFrame() {
   if (!GetWidget()->client_view() || !browser_frame_->ShouldUseNativeFrame())
     return;
 
+  if (base::win::GetVersion() < base::win::VERSION_VISTA)
+    return;
+
   MARGINS margins = { 0 };
   if (browser_view_->IsBrowserTypeNormal()) {
     // In fullscreen mode, we don't extend glass into the client area at all,
     // because the GDI-drawn text in the web content composited over it will
     // become semi-transparent over any glass area.
-    if (!IsMaximized() && !IsFullscreen()) {
+    if (!IsMaximized() && !IsFullscreen() && !(IsUndecorated())) {
       margins.cxLeftWidth = kClientEdgeThickness + 1;
       margins.cxRightWidth = kClientEdgeThickness + 1;
       margins.cyBottomHeight = kClientEdgeThickness + 1;
