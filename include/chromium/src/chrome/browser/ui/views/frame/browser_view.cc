@@ -1007,7 +1007,6 @@ bool BrowserView::IsToolbarVisible() const {
   } else {
 	 return browser_->is_type_popup() ? false : (browser_->SupportsWindowFeature(Browser::FEATURE_TOOLBAR) ||
            browser_->SupportsWindowFeature(Browser::FEATURE_LOCATIONBAR));
-  }
 }
 
 void BrowserView::DisableInactiveFrame() {
