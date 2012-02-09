@@ -623,9 +623,9 @@ TabContents* Browser::OpenApplicationWindow(
     extension_misc::LaunchContainer container,
     const GURL& url_input,
     Browser** app_browser,
-	const std::wstring param) {
+    const std::wstring param) {
+    
   GURL url;
-
 
   if (!url_input.is_empty()) {
     if (extension)
@@ -665,10 +665,12 @@ TabContents* Browser::OpenApplicationWindow(
   TabContents* contents = wrapper->tab_contents();
   contents->GetMutableRendererPrefs()->can_accept_load_drops = false;
   contents->render_view_host()->SyncRendererPrefs();
+  
   if ((CommandLine::ForCurrentProcess()->HasSwitch(
 	  switches::kDVNCIRuntime)) && (!param.empty())){		  
 		  browser->window()->SetWindowProperty(param);
-	}
+  }
+  
   browser->window()->Show();
 
   // TODO(jcampan): http://crbug.com/8123 we should not need to set the initial
@@ -694,7 +696,7 @@ TabContents* Browser::OpenAppShortcutWindow(Profile* profile,
       extension_misc::LAUNCH_WINDOW,
       url_input_,
       &app_browser,
-	  parameter);
+      parameter);
 
   if (!tab)
     return NULL;
@@ -3076,14 +3078,13 @@ void Browser::AddNewContents(TabContents* source,
                              WindowOpenDisposition disposition,
                              const gfx::Rect& initial_pos,
                              bool user_gesture,
-							 const std::wstring& param) {
+                             const std::wstring& param) {
   // No code for this yet.
   DCHECK(disposition != SAVE_TO_DISK);
   // Can't create a new contents for the current tab - invalid case.
   DCHECK(disposition != CURRENT_TAB);
 
-  if (CommandLine::ForCurrentProcess()->HasSwitch(
-    switches::kDVNCIRuntime)) 
+  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDVNCIRuntime)) 
 	disposition=NEW_POPUP;
 
   TabContentsWrapper* source_wrapper = NULL;
@@ -3137,7 +3138,7 @@ void Browser::AddNewContents(TabContents* source,
   if ((/*CommandLine::ForCurrentProcess()->HasSwitch(
 	  switches::kDVNCIRuntime)*/true) && (!param.empty())){
 		  params.browser->window()->SetWindowProperty(param);
-	}
+  }
 
   if (source) {
     NotificationService::current()->Notify(
