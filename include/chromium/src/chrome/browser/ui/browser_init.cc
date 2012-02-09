@@ -103,22 +103,19 @@
 #include "views/focus/accelerator_handler.h"
 #endif
 
-	void BrowserGlobalEntety_Exit(void*){
-       //UserMetrics::RecordAction(UserMetricsAction("Exit"));
-       BrowserList::AttemptUserExit();
-	}
+void BrowserGlobalEntety_Exit(void*){
+      BrowserList::AttemptUserExit();
+}
 
-	bool BrowserDVNCI_isEditable(){ 
-	   static bool is_editable = CommandLine::ForCurrentProcess()->HasSwitch(
-	   switches::kDVNCIEditable);
-       return is_editable;
-	}
+bool BrowserDVNCI_isEditable(){ 
+      static bool is_editable = CommandLine::ForCurrentProcess()->HasSwitch(switches::kDVNCIEditable);
+      return is_editable;
+}
 
-	bool BrowserDVNCI_isRuntime(){ 
-	   static bool is_runtime = CommandLine::ForCurrentProcess()->HasSwitch(
-	   switches::kDVNCIRuntime);
-       return is_runtime;
-	}
+bool BrowserDVNCI_isRuntime(){ 
+      static bool is_runtime = CommandLine::ForCurrentProcess()->HasSwitch(switches::kDVNCIRuntime);
+      return is_runtime;
+}
 
 
 
@@ -948,21 +945,21 @@ bool BrowserInit::LaunchWithProfile::ProcessStartupURLs(
 
   if (tabs.empty())
     return false;
-  if (!CommandLine::ForCurrentProcess()->HasSwitch(
-	  switches::kDVNCIRuntime)){	  
-		  Browser* browser = OpenTabsInBrowser(NULL, true, tabs);
-          AddInfoBarsIfNecessary(browser);}
+  if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDVNCIRuntime)){	  
+        Browser* browser = OpenTabsInBrowser(NULL, true, tabs);
+        AddInfoBarsIfNecessary(browser);}
   else{
-	  for (std::vector<Tab>::iterator it=tabs.begin();it!=tabs.end(); ++it){
-		  std::string tmp=it->url.possibly_invalid_spec();
-		  std::string::size_type iter=tmp.find("start.xml");
-		  if (iter!=std::string::npos){
+        for (std::vector<Tab>::iterator it=tabs.begin();it!=tabs.end(); ++it){
+        std::string tmp=it->url.possibly_invalid_spec();
+	  std::string::size_type iter=tmp.find("start.xml");
+	  if (iter!=std::string::npos){
 			  tmp=tmp+"[left=35%,top=35%, width=30%,height=30%,decorated=no,allwaystop=1]";
 			  GURL url_input_ = GURL(tmp);
 			  OpenWindowInBrowser(url_input_);
 			  return true;
-		  }		 
-		  OpenWindowInBrowser(it->url);}}
+	  }		 
+	  OpenWindowInBrowser(it->url);}
+  }
   return true;
 }
 
@@ -1073,40 +1070,36 @@ Browser* BrowserInit::LaunchWithProfile::OpenTabsInBrowser(
   return browser;
 }
 
-
 Browser* BrowserInit::LaunchWithProfile::OpenWindowInBrowser(const GURL& url,
-								 Browser* browser,
-                                 bool process_startup) {
+        Browser* browser,
+        bool process_startup) {
 
-  if (!profile_ && browser)
-    profile_ = browser->profile();
+    if (!profile_ && browser)
+        profile_ = browser->profile();
 
-  if (!browser) {
-    browser = Browser::Create(profile_);;
-  } else {
+    if (!browser) {
+        browser = Browser::Create(profile_);
+        ;
+    } else {
 #if defined(TOOLKIT_GTK)
-    // Setting the time of the last action on the window here allows us to steal
-    // focus, which is what the user wants when opening a new tab in an existing
-    // browser window.
-    gtk_util::SetWMLastUserActionTime(browser->window()->GetNativeHandle());
+        // Setting the time of the last action on the window here allows us to steal
+        // focus, which is what the user wants when opening a new tab in an existing
+        // browser window.
+        gtk_util::SetWMLastUserActionTime(browser->window()->GetNativeHandle());
 #endif
-  }
-
-
-
+    }
 
 #if !defined(OS_MACOSX)
-  // In kiosk mode, we want to always be fullscreen, so switch to that now.
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kKioskMode))
-    browser->ToggleFullscreenMode();
+    // In kiosk mode, we want to always be fullscreen, so switch to that now.
+    if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kKioskMode))
+        browser->ToggleFullscreenMode();
 #endif
 
-
     browser->OpenAppShortcutWindow(profile_,
-                                   url,
-                                   false);
+            url,
+            false);
 
-	return browser;
+    return browser;
 }
 
 void BrowserInit::LaunchWithProfile::AddInfoBarsIfNecessary(Browser* browser) {
