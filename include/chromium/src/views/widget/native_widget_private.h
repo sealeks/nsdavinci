@@ -21,86 +21,7 @@ namespace views {
 class InputMethod;
 class TooltipManager;
 namespace internal {
-    /*
-    top=0[%](0),left=0[%](0),width=100[%](400),left=100[%](200),resizable=yes|no|0|1(no), 
-    decorated=yes|no|0|1(no),tooltip=yes|no|0|1(no),modal=yes|no|0|1(no),allwaystop=yes|no|0|1(no),
-	state=normal|minimized|maximized(normal)
-	*/
-	class WindowParam{
-	public:
-		WindowParam(const std::wstring& parm = L""): eparam_(parm)  {}
-
-		~WindowParam(){};
-
-		std::wstring caption() const { 
-			  std::wstring result=L"";
-	          std::wstring::size_type it=eparam_.find(L"caption=");
-	          if (it==std::wstring::npos)
-	          	return result;
-			  result=eparam_.substr(it);
-	          result=result.substr(8);
-	          it=result.find_first_of(L",");
-	          if (it!=std::wstring::npos)
-	               result=result.substr(0,it);
-			return result;
-		};
-
-		bool isResizeble() const {
-              return  (eparam_.find(L"resizable=yes")!=std::wstring::npos) || (eparam_.find(L"resizable=1")!=std::wstring::npos);
-	    }
-
-		bool isUndecorated() const{
-	          return  ((eparam_.find(L"decorated=no")!=std::wstring::npos) || (eparam_.find(L"decorated=0")!=std::wstring::npos));
-	    }
-
-        bool isToolTip() const{
-	          return  (eparam_.find(L"tooltip=yes")!=std::wstring::npos) || (eparam_.find(L"tooltip=1")!=std::wstring::npos);
-	    }
-
-		bool isModal() const{
-	          return  (eparam_.find(L"modal=yes")!=std::wstring::npos) || (eparam_.find(L"modal=1")!=std::wstring::npos);
-	    }
-
-		bool isAllawaysTop() const{
-	          return  (eparam_.find(L"allwaystop=yes")!=std::wstring::npos) || (eparam_.find(L"allwaystop=1")!=std::wstring::npos);
-	    }
-
-		bool isMaximized() const{
-	          return  (eparam_.find(L"state=maximized")!=std::wstring::npos);
-	    }
-
-		bool isMinimized() const{
-	          return  (eparam_.find(L"state=minimized")!=std::wstring::npos);
-	    }
-
-		int Bounds(const std::wstring name, int display=0,  int dflt=0) const{
-	          int result=dflt;
-	          std::wstring::size_type it=eparam_.find(name+L"=");
-	          if (it==std::wstring::npos)
-	          	return result;
-	          std::wstring temp=eparam_.substr(it);
-	          temp=temp.substr(name.size()+1);
-	          it=temp.find_first_of(L",");
-	          if (it!=std::wstring::npos)
-	               temp=temp.substr(0,it);
-	          it=temp.find_last_of(L"%");
-	          if (it!=std::wstring::npos){
-	          	temp=temp.substr(0,it);
-	          	result = _wtoi(temp.c_str());
-	            result = result * display / 100;
-	          }
-	          else{
-	          	result = _wtoi(temp.c_str());
-	          }
-    
-	          if (result<0) result=dflt;
-	          return result;
-	          }
-
-	private:
-		std::wstring eparam_;
-	};
-
+ 
 ////////////////////////////////////////////////////////////////////////////////
 // NativeWidgetPrivate interface
 //
@@ -115,6 +36,91 @@ namespace internal {
 //             NativeWidget implementations. This file should not be included
 //             in code that does not fall into one of these use cases.
 //
+    
+    /*
+    top=0[%](0),left=0[%](0),width=100[%](400),left=100[%](200),resizable=yes|no|0|1(no), 
+    decorated=yes|no|0|1(no),tooltip=yes|no|0|1(no),modal=yes|no|0|1(no),allwaystop=yes|no|0|1(no),
+	state=normal|minimized|maximized(normal)
+	*/
+	class WindowParam {
+        public:
+
+            WindowParam(const std::wstring& parm = L"") : eparam_(parm) {
+            }
+
+            ~WindowParam() {
+            };
+
+            std::wstring caption() const {
+                std::wstring result = L"";
+                std::wstring::size_type it = eparam_.find(L"caption=");
+                if (it == std::wstring::npos)
+                    return result;
+                result = eparam_.substr(it);
+                result = result.substr(8);
+                it = result.find_first_of(L",");
+                if (it != std::wstring::npos)
+                    result = result.substr(0, it);
+                return result;
+            };
+
+            bool isResizeble() const {
+                return (eparam_.find(L"resizable=yes") != std::wstring::npos) || (eparam_.find(L"resizable=1") != std::wstring::npos);
+            }
+
+            bool isUndecorated() const {
+                return ((eparam_.find(L"decorated=no") != std::wstring::npos) || (eparam_.find(L"decorated=0") != std::wstring::npos));
+            }
+
+            bool isToolTip() const {
+                return (eparam_.find(L"tooltip=yes") != std::wstring::npos) || (eparam_.find(L"tooltip=1") != std::wstring::npos);
+            }
+
+            bool isModal() const {
+                return (eparam_.find(L"modal=yes") != std::wstring::npos) || (eparam_.find(L"modal=1") != std::wstring::npos);
+            }
+
+            bool isAllawaysTop() const {
+                return (eparam_.find(L"allwaystop=yes") != std::wstring::npos) || (eparam_.find(L"allwaystop=1") != std::wstring::npos);
+            }
+
+            bool isMaximized() const {
+                return (eparam_.find(L"state=maximized") != std::wstring::npos);
+            }
+
+            bool isMinimized() const {
+                return (eparam_.find(L"state=minimized") != std::wstring::npos);
+            }
+
+            int Bounds(const std::wstring name, int display = 0, int dflt = 0) const {
+                int result = dflt;
+                std::wstring::size_type it = eparam_.find(name + L"=");
+                if (it == std::wstring::npos)
+                    return result;
+                std::wstring temp = eparam_.substr(it);
+                temp = temp.substr(name.size() + 1);
+                it = temp.find_first_of(L",");
+                if (it != std::wstring::npos)
+                    temp = temp.substr(0, it);
+                it = temp.find_last_of(L"%");
+                if (it != std::wstring::npos) {
+                    temp = temp.substr(0, it);
+                    result = _wtoi(temp.c_str());
+                    result = result * display / 100;
+                } else {
+                    result = _wtoi(temp.c_str());
+                }
+
+                if (result < 0) result = dflt;
+                return result;
+            }
+
+        private:
+            std::wstring eparam_;
+        };
+
+
+
 class NativeWidgetPrivate : public NativeWidget {
  public:
   virtual ~NativeWidgetPrivate() {}
