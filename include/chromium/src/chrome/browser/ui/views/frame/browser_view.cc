@@ -979,19 +979,17 @@ void BrowserView::DestroyBrowser() {
 }
 
 bool BrowserView::IsBookmarkBarVisible() const {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kDVNCIRuntime))
-    return false;
-  return browser_->SupportsWindowFeature(Browser::FEATURE_BOOKMARKBAR) &&
-      active_bookmark_bar_ &&
-      (active_bookmark_bar_->GetPreferredSize().height() != 0);
+    if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDVNCIRuntime))
+        return false;
+    return browser_->SupportsWindowFeature(Browser::FEATURE_BOOKMARKBAR) &&
+            active_bookmark_bar_ &&
+            (active_bookmark_bar_->GetPreferredSize().height() != 0);
 }
 
 bool BrowserView::IsBookmarkBarAnimating() const {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kDVNCIRuntime))
-    return false;
-  return bookmark_bar_view_.get() && bookmark_bar_view_->is_animating();
+    if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDVNCIRuntime))
+        return false;
+    return bookmark_bar_view_.get() && bookmark_bar_view_->is_animating();
 }
 
 bool BrowserView::IsTabStripEditable() const {
@@ -999,13 +997,11 @@ bool BrowserView::IsTabStripEditable() const {
 }
 
 bool BrowserView::IsToolbarVisible() const {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kDVNCIRuntime))
-    return false;
-  if (UseCompactNavigationBar()) {
-    return false;
-  } else {
-	 return browser_->is_type_popup() ? false : (browser_->SupportsWindowFeature(Browser::FEATURE_TOOLBAR) ||
+    if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDVNCIRuntime))
+        return false;
+    if (UseCompactNavigationBar()) 
+        return false;
+    return browser_->is_type_popup() ? false : (browser_->SupportsWindowFeature(Browser::FEATURE_TOOLBAR) ||
            browser_->SupportsWindowFeature(Browser::FEATURE_LOCATIONBAR));
 }
 
