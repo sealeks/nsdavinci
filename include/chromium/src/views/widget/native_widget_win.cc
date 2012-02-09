@@ -1021,7 +1021,6 @@ bool NativeWidgetWin::IsFullscreen() const {
 }
 
 void NativeWidgetWin::SetWindowProperty(const std::wstring& pram){
-PushForceHidden();
 
     internal::WindowParam param(pram);
 
@@ -1029,65 +1028,75 @@ PushForceHidden();
     saved_window_info_.ex_style = GetWindowLong(GWL_EXSTYLE);
 
     MONITORINFO monitor_info;
-    monitor_info.cbSize = sizeof(monitor_info);
+    monitor_info.cbSize = sizeof (monitor_info);
     GetMonitorInfo(MonitorFromWindow(GetNativeView(), MONITOR_DEFAULTTONEAREST),
-                   &monitor_info);
+            &monitor_info);
     gfx::Rect monitor_rect(monitor_info.rcMonitor);
 
     gfx::Rect new_rect;
-    new_rect.set_x(param.Bounds(L"left",monitor_rect.width(),0));
-	new_rect.set_y(param.Bounds(L"top",monitor_rect.height(),0));
-	new_rect.set_height(param.Bounds(L"height",monitor_rect.height(),400));
-	new_rect.set_width(param.Bounds(L"width",monitor_rect.width(),200));
+    new_rect.set_x(param.Bounds(L"left", monitor_rect.width(), 0));
+    new_rect.set_y(param.Bounds(L"top", monitor_rect.height(), 0));
+    new_rect.set_height(param.Bounds(L"height", monitor_rect.height(), 400));
+    new_rect.set_width(param.Bounds(L"width", monitor_rect.width(), 200));
 
-	bool isCaption = !param.caption().empty();
+    bool isCaption = !param.caption().empty();
 
-	if (isCaption)
-		this->SetWindowTitle(param.caption());
+    if (base::win::GetVersion() < base::win::VERSION_VISTA) {
+        GetWidget()->set_frame_type(Widget::FRAME_TYPE_FORCE_NATIVE);
+        GetWidget()->FrameTypeChanged();
+    }
 
-	undecorated_=param.isUndecorated();
-	tooltip_=param.isToolTip();
+    undecorated_ = param.isUndecorated();
+    tooltip_ = param.isToolTip();
 
-	bool isCanResize=param.isResizeble();
-	bool isAllwaysTop=param.isAllawaysTop();
-	bool isModal=param.isModal();
-	bool isMaximized=param.isMaximized();
-	bool isMinimized=param.isMinimized();
+    bool isCanResize = param.isResizeble();
+    bool isAllwaysTop = param.isAllawaysTop();
+    bool isModal = param.isModal();
+    bool isMaximized = param.isMaximized();
+    bool isMinimized = param.isMinimized();
 
-	if (undecorated_){
+    if (undecorated_) {
 
-    SetWindowLong(GWL_STYLE,
-                  saved_window_info_.style & ~(WS_CAPTION | WS_THICKFRAME));
-	LONG exstyle_ = saved_window_info_.ex_style & ~(WS_EX_DLGMODALFRAME |
-                  WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE | WS_EX_APPWINDOW);
-	exstyle_= isAllwaysTop ? (saved_window_info_.ex_style | WS_EX_TOPMOST) : saved_window_info_.ex_style;
+        saved_window_info_.style = GetWindowLong(GWL_STYLE);
+        saved_window_info_.ex_style = GetWindowLong(GWL_EXSTYLE);
 
-    SetWindowLong(GWL_EXSTYLE,
-                  exstyle_);
+        saved_window_info_.style = saved_window_info_.style & ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_DLGFRAME | WS_BORDER);
 
-    SetWindowPos(isAllwaysTop ? HWND_TOPMOST : NULL, new_rect.x(), new_rect.y(), new_rect.width(),
-                 new_rect.height(),
-				 /*SWP_NOZORDER |*/ SWP_NOACTIVATE | SWP_FRAMECHANGED);}
-	else{
 
-    if (!isCanResize)
-        SetWindowLong(GWL_STYLE, saved_window_info_.style | WS_SYSMENU | WS_CAPTION & ~(WS_MINIMIZEBOX | WS_MINIMIZEBOX) & ~WS_THICKFRAME);
-	else
-        SetWindowLong(GWL_STYLE, saved_window_info_.style | WS_SYSMENU | WS_CAPTION & ~(WS_MINIMIZEBOX | WS_MINIMIZEBOX));
+        SetWindowLong(GWL_STYLE,
+                saved_window_info_.style & ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_DLGFRAME | WS_BORDER));
+        LONG exstyle_ = saved_window_info_.ex_style & ~(WS_EX_DLGMODALFRAME |
+                WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE);
+        exstyle_ = isAllwaysTop ? (exstyle_ | WS_EX_TOPMOST) : exstyle_;
 
-	LONG exstyle_= isAllwaysTop ? (saved_window_info_.ex_style | WS_EX_TOPMOST) : saved_window_info_.ex_style;
-	exstyle_= tooltip_ ? (exstyle_ | WS_EX_TOOLWINDOW) : exstyle_;
-	exstyle_= exstyle_ & (~WS_EX_APPWINDOW);
-    SetWindowLong(GWL_EXSTYLE, exstyle_);
-	SetWindowPos(isAllwaysTop ? HWND_TOPMOST : NULL, new_rect.x(), new_rect.y(), new_rect.width(),
-                 new_rect.height(),
-				 /*SWP_NOZORDER |*/ SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        SetWindowLong(GWL_EXSTYLE,
+            exstyle_);
 
-    if (isMaximized)
-      Maximize();
-	}
+        SetWindowPos(isAllwaysTop ? HWND_TOPMOST : NULL, new_rect.x(), new_rect.y(), new_rect.width(),
+            new_rect.height(),
+            SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    } else {
 
-PopForceHidden();
+        if (!isCanResize)
+            SetWindowLong(GWL_STYLE, saved_window_info_.style | WS_SYSMENU | WS_CAPTION & ~(WS_MINIMIZEBOX | WS_MINIMIZEBOX) & ~WS_THICKFRAME);
+        else
+            SetWindowLong(GWL_STYLE, saved_window_info_.style | WS_SYSMENU | WS_CAPTION & ~(WS_MINIMIZEBOX | WS_MINIMIZEBOX));
+
+        LONG exstyle_ = isAllwaysTop ? (saved_window_info_.ex_style | WS_EX_TOPMOST) : saved_window_info_.ex_style;
+        exstyle_ = tooltip_ ? (exstyle_ | WS_EX_TOOLWINDOW) : exstyle_;
+        exstyle_ = exstyle_ & (~WS_EX_APPWINDOW);
+        SetWindowLong(GWL_EXSTYLE, exstyle_);
+        SetWindowPos(isAllwaysTop ? HWND_TOPMOST : NULL, new_rect.x(), new_rect.y(), new_rect.width(),
+            new_rect.height(),
+            SWP_NOACTIVATE | SWP_FRAMECHANGED);
+
+        if (isMaximized)
+            Maximize();
+    }
+
+    if ((isCaption) && (!undecorated_))
+        this->SetWindowTitle(param.caption());
+
 }
 
 void NativeWidgetWin::SetOpacity(unsigned char opacity) {
@@ -1784,7 +1793,7 @@ LRESULT NativeWidgetWin::OnNCHitTest(const CPoint& point) {
 
   // If the DWM is rendering the window controls, we need to give the DWM's
   // default window procedure first chance to handle hit testing.
-  if (GetWidget()->ShouldUseNativeFrame()) {
+  if (GetWidget()->ShouldUseNativeFrame() && (base::win::GetVersion() >= base::win::VERSION_VISTA)) {
     LRESULT result;
     if (DwmDefWindowProc(GetNativeView(), WM_NCHITTEST, 0,
                          MAKELPARAM(point.x, point.y), &result)) {
@@ -2011,7 +2020,7 @@ void NativeWidgetWin::OnSysCommand(UINT notification_code, CPoint click) {
   // specific information so we must exclude this when comparing.
   static const int sc_mask = 0xFFF0;
   // Ignore size/move/maximize in fullscreen mode.
-  if (IsFullscreen() &&
+  if ((IsFullscreen() || IsUndecorated()) && 
       (((notification_code & sc_mask) == SC_SIZE) ||
        ((notification_code & sc_mask) == SC_MOVE) ||
        ((notification_code & sc_mask) == SC_MAXIMIZE)))
@@ -2177,7 +2186,7 @@ gfx::Insets NativeWidgetWin::GetClientAreaInsets() const {
   // rect when using the opaque frame.
   // Note: this is only required for non-fullscreen windows. Note that
   // fullscreen windows are in restored state, not maximized.
-  return gfx::Insets(0, 0, IsFullscreen() ? 0 : 1, 0);
+  return gfx::Insets(0, 0, IsFullscreen()  ? 0 : 1, 0);
 }
 
 void NativeWidgetWin::TrackMouseEvents(DWORD mouse_tracking_flags) {
