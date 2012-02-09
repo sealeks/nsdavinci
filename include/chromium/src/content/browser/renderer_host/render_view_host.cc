@@ -664,7 +664,7 @@ bool RenderViewHost::OnMessageReceived(const IPC::Message& msg) {
     IPC_MESSAGE_HANDLER(ViewHostMsg_UpdateInspectorSetting,
                         OnUpdateInspectorSetting)
     IPC_MESSAGE_HANDLER(ViewHostMsg_Close, OnMsgClose)
-	IPC_MESSAGE_HANDLER(ViewHostMsg_BrowserExit,OnMsgExitBrowser)
+    IPC_MESSAGE_HANDLER(ViewHostMsg_BrowserExit,OnMsgExitBrowser)
     IPC_MESSAGE_HANDLER(ViewHostMsg_RequestMove, OnMsgRequestMove)
     IPC_MESSAGE_HANDLER(ViewHostMsg_DidStartLoading, OnMsgDidStartLoading)
     IPC_MESSAGE_HANDLER(ViewHostMsg_DidStopLoading, OnMsgDidStopLoading)
@@ -760,7 +760,7 @@ void RenderViewHost::OnMsgShowView(int route_id,
                                    WindowOpenDisposition disposition,
                                    const gfx::Rect& initial_pos,
                                    bool user_gesture,
-								   std::wstring param) {
+                                   std::wstring param) {
   RenderViewHostDelegate::View* view = delegate_->GetViewDelegate();
   if (view) {
     if (!is_swapped_out_)
