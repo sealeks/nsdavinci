@@ -44,7 +44,7 @@ WindowFeatures::WindowFeatures(const String& features)
     , heightSet(false)
     , fullscreen(false)
     , dialog(false)
-	, param(features)
+    , param(features)
 {
     /*
      The IE rule is: all features except for channelmode and fullscreen default to YES, but
@@ -170,7 +170,7 @@ WindowFeatures::WindowFeatures(const String& dialogFeaturesString, const FloatRe
     , locationBarVisible(false)
     , fullscreen(false)
     , dialog(true)
-	, param(dialogFeaturesString)
+    , param(dialogFeaturesString)
 {
     DialogFeaturesMap features;
     parseDialogFeatures(dialogFeaturesString, features);
