@@ -396,7 +396,7 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
 DOMWindow::DOMWindow(Frame* frame)
     : m_shouldPrintWhenFinishedLoading(false)
     , m_frame(frame),
-	alarmeventlistener()
+    alarmeventlistener()
 {
 }
 
