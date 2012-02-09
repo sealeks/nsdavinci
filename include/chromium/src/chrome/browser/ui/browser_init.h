@@ -130,10 +130,9 @@ class BrowserInit {
                                bool process_startup,
                                const std::vector<Tab>& tabs);
 
-	Browser* OpenWindowInBrowser(const GURL& url,
-								 Browser* browser = 0,
-                                 bool process_startup =true
-								 );
+    Browser* OpenWindowInBrowser(const GURL& url,
+                               Browser* browser = 0,
+                               bool process_startup =true);
 
    private:
     FRIEND_TEST_ALL_PREFIXES(BrowserTest, RestorePinnedTabs);
