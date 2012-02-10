@@ -11,11 +11,160 @@ mainlibutil.www = {};
 
 mainlibutil.document = {};
 
+mainlibutil.designtime = {};
 
+mainlibutil.global = {};
+
+
+function dvnci_open(name){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){   
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                if (!fl[i].window){
+                  var win=window.open(fl[i]['path'],fl[i]['name'],fl[i]['param'].toString());
+                  fl[i].window=win;}
+                else{
+                  fl[i].window.focus();  
+                }
+                return;
+            }
+        }
+    }
+}
+
+function dvnci_close(name){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                if (fl[i].window)
+                    fl[i].window.close();
+                fl[i].window=null;
+                return;
+            }
+        }
+    }
+}
+
+function dvnci_close_win(){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            if (fl[i].window==window){
+                fl[i].window=null;
+                return;
+            }
+        }
+    }
+}
+
+
+//
+
+mainlibutil.global.getGlobal = function (){
+    return window.dvnci_globalobject();
+}
+
+mainlibutil.global.getFormList = function (){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp.formlist)
+        tmp.formlist=[];
+    return (tmp && tmp.formlist) ? tmp.formlist : null;
+}
+
+mainlibutil.global.getObjectInspector = function (){
+ var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp.objectinspectorwin){
+        var objectinspectorwin=window.open('', '' , 'caption=Свойства,left=5%,top=5%, width=400,height=650,tooltip=yes,allwaystop=yes;');
+        tmp.objectinspectorwin=objectinspectorwin;
+        objectinspectorwin.onclose=mainlibutil.designtime.destroyObjectInspector();
+        objectinspectorwin.document.open();    
+         var style='<style type="text/css"> body { margin: 0 0; padding: 0 0; -webkit-user-select: none;}'+
+        'div.scrollHeader{'+  
+        'margin: 0 0; padding: 0 0; border-top-right-radius: 6px; border-top-left-radius: 6px;'+
+        'border:  1px solid #000022; background: #000044; color: yellow; padding: 4px; -webkit-user-select: none;}'+  
+                
+        'div.scrollWrapper{'+
+                
+        'overflow:scroll; margin: 0 0; padding: 0 0;'+
+        'border:  1px solid grey; height:99%;}'+
+                
+        'table.scrollable{'+
+        'border-collapse:collapse;'+
+        'text-align: left;'+
+        'font-size: 12px;'+
+        'background:#f0f0f0;'+
+        '}'+
+        'table.scrollable th{'+
+        'border: 1px solid #999999;'+
+        'background:#e0e0e0;'+
+        'position: relative;'+
+        'padding-left: 6px;'+
+        'background-position: 100% 100%;'+
+        '}'+
+        'table.scrollable tbody{'+
+        'overflow:auto;'+
+        'border-spacing: 0px'+
+        '}'+
+        'table.scrollable td.static{ background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#aaa));'+
+        'border: 1px solid gray; '+
+        'padding: 0px 0px;'+
+        '}' +
+        'table.scrollable td{'+
+        'border: 1px solid gray; '+
+        'padding: 0px 0px;'+
+        '}' +
+        'table.scrollable td input{'+
+        'display: block; width: 100%; border: 0px; color: black;'+
+        'padding: 0px 0px; font-size: 12px; '+
+        '}' +
+        'table.scrollable td select{'+
+        'display: block; width: 100%; border: 0px; color: black;'+
+        'padding: 0px 0px; font-size: 12px;'+
+        '}' +
+        '.diffvalue{'+
+        'background: #808080;'+
+        '}</style>';                
+        objectinspectorwin.document.write('<?xml version="1.0" encoding="UTF-8"?>');
+        objectinspectorwin.document.write('   <html>');
+        objectinspectorwin.document.write('      <head>');
+        objectinspectorwin.document.write('<script type="text/javascript" src="../mainlib/js/startup.js"></script>');
+        objectinspectorwin.document.write('<script type="text/javascript" src="../mainlib/js/redactor.js"></script>');
+        objectinspectorwin.document.write('<script type="text/javascript" src="../mainlib/js/mainlibutil.js"></script>');
+        objectinspectorwin.document.write(style);
+        objectinspectorwin.document.write('   </head>');
+        objectinspectorwin.document.write('   <body>');
+        objectinspectorwin.document.write('   <div>');
+        objectinspectorwin.document.write('   <div class="scrollWrapper">');
+        objectinspectorwin.document.write('   <table class="scrollable" width="100%">');
+        objectinspectorwin.document.write('   <tbody>');
+        objectinspectorwin.document.write('   <tr>');
+        objectinspectorwin.document.write('   <th> Свойство');
+        objectinspectorwin.document.write('   </th>');       
+        objectinspectorwin.document.write('   <th> Значение');
+        objectinspectorwin.document.write('   </th>');
+        objectinspectorwin.document.write('   </tr>');       
+        objectinspectorwin.document.write('   </tbody>');
+        objectinspectorwin.document.write('   </table>');
+        objectinspectorwin.document.write('   </div>');       
+        objectinspectorwin.document.write('   </div>');        
+        objectinspectorwin.document.write('   </body>');
+        objectinspectorwin.document.write('   </html>');
+        objectinspectorwin.document.close();
+        objectinspectorwin.onunload=mainlibutil.designtime.destroyObjectInspector;
+        }
+        
+       
+    return (tmp && tmp.objectinspectorwin) ? tmp.objectinspectorwin : null;
+}
+
+
+//
 
 mainlibutil.startup.init = function(){
-    var el = document;
-    if (dvnci_iseditable/* && dvnci_iseditable()*/)
+    var el = document; 
+    if (true/*dvnci_iseditable()*/)
     document.addEventListener('keyup' ,function () {
         if ((event.keyCode==82) && (event.shiftKey)) {
             document.red = new redactor(el);
@@ -24,6 +173,7 @@ mainlibutil.startup.init = function(){
             return;
         }
     });
+    window.onunload=dvnci_close_win;
 }
 
 
@@ -360,4 +510,40 @@ mainlibutil.document.writeDoc = function (doc){
         var data= xmls.serializeToString(doc); 
         dvnci_writefile(doc.baseURI,data);
     }
+}
+
+// radactor util
+
+mainlibutil.designtime.getObjectInspectorDocument = function(){
+    var tmp = mainlibutil.global.getObjectInspector();
+    return tmp ? tmp.document : undefined;
+}
+
+mainlibutil.designtime.showObjectInspector = function(){
+    var tmp = mainlibutil.global.getObjectInspector();
+    if (tmp)
+        tmp.focus();
+}
+
+mainlibutil.designtime.closeObjectInspector = function(){
+    var tmp = mainlibutil.global.getObjectInspector();
+    if (tmp.objectinspectorwin)
+        tmp.objectinspectorwin.close();
+}
+
+mainlibutil.designtime.destroyObjectInspector = function(){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp.objectinspectorwin){
+        tmp.objectinspectorwin=undefined;
+    }
+}
+
+
+mainlibutil.designtime.getObjectInspector = function(){
+    var tmp = mainlibutil.global.getObjectInspector();
+    var doc = mainlibutil.designtime.getObjectInspectorDocument();
+    if (tmp && doc) {
+          return doc.getElementsByTagName('tbody')[0];       
+    }
+    
 }

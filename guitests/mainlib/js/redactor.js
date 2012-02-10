@@ -1230,13 +1230,16 @@ redactor.prototype.createObjectInspector = function(t, l, h, w){
         w = cookie['w'];
     }
  
-    this.inspectorFrame = this.createWindow('object_inspector', t, l , h ? h : 600, w ? w : 400);
-    
-    var div= mainlibutil.html.create_div(this.inspectorFrame.bindelement,null,'scrollWrapper');
-    var table= mainlibutil.html.create_table(div, null,'scrollable');
-    table.setAttribute('width' , '100%');
+    //this.inspectorFrame = this.createWindow('object_inspector', t, l , h ? h : 600, w ? w : 400);
+    this.inspectorFrame=mainlibutil.global.getObjectInspector();
+    this.inspectorFrame.tbody=mainlibutil.designtime.getObjectInspector();
+    //return mainlibutil.global.getObjectInspector();
+    //
+    //var div= mainlibutil.html.create_div(this.inspectorFrame.bindelement,null,'scrollWrapper');
+    //var table= mainlibutil.html.create_table(div, null,'scrollable');
+    //table.setAttribute('width' , '100%');
 
-    this.inspectorFrame.tbody= mainlibutil.html.create_tbody(table);
+    //this.inspectorFrame.tbody= mainlibutil.html.create_tbody(table);
 
     return this.inspectorFrame.tbody;
     
