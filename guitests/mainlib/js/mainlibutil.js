@@ -1,11 +1,30 @@
 
 var mainlibutil = {};
 
+mainlibutil.startup = {};
+
 mainlibutil.svg = {};
 
 mainlibutil.html = {};
 
 mainlibutil.www = {};
+
+mainlibutil.document = {};
+
+
+
+mainlibutil.startup.init = function(){
+    var el = document;
+    if (dvnci_iseditable/* && dvnci_iseditable()*/)
+    document.addEventListener('keyup' ,function () {
+        if ((event.keyCode==82) && (event.shiftKey)) {
+            document.red = new redactor(el);
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+    });
+}
 
 
 mainlibutil.html.create = function (name, parent){
@@ -319,4 +338,26 @@ mainlibutil.www.createWindow = function(doc, id, x, y, width, height, style){
         }
     }
     return undefined;
+}
+
+
+mainlibutil.document.readDoc = function (url){ 
+    try{
+        var xmlHttp=new XMLHttpRequest();
+        xmlHttp.open("GET",url,false);
+        xmlHttp.send(null);
+        return xmlHttp.responseXML;
+    }
+    catch(exception){
+    }
+    return null;
+}
+
+
+mainlibutil.document.writeDoc = function (doc){
+    if (doc && dvnci_writefile){
+        var xmls = new XMLSerializer();  
+        var data= xmls.serializeToString(doc); 
+        dvnci_writefile(doc.baseURI,data);
+    }
 }

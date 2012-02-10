@@ -1,16 +1,3 @@
-function init_red(el){
-    if (dvnci_iseditable && dvnci_iseditable())
-    document.addEventListener('keyup' ,function () {
-        if ((event.keyCode==82) && (event.shiftKey)) {
-            document.red = new redactor(el);
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-    });
-}
-
-
 
 function init_project_controller(){
     chrome.controller = new project_controller(document);
@@ -27,11 +14,6 @@ function DVNCI_GLOBAL_FORMS(){
         tmp.formlist=[];
     return (tmp && tmp.formlist) ? tmp.formlist : null;
 }
-
-
-
-
-
 ////
 
 function project_controller(doc){
@@ -70,7 +52,7 @@ project_controller.prototype.init_form = function(){
                               'param'  : els[i].getAttribute('param'),
                               'window'  : win});}         
         }
-        window.close();
+        //window.close();
     }
 }
 

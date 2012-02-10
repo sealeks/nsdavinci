@@ -10,7 +10,7 @@ function schema_info(){
 
 
 schema_info.prototype.init = function(libsulr){
-    this.libsdoc=this.readDocument(libsulr);
+    this.libsdoc=mainlibutil.document.readDoc(libsulr);
     if (this.libsdoc){
         var els=this.libsdoc.getElementsByTagName('include');
         for (var i=0; i<els.length;++i)
@@ -24,7 +24,7 @@ schema_info.prototype.init = function(libsulr){
 }
 
 schema_info.prototype.initlibs = function(libulr){
-    var libdoc=this.readDocument(libulr);
+    var libdoc=mainlibutil.document.readDoc(libulr);
     if (libdoc){ 
         this.read_types(libdoc);
         this.read_elements(libdoc);
@@ -33,18 +33,6 @@ schema_info.prototype.initlibs = function(libulr){
 }
 
 
-
-schema_info.prototype.readDocument = function (url){ 
-    try{
-        var xmlHttp=new XMLHttpRequest();
-        xmlHttp.open("GET",url,false);
-        xmlHttp.send(null);
-        return xmlHttp.responseXML;
-    }
-    catch(exception){
-    }
-    return null;
-}
 
 
 schema_info.prototype.getAttributeList = function (el){ 
@@ -335,26 +323,12 @@ redactor.prototype.attach = function(el){
 }
 
 
-
-//  чтение документа источника
-redactor.prototype.readDocument = function (url){ 
-    try{
-        var xmlHttp=new XMLHttpRequest();
-        xmlHttp.open("GET",url,false);
-        xmlHttp.send(null);
-        return xmlHttp.responseXML;
-    }
-    catch(except){}
-    return null;
-}
-
-
 //  чтение документа источника
 redactor.prototype.getSourseDocument = function (){ 
     if (this.sourseDocument)
         return this.sourseDocument;
     try{
-        this.sourseDocument = this.readDocument(this.instantdocument.URL);
+        this.sourseDocument = mainlibutil.document.readDoc(this.instantdocument.URL);
         if ((this.sourseDocument) && (this.sourseDocument.childNodes.length>1)){
             if (this.sourseDocument.childNodes[0].target=='xml-stylesheet'){
                 if (this.sourseDocument.childNodes[0].data)
@@ -372,7 +346,7 @@ redactor.prototype.getSourseDocument = function (){
 
 redactor.prototype.getLightDocument = function (){ 
     try{
-        this.lightDocument = this.readDocument(this.instantdocument.URL);
+        this.lightDocument = mainlibutil.document.readDoc(this.instantdocument.URL);
         
     }
     catch(except){
@@ -410,7 +384,7 @@ redactor.prototype.readXsltDocument = function(data){
             finded=urlxslt.search('"') ;
             if (finded!=-1){
                 urlxslt=urlxslt.substring(0,finded);
-                this.soursexslt = this.readDocument(urlxslt);
+                this.soursexslt = mainlibutil.document.readDoc(urlxslt);
                 this.xsltProcessor=new XSLTProcessor();  
                 this.xsltProcessor.importStylesheet(this.soursexslt); 
                 this.trasformsourse = this.xsltProcessor.transformToDocument(this.sourseDocument);
@@ -426,13 +400,6 @@ redactor.prototype.getTrasformDocument = function(){
     return undefined;
 }
 
-
-
-redactor.prototype.getXMLSerializer = function(){
-    if (this.xmls) return this.xmls;
-    this.xmls = new XMLSerializer();
-    return this.xmls;
-}
 
 
 redactor.prototype.getSourseElement = function(el){
@@ -635,9 +602,7 @@ redactor.prototype.updateElement = function(el){
 
 redactor.prototype.save = function(){
     if (this.sourseDocument){
-        var xmls = this.getXMLSerializer();  
-        var data= xmls.serializeToString(this.sourseDocument); 
-        dvnci_writefile(this.sourseDocument.baseURI,data);
+        mainlibutil.document.writeDoc(this.sourseDocument);
     }  
 }
 

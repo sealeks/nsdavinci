@@ -1,4 +1,4 @@
-<?xml-stylesheet href="../mainlib/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="background-image: url('../mainlib/css/res/bgrd2.png');" onload="init_red(document)">
+<?xml-stylesheet href="../mainlib/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="background-image: url('../mainlib/css/res/bgrd2.png');" onload="mainlibutil.startup.init()">
 
     <g>
 
@@ -27,7 +27,7 @@
         <mlib:rect id="shape0" x="646" y="151" height="150" width="56" value="r1::a" rotate="0" background="#444444" fill="gaz" stroke-width="2" stroke="#333333" r="6" direction="bt" visible=""/>
         
         <mlib:motor id="motoron16" x="1435" y="150" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="90" alarmack="m1::c4" local="m1::c2" environment="air" ron="m1::c1"/>
-        <mlib:motor id="motoron1" x="1146" y="152" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Подпиточный насос на бойлере" rotate="90" alarmack="m1::c4" local="m1::c2" environment="oil" ron="m1::c1"/>
+        <mlib:motor id="motoron1" x="771" y="65" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Подпиточный насос на бойлере" rotate="90" alarmack="m1::c4" local="m1::c2" environment="oil" ron="m1::c1"/>
         <mlib:sensor id="sensor0" x="166" y="122" height="25" width="100" rotate="0" background="gaz" stroke-width="1" stroke="gray" r="8" param="r1::a" format="%8.3f m" fontstyle="fill: #030"/><mlib:sensor id="sensor2" x="309" y="110" height="100" width="300" rotate="0" background="air" stroke-width="1" stroke="gray" r="8" param="r8::a" format="%8.1f m" fontstyle="fill: #003; font-size: 50px;" alighn="center"/></g>
     
 </svg>
