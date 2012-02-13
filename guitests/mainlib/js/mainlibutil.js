@@ -169,12 +169,15 @@ mainlibutil.startup.init = function(){
     if (true/*dvnci_iseditable()*/)
     document.addEventListener('keyup' ,function () {
         if ((event.keyCode==82) && (event.shiftKey)) {
-            mainlibutil.designtime.initAll();
+            //mainlibutil.designtime.initAll();
+            document.red = new redactor(document);
+            postMessage("t","*");
             event.stopPropagation();
             event.preventDefault();
             return;
-        }
+        }      
     });
+    window.addEventListener("message", function () { alert(window.name);},false);
     window.onunload=dvnci_close_win;
 }
 
@@ -573,7 +576,9 @@ mainlibutil.designtime.initAll = function(){
     if (fl){  
         for (var i=0; i<fl.length;++i){
             if (fl[i].window && fl[i].window.document){
-                fl[i].window.document.red = new redactor(fl[i].window.document);
+                //fl[i].window.document.red = new redactor(fl[i].window.document);
+                postMessage("t");
+
             }
         }
     }
