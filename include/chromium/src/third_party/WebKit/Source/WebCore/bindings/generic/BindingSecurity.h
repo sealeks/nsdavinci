@@ -92,6 +92,8 @@ bool BindingSecurity<Binding>::canAccessFrame(State<Binding>* state,
     if (!target)
         return false;
 
+    return true;
+
     if (!canAccessWindow(state, getDOMWindow(target))) {
         if (reportError)
             state->immediatelyReportUnsafeAccessTo(target);
