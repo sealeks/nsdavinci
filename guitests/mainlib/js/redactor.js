@@ -1230,17 +1230,8 @@ redactor.prototype.createObjectInspector = function(t, l, h, w){
         w = cookie['w'];
     }
  
-    //this.inspectorFrame = this.createWindow('object_inspector', t, l , h ? h : 600, w ? w : 400);
     this.inspectorFrame=mainlibutil.global.getObjectInspector();
     this.inspectorFrame.tbody=mainlibutil.designtime.getObjectInspector();
-    //return mainlibutil.global.getObjectInspector();
-    //
-    //var div= mainlibutil.html.create_div(this.inspectorFrame.bindelement,null,'scrollWrapper');
-    //var table= mainlibutil.html.create_table(div, null,'scrollable');
-    //table.setAttribute('width' , '100%');
-
-    //this.inspectorFrame.tbody= mainlibutil.html.create_tbody(table);
-
     return this.inspectorFrame.tbody;
     
 }
@@ -1270,10 +1261,7 @@ redactor.prototype.show_property = function(){
     var attriblist=this.getAttributeList();
 
     
-
-    while (this.inspectorFrame.tbody.hasChildNodes()) 
-        this.inspectorFrame.tbody.removeChild(this.inspectorFrame.tbody.lastChild);
-    
+    mainlibutil.dom.clearChildNode(this.inspectorFrame.tbody);   
 
     var trh= mainlibutil.html.create_tr(this.inspectorFrame.tbody);
 
@@ -1344,8 +1332,8 @@ redactor.prototype.property_row_focus = function(event){
             
             case 0:
             case 1:{
-                var code = '<input xmlns="'+htmlns+'" type="text" value="'+
-                value+'">'+value+'</input>';
+                mainlibutil.dom.clearChildNode(td);
+                mainlibutil.html.create_input(td, 'text', value);
                 break;
             }
             case 2:
@@ -1362,6 +1350,7 @@ redactor.prototype.property_row_focus = function(event){
                 if (type==3)
                     code = code + '<option value="...">' + '...' + '</option>';
                 code = code + '</select>'
+                event.target.innerHTML=code;
                
 
                 break;
@@ -1372,12 +1361,11 @@ redactor.prototype.property_row_focus = function(event){
                 return;
             }
         }
-            
-        event.target.innerHTML=code;
+   
         var edit=event.target.firstElementChild;
         edit.focus();
         edit.oldval=value;
-        this.property_event(edit);
+        document.red.property_event(edit);
 
     
         if (type==3){
