@@ -25,6 +25,8 @@
 #include "build/build_config.h"
 
 class FilePath;
+bool BrowserDVNCI_isEditable();
+bool BrowserDVNCI_isRuntime();
 
 class BASE_API CommandLine {
  public:

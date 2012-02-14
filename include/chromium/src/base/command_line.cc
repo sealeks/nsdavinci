@@ -20,6 +20,18 @@
 #include <shellapi.h>
 #endif
 
+
+
+bool BrowserDVNCI_isEditable(){ 
+      static bool is_editable = CommandLine::ForCurrentProcess()->HasSwitch("dvnci-editable");
+      return is_editable;
+}
+
+bool BrowserDVNCI_isRuntime(){ 
+      static bool is_runtime = CommandLine::ForCurrentProcess()->HasSwitch("dvnci-runtime");
+      return is_runtime;
+}
+
 CommandLine* CommandLine::current_process_commandline_ = NULL;
 
 namespace {
@@ -241,7 +253,7 @@ CommandLine::StringType CommandLine::command_line_string() const {
 #endif
         string.append(kSwitchValueSeparator + switch_value);
       }
-    }
+	}
     else {
 #if defined(OS_WIN)
       arg = QuoteForCommandLineToArgvW(arg);
@@ -249,6 +261,10 @@ CommandLine::StringType CommandLine::command_line_string() const {
       string.append(arg);
     }
   }
+    if (BrowserDVNCI_isEditable())
+      string.append(L" --dvnci-editable");
+    if (BrowserDVNCI_isRuntime())
+      string.append(L" --dvnci-runtime");
   return string;
 }
 

@@ -107,15 +107,6 @@ void BrowserGlobalEntety_Exit(void*){
       BrowserList::AttemptUserExit();
 }
 
-bool BrowserDVNCI_isEditable(){ 
-      static bool is_editable = CommandLine::ForCurrentProcess()->HasSwitch(switches::kDVNCIEditable);
-      return is_editable;
-}
-
-bool BrowserDVNCI_isRuntime(){ 
-      static bool is_runtime = CommandLine::ForCurrentProcess()->HasSwitch(switches::kDVNCIRuntime);
-      return is_runtime;
-}
 
 
 
