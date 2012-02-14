@@ -10,7 +10,7 @@
         <mlib:sensor id="sensor1" x="1323" y="226" height="25" width="100" rotate="0" background="water" stroke-width="1" stroke="gray" r="8" param="r8::a" format="%8.3f m" fontstyle="fill: #002;"/>
 
         <mlib:motor id="motoron10" x="1514" y="412" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="90" alarmack="m1::c4" local="m1::c2" environment="air" ron="m1::c1"/>
-        <mlib:motor id="motoron12" x="915" y="575" height="60" width="60" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="0" alarmack="m1::c4" local="m1::c2" environment="water" ron="m1::c1"/>
+        <mlib:motor id="motoron12" x="1098" y="674" height="60" width="60" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="0" alarmack="m1::c4" local="m1::c2" environment="water" ron="m1::c1"/>
         <mlib:motor id="motoron7" x="829" y="503" height="60" width="60" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="0" alarmack="m1::c4" local="m1::c2" environment="water" ron="m1::c1"/>
         <mlib:motor id="motoron6" x="668" y="576" height="60" width="60" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="0" alarmack="m1::c4" local="m1::c2" environment="gaz" ron="m1::c1"/>
         <mlib:motor id="motoron13" x="268" y="659" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Подпиточный насос на бойлере" rotate="90" alarmack="m1::c4" local="m1::c2" environment="oil" ron="m1::c1"/>
