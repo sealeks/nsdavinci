@@ -166,18 +166,19 @@ mainlibutil.global.getObjectInspector = function (){
 
 mainlibutil.startup.init = function(){
     var el = document; 
-    if (true/*dvnci_iseditable()*/)
-    document.addEventListener('keyup' ,function () {
-        if ((event.keyCode==82) && (event.shiftKey)) {
+    if (dvnci_iseditable()){
+    //document.addEventListener('keyup' ,function () {
+        //if ((event.keyCode==82) && (event.shiftKey)) {
             //mainlibutil.designtime.initAll();
             document.red = new redactor(document);
-            postMessage("t","*");
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }      
-    });
-    window.addEventListener("message", function () { alert(window.name);},false);
+            //postMessage("t","file://");
+            //event.stopPropagation();
+            //event.preventDefault();
+           // return;
+       // }      
+    //});
+    }
+    //window.addEventListener("message", function () { alert(window.name);},false);
     window.onunload=dvnci_close_win;
 }
 
