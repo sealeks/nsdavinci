@@ -1231,8 +1231,8 @@ redactor.prototype.createObjectInspector = function(t, l, h, w){
     }
  
     this.inspectorFrame=mainlibutil.global.getObjectInspector();
-    this.inspectorFrame.tbody=mainlibutil.designtime.getObjectInspector();
-    return this.inspectorFrame.tbody;
+    this.inspectortbody=mainlibutil.designtime.getObjectInspector();
+    return this.inspectortbody;
     
 }
 
@@ -1256,14 +1256,18 @@ redactor.prototype.recreateObjectInspector = function(t, l, h, w){
 
 
 redactor.prototype.show_property = function(){
-    if (!this.inspectorFrame) return;
+    
     
     var attriblist=this.getAttributeList();
 
-    
-    mainlibutil.dom.clearChildNode(this.inspectorFrame.tbody);   
 
-    var trh= mainlibutil.html.create_tr(this.inspectorFrame.tbody);
+    this.inspectorFrame=mainlibutil.global.getObjectInspector();
+    if (!this.inspectorFrame) return;
+    this.inspectortbody=mainlibutil.designtime.getObjectInspectorTbody();
+    
+    mainlibutil.dom.clearChildNode(this.inspectortbody);   
+
+    var trh= mainlibutil.html.create_tr(this.inspectortbody);
 
             
     var th1= mainlibutil.html.create_th(trh);
@@ -1277,7 +1281,7 @@ redactor.prototype.show_property = function(){
                             
     for (var i=0; i<attriblist.length; ++i ){
         
-        var tr= mainlibutil.html.create_tr(this.inspectorFrame.tbody);
+        var tr= mainlibutil.html.create_tr(this.inspectortbody);
        
         var td1= mainlibutil.html.create_td(tr);
         td1.innerHTML=attriblist[i]['name'];

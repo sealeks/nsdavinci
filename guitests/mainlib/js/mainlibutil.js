@@ -3,6 +3,8 @@ var mainlibutil = {};
 
 mainlibutil.startup = {};
 
+mainlibutil.window = {};
+
 mainlibutil.svg = {};
 
 mainlibutil.html = {};
@@ -24,10 +26,11 @@ function dvnci_open(name){
         for (var i=0; i<fl.length;++i){
             if (fl[i]['name']==name){
                 if (!fl[i].window){
-                  var win=window.open(fl[i]['path'],fl[i]['name'],fl[i]['param'].toString());
-                  fl[i].window=win;}
+                    var win=window.open(fl[i]['path'],fl[i]['name'],fl[i]['param'].toString());
+                    fl[i].window=win;
+                }
                 else{
-                  fl[i].window.focus();  
+                    fl[i].window.focus();  
                 }
                 return;
             }
@@ -62,6 +65,7 @@ function dvnci_close_win(){
 }
 
 
+
 //
 
 mainlibutil.global.getGlobal = function (){
@@ -76,13 +80,13 @@ mainlibutil.global.getFormList = function (){
 }
 
 mainlibutil.global.getObjectInspector = function (){
- var tmp=mainlibutil.global.getGlobal();
+    var tmp=mainlibutil.global.getGlobal();
     if (tmp && !tmp.objectinspectorwin){
-        var objectinspectorwin=window.open('', '' , 'caption=Свойства,left=5%,top=5%, width=400,height=650,tooltip=yes,allwaystop=yes;');
+        var objectinspectorwin=mainlibutil.window.createwindow('','Свойства','5%','5%', '400','650','yes','yes');
+            //window.open('', '' , 'caption=Свойства,left=5%,top=5%, width=400,height=650,tooltip=yes,allwaystop=yes;');
         tmp.objectinspectorwin=objectinspectorwin;
-        objectinspectorwin.onclose=mainlibutil.designtime.destroyObjectInspector;
         objectinspectorwin.document.open();    
-         var style='<style type="text/css"> body { margin: 0 0; padding: 0 0; -webkit-user-select: none;}'+
+        var style='<style type="text/css"> body { margin: 0 0; padding: 0 0; -webkit-user-select: none;}'+
         'div.scrollHeader{'+  
         'margin: 0 0; padding: 0 0; border-top-right-radius: 6px; border-top-left-radius: 6px;'+
         'border:  1px solid #000022; background: #000044; color: yellow; padding: 4px; -webkit-user-select: none;}'+  
@@ -154,10 +158,10 @@ mainlibutil.global.getObjectInspector = function (){
         objectinspectorwin.document.write('   </body>');
         objectinspectorwin.document.write('   </html>');
         objectinspectorwin.document.close();
+        tmp.objectinspectordoc=objectinspectorwin.document;
+        tmp.objectinspectortbody=objectinspectorwin.document.getElementsByTagName('tbody')[0];
         objectinspectorwin.onunload=mainlibutil.designtime.destroyObjectInspector;
-        }
-        
-       
+    }   
     return (tmp && tmp.objectinspectorwin) ? tmp.objectinspectorwin : null;
 }
 
@@ -167,20 +171,27 @@ mainlibutil.global.getObjectInspector = function (){
 mainlibutil.startup.init = function(){
     var el = document; 
     if (dvnci_iseditable()){
-    //document.addEventListener('keyup' ,function () {
-        //if ((event.keyCode==82) && (event.shiftKey)) {
-            //mainlibutil.designtime.initAll();
-            document.red = new redactor(document);
-            //postMessage("t","file://");
-            //event.stopPropagation();
-            //event.preventDefault();
-           // return;
-       // }      
-    //});
-    }
-    //window.addEventListener("message", function () { alert(window.name);},false);
+        document.red = new redactor(document);
+        mainlibutil.global.getObjectInspector();
+       }
     window.onunload=dvnci_close_win;
 }
+
+//  window
+
+mainlibutil.window.createwindow = function(name , caption, top, left, width, height, tooltip, allwaystop){
+    var tmp='caption=' + ( caption ? caption :  "") +
+       ',left='+ (left ? left : '0') +
+       ',top=' + (top ? top : '0') +
+       ',width=' + (width ? width : '200px') +
+       ',height=' + (height ? height : '200px') +
+       ',tooltip=' + (tooltip ? 'yes' : '0') +
+       ',allwaystop='+ (allwaystop ? 'yes' : '0') +
+       ';'
+    return window.open('', '' , tmp);
+}
+
+//
 
 
 mainlibutil.html.create = function (name, parent){
@@ -382,8 +393,8 @@ mainlibutil.svg.create_text = function (parent, x, y,  style, classnm, text){
     if (style) newel.setAttribute('style', style);
     if (classnm) newel.setAttribute('class', classnm);
     if (text){
-          var textdat = parent.ownerDocument.createTextNode('R');    
-          newel.appendChild(textdat);
+        var textdat = parent.ownerDocument.createTextNode('R');    
+        newel.appendChild(textdat);
     }
     return newel;
 }
@@ -538,16 +549,27 @@ mainlibutil.document.writeDoc = function (doc){
 
 // radactor util
 
-mainlibutil.designtime.getObjectInspectorDocument = function(){
-    var tmp = mainlibutil.global.getObjectInspector();
-    return tmp ? tmp.document : undefined;
-}
 
 mainlibutil.designtime.showObjectInspector = function(){
     var tmp = mainlibutil.global.getObjectInspector();
     if (tmp)
         tmp.focus();
 }
+
+mainlibutil.designtime.getObjectInspectorDocument = function(){
+    var tmp = mainlibutil.global.getGlobal();
+    if (tmp && tmp.objectinspectordoc) {
+        return tmp.objectinspectordoc; 
+    }
+}
+
+mainlibutil.designtime.getObjectInspectorTbody = function(){
+    var tmp = mainlibutil.global.getGlobal();
+    if (tmp && tmp.objectinspectortbody) {
+        return tmp.objectinspectortbody;       
+    }   
+}  
+
 
 mainlibutil.designtime.closeObjectInspector = function(){
     var tmp = mainlibutil.global.getObjectInspector();
@@ -557,41 +579,14 @@ mainlibutil.designtime.closeObjectInspector = function(){
 
 mainlibutil.designtime.destroyObjectInspector = function(){
     var tmp=mainlibutil.global.getGlobal();
-    if (tmp && tmp.objectinspectorwin){
+    if (tmp && tmp.objectinspectorwin)
         tmp.objectinspectorwin=undefined;
-    }
+    if (tmp && tmp.objectinspectordoc)
+        tmp.objectinspectordoc=undefined;
+    if (tmp && tmp.objectinspectortbody)
+        tmp.objectinspectortbody=undefined;   
+    
 }
+  
 
-
-mainlibutil.designtime.getObjectInspector = function(){
-    var tmp = mainlibutil.global.getObjectInspector();
-    var doc = mainlibutil.designtime.getObjectInspectorDocument();
-    if (tmp && doc) {
-          return doc.getElementsByTagName('tbody')[0];       
-    }
-    
-}    
-    
-mainlibutil.designtime.initAll = function(){
-    var fl =  mainlibutil.global.getFormList();
-    if (fl){  
-        for (var i=0; i<fl.length;++i){
-            if (fl[i].window && fl[i].window.document){
-                //fl[i].window.document.red = new redactor(fl[i].window.document);
-                postMessage("t");
-
-            }
-        }
-    }
-}    
-
-mainlibutil.designtime.uninitAll = function(){
-    var fl =  mainlibutil.global.getFormList();
-    if (fl){  
-        for (var i=0; i<fl.length;++i){
-            if (fl[i].window){
-            }
-        }
-    }
-}  
     
