@@ -21,6 +21,7 @@ mainlibutil.global = {};
 
 
 function dvnci_open(name){
+    if (dvnci_iseditable()) return;
     var fl =  mainlibutil.global.getFormList();
     if (fl){   
         for (var i=0; i<fl.length;++i){
@@ -39,6 +40,40 @@ function dvnci_open(name){
 }
 
 function dvnci_close(name){
+    if (dvnci_iseditable()) return;
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                if (fl[i].window)
+                    fl[i].window.close();
+                fl[i].window=null;
+                return;
+            }
+        }
+    }
+}
+
+
+function dvnci_open_design(name){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){   
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                if (!fl[i].window){
+                    var win=window.open(fl[i]['path'],fl[i]['name'],fl[i]['param'].toString());
+                    fl[i].window=win;
+                }
+                else{
+                    fl[i].window.focus();  
+                }
+                return;
+            }
+        }
+    }
+}
+
+function dvnci_close_design(name){
     var fl =  mainlibutil.global.getFormList();
     if (fl){  
         for (var i=0; i<fl.length;++i){
@@ -64,6 +99,11 @@ function dvnci_close_win(){
     }
 }
 
+function exit(){
+    if (dvnci_iseditable()) return;
+    dvnci_exit();
+}
+
 
 
 //
@@ -79,107 +119,22 @@ mainlibutil.global.getFormList = function (){
     return (tmp && tmp.formlist) ? tmp.formlist : null;
 }
 
-mainlibutil.global.getObjectInspector = function (){
-    var tmp=mainlibutil.global.getGlobal();
-    if (tmp && !tmp.objectinspectorwin){
-        var objectinspectorwin=mainlibutil.window.createwindow('','Свойства','5%','5%', '400','650','yes','yes');
-            //window.open('', '' , 'caption=Свойства,left=5%,top=5%, width=400,height=650,tooltip=yes,allwaystop=yes;');
-        tmp.objectinspectorwin=objectinspectorwin;
-        objectinspectorwin.document.open();    
-        var style='<style type="text/css"> body { margin: 0 0; padding: 0 0; -webkit-user-select: none;}'+
-        'div.scrollHeader{'+  
-        'margin: 0 0; padding: 0 0; border-top-right-radius: 6px; border-top-left-radius: 6px;'+
-        'border:  1px solid #000022; background: #000044; color: yellow; padding: 4px; -webkit-user-select: none;}'+  
-                
-        'div.scrollWrapper{'+
-                
-        'overflow:scroll; margin: 0 0; padding: 0 0;'+
-        'border:  1px solid grey; height:99%;}'+
-                
-        'table.scrollable{'+
-        'border-collapse:collapse;'+
-        'text-align: left;'+
-        'font-size: 12px;'+
-        'background:#f0f0f0;'+
-        '}'+
-        'table.scrollable th{'+
-        'border: 1px solid #999999;'+
-        'background:#e0e0e0;'+
-        'position: relative;'+
-        'padding-left: 6px;'+
-        'background-position: 100% 100%;'+
-        '}'+
-        'table.scrollable tbody{'+
-        'overflow:auto;'+
-        'border-spacing: 0px'+
-        '}'+
-        'table.scrollable td.static{ background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#aaa));'+
-        'border: 1px solid gray; '+
-        'padding: 0px 0px;'+
-        '}' +
-        'table.scrollable td{'+
-        'border: 1px solid gray; '+
-        'padding: 0px 0px;'+
-        '}' +
-        'table.scrollable td input{'+
-        'display: block; width: 100%; border: 0px; color: black;'+
-        'padding: 0px 0px; font-size: 12px; '+
-        '}' +
-        'table.scrollable td select{'+
-        'display: block; width: 100%; border: 0px; color: black;'+
-        'padding: 0px 0px; font-size: 12px;'+
-        '}' +
-        '.diffvalue{'+
-        'background: #808080;'+
-        '}</style>';                
-        objectinspectorwin.document.write('<?xml version="1.0" encoding="UTF-8"?>');
-        objectinspectorwin.document.write('   <html>');
-        objectinspectorwin.document.write('      <head>');
-        objectinspectorwin.document.write('<script type="text/javascript" src="../mainlib/js/startup.js"></script>');
-        objectinspectorwin.document.write('<script type="text/javascript" src="../mainlib/js/redactor.js"></script>');
-        objectinspectorwin.document.write('<script type="text/javascript" src="../mainlib/js/mainlibutil.js"></script>');
-        objectinspectorwin.document.write(style);
-        objectinspectorwin.document.write('   </head>');
-        objectinspectorwin.document.write('   <body>');
-        objectinspectorwin.document.write('   <div>');
-        objectinspectorwin.document.write('   <div class="scrollWrapper">');
-        objectinspectorwin.document.write('   <table class="scrollable" width="100%">');
-        objectinspectorwin.document.write('   <tbody>');
-        objectinspectorwin.document.write('   <tr>');
-        objectinspectorwin.document.write('   <th> Свойство');
-        objectinspectorwin.document.write('   </th>');       
-        objectinspectorwin.document.write('   <th> Значение');
-        objectinspectorwin.document.write('   </th>');
-        objectinspectorwin.document.write('   </tr>');       
-        objectinspectorwin.document.write('   </tbody>');
-        objectinspectorwin.document.write('   </table>');
-        objectinspectorwin.document.write('   </div>');       
-        objectinspectorwin.document.write('   </div>');        
-        objectinspectorwin.document.write('   </body>');
-        objectinspectorwin.document.write('   </html>');
-        objectinspectorwin.document.close();
-        tmp.objectinspectordoc=objectinspectorwin.document;
-        tmp.objectinspectortbody=objectinspectorwin.document.getElementsByTagName('tbody')[0];
-        objectinspectorwin.onunload=mainlibutil.designtime.destroyObjectInspector;
-    }   
-    return (tmp && tmp.objectinspectorwin) ? tmp.objectinspectorwin : null;
-}
-
-
 //
 
 mainlibutil.startup.init = function(){
     var el = document; 
     if (dvnci_iseditable()){
         document.red = new redactor(document);
-        mainlibutil.global.getObjectInspector();
+        mainlibutil.designtime.getObjectInspector();
+        mainlibutil.designtime.getMainWindow();
+        mainlibutil.designtime.getFormInspector();
        }
     window.onunload=dvnci_close_win;
 }
 
 //  window
 
-mainlibutil.window.createwindow = function(name , caption, top, left, width, height, tooltip, allwaystop){
+mainlibutil.window.create = function(name , caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal){
     var tmp='caption=' + ( caption ? caption :  "") +
        ',left='+ (left ? left : '0') +
        ',top=' + (top ? top : '0') +
@@ -187,8 +142,32 @@ mainlibutil.window.createwindow = function(name , caption, top, left, width, hei
        ',height=' + (height ? height : '200px') +
        ',tooltip=' + (tooltip ? 'yes' : '0') +
        ',allwaystop='+ (allwaystop ? 'yes' : '0') +
+       (nodecorate ? ',decorated=no' : '') +
        ';'
-    return window.open('', '' , tmp);
+    return window.open('', name , tmp);
+}
+
+
+mainlibutil.window.createhtml = function(name , caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, stylefile, style){
+    var newwin=mainlibutil.window.create(name , caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal);
+    newwin.document.open();
+    newwin.document.write('<?xml version="1.0" encoding="UTF-8"?>');
+    newwin.document.write('<html>');
+    newwin.document.write('    <head>');
+    newwin.document.write('     <script type="text/javascript" src="../mainlib/js/startup.js"></script>');
+    newwin.document.write('     <script type="text/javascript" src="../mainlib/js/redactor.js"></script>');
+    newwin.document.write('     <script type="text/javascript" src="../mainlib/js/mainlibutil.js"></script>');
+    if (stylefile)
+        newwin.document.write('     <link rel="stylesheet" type="text/css" href="'+stylefile+'">');
+    if (style)
+        newwin.document.write(style);
+    newwin.document.write('    </head>');
+    newwin.document.write('    <body>');
+    newwin.document.write('    </body>')
+    newwin.document.write('</html>');
+    newwin.document.close();
+    return newwin;
+    
 }
 
 //
@@ -550,10 +529,74 @@ mainlibutil.document.writeDoc = function (doc){
 // radactor util
 
 
-mainlibutil.designtime.showObjectInspector = function(){
-    var tmp = mainlibutil.global.getObjectInspector();
-    if (tmp)
-        tmp.focus();
+///  Main Window
+
+mainlibutil.designtime.getMainWindow = function (){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp.maindesignwin){
+        var maindesignwin=mainlibutil.window.createhtml('_mainDesign','Редактор','5%','5%', '600','60','yes','yes',null,null, "../mainlib/css/maindesignwindow.css");
+        tmp.maindesignwin=maindesignwin;
+        tmp.maindesigndoc=maindesignwin.document;
+        maindesignwin.onunload=mainlibutil.designtime.destroyMainWindow;
+        var objdoc =maindesignwin.document;
+        try{
+          var body=objdoc.getElementsByTagName('body')[0];
+          var div = mainlibutil.html.create_div(body);
+          div.setAttribute('id','toolbar');
+          var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable','1',function() {dvnci_exit();});
+          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable','2',function() {dvnci_exit();});
+          
+          
+        }
+        catch(error){
+           alert ('Create window error:' + error);
+           return null;
+        }       
+    }   
+    return (tmp && tmp.maindesignwin) ? tmp.maindesignwin : null;
+}
+
+
+mainlibutil.designtime.destroyMainWindow = function(){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && tmp.maindesignwin)
+        tmp.maindesignwin=undefined;
+    if (tmp && tmp.maindesigndoc)
+        tmp.maindesigndoc=undefined;   
+    dvnci_exit();
+       
+    
+}
+
+///  Object inspector
+
+mainlibutil.designtime.getObjectInspector = function (){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp.objectinspectorwin){
+ 
+        var objectinspectorwin=mainlibutil.window.createhtml('_ObjectInspector','Свойства','15%','15%', '400','650','yes','yes',null,null, "../mainlib/css/objectinspector.css");
+        tmp.objectinspectorwin=objectinspectorwin;
+        tmp.objectinspectordoc=objectinspectorwin.document;
+        objectinspectorwin.onunload=mainlibutil.designtime.destroyObjectInspector;
+        var objdoc =objectinspectorwin.document;
+        try{
+          var body=objdoc.getElementsByTagName('body')[0];
+          var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
+          var table = mainlibutil.html.create_table(div,null,"scrollable");
+          var tbody = mainlibutil.html.create_tbody(table);
+          var tr = mainlibutil.html.create_tr(tbody);
+          var th1 =mainlibutil.html.create_th(tr);
+          th1.innerHTML='Имя';
+          var th2 =mainlibutil.html.create_th(tr);
+          th2.innerHTML='Значение';
+          tmp.objectinspectortbody=tbody;
+        }
+        catch(error){
+           alert ('Create window error:' + error);
+           return null;
+        }       
+    }   
+    return (tmp && tmp.objectinspectorwin) ? tmp.objectinspectorwin : null;
 }
 
 mainlibutil.designtime.getObjectInspectorDocument = function(){
@@ -571,8 +614,16 @@ mainlibutil.designtime.getObjectInspectorTbody = function(){
 }  
 
 
+mainlibutil.designtime.showObjectInspector = function(){
+    var tmp = mainlibutil.designtime.getObjectInspector();
+    if (tmp)
+        tmp.focus();
+}
+
+
+
 mainlibutil.designtime.closeObjectInspector = function(){
-    var tmp = mainlibutil.global.getObjectInspector();
+    var tmp = mainlibutil.designtime.getObjectInspector();
     if (tmp.objectinspectorwin)
         tmp.objectinspectorwin.close();
 }
@@ -587,6 +638,136 @@ mainlibutil.designtime.destroyObjectInspector = function(){
         tmp.objectinspectortbody=undefined;   
     
 }
+
+
+// Form inspector
+
+
+mainlibutil.designtime.getFormInspector = function (){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp.forminspectorwin){
+ 
+        var forminspectorwin=mainlibutil.window.createhtml('_FormInspector','Окна','65%','65%', '300','400','yes','yes',null,null, "../mainlib/css/forminspector.css");
+        tmp.forminspectorwin=forminspectorwin;
+        tmp.forminspectordoc=forminspectorwin.document;
+        forminspectorwin.onunload=mainlibutil.designtime.destroyFormInspector;
+        var objdoc =forminspectorwin.document;
+        try{
+          var body=objdoc.getElementsByTagName('body')[0];
+          var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
+          var table = mainlibutil.html.create_table(div,null,"scrollable");
+          var tbody = mainlibutil.html.create_tbody(table);
+          var tr = mainlibutil.html.create_tr(tbody);
+          var th1 =mainlibutil.html.create_th(tr);
+          th1.innerHTML='id';
+          var th2 =mainlibutil.html.create_th(tr);
+          th2.innerHTML='Путь';
+          var th3 =mainlibutil.html.create_th(tr);
+          th3.innerHTML='O';
+          var th4 =mainlibutil.html.create_th(tr);
+          th4.innerHTML='X';
+          tmp.forminspectortbody=tbody;
+        }
+        catch(error){
+           alert ('Create window error:' + error);
+           return null;
+        }       
+    }   
+    mainlibutil.designtime.fillFormInspector();
+    return (tmp && tmp.forminspectorwin) ? tmp.forminspectorwin : null;
+}
+
+mainlibutil.designtime.fillFormInspector = function (){
+    var tbody = mainlibutil.designtime.getFormInspectorTbody();
+    mainlibutil.dom.clearChildNode(tbody);   
+
+    var tr = mainlibutil.html.create_tr(tbody);
+    var th1 =mainlibutil.html.create_th(tr);
+    th1.innerHTML='id';
+    var th2 =mainlibutil.html.create_th(tr);
+    th2.innerHTML='Путь';
+    var th3 =mainlibutil.html.create_th(tr);
+    th3.innerHTML='O';
+    var th4 =mainlibutil.html.create_th(tr);
+    th4.innerHTML='X';
+    
+    
+    var fl= mainlibutil.global.getFormList();
+
+    
+                            
+    for (var i=0; i<fl.length; ++i ){
+        var formname=fl[i]['name'];
+        formname=formname.toString();
+        var tr= mainlibutil.html.create_tr(tbody);
+       
+        var td1= mainlibutil.html.create_td(tr);
+        td1.innerHTML=formname;
+        
+        td1.className='static';
+   
+        var td2= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var val=fl[i]['path'];
+        td2.innerHTML= val ? val : "";
+        
+        var td3= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var btno = mainlibutil.html.create_button( td3,null,null,'O');
+        btno.setAttribute('onclick','dvnci_open_design("'+formname+ '");');
+        
+        var td4= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var btnc = mainlibutil.html.create_button( td4,null,null,'X');
+        btnc.setAttribute('onclick','dvnci_close_design("'+formname+ '");');
+    
+}
+        
+        
+}
+
+mainlibutil.designtime.getFormInspectorDocument = function(){
+    var tmp = mainlibutil.global.getGlobal();
+    if (tmp && tmp.forminspectordoc) {
+        return tmp.forminspectordoc; 
+    }
+}
+
+mainlibutil.designtime.getFormInspectorTbody = function(){
+    var tmp = mainlibutil.global.getGlobal();
+    if (tmp && tmp.forminspectortbody) {
+        return tmp.forminspectortbody;       
+    }   
+}  
+
+
+mainlibutil.designtime.showFormInspector = function(){
+    var tmp = mainlibutil.designtime.getFormInspector();
+    if (tmp)
+        tmp.focus();
+}
+
+
+
+mainlibutil.designtime.closeFormInspector = function(){
+    var tmp = mainlibutil.designtime.getFormInspector();
+    if (tmp.forminspectorwin)
+        tmp.forminspectorwin.close();
+}
+
+mainlibutil.designtime.destroyFormInspector = function(){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && tmp.forminspectorwin)
+        tmp.forminspectorwin=undefined;
+    if (tmp && tmp.forminspectordoc)
+        tmp.forminspectordoc=undefined;
+    if (tmp && tmp.forminspectortbody)
+        tmp.forminspectortbody=undefined;   
+    
+}
+
+
+
+
+
+
   
 
     
