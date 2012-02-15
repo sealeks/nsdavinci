@@ -5,6 +5,7 @@ div.scrollWrapper{
     overflow:scroll;
     height:150px;
     border:  1px solid grey;
+    width: 100%;
 }
 table.scrollable{
     border-collapse:collapse;

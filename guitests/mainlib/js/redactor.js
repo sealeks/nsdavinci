@@ -1230,7 +1230,7 @@ redactor.prototype.createObjectInspector = function(t, l, h, w){
         w = cookie['w'];
     }
  
-    this.inspectorFrame=mainlibutil.global.getObjectInspector();
+    this.inspectorFrame=mainlibutil.designtime.getObjectInspector();
     this.inspectortbody=mainlibutil.designtime.getObjectInspector();
     return this.inspectortbody;
     
@@ -1261,7 +1261,7 @@ redactor.prototype.show_property = function(){
     var attriblist=this.getAttributeList();
 
 
-    this.inspectorFrame=mainlibutil.global.getObjectInspector();
+    this.inspectorFrame=mainlibutil.designtime.getObjectInspector();
     if (!this.inspectorFrame) return;
     this.inspectortbody=mainlibutil.designtime.getObjectInspectorTbody();
     
