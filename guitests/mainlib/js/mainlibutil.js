@@ -543,9 +543,10 @@ mainlibutil.designtime.getMainWindow = function (){
           var body=objdoc.getElementsByTagName('body')[0];
           var div = mainlibutil.html.create_div(body);
           div.setAttribute('id','toolbar');
-          var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable','1',function() {dvnci_exit();});
-          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable','2',function() {dvnci_exit();});
-          
+          var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable','',function() {dvnci_exit();});
+          mainlibutil.html.create_div(btn1,null,'toolbar-icon');
+          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable','',function() {dvnci_exit();});
+          mainlibutil.html.create_div(btn2,null,'toolbar-icon');
           
         }
         catch(error){
