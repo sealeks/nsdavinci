@@ -3,6 +3,8 @@ var mainlibutil = {};
 
 mainlibutil.startup = {};
 
+mainlibutil.project = {};
+
 mainlibutil.window = {};
 
 mainlibutil.svg = {};
@@ -105,6 +107,12 @@ function exit(){
 }
 
 
+function init_project_controller(){
+    mainlibutil.global.getStartupDoc(document)
+    mainlibutil.project.init_form();
+    window.close();
+}
+
 
 //
 
@@ -117,6 +125,13 @@ mainlibutil.global.getFormList = function (){
     if (tmp && !tmp.formlist)
         tmp.formlist=[];
     return (tmp && tmp.formlist) ? tmp.formlist : null;
+}
+
+mainlibutil.global.getStartupDoc = function (doc){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp.startupdocument && doc)
+        tmp.startupdocument=doc;
+    return (tmp && tmp.startupdocument) ? tmp.startupdocument : null;
 }
 
 //
@@ -145,6 +160,72 @@ mainlibutil.startup.initredactor = function(name, red){
     }
 }
 
+
+//  project
+
+mainlibutil.project.init_form = function(){
+    var doc = mainlibutil.global.getStartupDoc();
+    if (doc){
+        try{
+        var elp=doc.getElementsByTagName('project')[0];
+        var projectPath=elp.getAttribute('path');
+        
+        var els=doc.getElementsByTagName('form');
+        var fl=mainlibutil.global.getFormList();
+        
+        for (var i=0; i<els.length;++i){
+          var path = projectPath && els[i].getAttribute('file') ? projectPath.toString() + els[i].getAttribute('file').toString() : 
+                     els[i].getAttribute('file') ? els[i].getAttribute('file').toString() : null; 
+          if (path){   
+              
+          var param = mainlibutil.project.buildparam(els[i]);
+          var win=window.open(path,
+                              els[i].getAttribute('name')  ? els[i].getAttribute('name') :  '',
+                              param ? param : '');
+                
+                
+         
+          
+          fl.push({'name' : els[i].getAttribute('name'),
+                              'path'  : path,
+                              'param'  : param,
+                              'window'  : win});}         
+        }}
+    catch(error){
+        alert('Startup error: '+ error)
+    }
+    }
+}
+
+mainlibutil.project.buildparam = function(el){
+    if (el){
+        var param='';
+        if (el.getAttribute('caption'))
+            param=param+";caption="+el.getAttribute('caption');
+        if (el.getAttribute('left'))
+            param=param+";left="+el.getAttribute('left');
+        if (el.getAttribute('top'))
+            param=param+";top="+el.getAttribute('top');  
+         if (el.getAttribute('width'))
+            param=param+";width="+el.getAttribute('width');
+        if (el.getAttribute('height'))
+            param=param+";height="+el.getAttribute('height'); 
+        if (el.getAttribute('decorated') && ((el.getAttribute('decorated')=='no') || (el.getAttribute('decorated')=='0')))
+            param=param+";decorated=no";
+        if (el.getAttribute('allwaystop') && ((el.getAttribute('allwaystop')=='yes') || (el.getAttribute('decorated')=='1')))
+            param=param+";allwaystop=yes";
+        if (el.getAttribute('resizable') && ((el.getAttribute('resizable')=='no') || (el.getAttribute('resizable')=='0')))
+            param=param+";resizable=no";
+        if (el.getAttribute('modal') && ((el.getAttribute('modal')=='yes') || (el.getAttribute('modal')=='1')))
+            param=param+";modal=yes";    
+        if (el.getAttribute('state'))
+            param=param+";state="+el.getAttribute('state');
+        return param;                
+    }
+    return null;
+    
+} 
+
 //  window
 
 mainlibutil.window.create = function(name , caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal){
@@ -167,7 +248,6 @@ mainlibutil.window.createhtml = function(name , caption, top, left, width, heigh
     newwin.document.write('<?xml version="1.0" encoding="UTF-8"?>');
     newwin.document.write('<html>');
     newwin.document.write('    <head>');
-    newwin.document.write('     <script type="text/javascript" src="../mainlib/js/startup.js"></script>');
     newwin.document.write('     <script type="text/javascript" src="../mainlib/js/redactor.js"></script>');
     newwin.document.write('     <script type="text/javascript" src="../mainlib/js/mainlibutil.js"></script>');
     if (stylefile)
@@ -551,9 +631,9 @@ mainlibutil.designtime.getMainWindow = function (){
         tmp.maindesignwin=maindesignwin;
         tmp.maindesigndoc=maindesignwin.document;
         maindesignwin.onunload=mainlibutil.designtime.destroyMainWindow;
-        var objdoc =maindesignwin.document;
+        var objdoc = tmp.maindesigndoc;
         try{
-          var body=objdoc.getElementsByTagName('body')[0];
+          var body=tmp.maindesigndoc.getElementsByTagName('body')[0];
           var div = mainlibutil.html.create_div(body);
           div.setAttribute('id','toolbar');
           var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {mainlibutil.designtime.SaveAll();});
@@ -570,7 +650,7 @@ mainlibutil.designtime.getMainWindow = function (){
           mainlibutil.designtime.setMainWindowToolStatus();
         }
         catch(error){
-           alert ('Create window error:' + error);
+           alert ('Create main window error:' + error);
            return null;
         }       
     }   

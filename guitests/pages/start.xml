@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="100%" height="100%" viewBox="0 0 576 324" enable-background="new 0 0 576 324" xml:space="preserve" onload="init_project_controller()">
-<script type="text/javascript" xlink:href="../mainlib/js/startup.js" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/TR/xhtml1" xmlns="http://www.w3.org/2000/svg"/>  
+
 <script type="text/javascript" xlink:href="../mainlib/js/redactor.js" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/TR/xhtml1" xmlns="http://www.w3.org/2000/svg"/> 
 <script type="text/javascript" xlink:href="../mainlib/js/mainlibutil.js" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/TR/xhtml1" xmlns="http://www.w3.org/2000/svg"/> 
 <project path='file:///F:/Project/davinci/guitests/pages/'>
-  <form name='f1' caption='f1' file='guimotor1.xml' param='caption=Газ,left=0%,top=0%, width=85%,height=85%,decorated=no'/>
-  <form name='f2' caption='f2' file='guimotor2.xml' param='caption=Газ,left=0%,top=0%, width=85%,height=85%,decorated=no'/>
-  <form name='f3' caption='f3' file='testopen.xml' param='left=85%,top=0%, width=15%,height=100%,decorated=no'/>
-  <form name='f4' caption='f4' file='alarmtable.htm' param='left=0%,top=85%, width=85%,height=15%,decorated=no'/>
+  <!--form name='f1'  file='guimotor1.xml' caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no" modal="no" allwaystop="no" state="normal|minimized|maximized(normal)" resizable="no"  -->
+  <form name='f1' file='guimotor1.xml' caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no"/>
+  <form name='f2' file='guimotor2.xml' caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no"/>
+  <form name='f3' file='testopen.xml' caption="left" left="85%" top="0%" width="15%" height="100%" decorated="no"/>
+  <form name='f4' file='alarmtable.htm' caption="Газ" left="0%" top="85%" width="85%" height="15%" decorated="no"/>
 </project>
 
 <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0.5" y1="163.834" x2="578.5" y2="163.834">
