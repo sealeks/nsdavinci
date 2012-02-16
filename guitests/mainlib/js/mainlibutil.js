@@ -557,14 +557,17 @@ mainlibutil.designtime.getMainWindow = function (){
           var div = mainlibutil.html.create_div(body);
           div.setAttribute('id','toolbar');
           var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {mainlibutil.designtime.SaveAll();});
+          tmp.maindesign_btnsave=btn1;
           mainlibutil.html.create_div(btn1,null,'toolbar-icon');
-          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable objinsp','',function() {dvnci_exit();});
+          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable objinsp','',function() {mainlibutil.designtime.resetObjectInspector();});
+          tmp.maindesign_btnobjisp=btn2;
           mainlibutil.html.create_div(btn2,null,'toolbar-icon');
-          var btn3 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable forminsp','',function() {dvnci_exit();});
+          var btn3 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable forminsp','',function() {mainlibutil.designtime.resetFormInspector();});
+          tmp.maindesign_btnformisp=btn3;
           mainlibutil.html.create_div(btn3,null,'toolbar-icon');
-          var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {dvnci_exit();});
+          var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {mainlibutil.designtime.destroyMainWindow();});
           mainlibutil.html.create_div(btn4,null,'toolbar-icon');
-          
+          mainlibutil.designtime.setMainWindowToolStatus();
         }
         catch(error){
            alert ('Create window error:' + error);
@@ -575,18 +578,48 @@ mainlibutil.designtime.getMainWindow = function (){
 }
 
 
+
+mainlibutil.designtime.setMainWindowToolStatus = function (val){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && tmp.maindesignwin){
+        if (tmp.maindesign_btnsave && (val==1 || !val)){
+            var ns = mainlibutil.designtime.isNeedSave();
+            if (ns  && tmp.maindesign_btnsave.hasAttribute('disabled')) 
+                tmp.maindesign_btnsave.removeAttribute('disabled');
+            if (!ns  && !tmp.maindesign_btnsave.hasAttribute('disabled')) 
+                tmp.maindesign_btnsave.setAttribute('disabled','disabled');
+        }
+        if (tmp.maindesign_btnobjisp && (val==2 || !val)){
+            var objvis = mainlibutil.designtime.getObjectInspector();
+            if (!objvis  && tmp.maindesign_btnobjisp.hasAttribute('off')) 
+                tmp.maindesign_btnobjisp.removeAttribute('off');
+            if (objvis  && !tmp.maindesign_btnobjisp.hasAttribute('off')) 
+                tmp.maindesign_btnobjisp.setAttribute('off','off');
+        }        
+        if (tmp.maindesign_btnformisp && (val==3 || !val)){
+            var frmvis = mainlibutil.designtime.getFormInspector();
+            if (!frmvis  && tmp.maindesign_btnformisp.hasAttribute('off')) 
+                tmp.maindesign_btnformisp.removeAttribute('off');
+            if (frmvis  && !tmp.maindesign_btnformisp.hasAttribute('off')) 
+                tmp.maindesign_btnformisp.setAttribute('off','off');
+        }                  
+    }
+}
+
+
 mainlibutil.designtime.destroyMainWindow = function(){
     var tmp=mainlibutil.global.getGlobal();
     if (tmp && tmp.maindesignwin)
         tmp.maindesignwin=undefined;
     if (tmp && tmp.maindesigndoc)
         tmp.maindesigndoc=undefined; 
-    if (confirm("Are you sure?")){
+    if (!mainlibutil.designtime.isNeedSave())
+        dvnci_exit();
+    if (confirm("Выйти без сохранения?")){
         dvnci_exit();
         return;}
      setTimeout(function() {mainlibutil.designtime.getMainWindow();}, 100);
 
-    //    mainlibutil.designtime.getMainWindow();
     
        
     
@@ -594,8 +627,9 @@ mainlibutil.designtime.destroyMainWindow = function(){
 
 ///  Object inspector
 
-mainlibutil.designtime.getObjectInspector = function (){
+mainlibutil.designtime.getObjectInspector = function (force){
     var tmp=mainlibutil.global.getGlobal();
+    if (!force && !tmp.objectinspectorwin) return null;
     if (tmp && !tmp.objectinspectorwin){
  
         var objectinspectorwin=mainlibutil.window.createhtml('_ObjectInspector','Свойства','15%','15%', '400','650','yes','yes',null,null, "../mainlib/css/objectinspector.css");
@@ -622,6 +656,17 @@ mainlibutil.designtime.getObjectInspector = function (){
     }   
     return (tmp && tmp.objectinspectorwin) ? tmp.objectinspectorwin : null;
 }
+
+mainlibutil.designtime.resetObjectInspector = function(){
+    var vis =  mainlibutil.designtime.getObjectInspector();
+    var tmp=mainlibutil.global.getGlobal();
+    if (vis && tmp.objectinspectorwin)
+        tmp.objectinspectorwin.close();
+    else
+        mainlibutil.designtime.getObjectInspector(true);
+    mainlibutil.designtime.setMainWindowToolStatus(2);
+        
+} 
 
 mainlibutil.designtime.getObjectInspectorDocument = function(){
     var tmp = mainlibutil.global.getGlobal();
@@ -659,7 +704,8 @@ mainlibutil.designtime.destroyObjectInspector = function(){
     if (tmp && tmp.objectinspectordoc)
         tmp.objectinspectordoc=undefined;
     if (tmp && tmp.objectinspectortbody)
-        tmp.objectinspectortbody=undefined;   
+        tmp.objectinspectortbody=undefined;
+    mainlibutil.designtime.setMainWindowToolStatus(2);
     
 }
 
@@ -667,8 +713,9 @@ mainlibutil.designtime.destroyObjectInspector = function(){
 // Form inspector
 
 
-mainlibutil.designtime.getFormInspector = function (){
+mainlibutil.designtime.getFormInspector = function (force){
     var tmp=mainlibutil.global.getGlobal();
+    if (!tmp.forminspectorwin && !force) return null;
     if (tmp && !tmp.forminspectorwin){
  
         var forminspectorwin=mainlibutil.window.createhtml('_FormInspector','Окна','65%','65%', '400','200','yes','yes',null,null, "../mainlib/css/forminspector.css");
@@ -700,6 +747,17 @@ mainlibutil.designtime.getFormInspector = function (){
     mainlibutil.designtime.fillFormInspector();
     return (tmp && tmp.forminspectorwin) ? tmp.forminspectorwin : null;
 }
+
+mainlibutil.designtime.resetFormInspector = function(){
+    var vis =  mainlibutil.designtime.getFormInspector();
+    var tmp=mainlibutil.global.getGlobal();
+    if (vis && tmp.forminspectorwin)
+        tmp.forminspectorwin.close();
+    else
+        mainlibutil.designtime.getFormInspector(true);
+    mainlibutil.designtime.setMainWindowToolStatus(3);
+        
+} 
 
 mainlibutil.designtime.fillFormInspector = function (){
     var tbody = mainlibutil.designtime.getFormInspectorTbody();
@@ -783,7 +841,8 @@ mainlibutil.designtime.destroyFormInspector = function(){
     if (tmp && tmp.forminspectordoc)
         tmp.forminspectordoc=undefined;
     if (tmp && tmp.forminspectortbody)
-        tmp.forminspectortbody=undefined;   
+        tmp.forminspectortbody=undefined;
+    mainlibutil.designtime.setMainWindowToolStatus(3);
     
 }
 
@@ -792,12 +851,19 @@ mainlibutil.designtime.SaveAll = function(){
     for (var i=0; i<fl.length; ++i ){
         if (fl[i].red){
             fl[i].red.save();
+    }   
     }
-    
-    }
+    mainlibutil.designtime.setMainWindowToolStatus();
     }
 
-
+mainlibutil.designtime.isNeedSave = function (){
+    var fl= mainlibutil.global.getFormList();
+    for (var i=0; i<fl.length; ++i ){
+        if (fl[i].red && fl[i].red.needsave)
+            return true;        
+    }   
+    return false;
+}
 
 
 

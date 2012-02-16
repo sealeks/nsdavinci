@@ -249,7 +249,7 @@ function redactor(doc){
     });        
     this.attach(this.instantdocument.documentElement);
     
-    this.createSighn();
+    this.needsave=false;
 }
 
 
@@ -554,7 +554,10 @@ redactor.prototype.setAttributeValue = function(name, val, el){
 redactor.prototype.setProperty = function(nm, val){
     this.setAttributeValue(nm['name'],val);
     this.updateElement();
+    this.needsave=true; 
+    mainlibutil.designtime.setMainWindowToolStatus(1);
     this.show_property();
+    
     
 }    
 
@@ -597,12 +600,14 @@ redactor.prototype.updateElement = function(el){
         for (var j=0; j< this.selectedElemens.length; ++j)
             this.updateElement(this.selectedElemens[j], true);
     }
+   
 }
 
 
 redactor.prototype.save = function(){
     if (this.sourseDocument){
         mainlibutil.document.writeDoc(this.sourseDocument);
+        this.needsave=false;
     }  
 }
 
@@ -835,11 +840,7 @@ redactor.prototype.select_component = function(el, shift, ctnrl){
 redactor.prototype.keybord_dispatcher = function (){
     
     this.moveElements(event);
-    
-    if (event.keyCode==69) {
-        this.attribute_editor();
-    }
-    
+
     if ((event.keyCode==82) && (event.shiftKey)) {
         window.location.reload();
         event.stopPropagation();
@@ -915,8 +916,10 @@ redactor.prototype.moveElements = function (event){
 
     }
     
-    if (ismove)
-        this.updateElement();    
+    if (ismove){
+        this.updateElement();
+
+        }   
 }
 
 
@@ -972,19 +975,6 @@ redactor.prototype.mousedown_component = function (){
     this.draggedstart=undefined;
 }
 
-redactor.prototype.mousedown_util = function (){
-    if ((event.button==0)){
-        var trgt = this.getTarget(event);
-        if (trgt.getAttribute('id')=='object_inspector_header'){
-            this.objins_draggedstart=true;
-            this.dragstartevent = event;
-            this.draggedstart=undefined;
-            event.stopPropagation();
-            return;
-        }
-    }
-    this.objins_draggedstart=undefined;
-}
 
 redactor.prototype.mouseup_document = function (){
     if (event.button==0){
@@ -998,6 +988,8 @@ redactor.prototype.mouseup_document = function (){
                         this.changeRect( xsh, ysh , null, null,  el);
                     }
                     this.updateElement();
+                    document.red.needsave=true; 
+                    mainlibutil.designtime.setMainWindowToolStatus(1);
                 }
                 this.show_property();
             }
@@ -1008,8 +1000,7 @@ redactor.prototype.mouseup_document = function (){
                         var y = parseInt(this.inspectorFrame.getAttribute('y')) + ysh;
                         var width = parseInt(this.inspectorFrame.getAttribute('width'));
                         var height = parseInt(this.inspectorFrame.getAttribute('height'));
-                        this.setObjInspectorCookie(x,y, height, width);
-                        this.recreateObjectInspector(x,y,height,width);
+
                     }
             
                 }
@@ -1083,9 +1074,6 @@ redactor.prototype.createWindow = function(id, top, left, width, height){
         '}';                
             
         var result = mainlibutil.www.createWindow(this.instantdocument, id, top, left, height, width, style);
-        result.divhd.onmousedown = function(ev) {
-            if (document.red) document.red.mousedown_util(ev);
-        } 
         return result;
     }
     return undefined;
@@ -1101,6 +1089,7 @@ redactor.prototype.createContextMenu = function(){
     
     var el = event.target;
     var isRoot=(el==this.instantdocument.documentElement);
+    if (isRoot) return;
 
     if (!isRoot){
         el= this.getTarget(event);
@@ -1138,7 +1127,7 @@ redactor.prototype.createContextMenu = function(){
    var tbody= mainlibutil.html.create_tbody(table);
 
        
-   isRoot ? this.ContextMenuDocument(tbody) : this.ContextMenuComponent(tbody);
+   this.ContextMenuComponent(tbody);
     
    this.contextmenu.onmouseout=function(){
         if (event.fromElement==this) {
@@ -1156,22 +1145,7 @@ redactor.prototype.ContextMenuButton = function(tbody, name, enable, func){
 }
 
 
-redactor.prototype.ContextMenuDocument = function(tbody){
-    
-    this.ContextMenuButton(tbody, 'Save', true,
-        function(){
-            if (document.red) document.red.save();
-            document.red.ContextMenuDestroy();
-        } );
-        
 
-        
-    this.ContextMenuButton(tbody, 'Close', true,
-        function(){
-            document.red.ContextMenuDestroy();
-        } );      
-       
-}
 
 redactor.prototype.ContextMenuComponent = function(tbody){
     
@@ -1179,24 +1153,32 @@ redactor.prototype.ContextMenuComponent = function(tbody){
         function(){
             document.red.toFrontElements();
             document.red.ContextMenuDestroy();
+            document.red.needsave=true; 
+            mainlibutil.designtime.setMainWindowToolStatus(1);
         } );
         
     this.ContextMenuButton(tbody, 'Send to Back', true,
         function(){
             document.red.toBackElements();
             document.red.ContextMenuDestroy();
+            document.red.needsave=true; 
+            mainlibutil.designtime.setMainWindowToolStatus(1);
         } );  
         
     this.ContextMenuButton(tbody, 'Delete', true,
         function(){
             document.red.deleteElements();
             document.red.ContextMenuDestroy();
+            document.red.needsave=true; 
+            mainlibutil.designtime.setMainWindowToolStatus(1);
         } );  
  
     this.ContextMenuButton(tbody, 'Clone', true,
         function(){
             document.red.cloneElements();
             document.red.ContextMenuDestroy();
+            document.red.needsave=true; 
+            mainlibutil.designtime.setMainWindowToolStatus(1);
         } ); 
         
     this.ContextMenuButton(tbody, 'Close', true,
@@ -1218,41 +1200,6 @@ redactor.prototype.ContextMenuDestroy = function(){
 }
 
 // Инспектор объектов
-
-// Создание инспектора объектов
-redactor.prototype.createObjectInspector = function(t, l, h, w){
-    
-    if (!t || !l){
-        var cookie = this.getObjInspectorCookie();
-        t = cookie['x'];
-        l = cookie['y'];
-        h = cookie['h'];
-        w = cookie['w'];
-    }
- 
-    this.inspectorFrame=mainlibutil.designtime.getObjectInspector();
-    this.inspectortbody=mainlibutil.designtime.getObjectInspector();
-    return this.inspectortbody;
-    
-}
-
-
-// Разрушение инспектора объектов
-redactor.prototype.destroyObjectInspector = function(){
-    if (this.inspectorFrame){
-        var parent=this.inspectorFrame.parentNode;
-        parent.removeChild(this.inspectorFrame);
-        this.inspectorFrame=undefined;
-    }
-}
-
-
-redactor.prototype.recreateObjectInspector = function(t, l, h, w){
-     this.destroyObjectInspector();
-     this.createObjectInspector(t, l, h, w);
-     this.show_property();
-     
-}
 
 
 redactor.prototype.show_property = function(){
@@ -1308,20 +1255,13 @@ redactor.prototype.show_property = function(){
     }
 }
 
-
-      
-
 redactor.prototype.attribute_editor = function(el){
     if (!this.inspectorFrame){
-        this.createObjectInspector();
         this.show_property(el);
     }
-    else{
-        this.destroyObjectInspector();
-    }
+
 
 }
-
 
 redactor.prototype.property_row_focus = function(event){
     
@@ -1395,10 +1335,7 @@ redactor.prototype.property_row_focus = function(event){
                 }
             }        
         }
-        
-
-
-        
+     
     }
     event.preventDefault();
     event.stopPropagation();   
@@ -1433,6 +1370,12 @@ redactor.prototype.property_leave_focus = function(event){
 }
 
 
+redactor.prototype.setNeedSave() = function(){
+    this.needsave=true; 
+    mainlibutil.designtime.setMainWindowToolStatus(1);
+}
+
+
 redactor.prototype.createSighn = function(){
 
 
@@ -1449,39 +1392,9 @@ redactor.prototype.createSighn = function(){
 }
     
 
-redactor.prototype.createCookie = function (name,value) {
-	document.cookie = name+"="+value+"; path=/";
-}
 
-redactor.prototype.readCookie = function (name) {
-	var nameEQ = name + "=";
-	var ca = document.cookie.split(';');
-	for(var i=0;i < ca.length;i++) {
-		var c = ca[i];
-		while (c.charAt(0)==' ') c = c.substring(1,c.length);
-		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-	}
-	return null;
-}
 
-redactor.prototype.eraseCookie = function (name) {
-	createCookie(name,"",-1);
-}
 
-redactor.prototype.setObjInspectorCookie = function (x, y, h, w){
-    this.createCookie('obji_x',x);
-    this.createCookie('obji_y',y);
-    this.createCookie('obji_h',h);
-    this.createCookie('obji_y',w);
-}
-
-redactor.prototype.getObjInspectorCookie = function (){
-    return {'x' : this.readCookie('obji_x') ? parseInt(this.readCookie('obji_x')) : 0 ,
-             'y' : this.readCookie('obji_y') ? parseInt(this.readCookie('obji_y')) : 0 ,
-             'h' : this.readCookie('obji_h') ? parseInt(this.readCookie('obji_h')) : 600 ,
-             'w' : this.readCookie('obji_w') ? parseInt(this.readCookie('obji_w')) : 300}
- 
-}
 
 
             

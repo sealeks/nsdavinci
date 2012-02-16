@@ -52,9 +52,16 @@ body {
     background-image: url(res/mainmenue.png);
 }
 
-.toolbar-icon:hover{
-    background-color: rgba(230,230,230,1);
-    border-radius: 4px;
+.toolbar-item[disabled] .toolbar-icon{
+    background-image: url(res/mainmenueoff.png);
+}
+
+.toolbar-item:hover[disabled] .toolbar-icon{
+    background-image: url(res/mainmenueoff.png);
+}
+
+.toolbar-item[off] .toolbar-icon{
+    background-image: url(res/mainmenuecl.png);
 }
 
 
