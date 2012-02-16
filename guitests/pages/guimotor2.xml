@@ -23,7 +23,7 @@
         <mlib:motor id="motoron8" x="1091" y="343" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Подпиточный насос на бойлере" rotate="90" alarmack="m1::c4" local="m1::c2" environment="oil" ron="m1::c1"/>
         <mlib:motor id="motoron9" x="1109" y="421" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Подпиточный насос на бойлере" rotate="90" alarmack="m1::c4" local="m1::c2" environment="oil" ron="m1::c1"/>
         <mlib:motor id="motoron11" x="832" y="504" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Подпиточный насос на бойлере" rotate="90" alarmack="m1::c4" local="m1::c2" environment="oil" ron="m1::c1"/>
-        <mlib:motor id="motoron14" x="1019" y="530" height="60" width="60" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="0" alarmack="m1::c4" local="m1::c2" environment="water" ron="m1::c1"/>
+        <mlib:motor id="motoron14" x="897" y="580" height="70" width="70" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="0" alarmack="m1::c4" local="m1::c2" environment="water" ron="m1::c1"/>
         <mlib:rect id="shape0" x="526" y="277" height="400" width="60" value="r1::a" rotate="0" background="#444444" fill="gaz" stroke-width="2" stroke="#333333" r="6" direction="bt" visible=""/>
         <mlib:motor id="motoron15" x="959" y="700" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="90" alarmack="m1::c4" local="m1::c2" environment="water" ron="m1::c1"/>
         <mlib:motor id="motoron16" x="1435" y="150" height="80" width="80" on="m1::c1" alarm="m1::c3" header="Мотор" rotate="90" alarmack="m1::c4" local="m1::c2" environment="air" ron="m1::c1"/>
