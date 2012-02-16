@@ -1347,9 +1347,9 @@ redactor.prototype.property_event = function(el){
     el.onblur= function(ev) {
         if (document.red) document.red.property_leave_focus(ev);
     }
-    el.addEventListener( 'keyup' ,function () {
-        if ((document.red) &&  (event.keyIdentifier=="Enter")) 
-            document.red.property_leave_focus(ev)
+    el.addEventListener( 'keyup' ,function (ev) {       
+        if ((ev.keyIdentifier=="Enter"))
+            document.red.property_leave_focus(ev);
         else 
             event.stopPropagation();
     });    
