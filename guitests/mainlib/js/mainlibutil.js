@@ -125,11 +125,24 @@ mainlibutil.startup.init = function(){
     var el = document; 
     if (dvnci_iseditable()){
         document.red = new redactor(document);
+        mainlibutil.startup.initredactor(window.name, document.red);
         mainlibutil.designtime.getObjectInspector();
         mainlibutil.designtime.getMainWindow();
         mainlibutil.designtime.getFormInspector();
        }
     window.onunload=dvnci_close_win;
+}
+
+mainlibutil.startup.initredactor = function(name, red){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                fl[i].red=red;
+                return;
+            }
+        }
+    }
 }
 
 //  window
@@ -534,7 +547,7 @@ mainlibutil.document.writeDoc = function (doc){
 mainlibutil.designtime.getMainWindow = function (){
     var tmp=mainlibutil.global.getGlobal();
     if (tmp && !tmp.maindesignwin){
-        var maindesignwin=mainlibutil.window.createhtml('_mainDesign','Редактор','5%','5%', '600','60','yes','yes',null,null, "../mainlib/css/maindesignwindow.css");
+        var maindesignwin=mainlibutil.window.createhtml('_mainDesign','Редактор','5%','5%', '600','70','yes','yes',null,null, "../mainlib/css/maindesignwindow.css");
         tmp.maindesignwin=maindesignwin;
         tmp.maindesigndoc=maindesignwin.document;
         maindesignwin.onunload=mainlibutil.designtime.destroyMainWindow;
@@ -543,10 +556,14 @@ mainlibutil.designtime.getMainWindow = function (){
           var body=objdoc.getElementsByTagName('body')[0];
           var div = mainlibutil.html.create_div(body);
           div.setAttribute('id','toolbar');
-          var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable','',function() {dvnci_exit();});
+          var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {mainlibutil.designtime.SaveAll();});
           mainlibutil.html.create_div(btn1,null,'toolbar-icon');
-          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable','',function() {dvnci_exit();});
+          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable objinsp','',function() {dvnci_exit();});
           mainlibutil.html.create_div(btn2,null,'toolbar-icon');
+          var btn3 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable forminsp','',function() {dvnci_exit();});
+          mainlibutil.html.create_div(btn3,null,'toolbar-icon');
+          var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {dvnci_exit();});
+          mainlibutil.html.create_div(btn4,null,'toolbar-icon');
           
         }
         catch(error){
@@ -563,8 +580,14 @@ mainlibutil.designtime.destroyMainWindow = function(){
     if (tmp && tmp.maindesignwin)
         tmp.maindesignwin=undefined;
     if (tmp && tmp.maindesigndoc)
-        tmp.maindesigndoc=undefined;   
-    dvnci_exit();
+        tmp.maindesigndoc=undefined; 
+    if (confirm("Are you sure?")){
+        dvnci_exit();
+        return;}
+     setTimeout(function() {mainlibutil.designtime.getMainWindow();}, 100);
+
+    //    mainlibutil.designtime.getMainWindow();
+    
        
     
 }
@@ -648,7 +671,7 @@ mainlibutil.designtime.getFormInspector = function (){
     var tmp=mainlibutil.global.getGlobal();
     if (tmp && !tmp.forminspectorwin){
  
-        var forminspectorwin=mainlibutil.window.createhtml('_FormInspector','Окна','65%','65%', '300','400','yes','yes',null,null, "../mainlib/css/forminspector.css");
+        var forminspectorwin=mainlibutil.window.createhtml('_FormInspector','Окна','65%','65%', '400','200','yes','yes',null,null, "../mainlib/css/forminspector.css");
         tmp.forminspectorwin=forminspectorwin;
         tmp.forminspectordoc=forminspectorwin.document;
         forminspectorwin.onunload=mainlibutil.designtime.destroyFormInspector;
@@ -763,6 +786,16 @@ mainlibutil.designtime.destroyFormInspector = function(){
         tmp.forminspectortbody=undefined;   
     
 }
+
+mainlibutil.designtime.SaveAll = function(){ 
+    var fl= mainlibutil.global.getFormList();
+    for (var i=0; i<fl.length; ++i ){
+        if (fl[i].red){
+            fl[i].red.save();
+    }
+    
+    }
+    }
 
 
 
