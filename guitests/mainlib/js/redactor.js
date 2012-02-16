@@ -1370,26 +1370,13 @@ redactor.prototype.property_leave_focus = function(event){
 }
 
 
-redactor.prototype.setNeedSave() = function(){
+redactor.prototype.setNeedSave = function(){
     this.needsave=true; 
     mainlibutil.designtime.setMainWindowToolStatus(1);
 }
 
 
-redactor.prototype.createSighn = function(){
 
-
-    var svg= mainlibutil.svg.create_svg(this.instantdocument.documentElement,50,50,50,50,'0 0 100 100');
-    svg.setAttribute('preserveAspectRatio','none');
-    svg.setAttribute('opacity','0.6');
-    
-    mainlibutil.svg.create_circle(svg, 50 , 50,40,'stroke: red; stroke-width: 5; fill: transparent;');
-    var text = mainlibutil.svg.create_text(svg, 50 , 50, 
-    'stroke: red; text-anchor: middle; dominant-baseline: central; -webkit-user-select: none; font-size: 40; fill: red;', null,  'R');
-    
- 
-    
-}
     
 
 
