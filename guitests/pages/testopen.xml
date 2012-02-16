@@ -4,8 +4,8 @@
 <mlib:button id="button1" x="20" y="20" height="40" width="220"  r="10" caption="Выход" fontstyle="font-size: 18; fill: green; " click="exit();"/>
 <mlib:button id="button2" x="20" y="80" height="40" width="220"  r="10" caption="1o" fontstyle="font-size: 18; fill: green; " click="dvnci_open('f1');"/>
 <mlib:button id="button3" x="20" y="140" height="40" width="220"  r="10" caption="2o" fontstyle="font-size: 18; fill: green; " click="dvnci_open('f2');"/>
-<mlib:button id="button2" x="20" y="200" height="40" width="220"  r="10" caption="1c" fontstyle="font-size: 18; fill: green; " click="dvnci_close('f1');"/>
-<mlib:button id="button3" x="20" y="260" height="40" width="220"  r="10" caption="2c" fontstyle="font-size: 18; fill: green; " click="dvnci_close('f2');"/>
-<mlib:button id="button3" x="20" y="320" height="40" width="220"  r="10" caption="red" fontstyle="font-size: 18; fill: green; " click="open('', '' , 'caption=Свойства,left=400,top=200, width=650,height=250,tooltip=yes,allwaystop=yes');"/>
+<mlib:button id="button6" x="20" y="200" height="40" width="220"  r="10" caption="1c" fontstyle="font-size: 18; fill: green; " click="dvnci_close('f1');"/>
+<mlib:button id="button4" x="20" y="260" height="40" width="220"  r="10" caption="2c" fontstyle="font-size: 18; fill: green; " click="dvnci_close('f2');"/>
+<mlib:button id="button5" x="20" y="320" height="40" width="220"  r="10" caption="red" fontstyle="font-size: 18; fill: green; " click="open('', '' , 'caption=Свойства,left=400,top=200, width=650,height=250,tooltip=yes,allwaystop=yes');"/>
 </g>
 </svg>
