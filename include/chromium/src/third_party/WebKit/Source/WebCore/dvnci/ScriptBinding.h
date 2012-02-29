@@ -106,8 +106,10 @@ namespace WebCore {
 
     static v8::Handle<v8::Value> dvnci_GlobalObject(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_globalobject");
+		v8::HandleScope handle_scope;
         static v8::Persistent<v8::Object> global = v8::Persistent<v8::Object>::New(v8::Object::New());
-        return global->ToObject();
+		static v8::Handle<v8::Value> value = global->ToObject();
+        return handle_scope.Close(value);
     }
 
     namespace DVNCI {

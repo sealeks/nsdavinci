@@ -45,7 +45,7 @@ dvnci::chrome_executor_ptr getexecutordvnci() {
     static dvnci::tagsbase_ptr kintf = dvnci::krnl::factory::build(basepath, 0);
     static dvnci::chrome_executor_ptr DVNCI_INTERFACE = dvnci::chrome_executor_ptr(new dvnci::chrome_gui_executor(kintf));
     static boost::thread dvnth = boost::thread(DVNCI_INTERFACE);
-	return BrowserDVNCI_isEditable() ? dvnci::chrome_executor_ptr() : DVNCI_INTERFACE;
+	return /*BrowserDVNCI_isEditable() ? dvnci::chrome_executor_ptr() :*/ DVNCI_INTERFACE;
 }
 
 
