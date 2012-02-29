@@ -944,7 +944,7 @@ bool BrowserInit::LaunchWithProfile::ProcessStartupURLs(
         std::string tmp=it->url.possibly_invalid_spec();
 	  std::string::size_type iter=tmp.find("start.xml");
 	  if (iter!=std::string::npos){
-			  tmp=tmp+"[left=35%,top=35%, width=30%,height=30%,decorated=no,allwaystop=1]";
+			  tmp=tmp+"[left=0,top=0, width=0,height=0,decorated=no,allwaystop=0]";
 			  GURL url_input_ = GURL(tmp);
 			  OpenWindowInBrowser(url_input_);
 			  return true;
