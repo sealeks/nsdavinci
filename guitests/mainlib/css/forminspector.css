@@ -55,7 +55,7 @@ table.scrollable td{
 }
 
 table.scrollable td input{
-    display: block; 
+    display: inline; 
     width: 100%; 
     border: 0px; 
     color: black;
@@ -74,4 +74,186 @@ table.scrollable td select{
 
 .diffvalue{
     background: #808080;
+}
+
+
+/*       */
+
+#toolbar {             
+    background-image: none !important;             
+    background-color: rgba(256,256,256,1) !important;         } 
+
+.toolbar-label {             
+    color: rgba(18,50,114,1) !important;             
+    text-shadow: none;}
+
+.toolbar-item {
+    margin: 0;
+    padding: 0 6px;
+    background-color: transparent;
+    border-style: none;
+    border-color: transparent;
+}
+
+
+.toolbar-item.toggleable {
+    padding-top: 4px;
+}
+
+
+.toolbar-icon {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url(res/mainmenue.png);
+}
+
+.toolbar-item[disabled] .toolbar-icon{
+    background-image: url(res/mainmenueoff.png);
+}
+
+.toolbar-item:hover[disabled] .toolbar-icon{
+    background-image: url(res/mainmenueoff.png);
+}
+
+.toolbar-item[off] .toolbar-icon{
+    background-image: url(res/mainmenuecl.png);
+}
+
+
+.toolbar-item:active .toolbar-icon {
+    background-position-y: 32px;
+}
+
+.toolbar-item:hover .toolbar-icon {
+    background-position-y: 32px;
+    border-style: 1px;
+    border-color: red;
+}
+
+
+.toolbar-item.toggleable:active .toolbar-label {
+    text-shadow: none;
+}
+
+.toolbar-item.save .toolbar-icon {
+    margin: 0;
+    padding: 0 0px;
+    background-position-x: 0 px;
+    border-style: none;
+    border-color: transparent;
+}
+
+.toolbar-item.objinsp .toolbar-icon {
+    margin: 0;
+    padding: 0 0px;
+    background-position-x: -30px;
+    border-style: none;
+    border-color: transparent;
+}
+
+.toolbar-item.forminsp .toolbar-icon {
+    margin: 0;
+    padding: 0 0px;
+    background-position-x: -60px;
+    border-style: none;
+    border-color: transparent;
+}
+
+.toolbar-item.exit .toolbar-icon {
+    margin: 0;
+    padding: 0 0px;
+    background-position-x: -90px;
+    border-style: none;
+    border-color: transparent;
+}
+
+
+/*       */
+
+ 
+
+.toolrow-label {             
+    color: rgba(18,50,114,1) !important;             
+    text-shadow: none;}
+
+.toolrow-item {
+    margin: 0;
+    padding: 0 6px;
+    background-color: transparent;
+    border-style: none;
+    border-color: transparent;
+}
+
+
+.toolrow-item.toggleable {
+    padding-top: 4px;
+}
+
+
+.toolrow-icon {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url(res/mainmenue.png);
+}
+
+.toolrow-item[disabled] .toolrow-icon{
+    background-image: url(res/mainmenueoff.png);
+}
+
+.toolrow-item:hover[disabled] .toolrow-icon{
+    background-image: url(res/mainmenueoff.png);
+}
+
+.toolrow-item[off] .toolrow-icon{
+    background-image: url(res/mainmenuecl.png);
+}
+
+
+.toolrow-item:active .toolrow-icon {
+    background-position-y: 32px;
+}
+
+.toolrow-item:hover .toolrow-icon {
+    background-position-y: 32px;
+    border-style: 1px;
+    border-color: red;
+}
+
+
+.toolrow-item.toggleable:active .toolrow-label {
+    text-shadow: none;
+}
+
+.toolrow-item.save .toolrow-icon {
+    margin: 0;
+    padding: 0 0px;
+    background-position-x: 0 px;
+    border-style: none;
+    border-color: transparent;
+}
+
+.toolrow-item.objinsp .toolrow-icon {
+    margin: 0;
+    padding: 0 0px;
+    background-position-x: -30px;
+    border-style: none;
+    border-color: transparent;
+}
+
+.toolrow-item.forminsp .toolrow-icon {
+    margin: 0;
+    padding: 0 0px;
+    background-position-x: -60px;
+    border-style: none;
+    border-color: transparent;
+}
+
+.toolrow-item.exit .toolrow-icon {
+    margin: 0;
+    padding: 0 0px;
+    background-position-x: -90px;
+    border-style: none;
+    border-color: transparent;
 }

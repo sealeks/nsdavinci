@@ -1,6 +1,8 @@
 
 var mainlibutil = {};
 
+mainlibutil.util = {};
+
 mainlibutil.startup = {};
 
 mainlibutil.project = {};
@@ -30,6 +32,7 @@ function dvnci_open(name){
             if (fl[i]['name']==name){
                 if (!fl[i].window){
                     var win=window.open(fl[i]['path'],fl[i]['name'],fl[i]['param'].toString());
+                    win.document.domain=document.domain;
                     fl[i].window=win;
                 }
                 else{
@@ -47,8 +50,9 @@ function dvnci_close(name){
     if (fl){  
         for (var i=0; i<fl.length;++i){
             if (fl[i]['name']==name){
-                if (fl[i].window)
-                    fl[i].window.close();
+                if (fl[i].window){
+                    fl[i].window.onunload=null;
+                    fl[i].window.close();}
                 fl[i].window=null;
                 return;
             }
@@ -57,44 +61,13 @@ function dvnci_close(name){
 }
 
 
-function dvnci_open_design(name){
-    var fl =  mainlibutil.global.getFormList();
-    if (fl){   
-        for (var i=0; i<fl.length;++i){
-            if (fl[i]['name']==name){
-                if (!fl[i].window){
-                    var win=window.open(fl[i]['path'],fl[i]['name'],fl[i]['param'].toString());
-                    fl[i].window=win;
-                }
-                else{
-                    fl[i].window.focus();  
-                }
-                return;
-            }
-        }
-    }
-}
-
-function dvnci_close_design(name){
-    var fl =  mainlibutil.global.getFormList();
-    if (fl){  
-        for (var i=0; i<fl.length;++i){
-            if (fl[i]['name']==name){
-                if (fl[i].window)
-                    fl[i].window.close();
-                fl[i].window=null;
-                return;
-            }
-        }
-    }
-}
 
 function dvnci_close_win(){
     var fl =  mainlibutil.global.getFormList();
-    if (fl){  
+    if (fl){      
         for (var i=0; i<fl.length;++i){
             if (fl[i].window==window){
-                fl[i].window=null;
+                fl[i].window=null;                 
                 return;
             }
         }
@@ -108,10 +81,16 @@ function exit(){
 
 
 function init_project_controller(){
-    mainlibutil.global.getStartupDoc(document)
+    mainlibutil.global.getStartupDoc(document);   
     mainlibutil.project.init_form();
-    window.close();
+    if (dvnci_iseditable()) {
+    mainlibutil.designtime.getMainWindow();}
+
 }
+
+//
+
+
 
 
 //
@@ -127,6 +106,13 @@ mainlibutil.global.getFormList = function (){
     return (tmp && tmp.formlist) ? tmp.formlist : null;
 }
 
+mainlibutil.global.getPath = function (){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp.path)
+        tmp.formlist=[];
+    return (tmp && tmp.path) ? tmp.path : null;
+}
+
 mainlibutil.global.getStartupDoc = function (doc){
     var tmp=mainlibutil.global.getGlobal();
     if (tmp && !tmp.startupdocument && doc)
@@ -138,12 +124,11 @@ mainlibutil.global.getStartupDoc = function (doc){
 
 mainlibutil.startup.init = function(){
     var el = document; 
+    window.addEventListener('message', function (ev) { window.close();}, false);
     if (dvnci_iseditable()){
         document.red = new redactor(document);
         mainlibutil.startup.initredactor(window.name, document.red);
-        mainlibutil.designtime.getObjectInspector();
-        mainlibutil.designtime.getMainWindow();
-        mainlibutil.designtime.getFormInspector();
+
        }
     window.onunload=dvnci_close_win;
 }
@@ -173,28 +158,56 @@ mainlibutil.project.init_form = function(){
         var els=doc.getElementsByTagName('form');
         var fl=mainlibutil.global.getFormList();
         
+        var glb = mainlibutil.global.getGlobal();
+        
         for (var i=0; i<els.length;++i){
           var path = projectPath && els[i].getAttribute('file') ? projectPath.toString() + els[i].getAttribute('file').toString() : 
                      els[i].getAttribute('file') ? els[i].getAttribute('file').toString() : null; 
           if (path){   
-              
+          
+          glb.path = path;
           var param = mainlibutil.project.buildparam(els[i]);
           var win=window.open(path,
                               els[i].getAttribute('name')  ? els[i].getAttribute('name') :  '',
                               param ? param : '');
-                
-                
-         
-          
-          fl.push({'name' : els[i].getAttribute('name'),
-                              'path'  : path,
-                              'param'  : param,
-                              'window'  : win});}         
+          win.document.domain=document.domain;     
+     
+                    fl.push({
+                        'name' : els[i].getAttribute('name'),
+                        'file' : els[i].hasAttribute('file') ? els[i].getAttribute('file') : '',
+                        'path'  : path,
+                        'param'  : param,
+                        'window'  : win,
+                        'top'  : els[i].hasAttribute('top') ? els[i].getAttribute('top') : null,
+                        'left'  : els[i].hasAttribute('left') ? els[i].getAttribute('left') : null,
+                        'width'  : els[i].hasAttribute('width') ? els[i].getAttribute('width') : null,
+                        'height'  : els[i].hasAttribute('height') ? els[i].getAttribute('height') : null,
+                        'caption'  : els[i].hasAttribute('caption') ? els[i].getAttribute('caption') : '',
+                        'decorated'  : els[i].hasAttribute('decorated') ? els[i].getAttribute('decorated') : true,
+                        'resizable'  : els[i].hasAttribute('resizable') ? els[i].getAttribute('resizable') : null,
+                        'modal'  : els[i].hasAttribute('modal') ? els[i].getAttribute('modal') : null,
+                        'allwaystop'  : els[i].hasAttribute('allwaystop') ? els[i].getAttribute('allwaystop') : null,
+                        'visible'  : ((els[i].hasAttribute('visible')) && (els[i].getAttribute('visible')=='false')) ? false : true,
+                        'element' : els[i]
+                    });
+                }         
         }}
-    catch(error){
+    catch(error){ 
         alert('Startup error: '+ error)
     }
     }
+}
+
+mainlibutil.project.getFormInfo = function(name){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                return fl[i];
+            }
+        }
+    }
+    return null;        
 }
 
 mainlibutil.project.buildparam = function(el){
@@ -220,11 +233,14 @@ mainlibutil.project.buildparam = function(el){
             param=param+";modal=yes";    
         if (el.getAttribute('state'))
             param=param+";state="+el.getAttribute('state');
+
         return param;                
     }
-    return null;
+    return '';
     
-} 
+}
+
+
 
 //  window
 
@@ -327,6 +343,13 @@ mainlibutil.html.create_th = function (parent, style, classnm){
     return newel;
 }
 
+mainlibutil.html.create_tabel_header = function (tr, style, classnm, arr){
+   for (var i=0; i < arr.length; ++i){
+       var th = mainlibutil.html.create_th(tr, style, classnm);
+       th.innerHTML=arr[i];
+   } 
+}
+
 mainlibutil.html.create_tr = function (parent, style, classnm){
     var newel = mainlibutil.html.create('tr', parent);
     if (!newel) return;
@@ -393,6 +416,36 @@ mainlibutil.html.create_input = function (parent, type, value){
     if (value) {
         newel.setAttribute('value', value );
         newel.innerHTML=value;
+    }
+    return newel;
+}
+
+mainlibutil.html.create_select = function (parent, type, value, list, addit){
+    var newel = mainlibutil.html.create('select', parent);
+    if (!newel) return;
+    if (type)
+        newel.setAttribute('type', type );
+    if (value) 
+        newel.setAttribute('value', value );
+
+    var newop = mainlibutil.html.create('option', newel);
+    //newop.setAttribute('value', value );
+    newop.setAttribute('selected','');
+    newop.innerHTML=value;
+
+    for(var i=0; i < list.length; i++){
+        if (list[i]!=value){
+        var newop = mainlibutil.html.create('option', newel);
+        //newop.setAttribute('value', list[i] );
+        newop.innerHTML=list[i];
+    }
+
+    }
+
+    if (addit){
+        var newop = mainlibutil.html.create('option', newel);
+        newop.setAttribute('value', '...' );
+        newop.innerHTML='...';
     }
     return newel;
 }
@@ -639,13 +692,13 @@ mainlibutil.designtime.getMainWindow = function (){
           var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {mainlibutil.designtime.SaveAll();});
           tmp.maindesign_btnsave=btn1;
           mainlibutil.html.create_div(btn1,null,'toolbar-icon');
-          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable objinsp','',function() {mainlibutil.designtime.resetObjectInspector();});
+          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable objinsp','',function() {alert('fffff'); /*mainlibutil.designtime.resetObjectInspector();*/});
           tmp.maindesign_btnobjisp=btn2;
           mainlibutil.html.create_div(btn2,null,'toolbar-icon');
           var btn3 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable forminsp','',function() {mainlibutil.designtime.resetFormInspector();});
           tmp.maindesign_btnformisp=btn3;
           mainlibutil.html.create_div(btn3,null,'toolbar-icon');
-          var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {mainlibutil.designtime.destroyMainWindow();});
+          var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {alert('destroy');mainlibutil.designtime.destroyMainWindow();});
           mainlibutil.html.create_div(btn4,null,'toolbar-icon');
           mainlibutil.designtime.setMainWindowToolStatus();
         }
@@ -688,6 +741,8 @@ mainlibutil.designtime.setMainWindowToolStatus = function (val){
 
 
 mainlibutil.designtime.destroyMainWindow = function(){
+    try{
+    
     var tmp=mainlibutil.global.getGlobal();
     if (tmp && tmp.maindesignwin)
         tmp.maindesignwin=undefined;
@@ -698,7 +753,8 @@ mainlibutil.designtime.destroyMainWindow = function(){
     if (confirm("Выйти без сохранения?")){
         dvnci_exit();
         return;}
-     setTimeout(function() {mainlibutil.designtime.getMainWindow();}, 100);
+     setTimeout(function() {mainlibutil.designtime.getMainWindow();}, 100);}
+     catch(error){dvnci_exit();}
 
     
        
@@ -798,25 +854,27 @@ mainlibutil.designtime.getFormInspector = function (force){
     if (!tmp.forminspectorwin && !force) return null;
     if (tmp && !tmp.forminspectorwin){
  
-        var forminspectorwin=mainlibutil.window.createhtml('_FormInspector','Окна','65%','65%', '400','200','yes','yes',null,null, "../mainlib/css/forminspector.css");
+        var forminspectorwin=mainlibutil.window.createhtml('_FormInspector','Окна','35%','35%', '600','200','yes','yes',null,null, "../mainlib/css/forminspector.css");
         tmp.forminspectorwin=forminspectorwin;
         tmp.forminspectordoc=forminspectorwin.document;
         forminspectorwin.onunload=mainlibutil.designtime.destroyFormInspector;
         var objdoc =forminspectorwin.document;
         try{
           var body=objdoc.getElementsByTagName('body')[0];
+          
+
+          var div = mainlibutil.html.create_div(body);
+          div.setAttribute('id','toolbar');
+          var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {mainlibutil.document.writeDoc(mainlibutil.global.getStartupDoc());});
+          mainlibutil.html.create_div(btn1,null,'toolbar-icon'); 
+          var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {/*mainlibutil.designtime.closeFormInspector();*/dvnci_exit();});
+          mainlibutil.html.create_div(btn4,null,'toolbar-icon');          
+          
+          
           var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
           var table = mainlibutil.html.create_table(div,null,"scrollable");
           var tbody = mainlibutil.html.create_tbody(table);
           var tr = mainlibutil.html.create_tr(tbody);
-          var th1 =mainlibutil.html.create_th(tr);
-          th1.innerHTML='id';
-          var th2 =mainlibutil.html.create_th(tr);
-          th2.innerHTML='Путь';
-          var th3 =mainlibutil.html.create_th(tr);
-          th3.innerHTML='O';
-          var th4 =mainlibutil.html.create_th(tr);
-          th4.innerHTML='X';
           tmp.forminspectortbody=tbody;
         }
         catch(error){
@@ -840,23 +898,17 @@ mainlibutil.designtime.resetFormInspector = function(){
 } 
 
 mainlibutil.designtime.fillFormInspector = function (){
+    
     var tbody = mainlibutil.designtime.getFormInspectorTbody();
+    
     mainlibutil.dom.clearChildNode(tbody);   
 
     var tr = mainlibutil.html.create_tr(tbody);
-    var th1 =mainlibutil.html.create_th(tr);
-    th1.innerHTML='id';
-    var th2 =mainlibutil.html.create_th(tr);
-    th2.innerHTML='Путь';
-    var th3 =mainlibutil.html.create_th(tr);
-    th3.innerHTML='O';
-    var th4 =mainlibutil.html.create_th(tr);
-    th4.innerHTML='X';
     
-    
+    mainlibutil.html.create_tabel_header(tr,null,null,['Файл','id','caption','x','y','width','height','visible','alltop','resize','decorate','modal','O','X']);
+   
     var fl= mainlibutil.global.getFormList();
-
-    
+ 
                             
     for (var i=0; i<fl.length; ++i ){
         var formname=fl[i]['name'];
@@ -864,25 +916,147 @@ mainlibutil.designtime.fillFormInspector = function (){
         var tr= mainlibutil.html.create_tr(tbody);
        
         var td1= mainlibutil.html.create_td(tr);
-        td1.innerHTML=formname;
+        td1.innerHTML=fl[i]['file'] ? fl[i]['file'] : "";
         
         td1.className='static';
    
-        var td2= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
-        var val=fl[i]['path'];
-        td2.innerHTML= val ? val : "";
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'name');
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'caption');
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'left', '50px');       
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'top', '50px');
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'width', '50px');       
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'height', '50px'); 
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'visible', '50px'/*, ['','true','false']*/);
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'allwaystop', '50px'/*,, ['','true']*/);       
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'resizable', '50px'/*,, ['','true']*/);
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'decorated', '50px'/*,, ['','no']*/);
+        mainlibutil.designtime.fiCreateRow(tr,fl[i],'modal', '50px'/*,, ['','true']*/);        
         
-        var td3= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
-        var btno = mainlibutil.html.create_button( td3,null,null,'O');
-        btno.setAttribute('onclick','dvnci_open_design("'+formname+ '");');
+        var td11= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var btno = mainlibutil.html.create_button( td11,'height: 15px;',null,'');
+        btno.setAttribute('onclick','mainlibutil.designtime.openwindow("'+formname+ '");');
         
-        var td4= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
-        var btnc = mainlibutil.html.create_button( td4,null,null,'X');
-        btnc.setAttribute('onclick','dvnci_close_design("'+formname+ '");');
+        var td12= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var btnc = mainlibutil.html.create_button( td12,'height: 15px;',null,'');
+        btnc.setAttribute('onclick','mainlibutil.designtime.closewindow("'+formname+ '");');
     
 }
+}
+
+mainlibutil.designtime.fiCreateRow = function(tr, tblrow, name, width, lst){
+    var td= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0;' + width ? 'width: ' + width + ';' : '');
+    var tmp= tblrow[name] ? tblrow[name] : '';
+    if (lst)
+       td.lst=lst; 
+    td.innerHTML= tmp;
+    td.elem=tblrow;
+    td.value=tmp;
+    td.propname=name;
+    td.onclick=function(ev) {
+        mainlibutil.designtime.fiPropertyRowFocus(ev);    
+}}
+
+
+
+mainlibutil.designtime.fiPropertyRowFocus = function(ev){
+    try{
+    var td = ev.target;
+    mainlibutil.dom.clearChildNode(td);
+    if (td.lst)
+       var edit=mainlibutil.html.create_select(ev.target, 'text', td.value, td.lst);
+   else
+       var edit=mainlibutil.html.create_input(ev.target, 'text', td.value);
+       
+    
+    edit.focus();
+    edit.oldval=td.value;  
+ 
+    edit.onblur= function(ev) {
+        mainlibutil.designtime.fiPropertyLeaveFocus(ev);
+    }
+
+    edit.addEventListener( 'keyup' ,function (ev) {       
+        if ((evn.keyIdentifier=="Enter"))
+            mainlibutil.designtime.fiPropertyLeaveFocus(ev);
+        else 
+            ev.stopPropagation();
+    });  
+    ev.preventDefault();
+    ev.stopPropagation();}
+    catch(error){
+        alert(error);
+    }
+}
+
+mainlibutil.designtime.fiPropertyLeaveFocus = function(event){
+
+    if (!event.target) return;
+    var oldval=event.target.oldval;
+    var value =event.target.value;
+    var td=event.target.parentNode;
+    td.removeChild(event.target);
+    td.innerHTML=value;
+    if ((oldval!=value) && (mainlibutil.designtime.fiCheckFormParam(td.propname,value))){  
         
         
+        if (td.elem && td.elem['element']){     
+            
+            td.elem['element'].setAttribute(td.propname,value);
+            td.elem[td.propname]=value;
+            mainlibutil.designtime.closewindow(td.elem['name'], true);
+            td.elem['param'] = mainlibutil.project.buildparam(td.elem['element']);
+
+            
+        }      
+    }
+
+          
+    event.preventDefault();
+    event.stopPropagation();   
+}
+
+ 
+
+mainlibutil.designtime.fiCheckFormParam = function(name, val){
+    try{
+        switch (name){
+            case 'caption':{
+                return true;
+            }             
+            case 'width':
+            case 'height':        
+            case 'top':
+            case 'left':{
+                var ind = val.search('/%/i');
+                if (ind==-1){
+                    var vl=parseInt(val);
+                    if (vl!=vl) return undefined;
+                }
+                else{
+                    var tmpval = val.substring(0,ind);
+                    if ((vl!=vl) || (vl<0) || (vl>100)) return undefined;
+                }
+                return true;
+            }
+            case 'name':{
+                return !mainlibutil.project.getFormInfo(val);
+            }
+            case 'visible':{
+                return (val=='') || (val=='true') || (val=='false');
+            } 
+            case 'resizable':
+            case 'resizable':
+            case 'allwaystop':{
+                return (val=='') || (val=='true');
+            }
+            case 'decorated':{
+                return (val=='') || (val=='no');
+            }  
+        }
+    }
+    catch(error){ 
+    }
+    return false;
 }
 
 mainlibutil.designtime.getFormInspectorDocument = function(){
@@ -944,6 +1118,59 @@ mainlibutil.designtime.isNeedSave = function (){
     }   
     return false;
 }
+
+ mainlibutil.designtime.openwindow = function(name){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){   
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                if (!fl[i].window){
+                    fl[i]['needreload']=undefined;
+                    var win=window.open(fl[i]['path'],fl[i]['name'],fl[i]['param'].toString());
+                    win.document.domain=document.domain;
+                    fl[i].window=win;
+                }
+                else{
+                    fl[i].window.focus();  
+                }
+                return;
+            }
+        }
+    }
+}
+
+
+mainlibutil.designtime.closewindow = function (name, needreload){
+    var fl =  mainlibutil.global.getFormList();
+   
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            try{
+            if (fl[i]['name']==name){
+                if (fl[i].window){
+                    fl[i].window.onunload=null;
+                    //fl[i].window.postMessage('close', mainlibutil.global.getPath());
+                    fl[i].window.close();}
+                fl[i].window=null;
+                return;
+            }}
+        catch(error){alert(error);}
+        }
+    }
+}
+
+mainlibutil.designtime.createFormInProject =function(name, left, top, width, heigth, decorated){
+    
+}
+
+mainlibutil.designtime.removeFormFromProject =function(name){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                
+            }
+}}}
 
 
 

@@ -3,13 +3,16 @@
     <head>
         <link rel="stylesheet" type="text/css" href="../mainlib/css/mainstyle.css"> 
         <script type="text/javascript" src="../mainlib/js/alarmscript.js"></script>
+        <script type="text/javascript" xlink:href="../mainlib/js/mainlibutil.js"></script>
+        <script type="text/javascript" xlink:href="../mainlib/js/redactor.js"></script> 
+        <script type="text/javascript" xlink:href="../mainlib/js/mainlib.js"></script>
     </head>
     <script type="text/javascript">
         function initform() {
             this.onalarm=dvn_onalarm_proc;}  
         
     </script>
-    <body onload="initform()" style="margin: 0">
+    <body onload="mainlibutil.startup.init()" style="margin: 0">
         <table  width="100%" >
             <tr class="clear_block">  
                 <td >   
