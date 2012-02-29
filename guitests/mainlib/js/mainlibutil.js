@@ -692,7 +692,7 @@ mainlibutil.designtime.getMainWindow = function (){
           var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {mainlibutil.designtime.SaveAll();});
           tmp.maindesign_btnsave=btn1;
           mainlibutil.html.create_div(btn1,null,'toolbar-icon');
-          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable objinsp','',function() {alert('fffff'); /*mainlibutil.designtime.resetObjectInspector();*/});
+          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable objinsp','',function() {mainlibutil.designtime.resetObjectInspector();});
           tmp.maindesign_btnobjisp=btn2;
           mainlibutil.html.create_div(btn2,null,'toolbar-icon');
           var btn3 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable forminsp','',function() {mainlibutil.designtime.resetFormInspector();});
