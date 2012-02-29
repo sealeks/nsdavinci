@@ -14,7 +14,6 @@ extension-element-prefixes="mlib">
     <xsl:template name="mainlib">
         
         <script type="text/javascript" xlink:href="../mainlib/js/mainlibutil.js"></script>
-        <script type="text/javascript" xlink:href="../mainlib/js/startup.js"></script>   
         <script type="text/javascript" xlink:href="../mainlib/js/redactor.js"></script> 
         <script type="text/javascript" xlink:href="../mainlib/js/mainlib.js"></script>
 

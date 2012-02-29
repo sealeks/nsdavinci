@@ -1267,7 +1267,6 @@ redactor.prototype.property_row_focus = function(event){
     
     if (event.target.tagname="td"){
         var td= event.target;
-        var htmlns="http://www.w3.org/1999/xhtml";
         var value=event.target.innerHTML;
         
         var type = td['type'] ? td['type']  : 0;
@@ -1284,19 +1283,8 @@ redactor.prototype.property_row_focus = function(event){
             case 3:{
               
                 var list=td['list'];
-                var code = '<select xmlns="'+htmlns+'" type="text" value="'+value+'">';
-                code = code + '<option value="' + value + '">' + value + '</option>';
-                if (list){
-                    for(var i=0; i < list.length; i++){
-                        code = code + '<option value="' + list[i] + '">' + list[i] + '</option>';
-                    }
-                }
-                if (type==3)
-                    code = code + '<option value="...">' + '...' + '</option>';
-                code = code + '</select>'
-                event.target.innerHTML=code;
-               
-
+                mainlibutil.dom.clearChildNode(td);        
+                mainlibutil.html.create_select(td,'text',value,list,type==3)       
                 break;
             }
             default:{
