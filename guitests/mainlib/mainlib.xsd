@@ -2,7 +2,7 @@
 <xsd:schema
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:mlib="http://dvnci/mlib"
-  xmlns:dvnlib="../lib.xsl">
+  xmlns:dvnlib="../dvnlib.xsl">
     <xsd:simpleType name="mlib:tag">    
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
@@ -72,8 +72,8 @@
     
     <xsd:element name="mlib:motor" type="motor">
         <xsd:complexType name="motor">
-            <dvnlib:creator name="mlib:motor">
-                <mlib:motor  x="" y="" height="" width=""/>
+            <dvnlib:creator name="mlib:motor" hint="motor">
+                <mlib:motor  x="" y="" height="50" width="50"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
@@ -94,8 +94,8 @@
 
     <xsd:element name="mlib:rect" type="rect">
         <xsd:complexType name="rect">
-            <dvnlib:creator name="mlib:rect">
-                <mlib:rect  x="" y="" height="" width=""/>
+            <dvnlib:creator name="mlib:rect"  hint="rect">
+                <mlib:rect  x="" y="" height="50" width="200"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
@@ -121,8 +121,8 @@
     
     <xsd:element name="mlib:sensor" type="sensor">
         <xsd:complexType name="sensor">
-            <dvnlib:creator name="mlib:sensor">
-                <mlib:button  x="" y="" height="" width=""/>
+            <dvnlib:creator name="mlib:sensor"  hint="sensor">
+                <mlib:button  x="" y="" height="50" width="200"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
@@ -146,8 +146,8 @@
     
     <xsd:element name="mlib:button" type="button">
         <xsd:complexType name="button">
-            <dvnlib:creator name="mlib:button">
-                <mlib:button  x="" y="" height="" width=""/>
+            <dvnlib:creator name="mlib:button"  hint="button">
+                <mlib:button  x="" y="" height="80" width="200"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
