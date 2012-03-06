@@ -1,0 +1,8 @@
+<?xml-stylesheet href="../mainlib/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="background-color: gray;" onload="mainlibutil.startup.init()">
+
+    <g>
+
+    </g>
+    
+
+<mlib:motor x="894" y="315" height="80" width="80" id="name0" environment="gaz" rotate="45"/><mlib:rect x="342" y="408" height="50" width="200" id="name1"/><mlib:button x="1000" y="406" height="40" width="200" id="name2" r="5" caption="ННННН"/><mlib:button x="1000" y="336" height="40" width="200" id="name3" r="5" caption="ННННН"/><mlib:button x="1000" y="263" height="40" width="200" id="name4" r="5" caption="ННННН"/><mlib:motor x="776" y="414" height="50" width="50" id="name5"/><mlib:button x="849" y="174" height="50" width="200" id="name6" param="r1::a" r="2" caption="%9.2f"/><mlib:button x="1127" y="200" height="50" width="200" id="name7"/><mlib:sensor x="946" y="536" height="50" width="200" id="name8" background="air" stroke-width="2" stroke="#008" r="3" param="r1::a" format="%9.2f" rotate="30" alighn="center" fontstyle="fill: #009; font-size: 18px;"/></svg>
