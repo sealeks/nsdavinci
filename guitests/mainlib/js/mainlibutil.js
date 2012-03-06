@@ -52,7 +52,8 @@ function dvnci_close(name){
             if (fl[i]['name']==name){
                 if (fl[i].window){
                     fl[i].window.onunload=null;
-                    fl[i].window.close();}
+                    fl[i].window.close();
+                }
                 fl[i].window=null;
                 return;
             }
@@ -84,7 +85,9 @@ function init_project_controller(){
     mainlibutil.global.getStartupDoc(document);   
     mainlibutil.project.init_form();
     if (dvnci_iseditable()) {
-    mainlibutil.designtime.getMainWindow();}
+        mainlibutil.designtime.getMainWindow();
+        mainlibutil.designtime.getLibInspector(true);
+    }
 
 }
 
@@ -106,11 +109,11 @@ mainlibutil.global.getFormList = function (){
     return (tmp && tmp.formlist) ? tmp.formlist : null;
 }
 
-mainlibutil.global.getPath = function (){
+mainlibutil.global.getLibList = function (){
     var tmp=mainlibutil.global.getGlobal();
-    if (tmp && !tmp.path)
-        tmp.formlist=[];
-    return (tmp && tmp.path) ? tmp.path : null;
+    if (tmp && !tmp.liblist)
+        tmp.liblist=[];
+    return (tmp && tmp.liblist) ? tmp.liblist : null;
 }
 
 mainlibutil.global.getStartupDoc = function (doc){
@@ -124,12 +127,14 @@ mainlibutil.global.getStartupDoc = function (doc){
 
 mainlibutil.startup.init = function(){
     var el = document; 
-    window.addEventListener('message', function (ev) { window.close();}, false);
+    window.addEventListener('message', function (ev) {
+        window.close();
+    }, false);
     if (dvnci_iseditable()){
         document.red = new redactor(document);
         mainlibutil.startup.initredactor(window.name, document.red);
 
-       }
+    }
     window.onunload=dvnci_close_win;
 }
 
@@ -152,50 +157,103 @@ mainlibutil.project.init_form = function(){
     var doc = mainlibutil.global.getStartupDoc();
     if (doc){
         try{
-        var elp=doc.getElementsByTagName('project')[0];
-        var projectPath=elp.getAttribute('path');
+            var elp=doc.getElementsByTagName('project')[0];
+            var projectPath=elp.getAttribute('path');
+            
+            var els=doc.getElementsByTagName('form');
+            var fl=mainlibutil.global.getFormList();
+                      
+            var ellib=doc.getElementsByTagName('lib');
+            var ll=mainlibutil.global.getLibList();
+            
+            
+            if (els){
+                for (var i=0; i<els.length;++i){
+                    var path = projectPath && els[i].getAttribute('file') ? projectPath.toString() + els[i].getAttribute('file').toString() : 
+                    els[i].getAttribute('file') ? els[i].getAttribute('file').toString() : null; 
+                    if (path){   
+
+                        var param = mainlibutil.project.buildparam(els[i]);
+                        var win=window.open(path,
+                            els[i].getAttribute('name')  ? els[i].getAttribute('name') :  '',
+                            param ? param : '');
+                        win.document.domain=document.domain;     
+                    
+                        fl.push({
+                            'name' : els[i].getAttribute('name'),
+                            'file' : els[i].hasAttribute('file') ? els[i].getAttribute('file') : '',
+                            'path'  : path,
+                            'param'  : param,
+                            'window'  : win,
+                            'top'  : els[i].hasAttribute('top') ? els[i].getAttribute('top') : null,
+                            'left'  : els[i].hasAttribute('left') ? els[i].getAttribute('left') : null,
+                            'width'  : els[i].hasAttribute('width') ? els[i].getAttribute('width') : null,
+                            'height'  : els[i].hasAttribute('height') ? els[i].getAttribute('height') : null,
+                            'caption'  : els[i].hasAttribute('caption') ? els[i].getAttribute('caption') : '',
+                            'decorated'  : els[i].hasAttribute('decorated') ? els[i].getAttribute('decorated') : true,
+                            'resizable'  : els[i].hasAttribute('resizable') ? els[i].getAttribute('resizable') : null,
+                            'modal'  : els[i].hasAttribute('modal') ? els[i].getAttribute('modal') : null,
+                            'allwaystop'  : els[i].hasAttribute('allwaystop') ? els[i].getAttribute('allwaystop') : null,
+                            'visible'  : ((els[i].hasAttribute('visible')) && (els[i].getAttribute('visible')=='false')) ? false : true,
+                            'element' : els[i]
+                        });
+                    }         
+                }
+            }
+                
+            if (ellib){       
+                for (var i=0; i<ellib.length;++i){
+                    if (ellib[i].hasAttribute('xsd')){
+                        ll.push({
+                            'name' : ellib[i].hasAttribute('name') ? ellib[i].getAttribute('name') : ('unnamed'+i),
+                            'path' : ellib[i].getAttribute('xsd'),
+                            'components' : mainlibutil.project.set_components(ellib[i].getAttribute('xsd'))
+                        })
+                    }
+                }
+                }
         
-        var els=doc.getElementsByTagName('form');
-        var fl=mainlibutil.global.getFormList();
         
-        var glb = mainlibutil.global.getGlobal();
-        
-        for (var i=0; i<els.length;++i){
-          var path = projectPath && els[i].getAttribute('file') ? projectPath.toString() + els[i].getAttribute('file').toString() : 
-                     els[i].getAttribute('file') ? els[i].getAttribute('file').toString() : null; 
-          if (path){   
-          
-          glb.path = path;
-          var param = mainlibutil.project.buildparam(els[i]);
-          var win=window.open(path,
-                              els[i].getAttribute('name')  ? els[i].getAttribute('name') :  '',
-                              param ? param : '');
-          win.document.domain=document.domain;     
-     
-                    fl.push({
-                        'name' : els[i].getAttribute('name'),
-                        'file' : els[i].hasAttribute('file') ? els[i].getAttribute('file') : '',
-                        'path'  : path,
-                        'param'  : param,
-                        'window'  : win,
-                        'top'  : els[i].hasAttribute('top') ? els[i].getAttribute('top') : null,
-                        'left'  : els[i].hasAttribute('left') ? els[i].getAttribute('left') : null,
-                        'width'  : els[i].hasAttribute('width') ? els[i].getAttribute('width') : null,
-                        'height'  : els[i].hasAttribute('height') ? els[i].getAttribute('height') : null,
-                        'caption'  : els[i].hasAttribute('caption') ? els[i].getAttribute('caption') : '',
-                        'decorated'  : els[i].hasAttribute('decorated') ? els[i].getAttribute('decorated') : true,
-                        'resizable'  : els[i].hasAttribute('resizable') ? els[i].getAttribute('resizable') : null,
-                        'modal'  : els[i].hasAttribute('modal') ? els[i].getAttribute('modal') : null,
-                        'allwaystop'  : els[i].hasAttribute('allwaystop') ? els[i].getAttribute('allwaystop') : null,
-                        'visible'  : ((els[i].hasAttribute('visible')) && (els[i].getAttribute('visible')=='false')) ? false : true,
-                        'element' : els[i]
-                    });
-                }         
-        }}
+    }
     catch(error){ 
         alert('Startup error: '+ error)
     }
+}
+}
+
+
+mainlibutil.project.set_components = function(path){
+    var result = [];
+    var doc = mainlibutil.document.readDoc(path);
+    if (doc){
+        var els = doc.getElementsByTagNameNS('../dvnlib.xsl','creator');        
+        for (var i=0; i<els.length;++i){
+            result.push({ 
+                'name' : els[i].hasAttribute('name') ? els[i].getAttribute('name') : ('unnamed'+i),
+                'hint' : els[i].hasAttribute('hint') ? els[i].getAttribute('hint') : null,
+                'text' : els[i].textContent,
+                'element' : els[i].firstElementChild
+            });
+        }
     }
+    return result;   
+}
+
+mainlibutil.project.get_components = function(tool, name){
+    var ll=mainlibutil.global.getLibList();
+    if (ll){
+        for (var i=0; i<ll.length;++i){
+            if (ll[i].name==tool){
+                var comps = ll[i].components;
+                for (var j=0; j<comps.length;++j){
+                    if (comps[j].hint==name){
+                        return comps[j].element;
+                    }
+                }
+            }
+        }
+    }
+    return null;   
 }
 
 mainlibutil.project.getFormInfo = function(name){
@@ -219,7 +277,7 @@ mainlibutil.project.buildparam = function(el){
             param=param+";left="+el.getAttribute('left');
         if (el.getAttribute('top'))
             param=param+";top="+el.getAttribute('top');  
-         if (el.getAttribute('width'))
+        if (el.getAttribute('width'))
             param=param+";width="+el.getAttribute('width');
         if (el.getAttribute('height'))
             param=param+";height="+el.getAttribute('height'); 
@@ -246,14 +304,14 @@ mainlibutil.project.buildparam = function(el){
 
 mainlibutil.window.create = function(name , caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal){
     var tmp='caption=' + ( caption ? caption :  "") +
-       ',left='+ (left ? left : '0') +
-       ',top=' + (top ? top : '0') +
-       ',width=' + (width ? width : '200px') +
-       ',height=' + (height ? height : '200px') +
-       ',tooltip=' + (tooltip ? 'yes' : '0') +
-       ',allwaystop='+ (allwaystop ? 'yes' : '0') +
-       (nodecorate ? ',decorated=no' : '') +
-       ';'
+    ',left='+ (left ? left : '0') +
+    ',top=' + (top ? top : '0') +
+    ',width=' + (width ? width : '200px') +
+    ',height=' + (height ? height : '200px') +
+    ',tooltip=' + (tooltip ? 'yes' : '0') +
+    ',allwaystop='+ (allwaystop ? 'yes' : '0') +
+    (nodecorate ? ',decorated=no' : '') +
+    ';'
     return window.open('', name , tmp);
 }
 
@@ -344,10 +402,10 @@ mainlibutil.html.create_th = function (parent, style, classnm){
 }
 
 mainlibutil.html.create_tabel_header = function (tr, style, classnm, arr){
-   for (var i=0; i < arr.length; ++i){
-       var th = mainlibutil.html.create_th(tr, style, classnm);
-       th.innerHTML=arr[i];
-   } 
+    for (var i=0; i < arr.length; ++i){
+        var th = mainlibutil.html.create_th(tr, style, classnm);
+        th.innerHTML=arr[i];
+    } 
 }
 
 mainlibutil.html.create_tr = function (parent, style, classnm){
@@ -435,10 +493,10 @@ mainlibutil.html.create_select = function (parent, type, value, list, addit){
 
     for(var i=0; i < list.length; i++){
         if (list[i]!=value){
-        var newop = mainlibutil.html.create('option', newel);
-        //newop.setAttribute('value', list[i] );
-        newop.innerHTML=list[i];
-    }
+            var newop = mainlibutil.html.create('option', newel);
+            //newop.setAttribute('value', list[i] );
+            newop.innerHTML=list[i];
+        }
 
     }
 
@@ -449,6 +507,109 @@ mainlibutil.html.create_select = function (parent, type, value, list, addit){
     }
     return newel;
 }
+
+mainlibutil.html.create_tool = function (doc, nametool, names, funcs, size){
+    if (names){
+    var body=doc.getElementsByTagName('body')[0];
+    var result = {};
+    if (body) {
+        mainlibutil.html.create_tool_style(doc, nametool, names,  size);
+        var div = mainlibutil.html.create_div(body);
+        div.setAttribute('id','toolbar');
+        for (var i=0;i<names.length;++i){
+            var btn = mainlibutil.html.create_button( div,null,nametool+'-item toggleable '+names[i],'', (funcs && funcs.length > i) ? funcs[i] : null);
+            btn.namebtn=names[i];
+            btn.nametool=nametool;
+            mainlibutil.html.create_div(btn,null,nametool+'-icon')
+            result[names[i]] = btn;
+        } 
+        return result;
+    }}
+   return undefined;
+} 
+
+
+
+mainlibutil.html.create_tool_style = function (doc, nametool, names,  sz){
+    var head = doc.getElementsByTagName('head')[0];
+    if (head){
+        var onfile = nametool + 'on';
+        var offfile = nametool + 'off';
+        var disablefile = nametool + 'dsbl';
+        var size = sz ? sz + "px" : "30px";
+        
+        var style="."+nametool+"-label {\n"+             
+        " color: rgba(18,50,114,1) !important;\n"+             
+        " text-shadow: none;}\n"+
+        " \n"+
+
+        "."+nametool+"-item {\n"+
+        " margin: 0;\n"+
+        " padding: 0 6px;\n"+
+        " background-color: transparent;\n"+
+        " border-style: none;\n"+
+        " border-color: transparent;}\n"+
+        " \n"+
+
+
+        "."+nametool+"-item.toggleable {\n"+
+        " padding-top: 4px;}\n"+
+        " \n"+
+
+        "."+nametool+"-icon {\n"+
+        " display: inline-block;\n"+
+        " width: "+ size+";\n"+
+        " height: "+ size+";\n"+
+        " background-image: url(../mainlib/css/res/"+onfile+".png);}\n"+
+        " \n"+
+                  
+        "."+nametool+"-item[disabled] ."+nametool+"-icon{\n"+
+        " background-image: url(../mainlib/css/res/"+disablefile+".png);}\n"+
+        " \n"+
+
+        "."+nametool+"-item:hover[disabled] ."+nametool+"-icon{\n"+
+        " background-image: url(../mainlib/css/res/"+disablefile+".png);}\n"+
+        " \n"+
+
+        "."+nametool+"-item[off] ."+nametool+"-icon{\n"+
+        " background-image: url(../mainlib/css/res/"+offfile+".png);}\n"+
+        " \n"+
+
+
+        "."+nametool+"-item:active ."+nametool+"-icon {\n"+
+        " background-position-y: "+ size+";}\n"+
+        " \n"+
+
+        "."+nametool+"-item:hover ."+nametool+"-icon {\n"+
+        " background-position-y: "+ size+";\n"+
+        " border-style: 1px;\n"+
+        " border-color: red;}\n"+
+        " \n"+
+
+
+        "."+nametool+"-item.toggleable:active ."+nametool+"-label {\n"+
+        " text-shadow: none;}\n"+
+        " \n";
+
+             
+        for (var i=0;i<names.length;++i){
+            var vsize = sz ? ("-" + sz*i + "px") : ("-" + 30*i + "px");
+                
+            style = style +"."+nametool+"-item."+names[i]+" ."+nametool+"-icon {\n"+
+            " margin: 0;\n"+
+            " padding: 0 0px;\n"+
+            " background-position-x: "+vsize+";\n"+
+            " border-style: none;\n"+
+            " border-color: transparent;}\n"+
+            " \n";
+        }
+
+
+    
+        mainlibutil.html.create_style(head, style);
+    }
+} 
+
 
 ///////////////////////////////////////////////
 
@@ -659,6 +820,7 @@ mainlibutil.document.readDoc = function (url){
         return xmlHttp.responseXML;
     }
     catch(exception){
+        alert(exception);
     }
     return null;
 }
@@ -674,91 +836,116 @@ mainlibutil.document.writeDoc = function (doc){
 
 // radactor util
 
-
 ///  Main Window
 
-mainlibutil.designtime.getMainWindow = function (){
+mainlibutil.designtime.CreateToolBarWindow = function (name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, names, funcs, destroyfunc){
     var tmp=mainlibutil.global.getGlobal();
-    if (tmp && !tmp.maindesignwin){
-        var maindesignwin=mainlibutil.window.createhtml('_mainDesign','Редактор','5%','5%', '600','70','yes','yes',null,null, "../mainlib/css/maindesignwindow.css");
-        tmp.maindesignwin=maindesignwin;
-        tmp.maindesigndoc=maindesignwin.document;
-        maindesignwin.onunload=mainlibutil.designtime.destroyMainWindow;
-        var objdoc = tmp.maindesigndoc;
-        try{
-          var body=tmp.maindesigndoc.getElementsByTagName('body')[0];
-          var div = mainlibutil.html.create_div(body);
-          div.setAttribute('id','toolbar');
-          var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {mainlibutil.designtime.SaveAll();});
-          tmp.maindesign_btnsave=btn1;
-          mainlibutil.html.create_div(btn1,null,'toolbar-icon');
-          var btn2 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable objinsp','',function() {mainlibutil.designtime.resetObjectInspector();});
-          tmp.maindesign_btnobjisp=btn2;
-          mainlibutil.html.create_div(btn2,null,'toolbar-icon');
-          var btn3 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable forminsp','',function() {mainlibutil.designtime.resetFormInspector();});
-          tmp.maindesign_btnformisp=btn3;
-          mainlibutil.html.create_div(btn3,null,'toolbar-icon');
-          var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {alert('destroy');mainlibutil.designtime.destroyMainWindow();});
-          mainlibutil.html.create_div(btn4,null,'toolbar-icon');
-          mainlibutil.designtime.setMainWindowToolStatus();
-        }
-        catch(error){
-           alert ('Create main window error:' + error);
-           return null;
-        }       
-    }   
-    return (tmp && tmp.maindesignwin) ? tmp.maindesignwin : null;
+    if (tmp && !tmp[name]){
+        tmp[name]=mainlibutil.window.createhtml('_'+name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, "../mainlib/css/maintoolstyle.css");
+        tmp[name].onunload= destroyfunc ? destroyfunc : 
+            function(){     
+               try{
+                  var tmpo=mainlibutil.global.getGlobal();
+                  if (tmpo && tmpo[name])
+                  tmpo[name]=undefined;}
+               catch(error){}
+            };
+        if (names)    
+           mainlibutil.designtime.CreateToolBarWindowTool(name, null, names, funcs);
+        return tmp[name];
+    } 
+    
+}
+
+mainlibutil.designtime.CreateToolBarWindowTool = function (name, tools, names, funcs){
+    var tmp=mainlibutil.global.getGlobal();
+    if (name && names && funcs && tmp[name]){
+        if (!tools) tools=name;
+        if (!tmp[name].tools)
+            tmp[name].tools={};
+        tmp[name].tools[tools]=mainlibutil.html.create_tool(tmp[name].document, tools, names, funcs) ;
+        //tmp[name+'_tools'] = tmp[name].tools;
+    }    
+}
+
+mainlibutil.designtime.setWindowButtonState = function (name, tools, btnname , state){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && tmp[name] && tmp[name].tools){
+        if (!tools) tools=name;
+        if (tmp[name].tools[tools]){
+            var rowtool = tmp[name].tools[tools];
+            if (rowtool[btnname]){
+                var btn =  rowtool[btnname]; 
+                if (btn.hasAttribute('off') && state!='off') 
+                    btn.removeAttribute('off'); 
+                if (btn.hasAttribute('on') && state!='on') 
+                    btn.removeAttribute('on');
+                if (btn.hasAttribute('disabled') && state!='disabled') 
+                    btn.removeAttribute('disabled');    
+                if (!btn.hasAttribute('off') && state=='off') 
+                    btn.setAttribute('off', 'off'); 
+                if (!btn.hasAttribute('on') && state=='on') 
+                    btn.setAttribute('on', 'on');
+                if (!btn.hasAttribute('disabled') && state=='disabled') 
+                    btn.setAttribute('disabled', 'disabled');                              
+            }       
+        }    
+    }
+}
+
+///
+
+mainlibutil.designtime.getMainWindow = function (){
+    mainlibutil.designtime.CreateToolBarWindow('maintool', 'Редактор' ,'5%','5%', '600','70','yes','yes',null,null,
+                                           ['save','objinsp', 'forminsp', 'exit'],
+                                           [function() {
+                                                 mainlibutil.designtime.SaveAll();},
+                                            function() {
+                                                 mainlibutil.designtime.resetObjectInspector();
+                                                       },
+                                            function() {
+                                                 mainlibutil.designtime.resetFormInspector();
+                                                       },
+                                            function() {
+                                                 mainlibutil.designtime.destroyMainWindow();
+                                                       }],
+                                            mainlibutil.designtime.destroyMainWindow);
+                                            mainlibutil.designtime.setMainWindowToolStatus();
+
 }
 
 
 
-mainlibutil.designtime.setMainWindowToolStatus = function (val){
-    var tmp=mainlibutil.global.getGlobal();
-    if (tmp && tmp.maindesignwin){
-        if (tmp.maindesign_btnsave && (val==1 || !val)){
-            var ns = mainlibutil.designtime.isNeedSave();
-            if (ns  && tmp.maindesign_btnsave.hasAttribute('disabled')) 
-                tmp.maindesign_btnsave.removeAttribute('disabled');
-            if (!ns  && !tmp.maindesign_btnsave.hasAttribute('disabled')) 
-                tmp.maindesign_btnsave.setAttribute('disabled','disabled');
-        }
-        if (tmp.maindesign_btnobjisp && (val==2 || !val)){
-            var objvis = mainlibutil.designtime.getObjectInspector();
-            if (!objvis  && tmp.maindesign_btnobjisp.hasAttribute('off')) 
-                tmp.maindesign_btnobjisp.removeAttribute('off');
-            if (objvis  && !tmp.maindesign_btnobjisp.hasAttribute('off')) 
-                tmp.maindesign_btnobjisp.setAttribute('off','off');
-        }        
-        if (tmp.maindesign_btnformisp && (val==3 || !val)){
-            var frmvis = mainlibutil.designtime.getFormInspector();
-            if (!frmvis  && tmp.maindesign_btnformisp.hasAttribute('off')) 
-                tmp.maindesign_btnformisp.removeAttribute('off');
-            if (frmvis  && !tmp.maindesign_btnformisp.hasAttribute('off')) 
-                tmp.maindesign_btnformisp.setAttribute('off','off');
-        }                  
-    }
+
+mainlibutil.designtime.setMainWindowToolStatus = function (val){   
+   if ((val==1 || !val)) 
+       mainlibutil.designtime.setWindowButtonState('maintool', null, 'save', mainlibutil.designtime.isNeedSave() ?  'on' :  'disabled');
+   if ((val==2 || !val)) 
+       mainlibutil.designtime.setWindowButtonState('maintool', null, 'objinsp', mainlibutil.designtime.getObjectInspector() ?  'off' :  'on');
+   if ((val==3 || !val)) 
+       mainlibutil.designtime.setWindowButtonState('maintool', null, 'forminsp', mainlibutil.designtime.getFormInspector() ?  'off' :  'on');
 }
 
 
 mainlibutil.designtime.destroyMainWindow = function(){
     try{
     
-    var tmp=mainlibutil.global.getGlobal();
-    if (tmp && tmp.maindesignwin)
-        tmp.maindesignwin=undefined;
-    if (tmp && tmp.maindesigndoc)
-        tmp.maindesigndoc=undefined; 
-    if (!mainlibutil.designtime.isNeedSave())
+        var tmp=mainlibutil.global.getGlobal();
+        if (tmp && tmp['maintool'])
+            tmp.maintool=undefined;
+        if (!mainlibutil.designtime.isNeedSave())
+            dvnci_exit();
+        if (confirm("Выйти без сохранения?")){
+            dvnci_exit();
+            return;
+        }
+        setTimeout(function() {
+            mainlibutil.designtime.getMainWindow();
+        }, 100);
+    }
+    catch(error){
         dvnci_exit();
-    if (confirm("Выйти без сохранения?")){
-        dvnci_exit();
-        return;}
-     setTimeout(function() {mainlibutil.designtime.getMainWindow();}, 100);}
-     catch(error){dvnci_exit();}
-
-    
-       
-    
+    }  
 }
 
 ///  Object inspector
@@ -774,20 +961,20 @@ mainlibutil.designtime.getObjectInspector = function (force){
         objectinspectorwin.onunload=mainlibutil.designtime.destroyObjectInspector;
         var objdoc =objectinspectorwin.document;
         try{
-          var body=objdoc.getElementsByTagName('body')[0];
-          var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
-          var table = mainlibutil.html.create_table(div,null,"scrollable");
-          var tbody = mainlibutil.html.create_tbody(table);
-          var tr = mainlibutil.html.create_tr(tbody);
-          var th1 =mainlibutil.html.create_th(tr);
-          th1.innerHTML='Имя';
-          var th2 =mainlibutil.html.create_th(tr);
-          th2.innerHTML='Значение';
-          tmp.objectinspectortbody=tbody;
+            var body=objdoc.getElementsByTagName('body')[0];
+            var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
+            var table = mainlibutil.html.create_table(div,null,"scrollable");
+            var tbody = mainlibutil.html.create_tbody(table);
+            var tr = mainlibutil.html.create_tr(tbody);
+            var th1 =mainlibutil.html.create_th(tr);
+            th1.innerHTML='Имя';
+            var th2 =mainlibutil.html.create_th(tr);
+            th2.innerHTML='Значение';
+            tmp.objectinspectortbody=tbody;
         }
         catch(error){
-           alert ('Create window error:' + error);
-           return null;
+            alert ('Create window error:' + error);
+            return null;
         }       
     }   
     return (tmp && tmp.objectinspectorwin) ? tmp.objectinspectorwin : null;
@@ -860,26 +1047,29 @@ mainlibutil.designtime.getFormInspector = function (force){
         forminspectorwin.onunload=mainlibutil.designtime.destroyFormInspector;
         var objdoc =forminspectorwin.document;
         try{
-          var body=objdoc.getElementsByTagName('body')[0];
+            var body=objdoc.getElementsByTagName('body')[0];
           
 
-          var div = mainlibutil.html.create_div(body);
-          div.setAttribute('id','toolbar');
-          var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {mainlibutil.document.writeDoc(mainlibutil.global.getStartupDoc());});
-          mainlibutil.html.create_div(btn1,null,'toolbar-icon'); 
-          var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {/*mainlibutil.designtime.closeFormInspector();*/dvnci_exit();});
-          mainlibutil.html.create_div(btn4,null,'toolbar-icon');          
+            var div = mainlibutil.html.create_div(body);
+            div.setAttribute('id','toolbar');
+            var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {
+                mainlibutil.document.writeDoc(mainlibutil.global.getStartupDoc());
+            });
+            mainlibutil.html.create_div(btn1,null,'toolbar-icon'); 
+            var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {dvnci_exit();
+            });
+            mainlibutil.html.create_div(btn4,null,'toolbar-icon');          
           
           
-          var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
-          var table = mainlibutil.html.create_table(div,null,"scrollable");
-          var tbody = mainlibutil.html.create_tbody(table);
-          var tr = mainlibutil.html.create_tr(tbody);
-          tmp.forminspectortbody=tbody;
+            var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
+            var table = mainlibutil.html.create_table(div,null,"scrollable");
+            var tbody = mainlibutil.html.create_tbody(table);
+            var tr = mainlibutil.html.create_tr(tbody);
+            tmp.forminspectortbody=tbody;
         }
         catch(error){
-           alert ('Create window error:' + error);
-           return null;
+            alert ('Create window error:' + error);
+            return null;
         }       
     }   
     mainlibutil.designtime.fillFormInspector();
@@ -940,49 +1130,51 @@ mainlibutil.designtime.fillFormInspector = function (){
         var btnc = mainlibutil.html.create_button( td12,'height: 15px;',null,'');
         btnc.setAttribute('onclick','mainlibutil.designtime.closewindow("'+formname+ '");');
     
-}
+    }
 }
 
 mainlibutil.designtime.fiCreateRow = function(tr, tblrow, name, width, lst){
     var td= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0;' + width ? 'width: ' + width + ';' : '');
     var tmp= tblrow[name] ? tblrow[name] : '';
     if (lst)
-       td.lst=lst; 
+        td.lst=lst; 
     td.innerHTML= tmp;
     td.elem=tblrow;
     td.value=tmp;
     td.propname=name;
     td.onclick=function(ev) {
         mainlibutil.designtime.fiPropertyRowFocus(ev);    
-}}
+    }
+}
 
 
 
 mainlibutil.designtime.fiPropertyRowFocus = function(ev){
     try{
-    var td = ev.target;
-    mainlibutil.dom.clearChildNode(td);
-    if (td.lst)
-       var edit=mainlibutil.html.create_select(ev.target, 'text', td.value, td.lst);
-   else
-       var edit=mainlibutil.html.create_input(ev.target, 'text', td.value);
+        var td = ev.target;
+        mainlibutil.dom.clearChildNode(td);
+        if (td.lst)
+            var edit=mainlibutil.html.create_select(ev.target, 'text', td.value, td.lst);
+        else
+            var edit=mainlibutil.html.create_input(ev.target, 'text', td.value);
        
     
-    edit.focus();
-    edit.oldval=td.value;  
+        edit.focus();
+        edit.oldval=td.value;  
  
-    edit.onblur= function(ev) {
-        mainlibutil.designtime.fiPropertyLeaveFocus(ev);
-    }
-
-    edit.addEventListener( 'keyup' ,function (ev) {       
-        if ((evn.keyIdentifier=="Enter"))
+        edit.onblur= function(ev) {
             mainlibutil.designtime.fiPropertyLeaveFocus(ev);
-        else 
-            ev.stopPropagation();
-    });  
-    ev.preventDefault();
-    ev.stopPropagation();}
+        }
+
+        edit.addEventListener( 'keyup' ,function (ev) {       
+            if ((evn.keyIdentifier=="Enter"))
+                mainlibutil.designtime.fiPropertyLeaveFocus(ev);
+            else 
+                ev.stopPropagation();
+        });  
+        ev.preventDefault();
+        ev.stopPropagation();
+    }
     catch(error){
         alert(error);
     }
@@ -1005,6 +1197,7 @@ mainlibutil.designtime.fiPropertyLeaveFocus = function(event){
             td.elem[td.propname]=value;
             mainlibutil.designtime.closewindow(td.elem['name'], true);
             td.elem['param'] = mainlibutil.project.buildparam(td.elem['element']);
+            mainlibutil.designtime.openwindow(td.elem['name']);
 
             
         }      
@@ -1059,6 +1252,8 @@ mainlibutil.designtime.fiCheckFormParam = function(name, val){
     return false;
 }
 
+
+
 mainlibutil.designtime.getFormInspectorDocument = function(){
     var tmp = mainlibutil.global.getGlobal();
     if (tmp && tmp.forminspectordoc) {
@@ -1100,15 +1295,94 @@ mainlibutil.designtime.destroyFormInspector = function(){
     
 }
 
+
+mainlibutil.designtime.getLibInspector = function (force){
+    try{
+    mainlibutil.designtime.CreateToolBarWindow('libtool','Компоненты','65%','35%', '600','70','yes','yes',null,null);
+    var libs =mainlibutil.global.getLibList();
+    for (var i=0; i<libs.length;++i){
+        var lib =libs[i];
+        var btnsname =[];
+        var btnsfunc =[];
+        var comps =lib.components;
+        
+        for (var j=0; j<comps.length;++j){
+            var name = lib.name;
+            var hint = comps[j].hint;
+            btnsname.push(comps[j].hint);
+            btnsfunc.push(mainlibutil.designtime.setSelectedToolEvent);
+        }
+        
+        mainlibutil.designtime.CreateToolBarWindowTool('libtool', lib.name , 
+            btnsname, 
+            btnsfunc); 
+    }}
+    catch(error){
+        alert(error)
+    }
+
+}  
+
+mainlibutil.designtime.setSelectedToolEvent = function(event){
+
+
+if (event && event.target && event.target.parentNode){
+    var trgt=event.target.parentNode;
+    mainlibutil.designtime.setSelectedComponent(trgt.nametool, trgt.namebtn);
+}
+}
+
+mainlibutil.designtime.setSelectedComponent = function(tool, comp){
+    var tmp= mainlibutil.global.getGlobal(); 
+    var set  = tool && comp;
+    var result = null; 
+    if (tmp){
+        var select = tmp['selectedComponent'];  
+        
+        if (select && set && select.tool==tool && select.component==comp){
+           tmp['selectedComponent'] =  null;
+           mainlibutil.designtime.setWindowButtonState('libtool', tool , comp , 'on' );
+           return null;}
+       
+        if (select){          
+            result = {'tool' : select.tool , 'component' : select.component};
+            if (!set) return result;
+            mainlibutil.designtime.setWindowButtonState('libtool', result.tool , result.component , 'on' );
+            }
+        if (set){
+            tmp['selectedComponent']={'tool' : tool , 'component' : comp};
+            mainlibutil.designtime.setWindowButtonState('libtool', tool  , comp  , 'off' );}
+    }
+    return result;
+}
+
+
+mainlibutil.designtime.getSelectedComponent = function(){
+var tmp = mainlibutil.designtime.setSelectedComponent();
+if (tmp && tmp.tool && tmp.component){
+    //alert(tmp.tool+' : '+ tmp.component);
+    return mainlibutil.project.get_components(tmp.tool, tmp.component);
+}
+return null;
+}
+
+
+mainlibutil.designtime.destroyLibInspector = function(){
+    
+}
+
+
+
+
 mainlibutil.designtime.SaveAll = function(){ 
     var fl= mainlibutil.global.getFormList();
     for (var i=0; i<fl.length; ++i ){
         if (fl[i].red){
             fl[i].red.save();
-    }   
+        }   
     }
     mainlibutil.designtime.setMainWindowToolStatus();
-    }
+}
 
 mainlibutil.designtime.isNeedSave = function (){
     var fl= mainlibutil.global.getFormList();
@@ -1119,7 +1393,7 @@ mainlibutil.designtime.isNeedSave = function (){
     return false;
 }
 
- mainlibutil.designtime.openwindow = function(name){
+mainlibutil.designtime.openwindow = function(name){
     var fl =  mainlibutil.global.getFormList();
     if (fl){   
         for (var i=0; i<fl.length;++i){
@@ -1146,22 +1420,25 @@ mainlibutil.designtime.closewindow = function (name, needreload){
     if (fl){  
         for (var i=0; i<fl.length;++i){
             try{
-            if (fl[i]['name']==name){
-                if (fl[i].window){
-                    fl[i].window.onunload=null;
-                    //fl[i].window.postMessage('close', mainlibutil.global.getPath());
-                    fl[i].window.close();}
-                fl[i].window=null;
-                return;
-            }}
-        catch(error){alert(error);}
+                if (fl[i]['name']==name){
+                    if (fl[i].window){
+                        fl[i].window.onunload=null;
+                        fl[i].window.close();
+                    }
+                    fl[i].window=null;
+                    return;
+                }
+            }
+            catch(error){
+                alert(error);
+            }
         }
     }
 }
 
 mainlibutil.designtime.createFormInProject =function(name, left, top, width, heigth, decorated){
     
-}
+    }
 
 mainlibutil.designtime.removeFormFromProject =function(name){
     var fl =  mainlibutil.global.getFormList();
@@ -1169,8 +1446,10 @@ mainlibutil.designtime.removeFormFromProject =function(name){
         for (var i=0; i<fl.length;++i){
             if (fl[i]['name']==name){
                 
-            }
-}}}
+        }
+        }
+    }
+}
 
 
 

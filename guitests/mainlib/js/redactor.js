@@ -259,7 +259,10 @@ redactor.prototype.attach = function(el){
         if (el==this.instantdocument.documentElement){
             el.oldoncick = el.oncick;
             el.onclick = function(ev) {
-                if (document.red) document.red.clearSelections();
+                if (document.red){
+                    document.red.clearSelections();
+                    document.red.click_parented(ev);
+                    }
             };
         }
         else{
@@ -795,6 +798,27 @@ redactor.prototype.click_component = function(){
     var el= this.getTarget(event);
     this.select_component(el, event.shiftKey, event.ctrlKey);
     event.stopPropagation();
+}
+
+redactor.prototype.click_parented = function(ev){
+if (ev && ev.clientX.toString() && ev.clientY.toString())
+       this.createLibComponent(ev.clientX.toString(), ev.clientY.toString());
+}
+
+redactor.prototype.createLibComponent = function(x, y){
+    var created = mainlibutil.designtime.getSelectedComponent();
+    if (created && x && y){
+         var coneid=this.unicalIdGenerate(created , this.sourseDocument);
+         var prnt = this.sourseDocument.documentElement;         
+         var el =prnt.appendChild(created.cloneNode(true)); 
+         el.setAttribute('id',  coneid);
+         if (el.hasAttribute('x')) el.setAttribute('x', x);
+         if (el.hasAttribute('y')) el.setAttribute('y', y);
+         this.getTrasformDocument();
+         var tel = this.getTransformElement(coneid);
+         this.instantdocument.documentElement.appendChild(tel);
+         this.attach(tel);
+         this.updateElement(tel);}     
 }
 
 /*выделение элемента*/
