@@ -281,14 +281,6 @@ extension-element-prefixes="mlib">
             <xsl:call-template  name="apply_visible"/>
             
             
-            
-
-                                              
-
-            
-            <!--xsl:attribute name="filter">
-                                <xsl:text>url(#armat_filter1)</xsl:text>
-            </xsl:attribute--> 
 
 
             <rect role="button"  aria-pressed="true" class="disablebuttongrad">
@@ -768,7 +760,271 @@ extension-element-prefixes="mlib">
         
         </g>
     </xsl:template>
+    
+    <xsl:template match="//mlib:path" >
+        <g>    
+            <xsl:call-template name="apply_id"/>
+            
+            <xsl:call-template name="apply_mlib_schema"/>
+            <path>
+
+            
+                <xsl:attribute name="d">
+                    <xsl:choose>                              
+                        <xsl:when test="boolean(@d) and not(@d='')">  
+                            <xsl:value-of select="@d"/>
+                        </xsl:when>   
+                        <xsl:otherwise> </xsl:otherwise>
+                    </xsl:choose>    
+                </xsl:attribute>
+            
+            <!--xsl:attribute name="filter">
+                                <xsl:text>url(#tubefilter)</xsl:text>
+            </xsl:attribute-->
+            
+                <xsl:attribute name="stroke-width">
+                    <xsl:choose>
+                        <xsl:when test="boolean(@stroke-width) and not(@stroke-width='')">  
+                            <xsl:value-of select="@stroke-width"/>
+                        </xsl:when>   
+                        <xsl:otherwise>
+                            <xsl:text>3</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose> 
+                </xsl:attribute> 
+
+                <xsl:attribute name="fill">
+                    <xsl:choose>
+                        <xsl:when test="boolean(@fill) and not(@fill='')">  
+                            <xsl:value-of select="@fill"/>
+                        </xsl:when>   
+                        <xsl:otherwise>
+                            <xsl:text>none</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose> 
+                </xsl:attribute>
+            
+                <xsl:attribute name="stroke">
+                    <xsl:choose>
+                        <xsl:when test="boolean(@stroke) and not(@stroke='')">  
+                            <xsl:value-of select="@stroke"/>
+                        </xsl:when>   
+                        <xsl:otherwise>
+                            <xsl:text>black</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose> 
+                </xsl:attribute>
+            
+            </path>
+            
+            <xsl:choose>
+                <xsl:when test="boolean(@on) and not(@on='')">           
+                    <path>          
+                        <xsl:attribute name="d">
+                            <xsl:choose>                              
+                                <xsl:when test="boolean(@d) and not(@d='')">  
+                                    <xsl:value-of select="@d"/>
+                                </xsl:when>   
+                                <xsl:otherwise> </xsl:otherwise>
+                            </xsl:choose>    
+                        </xsl:attribute>
+            
+   
+                        <xsl:attribute name="style">
+                            <xsl:text>#{ </xsl:text>
+                            <xsl:value-of select="@on"/>
+                            <xsl:text>  ? 'display: none;' :  'display: block;'</xsl:text>
+                            <xsl:text>}</xsl:text>
+                        </xsl:attribute>
+
+            
+                        <xsl:attribute name="stroke-width">
+                            <xsl:choose>
+                                <xsl:when test="boolean(@stroke-width) and not(@stroke-width='')">  
+                                    <xsl:value-of select="@stroke-width div 1.5"/>
+                                </xsl:when>   
+                                <xsl:otherwise>
+                                    <xsl:text>1px</xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose> 
+                        </xsl:attribute> 
+
+                        <xsl:attribute name="fill">
+
+                            <xsl:text>none</xsl:text>
+
+                        </xsl:attribute>
+            
+                        <xsl:attribute name="stroke">
+
+                            <xsl:text>black</xsl:text>
+
+                        </xsl:attribute>
+            
+                    </path>
+                </xsl:when>        
+            </xsl:choose>
+            
+        </g> 
+
+    </xsl:template>
+    
+   
+    <!-- -->
+    
+    
+    <xsl:template match="//mlib:alarmtable" >
+         
+        <foreignObject>
+
+            <xsl:call-template name="apply_rect"/>
+            <xsl:call-template name="apply_id"/>            
+            <xsl:call-template name="apply_mlib_schema"/>
+            
+            <xsl:variable name="rectvarw"> 
+                <xsl:text> width: </xsl:text> 
+                <xsl:value-of select="@width"/>
+                <xsl:text>px;</xsl:text>
+            </xsl:variable>
+         
+            <xsl:variable name="rectvarh"> 
+                <xsl:text> height: </xsl:text>
+                <xsl:value-of select="@height"/>
+                <xsl:text>px;</xsl:text>
+            </xsl:variable>
+            
+            <xsl:variable name="rectvarfont"> 
+                <xsl:choose>
+                    <xsl:when test="boolean(@fontstyle) and not(@fontstyle='')">
+                        <xsl:value-of select="@fontstyle"/>
+                    </xsl:when>   
+                    <xsl:otherwise>
+                        <xsl:text>font-size: 10px;</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>                       
+            </xsl:variable>
+             
+            <html xmlns="http://www.w3.org/1999/xhtml" style=" -webkit-user-select: none;"> 
+                <head xmlns="http://www.w3.org/1999/xhtml">
+                    <script xmlns="http://www.w3.org/1999/xhtml"  type="text/javascript" src="../mainlib/js/mainlibutil.js"></script>
+
+                    <style type="text/css">
+                        body{
+                          -webkit-user-select: none;
+                          margin: 0px 0px; 
+                          padding: 0px 0px;}
+
+                        div{
+                          float:left;
+                          overflow:scroll;
+                          height: 100%;
+                          width: 100%;
+                          border:  1px solid grey;
+                          background-color: white;}
+
+                        table{
+                          border-collapse:collapse;
+                          text-align: left;                          
+                          font-family: sans-serif;
+                          background:#f0f0f0;}
+
+                        tbody{
+                          overflow:auto;
+                          margin: 0; 
+                          width: 100%;}
+
+                        tr{
+                          display: table-row;
+                          border-spacing: 0;
+                          border: 1px solid #999999;}
+
+                        th{
+                          display: table-cell;
+                          border: 1px solid #999999;
+                          position: relative;
+                          padding: 4px 4px;
+                          font-size: larger;
+                          text-shadow: black 1px 1px 0px, #aaa  0 0 1em;
+                          color: white;
+                          background:  -webkit-linear-gradient(#333 0%, #111 50%, #333 100%);}
+                            
+                        td{
+                          display: table-cell;
+                          border: 1px;                         
+                          padding: 3px;
+                          border: 1px solid #999999;
+                          background:   -webkit-linear-gradient(#eee 0%, #ddd 50%, #eee 100%);}
 
 
+                        tr.avaron{
+                          color: red;
+                          font-weight: bold;}
+
+                        tr.alarmon{
+                          color: orange;
+                          font-weight: bold;}
+
+                        tr.noticeon{
+                          color: darksalmon;
+                          font-weight: bold;}
+
+                        tr.avarkvit{
+                          color:  dimgray;
+                          font-weight: normal;}
+
+                        tr.alarmkvit{
+                          color:  darkgrey;
+                          font-weight: normal;}
+
+                        tr.noticekvit{
+                          color:  lightsteelblue;
+                          font-weight: normal;} 
+                          
+                    </style>    
+                </head>
+
+                <body>
+                    <xsl:attribute name="xmlns">                    
+                        <xsl:text>http://www.w3.org/1999/xhtml</xsl:text>
+                    </xsl:attribute>  
+                    <xsl:attribute name="style">                    
+                        <xsl:value-of select="$rectvarw"/>
+                        <xsl:value-of select="$rectvarh"/>
+                    </xsl:attribute>  
+                    <div xmlns="http://www.w3.org/1999/xhtml">
+                        <table>
+                            <xsl:attribute name="xmlns">                    
+                                <xsl:text>http://www.w3.org/1999/xhtml</xsl:text>
+                            </xsl:attribute>  
+                            <xsl:attribute name="style">                    
+                                <xsl:value-of select="$rectvarw"/>
+                                <xsl:value-of select="$rectvarfont"/>
+                            </xsl:attribute>  
+                            <script type="text/javascript">                           
+                                <xsl:text>var testsalarm=new mainlibutil.alarmtable(this.document.getElementById('</xsl:text>
+                                <xsl:value-of select="@id"/>
+                                <xsl:text>'));</xsl:text>
+                            </script>
+                            <tbody xmlns="http://www.w3.org/1999/xhtml">       
+                                <tr>
+                                    <xsl:attribute name="xmlns">                    
+                                        <xsl:text>http://www.w3.org/1999/xhtml</xsl:text>
+                                    </xsl:attribute>  
+                                    <xsl:attribute name="style">                    
+                                        <xsl:value-of select="$rectvarw"/>
+                                    </xsl:attribute>  
+                                    <th >Время</th>
+                                    <th >Тэг</th>
+                                    <th >Сообщение</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </body>
+            </html>            
+        </foreignObject>
+
+
+    </xsl:template>
 
 </xsl:stylesheet>

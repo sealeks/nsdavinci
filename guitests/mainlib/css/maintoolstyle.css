@@ -15,15 +15,17 @@ html {
     margin: 0;
     padding:  0; 
     border: 0;
+    background-color: rgba(156,156,156,1) !important; 
 }
 
 body { 
     margin: 0;
     padding:  0; 
     border: 0;
+    background-color: rgba(156,156,156,1) !important; 
 }
 
-#toolbar {             
+.toolbar {             
     background-image: none !important;             
-    background-color: rgba(256,256,256,1) !important;         } 
+    background-color: rgba(156,156,156,1) !important;         } 
 

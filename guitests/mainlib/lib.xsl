@@ -9,16 +9,10 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <xsl:output  method="xml" indent="yes"/>
 
-
-    <xsl:template match="/*/*[position()=1]" >
-
-        
+    <xsl:template match="/*/*[position()=1]" >        
         <xsl:call-template name="mainlib"/>
-
         <xsl:apply-templates select="*"/>
     </xsl:template>
-    
-
     
 
     <xsl:template match="*">
@@ -27,11 +21,11 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         </xsl:copy>
     </xsl:template>
     
+    
     <xsl:template match="/" >
         <xsl:processing-instruction name="xml-stylesheet">href="../mainlib/css/mainlib.css"</xsl:processing-instruction>
         <xsl:apply-templates select="/*"/>
     </xsl:template>
-
 
     
     <xsl:template match="*|@*|text()">
@@ -41,18 +35,20 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     </xsl:template>
     
 
-    
     <xsl:template match="@*">
         <xsl:copy>
             <xsl:apply-templates select="@*"/>
         </xsl:copy>
     </xsl:template>
     
+    
     <xsl:template match="text()">
         <xsl:copy>
             <xsl:apply-templates select="text()"/>
         </xsl:copy>
     </xsl:template>
+    
+    
     
     <!-- main template  -->
     
@@ -71,11 +67,13 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         </xsl:attribute>
     </xsl:template> 
     
+    
     <xsl:template name="apply_id">    
         <xsl:attribute name="id">
             <xsl:value-of select="@id"/>
         </xsl:attribute>
-    </xsl:template>       
+    </xsl:template>    
+    
    
     <xsl:template name="apply_cental_rotate">    
         <xsl:choose>
@@ -93,6 +91,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         </xsl:choose>
     </xsl:template>   
     
+    
     <xsl:template name="apply_r">     
         <xsl:choose>
             <xsl:when test="boolean(@r) and not(@r='')">
@@ -106,6 +105,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         </xsl:choose>
     </xsl:template>
     
+    
     <xsl:template name="apply_visible">     
         <xsl:choose>
             <xsl:when test="boolean(@visible) and not(@visible='')">
@@ -117,5 +117,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             </xsl:when>
         </xsl:choose>
     </xsl:template> 
+    
 
 </xsl:stylesheet>
