@@ -11,7 +11,8 @@
         font-family="Verdana" font-size="23" fill="blue" >#{ r8::a }</text>
 
 
-
+    <mlib:path fill="none" stroke-width="5px" d="M 100,400 L 100,110 C  100,110 100,100 110,100  M 110,100 L 400,100" id="name1" stroke="#1E90FF"/>
+    <mlib:path fill="none" stroke-width="5px" d="M 435,100 L 580,100 " id="name0" stroke="#1E90FF"/>
 
 </svg>
 

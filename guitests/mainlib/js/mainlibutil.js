@@ -23,6 +23,18 @@ mainlibutil.designtime = {};
 
 mainlibutil.global = {};
 
+mainlibutil.error = {};
+
+mainlibutil.regex = {};
+
+mainlibutil.alarmtable = function(el){
+    
+    this.alarmelement=mainlibutil.document.findElementByTagName(el,'table');
+    if (this.alarmelement){
+        this.alarmelement.alarlistener=this;
+        this.alarmelement.onalarm=function(ev){ this.alarlistener.execute(ev);}}
+
+}
 
 function dvnci_open(name){
     if (dvnci_iseditable()) return;
@@ -44,6 +56,13 @@ function dvnci_open(name){
     }
 }
 
+
+function dvnci_show_modal(name, url, param){
+    if (dvnci_iseditable()) return null;
+    return showModalDialog(name, url ? url : '' , param);
+}
+
+
 function dvnci_close(name){
     if (dvnci_iseditable()) return;
     var fl =  mainlibutil.global.getFormList();
@@ -55,6 +74,18 @@ function dvnci_close(name){
                     fl[i].window.close();
                 }
                 fl[i].window=null;
+                return;
+            }
+        }
+    }
+}
+
+function set_win_redactor(win, redactor){   
+    var fl =  mainlibutil.global.getFormList();   
+    if (fl){  
+        for (var i=0; i<fl.length;++i){        
+            if (fl[i]['name']==win.name){
+                fl[i].redactor_glb=redactor;
                 return;
             }
         }
@@ -84,16 +115,20 @@ function exit(){
 function init_project_controller(){
     mainlibutil.global.getStartupDoc(document);   
     mainlibutil.project.init_form();
-    if (dvnci_iseditable()) {
+    if (dvnci_iseditable()) 
         mainlibutil.designtime.getMainWindow();
-        mainlibutil.designtime.getLibInspector(true);
-    }
-
 }
 
 //
 
 
+
+mainlibutil.util.remove_element_arr = function(arr,ind){
+    for (var i=ind; i<arr.length-1;++i)
+        arr[i]=arr[i+1];
+    if (ind<arr.length) 
+        arr.length=arr.length-1;
+}
 
 
 //
@@ -123,17 +158,26 @@ mainlibutil.global.getStartupDoc = function (doc){
     return (tmp && tmp.startupdocument) ? tmp.startupdocument : null;
 }
 
+mainlibutil.global.getGlobalPropertyEditor = function (){
+    var tmp=mainlibutil.global.getGlobal();
+    return tmp.globalpropertydialog;   
+}
+
+mainlibutil.global.setGlobalPropertyEditor = function (val){
+    var tmp=mainlibutil.global.getGlobal();
+    tmp.globalpropertydialog=val;   
+}
+
 //
 
 mainlibutil.startup.init = function(){
-    var el = document; 
-    window.addEventListener('message', function (ev) {
+    window.addEventListener('message', function () {
         window.close();
     }, false);
     if (dvnci_iseditable()){
         document.red = new redactor(document);
         mainlibutil.startup.initredactor(window.name, document.red);
-
+        set_win_redactor(window, document.red);
     }
     window.onunload=dvnci_close_win;
 }
@@ -157,116 +201,32 @@ mainlibutil.project.init_form = function(){
     var doc = mainlibutil.global.getStartupDoc();
     if (doc){
         try{
+            
+            var tmp=mainlibutil.global.getGlobal();
             var elp=doc.getElementsByTagName('project')[0];
             var projectPath=elp.getAttribute('path');
             
+            tmp.projectPath=projectPath;
+            
             var els=doc.getElementsByTagName('form');
-            var fl=mainlibutil.global.getFormList();
-                      
+                                 
             var ellib=doc.getElementsByTagName('lib');
-            var ll=mainlibutil.global.getLibList();
-            
-            
-            if (els){
-                for (var i=0; i<els.length;++i){
-                    var path = projectPath && els[i].getAttribute('file') ? projectPath.toString() + els[i].getAttribute('file').toString() : 
-                    els[i].getAttribute('file') ? els[i].getAttribute('file').toString() : null; 
-                    if (path){   
+                                
+            if (els)
+                for (var i=0; i<els.length;++i)   
+                    mainlibutil.project.addtoformlist(els[i]);
+                          
+            if (ellib)  
+                for (var i=0; i<ellib.length;++i)
+                    mainlibutil.project.addtoliblist(ellib[i],i);
 
-                        var param = mainlibutil.project.buildparam(els[i]);
-                        var win=window.open(path,
-                            els[i].getAttribute('name')  ? els[i].getAttribute('name') :  '',
-                            param ? param : '');
-                        win.document.domain=document.domain;     
-                    
-                        fl.push({
-                            'name' : els[i].getAttribute('name'),
-                            'file' : els[i].hasAttribute('file') ? els[i].getAttribute('file') : '',
-                            'path'  : path,
-                            'param'  : param,
-                            'window'  : win,
-                            'top'  : els[i].hasAttribute('top') ? els[i].getAttribute('top') : null,
-                            'left'  : els[i].hasAttribute('left') ? els[i].getAttribute('left') : null,
-                            'width'  : els[i].hasAttribute('width') ? els[i].getAttribute('width') : null,
-                            'height'  : els[i].hasAttribute('height') ? els[i].getAttribute('height') : null,
-                            'caption'  : els[i].hasAttribute('caption') ? els[i].getAttribute('caption') : '',
-                            'decorated'  : els[i].hasAttribute('decorated') ? els[i].getAttribute('decorated') : true,
-                            'resizable'  : els[i].hasAttribute('resizable') ? els[i].getAttribute('resizable') : null,
-                            'modal'  : els[i].hasAttribute('modal') ? els[i].getAttribute('modal') : null,
-                            'allwaystop'  : els[i].hasAttribute('allwaystop') ? els[i].getAttribute('allwaystop') : null,
-                            'visible'  : ((els[i].hasAttribute('visible')) && (els[i].getAttribute('visible')=='false')) ? false : true,
-                            'element' : els[i]
-                        });
-                    }         
-                }
-            }
-                
-            if (ellib){       
-                for (var i=0; i<ellib.length;++i){
-                    if (ellib[i].hasAttribute('xsd')){
-                        ll.push({
-                            'name' : ellib[i].hasAttribute('name') ? ellib[i].getAttribute('name') : ('unnamed'+i),
-                            'path' : ellib[i].getAttribute('xsd'),
-                            'components' : mainlibutil.project.set_components(ellib[i].getAttribute('xsd'))
-                        })
-                    }
-                }
-                }
-        
-        
-    }
-    catch(error){ 
-        alert('Startup error: '+ error)
-    }
-}
-}
-
-
-mainlibutil.project.set_components = function(path){
-    var result = [];
-    var doc = mainlibutil.document.readDoc(path);
-    if (doc){
-        var els = doc.getElementsByTagNameNS('../dvnlib.xsl','creator');        
-        for (var i=0; i<els.length;++i){
-            result.push({ 
-                'name' : els[i].hasAttribute('name') ? els[i].getAttribute('name') : ('unnamed'+i),
-                'hint' : els[i].hasAttribute('hint') ? els[i].getAttribute('hint') : null,
-                'text' : els[i].textContent,
-                'element' : els[i].firstElementChild
-            });
+        }
+        catch(error){ 
+            alert('Startup error: '+ error)
         }
     }
-    return result;   
 }
 
-mainlibutil.project.get_components = function(tool, name){
-    var ll=mainlibutil.global.getLibList();
-    if (ll){
-        for (var i=0; i<ll.length;++i){
-            if (ll[i].name==tool){
-                var comps = ll[i].components;
-                for (var j=0; j<comps.length;++j){
-                    if (comps[j].hint==name){
-                        return comps[j].element;
-                    }
-                }
-            }
-        }
-    }
-    return null;   
-}
-
-mainlibutil.project.getFormInfo = function(name){
-    var fl =  mainlibutil.global.getFormList();
-    if (fl){  
-        for (var i=0; i<fl.length;++i){
-            if (fl[i]['name']==name){
-                return fl[i];
-            }
-        }
-    }
-    return null;        
-}
 
 mainlibutil.project.buildparam = function(el){
     if (el){
@@ -298,21 +258,137 @@ mainlibutil.project.buildparam = function(el){
     
 }
 
+mainlibutil.project.addtoformlist = function(els){
+    var tmp=mainlibutil.global.getGlobal();
+    var prjpath=tmp.projectPath;
+    var path = prjpath && els.getAttribute('file') ? prjpath.toString() + els.getAttribute('file').toString() : 
+    els.getAttribute('file') ? els.getAttribute('file').toString() : null;
+    if (path){            
+        var param = mainlibutil.project.buildparam(els);
+        var win=window.open(path, els.getAttribute('name')  ? els.getAttribute('name') :  '', param ? param : '');
+        win.document.domain=document.domain; 
+        var fl=mainlibutil.global.getFormList();
+        fl.push({
+            'name' : els.getAttribute('name'),
+            'file' : els.hasAttribute('file') ? els.getAttribute('file') : '',
+            'path'  : path,
+            'param'  : param,
+            'window'  : win,
+            'top'  : els.hasAttribute('top') ? els.getAttribute('top') : null,
+            'left'  : els.hasAttribute('left') ? els.getAttribute('left') : null,
+            'width'  : els.hasAttribute('width') ? els.getAttribute('width') : null,
+            'height'  : els.hasAttribute('height') ? els.getAttribute('height') : null,
+            'caption'  : els.hasAttribute('caption') ? els.getAttribute('caption') : '',
+            'decorated'  : els.hasAttribute('decorated') ? els.getAttribute('decorated') : true,
+            'resizable'  : els.hasAttribute('resizable') ? els.getAttribute('resizable') : null,
+            'modal'  : els.hasAttribute('modal') ? els.getAttribute('modal') : null,
+            'allwaystop'  : els.hasAttribute('allwaystop') ? els.getAttribute('allwaystop') : null,
+            'visible'  : ((els.hasAttribute('visible')) && (els.getAttribute('visible')=='false')) ? false : true,
+            'element' : els
+        });
+    }   
+}
+
+mainlibutil.project.addtoliblist = function(els, i){   
+    var ll=mainlibutil.global.getLibList();  
+    if (els.hasAttribute('xsd')){
+        ll.push({
+            'name' : els.hasAttribute('name') ? els.getAttribute('name') : ('unnamed'+i),
+            'caption' : els.hasAttribute('caption') ? els.getAttribute('caption') : ('Library'+i),
+            'path' : els.getAttribute('xsd'),
+            'components' : mainlibutil.project.set_components(els.getAttribute('xsd'))
+        })
+    } 
+}
+
+mainlibutil.project.set_components = function(path){
+    var result = [];
+    var doc = mainlibutil.document.readDoc(path);
+    if (doc){
+        var els = doc.getElementsByTagNameNS('../dvnlib.xsl','creator');        
+        for (var i=0; i<els.length;++i){
+            result.push({ 
+                'name' : els[i].hasAttribute('name') ? els[i].getAttribute('name') : ('unnamed'+i),
+                'hint' : els[i].hasAttribute('hint') ? els[i].getAttribute('hint') : null,
+                'hintup' : els[i].hasAttribute('hintup') ? els[i].getAttribute('hintup') : (els[i].hasAttribute('hint') ? els[i].getAttribute('hint') : null),
+                'text' : els[i].textContent,
+                'element' : els[i].firstElementChild
+            });
+        }
+    }
+    return result;   
+}
+
+mainlibutil.project.get_components = function(tool, name){
+    var ll=mainlibutil.global.getLibList();
+    if (ll){
+        for (var i=0; i<ll.length;++i){
+            if (ll[i].name==tool){
+                var comps = ll[i].components;
+                for (var j=0; j<comps.length;++j){
+                    if (comps[j].hint==name){
+                        return comps[j].element;
+                    }
+                }
+            }
+        }
+    }
+    return null;   
+}
+
+
+
+mainlibutil.project.getFormInfo = function(name){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                return fl[i];
+            }
+        }
+    }
+    return null;        
+}
+
+
+
 
 
 //  window
 
-mainlibutil.window.create = function(name , caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal){
+mainlibutil.window.create = function(name , caption, top, left, width, height, tooltip, allwaystop, nodecorate){
     var tmp='caption=' + ( caption ? caption :  "") +
     ',left='+ (left ? left : '0') +
     ',top=' + (top ? top : '0') +
     ',width=' + (width ? width : '200px') +
     ',height=' + (height ? height : '200px') +
     ',tooltip=' + (tooltip ? 'yes' : '0') +
+    ',resizable='+ (false ? 'yes' : 'no') +
     ',allwaystop='+ (allwaystop ? 'yes' : '0') +
     (nodecorate ? ',decorated=no' : '') +
     ';'
     return window.open('', name , tmp);
+}
+
+
+mainlibutil.window.create_modal = function(url,  caption, value ,top, left, width, height, tooltip, allwaystop, nodecorate){
+    var tmp='caption=' + ( caption ? caption :  "") +
+    ',left='+ (left ? left : '0') +
+    ',top=' + (top ? top : '0') +
+    ',width=' + (width ? width : '200px') +
+    ',height=' + (height ? height : '200px') +
+    ',tooltip=' + (tooltip ? 'yes' : '0') +
+    ',resizable='+ (false ? 'yes' : 'no') +
+    ',allwaystop='+ (allwaystop ? 'yes' : '0') +
+    (nodecorate ? ',decorated=no' : '') +
+    ';'
+    mainlibutil.global.setGlobalPropertyEditor({'value': value});
+    window.showModalDialog(url, null , tmp);
+    
+    var ret = mainlibutil.global.getGlobalPropertyEditor();
+    if (!ret || ret==value) return null;
+    mainlibutil.global.setGlobalPropertyEditor();
+    return ret;
 }
 
 
@@ -335,6 +411,15 @@ mainlibutil.window.createhtml = function(name , caption, top, left, width, heigh
     newwin.document.close();
     return newwin;
     
+}
+
+
+
+//
+
+mainlibutil.regex.check = function (value, expr){
+    var re= new RegExp(expr);
+    return re.test(value);
 }
 
 //
@@ -444,6 +529,15 @@ mainlibutil.html.create_span = function (parent, style, classnm){
     return newel;
 }
 
+mainlibutil.html.create_link = function (parent, rel, type, href){
+    var newel = mainlibutil.html.create('link', parent);
+    if (!newel) return;
+    newel.setAttribute('rel', rel ? rel : 'stylesheet');
+    newel.setAttribute('type', type ? type : 'text/css');
+    if (href) newel.setAttribute('href', href);
+    return newel;
+}
+
 
 
 mainlibutil.html.create_style = function (parent,  style){
@@ -487,19 +581,15 @@ mainlibutil.html.create_select = function (parent, type, value, list, addit){
         newel.setAttribute('value', value );
 
     var newop = mainlibutil.html.create('option', newel);
-    //newop.setAttribute('value', value );
     newop.setAttribute('selected','');
     newop.innerHTML=value;
 
     for(var i=0; i < list.length; i++){
         if (list[i]!=value){
             var newop = mainlibutil.html.create('option', newel);
-            //newop.setAttribute('value', list[i] );
             newop.innerHTML=list[i];
         }
-
     }
-
     if (addit){
         var newop = mainlibutil.html.create('option', newel);
         newop.setAttribute('value', '...' );
@@ -508,24 +598,33 @@ mainlibutil.html.create_select = function (parent, type, value, list, addit){
     return newel;
 }
 
-mainlibutil.html.create_tool = function (doc, nametool, names, funcs, size){
+mainlibutil.html.create_tool = function (doc, nametool, names, hints, funcs, size, header, headerstyle){
     if (names){
-    var body=doc.getElementsByTagName('body')[0];
-    var result = {};
-    if (body) {
-        mainlibutil.html.create_tool_style(doc, nametool, names,  size);
-        var div = mainlibutil.html.create_div(body);
-        div.setAttribute('id','toolbar');
-        for (var i=0;i<names.length;++i){
-            var btn = mainlibutil.html.create_button( div,null,nametool+'-item toggleable '+names[i],'', (funcs && funcs.length > i) ? funcs[i] : null);
-            btn.namebtn=names[i];
-            btn.nametool=nametool;
-            mainlibutil.html.create_div(btn,null,nametool+'-icon')
-            result[names[i]] = btn;
-        } 
-        return result;
-    }}
-   return undefined;
+        var body=doc.getElementsByTagName('body')[0];
+        var result = {};
+        if (body) {
+            if (header){
+                var divhead = mainlibutil.html.create_div(body, headerstyle); 
+                divhead.innerHTML=header;
+            }
+            mainlibutil.html.create_tool_style(doc, nametool, names,  size);
+            var div = mainlibutil.html.create_div(body);
+            div.setAttribute('class','toolbar');
+            for (var i=0;i<names.length;++i){
+                var btn = mainlibutil.html.create_button( div,null,nametool+'-item toggleable '+names[i],'', (funcs && funcs.length > i) ? funcs[i] : null);               
+                btn.namebtn=names[i];
+                btn.nametool=nametool;
+                if ( hints &&  hints.length>i)
+                    btn.setAttribute('title', hints[i])
+                var dv = mainlibutil.html.create_div(btn,null,nametool+'-icon');
+                if (hints &&  hints.length>i)
+                    dv.setAttribute('title', hints[i]);
+                result[names[i]] = btn;
+            } 
+            return result;
+        }
+    }
+    return undefined;
 } 
 
 
@@ -545,7 +644,7 @@ mainlibutil.html.create_tool_style = function (doc, nametool, names,  sz){
 
         "."+nametool+"-item {\n"+
         " margin: 0;\n"+
-        " padding: 0 6px;\n"+
+        " padding: 0 0px;\n"+
         " background-color: transparent;\n"+
         " border-style: none;\n"+
         " border-color: transparent;}\n"+
@@ -553,7 +652,7 @@ mainlibutil.html.create_tool_style = function (doc, nametool, names,  sz){
 
 
         "."+nametool+"-item.toggleable {\n"+
-        " padding-top: 4px;}\n"+
+        " padding-top: 0px;}\n"+
         " \n"+
 
         "."+nametool+"-icon {\n"+
@@ -609,6 +708,7 @@ mainlibutil.html.create_tool_style = function (doc, nametool, names,  sz){
         mainlibutil.html.create_style(head, style);
     }
 } 
+
 
 
 ///////////////////////////////////////////////
@@ -773,7 +873,10 @@ mainlibutil.svg.create_button = function (parent, x, y,  height, width, rx, ry, 
 }
 
 
-mainlibutil.www.createWindow = function(doc, id, x, y, width, height, style){
+//
+
+
+mainlibutil.www.create_window = function(doc, id, x, y, width, height, style){
     
     if (!doc) return undefined;
 
@@ -811,6 +914,150 @@ mainlibutil.www.createWindow = function(doc, id, x, y, width, height, style){
     return undefined;
 }
 
+mainlibutil.www.correct_window_height = function (win, innerheight){
+    if (win.innerHeight!=innerheight){
+        var correctH =  win.outerHeight + (innerheight - win.innerHeight);
+        win.resizeTo(win.outerWidth,correctH);
+    }
+}
+
+mainlibutil.www.create_tbwindow = function (name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, names, hints,  funcs, destroyfunc){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp[name]){
+        tmp[name]=mainlibutil.window.createhtml('_'+name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, "../mainlib/css/maintoolstyle.css");
+        tmp[name].onunload= destroyfunc ? destroyfunc : 
+        function(){     
+            try{
+                var tmpo=mainlibutil.global.getGlobal();
+                if (tmpo && tmpo[name])
+                    tmpo[name]=undefined;
+            }
+            catch(error){}
+        };
+        if (names)    
+            mainlibutil.www.create_tbwindow_tools(name, null, names, hints, funcs);
+        return tmp[name];
+    }   
+}
+
+mainlibutil.www.create_modalwindow = function (name, caption, top, left, width, height, tooltip, allwaystop, nodecorate){
+    var result=mainlibutil.window.mainlibutil.window.create_modal(+name, caption, top, left, width, height, tooltip, allwaystop, nodecorate);
+    return result;
+}
+
+mainlibutil.www.create_tbwindow_tools = function (name, tools, names, hints, funcs, size, header, headerstyle){
+    var tmp=mainlibutil.global.getGlobal();
+    if (name && names && funcs && tmp[name]){
+        if (!tools) tools=name;
+        if (!tmp[name].tools)
+            tmp[name].tools={};
+        tmp[name].tools[tools]=mainlibutil.html.create_tool(tmp[name].document, tools, names, hints, funcs, size, header, headerstyle) ;
+        tmp[name+'_tools']=tmp[name].tools[tools];
+    }    
+}
+
+mainlibutil.www.set_tbwindow_btnstatus = function (name, tools, btnname , state){
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && tmp[name+'_tools']){
+        if (!tools) tools=name;
+        if (tmp[name+'_tools']){
+            var rowtool = tmp[name+'_tools'];
+            if (rowtool[btnname]){               
+                var btn =  rowtool[btnname]; 
+                if (btn.hasAttribute('off') && state!='off') 
+                    btn.removeAttribute('off'); 
+                if (btn.hasAttribute('on') && state!='on') 
+                    btn.removeAttribute('on');
+                if (btn.hasAttribute('disabled') && state!='disabled') 
+                    btn.removeAttribute('disabled');    
+                if (!btn.hasAttribute('off') && state=='off') 
+                    btn.setAttribute('off', 'off'); 
+                if (!btn.hasAttribute('on') && state=='on') 
+                    btn.setAttribute('on', 'on');
+                if (!btn.hasAttribute('disabled') && state=='disabled') 
+                    btn.setAttribute('disabled', 'disabled');                              
+            }       
+        }    
+    }
+}
+
+
+//
+
+
+
+mainlibutil.alarmtable.prototype.execute = function(evnt) {
+    this.cleartable();   
+    this.fillrowtab(evnt);
+}
+
+mainlibutil.alarmtable.prototype.cleartable = function() {
+    var el = this.alarmelement;
+    if (el==null) return;
+    var tbel = el.getElementsByTagName("tbody");
+    if (tbel.length==0) return;    
+    el = tbel[0];
+    while (el.children.length>1)
+        el.removeChild(el.lastChild);
+}
+        
+          
+
+  
+mainlibutil.alarmtable.prototype.fillrowtab = function(evnt){
+    var el = this.alarmelement;
+    if ((el==null) || (evnt==null)) return;
+    var tbel = el.getElementsByTagName("tbody");
+    if (tbel.length==0) return;    
+    el = tbel[0];
+    for (var i=0;i<evnt.length;++i){
+        this.insertrow(el, evnt[i]);
+    }
+     
+}
+
+
+mainlibutil.alarmtable.prototype.insertrow = function(el, arr) {
+
+    if (el.children.length==0) return;
+    var tr  = document.createElementNS('http://www.w3.org/1999/xhtml','tr');
+    if (arr[2]==0){
+        tr.setAttribute("class", (arr[1]>2) ? "avaron" : ((arr[1]>1) ? "alarmon" : "noticeon"));
+    }
+    else{
+        tr.setAttribute("class", (arr[1]>2) ? "avarkvit" : ((arr[1]>1) ? "alarmkvit" : "noticekvit"));
+    }
+
+      
+    for (var i=0; i<arr.length-1 ;++i){
+        if ((i==0) || (i>2)){
+            var td = document.createElement('td');
+            if (i==0){
+                var tm= new Date(0,0,0, arr[i].getHours() ,arr[i].getMinutes() 
+                    +arr[i].getTimezoneOffset(),arr[i].getSeconds());
+                var ta = document.createTextNode(tm.toLocaleTimeString());
+                var sp = document.createElementNS('http://www.w3.org/1999/xhtml','span');
+                sp.setAttribute("class", "smallfont");
+                sp.appendChild(ta);
+                td.appendChild(sp);
+                tr.appendChild(td);
+            }
+            else{
+                var ta = document.createTextNode(arr[i]);
+                var sp = document.createElement('span');
+                sp.setAttribute("class", "smallfont");
+                sp.appendChild(ta);
+                td.appendChild(sp);
+                tr.appendChild(td);
+            }
+        }
+    }
+      
+el.appendChild(tr);
+}
+
+//
+
 
 mainlibutil.document.readDoc = function (url){ 
     try{
@@ -834,119 +1081,101 @@ mainlibutil.document.writeDoc = function (doc){
     }
 }
 
-// radactor util
-
-///  Main Window
-
-mainlibutil.designtime.CreateToolBarWindow = function (name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, names, funcs, destroyfunc){
-    var tmp=mainlibutil.global.getGlobal();
-    if (tmp && !tmp[name]){
-        tmp[name]=mainlibutil.window.createhtml('_'+name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, "../mainlib/css/maintoolstyle.css");
-        tmp[name].onunload= destroyfunc ? destroyfunc : 
-            function(){     
-               try{
-                  var tmpo=mainlibutil.global.getGlobal();
-                  if (tmpo && tmpo[name])
-                  tmpo[name]=undefined;}
-               catch(error){}
-            };
-        if (names)    
-           mainlibutil.designtime.CreateToolBarWindowTool(name, null, names, funcs);
-        return tmp[name];
-    } 
-    
-}
-
-mainlibutil.designtime.CreateToolBarWindowTool = function (name, tools, names, funcs){
-    var tmp=mainlibutil.global.getGlobal();
-    if (name && names && funcs && tmp[name]){
-        if (!tools) tools=name;
-        if (!tmp[name].tools)
-            tmp[name].tools={};
-        tmp[name].tools[tools]=mainlibutil.html.create_tool(tmp[name].document, tools, names, funcs) ;
-        //tmp[name+'_tools'] = tmp[name].tools;
-    }    
-}
-
-mainlibutil.designtime.setWindowButtonState = function (name, tools, btnname , state){
-    var tmp=mainlibutil.global.getGlobal();
-    if (tmp && tmp[name] && tmp[name].tools){
-        if (!tools) tools=name;
-        if (tmp[name].tools[tools]){
-            var rowtool = tmp[name].tools[tools];
-            if (rowtool[btnname]){
-                var btn =  rowtool[btnname]; 
-                if (btn.hasAttribute('off') && state!='off') 
-                    btn.removeAttribute('off'); 
-                if (btn.hasAttribute('on') && state!='on') 
-                    btn.removeAttribute('on');
-                if (btn.hasAttribute('disabled') && state!='disabled') 
-                    btn.removeAttribute('disabled');    
-                if (!btn.hasAttribute('off') && state=='off') 
-                    btn.setAttribute('off', 'off'); 
-                if (!btn.hasAttribute('on') && state=='on') 
-                    btn.setAttribute('on', 'on');
-                if (!btn.hasAttribute('disabled') && state=='disabled') 
-                    btn.setAttribute('disabled', 'disabled');                              
-            }       
-        }    
+mainlibutil.document.findElementById = function (el, id){
+    for(var e=el.firstElementChild; e; e=e.nextElementSibling){
+        if (e.getAttribute('id')==id) return e;
+        var result = mainlibutil.document.findElementById(e, id);
+        if (result) 
+            return result;      
     }
 }
 
+mainlibutil.document.findElementByTagName = function (el, name){
+    for(var e=el.firstElementChild; e; e=e.nextElementSibling){
+        if (e.localName==name) return e;
+        var result = mainlibutil.document.findElementByTagName(e, name);
+        if (result) 
+            return result;      
+    }
+}
+
+// radactor util
+
+
 ///
 
-mainlibutil.designtime.getMainWindow = function (){
-    mainlibutil.designtime.CreateToolBarWindow('maintool', 'Редактор' ,'5%','5%', '600','70','yes','yes',null,null,
-                                           ['save','objinsp', 'forminsp', 'exit'],
-                                           [function() {
-                                                 mainlibutil.designtime.SaveAll();},
-                                            function() {
-                                                 mainlibutil.designtime.resetObjectInspector();
-                                                       },
-                                            function() {
-                                                 mainlibutil.designtime.resetFormInspector();
-                                                       },
-                                            function() {
-                                                 mainlibutil.designtime.destroyMainWindow();
-                                                       }],
-                                            mainlibutil.designtime.destroyMainWindow);
-                                            mainlibutil.designtime.setMainWindowToolStatus();
 
+
+
+mainlibutil.designtime.getMainWindow = function (){
+    mainlibutil.www.create_tbwindow('maintool', 'Редактор' ,'100' , '100', '600','64','yes','yes',null,null,
+        ['save','objinsp', 'forminsp','libinsp', 'exit'],
+        ['Сохранить','Редактор свойств', 'Редактор форм','Панель компонентов', 'Выход'],
+        [function() {
+            mainlibutil.designtime.SaveAll();
+        },
+        function() {
+            mainlibutil.designtime.resetObjectInspector();
+        },
+        function() {
+            mainlibutil.designtime.resetFormInspector();
+        },
+        function() {
+            mainlibutil.designtime.resetLibInspector();
+        },           
+        function() {
+            mainlibutil.designtime.destroyMainWindow();
+        }],
+        mainlibutil.designtime.destroyMainWindow);
+        
+        
+    var tmp=mainlibutil.global.getGlobal();
+    
+        
+    tmp.maintool.onload =  function() {
+            //setTimeout( function() {
+            //mainlibutil.www.correct_window_height(tmp.maintool,30);}, 1000);
+        }  
+    
+    
+     
+    mainlibutil.designtime.setMainWindowToolStatus();
+    tmp.maintool.focus();
+    
 }
 
 
 
 
-mainlibutil.designtime.setMainWindowToolStatus = function (val){   
-   if ((val==1 || !val)) 
-       mainlibutil.designtime.setWindowButtonState('maintool', null, 'save', mainlibutil.designtime.isNeedSave() ?  'on' :  'disabled');
-   if ((val==2 || !val)) 
-       mainlibutil.designtime.setWindowButtonState('maintool', null, 'objinsp', mainlibutil.designtime.getObjectInspector() ?  'off' :  'on');
-   if ((val==3 || !val)) 
-       mainlibutil.designtime.setWindowButtonState('maintool', null, 'forminsp', mainlibutil.designtime.getFormInspector() ?  'off' :  'on');
+mainlibutil.designtime.setMainWindowToolStatus = function (val){ 
+    if ((val==1 || !val)) 
+        mainlibutil.www.set_tbwindow_btnstatus('maintool', null, 'save', mainlibutil.designtime.isNeedSave() ?  'on' :  'disabled');
+    if ((val==2 || !val)) 
+        mainlibutil.www.set_tbwindow_btnstatus('maintool', null, 'objinsp', mainlibutil.designtime.getObjectInspector() ?  'off' :  'on');
+    if ((val==3 || !val)) 
+        mainlibutil.www.set_tbwindow_btnstatus('maintool', null, 'forminsp', mainlibutil.designtime.getFormInspector() ?  'off' :  'on');
+    if ((val==4 || !val)) 
+        mainlibutil.www.set_tbwindow_btnstatus('maintool', null, 'libinsp', mainlibutil.designtime.getLibInspector() ?  'off' :  'on');
 }
 
 
 mainlibutil.designtime.destroyMainWindow = function(){
-    try{
-    
         var tmp=mainlibutil.global.getGlobal();
-        if (tmp && tmp['maintool'])
+        if (tmp && tmp.maintool)
             tmp.maintool=undefined;
-        if (!mainlibutil.designtime.isNeedSave())
+        if (!mainlibutil.designtime.isNeedSave()){          
             dvnci_exit();
+            return;}
         if (confirm("Выйти без сохранения?")){
             dvnci_exit();
             return;
-        }
+        } 
+        else{
         setTimeout(function() {
             mainlibutil.designtime.getMainWindow();
-        }, 100);
-    }
-    catch(error){
-        dvnci_exit();
-    }  
+        }, 10);}
 }
+
 
 ///  Object inspector
 
@@ -954,28 +1183,25 @@ mainlibutil.designtime.getObjectInspector = function (force){
     var tmp=mainlibutil.global.getGlobal();
     if (!force && !tmp.objectinspectorwin) return null;
     if (tmp && !tmp.objectinspectorwin){
- 
-        var objectinspectorwin=mainlibutil.window.createhtml('_ObjectInspector','Свойства','15%','15%', '400','650','yes','yes',null,null, "../mainlib/css/objectinspector.css");
+        var objectinspectorwin=mainlibutil.window.createhtml('_ObjectInspector','Свойства','100', '900', '400','650','yes','yes',null,null, "../mainlib/css/objectinspector.css");
         tmp.objectinspectorwin=objectinspectorwin;
         tmp.objectinspectordoc=objectinspectorwin.document;
         objectinspectorwin.onunload=mainlibutil.designtime.destroyObjectInspector;
         var objdoc =objectinspectorwin.document;
-        try{
-            var body=objdoc.getElementsByTagName('body')[0];
-            var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
-            var table = mainlibutil.html.create_table(div,null,"scrollable");
-            var tbody = mainlibutil.html.create_tbody(table);
-            var tr = mainlibutil.html.create_tr(tbody);
-            var th1 =mainlibutil.html.create_th(tr);
-            th1.innerHTML='Имя';
-            var th2 =mainlibutil.html.create_th(tr);
-            th2.innerHTML='Значение';
-            tmp.objectinspectortbody=tbody;
-        }
-        catch(error){
-            alert ('Create window error:' + error);
-            return null;
-        }       
+        var body=objdoc.getElementsByTagName('body')[0];
+        var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
+        var table = mainlibutil.html.create_table(div,null,"scrollable");
+        var tbody = mainlibutil.html.create_tbody(table);
+        var tr = mainlibutil.html.create_tr(tbody);
+        var th1 =mainlibutil.html.create_th(tr);
+        th1.innerHTML='Имя';
+        var th2 =mainlibutil.html.create_th(tr);
+        th2.innerHTML='Значение';
+        tmp.objectinspectortbody=tbody;
+        var current=mainlibutil.designtime.getCurrentRedactor();
+        if (current)
+            current.show_property();
+              
     }   
     return (tmp && tmp.objectinspectorwin) ? tmp.objectinspectorwin : null;
 }
@@ -1038,64 +1264,60 @@ mainlibutil.designtime.destroyObjectInspector = function(){
 
 mainlibutil.designtime.getFormInspector = function (force){
     var tmp=mainlibutil.global.getGlobal();
-    if (!tmp.forminspectorwin && !force) return null;
-    if (tmp && !tmp.forminspectorwin){
- 
-        var forminspectorwin=mainlibutil.window.createhtml('_FormInspector','Окна','35%','35%', '600','200','yes','yes',null,null, "../mainlib/css/forminspector.css");
-        tmp.forminspectorwin=forminspectorwin;
-        tmp.forminspectordoc=forminspectorwin.document;
-        forminspectorwin.onunload=mainlibutil.designtime.destroyFormInspector;
-        var objdoc =forminspectorwin.document;
-        try{
-            var body=objdoc.getElementsByTagName('body')[0];
-          
+    if (!tmp.formtool && !force) return null;
+    if (tmp && !tmp.formtool){
 
-            var div = mainlibutil.html.create_div(body);
-            div.setAttribute('id','toolbar');
-            var btn1 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable save','',function() {
-                mainlibutil.document.writeDoc(mainlibutil.global.getStartupDoc());
-            });
-            mainlibutil.html.create_div(btn1,null,'toolbar-icon'); 
-            var btn4 = mainlibutil.html.create_button( div,null,'toolbar-item toggleable exit','',function() {dvnci_exit();
-            });
-            mainlibutil.html.create_div(btn4,null,'toolbar-icon');          
-          
-          
-            var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
-            var table = mainlibutil.html.create_table(div,null,"scrollable");
-            var tbody = mainlibutil.html.create_tbody(table);
-            var tr = mainlibutil.html.create_tr(tbody);
-            tmp.forminspectortbody=tbody;
-        }
-        catch(error){
-            alert ('Create window error:' + error);
-            return null;
-        }       
-    }   
+        mainlibutil.www.create_tbwindow('formtool', 'Окна' ,'600','100', '600','200','yes','yes',null,null,
+            ['add', 'new'],
+            ['Добавить из файла','Новая форма'],
+            [
+            function() {
+                mainlibutil.designtime.addwindowfromfile();             
+            },
+            function() {
+                mainlibutil.designtime.addnewwindow();
+            }]);
+    
+        var objdoc =tmp.formtool.document;
+        tmp.formtool.onunload=mainlibutil.designtime.destroyFormInspector;
+
+        var body=objdoc.getElementsByTagName('body')[0];
+        var head=objdoc.getElementsByTagName('head')[0];
+        mainlibutil.html.create_link(head, 'stylesheet', 'text/css',"../mainlib/css/forminspector.css");
+        var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
+        var table = mainlibutil.html.create_table(div,null,"scrollable");
+        var tbody = mainlibutil.html.create_tbody(table);
+        mainlibutil.html.create_tr(tbody);
+        tmp.formtooltbody=tbody;
+    }
+ 
     mainlibutil.designtime.fillFormInspector();
-    return (tmp && tmp.forminspectorwin) ? tmp.forminspectorwin : null;
+    return (tmp && tmp.formtool) ? tmp.formtool : null;
 }
 
 mainlibutil.designtime.resetFormInspector = function(){
     var vis =  mainlibutil.designtime.getFormInspector();
     var tmp=mainlibutil.global.getGlobal();
-    if (vis && tmp.forminspectorwin)
-        tmp.forminspectorwin.close();
+    if (vis && tmp.formtool)
+        tmp.formtool.close();
     else
         mainlibutil.designtime.getFormInspector(true);
+    var tmp=mainlibutil.global.getGlobal();
+    tmp.formtool.focus();
     mainlibutil.designtime.setMainWindowToolStatus(3);
         
 } 
 
 mainlibutil.designtime.fillFormInspector = function (){
-    
-    var tbody = mainlibutil.designtime.getFormInspectorTbody();
+    var tmp=mainlibutil.global.getGlobal();
+    var tbody = tmp.formtooltbody;
     
     mainlibutil.dom.clearChildNode(tbody);   
 
     var tr = mainlibutil.html.create_tr(tbody);
     
-    mainlibutil.html.create_tabel_header(tr,null,null,['Файл','id','caption','x','y','width','height','visible','alltop','resize','decorate','modal','O','X']);
+    mainlibutil.html.create_tabel_header(tr,null,null,
+                                         ['Файл','id','caption','x','y','width','height','visible','alltop','resize','decorate','modal','0/X','-']);
    
     var fl= mainlibutil.global.getFormList();
  
@@ -1124,11 +1346,12 @@ mainlibutil.designtime.fillFormInspector = function (){
         
         var td11= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
         var btno = mainlibutil.html.create_button( td11,'height: 15px;',null,'');
-        btno.setAttribute('onclick','mainlibutil.designtime.openwindow("'+formname+ '");');
+        btno.setAttribute('onclick','mainlibutil.designtime.resetwindow("'+formname+ '");');
+ 
         
-        var td12= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
-        var btnc = mainlibutil.html.create_button( td12,'height: 15px;',null,'');
-        btnc.setAttribute('onclick','mainlibutil.designtime.closewindow("'+formname+ '");');
+        var td13= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var btnd = mainlibutil.html.create_button( td13,'height: 15px;',null,'');
+        btnd.setAttribute('onclick','mainlibutil.designtime.removeFormFromProject("'+formname+ '");');
     
     }
 }
@@ -1167,7 +1390,7 @@ mainlibutil.designtime.fiPropertyRowFocus = function(ev){
         }
 
         edit.addEventListener( 'keyup' ,function (ev) {       
-            if ((evn.keyIdentifier=="Enter"))
+            if ((ev.keyIdentifier=="Enter"))
                 mainlibutil.designtime.fiPropertyLeaveFocus(ev);
             else 
                 ev.stopPropagation();
@@ -1200,7 +1423,11 @@ mainlibutil.designtime.fiPropertyLeaveFocus = function(event){
             mainlibutil.designtime.openwindow(td.elem['name']);
 
             
-        }      
+        }
+        var fdoc = mainlibutil.global.getStartupDoc();
+        fdoc.needsave=true;
+        mainlibutil.designtime.setMainWindowToolStatus();
+
     }
 
           
@@ -1211,7 +1438,6 @@ mainlibutil.designtime.fiPropertyLeaveFocus = function(event){
  
 
 mainlibutil.designtime.fiCheckFormParam = function(name, val){
-    try{
         switch (name){
             case 'caption':{
                 return true;
@@ -1245,91 +1471,82 @@ mainlibutil.designtime.fiCheckFormParam = function(name, val){
             case 'decorated':{
                 return (val=='') || (val=='no');
             }  
-        }
-    }
-    catch(error){ 
-    }
+        } 
     return false;
 }
 
 
 
-mainlibutil.designtime.getFormInspectorDocument = function(){
-    var tmp = mainlibutil.global.getGlobal();
-    if (tmp && tmp.forminspectordoc) {
-        return tmp.forminspectordoc; 
-    }
-}
-
-mainlibutil.designtime.getFormInspectorTbody = function(){
-    var tmp = mainlibutil.global.getGlobal();
-    if (tmp && tmp.forminspectortbody) {
-        return tmp.forminspectortbody;       
-    }   
-}  
-
-
-mainlibutil.designtime.showFormInspector = function(){
-    var tmp = mainlibutil.designtime.getFormInspector();
-    if (tmp)
-        tmp.focus();
-}
-
-
-
-mainlibutil.designtime.closeFormInspector = function(){
-    var tmp = mainlibutil.designtime.getFormInspector();
-    if (tmp.forminspectorwin)
-        tmp.forminspectorwin.close();
-}
-
 mainlibutil.designtime.destroyFormInspector = function(){
     var tmp=mainlibutil.global.getGlobal();
-    if (tmp && tmp.forminspectorwin)
-        tmp.forminspectorwin=undefined;
-    if (tmp && tmp.forminspectordoc)
-        tmp.forminspectordoc=undefined;
-    if (tmp && tmp.forminspectortbody)
-        tmp.forminspectortbody=undefined;
-    mainlibutil.designtime.setMainWindowToolStatus(3);
-    
+    if (tmp && tmp.formtool)
+        tmp.formtool=undefined;
+    if (tmp && tmp.formtooltbody)
+        tmp.formtooltbody=undefined; 
+    mainlibutil.designtime.setMainWindowToolStatus(3);  
 }
 
+//
 
-mainlibutil.designtime.getLibInspector = function (force){
-    try{
-    mainlibutil.designtime.CreateToolBarWindow('libtool','Компоненты','65%','35%', '600','70','yes','yes',null,null);
-    var libs =mainlibutil.global.getLibList();
-    for (var i=0; i<libs.length;++i){
-        var lib =libs[i];
-        var btnsname =[];
-        var btnsfunc =[];
-        var comps =lib.components;
+
+mainlibutil.designtime.getLibInspector = function (force){    
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && !tmp.libtool && !force) return null;
+    if (!tmp.libtool){
+        var libs =mainlibutil.global.getLibList();
         
-        for (var j=0; j<comps.length;++j){
-            var name = lib.name;
-            var hint = comps[j].hint;
-            btnsname.push(comps[j].hint);
-            btnsfunc.push(mainlibutil.designtime.setSelectedToolEvent);
+        var heigth = libs.length>0 ? 86 + 52 * (libs.length-1) : 46;
+        
+        mainlibutil.www.create_tbwindow('libtool','Библиотека','300','100', '600',heigth,'yes','yes',null,null);
+        tmp.libtool.onunload=mainlibutil.designtime.destroyLibInspector;
+    
+        var libs =mainlibutil.global.getLibList();
+        for (var i=0; i<libs.length;++i){
+            var lib =libs[i];
+            var btnsname =[];
+            var btnsfunc =[];
+            var btnshint =[];
+            var comps =lib.components;        
+            for (var j=0; j<comps.length;++j){
+                btnsname.push(comps[j].hint);
+                btnsfunc.push(mainlibutil.designtime.setSelectedToolEvent);
+                btnshint.push(comps[j].hintup);
+            }        
+            mainlibutil.www.create_tbwindow_tools('libtool', lib.name , 
+                btnsname, 
+                btnshint, 
+                btnsfunc, 
+                null, 
+                lib.caption, 
+                "background-color: #E7E7E7; margin: 0px; border-width: 1px 0px ; border-color: yellow; border-style: solid; text-align: center; color: #040347)"); 
         }
         
-        mainlibutil.designtime.CreateToolBarWindowTool('libtool', lib.name , 
-            btnsname, 
-            btnsfunc); 
-    }}
-    catch(error){
-        alert(error)
+        tmp.libtool.onload= function() { alert('test');}
+
     }
+    return (tmp && tmp.libtool) ? tmp.libtool : null;
 
 }  
 
+
+
+mainlibutil.designtime.resetLibInspector = function(){
+    
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp.libtool)
+        tmp.libtool.close();
+    else
+        mainlibutil.designtime.getLibInspector(true);
+    var tmp=mainlibutil.global.getGlobal();
+    tmp.libtool.focus();
+    mainlibutil.designtime.setMainWindowToolStatus(4);     
+} 
+
 mainlibutil.designtime.setSelectedToolEvent = function(event){
-
-
-if (event && event.target && event.target.parentNode){
-    var trgt=event.target.parentNode;
-    mainlibutil.designtime.setSelectedComponent(trgt.nametool, trgt.namebtn);
-}
+    if (event && event.target && event.target.parentNode){
+        var trgt=event.target.parentNode;
+        mainlibutil.designtime.setSelectedComponent(trgt.nametool, trgt.namebtn);
+    }
 }
 
 mainlibutil.designtime.setSelectedComponent = function(tool, comp){
@@ -1337,61 +1554,49 @@ mainlibutil.designtime.setSelectedComponent = function(tool, comp){
     var set  = tool && comp;
     var result = null; 
     if (tmp){
-        var select = tmp['selectedComponent'];  
-        
+        var select = tmp['selectedComponent'];       
         if (select && set && select.tool==tool && select.component==comp){
-           tmp['selectedComponent'] =  null;
-           mainlibutil.designtime.setWindowButtonState('libtool', tool , comp , 'on' );
-           return null;}
+            tmp['selectedComponent'] =  null;
+            mainlibutil.www.set_tbwindow_btnstatus('libtool', tool , comp , 'on' );
+            return null;
+        }
        
         if (select){          
-            result = {'tool' : select.tool , 'component' : select.component};
+            result = {
+                'tool' : select.tool , 
+                'component' : select.component
+            };
             if (!set) return result;
-            mainlibutil.designtime.setWindowButtonState('libtool', result.tool , result.component , 'on' );
-            }
+            mainlibutil.www.set_tbwindow_btnstatus('libtool', result.tool , result.component , 'on' );
+        }
         if (set){
-            tmp['selectedComponent']={'tool' : tool , 'component' : comp};
-            mainlibutil.designtime.setWindowButtonState('libtool', tool  , comp  , 'off' );}
+            tmp['selectedComponent']={
+                'tool' : tool , 
+                'component' : comp
+            };
+            mainlibutil.www.set_tbwindow_btnstatus('libtool', tool  , comp  , 'off' );
+        }
     }
     return result;
 }
 
 
 mainlibutil.designtime.getSelectedComponent = function(){
-var tmp = mainlibutil.designtime.setSelectedComponent();
-if (tmp && tmp.tool && tmp.component){
-    //alert(tmp.tool+' : '+ tmp.component);
-    return mainlibutil.project.get_components(tmp.tool, tmp.component);
-}
-return null;
+    var tmp = mainlibutil.designtime.setSelectedComponent();
+    return (tmp && tmp.tool && tmp.component)? mainlibutil.project.get_components(tmp.tool, tmp.component): null;
 }
 
 
 mainlibutil.designtime.destroyLibInspector = function(){
-    
+    var tmp=mainlibutil.global.getGlobal();
+    if (tmp && tmp.libtool)
+        tmp.libtool=undefined;
+    mainlibutil.designtime.setMainWindowToolStatus(4);  
 }
 
 
 
-
-mainlibutil.designtime.SaveAll = function(){ 
-    var fl= mainlibutil.global.getFormList();
-    for (var i=0; i<fl.length; ++i ){
-        if (fl[i].red){
-            fl[i].red.save();
-        }   
-    }
-    mainlibutil.designtime.setMainWindowToolStatus();
-}
-
-mainlibutil.designtime.isNeedSave = function (){
-    var fl= mainlibutil.global.getFormList();
-    for (var i=0; i<fl.length; ++i ){
-        if (fl[i].red && fl[i].red.needsave)
-            return true;        
-    }   
-    return false;
-}
+//
 
 mainlibutil.designtime.openwindow = function(name){
     var fl =  mainlibutil.global.getFormList();
@@ -1414,7 +1619,7 @@ mainlibutil.designtime.openwindow = function(name){
 }
 
 
-mainlibutil.designtime.closewindow = function (name, needreload){
+mainlibutil.designtime.closewindow = function (name){
     var fl =  mainlibutil.global.getFormList();
    
     if (fl){  
@@ -1436,19 +1641,232 @@ mainlibutil.designtime.closewindow = function (name, needreload){
     }
 }
 
-mainlibutil.designtime.createFormInProject =function(name, left, top, width, heigth, decorated){
-    
+mainlibutil.designtime.resetwindow = function (name){
+    var fl =  mainlibutil.global.getFormList(); 
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            try{
+                if (fl[i]['name']==name){
+                    if (fl[i].window)
+                        mainlibutil.designtime.closewindow(name);
+                    else
+                        mainlibutil.designtime.openwindow(name);              
+                }
+            }
+            catch(error){
+                alert(error);
+            }
+        }
     }
+}
 
-mainlibutil.designtime.removeFormFromProject =function(name){
+mainlibutil.designtime.windowstatus = function (name){
+    var fl =  mainlibutil.global.getFormList(); 
+    if (fl){  
+        for (var i=0; i<fl.length;++i)
+            if (fl[i]['name']==name)
+                return fl[i].window ? true : false;
+        }
+    return false;
+}
+
+mainlibutil.designtime.SaveAll = function(){ 
+    var fl= mainlibutil.global.getFormList();
+    for (var i=0; i<fl.length; ++i ){
+        if (fl[i].red){
+            fl[i].red.save();
+        }   
+    }
+    var fdoc = mainlibutil.global.getStartupDoc();
+    if (fdoc && fdoc.needsave) {
+        mainlibutil.document.writeDoc(fdoc);
+        fdoc = mainlibutil.global.getStartupDoc();
+        fdoc.needsave=undefined;
+    }    
+    mainlibutil.designtime.setMainWindowToolStatus();
+}
+
+mainlibutil.designtime.isNeedSave = function (){
+    var fl= mainlibutil.global.getFormList();
+    for (var i=0; i<fl.length; ++i ){
+        if (fl[i].red && fl[i].red.needsave)
+            return true;        
+    }   
+    var fdoc = mainlibutil.global.getStartupDoc();
+    if (fdoc && fdoc.needsave) return true;
+    return false;
+}
+
+mainlibutil.designtime.setCurrentRedactor = function (win){
+    var tmp= mainlibutil.global.getGlobal();
+    if (!win){
+        tmp.currentred = null;
+        return;
+    }
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){   
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['window']==win){
+                tmp.currentred=fl[i]['redactor_glb'];  
+            }
+        }
+    }
+}
+
+mainlibutil.designtime.getCurrentRedactor = function (){
+    var tmp= mainlibutil.global.getGlobal();
+    return tmp.currentred;
+}
+
+mainlibutil.designtime.findwindow = function (name){
     var fl =  mainlibutil.global.getFormList();
     if (fl){  
         for (var i=0; i<fl.length;++i){
             if (fl[i]['name']==name){
-                
-        }
+                return fl[i].window;
+            }
         }
     }
+    return null;   
+}
+
+mainlibutil.designtime.windowexists = function (name){
+    var fl =  mainlibutil.global.getFormList();
+    if (fl){  
+        for (var i=0; i<fl.length;++i){
+            if (fl[i]['name']==name){
+                return true;
+            }
+        }
+    }
+    return false;   
+}
+
+
+
+mainlibutil.designtime.addwindowfromfile = function (){
+    var openfile= prompt('Введите имя файла','');
+    if (!openfile || openfile=='') return; 
+    var openddoc = mainlibutil.document.readDoc(openfile);
+    if (!openddoc){
+        alert('Документ '+openfile+' не был открыт!');
+        return;
+    }
+    var openform= prompt('Введите имя формы','');
+    if (!openform || openform=='') return; 
+    if (!mainlibutil.regex.check(openform,'[A-Za-z][A-Za-z0-9]*')){
+        alert('Имя формы '+openform+' некорректно!');
+        return;
+    }
+    if (mainlibutil.designtime.windowexists(openform)){
+        alert('Форма с именем '+openform+' уже существует!');
+        return;
+    }
+    mainlibutil.designtime.addform(openfile,openform); 
+}
+               
+mainlibutil.designtime.addnewwindow = function (){
+    var openfile= prompt('Введите имя файла','');
+    if (!openfile || openfile=='') return;          
+    if (!mainlibutil.regex.check(openfile,'[A-Za-z][A-Za-z0-9]*\\.(xml|html|htm)')){
+        alert('Имя формы '+openfile+' некорректно!');
+        return;
+    }
+               
+    var openddoc = mainlibutil.document.readDoc(openfile);
+    if (openddoc){
+        alert('Документ '+openfile+' уже существует!!');
+        return;
+    }
+               
+    var openform= prompt('Введите имя формы','');
+    if (!openform || openform=='') return;
+    if (!mainlibutil.regex.check(openform,'[A-Za-z][A-Za-z0-9]*')){
+        alert('Имя формы '+openform+' некорректно!');
+        return;
+    }
+    if (mainlibutil.designtime.windowexists(openform)){
+        alert('Форма с именем '+openform+' уже существует!');
+        return;
+    }
+    mainlibutil.designtime.createfileform(openfile);
+    mainlibutil.designtime.addform(openfile,openform);
+           
+}
+
+mainlibutil.designtime.addform = function(file, name){
+    try{       
+        var doc = mainlibutil.global.getStartupDoc();
+        var elp=doc.getElementsByTagName('project')[0];           
+        var els=doc.getElementsByTagName('form');
+        var el=els.length>0 ? els[els.length-1] : null;
+        var newel=elp.ownerDocument.createElement('form');
+        newel.setAttribute('name',name);
+        newel.setAttribute('file',file);
+        newel.setAttribute('left','10%');
+        newel.setAttribute('top','10%');
+        newel.setAttribute('width','50%');
+        newel.setAttribute('height','50%');
+        newel.setAttribute('caption',name);
+        newel.setAttribute('decorated','no');
+        elp.insertBefore(newel,el ? el.nextSibling : null);
+        mainlibutil.project.addtoformlist(newel);
+        mainlibutil.designtime.fillFormInspector();
+        var fdoc = mainlibutil.global.getStartupDoc();
+        if (fdoc && !fdoc.needsave) fdoc.needsave=true;
+        mainlibutil.designtime.setMainWindowToolStatus();
+    }
+    catch(error){
+        alert(error);
+    }
+       
+}
+
+mainlibutil.designtime.createfileform = function(file){
+    var tmp=mainlibutil.global.getGlobal();
+    var prjpath=tmp.projectPath;
+    var txt = '<?xml-stylesheet href="../mainlib/lib.xsl" type="text/xsl"?>\n'+
+    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="" onload="mainlibutil.startup.init()">\n'+
+    '<g></g>\n'+
+    '</svg>\n';
+    return dvnci_writefile(prjpath.toString()+file,txt);      
+}
+
+
+mainlibutil.designtime.removeFormFromProject =function(name){
+    if (confirm('Удалить форму "'+name+'" из проекта?')){
+        try{
+            var fl =  mainlibutil.global.getFormList();
+            if (fl){  
+                for (var i=0; i<fl.length;++i){
+                    if (fl[i]['name']==name){
+                        mainlibutil.designtime.closewindow(name);
+                        mainlibutil.util.remove_element_arr(fl,i);               
+                        var fdoc = mainlibutil.global.getStartupDoc();
+                        var projel=fdoc.getElementsByTagName('project')[0];
+                        var els=fdoc.getElementsByTagName('form');
+                
+                        for (var j=0; j<els.length;++j){
+                            if (els[j].getAttribute('name')==name){
+                                els[j].parentNode.removeChild(els[j]);
+                                mainlibutil.designtime.fillFormInspector();
+                                if (fdoc && !fdoc.needsave) fdoc.needsave=true;
+                                mainlibutil.designtime.setMainWindowToolStatus();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    catch(error){
+        alert(error);
+    }
+}
+}
+
+mainlibutil.designtime.propertydialog = function(name, value){
+    return mainlibutil.window.create_modal('../mainlib/html/propertydialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
 }
 
 

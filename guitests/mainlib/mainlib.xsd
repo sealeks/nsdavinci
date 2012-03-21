@@ -95,7 +95,7 @@
     <xsd:element name="mlib:rect" type="rect">
         <xsd:complexType name="rect">
             <dvnlib:creator name="mlib:rect"  hint="rect">
-                <mlib:rect  x="" y="" height="50" width="200"/>
+                <mlib:rect  x="" y="" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
@@ -160,9 +160,38 @@
             <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
             <xsd:attribute name="caption" type="mlib:expression" default=""/>
             <xsd:attribute name="fontstyle" type="mlib:expression" default=""/>
+            <xsd:attribute name="click"  default=""/>
         </xsd:complexType>
     </xsd:element>
     
+    <xsd:element name="mlib:path" type="path">
+        <xsd:complexType name="path">
+            <dvnlib:creator name="mlib:path"  hint="path">
+                <mlib:path  stroke-width="5" d="M 0,0 L 100,100"/>
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/> 
+            <xsd:attribute name="d" type="mlib:expression_or_number" default=""/>
+            <xsd:attribute name="on" type="xsd:string" default=""/>
+            <xsd:attribute name="fill" type="mlib:color" default="white"/>       
+            <xsd:attribute name="stroke" type="mlib:environmentfill" default="black"/> 
+            <xsd:attribute name="stroke-width" type="xsd:number" default="0"/> 
+            <xsd:attribute name="click"  default=""/>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="mlib:alarmtable" type="alarmtable">
+        <xsd:complexType name="alarmtable">
+            <dvnlib:creator name="mlib:alarmtable"  hint="alarmtable">
+                <mlib:alarmtable  x="" y="" height="100" width="400"/>
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
+            <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
+            <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
+            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/> 
+            <xsd:attribute name="fontstyle" type="mlib:expression_or_number" default=""/>
+        </xsd:complexType>
+    </xsd:element>    
 
 
 </xsd:schema>

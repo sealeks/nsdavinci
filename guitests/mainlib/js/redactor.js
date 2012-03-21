@@ -262,6 +262,7 @@ redactor.prototype.attach = function(el){
                 if (document.red){
                     document.red.clearSelections();
                     document.red.click_parented(ev);
+                    mainlibutil.designtime.setCurrentRedactor(window);
                     }
             };
         }
@@ -557,7 +558,7 @@ redactor.prototype.setAttributeValue = function(name, val, el){
 redactor.prototype.setProperty = function(nm, val){
     this.setAttributeValue(nm['name'],val);
     this.updateElement();
-    this.needsave=true; 
+    this.setNeedSave();
     mainlibutil.designtime.setMainWindowToolStatus(1);
     this.show_property();
     
@@ -796,6 +797,7 @@ redactor.prototype.onmosnopropogate = function (){
 
 redactor.prototype.click_component = function(){
     var el= this.getTarget(event);
+    mainlibutil.designtime.setCurrentRedactor(window);
     this.select_component(el, event.shiftKey, event.ctrlKey);
     event.stopPropagation();
 }
@@ -818,7 +820,8 @@ redactor.prototype.createLibComponent = function(x, y){
          var tel = this.getTransformElement(coneid);
          this.instantdocument.documentElement.appendChild(tel);
          this.attach(tel);
-         this.updateElement(tel);}     
+         this.updateElement(tel);
+         this.setNeedSave(); }     
 }
 
 /*выделение элемента*/
@@ -1012,8 +1015,7 @@ redactor.prototype.mouseup_document = function (){
                         this.changeRect( xsh, ysh , null, null,  el);
                     }
                     this.updateElement();
-                    document.red.needsave=true; 
-                    mainlibutil.designtime.setMainWindowToolStatus(1);
+                    this.setNeedSave();
                 }
                 this.show_property();
             }
@@ -1097,7 +1099,7 @@ redactor.prototype.createWindow = function(id, top, left, width, height){
         'background: #808080;'+
         '}';                
             
-        var result = mainlibutil.www.createWindow(this.instantdocument, id, top, left, height, width, style);
+        var result = mainlibutil.www.create_window(this.instantdocument, id, top, left, height, width, style);
         return result;
     }
     return undefined;
@@ -1177,32 +1179,28 @@ redactor.prototype.ContextMenuComponent = function(tbody){
         function(){
             document.red.toFrontElements();
             document.red.ContextMenuDestroy();
-            document.red.needsave=true; 
-            mainlibutil.designtime.setMainWindowToolStatus(1);
+            document.red.setNeedSave();
         } );
         
     this.ContextMenuButton(tbody, 'Send to Back', true,
         function(){
             document.red.toBackElements();
             document.red.ContextMenuDestroy();
-            document.red.needsave=true; 
-            mainlibutil.designtime.setMainWindowToolStatus(1);
+            document.red.setNeedSave();
         } );  
         
     this.ContextMenuButton(tbody, 'Delete', true,
         function(){
             document.red.deleteElements();
             document.red.ContextMenuDestroy();
-            document.red.needsave=true; 
-            mainlibutil.designtime.setMainWindowToolStatus(1);
+            document.red.setNeedSave();
         } );  
  
     this.ContextMenuButton(tbody, 'Clone', true,
         function(){
             document.red.cloneElements();
             document.red.ContextMenuDestroy();
-            document.red.needsave=true; 
-            mainlibutil.designtime.setMainWindowToolStatus(1);
+            document.red.setNeedSave();
         } ); 
         
     this.ContextMenuButton(tbody, 'Close', true,
@@ -1242,11 +1240,11 @@ redactor.prototype.show_property = function(){
 
             
     var th1= mainlibutil.html.create_th(trh);
-    th1.setAttribute('width','50%');
+    //th1.setAttribute('width','50%');
     th1.innerHTML='Attribute';
             
     var th2= mainlibutil.html.create_th(trh);
-    th2.setAttribute('width','50%');
+    th2.setAttribute('width','80%');
     th2.innerHTML='Value';
 
                             
@@ -1295,6 +1293,15 @@ redactor.prototype.property_row_focus = function(event){
         
         var type = td['type'] ? td['type']  : 0;
         
+        if (type<=2 && event.button>0){           
+            var retval = mainlibutil.designtime.propertydialog(td['name'], value);
+            if (retval) 
+                this.setProperty(td.prop_dvn,retval);
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+        
         switch (type){
             
             case 0:
@@ -1324,24 +1331,19 @@ redactor.prototype.property_row_focus = function(event){
         document.red.property_event(edit);
 
     
-        if (type==3){
-            edit.onchange= function(){
+        if (type==3){           
+            edit.onchange= function(event){
                 var el=event.srcElement;
                 if (el.value=='...'){
-                    
-                    var code = '<input xmlns="'+htmlns+'" type="text" value=""></input>';
+                    var code = '<input xmlns="http://www.w3.org/1999/xhtml" type="text" value=""></input>';
                     el.onblur=null;
                     var parent=el.parentNode;
                     parent.innerHTML=code;
-                         
-
                     var edit=parent.firstElementChild;
                     edit.focus();
-                    edit.oldval=value;
-                    
+                    edit.oldval=value;                    
                     if (document.red) 
-                        document.red.property_event(edit);
-                         
+                        document.red.property_event(edit);                         
                     event.preventDefault();
                     event.stopPropagation();
                 }

@@ -50,6 +50,22 @@ extension-element-prefixes="mlib">
                 <feMergeNode in="litPaint"/>
             </feMerge>
         </filter>
+        
+
+        <filter id="tubefilter" >
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+            <feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
+            <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+                <fePointLight x="-5000" y="-10000" z="20000"/>
+            </feSpecularLighting>
+            <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+            <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint">
+            </feComposite>    
+            <feMerge>
+                <feMergeNode in="litPaint"/>
+            </feMerge>
+        </filter>
+
 
         
         
