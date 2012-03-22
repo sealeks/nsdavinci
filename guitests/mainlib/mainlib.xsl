@@ -23,9 +23,7 @@ extension-element-prefixes="mlib">
           
     </xsl:template>
     
-    
-    
-    
+      
     <xsl:template name="apply_mlib_schema">    
         <xsl:attribute name="xsi:schemaLocation">
             <xsl:text>../mainlib/maillib.xsd</xsl:text>
@@ -38,52 +36,15 @@ extension-element-prefixes="mlib">
     
     
     <xsl:template name="apply_mlib_motorbase">    
-        <circle>
-            <xsl:attribute name="cx">
-                <xsl:text>500</xsl:text>
-            </xsl:attribute>
-            <xsl:attribute name="cy">
-                <xsl:text>500</xsl:text>
-            </xsl:attribute>  
-            <xsl:attribute name="r">
-                <xsl:text>300</xsl:text>
-            </xsl:attribute> 
-            <xsl:attribute name="stroke-width">
-                <xsl:text>20</xsl:text>
-            </xsl:attribute> 
-        </circle>
-        <path>
-            <xsl:attribute name="d">
-                <xsl:text>M 400 600 L 400 400 L 500 500 L 600 400 L 600 600</xsl:text>
-            </xsl:attribute>
-            <xsl:attribute name="stroke-width">
-                <xsl:text>30</xsl:text>
-            </xsl:attribute> 
-        </path> 
+        <circle cx="500" cy="500" r="300" stroke-width="20"/>
+        <path d="M 400 600 L 400 400 L 500 500 L 600 400 L 600 600" stroke-width="30"/>
     </xsl:template>
     
     
     <xsl:template name="apply_mlib_motorlocal">    
-        <circle>
-            <xsl:attribute name="cx">
-                <xsl:text>150</xsl:text>
-            </xsl:attribute>
-            <xsl:attribute name="cy">
-                <xsl:text>150</xsl:text>
-            </xsl:attribute>  
-            <xsl:attribute name="r">
-                <xsl:text>80</xsl:text>
-            </xsl:attribute> 
-        </circle>
-        <path>
-            <xsl:attribute name="d">
-                <xsl:text>M 120 180 L 120 120 L 150 150 L 180 120 L 180 180</xsl:text>
-            </xsl:attribute>
-        </path>
+        <circle cx="150" cy="150" r="80"/>
+        <path d="M 120 180 L 120 120 L 150 150 L 180 120 L 180 180"/>
     </xsl:template>   
-    
-    
-    
     
     
     <xsl:template match="//mlib:motor" >   
