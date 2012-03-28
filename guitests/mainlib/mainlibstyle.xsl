@@ -25,14 +25,14 @@ extension-element-prefixes="mlib">
    
        <filter id="armat_filter1" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
             <feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
-            <feOffset in="blur" dx="0" dy="0" result="offsetBlur"/>
+            <!--feOffset in="blur" dx="0" dy="0" result="offsetBlur"/-->
             <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
                 <fePointLight x="50000" y="100000" z="200000"/>
             </feSpecularLighting>
             <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
             <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
             <feMerge>
-                <feMergeNode in="offsetBlur"/>
+                <!--feMergeNode in="offsetBlur"/-->
                 <feMergeNode in="litPaint"/>
             </feMerge>
         </filter>

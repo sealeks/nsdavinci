@@ -1,24 +1,23 @@
 <?xml-stylesheet href="../mainlib/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="background-color: gray;" onload="mainlibutil.startup.init()">
     <g>
-        <mlib:motor x="388" y="70" height="60" width="60" id="name21" on="m1::c1" environment="air" ron="m1::c1"/>
-
-
-    
-    
-
-    
-    
-    
-
-    
- 
+        <mlib:armatura x="388" y="62" height="60" width="60" id="name21" on="m1::c1" environment="air" ron="m1::c1" type="rvalve" alarm="m1::c2"/>
+        <mlib:armatura x="351" y="193" height="60" width="60" id="name4" on="m1::c1" environment="air" ron="m1::c1" type="cvalve" alarm="" don="m1::c5" doff="m1::c4" off="m1::c2" rotate="90" local="m1::c3"/>
+        <mlib:armatura x="219" y="239" height="60" width="60" id="name10" on="m1::c1" environment="gaz" ron="m1::c1" type="bolt" alarm="m1::c2"/>
+        <mlib:armatura x="502" y="265" height="60" width="60" id="name11" on="m1::c1" environment="stream" ron="m1::c1" type="motor" alarm="m1::c2"/>
     </g>    
-    <!--mlib:path stroke-width="5px" d="M 450,100 L 580,100" id="name0" stroke="#1E90FF"/-->
+    
     <mlib:path stroke-width="4" d="M 100,400 L 100,110 C  100,110 100,100 110,100  M 110,100 L 400,100" id="name0" stroke="#1E90FF" on=""/>
     <mlib:path stroke-width="4" d="M 435,100 L 580,100" id="name1" stroke="#1E90FF" on="m1::c1"/>
     <mlib:path stroke-width="4" d="M 580,100 Q 700,100 700,300 " id="name2" stroke="#1E90FF" on="m1::c1"/>
 
     <mlib:alarmtable x="1230" y="0" height="915" width="400" id="name5" fontstyle="font-size: 8px;"/>
-    <mlib:motor x="807" y="219" height="50" width="50" id="name3"/>
+    <mlib:armatura x="807" y="219" height="50" width="50" id="name3"/>
     
-<mlib:rect x="808" y="356" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333" id="name6" value="r5::a"/><mlib:alarmtable x="743" y="107" height="100" width="400" id="name7"/><mlib:alarmtable x="242" y="678" height="100" width="400" id="name8" fontstyle="font-size: 7px;"/><mlib:sensor x="187" y="416" height="50" width="200" id="name9" param="var::a" background="water" fontstyle="stroke: red; font-size: 30px;" stroke-width="2" r="3" stroke="green" format="%3.3f"/></svg>
+    <mlib:rect x="808" y="356" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333" id="name6" value="r5::a"/>
+    <mlib:alarmtable x="803" y="37" height="100" width="400" id="name7"/>
+    <mlib:alarmtable x="242" y="678" height="100" width="400" id="name8" fontstyle="font-size: 7px;"/>
+    <mlib:sensor x="187" y="416" height="50" width="200" id="name9" param="r8::a" background="water" fontstyle="fill: red; font-size: 30px;" stroke-width="2" r="3" stroke="green" format="%3.3f"/>
+    <mlib:button x="890" y="535" height="40" width="200" caption="Выход" id="name12" offcolor1="#A00" offcolor2="#700" disable="m1::c2" param="" color1="#0A0" color2="#070" visible="" r="10" fontstyle="fill: white; font-style: italic; font-weight: bold;" offfontstyle="" dsblfontstyle="fill: gray; font-style: italic; font-weight: normal;" state="m1::c1" onclick="" onmousedown="" onmouseup="exit();"/>
+    <mlib:button x="509" y="508" height="40" width="200" caption="caption" id="name13" disable="m1::c1" r="1"/>
+    <mlib:button x="922" y="280" height="40" width="200" caption="caption" id="name14" onclick=" if (!window.globalTick)  {          window.globalTick = setInterval(function()                  { if (dvnci_value('m1::c1')) {dvnci_value('m1::c1 @ 0');}  else (dvnci_value('m1::c1 @ 1')) }, 3000); }" offcaption="offcaption" dsblcaption="dsblcaption" state="m1::c5" disable="m1::c4"/>
+<mlib:button x="837" y="465" height="40" width="200" caption="on" id="name15" state="m1::c1" type="" param="m1::c1 @ 1" offcaption="off"/></svg>

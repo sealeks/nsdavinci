@@ -67,6 +67,36 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         </xsl:attribute>
     </xsl:template> 
     
+    <xsl:template name="apply_rect_b2"> 
+        <xsl:attribute name="x">
+            <xsl:value-of select="@x + 2"/>
+        </xsl:attribute>
+        <xsl:attribute name="y">
+            <xsl:value-of select="@y + 2"/>
+        </xsl:attribute>
+        <xsl:attribute name="height">
+            <xsl:value-of select="@height  - 4"/>
+        </xsl:attribute>
+        <xsl:attribute name="width">
+            <xsl:value-of select="@width - 4"/>
+        </xsl:attribute>
+    </xsl:template>
+    
+    <xsl:template name="apply_rect_b4"> 
+        <xsl:attribute name="x">
+            <xsl:value-of select="@x + 4"/>
+        </xsl:attribute>
+        <xsl:attribute name="y">
+            <xsl:value-of select="@y + 4"/>
+        </xsl:attribute>
+        <xsl:attribute name="height">
+            <xsl:value-of select="@height - 8"/>
+        </xsl:attribute>
+        <xsl:attribute name="width">
+            <xsl:value-of select="@width - 8"/>
+        </xsl:attribute>
+    </xsl:template> 
+    
     
     <xsl:template name="apply_id">    
         <xsl:attribute name="id">

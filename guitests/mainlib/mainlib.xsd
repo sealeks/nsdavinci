@@ -3,6 +3,7 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:mlib="http://dvnci/mlib"
   xmlns:dvnlib="../dvnlib.xsl">
+      
     <xsd:simpleType name="mlib:tag">    
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
@@ -67,26 +68,51 @@
             <xsd:enumeration value=""></xsd:enumeration>
             <xsd:enumeration></xsd:enumeration>
         </xsd:restriction>
-    </xsd:simpleType>    
+    </xsd:simpleType>  
+    
+    <xsd:simpleType name="mlib:armaturatype">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="motor"></xsd:enumeration>
+            <xsd:enumeration value="cvalve"></xsd:enumeration>
+            <xsd:enumeration value="ovalve"></xsd:enumeration>
+            <xsd:enumeration value="rvalve"></xsd:enumeration>
+            <xsd:enumeration value="bolt"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType> 
+    
+    <xsd:simpleType name="mlib:buttontype">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="tumbler"></xsd:enumeration>
+            <xsd:enumeration value="impulse"></xsd:enumeration>
+            <xsd:enumeration value="button"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType> 
     
     
-    <xsd:element name="mlib:motor" type="motor">
+    <xsd:element name="mlib:armatura" type="armatura">
         <xsd:complexType name="motor">
-            <dvnlib:creator name="mlib:motor" hint="motor">
-                <mlib:motor  x="" y="" height="50" width="50"/>
+            <dvnlib:creator name="mlib:armatura" hint="armatura">
+                <mlib:armatura  x="" y="" height="50" width="50"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="type" type="mlib:armaturatype"/>
             <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
             <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
             <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
             <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/>         
             <xsd:attribute name="header" type="mlib:expression_or_number" default=""/>
             <xsd:attribute name="on" type="xsd:string" default=""/>
+            <xsd:attribute name="off" type="xsd:string" default=""/>
             <xsd:attribute name="ron" type="xsd:string" default=""/>
+            <xsd:attribute name="roff" type="xsd:string" default=""/>
+            <xsd:attribute name="don" type="xsd:string" default=""/>
+            <xsd:attribute name="doff" type="xsd:string" default=""/>
+            <xsd:attribute name="local" type="mlib:expression_or_number" default=""/>
             <xsd:attribute name="alarm" type="xsd:string" default=""/>
             <xsd:attribute name="alarmack" type="xsd:string" default=""/>
-            <xsd:attribute name="environment" type="mlib:environment" default=""/> 
-            <xsd:attribute name="local" type="mlib:expression_or_number" default=""/>
+            <xsd:attribute name="environment" type="mlib:environment" default=""/>             
             <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
             <xsd:attribute name="rotate" type="mlib:number" default="0"/>        
         </xsd:complexType>
@@ -147,7 +173,7 @@
     <xsd:element name="mlib:button" type="button">
         <xsd:complexType name="button">
             <dvnlib:creator name="mlib:button"  hint="button">
-                <mlib:button  x="" y="" height="80" width="200"/>
+                <mlib:button  x="" y="" height="40" width="200" caption="caption"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
@@ -155,12 +181,34 @@
             <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
             <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/>  
             <xsd:attribute name="r" type="mlib:expression_or_number" default="100"/>
+            <xsd:attribute name="alighn" type="mlib:alighn" default=""/>
+            <xsd:attribute name="type" type="mlib:buttontype" default=""/>
+            
+            <xsd:attribute name="caption" type="mlib:expression" default=""/>
+            <xsd:attribute name="color1" type="mlib:expression" default=""/>
+            <xsd:attribute name="color2" type="mlib:expression" default=""/>
+            <xsd:attribute name="fontstyle" type="mlib:expression" default=""/>
+            <xsd:attribute name="offcaption" type="mlib:expression" default=""/>
+            <xsd:attribute name="offcolor1" type="mlib:expression" default=""/>
+            <xsd:attribute name="offcolor2" type="mlib:expression" default=""/>
+            <xsd:attribute name="offfontstyle" type="mlib:expression" default=""/>
+            <xsd:attribute name="dsblcaption" type="mlib:expression" default=""/>
+            <xsd:attribute name="dsblcolor1" type="mlib:expression" default=""/>
+            <xsd:attribute name="dsblcolor2" type="mlib:expression" default=""/>
+            <xsd:attribute name="dsblfontstyle" type="mlib:expression" default=""/>
+            
+
+            <xsd:attribute name="state" type="mlib:expression" default=""/>          
             <xsd:attribute name="param" type="mlib:expression" default=""/>
             <xsd:attribute name="disable" type="mlib:expression" default=""/>
             <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
-            <xsd:attribute name="caption" type="mlib:expression" default=""/>
-            <xsd:attribute name="fontstyle" type="mlib:expression" default=""/>
-            <xsd:attribute name="click"  default=""/>
+            
+            
+            <xsd:attribute name="onclick"  default=""/>
+            <xsd:attribute name="ondblclick" default=""/>
+            <xsd:attribute name="onmouseup" default=""/>
+            <xsd:attribute name="onmousedown" default=""/>
+            
         </xsd:complexType>
     </xsd:element>
     
@@ -191,7 +239,9 @@
             <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/> 
             <xsd:attribute name="fontstyle" type="mlib:expression_or_number" default=""/>
         </xsd:complexType>
-    </xsd:element>    
+    </xsd:element>  
+    
+ 
 
 
 </xsd:schema>
