@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="../mainlib/css/mainlib.css"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" version="1.1" style="background-image: url('../mainlib/css/res/bgrd2.png');" onload="mainlibutil.startup.init()">
+	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../mainlib/js/mainlibutil.js"/>
+	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../mainlib/js/redactor.js"/>
+	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../mainlib/js/mainlib.js"/>
+	<filter xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="armat_filter1" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+		<feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
+		<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+			<fePointLight x="50000" y="100000" z="200000"/>
+		</feSpecularLighting>
+		<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+		<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+		<feMerge>
+			<feMergeNode in="litPaint"/>
+		</feMerge>
+	</filter>
+	<filter xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="armat_filter2" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+		<feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
+		<feOffset in="blur" dx="0" dy="0" result="offsetBlur"/>
+		<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+			<fePointLight x="50000" y="100000" z="200000"/>
+		</feSpecularLighting>
+		<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+		<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+		<feMerge>
+			<feMergeNode in="offsetBlur"/>
+			<feMergeNode in="litPaint"/>
+		</feMerge>
+	</filter>
+	<filter xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="tubefilter">
+		<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+		<feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
+		<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+			<fePointLight x="-5000" y="-10000" z="20000"/>
+		</feSpecularLighting>
+		<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+		<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+		<feMerge>
+			<feMergeNode in="litPaint"/>
+		</feMerge>
+	</filter>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="hgradientnone" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#F7F7F7"/>
+		<stop offset="0.5" style="stop-color:#D1D1D1"/>
+		<stop offset="1" style="stop-color:#ECECEC"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="vgradientnone" x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#F7F7F7"/>
+		<stop offset="0.5" style="stop-color:#D1D1D1"/>
+		<stop offset="1" style="stop-color:#ECECEC"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="hgradientblack" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#666"/>
+		<stop offset="0.5" style="stop-color:#222"/>
+		<stop offset="1" style="stop-color:#666"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="vgradientblack" x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#666"/>
+		<stop offset="0.5" style="stop-color:#222"/>
+		<stop offset="1" style="stop-color:#666"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="hgradientred" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#AA0000"/>
+		<stop offset="0.5" style="stop-color:#FF0000"/>
+		<stop offset="1" style="stop-color:#AA0000"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="vgradientred" x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#AA0000"/>
+		<stop offset="0.5" style="stop-color:#FF0000"/>
+		<stop offset="1" style="stop-color:#AA0000"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="hgradientgreen" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#008800"/>
+		<stop offset="0.5" style="stop-color:#00BB00"/>
+		<stop offset="1" style="stop-color:#008800"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="vgradientgreen" x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#008800"/>
+		<stop offset="0.5" style="stop-color:#00BB00"/>
+		<stop offset="1" style="stop-color:#008800"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="hgradientgaz" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#FFFF44"/>
+		<stop offset="0.5" style="stop-color:#DDDD22"/>
+		<stop offset="1" style="stop-color:#FFFF44"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="vgradientgaz" x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#FFFF44"/>
+		<stop offset="0.5" style="stop-color:#DDDD22"/>
+		<stop offset="1" style="stop-color:#FFFF44"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="hgradientwater" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#55FFAA"/>
+		<stop offset="0.5" style="stop-color:#33CC99"/>
+		<stop offset="1" style="stop-color:#55FFAA"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="vgradientwater" x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#55FFAA"/>
+		<stop offset="0.5" style="stop-color:#33CC99"/>
+		<stop offset="1" style="stop-color:#55FFAA"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="hgradientair" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#55BBFF"/>
+		<stop offset="0.5" style="stop-color:#3399FF"/>
+		<stop offset="1" style="stop-color:#55BBFF"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="vgradientair" x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#55BBFF"/>
+		<stop offset="0.5" style="stop-color:#3399FF"/>
+		<stop offset="1" style="stop-color:#55BBFF"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="hgradientoil" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#FF8855"/>
+		<stop offset="0.5" style="stop-color:#CC6633"/>
+		<stop offset="1" style="stop-color:#FF8855"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="vgradientoil" x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#FF8855"/>
+		<stop offset="0.5" style="stop-color:#CC6633"/>
+		<stop offset="1" style="stop-color:#FF8855"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="hgradientstream" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#CC33CC"/>
+		<stop offset="0.5" style="stop-color:#FF00FF"/>
+		<stop offset="1" style="stop-color:#CC33CC"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="vgradientstrem" x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#CC33CC"/>
+		<stop offset="0.5" style="stop-color:#FF00FF"/>
+		<stop offset="1" style="stop-color:#CC33CC"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="gradientonbutton" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#AA0000"/>
+		<stop offset="0.5" style="stop-color:#FF0000"/>
+		<stop offset="1" style="stop-color:#AA0000"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="gradientoffbutton" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#00AA00"/>
+		<stop offset="0.5" style="stop-color:#007700"/>
+		<stop offset="1" style="stop-color:#00AA00"/>
+	</linearGradient>
+	<linearGradient xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="gradientdisablebutton" x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0" style="stop-color:#F7F7F7"/>
+		<stop offset="0.5" style="stop-color:#D1D1D1"/>
+		<stop offset="1" style="stop-color:#ECECEC"/>
+	</linearGradient>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="name12" xsi:schemaLocation="../mainlib/maillib.xsd">
+		<svg x="20" y="20" height="40" width="200" state="on">
+			<style type="text/css">
+                
+            g#name12 svg  text{
+            fill: red;text-anchor: middle;
+                 dominant-baseline: central; 
+                 -webkit-user-select: none;}
+                 
+            g#name12 svg[state="off"] > svg >  text{
+           fill: green;;}
+           
+           g#name12 svg[state="disable"] > svg >  text{
+           fill: gray;;}
+           
+           g#name12 svg * {
+                cursor: pointer;}
+          
+            g#name12 svg > g > rect{
+                fill: transparent;}
+                 
+            g#name12 svg > rect{     fill: url(#name12__gradienton);} 
+            
+            g#name12 svg:hover > rect {               
+                -webkit-svg-shadow: 3px 3px  3px rgba(0, 0, 0, 0.5);}
+         
+            g#name12 svg:active > rect {     fill: url(#name12__gradientona);  
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                 
+            g#name12 svg > g > rect { 
+                stroke: 
+            #333;
+                stroke-width: 1;}   
+                    
+            g#name12 svg:hover > g > rect {
+                stroke: 
+            #555;
+                stroke-width: 1;}                  
+       
+            g#name12 svg[state="off"] > rect {    fill: url(#name12__gradientoff);} 
+                    
+            g#name12 svg[state="off"]:active > rect {    fill: url(#name12__gradientoffa);}           
+           
+            g#name12 svg[state="off"] > g > rect {
+                stroke: 
+            #A00;
+                stroke-width: 1;}   
+                    
+            g#name12 svg[state="off"]:hover > g > rect {        
+                stroke: #F00;
+                stroke-width: 1;}            
+           
+            g#name12 svg[state="disable"] > rect, g#name12 svg[state="disable"]:hover > rect,g#name12 svg[state="disable"]:active > rect{ 
+                 fill: url(#name12__gradientdsbl); 
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                
+            g#name12 svg[state="disable"] > g > rect, g#name12 svg[state="disable"]:hover > g > rect,g#name12 svg[state="disable"]:active > g >rect{
+                 stroke-width: 0;
+                 stroke: none;}
+                 
+            g#name12 svg  > svg > text#name12__c1{
+                 dysplay: block;}
+                 
+            g#name12 svg  > svg > text#name12__c2{
+                 dysplay: none;}
+                 
+            g#name12 svg  > svg > text#name12__c3{
+                 dysplay: none;}                 
+                 
+            g#name12 svg[state="disable"]  > svg > text#name12__c1{
+                 dysplay: none;}
+                 
+            g#name12 svg[state="disable"]  > svg > text#name12__c2{
+                 dysplay: none;}
+                 
+            g#name12 svg[state="disable"]  > svg > text#name12__c3{
+                 dysplay: block;}
+                 
+            g#name12 svg[state="off"]  > svg > text#name12__c1{
+                 dysplay: none;}
+                 
+            g#name12 svg[state="off"]  > svg > text#name12__c2{
+                 dysplay: block;}
+                 
+            g#name12 svg[state="off"]  > svg > text#name12__c3{
+                 dysplay: none;}      
+                 
+                 
+            </style>
+			<defs>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name12__gradienton">
+					<stop offset="0%" stop-color="#333"/>
+					<stop offset="50%" stop-color="#555"/>
+					<stop offset="100%" stop-color="#333"/>
+				</linearGradient>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name12__gradientona">
+					<stop offset="0%" stop-color="#555"/>
+					<stop offset="50%" stop-color="#333"/>
+					<stop offset="100%" stop-color="#555"/>
+				</linearGradient>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name12__gradientoff">
+					<stop offset="0%" stop-color="#F00"/>
+					<stop offset="50%" stop-color="#A00"/>
+					<stop offset="100%" stop-color="#F00"/>
+				</linearGradient>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name12__gradientoffa">
+					<stop offset="0%" stop-color="#A00"/>
+					<stop offset="50%" stop-color="#F00"/>
+					<stop offset="100%" stop-color="#A00"/>
+				</linearGradient>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name12__gradientdsbl">
+					<stop offset="0%" stop-color="#777"/>
+					<stop offset="50%" stop-color="#AAA"/>
+					<stop offset="100%" stop-color="#777"/>
+				</linearGradient>
+			</defs>
+			<rect role="button" aria-pressed="true" x="2" y="2" height="36" width="196"/>
+			<svg x="4" y="4" height="32" width="192">
+				<text x="96" y="16" id="name12__c1">captionon</text>
+                                <text x="96" y="16" id="name12__c2">captionoff</text>
+                                <text x="96" y="16" id="name12__c3">captiondsbl</text>
+			</svg>
+			<g>
+				<rect x="4" y="4" height="32" width="192"/>
+			</g>
+		</svg>
+	</g>
+</svg>

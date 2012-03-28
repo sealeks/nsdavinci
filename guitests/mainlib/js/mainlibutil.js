@@ -180,6 +180,7 @@ mainlibutil.startup.init = function(){
         set_win_redactor(window, document.red);
     }
     window.onunload=dvnci_close_win;
+
 }
 
 mainlibutil.startup.initredactor = function(name, red){
@@ -216,9 +217,9 @@ mainlibutil.project.init_form = function(){
                 for (var i=0; i<els.length;++i)   
                     mainlibutil.project.addtoformlist(els[i]);
                           
-            if (ellib)  
+            if (ellib)  {
                 for (var i=0; i<ellib.length;++i)
-                    mainlibutil.project.addtoliblist(ellib[i],i);
+                    mainlibutil.project.addtoliblist(ellib[i],i);}
 
         }
         catch(error){ 
@@ -290,7 +291,7 @@ mainlibutil.project.addtoformlist = function(els){
 }
 
 mainlibutil.project.addtoliblist = function(els, i){   
-    var ll=mainlibutil.global.getLibList();  
+    var ll=mainlibutil.global.getLibList();
     if (els.hasAttribute('xsd')){
         ll.push({
             'name' : els.hasAttribute('name') ? els.getAttribute('name') : ('unnamed'+i),
