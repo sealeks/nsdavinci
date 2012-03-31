@@ -15,7 +15,11 @@ mainlibutil.html = {};
 
 mainlibutil.dom = {};
 
+mainlibutil.popup = {};
+
 mainlibutil.www = {};
+
+mainlibutil.xslttransform = {};
 
 mainlibutil.document = {};
 
@@ -32,7 +36,7 @@ mainlibutil.alarmtable = function(el){
     this.alarmelement=mainlibutil.document.findElementByTagName(el,'table');
     if (this.alarmelement){
         this.alarmelement.alarlistener=this;
-        this.alarmelement.onalarm=function(ev){ this.alarlistener.execute(ev);}}
+        this.alarmelement.onalarm=function(ev){this.alarlistener.execute(ev);}}
 
 }
 
@@ -129,6 +133,14 @@ mainlibutil.util.remove_element_arr = function(arr,ind){
     if (ind<arr.length) 
         arr.length=arr.length-1;
 }
+
+
+mainlibutil.util.trim = function(string)
+{
+return string.replace(/(^\s+)|(\s+$)/g, "");
+}
+
+
 
 
 //
@@ -351,8 +363,179 @@ mainlibutil.project.getFormInfo = function(name){
     return null;        
 }
 
+//
+
+mainlibutil.popup.getbound = function(el, W, H, yd, dir){
+    /*
+       dir 0 -top, 1 -right, 2 - bottom(default) , 3 left
+     */
+    
+     
+    if ((dir==undefined) || (dir==null)) throw "Bound popup error";
+  
+    var x0 = parseFloat(el.getAttribute('x'));
+    var y0 = parseFloat(el.getAttribute('y'));
+    var h0 = parseFloat(el.getAttribute('height'));
+    var w0 = parseFloat(el.getAttribute('width'));    
+    
+    
+    var hh= h0 + 2*yd;
+    var wh= w0 + 2*yd;
+    
+    var xc = (dir==2 || dir==0) ? (x0 + (w0-W) / 2) : ( dir==3 ? x0-yd- W : x0 - yd);
+    var yc = (dir==2 || dir==0) ? ( dir==2 ? y0 - yd : y0 - yd - H ) : (y0 + (h0-H) / 2);
+    
+    
+    var hc = (dir==2 || dir==0) ? H + hh : H;
+    var wc = (dir==2 || dir==0) ? W : W + wh;
+    return {'x': xc, 'y': yc, 'width': wc , 'height': hc} 
+}
 
 
+mainlibutil.popup.bpunds_intersect = function(popupbound, documenbound){
+    var X0 =   popupbound.x < documenbound.x ? documenbound.x : popupbound.x;
+    var Y0 =   popupbound.y < documenbound.y ? documenbound.y : popupbound.y;
+    var X1 =   (popupbound.x + popupbound.width) < (documenbound.x + documenbound.width) ? 
+        (popupbound.x + popupbound.width) : (documenbound.x + documenbound.width);
+    var Y1 =   (popupbound.y + popupbound.height) < (documenbound.y + documenbound.height) ? 
+        (popupbound.y + popupbound.height) : (documenbound.y + documenbound.height);;    
+    
+   return (X1-X0)*(Y1-Y0);
+}
+
+
+mainlibutil.popup.finddirect = function(el, W, H, yd){
+    var windowbound = {
+        'x': 0, 
+        'y': 0, 
+        'width': window.innerWidth , 
+        'height': window.innerHeight
+    };
+    var popupbound0 =  mainlibutil.popup.getbound(el, W, H, yd,0);
+    var popupbound1 =  mainlibutil.popup.getbound(el, W, H, yd,1);
+    var popupbound2 =  mainlibutil.popup.getbound(el, W, H, yd,2);
+    var popupbound3 =  mainlibutil.popup.getbound(el, W, H, yd,3);
+    var range = [mainlibutil.popup.bpunds_intersect(popupbound2, windowbound),
+    mainlibutil.popup.bpunds_intersect(popupbound1, windowbound),
+    mainlibutil.popup.bpunds_intersect(popupbound3, windowbound),
+    mainlibutil.popup.bpunds_intersect(popupbound0, windowbound)];
+    var max = 0;          
+    for (var i=1;i<range.length;i++){
+        if (range[max] < range[i]) max=i; 
+    } 
+    switch(max) {
+       case 1:return 1;
+       case 2:return 3;
+       case 3:return 0;     
+    }
+    return 2;
+}
+
+mainlibutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle){
+    
+
+    if ((dir==undefined) || (dir==null)) {
+        dir = mainlibutil.popup.finddirect(el, W, H, yd);
+    }
+    
+    var bounds=mainlibutil.popup.getbound(el, W, H, yd, dir);
+    
+    var h0 = parseFloat(el.getAttribute('height'));
+    var w0 = parseFloat(el.getAttribute('width'));  
+    
+    var hh= h0 + 2*yd;
+    var wh= w0 + 2*yd;
+    
+    var xc = bounds.x;
+    var yc = bounds.y;
+    var hc = bounds.height;
+    var wc = bounds.width;
+    
+    var docelem = document.documentElement;
+    
+    var svg =mainlibutil.svg.create_svg(docelem, xc , yc ,  hc , wc);
+    
+    mainlibutil.svg.create_rect(svg, 0 , 0 ,  hc  , wc,  null , null , popupstyle ? popupstyle : 'fill: white; opacity: 0.0;', null);
+    
+    svg.popupbody = mainlibutil.svg.create_svg(svg, dir==1 ? wh : 0 , dir==2 ? hh : 0 ,  H , W);
+    
+    mainlibutil.svg.create_rect(svg.popupbody, 0 , 0 ,  H  , W,  null , null , bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;', null);
+    
+    return svg;
+}
+
+// xslttransform
+
+
+mainlibutil.xslttransform.rootDocument = function (){ 
+    if (window.__rootDocument)
+        return window.__rootDocument;
+    window.__rootDocument = mainlibutil.document.readDoc(window.document.URL);
+    return window.__rootDocument;
+}
+
+
+mainlibutil.xslttransform.literootDocument = function (){ 
+    if (window.__literootDocument){
+        mainlibutil.dom.clearChildNode(window.__literootDocument.documentElement);
+        return window.__literootDocument;}
+    window.__literootDocument = mainlibutil.document.readDoc(window.document.URL);
+    mainlibutil.dom.clearChildNode(window.__literootDocument.documentElement);
+    return window.__literootDocument;
+}
+
+//mainlibutil.xslttransform.literootDocumentElement = function (){     
+//    return mainlibutil.xslttransform.literootDocument().documentElement;
+//}
+
+
+mainlibutil.xslttransform.xsltDocument = function(){
+    if (window.__xsltDocument)
+        return window.__xsltDocument;    
+    var root = mainlibutil.xslttransform.rootDocument();
+    if ((root) && (root.childNodes.length>1)){
+        if (root.childNodes[0].target=='xml-stylesheet'){
+            if (root.childNodes[0].data){
+                var urlxslt=root.childNodes[0].data.toString();
+                var finded=urlxslt.search('type="text/xsl"');
+                if (finded==-1)
+                    finded=urlxslt.search("href='");
+                if (finded!=-1){
+                    urlxslt=urlxslt.substring(6,urlxslt.length);
+                    finded=urlxslt.search('"') ;
+                    if (finded!=-1){
+                        urlxslt=urlxslt.substring(0,finded);
+                        window.__xsltDocument = mainlibutil.document.readDoc(urlxslt);
+                    }
+                }
+            } 
+        }
+    }
+    return window.__xsltDocument;
+}
+
+mainlibutil.xslttransform.xsltProcessor = function(){
+    if (window.__xsltProcessor) return window.__xsltProcessor;
+    window.__xsltProcessor=new XSLTProcessor();
+    var xsltdoc = mainlibutil.xslttransform.xsltDocument();
+    if (window.__xsltProcessor &&  xsltdoc)
+        window.__xsltProcessor.importStylesheet(xsltdoc);
+    else
+        throw 'XSLT transform error';       
+    return window.__xsltProcessor;
+}
+
+
+mainlibutil.xslttransform.tranformDocument = function(doc){
+    return mainlibutil.xslttransform.xsltProcessor().transformToDocument(doc);
+}
+
+mainlibutil.xslttransform.tranform_and_getById = function(doc, id){
+    var transdoc = mainlibutil.xslttransform.xsltProcessor().transformToDocument(doc);
+    window.testdoc=transdoc;
+    //alert(transdoc);
+    return transdoc.getElementById(id);
+}
 
 
 //  window
@@ -719,6 +902,12 @@ mainlibutil.dom.clearChildNode = function (element){
         element.removeChild(element.lastChild);
 }
 
+mainlibutil.dom.check_is_parent  = function(canparent,test,self){
+     if (!test) return false;
+     if (test==canparent) return (self) ? true : false;
+     return mainlibutil.dom.check_is_parent (canparent,test.parentNode,true);
+}
+
 
 ///////////////////////////////////////////////
 
@@ -740,6 +929,12 @@ mainlibutil.svg.create_svg = function (parent, x, y,  height, width, view){
     if (width || width==0) newel.setAttribute('width', parseFloat(width));
     if (height || height==0) newel.setAttribute('height', parseFloat(height));    
     if (view) newel.setAttribute('viewBox', view);
+    return newel;
+}
+
+mainlibutil.svg.create_g = function (parent){
+    
+    var newel = mainlibutil.svg.create('g', parent);
     return newel;
 }
 
@@ -802,11 +997,11 @@ mainlibutil.svg.foriegn_text = function (parent, x, y, height, width, text, styl
     
     var newel = mainlibutil.svg.create_foreignObject(parent, x, y, height, width);
     
-    var body = mainlibutil.html.create_body(newel, 'margin: 0px; padding: 50px; height: '+height+'px');
+    var body = mainlibutil.html.create_body(newel, 'margin: 0px;  height: '+height+'px; ');
     
-    var div = mainlibutil.html.create_div(body, style);
+    var div = mainlibutil.html.create_div(body, style + ' overflow: hidden;');
     
-    var span = mainlibutil.html.create_span(div, 'padding: 50px; ');
+    var span = mainlibutil.html.create_span(div, 'line-height: '+ height/2 + 'px;');
     
     var headertextnode=parent.ownerDocument.createTextNode(text);
     
@@ -831,11 +1026,11 @@ mainlibutil.svg.create_header = function (parent, x, y,  height, width, rx, ry, 
         
     
     var headersvg=mainlibutil.svg.create_svg(parent, 
-        x,y, height, width);
+        x ,y, height, width);
    
    
 
-    var headertext=mainlibutil.svg.foriegn_text(headersvg,0,0, height, width,text,
+    var headertext=mainlibutil.svg.foriegn_text(headersvg, 0 , 0  , height, width ,text,
         htmltextstyle);
     
     return newheadrect;
@@ -1522,7 +1717,7 @@ mainlibutil.designtime.getLibInspector = function (force){
                 "background-color: #E7E7E7; margin: 0px; border-width: 1px 0px ; border-color: yellow; border-style: solid; text-align: center; color: #040347)"); 
         }
         
-        tmp.libtool.onload= function() { alert('test');}
+        tmp.libtool.onload= function() {alert('test');}
 
     }
     return (tmp && tmp.libtool) ? tmp.libtool : null;
@@ -1828,7 +2023,7 @@ mainlibutil.designtime.createfileform = function(file){
     var prjpath=tmp.projectPath;
     var txt = '<?xml-stylesheet href="../mainlib/lib.xsl" type="text/xsl"?>\n'+
     '<svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="" onload="mainlibutil.startup.init()">\n'+
-    '<g></g>\n'+
+    '\n'+
     '</svg>\n';
     return dvnci_writefile(prjpath.toString()+file,txt);      
 }

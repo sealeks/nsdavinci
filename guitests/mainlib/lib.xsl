@@ -8,27 +8,26 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <xsl:include href="mainlib.xsl" xsi:schemaLocation="../mainlib/mainlib.xsd"/>
 
     <xsl:output  method="xml" indent="yes"/>
-
-    <xsl:template match="/*/*[position()=1]" >        
-        <xsl:call-template name="mainlib"/>
-        <xsl:apply-templates select="*"/>
-    </xsl:template>
-    
-
-    <xsl:template match="*">
-        <xsl:copy>
-            <xsl:apply-templates select="*"/>
-        </xsl:copy>
-    </xsl:template>
-    
     
     <xsl:template match="/" >
         <xsl:processing-instruction name="xml-stylesheet">href="../mainlib/css/mainlib.css"</xsl:processing-instruction>
         <xsl:apply-templates select="/*"/>
     </xsl:template>
 
+    <xsl:template match="/*[position()=1]" > 
+        <xsl:copy>
+        <xsl:apply-templates select="@*"/>    
+        <xsl:call-template name="includelib"/> 
+        <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>
     
-    <xsl:template match="*|@*|text()">
+
+    <xsl:template name="includelib" >      
+        <xsl:call-template name="mainlib"/>     
+    </xsl:template> 
+    
+    <xsl:template match="*|@*|text()" name="rootelemnt">
         <xsl:element name="{local-name()}">
             <xsl:apply-templates select="*|@*|text()"/>
         </xsl:element>
