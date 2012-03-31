@@ -981,7 +981,7 @@ namespace dvnci {
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getvalid(const calc_token& it) {
-            if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
+            if (it.operation() != expr) return it.valid();
             if (intf) {
                 return intf->valid(it.id());}
             throw dvncierror(ERROR_NILLINF);}
@@ -1405,7 +1405,7 @@ namespace dvnci {
                                                 return error(ERROR_EXPRPARSE);}
                                             calc_token lsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
-                                            calc_token resultit = (it->operation() == oprt_bitand) ? (lsideit && rsideit) :
+                                            calc_token resultit = (it->operation() == oprt_logicand) ? (lsideit && rsideit) :
                                                     (lsideit || rsideit);
                                             resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
                                             calcstack.push(resultit);}
@@ -1495,11 +1495,21 @@ namespace dvnci {
                                             return error(ERROR_EXPRPARSE);}
                                         break;}
 
-                                    case select_error:
-                                    case select_valid:{
+                                    case select_error:{
                                         if ((!calcstack.empty()) && (calcstack.top().id() != npos)) {
                                             calc_token nmidit = calcstack.top();
-                                            calc_token resultit = (it->operation() == select_valid) ? getvalid(nmidit) : geterror(nmidit);
+                                            calc_token resultit = geterror(nmidit);
+                                            calcstack.pop();
+                                            calcstack.push(resultit);}
+                                        else {
+                                            clearall();
+                                            return error(ERROR_EXPRPARSE);}
+                                        break;}  
+                                    
+                                    case select_valid:{
+                                        if ((!calcstack.empty())) {
+                                            calc_token nmidit = calcstack.top();
+                                            calc_token resultit =  getvalid(nmidit);
                                             calcstack.pop();
                                             calcstack.push(resultit);}
                                         else {
