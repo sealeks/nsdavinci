@@ -1809,6 +1809,8 @@ namespace dvnci {
 
         size_type insert_tag(std::string newname, size_type groupid) {
             lower_and_trim(newname);
+            if (!groups()->exists(groupid))
+                throw dvncierror(NS_ERROR_NOPARENT, "");
             return add(newname, groupid);}
 
         size_type insert_tag(std::string newname, std::string groupnm="");

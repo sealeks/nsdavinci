@@ -398,11 +398,11 @@ namespace dvnci {
                 case TYPE_UNUM16:
                 case TYPE_NUM8:
                 case TYPE_UNUM8:
-                case TYPE_DISCRET:   return ((lside.value() != 0) && (rside.value() != 0));
-                case TYPE_DOUBLE:    return ((lside.value<double>() != 0) && (rside.value<double>() != 0));
-                case TYPE_FLOAT:     return  ((lside.value<float>() != 0) && (rside.value<float>() != 0));
+                case TYPE_DISCRET:   
+                case TYPE_DOUBLE:    
+                case TYPE_FLOAT:     return  ((lside.value<bool>()) && (rside.value<bool>()));
                 case TYPE_TM:        return NULL_DOUBLE;}
-            return ((lside.value<double>() != 0) && (rside.value<double>() != 0));}
+            return ((lside.value<bool>()) && (rside.value<bool>()));}
 
         bool operator||(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
@@ -414,11 +414,11 @@ namespace dvnci {
                 case TYPE_UNUM16:
                 case TYPE_NUM8:
                 case TYPE_UNUM8:
-                case TYPE_DISCRET:  return ((lside.value() != 0) || (rside.value() != 0));
-                case TYPE_DOUBLE:    return ((lside.value<double>() != 0) || (rside.value<double>() != 0));
-                case TYPE_FLOAT:    return  ((lside.value<float>() != 0) || (rside.value<float>() != 0));
+                case TYPE_DISCRET:  
+                case TYPE_DOUBLE:    
+                case TYPE_FLOAT:    return ((lside.value<bool>()) || (rside.value<bool>()));
                 case TYPE_TM:       return NULL_DOUBLE;}
-            return ((lside.value<double>() != 0) || (rside.value<double>() != 0));}
+            return ((lside.value<bool>()) || (rside.value<bool>()));}
 
         calc_token operator&(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
