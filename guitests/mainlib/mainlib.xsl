@@ -47,13 +47,25 @@ extension-element-prefixes="mlib">
     
      <!--
     
-    Отображение состояния
+    Отображение внешнего вида
     
     -->
  
+ 
     <xsl:template name="apply_mlib_araturatype_motor">    
         <circle cx="500" cy="500" r="300" stroke-width="20"/>
-        <path d="M 400 600 L 400 400 L 500 500 L 600 400 L 600 600" stroke-width="30"/>
+        <path d="M 400,600 L 400,400 L 500,500 L 600,400 L 600,600" stroke-width="30"/>
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_araturatype_motorD">    
+        <circle cx="500" cy="500" r="300" stroke-width="20"/>
+        <path d="M 400,450 L 400,550 L 550,550 L 550,600 L 650,500 L 550,400 L 550,450z" stroke-width="20"/>
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_araturatype_simple">    
+        <path d="M 200,350 L 200,650 L 800,350 L 800,650 z" stroke-width="20"/>
     </xsl:template>
     
     
@@ -66,6 +78,7 @@ extension-element-prefixes="mlib">
         <line x1="700" y1="500" x2="750" y2="400" stroke-width="20"/>
     </xsl:template>
     
+    
     <xsl:template name="apply_mlib_araturatype_ovalve">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
         <path d="M 350,220 L 650, 220 L 650,320 L 350, 320z" stroke-width="20"/>  
@@ -75,13 +88,23 @@ extension-element-prefixes="mlib">
         <line x1="700" y1="300" x2="750" y2="400" stroke-width="20"/>
     </xsl:template>
     
+    
     <xsl:template name="apply_mlib_araturatype_rvalve">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
         <path d="M 500,650 L 500, 360" fill="none" stroke-width="20"/>
         <path d="M 410 ,360 L 590, 360 L 500,220 z"  stroke-width="20"/>
-    </xsl:template>    
+    </xsl:template> 
+    
     
     <xsl:template name="apply_mlib_araturatype_bolt">    
+        <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
+        <path d="M 500,650 L 500, 380" fill="none" stroke-width="20"/>
+        <circle cx="500" cy="320" r="120" stroke-width="20"/>
+        <path d="M 450 370 L 450 270 L 500 320 L 550 270 L 550 370" stroke-width="20" fill="none"/>
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_araturatype_regul">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
         <path d="M 500,650 L 500, 380" fill="none" stroke-width="20"/>
         <circle cx="500" cy="320" r="120" stroke-width="20"/>
@@ -105,7 +128,16 @@ extension-element-prefixes="mlib">
                     </xsl:when> 
                     <xsl:when test="@type='bolt'">
                         <xsl:call-template name="apply_mlib_araturatype_bolt"/> 
-                    </xsl:when>                   
+                    </xsl:when>
+                    <xsl:when test="@type='motorD'">
+                        <xsl:call-template name="apply_mlib_araturatype_motorD"/> 
+                    </xsl:when> 
+                    <xsl:when test="@type='simple'">
+                        <xsl:call-template name="apply_mlib_araturatype_simple"/> 
+                    </xsl:when>
+                    <xsl:when test="@type='regul'">
+                        <xsl:call-template name="apply_mlib_araturatype_regul"/> 
+                    </xsl:when>
                     <xsl:otherwise>
                         <xsl:call-template name="apply_mlib_araturatype_motor"/> 
                     </xsl:otherwise>                     
@@ -118,9 +150,156 @@ extension-element-prefixes="mlib">
     
     </xsl:template>
     
+     <!--
+    
+    Отображение аттоибута cursor
+    
+    -->  
+    
+    
+    <xsl:template name="apply_mlib_aratura_cursor_dsbl">
+        <xsl:attribute name="cursor">
+            <xsl:text>none</xsl:text>
+        </xsl:attribute>
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_aratura_cursor_checkstatevalid">
+        <xsl:choose>                        
+            <xsl:when test="(boolean(@off) and not(@off='')) and (boolean(@on) and not(@on=''))">
+                <xsl:text>(!(</xsl:text>
+                <xsl:value-of select="@on"/>
+                <xsl:text>).valid  &#38;&#38; !(</xsl:text>
+                <xsl:value-of select="@off"/>
+                <xsl:text>).valid) ? 'none' : </xsl:text>
+                               
+            </xsl:when>
+            <xsl:when test="boolean(@off) and not(@off='')">
+                <xsl:text>(!(</xsl:text>
+                <xsl:value-of select="@off"/>
+                <xsl:text>).valid) ? 'none' : </xsl:text>
+            </xsl:when>
+            <xsl:when test="boolean(@on) and not(@on='')">
+                <xsl:text>(!(</xsl:text>
+                <xsl:value-of select="@on"/>
+                <xsl:text>).valid) ? 'none' : </xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text></xsl:text>
+            </xsl:otherwise>
+        </xsl:choose> 
+    </xsl:template>
+    
+
+    <xsl:template name="apply_mlib_aratura_cursor_autocontrol">
+        <xsl:attribute name="cursor">
+            <xsl:text>#{ </xsl:text>
+            <xsl:call-template name="apply_mlib_aratura_cursor_checkstatevalid"/>
+            <xsl:text> ( </xsl:text>
+            <xsl:choose>                        
+                <xsl:when test="(boolean(@local) and not(@local=''))"> 
+                    <xsl:value-of select="@local"/>
+                    <xsl:text> ? 'none' : ( </xsl:text>
+                    <xsl:value-of select="@auto"/>
+                    <xsl:text> ? 'pointer' : 'pointer' </xsl:text>
+                    <xsl:text> ) </xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@auto"/>
+                    <xsl:text> ? 'pointer' : 'pointer' </xsl:text>
+                    <xsl:text>  </xsl:text>                   
+                </xsl:otherwise>
+            </xsl:choose>        
+            <xsl:text> ) :default none} </xsl:text>
+        </xsl:attribute>
+        <xsl:attribute name="autocontrol">
+             <xsl:text>yes</xsl:text> 
+        </xsl:attribute>    
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_aratura_cursor_auto">
+        <xsl:attribute name="cursor">
+            <xsl:text>#{ </xsl:text>
+            <xsl:call-template name="apply_mlib_aratura_cursor_checkstatevalid"/>
+            <xsl:text> ( </xsl:text>
+            <xsl:choose>                        
+                <xsl:when test="(boolean(@local) and not(@local=''))"> 
+                    <xsl:value-of select="@local"/>
+                    <xsl:text> ? 'none' : ( </xsl:text>
+                    <xsl:value-of select="@auto"/>
+                    <xsl:text> ? 'none' : 'pointer' </xsl:text>
+                    <xsl:text> ) </xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@auto"/>
+                    <xsl:text> ? 'none' : 'pointer' </xsl:text>
+                    <xsl:text>  </xsl:text>                   
+                </xsl:otherwise>
+            </xsl:choose>        
+            <xsl:text> ) :default none} </xsl:text>
+        </xsl:attribute>
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_aratura_cursor_local">
+        <xsl:attribute name="cursor">
+            <xsl:text>#{ </xsl:text>
+            <xsl:call-template name="apply_mlib_aratura_cursor_checkstatevalid"/>
+            <xsl:text> ( </xsl:text>
+            <xsl:choose>                        
+                <xsl:when test="(boolean(@local) and not(@local=''))"> 
+                    <xsl:value-of select="@local"/>
+                    <xsl:text> ? ('none' : 'pointer' )</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text> 'pointer'  </xsl:text>                  
+                </xsl:otherwise>
+            </xsl:choose>        
+            <xsl:text> ) :default none} </xsl:text>
+        </xsl:attribute>
+    </xsl:template>
+    
+    
+    
+    <xsl:template name="apply_mlib_aratura_cursor">
+        <xsl:choose>                        
+            <xsl:when test="(boolean(@off) and not(@off='')) or (boolean(@on) and not(@on=''))">
+                <xsl:choose>                        
+                    <xsl:when test="(boolean(@roff) and not(@roff='')) or (boolean(@ron) and not(@ron='')) or (boolean(@rauto) and not(@rauto=''))">
+                        <xsl:choose>                        
+                            <xsl:when test="(boolean(@rauto) and not(@rauto='')) and (boolean(@auto) and not(@auto=''))">
+                                <xsl:call-template name="apply_mlib_aratura_cursor_autocontrol"/>
+                            </xsl:when>
+                            <xsl:when test="(boolean(@auto) and not(@auto=''))">
+                                <xsl:call-template name="apply_mlib_aratura_cursor_auto"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:call-template name="apply_mlib_aratura_cursor_local"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="apply_mlib_aratura_cursor_dsbl"/>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="apply_mlib_aratura_cursor_dsbl"/>
+            </xsl:otherwise>        
+        </xsl:choose>    
+    </xsl:template>
+    
+    
+    <!--
+    
+    Описание логики состояния 
+    
+    -->  
+    
     
     <xsl:template name="apply_mlib_aratura_state"> 
-        <g>
+        <g class="none">
             <xsl:variable name="envir"> 
                 <xsl:value-of select="@environment"/> 
             </xsl:variable>
@@ -128,97 +307,90 @@ extension-element-prefixes="mlib">
                 <xsl:text>url(#armat_filter1)</xsl:text>
             </xsl:attribute>     
             <xsl:choose>                        
+                <xsl:when test="(boolean(@on) and not(@on='')) and (boolean(@off) and not(@off=''))"> 
+                    <xsl:attribute name="class">
+                        <xsl:text>non</xsl:text> 
+                    </xsl:attribute>
+                    <animate attributeName="class" attributeType="XML" fill="freeze" keyTimes="0;.5" dur="1000ms"  repeatCount="indefinite" calcMode="discrete"> 
+                        <xsl:attribute name="values">
+                            <xsl:text>#{ (!(</xsl:text>
+                            <xsl:value-of select="@on"/>
+                            <xsl:text>).valid &#38;&#38; !(</xsl:text>
+                            <xsl:value-of select="@off"/>
+                            <xsl:text>).valid) ? 'non;non;' : (</xsl:text>
+                                
+                            <xsl:value-of select="@on"/>
+                            <xsl:text> &#38;&#38; !</xsl:text>
+                            <xsl:value-of select="@off"/>
+                            <xsl:text>) ? </xsl:text>
+                                
+                            <xsl:text>'on</xsl:text>
+                            <xsl:value-of select="$envir"/>
+                            <xsl:text>;on</xsl:text>
+                            <xsl:value-of select="$envir"/>
+                            <xsl:text>;'</xsl:text>
+                                
+                            <xsl:text> : (!</xsl:text>
+                            <xsl:value-of select="@on"/>
+                            <xsl:text> &#38;&#38; </xsl:text>
+                            <xsl:value-of select="@off"/>
+                            <xsl:text>) ? </xsl:text>
+                                
+                            <xsl:text>'off</xsl:text>
+                            <xsl:value-of select="$envir"/>
+                            <xsl:text>;off</xsl:text>
+                            <xsl:value-of select="$envir"/>
+                            <xsl:text>;' : </xsl:text>
+                                
+                                
+                            <xsl:text>'on</xsl:text>
+                            <xsl:value-of select="$envir"/>
+                            <xsl:text>;off</xsl:text>
+                            <xsl:value-of select="$envir"/>
+                            <xsl:text>;'</xsl:text>
+                                                                
+                            <xsl:text> :default non;non;}</xsl:text>
+                        </xsl:attribute>    
+                    </animate>
+                </xsl:when>
                 <xsl:when test="boolean(@on) and not(@on='')"> 
-                    <xsl:choose>  
-                        <xsl:when test="boolean(@off) and not(@off='')"> 
-                            <animate id="a2" attributeType="XML" attributeName="class" keyTimes="0;.5" dur="1000ms"  repeatCount="indefinite" calcMode="discrete"> 
-                                <xsl:attribute name="values">
-                                    <xsl:text>#{ (!</xsl:text>
-                                    <xsl:value-of select="@on"/>
-                                    <xsl:text>.valid &#38;&#38; !</xsl:text>
-                                    <xsl:value-of select="@off"/>
-                                    <xsl:text>.valid) ? 'non;non;' : (</xsl:text>
-                                
-                                    <xsl:value-of select="@on"/>
-                                    <xsl:text> &#38;&#38; !</xsl:text>
-                                    <xsl:value-of select="@off"/>
-                                    <xsl:text>) ? </xsl:text>
-                                
-                                    <xsl:text>'on</xsl:text>
-                                    <xsl:value-of select="$envir"/>
-                                    <xsl:text>;on</xsl:text>
-                                    <xsl:value-of select="$envir"/>
-                                    <xsl:text>;'</xsl:text>
-                                
-                                    <xsl:text> : (!</xsl:text>
-                                    <xsl:value-of select="@on"/>
-                                    <xsl:text> &#38;&#38; </xsl:text>
-                                    <xsl:value-of select="@off"/>
-                                    <xsl:text>) ? </xsl:text>
-                                
-                                    <xsl:text>'off</xsl:text>
-                                    <xsl:value-of select="$envir"/>
-                                    <xsl:text>;off</xsl:text>
-                                    <xsl:value-of select="$envir"/>
-                                    <xsl:text>;' : </xsl:text>
-                                
-                                
-                                    <xsl:text>'on</xsl:text>
-                                    <xsl:value-of select="$envir"/>
-                                    <xsl:text>;off</xsl:text>
-                                    <xsl:value-of select="$envir"/>
-                                    <xsl:text>;'</xsl:text>
-                                
-                                
-                                    <xsl:text> :default 'non;non;'}</xsl:text>
-                                </xsl:attribute>    
-                            </animate>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:attribute name="class">
-                                <xsl:text>#{ !</xsl:text>
-                                <xsl:value-of select="@on"/>
-                                <xsl:text>.valid  ? 'non'  : ((</xsl:text>
-                                <xsl:value-of select="@on"/>
-                                <xsl:text>)  ? 'on</xsl:text>
-                                <xsl:value-of select="$envir"/>
-                                <xsl:text>':  'off</xsl:text>
-                                <xsl:value-of select="$envir"/>
-                                <xsl:text>') :default 'non'}</xsl:text>
-                            </xsl:attribute>                                   
-                        </xsl:otherwise> 
-                    </xsl:choose>  
+                    <xsl:attribute name="class">
+                        <xsl:text>#{ !(</xsl:text>
+                        <xsl:value-of select="@on"/>
+                        <xsl:text>).valid  ? 'non'  : ((</xsl:text>
+                        <xsl:value-of select="@on"/>
+                        <xsl:text>)  ? 'on</xsl:text>
+                        <xsl:value-of select="$envir"/>
+                        <xsl:text>':  'off</xsl:text>
+                        <xsl:value-of select="$envir"/>
+                        <xsl:text>') :default non}</xsl:text> 
+                    </xsl:attribute>
+                </xsl:when>                    
+                <xsl:when test="boolean(@off) and not(@off='')"> 
+                    <xsl:attribute name="class">
+                        <xsl:text>#{ !(</xsl:text>
+                        <xsl:value-of select="@off"/>
+                        <xsl:text>).valid  ? 'non'  : ((</xsl:text>
+                        <xsl:value-of select="@off"/>
+                        <xsl:text>)  ? 'off</xsl:text>
+                        <xsl:value-of select="$envir"/>
+                        <xsl:text>':  'on</xsl:text>
+                        <xsl:value-of select="$envir"/>
+                        <xsl:text>') :default non}</xsl:text> 
+                    </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise> 
-                    <xsl:choose>                        
-                        <xsl:when test="boolean(@off) and not(@off='')"> 
-                            <xsl:attribute name="class">
-                                <xsl:text>#{ !</xsl:text>
-                                <xsl:value-of select="@off"/>
-                                <xsl:text>.valid  ? 'non'  : ((</xsl:text>
-                                <xsl:value-of select="@off"/>
-                                <xsl:text>)  ? 'off</xsl:text>
-                                <xsl:value-of select="$envir"/>
-                                <xsl:text>':  'on</xsl:text>
-                                <xsl:value-of select="$envir"/>
-                                <xsl:text>') :default 'non'}</xsl:text> 
-                            </xsl:attribute>
-                        </xsl:when>
-                        <xsl:otherwise> 
-                            <xsl:attribute name="class">
-                                <xsl:text>on</xsl:text>
-                                <xsl:value-of select="$envir"/>  
-                            </xsl:attribute>
-                        </xsl:otherwise> 
-                    </xsl:choose>     
-                </xsl:otherwise>                    
-            </xsl:choose>
-            
-
-            
+                    <xsl:attribute name="class">
+                        <xsl:text>on</xsl:text>
+                        <xsl:value-of select="$envir"/>  
+                    </xsl:attribute>
+                </xsl:otherwise> 
+            </xsl:choose>              
             <xsl:call-template name="apply_mlib_araturatype"/> 
         </g>
     </xsl:template> 
+
+    
     
     <!--
     
@@ -239,13 +411,71 @@ extension-element-prefixes="mlib">
                     <xsl:attribute name="class">
                         <xsl:text>#{</xsl:text> 
                         <xsl:value-of select="@local"/>
-                        <xsl:text> ? 'local'  : 'transparent' :default 'transparent' }</xsl:text>
+                        <xsl:text> ? 'local'  : 'transparent' :default transparent }</xsl:text>
                     </xsl:attribute>                           
                     <xsl:call-template name="apply_mlib_aratura_local_img"/>
                 </g>                    
             </xsl:when>
         </xsl:choose>
-    </xsl:template>               
+    </xsl:template>  
+    
+    
+    
+    
+    <!--
+    
+    Отображение состояния автоматический.
+    
+    -->
+    
+    <xsl:template name="apply_mlib_aratura_auto_img">    
+        <circle cx="150" cy="150" r="100" stroke-width="20"/>
+        <path d="M 110,190 L 150,110  L 190,190 M 140,150 L 160,150" stroke-width="15" fill="none"/>
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_aratura_auto">    
+        <xsl:choose>
+            <xsl:when test="boolean(@auto) and not(@auto='')">
+                <g>
+                    <xsl:attribute name="class">
+                        <xsl:text>#{</xsl:text> 
+                        <xsl:value-of select="@auto"/>
+                        <xsl:text> ? 'autocontrol'  : 'transparent' :default transparent }</xsl:text>
+                    </xsl:attribute>                              
+                    <xsl:call-template name="apply_mlib_aratura_auto_img"/>
+                </g>                    
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>   
+    
+    
+    
+    <!--
+    
+    Отображение состояния автоматический.
+    
+    -->
+    
+    <xsl:template name="apply_mlib_aratura_control_img">    
+        <circle cx="850" cy="150" r="60" stroke-width="0"/>
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_aratura_control">    
+        <xsl:choose>
+            <xsl:when test="boolean(@control) and not(@control='')">
+                <g>
+                    <xsl:attribute name="class">
+                        <xsl:text>#{</xsl:text> 
+                        <xsl:value-of select="@control"/>
+                        <xsl:text> ? 'oncheckcontrol'  : 'offcheckcontrol' :default oncheckcontrol }</xsl:text>
+                    </xsl:attribute>                              
+                    <xsl:call-template name="apply_mlib_aratura_control_img"/>
+                </g>                    
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>      
     
     
     
@@ -258,13 +488,13 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_aratura_onsig">    
         <path d="M 450, 170 L 450,100 L 400,100 L 500,10  L 600,100 L 550,100 L 550,170z" stroke-width="0" stroke="none" fill="#0F0">
-            <animate id="a2" attributeType="XML" attributeName="fill" values="#0F0;transparent;" keyTimes="0;.5" dur="500ms"  repeatCount="indefinite" calcMode="discrete"/>
+            <animate  attributeType="XML" attributeName="fill" values="#0F0;transparent;" keyTimes="0;.5" dur="500ms"  repeatCount="indefinite" calcMode="discrete"/>
         </path>
     </xsl:template>  
     
     <xsl:template name="apply_mlib_aratura_offsig">
         <path d="M 450, 10 L 450,80 L 400,80 L 500,170  L 600,80 L 550,80 L 550,10z" stroke-width="0" stroke="none" fill="#F00">
-            <animate id="a2" attributeType="XML" attributeName="fill" values="transparent;#F00;" keyTimes="0;.5" dur="500ms"  repeatCount="indefinite" calcMode="discrete"/>
+            <animate  attributeType="XML" attributeName="fill" values="transparent;#F00;" keyTimes="0;.5" dur="500ms"  repeatCount="indefinite" calcMode="discrete"/>
         </path>
     </xsl:template> 
     
@@ -280,13 +510,13 @@ extension-element-prefixes="mlib">
                                 <xsl:text> &#38;&#38; !</xsl:text>
                                 <xsl:value-of select="@on"/>
                                 <xsl:text>)  ? 'display: block;' :  'display: none;'</xsl:text>
-                                <xsl:text> :default 'display: none;' }</xsl:text>                        
+                                <xsl:text> :default display: none; }</xsl:text>                        
                             </xsl:when>
                             <xsl:otherwise>                         
                                 <xsl:text>#{ </xsl:text>
                                 <xsl:value-of select="@don"/>
                                 <xsl:text>  ? 'display: block;' :  'display: none;'</xsl:text>
-                                <xsl:text> :default 'display: none;' }</xsl:text>                           
+                                <xsl:text> :default display: none; }</xsl:text>                           
                             </xsl:otherwise>                         
                         </xsl:choose>
                     </xsl:attribute> 
@@ -305,14 +535,13 @@ extension-element-prefixes="mlib">
                                 <xsl:text> &#38;&#38; !</xsl:text>
                                 <xsl:value-of select="@off"/>
                                 <xsl:text>)  ? 'display: block;' :  'display: none;'</xsl:text>
-                                <xsl:text> :default 'display: none;' }</xsl:text>                             
+                                <xsl:text> :default display: none; }</xsl:text>                             
                             </xsl:when>
-                            <xsl:otherwise>
-                           
+                            <xsl:otherwise>                          
                                 <xsl:text>#{ </xsl:text>
                                 <xsl:value-of select="@doff"/>
                                 <xsl:text>  ? 'display: block;' :  'display: none;'</xsl:text>
-                                <xsl:text> :default 'display: none;' }</xsl:text>                          
+                                <xsl:text> :default display: none; }</xsl:text>                          
                             </xsl:otherwise>                            
                         </xsl:choose>
                     </xsl:attribute> 
@@ -336,17 +565,17 @@ extension-element-prefixes="mlib">
                     <xsl:attribute name="display">
                         <xsl:text>#{ min(</xsl:text>
                         <xsl:value-of select="@alarm"/>
-                        <xsl:text> , </xsl:text>
+                        <xsl:text> , (</xsl:text>
                         <xsl:value-of select="@alarm"/>
-                        <xsl:text>.valid </xsl:text>
+                        <xsl:text>).valid </xsl:text>
                         <xsl:text>)   ? 'block'  : </xsl:text>
                         <xsl:choose>                
                             <xsl:when test="(boolean(@alarmack) and not(@alarmack=''))">
                                 <xsl:text> ((min(</xsl:text>
                                 <xsl:value-of select="@alarmack"/>
-                                <xsl:text> , </xsl:text>
+                                <xsl:text> , (</xsl:text>
                                 <xsl:value-of select="@alarmack"/>
-                                <xsl:text>.valid))   ? 'block'  : 'none')  }</xsl:text>
+                                <xsl:text>).valid))   ? 'block'  : 'none')  }</xsl:text>
                             </xsl:when>   
                             <xsl:otherwise>
                                 <xsl:text>    'none'  } </xsl:text>
@@ -354,7 +583,7 @@ extension-element-prefixes="mlib">
                         </xsl:choose>
                     </xsl:attribute>                            
                     <circle cx="500" cy="500" r="500"/>
-                    <animate id="a2" attributeType="XML" attributeName="opacity" from="0.1" to="0.99" dur="500ms" calcMode = "linear" repeatCount="indefinite">
+                    <animate  attributeType="XML" attributeName="opacity" from="0.1" to="0.99" dur="500ms" calcMode = "linear" repeatCount="indefinite">
                         <xsl:choose>                
                             <xsl:when test="(boolean(@alarmack) and not(@alarmack=''))">
                                 <xsl:attribute name="to">
@@ -378,42 +607,98 @@ extension-element-prefixes="mlib">
     -->
     
     
-    <xsl:template name="apply_mlib_aratura_control">    
+    <xsl:template name="apply_mlib_aratura_event"> 
         <xsl:choose>             
-            <xsl:when test="boolean(@ron) and not(@ron='')">   
-                <xsl:attribute name="onmouseover">
-                    <xsl:text>main_motor_click(this,'</xsl:text> 
-                    <xsl:value-of select="@header"/>
-                    <xsl:text>','</xsl:text>
-                    <xsl:value-of select="@ron"/>
-                    <xsl:text>');</xsl:text>
-                </xsl:attribute>
-                <xsl:choose>
-                    <xsl:when test="boolean(@local) and not(@local='')">
-                        <xsl:attribute name="cursor">
-                            <xsl:text>#{ (</xsl:text>
+            <xsl:when test="boolean(@rauto) or boolean(@roff) or boolean(@ron)"> 
+                <xsl:variable name="armaturakind"> 
+                    <xsl:choose>
+                        <xsl:when test="not(boolean(@type)) or (@type='motorD') or (@type='motor') or (@type='')">
+                            <xsl:text>motor</xsl:text>
+                        </xsl:when> 
+                        <xsl:otherwise>
+                            <xsl:text>valve</xsl:text>
+                        </xsl:otherwise>    
+                    </xsl:choose>        
+                </xsl:variable>
+                <xsl:choose>             
+                    <xsl:when test="boolean(@rauto) and not(@rauto='')">   
+                        <xsl:attribute name="onclick">
+                            <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
+                            <xsl:text>mainlib.armatura_auto_popup(this, '</xsl:text>
+                            <xsl:value-of select="@header"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="$armaturakind"/>
+                            <xsl:text>','</xsl:text>
                             <xsl:value-of select="@on"/>
-                            <xsl:text>.valid) ? ((</xsl:text>
-                            <xsl:value-of select="@local"/>
-                            <xsl:text>) ? 'default' : 'pointer') : 'default'}</xsl:text>
-                        </xsl:attribute> 
-                    </xsl:when> 
-                    <xsl:when test="boolean(@on) and not(@on='')">
-                        <xsl:attribute name="cursor">
-                            <xsl:text>#{ (</xsl:text>
-                            <xsl:value-of select="@on"/>
-                            <xsl:text>.valid) ?'pointer' : 'default'}</xsl:text>
-                        </xsl:attribute>    
-                    </xsl:when>     
-                    <xsl:otherwise> 
-                        <xsl:attribute name="cursor">
-                            <xsl:text>default</xsl:text>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@off"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@auto"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@ron"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@roff"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@rauto"/>
+                            <xsl:text>'</xsl:text>
+                            <xsl:text>);};</xsl:text>
                         </xsl:attribute>
-                    </xsl:otherwise>                           
-                </xsl:choose>        
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="onclick">
+                            <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
+                            <xsl:text>mainlib.armatura_popup(this, '</xsl:text>
+                            <xsl:value-of select="@header"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="$armaturakind"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@on"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@off"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@ron"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@roff"/>
+                            <xsl:text>'</xsl:text>
+                            <xsl:text>);};</xsl:text>
+                        </xsl:attribute>  
+                    </xsl:otherwise>                            
+                </xsl:choose>
             </xsl:when>               
         </xsl:choose>
     </xsl:template>  
+    
+    <!--
+    
+    формирование стиля
+    
+    -->    
+    
+    
+    <!--xsl:template name="apply_mlib_aratura_style">
+        <style type="text/css">
+            <xsl:text>  
+            
+            </xsl:text>
+            <xsl:text>  g#</xsl:text>
+            <xsl:value-of select="@id"/>
+            <xsl:text> {</xsl:text>
+            <xsl:text>     
+                cursor: pointer;}
+            </xsl:text>
+            <xsl:text> 
+                
+            </xsl:text>
+            <xsl:text>  g#</xsl:text>
+            <xsl:value-of select="@id"/>
+            <xsl:text>[state="disable"] {</xsl:text>
+            <xsl:text>     
+                cursor: none;}
+            </xsl:text>
+            <xsl:text> 
+            </xsl:text>
+        </style>   
+    </xsl:template-->
   
   
         <!--
@@ -434,8 +719,7 @@ extension-element-prefixes="mlib">
             <xsl:call-template name="apply_rect"/>
             
             <xsl:call-template  name="apply_visible"/>
-            
-                                                         
+                                                                   
             <xsl:attribute name="desc">
                 <xsl:if test="boolean(@on)">
                     <xsl:value-of select="@on"/>
@@ -446,30 +730,29 @@ extension-element-prefixes="mlib">
                 <xsl:if test="boolean(@header)">
                     <xsl:value-of select="@header"/>
                 </xsl:if>
-            </xsl:attribute>    
+            </xsl:attribute>  
             
+            <xsl:call-template name="apply_mlib_aratura_cursor"/>
+                       
+            <xsl:call-template name="apply_mlib_aratura_event"/>
             
-            <xsl:call-template name="apply_mlib_aratura_control"/>
+            <!--xsl:call-template name="apply_mlib_aratura_style"/-->
+            
                         
-            <svg>  
+            <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">  
                 
                 <xsl:call-template name="apply_rect"/>
-                
-                <xsl:attribute name="viewBox">
-                    <xsl:text>0 0 1000 1000</xsl:text>
-                </xsl:attribute>
-                
-                <xsl:attribute name="preserveAspectRatio">
-                    <xsl:text>none</xsl:text>
-                </xsl:attribute>
-                
-                
+                               
                 <xsl:call-template name="apply_mlib_aratura_alarmstate"/>
              
                 <xsl:call-template name="apply_mlib_aratura_state"/>
                 
+                <xsl:call-template name="apply_mlib_aratura_auto"/> 
+                                
                 <xsl:call-template name="apply_mlib_aratura_local"/>
                 
+                <xsl:call-template name="apply_mlib_aratura_control"/> 
+                                
                 <xsl:call-template name="apply_mlib_aratura_sig"/>
 
             </svg>       
@@ -509,15 +792,15 @@ extension-element-prefixes="mlib">
                 <xsl:when test="(boolean(@param) and not(@param=''))">
                     <xsl:choose> 
                         <xsl:when test="(boolean(@type) and (@type='tumbler'))">
-                            <xsl:text>dvnci_exec('(</xsl:text>
+                            <xsl:text>dvnci_exec('((</xsl:text>
                             <xsl:value-of select="@param"/>
-                            <xsl:text>.valid &#38;&#38; </xsl:text>
+                            <xsl:text>).valid &#38;&#38; </xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text> ? (</xsl:text>
                             <xsl:value-of select="@param"/>
-                            <xsl:text> @ 0) :  (</xsl:text>
+                            <xsl:text> @ 0) :  ((</xsl:text>
                             <xsl:value-of select="@param"/>
-                            <xsl:text>.valid &#38;&#38; !</xsl:text>
+                            <xsl:text>).valid &#38;&#38; !</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text> ? (</xsl:text>
                             <xsl:value-of select="@param"/>
@@ -529,7 +812,7 @@ extension-element-prefixes="mlib">
                             <xsl:value-of select="@param"/>
                             <xsl:text>');</xsl:text>                               
                         </xsl:when> 
-                        <xsl:when test="(boolean(@type) and (@type=''))">
+                        <xsl:when test="(not(boolean(@type)) or (@type=''))">
                             <xsl:text>dvnci_exec('</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>');</xsl:text> 
@@ -550,13 +833,23 @@ extension-element-prefixes="mlib">
                 <xsl:when test="(boolean(@param) and not(@param=''))">
                     <xsl:choose> 
                         <xsl:when test="(boolean(@type) and (@type='impulse'))">
-                            <xsl:text>dvnci_exec('(</xsl:text>
+                            <xsl:text>dvnci_exec('((</xsl:text>
                             <xsl:value-of select="@param"/>
-                            <xsl:text>.valid &#38;&#38; </xsl:text>
+                            <xsl:text>).valid &#38;&#38; </xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text> ? (</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text> @ 0) : (0</xsl:text>                           
+                            <xsl:text>))');</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="(boolean(@type) and (@type='unimpulse'))">
+                            <xsl:text>dvnci_exec('((</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid &#38;&#38; !</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text> ? (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text> @ 1) : (0</xsl:text>                           
                             <xsl:text>))');</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
@@ -575,13 +868,23 @@ extension-element-prefixes="mlib">
                 <xsl:when test="(boolean(@param) and not(@param=''))">
                     <xsl:choose> 
                         <xsl:when test="(boolean(@type) and (@type='impulse'))">
-                            <xsl:text>dvnci_exec('(</xsl:text>
+                            <xsl:text>dvnci_exec('((</xsl:text>
                             <xsl:value-of select="@param"/>
-                            <xsl:text>.valid &#38;&#38; !</xsl:text>
+                            <xsl:text>).valid &#38;&#38; !</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text> ? (</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text> @ 1) : (0</xsl:text>                           
+                            <xsl:text>))');</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="(boolean(@type) and (@type='unimpulse'))">
+                            <xsl:text>dvnci_exec('((</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid &#38;&#38; </xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text> ? (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text> @ 0) : (0</xsl:text>                           
                             <xsl:text>))');</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
@@ -690,31 +993,32 @@ extension-element-prefixes="mlib">
                 <xsl:when test="(boolean(@disable) and not(@disable=''))">                                    
                     <xsl:choose>                   
                         <xsl:when test="(boolean(@state) and not(@state=''))">   
-                            <xsl:text>#{ (!</xsl:text>
+                            <xsl:text>#{ (!(</xsl:text>
                             <xsl:value-of select="@disable"/>
-                            <xsl:text> &#38;&#38; </xsl:text>
+                            <xsl:text>) &#38;&#38; (</xsl:text>
                             <xsl:value-of select="@disable"/>
-                            <xsl:text>.valid) ? ( </xsl:text>
+                            <xsl:text>).valid) ? ( </xsl:text>
                             <xsl:text> (</xsl:text>
                             <xsl:value-of select="@state"/>
-                            <xsl:text>) ? 'on' : 'off' </xsl:text>  
-                            <xsl:text>): 'disable' :default 'disable'}</xsl:text>             
+                            <xsl:text>) ? 'off' : 'on' </xsl:text>  
+                            <xsl:text>): 'disable' :default disable}</xsl:text>             
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:text>#{ (!</xsl:text>
+                            <xsl:text>#{ (!(</xsl:text>
                             <xsl:value-of select="@disable"/>
-                            <xsl:text> &#38;&#38; </xsl:text>
+                            <xsl:text>)&#38;&#38; (</xsl:text>
                             <xsl:value-of select="@disable"/>
-                            <xsl:text>.valid) ? '' : 'disable' :default 'disable'}</xsl:text>    
+                            <xsl:text>).valid) ? '' : 'disable' :default disable}</xsl:text>    
                         </xsl:otherwise>    
                     </xsl:choose>               
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:choose>                   
                         <xsl:when test="(boolean(@state) and not(@state=''))">                                        
-                            <xsl:text>#{ (</xsl:text>
+                            <!--xsl:text>#{ (</xsl:text>
                             <xsl:value-of select="@state"/>
-                            <xsl:text>) ? 'on' : 'off' :default 'off'}</xsl:text>                  
+                            <xsl:text>) ? 'off' : '' :default }</xsl:text-->
+                            <xsl:text>#{ m1::c1 ? 'off' : 'on'}</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>                                        
                             <xsl:text></xsl:text>                     
@@ -733,8 +1037,25 @@ extension-element-prefixes="mlib">
     
     --> 
     
+    
+    <xsl:template name="apply_mlib_button_class">
+        <xsl:variable name="buttonstyle">
+            <xsl:value-of select="@id"/>
+            <xsl:text>__mlibbuttonstyle</xsl:text>
+        </xsl:variable>
+        <xsl:attribute name="class">
+            <xsl:value-of select="$buttonstyle"/>
+        </xsl:attribute> 
+    </xsl:template>
+    
  
     <xsl:template name="apply_mlib_button_style">
+        
+        <xsl:variable name="buttonstyle"> 
+            <xsl:text>.</xsl:text>
+            <xsl:value-of select="@id"/>
+            <xsl:text>__mlibbuttonstyle</xsl:text>
+        </xsl:variable>
         
         <xsl:variable name="gradienton_id"> 
             <xsl:value-of select="@id"/>
@@ -762,7 +1083,7 @@ extension-element-prefixes="mlib">
             <xsl:text disable-output-escaping="yes"> svg</xsl:text>
         </xsl:variable>
         
-        <xsl:variable name="var_oncolor1">
+        <xsl:variable name="var_color1">
             <xsl:choose>
                 <xsl:when test="(boolean(@color1) and not(@color1=''))">
                     <xsl:value-of select="@color1"/>
@@ -773,7 +1094,7 @@ extension-element-prefixes="mlib">
             </xsl:choose> 
         </xsl:variable>
         
-        <xsl:variable name="var_oncolor2">
+        <xsl:variable name="var_color2">
             <xsl:choose>
                 <xsl:when test="(boolean(@color2) and not(@color2=''))">
                     <xsl:value-of select="@color2"/>
@@ -784,10 +1105,10 @@ extension-element-prefixes="mlib">
             </xsl:choose> 
         </xsl:variable>
         
-        <xsl:variable name="var_offcolor1">
+        <xsl:variable name="var_oncolor1">
             <xsl:choose>
-                <xsl:when test="(boolean(@offcolor1) and not(@offcolor1=''))">
-                    <xsl:value-of select="@offcolor1"/>
+                <xsl:when test="(boolean(@oncolor1) and not(@oncolor1=''))">
+                    <xsl:value-of select="@oncolor1"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:text>#333</xsl:text>
@@ -795,10 +1116,10 @@ extension-element-prefixes="mlib">
             </xsl:choose> 
         </xsl:variable>
         
-        <xsl:variable name="var_offcolor2">
+        <xsl:variable name="var_oncolor2">
             <xsl:choose>
-                <xsl:when test="(boolean(@offcolor2) and not(@offcolor2=''))">
-                    <xsl:value-of select="@offcolor2"/>
+                <xsl:when test="(boolean(@oncolor2) and not(@oncolor2=''))">
+                    <xsl:value-of select="@oncolor2"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:text>#555</xsl:text>
@@ -873,7 +1194,9 @@ extension-element-prefixes="mlib">
                 
             </xsl:text>
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text>  text{
+            <xsl:text>  text</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
             </xsl:text>
             <xsl:value-of select="$var_fontstyle"/>      
             <xsl:choose> 
@@ -894,7 +1217,9 @@ extension-element-prefixes="mlib">
             </xsl:text> 
                
             <xsl:value-of select="$mainselector_id"/>  
-            <xsl:text disable-output-escaping="yes">[state="off"] > svg >  text{
+            <xsl:text disable-output-escaping="yes">[state="off"] > svg >  text</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
             </xsl:text>
             <xsl:value-of select="$var_offfontstyle"/>   
             <xsl:text>;}
@@ -902,7 +1227,9 @@ extension-element-prefixes="mlib">
             </xsl:text>
                  
             <xsl:value-of select="$mainselector_id"/>  
-            <xsl:text disable-output-escaping="yes">[state="disable"] > svg >  text{
+            <xsl:text disable-output-escaping="yes">[state="disable"] > svg >  text</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
             </xsl:text>
             <xsl:value-of select="$var_dsblfontstyle"/>   
             <xsl:text>;}
@@ -911,17 +1238,33 @@ extension-element-prefixes="mlib">
        
      
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text> * {
+            <xsl:text> *</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text>{
                 cursor: pointer;}
           
-            </xsl:text>    
+            </xsl:text> 
+            
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes"> > g > rect{
+            <xsl:text>[state="disable"] *</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text>{
+                cursor: default;}
+          
+            </xsl:text>    
+            
+            <xsl:value-of select="$mainselector_id"/>
+            <xsl:text disable-output-escaping="yes"> > g > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
                 fill: transparent;}
                  
             </xsl:text>    
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes"> > rect{ </xsl:text>
+            <xsl:text disable-output-escaping="yes"> > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
+            </xsl:text>
             <xsl:text>    </xsl:text>
             <xsl:value-of select="normalize-space('fill:  url(#')"/>
             <xsl:value-of select="$gradienton_id"/>
@@ -930,12 +1273,17 @@ extension-element-prefixes="mlib">
             
             </xsl:text>    
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">:hover > rect {               
+            <xsl:text disable-output-escaping="yes">:hover > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {               
                 -webkit-svg-shadow: 3px 3px  3px rgba(0, 0, 0, 0.5);}
          
             </xsl:text>    
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">:active > rect { </xsl:text>
+            <xsl:text disable-output-escaping="yes">:active > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
+            </xsl:text>
             <xsl:text>    </xsl:text>
             <xsl:value-of select="normalize-space('fill:  url(#')"/>
             <xsl:value-of select="$gradientona_id"/>
@@ -945,27 +1293,36 @@ extension-element-prefixes="mlib">
                  
             </xsl:text> 
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes"> > g > rect { </xsl:text>
+            <xsl:text disable-output-escaping="yes"> > g > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
+            </xsl:text>
             <xsl:text>
                 stroke: 
             </xsl:text>
-            <xsl:value-of select="$var_oncolor1"/>
+            <xsl:value-of select="$var_color1"/>
             <xsl:text >;
                 stroke-width: 1;}   
                     
             </xsl:text>    
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">:hover > g > rect {</xsl:text>
+            <xsl:text disable-output-escaping="yes">:hover > g > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
+            </xsl:text>
             <xsl:text>
                 stroke: 
             </xsl:text>
-            <xsl:value-of select="$var_oncolor2"/>
+            <xsl:value-of select="$var_color2"/>
             <xsl:text >;
                 stroke-width: 1;}                  
        
             </xsl:text>    
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="off"] > rect {</xsl:text>
+            <xsl:text disable-output-escaping="yes">[state="off"] > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
+            </xsl:text>
             <xsl:text>    </xsl:text>
             <xsl:value-of select="normalize-space('fill:  url(#')"/>
             <xsl:value-of select="$gradientoff_id"/>
@@ -974,7 +1331,10 @@ extension-element-prefixes="mlib">
                     
             </xsl:text>    
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="off"]:active > rect {</xsl:text>
+            <xsl:text disable-output-escaping="yes">[state="off"]:active > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
+            </xsl:text>
             <xsl:text>    </xsl:text>
             <xsl:value-of select="normalize-space('fill:  url(#')"/>
             <xsl:value-of select="$gradientoffa_id"/>
@@ -983,32 +1343,43 @@ extension-element-prefixes="mlib">
            
             </xsl:text> 
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="off"] > g > rect {</xsl:text>
+            <xsl:text disable-output-escaping="yes">[state="off"] > g > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
+            </xsl:text>
             <xsl:text>
                 stroke: 
             </xsl:text>
-            <xsl:value-of select="$var_offcolor2"/>
+            <xsl:value-of select="$var_oncolor2"/>
             <xsl:text >;
                 stroke-width: 1;}   
                     
             </xsl:text>    
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="off"]:hover > g > rect {
+            <xsl:text disable-output-escaping="yes">[state="off"]:hover > g > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
             </xsl:text>
             <xsl:text>
                 stroke: 
             </xsl:text>
-            <xsl:value-of select="$var_offcolor1"/>
+            <xsl:value-of select="$var_oncolor1"/>
             <xsl:text >;
                 stroke-width: 1;}            
            
             </xsl:text>           
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"] > rect, </xsl:text>
+            <xsl:text disable-output-escaping="yes">[state="disable"] > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> , </xsl:text>
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"]:hover > rect,</xsl:text>
+            <xsl:text disable-output-escaping="yes">[state="disable"]:hover > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> , </xsl:text>
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"]:active > rect{ 
+            <xsl:text disable-output-escaping="yes">[state="disable"]:active > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
             </xsl:text>
             <xsl:text>     </xsl:text>               
             <xsl:value-of select="normalize-space('fill:  url(#')"/>
@@ -1020,11 +1391,17 @@ extension-element-prefixes="mlib">
             </xsl:text> 
                 
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"] > g > rect, </xsl:text>
+            <xsl:text disable-output-escaping="yes">[state="disable"] > g > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> , </xsl:text>
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"]:hover > g > rect,</xsl:text>
+            <xsl:text disable-output-escaping="yes">[state="disable"]:hover > g > rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> , </xsl:text>
             <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"]:active > g >rect{
+            <xsl:text disable-output-escaping="yes">[state="disable"]:active > g >rect</xsl:text>
+            <xsl:value-of select="$buttonstyle"/>
+            <xsl:text> {
                  stroke-width: 0;
                  stroke: none;}
                  
@@ -1039,17 +1416,17 @@ extension-element-prefixes="mlib">
                 </xsl:attribute>   
                 <stop offset="0%">
                     <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_oncolor1"/>
+                        <xsl:value-of select="$var_color1"/>
                     </xsl:attribute>                         
                 </stop>
                 <stop offset="50%">
                     <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_oncolor2"/>
+                        <xsl:value-of select="$var_color2"/>
                     </xsl:attribute>                         
                 </stop> 
                 <stop offset="100%">
                     <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_oncolor1"/>
+                        <xsl:value-of select="$var_color1"/>
                     </xsl:attribute>                         
                 </stop>
             </linearGradient>
@@ -1060,6 +1437,48 @@ extension-element-prefixes="mlib">
                 </xsl:attribute>   
                 <stop offset="0%">
                     <xsl:attribute name="stop-color">
+                        <xsl:value-of select="$var_color2"/>
+                    </xsl:attribute>                         
+                </stop>
+                <stop offset="50%">
+                    <xsl:attribute name="stop-color">
+                        <xsl:value-of select="$var_color1"/>
+                    </xsl:attribute>                         
+                </stop> 
+                <stop offset="100%">
+                    <xsl:attribute name="stop-color">
+                        <xsl:value-of select="$var_color2"/>
+                    </xsl:attribute>                         
+                </stop>
+            </linearGradient>
+            
+            <linearGradient x1="100%" y1="0%" x2="100%" y2="100%">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="$gradientoff_id"/>
+                </xsl:attribute>   
+                <stop offset="0%">
+                    <xsl:attribute name="stop-color">
+                        <xsl:value-of select="$var_oncolor1"/>
+                    </xsl:attribute>                         
+                </stop>
+                <stop offset="50%">
+                    <xsl:attribute name="stop-color">
+                        <xsl:value-of select="$var_oncolor2"/>
+                    </xsl:attribute>                         
+                </stop> 
+                <stop offset="100%">
+                    <xsl:attribute name="stop-color">
+                        <xsl:value-of select="$var_oncolor1"/>
+                    </xsl:attribute>                         
+                </stop>
+            </linearGradient>
+            
+            <linearGradient x1="100%" y1="0%" x2="100%" y2="100%">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="$gradientoffa_id"/>
+                </xsl:attribute>   
+                <stop offset="0%">
+                    <xsl:attribute name="stop-color">
                         <xsl:value-of select="$var_oncolor2"/>
                     </xsl:attribute>                         
                 </stop>
@@ -1071,48 +1490,6 @@ extension-element-prefixes="mlib">
                 <stop offset="100%">
                     <xsl:attribute name="stop-color">
                         <xsl:value-of select="$var_oncolor2"/>
-                    </xsl:attribute>                         
-                </stop>
-            </linearGradient>
-            
-            <linearGradient x1="100%" y1="0%" x2="100%" y2="100%">
-                <xsl:attribute name="id">
-                    <xsl:value-of select="$gradientoff_id"/>
-                </xsl:attribute>   
-                <stop offset="0%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_offcolor1"/>
-                    </xsl:attribute>                         
-                </stop>
-                <stop offset="50%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_offcolor2"/>
-                    </xsl:attribute>                         
-                </stop> 
-                <stop offset="100%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_offcolor1"/>
-                    </xsl:attribute>                         
-                </stop>
-            </linearGradient>
-            
-            <linearGradient x1="100%" y1="0%" x2="100%" y2="100%">
-                <xsl:attribute name="id">
-                    <xsl:value-of select="$gradientoffa_id"/>
-                </xsl:attribute>   
-                <stop offset="0%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_offcolor2"/>
-                    </xsl:attribute>                         
-                </stop>
-                <stop offset="50%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_offcolor1"/>
-                    </xsl:attribute>                         
-                </stop> 
-                <stop offset="100%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_offcolor2"/>
                     </xsl:attribute>                         
                 </stop>
             </linearGradient> 
@@ -1150,6 +1527,7 @@ extension-element-prefixes="mlib">
     <xsl:template name="apply_mlib_button_body"> 
         <svg>
             <xsl:call-template name="apply_rect"/>
+            <xsl:call-template name="apply_mlib_button_class"/>
             <xsl:call-template name="apply_mlib_button_state"/>
             <xsl:call-template name="apply_mlib_button_style"/>          
             <rect role="button" aria-pressed="true"> 
@@ -1165,11 +1543,14 @@ extension-element-prefixes="mlib">
                 <xsl:attribute name="width">
                     <xsl:value-of select="@width - 4"/>
                 </xsl:attribute>
+                <xsl:call-template name="apply_mlib_button_class"/>
                 <xsl:call-template name="apply_r"/>
             </rect>   
             <xsl:call-template name="apply_mlib_button_caption"/>
             <g>
+                <xsl:call-template name="apply_mlib_button_class"/>
                 <rect>
+                    
                     <xsl:attribute name="x">
                         <xsl:value-of select="4"/>
                     </xsl:attribute>
@@ -1182,6 +1563,7 @@ extension-element-prefixes="mlib">
                     <xsl:attribute name="width">
                         <xsl:value-of select="@width - 8"/>
                     </xsl:attribute>
+                    <xsl:call-template name="apply_mlib_button_class"/>
                     <xsl:call-template name="apply_r"/>   
                 </rect>
             </g>
@@ -1200,52 +1582,52 @@ extension-element-prefixes="mlib">
     <xsl:template name="apply_mlib_button_caption_value_both">
         <xsl:text>#{ (!</xsl:text>
         <xsl:value-of select="@disable"/>
-        <xsl:text> &#38;&#38; </xsl:text>
+        <xsl:text> &#38;&#38;(</xsl:text>
         <xsl:value-of select="@disable"/>
-        <xsl:text>.valid) ? ( </xsl:text>
+        <xsl:text>).valid) ? ( </xsl:text>
         <xsl:text> (</xsl:text>
         <xsl:value-of select="@state"/>
         <xsl:text>) ? '</xsl:text>
-        <xsl:value-of select="@caption"/> 
+        <xsl:value-of select="@oncaption"/> 
         <xsl:text>' : '</xsl:text>
-        <xsl:value-of select="@offcaption"/>
+        <xsl:value-of select="@caption"/>
         <xsl:text>' </xsl:text>  
         <xsl:text>): '</xsl:text>
         <xsl:value-of select="@dsblcaption"/>
-        <xsl:text>' :default '</xsl:text>
+        <xsl:text>' :default </xsl:text>
         <xsl:value-of select="@dsblcaption"/>
-        <xsl:text>'}</xsl:text>     
+        <xsl:text>}</xsl:text>     
     </xsl:template> 
     
     <xsl:template name="apply_mlib_button_caption_value_dsbl">
         <xsl:text>#{ (!</xsl:text>
         <xsl:value-of select="@disable"/>
-        <xsl:text> &#38;&#38; </xsl:text>
+        <xsl:text> &#38;&#38; (</xsl:text>
         <xsl:value-of select="@disable"/>
-        <xsl:text>.valid) ? '</xsl:text>
+        <xsl:text>).valid) ? '</xsl:text>
         <xsl:value-of select="@caption"/>
         <xsl:text>' : '</xsl:text>
         <xsl:value-of select="@dsblcaption"/>
-        <xsl:text>' :default '</xsl:text>
+        <xsl:text>' :default </xsl:text>
         <xsl:value-of select="@dsblcaption"/>
-        <xsl:text>'}</xsl:text>      
+        <xsl:text>}</xsl:text>      
     </xsl:template> 
     
     <xsl:template name="apply_mlib_button_caption_value_state">
         <xsl:text>#{ (</xsl:text>
         <xsl:value-of select="@state"/>
         <xsl:text>) ? '</xsl:text>
-        <xsl:value-of select="@caption"/>
+        <xsl:value-of select="@oncaption"/>
         <xsl:text>' : '</xsl:text>
-        <xsl:value-of select="@offcaption"/>
-        <xsl:text>' :default '</xsl:text>
-        <xsl:value-of select="@offcaption"/>
-        <xsl:text>'}</xsl:text>   
+        <xsl:value-of select="@caption"/>
+        <xsl:text>' :default </xsl:text>
+        <xsl:value-of select="@caption"/>
+        <xsl:text>}</xsl:text>   
     </xsl:template>     
     
     <xsl:template name="apply_mlib_button_caption_value"> 
         <xsl:choose>
-            <xsl:when test="(boolean(@offcaption) and not(@offcaption=''))">
+            <xsl:when test="(boolean(@oncaption) and not(@oncaption=''))">
                 <xsl:choose>
                     <xsl:when test="(boolean(@dsblcaption) and not(@dsblcaption=''))">                       
                         <xsl:choose>
@@ -1317,7 +1699,8 @@ extension-element-prefixes="mlib">
             </xsl:attribute>
             <xsl:attribute name="width">
                 <xsl:value-of select="@width - 8"/>
-            </xsl:attribute>        
+            </xsl:attribute>
+            <xsl:call-template name="apply_mlib_button_class"/>
             <text>
                 <xsl:attribute name="x">
                     <xsl:value-of select="(@width - 8) div 2"/>
@@ -1325,7 +1708,7 @@ extension-element-prefixes="mlib">
                 <xsl:attribute name="y">
                     <xsl:value-of select="(@height - 8) div 2"/>
                 </xsl:attribute>     
-                <!--xsl:value-of select="@caption"/-->
+                <xsl:call-template name="apply_mlib_button_class"/>
                 <xsl:call-template name="apply_mlib_button_caption_value"/>
             </text>
         </svg>     

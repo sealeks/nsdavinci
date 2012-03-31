@@ -92,7 +92,25 @@
   
 }
 
-*.transparent
+.autocontrol
+{
+  stroke: black;
+  fill: #00CD00;
+
+}
+
+.offcheckcontrol
+{
+  fill: #B5B5B5;
+}
+
+.oncheckcontrol
+{
+  fill: #00EE00;
+}
+
+
+.transparent
 {
   stroke: transparent;
   fill: transparent;

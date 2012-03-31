@@ -73,10 +73,13 @@
     <xsd:simpleType name="mlib:armaturatype">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="motor"></xsd:enumeration>
+            <xsd:enumeration value="motorD"></xsd:enumeration>
             <xsd:enumeration value="cvalve"></xsd:enumeration>
             <xsd:enumeration value="ovalve"></xsd:enumeration>
             <xsd:enumeration value="rvalve"></xsd:enumeration>
             <xsd:enumeration value="bolt"></xsd:enumeration>
+            <xsd:enumeration value="simple"></xsd:enumeration>
+            <xsd:enumeration value="regul"></xsd:enumeration>
             <xsd:enumeration value=""></xsd:enumeration>
         </xsd:restriction>
     </xsd:simpleType> 
@@ -85,6 +88,7 @@
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="tumbler"></xsd:enumeration>
             <xsd:enumeration value="impulse"></xsd:enumeration>
+            <xsd:enumeration value="unimpulse"></xsd:enumeration>
             <xsd:enumeration value="button"></xsd:enumeration>
             <xsd:enumeration value=""></xsd:enumeration>
         </xsd:restriction>
@@ -103,17 +107,23 @@
             <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
             <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/>         
             <xsd:attribute name="header" type="mlib:expression_or_number" default=""/>
+            <xsd:attribute name="environment" type="mlib:environment" default=""/> 
+            
             <xsd:attribute name="on" type="xsd:string" default=""/>
             <xsd:attribute name="off" type="xsd:string" default=""/>
+            <xsd:attribute name="local" type="mlib:expression_or_number" default=""/>
+            <xsd:attribute name="auto" type="xsd:string" default=""/>
             <xsd:attribute name="ron" type="xsd:string" default=""/>
             <xsd:attribute name="roff" type="xsd:string" default=""/>
+            <xsd:attribute name="rauto" type="mlib:expression_or_number" default=""/>
             <xsd:attribute name="don" type="xsd:string" default=""/>
             <xsd:attribute name="doff" type="xsd:string" default=""/>
-            <xsd:attribute name="local" type="mlib:expression_or_number" default=""/>
+            <xsd:attribute name="control" type="xsd:string" default=""/>
+            
             <xsd:attribute name="alarm" type="xsd:string" default=""/>
-            <xsd:attribute name="alarmack" type="xsd:string" default=""/>
-            <xsd:attribute name="environment" type="mlib:environment" default=""/>             
+            <xsd:attribute name="alarmack" type="xsd:string" default=""/>                       
             <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
+            
             <xsd:attribute name="rotate" type="mlib:number" default="0"/>        
         </xsd:complexType>
     </xsd:element>
@@ -188,9 +198,9 @@
             <xsd:attribute name="color1" type="mlib:expression" default=""/>
             <xsd:attribute name="color2" type="mlib:expression" default=""/>
             <xsd:attribute name="fontstyle" type="mlib:expression" default=""/>
-            <xsd:attribute name="offcaption" type="mlib:expression" default=""/>
-            <xsd:attribute name="offcolor1" type="mlib:expression" default=""/>
-            <xsd:attribute name="offcolor2" type="mlib:expression" default=""/>
+            <xsd:attribute name="oncaption" type="mlib:expression" default=""/>
+            <xsd:attribute name="oncolor1" type="mlib:expression" default=""/>
+            <xsd:attribute name="oncolor2" type="mlib:expression" default=""/>
             <xsd:attribute name="offfontstyle" type="mlib:expression" default=""/>
             <xsd:attribute name="dsblcaption" type="mlib:expression" default=""/>
             <xsd:attribute name="dsblcolor1" type="mlib:expression" default=""/>
