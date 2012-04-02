@@ -532,8 +532,6 @@ mainlibutil.xslttransform.tranformDocument = function(doc){
 
 mainlibutil.xslttransform.tranform_and_getById = function(doc, id){
     var transdoc = mainlibutil.xslttransform.xsltProcessor().transformToDocument(doc);
-    window.testdoc=transdoc;
-    //alert(transdoc);
     return transdoc.getElementById(id);
 }
 

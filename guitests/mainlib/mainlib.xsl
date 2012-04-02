@@ -629,10 +629,6 @@ extension-element-prefixes="mlib">
                             <xsl:text>','</xsl:text>
                             <xsl:value-of select="$armaturakind"/>
                             <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@on"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@off"/>
-                            <xsl:text>','</xsl:text>
                             <xsl:value-of select="@auto"/>
                             <xsl:text>','</xsl:text>
                             <xsl:value-of select="@ron"/>
@@ -651,10 +647,6 @@ extension-element-prefixes="mlib">
                             <xsl:value-of select="@header"/>
                             <xsl:text>','</xsl:text>
                             <xsl:value-of select="$armaturakind"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@on"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@off"/>
                             <xsl:text>','</xsl:text>
                             <xsl:value-of select="@ron"/>
                             <xsl:text>','</xsl:text>
@@ -1015,10 +1007,9 @@ extension-element-prefixes="mlib">
                 <xsl:otherwise>
                     <xsl:choose>                   
                         <xsl:when test="(boolean(@state) and not(@state=''))">                                        
-                            <!--xsl:text>#{ (</xsl:text>
+                            <xsl:text>#{ (</xsl:text>
                             <xsl:value-of select="@state"/>
-                            <xsl:text>) ? 'off' : '' :default }</xsl:text-->
-                            <xsl:text>#{ m1::c1 ? 'off' : 'on'}</xsl:text>
+                            <xsl:text>) ? 'off' : '' :default }</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>                                        
                             <xsl:text></xsl:text>                     
