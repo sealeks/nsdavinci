@@ -80,7 +80,6 @@ namespace dvnci {
 
             oprt_leftgroup = 1000,          // (  1
             oprt_rightgroup = 1002,         // )  1
-            oprt_comma = 1004,             //,
             select_mineu = 1006,
             select_maxeu = 1008,
             select_ack = 1010,
@@ -201,6 +200,7 @@ namespace dvnci {
             oprt_command1 = 14020,           /* @@*/
             oprt_command2 = 14040,           /* @@@*/            
             oprt_postinc = 15000,           /* ++*/
+            oprt_comma = 15002,//1004,             //,            
             oprt_postdec = 15020,           /* --*/
         } ;
 
@@ -1711,7 +1711,7 @@ namespace dvnci {
                 calc_token tmp;
                 rslt = tmp;
                 return error(er.code());}
-            if (calcstack.size() != 1) {
+            if (calcstack.size() < 1) {
                 clearall();
                 return error(ERROR_EXPRPARSE);}
             if (calcstack.top().needassign()) {
@@ -1823,15 +1823,17 @@ namespace dvnci {
                                         polline.push_back(tmpitcond);}
                                     else
                                         polline.push_back(calcstack.top());
-                                    calcstack.pop();}
+									calcstack.pop();}
                                 if ((!calcstack.empty()) && ((calcstack.top().operation() == oprt_leftgroup) || (calcstack.top().operation() == oprt_caseleftgroup))) {
                                     if (tmpit.operation() != oprt_comma) calcstack.pop();}
                                 else {
+                                    if (tmpit.operation() != oprt_comma){
                                     clearall();
-                                    return error(ERROR_EXPRPARSE);}}
+                                    return error(ERROR_EXPRPARSE);}}}
                             else {
+                                if (tmpit.operation() != oprt_comma) {
                                 clearall();
-                                return error(ERROR_EXPRPARSE);}
+                                return error(ERROR_EXPRPARSE);}}
                             if (tmpit.operation() == oprt_casedelim) polline.push_back(tmpit);
                             break;}
                         default:{
