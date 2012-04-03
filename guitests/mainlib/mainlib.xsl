@@ -623,6 +623,7 @@ extension-element-prefixes="mlib">
                 <xsl:choose>             
                     <xsl:when test="boolean(@rauto) and not(@rauto='')">   
                         <xsl:attribute name="onclick">
+                            <!--xsl:call-template name="startcddata"/-->
                             <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
                             <xsl:text>mainlib.armatura_auto_popup(this, '</xsl:text>
                             <xsl:value-of select="@header"/>
@@ -635,13 +636,15 @@ extension-element-prefixes="mlib">
                             <xsl:text>','</xsl:text>
                             <xsl:value-of select="@roff"/>
                             <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@rauto"/>
-                            <xsl:text>'</xsl:text>
+                            <xsl:value-of select="@rauto"/>                           
+                            <xsl:text>'</xsl:text>                           
                             <xsl:text>);};</xsl:text>
+                            <!--xsl:call-template name="stopcddata"/-->
                         </xsl:attribute>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:attribute name="onclick">
+                            <!--xsl:call-template name="startcddata"/-->
                             <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
                             <xsl:text>mainlib.armatura_popup(this, '</xsl:text>
                             <xsl:value-of select="@header"/>
@@ -650,9 +653,10 @@ extension-element-prefixes="mlib">
                             <xsl:text>','</xsl:text>
                             <xsl:value-of select="@ron"/>
                             <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@roff"/>
-                            <xsl:text>'</xsl:text>
+                            <xsl:value-of select="@roff"/>                           
+                            <xsl:text>'</xsl:text>                           
                             <xsl:text>);};</xsl:text>
+                            <!--xsl:call-template name="stopcddata"/-->
                         </xsl:attribute>  
                     </xsl:otherwise>                            
                 </xsl:choose>

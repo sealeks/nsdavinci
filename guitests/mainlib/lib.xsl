@@ -51,6 +51,14 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     
     <!-- main template  -->
     
+    <xsl:template name="startcddata">
+        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+    </xsl:template>  
+    
+    <xsl:template name="stopcddata">    
+        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>      
+    </xsl:template>    
+    
     <xsl:template name="apply_rect"> 
         <xsl:attribute name="x">
             <xsl:value-of select="@x"/>

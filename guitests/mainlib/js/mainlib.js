@@ -109,7 +109,6 @@ mainlib.armatura_popup_content =  function(id, el,  type,  rron, rroff, auto, ra
             btn.setAttribute('oncolor2',typepopup==0 ? off_btn_color2 : on_btn_color2);
             btn.setAttribute('state', typepopup==0 ? rron : rroff);
             btn.setAttribute('param',typepopup==0 ? rron : rroff);
-            //alert(valid);
             if (valid)
                 btn.setAttribute('disable',valid);
             btn.setAttribute('r',10);
@@ -140,7 +139,7 @@ mainlib.armatura_popup_content =  function(id, el,  type,  rron, rroff, auto, ra
             btnoff.setAttribute('param',rroff + ' @ 1');
             btnoff.setAttribute('fontstyle',littlstyle);
             if (valid)
-                btnoff.setAttribute('disable',valid);            
+                btnoff.setAttribute('disable',valid);           
             btnoff.setAttribute('r',5);
             
             break;
@@ -179,7 +178,6 @@ mainlib.armatura_popup_header =  function(el, header){
 
 
 
-
 mainlib.armatura_popup = function(el, header, type, ron , roff){
     
     try{
@@ -195,7 +193,7 @@ mainlib.armatura_popup = function(el, header, type, ron , roff){
         var root = mainlibutil.svg.create_svg(litedocElement, 0 , 0,  200, 200);
         root.setAttribute('id', popup_id);
 
-        mainlib.armatura_popup_content(popup_id, root , type,  ron, roff);
+        mainlib.armatura_popup_content(popup_id, root ,  type,  ron, roff);
  
         var generated = mainlibutil.xslttransform.tranform_and_getById(litedoc,popup_id);
           
