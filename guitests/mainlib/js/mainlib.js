@@ -79,7 +79,19 @@ mainlib.armatura_popup_content =  function(id, el,  type,  rron, rroff, auto, ra
     var littlstyle ='font-size: 11; fill: white;';
     
     var isauto = (auto && rauto && (auto!='') && (rauto!=''));
-        
+    
+    var valid = '';
+    if (rron && (rron!=''))
+        valid = valid=='' ? (valid + rron) : (valid + ' || ' +rron);
+    if (rroff && (rroff!=''))
+        valid = valid=='' ? (valid + rroff) : (valid + ' || ' +rroff);
+    if (auto && (auto!=''))
+        valid = valid=='' ? (valid + auto) : (valid + ' || ' +auto);
+    
+    valid = (valid!='') ? '(!('+valid+').valid)' : undefined;
+    
+    if (isauto)
+        valid = (valid) ? auto + ' || ' + valid : auto;
     
     
     var typepopup = ((rron!='') && (rroff!='')) ? 2 : ((rron!='') ? 0 : 1);
@@ -89,6 +101,7 @@ mainlib.armatura_popup_content =  function(id, el,  type,  rron, rroff, auto, ra
         case 1:{
             var btn = mainlib.element.create_button(el, id + '_onoffbutton', typepopup==0 ? on_btn_caption : off_btn_caption , 20 , 95, 160, 100);
             btn.setAttribute('oncaption',typepopup==0 ? off_btn_caption : on_btn_caption);
+            btn.setAttribute('dsblcaption','  ');
             btn.setAttribute('type','tumbler');
             btn.setAttribute('color1',typepopup==0 ? on_btn_color1 : off_btn_color1);
             btn.setAttribute('color2',typepopup==0 ? on_btn_color2 : off_btn_color2);
@@ -96,8 +109,9 @@ mainlib.armatura_popup_content =  function(id, el,  type,  rron, rroff, auto, ra
             btn.setAttribute('oncolor2',typepopup==0 ? off_btn_color2 : on_btn_color2);
             btn.setAttribute('state', typepopup==0 ? rron : rroff);
             btn.setAttribute('param',typepopup==0 ? rron : rroff);
-            if (isauto)
-                btn.setAttribute('disable',auto);
+            //alert(valid);
+            if (valid)
+                btn.setAttribute('disable',valid);
             btn.setAttribute('r',10);
             break;
         }
@@ -108,8 +122,8 @@ mainlib.armatura_popup_content =  function(id, el,  type,  rron, rroff, auto, ra
             btnon.setAttribute('color2',on_btn_color2);
             btnon.setAttribute('param',rron + ' @ 1');
             btnon.setAttribute('fontstyle',littlstyle);
-            if (isauto)
-                btnon.setAttribute('disable',auto);
+            if (valid)
+                btnon.setAttribute('disable',valid);
             btnon.setAttribute('r',5);
             
             var btnstop = mainlib.element.create_button(el, id + '_stopbutton', stop_btn_caption , 20 , 130, 160, 33);          
@@ -125,8 +139,8 @@ mainlib.armatura_popup_content =  function(id, el,  type,  rron, rroff, auto, ra
             btnoff.setAttribute('color2',off_btn_color2);
             btnoff.setAttribute('param',rroff + ' @ 1');
             btnoff.setAttribute('fontstyle',littlstyle);
-            if (isauto)
-                btnoff.setAttribute('disable',auto);            
+            if (valid)
+                btnoff.setAttribute('disable',valid);            
             btnoff.setAttribute('r',5);
             
             break;

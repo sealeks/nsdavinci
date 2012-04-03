@@ -667,30 +667,52 @@ extension-element-prefixes="mlib">
     -->    
     
     
-    <!--xsl:template name="apply_mlib_aratura_style">
+    <xsl:template name="apply_mlib_aratura_style">
         <style type="text/css">
             <xsl:text>  
             
             </xsl:text>
             <xsl:text>  g#</xsl:text>
             <xsl:value-of select="@id"/>
-            <xsl:text> {</xsl:text>
-            <xsl:text>     
+            <xsl:text>[cursor="pointer"] {</xsl:text>
+            <xsl:text>
+                outline: 1px solid transparent;
                 cursor: pointer;}
             </xsl:text>
+            
+            <xsl:text>  g#</xsl:text>
+            <xsl:value-of select="@id"/>
+            <xsl:text>[cursor="pointer"]:hover {</xsl:text>
+            <xsl:text>
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+            </xsl:text>
+            
             <xsl:text> 
                 
             </xsl:text>
             <xsl:text>  g#</xsl:text>
             <xsl:value-of select="@id"/>
-            <xsl:text>[state="disable"] {</xsl:text>
-            <xsl:text>     
-                cursor: none;}
+            <xsl:text> {</xsl:text>
+            <xsl:text> 
+               outline: 1px solid transparent;
+               cursor: none;}
             </xsl:text>
+            
+            
+            <xsl:text>  g#</xsl:text>
+            <xsl:value-of select="@id"/>
+            <xsl:text>:hover {</xsl:text>
+            <xsl:text> 
+               outline: 1px solid gray;
+               cursor: none;}
+            </xsl:text>
+            
+            
             <xsl:text> 
             </xsl:text>
         </style>   
-    </xsl:template-->
+    </xsl:template>
   
   
         <!--
@@ -705,6 +727,8 @@ extension-element-prefixes="mlib">
             <xsl:call-template name="apply_id"/>
             
             <xsl:call-template name="apply_mlib_schema"/>
+            
+            
             
             <xsl:call-template name="apply_cental_rotate"/>
             
@@ -728,10 +752,12 @@ extension-element-prefixes="mlib">
                        
             <xsl:call-template name="apply_mlib_aratura_event"/>
             
-            <!--xsl:call-template name="apply_mlib_aratura_style"/-->
+            <xsl:call-template name="apply_mlib_aratura_style"/>
             
                         
-            <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">  
+            <svg viewBox="0 0 1000 1000" preserveAspectRatio="none"> 
+            
+                
                 
                 <xsl:call-template name="apply_rect"/>
                                

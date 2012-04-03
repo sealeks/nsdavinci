@@ -17,11 +17,11 @@
     <mlib:armatura x="569" y="340" height="60" width="60" id="name3" environment="gaz"/>
     
     <mlib:rect x="808" y="356" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333" id="name6" value="r5::a"/>
-    <mlib:alarmtable x="803" y="37" height="100" width="400" id="name7"/>
-    <mlib:alarmtable x="242" y="678" height="100" width="400" id="name8" fontstyle="font-size: 7px;"/>
+    
+    
     <mlib:sensor x="187" y="416" height="50" width="200" id="name9" param="r8::a" background="water" fontstyle="fill: red; font-size: 30px;" stroke-width="2" r="3" stroke="green" format="%3.3f"/>
-    <mlib:button x="890" y="535" height="40" width="200" caption="Включить" id="name12" oncolor1="#A00" oncolor2="#700" disable="" param="m4::c4" color1="#0A0" color2="#070" visible="" r="10" fontstyle="" offfontstyle="" dsblfontstyle="" state="m1::c1" onclick="" onmousedown="" onmouseup="" type="tumbler" oncaption="Выключить"/>
+    
     <mlib:button x="509" y="508" height="40" width="200" caption="caption" id="name13" disable="m1::c1" r="1"/>
-    <mlib:button x="922" y="280" height="40" width="200" caption="caption" id="name14" onclick=" if (!window.globalTick)  {          window.globalTick = setInterval(function()                  { if (dvnci_value('m1::c1')) {dvnci_value('m1::c1 @ 0');}  else (dvnci_value('m1::c1 @ 1')) }, 3000); }" oncaption="oncaption" dsblcaption="dsblcaption" state="m1::c5" disable="m1::c4"/>
-    <mlib:button x="837" y="465" height="40" width="200" caption="on" id="name15" state="m1::c1" type="unimpulse" param="m4::c4" oncaption="off" r="5"/>
-<mlib:button x="1164" y="382" height="100" width="400" caption="off" id="name5" oncaption="on" dsblcaption="dsbl" state="m1::c1" disable="m1::c2"/><mlib:armatura x="1279" y="166" height="60" width="60" id="name18" on="m1::c3" environment="water" ron="m1::c3" type="motorD" alarm="m1::c2" off="" roff=""/><mlib:armatura x="782" y="534" height="60" width="60" id="name19" on="m1::c4" environment="water" ron="m1::c4" type="motorD" alarm="m1::c2" off="" roff=""/><mlib:armatura x="816" y="209" height="60" width="60" id="name20" on="m1::c2" environment="water" ron="m1::c2" type="motorD" alarm="m1::c2" off="" roff="" header="Задвижка на паропроводе к котлу"/></svg>
+    
+    
+<mlib:armatura x="1279" y="166" height="60" width="60" id="name18" on="m1::c3" environment="water" ron="m1::c3" type="motorD" alarm="m1::c2" off="" roff=""/><mlib:armatura x="782" y="534" height="60" width="60" id="name19" on="m1::c4" environment="water" ron="m1::c4" type="motorD" alarm="m1::c2" off="" roff=""/><mlib:armatura x="816" y="209" height="60" width="60" id="name20" on="m1::c2" environment="water" ron="m1::c2" type="motorD" alarm="m1::c2" off="" roff="" header="Задвижка на паропроводе к котлу"/></svg>
