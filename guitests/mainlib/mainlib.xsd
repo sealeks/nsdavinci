@@ -158,7 +158,7 @@
     <xsd:element name="mlib:sensor" type="sensor">
         <xsd:complexType name="sensor">
             <dvnlib:creator name="mlib:sensor"  hint="sensor">
-                <mlib:sensor  x="" y="" height="50" width="200"/>
+                <mlib:sensor  x="" y="" height="30" width="150" stroke="white" stroke-width="1" r="4"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
