@@ -65,7 +65,7 @@ namespace browser_shutdown {
 bool g_trying_to_quit = false;
 
 Time shutdown_started_;
-ShutdownType shutdown_type_ = NOT_VALID;
+ShutdownType shutdown_type_ = END_SESSION;//NOT_VALID;
 int shutdown_num_processes_;
 int shutdown_num_processes_slow_;
 
