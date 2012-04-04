@@ -385,7 +385,8 @@ NativeWidgetWin::NativeWidgetWin(internal::NativeWidgetDelegate* delegate)
       is_right_mouse_pressed_on_caption_(false),
       restored_enabled_(false),
       undecorated_(false),
-      tooltip_(false){
+      tooltip_(false),
+      resizeble_(true){
 }
 
 NativeWidgetWin::~NativeWidgetWin() {
@@ -1041,6 +1042,9 @@ void NativeWidgetWin::SetWindowProperty(const std::wstring& pram){
 
     bool isCaption = !param.caption().empty();
 
+    if ((isCaption) && (!undecorated_))
+        this->SetWindowTitle(param.caption());
+
     if (base::win::GetVersion() < base::win::VERSION_VISTA) {
         GetWidget()->set_frame_type(Widget::FRAME_TYPE_FORCE_NATIVE);
         GetWidget()->FrameTypeChanged();
@@ -1050,6 +1054,7 @@ void NativeWidgetWin::SetWindowProperty(const std::wstring& pram){
     tooltip_ = param.isToolTip();
 
     bool isCanResize = param.isResizeble();
+	resizeble_=isCanResize;
     bool isAllwaysTop = param.isAllawaysTop();
     bool isModal = param.isModal();
     bool isMaximized = param.isMaximized();
@@ -1068,7 +1073,7 @@ void NativeWidgetWin::SetWindowProperty(const std::wstring& pram){
         LONG exstyle_ = saved_window_info_.ex_style & ~(WS_EX_DLGMODALFRAME |
                 WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE);
         exstyle_ = isAllwaysTop ? (exstyle_ | WS_EX_TOPMOST) : exstyle_;
-
+        exstyle_ = exstyle_ & ~WS_EX_APPWINDOW;
         SetWindowLong(GWL_EXSTYLE,
             exstyle_);
 
@@ -1078,13 +1083,13 @@ void NativeWidgetWin::SetWindowProperty(const std::wstring& pram){
     } else {
 
         if (!isCanResize)
-            SetWindowLong(GWL_STYLE, saved_window_info_.style | WS_SYSMENU | WS_CAPTION & ~(WS_MINIMIZEBOX | WS_MINIMIZEBOX) & ~WS_THICKFRAME);
+            SetWindowLong(GWL_STYLE, saved_window_info_.style | WS_SYSMENU | WS_CAPTION & ~(WS_MINIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME | WS_BORDER ));
         else
             SetWindowLong(GWL_STYLE, saved_window_info_.style | WS_SYSMENU | WS_CAPTION & ~(WS_MINIMIZEBOX | WS_MINIMIZEBOX));
 
         LONG exstyle_ = isAllwaysTop ? (saved_window_info_.ex_style | WS_EX_TOPMOST) : saved_window_info_.ex_style;
         exstyle_ = tooltip_ ? (exstyle_ | WS_EX_TOOLWINDOW) : exstyle_;
-        exstyle_ = exstyle_ & (~WS_EX_APPWINDOW);
+        exstyle_ = exstyle_ & ~WS_EX_APPWINDOW;
         SetWindowLong(GWL_EXSTYLE, exstyle_);
         SetWindowPos(isAllwaysTop ? HWND_TOPMOST : NULL, new_rect.x(), new_rect.y(), new_rect.width(),
             new_rect.height(),
@@ -1094,8 +1099,8 @@ void NativeWidgetWin::SetWindowProperty(const std::wstring& pram){
             Maximize();
     }
 
-    if ((isCaption) && (!undecorated_))
-        this->SetWindowTitle(param.caption());
+
+
 
 }
 
@@ -1651,6 +1656,7 @@ LRESULT NativeWidgetWin::OnMouseRange(UINT message,
     // We need to call |TrackMouseEvents| to listen for WM_MOUSELEAVE.
     TrackMouseEvents((message == WM_NCMOUSEMOVE) ?
         TME_NONCLIENT | TME_LEAVE : TME_LEAVE);
+	return 0;
   } else if (event.type() == ui::ET_MOUSE_EXITED) {
     // Reset our tracking flags so future mouse movement over this
     // NativeWidgetWin results in a new tracking session. Fall through for
@@ -2020,6 +2026,10 @@ void NativeWidgetWin::OnSysCommand(UINT notification_code, CPoint click) {
   // specific information so we must exclude this when comparing.
   static const int sc_mask = 0xFFF0;
   // Ignore size/move/maximize in fullscreen mode.
+
+  if ((!IsResizeble()) && 
+	  ((notification_code & sc_mask) == SC_SIZE))
+    return;
   if ((IsFullscreen() || IsUndecorated()) && 
       (((notification_code & sc_mask) == SC_SIZE) ||
        ((notification_code & sc_mask) == SC_MOVE) ||

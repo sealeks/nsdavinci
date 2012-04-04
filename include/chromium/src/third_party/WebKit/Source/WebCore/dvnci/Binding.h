@@ -146,6 +146,8 @@ namespace WebCore {
 
             AbstractAlarmObserver(DOMWindow * const domwin = 0) {
             };
+			AbstractAlarmObserver(Element * const elem){
+            };
 
             virtual ~AbstractAlarmObserver() {
             };
@@ -160,6 +162,7 @@ namespace WebCore {
         public:
             
             AlarmObserver(DOMWindow * const domwin = 0);
+			AlarmObserver(Element * const elem);
 
             virtual ~AlarmObserver() {
             };

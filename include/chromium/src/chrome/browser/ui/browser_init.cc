@@ -104,7 +104,7 @@
 #endif
 
 void BrowserGlobalEntety_Exit(void*){
-      BrowserList::AttemptUserExit();
+      BrowserList::AttemptExit();
 }
 
 

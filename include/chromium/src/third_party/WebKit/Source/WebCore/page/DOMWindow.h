@@ -493,7 +493,7 @@ namespace WebCore {
         mutable RefPtr<StorageInfo> m_storageInfo;
 #endif
 
-    WebCore::DVNCI::AlarmObserver alarmeventlistener;
+        WebCore::DVNCI::AlarmObserver alarmeventlistener;
     };
 
     inline String DOMWindow::status() const

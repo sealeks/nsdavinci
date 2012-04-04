@@ -262,6 +262,7 @@ class NativeWidgetWin : public ui::WindowImpl,
   virtual void SetWindowProperty(const std::wstring& param = L"") OVERRIDE;
   virtual bool IsUndecorated() const { return undecorated_;}
   virtual bool IsToolTip() const { return tooltip_;}
+  virtual bool IsResizeble() const { return resizeble_ ;}
   virtual void SetOpacity(unsigned char opacity) OVERRIDE;
   virtual void SetUseDragFrame(bool use_drag_frame) OVERRIDE;
   virtual bool IsAccessibleWidget() const OVERRIDE;
@@ -673,6 +674,7 @@ class NativeWidgetWin : public ui::WindowImpl,
 
   bool undecorated_;
   bool tooltip_;
+  bool resizeble_;
 };
 
 }  // namespace views

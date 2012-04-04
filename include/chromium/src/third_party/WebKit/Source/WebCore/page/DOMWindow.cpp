@@ -343,8 +343,8 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
         window.setHeight(pendingChanges.height());
     
     // Resize the window to between 100 and the screen width and height.
-    window.setWidth(min(max(100.0f, window.width()), screen.width()));
-    window.setHeight(min(max(100.0f, window.height()), screen.height()));
+    window.setWidth(min(max(10.0f, window.width()), screen.width()));
+    window.setHeight(min(max(10.0f, window.height()), screen.height()));
     
     // Constrain the window position to the screen.
     window.setX(max(screen.x(), min(window.x(), screen.maxX() - window.width())));

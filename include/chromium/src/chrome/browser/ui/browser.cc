@@ -1333,7 +1333,7 @@ bool Browser::SupportsWindowFeatureImpl(WindowFeature feature,
                                         bool check_fullscreen) const {
 
   if (CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kDVNCIRuntime)) return false;
+          switches::kDVNCIRuntime)) return feature<=FEATURE_TITLEBAR;
   // On Mac, fullscreen mode has most normal things (in a slide-down panel). On
   // other platforms, we hide some controls when in fullscreen mode.
   bool hide_ui_for_fullscreen = false;

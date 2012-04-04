@@ -150,11 +150,27 @@ namespace WebCore {
             imp->settrendlistener(imp->ontrend());
             return;
         }
+
+		static v8::Handle<v8::Value> onalarmElAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info) {
+            INC_STATS("DOM.Element.onalarmEl._get");
+            Element* imp = V8Element::toNative(info.Holder());
+            return imp->onalarm() ? v8::Handle<v8::Value > (static_cast<V8AbstractEventListener*> (imp->onalarm())->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value > (v8::Null());
+        }
+
+        static void onalarmElAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
+            INC_STATS("DOM.Element.onalarmEl._set");
+            Element* imp = V8Element::toNative(info.Holder());
+            imp->setOnalarm(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate));
+            imp->setalarmlistener(imp->onalarm());
+            return;
+        }
     }
 
     static const BatchedCallback ext_DOMWindowCallbacks[] = {
         {"dvnci_exec", dvnci_execCallback},
+		{"execute", dvnci_execCallback},
         {"dvnci_value", dvnci_execCallback},
+		{"expression", dvnci_execCallback},
         {"dvnci_writefile", dvnci_writefileCallback},
         {"dvnci_test", dvnci_exprtestCallback},
         {"dvnci_exit", dvnci_exitCallback},
@@ -170,6 +186,7 @@ namespace WebCore {
 
     static const BatchedAttribute ext_ElementAttrs[] = {
         {"ontrend", DVNCI::ontrendAttrGetter, DVNCI::ontrendAttrSetter, 0, static_cast<v8::AccessControl> (v8::DEFAULT), static_cast<v8::PropertyAttribute> (v8::None | v8::DontEnum), 0 /* on instance */},
+		{"onalarm", DVNCI::onalarmElAttrGetter, DVNCI::onalarmElAttrSetter, 0, static_cast<v8::AccessControl> (v8::DEFAULT), static_cast<v8::PropertyAttribute> (v8::None | v8::DontEnum), 0 /* on instance */},
     };
 
     void dvnci_external_registrate(v8::Persistent<v8::FunctionTemplate> desc, const char *interfaceName, v8::Local<v8::ObjectTemplate> instance) {
