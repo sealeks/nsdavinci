@@ -291,6 +291,7 @@ class NativeWidgetPrivate : public NativeWidget {
   virtual void SetWindowProperty(const std::wstring& param = L"") {};
   virtual bool IsUndecorated() const { return false;}
   virtual bool IsToolTip() const { return false;}
+  virtual bool IsResizeble() const { return true;}
   virtual void SetOpacity(unsigned char opacity) = 0;
   virtual void SetUseDragFrame(bool use_drag_frame) = 0;
   virtual bool IsAccessibleWidget() const = 0;

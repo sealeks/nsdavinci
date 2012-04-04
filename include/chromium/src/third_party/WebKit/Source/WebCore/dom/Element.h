@@ -31,6 +31,7 @@
 #include "ScrollTypes.h"
 
 #include "Event.h"
+#include "v8.h"
 
 #include "dvnci/Binding.h"
 
@@ -116,7 +117,8 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenchange);
 #endif
 
-	DEFINE_ATTRIBUTE_EVENT_LISTENER(trend)
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(trend)
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(alarm);
 
     virtual PassRefPtr<DocumentFragment> deprecatedCreateContextualFragment(const String&, FragmentScriptingPermission = FragmentScriptingAllowed);
 
@@ -256,6 +258,9 @@ public:
 
     AtomicString computeInheritedLanguage() const;
 
+    void setalarmlistener(bool vl);
+	void dispatchAlarmEvent(PassRefPtr<WebCore::DVNCI::alarmtable> value);
+
     void dispatchAttrRemovalEvent(Attribute*);
     void dispatchAttrAdditionEvent(Attribute*);
     void dispatchTrendEvent(PassRefPtr<WebCore::DVNCI::trendtable> value);
@@ -387,6 +392,7 @@ protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)
         , m_tagName(tagName)
+		, alarmeventlistener()
     {
     }
 
@@ -450,6 +456,7 @@ private:
 private:
     mutable RefPtr<NamedNodeMap> m_attributeMap;
 	WebCore::DVNCI::TrendObserver trendlistener;
+	WebCore::DVNCI::AlarmObserver alarmeventlistener;
 };
     
 inline Element* toElement(Node* node)

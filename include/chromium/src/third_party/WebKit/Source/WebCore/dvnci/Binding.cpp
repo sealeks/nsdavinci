@@ -40,11 +40,23 @@ bool BrowserDVNCI_isEditable();
 
 const int TICK_DVNCI_DURATION = 500;
 
+ struct guichrome_terminated_thread{
+	  guichrome_terminated_thread(dvnci::chrome_executor_ptr inf_): inf(inf_),th(inf_) {}
+
+	  ~guichrome_terminated_thread(){
+	     inf.terminate();
+         th.join();}
+
+  private:
+	  dvnci::chrome_executor_ptr inf;
+	  boost::thread th;
+  };
+
 dvnci::chrome_executor_ptr getexecutordvnci() {
     static dvnci::fspath basepath = dvnci::getlocalbasepath();
     static dvnci::tagsbase_ptr kintf = dvnci::krnl::factory::build(basepath, 0);
     static dvnci::chrome_executor_ptr DVNCI_INTERFACE = dvnci::chrome_executor_ptr(new dvnci::chrome_gui_executor(kintf));
-    static boost::thread dvnth = boost::thread(DVNCI_INTERFACE);
+    static guichrome_terminated_thread dvnth(DVNCI_INTERFACE);
 	return /*BrowserDVNCI_isEditable() ? dvnci::chrome_executor_ptr() :*/ DVNCI_INTERFACE;
 }
 
@@ -358,13 +370,18 @@ namespace WebCore {
 
         public:
 
-            AlarmObserverImpl(DOMWindow * const domwin) : AbstractAlarmObserver(), win(domwin) {
+            AlarmObserverImpl(DOMWindow * const domwin) : AbstractAlarmObserver(), win(domwin), element(0) {
+                registrate();
+            }
+
+			AlarmObserverImpl(Element * const elem) : AbstractAlarmObserver(), win(0), element(elem) {
                 registrate();
             }
 
             virtual void notyfy(const dvnci::vect_alarms_row& val) {
-                if (alarmlsnrptr  && win) {
-                    win->dispatchAlarmEvent(adoptRef(new alarmtable_impl(value)));
+                if (alarmlsnrptr  && (win || element)) {
+                    if (win) win->dispatchAlarmEvent(adoptRef(new alarmtable_impl(val)));
+					if (element) element->dispatchAlarmEvent(adoptRef(new alarmtable_impl(val)));
                 }
             }
 
@@ -403,6 +420,7 @@ namespace WebCore {
             dvnci::chrome_executor_ptr intf;
             dvnci::vect_alarms_row value;
             WebCore::DOMWindow * const win;
+			WebCore::Element * const element;
         };
         
         
@@ -411,6 +429,14 @@ namespace WebCore {
             if (domwin){
                 initdvnciMain();
                 impl = adoptRef(new AlarmObserverImpl(domwin));}
+            else
+                impl = impl_reftype();
+        }
+
+        AlarmObserver::AlarmObserver(Element * const elem) {
+            if (elem){
+                initdvnciMain();
+                impl = adoptRef(new AlarmObserverImpl(elem));}
             else
                 impl = impl_reftype();
         }

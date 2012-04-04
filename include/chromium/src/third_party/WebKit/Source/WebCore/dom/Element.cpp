@@ -1442,6 +1442,16 @@ void Element::dispatchAttrAdditionEvent(Attribute*)
 #endif
 }
 
+void Element::setalarmlistener(bool vl){
+	alarmeventlistener = WebCore::DVNCI::AlarmObserver(vl ? this : 0);
+}
+
+void Element::dispatchAlarmEvent(PassRefPtr<WebCore::DVNCI::alarmtable> value)
+{
+    RefPtr<Event> alarmEvent(DVNAlarmEvent::create(eventNames().alarmEvent, value, this));
+    dispatchScopedEvent(alarmEvent);
+}
+
 void Element::dispatchTrendEvent(PassRefPtr<WebCore::DVNCI::trendtable> value)
 {
     RefPtr<Event> trendEvent(DVNTrendEvent::create(eventNames().trendEvent, value, this));
