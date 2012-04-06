@@ -31,4 +31,4 @@
     <mlib:armatura x="839" y="137" height="55" width="55" id="name7" type="ovalve" environment="water" on="m1::c1" off="m1::c2" ron="m1::c1" roff="m1::c2"/>
     <mlib:sensor x="1110" y="518" height="30" width="150" id="name8" r="5" background="#300" stroke="#fff" stroke-width="1" param="m1::h1"/>
     <mlib:sensor x="1149" y="670" height="30" width="150" stroke="white" stroke-width="1" r="4" id="name12" param="m1::c1"/>
-<svg:circle xmlns:svg="http://www.w3.org/2000/svg" x="477" y="281" r="50" id="name14" stroke-width="2" stroke="red" fill="green" style="opacity: 0.8;"/><svg:circle xmlns:svg="http://www.w3.org/2000/svg" x="584" y="283" r="50" id="name15" stroke-width="2" stroke="#003" fill="yellow" style="opacity: 0.8;"/></svg>
+</svg>
