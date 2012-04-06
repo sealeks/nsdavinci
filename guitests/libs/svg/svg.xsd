@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:svg="http://www.w3.org/2000/svg"
+  xmlns:dvnlib="../dvnlib.xsl">
+         
+    <xsd:element name="svg:circle" type="armatura">
+        <xsd:complexType name="circle">
+            <dvnlib:creator name="svg:circle" hint="circle" style="fill: red;">
+                <svg:circle  x="" y="" r="50" />
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="x" type="xsd:string" default="0"/>
+            <xsd:attribute name="y" type="xsd:string" default="0"/> 
+            <xsd:attribute name="r" type="xsd:string" default="100"/>
+            <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="fill" type="xsd:string" default=""/>
+            <xsd:attribute name="style" type="xsd:string" default=""/>         
+        </xsd:complexType>
+    </xsd:element>
+
+   
+ 
+
+
+</xsd:schema>
+

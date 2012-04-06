@@ -12,7 +12,7 @@
   <form name="fa" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no"/>
   <!--form name="test" file="guimotort_1.xml" left="10%" top="10%" width="50%" height="50%" caption="test" decorated="no"/-->
   <lib xsd="../libs/main/mainlib.xsd" name="mainlib" caption="Базовая библиотека компонентов"/>
-  <!--lib xsd="../libs/main/mainlib.xsd" name="mainlib_1" caption="Вторая библиотека компонентов"/-->
+  <lib xsd="../libs/svg/svg.xsd" name="mainlib_1" caption="SVG"/>
 </project>
 
 </svg>
