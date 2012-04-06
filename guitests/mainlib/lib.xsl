@@ -72,6 +72,15 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <xsl:attribute name="width">
             <xsl:value-of select="@width"/>
         </xsl:attribute>
+    </xsl:template>
+    
+    <xsl:template name="apply_xy"> 
+        <xsl:attribute name="x">
+            <xsl:value-of select="@x"/>
+        </xsl:attribute>
+        <xsl:attribute name="y">
+            <xsl:value-of select="@y"/>
+        </xsl:attribute>
     </xsl:template> 
     
     <xsl:template name="apply_rect_b2"> 

@@ -2506,5 +2506,32 @@ extension-element-prefixes="mlib">
 
 
     </xsl:template>
-
+    
+    
+    
+    <!--xsl:template match="//mlib:external">   
+        <g>
+            <xsl:call-template name="apply_id"/>            
+            <xsl:call-template name="apply_mlib_schema"/>           
+            <xsl:choose>
+                <xsl:when test="(boolean(@onid) and not(@onid='')) or (boolean(@offid) and not(@offid=''))">                      
+                    <use>
+                        <xsl:call-template name="apply_xy"/>  
+                        <xsl:choose>
+                            <xsl:when test="(boolean(@onid) and not(@onid='')) and (boolean(@offid) and not(@offid=''))">
+                                
+                                
+                            <xsl:when test="boolean(@state) and not(@s='')"> 
+                                <xsl:choose>
+                                    <xsl:when test="boolean(@on) and not(@on='')">
+                                    </xsl:when>
+                                </xsl:choose> 
+                            </xsl:when>
+                        </xsl:choose>    
+                    </use>  
+                </xsl:when>
+            </xsl:choose> 
+        </g>
+    </xsl:template-->
+    
 </xsl:stylesheet>
