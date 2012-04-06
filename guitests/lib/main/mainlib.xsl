@@ -15,7 +15,7 @@ extension-element-prefixes="mlib">
         
         <script type="text/javascript" xlink:href="../util/js/mainlibutil.js"></script>
         <script type="text/javascript" xlink:href="../util/js/redactor.js"></script> 
-        <script type="text/javascript" xlink:href="../mainlib/js/mainlib.js"></script>
+        <script type="text/javascript" xlink:href="../lib/main/js/mainlib.js"></script>
 
         
         <xsl:call-template name="apply_mlib_armatfilter"/>
@@ -26,7 +26,7 @@ extension-element-prefixes="mlib">
       
     <xsl:template name="apply_mlib_schema">    
         <xsl:attribute name="xsi:schemaLocation">
-            <xsl:text>../mainlib/maillib.xsd</xsl:text>
+            <xsl:text>../lib/main/maillib.xsd</xsl:text>
         </xsl:attribute>  
     </xsl:template>
    
