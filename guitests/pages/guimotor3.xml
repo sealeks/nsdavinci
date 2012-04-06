@@ -1,4 +1,4 @@
-<?xml-stylesheet href="../mainlib/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="background-color: gray;" onload="mainlibutil.startup.init()">
+<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="background-color: gray;" onload="mainlibutil.startup.init()">
    
         
     <mlib:armatura x="388" y="62" height="60" width="60" id="name21" on="m1::c1" environment="air" ron="m1::c3" type="cvalve" alarm="" off="m1::c2" local="" auto="" control="" roff="m1::c4" rauto="" header="L" don="m1::c5" doff="m1::c6"/>

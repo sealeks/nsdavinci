@@ -227,7 +227,7 @@ schema_info.prototype.read_creators =  function(doc){
 function redactor(doc){ 
     this.instantdocument=doc;
     this.schema=new schema_info();
-    this.schema.init('../mainlib/lib.xsl');
+    this.schema.init('../util/lib.xsl');
     this.getSourseDocument();
     this.getLightDocument();
     this.instantdocument.addEventListener('keyup' ,function (ev) {

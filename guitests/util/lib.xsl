@@ -5,7 +5,7 @@ xmlns:html="http://www.w3.org/TR/xhtml1"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <xsl:include href="mainlib.xsl" xsi:schemaLocation="../mainlib/mainlib.xsd"/>
+    <xsl:include href="../mainlib/mainlib.xsl" xsi:schemaLocation="../mainlib/mainlib.xsd"/>
 
     <xsl:output  method="xml" indent="yes"/>
     
