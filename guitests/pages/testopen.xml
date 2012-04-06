@@ -3,6 +3,6 @@
 <mlib:button id="button1" x="3" y="8" height="40" width="280" r="10" caption="Выход" onclick="exit();" color1="#F00" color2="#A00" fontstyle="fill: white; font-size: 15px; font-weight: bold;"/>
 <mlib:button id="button2" x="4" y="47" height="40" width="280" r="1" caption="1o" onclick="dvnci_open('f1');"/>
 <mlib:button id="button3" x="4" y="86" height="40" width="280" r="1" caption="2o" onclick="dvnci_open('f2');"/>
-<mlib:button id="button6" x="4" y="126" height="40" width="280" r="1" caption="3c" onclick="dvnci_open('f5');"/>
-</g>
+<mlib:button id="button6" x="4" y="126" height="40" width="280" r="1" caption="3o" onclick="dvnci_open('f5');"/>
+<mlib:button id="button0" x="4" y="167" height="40" width="280" r="1" caption="3c" onclick="dvnci_close('f5');"/></g>
 </svg>
