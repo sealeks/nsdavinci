@@ -600,8 +600,8 @@ mainlibutil.window.createhtml = function(name , caption, top, left, width, heigh
     newwin.document.write('<?xml version="1.0" encoding="UTF-8"?>');
     newwin.document.write('<html>');
     newwin.document.write('    <head>');
-    newwin.document.write('     <script type="text/javascript" src="../mainlib/js/redactor.js"></script>');
-    newwin.document.write('     <script type="text/javascript" src="../mainlib/js/mainlibutil.js"></script>');
+    newwin.document.write('     <script type="text/javascript" src="../util/js/redactor.js"></script>');
+    newwin.document.write('     <script type="text/javascript" src="../util/js/mainlibutil.js"></script>');
     if (stylefile)
         newwin.document.write('     <link rel="stylesheet" type="text/css" href="'+stylefile+'">');
     if (style)
@@ -861,19 +861,19 @@ mainlibutil.html.create_tool_style = function (doc, nametool, names,  sz){
         " display: inline-block;\n"+
         " width: "+ size+";\n"+
         " height: "+ size+";\n"+
-        " background-image: url(../mainlib/css/res/"+onfile+".png);}\n"+
+        " background-image: url(../util/css/res/"+onfile+".png);}\n"+
         " \n"+
                   
         "."+nametool+"-item[disabled] ."+nametool+"-icon{\n"+
-        " background-image: url(../mainlib/css/res/"+disablefile+".png);}\n"+
+        " background-image: url(../util/css/res/"+disablefile+".png);}\n"+
         " \n"+
 
         "."+nametool+"-item:hover[disabled] ."+nametool+"-icon{\n"+
-        " background-image: url(../mainlib/css/res/"+disablefile+".png);}\n"+
+        " background-image: url(../util/css/res/"+disablefile+".png);}\n"+
         " \n"+
 
         "."+nametool+"-item[off] ."+nametool+"-icon{\n"+
-        " background-image: url(../mainlib/css/res/"+offfile+".png);}\n"+
+        " background-image: url(../util/css/res/"+offfile+".png);}\n"+
         " \n"+
 
 
@@ -1138,7 +1138,7 @@ mainlibutil.www.correct_window_height = function (win, innerheight){
 mainlibutil.www.create_tbwindow = function (name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, names, hints,  funcs, destroyfunc){
     var tmp=mainlibutil.global.getGlobal();
     if (tmp && !tmp[name]){
-        tmp[name]=mainlibutil.window.createhtml('_'+name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, "../mainlib/css/maintoolstyle.css");
+        tmp[name]=mainlibutil.window.createhtml('_'+name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, "../util/css/maintoolstyle.css");
         tmp[name].onunload= destroyfunc ? destroyfunc : 
         function(){     
             try{
@@ -1397,7 +1397,7 @@ mainlibutil.designtime.getObjectInspector = function (force){
     var tmp=mainlibutil.global.getGlobal();
     if (!force && !tmp.objectinspectorwin) return null;
     if (tmp && !tmp.objectinspectorwin){
-        var objectinspectorwin=mainlibutil.window.createhtml('_ObjectInspector','Свойства','100', '900', '400','650','yes','yes',null,null, "../mainlib/css/objectinspector.css");
+        var objectinspectorwin=mainlibutil.window.createhtml('_ObjectInspector','Свойства','100', '900', '400','650','yes','yes',null,null, "../util/css/objectinspector.css");
         tmp.objectinspectorwin=objectinspectorwin;
         tmp.objectinspectordoc=objectinspectorwin.document;
         objectinspectorwin.onunload=mainlibutil.designtime.destroyObjectInspector;
@@ -1497,7 +1497,7 @@ mainlibutil.designtime.getFormInspector = function (force){
 
         var body=objdoc.getElementsByTagName('body')[0];
         var head=objdoc.getElementsByTagName('head')[0];
-        mainlibutil.html.create_link(head, 'stylesheet', 'text/css',"../mainlib/css/forminspector.css");
+        mainlibutil.html.create_link(head, 'stylesheet', 'text/css',"../util/css/forminspector.css");
         var div = mainlibutil.html.create_div(mainlibutil.html.create_div(body),null,"scrollWrapper");
         var table = mainlibutil.html.create_table(div,null,"scrollable");
         var tbody = mainlibutil.html.create_tbody(table);
@@ -2039,7 +2039,7 @@ mainlibutil.designtime.addform = function(file, name){
 mainlibutil.designtime.createfileform = function(file){
     var tmp=mainlibutil.global.getGlobal();
     var prjpath=tmp.projectPath;
-    var txt = '<?xml-stylesheet href="../mainlib/lib.xsl" type="text/xsl"?>\n'+
+    var txt = '<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?>\n'+
     '<svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="" onload="mainlibutil.startup.init()">\n'+
     '\n'+
     '</svg>\n';
@@ -2080,7 +2080,7 @@ mainlibutil.designtime.removeFormFromProject =function(name){
 }
 
 mainlibutil.designtime.propertydialog = function(name, value){
-    return mainlibutil.window.create_modal('../mainlib/html/propertydialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
+    return mainlibutil.window.create_modal('../util/html/propertydialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
 }
 
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="../mainlib/css/mainlib.css"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" id="iiii" width="100%" height="100%" version="1.1" style="background-image: url('../mainlib/css/res/bgrd2.png');" onload="mainlibutil.startup.init()">
-	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../mainlib/js/mainlibutil.js"/>
-	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../mainlib/js/redactor.js"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" id="iiii" width="100%" height="100%" version="1.1" style="background-image: url('../util/css/res/bgrd2.png');" onload="mainlibutil.startup.init()">
+	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../util/js/mainlibutil.js"/>
+	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../util/js/redactor.js"/>
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../mainlib/js/mainlib.js"/>
         <script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript">
             window.onunload=dvnci_detachinterface;
@@ -148,7 +148,7 @@
 		<stop offset="0.5" style="stop-color:#D1D1D1"/>
 		<stop offset="1" style="stop-color:#ECECEC"/>
 	</linearGradient>
-	<g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="name21" xsi:schemaLocation="../mainlib/maillib.xsd" x="388" y="62" height="60" width="60" desc="m1::c1" header="L" cursor="#{ (!(m1::c1).valid  &amp;&amp; !(m1::c2).valid) ? 'none' :  (  'pointer'   ) :default none} " onclick="if (this.getAttribute('cursor')=='pointer') {mainlib.armatura_popup(this, 'L','valve','m1::c3','m1::c4');};">
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="name21" xsi:schemaLocation="../util/maillib.xsd" x="388" y="62" height="60" width="60" desc="m1::c1" header="L" cursor="#{ (!(m1::c1).valid  &amp;&amp; !(m1::c2).valid) ? 'none' :  (  'pointer'   ) :default none} " onclick="if (this.getAttribute('cursor')=='pointer') {mainlib.armatura_popup(this, 'L','valve','m1::c3','m1::c4');};">
 		<style type="text/css">  
             
               g#name21[cursor="pointer"] {

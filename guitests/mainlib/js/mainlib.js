@@ -257,10 +257,10 @@ function main_label_click(nm){
     newwin.document.write('<?xml version="1.0" encoding="UTF-8"?>');
     newwin.document.write('   <html>');
     newwin.document.write('      <head>');
-    newwin.document.write('<script type="text/javascript" src="../mainlib/js_ext/hightchart/jquery.min.js"></script>');
-    newwin.document.write('<script type="text/javascript" src="../mainlib/js_ext/hightchart/highcharts.js"></script>');
-    newwin.document.write('<script type="text/javascript" src="../mainlib/js_ext/hightchart/exporting.js"></script>');
-    newwin.document.write('<script type="text/javascript" src="../mainlib/js/hightrend.js"></script>');
+    newwin.document.write('<script type="text/javascript" src="../util/js_ext/hightchart/jquery.min.js"></script>');
+    newwin.document.write('<script type="text/javascript" src="../util/js_ext/hightchart/highcharts.js"></script>');
+    newwin.document.write('<script type="text/javascript" src="../util/js_ext/hightchart/exporting.js"></script>');
+    newwin.document.write('<script type="text/javascript" src="../util/js/hightrend.js"></script>');
     newwin.document.write('<script type="text/javascript">');
             
     newwin.document.write('      function initform() {');
