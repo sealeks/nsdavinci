@@ -5,12 +5,12 @@ xmlns:html="http://www.w3.org/TR/xhtml1"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <xsl:include href="../mainlib/mainlib.xsl" xsi:schemaLocation="../mainlib/mainlib.xsd"/>
+    <xsl:include href="../lib/main/mainlib.xsl" xsi:schemaLocation="../lib/main/mainlib.xsd"/>
 
     <xsl:output  method="xml" indent="yes"/>
     
     <xsl:template match="/" >
-        <xsl:processing-instruction name="xml-stylesheet">href="../mainlib/css/mainlib.css"</xsl:processing-instruction>
+        <xsl:processing-instruction name="xml-stylesheet">href="../lib/main/css/mainlib.css"</xsl:processing-instruction>
         <xsl:apply-templates select="/*"/>
     </xsl:template>
 
