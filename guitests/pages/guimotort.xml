@@ -1,6 +1,6 @@
 <?xml-stylesheet href="../mainlib/lib.xsl" type="text/xsl"?>
 <svg id="iiii" xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="background-image: url('../mainlib/css/res/bgrd2.png');" onload="mainlibutil.startup.init()">
        
-        <mlib:button x="20" y="100" height="80" width="160" caption="On" id="name0" fontstyle="" oncaption="Off" color1="#080" color2="#0B0" oncolor1="#800" oncolor2="#B00" r="10"  param="m1::c1" disable="!(m1::c1 || m1::c2)"/>
+           <mlib:armatura x="388" y="62" height="60" width="60" id="name21" on="m1::c1" environment="air" ron="m1::c3" type="cvalve" alarm="" off="m1::c2" local="" auto="" control="" roff="m1::c4" rauto="" header="L" don="m1::c5" doff="m1::c6"/>
 
 </svg>
