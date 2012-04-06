@@ -566,19 +566,44 @@ redactor.prototype.setProperty = function(nm, val){
 }    
 
 
+redactor.prototype.getXname =  function (el){
+    if (el.hasAttribute('x')) return 'x';
+    if (el.hasAttribute('cx')) return 'cx';
+    if (el.hasAttribute('x1')) return 'x1';
+    return null;
+}
+
+redactor.prototype.getYname =  function (el){
+    if (el.hasAttribute('y')) return 'y';
+    if (el.hasAttribute('cy')) return 'cy';
+    if (el.hasAttribute('y1')) return 'y1';
+    return null;
+}
+
+redactor.prototype.getWname =  function (el){
+    if (el.hasAttribute('width')) return 'width';
+    return null;
+}
+
+redactor.prototype.getHname =  function (el){
+    if (el.hasAttribute('width')) return 'width';
+    return null;
+}
+
+
 
 redactor.prototype.setElementRect = function(x, y, width, height , el){
     if (el){
         var sel = this.getSourseElement(el);
         if (!sel) return;
-        if (x)
-            sel.setAttribute( 'x', x);
-        if (y)
-            sel.setAttribute( 'y', y); 
-        if (width)
-            sel.setAttribute( 'width', width);
-        if (height)
-            sel.setAttribute( 'height', height);
+        if (x && this.getXname(sel))
+            sel.setAttribute( this.getXname(sel), x);
+        if (y && this.getYname(sel))
+            sel.setAttribute( this.getYname(sel), y); 
+        if (width && this.getWname(sel))
+            sel.setAttribute( this.getWname(sel) , width);
+        if (height  && this.getHname(sel))
+            sel.setAttribute( this.getHname(sel), height);
         return;
     }
     if ((this.selectedElemens ) || (this.selectedElemens.length>0)){  
@@ -740,10 +765,10 @@ redactor.prototype.clearSelection = function(el){
 
 redactor.prototype.changeRect = function(x, y, width , height, el){
     if (el){
-        this.setElementRect( (x ? parseFloat(this.getAttributeValue('x', el)) + x : x) ,
-            (y ? parseFloat(this.getAttributeValue('y', el)) + y : y) ,
-            (width ? parseFloat(this.getAttributeValue('width', el)) + width : width) ,
-            (height ? parseFloat(this.getAttributeValue('height', height)) + height : height) , el);
+        this.setElementRect( (x && this.getXname(el) ? parseFloat(this.getAttributeValue(this.getXname(el), el)) + x : x) ,
+            (y && this.getYname(el)? parseFloat(this.getAttributeValue(this.getYname(el), el)) + y : y) ,
+            (width && this.getWname(el) ? parseFloat(this.getAttributeValue(this.getWname(el), el)) + width : width) ,
+            (height && this.getHname(el)? parseFloat(this.getAttributeValue(this.getHname(el), height)) + height : height) , el);
     }
 }
  
@@ -814,8 +839,8 @@ redactor.prototype.createLibComponent = function(x, y){
          var prnt = this.sourseDocument.documentElement;         
          var el =prnt.appendChild(created.cloneNode(true)); 
          el.setAttribute('id',  coneid);
-         if (el.hasAttribute('x')) el.setAttribute('x', x);
-         if (el.hasAttribute('y')) el.setAttribute('y', y);
+         if (el.hasAttribute(this.getXname(el))) el.setAttribute(this.getXname(el), x);
+         if (el.hasAttribute(this.getYname(el))) el.setAttribute(this.getYname(el), y);
          this.getTrasformDocument();
          var tel = this.getTransformElement(coneid);
          this.instantdocument.documentElement.appendChild(tel);
@@ -895,23 +920,27 @@ redactor.prototype.moveElements = function (event){
         if (event.ctrlKey) {
             switch (event.keyIdentifier){
                 case 'Left':{
+                    if (el.hasAttribute('x')){   
                     this.setAttributeValue( 'x', parseFloat(this.getAttributeValue('x', el)) - incr, el);
-                    ismove=true;
+                    ismove=true;}
                     break;
                 }
                 case 'Right':{
+                    if (el.hasAttribute('x')){     
                     this.setAttributeValue('x', parseFloat(this.getAttributeValue('x', el)) + incr, el);
-                    ismove=true
+                    ismove=true;}
                     break;
                 }     
                 case 'Up':{
+                    if (el.hasAttribute('y')){     
                     this.setAttributeValue('y', parseFloat(this.getAttributeValue('y', el)) - incr, el);
-                    ismove=true
+                    ismove=true;}
                     break;
                 }
                 case 'Down':{
+                    if (el.hasAttribute('y')){     
                     this.setAttributeValue( 'y', parseFloat(this.getAttributeValue('y', el)) + incr, el);
-                    ismove=true;
+                    ismove=true;}
                     break
                 }
             }                
