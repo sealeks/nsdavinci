@@ -115,7 +115,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_araturatype"> 
         <xsl:choose>                         
-            <xsl:when test="boolean(@type) and not(@type='')">                             
+            <xsl:when test="boolean(@type) and not(normalize-space(@type)='')">                             
                 <xsl:choose>
                     <xsl:when test="@type='cvalve'"> 
                         <xsl:call-template name="apply_mlib_araturatype_cvalve"/>
@@ -166,7 +166,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_aratura_cursor_checkstatevalid">
         <xsl:choose>                        
-            <xsl:when test="(boolean(@off) and not(@off='')) and (boolean(@on) and not(@on=''))">
+            <xsl:when test="(boolean(@off) and not(normalize-space(@off)='')) and (boolean(@on) and not(normalize-space(@on)=''))">
                 <xsl:text>(!(</xsl:text>
                 <xsl:value-of select="@on"/>
                 <xsl:text>).valid  &#38;&#38; !(</xsl:text>
@@ -174,12 +174,12 @@ extension-element-prefixes="mlib">
                 <xsl:text>).valid) ? 'none' : </xsl:text>
                                
             </xsl:when>
-            <xsl:when test="boolean(@off) and not(@off='')">
+            <xsl:when test="boolean(@off) and not(normalize-space(@off)='')">
                 <xsl:text>(!(</xsl:text>
                 <xsl:value-of select="@off"/>
                 <xsl:text>).valid) ? 'none' : </xsl:text>
             </xsl:when>
-            <xsl:when test="boolean(@on) and not(@on='')">
+            <xsl:when test="boolean(@on) and not(normalize-space(@on)='')">
                 <xsl:text>(!(</xsl:text>
                 <xsl:value-of select="@on"/>
                 <xsl:text>).valid) ? 'none' : </xsl:text>
@@ -197,7 +197,7 @@ extension-element-prefixes="mlib">
             <xsl:call-template name="apply_mlib_aratura_cursor_checkstatevalid"/>
             <xsl:text> ( </xsl:text>
             <xsl:choose>                        
-                <xsl:when test="(boolean(@local) and not(@local=''))"> 
+                <xsl:when test="(boolean(@local) and not(normalize-space(@local)=''))"> 
                     <xsl:value-of select="@local"/>
                     <xsl:text> ? 'none' : ( </xsl:text>
                     <xsl:value-of select="@auto"/>
@@ -224,7 +224,7 @@ extension-element-prefixes="mlib">
             <xsl:call-template name="apply_mlib_aratura_cursor_checkstatevalid"/>
             <xsl:text> ( </xsl:text>
             <xsl:choose>                        
-                <xsl:when test="(boolean(@local) and not(@local=''))"> 
+                <xsl:when test="(boolean(@local) and not(normalize-space(@local)=''))"> 
                     <xsl:value-of select="@local"/>
                     <xsl:text> ? 'none' : ( </xsl:text>
                     <xsl:value-of select="@auto"/>
@@ -248,7 +248,7 @@ extension-element-prefixes="mlib">
             <xsl:call-template name="apply_mlib_aratura_cursor_checkstatevalid"/>
             <xsl:text> ( </xsl:text>
             <xsl:choose>                        
-                <xsl:when test="(boolean(@local) and not(@local=''))"> 
+                <xsl:when test="(boolean(@local) and not(normalize-space(@local)=''))"> 
                     <xsl:value-of select="@local"/>
                     <xsl:text> ? ('none' : 'pointer' )</xsl:text>
                 </xsl:when>
@@ -264,14 +264,14 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_aratura_cursor">
         <xsl:choose>                        
-            <xsl:when test="(boolean(@off) and not(@off='')) or (boolean(@on) and not(@on=''))">
+            <xsl:when test="(boolean(@off) and not(normalize-space(@off)='')) or (boolean(@on) and not(normalize-space(@on)=''))">
                 <xsl:choose>                        
-                    <xsl:when test="(boolean(@roff) and not(@roff='')) or (boolean(@ron) and not(@ron='')) or (boolean(@rauto) and not(@rauto=''))">
+                    <xsl:when test="(boolean(@roff) and not(normalize-space(@roff)='')) or (boolean(@ron) and not(normalize-space(@ron)='')) or (boolean(@rauto) and not(normalize-space(@rauto)=''))">
                         <xsl:choose>                        
-                            <xsl:when test="(boolean(@rauto) and not(@rauto='')) and (boolean(@auto) and not(@auto=''))">
+                            <xsl:when test="(boolean(@rauto) and not(normalize-space(@rauto)='')) and (boolean(@auto) and not(normalize-space(@auto)=''))">
                                 <xsl:call-template name="apply_mlib_aratura_cursor_autocontrol"/>
                             </xsl:when>
-                            <xsl:when test="(boolean(@auto) and not(@auto=''))">
+                            <xsl:when test="(boolean(@auto) and not(normalize-space(@auto)=''))">
                                 <xsl:call-template name="apply_mlib_aratura_cursor_auto"/>
                             </xsl:when>
                             <xsl:otherwise>
@@ -307,7 +307,7 @@ extension-element-prefixes="mlib">
                 <xsl:text>url(#armat_filter1)</xsl:text>
             </xsl:attribute>     
             <xsl:choose>                        
-                <xsl:when test="(boolean(@on) and not(@on='')) and (boolean(@off) and not(@off=''))"> 
+                <xsl:when test="(boolean(@on) and not(normalize-space(@on)='')) and (boolean(@off) and not(normalize-space(@off)=''))"> 
                     <xsl:attribute name="class">
                         <xsl:text>non</xsl:text> 
                     </xsl:attribute>
@@ -353,7 +353,7 @@ extension-element-prefixes="mlib">
                         </xsl:attribute>    
                     </animate>
                 </xsl:when>
-                <xsl:when test="boolean(@on) and not(@on='')"> 
+                <xsl:when test="boolean(@on) and not(normalize-space(@on)='')"> 
                     <xsl:attribute name="class">
                         <xsl:text>#{ !(</xsl:text>
                         <xsl:value-of select="@on"/>
@@ -366,7 +366,7 @@ extension-element-prefixes="mlib">
                         <xsl:text>') :default non}</xsl:text> 
                     </xsl:attribute>
                 </xsl:when>                    
-                <xsl:when test="boolean(@off) and not(@off='')"> 
+                <xsl:when test="boolean(@off) and not(normalize-space(@off)='')"> 
                     <xsl:attribute name="class">
                         <xsl:text>#{ !(</xsl:text>
                         <xsl:value-of select="@off"/>
@@ -406,7 +406,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_aratura_local">    
         <xsl:choose>
-            <xsl:when test="boolean(@local) and not(@local='')">
+            <xsl:when test="boolean(@local) and not(normalize-space(@local)='')">
                 <g>
                     <xsl:attribute name="class">
                         <xsl:text>#{</xsl:text> 
@@ -436,7 +436,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_aratura_auto">    
         <xsl:choose>
-            <xsl:when test="boolean(@auto) and not(@auto='')">
+            <xsl:when test="boolean(@auto) and not(normalize-space(@auto)='')">
                 <g>
                     <xsl:attribute name="class">
                         <xsl:text>#{</xsl:text> 
@@ -464,7 +464,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_aratura_control">    
         <xsl:choose>
-            <xsl:when test="boolean(@control) and not(@control='')">
+            <xsl:when test="boolean(@control) and not(normalize-space(@control)='')">
                 <g>
                     <xsl:attribute name="class">
                         <xsl:text>#{</xsl:text> 
@@ -500,11 +500,11 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_aratura_sig">   
         <xsl:choose>                          
-            <xsl:when test="boolean(@don) and not(@don='')"> 
+            <xsl:when test="boolean(@don) and not(normalize-space(@don)='')"> 
                 <g>
                     <xsl:attribute name="style">
                         <xsl:choose>                          
-                            <xsl:when test="boolean(@on) and not(@on='')">                                               
+                            <xsl:when test="boolean(@on) and not(normalize-space(@on)='')">                                               
                                 <xsl:text>#{ (</xsl:text>
                                 <xsl:value-of select="@don"/>
                                 <xsl:text> &#38;&#38; !</xsl:text>
@@ -525,11 +525,11 @@ extension-element-prefixes="mlib">
             </xsl:when>
         </xsl:choose> 
         <xsl:choose>
-            <xsl:when test="boolean(@doff) and not(@doff='')"> 
+            <xsl:when test="boolean(@doff) and not(normalize-space(@doff)='')"> 
                 <g>
                     <xsl:attribute name="style">
                         <xsl:choose>                          
-                            <xsl:when test="boolean(@off) and not(@off='')">                                                 
+                            <xsl:when test="boolean(@off) and not(normalize-space(@off)='')">                                                 
                                 <xsl:text>#{ (</xsl:text>
                                 <xsl:value-of select="@doff"/>
                                 <xsl:text> &#38;&#38; !</xsl:text>
@@ -560,7 +560,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_aratura_alarmstate">    
         <xsl:choose>                
-            <xsl:when test="(boolean(@alarm) and not(@alarm=''))">
+            <xsl:when test="(boolean(@alarm) and not(normalize-space(@alarm)=''))">
                 <g  class="alarm" opacity="0.3">              
                     <xsl:attribute name="display">
                         <xsl:text>#{ min(</xsl:text>
@@ -570,7 +570,7 @@ extension-element-prefixes="mlib">
                         <xsl:text>).valid </xsl:text>
                         <xsl:text>)   ? 'block'  : </xsl:text>
                         <xsl:choose>                
-                            <xsl:when test="(boolean(@alarmack) and not(@alarmack=''))">
+                            <xsl:when test="(boolean(@alarmack) and not(normalize-space(@alarmack)=''))">
                                 <xsl:text> ((min(</xsl:text>
                                 <xsl:value-of select="@alarmack"/>
                                 <xsl:text> , (</xsl:text>
@@ -585,7 +585,7 @@ extension-element-prefixes="mlib">
                     <circle cx="500" cy="500" r="500"/>
                     <animate  attributeType="XML" attributeName="opacity" from="0.1" to="0.99" dur="500ms" calcMode = "linear" repeatCount="indefinite">
                         <xsl:choose>                
-                            <xsl:when test="(boolean(@alarmack) and not(@alarmack=''))">
+                            <xsl:when test="(boolean(@alarmack) and not(normalize-space(@alarmack)=''))">
                                 <xsl:attribute name="to">
                                     <xsl:text>#{ (</xsl:text>
                                     <xsl:value-of select="@alarmack"/>
@@ -612,7 +612,7 @@ extension-element-prefixes="mlib">
             <xsl:when test="boolean(@rauto) or boolean(@roff) or boolean(@ron)"> 
                 <xsl:variable name="armaturakind"> 
                     <xsl:choose>
-                        <xsl:when test="not(boolean(@type)) or (@type='motorD') or (@type='motor') or (@type='')">
+                        <xsl:when test="not(boolean(@type)) or (@type='motorD') or (@type='motor') or (normalize-space(@type)='')">
                             <xsl:text>motor</xsl:text>
                         </xsl:when> 
                         <xsl:otherwise>
@@ -621,7 +621,7 @@ extension-element-prefixes="mlib">
                     </xsl:choose>        
                 </xsl:variable>
                 <xsl:choose>             
-                    <xsl:when test="boolean(@rauto) and not(@rauto='')">   
+                    <xsl:when test="boolean(@rauto) and not(normalize-space(@rauto)='')">   
                         <xsl:attribute name="onclick">
                             <!--xsl:call-template name="startcddata"/-->
                             <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
@@ -811,7 +811,7 @@ extension-element-prefixes="mlib">
     
         <xsl:variable name="on_eventvar"> 
             <xsl:choose> 
-                <xsl:when test="(boolean(@param) and not(@param=''))">
+                <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">
                     <xsl:choose> 
                         <xsl:when test="(boolean(@type) and (@type='tumbler'))">
                             <xsl:text>dvnci_exec('((</xsl:text>
@@ -834,7 +834,7 @@ extension-element-prefixes="mlib">
                             <xsl:value-of select="@param"/>
                             <xsl:text>');</xsl:text>                               
                         </xsl:when> 
-                        <xsl:when test="(not(boolean(@type)) or (@type=''))">
+                        <xsl:when test="(not(boolean(@type)) or (normalize-space(@type)=''))">
                             <xsl:text>dvnci_exec('</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>');</xsl:text> 
@@ -852,7 +852,7 @@ extension-element-prefixes="mlib">
         
         <xsl:variable name="mouseup_eventvar"> 
             <xsl:choose> 
-                <xsl:when test="(boolean(@param) and not(@param=''))">
+                <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">
                     <xsl:choose> 
                         <xsl:when test="(boolean(@type) and (@type='impulse'))">
                             <xsl:text>dvnci_exec('((</xsl:text>
@@ -887,7 +887,7 @@ extension-element-prefixes="mlib">
         
         <xsl:variable name="mousedown_eventvar"> 
             <xsl:choose> 
-                <xsl:when test="(boolean(@param) and not(@param=''))">
+                <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">
                     <xsl:choose> 
                         <xsl:when test="(boolean(@type) and (@type='impulse'))">
                             <xsl:text>dvnci_exec('((</xsl:text>
@@ -921,7 +921,7 @@ extension-element-prefixes="mlib">
         </xsl:variable>         
 
         <xsl:choose>                
-            <xsl:when test="(boolean(@onclick) and not(@onclick=''))">      
+            <xsl:when test="(boolean(@onclick) and not(normalize-space(@onclick)=''))">      
                 <xsl:attribute name="onclick">
                     <xsl:text> if (this.getAttribute('state')!='disable') {</xsl:text> 
                     <xsl:value-of select="@onclick"/>
@@ -944,7 +944,7 @@ extension-element-prefixes="mlib">
         </xsl:choose>
         
         <xsl:choose>                
-            <xsl:when test="(boolean(@ondblclick) and not(@ondblclick=''))">      
+            <xsl:when test="(boolean(@ondblclick) and not(normalize-space(@ondblclick)=''))">      
                 <xsl:attribute name="ondblclick">
                     <xsl:text> if (this.getAttribute('state')!='disable') {</xsl:text> 
                     <xsl:value-of select="@ondblclick"/>
@@ -955,7 +955,7 @@ extension-element-prefixes="mlib">
         </xsl:choose>
         
         <xsl:choose>                
-            <xsl:when test="(boolean(@onmouseup) and not(@onmouseup=''))">      
+            <xsl:when test="(boolean(@onmouseup) and not(normalize-space(@onmouseup)=''))">      
                 <xsl:attribute name="onmouseup">
                     <xsl:text> if (this.getAttribute('state')!='disable') {</xsl:text> 
                     <xsl:value-of select="@onmouseup"/>
@@ -978,7 +978,7 @@ extension-element-prefixes="mlib">
         </xsl:choose>
         
         <xsl:choose>                
-            <xsl:when test="(boolean(@onmousedown) and not(@onmousedown=''))">      
+            <xsl:when test="(boolean(@onmousedown) and not(normalize-space(@onmousedown)=''))">      
                 <xsl:attribute name="onmousedown">
                     <xsl:text> if (this.getAttribute('state')!='disable') {</xsl:text> 
                     <xsl:value-of select="@onmousedown"/>
@@ -1012,9 +1012,9 @@ extension-element-prefixes="mlib">
     <xsl:template name="apply_mlib_button_state"> 
         <xsl:attribute name="state">
             <xsl:choose>                
-                <xsl:when test="(boolean(@disable) and not(@disable=''))">                                    
+                <xsl:when test="(boolean(@disable) and not(normalize-space(@disable)=''))">                                    
                     <xsl:choose>                   
-                        <xsl:when test="(boolean(@state) and not(@state=''))">   
+                        <xsl:when test="(boolean(@state) and not(normalize-space(@state)=''))">   
                             <xsl:text>#{ (!(</xsl:text>
                             <xsl:value-of select="@disable"/>
                             <xsl:text>) &#38;&#38; (</xsl:text>
@@ -1036,7 +1036,7 @@ extension-element-prefixes="mlib">
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:choose>                   
-                        <xsl:when test="(boolean(@state) and not(@state=''))">                                        
+                        <xsl:when test="(boolean(@state) and not(normalize-space(@state)=''))">                                        
                             <xsl:text>#{ (</xsl:text>
                             <xsl:value-of select="@state"/>
                             <xsl:text>) ? 'off' : '' :default }</xsl:text>
@@ -1150,7 +1150,7 @@ extension-element-prefixes="mlib">
         
         <xsl:variable name="var_dsblcolor1">
             <xsl:choose>
-                <xsl:when test="(boolean(@dsblcolor1) and not(@dsblcolor1=''))">
+                <xsl:when test="(boolean(@dsblcolor1) and not(normalize-space(@dsblcolor1)=''))">
                     <xsl:value-of select="@dsblcolor1"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -1161,7 +1161,7 @@ extension-element-prefixes="mlib">
         
         <xsl:variable name="var_dsblcolor2">
             <xsl:choose>
-                <xsl:when test="(boolean(@dsblcolor2) and not(@dsblcolor2=''))">
+                <xsl:when test="(boolean(@dsblcolor2) and not(normalize-space(@dsblcolor2)=''))">
                     <xsl:value-of select="@dsblcolor2"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -1172,7 +1172,7 @@ extension-element-prefixes="mlib">
         
         <xsl:variable name="var_fontstyle">
             <xsl:choose>
-                <xsl:when test="(boolean(@fontstyle) and not(@fontstyle=''))">
+                <xsl:when test="(boolean(@fontstyle) and not(normalize-space(@fontstyle)=''))">
                     <xsl:value-of select="@fontstyle"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -1187,7 +1187,7 @@ extension-element-prefixes="mlib">
         
         <xsl:variable name="var_offfontstyle">
             <xsl:choose>
-                <xsl:when test="(boolean(@offfontstyle) and not(@offfontstyle=''))">
+                <xsl:when test="(boolean(@offfontstyle) and not(normalize-space(@offfontstyle)=''))">
                     <xsl:value-of select="@offfontstyle"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -1198,7 +1198,7 @@ extension-element-prefixes="mlib">
         
         <xsl:variable name="var_dsblfontstyle">
             <xsl:choose>
-                <xsl:when test="(boolean(@dsblfontstyle) and not(@dsblfontstyle=''))">
+                <xsl:when test="(boolean(@dsblfontstyle) and not(normalize-space(@dsblfontstyle)=''))">
                     <xsl:value-of select="@dsblfontstyle"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -1648,13 +1648,13 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_button_caption_value"> 
         <xsl:choose>
-            <xsl:when test="(boolean(@oncaption) and not(@oncaption=''))">
+            <xsl:when test="(boolean(@oncaption) and not(normalize-space(@oncaption)=''))">
                 <xsl:choose>
-                    <xsl:when test="(boolean(@dsblcaption) and not(@dsblcaption=''))">                       
+                    <xsl:when test="(boolean(@dsblcaption) and not(normalize-space(@dsblcaption)=''))">                       
                         <xsl:choose>
-                            <xsl:when test="(boolean(@state) and not(@state=''))">
+                            <xsl:when test="(boolean(@state) and not(normalize-space(@state)=''))">
                                 <xsl:choose>
-                                    <xsl:when test="(boolean(@disable) and not(@disable=''))">                                
+                                    <xsl:when test="(boolean(@disable) and not(normalize-space(@disable)=''))">                                
                                         <xsl:call-template name="apply_mlib_button_caption_value_both"/>                               
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -1664,7 +1664,7 @@ extension-element-prefixes="mlib">
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:choose>
-                                    <xsl:when test="(boolean(@disable) and not(@disable=''))">                                
+                                    <xsl:when test="(boolean(@disable) and not(normalize-space(@disable)=''))">                                
                                         <xsl:call-template name="apply_mlib_button_caption_value_dsbl"/>                                
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -1676,7 +1676,7 @@ extension-element-prefixes="mlib">
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:choose>
-                            <xsl:when test="(boolean(@state) and not(@state=''))">
+                            <xsl:when test="(boolean(@state) and not(normalize-space(@state)=''))">
                                 <xsl:call-template name="apply_mlib_button_caption_value_state"/>     
                             </xsl:when>
                             <xsl:otherwise>
@@ -1688,9 +1688,9 @@ extension-element-prefixes="mlib">
             </xsl:when>
             <xsl:otherwise>
                 <xsl:choose>
-                    <xsl:when test="(boolean(@dsblcaption) and not(@dsblcaption=''))">                       
+                    <xsl:when test="(boolean(@dsblcaption) and not(normalize-space(@dsblcaption)=''))">                       
                         <xsl:choose>
-                            <xsl:when test="(boolean(@disable) and not(@disable=''))">                              
+                            <xsl:when test="(boolean(@disable) and not(normalize-space(@disable)=''))">                              
                                 <xsl:call-template name="apply_mlib_button_caption_value_dsbl"/>                                                                                                                                                                           
                             </xsl:when>
                             <xsl:otherwise>
@@ -1797,7 +1797,7 @@ extension-element-prefixes="mlib">
                     <xsl:text>if (event.fromElement==this) {this.setAttribute('style','stroke-width : 0; stroke : trasparent;')};</xsl:text>
                 </xsl:attribute>  
                 <xsl:choose>                
-                    <xsl:when test="(boolean(@param) and not(@param=''))">  
+                    <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">  
                         <xsl:attribute name="onclick">                   
                             <xsl:text>dvnci_exec('</xsl:text>
                             <xsl:value-of select="@param"/>
@@ -1820,7 +1820,7 @@ extension-element-prefixes="mlib">
                         <xsl:value-of select="@height div 2"/>
                     </xsl:attribute>
                     <xsl:choose>                
-                        <xsl:when test="(boolean(@fontstyle) and not(@fontstyle=''))">
+                        <xsl:when test="(boolean(@fontstyle) and not(normalize-space(@fontstyle)=''))">
                             <xsl:attribute name="style">
                                 <xsl:value-of select="@fontstyle"/>
                             </xsl:attribute>

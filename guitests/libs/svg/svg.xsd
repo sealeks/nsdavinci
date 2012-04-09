@@ -3,6 +3,29 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:svg="http://www.w3.org/2000/svg"
   xmlns:dvnlib="../dvnlib.xsl">
+      
+      
+    <xsd:simpleType name="svg:stroke-linecap">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="butt"></xsd:enumeration>
+            <xsd:enumeration value="round"></xsd:enumeration>
+            <xsd:enumeration value="square"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="svg:stroke-linejoin">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="miter"></xsd:enumeration>
+            <xsd:enumeration value="round"></xsd:enumeration>
+            <xsd:enumeration value="bevel"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType> 
+    
+    
+    
+    <!-- ////////////////////////////////////////////  -->
          
     <xsd:element name="svg:circle" type="svg::circle">
         <xsd:complexType name="circle">
@@ -11,11 +34,17 @@
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="cx" type="xsd:string" default="0"/>
-            <xsd:attribute name="cy" type="xsd:string" default="0"/> 
+            <xsd:attribute name="cx-binding" type="xsd:string" default="0"/>
+            <xsd:attribute name="cy" type="xsd:string" default="0"/>
+            <xsd:attribute name="cy-binding" type="xsd:string" default="0"/> 
             <xsd:attribute name="r" type="xsd:string" default="100"/>
+            <xsd:attribute name="r-binding" type="xsd:string" default="100"/> 
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
             <xsd:attribute name="fill" type="xsd:string" default=""/>
+            <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
             <xsd:attribute name="style" type="xsd:string" default=""/>         
         </xsd:complexType>
     </xsd:element>
@@ -23,21 +52,132 @@
     <xsd:element name="svg:ellipse" type="svg::ellipse">
         <xsd:complexType name="ellipse">
             <dvnlib:creator name="svg:ellipse" hint="ellipse">
-                <svg:circle  cx="" cy="" rx="150" ry="35"/>
+                <svg:ellipse  cx="" cy="" rx="50" ry="50"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="cx" type="xsd:string" default="0"/>
-            <xsd:attribute name="cy" type="xsd:string" default="0"/> 
+            <xsd:attribute name="cx-binding" type="xsd:string" default="0"/>
+            <xsd:attribute name="cy" type="xsd:string" default="0"/>
+            <xsd:attribute name="cy-binding" type="xsd:string" default="0"/> 
             <xsd:attribute name="rx" type="xsd:string" default="100"/>
-            <xsd:attribute name="ry" type="xsd:string" default=""/>
+            <xsd:attribute name="rx-binding" type="xsd:string" default="100"/> 
+            <xsd:attribute name="ry" type="xsd:string" default="100"/>
+            <xsd:attribute name="ry-binding" type="xsd:string" default="100"/>  
+            <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
             <xsd:attribute name="fill" type="xsd:string" default=""/>
-            <xsd:attribute name="style" type="xsd:string" default=""/>         
+            <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="style" type="xsd:string" default=""/>       
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="svg:rect" type="svg::rect">
+        <xsd:complexType name="rect">
+            <dvnlib:creator name="svg:rect" hint="rect">
+                <svg:rect  x="" y="" width="50" height="50"/>
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="x" type="xsd:string" default="0"/>
+            <xsd:attribute name="x-binding" type="xsd:string" default="0"/>
+            <xsd:attribute name="y" type="xsd:string" default="0"/>
+            <xsd:attribute name="y-binding" type="xsd:string" default="0"/> 
+            <xsd:attribute name="width" type="xsd:string" default="0"/>
+            <xsd:attribute name="width-binding" type="xsd:string" default="0"/>
+            <xsd:attribute name="height" type="xsd:string" default="0"/>
+            <xsd:attribute name="height-binding" type="xsd:string" default="0"/> 
+            <xsd:attribute name="rx" type="xsd:string" default="100"/>
+            <xsd:attribute name="rx-binding" type="xsd:string" default="100"/> 
+            <xsd:attribute name="ry" type="xsd:string" default="100"/>
+            <xsd:attribute name="ry-binding" type="xsd:string" default="100"/>  
+            <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="fill" type="xsd:string" default=""/>
+            <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="style" type="xsd:string" default=""/>       
         </xsd:complexType>
     </xsd:element>
 
    
- 
+    <xsd:element name="svg:line" type="svg:line">
+        <xsd:complexType name="line">
+            <dvnlib:creator name="svg:line" hint="line">
+                <svg:line  x1="200" y1="200" x2="300" y2="300" stroke-width="3" stroke="black"/>
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="x1" type="xsd:string" default="0"/>
+            <xsd:attribute name="x1-binding" type="xsd:string" default="0"/>
+            <xsd:attribute name="y1" type="xsd:string" default="0"/>
+            <xsd:attribute name="y1-binding" type="xsd:string" default="0"/> 
+            <xsd:attribute name="x2" type="xsd:string" default="0"/>
+            <xsd:attribute name="x2-binding" type="xsd:string" default="0"/>
+            <xsd:attribute name="y2" type="xsd:string" default="0"/>
+            <xsd:attribute name="y2-binding" type="xsd:string" default="0"/>  
+            <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-linecap" type="svg:stroke-linecap" default=""/>
+            <xsd:attribute name="style" type="xsd:string" default=""/> 
+            
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="svg:polyline" type="svg:polyline">
+        <xsd:complexType name="polyline">
+            <dvnlib:creator name="svg:polyline" hint="polyline">
+                <svg:polyline points="200,200 300,300" stroke-width="3" stroke="black" fill="none"/>
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="points" type="xsd:string" default="0"/>             
+            <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-linecap" type="svg:stroke-linecap" default=""/>
+            <xsd:attribute name="stroke-linejoin" type="svg:stroke-linejoin" default=""/>
+            <xsd:attribute name="fill" type="xsd:string" default=""/>
+            <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="style" type="xsd:string" default=""/>           
+        </xsd:complexType>
+    </xsd:element> 
+    
+    <xsd:element name="svg:polygon" type="svg:polyline">
+        <xsd:complexType name="polygone">
+            <dvnlib:creator name="svg:polygon" hint="polygon">
+                <svg:polygon points="200,200 300,200 300,300 200,300" stroke-width="3" stroke="black" fill="red"/>
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="points" type="xsd:string" default="0"/>             
+            <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="fill" type="xsd:string" default=""/>
+            <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="style" type="xsd:string" default=""/>           
+        </xsd:complexType>
+    </xsd:element> 
+    
+    <xsd:element name="svg:path" type="svg:path">
+        <xsd:complexType name="path">
+            <dvnlib:creator name="svg:path" hint="path">
+                <svg:path points=" M200,200 L250,300 L300,200" stroke-width="3" stroke="black" fill="none"/>
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="d" type="xsd:string" default="0"/>             
+            <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="fill" type="xsd:string" default=""/>
+            <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="style" type="xsd:string" default=""/>           
+        </xsd:complexType>
+    </xsd:element>  
 
 
 </xsd:schema>

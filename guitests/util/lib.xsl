@@ -124,7 +124,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    
     <xsl:template name="apply_cental_rotate">    
         <xsl:choose>
-            <xsl:when test="boolean(@rotate) and not(@rotate='')">
+            <xsl:when test="boolean(@rotate) and not(normalize-space(@rotate)='')">
                 <xsl:attribute name="transform">
                     <xsl:text>rotate(</xsl:text>
                     <xsl:value-of select="@rotate"/>
@@ -141,7 +141,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     
     <xsl:template name="apply_r">     
         <xsl:choose>
-            <xsl:when test="boolean(@r) and not(@r='')">
+            <xsl:when test="boolean(@r) and not(normalize-space(@r)='')">
                 <xsl:attribute name="rx">
                     <xsl:value-of select="@r"/>
                 </xsl:attribute>
@@ -155,7 +155,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     
     <xsl:template name="apply_visible">     
         <xsl:choose>
-            <xsl:when test="boolean(@visible) and not(@visible='')">
+            <xsl:when test="boolean(@visible) and not(normalize-space(@visible)='')">
                 <xsl:attribute name="display">
                      <xsl:text> #{ ( </xsl:text>
                      <xsl:value-of select="@visible"/>
