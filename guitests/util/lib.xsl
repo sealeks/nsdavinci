@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 <xsl:stylesheet version="1.0"
 xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
 xmlns:html="http://www.w3.org/TR/xhtml1"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     
-    <xsl:import href="mainlibstyle.xsl"/>
+    <xsl:import href="libstyle.xsl"/>
 
     <xsl:include href="../libs/main/mainlib.xsl" xsi:schemaLocation="../libs/main/mainlib.xsd"/>
     <xsl:include href="../libs/svg/svg.xsl" xsi:schemaLocation="../libs/svg/svg.xsd"/>
@@ -20,8 +21,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <xsl:template match="/*[position()=1]" > 
         <xsl:copy>
-        <xsl:apply-templates select="@*"/>  
-        <script type="text/javascript" xlink:href="../util/js/mainlibutil.js"></script>
+        <xsl:apply-templates select="@*"/> 
+        <script type="text/javascript" xlink:href="../util/js/libutil.js"></script>
         <script type="text/javascript" xlink:href="../util/js/redactor.js"></script>
         <xsl:call-template name="includelib"/> 
         <xsl:call-template name="apply_mlib_armatfilter"/>
@@ -31,7 +32,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     </xsl:template>
     
 
-    <xsl:template name="includelib" >      
+    <xsl:template name="includelib" >
+        
         <xsl:call-template name="mainlib"/>     
     </xsl:template> 
     
