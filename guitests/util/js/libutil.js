@@ -208,6 +208,7 @@ mainlibutil.startup.init = function(){
     }, false);
     if (dvnci_iseditable()){
         document.red = new redactor(document);
+        mainlibutil.project.add_design_style(document);
         mainlibutil.startup.initredactor(window.name, document.red);
         set_win_redactor(window, document.red);
     }
@@ -250,6 +251,7 @@ mainlibutil.project.init_form = function(){
                     mainlibutil.project.addtoformlist(els[i]);
                           
             if (ellib)  {
+     
                 for (var i=0; i<ellib.length;++i)
                     mainlibutil.project.addtoliblist(ellib[i],i);}
 
@@ -298,7 +300,7 @@ mainlibutil.project.addtoformlist = function(els){
     els.getAttribute('file') ? els.getAttribute('file').toString() : null;
     if (path){            
         var param = mainlibutil.project.buildparam(els);
-        var win=window.open(path, els.getAttribute('name')  ? els.getAttribute('name') :  '', param ? param : '');
+        var win=window.open(path, els.getAttribute('name')  ? els.getAttribute('name') :  '', param ? param : '');       
         win.document.domain=document.domain; 
         var fl=mainlibutil.global.getFormList();
         fl.push({
@@ -320,6 +322,15 @@ mainlibutil.project.addtoformlist = function(els){
             'element' : els
         });
     }   
+}
+
+
+mainlibutil.project.add_design_style  = function(doc){
+     if (doc.documentElement){
+         var dstyle = ".redactor_selected { opacity: 0.8; outline: 1px solid red;} \n"+
+             "*[isgoupelement]{ outline: 1px solid green;";
+         }
+      mainlibutil.html.create_style(doc.documentElement, dstyle);              
 }
 
 mainlibutil.project.addtoliblist = function(els, i){   
@@ -925,6 +936,9 @@ mainlibutil.dom.check_is_parent  = function(canparent,test,self){
      if (test==canparent) return (self) ? true : false;
      return mainlibutil.dom.check_is_parent (canparent,test.parentNode,true);
 }
+
+
+
 
 
 ///////////////////////////////////////////////
