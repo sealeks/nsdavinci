@@ -253,6 +253,19 @@
         </xsd:complexType>
     </xsd:element>  
     
+    <xsd:element name="mlib:group" type="group">
+        <xsd:complexType name="group">
+            <dvnlib:creator name="mlib:group"  hint="group">
+                <mlib:group  x="" y="" height="400" width="400"/>
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
+            <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
+            <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
+            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/> 
+        </xsd:complexType>
+    </xsd:element> 
+    
  
 
 

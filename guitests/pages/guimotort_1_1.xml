@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="../libs/main/css/mainlib.css"?>
+<?xml-stylesheet href="../util/css/mainlib.css"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" id="iiii" width="100%" height="100%" version="1.1" style="background-image: url('../util/css/res/bgrd2.png');" onload="mainlibutil.startup.init()">
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../util/js/mainlibutil.js"/>
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript" xlink:href="../util/js/redactor.js"/>
@@ -261,10 +261,17 @@
 			<g class="name0__mlibbuttonstyle">
 				<rect x="4" y="4" height="72" width="152" class="name0__mlibbuttonstyle" rx="10" ry="10"/>
 			</g>
- 
+
 		</svg>
 	</g>
     <g>
-        <svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="246" cy="183" r="50" id="name11" stroke="red" style="opacity: 0.8" stroke-width="0.5"  fill="#{ m1::c1 ? 'blue' : 'red' :default green }"/>  
-    </g>   
+         
+        
+    </g>  
+    <svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="246" cy="183" r="50" id="name11" stroke="red" style="opacity: 0.8" stroke-width="0.5"  fill="#{ m1::c1 ? 'blue' : 'red' :default green }"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" id="dddiii" x="200" y="200" width="200" height="200" version="1.1" style="width:200px;height:200px;min-width:200px;min-height:200px;">
+                        <g>
+                            <rect x="0" y="0" width="400" height="400" fill="none" stroke="none"/>
+                            </g>
+                        </svg>
 </svg>

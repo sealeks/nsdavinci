@@ -2508,6 +2508,28 @@ extension-element-prefixes="mlib">
     </xsl:template>
     
     
+    <xsl:template match="//mlib:group">
+        <svg style="background-color: yellow; ">
+            
+            <xsl:call-template name="apply_rect"/>
+            <xsl:call-template name="apply_id"/>            
+            <xsl:call-template name="apply_mlib_schema"/>
+            
+            <xsl:attribute name="isgoupelement">
+                <xsl:text>true</xsl:text>
+            </xsl:attribute>    
+            
+            <rect stroke="none" fill="none">
+                <xsl:call-template name="apply_0_0_width_height"/> 
+            </rect>
+            <g> 
+            
+
+            </g>  
+        </svg>
+    </xsl:template>    
+    
+    
     
     <!--xsl:template match="//mlib:external">   
         <g>
