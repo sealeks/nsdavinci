@@ -9,18 +9,10 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 extension-element-prefixes="mlib">
     
-    <xsl:import href="mainlibstyle.xsl"/>
+    
 
-    <xsl:template name="mainlib">
-        
-        <script type="text/javascript" xlink:href="../util/js/mainlibutil.js"></script>
-        <script type="text/javascript" xlink:href="../util/js/redactor.js"></script> 
-        <script type="text/javascript" xlink:href="../libs/main/js/mainlib.js"></script>
-
-        
-        <xsl:call-template name="apply_mlib_armatfilter"/>
-        <xsl:call-template name="apply_mlib_style"/>
-          
+    <xsl:template name="mainlib">      
+        <script type="text/javascript" xlink:href="../libs/main/js/mainlib.js"></script>      
     </xsl:template>
     
       

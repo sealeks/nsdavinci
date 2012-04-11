@@ -4,9 +4,12 @@ xmlns="http://www.w3.org/2000/svg"
 xmlns:html="http://www.w3.org/TR/xhtml1"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+    <xsl:import href="mainlibstyle.xsl"/>
 
     <xsl:include href="../libs/main/mainlib.xsl" xsi:schemaLocation="../libs/main/mainlib.xsd"/>
     <xsl:include href="../libs/svg/svg.xsl" xsi:schemaLocation="../libs/svg/svg.xsd"/>
+    
 
     <xsl:output  method="xml" indent="yes"/>
     
@@ -17,8 +20,12 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <xsl:template match="/*[position()=1]" > 
         <xsl:copy>
-        <xsl:apply-templates select="@*"/>    
+        <xsl:apply-templates select="@*"/>  
+        <script type="text/javascript" xlink:href="../util/js/mainlibutil.js"></script>
+        <script type="text/javascript" xlink:href="../util/js/redactor.js"></script>
         <xsl:call-template name="includelib"/> 
+        <xsl:call-template name="apply_mlib_armatfilter"/>
+        <xsl:call-template name="apply_mlib_style"/>
         <xsl:apply-templates/>
         </xsl:copy>
     </xsl:template>
