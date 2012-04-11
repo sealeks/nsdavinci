@@ -11,7 +11,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <xsl:output  method="xml" indent="yes"/>
     
     <xsl:template match="/" >
-        <xsl:processing-instruction name="xml-stylesheet">href="../util/css/mainlib.css"</xsl:processing-instruction>
+        <xsl:processing-instruction name="xml-stylesheet">href="../util/css/libs.css"</xsl:processing-instruction>
         <xsl:apply-templates select="/*"/>
     </xsl:template>
 
