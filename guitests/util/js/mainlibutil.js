@@ -1166,7 +1166,7 @@ mainlibutil.www.create_tbwindow_tools = function (name, tools, names, hints, fun
         if (!tmp[name].tools)
             tmp[name].tools={};
         tmp[name].tools[tools]=mainlibutil.html.create_tool(tmp[name].document, tools, names, hints, funcs, size, header, headerstyle) ;
-        tmp[name+'_tools']=tmp[name].tools[tools];
+        tmp[tools+'_tools']=tmp[name].tools[tools];
     }    
 }
 
@@ -1735,7 +1735,7 @@ mainlibutil.designtime.getLibInspector = function (force){
                 "background-color: #E7E7E7; margin: 0px; border-width: 1px 0px ; border-color: yellow; border-style: solid; text-align: center; color: #040347)"); 
         }
         
-        tmp.libtool.onload= function() {alert('test');}
+        //tmp.libtool.onload= function() {alert('test');}
 
     }
     return (tmp && tmp.libtool) ? tmp.libtool : null;
@@ -1764,6 +1764,7 @@ mainlibutil.designtime.setSelectedToolEvent = function(event){
 }
 
 mainlibutil.designtime.setSelectedComponent = function(tool, comp){
+    //alert(tool + ' : ' + comp);
     var tmp= mainlibutil.global.getGlobal(); 
     var set  = tool && comp;
     var result = null; 
@@ -1771,24 +1772,26 @@ mainlibutil.designtime.setSelectedComponent = function(tool, comp){
         var select = tmp['selectedComponent'];       
         if (select && set && select.tool==tool && select.component==comp){
             tmp['selectedComponent'] =  null;
-            mainlibutil.www.set_tbwindow_btnstatus('libtool', tool , comp , 'on' );
+            mainlibutil.www.set_tbwindow_btnstatus(tool, tool , comp , 'on' );
             return null;
         }
        
-        if (select){          
+        if (select){ 
+            
+            mainlibutil.www.set_tbwindow_btnstatus(select.tool, select.tool  , select.component  , 'on' );
             result = {
                 'tool' : select.tool , 
                 'component' : select.component
             };
             if (!set) return result;
-            mainlibutil.www.set_tbwindow_btnstatus('libtool', result.tool , result.component , 'on' );
+            mainlibutil.www.set_tbwindow_btnstatus(tool, result.tool , result.component , 'on' );
         }
         if (set){
             tmp['selectedComponent']={
                 'tool' : tool , 
                 'component' : comp
             };
-            mainlibutil.www.set_tbwindow_btnstatus('libtool', tool  , comp  , 'off' );
+            mainlibutil.www.set_tbwindow_btnstatus(tool, tool  , comp  , 'off' );
         }
     }
     return result;

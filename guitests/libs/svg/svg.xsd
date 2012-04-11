@@ -23,7 +23,14 @@
         </xsd:restriction>
     </xsd:simpleType> 
     
-    
+    <xsd:simpleType name="svg:filtertype">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="filter1"></xsd:enumeration>
+            <xsd:enumeration value="filter2"></xsd:enumeration>
+            <xsd:enumeration value="filter3"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>     
     
     <!-- ////////////////////////////////////////////  -->
          
@@ -39,12 +46,20 @@
             <xsd:attribute name="cy-binding" type="xsd:string" default="0"/> 
             <xsd:attribute name="r" type="xsd:string" default="100"/>
             <xsd:attribute name="r-binding" type="xsd:string" default="100"/> 
+            
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="xsd:string" default=""/>
+            
             <xsd:attribute name="fill" type="xsd:string" default=""/>
             <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity-binding" type="xsd:string" default=""/>             
+            
+            <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/>         
         </xsd:complexType>
     </xsd:element>
@@ -62,13 +77,21 @@
             <xsd:attribute name="rx" type="xsd:string" default="100"/>
             <xsd:attribute name="rx-binding" type="xsd:string" default="100"/> 
             <xsd:attribute name="ry" type="xsd:string" default="100"/>
-            <xsd:attribute name="ry-binding" type="xsd:string" default="100"/>  
+            <xsd:attribute name="ry-binding" type="xsd:string" default="100"/>
+            
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="xsd:string" default=""/>
+            
             <xsd:attribute name="fill" type="xsd:string" default=""/>
             <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity-binding" type="xsd:string" default=""/>  
+            
+            <xsd:attribute name="filter" type="svg:filtertype" default=""/>             
             <xsd:attribute name="style" type="xsd:string" default=""/>       
         </xsd:complexType>
     </xsd:element>
@@ -90,13 +113,20 @@
             <xsd:attribute name="rx" type="xsd:string" default="100"/>
             <xsd:attribute name="rx-binding" type="xsd:string" default="100"/> 
             <xsd:attribute name="ry" type="xsd:string" default="100"/>
-            <xsd:attribute name="ry-binding" type="xsd:string" default="100"/>  
+            <xsd:attribute name="ry-binding" type="xsd:string" default="100"/>
+            
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="xsd:string" default=""/>            
             <xsd:attribute name="fill" type="xsd:string" default=""/>
             <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity-binding" type="xsd:string" default=""/> 
+            
+            <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/>       
         </xsd:complexType>
     </xsd:element>
@@ -115,13 +145,18 @@
             <xsd:attribute name="x2" type="xsd:string" default="0"/>
             <xsd:attribute name="x2-binding" type="xsd:string" default="0"/>
             <xsd:attribute name="y2" type="xsd:string" default="0"/>
-            <xsd:attribute name="y2-binding" type="xsd:string" default="0"/>  
+            <xsd:attribute name="y2-binding" type="xsd:string" default="0"/> 
+            
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="xsd:string" default=""/>            
             <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-linecap" type="svg:stroke-linecap" default=""/>
-            <xsd:attribute name="style" type="xsd:string" default=""/> 
+            
+            <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
+            <xsd:attribute name="style" type="xsd:string" default=""/>  
             
         </xsd:complexType>
     </xsd:element>
@@ -132,16 +167,23 @@
                 <svg:polyline points="200,200 300,300" stroke-width="3" stroke="black" fill="none"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
-            <xsd:attribute name="points" type="xsd:string" default="0"/>             
+            <xsd:attribute name="points" type="xsd:string" default="0"/> 
+            
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="xsd:string" default=""/>           
             <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-linecap" type="svg:stroke-linecap" default=""/>
             <xsd:attribute name="stroke-linejoin" type="svg:stroke-linejoin" default=""/>
             <xsd:attribute name="fill" type="xsd:string" default=""/>
             <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
-            <xsd:attribute name="style" type="xsd:string" default=""/>           
+            <xsd:attribute name="opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity-binding" type="xsd:string" default=""/>             
+            
+            <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
+            <xsd:attribute name="style" type="xsd:string" default=""/>            
         </xsd:complexType>
     </xsd:element> 
     
@@ -151,33 +193,76 @@
                 <svg:polygon points="200,200 300,200 300,300 200,300" stroke-width="3" stroke="black" fill="red"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
-            <xsd:attribute name="points" type="xsd:string" default="0"/>             
+            <xsd:attribute name="points" type="xsd:string" default="0"/> 
+            
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="xsd:string" default=""/>            
             <xsd:attribute name="fill" type="xsd:string" default=""/>
             <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
-            <xsd:attribute name="style" type="xsd:string" default=""/>           
+            <xsd:attribute name="opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity-binding" type="xsd:string" default=""/> 
+            
+            <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
+            <xsd:attribute name="style" type="xsd:string" default=""/>            
         </xsd:complexType>
     </xsd:element> 
     
     <xsd:element name="svg:path" type="svg:path">
         <xsd:complexType name="path">
             <dvnlib:creator name="svg:path" hint="path">
-                <svg:path points=" M200,200 L250,300 L300,200" stroke-width="3" stroke="black" fill="none"/>
+                <svg:path d=" M200,200 L250,300 L300,200" stroke-width="3" stroke="black" fill="none"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
-            <xsd:attribute name="d" type="xsd:string" default="0"/>             
+            <xsd:attribute name="d" type="xsd:string" default="0"/>  
+            
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
             <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="xsd:string" default=""/>            
+            <xsd:attribute name="stroke-linecap" type="svg:stroke-linecap" default=""/>
+            <xsd:attribute name="stroke-linejoin" type="svg:stroke-linejoin" default=""/>
             <xsd:attribute name="fill" type="xsd:string" default=""/>
             <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
-            <xsd:attribute name="style" type="xsd:string" default=""/>           
+            <xsd:attribute name="opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity-binding" type="xsd:string" default=""/> 
+            
+            <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
+            <xsd:attribute name="style" type="xsd:string" default=""/>            
         </xsd:complexType>
     </xsd:element>  
+    
+    <xsd:element name="svg:text" type="svg:text">
+        <xsd:complexType name="text">
+            <dvnlib:creator name="svg:text" hint="text">
+                <svg:text  x="" y="" text="text" fill="red"/>
+            </dvnlib:creator>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/> 
+            <xsd:attribute name="text" type="xsd:string" default=""/>
+            <xsd:attribute name="text-binding" type="xsd:string" default=""/>
+            
+            <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="xsd:string" default=""/>           
+            <xsd:attribute name="stroke" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="xsd:string" default=""/>            
+            <xsd:attribute name="fill" type="xsd:string" default=""/>
+            <xsd:attribute name="fill-binding" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity" type="xsd:string" default=""/>
+            <xsd:attribute name="opacity-binding" type="xsd:string" default=""/>            
+            
+            <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
+            <xsd:attribute name="style" type="xsd:string" default=""/>           
+        </xsd:complexType>
+    </xsd:element> 
+    
+
 
 
 </xsd:schema>
