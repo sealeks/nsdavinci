@@ -239,15 +239,5 @@ dominant-baseline: central;
 
 
 
-.redactor_selected {
- opacity: 0.8;
- outline: 1px solid red;
-}
 
-
-  
-*[isgoupelement]{
-
- outline: 1px solid green;
-}
 
