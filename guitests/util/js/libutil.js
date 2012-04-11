@@ -601,7 +601,7 @@ mainlibutil.window.createhtml = function(name , caption, top, left, width, heigh
     newwin.document.write('<html>');
     newwin.document.write('    <head>');
     newwin.document.write('     <script type="text/javascript" src="../util/js/redactor.js"></script>');
-    newwin.document.write('     <script type="text/javascript" src="../util/js/mainlibutil.js"></script>');
+    newwin.document.write('     <script type="text/javascript" src="../util/js/libutil.js"></script>');
     if (stylefile)
         newwin.document.write('     <link rel="stylesheet" type="text/css" href="'+stylefile+'">');
     if (style)

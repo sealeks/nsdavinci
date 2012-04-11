@@ -11,8 +11,8 @@ extension-element-prefixes="mlib">
     
     
 
-    <xsl:template name="mainlib">      
-        <script type="text/javascript" xlink:href="../libs/main/js/mainlib.js"></script>      
+    <xsl:template name="mainlib">  
+        <script type="text/javascript" xlink:href="../libs/main/js/mainlib.js"></script>   
     </xsl:template>
     
       
@@ -2378,7 +2378,7 @@ extension-element-prefixes="mlib">
              
             <html xmlns="http://www.w3.org/1999/xhtml" style=" -webkit-user-select: none;"> 
                 <head xmlns="http://www.w3.org/1999/xhtml">
-                    <script xmlns="http://www.w3.org/1999/xhtml"  type="text/javascript" src="../util/js/mainlibutil.js"></script>
+                    <script xmlns="http://www.w3.org/1999/xhtml"  type="text/javascript" src="../util/js/libutil.js"></script>
 
                     <style type="text/css">
                         body{
