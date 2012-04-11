@@ -9,20 +9,15 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 extension-element-prefixes="mlib">
 
-    <xsl:template name="mailib_gradients">
-        
-        <xsl:call-template name="apply_mlib_armatfilter"/>
-                
+    <xsl:template name="mailib_gradients">       
+        <xsl:call-template name="apply_mlib_armatfilter"/>                
     </xsl:template>
     
     
     
-    
-
    
    <xsl:template name="apply_mlib_armatfilter"> 
-   
-   
+ 
        <filter id="armat_filter1" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
             <feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
             <!--feOffset in="blur" dx="0" dy="0" result="offsetBlur"/-->
