@@ -39,4 +39,4 @@
     
     
     
-    <svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="961" cy="488" r="50" id="name14" filter="filter1" fill="green" stroke="#003" stroke-width="2"/><mlib:rect x="211" y="594" height="10" width="200" stroke="#003" r="3" stroke-width="1" fill="water" background="#003" id="name15" value="r1::a" rotate="270"/><mlib:sensor x="487" y="631" height="30" width="150" stroke="#003" stroke-width="1" r="4" id="name22" background="air" param="r1::a" fontstyle="fill: #003; font-size: 18;"/></svg>
+    <svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="961" cy="488" r="50" id="name14" filter="filter1" fill="green" stroke="#003" stroke-width="2"/><mlib:rect x="211" y="594" height="10" width="200" stroke="#003" r="3" stroke-width="1" fill="water" background="#003" id="name15" value="r1::a" rotate="270"/><mlib:sensor x="487" y="631" height="30" width="150" stroke="#003" stroke-width="1" r="4" id="name22" background="air" param="r1::a" fontstyle="fill: #003; font-size: 18;"/><mlib:group x="755" y="264" height="400" width="400" id="name24"/></svg>

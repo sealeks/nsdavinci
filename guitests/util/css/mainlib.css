@@ -238,10 +238,6 @@ dominant-baseline: central;
 
 
 
-/*use:hover {
-// opacity: 0.6;
-// outline: 1px solid #666;
-//}*/
 
 .redactor_selected {
  opacity: 0.8;
@@ -250,8 +246,8 @@ dominant-baseline: central;
 
 
   
-  
+*[isgoupelement]{
 
-/*use.mtranm{
-//   href : url("res/motor.svg#motron"); 
-}*/
+ outline: 1px solid green;
+}
+

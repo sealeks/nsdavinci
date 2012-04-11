@@ -11,7 +11,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <xsl:output  method="xml" indent="yes"/>
     
     <xsl:template match="/" >
-        <xsl:processing-instruction name="xml-stylesheet">href="../libs/main/css/mainlib.css"</xsl:processing-instruction>
+        <xsl:processing-instruction name="xml-stylesheet">href="../util/css/mainlib.css"</xsl:processing-instruction>
         <xsl:apply-templates select="/*"/>
     </xsl:template>
 
@@ -83,6 +83,21 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <xsl:value-of select="@y"/>
         </xsl:attribute>
     </xsl:template> 
+    
+    <xsl:template name="apply_0_0_width_height"> 
+        <xsl:attribute name="x">
+            <xsl:text>0</xsl:text>
+        </xsl:attribute>
+        <xsl:attribute name="y">
+            <xsl:text>0</xsl:text>
+        </xsl:attribute>
+        <xsl:attribute name="height">
+            <xsl:value-of select="@height"/>
+        </xsl:attribute>
+        <xsl:attribute name="width">
+            <xsl:value-of select="@width"/>
+        </xsl:attribute>
+    </xsl:template>
     
     <xsl:template name="apply_rect_b2"> 
         <xsl:attribute name="x">
