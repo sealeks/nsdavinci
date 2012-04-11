@@ -28,7 +28,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <xsl:call-template name="mainlib"/>     
     </xsl:template> 
     
-    <xsl:template match="*|@*|text()" name="rootelemnt">
+    <xsl:template match="*|@*|text()">
         <xsl:element name="{local-name()}">
             <xsl:apply-templates select="*|@*|text()"/>
         </xsl:element>

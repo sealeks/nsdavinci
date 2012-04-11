@@ -261,6 +261,10 @@
 			<g class="name0__mlibbuttonstyle">
 				<rect x="4" y="4" height="72" width="152" class="name0__mlibbuttonstyle" rx="10" ry="10"/>
 			</g>
+ 
 		</svg>
 	</g>
+    <g>
+        <svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="246" cy="183" r="50" id="name11" stroke="red" style="opacity: 0.8" stroke-width="0.5"  fill="#{ m1::c1 ? 'blue' : 'red' :default green }"/>  
+    </g>   
 </svg>
