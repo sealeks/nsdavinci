@@ -34,7 +34,10 @@ libutil.alarmtable = function(el){
     this.alarmelement=libutil.document.findElementByTagName(el,'table');
     if (this.alarmelement){
         this.alarmelement.alarlistener=this;
-        this.alarmelement.onalarm=function(ev){this.alarlistener.execute(ev);}}
+        this.alarmelement.onalarm=function(ev){
+            this.alarlistener.execute(ev);
+        }
+    }
 
 }
 
@@ -46,7 +49,7 @@ function dvnci_open(name){
             if (fl[i]['name']==name){
                 if (!fl[i].window){
                     var win=window.open(fl[i]['path'],fl[i]['name'],fl[i]['param'].toString());
-                   // win.document.domain=document.domain;
+                    // win.document.domain=document.domain;
                     fl[i].window=win;
                 }
                 else{
@@ -110,16 +113,16 @@ function dvnci_close_win(){
 
 function dvnci_close_allwin(){
     try{
-    var fl =  libutil.global.getFormList();
-    if (fl){      
-        for (var i=0; i<fl.length;++i){
-            if (fl[i].window!=window){
-                fl[i].window.onunload=null;
-                libutil.dom.clearChildNode(fl[i].window.document.documentElement); 
+        var fl =  libutil.global.getFormList();
+        if (fl){      
+            for (var i=0; i<fl.length;++i){
+                if (fl[i].window!=window){
+                    fl[i].window.onunload=null;
+                    libutil.dom.clearChildNode(fl[i].window.document.documentElement); 
                 //fl[i].window=null;
+                }
             }
         }
-    }
     }
     catch(err){
         alert(err);
@@ -155,7 +158,7 @@ libutil.util.remove_element_arr = function(arr,ind){
 
 libutil.util.trim = function(string)
 {
-return string.replace(/(^\s+)|(\s+$)/g, "");
+    return string.replace(/(^\s+)|(\s+$)/g, "");
 }
 
 
@@ -251,7 +254,8 @@ libutil.project.init_form = function(){
             if (ellib)  {
      
                 for (var i=0; i<ellib.length;++i)
-                    libutil.project.addtoliblist(ellib[i],i);}
+                    libutil.project.addtoliblist(ellib[i],i);
+            }
 
         }
         catch(error){ 
@@ -324,12 +328,12 @@ libutil.project.addtoformlist = function(els){
 
 
 libutil.project.add_design_style  = function(doc){
-     if (doc.documentElement){
-         var dstyle = ".designer_selected { opacity: 0.8; outline: 1px solid red;} \n"+
-             "*[isgoupelement]{ outline: 1px dashed green; } \n"+
-             "*[isgoupelement].designer_selected { opacity: 0.8; outline: 1px solid red;}";
-         }
-      libutil.html.create_style(doc.documentElement, dstyle);              
+    if (doc.documentElement){
+        var dstyle = ".designer_selected { opacity: 0.8; outline: 1px solid red;} \n"+
+        "*[isgoupelement]{ outline: 1px dashed green; } \n"+
+        "*[isgoupelement].designer_selected { opacity: 0.8; outline: 1px solid red;}";
+    }
+    libutil.html.create_style(doc.documentElement, dstyle);              
 }
 
 libutil.project.addtoliblist = function(els, i){   
@@ -418,7 +422,12 @@ libutil.popup.getbound = function(el, W, H, yd, dir){
     
     var hc = (dir==2 || dir==0) ? H + hh : H;
     var wc = (dir==2 || dir==0) ? W : W + wh;
-    return {'x': xc, 'y': yc, 'width': wc , 'height': hc} 
+    return {
+        'x': xc, 
+        'y': yc, 
+        'width': wc , 
+        'height': hc
+    } 
 }
 
 
@@ -426,11 +435,12 @@ libutil.popup.bpunds_intersect = function(popupbound, documenbound){
     var X0 =   popupbound.x < documenbound.x ? documenbound.x : popupbound.x;
     var Y0 =   popupbound.y < documenbound.y ? documenbound.y : popupbound.y;
     var X1 =   (popupbound.x + popupbound.width) < (documenbound.x + documenbound.width) ? 
-        (popupbound.x + popupbound.width) : (documenbound.x + documenbound.width);
+    (popupbound.x + popupbound.width) : (documenbound.x + documenbound.width);
     var Y1 =   (popupbound.y + popupbound.height) < (documenbound.y + documenbound.height) ? 
-        (popupbound.y + popupbound.height) : (documenbound.y + documenbound.height);;    
+    (popupbound.y + popupbound.height) : (documenbound.y + documenbound.height);
+    ;    
     
-   return (X1-X0)*(Y1-Y0);
+    return (X1-X0)*(Y1-Y0);
 }
 
 
@@ -454,9 +464,12 @@ libutil.popup.finddirect = function(el, W, H, yd){
         if (range[max] < range[i]) max=i; 
     } 
     switch(max) {
-       case 1:return 1;
-       case 2:return 3;
-       case 3:return 0;     
+        case 1:
+            return 1;
+        case 2:
+            return 3;
+        case 3:
+            return 0;     
     }
     return 2;
 }
@@ -508,7 +521,8 @@ libutil.xslttransform.rootDocument = function (){
 libutil.xslttransform.literootDocument = function (){ 
     if (window.__literootDocument){
         libutil.dom.clearChildNode(window.__literootDocument.documentElement);
-        return window.__literootDocument;}
+        return window.__literootDocument;
+    }
     window.__literootDocument = libutil.document.readDoc(window.document.URL);
     libutil.dom.clearChildNode(window.__literootDocument.documentElement);
     return window.__literootDocument;
@@ -594,7 +608,9 @@ libutil.window.create_modal = function(url,  caption, value ,top, left, width, h
     ',allwaystop='+ (allwaystop ? 'yes' : '0') +
     (nodecorate ? ',decorated=no' : '') +
     ';'
-    libutil.global.setGlobalPropertyEditor({'value': value});
+    libutil.global.setGlobalPropertyEditor({
+        'value': value
+    });
     window.showModalDialog(url, null , tmp);
     
     var ret = libutil.global.getGlobalPropertyEditor();
@@ -931,9 +947,9 @@ libutil.dom.clearChildNode = function (element){
 }
 
 libutil.dom.check_is_parent  = function(canparent,test,self){
-     if (!test) return false;
-     if (test==canparent) return (self) ? true : false;
-     return libutil.dom.check_is_parent (canparent,test.parentNode,true);
+    if (!test) return false;
+    if (test==canparent) return (self) ? true : false;
+    return libutil.dom.check_is_parent (canparent,test.parentNode,true);
 }
 
 
@@ -1280,7 +1296,7 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
         }
     }
       
-el.appendChild(tr);
+    el.appendChild(tr);
 }
 
 //
