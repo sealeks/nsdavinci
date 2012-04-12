@@ -8,6 +8,14 @@ xmlns:html="http://www.w3.org/TR/xhtml1"
 xmlns:xlink="http://www.w3.org/1999/xlink" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 extension-element-prefixes="mlib">
+    
+    
+    <xsl:template name="lib_svgstyle"> 
+        <defs>
+            <xsl:call-template name="apply_mlib_armatfilter"/>
+            <xsl:call-template name="apply_mlib_style"/> 
+        </defs>  
+    </xsl:template>
 
     <xsl:template name="mailib_gradients">       
         <xsl:call-template name="apply_mlib_armatfilter"/>                
