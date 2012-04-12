@@ -39,7 +39,7 @@ mainlib.armatura_popupbody  = function(el, width, height){
         return;
     }
 
-    el.popup = mainlibutil.popup.createsvgs(el,width,height,0, null, 'fill: white; opacity: 0.4;');
+    el.popup = libutil.popup.createsvgs(el,width,height,0, null, 'fill: white; opacity: 0.4;');
 
     
     if (el.popup.firstChild) {
@@ -51,7 +51,7 @@ mainlib.armatura_popupbody  = function(el, width, height){
     
     el.popup.onmouseout = function(ev){
          
-        if (!mainlibutil.dom.check_is_parent (el.popup,ev.toElement,true)){
+        if (!libutil.dom.check_is_parent (el.popup,ev.toElement,true)){
             el.popup.parentNode.removeChild(el.popup);
             el.popup=undefined;
         }
@@ -166,7 +166,7 @@ mainlib.armatura_popup_autocontent =  function(id, el, rauto){
 
 
 mainlib.armatura_popup_header =  function(el, header){
-    mainlibutil.svg.create_header(el,
+    libutil.svg.create_header(el,
         10,10,80,180, 5, 5,
         'fill: #333; stroke: white; stroke-with: 1; cursor: default;',
         header,
@@ -186,16 +186,16 @@ mainlib.armatura_popup = function(el, header, type, ron , roff){
     
         var body = mainlib.armatura_popupbody(el,200,200);
      
-        var litedoc = mainlibutil.xslttransform.literootDocument();
+        var litedoc = libutil.xslttransform.literootDocument();
     
         var litedocElement = litedoc.documentElement;
     
-        var root = mainlibutil.svg.create_svg(litedocElement, 0 , 0,  200, 200);
+        var root = libutil.svg.create_svg(litedocElement, 0 , 0,  200, 200);
         root.setAttribute('id', popup_id);
 
         mainlib.armatura_popup_content(popup_id, root ,  type,  ron, roff);
  
-        var generated = mainlibutil.xslttransform.tranform_and_getById(litedoc,popup_id);
+        var generated = libutil.xslttransform.tranform_and_getById(litedoc,popup_id);
           
         mainlib.armatura_popup_header(body,header);
     
@@ -219,18 +219,18 @@ mainlib.armatura_auto_popup = function(el, header, type, auto, ron , roff, rauto
     
         var body = mainlib.armatura_popupbody(el,200,250);
      
-        var litedoc = mainlibutil.xslttransform.literootDocument();
+        var litedoc = libutil.xslttransform.literootDocument();
     
         var litedocElement = litedoc.documentElement;
     
-        var root = mainlibutil.svg.create_svg(litedocElement, 0 , 0,  250, 200);
+        var root = libutil.svg.create_svg(litedocElement, 0 , 0,  250, 200);
         root.setAttribute('id', popup_id);
     
     
         mainlib.armatura_popup_content(popup_id, root ,  type,  ron, roff, auto, rauto);
         mainlib.armatura_popup_autocontent(popup_id, root , rauto);
  
-        var generated = mainlibutil.xslttransform.tranform_and_getById(litedoc,popup_id);
+        var generated = libutil.xslttransform.tranform_and_getById(litedoc,popup_id);
         
         mainlib.armatura_popup_header(body,header);
     

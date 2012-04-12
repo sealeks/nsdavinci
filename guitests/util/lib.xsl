@@ -23,7 +23,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <xsl:copy>
         <xsl:apply-templates select="@*"/> 
         <script type="text/javascript" xlink:href="../util/js/libutil.js"></script>
-        <script type="text/javascript" xlink:href="../util/js/redactor.js"></script>
+        <script type="text/javascript" xlink:href="../util/js/designer.js"></script>
         <xsl:call-template name="includelib"/> 
         <xsl:call-template name="lib_svgstyle"/> 
         <xsl:apply-templates/>

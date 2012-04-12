@@ -1,4 +1,4 @@
-
+var designutil = {};
 ///
 
 function schema_info(){
@@ -10,7 +10,7 @@ function schema_info(){
 
 
 schema_info.prototype.init = function(libsulr){
-    this.libsdoc=mainlibutil.document.readDoc(libsulr);
+    this.libsdoc=libutil.document.readDoc(libsulr);
     if (this.libsdoc){
         var els=this.libsdoc.getElementsByTagName('include');
         for (var i=0; i<els.length;++i)
@@ -24,7 +24,7 @@ schema_info.prototype.init = function(libsulr){
 }
 
 schema_info.prototype.initlibs = function(libulr){
-    var libdoc=mainlibutil.document.readDoc(libulr);
+    var libdoc=libutil.document.readDoc(libulr);
     if (libdoc){ 
         this.read_types(libdoc);
         this.read_elements(libdoc);
@@ -224,7 +224,7 @@ schema_info.prototype.read_creators =  function(doc){
 
 ///
 
-function redactor(doc){ 
+function designer(doc){ 
     this.instantdocument=doc;
     this.schema=new schema_info();
     this.schema.init('../util/lib.xsl');
@@ -254,7 +254,7 @@ function redactor(doc){
 
 
 // привязка ко всем элементам
-redactor.prototype.attach = function(el){
+designer.prototype.attach = function(el){
     try{
         if (el==this.instantdocument.documentElement){
             el.oldoncick = el.oncick;
@@ -262,7 +262,7 @@ redactor.prototype.attach = function(el){
                 if (document.red){
                     document.red.clearSelections();
                     document.red.click_parented(ev);
-                    mainlibutil.designtime.setCurrentRedactor(window);
+                    libutil.designtime.setCurrentRedactor(window);
                     }
             };
         }
@@ -328,11 +328,11 @@ redactor.prototype.attach = function(el){
 
 
 //  чтение документа источника
-redactor.prototype.getSourseDocument = function (){ 
+designer.prototype.getSourseDocument = function (){ 
     if (this.sourseDocument)
         return this.sourseDocument;
     try{
-        this.sourseDocument = mainlibutil.document.readDoc(this.instantdocument.URL);
+        this.sourseDocument = libutil.document.readDoc(this.instantdocument.URL);
         if ((this.sourseDocument) && (this.sourseDocument.childNodes.length>1)){
             if (this.sourseDocument.childNodes[0].target=='xml-stylesheet'){
                 if (this.sourseDocument.childNodes[0].data)
@@ -348,9 +348,9 @@ redactor.prototype.getSourseDocument = function (){
 
 
 
-redactor.prototype.getLightDocument = function (){ 
+designer.prototype.getLightDocument = function (){ 
     try{
-        this.lightDocument = mainlibutil.document.readDoc(this.instantdocument.URL);
+        this.lightDocument = libutil.document.readDoc(this.instantdocument.URL);
         
     }
     catch(except){
@@ -360,7 +360,7 @@ redactor.prototype.getLightDocument = function (){
 }
 
 
-redactor.prototype.getLightElement = function (el){
+designer.prototype.getLightElement = function (el){
     if (this.xsltProcessor && this.soursexslt) {
         if (this.lightDocument){
             var root = this.lightDocument.lastChild;
@@ -377,7 +377,7 @@ redactor.prototype.getLightElement = function (el){
 }
 
 //  чтение XSLT
-redactor.prototype.readXsltDocument = function(data){
+designer.prototype.readXsltDocument = function(data){
     var urlxslt=data;
     var urlxslt=urlxslt.toString();
     var finded=urlxslt.search('type="text/xsl"');
@@ -388,7 +388,7 @@ redactor.prototype.readXsltDocument = function(data){
             finded=urlxslt.search('"') ;
             if (finded!=-1){
                 urlxslt=urlxslt.substring(0,finded);
-                this.soursexslt = mainlibutil.document.readDoc(urlxslt);
+                this.soursexslt = libutil.document.readDoc(urlxslt);
                 this.xsltProcessor=new XSLTProcessor();  
                 this.xsltProcessor.importStylesheet(this.soursexslt); 
                 this.trasformsourse = this.xsltProcessor.transformToDocument(this.sourseDocument);
@@ -398,7 +398,7 @@ redactor.prototype.readXsltDocument = function(data){
     this.xslturl=undefined;
 }
 
-redactor.prototype.getTrasformDocument = function(){
+designer.prototype.getTrasformDocument = function(){
     if (this.xsltProcessor && this.soursexslt)
         return this.trasformsourse = this.xsltProcessor.transformToDocument(this.sourseDocument);
     return undefined;
@@ -406,13 +406,13 @@ redactor.prototype.getTrasformDocument = function(){
 
 
 
-redactor.prototype.getSourseElement = function(el){
+designer.prototype.getSourseElement = function(el){
     return el && el.id && this.sourseDocument ? 
         this.sourseDocument.getElementById(el.id) : null;
 }
 
 
-redactor.prototype.getTransformElement = function(elid){
+designer.prototype.getTransformElement = function(elid){
     if (this.trasformsourse) {
         var el=this.sourseDocument.getElementById(elid);
         if (el){
@@ -427,7 +427,7 @@ return null;
 
 
 
-redactor.prototype.getTarget = function (ev){
+designer.prototype.getTarget = function (ev){
   
     var el = ev.target.correspondingUseElement ? ev.target.correspondingUseElement : ev.target;
     
@@ -439,7 +439,7 @@ redactor.prototype.getTarget = function (ev){
     return ((el==owndoc)) || (!el.getAttribute('id')) ? undefined : el;
 }
 
-redactor.prototype.check_is_parent = function (el, self){
+designer.prototype.check_is_parent = function (el, self){
     var tst=el;
     if ((!tst) || (tst===this.instantdocument.documentElement)) return false;
     while (tst.parentNode!==this.instantdocument.documentElement){
@@ -452,7 +452,7 @@ redactor.prototype.check_is_parent = function (el, self){
 
 
 
-redactor.prototype.unicalIdGenerate = function(el, doc) {
+designer.prototype.unicalIdGenerate = function(el, doc) {
     var i=0;
     var tmpl = 'name';
     var expr = new RegExp('[a-z]{1,}', 'i');
@@ -469,7 +469,7 @@ redactor.prototype.unicalIdGenerate = function(el, doc) {
 }
 
 
-redactor.prototype.getAttributeList = function(el) {
+designer.prototype.getAttributeList = function(el) {
     if (el){
         return this.schema.getAttributeList(this.getSourseElement(el));
     }
@@ -508,7 +508,7 @@ redactor.prototype.getAttributeList = function(el) {
 
 
 
-redactor.prototype.getAttributeValue = function(name, el){
+designer.prototype.getAttributeValue = function(name, el){
     if (el){
         return this.getSourseElement(el) ? this.getSourseElement(el).getAttribute(name) : undefined;
     }  
@@ -534,7 +534,7 @@ redactor.prototype.getAttributeValue = function(name, el){
 
 
 
-redactor.prototype.setAttributeValue = function(name, val, el){
+designer.prototype.setAttributeValue = function(name, val, el){
     if (el){
         if (name=='id'){
             if (this.sourseDocument.getElementById(val))
@@ -555,44 +555,44 @@ redactor.prototype.setAttributeValue = function(name, val, el){
 }
 
 
-redactor.prototype.setProperty = function(nm, val){
+designer.prototype.setProperty = function(nm, val){
     this.setAttributeValue(nm['name'],val);
     this.updateElement();
     this.setNeedSave();
-    mainlibutil.designtime.setMainWindowToolStatus(1);
+    libutil.designtime.setMainWindowToolStatus(1);
     this.show_property();
     
     
 }    
 
 
-redactor.prototype.getXname =  function (el){
+designer.prototype.getXname =  function (el){
     if (el.hasAttribute('x')) return 'x';
     if (el.hasAttribute('cx')) return 'cx';
     if (el.hasAttribute('x1')) return 'x1';
     return null;
 }
 
-redactor.prototype.getYname =  function (el){
+designer.prototype.getYname =  function (el){
     if (el.hasAttribute('y')) return 'y';
     if (el.hasAttribute('cy')) return 'cy';
     if (el.hasAttribute('y1')) return 'y1';
     return null;
 }
 
-redactor.prototype.getWname =  function (el){
+designer.prototype.getWname =  function (el){
     if (el.hasAttribute('width')) return 'width';
     return null;
 }
 
-redactor.prototype.getHname =  function (el){
+designer.prototype.getHname =  function (el){
     if (el.hasAttribute('width')) return 'width';
     return null;
 }
 
 
 
-redactor.prototype.setElementRect = function(x, y, width, height , el){
+designer.prototype.setElementRect = function(x, y, width, height , el){
     if (el){
         var sel = this.getSourseElement(el);
         if (!sel) return;
@@ -614,7 +614,7 @@ redactor.prototype.setElementRect = function(x, y, width, height , el){
 }
 
 
-redactor.prototype.updateElement = function(el){
+designer.prototype.updateElement = function(el){
     if (el) {
         var select = this.isSelection(el);
         var tel = this.getTransformElement(el.getAttribute('id'));
@@ -633,15 +633,15 @@ redactor.prototype.updateElement = function(el){
 }
 
 
-redactor.prototype.save = function(){
+designer.prototype.save = function(){
     if (this.sourseDocument){
-        mainlibutil.document.writeDoc(this.sourseDocument);
+        libutil.document.writeDoc(this.sourseDocument);
         this.needsave=false;
     }  
 }
 
 
-redactor.prototype.deleteElements = function(el){
+designer.prototype.deleteElements = function(el){
     if (el){
         if (this.sourseDocument){
             var source = this.getSourseElement(el);
@@ -659,7 +659,7 @@ redactor.prototype.deleteElements = function(el){
     }   
 }
 
-redactor.prototype.cloneElements = function(el){
+designer.prototype.cloneElements = function(el){
     if (el){
         if (this.sourseDocument){
             var source = this.getSourseElement(el);
@@ -686,7 +686,7 @@ redactor.prototype.cloneElements = function(el){
     }   
 }
 
-redactor.prototype.toFrontElements = function(el){
+designer.prototype.toFrontElements = function(el){
     if (el){
         if (this.sourseDocument){
             var sel = this.getSourseElement(el);
@@ -710,7 +710,7 @@ redactor.prototype.toFrontElements = function(el){
     }   
 }
 
-redactor.prototype.toBackElements = function(el){
+designer.prototype.toBackElements = function(el){
     if (el){
         if (this.sourseDocument){
             var sel = this.getSourseElement(el);
@@ -738,7 +738,7 @@ redactor.prototype.toBackElements = function(el){
 
 
 // очистка всех выделенных элементов
-redactor.prototype.clearSelections = function (){
+designer.prototype.clearSelections = function (){
     if (this.selectedElemens!=null){
         for (var i=0;i < this.selectedElemens.length;++i){
             var old = this.selectedElemens[i].oldcomonentclass;
@@ -752,7 +752,7 @@ redactor.prototype.clearSelections = function (){
 
 
 // очистка выделения элемента
-redactor.prototype.clearSelection = function(el){
+designer.prototype.clearSelection = function(el){
     if (this.selectedElemens!=null)
         for (var i=0;i < this.selectedElemens.length;++i)
             if (this.selectedElemens[i]==el){
@@ -763,7 +763,7 @@ redactor.prototype.clearSelection = function(el){
             }
 }
 
-redactor.prototype.changeRect = function(x, y, width , height, el){
+designer.prototype.changeRect = function(x, y, width , height, el){
     if (el){
         this.setElementRect( (x && this.getXname(el) ? parseFloat(this.getAttributeValue(this.getXname(el), el)) + x : x) ,
             (y && this.getYname(el)? parseFloat(this.getAttributeValue(this.getYname(el), el)) + y : y) ,
@@ -774,7 +774,7 @@ redactor.prototype.changeRect = function(x, y, width , height, el){
  
 
 
-redactor.prototype.isSelection = function(el){
+designer.prototype.isSelection = function(el){
     if (el && this.selectedElemens) {
         for (var j=0; j< this.selectedElemens.length; ++j)
             if (this.selectedElemens[j]==el) return true;
@@ -784,7 +784,7 @@ return false;
 
 
 
-redactor.prototype.repaceselectedElemens = function(old, newel){
+designer.prototype.repaceselectedElemens = function(old, newel){
     for (var j=0; j< this.selectedElemens.length; ++j){
         if (this.selectedElemens[j]==old){
             this.selectedElemens[j]=newel;
@@ -795,14 +795,14 @@ redactor.prototype.repaceselectedElemens = function(old, newel){
     return false;
 }
  
-redactor.prototype.setSelectedClass = function(el){
+designer.prototype.setSelectedClass = function(el){
     el.oldcomonentclass= el.oldcomonentclass ?
     el.getAttribute('class') : null;
     el.setAttribute('class', (el.oldcomonentclass) ? 
-        el.oldcomonentclass + " redactor_selected" : "redactor_selected");
+        el.oldcomonentclass + " designer_selected" : "designer_selected");
 }
 
-redactor.prototype.resetSelectedClass = function(el){
+designer.prototype.resetSelectedClass = function(el){
     if (el.oldcomonentclass)
         el.setAttribute('class',el.oldcomonentclass);
 }
@@ -811,29 +811,29 @@ redactor.prototype.resetSelectedClass = function(el){
 // обработчики событий   
  
 /* empty*/
-redactor.prototype.onmos = function (){
+designer.prototype.onmos = function (){
     event.preventDefault();
     event.stopPropagation();
 } 
 
-redactor.prototype.onmosnopropogate = function (){
+designer.prototype.onmosnopropogate = function (){
     event.preventDefault();
 } 
 
-redactor.prototype.click_component = function(){
+designer.prototype.click_component = function(){
     var el= this.getTarget(event);
-    mainlibutil.designtime.setCurrentRedactor(window);
+    libutil.designtime.setCurrentRedactor(window);
     this.select_component(el, event.shiftKey, event.ctrlKey);
     event.stopPropagation();
 }
 
-redactor.prototype.click_parented = function(ev){
+designer.prototype.click_parented = function(ev){
 if (ev && ev.clientX.toString() && ev.clientY.toString())
        this.createLibComponent(ev.clientX.toString(), ev.clientY.toString());
 }
 
-redactor.prototype.createLibComponent = function(x, y){
-    var created = mainlibutil.designtime.getSelectedComponent();
+designer.prototype.createLibComponent = function(x, y){
+    var created = libutil.designtime.getSelectedComponent();
     if (created && x && y){
          var coneid=this.unicalIdGenerate(created , this.sourseDocument);
          var prnt = this.sourseDocument.documentElement;         
@@ -850,13 +850,13 @@ redactor.prototype.createLibComponent = function(x, y){
 }
 
 /*выделение элемента*/
-redactor.prototype.select_component = function(el, shift, ctnrl){
+designer.prototype.select_component = function(el, shift, ctnrl){
     if (this.selectedElemens==null){
         this.selectedElemens = new Array();
     }
     
     var el_class = el.getAttribute('class');
-    if (el_class=="redactor_selected"){
+    if (el_class=="designer_selected"){
         if (shift){
             clearSelection(el);
         }
@@ -889,7 +889,7 @@ redactor.prototype.select_component = function(el, shift, ctnrl){
 
 
 /*обработчик событий клавиатуры*/
-redactor.prototype.keybord_dispatcher = function (){
+designer.prototype.keybord_dispatcher = function (){
     
     this.moveElements(event);
 
@@ -904,7 +904,7 @@ redactor.prototype.keybord_dispatcher = function (){
     event.stopPropagation();
 }
 
-redactor.prototype.moveElements = function (event){
+designer.prototype.moveElements = function (event){
     
     if (!event.ctrlKey && !event.shiftKey) return;
     if (event.keyIdentifier!='Left' && event.keyIdentifier!='Right'  && event.keyIdentifier!='Down'  && event.keyIdentifier!='Up') return;
@@ -980,7 +980,7 @@ redactor.prototype.moveElements = function (event){
 
 
 
-redactor.prototype.mousemove_document = function (){
+designer.prototype.mousemove_document = function (){
     if ((this.objins_draggedstart) && (this.dragstartevent)){
         if (this.mousmoveevent){
             var xsh=event.clientX-this.mousmoveevent.clientX;
@@ -995,7 +995,7 @@ redactor.prototype.mousemove_document = function (){
 }
 
 
-redactor.prototype.mousedown_document = function (){
+designer.prototype.mousedown_document = function (){
     if ((event.button==0) && (!event.shiftKey)){
         var trgt = this.getTarget(event)
         if (this.selectedElemens){
@@ -1018,11 +1018,11 @@ redactor.prototype.mousedown_document = function (){
 
 
 
-redactor.prototype.mousedown_component = function (){
+designer.prototype.mousedown_component = function (){
     if ((event.button==0)){
         var trgt = this.getTarget(event)
         var cls = trgt.getAttribute('class');
-        if ((cls) && (cls.search('redactor_selected')!=-1)){
+        if ((cls) && (cls.search('designer_selected')!=-1)){
             this.draggedstart=true;
             this.objins_draggedstart=undefined;
             return;
@@ -1032,7 +1032,7 @@ redactor.prototype.mousedown_component = function (){
 }
 
 
-redactor.prototype.mouseup_document = function (){
+designer.prototype.mouseup_document = function (){
     if (event.button==0){
         if (this.dragstartevent){
             var xsh=event.clientX-this.dragstartevent.clientX;
@@ -1069,7 +1069,7 @@ redactor.prototype.mouseup_document = function (){
 
 }
 
-redactor.prototype.contextmenue = function (){
+designer.prototype.contextmenue = function (){
     this.createContextMenu(event);
     event.stopPropagation();
     event.preventDefault();    
@@ -1077,7 +1077,7 @@ redactor.prototype.contextmenue = function (){
 
 
 
-redactor.prototype.createWindow = function(id, top, left, width, height){
+designer.prototype.createWindow = function(id, top, left, width, height){
    
     if (this.instantdocument){
 
@@ -1128,7 +1128,7 @@ redactor.prototype.createWindow = function(id, top, left, width, height){
         'background: #808080;'+
         '}';                
             
-        var result = mainlibutil.www.create_window(this.instantdocument, id, top, left, height, width, style);
+        var result = libutil.www.create_window(this.instantdocument, id, top, left, height, width, style);
         return result;
     }
     return undefined;
@@ -1136,7 +1136,7 @@ redactor.prototype.createWindow = function(id, top, left, width, height){
 
 // контекстное меню
 
-redactor.prototype.createContextMenu = function(){
+designer.prototype.createContextMenu = function(){
 
 
     var l= event.clientX;
@@ -1174,12 +1174,12 @@ redactor.prototype.createContextMenu = function(){
                 
     '}';  
         
-   mainlibutil.html.create_style(this.contextmenu.bindelement,styletxt); 
+   libutil.html.create_style(this.contextmenu.bindelement,styletxt); 
    
-   var table = mainlibutil.html.create_table(this.contextmenu.bindelement, null, 'scrollable');
+   var table = libutil.html.create_table(this.contextmenu.bindelement, null, 'scrollable');
    table.setAttribute('width' , '100%');
            
-   var tbody= mainlibutil.html.create_tbody(table);
+   var tbody= libutil.html.create_tbody(table);
 
        
    this.ContextMenuComponent(tbody);
@@ -1191,18 +1191,18 @@ redactor.prototype.createContextMenu = function(){
     }
 }
 
-redactor.prototype.ContextMenuButton = function(tbody, name, enable, func){
+designer.prototype.ContextMenuButton = function(tbody, name, enable, func){
     
-    var btn = mainlibutil.html.create_button( 
-        mainlibutil.html.create_td(
-            mainlibutil.html.create_tr(tbody)), null , null, name, func);
+    var btn = libutil.html.create_button( 
+        libutil.html.create_td(
+            libutil.html.create_tr(tbody)), null , null, name, func);
 
 }
 
 
 
 
-redactor.prototype.ContextMenuComponent = function(tbody){
+designer.prototype.ContextMenuComponent = function(tbody){
     
     this.ContextMenuButton(tbody, 'Bring to Front', true,
         function(){
@@ -1241,7 +1241,7 @@ redactor.prototype.ContextMenuComponent = function(tbody){
 
 
 
-redactor.prototype.ContextMenuDestroy = function(){
+designer.prototype.ContextMenuDestroy = function(){
     
     if (this.contextmenu){
         this.contextmenu.parentNode.removeChild(this.contextmenu);
@@ -1253,40 +1253,40 @@ redactor.prototype.ContextMenuDestroy = function(){
 // Инспектор объектов
 
 
-redactor.prototype.show_property = function(){
+designer.prototype.show_property = function(){
     
     
     var attriblist=this.getAttributeList();
 
 
-    this.inspectorFrame=mainlibutil.designtime.getObjectInspector();
+    this.inspectorFrame=libutil.designtime.getObjectInspector();
     if (!this.inspectorFrame) return;
-    this.inspectortbody=mainlibutil.designtime.getObjectInspectorTbody();
+    this.inspectortbody=libutil.designtime.getObjectInspectorTbody();
     
-    mainlibutil.dom.clearChildNode(this.inspectortbody);   
+    libutil.dom.clearChildNode(this.inspectortbody);   
 
-    var trh= mainlibutil.html.create_tr(this.inspectortbody);
+    var trh= libutil.html.create_tr(this.inspectortbody);
 
             
-    var th1= mainlibutil.html.create_th(trh);
+    var th1= libutil.html.create_th(trh);
     //th1.setAttribute('width','50%');
     th1.innerHTML='Attribute';
             
-    var th2= mainlibutil.html.create_th(trh);
+    var th2= libutil.html.create_th(trh);
     th2.setAttribute('width','80%');
     th2.innerHTML='Value';
 
                             
     for (var i=0; i<attriblist.length; ++i ){
         
-        var tr= mainlibutil.html.create_tr(this.inspectortbody);
+        var tr= libutil.html.create_tr(this.inspectortbody);
        
-        var td1= mainlibutil.html.create_td(tr);
+        var td1= libutil.html.create_td(tr);
         td1.innerHTML=attriblist[i]['name'];
         
         td1.className='static';
    
-        var td2= mainlibutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var td2= libutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
         var val=this.getAttributeValue(attriblist[i]['name']);
         td2.innerHTML= val ? val : "";
         
@@ -1306,7 +1306,7 @@ redactor.prototype.show_property = function(){
     }
 }
 
-redactor.prototype.attribute_editor = function(el){
+designer.prototype.attribute_editor = function(el){
     if (!this.inspectorFrame){
         this.show_property(el);
     }
@@ -1314,7 +1314,7 @@ redactor.prototype.attribute_editor = function(el){
 
 }
 
-redactor.prototype.property_row_focus = function(event){
+designer.prototype.property_row_focus = function(event){
     
     if (event.target.tagname="td"){
         var td= event.target;
@@ -1323,7 +1323,7 @@ redactor.prototype.property_row_focus = function(event){
         var type = td['type'] ? td['type']  : 0;
         
         if (type<=2 && event.button>0){           
-            var retval = mainlibutil.designtime.propertydialog(td['name'], value);
+            var retval = libutil.designtime.propertydialog(td['name'], value);
             if (retval) 
                 this.setProperty(td.prop_dvn,retval);
             event.preventDefault();
@@ -1335,16 +1335,16 @@ redactor.prototype.property_row_focus = function(event){
             
             case 0:
             case 1:{
-                mainlibutil.dom.clearChildNode(td);
-                mainlibutil.html.create_input(td, 'text', value);
+                libutil.dom.clearChildNode(td);
+                libutil.html.create_input(td, 'text', value);
                 break;
             }
             case 2:
             case 3:{
               
                 var list=td['list'];
-                mainlibutil.dom.clearChildNode(td);        
-                mainlibutil.html.create_select(td,'text',value,list,type==3)       
+                libutil.dom.clearChildNode(td);        
+                libutil.html.create_select(td,'text',value,list,type==3)       
                 break;
             }
             default:{
@@ -1385,7 +1385,7 @@ redactor.prototype.property_row_focus = function(event){
 }
 
 
-redactor.prototype.property_event = function(el){
+designer.prototype.property_event = function(el){
     
     el.onblur= function(ev) {
         if (document.red) document.red.property_leave_focus(ev);
@@ -1399,7 +1399,7 @@ redactor.prototype.property_event = function(el){
 }
 
 
-redactor.prototype.property_leave_focus = function(event){
+designer.prototype.property_leave_focus = function(event){
     var oldval=event.target.oldval;
     var value =event.target.value;
     var td=event.target.parentNode;
@@ -1413,9 +1413,9 @@ redactor.prototype.property_leave_focus = function(event){
 }
 
 
-redactor.prototype.setNeedSave = function(){
+designer.prototype.setNeedSave = function(){
     this.needsave=true; 
-    mainlibutil.designtime.setMainWindowToolStatus(1);
+    libutil.designtime.setMainWindowToolStatus(1);
 }
 
 

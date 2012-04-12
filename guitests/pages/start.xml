@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 576 324" enable-background="new 0 0 576 324" xml:space="preserve" xmlns:xml="http://www.w3.org/XML/1998/namespace" onload="init_project_controller()">
 
-<script xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/TR/xhtml1" xmlns="http://www.w3.org/2000/svg" type="text/javascript" xlink:href="../util/js/redactor.js"/> 
+<script xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/TR/xhtml1" xmlns="http://www.w3.org/2000/svg" type="text/javascript" xlink:href="../util/js/designer.js"/> 
 <script xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/TR/xhtml1" xmlns="http://www.w3.org/2000/svg" type="text/javascript" xlink:href="../util/js/libutil.js"/> 
 <project path="file:///F:/Project/davinci/guitests/pages/">
   <!--form name='f1'  file='guimotor1.xml' caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no" modal="no" allwaystop="no" state="normal|minimized|maximized(normal)" resizable="no"  -->
