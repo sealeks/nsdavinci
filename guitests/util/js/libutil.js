@@ -328,7 +328,8 @@ mainlibutil.project.addtoformlist = function(els){
 mainlibutil.project.add_design_style  = function(doc){
      if (doc.documentElement){
          var dstyle = ".redactor_selected { opacity: 0.8; outline: 1px solid red;} \n"+
-             "*[isgoupelement]{ outline: 1px solid green;";
+             "*[isgoupelement]{ outline: 1px dashed green; } \n"+
+             "*[isgoupelement].redactor_selected { opacity: 0.8; outline: 1px solid red;}";
          }
       mainlibutil.html.create_style(doc.documentElement, dstyle);              
 }

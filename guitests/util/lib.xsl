@@ -25,15 +25,13 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <script type="text/javascript" xlink:href="../util/js/libutil.js"></script>
         <script type="text/javascript" xlink:href="../util/js/redactor.js"></script>
         <xsl:call-template name="includelib"/> 
-        <xsl:call-template name="apply_mlib_armatfilter"/>
-        <xsl:call-template name="apply_mlib_style"/>
+        <xsl:call-template name="lib_svgstyle"/> 
         <xsl:apply-templates/>
         </xsl:copy>
     </xsl:template>
     
 
-    <xsl:template name="includelib" >
-        
+    <xsl:template name="includelib">       
         <xsl:call-template name="mainlib"/>     
     </xsl:template> 
     

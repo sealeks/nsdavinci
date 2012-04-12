@@ -691,7 +691,7 @@ extension-element-prefixes="mlib">
             <xsl:value-of select="@id"/>
             <xsl:text> {</xsl:text>
             <xsl:text> 
-               outline: 1px solid transparent;
+              
                cursor: none;}
             </xsl:text>
             
@@ -700,7 +700,7 @@ extension-element-prefixes="mlib">
             <xsl:value-of select="@id"/>
             <xsl:text>:hover {</xsl:text>
             <xsl:text> 
-               outline: 1px solid gray;
+               
                cursor: none;}
             </xsl:text>
             
@@ -2511,12 +2511,11 @@ extension-element-prefixes="mlib">
                 <xsl:text>true</xsl:text>
             </xsl:attribute>    
             
-            <rect stroke="none" fill="none">
+            <rect stroke="white" fill="white" opacity="0.0">
                 <xsl:call-template name="apply_0_0_width_height"/> 
             </rect>
-            <g> 
-            
-
+            <g>     
+                <xsl:apply-templates/>
             </g>  
         </svg>
     </xsl:template>    
