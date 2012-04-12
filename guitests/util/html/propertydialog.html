@@ -31,7 +31,7 @@
 
     </head>
 
-    <body onload="var val =mainlibutil.global.getGlobalPropertyEditor().value;document.getElementById('text').innerHTML=val; " >
+    <body onload="var val =libutil.global.getGlobalPropertyEditor().value;document.getElementById('text').innerHTML=val; " >
         <table class="nullblock">
             <tr>  
                 <td class="nullblock">    
@@ -41,8 +41,8 @@
             </tr>
             <tr>  
                 <td class="nullblock" style="text-align: right;">
-                    <button onclick="mainlibutil.global.setGlobalPropertyEditor();window.close();"> Cancel </button>
-                    <button onclick="mainlibutil.global.setGlobalPropertyEditor(document.getElementById('text').value);window.close();"> OK </button>
+                    <button onclick="libutil.global.setGlobalPropertyEditor();window.close();"> Cancel </button>
+                    <button onclick="libutil.global.setGlobalPropertyEditor(document.getElementById('text').value);window.close();"> OK </button>
                 </td>
             </tr>
         </table>

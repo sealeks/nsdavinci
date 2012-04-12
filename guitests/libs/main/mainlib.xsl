@@ -2473,7 +2473,7 @@ extension-element-prefixes="mlib">
                                 <xsl:value-of select="$rectvarfont"/>
                             </xsl:attribute>  
                             <script type="text/javascript">                           
-                                <xsl:text>var testsalarm=new mainlibutil.alarmtable(this.document.getElementById('</xsl:text>
+                                <xsl:text>var testsalarm=new libutil.alarmtable(this.document.getElementById('</xsl:text>
                                 <xsl:value-of select="@id"/>
                                 <xsl:text>'));</xsl:text>
                             </script>

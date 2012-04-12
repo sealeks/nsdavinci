@@ -1,3 +1,3 @@
-<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="" onload="mainlibutil.startup.init()">
+<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="" onload="libutil.startup.init()">
     <mlib:button x="20" y="100" height="80" width="160" caption="Off" id="name0" oncaption="On" color1="#800" color2="#B00" oncolor1="#080" oncolor2="#0B0" r="10" type="tumbler" param="m1::c1" state="m1::c1"/>
 </svg>
