@@ -51,7 +51,7 @@ designer.prototype.attach = function(el){
                     document.red.clearSelections();
                     document.red.click_parented(ev);
                     designutil.toolwin.setCurrentRedactor(window);
-                    }
+                }
             };
         }
         else{
@@ -169,19 +169,19 @@ designer.prototype.readXsltDocument = function(data){
     var urlxslt=data;
     var urlxslt=urlxslt.toString();
     var finded=urlxslt.search('type="text/xsl"');
-        if (finded==-1)
-            finded=urlxslt.search("href='");
+    if (finded==-1)
+        finded=urlxslt.search("href='");
+    if (finded!=-1){
+        urlxslt=urlxslt.substring(6,urlxslt.length);
+        finded=urlxslt.search('"') ;
         if (finded!=-1){
-            urlxslt=urlxslt.substring(6,urlxslt.length);
-            finded=urlxslt.search('"') ;
-            if (finded!=-1){
-                urlxslt=urlxslt.substring(0,finded);
-                this.soursexslt = libutil.document.readDoc(urlxslt);
-                this.xsltProcessor=new XSLTProcessor();  
-                this.xsltProcessor.importStylesheet(this.soursexslt); 
-                this.trasformsourse = this.xsltProcessor.transformToDocument(this.sourseDocument);
-                return;
-            }
+            urlxslt=urlxslt.substring(0,finded);
+            this.soursexslt = libutil.document.readDoc(urlxslt);
+            this.xsltProcessor=new XSLTProcessor();  
+            this.xsltProcessor.importStylesheet(this.soursexslt); 
+            this.trasformsourse = this.xsltProcessor.transformToDocument(this.sourseDocument);
+            return;
+        }
     } 
     this.xslturl=undefined;
 }
@@ -196,7 +196,7 @@ designer.prototype.getTrasformDocument = function(){
 
 designer.prototype.getSourseElement = function(el){
     return el && el.id && this.sourseDocument ? 
-        this.sourseDocument.getElementById(el.id) : null;
+    this.sourseDocument.getElementById(el.id) : null;
 }
 
 
@@ -208,7 +208,7 @@ designer.prototype.getTransformElement = function(elid){
             return this.getLightElement(el);
         }
     }
-return null;
+    return null;
 }
 
 
@@ -397,7 +397,7 @@ designer.prototype.setElementRect = function(x, y, width, height , el){
     if ((this.selectedElemens ) || (this.selectedElemens.length>0)){  
         for (var j=0; j< this.selectedElemens.length; ++j)
             this.setElementRect(x, y, width, height, this.selectedElemens[j]);
-        }
+    }
   
 }
 
@@ -566,8 +566,8 @@ designer.prototype.isSelection = function(el){
     if (el && this.selectedElemens) {
         for (var j=0; j< this.selectedElemens.length; ++j)
             if (this.selectedElemens[j]==el) return true;
-        }
-return false;        
+    }
+    return false;        
 }
 
 
@@ -616,25 +616,26 @@ designer.prototype.click_component = function(){
 }
 
 designer.prototype.click_parented = function(ev){
-if (ev && ev.clientX.toString() && ev.clientY.toString())
-       this.createLibComponent(ev.clientX.toString(), ev.clientY.toString());
+    if (ev && ev.clientX.toString() && ev.clientY.toString())
+        this.createLibComponent(ev.clientX.toString(), ev.clientY.toString());
 }
 
 designer.prototype.createLibComponent = function(x, y){
     var created = designutil.toolwin.getSelectedComponent();
     if (created && x && y){
-         var coneid=this.unicalIdGenerate(created , this.sourseDocument);
-         var prnt = this.sourseDocument.documentElement;         
-         var el =prnt.appendChild(created.cloneNode(true)); 
-         el.setAttribute('id',  coneid);
-         if (el.hasAttribute(this.getXname(el))) el.setAttribute(this.getXname(el), x);
-         if (el.hasAttribute(this.getYname(el))) el.setAttribute(this.getYname(el), y);
-         this.getTrasformDocument();
-         var tel = this.getTransformElement(coneid);
-         this.instantdocument.documentElement.appendChild(tel);
-         this.attach(tel);
-         this.updateElement(tel);
-         this.setNeedSave(); }     
+        var coneid=this.unicalIdGenerate(created , this.sourseDocument);
+        var prnt = this.sourseDocument.documentElement;         
+        var el =prnt.appendChild(created.cloneNode(true)); 
+        el.setAttribute('id',  coneid);
+        if (el.hasAttribute(this.getXname(el))) el.setAttribute(this.getXname(el), x);
+        if (el.hasAttribute(this.getYname(el))) el.setAttribute(this.getYname(el), y);
+        this.getTrasformDocument();
+        var tel = this.getTransformElement(coneid);
+        this.instantdocument.documentElement.appendChild(tel);
+        this.attach(tel);
+        this.updateElement(tel);
+        this.setNeedSave();
+    }     
 }
 
 /*выделение элемента*/
@@ -709,26 +710,30 @@ designer.prototype.moveElements = function (event){
             switch (event.keyIdentifier){
                 case 'Left':{
                     if (el.hasAttribute('x')){   
-                    this.setAttributeValue( 'x', parseFloat(this.getAttributeValue('x', el)) - incr, el);
-                    ismove=true;}
+                        this.setAttributeValue( 'x', parseFloat(this.getAttributeValue('x', el)) - incr, el);
+                        ismove=true;
+                    }
                     break;
                 }
                 case 'Right':{
                     if (el.hasAttribute('x')){     
-                    this.setAttributeValue('x', parseFloat(this.getAttributeValue('x', el)) + incr, el);
-                    ismove=true;}
+                        this.setAttributeValue('x', parseFloat(this.getAttributeValue('x', el)) + incr, el);
+                        ismove=true;
+                    }
                     break;
                 }     
                 case 'Up':{
                     if (el.hasAttribute('y')){     
-                    this.setAttributeValue('y', parseFloat(this.getAttributeValue('y', el)) - incr, el);
-                    ismove=true;}
+                        this.setAttributeValue('y', parseFloat(this.getAttributeValue('y', el)) - incr, el);
+                        ismove=true;
+                    }
                     break;
                 }
                 case 'Down':{
                     if (el.hasAttribute('y')){     
-                    this.setAttributeValue( 'y', parseFloat(this.getAttributeValue('y', el)) + incr, el);
-                    ismove=true;}
+                        this.setAttributeValue( 'y', parseFloat(this.getAttributeValue('y', el)) + incr, el);
+                        ismove=true;
+                    }
                     break
                 }
             }                
@@ -763,7 +768,7 @@ designer.prototype.moveElements = function (event){
     if (ismove){
         this.updateElement();
 
-        }   
+    }   
 }
 
 
@@ -962,17 +967,17 @@ designer.prototype.createContextMenu = function(){
                 
     '}';  
         
-   libutil.html.create_style(this.contextmenu.bindelement,styletxt); 
+    libutil.html.create_style(this.contextmenu.bindelement,styletxt); 
    
-   var table = libutil.html.create_table(this.contextmenu.bindelement, null, 'scrollable');
-   table.setAttribute('width' , '100%');
+    var table = libutil.html.create_table(this.contextmenu.bindelement, null, 'scrollable');
+    table.setAttribute('width' , '100%');
            
-   var tbody= libutil.html.create_tbody(table);
+    var tbody= libutil.html.create_tbody(table);
 
        
-   this.ContextMenuComponent(tbody);
+    this.ContextMenuComponent(tbody);
     
-   this.contextmenu.onmouseout=function(){
+    this.contextmenu.onmouseout=function(){
         if (event.fromElement==this) {
             document.red.ContextMenuDestroy();
         }
@@ -1437,7 +1442,7 @@ designutil.componentinfo.prototype.read_creators =  function(doc){
 
 
             
- ///
+///
 
 
 
@@ -1471,9 +1476,9 @@ designutil.toolwin.getMainWindow = function (){
     
         
     tmp.maintool.onload =  function() {
-            //setTimeout( function() {
-            //libutil.www.correct_window_height(tmp.maintool,30);}, 1000);
-        }  
+    //setTimeout( function() {
+    //libutil.www.correct_window_height(tmp.maintool,30);}, 1000);
+    }  
     
     
      
@@ -1498,20 +1503,22 @@ designutil.toolwin.setMainWindowToolStatus = function (val){
 
 
 designutil.toolwin.destroyMainWindow = function(){
-        var tmp=libutil.global.getGlobal();
-        if (tmp && tmp.maintool)
-            tmp.maintool=undefined;
-        if (!designutil.toolwin.isNeedSave()){          
-            dvnci_exit();
-            return;}
-        if (confirm("Выйти без сохранения?")){
-            dvnci_exit();
-            return;
-        } 
-        else{
+    var tmp=libutil.global.getGlobal();
+    if (tmp && tmp.maintool)
+        tmp.maintool=undefined;
+    if (!designutil.toolwin.isNeedSave()){          
+        dvnci_exit();
+        return;
+    }
+    if (confirm("Выйти без сохранения?")){
+        dvnci_exit();
+        return;
+    } 
+    else{
         setTimeout(function() {
             designutil.toolwin.getMainWindow();
-        }, 10);}
+        }, 10);
+    }
 }
 
 
@@ -1655,7 +1662,7 @@ designutil.toolwin.fillFormInspector = function (){
     var tr = libutil.html.create_tr(tbody);
     
     libutil.html.create_tabel_header(tr,null,null,
-                                         ['Файл','id','caption','x','y','width','height','visible','alltop','resize','decorate','modal','0/X','-']);
+        ['Файл','id','caption','x','y','width','height','visible','alltop','resize','decorate','modal','0/X','-']);
    
     var fl= libutil.global.getFormList();
  
@@ -1776,40 +1783,40 @@ designutil.toolwin.fiPropertyLeaveFocus = function(event){
  
 
 designutil.toolwin.fiCheckFormParam = function(name, val){
-        switch (name){
-            case 'caption':{
-                return true;
-            }             
-            case 'width':
-            case 'height':        
-            case 'top':
-            case 'left':{
-                var ind = val.search('/%/i');
-                if (ind==-1){
-                    var vl=parseInt(val);
-                    if (vl!=vl) return undefined;
-                }
-                else{
-                    var tmpval = val.substring(0,ind);
-                    if ((vl!=vl) || (vl<0) || (vl>100)) return undefined;
-                }
-                return true;
+    switch (name){
+        case 'caption':{
+            return true;
+        }             
+        case 'width':
+        case 'height':        
+        case 'top':
+        case 'left':{
+            var ind = val.search('/%/i');
+            if (ind==-1){
+                var vl=parseInt(val);
+                if (vl!=vl) return undefined;
             }
-            case 'name':{
-                return !libutil.project.getFormInfo(val);
+            else{
+                var tmpval = val.substring(0,ind);
+                if ((vl!=vl) || (vl<0) || (vl>100)) return undefined;
             }
-            case 'visible':{
-                return (val=='') || (val=='true') || (val=='false');
-            } 
-            case 'resizable':
-            case 'resizable':
-            case 'allwaystop':{
-                return (val=='') || (val=='true');
-            }
-            case 'decorated':{
-                return (val=='') || (val=='no');
-            }  
+            return true;
+        }
+        case 'name':{
+            return !libutil.project.getFormInfo(val);
+        }
+        case 'visible':{
+            return (val=='') || (val=='true') || (val=='false');
         } 
+        case 'resizable':
+        case 'resizable':
+        case 'allwaystop':{
+            return (val=='') || (val=='true');
+        }
+        case 'decorated':{
+            return (val=='') || (val=='no');
+        }  
+    } 
     return false;
 }
 
@@ -1859,7 +1866,7 @@ designutil.toolwin.getLibInspector = function (force){
                 "background-color: #E7E7E7; margin: 0px; border-width: 1px 0px ; border-color: yellow; border-style: solid; text-align: center; color: #040347)"); 
         }
         
-        //tmp.libtool.onload= function() {alert('test');}
+    //tmp.libtool.onload= function() {alert('test');}
 
     }
     return (tmp && tmp.libtool) ? tmp.libtool : null;
@@ -2007,7 +2014,7 @@ designutil.toolwin.windowstatus = function (name){
         for (var i=0; i<fl.length;++i)
             if (fl[i]['name']==name)
                 return fl[i].window ? true : false;
-        }
+    }
     return false;
 }
 
@@ -2200,10 +2207,10 @@ designutil.toolwin.removeFormFromProject =function(name){
                 }
             }
         }
-    catch(error){
-        alert(error);
+        catch(error){
+            alert(error);
+        }
     }
-}
 }
 
 designutil.toolwin.propertydialog = function(name, value){
