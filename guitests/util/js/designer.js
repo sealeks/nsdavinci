@@ -1,232 +1,20 @@
 var designutil = {};
 ///
-
-function schema_info(){
+designutil.componentinfo = function(){
     this.elements = new Object();
     this.types = new Object();
     this.libs = [];
     this.creators = new Object();;
 }
 
-
-schema_info.prototype.init = function(libsulr){
-    this.libsdoc=libutil.document.readDoc(libsulr);
-    if (this.libsdoc){
-        var els=this.libsdoc.getElementsByTagName('include');
-        for (var i=0; i<els.length;++i)
-            if (els[i].getAttribute('xsi:schemaLocation')) 
-                this.libs.push(els[i].getAttribute('xsi:schemaLocation'));
-
-        if (this.libs.length>0)
-            for (var i=0; i<this.libs.length;++i)
-                this.initlibs(this.libs[i]);   
-    }
-}
-
-schema_info.prototype.initlibs = function(libulr){
-    var libdoc=libutil.document.readDoc(libulr);
-    if (libdoc){ 
-        this.read_types(libdoc);
-        this.read_elements(libdoc);
-        this.read_creators(libdoc);
-    }
-}
-
-
-
-
-schema_info.prototype.getAttributeList = function (el){ 
-    
-    var node = el['nodeName'];
-    if ((node) && (this.elements[node]!=undefined))
-        return this.elements[node];
-
-    this.attributes_for_nullschema(el);
-    return this.elements[node];
-
-    
-}
-
-
-schema_info.prototype.attributes_for_nullschema = function (el){ 
-    var node = el['nodeName'];
-
-    var result =[];
-    for (var i=0; i< el.attributes.length; ++i){
-        result.push({
-            'name' : el.attributes[i].name , 
-            'type' : null, 
-            'use' : null, 
-            'default' : null
-        })
-                
-        this.elements[node] = {
-            'name' : els[i].getAttribute('name'),
-            'type' : els[i].getAttribute('type'),
-            'attributes' : result
-        };
-   
-    }
-}
-
-schema_info.prototype.read_types =  function(doc){
-    if (doc){
-        var docElement=doc.documentElement;
-        var els=doc.getElementsByTagName('simpleType');
-        for (var i=0; i<els.length;++i){
-            if ((els[i].parentNode==docElement) && (els[i].getAttribute('name'))){
-                var info=this.read_simple_type(els[i]);
-                var nm = els[i].getAttribute('name');
-                if (info)
-                    this.types[nm] = {
-                        'name' : nm , 
-                        'type' : info.type, 
-                        'base' : info['base'], 
-                        'regex' : info['regex'],  
-                        'list' : info['list']
-                    };
-                    
-            }
-            else
-                this.types[nm] = {
-                    'name' : nm , 
-                    'type' : 0, 
-                    'base' : null, 
-                    'regex' : null,  
-                    'list' : null
-                } 
-        }
-    }
-}
-
-schema_info.prototype.read_simple_type =  function(el){
-    if (el){
-        var restrictel=el.firstElementChild;
-        if ((restrictel) || (restrictel.localName=='restriction')){
-            return this.read_restriction_type(restrictel);
-        }
-    }
-    return {
-        'type': 0, 
-        'base': null, 
-        'regex': null, 
-        'list': null
-    };
-}
-
-schema_info.prototype.read_restriction_type =  function(el){
-    if ((!el) || (el.childElementCount==0))
-        return {
-            'type': 0, 
-            'base': null, 
-            'regex': null, 
-            'list': null
-        };
-    var type=0;
-    var base=el.getAttribute('base');
-    var list=null;
-    var regex=null;
-        
-    if (el.childElementCount==1){
-        if ((el.firstElementChild.localName='pattern') && (el.firstElementChild.getAttribute('value'))){
-            type=1;
-            regex=el.firstElementChild.getAttribute('value');
-        }           
-    }
-    else{
-        if (el.firstElementChild.localName=='enumeration'){
-            list = [];
-            type=2;
-            for (var ch=el.firstElementChild; ch; ch=ch.nextElementSibling){
-                if (ch.localName=='enumeration'){
-                    if (ch.getAttribute('value')!=null)
-                        list.push(ch.getAttribute('value'));
-                    else
-                        type=3;
-                }
-            }
-            if (list.length==0){
-                list=null;
-                type=0;
-            }
-        } 
-    }
-    return {
-        'type': type, 
-        'base': base, 
-        'regex': regex, 
-        'list': list
-    };
-}
-            
-            
-     
-
-schema_info.prototype.read_elements =  function(doc){
-    if (doc){
-        var els=doc.getElementsByTagName('element');
-        for (var i=0; i<els.length;++i){
-            if (els[i].getAttribute('name')){
-                this.elements[els[i].getAttribute('name')]={
-                    'name' : els[i].getAttribute('name'),
-                    'type' : els[i].getAttribute('type'),
-                    'attributes' : null
-                };
-                this.read_attributes(els[i],this.elements[els[i].getAttribute('name')]);
-            }
-        }
-    }
-}
-
-schema_info.prototype.read_attributes = function(el,  info){
-    var result = new Object();
-    if (!el)
-        return result;
-    var typeel=el.firstElementChild;
-    if ((!typeel) || (typeel.localName!='complexType'))
-        return result; 
-    if (!typeel) return;
-        
-    for (var ch=typeel.firstElementChild; ch; ch=ch.nextElementSibling)
-        if ((ch.localName=='attribute') && (ch.getAttribute('name')))
-            result[ch.getAttribute('name')] = {
-                'name' : ch.getAttribute('name') , 
-                'type' : this.get_attribute(ch.getAttribute('type')), 
-                'use' : ch.getAttribute('use'), 
-                'default' : ch.getAttribute('default')
-            };
-                
-    info.attributes=result;
-}
-
-schema_info.prototype.get_attribute = function(name){
-    return ( name && this.types[name]) ? (this.types[name]) : null;
-}
-
-
-schema_info.prototype.read_creators =  function(doc){
-    if (doc){
-        var els=doc.getElementsByTagName('creator');
-        for (var i=0; i<els.length;++i)
-            if (els[i].nodeName=='dvnlib:creator'){
-                var nm = els[i].getAttribute('name');
-                var el = els[i].firstElementChild;
-                if ((nm) && (nm!='') && (el))
-                    this.creators[nm] = {
-                        'name' : nm , 
-                        'template' : el
-                    };
-                    
-            }        
-    }
-}
+libutil.toolwin = {};
         
 
 ///
 
 function designer(doc){ 
     this.instantdocument=doc;
-    this.schema=new schema_info();
+    this.schema=new designutil.componentinfo();
     this.schema.init('../util/lib.xsl');
     this.getSourseDocument();
     this.getLightDocument();
@@ -1424,11 +1212,237 @@ designer.prototype.setNeedSave = function(){
 
 
 
+///
 
+
+
+
+////
+
+
+
+
+
+designutil.componentinfo.prototype.init = function(libsulr){
+    this.libsdoc=libutil.document.readDoc(libsulr);
+    if (this.libsdoc){
+        var els=this.libsdoc.getElementsByTagName('include');
+        for (var i=0; i<els.length;++i)
+            if (els[i].getAttribute('xsi:schemaLocation')) 
+                this.libs.push(els[i].getAttribute('xsi:schemaLocation'));
+
+        if (this.libs.length>0)
+            for (var i=0; i<this.libs.length;++i)
+                this.initlibs(this.libs[i]);   
+    }
+}
+
+designutil.componentinfo.prototype.initlibs = function(libulr){
+    var libdoc=libutil.document.readDoc(libulr);
+    if (libdoc){ 
+        this.read_types(libdoc);
+        this.read_elements(libdoc);
+        this.read_creators(libdoc);
+    }
+}
+
+
+
+
+designutil.componentinfo.prototype.getAttributeList = function (el){ 
+    
+    var node = el['nodeName'];
+    if ((node) && (this.elements[node]!=undefined))
+        return this.elements[node];
+
+    this.attributes_for_nullschema(el);
+    return this.elements[node];
+
+    
+}
+
+
+designutil.componentinfo.prototype.attributes_for_nullschema = function (el){ 
+    var node = el['nodeName'];
+
+    var result =[];
+    for (var i=0; i< el.attributes.length; ++i){
+        result.push({
+            'name' : el.attributes[i].name , 
+            'type' : null, 
+            'use' : null, 
+            'default' : null
+        })
+                
+        this.elements[node] = {
+            'name' : els[i].getAttribute('name'),
+            'type' : els[i].getAttribute('type'),
+            'attributes' : result
+        };
+   
+    }
+}
+
+designutil.componentinfo.prototype.read_types =  function(doc){
+    if (doc){
+        var docElement=doc.documentElement;
+        var els=doc.getElementsByTagName('simpleType');
+        for (var i=0; i<els.length;++i){
+            if ((els[i].parentNode==docElement) && (els[i].getAttribute('name'))){
+                var info=this.read_simple_type(els[i]);
+                var nm = els[i].getAttribute('name');
+                if (info)
+                    this.types[nm] = {
+                        'name' : nm , 
+                        'type' : info.type, 
+                        'base' : info['base'], 
+                        'regex' : info['regex'],  
+                        'list' : info['list']
+                    };
+                    
+            }
+            else
+                this.types[nm] = {
+                    'name' : nm , 
+                    'type' : 0, 
+                    'base' : null, 
+                    'regex' : null,  
+                    'list' : null
+                } 
+        }
+    }
+}
+
+designutil.componentinfo.prototype.read_simple_type =  function(el){
+    if (el){
+        var restrictel=el.firstElementChild;
+        if ((restrictel) || (restrictel.localName=='restriction')){
+            return this.read_restriction_type(restrictel);
+        }
+    }
+    return {
+        'type': 0, 
+        'base': null, 
+        'regex': null, 
+        'list': null
+    };
+}
+
+designutil.componentinfo.prototype.read_restriction_type =  function(el){
+    if ((!el) || (el.childElementCount==0))
+        return {
+            'type': 0, 
+            'base': null, 
+            'regex': null, 
+            'list': null
+        };
+    var type=0;
+    var base=el.getAttribute('base');
+    var list=null;
+    var regex=null;
+        
+    if (el.childElementCount==1){
+        if ((el.firstElementChild.localName='pattern') && (el.firstElementChild.getAttribute('value'))){
+            type=1;
+            regex=el.firstElementChild.getAttribute('value');
+        }           
+    }
+    else{
+        if (el.firstElementChild.localName=='enumeration'){
+            list = [];
+            type=2;
+            for (var ch=el.firstElementChild; ch; ch=ch.nextElementSibling){
+                if (ch.localName=='enumeration'){
+                    if (ch.getAttribute('value')!=null)
+                        list.push(ch.getAttribute('value'));
+                    else
+                        type=3;
+                }
+            }
+            if (list.length==0){
+                list=null;
+                type=0;
+            }
+        } 
+    }
+    return {
+        'type': type, 
+        'base': base, 
+        'regex': regex, 
+        'list': list
+    };
+}
+            
+            
+     
+
+designutil.componentinfo.prototype.read_elements =  function(doc){
+    if (doc){
+        var els=doc.getElementsByTagName('element');
+        for (var i=0; i<els.length;++i){
+            if (els[i].getAttribute('name')){
+                this.elements[els[i].getAttribute('name')]={
+                    'name' : els[i].getAttribute('name'),
+                    'type' : els[i].getAttribute('type'),
+                    'attributes' : null
+                };
+                this.read_attributes(els[i],this.elements[els[i].getAttribute('name')]);
+            }
+        }
+    }
+}
+
+designutil.componentinfo.prototype.read_attributes = function(el,  info){
+    var result = new Object();
+    if (!el)
+        return result;
+    var typeel=el.firstElementChild;
+    if ((!typeel) || (typeel.localName!='complexType'))
+        return result; 
+    if (!typeel) return;
+        
+    for (var ch=typeel.firstElementChild; ch; ch=ch.nextElementSibling)
+        if ((ch.localName=='attribute') && (ch.getAttribute('name')))
+            result[ch.getAttribute('name')] = {
+                'name' : ch.getAttribute('name') , 
+                'type' : this.get_attribute(ch.getAttribute('type')), 
+                'use' : ch.getAttribute('use'), 
+                'default' : ch.getAttribute('default')
+            };
+                
+    info.attributes=result;
+}
+
+designutil.componentinfo.prototype.get_attribute = function(name){
+    return ( name && this.types[name]) ? (this.types[name]) : null;
+}
+
+
+designutil.componentinfo.prototype.read_creators =  function(doc){
+    if (doc){
+        var els=doc.getElementsByTagName('creator');
+        for (var i=0; i<els.length;++i)
+            if (els[i].nodeName=='dvnlib:creator'){
+                var nm = els[i].getAttribute('name');
+                var el = els[i].firstElementChild;
+                if ((nm) && (nm!='') && (el))
+                    this.creators[nm] = {
+                        'name' : nm , 
+                        'template' : el
+                    };
+                    
+            }        
+    }
+}
 
 
             
-                
+ ///
+
+
+
+
+////               
                 
                 
                 
