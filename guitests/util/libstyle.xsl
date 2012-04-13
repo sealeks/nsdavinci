@@ -21,8 +21,21 @@ extension-element-prefixes="mlib">
    <xsl:template name="apply_lib_filterstyle"> 
 
  
-       <filter id="filter_lib1" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="blur"/>
+       <filter id="filter_lib_armat1000"  x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
+            <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+                <fePointLight x="50000" y="50000" z="200000"/>
+            </feSpecularLighting>
+            <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+            <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+            <feMerge>
+                <!--feMergeNode in="offsetBlur"/-->
+                <feMergeNode in="litPaint"/>
+            </feMerge>
+        </filter>
+        
+        <filter id="filter_lib1" x="0%" y="0%" width="100%" height="100%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
             <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
                 <fePointLight x="50000" y="100000" z="200000"/>
             </feSpecularLighting>
@@ -34,21 +47,21 @@ extension-element-prefixes="mlib">
             </feMerge>
         </filter>
 
-        <filter id="filter_lib2" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
-            <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
-                <fePointLight x="50000" y="100000" z="200000"/>
+        <filter id="filter_lib2"  x="-10%" y="-10%" width="120%" height="120%" >
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+            <feSpecularLighting in="blur" surfaceScale="6" specularConstant=".6" specularExponent="5" lighting-color="#bbbbbb" result="specOut">
+                <fePointLight x="0" y="0" z="20000"/>
             </feSpecularLighting>
             <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
-            <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+            <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint">
+            </feComposite>    
             <feMerge>
-                <feMergeNode in="offsetBlur"/>
                 <feMergeNode in="litPaint"/>
             </feMerge>
         </filter>
         
 
-        <filter id="filter_lib3" filterUnits="userSpaceOnUse">
+        <filter id="filter_lib3" filterUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%" >
             <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
             <feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
                 <fePointLight x="0" y="0" z="20000"/>
