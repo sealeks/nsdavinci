@@ -12,22 +12,17 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="lib_svgstyle"> 
         <defs>
-            <xsl:call-template name="apply_mlib_armatfilter"/>
-            <xsl:call-template name="apply_mlib_style"/> 
+            <xsl:call-template name="apply_lib_filterstyle"/>
+            <xsl:call-template name="apply_lib_gradients"/> 
         </defs>  
     </xsl:template>
 
-    <xsl:template name="mailib_gradients">       
-        <xsl:call-template name="apply_mlib_armatfilter"/>                
-    </xsl:template>
-    
-    
-    
-   
-   <xsl:template name="apply_mlib_armatfilter"> 
  
-       <filter id="armat_filter1" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
+   <xsl:template name="apply_lib_filterstyle"> 
+
+ 
+       <filter id="filter_lib1" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="blur"/>
             <!--feOffset in="blur" dx="0" dy="0" result="offsetBlur"/-->
             <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
                 <fePointLight x="50000" y="100000" z="200000"/>
@@ -40,7 +35,7 @@ extension-element-prefixes="mlib">
             </feMerge>
         </filter>
 
-        <filter id="armat_filter2" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+        <filter id="filter_lib2" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
             <feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
             <feOffset in="blur" dx="0" dy="0" result="offsetBlur"/>
             <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
@@ -55,7 +50,21 @@ extension-element-prefixes="mlib">
         </filter>
         
 
-        <filter id="tubefilter" >
+        <filter id="filter_lib3" >
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+            <feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
+            <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+                <fePointLight x="-5000" y="-10000" z="20000"/>
+            </feSpecularLighting>
+            <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+            <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint">
+            </feComposite>    
+            <feMerge>
+                <feMergeNode in="litPaint"/>
+            </feMerge>
+        </filter>
+        
+        <filter id="filter_lib4" filterUnits="userSpaceOnUse">
             <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
             <feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
             <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
@@ -69,13 +78,12 @@ extension-element-prefixes="mlib">
             </feMerge>
         </filter>
 
-
-        
-        
      </xsl:template>   
      
      
-     <xsl:template name="apply_mlib_style"> 
+     
+     
+     <xsl:template name="apply_lib_gradients"> 
     
           <linearGradient id="hgradientnone"  x1="100%" y1="0%" x2="100%" y2="100%">
 		<stop  offset="0" style="stop-color:#F7F7F7"/>

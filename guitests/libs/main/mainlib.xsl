@@ -296,7 +296,7 @@ extension-element-prefixes="mlib">
                 <xsl:value-of select="@environment"/> 
             </xsl:variable>
             <xsl:attribute name="filter">
-                <xsl:text>url(#armat_filter1)</xsl:text>
+                <xsl:text>url(#filter_lib1)</xsl:text>
             </xsl:attribute>     
             <xsl:choose>                        
                 <xsl:when test="(boolean(@on) and not(normalize-space(@on)='')) and (boolean(@off) and not(normalize-space(@off)=''))"> 
@@ -730,7 +730,9 @@ extension-element-prefixes="mlib">
             
             <xsl:call-template name="apply_rect"/>
             
-            <xsl:call-template  name="apply_visible"/>
+            <!--xsl:call-template  name="apply_visible"/-->
+            
+            <xsl:call-template name="apply_svg_g_visible"/> 
                                                                    
             <xsl:attribute name="desc">
                 <xsl:if test="boolean(@on)">
@@ -1747,7 +1749,7 @@ extension-element-prefixes="mlib">
             
             <xsl:call-template name="apply_cental_rotate"/>
             
-            <xsl:call-template  name="apply_visible"/>
+            <xsl:call-template name="apply_svg_g_visible"/> 
                      
             <xsl:call-template  name="apply_mlib_button_body"/>
             
@@ -1850,7 +1852,7 @@ extension-element-prefixes="mlib">
             
             <xsl:call-template name="apply_cental_rotate"/>
             
-            <xsl:call-template  name="apply_visible"/>
+            <xsl:call-template name="apply_svg_g_visible"/> 
             
             <xsl:variable name="landsc">
                 <xsl:choose>
@@ -2058,7 +2060,7 @@ extension-element-prefixes="mlib">
             
             <xsl:call-template name="apply_cental_rotate"/>
             
-            <xsl:call-template  name="apply_visible"/>
+            <xsl:call-template name="apply_svg_g_visible"/> 
             
             <xsl:choose>
                 <xsl:when test="boolean(@param) and not(@param='')">
@@ -2229,6 +2231,7 @@ extension-element-prefixes="mlib">
             <xsl:call-template name="apply_id"/>
             
             <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_svg_g_visible"/> 
             <path>
 
             
@@ -2241,9 +2244,9 @@ extension-element-prefixes="mlib">
                     </xsl:choose>    
                 </xsl:attribute>
             
-            <!--xsl:attribute name="filter">
-                                <xsl:text>url(#tubefilter)</xsl:text>
-            </xsl:attribute-->
+            <xsl:attribute name="filter">
+                   <xsl:text>url(#filter_lib4)</xsl:text>
+            </xsl:attribute>
             
                 <xsl:attribute name="stroke-width">
                     <xsl:choose>
@@ -2500,51 +2503,241 @@ extension-element-prefixes="mlib">
     </xsl:template>
     
     
+    <!--   
+    ||_______________________________________________________________________________________________________________________________________||
+    ||_______________________________________________________________________________________________________________________________________||    
+    ||_______________________________________________________________________________________________________________________________________||    
+ 
+ 
+    ||_______________________________________________________________________________________________________________________________________||
+    ||_______________________________________________________________________________________________________________________________________||
+    ||_______________________________________________________________________________________________________________________________________||    
+    -->   
+    
+    
+    <xsl:template name="mlib_translate"> 
+        <xsl:choose>
+            <xsl:when test="(boolean(@translate-x) and not(normalize-space(@translate-x)='')) and  (boolean(@translate-y) and not(normalize-space(@translate-y)=''))">
+                <xsl:attribute name="transform">
+                    <xsl:text>translate(</xsl:text>
+                    <xsl:value-of select="@translate-x"/>
+                    <xsl:text>,</xsl:text>
+                    <xsl:value-of select="@translate-y"/>
+                    <xsl:text>)</xsl:text>
+                </xsl:attribute>    
+                <g>
+                    <xsl:call-template name="mlib_rotate"/>
+                </g>
+            </xsl:when>
+            <xsl:when test="(boolean(@translate-x) and not(normalize-space(@translate-x)=''))">  
+                <xsl:attribute name="transform">
+                    <xsl:text>translate(</xsl:text>
+                    <xsl:value-of select="@translate-x"/>
+                    <xsl:text>, 0</xsl:text>
+                    <xsl:text>)</xsl:text>
+                </xsl:attribute>              
+                <g>
+                    <xsl:call-template name="mlib_rotate"/>
+                </g>
+            </xsl:when>
+            <xsl:when test="(boolean(@translate-y) and not(normalize-space(@translate-y)=''))"> 
+                <xsl:attribute name="transform">
+                    <xsl:text>translate( 0</xsl:text>
+                    <xsl:text>,</xsl:text>
+                    <xsl:value-of select="@translate-y"/>
+                    <xsl:text>)</xsl:text>
+                </xsl:attribute>
+                <g>
+                    <xsl:call-template name="mlib_rotate"/>
+                </g>
+            </xsl:when>            
+            <xsl:otherwise>
+                <xsl:call-template name="mlib_rotate"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+
+    <xsl:template name="mlib_rotate"> 
+        <xsl:choose>
+            <xsl:when test=" (boolean(@rotate-angle) and not(normalize-space(@rotate-angle)='')) or (boolean(@rotate-angle-binding) and not(normalize-space(@rotate-angle-binding)='')) ">
+                <xsl:variable name="rotate-x"> 
+                    <xsl:choose>
+                        <xsl:when test=" (boolean(@rotate-x) and not(normalize-space(@rotate-x)='')) ">
+                            <xsl:value-of select="@rotate-x"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>0</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="rotate-y"> 
+                    <xsl:choose>
+                        <xsl:when test=" (boolean(@rotate-y) and not(normalize-space(@rotate-y)='')) ">
+                            <xsl:value-of select="@rotate-y"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>0</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable> 
+                
+                
+                <xsl:choose>
+                    <xsl:when test="(boolean(@rotate-angle) and not(normalize-space(@rotate-angle)='')) and (boolean(@rotate-angle-binding) and not(normalize-space(@rotate-angle-binding)='')) ">            
+                        <xsl:attribute name="transform">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@rotate-angle-binding"/>
+                            <xsl:text> ).valid ? </xsl:text>
+                            <xsl:text>('rotate(' + format((</xsl:text>
+                            <xsl:value-of select="@rotate-angle-binding"/>
+                            <xsl:text>) , '%3.2f')</xsl:text>
+                                                       
+                            <xsl:text>+ ',</xsl:text>
+                            <xsl:value-of select="$rotate-x"/>
+                            <xsl:text>,</xsl:text>
+                            <xsl:value-of select="$rotate-y"/>
+                            <xsl:text>'</xsl:text>
+                            
+                            <xsl:text> + ')') : 'rotate(</xsl:text>
+                            <xsl:value-of select="@rotate-angle"/>
+                            <xsl:text>,</xsl:text>
+                            <xsl:value-of select="$rotate-x"/>
+                            <xsl:text>,</xsl:text>
+                            <xsl:value-of select="$rotate-y"/>                            
+                            <xsl:text>)' :default </xsl:text>
+                            <xsl:text>rotate(</xsl:text>
+                            <xsl:value-of select="@rotate-angle"/>
+                            <xsl:text>,</xsl:text>
+                            <xsl:value-of select="$rotate-x"/>
+                            <xsl:text>,</xsl:text>
+                            <xsl:value-of select="$rotate-y"/>
+                            <xsl:text>)}</xsl:text>
+                        </xsl:attribute>    
+                        <g>
+                            <xsl:call-template name="mlib_scale"/>
+                        </g>
+                    </xsl:when>
+                    <xsl:when test="(boolean(@rotate-angle) and not(normalize-space(@rotate-angle)=''))">            
+                        <xsl:attribute name="transform">
+                            <xsl:text>rotate(</xsl:text>
+                            <xsl:value-of select="@rotate-angle"/>
+                            <xsl:text>,</xsl:text>
+                            <xsl:value-of select="$rotate-x"/>
+                            <xsl:text>,</xsl:text>
+                            <xsl:value-of select="$rotate-y"/>
+                            <xsl:text>)</xsl:text>
+                        </xsl:attribute>    
+                        <g>
+                            <xsl:call-template name="mlib_scale"/>
+                        </g>
+                    </xsl:when>
+                    <xsl:when test="(boolean(@rotate-angle-binding) and not(normalize-space(@rotate-angle-binding)='')) ">            
+                        <xsl:attribute name="transform">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@rotate-angle-binding"/>
+                            <xsl:text> ).valid ? </xsl:text>
+                            <xsl:text>('rotate(' + format((</xsl:text>
+                            <xsl:value-of select="@rotate-angle-binding"/>
+                            <xsl:text>) , '%3.2f')</xsl:text>
+                            
+                            <xsl:text>+ ',</xsl:text>
+                            <xsl:value-of select="$rotate-x"/>
+                            <xsl:text>,</xsl:text>
+                            <xsl:value-of select="$rotate-y"/>
+                            <xsl:text>'</xsl:text>
+                            
+                            <xsl:text> + ')') : '</xsl:text>
+                            <xsl:text>' :default }</xsl:text>
+                        </xsl:attribute>    
+                        <g>
+                            <xsl:call-template name="mlib_scale"/>
+                        </g>
+                    </xsl:when>            
+                    <xsl:otherwise>
+                        <xsl:call-template name="mlib_scale"/>
+                    </xsl:otherwise>
+                </xsl:choose>                
+             
+
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="mlib_scale"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template> 
+    
+    
+    <xsl:template name="mlib_scale"> 
+        <xsl:choose>
+            <xsl:when test="(boolean(@scale) and not(normalize-space(@scale)='')) and (boolean(@scale-binding) and not(normalize-space(@scale-binding)='')) ">            
+               <xsl:attribute name="transform">
+                   <xsl:text>#{ (</xsl:text>
+                   <xsl:value-of select="@scale-binding"/>
+                   <xsl:text> ).valid ? </xsl:text>
+                   <xsl:text>('scale(' + format((</xsl:text>
+                   <xsl:value-of select="@scale-binding"/>
+                   <xsl:text>) , '%3.2f')</xsl:text>
+                   <xsl:text> + ')') : 'scale(</xsl:text>
+                   <xsl:value-of select="@scale"/>
+                   <xsl:text>)' :default </xsl:text>
+                   <xsl:text>scale(</xsl:text>
+                   <xsl:value-of select="@scale"/>
+                   <xsl:text>)}</xsl:text>
+               </xsl:attribute>    
+               <xsl:apply-templates/>
+            </xsl:when>
+            <xsl:when test="(boolean(@scale) and not(normalize-space(@scale)=''))">            
+               <xsl:attribute name="transform">
+                   <xsl:text>scale(</xsl:text>
+                   <xsl:value-of select="@scale"/>
+                   <xsl:text>)</xsl:text>
+               </xsl:attribute>    
+               <xsl:apply-templates/>
+            </xsl:when>
+            <xsl:when test="(boolean(@scale-binding) and not(normalize-space(@scale-binding)='')) ">            
+               <xsl:attribute name="transform">
+                   <xsl:text>#{ (</xsl:text>
+                   <xsl:value-of select="@scale-binding"/>
+                   <xsl:text> ).valid ? </xsl:text>
+                   <xsl:text>('scale(' + format((</xsl:text>
+                   <xsl:value-of select="@scale-binding"/>
+                   <xsl:text>) , '%3.2f')</xsl:text>
+                   <xsl:text> + ')') : '</xsl:text>
+                   <xsl:text>' :default }</xsl:text>
+               </xsl:attribute>    
+               <xsl:apply-templates/>
+            </xsl:when>            
+            <xsl:otherwise>
+                <xsl:apply-templates/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>  
+    
+    
     <xsl:template match="//mlib:group">
-        <svg style="background-color: yellow; ">
+        <svg>
             
             <xsl:call-template name="apply_rect"/>
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
-            
             <xsl:attribute name="isgoupelement">
                 <xsl:text>true</xsl:text>
-            </xsl:attribute>    
+            </xsl:attribute>
             
-            <rect stroke="white" fill="white" opacity="0.0">
-                <xsl:call-template name="apply_0_0_width_height"/> 
-            </rect>
-            <g>     
-                <xsl:apply-templates/>
-            </g>  
+            <g>
+                <xsl:call-template name="apply_svg_g_visible_binding"/>          
+                <rect stroke="white" fill="white" opacity="0.0">
+                    <xsl:call-template name="apply_0_0_width_height"/> 
+                </rect>
+                <g> 
+                    <xsl:call-template name="mlib_translate"/>
+                </g>
+            </g>
         </svg>
     </xsl:template>    
     
     
-    
-    <!--xsl:template match="//mlib:external">   
-        <g>
-            <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_mlib_schema"/>           
-            <xsl:choose>
-                <xsl:when test="(boolean(@onid) and not(@onid='')) or (boolean(@offid) and not(@offid=''))">                      
-                    <use>
-                        <xsl:call-template name="apply_xy"/>  
-                        <xsl:choose>
-                            <xsl:when test="(boolean(@onid) and not(@onid='')) and (boolean(@offid) and not(@offid=''))">
-                                
-                                
-                            <xsl:when test="boolean(@state) and not(@s='')"> 
-                                <xsl:choose>
-                                    <xsl:when test="boolean(@on) and not(@on='')">
-                                    </xsl:when>
-                                </xsl:choose> 
-                            </xsl:when>
-                        </xsl:choose>    
-                    </use>  
-                </xsl:when>
-            </xsl:choose> 
-        </g>
-    </xsl:template-->
+
     
 </xsl:stylesheet>

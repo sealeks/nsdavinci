@@ -187,5 +187,35 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         </xsl:choose>
     </xsl:template> 
     
+   <xsl:template name="apply_svg_g_visible_binding">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@visible-binding) and not(normalize-space(@visible-binding)='')) ">
+               <xsl:attribute name="style">
+                 <xsl:text>#{ (</xsl:text>  
+                 <xsl:value-of select="@visible-binding"/>
+                 <xsl:text>) ? 'display: block;' : 'display: none;' :default display: block;}</xsl:text> 
+               </xsl:attribute>
+               <xsl:attribute name="dv-visible">
+                   <xsl:text>true</xsl:text> 
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="apply_svg_g_visible">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@visible) and not(normalize-space(@visible)='')) ">
+               <xsl:attribute name="style">
+                 <xsl:text>#{ (</xsl:text>  
+                 <xsl:value-of select="@visible"/>
+                 <xsl:text>) ? 'display: block;' : 'display: none;' :default display: none;}</xsl:text> 
+               </xsl:attribute>
+               <xsl:attribute name="dv-visible">
+                   <xsl:text>true</xsl:text> 
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
+    </xsl:template> 
+    
 
 </xsl:stylesheet>

@@ -7,7 +7,7 @@
         <script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="text/javascript">
             window.onunload=dvnci_detachinterface;
         </script>
-	<filter xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="armat_filter1" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+	<filter xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="filter_lib1" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
 		<feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
 		<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
 			<fePointLight x="50000" y="100000" z="200000"/>
@@ -18,7 +18,7 @@
 			<feMergeNode in="litPaint"/>
 		</feMerge>
 	</filter>
-	<filter xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="armat_filter2" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+	<filter xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="filter_lib2" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
 		<feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
 		<feOffset in="blur" dx="0" dy="0" result="offsetBlur"/>
 		<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
@@ -31,7 +31,7 @@
 			<feMergeNode in="litPaint"/>
 		</feMerge>
 	</filter>
-	<filter xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="tubefilter">
+	<filter xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="filter_lib3">
 		<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
 		<feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
 		<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
@@ -179,7 +179,7 @@
                 
             </script>    
 		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" x="388" y="62" height="60" width="60">
-			<g filter="url(#armat_filter1)" class="non">
+			<g filter="url(#filter_lib1)" class="non">
 				<animate attributeName="class" attributeType="XML" fill="freeze" keyTimes="0;.5" dur="1000ms" repeatCount="indefinite" calcMode="discrete" values="#{ (!(m1::c1).valid &amp;&amp; !(m1::c2).valid) ? 'non;non;' : (m1::c1 &amp;&amp; !m1::c2) ? 'onair;onair;' : (!m1::c1 &amp;&amp; m1::c2) ? 'offair;offair;' : 'onair;offair;' :default non;non;}"/>
 				<path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
 				<path d="M 350,220 L 650, 220 L 650,320 L 350, 320z" stroke-width="20"/>

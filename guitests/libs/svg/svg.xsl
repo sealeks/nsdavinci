@@ -23,6 +23,11 @@ extension-element-prefixes="svg">
     </xsl:template>
     
     
+           
+                   
+                
+                
+    
     <xsl:template name="apply_svg_x">        
         <xsl:choose>
             <xsl:when test="(boolean(@x) and not(normalize-space(@x)='')) and (boolean(@x-binding) and not(normalize-space(@x-binding)='')) ">
@@ -488,7 +493,7 @@ extension-element-prefixes="svg">
     
     
     <xsl:template name="apply_svg_stroke_opacity">   
-    <xsl:choose>
+        <xsl:choose>
             <xsl:when test="(boolean(@stroke-opacity) and not(normalize-space(@stroke-opacity)='')) and (boolean(@stroke-opacity-binding) and not(normalize-space(@stroke-opacity-binding)='')) ">
                 <xsl:attribute name="stroke-opacity">
                     <xsl:text> #{ ( </xsl:text>
@@ -563,7 +568,7 @@ extension-element-prefixes="svg">
     
     
     <xsl:template name="apply_svg_opacity">   
-    <xsl:choose>
+        <xsl:choose>
             <xsl:when test="(boolean(@opacity) and not(normalize-space(@opacity)='')) and (boolean(@opacity-binding) and not(normalize-space(@opacity-binding)='')) ">
                 <xsl:attribute name="opacity">
                     <xsl:text> #{ ( </xsl:text>
@@ -709,17 +714,17 @@ extension-element-prefixes="svg">
         <xsl:choose>
             <xsl:when test="(boolean(@filter) and (normalize-space(@filter)='filter1'))">
                 <xsl:attribute name="filter"> 
-                    <xsl:text>url(#tubefilter)</xsl:text>
+                    <xsl:text>url(#filter_lib1)</xsl:text>
                 </xsl:attribute>
             </xsl:when> 
             <xsl:when test="(boolean(@filter) and (normalize-space(@filter)='filter2'))">
                 <xsl:attribute name="filter"> 
-                    <xsl:text>url(#tubefilter)</xsl:text>
+                    <xsl:text>url(#filter_lib2)</xsl:text>
                 </xsl:attribute>
             </xsl:when>
             <xsl:when test="(boolean(@filter) and (normalize-space(@filter)='filter3'))">
                 <xsl:attribute name="filter"> 
-                    <xsl:text>url(#tubefilter)</xsl:text>
+                    <xsl:text>url(#filter_lib3)</xsl:text>
                 </xsl:attribute>
             </xsl:when>               
         </xsl:choose>
@@ -743,180 +748,204 @@ extension-element-prefixes="svg">
     
 
     <xsl:template match="//svg:circle"> 
-        <circle>
-            <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_svg_schema"/> 
-            <xsl:call-template name="apply_svg_cx"/>
-            <xsl:call-template name="apply_svg_cy"/>
-            <xsl:call-template name="apply_svg_r"/>
-            <xsl:call-template name="apply_svg_stroke"/>
-            <xsl:call-template name="apply_svg_stroke_width"/>
-            <xsl:call-template name="apply_svg_stroke_opacity"/>
-            <xsl:call-template name="apply_svg_fill"/>
-            <xsl:call-template name="apply_svg_opacity"/> 
-            <xsl:call-template name="apply_svg_filter"/>
-            <xsl:attribute name="style">
-                <xsl:value-of select="@style"/>
-            </xsl:attribute>
-  
-        </circle>     
+        <g>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_id"/>
+            <xsl:call-template name="apply_svg_schema"/>
+            <circle>  
+                <xsl:call-template name="apply_svg_cx"/>
+                <xsl:call-template name="apply_svg_cy"/>
+                <xsl:call-template name="apply_svg_r"/>
+                <xsl:call-template name="apply_svg_stroke"/>
+                <xsl:call-template name="apply_svg_stroke_width"/>
+                <xsl:call-template name="apply_svg_stroke_opacity"/>
+                <xsl:call-template name="apply_svg_fill"/>
+                <xsl:call-template name="apply_svg_opacity"/> 
+                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>  
+            </circle>  
+        </g>
     </xsl:template>
     
     <xsl:template match="//svg:ellipse"> 
-        <ellipse>
-            <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_svg_schema"/>  
-            <xsl:call-template name="apply_svg_cx"/>
-            <xsl:call-template name="apply_svg_cy"/>
-            <xsl:call-template name="apply_svg_rx"/>
-            <xsl:call-template name="apply_svg_ry"/>           
-            <xsl:call-template name="apply_svg_stroke"/>
-            <xsl:call-template name="apply_svg_stroke_width"/>
-            <xsl:call-template name="apply_svg_stroke_opacity"/> 
-            <xsl:call-template name="apply_svg_fill"/>
-            <xsl:call-template name="apply_svg_opacity"/>  
-            <xsl:call-template name="apply_svg_filter"/>
-            <xsl:attribute name="style">
-                <xsl:value-of select="@style"/>
-            </xsl:attribute>
+        <g>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_id"/>
+            <xsl:call-template name="apply_svg_schema"/>
+            <ellipse>  
+                <xsl:call-template name="apply_svg_cx"/>
+                <xsl:call-template name="apply_svg_cy"/>
+                <xsl:call-template name="apply_svg_rx"/>
+                <xsl:call-template name="apply_svg_ry"/>           
+                <xsl:call-template name="apply_svg_stroke"/>
+                <xsl:call-template name="apply_svg_stroke_width"/>
+                <xsl:call-template name="apply_svg_stroke_opacity"/> 
+                <xsl:call-template name="apply_svg_fill"/>
+                <xsl:call-template name="apply_svg_opacity"/>  
+                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>
   
-        </ellipse>     
+            </ellipse>   
+        </g>
     </xsl:template>  
     
     <xsl:template match="//svg:rect"> 
-        <rect>
-            <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_svg_schema"/>  
-            <xsl:call-template name="apply_svg_x"/>
-            <xsl:call-template name="apply_svg_y"/>
-            <xsl:call-template name="apply_svg_width"/>
-            <xsl:call-template name="apply_svg_height"/>
-            <xsl:call-template name="apply_svg_rx"/>
-            <xsl:call-template name="apply_svg_ry"/>           
-            <xsl:call-template name="apply_svg_stroke"/>
-            <xsl:call-template name="apply_svg_stroke_width"/>
-            <xsl:call-template name="apply_svg_stroke_opacity"/> 
-            <xsl:call-template name="apply_svg_fill"/>
-            <xsl:call-template name="apply_svg_opacity"/>  
-            <xsl:call-template name="apply_svg_filter"/>
-            <xsl:attribute name="style">
-                <xsl:value-of select="@style"/>
-            </xsl:attribute>
+        <g>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_id"/>
+            <xsl:call-template name="apply_svg_schema"/>
+            <rect>
   
-        </rect>     
+                <xsl:call-template name="apply_svg_x"/>
+                <xsl:call-template name="apply_svg_y"/>
+                <xsl:call-template name="apply_svg_width"/>
+                <xsl:call-template name="apply_svg_height"/>
+                <xsl:call-template name="apply_svg_rx"/>
+                <xsl:call-template name="apply_svg_ry"/>           
+                <xsl:call-template name="apply_svg_stroke"/>
+                <xsl:call-template name="apply_svg_stroke_width"/>
+                <xsl:call-template name="apply_svg_stroke_opacity"/> 
+                <xsl:call-template name="apply_svg_fill"/>
+                <xsl:call-template name="apply_svg_opacity"/>  
+                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>
+  
+            </rect>   
+        </g>
     </xsl:template> 
     
     <xsl:template match="//svg:line"> 
-        <line>
-            <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_svg_schema"/>  
-            <xsl:call-template name="apply_svg_x1"/>
-            <xsl:call-template name="apply_svg_y1"/>
-            <xsl:call-template name="apply_svg_x2"/>
-            <xsl:call-template name="apply_svg_y2"/>          
-            <xsl:call-template name="apply_svg_stroke"/>
-            <xsl:call-template name="apply_svg_stroke_width"/>
-            <xsl:call-template name="apply_svg_stroke_opacity"/>
-            <xsl:attribute name="stroke-linecap">
-                <xsl:value-of select="@stroke-linecap"/>
-            </xsl:attribute>
-            <xsl:call-template name="apply_svg_filter"/>
-            <xsl:attribute name="style">
-                <xsl:value-of select="@style"/>
-            </xsl:attribute>  
-        </line>     
+        <g>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_id"/>
+            <xsl:call-template name="apply_svg_schema"/>
+            <line>        
+                <xsl:call-template name="apply_svg_x1"/>
+                <xsl:call-template name="apply_svg_y1"/>
+                <xsl:call-template name="apply_svg_x2"/>
+                <xsl:call-template name="apply_svg_y2"/>          
+                <xsl:call-template name="apply_svg_stroke"/>
+                <xsl:call-template name="apply_svg_stroke_width"/>
+                <xsl:call-template name="apply_svg_stroke_opacity"/>
+                <xsl:attribute name="stroke-linecap">
+                    <xsl:value-of select="@stroke-linecap"/>
+                </xsl:attribute>
+                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>  
+            </line>     
+        </g>
     </xsl:template> 
     
-    <xsl:template match="//svg:polyline"> 
-        <polyline>
-            <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_svg_schema"/>           
-            <xsl:call-template name="apply_svg_stroke"/>
-            <xsl:call-template name="apply_svg_stroke_width"/>
-            <xsl:call-template name="apply_svg_stroke_opacity"/>
-            <xsl:attribute name="stroke-linecap">
-                <xsl:value-of select="@stroke-linecap"/>
-            </xsl:attribute>
-            <xsl:attribute name="stroke-linejoin">
-                <xsl:value-of select="@stroke-linejoin"/>
-            </xsl:attribute>
-            <xsl:attribute name="points">
-                <xsl:value-of select="@points"/>
-            </xsl:attribute> 
-            <xsl:call-template name="apply_svg_filter"/>
-            <xsl:attribute name="style">
-                <xsl:value-of select="@style"/>
-            </xsl:attribute>
-            <xsl:call-template name="apply_svg_fill"/>
-            <xsl:call-template name="apply_svg_opacity"/>  
-        </polyline>     
+    <xsl:template match="//svg:polyline">
+        <g>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_id"/>
+            <xsl:call-template name="apply_svg_schema"/>
+            <polyline>          
+                <xsl:call-template name="apply_svg_stroke"/>
+                <xsl:call-template name="apply_svg_stroke_width"/>
+                <xsl:call-template name="apply_svg_stroke_opacity"/>
+                <xsl:attribute name="stroke-linecap">
+                    <xsl:value-of select="@stroke-linecap"/>
+                </xsl:attribute>
+                <xsl:attribute name="stroke-linejoin">
+                    <xsl:value-of select="@stroke-linejoin"/>
+                </xsl:attribute>
+                <xsl:attribute name="points">
+                    <xsl:value-of select="@points"/>
+                </xsl:attribute> 
+                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>
+                <xsl:call-template name="apply_svg_fill"/>
+                <xsl:call-template name="apply_svg_opacity"/>  
+            </polyline>
+        </g>
     </xsl:template>
     
     <xsl:template match="//svg:polygon"> 
-        <polygon>
-            <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_svg_schema"/>           
-            <xsl:call-template name="apply_svg_stroke"/>
-            <xsl:call-template name="apply_svg_stroke_width"/>
-            <xsl:call-template name="apply_svg_stroke_opacity"/>
-            <xsl:attribute name="points">
-                <xsl:value-of select="@points"/>
-            </xsl:attribute> 
-            <xsl:call-template name="apply_svg_filter"/>
-            <xsl:attribute name="style">
-                <xsl:value-of select="@style"/>
-            </xsl:attribute>
-            <xsl:call-template name="apply_svg_fill"/>
-            <xsl:call-template name="apply_svg_opacity"/>   
-        </polygon>     
+        <g>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_id"/>
+            <xsl:call-template name="apply_svg_schema"/>
+            <polygon>        
+                <xsl:call-template name="apply_svg_stroke"/>
+                <xsl:call-template name="apply_svg_stroke_width"/>
+                <xsl:call-template name="apply_svg_stroke_opacity"/>
+                <xsl:attribute name="points">
+                    <xsl:value-of select="@points"/>
+                </xsl:attribute> 
+                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>
+                <xsl:call-template name="apply_svg_fill"/>
+                <xsl:call-template name="apply_svg_opacity"/>   
+            </polygon>     
+        </g>
     </xsl:template> 
     
     <xsl:template match="//svg:path"> 
-        <path>
-            <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_svg_schema"/>           
-            <xsl:call-template name="apply_svg_stroke"/>
-            <xsl:call-template name="apply_svg_stroke_width"/>
-            <xsl:call-template name="apply_svg_stroke_opacity"/>
-            <xsl:attribute name="stroke-linecap">
-                <xsl:value-of select="@stroke-linecap"/>
-            </xsl:attribute>
-            <xsl:attribute name="stroke-linejoin">
-                <xsl:value-of select="@stroke-linejoin"/>
-            </xsl:attribute>
-            <xsl:attribute name="d">
-                <xsl:value-of select="@d"/>
-            </xsl:attribute> 
-            <xsl:call-template name="apply_svg_filter"/>
-            <xsl:attribute name="style">
-                <xsl:value-of select="@style"/>
-            </xsl:attribute>
-            <xsl:call-template name="apply_svg_fill"/>
-            <xsl:call-template name="apply_svg_opacity"/>   
-        </path>     
+        <g>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_id"/>
+            <xsl:call-template name="apply_svg_schema"/>
+            <path>         
+                <xsl:call-template name="apply_svg_stroke"/>
+                <xsl:call-template name="apply_svg_stroke_width"/>
+                <xsl:call-template name="apply_svg_stroke_opacity"/>
+                <xsl:attribute name="stroke-linecap">
+                    <xsl:value-of select="@stroke-linecap"/>
+                </xsl:attribute>
+                <xsl:attribute name="stroke-linejoin">
+                    <xsl:value-of select="@stroke-linejoin"/>
+                </xsl:attribute>
+                <xsl:attribute name="d">
+                    <xsl:value-of select="@d"/>
+                </xsl:attribute> 
+                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>
+                <xsl:call-template name="apply_svg_fill"/>
+                <xsl:call-template name="apply_svg_opacity"/>   
+            </path>     
+        </g>
     </xsl:template>
     
     
     
     <xsl:template match="//svg:text"> 
-        <text>
-            <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_svg_schema"/> 
-            <xsl:call-template name="apply_svg_x"/>
-            <xsl:call-template name="apply_svg_y"/>
+        <g>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_id"/>
+            <xsl:call-template name="apply_svg_schema"/>
+            <text>
+                <xsl:call-template name="apply_svg_x"/>
+                <xsl:call-template name="apply_svg_y"/>
             
-            <xsl:call-template name="apply_svg_stroke"/>
-            <xsl:call-template name="apply_svg_stroke_width"/>
-            <xsl:call-template name="apply_svg_stroke_opacity"/>
-            <xsl:call-template name="apply_svg_fill"/>
-            <xsl:call-template name="apply_svg_opacity"/>              
+                <xsl:call-template name="apply_svg_stroke"/>
+                <xsl:call-template name="apply_svg_stroke_width"/>
+                <xsl:call-template name="apply_svg_stroke_opacity"/>
+                <xsl:call-template name="apply_svg_fill"/>
+                <xsl:call-template name="apply_svg_opacity"/>              
             
-            <xsl:call-template name="apply_svg_filter"/>
-            <xsl:attribute name="style">
-                <xsl:value-of select="@style"/>
-            </xsl:attribute>
-            <xsl:call-template name="apply_svg_text"/>
-        </text>     
+                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>
+                <xsl:call-template name="apply_svg_text"/>
+            </text>  
+        </g>
     </xsl:template> 
     
 </xsl:stylesheet>

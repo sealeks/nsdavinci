@@ -46,10 +46,10 @@ designer.prototype.attach = function(el){
     try{
         if (el==this.instantdocument.documentElement){
             el.oldoncick = el.oncick;
-            el.onclick = function(ev) {
+            el.onclick = function() {
                 if (document.red){
                     document.red.clearSelections();
-                    document.red.click_parented(ev);
+                    document.red.click_parented(el);
                     designutil.toolwin.setCurrentRedactor(window);
                 }
             };
@@ -58,7 +58,13 @@ designer.prototype.attach = function(el){
             if (el.id!=""){
                 el.oldoncick = el.oncick;
                 el.onclick= function() {
-                    if (document.red) document.red.click_component(event)
+                    //alert('hhh');
+                    if (el.hasAttribute('isgoupelement')){
+                        if (document.red) document.red.click_canparented(el, event);
+                    }
+                    else{
+                        if (document.red) document.red.click_component(event);
+                    }
                 };
                 
                 el.addEventListener('keyup', function() {
@@ -240,21 +246,7 @@ designer.prototype.check_is_parent = function (el, self){
 
 
 
-designer.prototype.unicalIdGenerate = function(el, doc) {
-    var i=0;
-    var tmpl = 'name';
-    var expr = new RegExp('[a-z]{1,}', 'i');
-    if (el && (el.getAttribute('id')))
-        tmpl=expr.exec(el.getAttribute('id'));
 
-    if (tmpl=='') tmpl = 'name';
-   
-    var fid=tmpl + i;
-    while (doc.getElementById(fid))
-        fid=tmpl+ (++i);
-    
-    return fid;
-}
 
 
 designer.prototype.getAttributeList = function(el) {
@@ -452,10 +444,9 @@ designer.prototype.cloneElements = function(el){
         if (this.sourseDocument){
             var source = this.getSourseElement(el);
             if (source){
-                var coneid=this.unicalIdGenerate(source, this.sourseDocument);
                 var el_c=source.cloneNode(true);
-                el_c.setAttribute('id',  coneid);
                 var prnt = source.parentNode;
+                this.unicalIdsGenerate(el_c);
                 prnt.appendChild(el_c);
                 this.getTrasformDocument();
                 var tel = this.getTransformElement(el_c.getAttribute('id'));
@@ -472,6 +463,33 @@ designer.prototype.cloneElements = function(el){
             this.cloneElements(this.selectedElemens[j], true);
  
     }   
+}
+
+designer.prototype.unicalIdGenerate = function(el, doc, newstr, templt) {
+    var i=0;
+    var tmpl = templt  ? templt : 'name';
+    var expr = new RegExp('[a-z]{1,}', 'i');
+    if (el && (el.getAttribute('id')))
+        tmpl=expr.exec(el.getAttribute('id'));
+
+    if (tmpl=='') tmpl = 'name';
+   
+    var fid=tmpl + i;
+    while ((doc.getElementById(fid)) || (newstr && newstr[fid]))
+        fid=tmpl+ (++i);
+    
+    return fid;
+}
+
+designer.prototype.unicalIdsGenerate  = function(el, newstr){
+   if (!newstr) newstr={};
+   var id = el.getAttribute('id');
+   if (id && this.sourseDocument.getElementById(id)){
+      var coneid=this.unicalIdGenerate(el, this.sourseDocument, newstr);
+      newstr[coneid]=1;
+      el.setAttribute('id',  coneid);}
+      for (var ch=el.firstElementChild; ch; ch=ch.nextElementSibling){
+          this.unicalIdsGenerate(ch, newstr);}
 }
 
 designer.prototype.toFrontElements = function(el){
@@ -615,27 +633,37 @@ designer.prototype.click_component = function(){
     event.stopPropagation();
 }
 
-designer.prototype.click_parented = function(ev){
-    if (ev && ev.clientX.toString() && ev.clientY.toString())
-        this.createLibComponent(ev.clientX.toString(), ev.clientY.toString());
+designer.prototype.click_canparented = function(el, ev){
+    if (((!this.isSelection(el))) || (!this.createLibComponent((ev.clientX - el.x.baseVal.value).toString(), (ev.clientY - el.y.baseVal.value).toString(), el)))
+        if (document.red) document.red.click_component(ev);
+    event.stopPropagation();
+    return false;
 }
 
-designer.prototype.createLibComponent = function(x, y){
+designer.prototype.click_parented = function(el){
+    if (event && event.clientX.toString() && event.clientY.toString())
+        this.createLibComponent(event.clientX.toString(), event.clientY.toString());
+}
+
+designer.prototype.createLibComponent = function(x, y , prnt){
     var created = designutil.toolwin.getSelectedComponent();
     if (created && x && y){
-        var coneid=this.unicalIdGenerate(created , this.sourseDocument);
-        var prnt = this.sourseDocument.documentElement;         
-        var el =prnt.appendChild(created.cloneNode(true)); 
+        var coneid=this.unicalIdGenerate(created , this.sourseDocument , null, created.localName);
+        var sprnt = prnt ? this.getSourseElement(prnt) : this.sourseDocument.documentElement;
+        prnt = prnt ? prnt : this.instantdocument.documentElement;
+        var el =sprnt.appendChild(created.cloneNode(true)); 
         el.setAttribute('id',  coneid);
         if (el.hasAttribute(this.getXname(el))) el.setAttribute(this.getXname(el), x);
         if (el.hasAttribute(this.getYname(el))) el.setAttribute(this.getYname(el), y);
         this.getTrasformDocument();
         var tel = this.getTransformElement(coneid);
-        this.instantdocument.documentElement.appendChild(tel);
+        prnt.appendChild(tel);
         this.attach(tel);
         this.updateElement(tel);
         this.setNeedSave();
-    }     
+        return true;
+    }
+    return false;
 }
 
 /*выделение элемента*/
@@ -1475,10 +1503,7 @@ designutil.toolwin.getMainWindow = function (){
     var tmp=libutil.global.getGlobal();
     
         
-    tmp.maintool.onload =  function() {
-    //setTimeout( function() {
-    //libutil.www.correct_window_height(tmp.maintool,30);}, 1000);
-    }  
+
     
     
      
