@@ -836,14 +836,16 @@ designer.prototype.mousedown_document = function (){
     this.mousmoveevent=undefined;
 }
 
-
+designer.prototype.is_need_insert = function (el){
+    return (designutil.toolwin.getSelectedComponent() && el.hasAttribute('isgoupelement'));
+}
 
 
 designer.prototype.mousedown_component = function (){
     if ((event.button==0)){
         var trgt = this.getTarget(event)
         var cls = trgt.getAttribute('class');
-        if ((cls) && (cls.search('designer_selected')!=-1)){
+        if ((cls) && (cls.search('designer_selected')!=-1) && (!designer.prototype.is_need_insert(trgt))){
             this.draggedstart=true;
             this.objins_draggedstart=undefined;
             return;

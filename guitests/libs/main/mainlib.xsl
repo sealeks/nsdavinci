@@ -296,7 +296,7 @@ extension-element-prefixes="mlib">
                 <xsl:value-of select="@environment"/> 
             </xsl:variable>
             <xsl:attribute name="filter">
-                <xsl:text>url(#filter_lib1)</xsl:text>
+                <xsl:text>url(#filter_lib_armat1000)</xsl:text>
             </xsl:attribute>     
             <xsl:choose>                        
                 <xsl:when test="(boolean(@on) and not(normalize-space(@on)='')) and (boolean(@off) and not(normalize-space(@off)=''))"> 
@@ -1741,19 +1741,13 @@ extension-element-prefixes="mlib">
     
     <xsl:template match="//mlib:button" >   
         <g>       
-            <xsl:call-template name="apply_id"/>
-            
-            <xsl:call-template name="apply_mlib_schema"/>
-            
-            <xsl:call-template name="apply_mlib_button_control"/>
-            
-            <xsl:call-template name="apply_cental_rotate"/>
-            
-            <xsl:call-template name="apply_svg_g_visible"/> 
-                     
-            <xsl:call-template  name="apply_mlib_button_body"/>
-            
-      
+            <xsl:call-template name="apply_id"/>            
+            <xsl:call-template name="apply_mlib_schema"/>   
+            <xsl:call-template name="apply_rect"/>
+            <xsl:call-template name="apply_mlib_button_control"/>            
+            <xsl:call-template name="apply_cental_rotate"/>             
+            <xsl:call-template name="apply_svg_g_visible"/>                     
+            <xsl:call-template  name="apply_mlib_button_body"/>  
         </g>  
     </xsl:template>
     
