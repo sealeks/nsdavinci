@@ -10,7 +10,7 @@
     
   
     
-    <mlib:path stroke-width="4" d="M 100,400 L 100,110 C  100,110 100,100 110,100  M 110,100 L 399,100" id="name0" stroke="#00d" on=""/>
+    <mlib:path stroke-width="4" d="M 100,400 L 100,110 C  100,110 100,100 110,100  M 110,100 L 399,100" id="name0" stroke="#cc0" on=""/>
     <mlib:path stroke-width="4" d="M 435,100 L 580,100 C 590, 100 600,100 600,110 L 600,200 C 600,210 600,220, 610,220 L 710,220" id="name1" stroke="#cc0" on="m1::c1"/>
     
 
@@ -28,7 +28,7 @@
     <mlib:armatura x="1279" y="166" height="60" width="60" id="name18" on="m1::c3" environment="water" ron="m1::c3" type="motorD" alarm="m1::c2" off="" roff=""/>
     
     <mlib:armatura x="816" y="209" height="60" width="60" id="name20" on="m1::c2" environment="water" ron="m1::c2" type="motorD" alarm="m1::c2" off="" roff="" header="Задвижка на паропроводе к котлу"/>
-    <mlib:button x="988" y="193" height="40" width="200" caption="caption" id="name5"/>
+    <mlib:button x="988" y="193" height="40" width="200" caption="caption" id="name5" onclick="window.open('guimotor1.xml',null);"/>
     <mlib:armatura x="839" y="137" height="55" width="55" id="name7" type="ovalve" environment="water" on="m1::c1" off="m1::c2" ron="m1::c1" roff="m1::c2"/>
     
     
@@ -44,5 +44,5 @@
   
     <mlib:sensor x="43" y="22" height="50" width="200" id="name9" param="timer" background="#003" fontstyle="fill: yellow; font-size: 30px;" stroke-width="2" r="3" stroke="green" format="%3.0f" alighn="center"/>
 <svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="179" cy="-200" r="50" id="circle0" stroke-width="1" stroke="red" fill="green" visible-binding="m1::c1 " filter="filter1"/>
-<svg:path xmlns:svg="http://www.w3.org/2000/svg" d="M 100,600 l 200,0 l 0,200 m -15, 0 l 30,0 m -15, 0  m 0, -200 l 200,0 l  0,200 m -15, 0 l 30,0 m -15, 0  m 0, -200 l 200,0 l  0,200 m -15, 0 l 30,0 m -15, 0  m 0, -200 l 200,0 l  0,200 m -15, 0 l 30,0 m -15, 0  m 0, -200 l 200,0 l  0,200 m -15, 0 l 30,0 m -15, 0  m 0, -200 l 200,0 l  0,200 m -15, 0 l 30,0 m -15, 0  m 0, -200 l 200,0 l  0,200" stroke-width="4" stroke="red" fill="none" id="path0" filter="filter3" stroke-binding="m1::c1 ? 'red' : '#0a0'"/>
-</svg>
+<svg:path xmlns:svg="http://www.w3.org/2000/svg" d="M 100,600 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 " stroke-width="4" stroke="red" fill="none" id="path0" filter="filter3" stroke-binding=""/>
+<mlib:armatura x="488" y="316" height="60" width="60" id="name2" environment="gaz"/></svg>
