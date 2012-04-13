@@ -2228,8 +2228,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template match="//mlib:path" >
         <g>    
-            <xsl:call-template name="apply_id"/>
-            
+            <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
             <xsl:call-template name="apply_svg_g_visible"/> 
             <path>

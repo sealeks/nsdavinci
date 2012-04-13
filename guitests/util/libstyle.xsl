@@ -23,7 +23,6 @@ extension-element-prefixes="mlib">
  
        <filter id="filter_lib1" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
             <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="blur"/>
-            <!--feOffset in="blur" dx="0" dy="0" result="offsetBlur"/-->
             <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
                 <fePointLight x="50000" y="100000" z="200000"/>
             </feSpecularLighting>
@@ -37,7 +36,6 @@ extension-element-prefixes="mlib">
 
         <filter id="filter_lib2" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
             <feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
-            <feOffset in="blur" dx="0" dy="0" result="offsetBlur"/>
             <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
                 <fePointLight x="50000" y="100000" z="200000"/>
             </feSpecularLighting>
@@ -50,11 +48,10 @@ extension-element-prefixes="mlib">
         </filter>
         
 
-        <filter id="filter_lib3" >
+        <filter id="filter_lib3" filterUnits="userSpaceOnUse">
             <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
-            <feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
-            <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
-                <fePointLight x="-5000" y="-10000" z="20000"/>
+            <feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+                <fePointLight x="0" y="0" z="20000"/>
             </feSpecularLighting>
             <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
             <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint">
@@ -66,9 +63,8 @@ extension-element-prefixes="mlib">
         
         <filter id="filter_lib4" filterUnits="userSpaceOnUse">
             <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
-            <feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
-            <feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
-                <fePointLight x="-5000" y="-10000" z="20000"/>
+            <feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+                <fePointLight x="0" y="0" z="20000"/>
             </feSpecularLighting>
             <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
             <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint">
