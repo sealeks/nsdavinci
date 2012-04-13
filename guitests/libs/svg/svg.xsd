@@ -60,7 +60,8 @@
             <xsd:attribute name="opacity-binding" type="xsd:string" default=""/>             
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
-            <xsd:attribute name="style" type="xsd:string" default=""/>         
+            <xsd:attribute name="style" type="xsd:string" default=""/>  
+            <xsd:attribute name="visible-binding" type="xsd:string" default=""/>
         </xsd:complexType>
     </xsd:element>
     
@@ -92,7 +93,8 @@
             <xsd:attribute name="opacity-binding" type="xsd:string" default=""/>  
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/>             
-            <xsd:attribute name="style" type="xsd:string" default=""/>       
+            <xsd:attribute name="style" type="xsd:string" default=""/>   
+            <xsd:attribute name="visible-binding" type="xsd:string" default=""/>
         </xsd:complexType>
     </xsd:element>
     
@@ -127,7 +129,8 @@
             <xsd:attribute name="opacity-binding" type="xsd:string" default=""/> 
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
-            <xsd:attribute name="style" type="xsd:string" default=""/>       
+            <xsd:attribute name="style" type="xsd:string" default=""/>  
+            <xsd:attribute name="visible-binding" type="xsd:string" default=""/>
         </xsd:complexType>
     </xsd:element>
 
@@ -157,6 +160,7 @@
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/>  
+            <xsd:attribute name="visible-binding" type="xsd:string" default=""/>
             
         </xsd:complexType>
     </xsd:element>
@@ -183,7 +187,8 @@
             <xsd:attribute name="opacity-binding" type="xsd:string" default=""/>             
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
-            <xsd:attribute name="style" type="xsd:string" default=""/>            
+            <xsd:attribute name="style" type="xsd:string" default=""/> 
+            <xsd:attribute name="visible-binding" type="xsd:string" default=""/>
         </xsd:complexType>
     </xsd:element> 
     
@@ -207,7 +212,8 @@
             <xsd:attribute name="opacity-binding" type="xsd:string" default=""/> 
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
-            <xsd:attribute name="style" type="xsd:string" default=""/>            
+            <xsd:attribute name="style" type="xsd:string" default=""/> 
+            <xsd:attribute name="visible-binding" type="xsd:string" default=""/>
         </xsd:complexType>
     </xsd:element> 
     
@@ -233,7 +239,8 @@
             <xsd:attribute name="opacity-binding" type="xsd:string" default=""/> 
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
-            <xsd:attribute name="style" type="xsd:string" default=""/>            
+            <xsd:attribute name="style" type="xsd:string" default=""/> 
+            <xsd:attribute name="visible-binding" type="xsd:string" default=""/>
         </xsd:complexType>
     </xsd:element>  
     
@@ -258,7 +265,8 @@
             <xsd:attribute name="opacity-binding" type="xsd:string" default=""/>            
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
-            <xsd:attribute name="style" type="xsd:string" default=""/>           
+            <xsd:attribute name="style" type="xsd:string" default=""/>   
+            <xsd:attribute name="visible-binding" type="xsd:string" default=""/>
         </xsd:complexType>
     </xsd:element> 
     

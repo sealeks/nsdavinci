@@ -331,7 +331,8 @@ libutil.project.add_design_style  = function(doc){
     if (doc.documentElement){
         var dstyle = ".designer_selected { opacity: 0.8; outline: 1px solid red;} \n"+
         "*[isgoupelement]{ outline: 1px dashed green; } \n"+
-        "*[isgoupelement].designer_selected { opacity: 0.8; outline: 1px solid red;}";
+        "*[isgoupelement].designer_selected { opacity: 0.8; outline: 1px solid red;}\n"+
+        "g[dv-visible] { display: block !important;} \n";;
     }
     libutil.html.create_style(doc.documentElement, dstyle);              
 }

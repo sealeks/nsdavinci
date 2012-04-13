@@ -235,6 +235,7 @@
             <xsd:attribute name="fill" type="mlib:color" default="white"/>       
             <xsd:attribute name="stroke" type="mlib:environmentfill" default="black"/> 
             <xsd:attribute name="stroke-width" type="xsd:number" default="0"/> 
+            <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
             <xsd:attribute name="click"  default=""/>
         </xsd:complexType>
     </xsd:element>
@@ -262,7 +263,16 @@
             <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
             <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
             <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
-            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/> 
+            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/>
+            <xsd:attribute name="translate-x" type="mlib:expression_or_number" default="0"/>
+            <xsd:attribute name="translate-y" type="mlib:expression_or_number" default="0"/>
+            <xsd:attribute name="rotate-x" type="mlib:expression_or_number" default="0"/>
+            <xsd:attribute name="rotate-y" type="mlib:expression_or_number" default="0"/> 
+            <xsd:attribute name="rotate-angle" type="mlib:expression_or_number" default="0"/> 
+            <xsd:attribute name="rotate-angle-binding" type="mlib:expression_or_number" default="0"/>
+            <xsd:attribute name="scale" type="mlib:expression_or_number" default="0"/> 
+            <xsd:attribute name="scale-binding" type="mlib:expression_or_number" default="0"/>
+            <xsd:attribute name="visible-binding" type="mlib:expression_or_number" default="0"/>
         </xsd:complexType>
     </xsd:element> 
     
