@@ -350,6 +350,7 @@ designer.prototype.getXname =  function (el){
     if (el.hasAttribute('x')) return 'x';
     if (el.hasAttribute('cx')) return 'cx';
     if (el.hasAttribute('x1')) return 'x1';
+    if (el.hasAttribute('d')) return 'd';
     return null;
 }
 
@@ -357,6 +358,7 @@ designer.prototype.getYname =  function (el){
     if (el.hasAttribute('y')) return 'y';
     if (el.hasAttribute('cy')) return 'cy';
     if (el.hasAttribute('y1')) return 'y1';
+    if (el.hasAttribute('d')) return 'd';
     return null;
 }
 
@@ -371,15 +373,81 @@ designer.prototype.getHname =  function (el){
 }
 
 
+designer.prototype.setDXval =  function (el , x){
+    if (el.hasAttribute('d') && x && !(x==0)) {
+        var dpath = el.getAttribute('d');
+        var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
+        if (fnd && (fnd.length>0))  {   
+            var dpath_strt = dpath.substring(0,fnd[0].length);
+            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
+            fnd = dpath_strt.match(/\s*M\s*[0-9\.]+/);
+            if (fnd && (fnd.length>0))  {
+                dpath_stp = dpath_strt.substring(fnd[0].length, dpath_strt.length ) + dpath_stp;
+                fnd = dpath_strt.match(/\s*M\s*(?=[0-9\.]+)/);
+                if (fnd && (fnd.length>0))  {
+                    var dpath_val = dpath_strt.substring(fnd[0].length, dpath_strt.length );
+                    dpath_strt = dpath_strt.substring(0,fnd[0].length);
+                    fnd = dpath_val.match(/\s*(?=([0-9\.])+)/);
+                    if (fnd && (fnd.length>0))  {                    
+                        dpath_val = dpath_val.substring(fnd[0].length, dpath_val.length );
+                        fnd = dpath_val.match(/\s*[0-9\.]*/);
+                        if (fnd && (fnd.length>0))  { 
+                            dpath_val = dpath_val.substring(0, fnd[0].length);
+                            try{
+                               var newpath = dpath_strt + (parseFloat(dpath_val) + x).toString() + dpath_stp;
+                               //alert(x + '  --- '+ dpath + ' --- '  + newpath); 
+                               return newpath;
+                            }
+                            catch(err){}
+                        }
+                    }
+                }                                       
+            }
+        }
+    };
+    return null;
+}
+
+
+designer.prototype.setDYval =  function (el , y){
+    if (el.hasAttribute('d') && y && !(y==0)){
+        var dpath = el.getAttribute('d');
+        var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
+        if (fnd && (fnd.length>0))  {   
+            var dpath_strt = dpath.substring(0,fnd[0].length);
+            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
+            fnd = dpath_strt.match(/\s*M\s*[0-9\.]+(\s|\,)/);
+            if (fnd && (fnd.length>0))  {
+                var dpath_val = dpath_strt.substring(fnd[0].length);
+                dpath_strt = dpath_strt.substring(0,fnd[0].length);
+                fnd = dpath_val.match(/[0-9\.]+/);
+                if (fnd && (fnd.length>0))  {                    
+                    dpath_val = fnd[0];
+                    try{
+                        var newpath = dpath_strt + (parseFloat(dpath_val) + y).toString() + dpath_stp;
+                        //alert(y + '  --- '+ dpath + ' --- '  + newpath); 
+                        return newpath;
+                    }
+                    catch(err){}
+                }
+            }
+        }
+    };
+    return null;
+}
 
 designer.prototype.setElementRect = function(x, y, width, height , el){
     if (el){
         var sel = this.getSourseElement(el);
         if (!sel) return;
-        if (x && this.getXname(sel))
-            sel.setAttribute( this.getXname(sel), x);
-        if (y && this.getYname(sel))
-            sel.setAttribute( this.getYname(sel), y); 
+        if (x && this.getXname(sel)){
+            switch(this.getXname(sel)){
+            case 'd': {var dx = this.setDXval(sel, x);if (dx) sel.setAttribute( 'd', dx);break;}   
+            default:sel.setAttribute( this.getXname(sel), x);}}
+        if (y && this.getYname(sel)){
+            switch(this.getYname(sel)){
+            case 'd': {var dy = this.setDYval(sel, y);if (dx) sel.setAttribute( 'd', dy);break;}   
+            default:sel.setAttribute( this.getYname(sel), y);}}
         if (width && this.getWname(sel))
             sel.setAttribute( this.getWname(sel) , width);
         if (height  && this.getHname(sel))
@@ -652,13 +720,12 @@ designer.prototype.createLibComponent = function(x, y , prnt){
         var sprnt = prnt ? this.getSourseElement(prnt) : this.sourseDocument.documentElement;
         prnt = prnt ? prnt : this.instantdocument.documentElement;
         var el =sprnt.appendChild(created.cloneNode(true)); 
-        el.setAttribute('id',  coneid);
-        if (el.hasAttribute(this.getXname(el))) el.setAttribute(this.getXname(el), x);
-        if (el.hasAttribute(this.getYname(el))) el.setAttribute(this.getYname(el), y);
+        el.setAttribute('id',  coneid);        
         this.getTrasformDocument();
         var tel = this.getTransformElement(coneid);
         prnt.appendChild(tel);
         this.attach(tel);
+        this.setElementRect(x,y, null, null, tel);
         this.updateElement(tel);
         this.setNeedSave();
         return true;

@@ -2237,9 +2237,13 @@ extension-element-prefixes="mlib">
                     </xsl:choose>    
                 </xsl:attribute>
             
-            <xsl:attribute name="filter">
-                   <xsl:text>url(#filter_lib4)</xsl:text>
-            </xsl:attribute>
+                <xsl:choose>                              
+                    <xsl:when test="boolean(@filter) and not(@filter='')">
+                        <xsl:attribute name="filter">
+                            <xsl:text>url(#filter_lib3)</xsl:text>
+                        </xsl:attribute>
+                    </xsl:when>
+                </xsl:choose>
             
                 <xsl:attribute name="stroke-width">
                     <xsl:choose>
