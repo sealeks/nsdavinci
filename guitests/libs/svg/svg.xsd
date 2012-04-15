@@ -220,7 +220,7 @@
     <xsd:element name="svg:path" type="svg:path">
         <xsd:complexType name="path">
             <dvnlib:creator name="svg:path" hint="path">
-                <svg:path d=" M200,200 L250,300 L300,200" stroke-width="3" stroke="black" fill="none"/>
+                <svg:path d=" M0,0 l 100,100" stroke-width="3" stroke="black" fill="none"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="d" type="xsd:string" default="0"/>  
