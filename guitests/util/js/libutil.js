@@ -529,9 +529,7 @@ libutil.xslttransform.literootDocument = function (){
     return window.__literootDocument;
 }
 
-//libutil.xslttransform.literootDocumentElement = function (){     
-//    return libutil.xslttransform.literootDocument().documentElement;
-//}
+
 
 
 libutil.xslttransform.xsltDocument = function(){
@@ -1132,7 +1130,6 @@ libutil.www.create_window = function(doc, id, x, y, width, height, style){
         if (root) {
      
             var result = libutil.svg.create_foreignObject(doc.documentElement,  x ? x : 0, y ? y : 0, height ? height : 300, width ? width : 300 );
-            result.setAttribute('opacity', '0.9');
             result.setAttribute('id',id);
             
             var html = libutil.html.create_html(result);
@@ -1143,11 +1140,6 @@ libutil.www.create_window = function(doc, id, x, y, width, height, style){
             
             var bodydiv= libutil.html.create_div(body);
            
-            var divhd= libutil.html.create_div(bodydiv, null, 'scrollHeader');
-            divhd.setAttribute('id', id+'_header');
-            divhd.innerHTML=id;
-
-            result.divhd = divhd;
             
             result.bindelement=bodydiv;
                

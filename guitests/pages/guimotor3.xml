@@ -2,7 +2,7 @@
    
        
     
-    <mlib:armatura x="387" y="60" height="60" width="60" id="name21" on="m1::c1" environment="gaz" ron="m1::c1" type="rvalve" alarm="" off="m1::c2" local="m1::c3" auto="m1::c4" control="" roff="m1::c2" rauto="m1::c4" header="L" don="m1::c5" doff="m1::c6" visible=""/>
+    <mlib:rect x="629" y="297" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333" id="name8" value="r5::a"/><mlib:armatura x="387" y="60" height="60" width="60" id="name21" on="m1::c1" environment="gaz" ron="m1::c1" type="rvalve" alarm="" off="m1::c2" local="m1::c3" auto="m1::c4" control="" roff="m1::c2" rauto="m1::c4" header="L" don="m1::c5" doff="m1::c6" visible=""/>
     <mlib:armatura x="201" y="204" height="50" width="50" id="name4" on="m1::c1" environment="air" ron="m1::c1" type="cvalve" alarm="" don="m1::c5" doff="m1::c4" off="m1::c2" rotate="90" local="m1::c3"/>
     <mlib:armatura x="273" y="233" height="60" width="60" id="name10" on="m1::c1" environment="gaz" ron="m1::c1" type="bolt" alarm="m1::c2"/>
     
@@ -17,7 +17,7 @@
     
     <mlib:armatura x="244" y="276" height="60" width="60" id="name3" environment="gaz"/>
     
-    <mlib:rect x="735" y="352" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333" id="name6" value="r5::a"/>
+    
     
     
     
@@ -46,4 +46,4 @@
     <svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="179" cy="-200" r="50" id="circle0" stroke-width="1" stroke="red" fill="green" visible-binding="m1::c1 " filter="filter1"/>
     <svg:path xmlns:svg="http://www.w3.org/2000/svg" d="M52,569l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 " stroke-width="4" stroke="red" fill="none" id="path0" filter="filter3" stroke-binding=""/>
     <mlib:armatura x="623" y="424" height="60" width="60" id="name2" environment="gaz"/>
-<mlib:path stroke-width="5" d="M 200,200 l 200,0 l 0,200" id="path1" stroke="red" filter="filter3"/><svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M1258,598l 100,170 100,-170z" stroke-width="2" stroke="green" fill="red" id="path2" filter=""/><svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M692,216v -80 h 10" stroke-width="1" stroke="#006" fill="none" id="path4"/><mlib:group x="1033" y="82" height="400" width="400" id="group0"><svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="100" cy="100" r="50" id="circle1"/></mlib:group></svg>
+<mlib:path stroke-width="5" d="M 200,200 l 200,0 l 0,200" id="path1" stroke="red" filter="filter3"/><svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M863,192l 100,170 100,-170z" stroke-width="2" stroke="green" fill="red" id="path2" filter=""/><svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M692,216v -80 h 10" stroke-width="1" stroke="#006" fill="none" id="path4"/><mlib:rect x="619" y="287" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333" id="name6" value="r5::a"/><mlib:group x="1122" y="137" height="400" width="400" id="group1" translate-x="" translate-y="" rotate-x="200" rotate-y="200" rotate-angle="0" rotate-angle-binding="r1::a"><svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="111" cy="105" r="50" id="circle2" stroke="red" stroke-width="0.5" fill="#003" filter="filter2"/><svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M174,171h 25 l -25,50 h 25 l -25, -50" stroke-width="1" stroke="black" fill="green" id="path5" filter="filter2"/><svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M239,169h 25 l -25,50 h 25 l -25, -50" stroke-width="1" stroke="black" fill="green" id="path3" filter="filter2"/></mlib:group><svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M613,508l 100,170 100,-170z" stroke-width="2" stroke="green" fill="red" id="path6" filter=""/></svg>
