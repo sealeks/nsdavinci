@@ -1,4 +1,5 @@
 var designutil = {};
+
 ///
 designutil.componentinfo = function(){
     this.elements = new Object();
@@ -6,6 +7,7 @@ designutil.componentinfo = function(){
     this.libs = [];
     this.creators = new Object();;
 }
+
 
 designutil.toolwin = {};
         
@@ -245,7 +247,32 @@ designer.prototype.check_is_parent = function (el, self){
 }
 
 
+designer.prototype.unicalIdGenerate = function(el, doc, newstr, templt) {
+    var i=0;
+    var tmpl = templt  ? templt : 'name';
+    var expr = new RegExp('[a-z]{1,}', 'i');
+    if (el && (el.getAttribute('id')))
+        tmpl=expr.exec(el.getAttribute('id'));
 
+    if (tmpl=='') tmpl = 'name';
+   
+    var fid=tmpl + i;
+    while ((doc.getElementById(fid)) || (newstr && newstr[fid]))
+        fid=tmpl+ (++i);
+    
+    return fid;
+}
+
+designer.prototype.unicalIdsGenerate  = function(el, newstr){
+   if (!newstr) newstr={};
+   var id = el.getAttribute('id');
+   if (id && this.sourseDocument.getElementById(id)){
+      var coneid=this.unicalIdGenerate(el, this.sourseDocument, newstr);
+      newstr[coneid]=1;
+      el.setAttribute('id',  coneid);}
+      for (var ch=el.firstElementChild; ch; ch=ch.nextElementSibling){
+          this.unicalIdsGenerate(ch, newstr);}
+}
 
 
 
@@ -373,6 +400,36 @@ designer.prototype.getHname =  function (el){
 }
 
 
+designer.prototype.setDX =  function (el){
+    if (el.hasAttribute('d')) {
+        var dpath = el.getAttribute('d');
+        var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
+        if (fnd && (fnd.length>0))  {   
+            var dpath_strt = dpath.substring(0,fnd[0].length);
+            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
+            fnd = dpath_strt.match(/\s*M\s*[0-9\.]+/);
+            if (fnd && (fnd.length>0))  {
+                dpath_stp = dpath_strt.substring(fnd[0].length, dpath_strt.length ) + dpath_stp;
+                fnd = dpath_strt.match(/\s*M\s*(?=[0-9\.]+)/);
+                if (fnd && (fnd.length>0))  {
+                    var dpath_val = dpath_strt.substring(fnd[0].length, dpath_strt.length );
+                    dpath_strt = dpath_strt.substring(0,fnd[0].length);
+                    fnd = dpath_val.match(/\s*(?=([0-9\.])+)/);
+                    if (fnd && (fnd.length>0))  {                    
+                        dpath_val = dpath_val.substring(fnd[0].length, dpath_val.length );
+                        fnd = dpath_val.match(/\s*[0-9\.]*/);
+                        if (fnd && (fnd.length>0))  { 
+                            dpath_val = dpath_val.substring(0, fnd[0].length);
+                            return parseFloat(dpath_val);
+                        }
+                    }
+                }                                       
+            }
+        }
+    };
+    return null;
+}
+
 designer.prototype.setDXval =  function (el , x){
     if (el.hasAttribute('d') && x && !(x==0)) {
         var dpath = el.getAttribute('d');
@@ -395,13 +452,35 @@ designer.prototype.setDXval =  function (el , x){
                             dpath_val = dpath_val.substring(0, fnd[0].length);
                             try{
                                var newpath = dpath_strt + (parseFloat(dpath_val) + x).toString() + dpath_stp;
-                               //alert(x + '  --- '+ dpath + ' --- '  + newpath); 
                                return newpath;
                             }
-                            catch(err){}
+                            catch(error){}
                         }
                     }
                 }                                       
+            }
+        }
+    };
+    return null;
+}
+
+
+designer.prototype.setDY =  function (el){
+    if (el.hasAttribute('d')){
+        var dpath = el.getAttribute('d');
+        var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
+        if (fnd && (fnd.length>0))  {   
+            var dpath_strt = dpath.substring(0,fnd[0].length);
+            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
+            fnd = dpath_strt.match(/\s*M\s*[0-9\.]+(\s|\,)/);
+            if (fnd && (fnd.length>0))  {
+                var dpath_val = dpath_strt.substring(fnd[0].length);
+                dpath_strt = dpath_strt.substring(0,fnd[0].length);
+                fnd = dpath_val.match(/[0-9\.]+/);
+                if (fnd && (fnd.length>0))  {                    
+                    dpath_val = fnd[0];
+                    return parseFloat(dpath_val);
+                }
             }
         }
     };
@@ -424,11 +503,10 @@ designer.prototype.setDYval =  function (el , y){
                 if (fnd && (fnd.length>0))  {                    
                     dpath_val = fnd[0];
                     try{
-                        var newpath = dpath_strt + (parseFloat(dpath_val) + y).toString() + dpath_stp;
-                        //alert(y + '  --- '+ dpath + ' --- '  + newpath); 
+                        var newpath = dpath_strt + (parseFloat(dpath_val) + y).toString() + dpath_stp; 
                         return newpath;
                     }
-                    catch(err){}
+                    catch(error){}
                 }
             }
         }
@@ -533,35 +611,11 @@ designer.prototype.cloneElements = function(el){
     }   
 }
 
-designer.prototype.unicalIdGenerate = function(el, doc, newstr, templt) {
-    var i=0;
-    var tmpl = templt  ? templt : 'name';
-    var expr = new RegExp('[a-z]{1,}', 'i');
-    if (el && (el.getAttribute('id')))
-        tmpl=expr.exec(el.getAttribute('id'));
 
-    if (tmpl=='') tmpl = 'name';
-   
-    var fid=tmpl + i;
-    while ((doc.getElementById(fid)) || (newstr && newstr[fid]))
-        fid=tmpl+ (++i);
-    
-    return fid;
-}
-
-designer.prototype.unicalIdsGenerate  = function(el, newstr){
-   if (!newstr) newstr={};
-   var id = el.getAttribute('id');
-   if (id && this.sourseDocument.getElementById(id)){
-      var coneid=this.unicalIdGenerate(el, this.sourseDocument, newstr);
-      newstr[coneid]=1;
-      el.setAttribute('id',  coneid);}
-      for (var ch=el.firstElementChild; ch; ch=ch.nextElementSibling){
-          this.unicalIdsGenerate(ch, newstr);}
-}
 
 designer.prototype.toFrontElements = function(el){
     if (el){
+        var elprnt = el.parentNode;
         if (this.sourseDocument){
             var sel = this.getSourseElement(el);
             if (sel){
@@ -571,6 +625,8 @@ designer.prototype.toFrontElements = function(el){
                 var cel=sel.cloneNode(true);
                 prnt.removeChild(sel);
                 prnt.appendChild(cel);
+                var rem = elprnt.removeChild(el);
+                elprnt.appendChild(rem);
             }
         }
     }
@@ -586,6 +642,7 @@ designer.prototype.toFrontElements = function(el){
 
 designer.prototype.toBackElements = function(el){
     if (el){
+        var elprnt = el.parentNode;
         if (this.sourseDocument){
             var sel = this.getSourseElement(el);
             if (sel){
@@ -595,6 +652,8 @@ designer.prototype.toBackElements = function(el){
                 var cel=sel.cloneNode(true);
                 prnt.removeChild(sel);
                 prnt.insertBefore(cel, prnt.firstElementChild);
+                var rem = elprnt.removeChild(el);
+                elprnt.insertBefore(rem, elprnt.firstElementChild);
             }
         }
     }
@@ -609,6 +668,54 @@ designer.prototype.toBackElements = function(el){
 }
 
 
+
+designer.prototype.pastToClipBoard = function(clear){
+    var tmp=libutil.global.getGlobal();
+    tmp.clipboard=[];
+
+    for (var i=0;i < this.selectedElemens.length;++i)
+        if (this.selectedElemens[i]){
+            var el = this.getSourseElement(this.selectedElemens[i]);
+            if (el)
+                tmp.clipboard.push(el.cloneNode(true));
+        }
+    
+    if (clear){
+        for (var i=0;i < this.selectedElemens.length;++i)
+            if (this.selectedElemens[i]){
+                var prnt = this.selectedElemens[i].parentNode;
+                var el = this.getSourseElement(this.selectedElemens[i]);
+                if (el){
+                    var prnts = el.parentNode;
+                    prnt.removeChild(this.selectedElemens[i]);
+                    prnts.removeChild(el); }
+            }
+       this.selectedElemens=[];     
+    }
+}
+        
+        
+designer.prototype.clearToClipBoard = function(){
+    var tmp=libutil.global.getGlobal();
+    tmp.clipboard=null;
+} 
+        
+designer.prototype.getClipBoard = function(){
+    var tmp=libutil.global.getGlobal();
+    return tmp.clipboard;
+}   
+
+designer.prototype.copyFromClipBoard = function( x , y, prnt){
+    var tmp=libutil.global.getGlobal();
+    //alert(x + '  --- '+ y);
+    if (tmp.clipboard && tmp.clipboard.length>0)
+    for (var i=0;i < tmp.clipboard.length;++i)
+        if (tmp.clipboard[i]){
+            x = this.getXname(tmp.clipboard[i])=='d' ? 10 : x;
+            y = this.getYname(tmp.clipboard[i])=='d' ? 10 : y;
+            this.createLibComponent(x, y, tmp.clipboard[i], prnt, tmp.clipboard.length > 1 )
+        }
+}
 
 
 // очистка всех выделенных элементов
@@ -638,11 +745,14 @@ designer.prototype.clearSelection = function(el){
 }
 
 designer.prototype.changeRect = function(x, y, width , height, el){
-    if (el){
-        this.setElementRect( (x && this.getXname(el) ? parseFloat(this.getAttributeValue(this.getXname(el), el)) + x : x) ,
-            (y && this.getYname(el)? parseFloat(this.getAttributeValue(this.getYname(el), el)) + y : y) ,
-            (width && this.getWname(el) ? parseFloat(this.getAttributeValue(this.getWname(el), el)) + width : width) ,
-            (height && this.getHname(el)? parseFloat(this.getAttributeValue(this.getHname(el), height)) + height : height) , el);
+    var sel = this.getSourseElement(el);
+    if (sel){
+        var xnmame = this.getXname(sel);
+        var ynmame = this.getYname(sel);
+        this.setElementRect( ((x && xnmame && xnmame!='d') ? parseFloat(sel.getAttribute(xnmame)) + x : x) ,
+            ((y && ynmame && ynmame!='d') ? parseFloat(sel.getAttribute(ynmame)) + y : y) ,
+            (width && this.getWname(sel) ? parseFloat(sel.getAttribute(this.getWname(sel))) + width : width) ,
+            (height && this.getHname(sel)? parseFloat(sel.getAttribute(this.getHname(sel))) + height : height) , el);
     }
 }
  
@@ -702,7 +812,7 @@ designer.prototype.click_component = function(){
 }
 
 designer.prototype.click_canparented = function(el, ev){
-    if (((!this.isSelection(el))) || (!this.createLibComponent((ev.clientX - el.x.baseVal.value).toString(), (ev.clientY - el.y.baseVal.value).toString(), el)))
+    if (((!this.isSelection(el))) || (!this.newLibComponent((ev.clientX - el.x.baseVal.value).toString(), (ev.clientY - el.y.baseVal.value).toString(), el)))
         if (document.red) document.red.click_component(ev);
     event.stopPropagation();
     return false;
@@ -710,12 +820,20 @@ designer.prototype.click_canparented = function(el, ev){
 
 designer.prototype.click_parented = function(el){
     if (event && event.clientX.toString() && event.clientY.toString())
-        this.createLibComponent(event.clientX.toString(), event.clientY.toString());
+        this.newLibComponent(event.clientX.toString(), event.clientY.toString());
 }
 
-designer.prototype.createLibComponent = function(x, y , prnt){
+designer.prototype.newLibComponent = function(x, y , prnt){
     var created = designutil.toolwin.getSelectedComponent();
     if (created && x && y){
+        this.createLibComponent(x, y, created, prnt);
+        return true;
+    }
+    return false;
+}
+
+designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
+    if (created/* && x && y*/){
         var coneid=this.unicalIdGenerate(created , this.sourseDocument , null, created.localName);
         var sprnt = prnt ? this.getSourseElement(prnt) : this.sourseDocument.documentElement;
         prnt = prnt ? prnt : this.instantdocument.documentElement;
@@ -725,7 +843,7 @@ designer.prototype.createLibComponent = function(x, y , prnt){
         var tel = this.getTransformElement(coneid);
         prnt.appendChild(tel);
         this.attach(tel);
-        this.setElementRect(x,y, null, null, tel);
+        chrect ? this.changeRect(x,y, null, null, el) : this.setElementRect(x,y, null, null, tel);
         this.updateElement(tel);
         this.setNeedSave();
         return true;
@@ -736,7 +854,7 @@ designer.prototype.createLibComponent = function(x, y , prnt){
 /*выделение элемента*/
 designer.prototype.select_component = function(el, shift, ctnrl){
     if (this.selectedElemens==null){
-        this.selectedElemens = new Array();
+        this.selectedElemens = [];
     }
     
     var el_class = el.getAttribute('class');
@@ -1034,7 +1152,7 @@ designer.prototype.createContextMenu = function(){
     
     var el = event.target;
     var isRoot=(el==this.instantdocument.documentElement);
-    if (isRoot) return;
+    //if (isRoot) return;
 
     if (!isRoot){
         el= this.getTarget(event);
@@ -1070,7 +1188,6 @@ designer.prototype.createContextMenu = function(){
     table.setAttribute('width' , '100%');
            
     var tbody= libutil.html.create_tbody(table);
-
        
     this.ContextMenuComponent(tbody);
     
@@ -1121,6 +1238,30 @@ designer.prototype.ContextMenuComponent = function(tbody){
             document.red.ContextMenuDestroy();
             document.red.setNeedSave();
         } ); 
+        
+    this.ContextMenuButton(tbody, 'Copy', true,
+        function(){
+            document.red.pastToClipBoard();
+            document.red.ContextMenuDestroy();
+            document.red.setNeedSave();
+        } ); 
+
+
+    this.ContextMenuButton(tbody, 'Cut', true,
+        function(){
+            document.red.pastToClipBoard(true);
+            document.red.ContextMenuDestroy();
+            document.red.setNeedSave();
+        } ); 
+        
+        
+    this.ContextMenuButton(tbody, 'Past', true,
+        function(){
+            var prn=tbody.parentNode.parentNode.parentNode.parentNode.parentNode;
+            document.red.copyFromClipBoard(prn ? parseFloat(prn.getAttribute('x')) : null, prn ? parseFloat(prn.getAttribute('y')) : null);
+            document.red.ContextMenuDestroy();
+            document.red.setNeedSave();
+        } );        
         
     this.ContextMenuButton(tbody, 'Close', true,
         function(){
