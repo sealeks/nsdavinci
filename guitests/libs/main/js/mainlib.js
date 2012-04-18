@@ -290,7 +290,7 @@ return el.popup.popupbody;
 
 mainlib.valueset_click =  function (el, nm, width){
     try{
-        
+        if (width<80) width=80;
         var popup_id = el.getAttribute('id') + '__popupvalueset';
         
         if (!parseFloat(width)) width=130;

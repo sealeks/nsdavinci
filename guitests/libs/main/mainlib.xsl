@@ -2036,6 +2036,8 @@ extension-element-prefixes="mlib">
     ||_______________________________________________________________________________________________________________________________________||    
     -->
     
+    <!-- event -->
+    
     
     <xsl:template name="mlib_sensor_event">
         <xsl:choose>
@@ -2060,10 +2062,127 @@ extension-element-prefixes="mlib">
                 </xsl:choose>                    
             </xsl:when>
         </xsl:choose>         
+    </xsl:template>
+    
+    
+    <!-- fill -->
+    
+    
+    <xsl:template name="mlib_sensor_fill">
+        <xsl:choose>
+            <xsl:when test="boolean(@param) and not(normalize-space(@param)='')">                  
+                <xsl:attribute name="class">
+                    <xsl:text>#{ (</xsl:text>
+                    <xsl:value-of select="@param"/>
+                    <xsl:text>).valid  ? '</xsl:text>
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_sensor_gradient_classon</xsl:text>
+                    <xsl:text>' : '</xsl:text>
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_sensor_gradient_classnone</xsl:text>
+                    <xsl:text>' :default </xsl:text>
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_sensor_gradient_classnone }</xsl:text>
+                </xsl:attribute>                       
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="class">
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_sensor_gradient_classon</xsl:text>
+                </xsl:attribute>    
+            </xsl:otherwise> 
+        </xsl:choose>         
     </xsl:template> 
     
     
     
+    <!-- cursor -->
+    
+    
+    <xsl:template name="mlib_sensor_cursor">
+        <xsl:choose>
+            <xsl:when test="boolean(@param) and not(normalize-space(@param)='')">                  
+                <xsl:choose>
+                    <xsl:when test="boolean(@sensorevent) and ((@sensorevent='valueset') or (@sensorevent='sensorevent'))">                  
+                        <xsl:attribute name="cursor">
+                           <xsl:text>#{ (</xsl:text>
+                           <xsl:value-of select="@param"/>
+                           <xsl:text>).valid  ? 'pointer' : 'none' :default none }</xsl:text>                            
+                        </xsl:attribute>                       
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="cursor">
+                            <xsl:text>none</xsl:text>
+                        </xsl:attribute>    
+                    </xsl:otherwise> 
+                </xsl:choose>                     
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="cursor">
+                    <xsl:text>none</xsl:text>
+                </xsl:attribute>    
+            </xsl:otherwise> 
+        </xsl:choose>         
+    </xsl:template>     
+    
+    
+    <!-- text -->   
+    
+    <xsl:template name="mlib_sensor_text">     
+        <xsl:choose>                              
+            <xsl:when test="boolean(@param) and not(normalize-space(@param)='')">
+                
+                <xsl:variable name="textdefault">
+                    <xsl:choose>                              
+                        <xsl:when test="boolean(@caption) and not(normalize-space(@caption)='')">
+                            <xsl:value-of select="@caption"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>?</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose> 
+                </xsl:variable>
+                
+                <xsl:choose>                                      
+                    <xsl:when test="boolean(@format) and not(normalize-space(@format)='')">
+                        <xsl:text>#{ (</xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text>).valid ? </xsl:text>
+                        <xsl:text> format(</xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text> , '</xsl:text>
+                        <xsl:value-of select="@format"/>
+                        <xsl:text>') : '</xsl:text>
+                        <xsl:value-of select="$textdefault"/>
+                        <xsl:text>' :default</xsl:text> 
+                        <xsl:value-of select="$textdefault"/>
+                        <xsl:text>}</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>#{ (</xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text>).valid ? </xsl:text>
+                        <xsl:text> format(</xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text> , '%8.1f') : '</xsl:text>
+                        <xsl:value-of select="$textdefault"/>
+                        <xsl:text>' :default</xsl:text> 
+                        <xsl:value-of select="$textdefault"/>
+                        <xsl:text>}</xsl:text>                                       
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>                              
+                    <xsl:when test="boolean(@caption) and not(normalize-space(@caption)='')">
+                        <xsl:value-of select="@caption"/>
+                    </xsl:when>
+                </xsl:choose> 
+            </xsl:otherwise>
+        </xsl:choose> 
+    </xsl:template>   
+    
+    <!-- style -->
     
     
     <xsl:template name="mlib_sensor_style">
@@ -2083,7 +2202,7 @@ extension-element-prefixes="mlib">
             </xsl:variable>   
             
             <xsl:choose>
-                <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')">
+                <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='') and boolean(@color2) and not(normalize-space(@color2)='')">
                     <xsl:choose>
                         <xsl:when test="not($gradtype='c')">                    
                             <linearGradient  x2="100%" y2="100%">
@@ -2116,14 +2235,7 @@ extension-element-prefixes="mlib">
                                 </stop>
                                 <stop  offset="0.5">
                                     <xsl:attribute name="stop-color">
-                                        <xsl:choose>
-                                            <xsl:when test="boolean(@color2) and not(normalize-space(@color2)='')">
-                                                <xsl:value-of select="@color2"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="@color1"/>
-                                            </xsl:otherwise> 
-                                        </xsl:choose>                                                         
+                                        <xsl:value-of select="@color2"/>                                                         
                                     </xsl:attribute>  
                                 </stop>
                                 <stop  offset="1">
@@ -2133,8 +2245,30 @@ extension-element-prefixes="mlib">
                                 </stop>
                             </linearGradient>
                         </xsl:when>
-                        <xsl:otherwise>
-
+                        <xsl:otherwise>                            
+                            <radialGradient>
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_sensor_gradient</xsl:text>
+                                </xsl:attribute>                               
+                                <stop  offset="0">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:value-of select="@color1"/>
+                                    </xsl:attribute>  
+                                </stop>
+                                <stop  offset="1">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:choose>
+                                            <xsl:when test="boolean(@color2) and not(normalize-space(@color2)='')">
+                                                <xsl:value-of select="@color2"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="@color1"/>
+                                            </xsl:otherwise> 
+                                        </xsl:choose> 
+                                    </xsl:attribute>  
+                                </stop>
+                            </radialGradient>                           
                         </xsl:otherwise>
                     </xsl:choose> 
                 </xsl:when>    
@@ -2142,17 +2276,22 @@ extension-element-prefixes="mlib">
             
             <style type="text/css">
                 
-                <xsl:text>
-                    rect.</xsl:text>
+                <xsl:text>rect.</xsl:text>
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_gradient_classon {
                 </xsl:text>
                 <xsl:choose>
-                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')">
+                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">
                         <xsl:text>fill : url(#</xsl:text>
                         <xsl:value-of select="@id"/>
                         <xsl:text>_sensor_gradient</xsl:text>
                         <xsl:text>);}
+                        </xsl:text>        
+                    </xsl:when>
+                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')">
+                        <xsl:text>fill : </xsl:text>
+                        <xsl:value-of select="@color1"/>
+                        <xsl:text>;}
                         </xsl:text>        
                     </xsl:when>
                     <xsl:when test="(@environment='gaz') or (@environment='water') or (@environment='air') or (@environment='oil') or (@environment='stream')">
@@ -2176,45 +2315,67 @@ extension-element-prefixes="mlib">
                 
                 <xsl:text>
                 </xsl:text>    
-                <xsl:text>                    
-                    rect.</xsl:text>
+                <xsl:text>rect.</xsl:text>
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_gradient_classnone {
                 </xsl:text>
-                <xsl:text>fill : url(#</xsl:text>
-                <xsl:text>gradientnone</xsl:text>
-                <xsl:text>_</xsl:text>
-                <xsl:value-of select="$gradtype"/>                
-                <xsl:text>);}
+                <xsl:choose>
+                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:text>gradientnone</xsl:text>
+                        <xsl:text>_</xsl:text>
+                        <xsl:value-of select="$gradtype"/>                
+                        <xsl:text>);</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise> 
+                        <xsl:text>fill : #F7F7F7;</xsl:text>                
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:text>}
                 </xsl:text>
                 
                 <xsl:text>
                 </xsl:text>    
-                <xsl:text>                    
-                    rect.</xsl:text>
+                <xsl:text>rect.</xsl:text>
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_gradient_classaccident {
                 </xsl:text>
-                <xsl:text>fill : url(#</xsl:text>
-                <xsl:text>gradientaccident</xsl:text>
-                <xsl:text>_</xsl:text>
-                <xsl:value-of select="$gradtype"/>                
-                <xsl:text>);}
-                </xsl:text> 
+                <xsl:choose>
+                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">                
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:text>gradientaccident</xsl:text>
+                        <xsl:text>_</xsl:text>
+                        <xsl:value-of select="$gradtype"/>                
+                        <xsl:text>);</xsl:text> 
+                    </xsl:when>
+                    <xsl:otherwise> 
+                        <xsl:text>fill : #AA0000;</xsl:text>                
+                    </xsl:otherwise>
+                </xsl:choose>                
+                <xsl:text>}
+                </xsl:text>                
 
                 <xsl:text>
                 </xsl:text>    
-                <xsl:text>                    
-                    rect.</xsl:text>
+                <xsl:text>rect.</xsl:text>
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_gradient_classalarm {
                 </xsl:text>
-                <xsl:text>fill : url(#</xsl:text>
-                <xsl:text>gradientalarm</xsl:text>
-                <xsl:text>_</xsl:text>
-                <xsl:value-of select="$gradtype"/>                
-                <xsl:text>);}
-                </xsl:text> 
+                <xsl:choose>
+                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">                   
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:text>gradientalarm</xsl:text>
+                        <xsl:text>_</xsl:text>
+                        <xsl:value-of select="$gradtype"/>                
+                        <xsl:text>);</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise> 
+                        <xsl:text>fill : #a09020;</xsl:text>                
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:text>}
+                </xsl:text>
+                
                 
             </style>  
         </defs>                
@@ -2236,8 +2397,11 @@ extension-element-prefixes="mlib">
             
             <xsl:call-template name="mlib_sensor_event"/> 
             
+            <xsl:call-template name="mlib_sensor_cursor"/>
+            
             <xsl:call-template name="mlib_sensor_style"/>
             
+           
    
             <rect>
                 
@@ -2256,15 +2420,9 @@ extension-element-prefixes="mlib">
                 
                 <xsl:call-template name="apply_r"/>
                 
-                <xsl:attribute name="class">
-                    <xsl:value-of select="@id"/>
-                    <xsl:text>_sensor_gradient_classon</xsl:text>                    
-                </xsl:attribute>    
+                <xsl:call-template name="mlib_sensor_fill"/>   
 
             </rect>
-                
-            <xsl:choose>
-                <xsl:when test="boolean(@param) and not(@param='')">
                     <svg>
                         <xsl:call-template name="apply_rect"/>
                         <text>
@@ -2322,29 +2480,10 @@ extension-element-prefixes="mlib">
                                 </xsl:otherwise>
                             </xsl:choose>
                                 
-                            <xsl:choose>                              
-                                <xsl:when test="boolean(@format) and not(@format='')">
-                                    <xsl:text>#{ format(</xsl:text>
-                                    <xsl:value-of select="@param"/>
-                                    <xsl:text> , '</xsl:text>
-                                    <xsl:value-of select="@format"/>
-                                    <xsl:text>')}</xsl:text>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:text>#{ format(</xsl:text>
-                                    <xsl:value-of select="@param"/>
-                                    <xsl:text> , '%8.1f')}</xsl:text>                                       
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            
-
-                            
+                            <xsl:call-template name="mlib_sensor_text"/> 
+                                                        
                         </text>
-                    </svg>
-                </xsl:when>
-            </xsl:choose>                   
-
-        
+                    </svg>                         
         </g>
     </xsl:template>
     
