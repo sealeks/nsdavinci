@@ -1,6 +1,6 @@
 <?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?>
 <svg id="iiii" xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="background-image: url('../util/css/res/bgrd2.png');" onload="libutil.startup.init()">
        
-          <svg:circle  id="ff" cx="100" cy="100" r="50"  fill="red" fill-binding="m1::c1 ? 'uuu' : 'ooo' " text="jjjjjjjjjj" />
+          <mlib:sensor x="701" y="133" height="20" width="80" stroke="#003" stroke-width="0.5" r="4" id="name11" environment="air" param="m1::h1" fontstyle="fill: #003; font-size: 14;" sensorevent="valueset" rotate="10" color1="green" color2="red" />
 
-</svg>
+</svg> 

@@ -135,90 +135,64 @@
 
 
 .nongradh{
-    fill: url(#hgradientnone)
+    fill: url(#gradientnone_h)
 }
 
 .nongradv{
-    fill: url(#vgradientnone)
-}
-
-.blackgradh{
-    fill: url(#hgradientblack)
-}
-
-.blackgradv{
-    fill: url(#vgradientblack)
+    fill: url(#gradientnone_v)
 }
 
 
 .redgradh{
-    fill: url(#hgradientred)
+    fill: url(#gradientalarm_h)
 }
 
 .redgradv{
-    fill: url(#vgradientred)
+    fill: url(#gradientalarm_v)
 }
 
-.greengradh{
-    fill: url(#hgradientgreen)
-}
-
-.rgreengradv{
-    fill: url(#vgradientgreen)
-}
 
 .gazgradh{
-    fill: url(#hgradientgaz)
+    fill: url(#gradientgaz_h)
 }
 
 .gazgradv{
-    fill: url(#vgradientgaz)
+    fill: url(#gradientgaz_v)
 }
 
 .watergradh{
-    fill: url(#hgradientwater)
+    fill: url(#gradientwater_h)
 }
 
 .watergradv{
-    fill: url(#vgradientwater)
+    fill: url(#gradientwater_v)
 }
 
 .airgradh{
-    fill: url(#hgradientair)
+    fill: url(#gradientair_h)
 }
 
 .airgradv{
-    fill: url(#vgradientair)
+    fill: url(#gradientair_v)
 }
 
 
 .oilgradh{
-    fill: url(#hgradientoil)
+    fill: url(#gradientoil_h)
 }
 
 .oilgradv{
-    fill: url(#vgradientoil)
+    fill: url(#gradientoil_v)
 }
 
 .streamgradh{
-    fill: url(#hgradientstream)
+    fill: url(#gradientstream_h)
 }
 
 .streamgradv{
-    fill: url(#vgradientstream)
+    fill: url(#gradientstream_v)
 }
 
-.onbuttongrad{
-    fill: url(#gradientonbutton)
-}
-
-.offbuttongrad{
-    fill: url(#gradientoffbutton)
-}
-
-.disablebuttongrad{
-    fill: url(#gradientdisablebutton)
-}
 
 
 .central_svgnatext{

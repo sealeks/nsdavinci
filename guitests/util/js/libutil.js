@@ -439,9 +439,8 @@ libutil.popup.bpunds_intersect = function(popupbound, documenbound){
     (popupbound.x + popupbound.width) : (documenbound.x + documenbound.width);
     var Y1 =   (popupbound.y + popupbound.height) < (documenbound.y + documenbound.height) ? 
     (popupbound.y + popupbound.height) : (documenbound.y + documenbound.height);
-    ;    
-    
-    return (X1-X0)*(Y1-Y0);
+
+    return (popupbound.width>0 && popupbound.height>0) ? ((X1-X0)*(Y1-Y0))/(popupbound.height * popupbound.width) : 0;
 }
 
 
@@ -1021,7 +1020,7 @@ libutil.svg.create_text = function (parent, x, y,  style, classnm, text){
     if (style) newel.setAttribute('style', style);
     if (classnm) newel.setAttribute('class', classnm);
     if (text){
-        var textdat = parent.ownerDocument.createTextNode('R');    
+        var textdat = parent.ownerDocument.createTextNode(text);    
         newel.appendChild(textdat);
     }
     return newel;
