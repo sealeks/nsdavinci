@@ -752,6 +752,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_svg_g_visible_binding"/>
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
+            <xsl:call-template name="apply_lib_mouseevent"/>
             <circle>  
                 <xsl:call-template name="apply_svg_cx"/>
                 <xsl:call-template name="apply_svg_cy"/>
@@ -774,6 +775,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_svg_g_visible_binding"/>
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
+            <xsl:call-template name="apply_lib_mouseevent"/>
             <ellipse>  
                 <xsl:call-template name="apply_svg_cx"/>
                 <xsl:call-template name="apply_svg_cy"/>
@@ -798,6 +800,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_svg_g_visible_binding"/>
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
+            <xsl:call-template name="apply_lib_mouseevent"/>
             <rect>
   
                 <xsl:call-template name="apply_svg_x"/>
@@ -825,6 +828,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_svg_g_visible_binding"/>
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
+            <xsl:call-template name="apply_lib_mouseevent"/>
             <line>        
                 <xsl:call-template name="apply_svg_x1"/>
                 <xsl:call-template name="apply_svg_y1"/>
@@ -849,6 +853,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_svg_g_visible_binding"/>
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
+            <xsl:call-template name="apply_lib_mouseevent"/>
             <polyline>          
                 <xsl:call-template name="apply_svg_stroke"/>
                 <xsl:call-template name="apply_svg_stroke_width"/>
@@ -877,6 +882,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_svg_g_visible_binding"/>
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
+            <xsl:call-template name="apply_lib_mouseevent"/>
             <polygon>        
                 <xsl:call-template name="apply_svg_stroke"/>
                 <xsl:call-template name="apply_svg_stroke_width"/>
@@ -899,6 +905,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_svg_g_visible_binding"/>
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
+            <xsl:call-template name="apply_lib_mouseevent"/>
             <path>         
                 <xsl:call-template name="apply_svg_stroke"/>
                 <xsl:call-template name="apply_svg_stroke_width"/>
@@ -929,6 +936,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_svg_g_visible_binding"/>
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
+            <xsl:call-template name="apply_lib_mouseevent"/>
             <text>
                 <xsl:call-template name="apply_svg_x"/>
                 <xsl:call-template name="apply_svg_y"/>

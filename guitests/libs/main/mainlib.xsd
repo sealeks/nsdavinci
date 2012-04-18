@@ -47,6 +47,15 @@
         </xsd:restriction>
     </xsd:simpleType> 
     
+    <xsd:simpleType name="mlib:gradienttype">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="lr"></xsd:enumeration>
+            <xsd:enumeration value="tb"></xsd:enumeration>
+            <xsd:enumeration value="c"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType> 
+    
     <xsd:simpleType name="mlib:environment">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="gaz"></xsd:enumeration>
@@ -101,7 +110,23 @@
             <xsd:enumeration value="filter3"></xsd:enumeration>
             <xsd:enumeration value=""></xsd:enumeration>
         </xsd:restriction>
-    </xsd:simpleType> 
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="mlib:armatfiltertype">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="filter"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="mlib:sensorevent">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="graph"></xsd:enumeration>
+            <xsd:enumeration value="valueset"></xsd:enumeration>
+            <xsd:enumeration value="non"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>        
+    </xsd:simpleType>
     
     
     <xsd:element name="mlib:armatura" type="armatura">
@@ -111,31 +136,34 @@
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="type" type="mlib:armaturatype"/>
-            <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
-            <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
-            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/>         
-            <xsd:attribute name="header" type="mlib:expression_or_number" default=""/>
+            <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
+            <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
+            <xsd:attribute name="width" type="mlib:string_or_number" default="100"/>
+            <xsd:attribute name="height" type="mlib:string_or_number" default="100"/>         
+            <xsd:attribute name="header" type="mlib:string_or_number" default=""/>
             <xsd:attribute name="environment" type="mlib:environment" default=""/> 
+            <xsd:attribute name="oncolor" type="mlib:color" default=""/>
+            <xsd:attribute name="offcolor" type="mlib:color" default=""/>
             
-            <xsd:attribute name="on" type="xsd:string" default=""/>
-            <xsd:attribute name="off" type="xsd:string" default=""/>
-            <xsd:attribute name="local" type="mlib:expression_or_number" default=""/>
-            <xsd:attribute name="auto" type="xsd:string" default=""/>
-            <xsd:attribute name="ron" type="xsd:string" default=""/>
-            <xsd:attribute name="roff" type="xsd:string" default=""/>
-            <xsd:attribute name="rauto" type="mlib:expression_or_number" default=""/>
-            <xsd:attribute name="don" type="xsd:string" default=""/>
-            <xsd:attribute name="doff" type="xsd:string" default=""/>
-            <xsd:attribute name="control" type="xsd:string" default=""/>
+            <xsd:attribute name="on" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="off" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="local" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="auto" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="ron" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="roff" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="rauto" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="don" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="doff" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="control" type="dvnlib:expression" default=""/>
             
-            <xsd:attribute name="alarm" type="xsd:string" default=""/>
-            <xsd:attribute name="alarmack" type="xsd:string" default=""/>                       
-            <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
+            <xsd:attribute name="alarm" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="alarmack" type="dvnlib:expression" default=""/>                       
+            <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
             
             <xsd:attribute name="rotate" type="mlib:number" default="0"/>
             
             <xsd:attribute name="debugfunc" type="xsd:string" default=""/>
+            <xsd:attribute name="filter" type="mlib:armatfiltertype" default=""/>
         </xsd:complexType>
     </xsd:element>
 
@@ -145,14 +173,14 @@
                 <mlib:rect  x="" y="" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
-            <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
-            <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
-            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/>  
+            <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
+            <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
+            <xsd:attribute name="width" type="mlib:string_or_number" default="100"/>
+            <xsd:attribute name="height" type="mlib:string_or_number" default="100"/>  
         
             <xsd:attribute name="direction" type="mlib:direction" default="toright"/>
             
-            <xsd:attribute name="value" type="mlib:expression_or_number" default=""/>
+            <xsd:attribute name="value" type="dvnlib:expression" default=""/>
         
             <xsd:attribute name="background" type="mlib:environmentfill" default="black"/>
             <xsd:attribute name="fill" type="mlib:environmentfill" default="white"/>
@@ -160,7 +188,7 @@
             <xsd:attribute name="stroke" type="mlib:color" default="black"/> 
             <xsd:attribute name="stroke-width" type="xsd:number" default="0"/> 
             <xsd:attribute name="r" type="xsd:number" default="0"/>
-            <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
+            <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
             <xsd:attribute name="rotate" type="mlib:number" default="0"/> 
             
         </xsd:complexType>
@@ -172,22 +200,28 @@
                 <mlib:sensor  x="" y="" height="30" width="150" stroke="white" stroke-width="1" r="4"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
-            <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
-            <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
-            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/>  
-            <xsd:attribute name="r" type="mlib:expression_or_number" default="100"/>
+            <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
+            <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
+            <xsd:attribute name="width" type="mlib:string_or_number" default="100"/>
+            <xsd:attribute name="height" type="mlib:string_or_number" default="100"/>  
+            <xsd:attribute name="r" type="mlib:string_or_number" default="100"/>
             <xsd:attribute name="alighn" type="mlib:alighn" default=""/>
             <xsd:attribute name="stroke" type="mlib:color" default="black"/> 
-            <xsd:attribute name="stroke-width" type="xsd:number" default="0"/> 
-            <xsd:attribute name="background" type="mlib:environmentfill" default="black"/>
-            <xsd:attribute name="param" type="mlib:expression" default=""/>
+            <xsd:attribute name="stroke-width" type="xsd:number" default="0"/>
+            <xsd:attribute name="gradient-type" type="mlib:gradienttype" default="0"/>            
+            <xsd:attribute name="environment" type="mlib:environment" default="black"/>
+            <xsd:attribute name="color1" type="mlib:color" default=""/>
+            <xsd:attribute name="color2" type="mlib:color" default=""/>
+            
+            <xsd:attribute name="sensorevent" type="mlib:sensorevent" default=""/>
+            <xsd:attribute name="param" type="dvnlib:expression" default=""/>
             <xsd:attribute name="format" type="xsd:string" default=""/>
-            <xsd:attribute name="disable" type="mlib:expression" default=""/>
-            <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
-            <xsd:attribute name="caption" type="mlib:expression" default=""/>
-            <xsd:attribute name="fontstyle" type="mlib:expression" default=""/>
-            <xsd:attribute name="rotate" type="mlib:number" default="0"/> 
+            <xsd:attribute name="disable" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
+            <xsd:attribute name="caption" type="xsd:string" default=""/>
+            <xsd:attribute name="fontstyle" type="xsd:string" default=""/>
+            <xsd:attribute name="rotate" type="mlib:number" default="0"/>
+            
         </xsd:complexType>
     </xsd:element>
     
@@ -197,38 +231,38 @@
                 <mlib:button  x="" y="" height="40" width="200" caption="caption"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
-            <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
-            <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
-            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/>  
-            <xsd:attribute name="r" type="mlib:expression_or_number" default="100"/>
+            <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
+            <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
+            <xsd:attribute name="width" type="mlib:string_or_number" default="100"/>
+            <xsd:attribute name="height" type="mlib:string_or_number" default="100"/>  
+            <xsd:attribute name="r" type="mlib:string_or_number" default="100"/>
             <xsd:attribute name="alighn" type="mlib:alighn" default=""/>
             <xsd:attribute name="type" type="mlib:buttontype" default=""/>
             
-            <xsd:attribute name="caption" type="mlib:expression" default=""/>
-            <xsd:attribute name="color1" type="mlib:expression" default=""/>
-            <xsd:attribute name="color2" type="mlib:expression" default=""/>
-            <xsd:attribute name="fontstyle" type="mlib:expression" default=""/>
-            <xsd:attribute name="oncaption" type="mlib:expression" default=""/>
-            <xsd:attribute name="oncolor1" type="mlib:expression" default=""/>
-            <xsd:attribute name="oncolor2" type="mlib:expression" default=""/>
-            <xsd:attribute name="offfontstyle" type="mlib:expression" default=""/>
-            <xsd:attribute name="dsblcaption" type="mlib:expression" default=""/>
-            <xsd:attribute name="dsblcolor1" type="mlib:expression" default=""/>
-            <xsd:attribute name="dsblcolor2" type="mlib:expression" default=""/>
-            <xsd:attribute name="dsblfontstyle" type="mlib:expression" default=""/>
+            <xsd:attribute name="caption" type="xsd:string" default=""/>
+            <xsd:attribute name="color1" type="xsd:string" default=""/>
+            <xsd:attribute name="color2" type="xsd:string" default=""/>
+            <xsd:attribute name="fontstyle" type="xsd:string" default=""/>
+            <xsd:attribute name="oncaption" type="xsd:string" default=""/>
+            <xsd:attribute name="oncolor1" type="xsd:string" default=""/>
+            <xsd:attribute name="oncolor2" type="xsd:string" default=""/>
+            <xsd:attribute name="offfontstyle" type="xsd:string" default=""/>
+            <xsd:attribute name="dsblcaption" type="xsd:string" default=""/>
+            <xsd:attribute name="dsblcolor1" type="xsd:string" default=""/>
+            <xsd:attribute name="dsblcolor2" type="xsd:string" default=""/>
+            <xsd:attribute name="dsblfontstyle" type="xsd:string" default=""/>
             
 
-            <xsd:attribute name="state" type="mlib:expression" default=""/>          
-            <xsd:attribute name="param" type="mlib:expression" default=""/>
-            <xsd:attribute name="disable" type="mlib:expression" default=""/>
-            <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
+            <xsd:attribute name="state" type="dvnlib:expression" default=""/>          
+            <xsd:attribute name="param" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="disable" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
             
             
-            <xsd:attribute name="onclick"  default=""/>
-            <xsd:attribute name="ondblclick" default=""/>
-            <xsd:attribute name="onmouseup" default=""/>
-            <xsd:attribute name="onmousedown" default=""/>
+            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
             
         </xsd:complexType>
     </xsd:element>
@@ -239,12 +273,12 @@
                 <mlib:path  stroke-width="5" d=" M0,0 l 100,100"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/> 
-            <xsd:attribute name="d" type="mlib:expression_or_number" default=""/>
-            <xsd:attribute name="on" type="xsd:string" default=""/>
+            <xsd:attribute name="d" type="mlib:path" default=""/>
+            <xsd:attribute name="on" type="dvnlib:expression" default=""/>
             <xsd:attribute name="fill" type="mlib:color" default="white"/>       
             <xsd:attribute name="stroke" type="mlib:environmentfill" default="black"/> 
             <xsd:attribute name="stroke-width" type="xsd:number" default="0"/> 
-            <xsd:attribute name="visible" type="mlib:expression_or_number" default="true"/>
+            <xsd:attribute name="visible" type="mlib:string_or_number" default="true"/>
             <xsd:attribute name="filter" type="mlib:filtertype" default=""/>
         </xsd:complexType>
     </xsd:element>
@@ -255,11 +289,11 @@
                 <mlib:alarmtable  x="" y="" height="100" width="400"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
-            <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
-            <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
-            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/> 
-            <xsd:attribute name="fontstyle" type="mlib:expression_or_number" default=""/>
+            <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
+            <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
+            <xsd:attribute name="width" type="mlib:string_or_number" default="100"/>
+            <xsd:attribute name="height" type="mlib:string_or_number" default="100"/> 
+            <xsd:attribute name="fontstyle" type="mlib:string_or_number" default=""/>
         </xsd:complexType>
     </xsd:element>  
     
@@ -269,19 +303,29 @@
                 <mlib:group  x="" y="" height="400" width="400"/>
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
-            <xsd:attribute name="x" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="y" type="mlib:expression_or_number" default="0"/> 
-            <xsd:attribute name="width" type="mlib:expression_or_number" default="100"/>
-            <xsd:attribute name="height" type="mlib:expression_or_number" default="100"/>
-            <xsd:attribute name="translate-x" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="translate-y" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="rotate-x" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="rotate-y" type="mlib:expression_or_number" default="0"/> 
-            <xsd:attribute name="rotate-angle" type="mlib:expression_or_number" default="0"/> 
-            <xsd:attribute name="rotate-angle-binding" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="scale" type="mlib:expression_or_number" default="0"/> 
-            <xsd:attribute name="scale-binding" type="mlib:expression_or_number" default="0"/>
-            <xsd:attribute name="visible-binding" type="mlib:expression_or_number" default="0"/>
+            <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
+            <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
+            <xsd:attribute name="width" type="mlib:string_or_number" default="100"/>
+            <xsd:attribute name="height" type="mlib:string_or_number" default="100"/>
+            <xsd:attribute name="translate-x" type="mlib:string_or_number" default="0"/>
+            <xsd:attribute name="translate-y" type="mlib:string_or_number" default="0"/>
+            <xsd:attribute name="rotate-x" type="mlib:string_or_number" default="0"/>
+            <xsd:attribute name="rotate-y" type="mlib:string_or_number" default="0"/> 
+            <xsd:attribute name="rotate-angle" type="mlib:string_or_number" default="0"/> 
+            <xsd:attribute name="rotate-angle-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="scale" type="mlib:string_or_number" default="0"/> 
+            <xsd:attribute name="scale-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="visible-binding" type="dvnlib:expression" default="0"/>
+            
+            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/> 
+            
         </xsd:complexType>
     </xsd:element> 
     

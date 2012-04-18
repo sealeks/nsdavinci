@@ -215,7 +215,97 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                </xsl:attribute>
             </xsl:when>   
         </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="apply_lib_onclick">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@onclick) and not(normalize-space(@onclick)='')) ">
+               <xsl:attribute name="onclick">
+                   <xsl:value-of select="@onclick"/>
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="apply_lib_ondblclick">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@ondblclick) and not(normalize-space(@ondblclick)='')) ">
+               <xsl:attribute name="ondblclick">
+                   <xsl:value-of select="@ondblclick"/>
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
     </xsl:template> 
     
+    <xsl:template name="apply_lib_onmousemove">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@onmousemove) and not(normalize-space(@onmousemove)='')) ">
+               <xsl:attribute name="onmousemove">
+                   <xsl:value-of select="@onmousemove"/>
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
+    </xsl:template> 
+    
+    <xsl:template name="apply_lib_onmouseup">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@onmouseup) and not(normalize-space(@onmouseup)='')) ">
+               <xsl:attribute name="onmouseup">
+                   <xsl:value-of select="@onmouseup"/>
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="apply_lib_onmousedown">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@onmousedown) and not(normalize-space(@onmousedown)='')) ">
+               <xsl:attribute name="onmousedown">
+                   <xsl:value-of select="@onmousedown"/>
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
+    </xsl:template> 
+    
+    <xsl:template name="apply_lib_onmouseout">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@onmouseout) and not(normalize-space(@onmouseout)='')) ">
+               <xsl:attribute name="onmouseout">
+                   <xsl:value-of select="@onmouseout"/>
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
+    </xsl:template> 
+    
+    <xsl:template name="apply_lib_onmouseover">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@onmouseover) and not(normalize-space(@onmouseover)='')) ">
+               <xsl:attribute name="onmouseover">
+                   <xsl:value-of select="@onmouseover"/>
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="apply_lib_onmousewheel">        
+        <xsl:choose>
+            <xsl:when test="(boolean(@onmousewheel) and not(normalize-space(@onmousewheel)='')) ">
+               <xsl:attribute name="onmousewheel">
+                   <xsl:value-of select="@onmousewheel"/>
+               </xsl:attribute>
+            </xsl:when>   
+        </xsl:choose>
+    </xsl:template> 
+    
+    <xsl:template name="apply_lib_mouseevent"> 
+        <xsl:call-template name="apply_lib_onclick"/> 
+        <xsl:call-template name="apply_lib_ondblclick"/> 
+        <xsl:call-template name="apply_lib_onmousemove"/> 
+        <xsl:call-template name="apply_lib_onmouseup"/>
+        <xsl:call-template name="apply_lib_onmousedown"/>
+        <xsl:call-template name="apply_lib_onmouseout"/>
+        <xsl:call-template name="apply_lib_onmouseover"/>
+        <xsl:call-template name="apply_lib_onmousewheel"/>
+    </xsl:template>    
 
 </xsl:stylesheet>
