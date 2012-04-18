@@ -214,11 +214,12 @@
             <xsd:attribute name="color2" type="mlib:color" default=""/>
             
             <xsd:attribute name="sensorevent" type="mlib:sensorevent" default=""/>
+            <xsd:attribute name="caption" type="xsd:string" default=""/>
             <xsd:attribute name="param" type="dvnlib:expression" default=""/>
             <xsd:attribute name="format" type="xsd:string" default=""/>
             <xsd:attribute name="disable" type="dvnlib:expression" default=""/>
             <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
-            <xsd:attribute name="caption" type="xsd:string" default=""/>
+            
             <xsd:attribute name="fontstyle" type="xsd:string" default=""/>
             <xsd:attribute name="rotate" type="mlib:number" default="0"/>
             
