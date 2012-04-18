@@ -79,6 +79,14 @@
 .alarm
 {
   stroke-width: 0;
+  fill: #ff9922;
+
+  
+}
+
+.accident
+{
+  stroke-width: 0;
   fill: red;
 
   
@@ -144,11 +152,11 @@
 
 
 .redgradh{
-    fill: url(#gradientalarm_h)
+    fill: url(#gradientaccident_h)
 }
 
 .redgradv{
-    fill: url(#gradientalarm_v)
+    fill: url(#gradientaccident_v)
 }
 
 
