@@ -566,7 +566,7 @@ extension-element-prefixes="mlib">
     <xsl:template name="apply_mlib_aratura_alarmstate">    
         <xsl:choose>                
             <xsl:when test="(boolean(@alarm) and not(normalize-space(@alarm)=''))">
-                <g  class="alarm" opacity="0.3">              
+                <g  class="accident" opacity="0.3">              
                     <xsl:attribute name="display">
                         <xsl:text>#{ min(</xsl:text>
                         <xsl:value-of select="@alarm"/>
@@ -731,9 +731,9 @@ extension-element-prefixes="mlib">
                             </xsl:choose>
                         </xsl:variable>
                         <xsl:text> 
-                   .
+                   
                         </xsl:text>
-                        <xsl:text>on__</xsl:text>
+                        <xsl:text>.on__</xsl:text>
                         <xsl:value-of select="@id"/>
                         <xsl:text>_armatclass {</xsl:text>
                         <xsl:text>stroke: </xsl:text>
@@ -744,9 +744,9 @@ extension-element-prefixes="mlib">
                         <xsl:text>;} 
                         </xsl:text>
                         <xsl:text> 
-                   .
+                  
                         </xsl:text>                  
-                        <xsl:text>off__</xsl:text>
+                        <xsl:text>.off__</xsl:text>
                         <xsl:value-of select="@id"/>
                         <xsl:text>_armatclass {</xsl:text>
                         <xsl:text>stroke: </xsl:text>
@@ -2193,10 +2193,10 @@ extension-element-prefixes="mlib">
                 <xsl:text>                    
                     rect.</xsl:text>
                 <xsl:value-of select="@id"/>
-                <xsl:text>_sensor_gradient_classalarm {
+                <xsl:text>_sensor_gradient_classaccident {
                 </xsl:text>
                 <xsl:text>fill : url(#</xsl:text>
-                <xsl:text>gradientalarm</xsl:text>
+                <xsl:text>gradientaccident</xsl:text>
                 <xsl:text>_</xsl:text>
                 <xsl:value-of select="$gradtype"/>                
                 <xsl:text>);}
@@ -2207,10 +2207,10 @@ extension-element-prefixes="mlib">
                 <xsl:text>                    
                     rect.</xsl:text>
                 <xsl:value-of select="@id"/>
-                <xsl:text>_sensor_gradient_classaccident {
+                <xsl:text>_sensor_gradient_classalarm {
                 </xsl:text>
                 <xsl:text>fill : url(#</xsl:text>
-                <xsl:text>gradientaccident</xsl:text>
+                <xsl:text>gradientalarm</xsl:text>
                 <xsl:text>_</xsl:text>
                 <xsl:value-of select="$gradtype"/>                
                 <xsl:text>);}
