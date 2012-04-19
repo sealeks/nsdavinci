@@ -108,6 +108,8 @@ namespace dvnci {
             if ((exists(i)) && (kvit(i)) && (off(i))) {
                 if (type(i) == msNew)
                     tgbs_ptr->insert_to_journal(now(), tagid(i) , msOut, tgbs_ptr->alarmlevel(tagid(i)));
+                (*tgbs_ptr)[tagid(i)]->alarmkvit(false);
+                (*tgbs_ptr)[tagid(i)]->alarmon(false);
                 incversion();
                 internal_remove(i);}
             else i++;}}
@@ -185,6 +187,7 @@ namespace dvnci {
         for (size_type i = 0; i < count(); ++i) {
             if ((operator[](i)->tagid() == id) && (!(kvit(i)))) {
                 tgbs_ptr->insert_to_journal(now(), operator[](i)->tagid() , msKvit, tgbs_ptr->alarmlevel(tagid(i)));
+                (*tgbs_ptr)[id]->alarmkvit(true);
                 incversion();
                 operator[](i)->kvit(true);}}
         checkout();}
@@ -2527,8 +2530,10 @@ namespace dvnci {
                     case NS_GROUP_SYSTEMCOUNT:{
                         break;}
                     default:{
-                        if (setval) 
-                            value_internal(id, val);  
+                        if ((setval) || (queue==acNullCommand))
+                            value_internal(id, val); 
+                        if (queue==acNullCommand)
+                            return;
                         commands()->add(id, val, queue, clid);}}
                 journal()->add(now(), id, msCmd, 0);}}}
 

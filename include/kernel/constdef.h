@@ -991,7 +991,7 @@ namespace dvnci {
     const acstgtype rwWriteOnly = 0x02;
 
 
-    const addcmdtype acNullCommand = 0x01;
+    const addcmdtype acNullCommand = 0x00;
     const addcmdtype acQueuedCommand = 0x01;
     const addcmdtype acNewCommand = 0x02;
     const addcmdtype acImpulseCommand = 0x03;
@@ -1027,8 +1027,8 @@ namespace dvnci {
 
     const std::string CORRECT_ENTETYNAME_REGEXTAMPL        = "[A-Za-z_\\$][A-Za-z_\\$0-9]*+";
     const std::string CORRECT_ENTETYFULLNAME_REGEXTAMPL    = CORRECT_ENTETYNAME_REGEXTAMPL + "::" + CORRECT_ENTETYNAME_REGEXTAMPL;
-    const std::string EXCL_CORRECT_ENTETYNAME_REGEXTAMPL   = "^num$|^abs$|^real$|^bool$|^min$|^max$|^sin$|^cos$|^pow$|^sqrt$|^sqr$"
-                                                             "|^exp$|^ln$|^rnd$|^e$|^pi$|^floor$|^trunc$";
+    const std::string EXCL_CORRECT_ENTETYNAME_REGEXTAMPL   = "^num$|^abs$|^real$|^bool$|^min$|^max$|^sin$|^cos$|^tan$|^sinh$|^cosh$|^tanh$|^pow$|^sqrt$|^sqr$|^nan$|^round$|^seil$|^format$"
+                                                             "|^asin$|^acos$|^atan$|^log10$|^log$|^now$|^exp$|^ln$|^rnd$|^e$|^pi$|^floor$|^trunc$|^ack$|^nack$|^alarm$|^checktags$|^alarmlevel$";
     const std::string NUMBER_REGEXTAMPL_BIN                = "0b[01]{1,63}+u?+l?+u?+|0b[01]{1,31}+u?+";
     const std::string NUMBER_REGEXTAMPL_OCT                = "0[0-7]{0,21}+u?+l?+u?+|0[0-7]{1,10}+u?+";
     const std::string NUMBER_REGEXTAMPL_DEC                = "[1-9][0-9]{0,19}+l?+u?+1?+|[1-9][0-9]{0,9}+u?+|[1-9][0-9]{0,9}+f?+|0f?+";
@@ -1041,12 +1041,12 @@ namespace dvnci {
     const std::string NUMBER_REGEXTAMPL                    = "[0-9]*[\\.]?[0-9]++";
     const std::string STRING1_REGEXTAMPL                   = "'.*?'";
     const std::string STRING2_REGEXTAMPL                   = "\".*?\"";    
-    const std::string OPERATORS_REGEXTAMPL                 = "\\(|\\)|\\*|/|%|\\+\\+?+|--?+|<<<|>>>|<<|>>|@@=|@=|[<>!=]=?+|&?+&|\\^|\\|?\\||&?&|,|\\?|:|@@|@|#";
-    const std::string SELECTOR_REGEXTAMPL                  = "\\.bool|\\.real|\\.num|\\.alarmmsg|\\.alarmack|\\.alarm|\\.ack|\\.mineu|\\.maxeu"
+    const std::string OPERATORS_REGEXTAMPL                 = "\\(|\\)|\\*|/|%|\\+\\+?+|--?+|<<<|>>>|<<|>>|@@=|@=|[<>!=]=?+|&?+&|\\^|\\|?\\||&?&|,|\\?|:|@@|@|#|=";
+    const std::string SELECTOR_REGEXTAMPL                  = "\\.bool|\\.real|\\.num|\\.alarmmsg|\\.alarmlevel|\\.nack|\\.alarm|\\.ack|\\.mineu|\\.maxeu"
                                                              "|\\.time|\\.logtime|\\.error|\\.valid|\\.comment|\\.eu|\\.binding|\\.msc|\\.sec|\\.minute|\\.hour|\\.monthdays"
                                                              "|\\.dayweek|\\.dayyear|\\.day|\\.month|\\.year|\\.epochminute|\\.epochhour"
                                                              "|\\.epochday|\\.epochmsc|\\.epoch|\\.lastvalue";
-    const std::string FUNCTION_REGEXTAMPL                  = "num(?=\\()|abs(?=\\()|real(?=\\()|bool(?=\\()|min(?=\\()|max(?=\\()"
+    const std::string FUNCTION_REGEXTAMPL                  = "num(?=\\()|abs(?=\\()|real(?=\\()|bool(?=\\()|min(?=\\()|max(?=\\()|nack(?=\\()|alarmlevel(?=\\()|alarm(?=\\()|ack(?=\\()|checktags(?=\\()"
                                                              "|sinh(?=\\()|cosh(?=\\()|tanh(?=\\()|asin(?=\\()|acos(?=\\()|atan(?=\\()|sin(?=\\()|cos(?=\\()|tan(?=\\()"
                                                              "|pow(?=\\()|sqrt(?=\\()|sqr(?=\\()|exp(?=\\()|log10(?=\\()|log(?=\\()|ln(?=\\()"
                                                              "|rnd(?=\\()|now(?=\\()|e(?=\\()|pi(?=\\()|nan(?=\\()|floor(?=\\()|seil(?=\\()|round(?=\\()|format(?=\\()"
