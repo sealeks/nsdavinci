@@ -1767,13 +1767,13 @@ namespace dvnci {
 
 
         template<typename T>
-        void send_command(size_type id, T val, addcmdtype queue = acQueuedCommand, size_type clid = npos);
+        void send_command(size_type id, T val, addcmdtype queue = acQueuedCommand,  bool setval = false , size_type clid = npos);
 
-        void send_command(size_type id, const std::string& val, addcmdtype queue = acQueuedCommand, size_type clid = npos);
+        void send_command(size_type id, const std::string& val, addcmdtype queue = acQueuedCommand,  bool setval = false, size_type clid = npos);
 
-        void send_command(size_type id, const short_value& val, addcmdtype queue = acQueuedCommand, size_type clid = npos);
+        void send_command(size_type id, const short_value& val, addcmdtype queue = acQueuedCommand,  bool setval = false, size_type clid = npos);
         
-        void send_command(const std::string& id, const short_value& val, addcmdtype queue = acQueuedCommand, size_type clid = npos);
+        void send_command(const std::string& id, const short_value& val, addcmdtype queue = acQueuedCommand,  bool setval = false, size_type clid = npos);
 
 
 
@@ -2665,7 +2665,7 @@ namespace dvnci {
 
 
 
-        void send_command_str(size_type id, const std::string& val, bool queue = true, size_type clid = npos) ;
+        void send_command_str(size_type id, const std::string& val, addcmdtype queue = acQueuedCommand, bool setval = false, size_type clid = npos) ;
 
         void addtags(str_indx_map& newnames, size_type groupid);
 
@@ -2966,7 +2966,7 @@ namespace dvnci {
                         insert_to_alarms(id, in_alarm<T > (id));}}}}}
 
     template<typename T>
-    void tagsbase::send_command(size_type id, T val, addcmdtype queue , size_type clid) {
+    void tagsbase::send_command(size_type id, T val, addcmdtype queue , bool setval ,size_type clid) {
         if (IN_TEXTSET(type(id))) return;
         if (exists(id)) {
             if ((groups()->exists(group(id)))) {
@@ -2982,6 +2982,8 @@ namespace dvnci {
                     case NS_GROUP_SYSTEMCOUNT:{
                         break;}
                     default:{
+                        if (setval) 
+                            value_internal<T >(id, val);                           
                         commands()->add(id, operator[](id)->value<num64 > (), num64_cast<T > (val), operator[](id)->type(), queue, clid);}}
                 insert_cmd_to_alarms<T > (id, val, val);}}}}
 

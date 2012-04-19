@@ -123,8 +123,9 @@ namespace dvnci {
                     case oprt_logicor: return os << "||";
                     case oprt_condit: return os << "?";
                     case oprt_command: return os << "@";
+                    case oprt_commandset: return os << "@=";
                     case oprt_command1: return os << "@@";
-                    case oprt_command2: return os << "@@@";                   
+                    case oprt_commandset1: return os << "@@=";                   
                     case oprt_kvit: return os << "#";
                     case oprt_postinc: return os << "post++";
                     case oprt_postdec: return os << "post--";
