@@ -1292,103 +1292,103 @@ namespace dvnci {
     void tagsbase::write_val_event(size_type id, const dt_val_pair& val) {
         write_val_event(id, val.first, val.second);}
 
-    void tagsbase::send_command(size_type id, const std::string& val, addcmdtype queue , size_type clid) {
+    void tagsbase::send_command(size_type id, const std::string& val, addcmdtype queue , bool setval, size_type clid) {
         if (exists(id)) {
             switch (type(id)) {
                 case TYPE_TEXT:{
-                    send_command_str(id, val, queue, clid);
+                    send_command_str(id, val, queue, setval  , clid);
                     return;}
                 case TYPE_DISCRET:{
                     bool tmp = false;
-                    if (str_to<bool>(val, tmp)) send_command<bool>(id, tmp, queue, clid);
+                    if (str_to<bool>(val, tmp)) send_command<bool>(id, tmp, queue, setval , clid);
                     return;}
                 case TYPE_NUM64:{
                     num64 tmp = 0;
-                    if (str_to<num64 > (val, tmp)) send_command<num64 > (id, tmp, queue, clid);
+                    if (str_to<num64 > (val, tmp)) send_command<num64 > (id, tmp, queue, setval , clid);
                     return;}
                 case TYPE_UNUM64:{
                     unum64 tmp = 0;
-                    if (str_to<unum64 > (val, tmp)) send_command<unum64 > (id, tmp, queue, clid);
+                    if (str_to<unum64 > (val, tmp)) send_command<unum64 > (id, tmp, queue, setval , clid);
                     return;}
                 case TYPE_NUM32:{
                     num32 tmp = 0;
-                    if (str_to<num32 > (val, tmp)) send_command<num32 > (id, tmp, queue, clid);
+                    if (str_to<num32 > (val, tmp)) send_command<num32 > (id, tmp, queue, setval , clid);
                     return;}
                 case TYPE_UNUM32:{
                     unum32 tmp = 0;
-                    if (str_to<unum32 > (val, tmp)) send_command<unum32 > (id, tmp, queue, clid);
+                    if (str_to<unum32 > (val, tmp)) send_command<unum32 > (id, tmp, queue, setval , clid);
                     return;}
                 case TYPE_NUM16:{
                     num16 tmp = 0;
-                    if (str_to<num16 > (val, tmp)) send_command<num16 > (id, tmp, queue, clid);
+                    if (str_to<num16 > (val, tmp)) send_command<num16 > (id, tmp, queue, setval , clid);
                     return;}
                 case TYPE_UNUM16:{
                     unum16 tmp = 0;
-                    if (str_to<unum16 > (val, tmp)) send_command<unum16 > (id, tmp, queue, clid);
+                    if (str_to<unum16 > (val, tmp)) send_command<unum16 > (id, tmp, queue, setval , clid);
                     return;};
                 case TYPE_NUM8:{
                     num8 tmp = 0;
-                    if (str_to<num8 > (val, tmp)) send_command<num8 > (id, tmp, queue, clid);
+                    if (str_to<num8 > (val, tmp)) send_command<num8 > (id, tmp, queue, setval , clid);
                     return;}
                 case TYPE_UNUM8:{
                     unum8 tmp = 0;
-                    if (str_to<unum8 > (val, tmp)) send_command<unum8 > (id, tmp, queue, clid);
+                    if (str_to<unum8 > (val, tmp)) send_command<unum8 > (id, tmp, queue, setval , clid);
                     return;}
                 case TYPE_DOUBLE:{
                     double tmp = 0;
-                    if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, clid);
+                    if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, setval , clid);
                     return;}
                 case TYPE_FLOAT:{
                     float tmp = 0;
-                    if (str_to<float>(val, tmp)) send_command<float>(id, tmp, queue, clid);
+                    if (str_to<float>(val, tmp)) send_command<float>(id, tmp, queue, setval , clid);
                     return;}}
             double tmp = 0;
-            if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, clid);}}
+            if (str_to<double>(val, tmp)) send_command<double>(id, tmp, queue, setval , clid);}}
 
-    void tagsbase::send_command(size_type id, const short_value& val , addcmdtype queue , size_type clid) {
+    void tagsbase::send_command(size_type id, const short_value& val , addcmdtype queue ,  bool setval,  size_type clid) {
         if (exists(id)) {
             switch (type(id)) {
                 case TYPE_TEXT:{
                     return;}
                 case TYPE_DISCRET:{
-                    send_command<bool>(id, val.value<bool>(), queue, clid);
+                    send_command<bool>(id, val.value<bool>(), queue, setval , clid);
                     return;}
                 case TYPE_NUM64:{
-                    send_command<num64 > (id, val.value<num64 > (), queue, clid);
+                    send_command<num64 > (id, val.value<num64 > (), queue, setval , clid);
                     return;}
                 case TYPE_UNUM64:{
-                    send_command<unum64 > (id, val.value<unum64 > (), queue, clid);
+                    send_command<unum64 > (id, val.value<unum64 > (), queue, setval , clid);
                     return;}
                 case TYPE_NUM32:{
-                    send_command<num32 > (id, val.value<num32 > (), queue, clid);
+                    send_command<num32 > (id, val.value<num32 > (), queue, setval , clid);
                     return;}
                 case TYPE_UNUM32:{
-                    send_command<unum32 > (id, val.value<unum32 > (), queue, clid);
+                    send_command<unum32 > (id, val.value<unum32 > (), queue, setval , clid);
                     return;}
                 case TYPE_NUM16:{
-                    send_command<num16 > (id, val.value<num16 > (), queue, clid);
+                    send_command<num16 > (id, val.value<num16 > (), queue, setval , clid);
                     return;}
                 case TYPE_UNUM16:{
-                    send_command<unum16 > (id, val.value<unum16 > (), queue, clid);
+                    send_command<unum16 > (id, val.value<unum16 > (), queue, setval , clid);
                     return;}
                 case TYPE_NUM8:{
-                    send_command<num8 > (id, val.value<num8 > (), queue, clid);
+                    send_command<num8 > (id, val.value<num8 > (), queue, setval , clid);
                     return;}
                 case TYPE_UNUM8:{
-                    send_command<unum8 > (id, val.value<unum8 > (), queue, clid);
+                    send_command<unum8 > (id, val.value<unum8 > (), queue, setval , clid);
                     return;}
                 case TYPE_DOUBLE:{
-                    send_command<double>(id, val.value<double>(), queue, clid);
+                    send_command<double>(id, val.value<double>(), queue, setval , clid);
                     return;}
                 case TYPE_FLOAT:{
-                    send_command<float>(id, val.value<float>(), queue, clid);
+                    send_command<float>(id, val.value<float>(), queue, setval , clid);
                     return;}}
-            send_command<double>(id, val.value<double>(), queue, clid);}}
+            send_command<double>(id, val.value<double>(), queue, setval , clid);}}
     
-    void tagsbase::send_command(const std::string& id, const short_value& val, addcmdtype queue, size_type clid){
+    void tagsbase::send_command(const std::string& id, const short_value& val, addcmdtype queue, bool setval, size_type clid){
              size_type ind = operator ()(id);
              if (exists(ind))
-                 send_command(ind, val, queue, clid);}
+                 send_command(ind, val, queue, setval , clid);}
 
     void tagsbase::kvit(size_type id) {
         if (id == npos) kvitall();
@@ -2513,7 +2513,7 @@ namespace dvnci {
                 default: return true;}}
         return false;}
 
-    void tagsbase::send_command_str(size_type id, const std::string& val, bool queue , size_type clid) {
+    void tagsbase::send_command_str(size_type id, const std::string& val, addcmdtype queue, bool setval , size_type clid) {
         if (IN_TEXTSET(type(id))) {
             if ((groups()->exists(group(id)))) {
                 switch (groups()->appid(group(id))) {
@@ -2527,6 +2527,8 @@ namespace dvnci {
                     case NS_GROUP_SYSTEMCOUNT:{
                         break;}
                     default:{
+                        if (setval) 
+                            value_internal(id, val);  
                         commands()->add(id, val, queue, clid);}}
                 journal()->add(now(), id, msCmd, 0);}}}
 
