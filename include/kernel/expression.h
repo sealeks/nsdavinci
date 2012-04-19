@@ -66,8 +66,8 @@ namespace dvnci {
          *
          * Функции тревожных состояний ack, alarm, nack -  ack( tag1, tag2, ... ) все квитированы, alarm( tag1, tag2, ...) хотя бы одно тревожное сотояние, 
          *  nack( tag1, tag2, ...) хотя бы одно неквитированное тревожное состояние
-         * alarmlevel(tag1, tag2...) - максимальный для тегов alarmlevel
-         * checktags(tag1, tag2...) - некий список - список тегов
+         *  alarmlevel(tag1, tag2...) - максимальный для тегов alarmlevel с тревожным состоянием
+         * tags(tag1, tag2...) -  - список тегов, проверяет что все выражения являются тегами
          * 
          * Константы pi , e и переменная текущего времени now;
          */
@@ -166,7 +166,7 @@ namespace dvnci {
             func_nack = 1227, /* nack(*/
             func_alarm = 1229, /* alarm(*/
             func_alarmlevel = 1231, /* alarmlevel(*/
-            func_checktags = 1233, /* checktags(*/            
+            func_tags = 1233, /* tags(*/            
             oprt_opnot = 2001, // !  2
             oprt_opexnot = 2003, // ~  2
             oprt_add_unary = 2005, // +   2
@@ -277,8 +277,10 @@ namespace dvnci {
 
             bool kvit(indx id = npos) {
                 return false;}
+            
+            altype alarmlevel(indx id) const { return 0;};
 
-            void send_command(indx id, const short_value& vl, addcmdtype queue = acQueuedCommand, indx clid = npos) {};
+            void send_command(indx id, const short_value& vl, addcmdtype queue = acQueuedCommand, indx clid = npos) {};            
 
             void incref(indx id) {}
 
@@ -405,7 +407,7 @@ namespace dvnci {
                 return ((operation_ == expr) && (operation_ == constant));}
 
             bool iserror() const {
-                return ((!isoperation()) && (error() != NS_ERROR_SUCCESS));}
+                return ((!isoperation()) && (error()));}
 
             std::string to_string() const {
                 if (isoperation()) return "op" + to_str<int>(static_cast<int> (operation())) + " ";
@@ -515,16 +517,16 @@ namespace dvnci {
             enum const_type {
                 hex_const, dec_const, oct_const, bin_const, real_const, none_const} ;
 
-            expression_templ(const std::string& val, interface_type_ptr inf) : changepoll(false), intf(inf), error_(ERROR_EXPRNOINIT), expression_("") {
+            expression_templ(const std::string& val, interface_type_ptr inf, bool tested = false) : changepoll(false), intf(inf), error_(ERROR_EXPRNOINIT), expression_(""), testmode_(tested) {
                 refcntr = refcounter_type_ptr(new refcounter_type(intf));
                 refcntr->active(true);
                 expressionstr(val);};
 
-            expression_templ(const std::string& val = "") : changepoll(false), intf(), error_(ERROR_EXPRNOINIT), expression_("") {
+            expression_templ(const std::string& val = "", bool tested = false) : changepoll(false), intf(), error_(ERROR_EXPRNOINIT), expression_(""), testmode_(tested) {
                 refcntr = refcounter_type_ptr();
                 expressionstr(val);};
                 
-            expression_templ(const std::wstring& val, interface_type_ptr inf) : changepoll(false), intf(inf), error_(ERROR_EXPRNOINIT), expression_("") {
+            expression_templ(const std::wstring& val, interface_type_ptr inf, bool tested = false) : changepoll(false), intf(inf), error_(ERROR_EXPRNOINIT), expression_(""), testmode_(tested) {
                 refcntr = refcounter_type_ptr(new refcounter_type(intf));
                 refcntr->active(true);
                 expressionstr(val);};
@@ -682,7 +684,9 @@ namespace dvnci {
                 clearstack();
                 polline.clear();
                 stringvector.clear();}
-
+            
+            bool testmode() const {            
+                return testmode_;}
 
             polishstack calcstack;
             polishline polline;
@@ -694,6 +698,7 @@ namespace dvnci {
             refcounter_type_ptr refcntr;
             ns_error error_;
             std::string expression_;
+            bool testmode_;
             indx_set indexes_;} ;
 
         template<typename BASEINTF, typename REFCOUNTER>
@@ -763,7 +768,7 @@ namespace dvnci {
             if (val == "ack") return calc_token(func_ack);
             if (val == "alarm") return calc_token(func_alarm);
             if (val == "nack") return calc_token(func_nack);
-            if (val == "checktags") return calc_token(func_checktags);
+            if (val == "tags") return calc_token(func_tags);
             if (val == "alarmlevel") return calc_token(func_alarmlevel);            
             if (val == ".num") return calc_token(select_num);
             if (val == "num") return calc_token(func_num);
@@ -1286,7 +1291,7 @@ namespace dvnci {
                                         break;}
                                     calcstack.pop();
                                     if ((intf) && (!calcstack.top().isnan()) && (calcstack.top().id() != npos)) {
-                                        if (rsideit.valid() == FULL_VALID) {
+                                        if ((rsideit.valid() == FULL_VALID) && (!testmode())) {
                                             intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), FULL_VALID),
                                                     ((it->operation() == oprt_command) || (it->operation() == oprt_commandset))  ? acQueuedCommand : 
                                                         (((it->operation() == oprt_command1) || (it->operation() == oprt_commandset1))  ? acNewCommand : acNullCommand),
@@ -1307,6 +1312,7 @@ namespace dvnci {
                                     return error(ERROR_EXPRPARSE);}
                                 break;}
                             case oprt_kvit:{
+                                if (!testmode()) {
                                 if (!calcstack.empty()) {
                                     if (calcstack.top().id() != npos) {
                                         intf->kvit(calcstack.top().id());}
@@ -1316,7 +1322,7 @@ namespace dvnci {
                                 else {
                                     intf->kvit();
                                     return error();}
-                                break;}
+                                break;}}
                             default:{
                                 switch (it->operation()) {
                                     case oprt_add:
@@ -1583,7 +1589,8 @@ namespace dvnci {
                                             calc_token nmidit = calcstack.top();
                                             calcstack.pop();
                                             calc_token resultit = getalarmlevel(nmidit);
-                                            if (resultit.value<altype>()>rslt){
+                                            calc_token resultal = getalarm(nmidit);
+                                            if (resultal.valid() && (resultal.value<bool>()) &&(resultit.value<altype>()>rslt)){
                                                 rslt= resultit.value<altype>();}
                                             }
                                         else {
@@ -1593,7 +1600,7 @@ namespace dvnci {
                                         calcstack.push(calc_token(rslt));
                                         break;}   
                                     
-                                    case func_checktags:{
+                                    case func_tags:{
                                         altype rslt= false;
                                         do{
                                         if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
@@ -1960,7 +1967,7 @@ namespace dvnci {
                 clearstack();
                 polline.clear();
                 parsetoken();}
-            print_line(polline);
+            //print_line(polline);
             savedpolline = polline;
             return error();}
 

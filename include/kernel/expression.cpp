@@ -11,6 +11,21 @@
 
 namespace dvnci {
     namespace expr {
+        
+        /*
+        typedef std::pair<std::string, calc_operation> stringoperate_pair;
+        struct char_calc_operation {const char* ; calc_operation ;};
+        typedef std::map<std::string, calc_operation , std::less<std::string>, std::allocator<stringoperate_pair > > stringoperate_map;
+        
+        const char_calc_operation TOKEN_OPERATOR_ARR[] ={{"(",oprt_leftgroup},{")",oprt_rightgroup}};
+        
+        const stringoperate_map TOKEN_OPERATOR_MAP(TOKEN_OPERATOR_ARR[0],TOKEN_OPERATOR_ARR[3]);
+        
+        calc_token token_from_string(const std::string& val){
+            stringoperate_map::const_iterator it=TOKEN_OPERATOR_MAP.find(val);
+            if (it!=TOKEN_OPERATOR_MAP.end())
+                return calc_token(it->second);
+        }*/
 
         std::ostream & operator<<(std::ostream& os, calc_operation oper) {
                 switch (oper) {
@@ -30,7 +45,7 @@ namespace dvnci {
                     case func_nack: return os << "func nack";
                     case func_alarm: return os << "func alarm"; 
                     case func_alarmlevel: return os << "func_alarmlevel";
-                    case func_checktags: return os << "func checktags";                    
+                    case func_tags: return os << "func tags";                    
                     case select_mod: return os << "sct mod";
                     case select_num: return os << "sct num";
                     case func_num: return os << "num";
