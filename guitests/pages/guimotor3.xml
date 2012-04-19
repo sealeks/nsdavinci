@@ -3,7 +3,7 @@
        
     
     
-    <mlib:rect x="712" y="389" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333" id="name8" value="r5::a"/>
+    <mlib:rect x="738" y="430" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333" id="name8" value="r5::a"/>
     <mlib:armatura x="387" y="60" height="60" width="60" id="name21" on="m1::c1" environment="gaz" ron="m1::c1" type="cvalve" alarm="" off="m1::c2" local="m1::c3" auto="m1::c4" control="" roff="m1::c2" rauto="m1::c4" header="L" don="m1::c5" doff="m1::c6" visible="" oncolor="#0c0" filter="filter1"/>
     <mlib:armatura x="201" y="204" height="50" width="50" id="name4" on="m1::c1" environment="air" ron="m1::c1" type="cvalve" alarm="" don="m1::c5" doff="m1::c4" off="m1::c2" rotate="90" local="m1::c3" filter="filter"/>
     <mlib:armatura x="274" y="233" height="60" width="60" id="name10" on="m1::c1" environment="gaz" ron="m1::c1" type="bolt" alarm="m1::c2" filter="filter"/>
@@ -17,7 +17,7 @@
     
 
     
-    <mlib:armatura x="244" y="276" height="60" width="60" id="name3" environment="gaz" filter="filter"/>
+    <mlib:armatura x="339" y="310" height="60" width="60" id="name3" environment="gaz" filter="filter"/>
     
     
     
@@ -55,10 +55,10 @@
         <svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M20,10h 25 l -25,50 h 25 l -25, -50" stroke-width="1" stroke="black" fill="green" id="path5" filter="filter2"/>
     </mlib:group>
     <svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M534,500l 100,170 100,-170z" stroke-width="2" stroke="green" fill="red" id="path6" filter=""/>
-    <mlib:group x="1314" y="138" height="75" width="74" id="group0" translate-x="" translate-y="" rotate-x="32" rotate-y="32" rotate-angle="45" rotate-angle-binding="" scale="1">
+    <mlib:group x="1314" y="138" height="75" width="74" id="group0" translate-x="" translate-y="" rotate-x="32" rotate-y="32" rotate-angle="" rotate-angle-binding="" scale="">
         <svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M20,10h 25 l -25,50 h 25 l -25, -50" stroke-width="1" stroke="black" fill="green" id="path3" filter="filter2"/>
     </mlib:group>
-    <mlib:group x="1206" y="294" height="267" width="268" id="group2">
+    <mlib:group x="1191" y="275" height="267" width="268" id="group2">
         <svg:circle xmlns:svg="http://www.w3.org/2000/svg" cx="88" cy="140" r="50" id="circle1" width="NaN"/>
     </mlib:group>
 <mlib:sensor x="704" y="119" height="30" width="30" stroke="#001" stroke-width="1" r="15" id="name11" environment="water" param="m1::h1" fontstyle="fill: #111; font-size: 11; font-weight: bold;" sensorevent="valueset" rotate="" color1="" color2="" gradient-type="c" alighn="center"/><svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M694,216v -80 h 10" stroke-width="1" stroke="#006" fill="none" id="path4"/></svg>
