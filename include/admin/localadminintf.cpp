@@ -321,7 +321,7 @@ namespace dvnci {
                         case NT_AGROUP:
                         case NT_USER:
                         case NT_ACCESSRULE:{
-                            pairpack.first = intf->insert_entity(ittp, newnm, errrst);
+                            pairpack.first = intf->insert_entity(ittp, newnm, errrst, parentid);
                             pairpack.second = name_with_type(newnm, ittp);
                             if (errrst)
                                  adderror(dvncierror(errrst));
