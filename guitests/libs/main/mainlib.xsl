@@ -2105,9 +2105,9 @@ extension-element-prefixes="mlib">
                 <xsl:choose>
                     <xsl:when test="boolean(@sensorevent) and ((@sensorevent='valueset') or (@sensorevent='sensorevent'))">                  
                         <xsl:attribute name="cursor">
-                           <xsl:text>#{ (</xsl:text>
-                           <xsl:value-of select="@param"/>
-                           <xsl:text>).valid  ? 'pointer' : 'none' :default none }</xsl:text>                            
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? 'pointer' : 'none' :default none }</xsl:text>                            
                         </xsl:attribute>                       
                     </xsl:when>
                     <xsl:otherwise>
@@ -2423,67 +2423,67 @@ extension-element-prefixes="mlib">
                 <xsl:call-template name="mlib_sensor_fill"/>   
 
             </rect>
-                    <svg>
-                        <xsl:call-template name="apply_rect"/>
-                        <text>
+            <svg>
+                <xsl:call-template name="apply_rect"/>
+                <text>
                             
-                            <xsl:choose>
-                                <xsl:when test="boolean(@alighn) and (@alighn='left')">               
-                                    <xsl:attribute name="x">
-                                        <xsl:value-of select="@width * 0.1 "/>
-                                    </xsl:attribute>
-                                    <xsl:attribute name="y">
-                                        <xsl:value-of select="@height div 2"/>
-                                    </xsl:attribute> 
-                                    <xsl:attribute name="class">
-                                        <xsl:text>left_svgnatext</xsl:text>
-                                    </xsl:attribute>
-                                </xsl:when>
-                                <xsl:when test="boolean(@alighn) and (@alighn='center')">               
-                                    <xsl:attribute name="x">
-                                        <xsl:value-of select="@width div 2"/>
-                                    </xsl:attribute>
-                                    <xsl:attribute name="y">
-                                        <xsl:value-of select="@height div 2"/>
-                                    </xsl:attribute> 
-                                    <xsl:attribute name="class">
-                                        <xsl:text>central_svgnatext</xsl:text>
-                                    </xsl:attribute>
-                                </xsl:when>
-                                <xsl:otherwise>   
-                                    <xsl:attribute name="x">
-                                        <xsl:value-of select="@width * 0.9 "/>
-                                    </xsl:attribute>
-                                    <xsl:attribute name="y">
-                                        <xsl:value-of select="@height div 2"/>
-                                    </xsl:attribute> 
-                                    <xsl:attribute name="class">
-                                        <xsl:text>right_svgnatext</xsl:text>
-                                    </xsl:attribute>
-                                </xsl:otherwise>
-                            </xsl:choose>
+                    <xsl:choose>
+                        <xsl:when test="boolean(@alighn) and (@alighn='left')">               
+                            <xsl:attribute name="x">
+                                <xsl:value-of select="@width * 0.1 "/>
+                            </xsl:attribute>
+                            <xsl:attribute name="y">
+                                <xsl:value-of select="@height div 2"/>
+                            </xsl:attribute> 
+                            <xsl:attribute name="class">
+                                <xsl:text>left_svgnatext</xsl:text>
+                            </xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="boolean(@alighn) and (@alighn='center')">               
+                            <xsl:attribute name="x">
+                                <xsl:value-of select="@width div 2"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="y">
+                                <xsl:value-of select="@height div 2"/>
+                            </xsl:attribute> 
+                            <xsl:attribute name="class">
+                                <xsl:text>central_svgnatext</xsl:text>
+                            </xsl:attribute>
+                        </xsl:when>
+                        <xsl:otherwise>   
+                            <xsl:attribute name="x">
+                                <xsl:value-of select="@width * 0.9 "/>
+                            </xsl:attribute>
+                            <xsl:attribute name="y">
+                                <xsl:value-of select="@height div 2"/>
+                            </xsl:attribute> 
+                            <xsl:attribute name="class">
+                                <xsl:text>right_svgnatext</xsl:text>
+                            </xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
                             
                                 
-                            <xsl:choose>                              
-                                <xsl:when test="boolean(@fontstyle) and not(@fontstyle='')">
-                                    <xsl:attribute name="style">
-                                        <xsl:value-of select="@fontstyle"/>
-                                    </xsl:attribute>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:attribute name="style">
-                                        <xsl:text>fill: white; </xsl:text>
-                                        <xsl:text>fill-size:  </xsl:text>
-                                        <xsl:value-of select="@height div 1.5"/>
-                                        <xsl:text>;</xsl:text>
-                                    </xsl:attribute>                                    
-                                </xsl:otherwise>
-                            </xsl:choose>
+                    <xsl:choose>                              
+                        <xsl:when test="boolean(@fontstyle) and not(@fontstyle='')">
+                            <xsl:attribute name="style">
+                                <xsl:value-of select="@fontstyle"/>
+                            </xsl:attribute>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="style">
+                                <xsl:text>fill: white; </xsl:text>
+                                <xsl:text>fill-size:  </xsl:text>
+                                <xsl:value-of select="@height div 1.5"/>
+                                <xsl:text>;</xsl:text>
+                            </xsl:attribute>                                    
+                        </xsl:otherwise>
+                    </xsl:choose>
                                 
-                            <xsl:call-template name="mlib_sensor_text"/> 
+                    <xsl:call-template name="mlib_sensor_text"/> 
                                                         
-                        </text>
-                    </svg>                         
+                </text>
+            </svg>                         
         </g>
     </xsl:template>
     
