@@ -24,8 +24,13 @@ namespace dvnci {
                     case select_mineu: return os << "mineu";
                     case select_maxeu: return os << "maxeu";
                     case select_ack: return os << "ack";
-                    case select_alarmack: return os << "alarmack";
+                    case select_nack: return os << "nack";
                     case select_alarm: return os << "alarm";
+                    case func_ack: return os << "func ack";
+                    case func_nack: return os << "func nack";
+                    case func_alarm: return os << "func alarm"; 
+                    case func_id: return os << "func_id";
+                    case func_checktags: return os << "func checktags";                    
                     case select_mod: return os << "sct mod";
                     case select_num: return os << "sct num";
                     case func_num: return os << "num";
@@ -125,7 +130,8 @@ namespace dvnci {
                     case oprt_command: return os << "@";
                     case oprt_commandset: return os << "@=";
                     case oprt_command1: return os << "@@";
-                    case oprt_commandset1: return os << "@@=";                   
+                    case oprt_commandset1: return os << "@@="; 
+                    case oprt_assign: return os << "="; 
                     case oprt_kvit: return os << "#";
                     case oprt_postinc: return os << "post++";
                     case oprt_postdec: return os << "post--";
@@ -141,6 +147,7 @@ namespace dvnci {
                     case select_binding: return os << "binding";
                     case select_eu: return os << "eu";
                     case select_alarmmsg: return os << "alarmmsg";
+                    case select_alarmlevel: return os << "alarmlevel";
                     case oprt_allvalid_unary: return os << "allvld &";}
                 return os << "nodef";}
 

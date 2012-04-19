@@ -17,7 +17,7 @@ namespace dvnci {
 
         const boost::wregex WFULLEXPR_REGEX = boost::wregex(utf8_to_wstr(FULLEXPR_REGEXTAMPL));
 
-        /*Шаблон expression_templ прдоставляет сервис языка расчитываемых выражений.
+        /*Шаблон expression_templ прдоставляет сервис языка  выражений.
           Параметром шаблона является интерфейс доступа к тегам. Требование к интерфейсу:
           BASEINTF = intf
           1. size_t          intf(std::string vl) возврат индекса тега по имени в таблице или npos при отсутствии.
@@ -30,7 +30,8 @@ namespace dvnci {
           7. bool            intf->alarmon(size_t id) возврат установленного тревожного состояния для тега id
           8. bool            intf->alarmkvit(size_t id) возврат квитированного  тревожного состояния для тега id
           9. bool            intf->kvit(size_t id = npos) квитирование тега id ( npos - всех)
-          10.                intf->send_command(calcstack.top().id, short_value vl) посылка команды  vl тега id
+          10. bool           intf->alarmlevel(size_t id) уровень тревожности
+          11.                intf->send_command(calcstack.top().id, short_value vl) посылка команды  vl тега id
          *
          *       Операции допустимые в выражениях, соответствуют операциям языка C++ , за исключением операций присваивания (=,+=,-= ..),
          * косвенного обращения и разыменовывания (->, *), функции (), выделения элемента [], определения размера sizeof и постфикных ++, --
@@ -44,8 +45,8 @@ namespace dvnci {
          *
          * Селекторные операции над тегами:
           1. .mineu, .maxeu - минимальные и максимальные границы значений (пример tag.mineu), имеет тип тега
-          2. .ack, .alarm, .alarmack - квитированная тревожноое состояние, тревожное и квитированное с проверкой
-             тревожности для тега (пример tag.ack), имеет тип bool
+          2. .ack, .alarm, .nack, .alarmlevel - квитированноe тревожноое состояние, тревожноое состояние и неквитированное тревожноое состояние, уровень тревожности
+             для тега (пример tag.ack), имеет тип bool, tag.alarmlevel - [0..3]
           3. .time, .logtime - время установки значения и время установки предыдущего значения для тега (пример tag.time), имеет тип datetime
           4. .lastvalue - предыдущее значение  тега (пример tag.lastvalue), имеет тип тега
           5  .epoch, .msc ,.sec, .minute, .hour, .day, .month, .monthdays, .year
@@ -56,13 +57,18 @@ namespace dvnci {
                                          (unum16), (num8), (unum8), (float), (double), (bool). Пример: (float)tag или (double)(tag1 / tag2 - 1)
          * Существует простой аналог в селекторной нотации tag.num == (num64)tag, tag.bool == (bool)tag, tag.real == (double)tag
          *
-         * Математические функции: abs, sin, cos, pow, sqrt, sqr, exp, ln, rnd, floor, trunc, min( arg1, arg2), max( arg1 , arg2) : Пример: sin(tag1)
+         * Математические функции: abs, sin, cos, pow, sqrt, sqr, exp, ln, rnd, floor, trunc, min( arg1, arg2, ...), max( arg1 , arg2, ...), : Пример: sin(tag1)
          *
          * Операция условия может иметь произвольное число вложений, что позволяет осуществлять case - логику
          * Пример tag @ ( ( tag0 == 1) ? tag1 : (( tag0 == 2) ? tag2 : null))
          *
          * Функции инкримента для типа TYPE_TM :   incmsc, incsec, incminute, inchour, incday. Пример: incminute(now, 10) или incsec(tag.time, 12)
          *
+         * Функции тревожных состояний ack, alarm, nack -  ack( tag1, tag2, ... ) все квитированы, alarm( tag1, tag2, ...) хотя бы одно тревожное сотояние, 
+         *  nack( tag1, tag2, ...) хотя бы одно неквитированное тревожное состояние
+         * alarmlevel(tag1, tag2...) - максимальный для тегов alarmlevel
+         * checktags(tag1, tag2...) - некий список - список тегов
+         * 
          * Константы pi , e и переменная текущего времени now;
          */
 
@@ -85,7 +91,7 @@ namespace dvnci {
             select_mineu = 1006,
             select_maxeu = 1008,
             select_ack = 1010,
-            select_alarmack = 1012,
+            select_nack = 1012,
             select_alarm = 1014,
             select_mod = 1016,
             select_num = 1018,
@@ -155,6 +161,12 @@ namespace dvnci {
             select_binding = 1112, /* .binding*/
             select_eu = 1114, /* .eu*/
             select_alarmmsg = 1116, /* .alarmmsg*/
+            select_alarmlevel = 1118, /* .alarmlevel*/
+            func_ack = 1225, /* ack(*/
+            func_nack = 1227, /* nack(*/
+            func_alarm = 1229, /* alarm(*/
+            func_alarmlevel = 1231, /* alarmlevel(*/
+            func_checktags = 1233, /* checktags(*/            
             oprt_opnot = 2001, // !  2
             oprt_opexnot = 2003, // ~  2
             oprt_add_unary = 2005, // +   2
@@ -202,7 +214,7 @@ namespace dvnci {
             oprt_command1 = 14020, /* @@*/
             oprt_commandset = 14060, /* @= */
             oprt_commandset1 = 14080, /* @@ =*/
-            //oprt_command2 = 14040, /* @@@*/
+            oprt_assign = 14100, /* = */
             oprt_postinc = 15000, /* ++*/
             oprt_comma = 15002, //1004,             //,            
             oprt_postdec = 15020, /* --*/
@@ -625,7 +637,7 @@ namespace dvnci {
 
             virtual calc_token getack(const calc_token& it);
 
-            virtual calc_token getalarmack(const calc_token& it);
+            virtual calc_token getnack(const calc_token& it);
 
             virtual calc_token getcomment(const calc_token& it);
 
@@ -634,6 +646,8 @@ namespace dvnci {
             virtual calc_token geteu(const calc_token& it);
 
             virtual calc_token getalarmmsg(const calc_token& it);
+            
+            virtual calc_token getalarmlevel(const calc_token& it);            
 
             virtual calc_token calc_token_factory(const std::string& val);
 
@@ -710,7 +724,7 @@ namespace dvnci {
                     case '-': return calc_token(oprt_sub);
                     case '<': return calc_token(oprt_compless);
                     case '>': return calc_token(oprt_compmore);
-                    case '=': return calc_token(oprt_compeq);
+                    case '=': return calc_token(oprt_assign);
                     case '&': return calc_token(oprt_bitand);
                     case '^': return calc_token(oprt_bitexor);
                     case '|': return calc_token(oprt_bitor);
@@ -745,7 +759,12 @@ namespace dvnci {
             if (val == ".maxeu") return calc_token(select_maxeu);
             if (val == ".ack") return calc_token(select_ack);
             if (val == ".alarm") return calc_token(select_alarm);
-            if (val == ".alarmack") return calc_token(select_alarmack);
+            if (val == ".nack") return calc_token(select_nack);
+            if (val == "ack") return calc_token(func_ack);
+            if (val == "alarm") return calc_token(func_alarm);
+            if (val == "nack") return calc_token(func_nack);
+            if (val == "checktags") return calc_token(func_checktags);
+            if (val == "alarmlevel") return calc_token(func_alarmlevel);            
             if (val == ".num") return calc_token(select_num);
             if (val == "num") return calc_token(func_num);
             if (val == ".real") return calc_token(select_real);
@@ -773,6 +792,7 @@ namespace dvnci {
             if (val == ".binding") return calc_token(select_binding);
             if (val == ".eu") return calc_token(select_eu);
             if (val == ".alarmmsg") return calc_token(select_alarmmsg);
+            if (val == ".alarmlevel") return calc_token(select_alarmlevel);            
             if (val == "cosh") return calc_token(func_cosh);
             if (val == "sinh") return calc_token(func_sinh);
             if (val == "tanh") return calc_token(func_tanh);
@@ -1022,10 +1042,10 @@ namespace dvnci {
             throw dvncierror(ERROR_NILLINF);}
 
         template<typename BASEINTF, typename REFCOUNTER>
-        calc_token expression_templ<BASEINTF, REFCOUNTER>::getalarmack(const calc_token& it) {
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::getnack(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                calc_token tmp((static_cast<bool> (intf->alarmkvit(it.id()))) && (static_cast<bool> (intf->alarmon(it.id()))));
+                calc_token tmp(static_cast<bool> (!(intf->alarmkvit(it.id())) && (intf->alarmon(it.id()))));
                 tmp.valid(intf->valid(it.id()));
                 return tmp;}
             throw dvncierror(ERROR_NILLINF);}
@@ -1057,6 +1077,13 @@ namespace dvnci {
             if (intf) {
                 return intf->alarmmsg(it.id());}
             throw dvncierror(ERROR_NILLINF);}
+        
+        template<typename BASEINTF, typename REFCOUNTER>
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::getalarmlevel(const calc_token& it) {
+            if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
+            if (intf) {
+                return intf->alarmlevel(it.id());}
+            throw dvncierror(ERROR_NILLINF);}        
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::calc_token_factory(const std::string& val) {
@@ -1245,7 +1272,8 @@ namespace dvnci {
                             case oprt_commandset:
                             case oprt_commandset1:
                             case oprt_command:
-                            case oprt_command1:{
+                            case oprt_command1:
+                            case oprt_assign:{
                                 if (calcstack.size() >= 2) {
                                     if ((calcstack.top().operation() == constant) && (calcstack.top().isnan())) {
                                         //calcstack.pop();
@@ -1261,13 +1289,17 @@ namespace dvnci {
                                         if (rsideit.valid() == FULL_VALID) {
                                             intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), FULL_VALID),
                                                     ((it->operation() == oprt_command) || (it->operation() == oprt_commandset))  ? acQueuedCommand : 
-                                                        (((it->operation() == oprt_command1) || (it->operation() == oprt_commandset1))  ? acNewCommand : acImpulseCommand),
-                                                    ((it->operation() == oprt_commandset) || (it->operation() == oprt_commandset1)));}
+                                                        (((it->operation() == oprt_command1) || (it->operation() == oprt_commandset1))  ? acNewCommand : acNullCommand),
+                                                    ((it->operation() == oprt_commandset) || (it->operation() == oprt_commandset1) || (it->operation() ==  acNullCommand)));}
                                         //calcstack.pop();
                                         /*calcstack.push(rsideit);*/
                                     }
                                     else {
-                                        //calcstack.pop();
+                                        if (calcstack.top().id() == npos){
+                                            calcstack.pop();
+                                            calc_token errtoken;
+                                            errtoken.error(ERROR_EXPRMATH);
+                                            calcstack.push(errtoken);}
                                         /*calcstack.push(rsideit);*/
                                     }}
                                 else {
@@ -1472,7 +1504,7 @@ namespace dvnci {
                                     case select_maxeu:
                                     case select_ack:
                                     case select_alarm:
-                                    case select_alarmack:{
+                                    case select_nack:{
                                         if (!calcstack.empty() && (calcstack.top().id() != npos)) {
                                             calc_token nmidit = calcstack.top();
                                             calcstack.pop();
@@ -1480,12 +1512,104 @@ namespace dvnci {
                                                     (it->operation() == select_maxeu) ? getmaxeu(nmidit) :
                                                     (it->operation() == select_ack) ? getack(nmidit) :
                                                     (it->operation() == select_alarm) ? getalarm(nmidit) :
-                                                    getalarmack(nmidit);
+                                                    getnack(nmidit);
                                             calcstack.push(resultit);}
                                         else {
                                             clearall();
                                             return error(ERROR_EXPRPARSE);}
                                         break;}
+                                    
+                                    case func_alarm:{
+                                        bool rslt= false;
+                                        do{
+                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
+                                            calc_token nmidit = calcstack.top();
+                                            calcstack.pop();
+                                            calc_token resultit = getalarm(nmidit);
+                                            if (resultit.valid() && (resultit.value<bool>())){
+                                                rslt= true;
+                                                break;}
+                                            }
+                                        else {
+                                            clearall();
+                                            return error(ERROR_EXPRPARSE);}}
+                                        while(calcstack.size());
+                                        calcstack.push(calc_token(rslt));
+                                        break;}
+                                    
+                                    case func_ack:{
+                                        bool rslt= false;
+                                        do{
+                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
+                                            calc_token nmidit = calcstack.top();
+                                            calcstack.pop();
+                                            calc_token resultal = getalarm(nmidit);
+                                            calc_token resultack = getack(nmidit);
+                                                if (resultal.valid() && (resultal.value<bool>())) {
+                                                    rslt = true;
+                                                    if (resultack.valid() && (!resultack.value<bool>())) {
+                                                        rslt = false;
+                                                        break;}}}
+                                        else {
+                                            clearall();
+                                            return error(ERROR_EXPRPARSE);}}
+                                        while(calcstack.size());
+                                        calcstack.push(calc_token(rslt));
+                                        break;}
+                                    
+                                    case func_nack:{
+                                        bool rslt= false;
+                                        do{
+                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
+                                            calc_token nmidit = calcstack.top();
+                                            calcstack.pop();
+                                            calc_token resultal = getalarm(nmidit);
+                                            calc_token resultnack = getnack(nmidit);
+                                                if (resultal.valid() && (resultal.value<bool>()) && 
+                                                        resultnack.valid() && (resultnack.value<bool>())) {
+                                                        rslt = true;
+                                                        break;}}
+                                        else {
+                                            clearall();
+                                            return error(ERROR_EXPRPARSE);}}
+                                        while(calcstack.size());
+                                        calcstack.push(calc_token(rslt));
+                                        break;}
+                                    
+                                    case func_alarmlevel:{
+                                        altype rslt= 0;
+                                        do{
+                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
+                                            calc_token nmidit = calcstack.top();
+                                            calcstack.pop();
+                                            calc_token resultit = getalarmlevel(nmidit);
+                                            if (resultit.value<altype>()>rslt){
+                                                rslt= resultit.value<altype>();}
+                                            }
+                                        else {
+                                            clearall();
+                                            return error(ERROR_EXPRPARSE);}}
+                                        while(calcstack.size());
+                                        calcstack.push(calc_token(rslt));
+                                        break;}   
+                                    
+                                    case select_checktags:{
+                                        altype rslt= false;
+                                        do{
+                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
+                                            calc_token nmidit = calcstack.top();
+                                            calcstack.pop();
+                                            rslt=true;
+                                            }
+                                        else {                                           
+                                            while(calcstack.size())
+                                                calcstack.pop();
+                                            rslt= false;;}}
+                                        while(calcstack.size());
+                                        calcstack.push(calc_token(rslt));
+                                        break;}                                       
+                                    
+                                    
 
                                     case select_time:
                                     case select_logtime:{
@@ -1627,14 +1751,16 @@ namespace dvnci {
                                     case select_comment:
                                     case select_eu:
                                     case select_binding:
-                                    case select_alarmmsg:{
+                                    case select_alarmmsg:
+                                    case select_alarmlevel:{
                                         if (!calcstack.empty() && (calcstack.top().id() != npos)) {
                                             calc_token nmidit = calcstack.top();
                                             calcstack.pop();
                                             calc_token resultit = (it->operation() == select_comment) ? getcomment(nmidit) :
                                                     (it->operation() == select_eu) ? geteu(nmidit) :
                                                     (it->operation() == select_binding) ? getbinding(nmidit) :
-                                                    getalarmmsg(nmidit);
+                                                    (it->operation() == select_alarmmsg) ? getalarmmsg(nmidit) :
+                                                        getalarmlevel(nmidit);
                                             calcstack.push(resultit);}
                                         else {
                                             clearall();
@@ -1705,6 +1831,7 @@ namespace dvnci {
                                     case func_min:
                                     case func_max:{
                                         if (!calcstack.empty()) {
+                                            do {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
@@ -1715,13 +1842,15 @@ namespace dvnci {
                                             calc_token resultit = (it->operation() == func_min) ? minim(lsideit, rsideit) : maxim(lsideit, rsideit);
                                             resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
                                             calcstack.push(resultit);}
+                                            while(calcstack.size()>1);}
                                         else {
                                             clearall();
                                             return error(ERROR_EXPRPARSE);}
                                         break;}
                                     default:{}}}}
                         ++it;}}}
-            catch (dvncierror& er) {
+            catch (dvncierror& er) { 
+
                 calc_token tmp;
                 rslt = tmp;
                 return error(er.code());}
@@ -1808,7 +1937,7 @@ namespace dvnci {
                 clearstack();
                 polline.clear();
                 parsetoken();}
-            //print_line(polline);
+            print_line(polline);
             savedpolline = polline;
             return error();}
 
@@ -1831,7 +1960,7 @@ namespace dvnci {
                 clearstack();
                 polline.clear();
                 parsetoken();}
-            //print_line(polline);
+            print_line(polline);
             savedpolline = polline;
             return error();}
 
@@ -1842,7 +1971,7 @@ namespace dvnci {
             size_t casecounter = 0;
             size_t counter = 0;
             for (exprstack::iterator it = stringvector.begin(); it != stringvector.end(); ++it) {
-                //DEBUG_VAL_DVNCI(*it)
+                DEBUG_VAL_DVNCI(*it)
                 calc_token tmpit = calc_token_factory(*it);
                 if (tmpit.iserror()) {
                     if (tmpit.error() == ERROR_TAGNOEXIST) { // возможно появится
