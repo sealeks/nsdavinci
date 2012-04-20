@@ -566,18 +566,27 @@ extension-element-prefixes="mlib">
     <xsl:template name="apply_mlib_aratura_alarmstate">    
         <xsl:choose>                
             <xsl:when test="(boolean(@alarm) and not(normalize-space(@alarm)=''))">
-                <g  class="accident" opacity="0.3">                                       
+                <g  class="accident" opacity="0.0"> 
+                    <xsl:attribute name="class">
+                        <xsl:text>#{ (alarmlevel(</xsl:text>
+                        <xsl:value-of select="@alarm"/>
+                        <xsl:text>)==3) ? 'accident' : (</xsl:text>
+                        <xsl:text>( alarmlevel(</xsl:text>
+                        <xsl:value-of select="@alarm"/> 
+                        <xsl:text>)==2) ? 'alarm' : </xsl:text>
+                        <xsl:text>  'notice')  :default accident }</xsl:text>
+                    </xsl:attribute>                 
                     <circle cx="500" cy="500" r="500"/>
                     <animate  attributeType="XML" attributeName="opacity"  dur="500ms" calcMode = "linear" repeatCount="indefinite">
-                           <xsl:attribute name="values">
-                                    <xsl:text>#{ nack(</xsl:text>
-                                    <xsl:value-of select="@alarm"/>
-                                    <xsl:text>) ? '0;1' : </xsl:text>
-                                    <xsl:text>( ack(</xsl:text>
-                                    <xsl:value-of select="@alarm"/> 
-                                    <xsl:text>) ? '1;1' : </xsl:text>
-                                    <xsl:text>  '0;0')  :default 0;0 }</xsl:text>
-                                </xsl:attribute> 
+                        <xsl:attribute name="values">
+                            <xsl:text>#{ ack(</xsl:text>
+                            <xsl:value-of select="@alarm"/>
+                            <xsl:text>) ? '1;1' : </xsl:text>
+                            <xsl:text>( nack(</xsl:text>
+                            <xsl:value-of select="@alarm"/> 
+                            <xsl:text>) ? '0;1' : </xsl:text>
+                            <xsl:text>  '0;0')  :default 0;0 }</xsl:text>
+                        </xsl:attribute> 
                     </animate>                      
                 </g>     
             </xsl:when>   
@@ -847,7 +856,7 @@ extension-element-prefixes="mlib">
                 <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">
                     <xsl:choose> 
                         <xsl:when test="(boolean(@type) and (@type='tumbler'))">
-                            <xsl:text>dvnci_exec('((</xsl:text>
+                            <xsl:text>$$('((</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>).valid &#38;&#38; </xsl:text>
                             <xsl:value-of select="@param"/>
@@ -863,12 +872,12 @@ extension-element-prefixes="mlib">
                             <xsl:text>)))');</xsl:text>
                         </xsl:when>
                         <xsl:when test="(boolean(@type) and (@type='button'))">
-                            <xsl:text>dvnci_exec('</xsl:text>
+                            <xsl:text>$$('</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>');</xsl:text>                               
                         </xsl:when> 
                         <xsl:when test="(not(boolean(@type)) or (normalize-space(@type)=''))">
-                            <xsl:text>dvnci_exec('</xsl:text>
+                            <xsl:text>$$('</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>');</xsl:text> 
                         </xsl:when>
@@ -888,7 +897,7 @@ extension-element-prefixes="mlib">
                 <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">
                     <xsl:choose> 
                         <xsl:when test="(boolean(@type) and (@type='impulse'))">
-                            <xsl:text>dvnci_exec('((</xsl:text>
+                            <xsl:text>$$('((</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>).valid &#38;&#38; </xsl:text>
                             <xsl:value-of select="@param"/>
@@ -898,7 +907,7 @@ extension-element-prefixes="mlib">
                             <xsl:text>))');</xsl:text>
                         </xsl:when>
                         <xsl:when test="(boolean(@type) and (@type='unimpulse'))">
-                            <xsl:text>dvnci_exec('((</xsl:text>
+                            <xsl:text>$$('((</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>).valid &#38;&#38; !</xsl:text>
                             <xsl:value-of select="@param"/>
@@ -923,7 +932,7 @@ extension-element-prefixes="mlib">
                 <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">
                     <xsl:choose> 
                         <xsl:when test="(boolean(@type) and (@type='impulse'))">
-                            <xsl:text>dvnci_exec('((</xsl:text>
+                            <xsl:text>$$('((</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>).valid &#38;&#38; !</xsl:text>
                             <xsl:value-of select="@param"/>
@@ -933,7 +942,7 @@ extension-element-prefixes="mlib">
                             <xsl:text>))');</xsl:text>
                         </xsl:when>
                         <xsl:when test="(boolean(@type) and (@type='unimpulse'))">
-                            <xsl:text>dvnci_exec('((</xsl:text>
+                            <xsl:text>$$('((</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>).valid &#38;&#38; </xsl:text>
                             <xsl:value-of select="@param"/>

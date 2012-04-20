@@ -41,8 +41,8 @@ libutil.alarmtable = function(el){
 
 }
 
-function dvnci_open(name){
-    if (dvnci_iseditable()) return;
+function formopen(name){
+    if ($$editable()) return;
     var fl =  libutil.global.getFormList();
     if (fl){   
         for (var i=0; i<fl.length;++i){
@@ -62,14 +62,14 @@ function dvnci_open(name){
 }
 
 
-function dvnci_show_modal(name, url, param){
-    if (dvnci_iseditable()) return null;
+function formopenmodal(name, url, param){
+    if ($$editable()) return null;
     return showModalDialog(name, url ? url : '' , param);
 }
 
 
-function dvnci_close(name){
-    if (dvnci_iseditable()) return;
+function formclose(name){
+    if ($$editable()) return;
     var fl =  libutil.global.getFormList();
     if (fl){  
         for (var i=0; i<fl.length;++i){
@@ -99,7 +99,7 @@ function set_win_designer(win, designer){
 
 
 
-function dvnci_close_win(){
+function formclose_win(){
     var fl =  libutil.global.getFormList();
     if (fl){      
         for (var i=0; i<fl.length;++i){
@@ -111,7 +111,7 @@ function dvnci_close_win(){
     }
 }
 
-function dvnci_close_allwin(){
+function formclose_allwin(){
     try{
         var fl =  libutil.global.getFormList();
         if (fl){      
@@ -130,9 +130,9 @@ function dvnci_close_allwin(){
 }
 
 function exit(){
-    if (dvnci_iseditable()) return;
-    //dvnci_close_allwin()
-    dvnci_exit();
+    if ($$editable()) return;
+    //formclose_allwin()
+    $$exit();
     window.close();
 }
 
@@ -140,7 +140,7 @@ function exit(){
 function init_project_controller(){
     libutil.global.getStartupDoc(document);   
     libutil.project.init_form();
-    if (dvnci_iseditable() && designutil.toolwin) 
+    if ($$editable() && designutil.toolwin) 
         designutil.toolwin.getMainWindow();
 }
 
@@ -166,38 +166,35 @@ libutil.util.trim = function(string)
 
 //
 
-libutil.global.getGlobal = function (){
-    return window.dvnci_globalobject();
-}
 
 libutil.global.getFormList = function (){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && !tmp.formlist)
         tmp.formlist=[];
     return (tmp && tmp.formlist) ? tmp.formlist : null;
 }
 
 libutil.global.getLibList = function (){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && !tmp.liblist)
         tmp.liblist=[];
     return (tmp && tmp.liblist) ? tmp.liblist : null;
 }
 
 libutil.global.getStartupDoc = function (doc){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && !tmp.startupdocument && doc)
         tmp.startupdocument=doc;
     return (tmp && tmp.startupdocument) ? tmp.startupdocument : null;
 }
 
 libutil.global.getGlobalPropertyEditor = function (){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     return tmp.globalpropertydialog;   
 }
 
 libutil.global.setGlobalPropertyEditor = function (val){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     tmp.globalpropertydialog=val;   
 }
 
@@ -207,13 +204,13 @@ libutil.startup.init = function(){
     window.addEventListener('message', function () {
         window.close();
     }, false);
-    if (dvnci_iseditable()){
+    if ($$editable()){
         document.red = new designer(document);
         libutil.project.add_design_style(document);
         libutil.startup.initdesigner(window.name, document.red);
         set_win_designer(window, document.red);
     }
-    window.onunload=dvnci_close_win;
+    window.onunload=formclose_win;
 
 }
 
@@ -237,7 +234,7 @@ libutil.project.init_form = function(){
     if (doc){
         try{
             
-            var tmp=libutil.global.getGlobal();
+            var tmp=$$global();
             var elp=doc.getElementsByTagName('project')[0];
             var projectPath=elp.getAttribute('path');
             
@@ -296,7 +293,7 @@ libutil.project.buildparam = function(el){
 }
 
 libutil.project.addtoformlist = function(els){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     var prjpath=tmp.projectPath;
     var path = prjpath && els.getAttribute('file') ? prjpath.toString() + els.getAttribute('file').toString() : 
     els.getAttribute('file') ? els.getAttribute('file').toString() : null;
@@ -1157,13 +1154,13 @@ libutil.www.correct_window_height = function (win, innerheight){
 }
 
 libutil.www.create_tbwindow = function (name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, names, hints,  funcs, destroyfunc){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && !tmp[name]){
         tmp[name]=libutil.window.createhtml('_'+name, caption, top, left, width, height, tooltip, allwaystop, nodecorate, modal, "../util/css/maintoolstyle.css");
         tmp[name].onunload= destroyfunc ? destroyfunc : 
         function(){     
             try{
-                var tmpo=libutil.global.getGlobal();
+                var tmpo=$$global();
                 if (tmpo && tmpo[name])
                     tmpo[name]=undefined;
             }
@@ -1181,7 +1178,7 @@ libutil.www.create_modalwindow = function (name, caption, top, left, width, heig
 }
 
 libutil.www.create_tbwindow_tools = function (name, tools, names, hints, funcs, size, header, headerstyle){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (name && names && funcs && tmp[name]){
         if (!tools) tools=name;
         if (!tmp[name].tools)
@@ -1192,7 +1189,7 @@ libutil.www.create_tbwindow_tools = function (name, tools, names, hints, funcs, 
 }
 
 libutil.www.set_tbwindow_btnstatus = function (name, tools, btnname , state){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && tmp[name+'_tools']){
         if (!tools) tools=name;
         if (tmp[name+'_tools']){
@@ -1309,10 +1306,10 @@ libutil.document.readDoc = function (url){
 
 
 libutil.document.writeDoc = function (doc){
-    if (doc && dvnci_writefile){
+    if (doc && $$writefile){
         var xmls = new XMLSerializer();  
         var data= xmls.serializeToString(doc); 
-        dvnci_writefile(doc.baseURI,data);
+        $$writefile(doc.baseURI,data);
     }
 }
 

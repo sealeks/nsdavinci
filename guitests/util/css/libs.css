@@ -76,10 +76,18 @@
   stroke: #33CC33;
 }
 
+.notice
+{
+  stroke-width: 0;
+  fill: #FF0;
+
+  
+}
+
 .alarm
 {
   stroke-width: 0;
-  fill: #ff9922;
+  fill: #EEAD0E;
 
   
 }

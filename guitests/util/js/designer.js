@@ -1,5 +1,6 @@
 var designutil = {};
 
+
 ///
 designutil.componentinfo = function(){
     this.elements = new Object();
@@ -706,7 +707,7 @@ designer.prototype.toBackElements = function(el){
 
 
 designer.prototype.pastToClipBoard = function(clear){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     tmp.clipboard=[];
 
     for (var i=0;i < this.selectedElemens.length;++i)
@@ -732,17 +733,17 @@ designer.prototype.pastToClipBoard = function(clear){
         
         
 designer.prototype.clearToClipBoard = function(){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     tmp.clipboard=null;
 } 
         
 designer.prototype.getClipBoard = function(){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     return tmp.clipboard;
 }   
 
 designer.prototype.copyFromClipBoard = function( x , y, prnt){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     //alert(x + '  --- '+ y);
     if (tmp.clipboard && tmp.clipboard.length>0)
     for (var i=0;i < tmp.clipboard.length;++i)
@@ -1748,7 +1749,7 @@ designutil.toolwin.getMainWindow = function (){
         designutil.toolwin.destroyMainWindow);
         
         
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     
         
 
@@ -1776,15 +1777,15 @@ designutil.toolwin.setMainWindowToolStatus = function (val){
 
 
 designutil.toolwin.destroyMainWindow = function(){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && tmp.maintool)
         tmp.maintool=undefined;
     if (!designutil.toolwin.isNeedSave()){          
-        dvnci_exit();
+        $$exit();
         return;
     }
     if (confirm("Выйти без сохранения?")){
-        dvnci_exit();
+        $$exit();
         return;
     } 
     else{
@@ -1798,7 +1799,7 @@ designutil.toolwin.destroyMainWindow = function(){
 ///  Object inspector
 
 designutil.toolwin.getObjectInspector = function (force){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (!force && !tmp.objectinspectorwin) return null;
     if (tmp && !tmp.objectinspectorwin){
         var objectinspectorwin=libutil.window.createhtml('_ObjectInspector','Свойства','100', '900', '400','650','yes','yes',null,null, "../util/css/objectinspector.css");
@@ -1826,7 +1827,7 @@ designutil.toolwin.getObjectInspector = function (force){
 
 designutil.toolwin.resetObjectInspector = function(){
     var vis =  designutil.toolwin.getObjectInspector();
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (vis && tmp.objectinspectorwin)
         tmp.objectinspectorwin.close();
     else
@@ -1836,14 +1837,14 @@ designutil.toolwin.resetObjectInspector = function(){
 } 
 
 designutil.toolwin.getObjectInspectorDocument = function(){
-    var tmp = libutil.global.getGlobal();
+    var tmp = $$global();
     if (tmp && tmp.objectinspectordoc) {
         return tmp.objectinspectordoc; 
     }
 }
 
 designutil.toolwin.getObjectInspectorTbody = function(){
-    var tmp = libutil.global.getGlobal();
+    var tmp = $$global();
     if (tmp && tmp.objectinspectortbody) {
         return tmp.objectinspectortbody;       
     }   
@@ -1865,7 +1866,7 @@ designutil.toolwin.closeObjectInspector = function(){
 }
 
 designutil.toolwin.destroyObjectInspector = function(){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && tmp.objectinspectorwin)
         tmp.objectinspectorwin=undefined;
     if (tmp && tmp.objectinspectordoc)
@@ -1881,7 +1882,7 @@ designutil.toolwin.destroyObjectInspector = function(){
 
 
 designutil.toolwin.getFormInspector = function (force){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (!tmp.formtool && !force) return null;
     if (tmp && !tmp.formtool){
 
@@ -1915,19 +1916,19 @@ designutil.toolwin.getFormInspector = function (force){
 
 designutil.toolwin.resetFormInspector = function(){
     var vis =  designutil.toolwin.getFormInspector();
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (vis && tmp.formtool)
         tmp.formtool.close();
     else
         designutil.toolwin.getFormInspector(true);
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     tmp.formtool.focus();
     designutil.toolwin.setMainWindowToolStatus(3);
         
 } 
 
 designutil.toolwin.fillFormInspector = function (){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     var tbody = tmp.formtooltbody;
     
     libutil.dom.clearChildNode(tbody);   
@@ -2096,7 +2097,7 @@ designutil.toolwin.fiCheckFormParam = function(name, val){
 
 
 designutil.toolwin.destroyFormInspector = function(){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && tmp.formtool)
         tmp.formtool=undefined;
     if (tmp && tmp.formtooltbody)
@@ -2108,7 +2109,7 @@ designutil.toolwin.destroyFormInspector = function(){
 
 
 designutil.toolwin.getLibInspector = function (force){    
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && !tmp.libtool && !force) return null;
     if (!tmp.libtool){
         var libs =libutil.global.getLibList();
@@ -2150,12 +2151,12 @@ designutil.toolwin.getLibInspector = function (force){
 
 designutil.toolwin.resetLibInspector = function(){
     
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp.libtool)
         tmp.libtool.close();
     else
         designutil.toolwin.getLibInspector(true);
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     tmp.libtool.focus();
     designutil.toolwin.setMainWindowToolStatus(4);     
 } 
@@ -2169,7 +2170,7 @@ designutil.toolwin.setSelectedToolEvent = function(event){
 
 designutil.toolwin.setSelectedComponent = function(tool, comp){
     //alert(tool + ' : ' + comp);
-    var tmp= libutil.global.getGlobal(); 
+    var tmp= $$global(); 
     var set  = tool && comp;
     var result = null; 
     if (tmp){
@@ -2209,7 +2210,7 @@ designutil.toolwin.getSelectedComponent = function(){
 
 
 designutil.toolwin.destroyLibInspector = function(){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     if (tmp && tmp.libtool)
         tmp.libtool=undefined;
     designutil.toolwin.setMainWindowToolStatus(4);  
@@ -2319,7 +2320,7 @@ designutil.toolwin.isNeedSave = function (){
 }
 
 designutil.toolwin.setCurrentRedactor = function (win){
-    var tmp= libutil.global.getGlobal();
+    var tmp= $$global();
     if (!win){
         tmp.currentred = null;
         return;
@@ -2335,7 +2336,7 @@ designutil.toolwin.setCurrentRedactor = function (win){
 }
 
 designutil.toolwin.getCurrentRedactor = function (){
-    var tmp= libutil.global.getGlobal();
+    var tmp= $$global();
     return tmp.currentred;
 }
 
@@ -2444,13 +2445,13 @@ designutil.toolwin.addform = function(file, name){
 }
 
 designutil.toolwin.createfileform = function(file){
-    var tmp=libutil.global.getGlobal();
+    var tmp=$$global();
     var prjpath=tmp.projectPath;
     var txt = '<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?>\n'+
     '<svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="" onload="libutil.startup.init()">\n'+
     '\n'+
     '</svg>\n';
-    return dvnci_writefile(prjpath.toString()+file,txt);      
+    return $$writefile(prjpath.toString()+file,txt);      
 }
 
 
