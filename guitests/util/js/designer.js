@@ -1351,7 +1351,8 @@ designer.prototype.show_property = function(){
         
         var typenm= attriblist[i]['typename'];
         td1.className= (typenm=='dvnlib:expression') ? 'staticexpr' : 
-            ( (typenm=='dvnlib:event') ? 'staticevent' :'static' );
+            ((typenm=='dvnlib:taglist') ? 'statictaglist' :
+            ( (typenm=='dvnlib:event') ? 'staticevent' :'static' ));
    
         var td2= libutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
         var val=this.getAttributeValue(attriblist[i]['name']);

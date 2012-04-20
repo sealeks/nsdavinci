@@ -156,8 +156,7 @@
             <xsd:attribute name="doff" type="dvnlib:expression" default=""/>
             <xsd:attribute name="control" type="dvnlib:expression" default=""/>
             
-            <xsd:attribute name="alarm" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="alarmack" type="dvnlib:expression" default=""/>                       
+            <xsd:attribute name="alarm" type="dvnlib:taglist" default=""/>                      
             <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
             
             <xsd:attribute name="rotate" type="mlib:number" default="0"/>
