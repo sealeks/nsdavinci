@@ -29,7 +29,7 @@
     
     
     
-    <mlib:armatura x="466" y="232" height="60" width="60" id="name20" on="m1::c2" environment="water" ron="m1::c2" type="motorD" alarm="m1::c2" off="" roff="" header="Задвижка на паропроводе к котлу" filter="filter"/>
+    <mlib:armatura x="466" y="232" height="60" width="60" id="name20" on="m1::c2" environment="water" ron="m1::c2" type="motorD" alarm="m1::c1,m1::c2,m1::c3" off="" roff="" header="Задвижка на паропроводе к котлу" filter="filter"/>
     <mlib:button x="181" y="450" height="40" width="200" caption="caption" id="name5" onclick=""/>
     <mlib:armatura x="903" y="111" height="50" width="50" id="name7" type="ovalve" environment="water" on="m1::c1" off="m1::c2" ron="m1::c1" roff="m1::c2" filter="filter"/>
     

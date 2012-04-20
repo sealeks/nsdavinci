@@ -1,6 +1,6 @@
 <?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?>
 <svg id="iiii" xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="background-image: url('../util/css/res/bgrd2.png');" onload="libutil.startup.init()">
        
-          <mlib:sensor x="701" y="133" height="20" width="80" stroke="#003" stroke-width="0.5" r="4" id="name11" environment="air" caption="jjjjjj" fontstyle="fill: #003; font-size: 14;" sensorevent="valueset" rotate="10" color1="green"  />
+         <mlib:armatura x="274" y="233" height="60" width="60" id="name10" on="m1::c1" environment="gaz" ron="m1::c1" type="bolt" alarm="m1::c2" filter="filter"/>
 
 </svg> 
