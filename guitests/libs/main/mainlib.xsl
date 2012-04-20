@@ -566,39 +566,19 @@ extension-element-prefixes="mlib">
     <xsl:template name="apply_mlib_aratura_alarmstate">    
         <xsl:choose>                
             <xsl:when test="(boolean(@alarm) and not(normalize-space(@alarm)=''))">
-                <g  class="accident" opacity="0.3">              
-                    <xsl:attribute name="display">
-                        <xsl:text>#{ min(</xsl:text>
-                        <xsl:value-of select="@alarm"/>
-                        <xsl:text> , (</xsl:text>
-                        <xsl:value-of select="@alarm"/>
-                        <xsl:text>).valid </xsl:text>
-                        <xsl:text>)   ? 'block'  : </xsl:text>
-                        <xsl:choose>                
-                            <xsl:when test="(boolean(@alarmack) and not(normalize-space(@alarmack)=''))">
-                                <xsl:text> ((min(</xsl:text>
-                                <xsl:value-of select="@alarmack"/>
-                                <xsl:text> , (</xsl:text>
-                                <xsl:value-of select="@alarmack"/>
-                                <xsl:text>).valid))   ? 'block'  : 'none')  }</xsl:text>
-                            </xsl:when>   
-                            <xsl:otherwise>
-                                <xsl:text>    'none'  } </xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>                            
+                <g  class="accident" opacity="0.3">                                       
                     <circle cx="500" cy="500" r="500"/>
-                    <animate  attributeType="XML" attributeName="opacity" from="0.1" to="0.99" dur="500ms" calcMode = "linear" repeatCount="indefinite">
-                        <xsl:choose>                
-                            <xsl:when test="(boolean(@alarmack) and not(normalize-space(@alarmack)=''))">
-                                <xsl:attribute name="to">
-                                    <xsl:text>#{ (</xsl:text>
-                                    <xsl:value-of select="@alarmack"/>
-                                    <xsl:text>)   ? '0.1'  : '0.99' }</xsl:text>
+                    <animate  attributeType="XML" attributeName="opacity"  dur="500ms" calcMode = "linear" repeatCount="indefinite">
+                           <xsl:attribute name="values">
+                                    <xsl:text>#{ nack(</xsl:text>
+                                    <xsl:value-of select="@alarm"/>
+                                    <xsl:text>) ? '0;1' : </xsl:text>
+                                    <xsl:text>( ack(</xsl:text>
+                                    <xsl:value-of select="@alarm"/> 
+                                    <xsl:text>) ? '1;1' : </xsl:text>
+                                    <xsl:text>  '0;0')  :default 0;0 }</xsl:text>
                                 </xsl:attribute> 
-                            </xsl:when>
-                        </xsl:choose>
-                    </animate>    
+                    </animate>                      
                 </g>     
             </xsl:when>   
         </xsl:choose>  
