@@ -3415,19 +3415,13 @@ extension-element-prefixes="mlib">
                     </style>    
                 </head>
 
-                <body>
-                    <xsl:attribute name="xmlns">                    
-                        <xsl:text>http://www.w3.org/1999/xhtml</xsl:text>
-                    </xsl:attribute>  
+                <body xmlns="http://www.w3.org/1999/xhtml">
                     <xsl:attribute name="style">                    
                         <xsl:value-of select="$rectvarw"/>
                         <xsl:value-of select="$rectvarh"/>
                     </xsl:attribute>  
                     <div xmlns="http://www.w3.org/1999/xhtml">
-                        <table>
-                            <xsl:attribute name="xmlns">                    
-                                <xsl:text>http://www.w3.org/1999/xhtml</xsl:text>
-                            </xsl:attribute>  
+                        <table> 
                             <xsl:attribute name="style">                    
                                 <xsl:value-of select="$rectvarw"/>
                                 <xsl:value-of select="$rectvarfont"/>
@@ -3438,10 +3432,7 @@ extension-element-prefixes="mlib">
                                 <xsl:text>'));</xsl:text>
                             </script>
                             <tbody xmlns="http://www.w3.org/1999/xhtml">       
-                                <tr>
-                                    <xsl:attribute name="xmlns">                    
-                                        <xsl:text>http://www.w3.org/1999/xhtml</xsl:text>
-                                    </xsl:attribute>  
+                                <tr> 
                                     <xsl:attribute name="style">                    
                                         <xsl:value-of select="$rectvarw"/>
                                     </xsl:attribute>  

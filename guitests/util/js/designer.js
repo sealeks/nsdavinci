@@ -1538,14 +1538,32 @@ designutil.componentinfo.prototype.init = function(libsulr){
     }
 }
 
+
+
+designutil.componentinfo.prototype.targetNSprefix = function(doc){
+    if (doc){
+        var docel=doc.documentElement;
+        if (docel && docel.hasAttribute('targetNamespace')) { 
+        var uri=docel.getAttribute('targetNamespace');
+        if (docel.attributes){
+        for (var i=0; i< docel.attributes.length; ++i){ 
+            if ((docel.attributes[i].localName!='targetNamespace') 
+                    && (docel.attributes[i].value==uri))
+             return docel.attributes[i].localName;}}}}
+    return null;}
+
+
+
 designutil.componentinfo.prototype.initlibs = function(libulr){
     var libdoc=libutil.document.readDoc(libulr);
+    var pref = this.targetNSprefix(libdoc);
     if (libdoc){ 
-        this.read_types(libdoc);
-        this.read_elements(libdoc);
+        this.read_types(libdoc,pref);
+        this.read_elements(libdoc, pref);
         this.read_creators(libdoc);
     }
 }
+
 
 
 
@@ -1584,7 +1602,7 @@ designutil.componentinfo.prototype.attributes_for_nullschema = function (el){
     }
 }
 
-designutil.componentinfo.prototype.read_types =  function(doc){
+designutil.componentinfo.prototype.read_types =  function(doc, pref){
     if (doc){
         var docElement=doc.documentElement;
         var els=doc.getElementsByTagName('simpleType');
@@ -1592,6 +1610,7 @@ designutil.componentinfo.prototype.read_types =  function(doc){
             if ((els[i].parentNode==docElement) && (els[i].getAttribute('name'))){
                 var info=this.read_simple_type(els[i]);
                 var nm = els[i].getAttribute('name');
+                nm = pref ? (pref + ':' + nm) : nm; 
                 if (info)
                     this.types[nm] = {
                         'name' : nm , 
@@ -1630,7 +1649,7 @@ designutil.componentinfo.prototype.read_simple_type =  function(el){
     };
 }
 
-designutil.componentinfo.prototype.read_restriction_type =  function(el,prnt){
+designutil.componentinfo.prototype.read_restriction_type =  function(el, prnt){
     if ((!el) || (el.childElementCount==0))
         return {
             'type': 0, 
@@ -1678,12 +1697,14 @@ designutil.componentinfo.prototype.read_restriction_type =  function(el,prnt){
             
      
 
-designutil.componentinfo.prototype.read_elements =  function(doc){
+designutil.componentinfo.prototype.read_elements =  function(doc, pref){
     if (doc){
         var els=doc.getElementsByTagName('element');
         for (var i=0; i<els.length;++i){
-            if (els[i].getAttribute('name')){
-                this.elements[els[i].getAttribute('name')]={
+            var nm = els[i].getAttribute('name');
+            nm = pref ? (pref + ':' + nm) : nm;
+            if (nm){
+                this.elements[nm]={
                     'name' : els[i].getAttribute('name'),
                     'type' : els[i].getAttribute('type'),
                     'attributes' : null
