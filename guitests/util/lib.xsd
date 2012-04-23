@@ -3,68 +3,17 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:lib="http://dvnci/lib">
       
-    <xsd:simpleType name="mlib:tag">    
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
-        </xsd:restriction>
+      
+    <xsd:simpleType name="lib:expression" lib:validator="libutil.validator.expresssion">    
     </xsd:simpleType>
     
-    <xsd:simpleType name="mlib:expression">
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
-        </xsd:restriction>
+    <xsd:simpleType name="lib:taglist" lib:validator="libutil.validator.taglist">    
     </xsd:simpleType>
     
-    <xsd:simpleType name="mlib:tag_or_number">
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
-        </xsd:restriction>
+    <xsd:simpleType name="lib:tag" lib:validator="libutil.validator.tag">    
     </xsd:simpleType>
-    
-    <xsd:simpleType name="mlib:expression_or_number">
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-    
-    <xsd:simpleType name="mlib:direction">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="lr"></xsd:enumeration>
-            <xsd:enumeration value="rl"></xsd:enumeration>
-            <xsd:enumeration value="tb"></xsd:enumeration>
-            <xsd:enumeration value="bt"></xsd:enumeration>
-            <xsd:enumeration value=""></xsd:enumeration>
-        </xsd:restriction>
-    </xsd:simpleType>   
-    
-    <xsd:simpleType name="mlib:alighn">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="left"></xsd:enumeration>
-            <xsd:enumeration value="center"></xsd:enumeration>
-            <xsd:enumeration value="right"></xsd:enumeration>
-            <xsd:enumeration value=""></xsd:enumeration>
-        </xsd:restriction>
-    </xsd:simpleType> 
-    
-    <xsd:simpleType name="mlib:gradienttype">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="lr"></xsd:enumeration>
-            <xsd:enumeration value="tb"></xsd:enumeration>
-            <xsd:enumeration value="c"></xsd:enumeration>
-            <xsd:enumeration value=""></xsd:enumeration>
-        </xsd:restriction>
-    </xsd:simpleType> 
-    
-    <xsd:simpleType name="mlib:environment">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="gaz"></xsd:enumeration>
-            <xsd:enumeration value="water"></xsd:enumeration>
-            <xsd:enumeration value="air"></xsd:enumeration>
-            <xsd:enumeration value="stream"></xsd:enumeration>
-            <xsd:enumeration value="oil"></xsd:enumeration>
-            <xsd:enumeration value=""></xsd:enumeration>
-        </xsd:restriction>
-    </xsd:simpleType>   
+      
+   
     
 
 </xsd:schema>

@@ -2,32 +2,10 @@
 <xsd:schema
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:mlib="http://dvnci/mlib"
-  xmlns:dvnlib="../dvnlib.xsl">
+  xmlns:dvnlib="../dvnlib.xsl"
+  xmlns:lib="http://dvnci/lib">
       
-    <xsd:simpleType name="mlib:tag">    
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-    
-    <xsd:simpleType name="mlib:expression">
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-    
-    <xsd:simpleType name="mlib:tag_or_number">
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-    
-    <xsd:simpleType name="mlib:expression_or_number">
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[A-Za-z0-9_]{0,}::{0,1}[A-Za-z0-9_]{0,}.{0,1}[A-Za-z0-9_]{0,}"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-    
+   
     <xsd:simpleType name="mlib:direction">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="lr"></xsd:enumeration>
@@ -66,18 +44,7 @@
             <xsd:enumeration value=""></xsd:enumeration>
         </xsd:restriction>
     </xsd:simpleType>   
-    
-    <xsd:simpleType name="mlib:environmentfill">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="gaz"></xsd:enumeration>
-            <xsd:enumeration value="water"></xsd:enumeration>
-            <xsd:enumeration value="air"></xsd:enumeration>
-            <xsd:enumeration value="stream"></xsd:enumeration>
-            <xsd:enumeration value="oil"></xsd:enumeration>
-            <xsd:enumeration value=""></xsd:enumeration>
-            <xsd:enumeration></xsd:enumeration>
-        </xsd:restriction>
-    </xsd:simpleType>  
+ 
     
     <xsd:simpleType name="mlib:armaturatype">
         <xsd:restriction base="xsd:string">
@@ -145,19 +112,19 @@
             <xsd:attribute name="oncolor" type="mlib:color" default=""/>
             <xsd:attribute name="offcolor" type="mlib:color" default=""/>
             
-            <xsd:attribute name="on" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="off" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="local" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="auto" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="ron" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="roff" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="rauto" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="don" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="doff" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="control" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="on" type="lib:expression" default=""/>
+            <xsd:attribute name="off" type="lib:expression" default=""/>
+            <xsd:attribute name="local" type="lib:expression" default=""/>
+            <xsd:attribute name="auto" type="lib:expression" default=""/>
+            <xsd:attribute name="ron" type="lib:tag" default=""/>
+            <xsd:attribute name="roff" type="lib:tag" default=""/>
+            <xsd:attribute name="rauto" type="lib:tag" default=""/>
+            <xsd:attribute name="don" type="lib:expression" default=""/>
+            <xsd:attribute name="doff" type="lib:expression" default=""/>
+            <xsd:attribute name="control" type="lib:expression" default=""/>
             
-            <xsd:attribute name="alarms" type="dvnlib:taglist" default=""/>                      
-            <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
+            <xsd:attribute name="alarms" type="lib:taglist" default=""/>                      
+            <xsd:attribute name="visible" type="lib:expression" default="true"/>
             
             <xsd:attribute name="rotate" type="mlib:number" default="0"/>
             
@@ -179,8 +146,8 @@
         
             <xsd:attribute name="direction" type="mlib:direction" default="toright"/>
             
-            <xsd:attribute name="param" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="alarms" type="dvnlib:taglist" default=""/>
+            <xsd:attribute name="param" type="lib:expression" default=""/>
+            <xsd:attribute name="alarms" type="lib:taglist" default=""/>
 
             <xsd:attribute name="gradient-type" type="mlib:gradienttype" default="0"/>
             <xsd:attribute name="environment" type="mlib:environment" default="black"/>
@@ -193,7 +160,7 @@
             <xsd:attribute name="stroke" type="mlib:color" default="black"/> 
             <xsd:attribute name="stroke-width" type="xsd:number" default="0"/> 
             <xsd:attribute name="r" type="xsd:number" default="0"/>
-            <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
+            <xsd:attribute name="visible" type="lib:expression" default="true"/>
             <xsd:attribute name="rotate" type="mlib:number" default="0"/> 
             
         </xsd:complexType>
@@ -221,14 +188,14 @@
             <xsd:attribute name="sensorevent" type="mlib:sensorevent" default=""/>
             <xsd:attribute name="caption" type="xsd:string" default=""/>
             <xsd:attribute name="format" type="xsd:string" default=""/>
-            <xsd:attribute name="param" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="control" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="disable" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
+            <xsd:attribute name="param" type="lib:expression" default=""/>
+            <xsd:attribute name="control" type="lib:expression" default=""/>
+            <xsd:attribute name="disable" type="lib:expression" default=""/>
+            <xsd:attribute name="visible" type="lib:expression" default="true"/>
             
-            <xsd:attribute name="alarms" type="dvnlib:taglist" default=""/>
-            <xsd:attribute name="alarms-low" type="dvnlib:taglist" default=""/> 
-            <xsd:attribute name="alarms-high" type="dvnlib:taglist" default=""/>
+            <xsd:attribute name="alarms" type="lib:taglist" default=""/>
+            <xsd:attribute name="alarms-low" type="lib:taglist" default=""/> 
+            <xsd:attribute name="alarms-high" type="lib:taglist" default=""/>
             
             <xsd:attribute name="fontcolor" type="xsd:string" default=""/>
             <xsd:attribute name="fontstyle" type="xsd:string" default=""/>
@@ -265,10 +232,10 @@
             <xsd:attribute name="dsblfontstyle" type="xsd:string" default=""/>
             
 
-            <xsd:attribute name="state" type="dvnlib:expression" default=""/>          
-            <xsd:attribute name="param" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="disable" type="dvnlib:expression" default=""/>
-            <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
+            <xsd:attribute name="state" type="lib:expression" default=""/>          
+            <xsd:attribute name="param" type="lib:expression" default=""/>
+            <xsd:attribute name="disable" type="lib:expression" default=""/>
+            <xsd:attribute name="visible" type="lib:expression" default="true"/>
             
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
@@ -286,7 +253,7 @@
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/> 
             <xsd:attribute name="d" type="mlib:path" default=""/>
-            <xsd:attribute name="on" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="on" type="lib:expression" default=""/>
             <xsd:attribute name="fill" type="mlib:color" default="white"/>       
             <xsd:attribute name="stroke" type="string_or_number" default="black"/> 
             <xsd:attribute name="off-stroke" type="string_or_number" default="black"/>
@@ -325,10 +292,10 @@
             <xsd:attribute name="rotate-x" type="mlib:string_or_number" default="0"/>
             <xsd:attribute name="rotate-y" type="mlib:string_or_number" default="0"/> 
             <xsd:attribute name="rotate-angle" type="mlib:string_or_number" default="0"/> 
-            <xsd:attribute name="rotate-angle-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="rotate-angle-binding" type="lib:expression" default="0"/>
             <xsd:attribute name="scale" type="mlib:string_or_number" default="0"/> 
-            <xsd:attribute name="scale-binding" type="dvnlib:expression" default="0"/>
-            <xsd:attribute name="visible-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="scale-binding" type="lib:expression" default="0"/>
+            <xsd:attribute name="visible-binding" type="lib:expression" default="0"/>
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
             <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>

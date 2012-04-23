@@ -29,6 +29,8 @@ libutil.error = {};
 
 libutil.regex = {};
 
+libutil.validator = {};
+
 libutil.alarmtable = function(el){
     
     this.alarmelement=libutil.document.findElementByTagName(el,'table');
@@ -1337,9 +1339,32 @@ libutil.document.findElementByTagName = function (el, name){
 ///
 
 
+libutil.validator.expresssion = function(val) {
+    if ((val==undefined) || (val=='') || (val==null))  return undefined;
+    var error = $$error(val);
+    return (error==undefined) ? undefined : (error==0);
+    
+}
 
+libutil.validator.taglist = function(val) {
+    if ((val==undefined) || (val=='') || (val==null))  return undefined;
+    var error = $$error('tags('+val+')');
+    var check=  $$check('tags('+val+')');
+    return (error==undefined) ? undefined : (error==0 && check);   
+}
 
+libutil.validator.tag = function(val) {
+    if ((val==undefined) || (val=='') || (val==null))  return undefined;
+    var error = $$error('tags('+val+')');
+    var check=  $$check(val+'.binding');
+    return (error==undefined) ? undefined : (error==0 && (check!=undefined));   
+}
 
+libutil.validator.regex = function(val , regex) {
+    if ((val==undefined) || (val=='') || (val==null))  return undefined;
+    var error = val.test(regex);
+    return (error==undefined) ? undefined : (error);   
+}
 
 
 
