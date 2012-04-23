@@ -353,7 +353,7 @@ mainlib.valueset_click =  function (el, nm, width){
         var fnc_num = function(num) {return "var txtel= document.getElementById('"+popup_id+"_text'); if (txtel) txtel.textContent=txtel.textContent+'" + num.toString() +"';"}
         var fnc_clear = "var txtel= document.getElementById('"+popup_id+"_text'); if (txtel && txtel.textContent.length>0) txtel.textContent=txtel.textContent.substring(0, txtel.textContent.length-1);";
         var fnc_clearpopup = "var popuptmp= document.getElementById('"+popup_id+"');  if (popuptmp && popuptmp.clearpopup) popuptmp.clearpopup();";
-        var fnc_cmd = "var txtel= document.getElementById('"+popup_id+"_text'); if (txtel && txtel.textContent.length>0) { expression(('" + nm +  
+        var fnc_cmd = "var txtel= document.getElementById('"+popup_id+"_text'); if (txtel && txtel.textContent.length>0) { $$(('" + nm +  
                            "@=' + " +"txtel.textContent" +"));} var popuptmp= document.getElementById('"+popup_id+"');  if (popuptmp && popuptmp.clearpopup) popuptmp.clearpopup();";
 
 

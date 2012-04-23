@@ -110,6 +110,25 @@ extension-element-prefixes="mlib">
 		<stop  offset="0" style="stop-color:#F7F7F7"/>
 		<stop  offset="1" style="stop-color:#D1D1D1"/>
 	</radialGradient>
+        
+        
+        
+          <linearGradient id="gradientblack_h"  x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop  offset="0" style="stop-color:#333"/>
+		<stop  offset="0.5" style="stop-color:#000"/>
+		<stop  offset="1" style="stop-color:#333"/>
+	</linearGradient>
+        
+        <linearGradient id="gradienblack_v"  x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop  offset="0" style="stop-color:#000"/>
+		<stop  offset="0.5" style="stop-color:#333"/>
+		<stop  offset="1" style="stop-color:#000"/>
+	</linearGradient>
+        
+        <radialGradient id="gradientblack_c">
+		<stop  offset="0" style="stop-color:#333"/>
+		<stop  offset="1" style="stop-color:#000"/>
+	</radialGradient>        
                 
 
 
@@ -119,7 +138,7 @@ extension-element-prefixes="mlib">
 		<stop  offset="1" style="stop-color:#f92"/>
 	</linearGradient>
         
-        <linearGradient id="gradientalarm_h"  x1="0%" y1="100%" x2="100%" y2="100%">
+        <linearGradient id="gradientalarm_v"  x1="0%" y1="100%" x2="100%" y2="100%">
 		<stop  offset="0" style="stop-color:#a92"/>
 		<stop  offset="0.5" style="stop-color:#f92"/>
 		<stop  offset="1" style="stop-color:#f92"/>
@@ -138,7 +157,7 @@ extension-element-prefixes="mlib">
 		<stop  offset="1" style="stop-color:#AA0000"/>
 	</linearGradient>
         
-        <linearGradient id="gradientaccident_h"  x1="0%" y1="100%" x2="100%" y2="100%">
+        <linearGradient id="gradientaccident_v"  x1="0%" y1="100%" x2="100%" y2="100%">
 		<stop  offset="0" style="stop-color:#AA0000"/>
 		<stop  offset="0.5" style="stop-color:#FF0000"/>
 		<stop  offset="1" style="stop-color:#AA0000"/>
@@ -148,6 +167,24 @@ extension-element-prefixes="mlib">
 		<stop  offset="0" style="stop-color:#AA0000"/>
 		<stop  offset="1" style="stop-color:#FF0000"/>
 	</radialGradient>
+        
+        
+        <linearGradient id="gradientnotice_h"  x1="100%" y1="0%" x2="100%" y2="100%">
+		<stop  offset="0" style="stop-color:#AAAA00"/>
+		<stop  offset="0.5" style="stop-color:#FFFF00"/>
+		<stop  offset="1" style="stop-color:#AAAA00"/>
+	</linearGradient>
+        
+        <linearGradient id="gradientnotice_v"  x1="0%" y1="100%" x2="100%" y2="100%">
+		<stop  offset="0" style="stop-color:#AAAA00"/>
+		<stop  offset="0.5" style="stop-color:#FFFF00"/>
+		<stop  offset="1" style="stop-color:#AAAA00"/>
+	</linearGradient>
+        
+        <radialGradient id="gradientnotice_c">
+		<stop  offset="0" style="stop-color:#AAAA00"/>
+		<stop  offset="1" style="stop-color:#FFFF00"/>
+	</radialGradient>        
         
 
         

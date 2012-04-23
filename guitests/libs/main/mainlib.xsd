@@ -156,7 +156,7 @@
             <xsd:attribute name="doff" type="dvnlib:expression" default=""/>
             <xsd:attribute name="control" type="dvnlib:expression" default=""/>
             
-            <xsd:attribute name="alarm" type="dvnlib:taglist" default=""/>                      
+            <xsd:attribute name="alarms" type="dvnlib:taglist" default=""/>                      
             <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
             
             <xsd:attribute name="rotate" type="mlib:number" default="0"/>
@@ -179,10 +179,16 @@
         
             <xsd:attribute name="direction" type="mlib:direction" default="toright"/>
             
-            <xsd:attribute name="value" type="dvnlib:expression" default=""/>
-        
-            <xsd:attribute name="background" type="mlib:environmentfill" default="black"/>
-            <xsd:attribute name="fill" type="mlib:environmentfill" default="white"/>
+            <xsd:attribute name="param" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="alarms" type="dvnlib:taglist" default=""/>
+
+            <xsd:attribute name="gradient-type" type="mlib:gradienttype" default="0"/>
+            <xsd:attribute name="environment" type="mlib:environment" default="black"/>
+            <xsd:attribute name="color1" type="mlib:color" default=""/>
+            <xsd:attribute name="color2" type="mlib:color" default=""/>  
+            <xsd:attribute name="fillenvironment" type="mlib:environment" default="black"/>
+            <xsd:attribute name="fillcolor1" type="mlib:color" default=""/>
+            <xsd:attribute name="fillcolor2" type="mlib:color" default=""/>            
         
             <xsd:attribute name="stroke" type="mlib:color" default="black"/> 
             <xsd:attribute name="stroke-width" type="xsd:number" default="0"/> 
@@ -214,11 +220,17 @@
             
             <xsd:attribute name="sensorevent" type="mlib:sensorevent" default=""/>
             <xsd:attribute name="caption" type="xsd:string" default=""/>
-            <xsd:attribute name="param" type="dvnlib:expression" default=""/>
             <xsd:attribute name="format" type="xsd:string" default=""/>
+            <xsd:attribute name="param" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="control" type="dvnlib:expression" default=""/>
             <xsd:attribute name="disable" type="dvnlib:expression" default=""/>
             <xsd:attribute name="visible" type="dvnlib:expression" default="true"/>
             
+            <xsd:attribute name="alarms" type="dvnlib:taglist" default=""/>
+            <xsd:attribute name="alarms-low" type="dvnlib:taglist" default=""/> 
+            <xsd:attribute name="alarms-high" type="dvnlib:taglist" default=""/>
+            
+            <xsd:attribute name="fontcolor" type="xsd:string" default=""/>
             <xsd:attribute name="fontstyle" type="xsd:string" default=""/>
             <xsd:attribute name="rotate" type="mlib:number" default="0"/>
             
@@ -276,7 +288,8 @@
             <xsd:attribute name="d" type="mlib:path" default=""/>
             <xsd:attribute name="on" type="dvnlib:expression" default=""/>
             <xsd:attribute name="fill" type="mlib:color" default="white"/>       
-            <xsd:attribute name="stroke" type="mlib:environmentfill" default="black"/> 
+            <xsd:attribute name="stroke" type="string_or_number" default="black"/> 
+            <xsd:attribute name="off-stroke" type="string_or_number" default="black"/>
             <xsd:attribute name="stroke-width" type="xsd:number" default="0"/> 
             <xsd:attribute name="visible" type="mlib:string_or_number" default="true"/>
             <xsd:attribute name="filter" type="mlib:filtertype" default=""/>

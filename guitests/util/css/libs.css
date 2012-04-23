@@ -78,26 +78,43 @@
 
 .notice
 {
-  stroke-width: 0;
-  fill: #FF0;
+  stroke-width: 0 !important;
+  fill: #FF0 !important;
 
   
 }
 
 .alarm
 {
-  stroke-width: 0;
-  fill: #EEAD0E;
+  stroke-width: 0 !important;
+  fill: #EEAD0E !important;
 
   
 }
 
 .accident
 {
-  stroke-width: 0;
-  fill: red;
+  stroke-width: 0 !important;
+  fill: red !important;
+  
+}
+
+.notice_stroke
+{
+  stroke: #FF0 !important;
 
   
+}
+
+.alarm_stroke
+{
+  stroke: #EEAD0E !important;
+
+}
+
+.accident_stroke
+{
+  stroke: #F00 !important;
 }
 
 .local
