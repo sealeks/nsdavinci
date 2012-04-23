@@ -3,7 +3,8 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:mlib="http://dvnci/mlib"
   xmlns:dvnlib="../dvnlib.xsl"
-  xmlns:lib="http://dvnci/lib">
+  xmlns:lib="http://dvnci/lib"
+  targetNamespace="http://dvnci/mlib">
       
    
     <xsd:simpleType name="mlib:direction">
