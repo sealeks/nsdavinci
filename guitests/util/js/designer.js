@@ -1354,7 +1354,7 @@ designer.prototype.show_property = function(){
         td1.className= (typenm=='lib:expression') ? 'staticexpr' : 
             ((typenm=='lib:taglist') ? 'statictaglist' :
             ((typenm=='lib:tag') ? 'statictag' :
-            ((typenm=='dvnlib:event') ? 'staticevent' :'static' )));
+            ((typenm=='lib:event') ? 'staticevent' :'static' )));
    
         var td2= libutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
         var val=this.getAttributeValue(attriblist[i]['name']);
@@ -1709,7 +1709,7 @@ designutil.componentinfo.prototype.read_elements =  function(doc, pref){
                     'type' : els[i].getAttribute('type'),
                     'attributes' : null
                 };
-                this.read_attributes(els[i],this.elements[els[i].getAttribute('name')]);
+                this.read_attributes(els[i],this.elements[nm]);
             }
         }
     }

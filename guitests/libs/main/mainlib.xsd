@@ -7,7 +7,7 @@
   targetNamespace="http://dvnci/mlib">
       
    
-    <xsd:simpleType name="mlib:direction">
+    <xsd:simpleType name="direction">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="lr"></xsd:enumeration>
             <xsd:enumeration value="rl"></xsd:enumeration>
@@ -17,7 +17,7 @@
         </xsd:restriction>
     </xsd:simpleType>   
     
-    <xsd:simpleType name="mlib:alighn">
+    <xsd:simpleType name="alighn">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="left"></xsd:enumeration>
             <xsd:enumeration value="center"></xsd:enumeration>
@@ -26,7 +26,7 @@
         </xsd:restriction>
     </xsd:simpleType> 
     
-    <xsd:simpleType name="mlib:gradienttype">
+    <xsd:simpleType name="gradienttype">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="lr"></xsd:enumeration>
             <xsd:enumeration value="tb"></xsd:enumeration>
@@ -35,7 +35,7 @@
         </xsd:restriction>
     </xsd:simpleType> 
     
-    <xsd:simpleType name="mlib:environment">
+    <xsd:simpleType name="environment">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="gaz"></xsd:enumeration>
             <xsd:enumeration value="water"></xsd:enumeration>
@@ -47,7 +47,7 @@
     </xsd:simpleType>   
  
     
-    <xsd:simpleType name="mlib:armaturatype">
+    <xsd:simpleType name="armaturatype">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="motor"></xsd:enumeration>
             <xsd:enumeration value="motorD"></xsd:enumeration>
@@ -61,7 +61,7 @@
         </xsd:restriction>
     </xsd:simpleType> 
     
-    <xsd:simpleType name="mlib:buttontype">
+    <xsd:simpleType name="buttontype">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="tumbler"></xsd:enumeration>
             <xsd:enumeration value="impulse"></xsd:enumeration>
@@ -71,7 +71,7 @@
         </xsd:restriction>
     </xsd:simpleType> 
     
-    <xsd:simpleType name="mlib:filtertype">
+    <xsd:simpleType name="filtertype">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="filter1"></xsd:enumeration>
             <xsd:enumeration value="filter2"></xsd:enumeration>
@@ -80,14 +80,14 @@
         </xsd:restriction>
     </xsd:simpleType>
     
-    <xsd:simpleType name="mlib:armatfiltertype">
+    <xsd:simpleType name="armatfiltertype">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="filter"></xsd:enumeration>
             <xsd:enumeration value=""></xsd:enumeration>
         </xsd:restriction>
     </xsd:simpleType>
     
-    <xsd:simpleType name="mlib:sensorevent">
+    <xsd:simpleType name="sensorevent">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="graph"></xsd:enumeration>
             <xsd:enumeration value="valueset"></xsd:enumeration>
@@ -97,7 +97,7 @@
     </xsd:simpleType>
     
     
-    <xsd:element name="mlib:armatura" type="armatura">
+    <xsd:element name="armatura" type="armatura">
         <xsd:complexType name="motor">
             <lib:creator name="mlib:armatura" hint="armatura">
                 <mlib:armatura  x="" y="" height="50" width="50"/>
@@ -134,7 +134,7 @@
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="mlib:rect" type="rect">
+    <xsd:element name="rect" type="rect">
         <xsd:complexType name="rect">
             <lib:creator name="mlib:rect"  hint="rect">
                 <mlib:rect  x="" y="" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333"/>
@@ -167,7 +167,7 @@
         </xsd:complexType>
     </xsd:element>
     
-    <xsd:element name="mlib:sensor" type="sensor">
+    <xsd:element name="sensor" type="sensor">
         <xsd:complexType name="sensor">
             <lib:creator name="mlib:sensor"  hint="sensor">
                 <mlib:sensor  x="" y="" height="30" width="150" stroke="white" stroke-width="1" r="4"/>
@@ -205,7 +205,7 @@
         </xsd:complexType>
     </xsd:element>
     
-    <xsd:element name="mlib:button" type="button">
+    <xsd:element name="button" type="button">
         <xsd:complexType name="button">
             <lib:creator name="mlib:button"  hint="button">
                 <mlib:button  x="" y="" height="40" width="200" caption="caption"/>
@@ -239,15 +239,15 @@
             <xsd:attribute name="visible" type="lib:expression" default="true"/>
             
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
             
         </xsd:complexType>
     </xsd:element>
     
-    <xsd:element name="mlib:path" type="path">
+    <xsd:element name="path" type="path">
         <xsd:complexType name="path">
             <lib:creator name="mlib:path"  hint="path">
                 <mlib:path  stroke-width="5" d=" M0,0 l 100,100"/>
@@ -264,7 +264,7 @@
         </xsd:complexType>
     </xsd:element>
     
-    <xsd:element name="mlib:alarmtable" type="alarmtable">
+    <xsd:element name="alarmtable" type="alarmtable">
         <xsd:complexType name="alarmtable">
             <lib:creator name="mlib:alarmtable"  hint="alarmtable">
                 <mlib:alarmtable  x="" y="" height="100" width="400"/>
@@ -278,7 +278,7 @@
         </xsd:complexType>
     </xsd:element>  
     
-    <xsd:element name="mlib:group" type="group">
+    <xsd:element name="group" type="group">
         <xsd:complexType name="group">
             <lib:creator name="mlib:group"  hint="group">
                 <mlib:group  x="" y="" height="400" width="400"/>
@@ -298,14 +298,14 @@
             <xsd:attribute name="scale-binding" type="lib:expression" default="0"/>
             <xsd:attribute name="visible-binding" type="lib:expression" default="0"/>
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
-            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/> 
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="lib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="lib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="lib:event" default=""/> 
             
         </xsd:complexType>
     </xsd:element> 

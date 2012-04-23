@@ -64,14 +64,14 @@
             <xsd:attribute name="style" type="xsd:string" default=""/>  
             <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
-            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/> 
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="lib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="lib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="lib:event" default=""/> 
             
         </xsd:complexType>
     </xsd:element>
@@ -107,14 +107,14 @@
             <xsd:attribute name="style" type="xsd:string" default=""/>   
             <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
-            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/> 
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="lib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="lib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="lib:event" default=""/> 
             
         </xsd:complexType>
     </xsd:element>
@@ -153,14 +153,14 @@
             <xsd:attribute name="style" type="xsd:string" default=""/>  
             <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
-            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/> 
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="lib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="lib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="lib:event" default=""/> 
             
         </xsd:complexType>
     </xsd:element>
@@ -193,14 +193,14 @@
             <xsd:attribute name="style" type="xsd:string" default=""/>  
             <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
-            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/>             
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="lib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="lib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="lib:event" default=""/>             
             
         </xsd:complexType>
     </xsd:element>
@@ -230,14 +230,14 @@
             <xsd:attribute name="style" type="xsd:string" default=""/> 
             <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
-            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/> 
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="lib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="lib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="lib:event" default=""/> 
             
             
         </xsd:complexType>
@@ -266,14 +266,14 @@
             <xsd:attribute name="style" type="xsd:string" default=""/> 
             <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
-            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/> 
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="lib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="lib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="lib:event" default=""/> 
             
         </xsd:complexType>
     </xsd:element> 
@@ -303,14 +303,14 @@
             <xsd:attribute name="style" type="xsd:string" default=""/> 
             <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
-            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/> 
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="lib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="lib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="lib:event" default=""/> 
             
             
         </xsd:complexType>
@@ -340,14 +340,14 @@
             <xsd:attribute name="style" type="xsd:string" default=""/>   
             <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
-            <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
-            <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseup" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousedown" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousemove" type="dvnlib:event" default=""/> 
-            <xsd:attribute name="onmouseout" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmouseover" type="dvnlib:event" default=""/>
-            <xsd:attribute name="onmousewheel" type="dvnlib:event" default=""/>  
+            <xsd:attribute name="onclick"  type="lib:event" default=""/>
+            <xsd:attribute name="ondblclick" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseup" type="lib:event" default=""/>
+            <xsd:attribute name="onmousedown" type="lib:event" default=""/>
+            <xsd:attribute name="onmousemove" type="lib:event" default=""/> 
+            <xsd:attribute name="onmouseout" type="lib:event" default=""/>
+            <xsd:attribute name="onmouseover" type="lib:event" default=""/>
+            <xsd:attribute name="onmousewheel" type="lib:event" default=""/>  
             
             
         </xsd:complexType>
