@@ -1725,7 +1725,7 @@ designutil.componentinfo.prototype.read_creators =  function(doc){
     if (doc){
         var els=doc.getElementsByTagName('creator');
         for (var i=0; i<els.length;++i)
-            if (els[i].nodeName=='dvnlib:creator'){
+            if (els[i].nodeName=='lib:creator'){
                 var nm = els[i].getAttribute('name');
                 var el = els[i].firstElementChild;
                 if ((nm) && (nm!='') && (el))

@@ -37,9 +37,9 @@
          
     <xsd:element name="svg:circle" type="svg::circle">
         <xsd:complexType name="circle">
-            <dvnlib:creator name="svg:circle" hint="circle" style="fill: red;">
+            <lib:creator name="svg:circle" hint="circle" style="fill: red;">
                 <svg:circle  cx="" cy="" r="50" />
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="cx" type="xsd:string" default="0"/>
             <xsd:attribute name="cx-binding" type="lib:expression" default="0"/>
@@ -78,9 +78,9 @@
     
     <xsd:element name="svg:ellipse" type="svg::ellipse">
         <xsd:complexType name="ellipse">
-            <dvnlib:creator name="svg:ellipse" hint="ellipse">
+            <lib:creator name="svg:ellipse" hint="ellipse">
                 <svg:ellipse  cx="" cy="" rx="50" ry="50"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="cx" type="xsd:string" default="0"/>
             <xsd:attribute name="cx-binding" type="lib:expression" default="0"/>
@@ -121,9 +121,9 @@
     
     <xsd:element name="svg:rect" type="svg::rect">
         <xsd:complexType name="rect">
-            <dvnlib:creator name="svg:rect" hint="rect">
+            <lib:creator name="svg:rect" hint="rect">
                 <svg:rect  x="" y="" width="50" height="50"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="xsd:string" default="0"/>
             <xsd:attribute name="x-binding" type="lib:expression" default="0"/>
@@ -168,9 +168,9 @@
    
     <xsd:element name="svg:line" type="svg:line">
         <xsd:complexType name="line">
-            <dvnlib:creator name="svg:line" hint="line">
+            <lib:creator name="svg:line" hint="line">
                 <svg:line  x1="200" y1="200" x2="300" y2="300" stroke-width="3" stroke="black"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x1" type="xsd:string" default="0"/>
             <xsd:attribute name="x1-binding" type="lib:expression" default="0"/>
@@ -207,9 +207,9 @@
     
     <xsd:element name="svg:polyline" type="svg:polyline">
         <xsd:complexType name="polyline">
-            <dvnlib:creator name="svg:polyline" hint="polyline">
+            <lib:creator name="svg:polyline" hint="polyline">
                 <svg:polyline points="200,200 300,300" stroke-width="3" stroke="black" fill="none"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="points" type="xsd:string" default="0"/> 
             
@@ -245,9 +245,9 @@
     
     <xsd:element name="svg:polygon" type="svg:polyline">
         <xsd:complexType name="polygone">
-            <dvnlib:creator name="svg:polygon" hint="polygon">
+            <lib:creator name="svg:polygon" hint="polygon">
                 <svg:polygon points="200,200 300,200 300,300 200,300" stroke-width="3" stroke="black" fill="red"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="points" type="xsd:string" default="0"/> 
             
@@ -280,9 +280,9 @@
     
     <xsd:element name="svg:path" type="svg:path">
         <xsd:complexType name="path">
-            <dvnlib:creator name="svg:path" hint="path">
+            <lib:creator name="svg:path" hint="path">
                 <svg:path d=" M0,0 l 100,100" stroke-width="3" stroke="black" fill="none"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="d" type="xsd:string" default="0"/>  
             
@@ -318,9 +318,9 @@
     
     <xsd:element name="svg:text" type="svg:text">
         <xsd:complexType name="text">
-            <dvnlib:creator name="svg:text" hint="text">
+            <lib:creator name="svg:text" hint="text">
                 <svg:text  x="" y="" text="text" fill="red"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/> 
             <xsd:attribute name="text" type="xsd:string" default=""/>
             <xsd:attribute name="text-binding" type="lib:expression" default=""/>
@@ -355,9 +355,9 @@
     
     <xsd:element name="svg" type="svg">
         <xsd:complexType name="svg">
-            <dvnlib:creator name="svg" hint="svg">
+            <lib:creator name="svg" hint="svg">
                 <svg  x="" y="" width="100%" height="100%"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/> 
             <xsd:attribute name="style" type="xsd:string" default=""/>
             <xsd:attribute name="x" type="xsd:string" default=""/>
