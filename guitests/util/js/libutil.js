@@ -437,7 +437,7 @@ libutil.popup.bpunds_intersect = function(popupbound, documenbound){
     var Y1 =   (popupbound.y + popupbound.height) < (documenbound.y + documenbound.height) ? 
     (popupbound.y + popupbound.height) : (documenbound.y + documenbound.height);
 
-    return (popupbound.width>0 && popupbound.height>0) ? ((X1-X0)*(Y1-Y0))/(popupbound.height * popupbound.width) : 0;
+    return (popupbound.width>0 && popupbound.height>0) ? parseInt(((X1-X0)*(Y1-Y0)*1000)/(popupbound.height * popupbound.width)) : 0;
 }
 
 
