@@ -98,9 +98,9 @@
     
     <xsd:element name="mlib:armatura" type="armatura">
         <xsd:complexType name="motor">
-            <dvnlib:creator name="mlib:armatura" hint="armatura">
+            <lib:creator name="mlib:armatura" hint="armatura">
                 <mlib:armatura  x="" y="" height="50" width="50"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="type" type="mlib:armaturatype"/>
             <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
@@ -135,9 +135,9 @@
 
     <xsd:element name="mlib:rect" type="rect">
         <xsd:complexType name="rect">
-            <dvnlib:creator name="mlib:rect"  hint="rect">
+            <lib:creator name="mlib:rect"  hint="rect">
                 <mlib:rect  x="" y="" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
             <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
@@ -168,9 +168,9 @@
     
     <xsd:element name="mlib:sensor" type="sensor">
         <xsd:complexType name="sensor">
-            <dvnlib:creator name="mlib:sensor"  hint="sensor">
+            <lib:creator name="mlib:sensor"  hint="sensor">
                 <mlib:sensor  x="" y="" height="30" width="150" stroke="white" stroke-width="1" r="4"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
             <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
@@ -206,9 +206,9 @@
     
     <xsd:element name="mlib:button" type="button">
         <xsd:complexType name="button">
-            <dvnlib:creator name="mlib:button"  hint="button">
+            <lib:creator name="mlib:button"  hint="button">
                 <mlib:button  x="" y="" height="40" width="200" caption="caption"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
             <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
@@ -248,9 +248,9 @@
     
     <xsd:element name="mlib:path" type="path">
         <xsd:complexType name="path">
-            <dvnlib:creator name="mlib:path"  hint="path">
+            <lib:creator name="mlib:path"  hint="path">
                 <mlib:path  stroke-width="5" d=" M0,0 l 100,100"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/> 
             <xsd:attribute name="d" type="mlib:path" default=""/>
             <xsd:attribute name="on" type="lib:expression" default=""/>
@@ -265,9 +265,9 @@
     
     <xsd:element name="mlib:alarmtable" type="alarmtable">
         <xsd:complexType name="alarmtable">
-            <dvnlib:creator name="mlib:alarmtable"  hint="alarmtable">
+            <lib:creator name="mlib:alarmtable"  hint="alarmtable">
                 <mlib:alarmtable  x="" y="" height="100" width="400"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
             <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
@@ -279,9 +279,9 @@
     
     <xsd:element name="mlib:group" type="group">
         <xsd:complexType name="group">
-            <dvnlib:creator name="mlib:group"  hint="group">
+            <lib:creator name="mlib:group"  hint="group">
                 <mlib:group  x="" y="" height="400" width="400"/>
-            </dvnlib:creator>
+            </lib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="mlib:string_or_number" default="0"/>
             <xsd:attribute name="y" type="mlib:string_or_number" default="0"/> 
