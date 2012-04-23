@@ -2,7 +2,8 @@
 <xsd:schema
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:svg="http://www.w3.org/2000/svg"
-  xmlns:dvnlib="../dvnlib.xsl">
+  xmlns:dvnlib="../dvnlib.xsl"
+  xmlns:lib="http://dvnci/lib">
       
       
     <xsd:simpleType name="svg:stroke-linecap">
@@ -41,27 +42,27 @@
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="cx" type="xsd:string" default="0"/>
-            <xsd:attribute name="cx-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="cx-binding" type="lib:expression" default="0"/>
             <xsd:attribute name="cy" type="xsd:string" default="0"/>
-            <xsd:attribute name="cy-binding" type="dvnlib:expression" default="0"/> 
+            <xsd:attribute name="cy-binding" type="lib:expression" default="0"/> 
             <xsd:attribute name="r" type="xsd:string" default="100"/>
-            <xsd:attribute name="r-binding" type="dvnlib:expression" default="100"/> 
+            <xsd:attribute name="r-binding" type="lib:expression" default="100"/> 
             
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-width-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-opacity-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="fill" type="xsd:string" default=""/>
-            <xsd:attribute name="fill-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="fill-binding" type="lib:expression" default=""/>
             <xsd:attribute name="opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="opacity-binding" type="dvnlib:expression" default=""/>             
+            <xsd:attribute name="opacity-binding" type="lib:expression" default=""/>             
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/>  
-            <xsd:attribute name="visible-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
             <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
@@ -82,29 +83,29 @@
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="cx" type="xsd:string" default="0"/>
-            <xsd:attribute name="cx-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="cx-binding" type="lib:expression" default="0"/>
             <xsd:attribute name="cy" type="xsd:string" default="0"/>
-            <xsd:attribute name="cy-binding" type="dvnlib:expression" default="0"/> 
+            <xsd:attribute name="cy-binding" type="lib:expression" default="0"/> 
             <xsd:attribute name="rx" type="xsd:string" default="100"/>
-            <xsd:attribute name="rx-binding" type="dvnlib:expression" default="100"/> 
+            <xsd:attribute name="rx-binding" type="lib:expression" default="100"/> 
             <xsd:attribute name="ry" type="xsd:string" default="100"/>
-            <xsd:attribute name="ry-binding" type="dvnlib:expression" default="100"/>
+            <xsd:attribute name="ry-binding" type="lib:expression" default="100"/>
             
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-width-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-opacity-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-opacity-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="fill" type="xsd:string" default=""/>
-            <xsd:attribute name="fill-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="fill-binding" type="lib:expression" default=""/>
             <xsd:attribute name="opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="opacity-binding" type="dvnlib:expression" default=""/>  
+            <xsd:attribute name="opacity-binding" type="lib:expression" default=""/>  
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/>             
             <xsd:attribute name="style" type="xsd:string" default=""/>   
-            <xsd:attribute name="visible-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
             <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
@@ -125,32 +126,32 @@
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x" type="xsd:string" default="0"/>
-            <xsd:attribute name="x-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="x-binding" type="lib:expression" default="0"/>
             <xsd:attribute name="y" type="xsd:string" default="0"/>
-            <xsd:attribute name="y-binding" type="dvnlib:expression" default="0"/> 
+            <xsd:attribute name="y-binding" type="lib:expression" default="0"/> 
             <xsd:attribute name="width" type="xsd:string" default="0"/>
-            <xsd:attribute name="width-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="width-binding" type="lib:expression" default="0"/>
             <xsd:attribute name="height" type="xsd:string" default="0"/>
-            <xsd:attribute name="height-binding" type="dvnlib:expression" default="0"/> 
+            <xsd:attribute name="height-binding" type="lib:expression" default="0"/> 
             <xsd:attribute name="rx" type="xsd:string" default="100"/>
-            <xsd:attribute name="rx-binding" type="dvnlib:expression" default="100"/> 
+            <xsd:attribute name="rx-binding" type="lib:expression" default="100"/> 
             <xsd:attribute name="ry" type="xsd:string" default="100"/>
-            <xsd:attribute name="ry-binding" type="dvnlib:expression" default="100"/>
+            <xsd:attribute name="ry-binding" type="lib:expression" default="100"/>
             
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-width-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-opacity-binding" type="dvnlib:expression" default=""/>            
+            <xsd:attribute name="stroke-opacity-binding" type="lib:expression" default=""/>            
             <xsd:attribute name="fill" type="xsd:string" default=""/>
-            <xsd:attribute name="fill-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="fill-binding" type="lib:expression" default=""/>
             <xsd:attribute name="opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="opacity-binding" type="dvnlib:expression" default=""/> 
+            <xsd:attribute name="opacity-binding" type="lib:expression" default=""/> 
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/>  
-            <xsd:attribute name="visible-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
             <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
@@ -172,25 +173,25 @@
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="x1" type="xsd:string" default="0"/>
-            <xsd:attribute name="x1-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="x1-binding" type="lib:expression" default="0"/>
             <xsd:attribute name="y1" type="xsd:string" default="0"/>
-            <xsd:attribute name="y1-binding" type="dvnlib:expression" default="0"/> 
+            <xsd:attribute name="y1-binding" type="lib:expression" default="0"/> 
             <xsd:attribute name="x2" type="xsd:string" default="0"/>
-            <xsd:attribute name="x2-binding" type="dvnlib:expression" default="0"/>
+            <xsd:attribute name="x2-binding" type="lib:expression" default="0"/>
             <xsd:attribute name="y2" type="xsd:string" default="0"/>
-            <xsd:attribute name="y2-binding" type="dvnlib:expression" default="0"/> 
+            <xsd:attribute name="y2-binding" type="lib:expression" default="0"/> 
             
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-width-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-opacity" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-opacity" type="lib:expression" default=""/>
             <xsd:attribute name="stroke-opacity-binding" type="xsd:string" default=""/>            
-            <xsd:attribute name="stroke-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke-linecap" type="svg:stroke-linecap" default=""/>
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/>  
-            <xsd:attribute name="visible-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
             <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
@@ -213,21 +214,21 @@
             <xsd:attribute name="points" type="xsd:string" default="0"/> 
             
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-width-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-opacity-binding" type="dvnlib:expression" default=""/>           
+            <xsd:attribute name="stroke-opacity-binding" type="lib:expression" default=""/>           
             <xsd:attribute name="stroke-linecap" type="svg:stroke-linecap" default=""/>
             <xsd:attribute name="stroke-linejoin" type="svg:stroke-linejoin" default=""/>
             <xsd:attribute name="fill" type="xsd:string" default=""/>
-            <xsd:attribute name="fill-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="fill-binding" type="lib:expression" default=""/>
             <xsd:attribute name="opacity" type="xsd:string" default=""/>
             <xsd:attribute name="opacity-binding" type="xsd:string" default=""/>             
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/> 
-            <xsd:attribute name="visible-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
             <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
@@ -251,19 +252,19 @@
             <xsd:attribute name="points" type="xsd:string" default="0"/> 
             
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-width-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-opacity-binding" type="dvnlib:expression" default=""/>            
+            <xsd:attribute name="stroke-opacity-binding" type="lib:expression" default=""/>            
             <xsd:attribute name="fill" type="xsd:string" default=""/>
-            <xsd:attribute name="fill-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="fill-binding" type="lib:expression" default=""/>
             <xsd:attribute name="opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="opacity-binding" type="dvnlib:expression" default=""/> 
+            <xsd:attribute name="opacity-binding" type="lib:expression" default=""/> 
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/> 
-            <xsd:attribute name="visible-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
             <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
@@ -286,21 +287,21 @@
             <xsd:attribute name="d" type="xsd:string" default="0"/>  
             
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-width-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-width-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-opacity-binding" type="dvnlib:expression" default=""/>            
+            <xsd:attribute name="stroke-opacity-binding" type="lib:expression" default=""/>            
             <xsd:attribute name="stroke-linecap" type="svg:stroke-linecap" default=""/>
             <xsd:attribute name="stroke-linejoin" type="svg:stroke-linejoin" default=""/>
             <xsd:attribute name="fill" type="xsd:string" default=""/>
-            <xsd:attribute name="fill-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="fill-binding" type="lib:expression" default=""/>
             <xsd:attribute name="opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="opacity-binding" type="dvnlib:expression" default=""/> 
+            <xsd:attribute name="opacity-binding" type="lib:expression" default=""/> 
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/> 
-            <xsd:attribute name="visible-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
             <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>
@@ -322,22 +323,22 @@
             </dvnlib:creator>
             <xsd:attribute name="id" type="xsd:ID" use="required"/> 
             <xsd:attribute name="text" type="xsd:string" default=""/>
-            <xsd:attribute name="text-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="text-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="stroke-width" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-width-binding" type="dvnlib:expression" default=""/>           
+            <xsd:attribute name="stroke-width-binding" type="lib:expression" default=""/>           
             <xsd:attribute name="stroke" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="stroke-binding" type="lib:expression" default=""/>
             <xsd:attribute name="stroke-opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="stroke-opacity-binding" type="dvnlib:expression" default=""/>            
+            <xsd:attribute name="stroke-opacity-binding" type="lib:expression" default=""/>            
             <xsd:attribute name="fill" type="xsd:string" default=""/>
-            <xsd:attribute name="fill-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="fill-binding" type="lib:expression" default=""/>
             <xsd:attribute name="opacity" type="xsd:string" default=""/>
-            <xsd:attribute name="opacity-binding" type="dvnlib:expression" default=""/>            
+            <xsd:attribute name="opacity-binding" type="lib:expression" default=""/>            
             
             <xsd:attribute name="filter" type="svg:filtertype" default=""/> 
             <xsd:attribute name="style" type="xsd:string" default=""/>   
-            <xsd:attribute name="visible-binding" type="dvnlib:expression" default=""/>
+            <xsd:attribute name="visible-binding" type="lib:expression" default=""/>
             
             <xsd:attribute name="onclick"  type="dvnlib:event" default=""/>
             <xsd:attribute name="ondblclick" type="dvnlib:event" default=""/>

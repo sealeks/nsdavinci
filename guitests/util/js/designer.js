@@ -1351,9 +1351,10 @@ designer.prototype.show_property = function(){
         td1.innerHTML=attriblist[i]['name'];
         
         var typenm= attriblist[i]['typename'];
-        td1.className= (typenm=='dvnlib:expression') ? 'staticexpr' : 
-            ((typenm=='dvnlib:taglist') ? 'statictaglist' :
-            ( (typenm=='dvnlib:event') ? 'staticevent' :'static' ));
+        td1.className= (typenm=='lib:expression') ? 'staticexpr' : 
+            ((typenm=='lib:taglist') ? 'statictaglist' :
+            ((typenm=='lib:tag') ? 'statictag' :
+            ((typenm=='dvnlib:event') ? 'staticevent' :'static' )));
    
         var td2= libutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
         var val=this.getAttributeValue(attriblist[i]['name']);
@@ -1365,7 +1366,10 @@ designer.prototype.show_property = function(){
         td2.type=(!attriblist[i]['type']) ? 0 : (attriblist[i]['type']['type'] ? attriblist[i]['type']['type'] : 0) ;
         td2.regex=(!attriblist[i]['type']) ? null : (attriblist[i]['type']['regex'] ? attriblist[i]['type']['type'] : null) ;
         td2.list=(!attriblist[i]['type']) ? null : (attriblist[i]['type']['list'] ? attriblist[i]['type']['list'] : null) ;
-        ;
+        td2.validator = this.attribute_validator(attriblist[i]) ;
+        if (td2.validator)
+             td2.className = designutil.toolwin.validate_to_class(td2.validator(val));
+         
         td2.onclick=function(ev) {
             if (document.red) document.red.property_row_focus(ev);
         }
@@ -1373,6 +1377,13 @@ designer.prototype.show_property = function(){
 
 
     }
+}
+
+designer.prototype.attribute_validator = function(attr){
+  if (!attr['type']) return null;
+  if (attr['type']['validator'])  
+            return new Function("val", " return " + attr['type']['validator'] + "(val)");
+  return null;          
 }
 
 designer.prototype.attribute_editor = function(el){
@@ -1405,7 +1416,14 @@ designer.prototype.property_row_focus = function(event){
             case 0:
             case 1:{
                 libutil.dom.clearChildNode(td);
-                libutil.html.create_input(td, 'text', value);
+                var txtedit = libutil.html.create_input(td, 'text', value);
+                if (td.validator){
+                    txtedit.className= designutil.toolwin.validate_to_class(td.validator(txtedit.value));
+                    txtedit.validator=td.validator;
+                    txtedit.oninput= function(){
+                       txtedit.className= designutil.toolwin.validate_to_class(txtedit.validator(txtedit.value)) 
+                    }    
+                    }
                 break;
             }
             case 2:
@@ -1456,28 +1474,28 @@ designer.prototype.property_row_focus = function(event){
 
 designer.prototype.property_event = function(el){
     
-    el.onblur= function(ev) {
-        if (document.red) document.red.property_leave_focus(ev);
+    el.onblur= function() {
+        if (document.red) document.red.property_leave_focus(el);
     }
     el.addEventListener( 'keyup' ,function (ev) {       
         if ((ev.keyIdentifier=="Enter"))
-            document.red.property_leave_focus(ev);
+            document.red.property_leave_focus(el);
         else 
             event.stopPropagation();
     });    
 }
 
 
-designer.prototype.property_leave_focus = function(event){
-    var oldval=event.target.oldval;
-    var value =event.target.value;
-    var td=event.target.parentNode;
-    td.removeChild(event.target);
+designer.prototype.property_leave_focus = function(el){
+    var oldval=el.oldval;
+    var value =el.value;
+    var td=el.parentNode;
+    td.removeChild(el);
     td.innerHTML=value;
     if (oldval!=value){
         this.setProperty(td.prop_dvn,value);
     }
-    event.preventDefault();
+    event.stopPropagation();
     event.stopPropagation();   
 }
 
@@ -1507,11 +1525,13 @@ designer.prototype.setNeedSave = function(){
 designutil.componentinfo.prototype.init = function(libsulr){
     this.libsdoc=libutil.document.readDoc(libsulr);
     if (this.libsdoc){
+        this.libs.push('../util/lib.xsd')
         var els=this.libsdoc.getElementsByTagName('include');
         for (var i=0; i<els.length;++i)
             if (els[i].getAttribute('xsi:schemaLocation')) 
                 this.libs.push(els[i].getAttribute('xsi:schemaLocation'));
 
+       
         if (this.libs.length>0)
             for (var i=0; i<this.libs.length;++i)
                 this.initlibs(this.libs[i]);   
@@ -1555,11 +1575,11 @@ designutil.componentinfo.prototype.attributes_for_nullschema = function (el){
             'default' : null
         })
                 
-        this.elements[node] = {
-            'name' : els[i].getAttribute('name'),
-            'type' : els[i].getAttribute('type'),
-            'attributes' : result
-        };
+        //this.elements[node] = {
+        //    'name' : els[i].getAttribute('name'),
+        //    'type' : els[i].getAttribute('type'),
+        //    'attributes' : result
+        //};
    
     }
 }
@@ -1578,7 +1598,8 @@ designutil.componentinfo.prototype.read_types =  function(doc){
                         'type' : info.type, 
                         'base' : info['base'], 
                         'regex' : info['regex'],  
-                        'list' : info['list']
+                        'list' : info['list'],
+                        'validator': (els[i] && els[i].hasAttributeNS("http://dvnci/lib",'validator') ? els[i].getAttributeNS("http://dvnci/lib",'validator') : null)
                     };
                     
             }
@@ -1597,8 +1618,8 @@ designutil.componentinfo.prototype.read_types =  function(doc){
 designutil.componentinfo.prototype.read_simple_type =  function(el){
     if (el){
         var restrictel=el.firstElementChild;
-        if ((restrictel) || (restrictel.localName=='restriction')){
-            return this.read_restriction_type(restrictel);
+        if ((restrictel) && (restrictel.localName=='restriction')){
+            return this.read_restriction_type(restrictel,el);
         }
     }
     return {
@@ -1609,7 +1630,7 @@ designutil.componentinfo.prototype.read_simple_type =  function(el){
     };
 }
 
-designutil.componentinfo.prototype.read_restriction_type =  function(el){
+designutil.componentinfo.prototype.read_restriction_type =  function(el,prnt){
     if ((!el) || (el.childElementCount==0))
         return {
             'type': 0, 
@@ -2020,6 +2041,12 @@ designutil.toolwin.fiPropertyRowFocus = function(ev){
     catch(error){
         alert(error);
     }
+}
+
+designutil.toolwin.validate_to_class = function(val){
+   if (val==true) return 'ok';
+   if (val==false) return 'error';
+   return 'nodef';
 }
 
 designutil.toolwin.fiPropertyLeaveFocus = function(event){

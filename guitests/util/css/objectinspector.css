@@ -69,6 +69,14 @@ table.scrollable td.statictaglist{
     padding: 0px 0px;
 }
 
+table.scrollable td.statictag{ 
+    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#111));   
+    color: #9E9AFE; 
+    font-weight: bold;
+    border: 1px solid gray;   
+    padding: 0px 0px;
+}
+
 table.scrollable td.staticevent{ 
     background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#111));   
     color: #f4c430; 
@@ -80,6 +88,21 @@ table.scrollable td.staticevent{
 table.scrollable td{
     border: 1px solid gray; 
     padding: 0px 0px;
+}
+
+.error{
+    color: red !important;
+    font-weight: bold;
+}
+
+.ok{
+    color: green !important;
+    font-weight: bold;
+}
+
+.nodef{
+    color: gray !important;
+    font-weight: bold;
 }
 
 table.scrollable td input{
