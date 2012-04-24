@@ -25,6 +25,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <xsl:attribute name="onload">
             <xsl:text>libutil.startup.init()</xsl:text>
         </xsl:attribute>
+        <xsl:attribute name="version">
+            <xsl:text>1.1</xsl:text>
+        </xsl:attribute>
         <script type="text/javascript" xlink:href="../util/js/libutil.js"></script>
         <script type="text/javascript" xlink:href="../util/js/designer.js"></script>
         <xsl:call-template name="includelib"/> 
