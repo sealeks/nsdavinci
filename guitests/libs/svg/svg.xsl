@@ -17,9 +17,9 @@ extension-element-prefixes="svg">
     
       
     <xsl:template name="apply_svg_schema">    
-        <xsl:attribute name="xsi:schemaLocation">
+        <!--xsl:attribute name="xsi:schemaLocation">
             <xsl:text>../libs/svg/svg.xsd</xsl:text>
-        </xsl:attribute>  
+        </xsl:attribute-->  
     </xsl:template>
     
     
