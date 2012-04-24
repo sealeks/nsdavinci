@@ -31,6 +31,12 @@ libutil.regex = {};
 
 libutil.validator = {};
 
+libutil.LIB_NAMESPACE_URL =  'http://dvnci/lib';
+
+libutil.SVG_NAMESPACE_URL =  'http://www.w3.org/2000/svg';
+
+libutil.XHTML_NAMESPACE_URL =  'http://www.w3.org/1999/xhtml';
+
 libutil.alarmtable = function(el){
     
     this.alarmelement=libutil.document.findElementByTagName(el,'table');
@@ -352,7 +358,7 @@ libutil.project.set_components = function(path){
     var result = [];
     var doc = libutil.document.readDoc(path);
     if (doc){
-        var els = doc.getElementsByTagNameNS('../dvnlib.xsl','creator');        
+        var els = doc.getElementsByTagNameNS(libutil.LIB_NAMESPACE_URL,'creator');        
         for (var i=0; i<els.length;++i){
             result.push({ 
                 'name' : els[i].hasAttribute('name') ? els[i].getAttribute('name') : ('unnamed'+i),
@@ -652,7 +658,7 @@ libutil.regex.check = function (value, expr){
 
 libutil.html.create = function (name, parent){
     if (!parent) return;
-    var newel = parent.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', name);
+    var newel = parent.ownerDocument.createElementNS(libutil.XHTML_NAMESPACE_URL, name);
     if (parent) parent.appendChild(newel);
     return newel;
 }
@@ -959,7 +965,7 @@ libutil.dom.check_is_parent  = function(canparent,test,self){
 
 libutil.svg.create = function (name, parent){
     if (!parent) return;
-    var newel = parent.ownerDocument.createElementNS('http://www.w3.org/2000/svg', name);
+    var newel = parent.ownerDocument.createElementNS(libutil.SVG_NAMESPACE_URL, name);
     if (parent) parent.appendChild(newel);
     return newel;
 }
@@ -1254,7 +1260,7 @@ libutil.alarmtable.prototype.fillrowtab = function(evnt){
 libutil.alarmtable.prototype.insertrow = function(el, arr) {
 
     if (el.children.length==0) return;
-    var tr  = document.createElementNS('http://www.w3.org/1999/xhtml','tr');
+    var tr  = document.createElementNS(libutil.XHTML_NAMESPACE_URL,'tr');
     if (arr[2]==0){
         tr.setAttribute("class", (arr[1]>2) ? "avaron" : ((arr[1]>1) ? "alarmon" : "noticeon"));
     }
@@ -1270,7 +1276,7 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
                 var tm= new Date(0,0,0, arr[i].getHours() ,arr[i].getMinutes() 
                     +arr[i].getTimezoneOffset(),arr[i].getSeconds());
                 var ta = document.createTextNode(tm.toLocaleTimeString());
-                var sp = document.createElementNS('http://www.w3.org/1999/xhtml','span');
+                var sp = document.createElementNS(libutil.XHTML_NAMESPACE_URL,'span');
                 sp.setAttribute("class", "smallfont");
                 sp.appendChild(ta);
                 td.appendChild(sp);
@@ -1331,6 +1337,13 @@ libutil.document.findElementByTagName = function (el, name){
         if (result) 
             return result;      
     }
+}
+
+libutil.document.findChildByTagName = function (el, name){
+    for(var e=el.firstElementChild; e; e=e.nextElementSibling){
+        if (e.localName==name) return e;    
+    }
+    return null;
 }
 
 // radactor util
