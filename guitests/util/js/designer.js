@@ -1,7 +1,6 @@
 var designutil = {};
 
 
-
 ///
 designutil.componentinfo = function(){
     this.elements = new Object();
@@ -9,7 +8,6 @@ designutil.componentinfo = function(){
     this.libs = [];
     this.creators = new Object();;
 }
-
 
 designutil.toolwin = {};
    
@@ -1394,8 +1392,6 @@ designer.prototype.attribute_editor = function(el){
     if (!this.inspectorFrame){
         this.show_property(el);
     }
-
-
 }
 
 designer.prototype.property_row_focus = function(event){
@@ -1511,11 +1507,7 @@ designer.prototype.setNeedSave = function(){
 
 
 
-    
-
-
 /*
-
 
     Component info from schema
 

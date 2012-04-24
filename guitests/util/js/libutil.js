@@ -37,6 +37,9 @@ libutil.SVG_NAMESPACE_URL =  'http://www.w3.org/2000/svg';
 
 libutil.XHTML_NAMESPACE_URL =  'http://www.w3.org/1999/xhtml';
 
+
+
+
 libutil.alarmtable = function(el){
     
     this.alarmelement=libutil.document.findElementByTagName(el,'table');
@@ -46,8 +49,8 @@ libutil.alarmtable = function(el){
             this.alarlistener.execute(ev);
         }
     }
-
 }
+
 
 function formopen(name){
     if ($$editable()) return;
@@ -70,11 +73,6 @@ function formopen(name){
 }
 
 
-function formopenmodal(name, url, param){
-    if ($$editable()) return null;
-    return showModalDialog(name, url ? url : '' , param);
-}
-
 
 function formclose(name){
     if ($$editable()) return;
@@ -92,6 +90,8 @@ function formclose(name){
         }
     }
 }
+
+
 
 function set_win_designer(win, designer){   
     var fl =  libutil.global.getFormList();   
@@ -138,8 +138,7 @@ function formclose_allwin(){
 }
 
 function exit(){
-    if ($$editable()) return;
-    //formclose_allwin()
+    //if ($$editable()) return;
     $$exit();
     window.close();
 }
@@ -164,8 +163,7 @@ libutil.util.remove_element_arr = function(arr,ind){
 }
 
 
-libutil.util.trim = function(string)
-{
+libutil.util.trim = function(string){
     return string.replace(/(^\s+)|(\s+$)/g, "");
 }
 
@@ -307,8 +305,11 @@ libutil.project.addtoformlist = function(els){
     els.getAttribute('file') ? els.getAttribute('file').toString() : null;
     if (path){            
         var param = libutil.project.buildparam(els);
-        var win=window.open(path, els.getAttribute('name')  ? els.getAttribute('name') :  '', param ? param : '');       
-        win.document.domain=document.domain; 
+        var visible =((els.hasAttribute('visible')) && (els.getAttribute('visible')=='false')) ? false : true;
+        if (visible) {
+            var win=window.open(path, els.hasAttribute('name')  ? els.getAttribute('name') :  '', param);       
+            win.document.domain=document.domain;
+        } 
         var fl=libutil.global.getFormList();
         fl.push({
             'name' : els.getAttribute('name'),
@@ -325,7 +326,7 @@ libutil.project.addtoformlist = function(els){
             'resizable'  : els.hasAttribute('resizable') ? els.getAttribute('resizable') : null,
             'modal'  : els.hasAttribute('modal') ? els.getAttribute('modal') : null,
             'allwaystop'  : els.hasAttribute('allwaystop') ? els.getAttribute('allwaystop') : null,
-            'visible'  : ((els.hasAttribute('visible')) && (els.getAttribute('visible')=='false')) ? false : true,
+            'visible'  : visible,
             'element' : els
         });
     }   
@@ -341,6 +342,9 @@ libutil.project.add_design_style  = function(doc){
     }
     libutil.html.create_style(doc.documentElement, dstyle);              
 }
+
+
+
 
 libutil.project.addtoliblist = function(els, i){   
     var ll=libutil.global.getLibList();
@@ -403,7 +407,17 @@ libutil.project.getFormInfo = function(name){
     return null;        
 }
 
+
+
+
+
+
 //
+
+
+
+
+
 
 libutil.popup.getbound = function(el, W, H, yd, dir){
     /*
@@ -1065,21 +1079,17 @@ libutil.svg.create_header = function (parent, x, y,  height, width, rx, ry,  rec
 
     var newheadrect =  libutil.svg.create_rect( parent, 
         x, y,  height, width, rx , ry, rectstyle);
-
-
-    
+   
     newheadrect.onmouseout = function() {
         event.preventDefault();
         event.stopPropagation();
         return;
     } 
-        
-    
+         
     var headersvg=libutil.svg.create_svg(parent, 
         x ,y, height, width);
    
    
-
     var headertext=libutil.svg.foriegn_text(headersvg, 0 , 0  , height, width ,text,
         htmltextstyle);
     
@@ -1180,10 +1190,6 @@ libutil.www.create_tbwindow = function (name, caption, top, left, width, height,
     }   
 }
 
-libutil.www.create_modalwindow = function (name, caption, top, left, width, height, tooltip, allwaystop, nodecorate){
-    var result=libutil.window.libutil.window.create_modal(+name, caption, top, left, width, height, tooltip, allwaystop, nodecorate);
-    return result;
-}
 
 libutil.www.create_tbwindow_tools = function (name, tools, names, hints, funcs, size, header, headerstyle){
     var tmp=$$global();
@@ -1346,10 +1352,11 @@ libutil.document.findChildByTagName = function (el, name){
     return null;
 }
 
-// radactor util
+/* 
 
+  valdator
 
-///
+*/
 
 
 libutil.validator.expresssion = function(val) {

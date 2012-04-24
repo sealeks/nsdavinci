@@ -1,6 +1,4 @@
-<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?>
-<svg:svg xmlns="http://www.w3.org/2000/svg"  xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" 
-        width="100%" height="100%" style="background-color: #aaa;">    
+<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?><svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-color: #aaa;">    
 
 <mlib:button id="button1" x="3" y="8" height="40" width="280" r="10" caption="Выход" onclick="exit();" color1="#F00" color2="#A00" fontstyle="fill: white; font-size: 15px; font-weight: bold;"/>
 <mlib:button id="button2" x="4" y="47" height="40" width="280" r="1" caption="1o" onclick="formopen('f1');"/>
