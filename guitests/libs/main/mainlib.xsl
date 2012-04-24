@@ -3687,6 +3687,29 @@ extension-element-prefixes="mlib">
     </xsl:template>    
     
     
-
+   <!--
+   
+   
+   trackbar
+   
+   
+   -->
+   
+   
+    <xsl:template match="//mlib:trackbar">
+        <svg>
+            
+            <xsl:call-template name="apply_rect"/>
+            <xsl:call-template name="apply_id"/>            
+            <xsl:call-template name="apply_mlib_schema"/>
+            <g>
+                <xsl:call-template name="apply_svg_g_visible_binding"/>          
+                <rect stroke="white" fill="white" opacity="1.0">
+                    <xsl:call-template name="apply_0_0_width_height"/> 
+                </rect>
+            </g>
+        </svg>
+    </xsl:template>   
+    
     
 </xsl:stylesheet>

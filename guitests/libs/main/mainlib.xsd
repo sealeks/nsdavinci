@@ -327,4 +327,25 @@
         <xsd:attribute name="onmousewheel" type="lib:event"/>
     </xsd:complexType>
 </xsd:element>
+
+
+
+<xsd:element name="trackbar">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:trackbar" hint="trackbar">
+                <mlib:trackbar x="" y="" height="30" width="400"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="100"/>
+        <xsd:attribute name="height" type="xsd:string" default="100"/>      
+        <xsd:attribute name="visible-binding" type="lib:expression"/>       
+    </xsd:complexType>
+</xsd:element>
+
 </xsd:schema>
