@@ -17,9 +17,9 @@ extension-element-prefixes="mlib">
     
       
     <xsl:template name="apply_mlib_schema">    
-        <xsl:attribute name="xsi:schemaLocation">
+        <!--xsl:attribute name="xsi:schemaLocation">
             <xsl:text>../libs/main/maillib.xsd</xsl:text>
-        </xsl:attribute>  
+        </xsl:attribute-->  
     </xsl:template>
    
      
