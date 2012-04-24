@@ -22,6 +22,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <xsl:template match="/*[position()=1]" > 
         <xsl:copy>
         <xsl:apply-templates select="@*"/> 
+        <xsl:attribute name="onload">
+            <xsl:text>libutil.startup.init()</xsl:text>
+        </xsl:attribute>
         <script type="text/javascript" xlink:href="../util/js/libutil.js"></script>
         <script type="text/javascript" xlink:href="../util/js/designer.js"></script>
         <xsl:call-template name="includelib"/> 

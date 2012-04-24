@@ -1,6 +1,7 @@
 var designutil = {};
 
 
+
 ///
 designutil.componentinfo = function(){
     this.elements = new Object();
@@ -11,7 +12,10 @@ designutil.componentinfo = function(){
 
 
 designutil.toolwin = {};
-        
+   
+   
+   
+   
 
 ///
 
@@ -1510,32 +1514,36 @@ designer.prototype.setNeedSave = function(){
     
 
 
-
-///
-
+/*
 
 
+    Component info from schema
 
-////
+*/
 
 
 
 
 
 designutil.componentinfo.prototype.init = function(libsulr){
-    this.libsdoc=libutil.document.readDoc(libsulr);
-    if (this.libsdoc){
-        this.libs.push('../util/lib.xsd')
-        var els=this.libsdoc.getElementsByTagName('include');
-        for (var i=0; i<els.length;++i)
-            if (els[i].getAttribute('xsi:schemaLocation')) 
-                this.libs.push(els[i].getAttribute('xsi:schemaLocation'));
+    try{
+        this.libsdoc=libutil.document.readDoc(libsulr);
+        if (this.libsdoc){
+            this.libs.push('../util/lib.xsd')
+            var els=this.libsdoc.getElementsByTagName('include');
+            for (var i=0; i<els.length;++i)
+                if (els[i].getAttribute('xsi:schemaLocation')) 
+                    this.libs.push(els[i].getAttribute('xsi:schemaLocation'));
 
        
-        if (this.libs.length>0)
-            for (var i=0; i<this.libs.length;++i)
-                this.initlibs(this.libs[i]);   
+            if (this.libs.length>0)
+                for (var i=0; i<this.libs.length;++i)
+                    this.initlibs(this.libs[i]);   
+        }
     }
+catch(error){
+    alert('Error load library schemas :' + error);
+}
 }
 
 
@@ -1582,7 +1590,6 @@ designutil.componentinfo.prototype.getAttributeList = function (el){
 
 
 designutil.componentinfo.prototype.attributes_for_nullschema = function (el){ 
-    var node = el['nodeName'];
 
     var result =[];
     for (var i=0; i< el.attributes.length; ++i){
@@ -1593,12 +1600,7 @@ designutil.componentinfo.prototype.attributes_for_nullschema = function (el){
             'default' : null
         })
                 
-        //this.elements[node] = {
-        //    'name' : els[i].getAttribute('name'),
-        //    'type' : els[i].getAttribute('type'),
-        //    'attributes' : result
-        //};
-   
+        return result;
     }
 }
 
@@ -1618,7 +1620,8 @@ designutil.componentinfo.prototype.read_types =  function(doc, pref){
                         'base' : info['base'], 
                         'regex' : info['regex'],  
                         'list' : info['list'],
-                        'validator': (els[i] && els[i].hasAttributeNS("http://dvnci/lib",'validator') ? els[i].getAttributeNS("http://dvnci/lib",'validator') : null)
+                        'validator': (els[i] && els[i].hasAttributeNS(libutil.LIB_NAMESPACE_URL,'validator') ? 
+                            els[i].getAttributeNS(libutil.LIB_NAMESPACE_URL,'validator') : null)
                     };
                     
             }
@@ -1701,8 +1704,9 @@ designutil.componentinfo.prototype.read_elements =  function(doc, pref){
     if (doc){
         var els=doc.getElementsByTagName('element');
         for (var i=0; i<els.length;++i){
+            if (els[i] && (els[i].parentNode==doc.documentElement)){
             var nm = els[i].getAttribute('name');
-            nm = pref ? (pref + ':' + nm) : nm;
+            nm = pref && nm!='svg' ? (pref + ':' + nm) : nm;
             if (nm){
                 this.elements[nm]={
                     'name' : els[i].getAttribute('name'),
@@ -1712,16 +1716,14 @@ designutil.componentinfo.prototype.read_elements =  function(doc, pref){
                 this.read_attributes(els[i],this.elements[nm]);
             }
         }
-    }
+    }}
 }
 
 designutil.componentinfo.prototype.read_attributes = function(el,  info){
-    var result = new Object();
+    var result = {};
     if (!el)
         return result;
-    var typeel=el.firstElementChild;
-    if ((!typeel) || (typeel.localName!='complexType'))
-        return result; 
+    var typeel= libutil.document.findChildByTagName(el,'complexType');
     if (!typeel) return;
         
     for (var ch=typeel.firstElementChild; ch; ch=ch.nextElementSibling)
@@ -1743,7 +1745,7 @@ designutil.componentinfo.prototype.get_attribute = function(name){
 
 
 designutil.componentinfo.prototype.read_creators =  function(doc){
-    if (doc){
+   if (doc){
         var els=doc.getElementsByTagName('creator');
         for (var i=0; i<els.length;++i)
             if (els[i].nodeName=='lib:creator'){
@@ -1761,12 +1763,13 @@ designutil.componentinfo.prototype.read_creators =  function(doc){
 
 
             
-///
+/*
 
 
+    Main disigner interface
 
 
-////               
+*/               
                 
                 
 designutil.toolwin.getMainWindow = function (){
@@ -1792,12 +1795,7 @@ designutil.toolwin.getMainWindow = function (){
         
         
     var tmp=$$global();
-    
-        
-
-    
-    
-     
+ 
     designutil.toolwin.setMainWindowToolStatus();
     tmp.maintool.focus();
     
@@ -1999,11 +1997,11 @@ designutil.toolwin.fillFormInspector = function (){
         designutil.toolwin.fiCreateRow(tr,fl[i],'top', '50px');
         designutil.toolwin.fiCreateRow(tr,fl[i],'width', '50px');       
         designutil.toolwin.fiCreateRow(tr,fl[i],'height', '50px'); 
-        designutil.toolwin.fiCreateRow(tr,fl[i],'visible', '50px'/*, ['','true','false']*/);
-        designutil.toolwin.fiCreateRow(tr,fl[i],'allwaystop', '50px'/*,, ['','true']*/);       
-        designutil.toolwin.fiCreateRow(tr,fl[i],'resizable', '50px'/*,, ['','true']*/);
-        designutil.toolwin.fiCreateRow(tr,fl[i],'decorated', '50px'/*,, ['','no']*/);
-        designutil.toolwin.fiCreateRow(tr,fl[i],'modal', '50px'/*,, ['','true']*/);        
+        designutil.toolwin.fiCreateRow(tr,fl[i],'visible', '50px');
+        designutil.toolwin.fiCreateRow(tr,fl[i],'allwaystop', '50px');       
+        designutil.toolwin.fiCreateRow(tr,fl[i],'resizable', '50px');
+        designutil.toolwin.fiCreateRow(tr,fl[i],'decorated', '50px');
+        designutil.toolwin.fiCreateRow(tr,fl[i],'modal', '50px');        
         
         var td11= libutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
         var btno = libutil.html.create_button( td11,'height: 15px;',null,'');
@@ -2496,9 +2494,10 @@ designutil.toolwin.createfileform = function(file){
     var tmp=$$global();
     var prjpath=tmp.projectPath;
     var txt = '<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?>\n'+
-    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" version="1.1" style="" onload="libutil.startup.init()">\n'+
+    '<svg:svg xmlns="http://www.w3.org/2000/svg"  xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink"'+ 
+    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" version="1.1" style="">'+
     '\n'+
-    '</svg>\n';
+    '</svg:svg>\n';
     return $$writefile(prjpath.toString()+file,txt);      
 }
 

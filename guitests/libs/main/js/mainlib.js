@@ -2,12 +2,14 @@ var mainlib = {
     
 };
 
+mainlib.NAMESPACE_URL = 'http://dvnci/mlib';
+
 mainlib.element = {};
 
 
 mainlib.element.create = function (name, parent){
     if (!parent) return;
-    var newel = parent.ownerDocument.createElementNS('http://dvnci/mlib', name);
+    var newel = parent.ownerDocument.createElementNS(mainlib.NAMESPACE_URL, name);
     if (parent) parent.appendChild(newel);
     return newel;
 }

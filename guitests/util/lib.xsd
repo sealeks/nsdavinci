@@ -10,30 +10,39 @@
     
     <xsd:simpleType name="expression" lib:validator="libutil.validator.expresssion">  
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="\."/>
+            <xsd:pattern value=".*"/>
         </xsd:restriction>
     </xsd:simpleType>
     
     <xsd:simpleType name="taglist" lib:validator="libutil.validator.taglist">  
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="."/>
+            <xsd:pattern value=".*"/>
         </xsd:restriction>
     </xsd:simpleType>
     
     <xsd:simpleType name="tag" lib:validator="libutil.validator.tag">  
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="\."/>
+            <xsd:pattern value=".*"/>
         </xsd:restriction>
     </xsd:simpleType>
     
+    
     <xsd:simpleType name="event">  
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="\."/>
+            <xsd:pattern value=".*"/>
         </xsd:restriction>
     </xsd:simpleType>    
       
    
-    
+    <xsd:element name="creator">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:any namespace="##other" processContents="skip"/>
+            </xsd:sequence>
+            <xsd:attribute name="name" type="xsd:string"/> 
+            <xsd:attribute name="hint" type="xsd:string"/> 
+        </xsd:complexType>
+    </xsd:element>     
 
 </xsd:schema>
 
