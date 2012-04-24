@@ -1706,7 +1706,7 @@ designutil.componentinfo.prototype.read_elements =  function(doc, pref){
         for (var i=0; i<els.length;++i){
             if (els[i] && (els[i].parentNode==doc.documentElement)){
             var nm = els[i].getAttribute('name');
-            nm = pref && nm!='svg' ? (pref + ':' + nm) : nm;
+            nm = pref /*&& nm!='svg'*/ ? (pref + ':' + nm) : nm;
             if (nm){
                 this.elements[nm]={
                     'name' : els[i].getAttribute('name'),
@@ -2495,8 +2495,7 @@ designutil.toolwin.createfileform = function(file){
     var prjpath=tmp.projectPath;
     var txt = '<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?>\n'+
     '<svg:svg xmlns="http://www.w3.org/2000/svg"  xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink"'+ 
-    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" version="1.1" style="">'+
-    '\n'+
+    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="">\n'+
     '</svg:svg>\n';
     return $$writefile(prjpath.toString()+file,txt);      
 }

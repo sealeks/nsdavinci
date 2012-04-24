@@ -419,14 +419,12 @@
                 <xsd:any namespace="##any" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
             <xsd:attribute name="id" type="xsd:ID" use="required"/> 
-            <xsd:attribute name="style" type="xsd:string"/>
             <xsd:attribute name="x" type="xsd:string"/>
             <xsd:attribute name="y" type="xsd:string"/>
             <xsd:attribute name="width" type="xsd:string"/>
-            <xsd:attribute name="version" type="xsd:string"/>
             <xsd:attribute name="height" type="xsd:string"/>
             <xsd:attribute name="veiwBox" type="xsd:string"/>
-            <!--xsd:attribute name="onload" type="xsd:string"/-->
+            <xsd:attribute name="style" type="xsd:string"/>
         </xsd:complexType>
     </xsd:element> 
     
