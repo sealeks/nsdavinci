@@ -42,7 +42,7 @@ libutil.XHTML_NAMESPACE_URL =  'http://www.w3.org/1999/xhtml';
 
 libutil.alarmtable = function(el){
     
-    this.alarmelement=libutil.document.findElementByTagName(el,'table');
+    this.alarmelement=libutil.dom.findElementByTagName(el,'table');
     if (this.alarmelement){
         this.alarmelement.alarlistener=this;
         this.alarmelement.onalarm=function(ev){
@@ -53,7 +53,7 @@ libutil.alarmtable = function(el){
 
 
 function formopen(name){
-    if ($$editable()) return;
+    if ((!window.$$editable) || ($$editable())) return;
     var fl =  libutil.global.getFormList();
     if (fl){   
         for (var i=0; i<fl.length;++i){
@@ -75,7 +75,7 @@ function formopen(name){
 
 
 function formclose(name){
-    if ($$editable()) return;
+    if ((!window.$$editable) || ($$editable())) return;
     var fl =  libutil.global.getFormList();
     if (fl){  
         for (var i=0; i<fl.length;++i){
@@ -210,7 +210,7 @@ libutil.startup.init = function(){
     window.addEventListener('message', function () {
         window.close();
     }, false);
-    if ($$editable()){
+    if ((window.$$editable) && ($$editable())){
         document.red = new designer(document);
         libutil.project.add_design_style(document);
         libutil.startup.initdesigner(window.name, document.red);
@@ -360,7 +360,7 @@ libutil.project.addtoliblist = function(els, i){
 
 libutil.project.set_components = function(path){
     var result = [];
-    var doc = libutil.document.readDoc(path);
+    var doc = libutil.dom.readDoc(path);
     if (doc){
         var els = doc.getElementsByTagNameNS(libutil.LIB_NAMESPACE_URL,'creator');        
         for (var i=0; i<els.length;++i){
@@ -532,7 +532,7 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle){
 libutil.xslttransform.rootDocument = function (){ 
     if (window.__rootDocument)
         return window.__rootDocument;
-    window.__rootDocument = libutil.document.readDoc(window.document.URL);
+    window.__rootDocument = libutil.dom.readDoc(window.document.URL);
     return window.__rootDocument;
 }
 
@@ -542,7 +542,7 @@ libutil.xslttransform.literootDocument = function (){
         libutil.dom.clearChildNode(window.__literootDocument.documentElement);
         return window.__literootDocument;
     }
-    window.__literootDocument = libutil.document.readDoc(window.document.URL);
+    window.__literootDocument = libutil.dom.readDoc(window.document.URL);
     libutil.dom.clearChildNode(window.__literootDocument.documentElement);
     return window.__literootDocument;
 }
@@ -566,7 +566,7 @@ libutil.xslttransform.xsltDocument = function(){
                     finded=urlxslt.search('"') ;
                     if (finded!=-1){
                         urlxslt=urlxslt.substring(0,finded);
-                        window.__xsltDocument = libutil.document.readDoc(urlxslt);
+                        window.__xsltDocument = libutil.dom.readDoc(urlxslt);
                     }
                 }
             } 
@@ -956,18 +956,7 @@ libutil.html.create_tool_style = function (doc, nametool, names,  sz){
 
 
 
-///////////////////////////////////////////////
 
-libutil.dom.clearChildNode = function (element){
-    while (element.hasChildNodes()) 
-        element.removeChild(element.lastChild);
-}
-
-libutil.dom.check_is_parent  = function(canparent,test,self){
-    if (!test) return false;
-    if (test==canparent) return (self) ? true : false;
-    return libutil.dom.check_is_parent (canparent,test.parentNode,true);
-}
 
 
 
@@ -1302,10 +1291,84 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
     el.appendChild(tr);
 }
 
-//
+///////////////////////////////////////////////
+
+libutil.dom.clearChildNode = function (element){
+    while (element.hasChildNodes()) 
+        element.removeChild(element.lastChild);
+}
 
 
-libutil.document.readDoc = function (url){ 
+
+libutil.dom.check_is_parent  = function(canparent,test,self){
+    if (!test) return false;
+    if (test==canparent) return (self) ? true : false;
+    return libutil.dom.check_is_parent (canparent,test.parentNode,true);
+}
+
+
+libutil.dom.duplicate_element  = function(el, deep, excluteattr){
+    var doc=el.ownerDocument ? el.ownerDocument : el.document;
+    var namespace = el.namespaceURI;
+    var localName = el.localName;
+    //var parent=el.parentNode;
+    var duplicate = doc.createElementNS(namespace, localName);
+    
+    var notexclude = function(nm){
+        if (!excluteattr || !excluteattr.length) return true;
+        for (var i=0;i<excluteattr.length;++i){
+            if (excluteattr[i]==nm) return false;
+        }
+        return true;
+    }
+    
+    for (var i=0;i<el.attributes.length;++i){
+        if (notexclude(el.attributes[i].localName)){
+        if (el.attributes[i].namespaceURI) 
+            duplicate.setAttributeNS(el.attributes[i].namespaceURI , el.attributes[i].localName, el.attributes[i].value);
+        else
+            duplicate.setAttribute(el.attributes[i].localName, el.attributes[i].value);} 
+    }
+    
+    if (deep || (deep==undefined)){
+        for(var e=el.firstElementChild; e; e=e.nextElementSibling){
+            duplicate.appendChild(e.cloneNode(true));
+        }
+    }
+    
+    return duplicate;
+      
+}
+
+
+libutil.dom.findElementById = function (el, id){
+    for(var e=el.firstElementChild; e; e=e.nextElementSibling){
+        if (e.getAttribute('id')==id) return e;
+        var result = libutil.dom.findElementById(e, id);
+        if (result) 
+            return result;      
+    }
+}
+
+libutil.dom.findElementByTagName = function (el, name){
+    for(var e=el.firstElementChild; e; e=e.nextElementSibling){
+        if (e.localName==name) return e;
+        var result = libutil.dom.findElementByTagName(e, name);
+        if (result) 
+            return result;      
+    }
+}
+
+libutil.dom.findChildByTagName = function (el, name){
+    for(var e=el.firstElementChild; e; e=e.nextElementSibling){
+        if (e.localName==name) return e;    
+    }
+    return null;
+}
+
+
+
+libutil.dom.readDoc = function (url){ 
     try{
         var xmlHttp=new XMLHttpRequest();
         xmlHttp.open("GET",url,false);
@@ -1319,37 +1382,12 @@ libutil.document.readDoc = function (url){
 }
 
 
-libutil.document.writeDoc = function (doc){
+libutil.dom.writeDoc = function (doc){
     if (doc && $$writefile){
         var xmls = new XMLSerializer();  
         var data= xmls.serializeToString(doc); 
         $$writefile(doc.baseURI,data);
     }
-}
-
-libutil.document.findElementById = function (el, id){
-    for(var e=el.firstElementChild; e; e=e.nextElementSibling){
-        if (e.getAttribute('id')==id) return e;
-        var result = libutil.document.findElementById(e, id);
-        if (result) 
-            return result;      
-    }
-}
-
-libutil.document.findElementByTagName = function (el, name){
-    for(var e=el.firstElementChild; e; e=e.nextElementSibling){
-        if (e.localName==name) return e;
-        var result = libutil.document.findElementByTagName(e, name);
-        if (result) 
-            return result;      
-    }
-}
-
-libutil.document.findChildByTagName = function (el, name){
-    for(var e=el.firstElementChild; e; e=e.nextElementSibling){
-        if (e.localName==name) return e;    
-    }
-    return null;
 }
 
 /* 
