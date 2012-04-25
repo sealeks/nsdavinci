@@ -2,5 +2,5 @@
 <svg:svg xmlns="http://www.w3.org/2000/svg"  xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" 
         width="100%" height="100%" style="background-image: url('../util/css/res/bgrd2.png');">
        
-<mlib:rect x="493" y="296" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" fill="#999" background="#333" id="name6" param="r5::a" color1="#300" color2="#600" fillcolor1="#030" fillcolor2="#060" alarms="m1::c1"/>
+<mlib:slider x="1133" y="242" height="15" width="400" id="slider0" param="m1::h1" r="2" environment="water" color1="#999" color2="#FFF" stroke="" stroke-width="0.5" gradient-type="lr" wait-timeout="2000"/>
 </svg:svg> 

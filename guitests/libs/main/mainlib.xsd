@@ -59,6 +59,14 @@
         <xsd:enumeration value=""/>
     </xsd:restriction>
 </xsd:simpleType>
+
+<xsd:simpleType name="sliderlive">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="live"/>
+        <xsd:enumeration value="set"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
         
 <xsd:simpleType name="buttontype">
     <xsd:restriction base="xsd:string">
@@ -330,11 +338,11 @@
 
 
 
-<xsd:element name="trackbar">
+<xsd:element name="slider">
     <xsd:annotation>
         <xsd:appinfo>
-            <lib:creator name="mlib:trackbar" hint="trackbar">
-                <mlib:trackbar x="" y="" height="30" width="400"/>
+            <lib:creator name="mlib:slider" hint="slider">
+                <mlib:slider x="" y="" height="30" width="400"/>
             </lib:creator>
         </xsd:appinfo>
     </xsd:annotation>
@@ -343,7 +351,23 @@
         <xsd:attribute name="x" type="xsd:string" default="0"/>
         <xsd:attribute name="y" type="xsd:string" default="0"/>
         <xsd:attribute name="width" type="xsd:string" default="100"/>
-        <xsd:attribute name="height" type="xsd:string" default="100"/>      
+        <xsd:attribute name="height" type="xsd:string" default="100"/>
+        <xsd:attribute name="r" type="xsd:string"/>
+        <xsd:attribute name="stroke" type="xsd:string"/>
+        <xsd:attribute name="stroke-width" type="xsd:string"/>
+        
+        <xsd:attribute name="direction" type="mlib:direction"/>
+        <xsd:attribute name="gradient-type" type="mlib:gradienttype"/>
+        <xsd:attribute name="wait-timeout" type="xsd:string"/>
+        <xsd:attribute name="live-command" type="mlib:sliderlive"/>
+        <xsd:attribute name="environment" type="mlib:environment"/>
+        <xsd:attribute name="color1" type="xsd:string"/>
+        <xsd:attribute name="color2" type="xsd:string"/>
+        <xsd:attribute name="fillenvironment" type="mlib:environment"/>
+        <xsd:attribute name="fillcolor1" type="xsd:string"/>
+        <xsd:attribute name="fillcolor2" type="xsd:string"/>
+        
+        <xsd:attribute name="param" type="lib:expression"/>
         <xsd:attribute name="visible-binding" type="lib:expression"/>       
     </xsd:complexType>
 </xsd:element>

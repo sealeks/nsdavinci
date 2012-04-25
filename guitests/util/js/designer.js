@@ -132,7 +132,7 @@ designer.prototype.getSourseDocument = function (){
     if (this.sourseDocument)
         return this.sourseDocument;
     try{
-        this.sourseDocument = libutil.document.readDoc(this.instantdocument.URL);
+        this.sourseDocument = libutil.dom.readDoc(this.instantdocument.URL);
         if ((this.sourseDocument) && (this.sourseDocument.childNodes.length>1)){
             if (this.sourseDocument.childNodes[0].target=='xml-stylesheet'){
                 if (this.sourseDocument.childNodes[0].data)
@@ -150,7 +150,7 @@ designer.prototype.getSourseDocument = function (){
 
 designer.prototype.getLightDocument = function (){ 
     try{
-        this.lightDocument = libutil.document.readDoc(this.instantdocument.URL);
+        this.lightDocument = libutil.dom.readDoc(this.instantdocument.URL);
         
     }
     catch(except){
@@ -188,7 +188,7 @@ designer.prototype.readXsltDocument = function(data){
         finded=urlxslt.search('"') ;
         if (finded!=-1){
             urlxslt=urlxslt.substring(0,finded);
-            this.soursexslt = libutil.document.readDoc(urlxslt);
+            this.soursexslt = libutil.dom.readDoc(urlxslt);
             this.xsltProcessor=new XSLTProcessor();  
             this.xsltProcessor.importStylesheet(this.soursexslt); 
             this.trasformsourse = this.xsltProcessor.transformToDocument(this.sourseDocument);
@@ -600,7 +600,7 @@ designer.prototype.updateroot = function(){
 
 designer.prototype.save = function(){
     if (this.sourseDocument){
-        libutil.document.writeDoc(this.sourseDocument);
+        libutil.dom.writeDoc(this.sourseDocument);
         this.needsave=false;
     }  
 }
@@ -1519,7 +1519,7 @@ designer.prototype.setNeedSave = function(){
 
 designutil.componentinfo.prototype.init = function(libsulr){
     try{
-        this.libsdoc=libutil.document.readDoc(libsulr);
+        this.libsdoc=libutil.dom.readDoc(libsulr);
         if (this.libsdoc){
             this.libs.push('../util/lib.xsd')
             var els=this.libsdoc.getElementsByTagName('include');
@@ -1555,7 +1555,7 @@ designutil.componentinfo.prototype.targetNSprefix = function(doc){
 
 
 designutil.componentinfo.prototype.initlibs = function(libulr){
-    var libdoc=libutil.document.readDoc(libulr);
+    var libdoc=libutil.dom.readDoc(libulr);
     var pref = this.targetNSprefix(libdoc);
     if (libdoc){ 
         this.read_types(libdoc,pref);
@@ -1715,7 +1715,7 @@ designutil.componentinfo.prototype.read_attributes = function(el,  info){
     var result = {};
     if (!el)
         return result;
-    var typeel= libutil.document.findChildByTagName(el,'complexType');
+    var typeel= libutil.dom.findChildByTagName(el,'complexType');
     if (!typeel) return;
         
     for (var ch=typeel.firstElementChild; ch; ch=ch.nextElementSibling)
@@ -2339,7 +2339,7 @@ designutil.toolwin.SaveAll = function(){
     }
     var fdoc = libutil.global.getStartupDoc();
     if (fdoc && fdoc.needsave) {
-        libutil.document.writeDoc(fdoc);
+        libutil.dom.writeDoc(fdoc);
         fdoc = libutil.global.getStartupDoc();
         fdoc.needsave=undefined;
     }    
@@ -2407,7 +2407,7 @@ designutil.toolwin.windowexists = function (name){
 designutil.toolwin.addwindowfromfile = function (){
     var openfile= prompt('Введите имя файла','');
     if (!openfile || openfile=='') return; 
-    var openddoc = libutil.document.readDoc(openfile);
+    var openddoc = libutil.dom.readDoc(openfile);
     if (!openddoc){
         alert('Документ '+openfile+' не был открыт!');
         return;
@@ -2433,7 +2433,7 @@ designutil.toolwin.addnewwindow = function (){
         return;
     }
                
-    var openddoc = libutil.document.readDoc(openfile);
+    var openddoc = libutil.dom.readDoc(openfile);
     if (openddoc){
         alert('Документ '+openfile+' уже существует!!');
         return;

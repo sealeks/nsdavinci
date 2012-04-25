@@ -356,7 +356,7 @@ mainlib.valueset_click =  function (el, nm, width){
         var fnc_clear = "var txtel= document.getElementById('"+popup_id+"_text'); if (txtel && txtel.textContent.length>0) txtel.textContent=txtel.textContent.substring(0, txtel.textContent.length-1);";
         var fnc_clearpopup = "var popuptmp= document.getElementById('"+popup_id+"');  if (popuptmp && popuptmp.clearpopup) popuptmp.clearpopup();";
         var fnc_cmd = "var txtel= document.getElementById('"+popup_id+"_text'); if (txtel && txtel.textContent.length>0) { $$(('" + nm +  
-                           "@=' + " +"txtel.textContent" +"));} var popuptmp= document.getElementById('"+popup_id+"');  if (popuptmp && popuptmp.clearpopup) popuptmp.clearpopup();";
+                           "@= ' + " +"txtel.textContent" +"));} var popuptmp= document.getElementById('"+popup_id+"');  if (popuptmp && popuptmp.clearpopup) popuptmp.clearpopup();";
 
 
         //alert(fnc_cmd);
@@ -485,6 +485,81 @@ mainlib.graph_click =  function (nm){
     newwin.document.write('</body>');
     newwin.document.write('</html>');
     newwin.document.close();
+}
+
+
+mainlib.create_duplicate_slider =  function (el, x, minx, maxx, tag, live, wait){
+    
+    var parent=el.parentNode;
+    
+    if (el.movelement)
+      parent.removeChild(el.movelement);
+    
+    var dupl = libutil.dom.duplicate_element(el, false, ['id','captured','onmousedown', 'onmouseup']);
+    
+
+    
+    el.movelement = dupl;
+    
+    dupl.minx =minx;
+    dupl.maxx =maxx;
+    
+    dupl.startx =event.x ;
+    
+    dupl.startcx =parseInt(dupl.getAttribute('cx'));
+    
+    var selfremove = function(){
+        if (el.movelement){
+        el.movelement.onmouseout=null;
+        el.movelement.onmousemove=null;
+        el.movelement.onmouseup=null;      
+        parent.removeChild(el.movelement);
+        el.movelement=undefined;}}
+  
+    
+    
+    var command = function(val){
+        try{
+            var cmd = tag + ' @@= ('+ tag +'.mineu + ((' + tag + '.maxeu - ' + tag + '.mineu) * ' + val.toString()+ '))';
+            console.log('val:' + val +' min:' + $$(tag +'.mineu') +' max:' + $$(tag +'.maxeu'))
+            $$(cmd);
+        }
+        catch(error){
+            console.log('Command slider no set:' + error)
+        }
+    }
+    
+    parent.appendChild(dupl);
+    
+    dupl.onmouseup=function(ev){
+        var newx =ev.x - dupl.startx;
+        if (newx){            
+            var newval = dupl.startcx + newx;
+            command((newval-x)/(dupl.maxx - dupl.minx));
+            setTimeout(function() {
+                selfremove();
+                el.onmouseup();
+            }, (wait && parseInt(wait)) ? wait : 1000  );}
+        else{
+        selfremove();
+        el.onmouseup();}}
+    
+    dupl.onmousemove = function(ev){
+        var newx =ev.x - dupl.startx;
+        if (newx){
+            var newval = dupl.startcx + newx;
+            dupl.setAttribute('cx',newval);
+            if (live)
+               command((newval-20)/(dupl.maxx - dupl.minx));
+        }  
+    }
+    
+    dupl.onmouseout = function(){
+        selfremove();
+        el.onmouseup();
+    }
+    
+    
 }
     
 //documentElement.appendChild(svg);

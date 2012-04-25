@@ -3690,23 +3690,527 @@ extension-element-prefixes="mlib">
    <!--
    
    
-   trackbar
+   slider
    
    
    -->
    
    
-    <xsl:template match="//mlib:trackbar">
-        <svg>
+   <!-- style   -->
+   
+    <xsl:template name="apply_mlib_slider_style">
+        <defs>
+      
+            <xsl:variable name="gradtype">    
+                <xsl:choose>
+                    <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">
+                        <xsl:choose>
+                            <xsl:when test="(@gradient-type='tb')">
+                                <xsl:text>h</xsl:text>
+                            </xsl:when>
+                            <xsl:when test="(@gradient-type='c')">
+                                <xsl:text>c</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>v</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>                         
+                    </xsl:when> 
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="(@gradient-type='tb')">
+                                <xsl:text>v</xsl:text>
+                            </xsl:when>
+                            <xsl:when test="(@gradient-type='c')">
+                                <xsl:text>c</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>h</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>                                              
+                    </xsl:otherwise>  
+                </xsl:choose>
+            </xsl:variable>    
+       
+            <xsl:choose>
+                <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='') and boolean(@color2) and not(normalize-space(@color2)='')">
+                    <xsl:choose>
+                        <xsl:when test="not($gradtype='c')">                    
+                            <linearGradient  x2="100%" y2="100%">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_slider_gradient</xsl:text>
+                                </xsl:attribute>
+                                <xsl:choose>
+                                    <xsl:when test="$gradtype='v'"> 
+                                        <xsl:attribute name="x1">
+                                            <xsl:text>0%</xsl:text>
+                                        </xsl:attribute>
+                                        <xsl:attribute name="y1">
+                                            <xsl:text>100%</xsl:text>
+                                        </xsl:attribute>
+                                    </xsl:when>
+                                    <xsl:otherwise> 
+                                        <xsl:attribute name="x1">
+                                            <xsl:text>100%</xsl:text>
+                                        </xsl:attribute>
+                                        <xsl:attribute name="y1">
+                                            <xsl:text>0%</xsl:text>
+                                        </xsl:attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose>                               
+                                <stop  offset="0">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:value-of select="@color1"/>
+                                    </xsl:attribute>  
+                                </stop>
+                                <stop  offset="0.5">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:value-of select="@color2"/>                                                         
+                                    </xsl:attribute>  
+                                </stop>
+                                <stop  offset="1">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:value-of select="@color1"/>
+                                    </xsl:attribute>  
+                                </stop>
+                            </linearGradient>
+                        </xsl:when>
+                        <xsl:otherwise>                            
+                            <radialGradient>
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_slider_gradient</xsl:text>
+                                </xsl:attribute>                               
+                                <stop  offset="0">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:value-of select="@color1"/>
+                                    </xsl:attribute>  
+                                </stop>
+                                <stop  offset="1">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:choose>
+                                            <xsl:when test="boolean(@color2) and not(normalize-space(@color2)='')">
+                                                <xsl:value-of select="@color2"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="@color1"/>
+                                            </xsl:otherwise> 
+                                        </xsl:choose> 
+                                    </xsl:attribute>  
+                                </stop>
+                            </radialGradient>                           
+                        </xsl:otherwise>
+                    </xsl:choose> 
+                </xsl:when>    
+            </xsl:choose>
             
+            
+            
+            <xsl:choose>
+                <xsl:when test="boolean(@fillcolor1) and not(normalize-space(@fillcolor1)='') and boolean(@fillcolor2) and not(normalize-space(@fillcolor2)='')">
+                    <xsl:choose>
+                        <xsl:when test="not($gradtype='c')">                    
+                            <linearGradient  x2="100%" y2="100%">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_fillrect_gradient</xsl:text>
+                                </xsl:attribute>
+                                <xsl:choose>
+                                    <xsl:when test="$gradtype='v'"> 
+                                        <xsl:attribute name="x1">
+                                            <xsl:text>0%</xsl:text>
+                                        </xsl:attribute>
+                                        <xsl:attribute name="y1">
+                                            <xsl:text>100%</xsl:text>
+                                        </xsl:attribute>
+                                    </xsl:when>
+                                    <xsl:otherwise> 
+                                        <xsl:attribute name="x1">
+                                            <xsl:text>100%</xsl:text>
+                                        </xsl:attribute>
+                                        <xsl:attribute name="y1">
+                                            <xsl:text>0%</xsl:text>
+                                        </xsl:attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose>                               
+                                <stop  offset="0">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:value-of select="@fillcolor1"/>
+                                    </xsl:attribute>  
+                                </stop>
+                                <stop  offset="0.5">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:value-of select="@fillcolor2"/>                                                         
+                                    </xsl:attribute>  
+                                </stop>
+                                <stop  offset="1">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:value-of select="@fillcolor1"/>
+                                    </xsl:attribute>  
+                                </stop>
+                            </linearGradient>
+                        </xsl:when>
+                        <xsl:otherwise>                            
+                            <radialGradient>
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_fillslider_gradient</xsl:text>
+                                </xsl:attribute>                               
+                                <stop  offset="0">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:value-of select="@fillcolor1"/>
+                                    </xsl:attribute>  
+                                </stop>
+                                <stop  offset="1">
+                                    <xsl:attribute name="stop-color">
+                                        <xsl:choose>
+                                            <xsl:when test="boolean(@fillcolor2) and not(normalize-space(@fillcolor2)='')">
+                                                <xsl:value-of select="@fillcolor2"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="@fillcolor1"/>
+                                            </xsl:otherwise> 
+                                        </xsl:choose> 
+                                    </xsl:attribute>  
+                                </stop>
+                            </radialGradient>                           
+                        </xsl:otherwise>
+                    </xsl:choose> 
+                </xsl:when>    
+            </xsl:choose>                
+            
+            
+            
+   
+            <style type="text/css">
+                
+                
+                <xsl:text>
+                </xsl:text>
+                <xsl:text>#</xsl:text>
+                <xsl:value-of select="@id"/>
+                <xsl:text>_sliderbutton[captured="captured"] {         
+                            opacity: 0;}</xsl:text>  
+                
+                <xsl:text>
+                    
+                rect.</xsl:text>
+                <xsl:value-of select="@id"/>
+                <xsl:text>_slider_gradient_class {
+                </xsl:text>
+                <xsl:choose>
+                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_slider_gradient</xsl:text>
+                        <xsl:text>);}
+                        </xsl:text>        
+                    </xsl:when>
+                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')">
+                        <xsl:text>fill : </xsl:text>
+                        <xsl:value-of select="@color1"/>
+                        <xsl:text>;}
+                        </xsl:text>        
+                    </xsl:when>
+                    <xsl:when test="(@environment='gaz') or (@environment='water') or (@environment='air') or (@environment='oil') or (@environment='stream')">
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:text>gradient</xsl:text>
+                        <xsl:value-of select="@environment"/>
+                        <xsl:text>_</xsl:text>
+                        <xsl:value-of select="$gradtype"/>
+                        <xsl:text>);}
+                        </xsl:text>     
+                    </xsl:when>
+                    <xsl:otherwise> 
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:text>gradientnone</xsl:text>
+                        <xsl:text>_</xsl:text>
+                        <xsl:value-of select="$gradtype"/>
+                        <xsl:text>);}
+                        </xsl:text> 
+                    </xsl:otherwise>                    
+                </xsl:choose>
+    
+                <xsl:text>  
+                </xsl:text>
+                <xsl:text>#</xsl:text>
+                <xsl:value-of select="@id"/>
+                <xsl:text>_slider_fill {
+                </xsl:text>
+                <xsl:choose>
+                    <xsl:when test="boolean(@fillcolor1) and not(normalize-space(@fillcolor1)='')  and boolean(@fillcolor2) and not(normalize-space(@fillcolor2)='')">
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_fillslider_gradient</xsl:text>
+                        <xsl:text>);}
+                        </xsl:text>        
+                    </xsl:when>
+                    <xsl:when test="boolean(@fillcolor1) and not(normalize-space(@fillcolor1)='')">
+                        <xsl:text>fill : </xsl:text>
+                        <xsl:value-of select="@fillcolor1"/>
+                        <xsl:text>;}
+                        </xsl:text>        
+                    </xsl:when>
+                    <xsl:when test="(@fillenvironment='gaz') or (@fillenvironment='water') or (@fillenvironment='air') or (@fillenvironment='oil') or (@fillenvironment='stream')">
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:text>gradient</xsl:text>
+                        <xsl:value-of select="@fillenvironment"/>
+                        <xsl:text>_</xsl:text>
+                        <xsl:value-of select="$gradtype"/>
+                        <xsl:text>);}
+                        </xsl:text>     
+                    </xsl:when>
+                    <xsl:otherwise> 
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:text>gradientblack</xsl:text>
+                        <xsl:text>_</xsl:text>
+                        <xsl:value-of select="$gradtype"/>
+                        <xsl:text>);}
+                        </xsl:text> 
+                    </xsl:otherwise>                    
+                </xsl:choose>    
+    
+                <xsl:text>
+                </xsl:text>    
+                <xsl:text>rect.</xsl:text>
+                <xsl:value-of select="@id"/>
+                <xsl:text>_slider_gradient_classnone {
+                </xsl:text>
+                <xsl:choose>
+                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">
+                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:text>gradientnone</xsl:text>
+                        <xsl:text>_</xsl:text>
+                        <xsl:value-of select="$gradtype"/>                
+                        <xsl:text>);</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise> 
+                        <xsl:text>fill : #F7F7F7;</xsl:text>                
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:text>}
+                </xsl:text>
+                
+                <xsl:text>
+                </xsl:text>    
+                               
+        
+            </style>  
+        </defs>                           
+    </xsl:template>  
+  
+   
+    <xsl:template name="apply_mlib_slider_stroke">
+        <xsl:attribute name="stroke">
+            <xsl:choose> 
+                <xsl:when test="(boolean(@stroke) and not(normalize-space(@stroke)=''))">
+                    <xsl:value-of select="@stroke"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>#000</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:attribute>       
+    </xsl:template>
+    
+    <xsl:template name="apply_mlib_slider_strokewidth">
+        <xsl:attribute name="stroke-width">
+            <xsl:choose> 
+                <xsl:when test="(boolean(@stroke-width) and not(normalize-space(@stroke-width)=''))">
+                    <xsl:value-of select="@stroke-width"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>1</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:attribute>       
+    </xsl:template>    
+       
+    
+    <xsl:template name="apply_mlib_slider_sliderrect"> 
+        <rect>
+            <xsl:attribute name="x">
+                <xsl:value-of select="@width * 0.05"/>
+            </xsl:attribute>
+            <xsl:attribute name="y">
+                <xsl:value-of select="@height * 0.36"/>
+            </xsl:attribute>
+            <xsl:attribute name="height">
+                <xsl:value-of select="@height * 0.28"/>
+            </xsl:attribute>
+            <xsl:attribute name="width">
+                <xsl:value-of select="@width * 0.9"/>
+            </xsl:attribute>
+            <xsl:call-template name="apply_mlib_slider_stroke"/>
+            <xsl:call-template name="apply_mlib_slider_strokewidth"/>
+            <xsl:attribute name="class">
+                <xsl:choose> 
+                    <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">  
+                        <xsl:text>#{ </xsl:text>
+                        <xsl:text>(</xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text>).valid ? '</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_slider_gradient_class' : '</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_slider_gradient_classnone' :default </xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_slider_gradient_classnone }</xsl:text>            
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="class">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_slider_gradient_class</xsl:text>
+                        </xsl:attribute>                      
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+        
+            <xsl:call-template name="apply_r"/>
+    
+        </rect>
+    </xsl:template>
+    
+    <xsl:template name="apply_mlib_slider_sliderfillrect"> 
+        <rect stroke="none">
+            <xsl:attribute name="x">
+                <xsl:value-of select="@width * 0.05"/>
+            </xsl:attribute>
+            <xsl:attribute name="y">
+                <xsl:value-of select="@height * 0.36"/>
+            </xsl:attribute>
+            <xsl:attribute name="height">
+                <xsl:value-of select="@height * 0.28"/>
+            </xsl:attribute>
+            <xsl:attribute name="width">
+                <xsl:value-of select="@width * 0.9"/>
+            </xsl:attribute>
+            <xsl:call-template name="apply_mlib_slider_strokewidth"/>
+            <xsl:attribute name="class">
+                <xsl:choose> 
+                    <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">  
+                        <xsl:text>#{ </xsl:text>
+                        <xsl:text>(</xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text>).valid ? '</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_slider_gradient_class' : '</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_slider_gradient_classnone' :default </xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_slider_gradient_classnone }</xsl:text>            
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="class">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_slider_gradient_class</xsl:text>
+                        </xsl:attribute>                      
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+        
+            <xsl:call-template name="apply_r"/>
+    
+        </rect>
+    </xsl:template> 
+    
+   <!-- fillsrect -->
+   
+    
+
+      
+    
+    
+    
+    <xsl:template name="apply_mlib_slider_sliderparam"> 
+        <circle stroke-width="1" fill="red">
+            <xsl:attribute name="id">            
+                <xsl:value-of select="@id"/>
+                <xsl:text>_sliderbutton</xsl:text>  
+            </xsl:attribute>  
+            <xsl:attribute name="cy">
+                <xsl:value-of select="@height * 0.5"/>
+            </xsl:attribute>
+            <xsl:attribute name="cx">
+                <xsl:choose> 
+                    <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">
+                        <xsl:text>#{ </xsl:text>
+                        <xsl:text>((&#38;</xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text> - </xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text>.mineu)/(</xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text>.maxeu-</xsl:text>
+                        <xsl:value-of select="@param"/>
+                        <xsl:text>.mineu)  * 0.9 +  0.05) * </xsl:text>
+                        <xsl:value-of select="@width"/>
+                        <xsl:text> :default </xsl:text>
+                        <xsl:value-of select="@width * 0.05"/>
+                        <xsl:text> }</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@width * 0.05"/>
+                    </xsl:otherwise>                  
+                </xsl:choose>
+            </xsl:attribute>
+            <xsl:call-template name="apply_mlib_slider_stroke"/>
+            <xsl:call-template name="apply_mlib_slider_strokewidth"/>            
+            <xsl:attribute name="r">
+                <xsl:value-of select="@height * 0.3"/>
+            </xsl:attribute>
+            <xsl:attribute name="onmousedown">   
+                <xsl:text>this.setAttribute('captured','captured');mainlib.create_duplicate_slider(this,</xsl:text>
+                <xsl:value-of select="@width * 0.05"/>
+                <xsl:text> ,  </xsl:text> 
+                <xsl:value-of select="@x + @width * 0.05"/>
+                <xsl:text> ,  </xsl:text>
+                <xsl:value-of select="@x + @width * 0.95"/>
+                <xsl:text> , '</xsl:text>
+                <xsl:value-of select="@param"/>
+                <xsl:text>' , </xsl:text>
+                <xsl:choose> 
+                    <xsl:when test="(boolean(@live-command) and (normalize-space(@live-command)='live'))"> 
+                        <xsl:text>true</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>false</xsl:text>
+                    </xsl:otherwise>     
+                </xsl:choose> 
+                
+                <xsl:choose> 
+                    <xsl:when test="(boolean(@wait-timeout) and not(normalize-space(@wait-timeout)=''))"> 
+                        <xsl:text> , </xsl:text>
+                        <xsl:value-of select="@wait-timeout"/>
+                    </xsl:when>   
+                </xsl:choose> 
+                <xsl:text>);</xsl:text>             
+            </xsl:attribute>
+            <xsl:attribute name="onmouseup">   
+                <xsl:text>if (this.hasAttribute('captured'))  this.removeAttribute('captured')</xsl:text>            
+            </xsl:attribute>             
+        </circle>    
+    </xsl:template>    
+   
+   
+    <xsl:template match="//mlib:slider">
+        <svg>        
             <xsl:call-template name="apply_rect"/>
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
-            <g>
-                <xsl:call-template name="apply_svg_g_visible_binding"/>          
-                <rect stroke="white" fill="white" opacity="1.0">
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_mlib_slider_style"/>
+            <g>           
+                <rect stroke="white" fill="white" opacity="0.0">
                     <xsl:call-template name="apply_0_0_width_height"/> 
                 </rect>
+                
+                <!--xsl:call-template name="apply_mlib_slider_boundrect"/--> 
+
+                <xsl:call-template name="apply_mlib_slider_sliderrect"/> 
+
+                <xsl:call-template name="apply_mlib_slider_sliderparam"/> 
             </g>
         </svg>
     </xsl:template>   
