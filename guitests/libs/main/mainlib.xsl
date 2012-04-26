@@ -566,18 +566,24 @@ extension-element-prefixes="mlib">
     <xsl:template name="apply_mlib_aratura_alarmstate">    
         <xsl:choose>                
             <xsl:when test="(boolean(@alarms) and not(normalize-space(@alarms)=''))">
-                <g  class="accident" opacity="0.0"> 
-                    <xsl:attribute name="class">
-                        <xsl:text>#{ (alarmlevel(</xsl:text>
-                        <xsl:value-of select="@alarms"/>
-                        <xsl:text>)==3) ? 'accident' : (</xsl:text>
-                        <xsl:text>( alarmlevel(</xsl:text>
-                        <xsl:value-of select="@alarms"/> 
-                        <xsl:text>)==2) ? 'alarm' : </xsl:text>
-                        <xsl:text>  'notice')  :default accident }</xsl:text>
-                    </xsl:attribute>                 
+                <g  class="accident" opacity="0.0">
+                    <xsl:call-template name="apply_lib_alarm_class">
+                        <xsl:with-param name="alarms" select="@alarms"/>
+                        <xsl:with-param name="accident">accident</xsl:with-param>
+                        <xsl:with-param name="alarm">alarm</xsl:with-param>
+                        <xsl:with-param name="notice">notice</xsl:with-param>
+                        <xsl:with-param name="default">accident</xsl:with-param>
+                    </xsl:call-template>
                     <circle cx="500" cy="500" r="500"/>
-                    <animate  attributeType="XML" attributeName="opacity"  dur="500ms" calcMode = "linear" repeatCount="indefinite">
+                    <xsl:call-template name="apply_lib_alarm_animate">
+                        <xsl:with-param name="attributeName">opacity</xsl:with-param>
+                        <xsl:with-param name="attributeType">XML</xsl:with-param>
+                        <xsl:with-param name="calcMode">linear</xsl:with-param>
+                        <xsl:with-param name="alarms" select="@alarms"/>
+                        <xsl:with-param name="on">1</xsl:with-param>
+                        <xsl:with-param name="off">0</xsl:with-param> 
+                    </xsl:call-template>    
+                    <!--animate  attributeType="XML" attributeName="opacity"  dur="500ms" calcMode = "linear" repeatCount="indefinite">
                         <xsl:attribute name="values">
                             <xsl:text>#{ ack(</xsl:text>
                             <xsl:value-of select="@alarms"/>
@@ -587,7 +593,7 @@ extension-element-prefixes="mlib">
                             <xsl:text>) ? '0;1' : </xsl:text>
                             <xsl:text>  '0;0')  :default 0;0 }</xsl:text>
                         </xsl:attribute> 
-                    </animate>                      
+                    </animate-->                      
                 </g>     
             </xsl:when>   
         </xsl:choose>  
@@ -2224,55 +2230,29 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="mlib_fillrect_rectclass">       
         <xsl:choose>
-            <xsl:when test="boolean(@param) and not(normalize-space(@param)='')">            
+            <xsl:when test="not(normalize-space(@param)='')">            
                 <xsl:choose>
-                    <xsl:when test="boolean(@alarms) and not(normalize-space(@alarms)='')"> 
+                    <xsl:when test="not(normalize-space(@alarms)='')"> 
                     
-                        <animate  attributeType="XML" attributeName="class"  dur="500ms" calcMode = "discrete" repeatCount="indefinite">
-                            <xsl:attribute name="values">                   
-                                <xsl:text>#{ ack(</xsl:text>
-                                <xsl:value-of select="@alarms"/>
-                                <xsl:text>) ? ( (alarmlevel(</xsl:text>
-                                <xsl:value-of select="@alarms"/>
-                                <xsl:text>)==1) ? '</xsl:text>
+                        <xsl:call-template name="apply_lib_alarmcheckstate_animate">
+                            <xsl:with-param name="attributeName">class</xsl:with-param>
+                            <xsl:with-param name="attributeType">XML</xsl:with-param>
+                            <xsl:with-param name="calcMode">discrete</xsl:with-param>
+                            <xsl:with-param name="alarms" select="@alarms"/>
+                            <xsl:with-param name="accident">
                                 <xsl:value-of select="@id"/>
-                                <xsl:text>_rect_gradient_classnotice</xsl:text>
-                                <xsl:text>;</xsl:text>
+                                <xsl:text>_rect_gradient_classaccident</xsl:text> 
+                            </xsl:with-param>
+                            <xsl:with-param name="alarm">
                                 <xsl:value-of select="@id"/>
-                                <xsl:text>_rect_gradient_classnotice</xsl:text>
-                                <xsl:text>'  : ((alarmlevel(</xsl:text>
-                                <xsl:value-of select="@alarms"/>
-                                <xsl:text>)==2) ? '</xsl:text>
+                                <xsl:text>_rect_gradient_classalarm</xsl:text>                         
+                            </xsl:with-param>
+                            <xsl:with-param name="notice">
                                 <xsl:value-of select="@id"/>
-                                <xsl:text>_rect_gradient_classalarm</xsl:text>
-                                <xsl:text>;</xsl:text>
-                                <xsl:value-of select="@id"/>
-                                <xsl:text>_rect_gradient_classalarm</xsl:text>
-                                <xsl:text>' : '</xsl:text>
-                                <xsl:value-of select="@id"/>
-                                <xsl:text>_rect_gradient_classaccident</xsl:text>
-                                <xsl:text>;</xsl:text>
-                                <xsl:value-of select="@id"/>
-                                <xsl:text>_rect_gradient_classaccident</xsl:text>
-                                <xsl:text>')) : </xsl:text>
-                                <xsl:text>( nack(</xsl:text>
-                                <xsl:value-of select="@alarms"/>
-                                <xsl:text>) ? ( (alarmlevel(</xsl:text>
-                                <xsl:value-of select="@alarms"/>
-                                <xsl:text>)==1) ? '</xsl:text>
-                                <xsl:value-of select="@id"/>
-                                <xsl:text>_rect_gradient_classnotice</xsl:text>
-                                <xsl:text>; '  : ((alarmlevel(</xsl:text>
-                                <xsl:value-of select="@alarms"/>
-                                <xsl:text>)==2) ? '</xsl:text>
-                                <xsl:value-of select="@id"/>
-                                <xsl:text>_rect_gradient_classalarm</xsl:text>
-                                <xsl:text>; ' : '</xsl:text>
-                                <xsl:value-of select="@id"/>
-                                <xsl:text>_rect_gradient_classaccident</xsl:text>                                
-                                <xsl:text>; ')) : ' ; ') :default }</xsl:text>
-                            </xsl:attribute> 
-                        </animate>                                  
+                                <xsl:text>_rect_gradient_classnotice</xsl:text>  
+                            </xsl:with-param>
+                        </xsl:call-template>
+                                                   
                     </xsl:when>
                     <xsl:otherwise> 
                         <xsl:attribute name="class">
@@ -2440,9 +2420,9 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="mlib_sensor_event">
         <xsl:choose>
-            <xsl:when test="boolean(@param) and not(normalize-space(@param)='')">                  
+            <xsl:when test="not(normalize-space(@param)='')">                  
                 <xsl:choose>
-                    <xsl:when test="boolean(@sensorevent) and (@sensorevent='valueset')"> 
+                    <xsl:when test="boolean(@sensorevent='valueset')"> 
                         <xsl:attribute name="onclick">
                             <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
                             <xsl:text>mainlib.valueset_click(this, '</xsl:text>
@@ -2452,7 +2432,7 @@ extension-element-prefixes="mlib">
                             <xsl:text>)</xsl:text> 
                         </xsl:attribute>    
                     </xsl:when>
-                    <xsl:when test="boolean(@sensorevent) and (@sensorevent='graph')">
+                    <xsl:when test="boolean(@sensorevent='graph')">
                         <xsl:attribute name="onclick">
                             <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
                             <xsl:text>mainlib.graph_click('</xsl:text> 
@@ -2486,7 +2466,7 @@ extension-element-prefixes="mlib">
             </xsl:variable>   
             
             <xsl:choose>
-                <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='') and boolean(@color2) and not(normalize-space(@color2)='')">
+                <xsl:when test="not(normalize-space(@color1)='') and not(normalize-space(@color2)='')">
                     <xsl:choose>
                         <xsl:when test="not($gradtype='c')">                    
                             <linearGradient  x2="100%" y2="100%">
@@ -2543,7 +2523,7 @@ extension-element-prefixes="mlib">
                                 <stop  offset="1">
                                     <xsl:attribute name="stop-color">
                                         <xsl:choose>
-                                            <xsl:when test="boolean(@color2) and not(normalize-space(@color2)='')">
+                                            <xsl:when test="not(normalize-space(@color2)='')">
                                                 <xsl:value-of select="@color2"/>
                                             </xsl:when>
                                             <xsl:otherwise>
@@ -2565,14 +2545,14 @@ extension-element-prefixes="mlib">
                 <xsl:text>_sensor_gradient_classon {
                 </xsl:text>
                 <xsl:choose>
-                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">
+                    <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">
                         <xsl:text>fill : url(#</xsl:text>
                         <xsl:value-of select="@id"/>
                         <xsl:text>_sensor_gradient</xsl:text>
                         <xsl:text>);}
                         </xsl:text>        
                     </xsl:when>
-                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')">
+                    <xsl:when test="not(normalize-space(@color1)='')">
                         <xsl:text>fill : </xsl:text>
                         <xsl:value-of select="@color1"/>
                         <xsl:text>;}
@@ -2604,7 +2584,7 @@ extension-element-prefixes="mlib">
                 <xsl:text>_sensor_gradient_classnone {
                 </xsl:text>
                 <xsl:choose>
-                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">
+                    <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">
                         <xsl:text>fill : url(#</xsl:text>
                         <xsl:text>gradientnone</xsl:text>
                         <xsl:text>_</xsl:text>
@@ -2625,7 +2605,7 @@ extension-element-prefixes="mlib">
                 <xsl:text>_sensor_gradient_classaccident {
                 </xsl:text>
                 <xsl:choose>
-                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">                
+                    <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">                
                         <xsl:text>fill : url(#</xsl:text>
                         <xsl:text>gradientaccident</xsl:text>
                         <xsl:text>_</xsl:text>
@@ -2646,7 +2626,7 @@ extension-element-prefixes="mlib">
                 <xsl:text>_sensor_gradient_classalarm {
                 </xsl:text>
                 <xsl:choose>
-                    <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='')  and boolean(@color2) and not(normalize-space(@color2)='')">                   
+                    <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">                   
                         <xsl:text>fill : url(#</xsl:text>
                         <xsl:text>gradientalarm</xsl:text>
                         <xsl:text>_</xsl:text>
@@ -2680,7 +2660,7 @@ extension-element-prefixes="mlib">
                     </xsl:otherwise>
                 </xsl:choose>
                 <xsl:choose>
-                    <xsl:when test="boolean(@fontcolor) and not(normalize-space(@fontcolor)='') ">                   
+                    <xsl:when test="not(normalize-space(@fontcolor)='') ">                   
                         <xsl:text>
                         fill : 
                         </xsl:text>
@@ -2706,7 +2686,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="mlib_sensor_fill">
         <xsl:choose>         
-            <xsl:when test="boolean(@param) and not(normalize-space(@param)='')">                  
+            <xsl:when test="not(normalize-space(@param)='')">                  
                 <xsl:attribute name="class">
                     <xsl:text>#{ (</xsl:text>
                     <xsl:value-of select="@param"/>
@@ -2762,9 +2742,9 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="mlib_sensor_cursor">
         <xsl:choose>
-            <xsl:when test="boolean(@param) and not(normalize-space(@param)='')">                  
+            <xsl:when test="not(normalize-space(@param)='')">                  
                 <xsl:choose>
-                    <xsl:when test="boolean(@sensorevent) and ((@sensorevent='valueset') or (@sensorevent='graph'))">                  
+                    <xsl:when test="((@sensorevent='valueset') or (@sensorevent='graph'))">                  
                         <xsl:attribute name="cursor">
                             <xsl:text>#{ (</xsl:text>
                             <xsl:value-of select="@param"/>
@@ -2792,11 +2772,11 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="mlib_sensor_textcontent">     
         <xsl:choose>                              
-            <xsl:when test="boolean(@param) and not(normalize-space(@param)='')">
+            <xsl:when test="not(normalize-space(@param)='')">
                 
                 <xsl:variable name="textdefault">
                     <xsl:choose>                              
-                        <xsl:when test="boolean(@caption) and not(normalize-space(@caption)='')">
+                        <xsl:when test="not(normalize-space(@caption)='')">
                             <xsl:value-of select="@caption"/>
                         </xsl:when>
                         <xsl:otherwise>
@@ -2806,7 +2786,7 @@ extension-element-prefixes="mlib">
                 </xsl:variable>
                 
                 <xsl:choose>                                      
-                    <xsl:when test="boolean(@format) and not(normalize-space(@format)='')">
+                    <xsl:when test="not(normalize-space(@format)='')">
                         <xsl:text>#{ (</xsl:text>
                         <xsl:value-of select="@param"/>
                         <xsl:text>).valid ? </xsl:text>
@@ -2836,7 +2816,7 @@ extension-element-prefixes="mlib">
             </xsl:when>
             <xsl:otherwise>
                 <xsl:choose>                              
-                    <xsl:when test="boolean(@caption) and not(normalize-space(@caption)='')">
+                    <xsl:when test="not(normalize-space(@caption)='')">
                         <xsl:value-of select="@caption"/>
                     </xsl:when>
                 </xsl:choose> 
@@ -2850,66 +2830,63 @@ extension-element-prefixes="mlib">
     <xsl:template name="mlib_sensor_textalarm">
 
         <xsl:choose>
-            <xsl:when test="(boolean(@alarms-low) and not(normalize-space(@alarms-low)='')) or( boolean(@alarms-high) and not(normalize-space(@alarms-high)=''))">
+            <xsl:when test="(not(normalize-space(@alarms-low)='')) or (not(normalize-space(@alarms-high)='')) or (not(normalize-space(@alarms)=''))">
+                <xsl:variable name="alarm1">
+                    <xsl:value-of select="@alarms-low"/> 
+                </xsl:variable>
+                
+                <xsl:variable name="alarm2">
+                    <xsl:choose>
+                        <xsl:when test="not(normalize-space(@alarms-high)='')">
+                            <xsl:choose>
+                                <xsl:when test="not(normalize-space($alarm1)='')">                    
+                                    <xsl:value-of select="$alarm1"/> 
+                                    <xsl:text>,</xsl:text>
+                                    <xsl:value-of select="@alarms-high"/> 
+                                </xsl:when>
+                                <xsl:otherwise> 
+                                    <xsl:value-of select="@alarms-high"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise> 
+                            <xsl:value-of select="$alarm1"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable> 
                 
                 <xsl:variable name="alarmlist">
                     <xsl:choose>
-                        <xsl:when test="boolean(@alarms-low) and not(normalize-space(@alarms-low)='') and boolean(@alarms-high) and not(normalize-space(@alarms-high)='')  and boolean(@alarms) and not(normalize-space(@alarms)='')  ">                    
-                            <xsl:value-of select="@alarms-low"/> 
-                            <xsl:text>,</xsl:text>
-                            <xsl:value-of select="@alarms-high"/>
-                            <xsl:text>,</xsl:text>
-                            <xsl:value-of select="@alarms"/>                           
+                        <xsl:when test="not(normalize-space(@alarms)='')">
+                            <xsl:choose>
+                                <xsl:when test="not(normalize-space($alarm2)='')">                    
+                                    <xsl:value-of select="$alarm2"/> 
+                                    <xsl:text>,</xsl:text>
+                                    <xsl:value-of select="@alarms"/> 
+                                </xsl:when>
+                                <xsl:otherwise> 
+                                    <xsl:value-of select="@alarms"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:when>
-                        <xsl:when test="boolean(@alarms-low) and not(normalize-space(@alarms-low)='') and boolean(@alarms-high) and not(normalize-space(@alarms-high)='')">                    
-                            <xsl:value-of select="@alarms-low"/> 
-                            <xsl:text>,</xsl:text>
-                            <xsl:value-of select="@alarms-high"/>                  
-                        </xsl:when> 
-                        <xsl:when test="boolean(@alarms-low) and not(normalize-space(@alarms-low)='')  and boolean(@alarms) and not(normalize-space(@alarms)='')  ">                    
-                            <xsl:value-of select="@alarms-low"/> 
-                            <xsl:text>,</xsl:text>
-                            <xsl:value-of select="@alarms"/>                           
-                        </xsl:when>   
-                        <xsl:when test=" boolean(@alarms-high) and not(normalize-space(@alarms-high)='')  and boolean(@alarms) and not(normalize-space(@alarms)='')  ">                    
-                            <xsl:value-of select="@alarms-high"/>
-                            <xsl:text>,</xsl:text>
-                            <xsl:value-of select="@alarms"/>                           
-                        </xsl:when>                        
-                        <xsl:when test="boolean(@alarms-low) and not(normalize-space(@alarms-low)='')  ">                    
-                            <xsl:value-of select="@alarms-low"/>                           
-                        </xsl:when>
-                        <xsl:when test="boolean(@alarms-high) and not(normalize-space(@alarms-high)='')  ">                    
-                            <xsl:value-of select="@alarms-high"/>                           
-                        </xsl:when> 
-                        <xsl:when test="boolean(@alarms) and not(normalize-space(@alarms)='')  ">                    
-                            <xsl:value-of select="@alarms"/>                           
-                        </xsl:when>                          
                         <xsl:otherwise> 
-                            <xsl:text></xsl:text>    
+                            <xsl:value-of select="$alarm2"/>
                         </xsl:otherwise>
-                    </xsl:choose>                   
-                </xsl:variable> 
-                               
-                <animate  attributeType="XML" attributeName="class"  dur="500ms" calcMode = "discrete" repeatCount="indefinite">
-                    <xsl:attribute name="values">
-                        <xsl:text>#{ ack(</xsl:text>
-                        <xsl:value-of select="$alarmlist"/>
-                        <xsl:text>) ? ( (alarmlevel(</xsl:text>
-                        <xsl:value-of select="$alarmlist"/>
-                        <xsl:text>)==1) ? 'notice;notice'  : ((alarmlevel(</xsl:text>
-                        <xsl:value-of select="$alarmlist"/>
-                        <xsl:text>)==2) ? 'alarm;alarm' : 'accident;accident')) : </xsl:text>
-                        <xsl:text>( nack(</xsl:text>
-                        <xsl:value-of select="$alarmlist"/>
-                        <xsl:text>) ? ( (alarmlevel(</xsl:text>
-                        <xsl:value-of select="$alarmlist"/>
-                        <xsl:text>)==1) ? 'notice; '  : ((alarmlevel(</xsl:text>
-                        <xsl:value-of select="$alarmlist"/>
-                        <xsl:text>)==2) ? 'alarm; ' : 'accident; ')) : ' ') :default }</xsl:text>
-                    </xsl:attribute> 
-                </animate>  
+                    </xsl:choose>
+                </xsl:variable>  
                 
+                <xsl:call-template name="apply_lib_alarmcheckstate_animate">
+
+                    <xsl:with-param name="attributeName">class</xsl:with-param>
+                    <xsl:with-param name="attributeType">XML</xsl:with-param>
+                    <xsl:with-param name="calcMode">discrete</xsl:with-param>
+                    <xsl:with-param name="alarms" select="$alarmlist"/>
+                    <xsl:with-param name="accident">accident</xsl:with-param>
+                    <xsl:with-param name="alarm">alarm</xsl:with-param>
+                    <xsl:with-param name="notice">notice</xsl:with-param>
+  
+                </xsl:call-template>    
+                                        
             </xsl:when>                    
 
         </xsl:choose>        
@@ -2958,7 +2935,7 @@ extension-element-prefixes="mlib">
                             
                                 
                 <xsl:choose>                              
-                    <xsl:when test="boolean(@fontstyle) and not(@fontstyle='')">
+                    <xsl:when test="not(@fontstyle='')">
                         <xsl:attribute name="style">
                             <xsl:value-of select="@fontstyle"/>
                         </xsl:attribute>
@@ -2990,18 +2967,18 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_sensor_alarmstate">    
         <xsl:choose>                
-            <xsl:when test="(boolean(@alarms-low) and not(normalize-space(@alarms-low)=''))">
+            <xsl:when test="not(normalize-space(@alarms-low)='')">
                 <g  class="accident">  
+                    <xsl:call-template name="apply_lib_alarm_class">
+                        <xsl:with-param name="alarms" select="@alarms-low"/>
+                        <xsl:with-param name="accident">accident</xsl:with-param>
+                        <xsl:with-param name="alarm">alarm</xsl:with-param>
+                        <xsl:with-param name="notice">notice</xsl:with-param>
+                        <xsl:with-param name="default">accident</xsl:with-param>
+                    </xsl:call-template>
+                    
                     <polygon>
-                        <xsl:attribute name="class">
-                            <xsl:text>#{ (alarmlevel(</xsl:text>
-                            <xsl:value-of select="@alarms-low"/>
-                            <xsl:text>)==3) ? 'accident' : (</xsl:text>
-                            <xsl:text>( alarmlevel(</xsl:text>
-                            <xsl:value-of select="@alarms-low"/> 
-                            <xsl:text>)==2) ? 'alarm' : </xsl:text>
-                            <xsl:text>  'notice')  :default accident }</xsl:text>
-                        </xsl:attribute>                         
+                       
                         <xsl:attribute name="points">
                             <xsl:value-of select="@x + (@width* 0.3)"/>  
                             <xsl:text>,</xsl:text>
@@ -3015,34 +2992,33 @@ extension-element-prefixes="mlib">
                             <xsl:text>,</xsl:text>
                             <xsl:value-of select="@y + (@height * 0.75)"/>                                                               
                         </xsl:attribute>
-                        <animate  attributeType="XML" attributeName="opacity"  dur="500ms" calcMode = "linear" repeatCount="indefinite">
-                            <xsl:attribute name="values">
-                                <xsl:text>#{ ack(</xsl:text>
-                                <xsl:value-of select="@alarms-low"/>
-                                <xsl:text>) ? '1;1' : </xsl:text>
-                                <xsl:text>( nack(</xsl:text>
-                                <xsl:value-of select="@alarms-low"/> 
-                                <xsl:text>) ? '0;1' : </xsl:text>
-                                <xsl:text>  '0;0')  :default 0;0 }</xsl:text>
-                            </xsl:attribute> 
-                        </animate>
+                        
+                        <xsl:call-template name="apply_lib_alarm_animate">
+                            <xsl:with-param name="attributeName">opacity</xsl:with-param>
+                            <xsl:with-param name="attributeType">XML</xsl:with-param>
+                            <xsl:with-param name="calcMode">linear</xsl:with-param>
+                            <xsl:with-param name="alarms" select="@alarms-low"/>
+                            <xsl:with-param name="on">1</xsl:with-param>
+                            <xsl:with-param name="off">0</xsl:with-param> 
+                        </xsl:call-template>
+                        
                     </polygon>
                 </g>     
             </xsl:when>   
         </xsl:choose>  
         <xsl:choose>                
-            <xsl:when test="(boolean(@alarms-high) and not(normalize-space(@alarms-high)=''))">
-                <g  class="accident">                 
-                    <polygon>    
-                        <xsl:attribute name="class">
-                            <xsl:text>#{ (alarmlevel(</xsl:text>
-                            <xsl:value-of select="@alarms-high"/>
-                            <xsl:text>)==3) ? 'accident' : (</xsl:text>
-                            <xsl:text>( alarmlevel(</xsl:text>
-                            <xsl:value-of select="@alarms-high"/> 
-                            <xsl:text>)==2) ? 'alarm' : </xsl:text>
-                            <xsl:text>  'notice')  :default accident }</xsl:text>
-                        </xsl:attribute> 
+            <xsl:when test="not(normalize-space(@alarms-high)='')">
+                <g  class="accident"> 
+                    <xsl:call-template name="apply_lib_alarm_class">
+                        <xsl:with-param name="alarms" select="@alarms-high"/>
+                        <xsl:with-param name="accident">accident</xsl:with-param>
+                        <xsl:with-param name="alarm">alarm</xsl:with-param>
+                        <xsl:with-param name="notice">notice</xsl:with-param>
+                        <xsl:with-param name="default">accident</xsl:with-param>
+                    </xsl:call-template>
+                    
+                    <polygon> 
+                  
                         <xsl:attribute name="points">
                             <xsl:value-of select="@x + (@width* 0.3)"/>  
                             <xsl:text>,</xsl:text>
@@ -3055,19 +3031,17 @@ extension-element-prefixes="mlib">
                             <xsl:value-of select="@x + (@width div 2)"/>  
                             <xsl:text>,</xsl:text>
                             <xsl:value-of select="@y+ (@height * 0.25)"/>                                                                                           
-                        </xsl:attribute>                                 
+                        </xsl:attribute>
                     
-                        <animate  attributeType="XML" attributeName="opacity"  dur="500ms" calcMode = "linear" repeatCount="indefinite">
-                            <xsl:attribute name="values">
-                                <xsl:text>#{ ack(</xsl:text>
-                                <xsl:value-of select="@alarms-high"/>
-                                <xsl:text>) ? '1;1' : </xsl:text>
-                                <xsl:text>( nack(</xsl:text>
-                                <xsl:value-of select="@alarms-high"/> 
-                                <xsl:text>) ? '0;1' : </xsl:text>
-                                <xsl:text>  '0;0')  :default 0;0 }</xsl:text>
-                            </xsl:attribute> 
-                        </animate>
+                        <xsl:call-template name="apply_lib_alarm_animate">
+                            <xsl:with-param name="attributeName">opacity</xsl:with-param>
+                            <xsl:with-param name="attributeType">XML</xsl:with-param>
+                            <xsl:with-param name="calcMode">linear</xsl:with-param>
+                            <xsl:with-param name="alarms" select="@alarms-high"/>
+                            <xsl:with-param name="on">1</xsl:with-param>
+                            <xsl:with-param name="off">0</xsl:with-param> 
+                        </xsl:call-template>
+
                     </polygon>
                 </g>     
             </xsl:when>   
@@ -3093,7 +3067,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_sensor_control">    
         <xsl:choose>
-            <xsl:when test="boolean(@control) and not(normalize-space(@control)='')">
+            <xsl:when test="not(normalize-space(@control)='')">
                 <g>
                     <xsl:attribute name="class">
                         <xsl:text>#{</xsl:text> 
@@ -3158,7 +3132,7 @@ extension-element-prefixes="mlib">
    
             <xsl:attribute name="d">
                 <xsl:choose>                              
-                    <xsl:when test="boolean(@d) and not(@d='')">  
+                    <xsl:when test="not(@d='')">  
                         <xsl:value-of select="@d"/>
                     </xsl:when>   
                     <xsl:otherwise> </xsl:otherwise>
@@ -3166,7 +3140,7 @@ extension-element-prefixes="mlib">
             </xsl:attribute>
             
             <xsl:choose>                              
-                <xsl:when test="boolean(@filter) and not(@filter='')">
+                <xsl:when test="not(@filter='')">
                     <xsl:attribute name="filter">
                         <xsl:text>url(#filter_lib3)</xsl:text>
                     </xsl:attribute>
@@ -3175,7 +3149,7 @@ extension-element-prefixes="mlib">
             
             <xsl:attribute name="stroke-width">
                 <xsl:choose>
-                    <xsl:when test="boolean(@stroke-width) and not(@stroke-width='')">  
+                    <xsl:when test="not(@stroke-width='')">  
                         <xsl:value-of select="@stroke-width"/>
                     </xsl:when>   
                     <xsl:otherwise>
@@ -3186,9 +3160,9 @@ extension-element-prefixes="mlib">
             
             <xsl:attribute name="stroke">
                 <xsl:choose>
-                    <xsl:when test="boolean(@on) and not(normalize-space(@on)='')"> 
+                    <xsl:when test="not(normalize-space(@on)='')"> 
                         <xsl:choose>
-                            <xsl:when test="boolean(@stroke) and not(@stroke='')">  
+                            <xsl:when test="not(@stroke='')">  
                                 <xsl:text>#{ (</xsl:text>
                                 <xsl:value-of select="@on"/>
                                 <xsl:text>).valid ? '</xsl:text>
@@ -3204,7 +3178,7 @@ extension-element-prefixes="mlib">
                     </xsl:when>   
                     <xsl:otherwise>
                         <xsl:choose>
-                            <xsl:when test="boolean(@stroke) and not(@stroke='')">  
+                            <xsl:when test="not(@stroke='')">  
                                 <xsl:value-of select="@stroke"/>
                             </xsl:when>   
                             <xsl:otherwise>
@@ -3222,12 +3196,12 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_path_fill">
         <xsl:choose>
-            <xsl:when test="boolean(@on) and not(@on='')">           
+            <xsl:when test="not(@on='')">           
                 <path fill="none">    
                     
                     <xsl:attribute name="d">
                         <xsl:choose>                              
-                            <xsl:when test="boolean(@d) and not(@d='')">  
+                            <xsl:when test="not(@d='')">  
                                 <xsl:value-of select="@d"/>
                             </xsl:when>   
                             <xsl:otherwise> </xsl:otherwise>
@@ -3245,7 +3219,7 @@ extension-element-prefixes="mlib">
             
                     <xsl:attribute name="stroke-width">
                         <xsl:choose>
-                            <xsl:when test="boolean(@stroke-width) and not(@stroke-width='')">  
+                            <xsl:when test="not(@stroke-width='')">  
                                 <xsl:value-of select="@stroke-width div 1.5"/>
                             </xsl:when>   
                             <xsl:otherwise>
@@ -3257,7 +3231,7 @@ extension-element-prefixes="mlib">
             
                     <xsl:attribute name="stroke">
                         <xsl:choose>
-                            <xsl:when test="boolean(@off-stroke) and not(@off-stroke='')">  
+                            <xsl:when test="not(@off-stroke='')">  
                                 <xsl:text>#{ (</xsl:text>
                                 <xsl:value-of select="@on"/>
                                 <xsl:text>).valid ? '</xsl:text>
@@ -3465,7 +3439,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="mlib_translate"> 
         <xsl:choose>
-            <xsl:when test="(boolean(@translate-x) and not(normalize-space(@translate-x)='')) and  (boolean(@translate-y) and not(normalize-space(@translate-y)=''))">
+            <xsl:when test="(not(normalize-space(@translate-x)='')) and  (not(normalize-space(@translate-y)=''))">
                 <xsl:attribute name="transform">
                     <xsl:text>translate(</xsl:text>
                     <xsl:value-of select="@translate-x"/>
@@ -3477,7 +3451,7 @@ extension-element-prefixes="mlib">
                     <xsl:call-template name="mlib_rotate"/>
                 </g>
             </xsl:when>
-            <xsl:when test="(boolean(@translate-x) and not(normalize-space(@translate-x)=''))">  
+            <xsl:when test="not(normalize-space(@translate-x)='')">  
                 <xsl:attribute name="transform">
                     <xsl:text>translate(</xsl:text>
                     <xsl:value-of select="@translate-x"/>
@@ -3488,7 +3462,7 @@ extension-element-prefixes="mlib">
                     <xsl:call-template name="mlib_rotate"/>
                 </g>
             </xsl:when>
-            <xsl:when test="(boolean(@translate-y) and not(normalize-space(@translate-y)=''))"> 
+            <xsl:when test="not(normalize-space(@translate-y)='')"> 
                 <xsl:attribute name="transform">
                     <xsl:text>translate( 0</xsl:text>
                     <xsl:text>,</xsl:text>
@@ -3508,10 +3482,10 @@ extension-element-prefixes="mlib">
 
     <xsl:template name="mlib_rotate"> 
         <xsl:choose>
-            <xsl:when test=" (boolean(@rotate-angle) and not(normalize-space(@rotate-angle)='')) or (boolean(@rotate-angle-binding) and not(normalize-space(@rotate-angle-binding)='')) ">
+            <xsl:when test=" (not(normalize-space(@rotate-angle)='')) or (not(normalize-space(@rotate-angle-binding)='')) ">
                 <xsl:variable name="rotate-x"> 
                     <xsl:choose>
-                        <xsl:when test=" (boolean(@rotate-x) and not(normalize-space(@rotate-x)='')) ">
+                        <xsl:when test="not(normalize-space(@rotate-x)='') ">
                             <xsl:value-of select="@rotate-x"/>
                         </xsl:when>
                         <xsl:otherwise>
@@ -3521,7 +3495,7 @@ extension-element-prefixes="mlib">
                 </xsl:variable>
                 <xsl:variable name="rotate-y"> 
                     <xsl:choose>
-                        <xsl:when test=" (boolean(@rotate-y) and not(normalize-space(@rotate-y)='')) ">
+                        <xsl:when test="not(normalize-space(@rotate-y)='') ">
                             <xsl:value-of select="@rotate-y"/>
                         </xsl:when>
                         <xsl:otherwise>
@@ -3532,7 +3506,7 @@ extension-element-prefixes="mlib">
                 
                 
                 <xsl:choose>
-                    <xsl:when test="(boolean(@rotate-angle) and not(normalize-space(@rotate-angle)='')) and (boolean(@rotate-angle-binding) and not(normalize-space(@rotate-angle-binding)='')) ">            
+                    <xsl:when test="not(normalize-space(@rotate-angle)='') and not(normalize-space(@rotate-angle-binding)='') ">            
                         <xsl:attribute name="transform">
                             <xsl:text>#{ (</xsl:text>
                             <xsl:value-of select="@rotate-angle-binding"/>
@@ -3566,7 +3540,7 @@ extension-element-prefixes="mlib">
                             <xsl:call-template name="mlib_scale"/>
                         </g>
                     </xsl:when>
-                    <xsl:when test="(boolean(@rotate-angle) and not(normalize-space(@rotate-angle)=''))">            
+                    <xsl:when test="not(normalize-space(@rotate-angle)='')">            
                         <xsl:attribute name="transform">
                             <xsl:text>rotate(</xsl:text>
                             <xsl:value-of select="@rotate-angle"/>
@@ -3580,7 +3554,7 @@ extension-element-prefixes="mlib">
                             <xsl:call-template name="mlib_scale"/>
                         </g>
                     </xsl:when>
-                    <xsl:when test="(boolean(@rotate-angle-binding) and not(normalize-space(@rotate-angle-binding)='')) ">            
+                    <xsl:when test="(not(normalize-space(@rotate-angle-binding)='')) ">            
                         <xsl:attribute name="transform">
                             <xsl:text>#{ (</xsl:text>
                             <xsl:value-of select="@rotate-angle-binding"/>
@@ -3618,7 +3592,7 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="mlib_scale"> 
         <xsl:choose>
-            <xsl:when test="(boolean(@scale) and not(normalize-space(@scale)='')) and (boolean(@scale-binding) and not(normalize-space(@scale-binding)='')) ">            
+            <xsl:when test="not(normalize-space(@scale)='') and not(normalize-space(@scale-binding)='') ">            
                 <xsl:attribute name="transform">
                     <xsl:text>#{ (</xsl:text>
                     <xsl:value-of select="@scale-binding"/>
@@ -3635,7 +3609,7 @@ extension-element-prefixes="mlib">
                 </xsl:attribute>    
                 <xsl:apply-templates/>
             </xsl:when>
-            <xsl:when test="(boolean(@scale) and not(normalize-space(@scale)=''))">            
+            <xsl:when test="not(normalize-space(@scale)='')">            
                 <xsl:attribute name="transform">
                     <xsl:text>scale(</xsl:text>
                     <xsl:value-of select="@scale"/>
@@ -3643,7 +3617,7 @@ extension-element-prefixes="mlib">
                 </xsl:attribute>    
                 <xsl:apply-templates/>
             </xsl:when>
-            <xsl:when test="(boolean(@scale-binding) and not(normalize-space(@scale-binding)='')) ">            
+            <xsl:when test="not(normalize-space(@scale-binding)='') ">            
                 <xsl:attribute name="transform">
                     <xsl:text>#{ (</xsl:text>
                     <xsl:value-of select="@scale-binding"/>
@@ -4030,20 +4004,32 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_slider_sliderrect"> 
         <rect>
-            <xsl:attribute name="x">
-                <xsl:value-of select="@width * 0.05"/>
-            </xsl:attribute>
-            <xsl:attribute name="y">
-                <xsl:value-of select="@height * 0.36"/>
-            </xsl:attribute>
-            <xsl:attribute name="height">
-                <xsl:value-of select="@height * 0.28"/>
-            </xsl:attribute>
-            <xsl:attribute name="width">
-                <xsl:value-of select="@width * 0.9"/>
-            </xsl:attribute>
+            
+            <xsl:variable name="kh">
+                <xsl:choose>
+                    <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">0.9</xsl:when>
+                    <xsl:otherwise>0.36</xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            
+            <xsl:variable name="kw">
+                <xsl:choose>
+                    <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">0.36</xsl:when>
+                    <xsl:otherwise>0.9</xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            
+            <xsl:call-template name="apply_parametred_rect">          
+                    <xsl:with-param name="x" select=" @width * (1 - $kw) div 2"/>
+                    <xsl:with-param name="y" select="@height  * (1 - $kh) div 2"/>
+                    <xsl:with-param name="width" select="@width *  $kw "/>
+                    <xsl:with-param name="height" select="@height * $kh"/>
+            </xsl:call-template>              
+
+
             <xsl:call-template name="apply_mlib_slider_stroke"/>
             <xsl:call-template name="apply_mlib_slider_strokewidth"/>
+            
             <xsl:attribute name="class">
                 <xsl:choose> 
                     <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">  
@@ -4074,18 +4060,37 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_slider_sliderfillrect"> 
         <rect stroke="none">
-            <xsl:attribute name="x">
-                <xsl:value-of select="@width * 0.05"/>
-            </xsl:attribute>
-            <xsl:attribute name="y">
-                <xsl:value-of select="@height * 0.36"/>
-            </xsl:attribute>
-            <xsl:attribute name="height">
-                <xsl:value-of select="@height * 0.28"/>
-            </xsl:attribute>
-            <xsl:attribute name="width">
-                <xsl:value-of select="@width * 0.9"/>
-            </xsl:attribute>
+        
+            <xsl:variable name="kh">
+                <xsl:choose>
+                    <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">0.9</xsl:when>
+                    <xsl:otherwise>0.36</xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            
+            <xsl:variable name="kw">
+                <xsl:choose>
+                    <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">0.36</xsl:when>
+                    <xsl:otherwise>0.9</xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            
+            <xsl:call-template name="apply_lib_attributeset">
+                <xsl:with-param name="set">
+                    <x>
+                        <xsl:value-of select="@width * (1 - kw) div 2"/></x>
+                    <y>
+                        <xsl:value-of select="@height  * (1 - kh) div 2"/>
+                    </y>
+                    <height>
+                        <xsl:value-of select="@width * ( 1- (1 - kw) div 2)"/>
+                    </height>
+                    <width>
+                        <xsl:value-of select="@height * ( 1- (1 - kw) div 2)"/>
+                    </width>
+                </xsl:with-param>
+            </xsl:call-template>  
+            
             <xsl:call-template name="apply_mlib_slider_strokewidth"/>
             <xsl:attribute name="class">
                 <xsl:choose> 
@@ -4161,7 +4166,7 @@ extension-element-prefixes="mlib">
                 <xsl:value-of select="@height * 0.3"/>
             </xsl:attribute>
             <xsl:attribute name="onmousedown">   
-                <xsl:text>this.setAttribute('captured','captured');mainlib.create_duplicate_slider(this,</xsl:text>
+                <xsl:text>this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,</xsl:text>
                 <xsl:value-of select="@width * 0.05"/>
                 <xsl:text> ,  </xsl:text> 
                 <xsl:value-of select="@x + @width * 0.05"/>

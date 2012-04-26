@@ -61,9 +61,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         </xsl:copy>
     </xsl:template>
     
-    
-    
-    <!-- main template  -->
+
     
     <xsl:template name="startcddata">
         <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
@@ -85,6 +83,25 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         </xsl:attribute>
         <xsl:attribute name="width">
             <xsl:value-of select="@width"/>
+        </xsl:attribute>
+    </xsl:template>
+    
+    <xsl:template name="apply_parametred_rect"> 
+        <xsl:param name="x"/>
+        <xsl:param name="y"/>
+        <xsl:param name="height"/>
+        <xsl:param name="width"/>        
+        <xsl:attribute name="x">
+            <xsl:value-of select="$x"/>
+        </xsl:attribute>
+        <xsl:attribute name="y">
+            <xsl:value-of select="$y"/>
+        </xsl:attribute>
+        <xsl:attribute name="height">
+            <xsl:value-of select="$height"/>
+        </xsl:attribute>
+        <xsl:attribute name="width">
+            <xsl:value-of select="$width"/>
         </xsl:attribute>
     </xsl:template>
     
@@ -312,6 +329,123 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <xsl:call-template name="apply_lib_onmouseout"/>
         <xsl:call-template name="apply_lib_onmouseover"/>
         <xsl:call-template name="apply_lib_onmousewheel"/>
-    </xsl:template>    
+    </xsl:template>  
+    
+    
 
+    
+    
+    <xsl:template name="apply_lib_alarm_class">
+        <xsl:param name="alarms"/>
+        <xsl:param name="accident"/>
+        <xsl:param name="alarm"/> 
+        <xsl:param name="notice"/>
+        <xsl:param name="default"/> 
+        <xsl:attribute name="class">
+            <xsl:text>#{ (alarmlevel(</xsl:text>
+            <xsl:value-of select="$alarms"/>
+            <xsl:text>)==3) ? '</xsl:text>
+            <xsl:value-of select="$accident"/>
+            <xsl:text>' : </xsl:text>
+            <xsl:text> ((alarmlevel(</xsl:text>
+            <xsl:value-of select="$alarms"/>
+            <xsl:text>)==2) ? '</xsl:text>
+            <xsl:value-of select="$alarm"/>
+            <xsl:text>' : '</xsl:text>
+            <xsl:value-of select="$notice"/>
+            <xsl:text>')  :default </xsl:text> 
+            <xsl:value-of select="$default"/> 
+            <xsl:text>}</xsl:text>
+        </xsl:attribute>                 
+    </xsl:template>
+    
+    
+    
+    <xsl:template name="apply_lib_alarm_animate">
+        <xsl:param name="attributeName"/>
+        <xsl:param name="attributeType"/>
+        <xsl:param name="calcMode"/>
+        <xsl:param name="alarms"/>
+        <xsl:param name="on"/>
+        <xsl:param name="off"/> 
+        <xsl:param name="dur"/> 
+        <animate  attributeType="{$attributeType}" attributeName="{$attributeName}"  calcMode = "{$calcMode}" dur="500ms"  repeatCount="indefinite">
+            <xsl:attribute name="values">
+                <xsl:text>#{ ack(</xsl:text>
+                <xsl:value-of select="$alarms"/>
+                <xsl:text>) ? '</xsl:text>
+                <xsl:value-of select="$on"/>
+                <xsl:text>;</xsl:text>
+                <xsl:value-of select="$on"/>
+                <xsl:text>' : </xsl:text>
+                <xsl:text>( nack(</xsl:text>
+                <xsl:value-of select="$alarms"/> 
+                <xsl:text>) ? '</xsl:text>
+                <xsl:value-of select="$off"/>
+                <xsl:text>;</xsl:text>
+                <xsl:value-of select="$on"/>
+                <xsl:text>' : </xsl:text>
+                <xsl:text>  '</xsl:text>
+                <xsl:value-of select="$off"/>
+                <xsl:text>;</xsl:text>
+                <xsl:value-of select="$off"/>
+                <xsl:text>')  :default </xsl:text> 
+                <xsl:value-of select="$off"/>
+                <xsl:text>;</xsl:text>
+                <xsl:value-of select="$off"/> 
+                <xsl:text>}</xsl:text>
+            </xsl:attribute> 
+        </animate>                
+    </xsl:template> 
+    
+    
+    <xsl:template name="apply_lib_alarmcheckstate_animate">
+        <xsl:param name="attributeName"/>
+        <xsl:param name="attributeType"/>
+        <xsl:param name="calcMode"/>
+        <xsl:param name="alarms"/>
+        <xsl:param name="accident"/>
+        <xsl:param name="alarm"/> 
+        <xsl:param name="notice"/> 
+        <xsl:param name="dur"/> 
+        <animate  attributeType="{$attributeType}" attributeName="{$attributeName}"  calcMode = "{$calcMode}" dur="500ms"  repeatCount="indefinite">
+            <xsl:attribute name="values">
+                <xsl:text>#{ ack(</xsl:text>
+                <xsl:value-of select="$alarms"/>
+                <xsl:text>) ? ( (alarmlevel(</xsl:text>
+                <xsl:value-of select="$alarms"/>
+                <xsl:text>)==1) ? '</xsl:text>
+                <xsl:value-of select="$notice"/>
+                <xsl:text>;</xsl:text>
+                <xsl:value-of select="$notice"/>
+                <xsl:text>'  : ((alarmlevel(</xsl:text>
+                <xsl:value-of select="$alarms"/>
+                <xsl:text>)==2) ? '</xsl:text>
+                <xsl:value-of select="$alarm"/>
+                <xsl:text>;</xsl:text>
+                <xsl:value-of select="$alarm"/>
+                <xsl:text>' : '</xsl:text>
+                <xsl:value-of select="$accident"/>
+                <xsl:text>;</xsl:text>
+                <xsl:value-of select="$accident"/>
+                <xsl:text>')) : </xsl:text>
+                <xsl:text>( nack(</xsl:text>
+                <xsl:value-of select="$alarms"/>
+                <xsl:text>) ? ( (alarmlevel(</xsl:text>
+                <xsl:value-of select="$alarms"/>
+                <xsl:text>)==1) ? '</xsl:text>
+                <xsl:value-of select="$notice"/>
+                <xsl:text>; '</xsl:text>
+                <xsl:text> : ((alarmlevel(</xsl:text>
+                <xsl:value-of select="$alarms"/>
+                <xsl:text>)==2) ? '</xsl:text>
+                <xsl:value-of select="$alarm"/>
+                <xsl:text>; ' : '</xsl:text>
+                <xsl:value-of select="$accident"/>
+                <xsl:text>; ')) : ' ; ') :default }</xsl:text>
+            </xsl:attribute> 
+        </animate>                
+    </xsl:template>
+    
+    
 </xsl:stylesheet>
