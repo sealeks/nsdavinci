@@ -4075,20 +4075,11 @@ extension-element-prefixes="mlib">
                 </xsl:choose>
             </xsl:variable>
             
-            <xsl:call-template name="apply_lib_attributeset">
-                <xsl:with-param name="set">
-                    <x>
-                        <xsl:value-of select="@width * (1 - kw) div 2"/></x>
-                    <y>
-                        <xsl:value-of select="@height  * (1 - kh) div 2"/>
-                    </y>
-                    <height>
-                        <xsl:value-of select="@width * ( 1- (1 - kw) div 2)"/>
-                    </height>
-                    <width>
-                        <xsl:value-of select="@height * ( 1- (1 - kw) div 2)"/>
-                    </width>
-                </xsl:with-param>
+            <xsl:call-template name="apply_parametred_rect">          
+                    <xsl:with-param name="x" select=" @width * (1 - $kw) div 2"/>
+                    <xsl:with-param name="y" select="@height  * (1 - $kh) div 2"/>
+                    <xsl:with-param name="width" select="@width *  $kw "/>
+                    <xsl:with-param name="height" select="@height * $kh"/>
             </xsl:call-template>  
             
             <xsl:call-template name="apply_mlib_slider_strokewidth"/>
