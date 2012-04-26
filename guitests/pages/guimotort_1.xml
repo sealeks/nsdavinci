@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="../util/css/libs.css"?>
-<svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-image: url('../util/css/res/bgrd2.png');" onload="libutil.startup.init()" version="1.1">
+<svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-image: url('../util/css/res/bgrd2.png');" viewBox="0 0 6000 3000" preserveAspectRatio="none" onload="libutil.startup.init()" version="1.1">
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../util/js/libutil.js"/>
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../util/js/designer.js"/>
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../libs/main/js/mainlib.js"/>
@@ -226,7 +226,7 @@
 		<g>
 			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="15" width="400"/>
 			<rect x="20" y="5.4" height="4.2" width="360" stroke="#000" stroke-width="0.5" class="#{ (m1::h1).valid ? 'slider0_slider_gradient_class' : 'slider0_slider_gradient_classnone' :default slider0_slider_gradient_classnone }" rx="2" ry="2"/>
-			<circle fill="red" id="slider0_sliderbutton" cy="7.5" cx="#{ ((&amp;m1::h1 - m1::h1.mineu)/(m1::h1.maxeu-m1::h1.mineu)  * 0.9 +  0.05) * 400 :default 20 }" stroke="#000" stroke-width="0.5" r="4.5" onmousedown="this.setAttribute('captured','captured');mainlib.create_duplicate_slider(this,20 ,  1153 ,  1513 , 'm1::h1' , false , 2000);" onmouseup="if (this.hasAttribute('captured'))  this.removeAttribute('captured')"/>
+			<circle fill="red" id="slider0_sliderbutton" cy="7.5" cx="#{ ((&amp;m1::h1 - m1::h1.mineu)/(m1::h1.maxeu-m1::h1.mineu)  * 0.9 +  0.05) * 400 :default 20 }" stroke="#000" stroke-width="0.5" r="4.5" onmousedown="this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,20 ,  1153 ,  1513 , 'm1::h1' , false , 2000);" onmouseup="if (this.hasAttribute('captured'))  this.removeAttribute('captured')"/>
 		</g>
 	</svg>
 </svg:svg>

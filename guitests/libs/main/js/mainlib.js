@@ -488,17 +488,20 @@ mainlib.graph_click =  function (nm){
 }
 
 
-mainlib.create_duplicate_slider =  function (el, x, minx, maxx, tag, live, wait){
+mainlib.create_shadow_slider =  function (el, x, minx, maxx, tag, live, wait){
     
     var parent=el.parentNode;
     
-    if (el.movelement)
-      parent.removeChild(el.movelement);
+    if (el.movelement){
+        parent.onmousemove=undefined;
+        parent.onmouseout=undefined;
+        parent.onmouseup=undefined;
+        //console.log('parent.onmousemove deleted INIT');
+        parent.removeChild(el.movelement);
+    }
     
     var dupl = libutil.dom.duplicate_element(el, false, ['id','captured','onmousedown', 'onmouseup']);
-    
 
-    
     el.movelement = dupl;
     
     dupl.minx =minx;
@@ -509,55 +512,84 @@ mainlib.create_duplicate_slider =  function (el, x, minx, maxx, tag, live, wait)
     dupl.startcx =parseInt(dupl.getAttribute('cx'));
     
     var selfremove = function(){
+        parent.onmousemove=undefined;
+        parent.onmouseout=undefined;
+        parent.onmouseup=undefined;
         if (el.movelement){
-        el.movelement.onmouseout=null;
-        el.movelement.onmousemove=null;
-        el.movelement.onmouseup=null;      
-        parent.removeChild(el.movelement);
-        el.movelement=undefined;}}
+            el.movelement.onmouseout=undefined;
+            el.movelement.onmousemove=undefined;
+            el.movelement.onmouseup=undefined;      
+            parent.removeChild(el.movelement);
+            el.movelement=undefined;
+        }
+    }
   
     
     
-    var command = function(val){
-        try{
-            var cmd = tag + ' @@= ('+ tag +'.mineu + ((' + tag + '.maxeu - ' + tag + '.mineu) * ' + val.toString()+ '))';
-            console.log('val:' + val +' min:' + $$(tag +'.mineu') +' max:' + $$(tag +'.maxeu'))
-            $$(cmd);
-        }
-        catch(error){
-            console.log('Command slider no set:' + error)
-        }
+var command = function(val){
+    try{
+        var cmd = tag + ' @@= ('+ tag +'.mineu + ((' + tag + '.maxeu - ' + tag + '.mineu) * ' + val.toString()+ '))';
+        console.log('val:' + val +' min:' + $$(tag +'.mineu') +' max:' + $$(tag +'.maxeu'))
+        $$(cmd);
     }
+    catch(error){
+        console.log('Command slider no set:' + error)
+    }
+}
     
-    parent.appendChild(dupl);
+parent.onmousemove = function(ev){
+    if (el.movelement) {
+        //console.log('parent.onmousemove');
+        el.movelement.onmousemove(ev);
+        ev.stopPropagation();
+    }
+}    
+    
+parent.appendChild(dupl);
     
     dupl.onmouseup=function(ev){
         var newx =ev.x - dupl.startx;
         if (newx){            
+            //console.log('dupl.onmouseup');
             var newval = dupl.startcx + newx;
             command((newval-x)/(dupl.maxx - dupl.minx));
             setTimeout(function() {
                 selfremove();
                 el.onmouseup();
-            }, (wait && parseInt(wait)) ? wait : 1000  );}
+            }, (wait && parseInt(wait)) ? wait : 1000  );
+        }
         else{
-        selfremove();
-        el.onmouseup();}}
-    
-    dupl.onmousemove = function(ev){
-        var newx =ev.x - dupl.startx;
-        if (newx){
-            var newval = dupl.startcx + newx;
-            dupl.setAttribute('cx',newval);
-            if (live)
-               command((newval-20)/(dupl.maxx - dupl.minx));
-        }  
+            selfremove();
+            el.onmouseup();
+        }
     }
     
-    dupl.onmouseout = function(){
+dupl.onmousemove = function(ev){
+    var newx =ev.x - dupl.startx;
+    if (newx){
+        var newval = dupl.startcx + newx;
+        dupl.setAttribute('cx',newval);
+        if (live)
+            command((newval-20)/(dupl.maxx - dupl.minx));
+    }  
+}
+    
+parent.onmouseout = function(ev){
+
+    if (!libutil.dom.check_is_parent (parent,ev.toElement,true)){
         selfremove();
         el.onmouseup();
     }
+}
+    
+parent.onmouseup = function(ev){
+    if (el.movelement){
+       el.movelement.onmouseup();}
+    else{
+       el.onmouseup();}
+        
+
+}
     
     
 }
