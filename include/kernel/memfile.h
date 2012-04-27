@@ -2982,8 +2982,10 @@ namespace dvnci {
                     case NS_GROUP_SYSTEMCOUNT:{
                         break;}
                     default:{
-                        if ((setval) || (queue==acNullCommand))
-                            value_internal<T >(id, val);
+                        if ((setval) || (queue==acNullCommand)){
+                            if (logged(id) || alarmed(id) || msged(id))
+                                operator[](id)->valid(0);
+                            value_internal<T >(id, val);}
                         if (queue==acNullCommand)
                             return;
                         commands()->add(id, operator[](id)->value<num64 > (), num64_cast<T > (val), operator[](id)->type(), queue, clid);}}
