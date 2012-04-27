@@ -4048,7 +4048,9 @@ extension-element-prefixes="mlib">
                     <xsl:value-of select="@id"/>
                     <xsl:text>_sliderbuttondef</xsl:text>  
                 </xsl:attribute>
-                <circle cx="{$size div 2}" cy="{$size div 2}" r="{$size div 2.2}" stroke="{@stroke}" stroke-width="{@stroke-width}">
+                <circle cx="{$size div 2}" cy="{$size div 2}" r="{$size}" stroke="0" stroke-width="0" fill="black" opacity="0">
+                </circle> 
+                <circle cx="{$size div 2}" cy="{$size div 2}" r="{$size div 2}" stroke="{@stroke}" stroke-width="{@stroke-width}">
                     <xsl:attribute name="fill">
                         <xsl:choose>
                             <xsl:when test="not(normalize-space(@slidercolor1)='')"><xsl:value-of select="@slidercolor1"/></xsl:when>
@@ -4142,7 +4144,7 @@ extension-element-prefixes="mlib">
                     <xsl:value-of select="@width * 0.5"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="@height * 0.8"/>
+                    <xsl:value-of select="@height * 1"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>

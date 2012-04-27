@@ -61,7 +61,7 @@ designer.prototype.attach = function(el){
             };
         }
         else{
-            if (el.id!=""){
+            if ((el.id!="") && (el.hasAttribute('isdesined'))) {
                 el.oldoncick = el.oncick;
                 el.onclick= function() {
                     //alert('hhh');
@@ -233,7 +233,7 @@ designer.prototype.getTarget = function (ev){
     
     var owndoc = el.ownerDocument;
     
-    while ((el!=owndoc) && (!el.getAttribute('id')) && (el.parentNode))
+    while ((el!=owndoc) && (!(el.getAttribute('id') && el.hasAttribute('isdesined'))))
         el=el.parentNode;
 
     return ((el==owndoc)) || (!el.getAttribute('id')) ? undefined : el;
@@ -900,6 +900,7 @@ designer.prototype.select_component = function(el, shift, ctnrl){
     if (this.selectedElemens==null){
         this.selectedElemens = [];
     }
+    
     
     var el_class = el.getAttribute('class');
     if (el_class=="designer_selected"){
