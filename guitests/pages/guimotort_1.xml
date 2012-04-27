@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="../util/css/libs.css"?>
-<svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-image: url('../util/css/res/bgrd2.png');" onload="libutil.startup.init()" version="1.1">
+<svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-color: #ccc;" veiwBox="0 0 4000 2000" onload="libutil.startup.init()" version="1.1">
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../util/js/libutil.js"/>
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../util/js/designer.js"/>
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../libs/main/js/mainlib.js"/>
@@ -201,11 +201,714 @@
 			<stop offset="1" style="stop-color:#FF00FF"/>
 		</radialGradient>
 	</defs>
-	<svg xmlns:html="http://www.w3.org/TR/xhtml1" x="81" y="51" height="20" width="400" id="slider0">
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name8" x="738" y="430" height="50" width="200">
+		<defs>
+			<style type="text/css">rect.name8_rect_gradient_class {
+                fill : url(#gradientnone_h);}
+                          
+                #name8_rect_fill {
+                fill : url(#gradientblack_h);}
+                        
+                rect.name8_rect_gradient_classnone {
+                fill : #F7F7F7;}
+                
+                rect.name8_rect_gradient_classaccident {
+                fill : #FF0000 !important;}
+                
+                rect.name8_rect_gradient_classalarm {
+                fill : #a09020 !important;}
+                
+                rect.name8_rect_gradient_classnotice {
+                fill : #ff0 !important;}
+                </style>
+		</defs>
+		<rect x="738" y="430" height="50" width="200" rx="4" ry="4" stroke-width="1" stroke="#ddd" class="name8_rect_gradient_class"/>
+		<rect id="name8_rect_fill" x="738" y="430" width="0" height="0" stroke-width="1" stroke="trasparent" rx="4" ry="4"/>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" desc="m1::c1" header="L" id="name21" x="387" y="60" height="60" width="60" cursor="#{ (!(m1::c1).valid  &amp;&amp; !(m1::c2).valid) ? 'none' :  ( m1::c3 ? 'none' : ( m1::c4 ? 'pointer' : 'pointer'  )  ) :default none} " autocontrol="yes" onclick="if (this.getAttribute('cursor')=='pointer') {mainlib.armatura_auto_popup(this, 'L','valve','m1::c4','m1::c1','m1::c2','m1::c4');};">
+		<defs>
+			<style type="text/css">  
+            
+                  g#name21[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                  g#name21[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                 
+                
+                  g#name21 { 
+              
+               cursor: none;}
+                  g#name21:hover { 
+               
+               cursor: none;}
+                 
+                   
+                        .on__name21_armatclass {stroke: black; fill: #0c0;} 
+                         
+                  
+                        .off__name21_armatclass {stroke: #0c0; fill: black;} 
+                         
+                </style>
+		</defs>
+		<rect fill="white" stroke="white" opacity="0" x="387" y="60" height="60" width="60"/>
+		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" x="387" y="60" height="60" width="60">
+			<g filter="url(#filter_lib_armat1000)" class="non">
+				<animate attributeName="class" attributeType="XML" fill="freeze" keyTimes="0;.5" dur="1000ms" repeatCount="indefinite" calcMode="discrete" values="#{ (!(m1::c1).valid &amp;&amp; !(m1::c2).valid) ? 'non;non;' : (m1::c1 &amp;&amp; !m1::c2) ? 'on__name21_armatclass;on__name21_armatclass;' : (!m1::c1 &amp;&amp; m1::c2) ? 'off__name21_armatclass;off__name21_armatclass;' : 'on__name21_armatclass;off__name21_armatclass;' :default non;non;}"/>
+				<path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
+				<path d="M 350,220 L 650, 220 L 650,320 L 350, 320z" stroke-width="20"/>
+				<path d="M 500,650 L 500, 550 L 600,500 L 400, 450 L 600, 400 L 500,350 L 500, 320" fill="none" stroke-width="20"/>
+				<line x1="700" y1="300" x2="700" y2="500" stroke-width="20"/>
+				<line x1="700" y1="500" x2="650" y2="400" stroke-width="20"/>
+				<line x1="700" y1="500" x2="750" y2="400" stroke-width="20"/>
+			</g>
+			<g class="#{m1::c4 ? 'autocontrol'  : 'transparent' :default transparent }">
+				<circle cx="150" cy="150" r="100" stroke-width="20"/>
+				<path d="M 110,190 L 150,110  L 190,190 M 140,150 L 160,150" stroke-width="15" fill="none"/>
+			</g>
+			<g class="#{m1::c3 ? 'local'  : 'transparent' :default transparent }">
+				<circle cx="150" cy="150" r="100" stroke-width="20"/>
+				<path d="M 110,190 L 110,110 L 150,150 L 190,110 L 190,190" stroke-width="15"/>
+			</g>
+			<g style="#{ (m1::c5 &amp;&amp; !m1::c1)  ? 'display: block;' :  'display: none;' :default display: none; }">
+				<path d="M 450, 170 L 450,100 L 400,100 L 500,10  L 600,100 L 550,100 L 550,170z" stroke-width="0" stroke="none" fill="#0F0">
+					<animate attributeType="XML" attributeName="fill" values="#0F0;transparent;" keyTimes="0;.5" dur="500ms" repeatCount="indefinite" calcMode="discrete"/>
+				</path>
+			</g>
+			<g style="#{ (m1::c6 &amp;&amp; !m1::c2)  ? 'display: block;' :  'display: none;' :default display: none; }">
+				<path d="M 450, 10 L 450,80 L 400,80 L 500,170  L 600,80 L 550,80 L 550,10z" stroke-width="0" stroke="none" fill="#F00">
+					<animate attributeType="XML" attributeName="fill" values="transparent;#F00;" keyTimes="0;.5" dur="500ms" repeatCount="indefinite" calcMode="discrete"/>
+				</path>
+			</g>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" desc="m1::c1" header="" id="name4" transform="rotate(90,226,229)" x="201" y="204" height="50" width="50" cursor="#{ (!(m1::c1).valid  &amp;&amp; !(m1::c2).valid) ? 'none' :  ( m1::c3 ? ('none' : 'pointer' ) ) :default none} " onclick="if (this.getAttribute('cursor')=='pointer') {mainlib.armatura_popup(this, '','valve','m1::c1','');};">
+		<defs>
+			<style type="text/css">  
+            
+                  g#name4[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                  g#name4[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                 
+                
+                  g#name4 { 
+              
+               cursor: none;}
+                  g#name4:hover { 
+               
+               cursor: none;}
+                 
+                </style>
+		</defs>
+		<rect fill="white" stroke="white" opacity="0" x="201" y="204" height="50" width="50"/>
+		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" x="201" y="204" height="50" width="50">
+			<g filter="url(#filter_lib_armat1000)" class="non">
+				<animate attributeName="class" attributeType="XML" fill="freeze" keyTimes="0;.5" dur="1000ms" repeatCount="indefinite" calcMode="discrete" values="#{ (!(m1::c1).valid &amp;&amp; !(m1::c2).valid) ? 'non;non;' : (m1::c1 &amp;&amp; !m1::c2) ? 'onair;onair;' : (!m1::c1 &amp;&amp; m1::c2) ? 'offair;offair;' : 'onair;offair;' :default non;non;}"/>
+				<path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
+				<path d="M 350,220 L 650, 220 L 650,320 L 350, 320z" stroke-width="20"/>
+				<path d="M 500,650 L 500, 550 L 600,500 L 400, 450 L 600, 400 L 500,350 L 500, 320" fill="none" stroke-width="20"/>
+				<line x1="700" y1="300" x2="700" y2="500" stroke-width="20"/>
+				<line x1="700" y1="500" x2="650" y2="400" stroke-width="20"/>
+				<line x1="700" y1="500" x2="750" y2="400" stroke-width="20"/>
+			</g>
+			<g class="#{m1::c3 ? 'local'  : 'transparent' :default transparent }">
+				<circle cx="150" cy="150" r="100" stroke-width="20"/>
+				<path d="M 110,190 L 110,110 L 150,150 L 190,110 L 190,190" stroke-width="15"/>
+			</g>
+			<g style="#{ (m1::c5 &amp;&amp; !m1::c1)  ? 'display: block;' :  'display: none;' :default display: none; }">
+				<path d="M 450, 170 L 450,100 L 400,100 L 500,10  L 600,100 L 550,100 L 550,170z" stroke-width="0" stroke="none" fill="#0F0">
+					<animate attributeType="XML" attributeName="fill" values="#0F0;transparent;" keyTimes="0;.5" dur="500ms" repeatCount="indefinite" calcMode="discrete"/>
+				</path>
+			</g>
+			<g style="#{ (m1::c4 &amp;&amp; !m1::c2)  ? 'display: block;' :  'display: none;' :default display: none; }">
+				<path d="M 450, 10 L 450,80 L 400,80 L 500,170  L 600,80 L 550,80 L 550,10z" stroke-width="0" stroke="none" fill="#F00">
+					<animate attributeType="XML" attributeName="fill" values="transparent;#F00;" keyTimes="0;.5" dur="500ms" repeatCount="indefinite" calcMode="discrete"/>
+				</path>
+			</g>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" desc="m1::c1" header="" id="name10" x="274" y="233" height="60" width="60" cursor="#{ (!(m1::c1).valid) ? 'none' :  (  'pointer'   ) :default none} " onclick="if (this.getAttribute('cursor')=='pointer') {mainlib.armatura_popup(this, '','valve','m1::c1','');};">
+		<defs>
+			<style type="text/css">  
+            
+                  g#name10[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                  g#name10[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                 
+                
+                  g#name10 { 
+              
+               cursor: none;}
+                  g#name10:hover { 
+               
+               cursor: none;}
+                 
+                </style>
+		</defs>
+		<rect fill="white" stroke="white" opacity="0" x="274" y="233" height="60" width="60"/>
+		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" x="274" y="233" height="60" width="60">
+			<g opacity="0.0" class="#{ (alarmlevel(m1::c2)==3) ? 'accident' :  ((alarmlevel(m1::c2)==2) ? 'alarm' : 'notice')  :default accident}">
+				<circle cx="500" cy="500" r="500"/>
+				<animate attributeType="XML" attributeName="opacity" calcMode="linear" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c2) ? '1;1' : ( nack(m1::c2) ? '0;1' :   '0;0')  :default 0;0}"/>
+			</g>
+			<g filter="url(#filter_lib_armat1000)" class="#{ !(m1::c1).valid  ? 'non'  : ((m1::c1)  ? 'ongaz':  'offgaz') :default non}">
+				<path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
+				<path d="M 500,650 L 500, 380" fill="none" stroke-width="20"/>
+				<circle cx="500" cy="320" r="120" stroke-width="20"/>
+				<path d="M 450 370 L 450 270 L 500 320 L 550 270 L 550 370" stroke-width="20" fill="none"/>
+			</g>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name0">
+		<path fill="none" d="M 100,400 L 100,110 C  100,110 100,100 110,100  M 110,100 L 399,100" filter="url(#filter_lib3)" stroke-width="4" stroke="#cc0"/>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name1">
+		<path fill="none" d="M 435,100 L 580,100 C 590, 100 600,100 600,110 L 600,200 C 600,210 600,220, 610,220 L 710,220" filter="url(#filter_lib3)" stroke-width="4" stroke="#{ (m1::c1).valid ? '#cc0' : '#eee' :default #eee}"/>
+		<path fill="none" d="M 435,100 L 580,100 C 590, 100 600,100 600,110 L 600,200 C 600,210 600,220, 610,220 L 710,220" style="#{ m1::c1  ? 'display: none;' :  'display: block;' :default display: none;}" stroke-width="2.66666666666667" stroke="#{ (m1::c1).valid ? '' : '#ddd' :default #ddd}"/>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" desc="" header="" id="name3" x="339" y="310" height="60" width="60" cursor="none">
+		<defs>
+			<style type="text/css">  
+            
+                  g#name3[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                  g#name3[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                 
+                
+                  g#name3 { 
+              
+               cursor: none;}
+                  g#name3:hover { 
+               
+               cursor: none;}
+                 
+                </style>
+		</defs>
+		<rect fill="white" stroke="white" opacity="0" x="339" y="310" height="60" width="60"/>
+		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" x="339" y="310" height="60" width="60">
+			<g filter="url(#filter_lib_armat1000)" class="ongaz">
+				<circle cx="500" cy="500" r="300" stroke-width="20"/>
+				<path d="M 400,600 L 400,400 L 500,500 L 600,400 L 600,600" stroke-width="30"/>
+			</g>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" desc="m1::c2" header="Задвижка на паропроводе к котлу" id="name20" x="466" y="232" height="60" width="60" cursor="#{ (!(m1::c2).valid) ? 'none' :  (  'pointer'   ) :default none} " onclick="if (this.getAttribute('cursor')=='pointer') {mainlib.armatura_popup(this, 'Задвижка на паропроводе к котлу','motor','m1::c2','');};">
+		<defs>
+			<style type="text/css">  
+            
+                  g#name20[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                  g#name20[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                 
+                
+                  g#name20 { 
+              
+               cursor: none;}
+                  g#name20:hover { 
+               
+               cursor: none;}
+                 
+                </style>
+		</defs>
+		<rect fill="white" stroke="white" opacity="0" x="466" y="232" height="60" width="60"/>
+		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" x="466" y="232" height="60" width="60">
+			<g opacity="0.0" class="#{ (alarmlevel(m1::c1,m1::c2,m1::c3)==3) ? 'accident' :  ((alarmlevel(m1::c1,m1::c2,m1::c3)==2) ? 'alarm' : 'notice')  :default accident}">
+				<circle cx="500" cy="500" r="500"/>
+				<animate attributeType="XML" attributeName="opacity" calcMode="linear" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c1,m1::c2,m1::c3) ? '1;1' : ( nack(m1::c1,m1::c2,m1::c3) ? '0;1' :   '0;0')  :default 0;0}"/>
+			</g>
+			<g filter="url(#filter_lib_armat1000)" class="#{ !(m1::c2).valid  ? 'non'  : ((m1::c2)  ? 'onwater':  'offwater') :default non}">
+				<circle cx="500" cy="500" r="300" stroke-width="20"/>
+				<path d="M 400,450 L 400,550 L 550,550 L 550,600 L 650,500 L 550,400 L 550,450z" stroke-width="20"/>
+			</g>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name5" x="181" y="450" height="40" width="200">
+		<svg x="181" y="450" height="40" width="200" class="name5__mlibbuttonstyle" state="">
+			<style type="text/css">
+                
+            g#name5 svg  text.name5__mlibbuttonstyle {
+            
+                 font-size: 18;
+                 fill: white;
+                 font-weight: bold;
+                    text-anchor: middle;
+                 dominant-baseline: central; 
+                 -webkit-user-select: none;}
+                 
+            g#name5 svg[state="off"] > svg >  text.name5__mlibbuttonstyle {
+            
+                 font-size: 18;
+                 fill: white;
+                 font-weight: bold;
+                    ;}
+           
+            g#name5 svg[state="disable"] > svg >  text.name5__mlibbuttonstyle {
+            
+                 font-size: 18;
+                 fill: #666;
+                    ;}
+           
+            g#name5 svg *.name5__mlibbuttonstyle{
+                cursor: pointer;}
+          
+            g#name5 svg[state="disable"] *.name5__mlibbuttonstyle{
+                cursor: default;}
+          
+            g#name5 svg > g > rect.name5__mlibbuttonstyle {
+                fill: transparent;}
+                 
+            g#name5 svg > rect.name5__mlibbuttonstyle {
+                fill: url(#name5__gradienton);} 
+            
+            g#name5 svg:hover > rect.name5__mlibbuttonstyle {               
+                -webkit-svg-shadow: 3px 3px  3px rgba(0, 0, 0, 0.5);}
+         
+            g#name5 svg:active > rect.name5__mlibbuttonstyle {
+                fill: url(#name5__gradientona);  
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                 
+            g#name5 svg > g > rect.name5__mlibbuttonstyle {
+            
+                stroke: 
+            #333;
+                stroke-width: 1;}   
+                    
+            g#name5 svg:hover > g > rect.name5__mlibbuttonstyle {
+            
+                stroke: 
+            #555;
+                stroke-width: 1;}                  
+       
+            g#name5 svg[state="off"] > rect.name5__mlibbuttonstyle {
+                fill: url(#name5__gradientoff);} 
+                    
+            g#name5 svg[state="off"]:active > rect.name5__mlibbuttonstyle {
+                fill: url(#name5__gradientoffa);}           
+           
+            g#name5 svg[state="off"] > g > rect.name5__mlibbuttonstyle {
+            
+                stroke: 
+            #555;
+                stroke-width: 1;}   
+                    
+            g#name5 svg[state="off"]:hover > g > rect.name5__mlibbuttonstyle {
+            
+                stroke: 
+            #333;
+                stroke-width: 1;}            
+           
+            g#name5 svg[state="disable"] > rect.name5__mlibbuttonstyle , g#name5 svg[state="disable"]:hover > rect.name5__mlibbuttonstyle , g#name5 svg[state="disable"]:active > rect.name5__mlibbuttonstyle {
+                 fill: url(#name5__gradientdsbl); 
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                
+            g#name5 svg[state="disable"] > g > rect.name5__mlibbuttonstyle , g#name5 svg[state="disable"]:hover > g > rect.name5__mlibbuttonstyle , g#name5 svg[state="disable"]:active > g >rect.name5__mlibbuttonstyle {
+                 stroke-width: 0;
+                 stroke: none;}
+                 
+                 
+            </style>
+			<defs>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name5__gradienton">
+					<stop offset="0%" stop-color="#333"/>
+					<stop offset="50%" stop-color="#555"/>
+					<stop offset="100%" stop-color="#333"/>
+				</linearGradient>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name5__gradientona">
+					<stop offset="0%" stop-color="#555"/>
+					<stop offset="50%" stop-color="#333"/>
+					<stop offset="100%" stop-color="#555"/>
+				</linearGradient>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name5__gradientoff">
+					<stop offset="0%" stop-color="#333"/>
+					<stop offset="50%" stop-color="#555"/>
+					<stop offset="100%" stop-color="#333"/>
+				</linearGradient>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name5__gradientoffa">
+					<stop offset="0%" stop-color="#555"/>
+					<stop offset="50%" stop-color="#333"/>
+					<stop offset="100%" stop-color="#555"/>
+				</linearGradient>
+				<linearGradient x1="100%" y1="0%" x2="100%" y2="100%" id="name5__gradientdsbl">
+					<stop offset="0%" stop-color="#777"/>
+					<stop offset="50%" stop-color="#AAA"/>
+					<stop offset="100%" stop-color="#777"/>
+				</linearGradient>
+			</defs>
+			<rect role="button" aria-pressed="true" x="2" y="2" height="36" width="196" class="name5__mlibbuttonstyle"/>
+			<svg x="4" y="4" height="32" width="192" class="name5__mlibbuttonstyle">
+				<text x="96" y="16" class="name5__mlibbuttonstyle">caption</text>
+			</svg>
+			<g class="name5__mlibbuttonstyle">
+				<rect x="4" y="4" height="32" width="192" class="name5__mlibbuttonstyle"/>
+			</g>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" desc="m1::c1" header="" id="name7" x="903" y="111" height="50" width="50" cursor="#{ (!(m1::c1).valid  &amp;&amp; !(m1::c2).valid) ? 'none' :  (  'pointer'   ) :default none} " onclick="if (this.getAttribute('cursor')=='pointer') {mainlib.armatura_popup(this, '','valve','m1::c1','m1::c2');};">
+		<defs>
+			<style type="text/css">  
+            
+                  g#name7[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                  g#name7[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                 
+                
+                  g#name7 { 
+              
+               cursor: none;}
+                  g#name7:hover { 
+               
+               cursor: none;}
+                 
+                </style>
+		</defs>
+		<rect fill="white" stroke="white" opacity="0" x="903" y="111" height="50" width="50"/>
+		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" x="903" y="111" height="50" width="50">
+			<g filter="url(#filter_lib_armat1000)" class="non">
+				<animate attributeName="class" attributeType="XML" fill="freeze" keyTimes="0;.5" dur="1000ms" repeatCount="indefinite" calcMode="discrete" values="#{ (!(m1::c1).valid &amp;&amp; !(m1::c2).valid) ? 'non;non;' : (m1::c1 &amp;&amp; !m1::c2) ? 'onwater;onwater;' : (!m1::c1 &amp;&amp; m1::c2) ? 'offwater;offwater;' : 'onwater;offwater;' :default non;non;}"/>
+				<path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
+				<path d="M 350,220 L 650, 220 L 650,320 L 350, 320z" stroke-width="20"/>
+				<path d="M 500,650 L 500, 550 L 600,500 L 400, 450 L 600, 400 L 500,350 L 500, 320" fill="none" stroke-width="20"/>
+				<line x1="700" y1="300" x2="700" y2="500" stroke-width="20"/>
+				<line x1="700" y1="300" x2="650" y2="400" stroke-width="20"/>
+				<line x1="700" y1="300" x2="750" y2="400" stroke-width="20"/>
+			</g>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name15" x="519" y="417" height="15" width="400" transform="rotate(20,719,424.5)">
+		<defs>
+			<linearGradient x2="100%" y2="100%" id="name15_rect_gradient" x1="100%" y1="0%">
+				<stop offset="0" stop-color="#999"/>
+				<stop offset="0.5" stop-color="#eee"/>
+				<stop offset="1" stop-color="#999"/>
+			</linearGradient>
+			<linearGradient x2="100%" y2="100%" id="name15_fillrect_gradient" x1="100%" y1="0%">
+				<stop offset="0" stop-color="#0f0"/>
+				<stop offset="0.5" stop-color="#090"/>
+				<stop offset="1" stop-color="#0f0"/>
+			</linearGradient>
+			<style type="text/css">rect.name15_rect_gradient_class {
+                fill : url(#name15_rect_gradient);}
+                          
+                #name15_rect_fill {
+                fill : url(#name15_fillrect_gradient);}
+                        
+                rect.name15_rect_gradient_classnone {
+                fill : url(#gradientnone_h);}
+                
+                rect.name15_rect_gradient_classaccident {
+                fill : url(#gradientaccident_h) !important;}
+                
+                rect.name15_rect_gradient_classalarm {
+                fill : url(#gradientalarm_h) !important;}
+                
+                rect.name15_rect_gradient_classnotice {
+                fill : url(#gradientnotice_h) !important;}
+                </style>
+		</defs>
+		<rect x="519" y="417" height="15" width="400" rx="3" ry="3" stroke-width="1" stroke="#000" class="#{ (m1::h1).valid  ? 'name15_rect_gradient_class' : 'name15_rect_gradient_classnone' :default name15_rect_gradient_classnone }"/>
+		<rect id="name15_rect_fill" transform="translate(400,15) rotate(180,519 , 417)" x="519" y="417" width="#{ (m1::h1 - m1::h1.mineu)/(m1::h1.maxeu - m1::h1.mineu) *400}" height="15" stroke-width="1" stroke="trasparent" rx="3" ry="3">
+			<animate attributeType="XML" attributeName="class" calcMode="discrete" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c1,m1::c2,m1::c3) ? ( (alarmlevel(m1::c1,m1::c2,m1::c3)==1) ? 'name15_rect_gradient_classnotice;name15_rect_gradient_classnotice'  : ((alarmlevel(m1::c1,m1::c2,m1::c3)==2) ? 'name15_rect_gradient_classalarm;name15_rect_gradient_classalarm' : 'name15_rect_gradient_classaccident;name15_rect_gradient_classaccident')) : ( nack(m1::c1,m1::c2,m1::c3) ? ( (alarmlevel(m1::c1,m1::c2,m1::c3)==1) ? 'name15_rect_gradient_classnotice; ' : ((alarmlevel(m1::c1,m1::c2,m1::c3)==2) ? 'name15_rect_gradient_classalarm; ' : 'name15_rect_gradient_classaccident; ')) : ' ; ') :default }"/>
+		</rect>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name22" x="721" y="275" height="20" width="80" onclick="if (this.getAttribute('cursor')=='pointer') mainlib.graph_click('r1::a')" cursor="#{ (r1::a).valid  ? 'pointer' : 'none' :default none }">
+		<defs>
+			<style type="text/css">rect.name22_sensor_gradient_classon {
+                fill : url(#gradientair_h);}
+                        
+                rect.name22_sensor_gradient_classnone {
+                fill : #F7F7F7;}
+                
+                rect.name22_sensor_gradient_classaccident {
+                fill : #FF0000;}
+                
+                rect.name22_sensor_gradient_classalarm {
+                fill : #a09020;}
+                
+                #name22_sensor_text {
+                text-anchor: end;                  
+                dominant-baseline: central;  
+                -webkit-user-select: none;}
+                </style>
+		</defs>
+		<rect x="721" y="275" height="20" width="80" stroke-width="1" stroke="#003" rx="4" ry="4" class="#{ (r1::a).valid  ? 'name22_sensor_gradient_classon' : 'name22_sensor_gradient_classnone' :default name22_sensor_gradient_classnone }"/>
+		<svg x="721" y="275" height="20" width="80">
+			<text id="name22_sensor_text" x="72" y="10" style="fill: #003; font-size: 14;" class="name22_sensor_text_class">#{ (r1::a).valid ?  format(r1::a , '%8.1f') : '?' :default?}</text>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name9" x="1292" y="750" height="50" width="50" cursor="none">
+		<defs>
+			<style type="text/css">rect.name9_sensor_gradient_classon {
+                fill : url(#gradientwater_c);}
+                        
+                rect.name9_sensor_gradient_classnone {
+                fill : #F7F7F7;}
+                
+                rect.name9_sensor_gradient_classaccident {
+                fill : #FF0000;}
+                
+                rect.name9_sensor_gradient_classalarm {
+                fill : #a09020;}
+                
+                #name9_sensor_text {
+                text-anchor: middle;
+                        fill : 
+                        green;                  
+                dominant-baseline: central;  
+                -webkit-user-select: none;}
+                </style>
+		</defs>
+		<rect x="1292" y="750" height="50" width="50" stroke-width="2" stroke="green" rx="25" ry="25" class="name9_sensor_gradient_classon"/>
+		<svg x="1292" y="750" height="50" width="50">
+			<text id="name9_sensor_text" x="25" y="25" style="font-size: 15px; font-weight: bold;" class="name9_sensor_text_class">2222</text>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" style="#{ (m1::c1 ) ? 'display: block;' : 'display: none;' :default display: block;}" dv-visible="true" id="circle0">
+		<circle cx="179" cy="-200" r="50" stroke="red" stroke-width="1" fill="green" filter="url(#filter_lib1)" style=""/>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="path0">
+		<path stroke="red" stroke-width="4" stroke-linecap="" stroke-linejoin="" d="M52,569l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 l 0,200 m 10, 10 a 10, 10 0 1 0 0 1 l 0,-1 m -10, -10 m 0,-200 l 200,0 " filter="url(#filter_lib3)" style="" fill="none"/>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" desc="" header="" id="name2" x="623" y="424" height="60" width="60" cursor="none">
+		<defs>
+			<style type="text/css">  
+            
+                  g#name2[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                  g#name2[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                 
+                
+                  g#name2 { 
+              
+               cursor: none;}
+                  g#name2:hover { 
+               
+               cursor: none;}
+                 
+                </style>
+		</defs>
+		<rect fill="white" stroke="white" opacity="0" x="623" y="424" height="60" width="60"/>
+		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" x="623" y="424" height="60" width="60">
+			<g class="ongaz">
+				<circle cx="500" cy="500" r="300" stroke-width="20"/>
+				<path d="M 400,600 L 400,400 L 500,500 L 600,400 L 600,600" stroke-width="30"/>
+			</g>
+		</svg>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="path2">
+		<path stroke="green" stroke-width="2" stroke-linecap="" stroke-linejoin="" d=" M918,230l 100,170 100,-170z" style="" fill="red"/>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name6" x="493" y="296" height="50" width="200">
+		<defs>
+			<style type="text/css">rect.name6_rect_gradient_class {
+                fill : url(#gradientnone_h);}
+                          
+                #name6_rect_fill {
+                fill : url(#gradientblack_h);}
+                        
+                rect.name6_rect_gradient_classnone {
+                fill : #F7F7F7;}
+                
+                rect.name6_rect_gradient_classaccident {
+                fill : #FF0000 !important;}
+                
+                rect.name6_rect_gradient_classalarm {
+                fill : #a09020 !important;}
+                
+                rect.name6_rect_gradient_classnotice {
+                fill : #ff0 !important;}
+                </style>
+		</defs>
+		<rect x="493" y="296" height="50" width="200" rx="4" ry="4" stroke-width="1" stroke="#ddd" class="name6_rect_gradient_class"/>
+		<rect id="name6_rect_fill" x="493" y="296" width="0" height="0" stroke-width="1" stroke="trasparent" rx="4" ry="4"/>
+	</g>
+	<svg xmlns:html="http://www.w3.org/TR/xhtml1" isgoupelement="true" x="1122" y="137" height="65" width="65" id="group1" onclick="$$('m1::c1 @ 1');">
+		<g>
+			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="65" width="65"/>
+			<g transform="rotate(45,32,32)">
+				<g transform="scale(1)">
+					<g id="path5">
+						<path stroke="black" stroke-width="1" stroke-linecap="" stroke-linejoin="" d=" M20,10h 25 l -25,50 h 25 l -25, -50" filter="url(#filter_lib2)" style="" fill="green"/>
+					</g>
+				</g>
+			</g>
+		</g>
+	</svg>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="path6">
+		<path stroke="green" stroke-width="2" stroke-linecap="" stroke-linejoin="" d=" M534,500l 100,170 100,-170z" style="" fill="red"/>
+	</g>
+	<svg xmlns:html="http://www.w3.org/TR/xhtml1" isgoupelement="true" x="1314" y="138" height="75" width="74" id="group0">
+		<g>
+			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="75" width="74"/>
+			<g>
+				<g id="path3">
+					<path stroke="black" stroke-width="1" stroke-linecap="" stroke-linejoin="" d=" M20,10h 25 l -25,50 h 25 l -25, -50" filter="url(#filter_lib2)" style="" fill="green"/>
+				</g>
+			</g>
+		</g>
+	</svg>
+	<svg xmlns:html="http://www.w3.org/TR/xhtml1" isgoupelement="true" x="1191" y="275" height="267" width="268" id="group2">
+		<g>
+			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="267" width="268"/>
+			<g>
+				<g id="circle1">
+					<circle cx="88" cy="140" r="50" style=""/>
+				</g>
+			</g>
+		</g>
+	</svg>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name11" x="704" y="119" height="30" width="30" onclick="if (this.getAttribute('cursor')=='pointer') mainlib.valueset_click(this, 'm1::h1',39)" cursor="#{ (m1::h1).valid  ? 'pointer' : 'none' :default none }">
+		<defs>
+			<style type="text/css">rect.name11_sensor_gradient_classon {
+                fill : url(#gradientwater_c);}
+                        
+                rect.name11_sensor_gradient_classnone {
+                fill : #F7F7F7;}
+                
+                rect.name11_sensor_gradient_classaccident {
+                fill : #FF0000;}
+                
+                rect.name11_sensor_gradient_classalarm {
+                fill : #a09020;}
+                
+                #name11_sensor_text {
+                text-anchor: middle;                  
+                dominant-baseline: central;  
+                -webkit-user-select: none;}
+                </style>
+		</defs>
+		<rect x="704" y="119" height="30" width="30" stroke-width="1" stroke="#001" rx="15" ry="15" class="#{ (m1::h1).valid  ? 'name11_sensor_gradient_classon' : 'name11_sensor_gradient_classnone' :default name11_sensor_gradient_classnone }"/>
+		<svg x="704" y="119" height="30" width="30">
+			<text id="name11_sensor_text" x="15" y="15" style=" font-size: 11; font-weight: bold;" class="name11_sensor_text_class">#{ (m1::h1).valid ?  format(m1::h1 , '%8.1f') : '?' :default?}<animate attributeType="XML" attributeName="class" calcMode="discrete" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c1) ? ( (alarmlevel(m1::c1)==1) ? 'notice;notice'  : ((alarmlevel(m1::c1)==2) ? 'alarm;alarm' : 'accident;accident')) : ( nack(m1::c1) ? ( (alarmlevel(m1::c1)==1) ? 'notice; ' : ((alarmlevel(m1::c1)==2) ? 'alarm; ' : 'accident; ')) : ' ; ') :default }"/></text>
+		</svg>
+		<g class="#{ (alarmlevel(m1::c1)==3) ? 'accident' :  ((alarmlevel(m1::c1)==2) ? 'alarm' : 'notice')  :default accident}">
+			<polygon points="713,149 725,149 719,141.5">
+				<animate attributeType="XML" attributeName="opacity" calcMode="linear" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c1) ? '1;1' : ( nack(m1::c1) ? '0;1' :   '0;0')  :default 0;0}"/>
+			</polygon>
+		</g>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="path4">
+		<path stroke="#006" stroke-width="1" stroke-linecap="" stroke-linejoin="" d=" M694,216v -80 h 10" style="" fill="none"/>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name12" x="792" y="87" height="20" width="60" onclick="if (this.getAttribute('cursor')=='pointer') mainlib.valueset_click(this, 'm1::h1',78)" cursor="#{ (m1::h1).valid  ? 'pointer' : 'none' :default none }">
+		<defs>
+			<linearGradient x2="100%" y2="100%" id="name12_sensor_gradient" x1="100%" y1="0%">
+				<stop offset="0" stop-color="#000"/>
+				<stop offset="0.5" stop-color="#444"/>
+				<stop offset="1" stop-color="#000"/>
+			</linearGradient>
+			<style type="text/css">rect.name12_sensor_gradient_classon {
+                fill : url(#name12_sensor_gradient);}
+                        
+                rect.name12_sensor_gradient_classnone {
+                fill : url(#gradientnone_h);}
+                
+                rect.name12_sensor_gradient_classaccident {
+                fill : url(#gradientaccident_h);}
+                
+                rect.name12_sensor_gradient_classalarm {
+                fill : url(#gradientalarm_h);}
+                
+                #name12_sensor_text {
+                text-anchor: end;
+                        fill : 
+                        yellow;                  
+                dominant-baseline: central;  
+                -webkit-user-select: none;}
+                </style>
+		</defs>
+		<rect x="792" y="87" height="20" width="60" stroke-width="1" stroke="blue" rx="5" ry="5" class="#{ (m1::h1).valid  ? 'name12_sensor_gradient_classon' : 'name12_sensor_gradient_classnone' :default name12_sensor_gradient_classnone }"/>
+		<svg x="792" y="87" height="20" width="60">
+			<text id="name12_sensor_text" x="54" y="10" style="font-size: 14; " class="name12_sensor_text_class">#{ (m1::h1).valid ?  format(m1::h1 , '%8.1f') : '?' :default?}<animate attributeType="XML" attributeName="class" calcMode="discrete" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c1,m1::c2,m1::c3) ? ( (alarmlevel(m1::c1,m1::c2,m1::c3)==1) ? 'notice;notice'  : ((alarmlevel(m1::c1,m1::c2,m1::c3)==2) ? 'alarm;alarm' : 'accident;accident')) : ( nack(m1::c1,m1::c2,m1::c3) ? ( (alarmlevel(m1::c1,m1::c2,m1::c3)==1) ? 'notice; ' : ((alarmlevel(m1::c1,m1::c2,m1::c3)==2) ? 'alarm; ' : 'accident; ')) : ' ; ') :default }"/></text>
+		</svg>
+		<g class="#{ (alarmlevel(m1::c1)==3) ? 'accident' :  ((alarmlevel(m1::c1)==2) ? 'alarm' : 'notice')  :default accident}">
+			<polygon points="810,107 834,107 822,102">
+				<animate attributeType="XML" attributeName="opacity" calcMode="linear" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c1) ? '1;1' : ( nack(m1::c1) ? '0;1' :   '0;0')  :default 0;0}"/>
+			</polygon>
+		</g>
+		<g class="#{ (alarmlevel(m1::c2)==3) ? 'accident' :  ((alarmlevel(m1::c2)==2) ? 'alarm' : 'notice')  :default accident}">
+			<polygon points="810,87 834,87 822,92">
+				<animate attributeType="XML" attributeName="opacity" calcMode="linear" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c2) ? '1;1' : ( nack(m1::c2) ? '0;1' :   '0;0')  :default 0;0}"/>
+			</polygon>
+		</g>
+		<g class="#{m1::c1 ? 'oncheckcontrol'  : 'offcheckcontrol' :default oncheckcontrol }">
+			<circle r="3" stroke-width="0" cx="855" cy="84"/>
+		</g>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="rect0" x="930" y="726" height="50" width="200">
+		<defs>
+			<style type="text/css">rect.rect0_rect_gradient_class {
+                fill : url(#gradientnone_h);}
+                          
+                #rect0_rect_fill {
+                fill : url(#gradientblack_h);}
+                        
+                rect.rect0_rect_gradient_classnone {
+                fill : #F7F7F7;}
+                
+                rect.rect0_rect_gradient_classaccident {
+                fill : #FF0000 !important;}
+                
+                rect.rect0_rect_gradient_classalarm {
+                fill : #a09020 !important;}
+                
+                rect.rect0_rect_gradient_classnotice {
+                fill : #ff0 !important;}
+                </style>
+		</defs>
+		<rect x="930" y="726" height="50" width="200" rx="4" ry="4" stroke-width="1" stroke="#ddd" class="rect0_rect_gradient_class"/>
+		<rect id="rect0_rect_fill" x="930" y="726" width="0" height="0" stroke-width="1" stroke="trasparent" rx="4" ry="4"/>
+	</g>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="sensor0" x="977" y="463" height="20" width="100" onclick="if (this.getAttribute('cursor')=='pointer') mainlib.valueset_click(this, 'r1::a',130)" cursor="#{ (r1::a).valid  ? 'pointer' : 'none' :default none }">
+		<defs>
+			<style type="text/css">rect.sensor0_sensor_gradient_classon {
+                fill : url(#gradientnone_h);}
+                        
+                rect.sensor0_sensor_gradient_classnone {
+                fill : #F7F7F7;}
+                
+                rect.sensor0_sensor_gradient_classaccident {
+                fill : #FF0000;}
+                
+                rect.sensor0_sensor_gradient_classalarm {
+                fill : #a09020;}
+                
+                #sensor0_sensor_text {
+                text-anchor: end;
+                        fill : 
+                        black;                  
+                dominant-baseline: central;  
+                -webkit-user-select: none;}
+                </style>
+		</defs>
+		<rect x="977" y="463" height="20" width="100" stroke-width="1" stroke="#000" rx="4" ry="4" class="#{ (r1::a).valid  ? 'sensor0_sensor_gradient_classon' : 'sensor0_sensor_gradient_classnone' :default sensor0_sensor_gradient_classnone }"/>
+		<svg x="977" y="463" height="20" width="100">
+			<text id="sensor0_sensor_text" x="90" y="10" style="font-size: 14;" class="sensor0_sensor_text_class">#{ (r1::a).valid ?  format(r1::a , '%8.1f') : '?' :default?}</text>
+		</svg>
+	</g>
+	<svg xmlns:html="http://www.w3.org/TR/xhtml1" x="72" y="40" height="15" width="400" id="slider0">
 		<defs>
 			<linearGradient x2="100%" y2="100%" id="slider0_slider_gradient" x1="100%" y1="0%">
 				<stop offset="0" stop-color="#888"/>
-				<stop offset="0.5" stop-color="#111"/>
+				<stop offset="0.5" stop-color="#333"/>
 				<stop offset="1" stop-color="#888"/>
 			</linearGradient>
 			<style type="text/css">
@@ -216,7 +919,7 @@
                 fill : url(#slider0_slider_gradient);}
                           
                 #slider0_slider_fill {
-                fill : url(#gradientgaz_h);}
+                fill : url(#gradientair_h);}
                         
                 .slider0_slider_gradient_classnone {
                 fill : url(#gradientnone_h);}
@@ -224,51 +927,46 @@
                 </style>
 		</defs>
 		<g>
-			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="20" width="400"/>
-			<rect x="20" y="6.4" height="7.2" width="360" rx="2" ry="2" class="#{ (m1::h1).valid ? 'slider0_slider_gradient_class' : 'slider0_slider_gradient_classnone' :default slider0_slider_gradient_classnone }" stroke="#000" stroke-width="0.5"/>
-			<rect id="slider0_slider_fill" class="#{ (m1::h1).valid ? 'slider0_slider_gradient_class' : 'slider0_slider_gradient_classnone' :default slider0_slider_gradient_classnone }" x="20" y="6.4" width="#{ (m1::h1 - m1::h1.mineu)/(m1::h1.maxeu - m1::h1.mineu) *360}" height="7.2" stroke="trasparent" stroke-width="0.5" rx="2" ry="2"/>
+			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="15" width="400"/>
+			<rect x="20" y="4.8" height="5.4" width="360" rx="4" ry="4" class="#{ (m1::h1).valid ? 'slider0_slider_gradient_class' : 'slider0_slider_gradient_classnone' :default slider0_slider_gradient_classnone }" stroke="#000" stroke-width="1"/>
+			<rect id="slider0_slider_fill" class="#{ (m1::h1).valid ? 'slider0_slider_gradient_class' : 'slider0_slider_gradient_classnone' :default slider0_slider_gradient_classnone }" x="20" y="4.8" width="#{ (m1::h1 - m1::h1.mineu)/(m1::h1.maxeu - m1::h1.mineu) *360}" height="5.4" stroke="trasparent" stroke-width="1" rx="4" ry="4"/>
 			<defs>
 				<symbol id="slider0_sliderbuttondef">
-					<circle cx="5" cy="5" r="5" stroke="" stroke-width="0.5" fill="gray"/>
-					<circle cx="5" cy="5" r="3.33333333333333" stroke="" stroke-width="0.5" fill="red"/>
+					<circle cx="6" cy="6" r="5.45454545454545" stroke="" stroke-width="1" fill="red"/>
+					<circle cx="6" cy="6" r="4" stroke="" stroke-width="0" fill="red"/>
 				</symbol>
 			</defs>
-			<use id="slider0_sliderbutton" transform="translate( -5, -5)" xlink:href="#slider0_sliderbuttondef" width="10" height="10" y="10" x="#{ ((&amp;m1::h1 - m1::h1.mineu)/(m1::h1.maxeu-m1::h1.mineu)) * 360 + 20 :default 20 }" r="5" onmousedown="this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,20 ,  10 ,  380 ,  10, '' , 'm1::h1' , false , 5000);" onmouseup="if (this.hasAttribute('captured'))  this.removeAttribute('captured')" stroke="#000" stroke-width="0.5"/>
+			<use id="slider0_sliderbutton" transform="translate( -6, -6)" xlink:href="#slider0_sliderbuttondef" width="12" height="12" y="7.5" x="#{ ((&amp;m1::h1 - m1::h1.mineu)/(m1::h1.maxeu-m1::h1.mineu)) * 360 + 20 :default 20 }" r="6" onmousedown="this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,20 ,  7.5 ,  380 ,  7.5, 'lr' , 'm1::h1' , false , 2000);" onmouseup="if (this.hasAttribute('captured'))  this.removeAttribute('captured')" stroke="#000" stroke-width="1"/>
 		</g>
 	</svg>
-	<svg xmlns:html="http://www.w3.org/TR/xhtml1" x="355" y="106" height="400" width="20" id="slider1">
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" id="name13" x="738" y="135" height="30" width="30" onclick="if (this.getAttribute('cursor')=='pointer') mainlib.valueset_click(this, 'm1::h1',39)" cursor="#{ (m1::h1).valid  ? 'pointer' : 'none' :default none }">
 		<defs>
-			<linearGradient x2="100%" y2="100%" id="slider1_slider_gradient" x1="0%" y1="100%">
-				<stop offset="0" stop-color="#888"/>
-				<stop offset="0.5" stop-color="#111"/>
-				<stop offset="1" stop-color="#888"/>
-			</linearGradient>
-			<style type="text/css">
-                #slider1_sliderbutton[captured="captured"] {         
-                            opacity: 0;}
-                
-                .slider1_slider_gradient_class {
-                fill : url(#slider1_slider_gradient);}
-                          
-                #slider1_slider_fill {
-                fill : url(#gradientgaz_v);}
+			<style type="text/css">rect.name13_sensor_gradient_classon {
+                fill : url(#gradientwater_c);}
                         
-                .slider1_slider_gradient_classnone {
-                fill : url(#gradientnone_v);}
+                rect.name13_sensor_gradient_classnone {
+                fill : #F7F7F7;}
                 
+                rect.name13_sensor_gradient_classaccident {
+                fill : #FF0000;}
+                
+                rect.name13_sensor_gradient_classalarm {
+                fill : #a09020;}
+                
+                #name13_sensor_text {
+                text-anchor: middle;                  
+                dominant-baseline: central;  
+                -webkit-user-select: none;}
                 </style>
 		</defs>
-		<g>
-			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="400" width="20"/>
-			<rect x="6.4" y="20" height="360" width="7.2" rx="2" ry="2" class="#{ (m1::h1).valid ? 'slider1_slider_gradient_class' : 'slider1_slider_gradient_classnone' :default slider1_slider_gradient_classnone }" stroke="#000" stroke-width="0.5"/>
-			<rect id="slider1_slider_fill" class="#{ (m1::h1).valid ? 'slider1_slider_gradient_class' : 'slider1_slider_gradient_classnone' :default slider1_slider_gradient_classnone }" x="6.4" y="20" height="#{ (m1::h1 - m1::h1.mineu)/(m1::h1.maxeu - m1::h1.mineu) *360}" width="7.2" stroke="trasparent" stroke-width="0.5" rx="2" ry="2"/>
-			<defs>
-				<symbol id="slider1_sliderbuttondef">
-					<circle cx="5" cy="5" r="5" stroke="" stroke-width="0.5" fill="gray"/>
-					<circle cx="5" cy="5" r="3.33333333333333" stroke="" stroke-width="0.5" fill="red"/>
-				</symbol>
-			</defs>
-			<use id="slider1_sliderbutton" transform="translate( -5, -5)" xlink:href="#slider1_sliderbuttondef" width="10" height="10" y="#{ ((&amp;m1::h1 - m1::h1.mineu)/(m1::h1.maxeu-m1::h1.mineu)) * 360 + 20 :default 20 }" x="10" r="5" onmousedown="this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,10 ,  20 ,  10 ,  380, 'tb' , 'm1::h1' , false , 5000);" onmouseup="if (this.hasAttribute('captured'))  this.removeAttribute('captured')" stroke="#000" stroke-width="0.5"/>
+		<rect x="738" y="135" height="30" width="30" stroke-width="1" stroke="#001" rx="15" ry="15" class="#{ (m1::h1).valid  ? 'name13_sensor_gradient_classon' : 'name13_sensor_gradient_classnone' :default name13_sensor_gradient_classnone }"/>
+		<svg x="738" y="135" height="30" width="30">
+			<text id="name13_sensor_text" x="15" y="15" style=" font-size: 11; font-weight: bold;" class="name13_sensor_text_class">#{ (m1::h1).valid ?  format(m1::h1 , '%8.1f') : '?' :default?}<animate attributeType="XML" attributeName="class" calcMode="discrete" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c2) ? ( (alarmlevel(m1::c2)==1) ? 'notice;notice'  : ((alarmlevel(m1::c2)==2) ? 'alarm;alarm' : 'accident;accident')) : ( nack(m1::c2) ? ( (alarmlevel(m1::c2)==1) ? 'notice; ' : ((alarmlevel(m1::c2)==2) ? 'alarm; ' : 'accident; ')) : ' ; ') :default }"/></text>
+		</svg>
+		<g class="#{ (alarmlevel(m1::c2)==3) ? 'accident' :  ((alarmlevel(m1::c2)==2) ? 'alarm' : 'notice')  :default accident}">
+			<polygon points="747,135 759,135 753,142.5">
+				<animate attributeType="XML" attributeName="opacity" calcMode="linear" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c2) ? '1;1' : ( nack(m1::c2) ? '0;1' :   '0;0')  :default 0;0}"/>
+			</polygon>
 		</g>
-	</svg>
+	</g>
 </svg:svg>

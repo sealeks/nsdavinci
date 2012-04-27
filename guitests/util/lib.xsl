@@ -61,6 +61,18 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         </xsl:copy>
     </xsl:template>
     
+    
+        
+    
+    <xsl:template name="apply_id">    
+        <xsl:attribute name="id">
+            <xsl:value-of select="@id"/>
+        </xsl:attribute>
+        <xsl:attribute name="isdesined">
+            <xsl:text>isdesined</xsl:text>
+        </xsl:attribute>
+    </xsl:template>    
+    
 
     
     <xsl:template name="startcddata">
@@ -158,13 +170,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <xsl:value-of select="@width - 8"/>
         </xsl:attribute>
     </xsl:template> 
-    
-    
-    <xsl:template name="apply_id">    
-        <xsl:attribute name="id">
-            <xsl:value-of select="@id"/>
-        </xsl:attribute>
-    </xsl:template>    
+
     
    
     <xsl:template name="apply_cental_rotate">    
