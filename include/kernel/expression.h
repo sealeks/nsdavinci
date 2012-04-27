@@ -37,11 +37,13 @@ namespace dvnci {
          * косвенного обращения и разыменовывания (->, *), функции (), выделения элемента [], определения размера sizeof и постфикных ++, --
          *       Операция  определения адреса (&) изменяет смысл и действует таким образом , что операнд приобретает валидность.
          * Kроме того, вводятся дополнительные операции:
-         *          1. Операция @  (@@, @=, @@=) - посылка команды. (@@ с постановкой в очередь, @=, @@= c установкой значения)
+         *          1. Операция @  (@@, @=, @@=) - посылка команды. (@@ с постановкой в очередь, @=, @@= c установкой значения, = -установка значения)
          *          Вырважение tag @ expr означает посыку команды val.value. Команда не посылается в случае нулевой валидности expr
          *          Операция возвращает значение и в во многом (в том числе приоритетом) соответсвует присваиванию ( т.е "tag1 @ ((tag2 @ expr) + 1)" - корректно )
          *          2. Операция квитирования #
          *          Выражение #tag означает квитирование тега tag (включая группу алармовую группу)
+         * 
+         *          NB: операции с установкой значения для тегов с тревогой, отслеживанием и логированием скидывают валидность
          *
          * Селекторные операции над тегами:
           1. .mineu, .maxeu - минимальные и максимальные границы значений (пример tag.mineu), имеет тип тега
@@ -166,7 +168,7 @@ namespace dvnci {
             func_nack = 1227, /* nack(*/
             func_alarm = 1229, /* alarm(*/
             func_alarmlevel = 1231, /* alarmlevel(*/
-            func_tags = 1233, /* tags(*/            
+            func_tags = 1233, /* tags(*/
             oprt_opnot = 2001, // !  2
             oprt_opexnot = 2003, // ~  2
             oprt_add_unary = 2005, // +   2
@@ -219,6 +221,14 @@ namespace dvnci {
             oprt_comma = 15002, //1004,             //,            
             oprt_postdec = 15020, /* --*/
         } ;
+
+        enum const_type {
+            hex_const,
+            dec_const,
+            oct_const,
+            bin_const,
+            real_const,
+            none_const} ;
 
         class exprintf_stub {
         public:
@@ -277,10 +287,11 @@ namespace dvnci {
 
             bool kvit(indx id = npos) {
                 return false;}
-            
-            altype alarmlevel(indx id) const { return 0;};
 
-            void send_command(indx id, const short_value& vl, addcmdtype queue = acQueuedCommand, indx clid = npos) {};            
+            altype alarmlevel(indx id) const {
+                return 0;};
+
+            void send_command(indx id, const short_value& vl, addcmdtype queue = acQueuedCommand, indx clid = npos) {};
 
             void incref(indx id) {}
 
@@ -499,6 +510,12 @@ namespace dvnci {
             indx id_;
             calc_operation operation_;} ;
 
+
+
+        calc_token test_operator_token(const std::string& val);
+        calc_token test_const_token(std::string val);
+        calc_token test_stringtype_token(const std::string& val);
+
         template<typename BASEINTF, typename REFCOUNTER = refcounter_templ<BASEINTF> >
                 class expression_templ {
             typedef BASEINTF interface_type;
@@ -514,9 +531,6 @@ namespace dvnci {
 
         public:
 
-            enum const_type {
-                hex_const, dec_const, oct_const, bin_const, real_const, none_const} ;
-
             expression_templ(const std::string& val, interface_type_ptr inf, bool tested = false) : changepoll(false), intf(inf), error_(ERROR_EXPRNOINIT), expression_(""), testmode_(tested) {
                 refcntr = refcounter_type_ptr(new refcounter_type(intf));
                 refcntr->active(true);
@@ -525,12 +539,11 @@ namespace dvnci {
             expression_templ(const std::string& val = "", bool tested = false) : changepoll(false), intf(), error_(ERROR_EXPRNOINIT), expression_(""), testmode_(tested) {
                 refcntr = refcounter_type_ptr();
                 expressionstr(val);};
-                
+
             expression_templ(const std::wstring& val, interface_type_ptr inf, bool tested = false) : changepoll(false), intf(inf), error_(ERROR_EXPRNOINIT), expression_(""), testmode_(tested) {
                 refcntr = refcounter_type_ptr(new refcounter_type(intf));
                 refcntr->active(true);
                 expressionstr(val);};
-              
 
             virtual ~expression_templ() {}
 
@@ -589,39 +602,15 @@ namespace dvnci {
                 lower_and_fulltrim(val);
                 parse(val);
                 expression_ = val;}
-            
+
             void expressionstr(std::wstring val) {
                 lower_and_fulltrim(val);
                 parse(val);
                 expression_ = wstr_to_utf8(val);}
 
-            calc_token getoperation(std::string val);
+            calc_token parse_token(std::string val);
 
-            const_type parseconstype(std::string& val, bool& flt) {
-                flt = false;
-                std::string::size_type posFloat = val.find_last_of("f");
-                if (val.find_first_of(".") != std::string::npos) {
-                    flt = (posFloat != std::string::npos);
-                    if (posFloat != std::string::npos) {
-                        val = val.substr(0, posFloat);}
-                    return real_const;}
-                if (val.find("0b") == 0) {
-                    val = val.substr(2);
-                    return bin_const;}
-                if (val.find("0x") == 0) {
-                    val = val.substr(2);
-                    return hex_const;}
-                flt = (posFloat != std::string::npos);
-                if (posFloat != std::string::npos) {
-                    val = val.substr(0, posFloat);}
-                if (flt) return real_const;
-                if (((val.find_first_of("0") == 0) && (val.size() > 1))) {
-                    val = val.substr(1);
-                    return oct_const;}
-                if (flt) return real_const;
-                return dec_const;}
-
-            calc_token testconst(std::string val);
+            calc_token parse_tag(std::string val);
 
             calc_token getmineu(calc_token& it);
 
@@ -648,8 +637,8 @@ namespace dvnci {
             virtual calc_token geteu(const calc_token& it);
 
             virtual calc_token getalarmmsg(const calc_token& it);
-            
-            virtual calc_token getalarmlevel(const calc_token& it);            
+
+            virtual calc_token getalarmlevel(const calc_token& it);
 
             virtual calc_token calc_token_factory(const std::string& val);
 
@@ -684,8 +673,8 @@ namespace dvnci {
                 clearstack();
                 polline.clear();
                 stringvector.clear();}
-            
-            bool testmode() const {            
+
+            bool testmode() const {
                 return testmode_;}
 
             polishstack calcstack;
@@ -713,273 +702,22 @@ namespace dvnci {
             return false;}
 
         template<typename BASEINTF, typename REFCOUNTER>
-        calc_token expression_templ<BASEINTF, REFCOUNTER>::getoperation(std::string val) {
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::parse_token(std::string val) {
             if (val.empty()) return calc_token(notoperation);
             lower_and_trim(val);
-            if (val.size() == 1) {
-                char vltmp = *(val.c_str());
-                switch (vltmp) {
-                    case '(': return calc_token(oprt_leftgroup);
-                    case ')': return calc_token(oprt_rightgroup);
-                    case '!': return calc_token(oprt_opnot);
-                    case '*': return calc_token(oprt_mult);
-                    case '/': return calc_token(oprt_div);
-                    case '%': return calc_token(oprt_modulo);
-                    case '+': return calc_token(oprt_add);
-                    case '-': return calc_token(oprt_sub);
-                    case '<': return calc_token(oprt_compless);
-                    case '>': return calc_token(oprt_compmore);
-                    case '=': return calc_token(oprt_assign);
-                    case '&': return calc_token(oprt_bitand);
-                    case '^': return calc_token(oprt_bitexor);
-                    case '|': return calc_token(oprt_bitor);
-                    case '~': return calc_token(oprt_opexnot);
-                    case ',': return calc_token(oprt_comma);
-                    case ':': return calc_token(oprt_casedelim);
-                    case '[': return calc_token(oprt_caseleftgroup);
-                    case ']': return calc_token(oprt_caserightgroup);
-                    case '@': return calc_token(oprt_command);
-                    case '#': return calc_token(oprt_kvit);
-                    case '?': return calc_token(oprt_condit);}}
-            if (val.size() == 2) {
-                if (val == "<<") return calc_token(oprt_bitleft);
-                if (val == ">>") return calc_token(oprt_bitright);
-                if (val == "==") return calc_token(oprt_compeq);
-                if (val == "!=") return calc_token(oprt_compnoteq);
-                if (val == "<=") return calc_token(oprt_complessoreq);
-                if (val == ">=") return calc_token(oprt_compmoreoreq);
-                if (val == "||") return calc_token(oprt_logicor);
-                if (val == "&&") return calc_token(oprt_logicand);
-                if (val == "++") return calc_token(oprt_prefinc);
-                if (val == "--") return calc_token(oprt_prefdec);
-                if (val == "''") return calc_token("");
-                if (val == "@@") return calc_token(oprt_command1);
-                if (val == "@=") return calc_token(oprt_commandset);
-                if (val == "\"\"") return calc_token("");}
-            if (val == "<<<") return calc_token(oprt_cyclbitleft);
-            if (val == ">>>") return calc_token(oprt_cyclbitright);
-            if (val == "@@=") return calc_token(oprt_commandset1);
-            if (val == "mod") return calc_token(select_mod);
-            if (val == ".mineu") return calc_token(select_mineu);
-            if (val == ".maxeu") return calc_token(select_maxeu);
-            if (val == ".ack") return calc_token(select_ack);
-            if (val == ".alarm") return calc_token(select_alarm);
-            if (val == ".nack") return calc_token(select_nack);
-            if (val == "ack") return calc_token(func_ack);
-            if (val == "alarm") return calc_token(func_alarm);
-            if (val == "nack") return calc_token(func_nack);
-            if (val == "tags") return calc_token(func_tags);
-            if (val == "alarmlevel") return calc_token(func_alarmlevel);            
-            if (val == ".num") return calc_token(select_num);
-            if (val == "num") return calc_token(func_num);
-            if (val == ".real") return calc_token(select_real);
-            if (val == "real") return calc_token(func_real);
-            if (val == ".bool") return calc_token(select_bool);
-            if (val == "bool") return calc_token(func_bool);
-            if (val == "abs") return calc_token(func_abs);
-            if (val == "min") return calc_token(func_min);
-            if (val == "max") return calc_token(func_max);
-            if (val == "sin") return calc_token(func_sin);
-            if (val == "cos") return calc_token(func_cos);
-            if (val == "pow") return calc_token(func_pow);
-            if (val == "sqrt") return calc_token(func_sqrt);
-            if (val == "sqr") return calc_token(func_sqr);
-            if (val == "exp") return calc_token(func_exp);
-            if (val == "log") return calc_token(func_ln);
-            if (val == "ln") return calc_token(func_ln);
-            if (val == "log10") return calc_token(func_log10);
-            if (val == "tan") return calc_token(func_tan);
-            if (val == "acos") return calc_token(func_acos);
-            if (val == "asin") return calc_token(func_asin);
-            if (val == "atan") return calc_token(func_atan);
-            if (val == "format") return calc_token(func_format);
-            if (val == ".comment") return calc_token(select_comment);
-            if (val == ".binding") return calc_token(select_binding);
-            if (val == ".eu") return calc_token(select_eu);
-            if (val == ".alarmmsg") return calc_token(select_alarmmsg);
-            if (val == ".alarmlevel") return calc_token(select_alarmlevel);            
-            if (val == "cosh") return calc_token(func_cosh);
-            if (val == "sinh") return calc_token(func_sinh);
-            if (val == "tanh") return calc_token(func_tanh);
-            if (val == "rnd") return calc_token(func_rnd);
-            if (val == "floor") return calc_token(func_floor);
-            if (val == "seil") return calc_token(func_ceiling);
-            if (val == "round") return calc_token(func_round);
-            if (val == "e") return calc_token(const_e);
-            if (val == "null") return calc_token(NULL_DOUBLE);
-            if (val == "nan") return calc_token(NULL_DOUBLE);
-            if (val == "pi") return calc_token(const_pi);
-            if (val == "incmsc") return calc_token(func_incmsc);
-            if (val == "incsec") return calc_token(func_incsec);
-            if (val == "incminute") return calc_token(func_incminute);
-            if (val == "inchour") return calc_token(func_inchour);
-            if (val == "incday") return calc_token(func_incday);
-            if (val == "(notype)") return calc_token(oper_cast_basetype);
-            if (val == "(num64)") return calc_token(oper_cast_num64);
-            if (val == "(unum64)") return calc_token(oper_cast_unum64);
-            if (val == "(num32)") return calc_token(oper_cast_num32);
-            if (val == "(unum32)") return calc_token(oper_cast_unum32);
-            if (val == "(num16)") return calc_token(oper_cast_num16);
-            if (val == "(unum16)") return calc_token(oper_cast_unum16);
-            if (val == "(num8)") return calc_token(oper_cast_num8);
-            if (val == "(unum8)") return calc_token(oper_cast_unum8);
-            if (val == "(float)") return calc_token(oper_cast_float);
-            if (val == "(double)") return calc_token(oper_cast_double);
-            if (val == "(bool)") return calc_token(oper_cast_bool);
-            if (val == "(vbool)") return calc_token(oper_cast_vbool);
-            if (val == "(time)") return calc_token(oper_cast_time);
-            if (val == "(text)") return calc_token(oper_cast_text);
-            if (val == "now") return calc_token(const_now);
-            if (val == ".time") return calc_token(select_time);
-            if (val == ".logtime") return calc_token(select_logtime);
-            if (val == ".error") return calc_token(select_error);
-            if (val == ".valid") return calc_token(select_valid);
-            if (val == ".epoch") return calc_token(select_epoch);
-            if (val == ".msc") return calc_token(select_msc);
-            if (val == ".sec") return calc_token(select_sec);
-            if (val == ".minute") return calc_token(select_minute);
-            if (val == ".hour") return calc_token(select_hour);
-            if (val == ".day") return calc_token(select_day);
-            if (val == ".month") return calc_token(select_month);
-            if (val == ".monthdays") return calc_token(select_monthdays);
-            if (val == ".year") return calc_token(select_year);
-            if (val == ".dayweek") return calc_token(select_dayweek);
-            if (val == ".dayyear") return calc_token(select_dayyear);
-            if (val == ".epochmsc") return calc_token(select_epochmsc);
-            if (val == ".epochday") return calc_token(select_epochday);
-            if (val == ".epochhour") return calc_token(select_epochhour);
-            if (val == ".epochminute") return calc_token(select_epochminute);
-            if (val == ".lastvalue") return calc_token(select_lastvalue);
-            return testconst(val);};
+            calc_token operat_token = test_operator_token(val);
+            if (operat_token.operation() != notoperation)
+                return operat_token;
+            calc_token constant_token = test_const_token(val);
+            if (constant_token.operation() != notoperation)
+                return constant_token;
+            calc_token string_token = test_stringtype_token(val);
+            if (string_token.operation() != notoperation)
+                return string_token;
+            return parse_tag(val);};
 
         template<typename BASEINTF, typename REFCOUNTER>
-        calc_token expression_templ<BASEINTF, REFCOUNTER>::testconst(std::string val) {
-            boost::regex ex(NUMBER_REGEXTAMPL_EXT);
-            boost::smatch xResults;
-            if (boost::regex_match(val, xResults, ex)) {
-                //DEBUG_STR_VAL_DVNCI(ISNUMERIC_CONST, val)
-                std::string::size_type posLong = val.find_last_of("l");
-                std::string::size_type posUnsign = val.find_last_of("u");
-                std::string::size_type posLongUnsign = val.find_first_of("lu");
-                std::string::size_type posUnsignLong = val.find_first_of("ul");
-                bool isFloat = false;
-                bool isLong = ((posLong != std::string::npos) || (posUnsignLong != std::string::npos) || (posLongUnsign != std::string::npos));
-                bool isUnsign = ((posUnsign != std::string::npos) || (posUnsignLong != std::string::npos) || (posLongUnsign != std::string::npos));
-                if (posLongUnsign != std::string::npos) {
-                    val = val.substr(0, posLongUnsign);}
-                else if (posUnsignLong != std::string::npos) {
-                    val = val.substr(0, posUnsignLong);}
-                else if (posLong != std::string::npos) {
-                    val = val.substr(0, posLong);}
-                else if (posUnsign != std::string::npos) {
-                    val = val.substr(0, posUnsign);}
-
-                //DEBUG_VAL_DVNCI(isLong)
-                //DEBUG_VAL_DVNCI(isUnsign)
-                //DEBUG_VAL_DVNCI(val)
-                switch (parseconstype(val, isFloat)) {
-                    case real_const:{
-                        if (isFloat) {
-                            float tmpfl = 0;
-                            if (str_to(val, tmpfl)) {
-                                return calc_token(tmpfl);}
-                            else {
-                                return calc_token(NULL_DOUBLE);}}
-                        double tmpdbl = NULL_DOUBLE;
-                        str_to(val, tmpdbl);
-                        return calc_token(tmpdbl);}
-                    case bin_const:{
-                        if (isLong) {
-                            if (isUnsign) {
-                                unum64 tmp = 0;
-                                if (binstr_to<unum64 > (val, tmp)) {
-                                    return calc_token(tmp);}}
-                            else {
-                                num64 tmp = 0;
-                                if (binstr_to<num64 > (val, tmp)) {
-                                    return calc_token(tmp);}}}
-                        else {
-                            if (isUnsign) {
-                                unum32 tmp = 0;
-                                if (binstr_to<unum32 > (val, tmp)) {
-                                    return calc_token(tmp);}}
-                            else {
-                                num32 tmp = 0;
-                                if (binstr_to<num32 > (val, tmp)) {
-                                    return calc_token(tmp);}}}
-                        return calc_token(NULL_DOUBLE);}
-                    case oct_const:{
-                        if (isLong) {
-                            if (isUnsign) {
-                                unum64 tmp = 0;
-                                if (octstr_to<unum64 > (val, tmp)) {
-                                    return calc_token(tmp);}}
-                            else {
-                                num64 tmp = 0;
-                                if (octstr_to<num64 > (val, tmp)) {
-                                    return calc_token(tmp);}}}
-                        else {
-                            if (isUnsign) {
-                                unum32 tmp = 0;
-                                if (octstr_to<unum32 > (val, tmp)) {
-                                    return calc_token(tmp);}}
-                            else {
-                                num32 tmp = 0;
-                                if (octstr_to<num32 > (val, tmp)) {
-                                    return calc_token(tmp);}}}
-                        return calc_token(NULL_DOUBLE);}
-                    case hex_const:{
-                        if (isLong) {
-                            if (isUnsign) {
-                                unum64 tmp = 0;
-                                if (hexstr_to<unum64 > (val, tmp)) {
-                                    return calc_token(tmp);}}
-                            else {
-                                num64 tmp = 0;
-                                if (hexstr_to<num64 > (val, tmp)) {
-                                    return calc_token(tmp);}}}
-                        else {
-                            if (isUnsign) {
-                                unum32 tmp = 0;
-                                if (hexstr_to<unum32 > (val, tmp)) {
-                                    return calc_token(tmp);}}
-                            else {
-                                num32 tmp = 0;
-                                if (hexstr_to<num32 > (val, tmp)) {
-                                    return calc_token(tmp);}}}
-                        return calc_token(NULL_DOUBLE);}
-                    case dec_const:{
-                        if (isLong) {
-                            if (isUnsign) {
-                                unum64 tmp = 0;
-                                if (str_to<unum64 > (val, tmp)) {
-                                    return calc_token(tmp);}}
-                            else {
-                                num64 tmp = 0;
-                                if (str_to<num64 > (val, tmp)) {
-                                    return calc_token(tmp);}}}
-                        else {
-                            if (isUnsign) {
-                                unum32 tmp = 0;
-                                if (str_to<unum32 > (val, tmp)) {
-                                    return calc_token(tmp);}}
-                            else {
-                                num32 tmp = 0;
-                                if (str_to<num32 > (val, tmp)) {
-                                    return calc_token(tmp);}}}
-                        return calc_token(NULL_DOUBLE);}
-                    default: calc_token(NULL_DOUBLE);}
-                return calc_token(NULL_DOUBLE);}
-
-            if (val.size() >= 2) {
-                if (((*val.begin()) == '"') || ((*val.begin()) == '\'')) {
-                    if (((*val.begin()) == '"') && ((*val.rbegin()) == '"')) {
-                        return calc_token(val.substr(1, val.size() - 2));}
-                    if (((*val.begin()) == '\'') && ((*val.rbegin()) == '\'')) {
-                        return calc_token(val.substr(1, val.size() - 2));}
-                    calc_token(NULL_DOUBLE);}}
-
-
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::parse_tag(std::string val) {
             indx idtag = (intf) ? intf(val) : npos;
             if ((idtag != npos) && (refcntr)) refcntr->add(idtag);
             return calc_token(idtag,
@@ -1082,17 +820,17 @@ namespace dvnci {
             if (intf) {
                 return intf->alarmmsg(it.id());}
             throw dvncierror(ERROR_NILLINF);}
-        
+
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getalarmlevel(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
                 return intf->alarmlevel(it.id());}
-            throw dvncierror(ERROR_NILLINF);}        
+            throw dvncierror(ERROR_NILLINF);}
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::calc_token_factory(const std::string& val) {
-            return getoperation(trim_copy(val));}
+            return parse_token(trim_copy(val));}
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::assignexpr(const calc_token& it) {
@@ -1293,14 +1031,14 @@ namespace dvnci {
                                     if ((intf) && (!calcstack.top().isnan()) && (calcstack.top().id() != npos)) {
                                         if ((rsideit.valid() == FULL_VALID) && (!testmode())) {
                                             intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), FULL_VALID),
-                                                    ((it->operation() == oprt_command) || (it->operation() == oprt_commandset))  ? acQueuedCommand : 
-                                                        (((it->operation() == oprt_command1) || (it->operation() == oprt_commandset1))  ? acNewCommand : acNullCommand),
+                                                    ((it->operation() == oprt_command) || (it->operation() == oprt_commandset))  ? acQueuedCommand :
+                                                    (((it->operation() == oprt_command1) || (it->operation() == oprt_commandset1))  ? acNewCommand : acNullCommand),
                                                     ((it->operation() == oprt_commandset) || (it->operation() == oprt_commandset1) || (it->operation() ==  acNullCommand)));}
                                         //calcstack.pop();
                                         /*calcstack.push(rsideit);*/
                                     }
                                     else {
-                                        if (calcstack.top().id() == npos){
+                                        if (calcstack.top().id() == npos) {
                                             calcstack.pop();
                                             calc_token errtoken;
                                             errtoken.error(ERROR_EXPRMATH);
@@ -1313,16 +1051,15 @@ namespace dvnci {
                                 break;}
                             case oprt_kvit:{
                                 if (!testmode()) {
-                                if (!calcstack.empty()) {
-                                    if (calcstack.top().id() != npos) {
-                                        intf->kvit(calcstack.top().id());}
+                                    if (!calcstack.empty()) {
+                                        if (calcstack.top().id() != npos) {
+                                            intf->kvit(calcstack.top().id());}
+                                        else {
+                                            intf->kvit(calcstack.top().id());}}
                                     else {
-                                        intf->kvit(calcstack.top().id());
-                                        return error(ERROR_EXPRPARSE);}}
-                                else {
-                                    intf->kvit();
-                                    return error();}
-                                break;}}
+                                        intf->kvit();
+                                        calcstack.push(true);}
+                                    break;}}
                             default:{
                                 switch (it->operation()) {
                                     case oprt_add:
@@ -1524,99 +1261,97 @@ namespace dvnci {
                                             clearall();
                                             return error(ERROR_EXPRPARSE);}
                                         break;}
-                                    
+
                                     case func_alarm:{
-                                        bool rslt= false;
-                                        do{
-                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
-                                            calc_token nmidit = calcstack.top();
-                                            calcstack.pop();
-                                            calc_token resultit = getalarm(nmidit);
-                                            if (resultit.valid() && (resultit.value<bool>())){
-                                                rslt= true;
-                                                break;}
-                                            }
-                                        else {
-                                            clearall();
-                                            return error(ERROR_EXPRPARSE);}}
-                                        while(calcstack.size());
+                                        bool rslt = false;
+                                        do {
+                                            if (!calcstack.empty() && (calcstack.top().id() != npos)) {
+                                                calc_token nmidit = calcstack.top();
+                                                calcstack.pop();
+                                                calc_token resultit = getalarm(nmidit);
+                                                if (resultit.valid() && (resultit.value<bool>())) {
+                                                    rslt = true;
+                                                    break;}}
+                                            else {
+                                                clearall();
+                                                return error(ERROR_EXPRPARSE);}}
+                                        while (calcstack.size());
                                         calcstack.push(calc_token(rslt));
                                         break;}
-                                    
+
                                     case func_ack:{
-                                        bool rslt= false;
-                                        do{
-                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
-                                            calc_token nmidit = calcstack.top();
-                                            calcstack.pop();
-                                            calc_token resultal = getalarm(nmidit);
-                                            calc_token resultack = getack(nmidit);
+                                        bool rslt = false;
+                                        do {
+                                            if (!calcstack.empty() && (calcstack.top().id() != npos)) {
+                                                calc_token nmidit = calcstack.top();
+                                                calcstack.pop();
+                                                calc_token resultal = getalarm(nmidit);
+                                                calc_token resultack = getack(nmidit);
                                                 if (resultal.valid() && (resultal.value<bool>())) {
                                                     rslt = true;
                                                     if (resultack.valid() && (!resultack.value<bool>())) {
                                                         rslt = false;
                                                         break;}}}
-                                        else {
-                                            clearall();
-                                            return error(ERROR_EXPRPARSE);}}
-                                        while(calcstack.size());
+                                            else {
+                                                clearall();
+                                                return error(ERROR_EXPRPARSE);}}
+                                        while (calcstack.size());
                                         calcstack.push(calc_token(rslt));
                                         break;}
-                                    
+
                                     case func_nack:{
-                                        bool rslt= false;
-                                        do{
-                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
-                                            calc_token nmidit = calcstack.top();
-                                            calcstack.pop();
-                                            calc_token resultal = getalarm(nmidit);
-                                            calc_token resultnack = getnack(nmidit);
-                                                if (resultal.valid() && (resultal.value<bool>()) && 
+                                        bool rslt = false;
+                                        do {
+                                            if (!calcstack.empty() && (calcstack.top().id() != npos)) {
+                                                calc_token nmidit = calcstack.top();
+                                                calcstack.pop();
+                                                calc_token resultal = getalarm(nmidit);
+                                                calc_token resultnack = getnack(nmidit);
+                                                if (resultal.valid() && (resultal.value<bool>()) &&
                                                         resultnack.valid() && (resultnack.value<bool>())) {
-                                                        rslt = true;
-                                                        break;}}
-                                        else {
-                                            clearall();
-                                            return error(ERROR_EXPRPARSE);}}
-                                        while(calcstack.size());
+                                                    rslt = true;
+                                                    break;}}
+                                            else {
+                                                clearall();
+                                                return error(ERROR_EXPRPARSE);}}
+                                        while (calcstack.size());
                                         calcstack.push(calc_token(rslt));
                                         break;}
-                                    
+
                                     case func_alarmlevel:{
-                                        altype rslt= 0;
-                                        do{
-                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
-                                            calc_token nmidit = calcstack.top();
-                                            calcstack.pop();
-                                            calc_token resultit = getalarmlevel(nmidit);
-                                            calc_token resultal = getalarm(nmidit);
-                                            if (resultal.valid() && (resultal.value<bool>()) &&(resultit.value<altype>()>rslt)){
-                                                rslt= resultit.value<altype>();}
-                                            }
-                                        else {
-                                            clearall();
-                                            return error(ERROR_EXPRPARSE);}}
-                                        while(calcstack.size());
-                                        calcstack.push(calc_token(rslt));
-                                        break;}   
-                                    
-                                    case func_tags:{
-                                        altype rslt= false;
-                                        do{
-                                        if (!calcstack.empty() && (calcstack.top().id() != npos)) {                                           
-                                            calc_token nmidit = calcstack.top();
-                                            calcstack.pop();
-                                            rslt=true;
-                                            }
-                                        else {                                           
-                                            while(calcstack.size())
+                                        altype rslt = 0;
+                                        do {
+                                            if (!calcstack.empty() && (calcstack.top().id() != npos)) {
+                                                calc_token nmidit = calcstack.top();
                                                 calcstack.pop();
-                                            rslt= false;;}}
-                                        while(calcstack.size());
+                                                calc_token resultit = getalarmlevel(nmidit);
+                                                calc_token resultal = getalarm(nmidit);
+                                                if (resultal.valid() && (resultal.value<bool>()) && (resultit.value<altype > () > rslt)) {
+                                                    rslt = resultit.value<altype > ();}}
+                                            else {
+                                                clearall();
+                                                return error(ERROR_EXPRPARSE);}}
+                                        while (calcstack.size());
                                         calcstack.push(calc_token(rslt));
-                                        break;}                                       
-                                    
-                                    
+                                        break;}
+
+                                    case func_tags:{
+                                        altype rslt = false;
+                                        do {
+                                            if (!calcstack.empty() && (calcstack.top().id() != npos)) {
+                                                calc_token nmidit = calcstack.top();
+                                                calcstack.pop();
+                                                rslt = true;}
+                                            else {
+                                                while (calcstack.size())
+                                                    calcstack.pop();
+                                                rslt = false;
+                                                ;}}
+                                        while (calcstack.size());
+                                        calcstack.push(calc_token(rslt));
+                                        break;}
+
+
 
                                     case select_time:
                                     case select_logtime:{
@@ -1767,7 +1502,7 @@ namespace dvnci {
                                                     (it->operation() == select_eu) ? geteu(nmidit) :
                                                     (it->operation() == select_binding) ? getbinding(nmidit) :
                                                     (it->operation() == select_alarmmsg) ? getalarmmsg(nmidit) :
-                                                        getalarmlevel(nmidit);
+                                                    getalarmlevel(nmidit);
                                             calcstack.push(resultit);}
                                         else {
                                             clearall();
@@ -1839,24 +1574,24 @@ namespace dvnci {
                                     case func_max:{
                                         if (!calcstack.empty()) {
                                             do {
-                                            calc_token rsideit = prepareitem(calcstack.top());
-                                            calcstack.pop();
-                                            if ((calcstack.empty())) {
-                                                clearall();
-                                                return error(ERROR_EXPRPARSE);}
-                                            calc_token lsideit = prepareitem(calcstack.top());
-                                            calcstack.pop();
-                                            calc_token resultit = (it->operation() == func_min) ? minim(lsideit, rsideit) : maxim(lsideit, rsideit);
-                                            resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
-                                            calcstack.push(resultit);}
-                                            while(calcstack.size()>1);}
+                                                calc_token rsideit = prepareitem(calcstack.top());
+                                                calcstack.pop();
+                                                if ((calcstack.empty())) {
+                                                    clearall();
+                                                    return error(ERROR_EXPRPARSE);}
+                                                calc_token lsideit = prepareitem(calcstack.top());
+                                                calcstack.pop();
+                                                calc_token resultit = (it->operation() == func_min) ? minim(lsideit, rsideit) : maxim(lsideit, rsideit);
+                                                resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
+                                                calcstack.push(resultit);}
+                                            while (calcstack.size() > 1);}
                                         else {
                                             clearall();
                                             return error(ERROR_EXPRPARSE);}
                                         break;}
                                     default:{}}}}
                         ++it;}}}
-            catch (dvncierror& er) { 
+            catch (dvncierror& er) {
 
                 calc_token tmp;
                 rslt = tmp;
@@ -2085,8 +1820,6 @@ namespace dvnci {
                 else
                     std::cout << it->operation() << "   ";}
             std::cout << std::endl;}
-
-
 
 
 

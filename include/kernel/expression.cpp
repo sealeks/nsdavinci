@@ -11,169 +11,336 @@
 
 namespace dvnci {
     namespace expr {
-        
-        /*
-        typedef std::pair<std::string, calc_operation> stringoperate_pair;
-        struct char_calc_operation {const char* ; calc_operation ;};
-        typedef std::map<std::string, calc_operation , std::less<std::string>, std::allocator<stringoperate_pair > > stringoperate_map;
-        
-        const char_calc_operation TOKEN_OPERATOR_ARR[] ={{"(",oprt_leftgroup},{")",oprt_rightgroup}};
-        
-        const stringoperate_map TOKEN_OPERATOR_MAP(TOKEN_OPERATOR_ARR[0],TOKEN_OPERATOR_ARR[3]);
-        
-        calc_token token_from_string(const std::string& val){
-            stringoperate_map::const_iterator it=TOKEN_OPERATOR_MAP.find(val);
-            if (it!=TOKEN_OPERATOR_MAP.end())
-                return calc_token(it->second);
-        }*/
+
+
+        typedef std::pair<std::string, calc_token>                                                                       name_token_pair;
+        typedef std::map<std::string, calc_token , std::less<std::string>, std::allocator<name_token_pair > >            name_token_map;
+
+        typedef std::pair<calc_operation, std::string>                                                                   operator_name_pair;
+        typedef std::map<calc_operation, std::string , std::less<calc_operation>, std::allocator<operator_name_pair > >  operator_name_map;
+
+        struct name_token_initillizer {
+
+            static name_token_map create() {
+                name_token_map map;
+                map["("] = oprt_leftgroup;
+                map[")"] = oprt_rightgroup;
+                map["!"] = oprt_opnot;
+                map["*"] = oprt_mult;
+                map["/"] = oprt_div;
+                map["%"] = oprt_modulo;
+                map["+"] = oprt_add;
+                map["-"] = oprt_sub;
+                map["<"] = oprt_compless;
+                map[">"] = oprt_compmore;
+                map["="] = oprt_assign;
+                map["&"] = oprt_bitand;
+                map["^"] = oprt_bitexor;
+                map["|"] = oprt_bitor;
+                map["~"] = oprt_opexnot;
+                map[","] = oprt_comma;
+                map[":"] = oprt_casedelim;
+                map["["] = oprt_caseleftgroup;
+                map["]"] = oprt_caserightgroup;
+                map["@"] = oprt_command;
+                map["#"] = oprt_kvit;
+                map["?"] = oprt_condit;
+                map["<<"] = oprt_bitleft;
+                map[">>"] = oprt_bitright;
+                map["=="] = oprt_compeq;
+                map["!="] = oprt_compnoteq;
+                map["<="] = oprt_complessoreq;
+                map[">="] = oprt_compmoreoreq;
+                map["||"] = oprt_logicor;
+                map["&&"] = oprt_logicand;
+                map["++"] = oprt_prefinc;
+                map["--"] = oprt_prefdec;
+                map["''"] = "";
+                map["@@"] = oprt_command1;
+                map["@="] = oprt_commandset;
+                map["\"\""] = "";
+                map["<<<"] = oprt_cyclbitleft;
+                map[">>>"] = oprt_cyclbitright;
+                map["@@="] = oprt_commandset1;
+                map["mod"] = select_mod;
+                map[".mineu"] = select_mineu;
+                map[".maxeu"] = select_maxeu;
+                map[".ack"] = select_ack;
+                map[".alarm"] = select_alarm;
+                map[".nack"] = select_nack;
+                map["ack"] = func_ack;
+                map["alarm"] = func_alarm;
+                map["nack"] = func_nack;
+                map["tags"] = func_tags;
+                map["alarmlevel"] = func_alarmlevel;
+                map[".num"] = select_num;
+                map["num"] = func_num;
+                map[".real"] = select_real;
+                map["real"] = func_real;
+                map[".bool"] = select_bool;
+                map["bool"] = func_bool;
+                map["abs"] = func_abs;
+                map["min"] = func_min;
+                map["max"] = func_max;
+                map["sin"] = func_sin;
+                map["cos"] = func_cos;
+                map["pow"] = func_pow;
+                map["sqrt"] = func_sqrt;
+                map["sqr"] = func_sqr;
+                map["exp"] = func_exp;
+                map["log"] = func_ln;
+                map["ln"] = func_ln;
+                map["log10"] = func_log10;
+                map["tan"] = func_tan;
+                map["acos"] = func_acos;
+                map["asin"] = func_asin;
+                map["atan"] = func_atan;
+                map["format"] = func_format;
+                map[".comment"] = select_comment;
+                map[".binding"] = select_binding;
+                map[".eu"] = select_eu;
+                map[".alarmmsg"] = select_alarmmsg;
+                map[".alarmlevel"] = select_alarmlevel;
+                map["cosh"] = func_cosh;
+                map["sinh"] = func_sinh;
+                map["tanh"] = func_tanh;
+                map["rnd"] = func_rnd;
+                map["floor"] = func_floor;
+                map["seil"] = func_ceiling;
+                map["round"] = func_round;
+                map["e"] = const_e;
+                map["null"] = NULL_DOUBLE;
+                map["nan"] = NULL_DOUBLE;
+                map["pi"] = const_pi;
+                map["incmsc"] = func_incmsc;
+                map["incsec"] = func_incsec;
+                map["incminute"] = func_incminute;
+                map["inchour"] = func_inchour;
+                map["incday"] = func_incday;
+                map["(notype)"] = oper_cast_basetype;
+                map["(num64)"] = oper_cast_num64;
+                map["(unum64)"] = oper_cast_unum64;
+                map["(num32)"] = oper_cast_num32;
+                map["(unum32)"] = oper_cast_unum32;
+                map["(num16)"] = oper_cast_num16;
+                map["(unum16)"] = oper_cast_unum16;
+                map["(num8)"] = oper_cast_num8;
+                map["(unum8)"] = oper_cast_unum8;
+                map["(float)"] = oper_cast_float;
+                map["(double)"] = oper_cast_double;
+                map["(bool)"] = oper_cast_bool;
+                map["(vbool)"] = oper_cast_vbool;
+                map["(time)"] = oper_cast_time;
+                map["(text)"] = oper_cast_text;
+                map["now"] = const_now;
+                map[".time"] = select_time;
+                map[".logtime"] = select_logtime;
+                map[".error"] = select_error;
+                map[".valid"] = select_valid;
+                map[".epoch"] = select_epoch;
+                map[".msc"] = select_msc;
+                map[".sec"] = select_sec;
+                map[".minute"] = select_minute;
+                map[".hour"] = select_hour;
+                map[".day"] = select_day;
+                map[".month"] = select_month;
+                map[".monthdays"] = select_monthdays;
+                map[".year"] = select_year;
+                map[".dayweek"] = select_dayweek;
+                map[".dayyear"] = select_dayyear;
+                map[".epochmsc"] = select_epochmsc;
+                map[".epochday"] = select_epochday;
+                map[".epochhour"] = select_epochhour;
+                map[".epochminute"] = select_epochminute;
+                map[".lastvalue"] = select_lastvalue;
+                return map;}
+
+            static operator_name_map create_names() {
+                name_token_map tmp = create();
+                operator_name_map map;
+                for (name_token_map::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
+                    if ((it->second.operation() != notoperation) && (it->second.operation() != expr)
+                            && (it->second.operation() != constant))
+                        map[it->second.operation()] = it->first;}
+                map[constant] = "{constant}";
+                map[expr] = "{expr}";
+                map[notoperation] = "{not operate}";
+                return map;}} ;
+
+
+        const name_token_map TOKEN_OPERATOR_MAP = name_token_initillizer::create();
+        const operator_name_map OPERATOR_NAME_MAP = name_token_initillizer::create_names();
+
+        calc_token test_operator_token(const std::string& val) {
+            name_token_map::const_iterator it = TOKEN_OPERATOR_MAP.find(val);
+            return  (it != TOKEN_OPERATOR_MAP.end()) ? it->second : calc_token();}
+
+        std::string string_from_operator(calc_operation val) {
+            operator_name_map::const_iterator it = OPERATOR_NAME_MAP.find(val);
+            return (it != OPERATOR_NAME_MAP.end()) ? it->second : "nodef";}
+
+        const_type parseconstype(std::string& val, bool& flt) {
+            flt = false;
+            std::string::size_type posFloat = val.find_last_of("f");
+            if (val.find_first_of(".") != std::string::npos) {
+                flt = (posFloat != std::string::npos);
+                if (posFloat != std::string::npos) {
+                    val = val.substr(0, posFloat);}
+                return real_const;}
+            if (val.find("0b") == 0) {
+                val = val.substr(2);
+                return bin_const;}
+            if (val.find("0x") == 0) {
+                val = val.substr(2);
+                return hex_const;}
+            flt = (posFloat != std::string::npos);
+            if (posFloat != std::string::npos) {
+                val = val.substr(0, posFloat);}
+            if (flt) return real_const;
+            if (((val.find_first_of("0") == 0) && (val.size() > 1))) {
+                val = val.substr(1);
+                return oct_const;}
+            if (flt) return real_const;
+            return dec_const;}
+
+        calc_token test_const_token(std::string val) {
+            boost::regex ex(NUMBER_REGEXTAMPL_EXT);
+            boost::smatch xResults;
+            if (boost::regex_match(val, xResults, ex)) {
+                //DEBUG_STR_VAL_DVNCI(ISNUMERIC_CONST, val)
+                std::string::size_type posLong = val.find_last_of("l");
+                std::string::size_type posUnsign = val.find_last_of("u");
+                std::string::size_type posLongUnsign = val.find_first_of("lu");
+                std::string::size_type posUnsignLong = val.find_first_of("ul");
+                bool isFloat = false;
+                bool isLong = ((posLong != std::string::npos) || (posUnsignLong != std::string::npos) || (posLongUnsign != std::string::npos));
+                bool isUnsign = ((posUnsign != std::string::npos) || (posUnsignLong != std::string::npos) || (posLongUnsign != std::string::npos));
+                if (posLongUnsign != std::string::npos) {
+                    val = val.substr(0, posLongUnsign);}
+                else if (posUnsignLong != std::string::npos) {
+                    val = val.substr(0, posUnsignLong);}
+                else if (posLong != std::string::npos) {
+                    val = val.substr(0, posLong);}
+                else if (posUnsign != std::string::npos) {
+                    val = val.substr(0, posUnsign);}
+
+                //DEBUG_VAL_DVNCI(isLong)
+                //DEBUG_VAL_DVNCI(isUnsign)
+                //DEBUG_VAL_DVNCI(val)
+                switch (parseconstype(val, isFloat)) {
+                    case real_const:{
+                        if (isFloat) {
+                            float tmpfl = 0;
+                            if (str_to(val, tmpfl)) {
+                                return calc_token(tmpfl);}
+                            else {
+                                return calc_token(NULL_DOUBLE);}}
+                        double tmpdbl = NULL_DOUBLE;
+                        str_to(val, tmpdbl);
+                        return calc_token(tmpdbl);}
+                    case bin_const:{
+                        if (isLong) {
+                            if (isUnsign) {
+                                unum64 tmp = 0;
+                                if (binstr_to<unum64 > (val, tmp)) {
+                                    return calc_token(tmp);}}
+                            else {
+                                num64 tmp = 0;
+                                if (binstr_to<num64 > (val, tmp)) {
+                                    return calc_token(tmp);}}}
+                        else {
+                            if (isUnsign) {
+                                unum32 tmp = 0;
+                                if (binstr_to<unum32 > (val, tmp)) {
+                                    return calc_token(tmp);}}
+                            else {
+                                num32 tmp = 0;
+                                if (binstr_to<num32 > (val, tmp)) {
+                                    return calc_token(tmp);}}}
+                        return calc_token(NULL_DOUBLE);}
+                    case oct_const:{
+                        if (isLong) {
+                            if (isUnsign) {
+                                unum64 tmp = 0;
+                                if (octstr_to<unum64 > (val, tmp)) {
+                                    return calc_token(tmp);}}
+                            else {
+                                num64 tmp = 0;
+                                if (octstr_to<num64 > (val, tmp)) {
+                                    return calc_token(tmp);}}}
+                        else {
+                            if (isUnsign) {
+                                unum32 tmp = 0;
+                                if (octstr_to<unum32 > (val, tmp)) {
+                                    return calc_token(tmp);}}
+                            else {
+                                num32 tmp = 0;
+                                if (octstr_to<num32 > (val, tmp)) {
+                                    return calc_token(tmp);}}}
+                        return calc_token(NULL_DOUBLE);}
+                    case hex_const:{
+                        if (isLong) {
+                            if (isUnsign) {
+                                unum64 tmp = 0;
+                                if (hexstr_to<unum64 > (val, tmp)) {
+                                    return calc_token(tmp);}}
+                            else {
+                                num64 tmp = 0;
+                                if (hexstr_to<num64 > (val, tmp)) {
+                                    return calc_token(tmp);}}}
+                        else {
+                            if (isUnsign) {
+                                unum32 tmp = 0;
+                                if (hexstr_to<unum32 > (val, tmp)) {
+                                    return calc_token(tmp);}}
+                            else {
+                                num32 tmp = 0;
+                                if (hexstr_to<num32 > (val, tmp)) {
+                                    return calc_token(tmp);}}}
+                        return calc_token(NULL_DOUBLE);}
+                    case dec_const:{
+                        if (isLong) {
+                            if (isUnsign) {
+                                unum64 tmp = 0;
+                                if (str_to<unum64 > (val, tmp)) {
+                                    return calc_token(tmp);}}
+                            else {
+                                num64 tmp = 0;
+                                if (str_to<num64 > (val, tmp)) {
+                                    return calc_token(tmp);}}}
+                        else {
+                            if (isUnsign) {
+                                unum32 tmp = 0;
+                                if (str_to<unum32 > (val, tmp)) {
+                                    return calc_token(tmp);}}
+                            else {
+                                num32 tmp = 0;
+                                if (str_to<num32 > (val, tmp)) {
+                                    return calc_token(tmp);}}}
+                        return calc_token(NULL_DOUBLE);}
+                    default: calc_token(NULL_DOUBLE);}
+                return calc_token(NULL_DOUBLE);}
+            return calc_token();}
+
+        calc_token test_stringtype_token(const std::string& val) {
+            if (val.size() >= 2) {
+                if (((*val.begin()) == '"') || ((*val.begin()) == '\'')) {
+                    if (((*val.begin()) == '"') && ((*val.rbegin()) == '"')) {
+                        return calc_token(val.substr(1, val.size() - 2));}
+                    if (((*val.begin()) == '\'') && ((*val.rbegin()) == '\'')) {
+                        return calc_token(val.substr(1, val.size() - 2));}
+                    calc_token(NULL_DOUBLE);}}
+            return calc_token();}
 
         std::ostream & operator<<(std::ostream& os, calc_operation oper) {
-                switch (oper) {
-                    case notoperation: return os << "nooper";
-                    case expr: return os << "var";
-                    case constant: return os << "const";
-                    case oprt_leftgroup: return os << "(";          // (  1
-                    case oprt_rightgroup: return os << ")";         // )  1
-                    case oprt_selector: return os << ".";
-                    case oprt_comma: return os << ",";
-                    case select_mineu: return os << "mineu";
-                    case select_maxeu: return os << "maxeu";
-                    case select_ack: return os << "ack";
-                    case select_nack: return os << "nack";
-                    case select_alarm: return os << "alarm";
-                    case func_ack: return os << "func ack";
-                    case func_nack: return os << "func nack";
-                    case func_alarm: return os << "func alarm"; 
-                    case func_alarmlevel: return os << "func_alarmlevel";
-                    case func_tags: return os << "func tags";                    
-                    case select_mod: return os << "sct mod";
-                    case select_num: return os << "sct num";
-                    case func_num: return os << "num";
-                    case select_real: return os << "sct real";
-                    case func_real: return os << "real";
-                    case select_bool: return os << "sct bool";
-                    case func_bool: return os << "bool";
-                    case func_min: return os << "min";
-                    case func_max: return os << "max";
-                    case func_abs: return os << "abs";
-                    case func_sin: return os << "sin";
-                    case func_cos: return os << "cos";
-                    case func_pow: return os << "pow";
-                    case func_sqrt: return os << "sqrt";
-                    case func_sqr: return os << "sqr";
-                    case func_exp: return os << "exp";
-                    case func_ln: return os << "ln";
-                    case func_log10: return os << "log10";
-                    case func_tan: return os << "tan";
-                    case func_acos: return os << "acos";
-                    case func_asin: return os << "asin";
-                    case func_atan: return os << "atan";
-                    case func_cosh: return os << "cosh";
-                    case func_sinh: return os << "sinh";
-                    case func_tanh: return os << "tanh";
-                    case func_rnd: return os << "rnd";
-                    case func_floor: return os << "floor";
-                    case func_ceiling: return os << "seil";
-                    case func_round: return os << "round";
-                    case const_nan: return os << "null";
-                    case const_e: return os << "e";
-                    case const_pi: return os << "pi";
-                    case oprt_opnot: return os << "!";
-                    case oprt_opexnot: return os << "~";
-                    case oprt_add_unary: return os << "unary +";
-                    case oprt_sub_unary: return os << "unary -";
-                    case oper_cast_basetype: return os << "(notype)";
-                    case oper_cast_num64: return os << "(num64)";
-                    case oper_cast_unum64: return os << "(unum64)";
-                    case oper_cast_num32: return os << "(num32)";
-                    case oper_cast_unum32: return os << "(unum32)";
-                    case oper_cast_num16: return os << "(num16)";
-                    case oper_cast_unum16: return os << "(unum16)";
-                    case oper_cast_num8: return os << "(num8)";
-                    case oper_cast_unum8: return os << "(unum8)";
-                    case oper_cast_float: return os << "(float)";
-                    case oper_cast_double: return os << "(double)";
-                    case oper_cast_bool: return os << "(bool)";
-                    case oper_cast_vbool: return os << "(vbool)";
-                    case oper_cast_time: return os << "(time)";
-                    case oper_cast_text: return os << "(text)";
-                    case const_now: return os << "now";
-                    case select_time: return os << ".time";
-                    case select_logtime: return os << ".logtime";
-                    case select_error: return os << ".error";
-                    case select_valid: return os << ".valid";
-                    case select_epoch: return os << ".epoch";
-                    case select_epochmsc: return os << ".epochmsc";
-                    case select_epochminute: return os << ".epochminute";
-                    case select_epochhour: return os << ".epochhour";
-                    case select_epochday: return os << ".epochday";
-                    case select_msc: return os << ".msc";
-                    case select_sec: return os << ".sec";
-                    case select_minute: return os << ".minute";
-                    case select_hour: return os << ".hour";
-                    case select_day: return os << ".day";
-                    case select_month: return os << ".month";
-                    case select_year: return os << ".year";
-                    case select_dayweek: return os << ".dayweek";
-                    case select_dayyear: return os << ".dayyear";
-                    case select_monthdays: return os << ".monthdays";
-                    case select_lastvalue: return os << ".lastvalue";
-                    case oprt_mult: return os << "*";
-                    case oprt_div: return os << "/";
-                    case oprt_modulo: return os << "%";
-                    case oprt_add: return os << "+";
-                    case oprt_sub: return os << "-";
-                    case oprt_bitleft: return os << "<<";
-                    case oprt_bitright: return os << ">>";
-                    case oprt_cyclbitleft: return os << "<<<";
-                    case oprt_cyclbitright: return os << ">>>";
-                    case oprt_compless: return os << "<";
-                    case oprt_complessoreq: return os << "<=";
-                    case oprt_compmore: return os << ">";
-                    case oprt_compmoreoreq: return os << ">=";
-                    case oprt_compeq: return os << "==";
-                    case oprt_compnoteq: return os << "!=";
-                    case oprt_bitand: return os << "&";
-                    case oprt_bitexor: return os << "^";
-                    case oprt_bitor: return os << "|";
-                    case oprt_logicand: return os << "&&";
-                    case oprt_casedelim: return os << ":";
-                    case oprt_caseleftgroup: return os << "[";
-                    case oprt_caserightgroup: return os << "]";
-                    case oprt_logicor: return os << "||";
-                    case oprt_condit: return os << "?";
-                    case oprt_command: return os << "@";
-                    case oprt_commandset: return os << "@=";
-                    case oprt_command1: return os << "@@";
-                    case oprt_commandset1: return os << "@@="; 
-                    case oprt_assign: return os << "="; 
-                    case oprt_kvit: return os << "#";
-                    case oprt_postinc: return os << "post++";
-                    case oprt_postdec: return os << "post--";
-                    case oprt_prefinc: return os << "pref++";
-                    case oprt_prefdec: return os << "pref--";
-                    case func_incmsc: return os << "incmsc";
-                    case func_incsec: return os << "incsec";
-                    case func_incminute: return os << "incminute";
-                    case func_inchour: return os << "inchour";
-                    case func_incday: return os << "incday";
-                    case func_format: return os << "format"; 
-                    case select_comment: return os << "comment";
-                    case select_binding: return os << "binding";
-                    case select_eu: return os << "eu";
-                    case select_alarmmsg: return os << "alarmmsg";
-                    case select_alarmlevel: return os << "alarmlevel";
-                    case oprt_allvalid_unary: return os << "allvld &";}
-                return os << "nodef";}
-
-        
+            return os << string_from_operator(oper);}
 
         tagtype  type_cast(const calc_token& v1, const calc_token& v2) {
             tagtype mintp = v1.type() < v2.type() ? v1.type() : v2.type();
             tagtype maxtp = v1.type() > v2.type() ? v1.type() : v2.type();
             return (mintp == maxtp) ? mintp :
                     ((mintp < EVENT_TYPE_OSC) ?  ((maxtp <= TYPE_DISCRET) ? mintp : TYPE_NODEF) :
-                     (maxtp < REPORTTYPE_YEAR) ?  mintp : TYPE_NODEF);}
+                    (maxtp < REPORTTYPE_YEAR) ?  mintp : TYPE_NODEF);}
 
         calc_token operator+(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
@@ -188,7 +355,7 @@ namespace dvnci {
                 case TYPE_UNUM8:    return (lside.value<unum8 > () + rside.value<unum8 > ());
                 case TYPE_DOUBLE:   return (lside.value<double>() + rside.value<double>());
                 case TYPE_FLOAT:    return (lside.value<float>() + rside.value<float>());
-                case TYPE_TEXT:    return (lside.value<std::string>() + rside.value<std::string>());
+                case TYPE_TEXT:    return (lside.value<std::string > () + rside.value<std::string > ());
                 case TYPE_TM:       return NULL_DOUBLE;}
             return (lside.value<double>() + rside.value<double>());}
 
@@ -421,8 +588,8 @@ namespace dvnci {
                 case TYPE_UNUM16:
                 case TYPE_NUM8:
                 case TYPE_UNUM8:
-                case TYPE_DISCRET:   
-                case TYPE_DOUBLE:    
+                case TYPE_DISCRET:
+                case TYPE_DOUBLE:
                 case TYPE_FLOAT:     return  ((lside.value<bool>()) && (rside.value<bool>()));
                 case TYPE_TM:        return NULL_DOUBLE;}
             return ((lside.value<bool>()) && (rside.value<bool>()));}
@@ -437,8 +604,8 @@ namespace dvnci {
                 case TYPE_UNUM16:
                 case TYPE_NUM8:
                 case TYPE_UNUM8:
-                case TYPE_DISCRET:  
-                case TYPE_DOUBLE:    
+                case TYPE_DISCRET:
+                case TYPE_DOUBLE:
                 case TYPE_FLOAT:    return ((lside.value<bool>()) || (rside.value<bool>()));
                 case TYPE_TM:       return NULL_DOUBLE;}
             return ((lside.value<bool>()) || (rside.value<bool>()));}
@@ -487,9 +654,9 @@ namespace dvnci {
                 case TYPE_NUM8:    return (lside.value<num8 > () ^ rside.value<num8 > ());
                 case TYPE_UNUM8:    return (lside.value<unum8 > () ^ rside.value<unum8 > ());
                 case TYPE_DOUBLE:    return (((lside.value<double>() != 0) && (rside.value<double>() == 0)) ||
-                                             ((lside.value<double>() == 0) && (rside.value<double>() != 0)));
+                            ((lside.value<double>() == 0) && (rside.value<double>() != 0)));
                 case TYPE_FLOAT:    return (((lside.value<float>() != 0) && (rside.value<float>() == 0)) ||
-                                            ((lside.value<float>() == 0) && (rside.value<float>() != 0)));
+                            ((lside.value<float>() == 0) && (rside.value<float>() != 0)));
                 case TYPE_TM:        return NULL_DOUBLE;}
             return (((lside.value<double>() != 0) && (rside.value<double>() == 0)) ||
                     ((lside.value<double>() == 0) && (rside.value<double>() != 0)));}
@@ -572,7 +739,7 @@ namespace dvnci {
                 default: return NULL_DOUBLE;}
             return NULL_DOUBLE;}
 
-          calc_token cycl_operator_btlft(const calc_token& lside, const calc_token& rside) {
+        calc_token cycl_operator_btlft(const calc_token& lside, const calc_token& rside) {
             switch (lside.type()) {
                 case TYPE_DISCRET:{
                     return ((!rside.value<bool>()) && ((lside.value<bool>())));}
@@ -687,7 +854,7 @@ namespace dvnci {
                 case oper_cast_bool:{
                     return value<bool>();}
                 case oper_cast_text:{
-                    return value<std::string>();}
+                    return value<std::string > ();}
                 default:{
                     return value<double>();}}
             return value<double>();}
@@ -730,13 +897,11 @@ namespace dvnci {
             return (lside.value<double>() > rside.value<double>()) ? lside.value<double>() : rside.value<double>();}
 
         datetime calc_token::tm() const {
-            if (type()== TYPE_TM) {
+            if (type() == TYPE_TM) {
                 try {
                     return cast_datetime_fromnum64(value());}
                 catch (...) {}}
             return datetime();}
-
-
 
 
 
