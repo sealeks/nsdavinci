@@ -160,6 +160,8 @@ namespace dvnci {
         for (size_type i = 0; i < count(); ++i) {
             if (!(kvit(i))) {
                 tgbs_ptr->insert_to_journal(now(), operator[](i)->tagid() , msKvit, tgbs_ptr->alarmlevel(tagid(i)));
+				if (tgbs_ptr->exists(operator[](i)->tagid()))
+				    (*tgbs_ptr)[operator[](i)->tagid()]->alarmkvit(true);
                 incversion();
                 operator[](i)->kvit(true);}}
         checkout();}
@@ -169,6 +171,8 @@ namespace dvnci {
         for (size_type i = 0; i < count(); ++i) {
             if ((operator[](i)->agroup() == agrnum) && (!(kvit(i)))) {
                 tgbs_ptr->insert_to_journal(now(), operator[](i)->tagid() , msKvit, tgbs_ptr->alarmlevel(tagid(i)));
+				if (tgbs_ptr->exists(operator[](i)->tagid()))
+				    (*tgbs_ptr)[operator[](i)->tagid()]->alarmkvit(true);
                 incversion();
                 operator[](i)->kvit(true);}}
         checkout();}
@@ -178,6 +182,8 @@ namespace dvnci {
         for (size_type i = 0; i < count(); ++i) {
             if ((operator[](i)->group() == grnum) && (!(kvit(i)))) {
                 tgbs_ptr->insert_to_journal(now(), operator[](i)->tagid() , msKvit, tgbs_ptr->alarmlevel(tagid(i)));
+				if (tgbs_ptr->exists(operator[](i)->tagid()))
+				    (*tgbs_ptr)[operator[](i)->tagid()]->alarmkvit(true);
                 incversion();
                 operator[](i)->kvit(true);}}
         checkout();}
@@ -2531,6 +2537,8 @@ namespace dvnci {
                         break;}
                     default:{
                         if ((setval) || (queue==acNullCommand))
+                            if (logged(id) || alarmed(id) || msged(id))
+                                operator[](id)->valid(0);
                             value_internal(id, val); 
                         if (queue==acNullCommand)
                             return;
