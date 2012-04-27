@@ -4295,7 +4295,7 @@ extension-element-prefixes="mlib">
             
             
             <xsl:attribute name="onmousedown">   
-                <xsl:text>this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,</xsl:text>
+                <xsl:text>if (this.getAttribute('cursor')=='pointer') {this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,</xsl:text>
                 <xsl:value-of select="$x1"/>
                 <xsl:text> ,  </xsl:text> 
                 <xsl:value-of select="$y1"/>
@@ -4324,19 +4324,38 @@ extension-element-prefixes="mlib">
                         <xsl:value-of select="@wait-timeout"/>
                     </xsl:when>   
                 </xsl:choose> 
-                <xsl:text>);</xsl:text>             
+                <xsl:text>);}</xsl:text>             
             </xsl:attribute>  
             
             <xsl:attribute name="onmouseup">   
                 <xsl:text>if (this.hasAttribute('captured'))  this.removeAttribute('captured')</xsl:text>            
             </xsl:attribute> 
             
+            <xsl:call-template name="mlib_slider_cursor"/>
+            
             <xsl:call-template name="apply_mlib_slider_stroke"/>
             
             <xsl:call-template name="apply_mlib_slider_strokewidth"/> 
             
         </use>    
-    </xsl:template>    
+    </xsl:template>  
+    
+    <xsl:template name="mlib_slider_cursor">
+        <xsl:choose>
+            <xsl:when test="not(normalize-space(@param)='')">                                
+                <xsl:attribute name="cursor">
+                    <xsl:text>#{ (</xsl:text>
+                    <xsl:value-of select="@param"/>
+                    <xsl:text>).valid  ? 'pointer' : 'none' :default none }</xsl:text>                            
+                </xsl:attribute>                       
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="cursor">
+                    <xsl:text>none</xsl:text>
+                </xsl:attribute>    
+            </xsl:otherwise> 
+        </xsl:choose>         
+    </xsl:template> 
    
    
     <xsl:template match="//mlib:slider">
@@ -4344,7 +4363,7 @@ extension-element-prefixes="mlib">
             <xsl:call-template name="apply_rect"/>
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
-            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>           
             <xsl:call-template name="apply_mlib_slider_style"/>
             <g>           
                 <rect stroke="white" fill="white" opacity="0.0">
