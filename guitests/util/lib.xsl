@@ -169,7 +169,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    
     <xsl:template name="apply_cental_rotate">    
         <xsl:choose>
-            <xsl:when test="boolean(@rotate) and not(normalize-space(@rotate)='')">
+            <xsl:when test="not(normalize-space(@rotate)='')">
                 <xsl:attribute name="transform">
                     <xsl:text>rotate(</xsl:text>
                     <xsl:value-of select="@rotate"/>
@@ -184,9 +184,124 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     </xsl:template>   
     
     
+    <xsl:template name="apply_lib_fillrectangle"> 
+        <xsl:param name="param"/>
+        <xsl:param name="x"/>
+        <xsl:param name="y"/> 
+        <xsl:param name="width"/>
+        <xsl:param name="height"/> 
+        <xsl:param name="direction"/>
+        <xsl:param name="stroke-width"/> 
+        
+        <xsl:variable name="landsc">
+            <xsl:choose>
+                <xsl:when test="boolean($direction='tb') or boolean($direction='bt')">v</xsl:when> 
+                <xsl:otherwise>h</xsl:otherwise>  
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:choose>
+            <xsl:when test="boolean($direction='bt') or boolean($direction='rl')">      
+                <xsl:attribute name="transform">
+                    <xsl:text>translate(</xsl:text>
+                    <xsl:value-of select="$width"/>
+                    <xsl:text>,</xsl:text>
+                    <xsl:value-of select="$height"/>
+                    <xsl:text>)</xsl:text>
+                    <xsl:text> rotate(</xsl:text>
+                    <xsl:text>180,</xsl:text>
+                    <xsl:value-of select="$x"/>
+                    <xsl:text> , </xsl:text>
+                    <xsl:value-of select="$y"/>
+                    <xsl:text>)</xsl:text>
+                </xsl:attribute>  
+            </xsl:when> 
+        </xsl:choose>            
+                
+        <xsl:attribute name="x">
+            <xsl:value-of select="$x"/>
+        </xsl:attribute>
+        
+        <xsl:attribute name="y">
+            <xsl:value-of select="$y"/>
+        </xsl:attribute>
+        
+        
+        <xsl:choose>
+            <xsl:when test="not(normalize-space(@param)='')">               
+                <xsl:choose>
+                    <xsl:when test="$landsc='h'">
+                        <xsl:attribute name="width">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="$param"/>
+                            <xsl:text> - </xsl:text>
+                            <xsl:value-of select="$param"/>
+                            <xsl:text>.mineu)/</xsl:text>
+                            <xsl:text>(</xsl:text>
+                            <xsl:value-of select="$param"/>
+                            <xsl:text>.maxeu - </xsl:text>
+                            <xsl:value-of select="$param"/>
+                            <xsl:text>.mineu) *</xsl:text>
+                            <xsl:value-of select="$width"/>
+                            <xsl:text>}</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="height">
+                            <xsl:value-of select="$height"/>
+                        </xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="height">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="$param"/>
+                            <xsl:text> - </xsl:text>
+                            <xsl:value-of select="$param"/>
+                            <xsl:text>.mineu)/</xsl:text>
+                            <xsl:text>(</xsl:text>
+                            <xsl:value-of select="$param"/>
+                            <xsl:text>.maxeu - </xsl:text>
+                            <xsl:value-of select="$param"/>
+                            <xsl:text>.mineu) *</xsl:text>
+                            <xsl:value-of select="$height"/>
+                            <xsl:text>}</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="width">
+                            <xsl:value-of select="$width"/>
+                        </xsl:attribute>
+                    </xsl:otherwise>                    
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="width">
+                    <xsl:text>0</xsl:text>
+                </xsl:attribute>
+                <xsl:attribute name="height">
+                    <xsl:text>0</xsl:text>
+                </xsl:attribute>
+            </xsl:otherwise>
+        </xsl:choose> 
+        
+        <xsl:choose>
+            <xsl:when test="not(normalize-space(@stroke-width)='')">
+                <xsl:attribute name="stroke-width">
+                    <xsl:value-of select="$stroke-width"/>
+                </xsl:attribute> 
+            </xsl:when>
+            <xsl:otherwise> 
+                <xsl:text>1</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
+         
+        <xsl:attribute name="stroke">
+            <xsl:text>trasparent</xsl:text>
+        </xsl:attribute> 
+                
+    </xsl:template>   
+    
+    
+    
     <xsl:template name="apply_r">     
         <xsl:choose>
-            <xsl:when test="boolean(@r) and not(normalize-space(@r)='')">
+            <xsl:when test="not(normalize-space(@r)='')">
                 <xsl:attribute name="rx">
                     <xsl:value-of select="@r"/>
                 </xsl:attribute>
@@ -446,6 +561,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             </xsl:attribute> 
         </animate>                
     </xsl:template>
+    
+    
+    
     
     
 </xsl:stylesheet>

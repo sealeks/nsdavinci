@@ -21,7 +21,8 @@ extension-element-prefixes="mlib">
             <xsl:text>../libs/main/maillib.xsd</xsl:text>
         </xsl:attribute-->  
     </xsl:template>
-   
+    
+
      
     
     <!--   
@@ -582,18 +583,7 @@ extension-element-prefixes="mlib">
                         <xsl:with-param name="alarms" select="@alarms"/>
                         <xsl:with-param name="on">1</xsl:with-param>
                         <xsl:with-param name="off">0</xsl:with-param> 
-                    </xsl:call-template>    
-                    <!--animate  attributeType="XML" attributeName="opacity"  dur="500ms" calcMode = "linear" repeatCount="indefinite">
-                        <xsl:attribute name="values">
-                            <xsl:text>#{ ack(</xsl:text>
-                            <xsl:value-of select="@alarms"/>
-                            <xsl:text>) ? '1;1' : </xsl:text>
-                            <xsl:text>( nack(</xsl:text>
-                            <xsl:value-of select="@alarms"/> 
-                            <xsl:text>) ? '0;1' : </xsl:text>
-                            <xsl:text>  '0;0')  :default 0;0 }</xsl:text>
-                        </xsl:attribute> 
-                    </animate-->                      
+                    </xsl:call-template>                      
                 </g>     
             </xsl:when>   
         </xsl:choose>  
@@ -771,6 +761,19 @@ extension-element-prefixes="mlib">
     
     <xsl:template match="//mlib:armatura" >   
         <g>       
+        
+            <xsl:attribute name="desc">
+                <xsl:if test="boolean(@on)">
+                    <xsl:value-of select="@on"/>
+                </xsl:if>
+            </xsl:attribute>
+                    
+            <xsl:attribute name="header">
+                <xsl:if test="boolean(@header)">
+                    <xsl:value-of select="@header"/>
+                </xsl:if>
+            </xsl:attribute> 
+            
             <xsl:call-template name="apply_id"/>
             
             <xsl:call-template name="apply_mlib_schema"/>
@@ -782,19 +785,7 @@ extension-element-prefixes="mlib">
             <!--xsl:call-template  name="apply_visible"/-->
             
             <xsl:call-template name="apply_svg_g_visible"/> 
-                                                                   
-            <xsl:attribute name="desc">
-                <xsl:if test="boolean(@on)">
-                    <xsl:value-of select="@on"/>
-                </xsl:if>
-            </xsl:attribute>
-                    
-            <xsl:attribute name="header">
-                <xsl:if test="boolean(@header)">
-                    <xsl:value-of select="@header"/>
-                </xsl:if>
-            </xsl:attribute>  
-            
+                                                                               
             <xsl:call-template name="apply_mlib_aratura_cursor"/>
                        
             <xsl:call-template name="apply_mlib_aratura_event"/>
@@ -2276,12 +2267,6 @@ extension-element-prefixes="mlib">
     
 
     <xsl:template name="mlib_rect_fillrect">    
-        <xsl:variable name="landsc">
-            <xsl:choose>
-                <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">v</xsl:when> 
-                <xsl:otherwise>h</xsl:otherwise>  
-            </xsl:choose>
-        </xsl:variable>
             
         <rect >
             
@@ -2289,87 +2274,17 @@ extension-element-prefixes="mlib">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_rect_fill</xsl:text>
             </xsl:attribute> 
+                     
+            <xsl:call-template name="apply_lib_fillrectangle"> 
+                <xsl:with-param name="param" select=" @param"/>
+                <xsl:with-param name="x" select=" @x"/>
+                <xsl:with-param name="y" select="@y"/>
+                <xsl:with-param name="width" select="@width"/>
+                <xsl:with-param name="height" select="@height"/>
+                <xsl:with-param name="direction" select=" @direction"/>
+                <xsl:with-param name="stroke-width" select="@stroke-width"/>
+            </xsl:call-template>
              
-            <xsl:choose>
-                <xsl:when test="boolean(@direction='bt') or boolean(@direction='rl')">      
-                    <xsl:attribute name="transform">
-                        <xsl:text>translate(</xsl:text>
-                        <xsl:value-of select="@width"/>
-                        <xsl:text>,</xsl:text>
-                        <xsl:value-of select="@height"/>
-                        <xsl:text>)</xsl:text>
-                        <xsl:text> rotate(</xsl:text>
-                        <xsl:text>180,</xsl:text>
-                        <xsl:value-of select="@x"/>
-                        <xsl:text> , </xsl:text>
-                        <xsl:value-of select="@y"/>
-                        <xsl:text>)</xsl:text>
-                    </xsl:attribute>  
-                </xsl:when> 
-            </xsl:choose>            
-                
-            <xsl:attribute name="x">
-                <xsl:value-of select="@x"/>
-            </xsl:attribute>
-            <xsl:attribute name="y">
-                <xsl:value-of select="@y"/>
-            </xsl:attribute>
-                
-             
-            <xsl:choose>
-                <xsl:when test="$landsc='h'">
-                    <xsl:attribute name="width">
-                        <xsl:text>#{ (</xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text> - </xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>.mineu)/</xsl:text>
-                        <xsl:text>(</xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>.maxeu - </xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>.mineu) *</xsl:text>
-                        <xsl:value-of select="@width"/>
-                        <xsl:text>}</xsl:text>
-                    </xsl:attribute>
-                    <xsl:attribute name="height">
-                        <xsl:value-of select="@height"/>
-                    </xsl:attribute>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:attribute name="height">
-                        <xsl:text>#{ (</xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text> - </xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>.mineu)/</xsl:text>
-                        <xsl:text>(</xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>.maxeu - </xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>.mineu) *</xsl:text>
-                        <xsl:value-of select="@height"/>
-                        <xsl:text>}</xsl:text>
-                    </xsl:attribute>
-                    <xsl:attribute name="width">
-                        <xsl:value-of select="@width"/>
-                    </xsl:attribute>
-                </xsl:otherwise>                    
-            </xsl:choose> 
-                
-                <!-- Direction-->
-                
-            <xsl:choose>
-                <xsl:when test="boolean(@stroke-width)">
-                    <xsl:attribute name="stroke-width">
-                        <xsl:value-of select="@stroke-width"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="stroke">
-                        <xsl:text>trasparent</xsl:text>
-                    </xsl:attribute>
-                </xsl:when>
-            </xsl:choose> 
-                
             <xsl:call-template name="apply_r"/>
                 
             <xsl:call-template name="mlib_fillrect_rectclass"/>
@@ -3639,14 +3554,13 @@ extension-element-prefixes="mlib">
     
     <xsl:template match="//mlib:group">
         <svg>
-            
+            <xsl:attribute name="isgoupelement">
+                <xsl:text>true</xsl:text>
+            </xsl:attribute>
             <xsl:call-template name="apply_rect"/>
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
             <xsl:call-template name="apply_lib_mouseevent"/> 
-            <xsl:attribute name="isgoupelement">
-                <xsl:text>true</xsl:text>
-            </xsl:attribute>
             
             <g>
                 <xsl:call-template name="apply_svg_g_visible_binding"/>          
@@ -3865,11 +3779,12 @@ extension-element-prefixes="mlib">
                 <xsl:text>#</xsl:text>
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sliderbutton[captured="captured"] {         
-                            opacity: 0;}</xsl:text>  
+                            opacity: 0;}
+                </xsl:text>  
                 
                 <xsl:text>
-                    
-                rect.</xsl:text>
+                </xsl:text>
+                <xsl:text>.</xsl:text>
                 <xsl:value-of select="@id"/>
                 <xsl:text>_slider_gradient_class {
                 </xsl:text>
@@ -3947,7 +3862,7 @@ extension-element-prefixes="mlib">
     
                 <xsl:text>
                 </xsl:text>    
-                <xsl:text>rect.</xsl:text>
+                <xsl:text>.</xsl:text>
                 <xsl:value-of select="@id"/>
                 <xsl:text>_slider_gradient_classnone {
                 </xsl:text>
@@ -3967,9 +3882,7 @@ extension-element-prefixes="mlib">
                 </xsl:text>
                 
                 <xsl:text>
-                </xsl:text>    
-                               
-        
+                </xsl:text>                                        
             </style>  
         </defs>                           
     </xsl:template>  
@@ -3999,8 +3912,34 @@ extension-element-prefixes="mlib">
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:attribute>       
-    </xsl:template>    
-       
+    </xsl:template>  
+    
+    
+    <xsl:template name="apply_mlib_slider_sliderrectclass"> 
+        <xsl:attribute name="class">
+            <xsl:choose> 
+                <xsl:when test="not(normalize-space(@param)='')">  
+                    <xsl:text>#{ </xsl:text>
+                    <xsl:text>(</xsl:text>
+                    <xsl:value-of select="@param"/>
+                    <xsl:text>).valid ? '</xsl:text>
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_slider_gradient_class' : '</xsl:text>
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_slider_gradient_classnone' :default </xsl:text>
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_slider_gradient_classnone }</xsl:text>            
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="class">
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_slider_gradient_class</xsl:text>
+                    </xsl:attribute>                      
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:attribute>       
+    </xsl:template>      
+    
     
     <xsl:template name="apply_mlib_slider_sliderrect"> 
         <rect>
@@ -4017,49 +3956,32 @@ extension-element-prefixes="mlib">
                     <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">0.36</xsl:when>
                     <xsl:otherwise>0.9</xsl:otherwise>
                 </xsl:choose>
-            </xsl:variable>
-            
+            </xsl:variable>     
+           
             <xsl:call-template name="apply_parametred_rect">          
-                    <xsl:with-param name="x" select=" @width * (1 - $kw) div 2"/>
-                    <xsl:with-param name="y" select="@height  * (1 - $kh) div 2"/>
-                    <xsl:with-param name="width" select="@width *  $kw "/>
-                    <xsl:with-param name="height" select="@height * $kh"/>
-            </xsl:call-template>              
-
-
-            <xsl:call-template name="apply_mlib_slider_stroke"/>
-            <xsl:call-template name="apply_mlib_slider_strokewidth"/>
-            
-            <xsl:attribute name="class">
-                <xsl:choose> 
-                    <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">  
-                        <xsl:text>#{ </xsl:text>
-                        <xsl:text>(</xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>).valid ? '</xsl:text>
-                        <xsl:value-of select="@id"/>
-                        <xsl:text>_slider_gradient_class' : '</xsl:text>
-                        <xsl:value-of select="@id"/>
-                        <xsl:text>_slider_gradient_classnone' :default </xsl:text>
-                        <xsl:value-of select="@id"/>
-                        <xsl:text>_slider_gradient_classnone }</xsl:text>            
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="class">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_slider_gradient_class</xsl:text>
-                        </xsl:attribute>                      
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
+                <xsl:with-param name="x" select=" @width * (1 - $kw) div 2"/>
+                <xsl:with-param name="y" select="@height  * (1 - $kh) div 2"/>
+                <xsl:with-param name="width" select="@width *  $kw "/>
+                <xsl:with-param name="height" select="@height * $kh"/>
+            </xsl:call-template>  
         
             <xsl:call-template name="apply_r"/>
+            
+            <xsl:call-template name="apply_mlib_slider_sliderrectclass"/>
+            
+            <xsl:call-template name="apply_mlib_slider_stroke"/>
+            <xsl:call-template name="apply_mlib_slider_strokewidth"/>
     
         </rect>
     </xsl:template>
     
     <xsl:template name="apply_mlib_slider_sliderfillrect"> 
         <rect stroke="none">
+            
+            <xsl:attribute name="id">            
+                <xsl:value-of select="@id"/>
+                <xsl:text>_slider_fill</xsl:text>  
+            </xsl:attribute>  
         
             <xsl:variable name="kh">
                 <xsl:choose>
@@ -4075,14 +3997,6 @@ extension-element-prefixes="mlib">
                 </xsl:choose>
             </xsl:variable>
             
-            <xsl:call-template name="apply_parametred_rect">          
-                    <xsl:with-param name="x" select=" @width * (1 - $kw) div 2"/>
-                    <xsl:with-param name="y" select="@height  * (1 - $kh) div 2"/>
-                    <xsl:with-param name="width" select="@width *  $kw "/>
-                    <xsl:with-param name="height" select="@height * $kh"/>
-            </xsl:call-template>  
-            
-            <xsl:call-template name="apply_mlib_slider_strokewidth"/>
             <xsl:attribute name="class">
                 <xsl:choose> 
                     <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">  
@@ -4105,65 +4019,292 @@ extension-element-prefixes="mlib">
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
-        
+            
+            <xsl:call-template name="apply_lib_fillrectangle"> 
+                <xsl:with-param name="param" select=" @param"/>
+                <xsl:with-param name="x" select=" @width * (1 - $kw) div 2"/>
+                <xsl:with-param name="y" select="@height  * (1 - $kh) div 2"/>
+                <xsl:with-param name="width" select="@width *  $kw"/>
+                <xsl:with-param name="height" select="@height * $kh"/>
+                <xsl:with-param name="direction" select=" @direction"/>
+                <xsl:with-param name="stroke-width" select="@stroke-width"/>
+            </xsl:call-template>
+                       
+            <xsl:call-template name="apply_mlib_slider_strokewidth"/>
+            
             <xsl:call-template name="apply_r"/>
     
         </rect>
     </xsl:template> 
     
-   <!-- fillsrect -->
+
    
     
-
-      
+    <xsl:template name="apply_mlib_slider_button"> 
+        <xsl:param name="size"/>
+        <defs>
+            <symbol>
+                <xsl:attribute name="id">            
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_sliderbuttondef</xsl:text>  
+                </xsl:attribute>
+                <circle cx="{$size div 2}" cy="{$size div 2}" r="{$size div 2.2}" stroke="{@stroke}" stroke-width="{@stroke-width}">
+                    <xsl:attribute name="fill">
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space(@slidercolor1)='')"><xsl:value-of select="@slidercolor1"/></xsl:when>
+                            <xsl:otherwise>green</xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                </circle> 
+                <circle cx="{$size div 2}" cy="{$size div 2}" r="{$size div 3}" stroke="{@stroke}" stroke-width="0">
+                    <xsl:attribute name="fill">
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space(@slidercolor2)='')"><xsl:value-of select="@slidercolor2"/></xsl:when>
+                            <xsl:otherwise>red</xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                </circle>                 
+            </symbol>
+        </defs>    
+    </xsl:template>    
     
     
+    <xsl:template name="apply_mlib_slider_buttoncontrol"> 
     
-    <xsl:template name="apply_mlib_slider_sliderparam"> 
-        <circle stroke-width="1" fill="red">
+        <xsl:variable name="kh">
+            <xsl:choose>
+                <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">0.9</xsl:when>
+                <xsl:otherwise>0.36</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+            
+        <xsl:variable name="kw">
+            <xsl:choose>
+                <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">0.36</xsl:when>
+                <xsl:otherwise>0.9</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable> 
+        
+        <xsl:variable name="x1">
+            <xsl:choose>
+                <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">
+                    <xsl:value-of select="@width * 0.5"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@width * (1 - $kw) div 2"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable> 
+        
+        <xsl:variable name="y1">
+            <xsl:choose>
+                <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">
+                    <xsl:value-of select="@height * (1 - $kh) div 2"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@height * 0.5"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable> 
+        
+        <xsl:variable name="x2">
+            <xsl:choose>
+                <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">
+                    <xsl:value-of select="@width * 0.5"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@width *((1 - $kw) div 2 + $kw)"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:variable name="y2">
+            <xsl:choose>
+                <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">
+                    <xsl:value-of select="@height *((1 - $kh) div 2 + $kh)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@height * 0.5"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+ 
+        <xsl:variable name="rev">
+            <xsl:choose>
+                <xsl:when test="boolean(@direction='bt') or boolean(@direction='rl')">r</xsl:when>
+                <xsl:otherwise></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:variable name="buttonsize">
+            <xsl:choose>
+                <xsl:when test="@width &lt; @height">
+                    <xsl:value-of select="@width * 0.5"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@height * 0.8"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+                    
+        <!--line x1="{$x1}" x2="{$x2}" y1="{$y1}" y2="{$y2}" stroke="#003" stroke-width="3" direct="{$rev}"/-->
+        
+        <xsl:call-template name="apply_mlib_slider_button">
+            <xsl:with-param name="size" select="$buttonsize"/>
+        </xsl:call-template>            
+            
+        
+    
+        <use transform="">
+            
             <xsl:attribute name="id">            
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sliderbutton</xsl:text>  
-            </xsl:attribute>  
-            <xsl:attribute name="cy">
-                <xsl:value-of select="@height * 0.5"/>
             </xsl:attribute>
-            <xsl:attribute name="cx">
-                <xsl:choose> 
-                    <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">
-                        <xsl:text>#{ </xsl:text>
-                        <xsl:text>((&#38;</xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text> - </xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>.mineu)/(</xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>.maxeu-</xsl:text>
-                        <xsl:value-of select="@param"/>
-                        <xsl:text>.mineu)  * 0.9 +  0.05) * </xsl:text>
-                        <xsl:value-of select="@width"/>
-                        <xsl:text> :default </xsl:text>
-                        <xsl:value-of select="@width * 0.05"/>
-                        <xsl:text> }</xsl:text>
+            
+            <xsl:attribute name="transform"> 
+                <xsl:text>translate( -</xsl:text>
+                <xsl:value-of select="$buttonsize div 2"/>
+                <xsl:text>, -</xsl:text> 
+                <xsl:value-of select="$buttonsize div 2"/>
+                <xsl:text>)</xsl:text>  
+            </xsl:attribute>
+            
+            <xsl:attribute name="xlink:href"> 
+                <xsl:text>#</xsl:text>
+                <xsl:value-of select="@id"/>
+                <xsl:text>_sliderbuttondef</xsl:text>  
+            </xsl:attribute> 
+            
+            <xsl:attribute name="width">            
+                <xsl:value-of select="$buttonsize"/> 
+            </xsl:attribute>
+            
+            <xsl:attribute name="height">            
+                <xsl:value-of select="$buttonsize"/>   
+            </xsl:attribute>            
+            
+             
+            <xsl:attribute  name="y">
+                <xsl:choose>
+                    <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space(@param)='')">
+                                <xsl:text>#{ </xsl:text>
+                                <xsl:text>(</xsl:text>
+                                <xsl:if test="boolean($rev='r')">
+                                    <xsl:text> 1 - </xsl:text>
+                                </xsl:if>
+                                <xsl:text>(&#38;</xsl:text>
+                                <xsl:value-of select="@param"/>
+                                <xsl:text> - </xsl:text>
+                                <xsl:value-of select="@param"/>
+                                <xsl:text>.mineu)/(</xsl:text>
+                                <xsl:value-of select="@param"/>
+                                <xsl:text>.maxeu-</xsl:text>
+                                <xsl:value-of select="@param"/>
+                                <xsl:text>.mineu)) * </xsl:text>
+                                <xsl:value-of select="$y2 - $y1"/>
+                                <xsl:text> + </xsl:text>
+                                <xsl:value-of select="$y1"/>
+                                <xsl:text> :default </xsl:text>
+                                <xsl:choose>
+                                    <xsl:when test="boolean($rev='r')">
+                                        <xsl:value-of select="$y2"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="$y1"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                                <xsl:text> }</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:choose>
+                                    <xsl:when test="boolean($rev='r')">
+                                        <xsl:value-of select="$y2"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="$y1"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="@width * 0.05"/>
-                    </xsl:otherwise>                  
+                    <xsl:otherwise>                       
+                        <xsl:value-of select="$y1"/>                                            
+                    </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
-            <xsl:call-template name="apply_mlib_slider_stroke"/>
-            <xsl:call-template name="apply_mlib_slider_strokewidth"/>            
+            
+            <xsl:attribute name="x">
+                <xsl:choose>
+                    <xsl:when test="boolean(@direction='tb') or boolean(@direction='bt')">
+                        <xsl:value-of select="$x1"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="(boolean(@param) and not(normalize-space(@param)=''))">
+                                <xsl:text>#{ </xsl:text>
+                                <xsl:text>(</xsl:text>
+                                <xsl:if test="boolean($rev='r')">
+                                    <xsl:text> 1 - </xsl:text>
+                                </xsl:if>
+                                <xsl:text>(&#38;</xsl:text>
+                                <xsl:value-of select="@param"/>
+                                <xsl:text> - </xsl:text>
+                                <xsl:value-of select="@param"/>
+                                <xsl:text>.mineu)/(</xsl:text>
+                                <xsl:value-of select="@param"/>
+                                <xsl:text>.maxeu-</xsl:text>
+                                <xsl:value-of select="@param"/>
+                                <xsl:text>.mineu)) * </xsl:text>
+                                <xsl:value-of select="$x2 - $x1"/>
+                                <xsl:text> + </xsl:text>
+                                <xsl:value-of select="$x1"/>
+                                <xsl:text> :default </xsl:text>
+                                <xsl:choose>
+                                    <xsl:when test="boolean($rev='r')">
+                                        <xsl:value-of select="$x2"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="$x1"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                                <xsl:text> }</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:choose>
+                                    <xsl:when test="boolean($rev='r')">
+                                        <xsl:value-of select="$x2"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="$x1"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:otherwise> 
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>  
+            
             <xsl:attribute name="r">
-                <xsl:value-of select="@height * 0.3"/>
+                <xsl:value-of select="$buttonsize div 2"/>      
             </xsl:attribute>
+            
+            
             <xsl:attribute name="onmousedown">   
                 <xsl:text>this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,</xsl:text>
-                <xsl:value-of select="@width * 0.05"/>
+                <xsl:value-of select="$x1"/>
                 <xsl:text> ,  </xsl:text> 
-                <xsl:value-of select="@x + @width * 0.05"/>
+                <xsl:value-of select="$y1"/>
                 <xsl:text> ,  </xsl:text>
-                <xsl:value-of select="@x + @width * 0.95"/>
-                <xsl:text> , '</xsl:text>
+                <xsl:value-of select="$x2"/>
+                <xsl:text> ,  </xsl:text> 
+                <xsl:value-of select="$y2"/>
+                <xsl:text>, '</xsl:text>
+                <xsl:value-of select="@direction"/>
+                <xsl:text>' </xsl:text>                
+                <xsl:text>, '</xsl:text>
                 <xsl:value-of select="@param"/>
                 <xsl:text>' , </xsl:text>
                 <xsl:choose> 
@@ -4182,11 +4323,17 @@ extension-element-prefixes="mlib">
                     </xsl:when>   
                 </xsl:choose> 
                 <xsl:text>);</xsl:text>             
-            </xsl:attribute>
+            </xsl:attribute>  
+            
             <xsl:attribute name="onmouseup">   
                 <xsl:text>if (this.hasAttribute('captured'))  this.removeAttribute('captured')</xsl:text>            
-            </xsl:attribute>             
-        </circle>    
+            </xsl:attribute> 
+            
+            <xsl:call-template name="apply_mlib_slider_stroke"/>
+            
+            <xsl:call-template name="apply_mlib_slider_strokewidth"/> 
+            
+        </use>    
     </xsl:template>    
    
    
@@ -4202,11 +4349,11 @@ extension-element-prefixes="mlib">
                     <xsl:call-template name="apply_0_0_width_height"/> 
                 </rect>
                 
-                <!--xsl:call-template name="apply_mlib_slider_boundrect"/--> 
-
-                <xsl:call-template name="apply_mlib_slider_sliderrect"/> 
-
-                <xsl:call-template name="apply_mlib_slider_sliderparam"/> 
+                <xsl:call-template name="apply_mlib_slider_sliderrect"/>
+                
+                <xsl:call-template name="apply_mlib_slider_sliderfillrect"/>
+                
+                <xsl:call-template name="apply_mlib_slider_buttoncontrol"/> 
             </g>
         </svg>
     </xsl:template>   

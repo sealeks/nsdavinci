@@ -366,6 +366,8 @@
         <xsd:attribute name="fillenvironment" type="mlib:environment"/>
         <xsd:attribute name="fillcolor1" type="xsd:string"/>
         <xsd:attribute name="fillcolor2" type="xsd:string"/>
+        <xsd:attribute name="slidercolor1" type="xsd:string"/>
+        <xsd:attribute name="slidercolor2" type="xsd:string"/>
         
         <xsd:attribute name="param" type="lib:expression"/>
         <xsd:attribute name="visible-binding" type="lib:expression"/>       
