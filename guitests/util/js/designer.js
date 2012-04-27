@@ -18,6 +18,7 @@ designutil.toolwin = {};
 ///
 
 function designer(doc){ 
+    
     this.instantdocument=doc;
     this.schema=new designutil.componentinfo();
     this.schema.init('../util/lib.xsl');
@@ -224,9 +225,6 @@ designer.prototype.getTransformElement = function(elid){
 }
 
 
-
-
-
 designer.prototype.getTarget = function (ev){
   
     var el = ev.target.correspondingUseElement ? ev.target.correspondingUseElement : ev.target;
@@ -239,16 +237,6 @@ designer.prototype.getTarget = function (ev){
     return ((el==owndoc)) || (!el.getAttribute('id')) ? undefined : el;
 }
 
-designer.prototype.check_is_parent = function (el, self){
-    var tst=el;
-    if ((!tst) || (tst===this.instantdocument.documentElement)) return false;
-    while (tst.parentNode!==this.instantdocument.documentElement){
-        if (tst.parentNode==self)
-            return true;
-        tst=tst.parentNode;
-    }
-    return false;
-}
 
 
 designer.prototype.unicalIdGenerate = function(el, doc, newstr, templt) {
@@ -262,8 +250,7 @@ designer.prototype.unicalIdGenerate = function(el, doc, newstr, templt) {
    
     var fid=tmpl + i;
     while ((doc.getElementById(fid)) || (newstr && newstr[fid]))
-        fid=tmpl+ (++i);
-    
+        fid=tmpl+ (++i);   
     return fid;
 }
 
@@ -287,7 +274,6 @@ designer.prototype.getAttributeList = function(el) {
     else
     {
         var result = [];
-        //if ((!this.selectedElemens ) || (this.selectedElemens.length==0)) return;
         var attrs = [];
         if (this.selectedElemens && this.selectedElemens.length>0){
             for (var j=0; j< this.selectedElemens.length; ++j){
@@ -324,6 +310,21 @@ designer.prototype.getAttributeList = function(el) {
         
     return result;
 };
+
+
+designer.prototype.setFastXAttribute = function(name, val, el){
+    if ((!this.getXname(name)) && (!el)) return false;
+    if (el){
+        var sel = this.getSourseElement(el);
+        if ((!sel) && (!val)) return;
+        sel.setAttribute( name, val);
+        return;
+    }
+    if ((!this.selectedElemens ) || (this.selectedElemens.length==0)){
+        this.setAttributeValue(name,val, this.instantdocument.documentElement, true);
+        this.updateRoot();
+    }
+}
 
 
 
@@ -371,13 +372,12 @@ designer.prototype.setAttributeValue = function(name, val, el){
     }
     if ((!this.selectedElemens ) || (this.selectedElemens.length==0)){
         this.setAttributeValue(name,val, this.instantdocument.documentElement, true);
-        this.updateroot();
+        this.updateRoot();
     }
     else{
     for (var j=0; j< this.selectedElemens.length; ++j){
         this.setAttributeValue(name,val, this.selectedElemens[j], true);
-    }}
-  
+    }} 
 }
 
 
@@ -386,9 +386,7 @@ designer.prototype.setProperty = function(nm, val){
     this.updateElement();
     this.setNeedSave();
     designutil.toolwin.setMainWindowToolStatus(1);
-    this.show_property();
-    
-    
+    this.show_property();      
 }    
 
 
@@ -578,7 +576,7 @@ designer.prototype.updateElement = function(el){
    
 }
 
-designer.prototype.updateroot = function(){
+designer.prototype.updateRoot = function(){
         var el = this.instantdocument.documentElement;
         var tel = this.sourseDocument.documentElement;
         if (tel.getAttribute('style')!=el.getAttribute('style'))
@@ -770,34 +768,6 @@ designer.prototype.clearSelections = function (){
         event.stopPropagation();
 }
 
-
-
-// очистка выделения элемента
-designer.prototype.clearSelection = function(el){
-    if (this.selectedElemens!=null)
-        for (var i=0;i < this.selectedElemens.length;++i)
-            if (this.selectedElemens[i]==el){
-                var old = this.selectedElemens[i].oldcomonentclass;
-                this.selectedElemens[i].setAttribute('class', old ? old : null);
-                this.selectedElemens.splice(i,1);
-                break;
-            }
-}
-
-designer.prototype.changeRect = function(x, y, width , height, el){
-    var sel = this.getSourseElement(el);
-    if (sel){
-        var xnmame = this.getXname(sel);
-        var ynmame = this.getYname(sel);
-        this.setElementRect( ((x && xnmame && xnmame!='d') ? parseFloat(sel.getAttribute(xnmame)) + x : x) ,
-            ((y && ynmame && ynmame!='d') ? parseFloat(sel.getAttribute(ynmame)) + y : y) ,
-            (width && this.getWname(sel) ? parseFloat(sel.getAttribute(this.getWname(sel))) + width : width) ,
-            (height && this.getHname(sel)? parseFloat(sel.getAttribute(this.getHname(sel))) + height : height) , el);
-    }
-}
- 
-
-
 designer.prototype.isSelection = function(el){
     if (el && this.selectedElemens) {
         for (var j=0; j< this.selectedElemens.length; ++j)
@@ -834,6 +804,36 @@ designer.prototype.resetSelectedClass = function(el){
     if (el.oldcomonentclass)
         el.setAttribute('class',el.oldcomonentclass);
 }
+
+
+
+// очистка выделения элемента
+designer.prototype.clearSelection = function(el){
+    if (this.selectedElemens!=null)
+        for (var i=0;i < this.selectedElemens.length;++i)
+            if (this.selectedElemens[i]==el){
+                var old = this.selectedElemens[i].oldcomonentclass;
+                this.selectedElemens[i].setAttribute('class', old ? old : null);
+                this.selectedElemens.splice(i,1);
+                break;
+            }
+}
+
+
+
+designer.prototype.changeRect = function(x, y, width , height, el){
+    var sel = this.getSourseElement(el);
+    if (sel){
+        var xnmame = this.getXname(sel);
+        var ynmame = this.getYname(sel);
+        this.setElementRect( ((x && xnmame && xnmame!='d') ? parseFloat(sel.getAttribute(xnmame)) + x : x) ,
+            ((y && ynmame && ynmame!='d') ? parseFloat(sel.getAttribute(ynmame)) + y : y) ,
+            (width && this.getWname(sel) ? parseFloat(sel.getAttribute(this.getWname(sel))) + width : width) ,
+            (height && this.getHname(sel)? parseFloat(sel.getAttribute(this.getHname(sel))) + height : height) , el);
+    }
+}
+ 
+
  
     
 // обработчики событий   
@@ -851,7 +851,7 @@ designer.prototype.onmosnopropogate = function (){
 designer.prototype.click_component = function(){
     var el= this.getTarget(event);
     designutil.toolwin.setCurrentRedactor(window);
-    this.select_component(el, event.shiftKey, event.ctrlKey);
+    this.selectComponent(el, event.shiftKey, event.ctrlKey);
     event.stopPropagation();
 }
 
@@ -896,7 +896,7 @@ designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
 }
 
 /*выделение элемента*/
-designer.prototype.select_component = function(el, shift, ctnrl){
+designer.prototype.selectComponent = function(el, shift, ctnrl){
     if (this.selectedElemens==null){
         this.selectedElemens = [];
     }
