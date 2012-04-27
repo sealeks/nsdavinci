@@ -488,7 +488,7 @@ mainlib.graph_click =  function (nm){
 }
 
 
-mainlib.create_shadow_slider =  function (el, x, minx, maxx, tag, live, wait){
+mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag, live, wait){
     
     var parent=el.parentNode;
     
@@ -504,12 +504,23 @@ mainlib.create_shadow_slider =  function (el, x, minx, maxx, tag, live, wait){
 
     el.movelement = dupl;
     
-    dupl.minx =minx;
-    dupl.maxx =maxx;
+    dupl.minx =x1;
+    dupl.maxx =x2;
+    dupl.miny =y1;
+    dupl.maxy =x1;
     
     dupl.startx =event.x ;
+    dupl.starty =event.y;
     
-    dupl.startcx =parseInt(dupl.getAttribute('cx'));
+    dupl.startcx =parseInt(dupl.getAttribute('x'));
+    dupl.startcy =parseInt(dupl.getAttribute('y'));
+    
+    dupl.reverse =(direction=='rl') || (direction=='bt');
+    dupl.vertical =(direction=='tb') || (direction=='bt');
+    
+    dupl.lengthline = dupl.vertical ? (dupl.maxy - dupl.miny) : (dupl.maxx - dupl.minx);
+    
+    parent.appendChild(dupl);
     
     var selfremove = function(){
         parent.onmousemove=undefined;
@@ -523,6 +534,37 @@ mainlib.create_shadow_slider =  function (el, x, minx, maxx, tag, live, wait){
             el.movelement=undefined;
         }
     }
+    
+    dupl.onmousemove = function(ev){
+        var newv = dupl.vertical ? ev.y - dupl.starty : ev.x - dupl.startx;
+        if (newv){
+            var newval = (dupl.vertical ? dupl.startcy  : dupl.startcx) + newv;
+            dupl.setAttribute(dupl.vertical ? 'y' : 'x' ,newval);
+        if (live){
+            var cmdlength = dupl.vertical ? (dupl.reverse ? dupl.maxy - newval:  newval - dupl.miny) 
+                                          : (dupl.reverse ? dupl.maxx - newval: newval - dupl.minx);
+            command(cmdlength/dupl.lengthline);}
+        }  
+    }
+    
+    dupl.onmouseup=function(ev){
+        var newv = dupl.vertical ? ev.y - dupl.starty : ev.x - dupl.startx;
+        if (newv){            
+            //console.log('dupl.onmouseup');
+            var newval = (dupl.vertical ? dupl.startcy  : dupl.startcx) + newv;
+            var cmdlength = dupl.vertical ? (dupl.reverse ? dupl.maxy - newval:  newval - dupl.miny) 
+                                          : (dupl.reverse ? dupl.maxx - newval: newval - dupl.minx);
+            command(cmdlength/dupl.lengthline);
+            setTimeout(function() {
+                selfremove();
+                el.onmouseup();
+            }, (wait && parseInt(wait)) ? wait : 1000  );
+        }
+        else{
+            selfremove();
+            el.onmouseup();
+        }
+    }    
   
     
     
@@ -544,35 +586,7 @@ parent.onmousemove = function(ev){
         ev.stopPropagation();
     }
 }    
-    
-parent.appendChild(dupl);
-    
-    dupl.onmouseup=function(ev){
-        var newx =ev.x - dupl.startx;
-        if (newx){            
-            //console.log('dupl.onmouseup');
-            var newval = dupl.startcx + newx;
-            command((newval-x)/(dupl.maxx - dupl.minx));
-            setTimeout(function() {
-                selfremove();
-                el.onmouseup();
-            }, (wait && parseInt(wait)) ? wait : 1000  );
-        }
-        else{
-            selfremove();
-            el.onmouseup();
-        }
-    }
-    
-dupl.onmousemove = function(ev){
-    var newx =ev.x - dupl.startx;
-    if (newx){
-        var newval = dupl.startcx + newx;
-        dupl.setAttribute('cx',newval);
-        if (live)
-            command((newval-20)/(dupl.maxx - dupl.minx));
-    }  
-}
+
     
 parent.onmouseout = function(ev){
 

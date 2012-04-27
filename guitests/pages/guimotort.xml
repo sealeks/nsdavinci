@@ -2,6 +2,6 @@
 <svg:svg xmlns="http://www.w3.org/2000/svg"  xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" 
         width="100%" height="100%" style="background-image: url('../util/css/res/bgrd2.png');">
        
-<!--mlib:slider x="1133" y="242" height="15" width="400" id="slider0" param="m1::h1" r="2" environment="water" color1="#999" color2="#FFF" stroke="" stroke-width="0.5" gradient-type="lr" wait-timeout="2000"/-->
-<mlib:sensor x="704" y="119" height="30" width="30" stroke="#001" stroke-width="1" r="15" id="name11" environment="water" param="m1::h1" fontstyle="fill: #111; font-size: 11; font-weight: bold;" sensorevent="valueset" rotate="" color1="" color2="" gradient-type="c" alighn="center"  alarms-low="m1::c1" alarms-high="m1::c2"/>
+<mlib:slider x="81" y="51" height="20" width="400" id="slider0" param="m1::h1" r="2" environment="water" color1="#888" color2="#111" stroke="" stroke-width="0.5" gradient-type="lr" wait-timeout="5000" live-command="set" direction="" fillenvironment="gaz" slidercolor1="gray"/>
+<mlib:slider x="355" y="106" height="400" width="20" id="slider1" param="m1::h1" r="2" environment="water" color1="#888" color2="#111" stroke="" stroke-width="0.5" gradient-type="lr" wait-timeout="5000" live-command="set" direction="tb" fillenvironment="gaz" slidercolor1="gray"/>
 </svg:svg> 

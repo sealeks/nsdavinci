@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="../util/css/libs.css"?>
-<svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-image: url('../util/css/res/bgrd2.png');" viewBox="0 0 6000 3000" preserveAspectRatio="none" onload="libutil.startup.init()" version="1.1">
+<svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-image: url('../util/css/res/bgrd2.png');" onload="libutil.startup.init()" version="1.1">
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../util/js/libutil.js"/>
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../util/js/designer.js"/>
 	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../libs/main/js/mainlib.js"/>
@@ -201,32 +201,74 @@
 			<stop offset="1" style="stop-color:#FF00FF"/>
 		</radialGradient>
 	</defs>
-	<svg xmlns:html="http://www.w3.org/TR/xhtml1" x="1133" y="242" height="15" width="400" id="slider0">
+	<svg xmlns:html="http://www.w3.org/TR/xhtml1" x="81" y="51" height="20" width="400" id="slider0">
 		<defs>
 			<linearGradient x2="100%" y2="100%" id="slider0_slider_gradient" x1="100%" y1="0%">
-				<stop offset="0" stop-color="#999"/>
-				<stop offset="0.5" stop-color="#FFF"/>
-				<stop offset="1" stop-color="#999"/>
+				<stop offset="0" stop-color="#888"/>
+				<stop offset="0.5" stop-color="#111"/>
+				<stop offset="1" stop-color="#888"/>
 			</linearGradient>
 			<style type="text/css">
                 #slider0_sliderbutton[captured="captured"] {         
                             opacity: 0;}
-                    
-                rect.slider0_slider_gradient_class {
+                
+                .slider0_slider_gradient_class {
                 fill : url(#slider0_slider_gradient);}
                           
                 #slider0_slider_fill {
-                fill : url(#gradientblack_h);}
+                fill : url(#gradientgaz_h);}
                         
-                rect.slider0_slider_gradient_classnone {
+                .slider0_slider_gradient_classnone {
                 fill : url(#gradientnone_h);}
                 
                 </style>
 		</defs>
 		<g>
-			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="15" width="400"/>
-			<rect x="20" y="5.4" height="4.2" width="360" stroke="#000" stroke-width="0.5" class="#{ (m1::h1).valid ? 'slider0_slider_gradient_class' : 'slider0_slider_gradient_classnone' :default slider0_slider_gradient_classnone }" rx="2" ry="2"/>
-			<circle fill="red" id="slider0_sliderbutton" cy="7.5" cx="#{ ((&amp;m1::h1 - m1::h1.mineu)/(m1::h1.maxeu-m1::h1.mineu)  * 0.9 +  0.05) * 400 :default 20 }" stroke="#000" stroke-width="0.5" r="4.5" onmousedown="this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,20 ,  1153 ,  1513 , 'm1::h1' , false , 2000);" onmouseup="if (this.hasAttribute('captured'))  this.removeAttribute('captured')"/>
+			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="20" width="400"/>
+			<rect x="20" y="6.4" height="7.2" width="360" rx="2" ry="2" class="#{ (m1::h1).valid ? 'slider0_slider_gradient_class' : 'slider0_slider_gradient_classnone' :default slider0_slider_gradient_classnone }" stroke="#000" stroke-width="0.5"/>
+			<rect id="slider0_slider_fill" class="#{ (m1::h1).valid ? 'slider0_slider_gradient_class' : 'slider0_slider_gradient_classnone' :default slider0_slider_gradient_classnone }" x="20" y="6.4" width="#{ (m1::h1 - m1::h1.mineu)/(m1::h1.maxeu - m1::h1.mineu) *360}" height="7.2" stroke="trasparent" stroke-width="0.5" rx="2" ry="2"/>
+			<defs>
+				<symbol id="slider0_sliderbuttondef">
+					<circle cx="5" cy="5" r="5" stroke="" stroke-width="0.5" fill="gray"/>
+					<circle cx="5" cy="5" r="3.33333333333333" stroke="" stroke-width="0.5" fill="red"/>
+				</symbol>
+			</defs>
+			<use id="slider0_sliderbutton" transform="translate( -5, -5)" xlink:href="#slider0_sliderbuttondef" width="10" height="10" y="10" x="#{ ((&amp;m1::h1 - m1::h1.mineu)/(m1::h1.maxeu-m1::h1.mineu)) * 360 + 20 :default 20 }" r="5" onmousedown="this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,20 ,  10 ,  380 ,  10, '' , 'm1::h1' , false , 5000);" onmouseup="if (this.hasAttribute('captured'))  this.removeAttribute('captured')" stroke="#000" stroke-width="0.5"/>
+		</g>
+	</svg>
+	<svg xmlns:html="http://www.w3.org/TR/xhtml1" x="355" y="106" height="400" width="20" id="slider1">
+		<defs>
+			<linearGradient x2="100%" y2="100%" id="slider1_slider_gradient" x1="0%" y1="100%">
+				<stop offset="0" stop-color="#888"/>
+				<stop offset="0.5" stop-color="#111"/>
+				<stop offset="1" stop-color="#888"/>
+			</linearGradient>
+			<style type="text/css">
+                #slider1_sliderbutton[captured="captured"] {         
+                            opacity: 0;}
+                
+                .slider1_slider_gradient_class {
+                fill : url(#slider1_slider_gradient);}
+                          
+                #slider1_slider_fill {
+                fill : url(#gradientgaz_v);}
+                        
+                .slider1_slider_gradient_classnone {
+                fill : url(#gradientnone_v);}
+                
+                </style>
+		</defs>
+		<g>
+			<rect stroke="white" fill="white" opacity="0.0" x="0" y="0" height="400" width="20"/>
+			<rect x="6.4" y="20" height="360" width="7.2" rx="2" ry="2" class="#{ (m1::h1).valid ? 'slider1_slider_gradient_class' : 'slider1_slider_gradient_classnone' :default slider1_slider_gradient_classnone }" stroke="#000" stroke-width="0.5"/>
+			<rect id="slider1_slider_fill" class="#{ (m1::h1).valid ? 'slider1_slider_gradient_class' : 'slider1_slider_gradient_classnone' :default slider1_slider_gradient_classnone }" x="6.4" y="20" height="#{ (m1::h1 - m1::h1.mineu)/(m1::h1.maxeu - m1::h1.mineu) *360}" width="7.2" stroke="trasparent" stroke-width="0.5" rx="2" ry="2"/>
+			<defs>
+				<symbol id="slider1_sliderbuttondef">
+					<circle cx="5" cy="5" r="5" stroke="" stroke-width="0.5" fill="gray"/>
+					<circle cx="5" cy="5" r="3.33333333333333" stroke="" stroke-width="0.5" fill="red"/>
+				</symbol>
+			</defs>
+			<use id="slider1_sliderbutton" transform="translate( -5, -5)" xlink:href="#slider1_sliderbuttondef" width="10" height="10" y="#{ ((&amp;m1::h1 - m1::h1.mineu)/(m1::h1.maxeu-m1::h1.mineu)) * 360 + 20 :default 20 }" x="10" r="5" onmousedown="this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,10 ,  20 ,  10 ,  380, 'tb' , 'm1::h1' , false , 5000);" onmouseup="if (this.hasAttribute('captured'))  this.removeAttribute('captured')" stroke="#000" stroke-width="0.5"/>
 		</g>
 	</svg>
 </svg:svg>
