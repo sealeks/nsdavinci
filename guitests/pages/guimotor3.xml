@@ -56,7 +56,7 @@
     <mlib:group x="1122" y="137" height="65" width="65" id="group1" translate-x="" translate-y="" rotate-x="32" rotate-y="32" rotate-angle="45" rotate-angle-binding="" scale="1" onclick="$$('m1::c1 @ 1');">
         <svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M20,10h 25 l -25,50 h 25 l -25, -50" stroke-width="1" stroke="black" fill="green" id="path5" filter="filter2"/>
     </mlib:group>
-    <svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M534,500l 100,170 100,-170z" stroke-width="2" stroke="green" fill="red" id="path6" filter=""/>
+    <svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M89,492l 100,170 100,-170z" stroke-width="2" stroke="green" fill="red" id="path6" filter=""/>
     <mlib:group x="1313" y="138" height="75" width="74" id="group0" translate-x="" translate-y="" rotate-x="32" rotate-y="32" rotate-angle="" rotate-angle-binding="" scale="">
         <svg:path xmlns:svg="http://www.w3.org/2000/svg" d=" M23,15h 25 l -25,50 h 25 l -25, -50" stroke-width="1" stroke="black" fill="" id="path3" filter=""/>
     </mlib:group>

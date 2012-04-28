@@ -417,111 +417,87 @@ designer.prototype.getHname =  function (el){
 }
 
 
-designer.prototype.getDX =  function (el){
+
+
+
+designer.prototype.getDXinfo =  function (el){
     if (el.hasAttribute('d')) {
         var dpath = el.getAttribute('d');
-        var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
+        var fnd = dpath.match(/\s*M[\-0-9\s\.\,]+/);
         if (fnd && (fnd.length>0))  {   
             var dpath_strt = dpath.substring(0,fnd[0].length);
             var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
-            fnd = dpath_strt.match(/\s*M\s*[0-9\.]+/);
+            fnd = dpath_strt.match(/\s*M\s*[\-0-9\.]+/);
             if (fnd && (fnd.length>0))  {
                 dpath_stp = dpath_strt.substring(fnd[0].length, dpath_strt.length ) + dpath_stp;
-                fnd = dpath_strt.match(/\s*M\s*(?=[0-9\.]+)/);
+                fnd = dpath_strt.match(/\s*M\s*(?=[\-0-9\.]+)/);
                 if (fnd && (fnd.length>0))  {
                     var dpath_val = dpath_strt.substring(fnd[0].length, dpath_strt.length );
                     dpath_strt = dpath_strt.substring(0,fnd[0].length);
-                    fnd = dpath_val.match(/\s*(?=([0-9\.])+)/);
+                    fnd = dpath_val.match(/\s*(?=([\-0-9\.])+)/);
                     if (fnd && (fnd.length>0))  {                    
                         dpath_val = dpath_val.substring(fnd[0].length, dpath_val.length );
-                        fnd = dpath_val.match(/\s*[0-9\.]*/);
+                        fnd = dpath_val.match(/\s*[\-0-9\.]*/);
                         if (fnd && (fnd.length>0))  { 
                             dpath_val = dpath_val.substring(0, fnd[0].length);
-                            return parseFloat(dpath_val);
+
+                               console.log( 'X get d: ' + dpath + ' start: ' + dpath_strt + ' y: ' + dpath_val + ' stop: ' + dpath_stp); 
+                               return {
+                                   'start' : dpath_strt,
+                                   'x' : dpath_val,
+                                   'stop' :  dpath_stp
+                                   
+                               };
                         }
                     }
                 }                                       
             }
         }
     };
+    return null;
+}
+
+designer.prototype.getDXval =  function (el){
+    if (el.hasAttribute('d')) {
+        try{
+        var dpathinfo = this.getDXinfo(el);
+        if (dpathinfo)
+            return parseFloat(dpathinfo.x);}
+        catch(error){}
+    }
     return null;
 }
 
 designer.prototype.setDXval =  function (el , x){
-    if (el.hasAttribute('d') && x && !(x==0)) {
-        var dpath = el.getAttribute('d');
-        var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
-        if (fnd && (fnd.length>0))  {   
-            var dpath_strt = dpath.substring(0,fnd[0].length);
-            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
-            fnd = dpath_strt.match(/\s*M\s*[0-9\.]+/);
-            if (fnd && (fnd.length>0))  {
-                dpath_stp = dpath_strt.substring(fnd[0].length, dpath_strt.length ) + dpath_stp;
-                fnd = dpath_strt.match(/\s*M\s*(?=[0-9\.]+)/);
-                if (fnd && (fnd.length>0))  {
-                    var dpath_val = dpath_strt.substring(fnd[0].length, dpath_strt.length );
-                    dpath_strt = dpath_strt.substring(0,fnd[0].length);
-                    fnd = dpath_val.match(/\s*(?=([0-9\.])+)/);
-                    if (fnd && (fnd.length>0))  {                    
-                        dpath_val = dpath_val.substring(fnd[0].length, dpath_val.length );
-                        fnd = dpath_val.match(/\s*[0-9\.]*/);
-                        if (fnd && (fnd.length>0))  { 
-                            dpath_val = dpath_val.substring(0, fnd[0].length);
-                            try{
-                               var newpath = dpath_strt + (x).toString() + dpath_stp;
-                               return newpath;
-                            }
-                            catch(error){}
-                        }
-                    }
-                }                                       
-            }
-        }
-    };
-    return null;
+    if (el.hasAttribute('d')) {
+        var dpathinfo = this.getDXinfo(el);
+        if (dpathinfo)
+            el.setAttribute('d', dpathinfo.start + (x).toString() + dpathinfo.stop);
+    }
 }
 
 
-designer.prototype.getDY =  function (el){
+designer.prototype.getDYinfo =  function (el){
     if (el.hasAttribute('d')){
         var dpath = el.getAttribute('d');
-        var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
+        var fnd = dpath.match(/\s*M[\-0-9\s\.\,]+/);
         if (fnd && (fnd.length>0))  {   
             var dpath_strt = dpath.substring(0,fnd[0].length);
             var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
-            fnd = dpath_strt.match(/\s*M\s*[0-9\.]+(\s|\,)/);
+            fnd = dpath_strt.match(/\s*M\s*[\-0-9\.]+(\s|\,)/);
             if (fnd && (fnd.length>0))  {
                 var dpath_val = dpath_strt.substring(fnd[0].length);
                 dpath_strt = dpath_strt.substring(0,fnd[0].length);
-                fnd = dpath_val.match(/[0-9\.]+/);
-                if (fnd && (fnd.length>0))  {                    
-                    dpath_val = fnd[0];
-                    return parseFloat(dpath_val);
-                }
-            }
-        }
-    };
-    return null;
-}
-
-
-designer.prototype.setDYval =  function (el , y){
-    if (el.hasAttribute('d') && y && !(y==0)){
-        var dpath = el.getAttribute('d');
-        var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
-        if (fnd && (fnd.length>0))  {   
-            var dpath_strt = dpath.substring(0,fnd[0].length);
-            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
-            fnd = dpath_strt.match(/\s*M\s*[0-9\.]+(\s|\,)/);
-            if (fnd && (fnd.length>0))  {
-                var dpath_val = dpath_strt.substring(fnd[0].length);
-                dpath_strt = dpath_strt.substring(0,fnd[0].length);
-                fnd = dpath_val.match(/[0-9\.]+/);
+                fnd = dpath_val.match(/[\-0-9\.]+/);
                 if (fnd && (fnd.length>0))  {                    
                     dpath_val = fnd[0];
                     try{
-                        var newpath = dpath_strt + (y).toString() + dpath_stp; 
-                        return newpath;
+                        return {
+                            'start' : dpath_strt,
+                            'y' : dpath_val,
+                            'stop' :  dpath_stp
+                                   
+                        };
                     }
                     catch(error){}
                 }
@@ -531,17 +507,37 @@ designer.prototype.setDYval =  function (el , y){
     return null;
 }
 
+designer.prototype.getDYval =  function (el){
+    if (el.hasAttribute('d')) {
+        try{
+        var dpathinfo = this.getDYinfo(el);
+        if (dpathinfo)
+            return parseFloat(dpathinfo.y);}
+        catch(error){}
+    }
+    return null;
+}
+
+
+designer.prototype.setDYval =  function (el , y){
+    if (el.hasAttribute('d') && y) {
+        var dpathinfo = this.getDYinfo(el);
+        if (dpathinfo)
+            el.setAttribute('d', dpathinfo.start + (y).toString() + dpathinfo.stop);
+    }
+}
+
 designer.prototype.setElementRect = function(x, y, width, height , el){
     if (el){
         var sel = this.getSourseElement(el);
         if (!sel) return;
         if (x && this.getXname(sel)){
             switch(this.getXname(sel)){
-            case 'd': {var dx = this.setDXval(sel, x);if (dx) sel.setAttribute( 'd', dx);break;}   
+            case 'd': {this.setDXval( sel, x);break;}   
             default:sel.setAttribute( this.getXname(sel), x);}}
         if (y && this.getYname(sel)){
             switch(this.getYname(sel)){
-            case 'd': {var dy = this.setDYval(sel, y);if (dy) sel.setAttribute( 'd', dy);break;}   
+            case 'd': {this.setDYval( sel, y);break;}   
             default:sel.setAttribute( this.getYname(sel), y);}}
         if (width && this.getWname(sel))
             sel.setAttribute( this.getWname(sel) , width);
@@ -826,8 +822,8 @@ designer.prototype.changeRect = function(x, y, width , height, el){
     if (sel){
         var xnmame = this.getXname(sel);
         var ynmame = this.getYname(sel);
-        this.setElementRect( ((x && xnmame && xnmame!='d') ? parseFloat(sel.getAttribute(xnmame)) + x : x) ,
-            ((y && ynmame && ynmame!='d') ? parseFloat(sel.getAttribute(ynmame)) + y : y) ,
+        this.setElementRect( ((x && xnmame && xnmame!='d') ? parseFloat(sel.getAttribute(xnmame)) + x : parseFloat(this.getDXval(sel)) + x) ,
+            ((y && ynmame && ynmame!='d') ? parseFloat(sel.getAttribute(ynmame)) + y : parseFloat(this.getDYval(sel)) + y) ,
             (width && this.getWname(sel) ? parseFloat(sel.getAttribute(this.getWname(sel))) + width : width) ,
             (height && this.getHname(sel)? parseFloat(sel.getAttribute(this.getHname(sel))) + height : height) , el);
     }
