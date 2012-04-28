@@ -338,7 +338,7 @@ libutil.project.add_design_style  = function(doc){
         var dstyle = ".designer_selected { opacity: 0.8; outline: 1px solid red;} \n"+
         "*[isgoupelement]{ outline: 1px dashed green; } \n"+
         "*[isgoupelement].designer_selected { opacity: 0.8; outline: 1px solid red;}\n"+
-        "g[dv-visible] { display: block !important;} \n";;
+        "*[dv-visible] { display: block !important;} \n";;
     }
     libutil.html.create_style(doc.documentElement, dstyle);              
 }
@@ -1400,7 +1400,8 @@ libutil.dom.writeDoc = function (doc){
 libutil.validator.expresssion = function(val) {
     if ((val==undefined) || (val=='') || (val==null))  return undefined;
     var error = $$error(val);
-    return (error==undefined) ? undefined : (error==0);
+    var test = $$(val);
+    return ((error==undefined) || (test==undefined)) ? undefined : (error==0);
     
 }
 
