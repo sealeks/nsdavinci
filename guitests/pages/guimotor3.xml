@@ -5,7 +5,7 @@
        
     
     
-    <svg:circle cx="914" cy="232" r="50" id="circle2"/><mlib:rect x="738" y="430" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" id="name8"/>
+    <svg:circle cx="914" cy="232" r="50" id="circle2" visible-binding="m1::c1"/><mlib:rect x="738" y="430" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" id="name8"/>
     <mlib:armatura x="389" y="65" height="54" width="59" id="name21" on="m1::c1" environment="gaz" ron="m1::c1" type="cvalve" alarms="" off="m1::c2" local="m1::c3" auto="m1::c4" control="" roff="m1::c2" rauto="m1::c4" header="L" don="m1::c5" doff="m1::c6" visible="" oncolor="#0c0" filter="filter"/>
     <mlib:armatura x="201" y="204" height="50" width="50" id="name4" on="m1::c1" environment="air" ron="m1::c1" type="cvalve" alarms="" don="m1::c5" doff="m1::c4" off="m1::c2" rotate="90" local="m1::c3" filter="filter"/>
     <mlib:armatura x="274" y="233" height="60" width="60" id="name10" on="m1::c1" environment="gaz" ron="m1::c1" type="bolt" alarms="m1::c2" filter="filter"/>

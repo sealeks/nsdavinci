@@ -417,7 +417,7 @@ designer.prototype.getHname =  function (el){
 }
 
 
-designer.prototype.setDX =  function (el){
+designer.prototype.getDX =  function (el){
     if (el.hasAttribute('d')) {
         var dpath = el.getAttribute('d');
         var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
@@ -468,7 +468,7 @@ designer.prototype.setDXval =  function (el , x){
                         if (fnd && (fnd.length>0))  { 
                             dpath_val = dpath_val.substring(0, fnd[0].length);
                             try{
-                               var newpath = dpath_strt + (parseFloat(dpath_val) + x).toString() + dpath_stp;
+                               var newpath = dpath_strt + (x).toString() + dpath_stp;
                                return newpath;
                             }
                             catch(error){}
@@ -482,7 +482,7 @@ designer.prototype.setDXval =  function (el , x){
 }
 
 
-designer.prototype.setDY =  function (el){
+designer.prototype.getDY =  function (el){
     if (el.hasAttribute('d')){
         var dpath = el.getAttribute('d');
         var fnd = dpath.match(/\s*M[0-9\s\.\,]+/);
@@ -520,7 +520,7 @@ designer.prototype.setDYval =  function (el , y){
                 if (fnd && (fnd.length>0))  {                    
                     dpath_val = fnd[0];
                     try{
-                        var newpath = dpath_strt + (parseFloat(dpath_val) + y).toString() + dpath_stp; 
+                        var newpath = dpath_strt + (y).toString() + dpath_stp; 
                         return newpath;
                     }
                     catch(error){}
