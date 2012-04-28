@@ -417,6 +417,15 @@ designer.prototype.getHname =  function (el){
 }
 
 
+designer.prototype.getTmpRaranslate =  function (el){
+    if (el.hasAttribute('trasform')){
+        var attr = el.getAttribute('trasform');
+        if (attr.test(/\s*translate\s*\(\s*\-?[0-9\.]+\s*\,\s*\-?[0-9\.]+\s*\)\s*/))
+            return attr;
+    }
+    return null;
+}
+
 
 
 
