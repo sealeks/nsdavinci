@@ -25,19 +25,24 @@ function designer(doc){
     this.getSourseDocument();
     this.getLightDocument();
     this.instantdocument.addEventListener('keyup' ,function (ev) {
-        document.red.keybord_dispatcher(ev)
+        if (document.red)
+            document.red.keybord_dispatcher(ev)
     });
     this.instantdocument.addEventListener('mousemove' ,function (ev) {
-        document.red.mousemove_document(ev)
+        if (document.red)
+            document.red.mousemove_document(ev)
     });
     this.instantdocument.addEventListener('mousedown' ,function (ev) {
-        document.red.mousedown_document(ev)
+        if (document.red)
+            document.red.mousedown_document(ev)
     });
     this.instantdocument.addEventListener('mouseup' ,function (ev) {
-        document.red.mouseup_document(ev)
+        if (document.red)
+            document.red.mouseup_document(ev)
     });    
     this.instantdocument.addEventListener('contextmenu' ,function (ev) {
-        document.red.createContextMenu(ev);
+        if (document.red)
+            document.red.createContextMenu(ev);
         event.stopPropagation();
         event.preventDefault();  
     });        
@@ -63,6 +68,8 @@ designer.prototype.attach = function(el){
         }
         else{
             if ((el.id!="") && (el.hasAttribute('isdesined'))) {
+                var parentclass = el.parentNode.getAttribute('class');
+                if (parentclass!='designer_selected'){
                 el.oldoncick = el.oncick;
                 el.onclick= function() {
                     //alert('hhh');
@@ -71,12 +78,17 @@ designer.prototype.attach = function(el){
                     }
                     else{
                         if (document.red) document.red.click_component(event);
-                    }
+                    }}
                 };
                 
+                //el.addEventListener('keyup', function() {
+                //    if (document.red) document.red.keybord_dispatcher(event);
+                //});
+                
                 el.addEventListener('keyup', function() {
-                    if (document.red) document.red.keybord_dispatcher(event);
-                });
+                    if (document.red) document.red.onmos();
+                 });
+                
                 el.oldonmouseout = el.onmouseout;
                 el.onmouseout = function() {
                     if (document.red) document.red.onmos();
@@ -97,7 +109,28 @@ designer.prototype.attach = function(el){
                 el.onmousewheel = function() {
                     if (document.red) document.red.onmos();
                 };
-                el.oldonmousemove = el.onmousemove;
+                
+                ////
+                
+                el.onmousemove = undefined;/*el.onmousemove;
+                el.onmousemove = function() {
+                    if (document.red) document.red.onmos();
+                };  */
+                el.onmousedown = undefined;/*el.onmousemove;
+                el.onmousedown = function() {
+                    if (document.red) document.red.onmos();
+                };*/
+                el.onmouseup = undefined;/*el.onmouseup;
+                el.onmouseup = function() {
+                    if (document.red) document.red.onmos();
+                };  */
+                el.oncontextmenu  = undefined;/*el.oncontextmenu;
+                el.oncontextmenu = function() {
+                    if (document.red) document.red.onmos();
+                };   */              
+                
+                
+                /*el.oldonmousemove = el.onmousemove;
                 el.onmousemove = function() {
                     if (document.red) document.red.onmosnopropogate();
                 };
@@ -117,7 +150,7 @@ designer.prototype.attach = function(el){
                         event.preventDefault();
                         event.stopPropagation();
                     }
-                };
+                };*/
             }
         }        
     }
@@ -277,7 +310,7 @@ designer.prototype.getAttributeList = function(el) {
         var attrs = [];
         if (this.selectedElemens && this.selectedElemens.length>0){
             for (var j=0; j< this.selectedElemens.length; ++j){
-                var attr = this.getAttributeList(this.selectedElemens[0]);
+                var attr = this.getAttributeList(this.selectedElemens[j].getElement());
                 if (!attr) 
                     return null;
                 attrs.push(attr);
@@ -338,13 +371,13 @@ designer.prototype.getAttributeValue = function(name, el){
     }
     else
     {
-        var sel = this.getSourseElement(this.selectedElemens[0]);
+        var sel = this.getSourseElement(this.selectedElemens[0].getElement());
         if (sel){
             var value=sel.getAttribute(name);
             value= value !=null ? value : undefined;
             if (this.selectedElemens.length>1){
                 for (var j=1; j< this.selectedElemens.length; ++j){
-                    var val=this.getAttributeValue(name, this.selectedElemens[j]);
+                    var val=this.getAttributeValue(name, this.selectedElemens[j].getElement());
                     val= val !=null ? val : undefined;
                     if (value!=val)
                         return undefined;
@@ -376,7 +409,7 @@ designer.prototype.setAttributeValue = function(name, val, el){
     }
     else{
     for (var j=0; j< this.selectedElemens.length; ++j){
-        this.setAttributeValue(name,val, this.selectedElemens[j], true);
+        this.setAttributeValue(name,val, this.selectedElemens[j].getElement(), true);
     }} 
 }
 
@@ -415,108 +448,6 @@ designer.prototype.getHname =  function (el){
     if (el.hasAttribute('height')) return 'height';
     return null;
 }
-
-///\s*translate\s*\(\s*\-?[0-9\.]+\s*\,\s*\-?[0-9\.]+\s*\)\s*/  find   ' translate (  -nn.n, -nn.n ) '
-///(?:\s*translate\s*\(\s*)/ find   ' translate ( '
-////(?:\s*translate\s*\(\s*\-?[0-9\.]+\s*\,)/ find  ' translate ( -nn.n, '
-////(?:\-?[0-9\.]+)/ find  '-nn.n'
-
-designer.prototype.getTmpTranslate =  function (el){
-    if (el.hasAttribute('transform')){
-        var attr = el.getAttribute('transform');
-        var matchstr = attr.match(/\s*translate\s*\(\s*\-?[0-9\.]+\s*\,\s*\-?[0-9\.]+\s*\)\s*/);
-        if (matchstr && matchstr.length==1)
-            return matchstr[0];
-    }
-    return null;
-}
-
-
-
-
-designer.prototype.getinfoXTranslate =  function (el){
-    var traslateattr = this.getTmpTranslate(el);
-    if (traslateattr){
-        try{
-        var traslateattr_xmatch =traslateattr.match(/(?:\s*translate\s*\(\s*)/);
-        if (traslateattr_xmatch && traslateattr_xmatch.length==1){
-            var strt = traslateattr_xmatch[0];
-            var rest = traslateattr.substring(strt.length);
-            traslateattr_xmatch =rest.match(/(?:\-?[0-9\.]+)/);
-            if (traslateattr_xmatch && traslateattr_xmatch.length==1){
-                var midle = traslateattr_xmatch[0];
-                var stp = rest.substring(midle.length);
-                return{
-                    'start' : strt,
-                    'x' : midle,
-                    'stop' : stp}
-        }}}
-        catch(error){}    
-    }
-    return null;
-}
-
-designer.prototype.getXTranslate =  function (el){
-    var info = this.getinfoXTranslate(el);
-    if (info){
-        return parseFloat(info.x);
-    }
-    return null;
-}
-
-designer.prototype.setShiftXTranslate =  function (el , x){
-    if ((x==null) || (x==undefined) || (x==0)) return;
-    var info = this.getinfoXTranslate(el);
-    if (info){
-        el.setAttribute('transform', info.start + (x + parseFloat(info.x)).toString() + info.stop);       
-    }
-    else{
-        el.setAttribute('transform', 'translate('+x.toString() + ',0)');
-    }
-}
-
-designer.prototype.getinfoYTranslate =  function (el){
-    var traslateattr = this.getTmpTranslate(el);
-    if (traslateattr){
-        try{
-        var traslateattr_xmatch =traslateattr.match(/(?:\s*translate\s*\(\s*\-?[0-9\.]+\s*\,)/);
-        if (traslateattr_xmatch && traslateattr_xmatch.length==1){
-            var strt = traslateattr_xmatch[0];
-            var rest = traslateattr.substring(strt.length);
-            traslateattr_xmatch =rest.match(/(?:\-?[0-9\.]+)/);
-            if (traslateattr_xmatch && traslateattr_xmatch.length==1){
-                var midle = traslateattr_xmatch[0];
-                var stp = rest.substring(midle.length);
-                return{
-                    'start' : strt,
-                    'y' : midle,
-                    'stop' : stp}
-        }}}
-        catch(error){}    
-    }
-    return null;
-}
-
-designer.prototype.getYTranslate =  function (el){
-    var info = this.getinfoYTranslate(el);
-    if (info){
-        return parseFloat(info.y);
-    }
-    return null;
-}
-
-
-designer.prototype.setShiftYTranslate =  function (el , y){
-    if ((y==null) || (y==undefined) || (y==0)) return;
-    var info = this.getinfoYTranslate(el);
-    if (info){
-        el.setAttribute('transform', info.start + (y + parseFloat(info.y)).toString() + info.stop);       
-    }
-    else{
-        el.setAttribute('transform', 'translate(0,'+y.toString() + ')');
-    }
-}
-
 
 
 designer.prototype.getDXinfo =  function (el){
@@ -647,7 +578,7 @@ designer.prototype.setElementRect = function(x, y, width, height , el){
     }
     if ((this.selectedElemens ) || (this.selectedElemens.length>0)){  
         for (var j=0; j< this.selectedElemens.length; ++j)
-            this.setElementRect(x, y, width, height, this.selectedElemens[j]);
+            this.setElementRect(x, y, width, height, this.selectedElemens[j].getElement());
     }
   
 }
@@ -666,7 +597,7 @@ designer.prototype.updateElement = function(el){
     }
     else{
         for (var j=0; j< this.selectedElemens.length; ++j)
-            this.updateElement(this.selectedElemens[j], true);
+            this.updateElement(this.selectedElemens[j].getElement(), true);
     }
    
 }
@@ -711,7 +642,7 @@ designer.prototype.deleteElements = function(el){
     }
     else{
         for (var j=0; j< this.selectedElemens.length; ++j)
-            this.deleteElements(this.selectedElemens[j]);
+            this.deleteElements(this.selectedElemens[j].getElement());
        
         this.selectedElemens.length=0;
     }   
@@ -738,7 +669,7 @@ designer.prototype.cloneElements = function(el){
     }
     else{
         for (var j=0; j< this.selectedElemens.length; ++j)  
-            this.cloneElements(this.selectedElemens[j], true);
+            this.cloneElements(this.selectedElemens[j].getElement(), true);
  
     }   
 }
@@ -765,7 +696,7 @@ designer.prototype.toFrontElements = function(el){
     else{
         
         for (var j=0; j< this.selectedElemens.length; ++j)
-            this.toFrontElements(this.selectedElemens[j]);
+            this.toFrontElements(this.selectedElemens[j].getElement());
      
         this.clearSelections();
 
@@ -792,7 +723,7 @@ designer.prototype.toBackElements = function(el){
     else{
         
         for (var j=0; j< this.selectedElemens.length; ++j) 
-            this.toBackElements(this.selectedElemens[j]);
+            this.toBackElements(this.selectedElemens[j].getElement());
         
         this.clearSelections();
 
@@ -806,8 +737,8 @@ designer.prototype.pastToClipBoard = function(clear){
     tmp.clipboard=[];
 
     for (var i=0;i < this.selectedElemens.length;++i)
-        if (this.selectedElemens[i]){
-            var el = this.getSourseElement(this.selectedElemens[i]);
+        if (this.selectedElemens[i].getElement()){
+            var el = this.getSourseElement(this.selectedElemens[i].getElement());
             if (el)
                 tmp.clipboard.push(el.cloneNode(true));
         }
@@ -815,11 +746,11 @@ designer.prototype.pastToClipBoard = function(clear){
     if (clear){
         for (var i=0;i < this.selectedElemens.length;++i)
             if (this.selectedElemens[i]){
-                var prnt = this.selectedElemens[i].parentNode;
-                var el = this.getSourseElement(this.selectedElemens[i]);
+                var prnt = this.selectedElemens[i].getElement().parentNode;
+                var el = this.getSourseElement(this.selectedElemens[i].getElement());
                 if (el){
                     var prnts = el.parentNode;
-                    prnt.removeChild(this.selectedElemens[i]);
+                    prnt.removeChild(this.selectedElemens[i].getElement());
                     prnts.removeChild(el);}
             }
        this.selectedElemens=[];     
@@ -864,44 +795,6 @@ designer.prototype.selectionCount = function(){
 }
 
 
-designer.prototype.repaceselectedElemens = function(old, newel){
-    for (var j=0; j< this.selectedElemens.length; ++j){
-        if (this.selectedElemens[j]==old){
-            this.selectedElemens[j]=newel;
-            this.setSelectedClass(newel);
-            this.resetSelectedClass(old);            
-        }
-    }
-    return false;
-}
- 
-designer.prototype.setSelectedClass = function(el){
-    el.oldcomonentclass= el.oldcomonentclass ?
-    el.getAttribute('class') : null;
-    el.setAttribute('class', (el.oldcomonentclass) ? 
-        el.oldcomonentclass + " designer_selected" : "designer_selected");
-}
-
-designer.prototype.resetSelectedClass = function(el){
-    if (el.oldcomonentclass)
-        el.setAttribute('class',el.oldcomonentclass);
-}
-
-
-
-// очистка выделения элемента
-designer.prototype.clearSelection = function(el){
-    if (this.selectedElemens!=null)
-        for (var i=0;i < this.selectedElemens.length;++i)
-            if (this.selectedElemens[i]==el){
-                var old = this.selectedElemens[i].oldcomonentclass;
-                this.selectedElemens[i].setAttribute('class', old ? old : null);
-                this.selectedElemens.splice(i,1);
-                break;
-            }
-}
-
-
 
 designer.prototype.changeRect = function(x, y, width , height, el){
     var sel = this.getSourseElement(el);
@@ -913,18 +806,10 @@ designer.prototype.changeRect = function(x, y, width , height, el){
             (width && this.getWname(sel) ? parseFloat(sel.getAttribute(this.getWname(sel))) + width : width) ,
             (height && this.getHname(sel)? parseFloat(sel.getAttribute(this.getHname(sel))) + height : height) , el);
     }
+
 }
 
 
-designer.prototype.shiftRect = function(x, y, el){
-    if (el){
-        this.setShiftXTranslate(el, x);
-        this.setShiftYTranslate(el, y);
-    }
-}
- 
-
- 
     
 // обработчики событий   
  
@@ -985,17 +870,40 @@ designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
     return false;
 }
 
+// очистка выделения элемента
+designer.prototype.clearSelection = function(el){
+    if (this.selectedElemens!=null)
+        for (var i=0;i < this.selectedElemens.length;++i)
+            if (this.selectedElemens[i].getElement()==el){
+                this.selectedElemens[i].deselect();
+                this.selectedElemens.splice(i,1);
+                break;
+            }
+}
+
+
+
 // очистка всех выделенных элементов
 designer.prototype.clearSelections = function (){
     if (this.selectedElemens!=null){
         for (var i=0;i < this.selectedElemens.length;++i){
-            var old = this.selectedElemens[i].oldcomonentclass;
-            this.selectedElemens[i].setAttribute('class', old);
+            this.selectedElemens[i].deselect();
         };
        this.selectedElemens=[]; 
     }
     if (event)
         event.stopPropagation();
+}
+
+
+designer.prototype.repaceselectedElemens = function(old, newel){
+    for (var j=0; j< this.selectedElemens.length; ++j){
+        if (this.selectedElemens[j].getElement()==old){
+            this.clearSelection(old);
+            this.selectedElemens.push(new designutil.selectwraper(newel));            
+        }
+    }
+    return false;
 }
 
 /*выделение элемента*/
@@ -1017,7 +925,6 @@ designer.prototype.selectComponent = function(el, shift, ctnrl){
         this.clearSelections();
         this.selectedElemens.length=0;
         this.selectedElemens.push(/*el*/ new designutil.selectwraper(el));
-        //this.setSelectedClass(el);
         this.show_property(el);
 
     }
@@ -1031,7 +938,6 @@ designer.prototype.selectComponent = function(el, shift, ctnrl){
         }
         if (!finded){
             this.selectedElemens.push(/*el*/ new designutil.selectwraper(el));
-            //this.setSelectedClass(el);
             this.show_property(el);
         }
     }
@@ -1066,27 +972,27 @@ designer.prototype.moveElements = function (event){
     var ismove=false;
 
     for (var i=0;i < this.selectedElemens.length;++i){
-        var el=this.selectedElemens[i];
+        var el=this.selectedElemens[i].getElement();
         if (event.ctrlKey) {
             switch (event.keyIdentifier){
                 case 'Left':{
-                    this.changeRect(- incr, null, null, null, el);
-                    ismove=true;
+                    this.changeRect(-incr, null, null, null, el);
+                    this.selectedElemens[i].shiftRect(-incr, null);
                     break;
                 }
                 case 'Right':{
                     this.changeRect( incr, null, null, null, el);
-                    ismove=true;
+                    this.selectedElemens[i].shiftRect(incr, null);
                     break;
                 }     
                 case 'Up':{
-                   this.changeRect(null,- incr,  null, null, el);
-                   ismove=true;
+                   this.changeRect(null,-incr,  null, null, el);
+                   this.selectedElemens[i].shiftRect(null, -incr);
                    break;
                 }
                 case 'Down':{
                    this.changeRect(null,+ incr,  null, null, el);
-                   ismove=true;
+                   this.selectedElemens[i].shiftRect(null, incr);
                    break;
                 }
             }                
@@ -1118,10 +1024,7 @@ designer.prototype.moveElements = function (event){
 
     }
     
-    if (ismove){
-        this.updateElement();
-
-    }   
+   
 }
 
 
@@ -1133,9 +1036,9 @@ designer.prototype.mousemove_document = function (){
             var ysh=event.pageY-this.mousmoveevent.pageY;
             if (this.selectedElemens) {
                 for (var i=0;i < this.selectedElemens.length;++i){
-                    var el = this.selectedElemens[i];
+                    var el = this.selectedElemens[i].getElement();
                     this.changeRect( xsh, ysh , null, null,  el);
-                    this.shiftRect(xsh, ysh, el);
+                    this.selectedElemens[i].shiftRect(xsh, ysh);
                 }}
                 
         }
@@ -1154,7 +1057,7 @@ designer.prototype.mousedown_document = function (){
         if (this.selectedElemens){
             if (this.selectedElemens.length>0){
                 for (var i=0; i<this.selectedElemens.length;++i){ 
-                    if (trgt==this.selectedElemens[i]){
+                    if (trgt==this.selectedElemens[i].getElement()){
                         this.dragstartevent = event;
                         return;
                     }
@@ -1188,16 +1091,14 @@ designer.prototype.mousedown_component = function (){
 designer.prototype.mouseup_document = function (){
     if (event.button==0){
         if (this.mousmoveevent){
-            //var xsh=event.pageX-this.dragstartevent.pageX;
-            //var ysh=event.pageY-this.dragstartevent.pageY;
             var xsh=event.pageX-this.mousmoveevent.pageX;
             var ysh=event.pageY-this.mousmoveevent.pageY;
             if (this.draggedstart){
                 if (this.selectedElemens) {
                     for (var i=0;i < this.selectedElemens.length;++i){
-                        var el = this.selectedElemens[i];
+                        var el = this.selectedElemens[i].getElement();
                         this.changeRect( xsh, ysh , null, null,  el);
-                        this.shiftRect(xsh, ysh, el);
+                        this.selectedElemens[i].shiftRect(xsh, ysh);
                     }
                     //this.updateElement();
                     this.setNeedSave();
@@ -1634,18 +1535,144 @@ designutil.selectwraper.prototype.getParent = function(){
 
 designutil.selectwraper.prototype.select = function(){
     this.selement = this.document.createElementNS(libutil.SVG_NAMESPACE_URL, 'g');
-    this.selement.className = 'designer_selected';
-    this.selement.appendChild(this.parent.replaceChild( this.selement , this.element)); 
+    this.selement.setAttribute('class', 'designer_selected');
+    this.selement.appendChild(this.parent.replaceChild( this.selement , this.element));
+    this.selement.designer=this.designer;
+    this.selement.addEventListener('keyup', function() {
+        if (this.designer) this.designer.keybord_dispatcher(event);
+    });
+    this.selement.onmousemove = function() {
+        if (this.designer) this.designer.mousemove_document();
+    };
+    this.selement.onmousedown = function() {
+        if (this.designer) this.designer.mousedown_component();
+    };
+    this.selement.onmouseup = function() {
+        if (this.designer) this.designer.mouseup_document();
+    };
+    this.selement.oncontextmenu = function() {
+        if (this.designer) {
+            if (this.designer.isSelection(this.designer.getTarget(event)))
+                this.designer.createContextMenu(event);
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    };
 }
+
 
 designutil.selectwraper.prototype.deselect = function(){
     if (this.selement){
        this.selement.removeChild(this.element); 
        this.parent.replaceChild(this.element,this.selement);
+       if (this.designer)
+           this.designer.updateElement(this.element);
+       
     } 
 }
 
 
+designutil.selectwraper.prototype.getTmpTranslate =  function (el){
+    if (el.hasAttribute('transform')){
+        var attr = el.getAttribute('transform');
+        var matchstr = attr.match(/\s*translate\s*\(\s*\-?[0-9\.]+\s*\,\s*\-?[0-9\.]+\s*\)\s*/);
+        if (matchstr && matchstr.length==1)
+            return matchstr[0];
+    }
+    return null;
+}
+
+
+
+
+designutil.selectwraper.prototype.getinfoXTranslate =  function (el){
+    var traslateattr = this.getTmpTranslate(el);
+    if (traslateattr){
+        try{
+        var traslateattr_xmatch =traslateattr.match(/(?:\s*translate\s*\(\s*)/);
+        if (traslateattr_xmatch && traslateattr_xmatch.length==1){
+            var strt = traslateattr_xmatch[0];
+            var rest = traslateattr.substring(strt.length);
+            traslateattr_xmatch =rest.match(/(?:\-?[0-9\.]+)/);
+            if (traslateattr_xmatch && traslateattr_xmatch.length==1){
+                var midle = traslateattr_xmatch[0];
+                var stp = rest.substring(midle.length);
+                return{
+                    'start' : strt,
+                    'x' : midle,
+                    'stop' : stp}
+        }}}
+        catch(error){}    
+    }
+    return null;
+}
+
+designutil.selectwraper.prototype.getXTranslate =  function (el){
+    var info = this.getinfoXTranslate(el);
+    if (info){
+        return parseFloat(info.x);
+    }
+    return null;
+}
+
+designutil.selectwraper.prototype.setShiftXTranslate =  function (el , x){
+    if ((x==null) || (x==undefined) || (x==0)) return;
+    var info = this.getinfoXTranslate(el);
+    if (info){
+        el.setAttribute('transform', info.start + (x + parseFloat(info.x)).toString() + info.stop);       
+    }
+    else{
+        el.setAttribute('transform', 'translate('+x.toString() + ',0)');
+    }
+}
+
+designutil.selectwraper.prototype.getinfoYTranslate =  function (el){
+    var traslateattr = this.getTmpTranslate(el);
+    if (traslateattr){
+        try{
+        var traslateattr_xmatch =traslateattr.match(/(?:\s*translate\s*\(\s*\-?[0-9\.]+\s*\,)/);
+        if (traslateattr_xmatch && traslateattr_xmatch.length==1){
+            var strt = traslateattr_xmatch[0];
+            var rest = traslateattr.substring(strt.length);
+            traslateattr_xmatch =rest.match(/(?:\-?[0-9\.]+)/);
+            if (traslateattr_xmatch && traslateattr_xmatch.length==1){
+                var midle = traslateattr_xmatch[0];
+                var stp = rest.substring(midle.length);
+                return{
+                    'start' : strt,
+                    'y' : midle,
+                    'stop' : stp}
+        }}}
+        catch(error){}    
+    }
+    return null;
+}
+
+designutil.selectwraper.prototype.getYTranslate =  function (el){
+    var info = this.getinfoYTranslate(el);
+    if (info){
+        return parseFloat(info.y);
+    }
+    return null;
+}
+
+
+designutil.selectwraper.prototype.setShiftYTranslate =  function (el , y){
+    if ((y==null) || (y==undefined) || (y==0)) return;
+    var info = this.getinfoYTranslate(el);
+    if (info){
+        el.setAttribute('transform', info.start + (y + parseFloat(info.y)).toString() + info.stop);       
+    }
+    else{
+        el.setAttribute('transform', 'translate(0,'+y.toString() + ')');
+    }
+}
+
+
+designutil.selectwraper.prototype.shiftRect = function(x, y){
+        this.setShiftXTranslate(this.selement, x);
+        this.setShiftYTranslate(this.selement, y);
+}
 
 
 
