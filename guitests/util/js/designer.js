@@ -416,8 +416,12 @@ designer.prototype.getHname =  function (el){
     return null;
 }
 
+///\s*translate\s*\(\s*\-?[0-9\.]+\s*\,\s*\-?[0-9\.]+\s*\)\s*/  find   ' translate (  -nn.n, -nn.n ) '
+///(?:\s*translate\s*\(\s*)/ find   ' translate ( '
+////(?:\s*translate\s*\(\s*\-?[0-9\.]+\s*\,)/ find  ' translate ( -nn.n, '
+////(?:\-?[0-9\.]+)/ find  '-nn.n'
 
-designer.prototype.getTmpRaranslate =  function (el){
+designer.prototype.getTmpTranslate =  function (el){
     if (el.hasAttribute('trasform')){
         var attr = el.getAttribute('trasform');
         if (attr.test(/\s*translate\s*\(\s*\-?[0-9\.]+\s*\,\s*\-?[0-9\.]+\s*\)\s*/))
@@ -426,6 +430,91 @@ designer.prototype.getTmpRaranslate =  function (el){
     return null;
 }
 
+
+
+
+designer.prototype.getinfoXTranslate =  function (el){
+    var traslateattr = this.getTmpTranslate(el);
+    if (traslateattr){
+        try{
+        var traslateattr_xmatch =traslateattr.match(/(?:\s*translate\s*\(\s*)/);
+        if (traslateattr_xmatch && traslateattr_xmatch.length==1){
+            var strt = traslateattr_xmatch[0];
+            var rest = traslateattr.substring(strt.length);
+            traslateattr_xmatch =rest.match(/(?:\-?[0-9\.]+)/);
+            if (traslateattr_xmatch && traslateattr_xmatch.length==1){
+                var midle = traslateattr_xmatch[0];
+                var stp = rest.substring(midle.length);
+                return{
+                    'start' : strt,
+                    'x' : midle,
+                    'stop' : stp}
+        }}}
+        catch(error){}    
+    }
+    return null;
+}
+
+designer.prototype.getXTranslate =  function (el){
+    var info = this.getinfoXTranslate(el);
+    if (info){
+        return parseFloat(info.x);
+    }
+    return null;
+}
+
+designer.prototype.setShiftXTranslate =  function (el , x){
+    if ((x==null) || (x==undefined) || (x==0)) return;
+    var info = this.getinfoXTranslate(el);
+    if (info){
+        el.setAtribute('trasform', info.start + (x + parseFloat(info.x)).toString() + info.stop);       
+    }
+    else{
+        el.setAtribute('trasform', 'translate('+x.toString() + ',0)');
+    }
+}
+
+designer.prototype.getinfoYTranslate =  function (el){
+    var traslateattr = this.getTmpTranslate(el);
+    if (traslateattr){
+        try{
+        var traslateattr_xmatch =traslateattr.match(/(?:\s*translate\s*\(\s*\-?[0-9\.]+\s*\,)/);
+        if (traslateattr_xmatch && traslateattr_xmatch.length==1){
+            var strt = traslateattr_xmatch[0];
+            var rest = traslateattr.substring(strt.length);
+            traslateattr_xmatch =rest.match(/(?:\-?[0-9\.]+)/);
+            if (traslateattr_xmatch && traslateattr_xmatch.length==1){
+                var midle = traslateattr_xmatch[0];
+                var stp = rest.substring(midle.length);
+                return{
+                    'start' : strt,
+                    'y' : midle,
+                    'stop' : stp}
+        }}}
+        catch(error){}    
+    }
+    return null;
+}
+
+designer.prototype.getYTranslate =  function (el){
+    var info = this.getinfoYTranslate(el);
+    if (info){
+        return parseFloat(info.y);
+    }
+    return null;
+}
+
+
+designer.prototype.setShiftYTranslate =  function (el , y){
+    if ((y==null) || (y==undefined) || (y==0)) return;
+    var info = this.getinfoYTranslate(el);
+    if (info){
+        el.setAtribute('trasform', info.start + (y + parseFloat(info.y)).toString() + info.stop);       
+    }
+    else{
+        el.setAtribute('trasform', 'translate(0,'+y.toString() + ')');
+    }
+}
 
 
 
