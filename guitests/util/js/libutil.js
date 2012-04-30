@@ -1400,22 +1400,22 @@ libutil.dom.writeDoc = function (doc){
 libutil.validator.expresssion = function(val) {
     if ((val==undefined) || (val=='') || (val==null))  return undefined;
     var error = $$error(val);
-    var test = $$(val);
-    return ((error==undefined) || (test==undefined)) ? undefined : (error==0);
+    var test = $$check(val);
+    return ((error===undefined) || (test===undefined)) ? undefined : (error==0);
     
 }
 
 libutil.validator.taglist = function(val) {
     if ((val==undefined) || (val=='') || (val==null))  return undefined;
     var error = $$error('tags('+val+')');
-    var check=  $$check('tags('+val+')');
-    return (error==undefined) ? undefined : (error==0 && check);   
+    var check = $$check('tags('+val+')');
+    return (error===undefined) ? undefined : (error==0 && check);   
 }
 
 libutil.validator.tag = function(val) {
     if ((val==undefined) || (val=='') || (val==null))  return undefined;
     var error = $$error('tags('+val+')');
-    var check=  $$check(val+'.binding');
+    var check = $$check(val+'.binding');
     return (error==undefined) ? undefined : (error==0 && (check!=undefined));   
 }
 
