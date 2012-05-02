@@ -985,6 +985,18 @@ libutil.svg.create_svg = function (parent, x, y,  height, width, view){
     return newel;
 }
 
+
+libutil.svg.create_use = function (parent, x, y,  height, width){
+    
+    var newel = libutil.svg.create('use', parent);
+    if (!newel) return;
+    if (x || x==0) newel.setAttribute('x', parseFloat(x));
+    if (y || y==0) newel.setAttribute('y', parseFloat(y));
+    if (width || width==0) newel.setAttribute('width', parseFloat(width));
+    if (height || height==0) newel.setAttribute('height', parseFloat(height));    
+    return newel;
+}
+
 libutil.svg.create_g = function (parent){
     
     var newel = libutil.svg.create('g', parent);
