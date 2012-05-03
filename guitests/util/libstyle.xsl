@@ -86,6 +86,9 @@ extension-element-prefixes="mlib">
                 <feMergeNode in="litPaint"/>
             </feMerge>
         </filter>
+        
+        <filter id="filter_null">
+        </filter>
 
      </xsl:template>   
      
