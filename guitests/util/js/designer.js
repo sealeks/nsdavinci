@@ -1,12 +1,13 @@
 var designutil = {};
 
 designutil.SELECT_MODE = null;
+
 ///
 designutil.componentinfo = function(){
-    this.elements = new Object();
-    this.types = new Object();
+    this.elements = {};
+    this.types = {};
     this.libs = [];
-    this.creators = new Object();;
+    this.creators = {};
 }
 
 designutil.toolwin = {};
@@ -26,19 +27,19 @@ function designer(doc){
     this.getLightDocument();
     this.instantdocument.addEventListener('keyup' ,function (ev) {
         if (document.red)
-            document.red.keybord_dispatcher(ev)
+            document.red.keybordDispatcherd(ev)
     });
     this.instantdocument.addEventListener('mousemove' ,function (ev) {
         if (document.red)
-            document.red.mousemove_document(ev)
+            document.red.mousemoveDocument(ev)
     });
     this.instantdocument.addEventListener('mousedown' ,function (ev) {
         if (document.red)
-            document.red.mousedown_document(ev)
+            document.red.mousedownDocument(ev)
     });
     this.instantdocument.addEventListener('mouseup' ,function (ev) {
         if (document.red)
-            document.red.mouseup_document(ev)
+            document.red.mouseupDocument(ev)
     });    
     this.instantdocument.addEventListener('contextmenu' ,function (ev) {
         if (document.red)
@@ -60,7 +61,7 @@ designer.prototype.attach = function(el){
             el.onclick = function() {
                 if (document.red){
                     document.red.clearSelections();
-                    document.red.click_parented(el);
+                    document.red.clickParented(el);
                     designutil.toolwin.setCurrentRedactor(window);
                     document.red.show_property(document.documentElement);
                 }
@@ -73,10 +74,10 @@ designer.prototype.attach = function(el){
                 el.oldoncick = el.oncick;
                 el.onclick= function() {
                     if (el.hasAttribute('isgoupelement')){
-                        if (document.red) document.red.click_canparented(el, event);
+                        if (document.red) document.red.clickCanParented(el, event);
                     }
                     else{
-                        if (document.red) document.red.click_component(event);
+                        if (document.red) document.red.clickComponent(event);
                     }}
                 };
 
@@ -113,7 +114,9 @@ designer.prototype.attach = function(el){
             }
         }        
     }
-    catch(except){}
+    catch(error){
+        console.error('designer.prototype.attach error: ' + error);
+    }
     for (var i=0;i<el.childNodes.length;i++){
         this.attach(el.childNodes[i]); 
     }
@@ -133,7 +136,8 @@ designer.prototype.getSourseDocument = function (){
             }
         }
     }
-    catch(except){
+    catch(error){
+        console.error('designer.prototype.getSourseDocument error: ' + error);
         this.sourseDocument = null;
     }
     return this.sourseDocument;
@@ -143,10 +147,10 @@ designer.prototype.getSourseDocument = function (){
 
 designer.prototype.getLightDocument = function (){ 
     try{
-        this.lightDocument = libutil.dom.readDoc(this.instantdocument.URL);
-        
+        this.lightDocument = libutil.dom.readDoc(this.instantdocument.URL);     
     }
-    catch(except){
+    catch(error){
+        console.error('designer.prototype.getLightDocument error: ' + error);
         this.lightDocument = null;
     }
     return this.lightDocument;   
@@ -191,6 +195,7 @@ designer.prototype.readXsltDocument = function(data){
     this.xslturl=undefined;
 }
 
+
 designer.prototype.getTrasformDocument = function(){
     if (this.xsltProcessor && this.soursexslt)
         return this.trasformsourse = this.xsltProcessor.transformToDocument(this.sourseDocument);
@@ -219,10 +224,8 @@ designer.prototype.getTransformElement = function(elid){
 
 designer.prototype.getTarget = function (ev){
   
-    var el = ev.target.correspondingUseElement ? ev.target.correspondingUseElement : ev.target;
-    
-    var owndoc = el.ownerDocument;
-    
+    var el = ev.target.correspondingUseElement ? ev.target.correspondingUseElement : ev.target;   
+    var owndoc = el.ownerDocument;   
     while ((el!=owndoc) && (!(el.getAttribute('id') && el.hasAttribute('isdesined'))))
         el=el.parentNode;
 
@@ -302,21 +305,6 @@ designer.prototype.getAttributeList = function(el) {
         
     return result;
 };
-
-
-designer.prototype.setFastXAttribute = function(name, val, el){
-    if ((!this.getXname(name)) && (!el)) return false;
-    if (el){
-        var sel = this.getSourseElement(el);
-        if ((!sel) && (!val)) return;
-        sel.setAttribute( name, val);
-        return;
-    }
-    if ((!this.selectedElemens ) || (this.selectedElemens.length==0)){
-        this.setAttributeValue(name,val, this.instantdocument.documentElement, true);
-        this.updateRoot();
-    }
-}
 
 
 
@@ -548,7 +536,7 @@ designer.prototype.updateElement = function(el){
         var old = el.parentNode.replaceChild(tel ,el);
         this.attach(tel);
         if (select){
-            this.repaceselectedElemens(old, tel);
+            this.repaceSelectedElemens(old, tel);
             this.setSelectedClass(tel);
         }
     }
@@ -738,28 +726,6 @@ designer.prototype.copyFromClipBoard = function( x , y, prnt){
 }
 
 
-designer.prototype.isSelection = function(el){
-    if (el && this.selectedElemens) {
-        for (var j=0; j< this.selectedElemens.length; ++j)
-            if (this.selectedElemens[j].getElement()==el) return true;
-    }
-    return false;        
-}
-
-
-designer.prototype.isSelectionParent = function(el){
-    if (el && this.selectedElemens) {
-        for (var j=0; j< this.selectedElemens.length; ++j)
-            if (this.selectedElemens[j].getElement().parentNode==el.parentNode) 
-                return false;
-    }
-    return true;        
-}
-
-designer.prototype.selectionCount = function(){
-    return this.selectedElemens && this.selectedElemens.length > 0;        
-}
-
 
 
 designer.prototype.changeRect = function(x, y, width , height, el){
@@ -789,21 +755,21 @@ designer.prototype.onmosnopropogate = function (){
     event.preventDefault();
 } 
 
-designer.prototype.click_component = function(){
+designer.prototype.clickComponent = function(){
     var el= this.getTarget(event);
     designutil.toolwin.setCurrentRedactor(window);
     this.selectComponent(el, event.shiftKey, event.ctrlKey);
     event.stopPropagation();
 }
 
-designer.prototype.click_canparented = function(el, ev){
+designer.prototype.clickCanParented = function(el, ev){
     if (((!this.isSelection(el))) || (!this.newLibComponent((ev.pageX - el.x.baseVal.value).toString(), (ev.pageY - el.y.baseVal.value).toString(), el)))
-        if (document.red) document.red.click_component(ev);
+        if (document.red) document.red.clickComponent(ev);
     event.stopPropagation();
     return false;
 }
 
-designer.prototype.click_parented = function(el){
+designer.prototype.clickParented = function(){
     if (event && event.pageX.toString() && event.pageY.toString())
         this.newLibComponent(event.pageX.toString(), event.pageY.toString());
 }
@@ -836,6 +802,32 @@ designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
     return false;
 }
 
+
+
+designer.prototype.isSelection = function(el){
+    if (el && this.selectedElemens) {
+        for (var j=0; j< this.selectedElemens.length; ++j)
+            if (this.selectedElemens[j].getElement()==el) return true;
+    }
+    return false;        
+}
+
+
+designer.prototype.isSelectionParent = function(el){
+    if (el && this.selectedElemens) {
+        for (var j=0; j< this.selectedElemens.length; ++j)
+            if (this.selectedElemens[j].getElement().parentNode==el.parentNode) 
+                return false;
+    }
+    return true;        
+}
+
+designer.prototype.selectionCount = function(){
+    return this.selectedElemens && this.selectedElemens.length > 0;        
+}
+
+
+
 // очистка выделения элемента
 designer.prototype.clearSelection = function(el){
     if (this.selectedElemens!=null)
@@ -846,7 +838,6 @@ designer.prototype.clearSelection = function(el){
                 break;
             }
 }
-
 
 
 // очистка всех выделенных элементов
@@ -862,7 +853,7 @@ designer.prototype.clearSelections = function (){
 }
 
 
-designer.prototype.repaceselectedElemens = function(old, newel){
+designer.prototype.repaceSelectedElemens = function(old, newel){
     for (var j=0; j< this.selectedElemens.length; ++j){
         if (this.selectedElemens[j].getElement()==old){
             this.clearSelection(old);
@@ -881,9 +872,8 @@ designer.prototype.selectComponent = function(el, shift, ctnrl){
     
     var el_class = el.getAttribute('class');
     if (el_class=="designer_selected"){
-        if (shift){
+        if (shift)
             clearSelection(el);
-        }
         return false;
     }
     
@@ -893,7 +883,7 @@ designer.prototype.selectComponent = function(el, shift, ctnrl){
     if (!shift){
         this.clearSelections();
         this.selectedElemens.length=0;
-        this.selectedElemens.push(/*el*/ new designutil.selectwraper(el));
+        this.selectedElemens.push( new designutil.selectwraper(el));
         this.show_property(el);
 
     }
@@ -906,15 +896,19 @@ designer.prototype.selectComponent = function(el, shift, ctnrl){
             }
         }
         if (!finded){
-            this.selectedElemens.push(/*el*/ new designutil.selectwraper(el));
+            this.selectedElemens.push(new designutil.selectwraper(el));
             this.show_property(el);
         }
     }
 }
 
+designer.prototype.isNeedInsert = function (el){
+    return (designutil.toolwin.getSelectedComponent() && el.hasAttribute('isgoupelement'));
+}
+
 
 /*обработчик событий клавиатуры*/
-designer.prototype.keybord_dispatcher = function (){
+designer.prototype.keybordDispatcherd = function (){
     
     this.moveElements(event);
 
@@ -938,7 +932,6 @@ designer.prototype.moveElements = function (event){
     
     var incr =event.altKey ? 10 : 1;
     
-    var ismove=false;
 
     for (var i=0;i < this.selectedElemens.length;++i){
         var el=this.selectedElemens[i].getElement();
@@ -998,7 +991,7 @@ designer.prototype.moveElements = function (event){
 
 
 
-designer.prototype.mousemove_document = function (){
+designer.prototype.mousemoveDocument = function (){
     if ((this.dragstartevent)){
         if (this.mousmoveevent){
             var xsh=event.pageX-this.mousmoveevent.pageX;
@@ -1020,7 +1013,7 @@ designer.prototype.mousemove_document = function (){
 }
 
 
-designer.prototype.mousedown_document = function (){
+designer.prototype.mousedownDocument = function (){
     if ((event.button==0) && (!event.shiftKey)){
         var trgt = this.getTarget(event)
         if (this.selectedElemens){
@@ -1039,16 +1032,14 @@ designer.prototype.mousedown_document = function (){
     this.mousmoveevent=undefined;
 }
 
-designer.prototype.is_need_insert = function (el){
-    return (designutil.toolwin.getSelectedComponent() && el.hasAttribute('isgoupelement'));
-}
 
 
-designer.prototype.mousedown_component = function (){
+
+designer.prototype.mousedownComponent = function (){
     if ((event.button==0)){
         var trgt = this.getTarget(event)
         var cls = trgt.getAttribute('class');
-        if ((cls) && (cls.search('designer_selected')!=-1) && (!designer.prototype.is_need_insert(trgt))){
+        if ((cls) && (cls.search('designer_selected')!=-1) && (!designer.prototype.isNeedInsert(trgt))){
             this.draggedstart=true;
             return;
         }
@@ -1057,7 +1048,7 @@ designer.prototype.mousedown_component = function (){
 }
 
 
-designer.prototype.mouseup_document = function (){
+designer.prototype.mouseupDocument = function (){
     if (event.button==0){
         if (this.mousmoveevent){
             var xsh=event.pageX-this.mousmoveevent.pageX;
@@ -1068,8 +1059,7 @@ designer.prototype.mouseup_document = function (){
                         var el = this.selectedElemens[i].getElement();
                         this.changeRect( xsh, ysh , null, null,  el);
                         this.selectedElemens[i].shiftRect(xsh, ysh);
-                    }
-                    //this.updateElement();
+                    }                   
                     this.setNeedSave();
                 }
                 this.show_property();
@@ -1088,6 +1078,10 @@ designer.prototype.contextmenue = function (){
     event.preventDefault();    
 }
 
+
+
+
+//  ****/
 
 
 designer.prototype.createWindow = function(id, top, left, width, height){
@@ -1515,16 +1509,16 @@ designutil.selectwraper.prototype.select = function(){
     this.selement.setAttribute('class', 'designer_selected');
     this.selement.designer=this.designer;
     /*this.selement.addEventListener('keyup', function() {
-        if (this.designer) this.designer.keybord_dispatcher(event);
+        if (this.designer) this.designer.keybordDispatcherd(event);
     });*/
     this.selement.onmousemove = function() {
-        if (this.designer) this.designer.mousemove_document();
+        if (this.designer) this.designer.mousemoveDocument();
     };
     this.selement.onmousedown = function() {
-        if (this.designer) this.designer.mousedown_component();
+        if (this.designer) this.designer.mousedownComponent();
     };
     this.selement.onmouseup = function() {
-        if (this.designer) this.designer.mouseup_document();
+        if (this.designer) this.designer.mouseupDocument();
     };
     this.selement.oncontextmenu = function() {
         if (this.designer) {
