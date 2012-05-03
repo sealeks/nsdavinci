@@ -37,6 +37,10 @@ libutil.SVG_NAMESPACE_URL =  'http://www.w3.org/2000/svg';
 
 libutil.XHTML_NAMESPACE_URL =  'http://www.w3.org/1999/xhtml';
 
+libutil.XLINK_NAMESPACE_URL =  'http://www.w3.org/1999/xlink';
+
+libutil.test = {};
+
 
 
 
@@ -163,8 +167,8 @@ libutil.util.remove_element_arr = function(arr,ind){
 }
 
 
-libutil.util.trim = function(string){
-    return string.replace(/(^\s+)|(\s+$)/g, "");
+libutil.util.trim = function(str){
+    return str.replace(/(^\s+)|(\s+$)/g, "");
 }
 
 
@@ -408,9 +412,11 @@ libutil.project.getFormInfo = function(name){
 }
 
 
+//
 
-
-
+libutil.test.element = function(el){
+   console.log(el);
+}
 
 //
 
@@ -493,7 +499,7 @@ libutil.popup.finddirect = function(el, W, H, yd){
     return 2;
 }
 
-libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle){
+libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r){
     
 
     if ((dir==undefined) || (dir==null)) {
@@ -521,7 +527,12 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle){
     
     svg.popupbody = libutil.svg.create_svg(svg, dir==1 ? wh : 0 , dir==2 ? hh : 0 ,  H , W);
     
-    libutil.svg.create_rect(svg.popupbody, 0 , 0 ,  H  , W,  null , null , bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;', null);
+    var rct = libutil.svg.create_rect(svg.popupbody, 0 , 0 ,  H  , W,  null , null , bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;', null);
+    
+    if (r){
+       rct.setAttribute('rx',r); 
+       rct.setAttribute('ry',r);
+    }
     
     return svg;
 }

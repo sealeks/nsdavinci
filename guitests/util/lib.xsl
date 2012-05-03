@@ -4,7 +4,8 @@ xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink"
 xmlns:html="http://www.w3.org/TR/xhtml1"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:import href="libstyle.xsl"/>
 
