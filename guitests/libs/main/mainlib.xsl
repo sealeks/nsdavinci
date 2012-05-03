@@ -159,7 +159,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="apply_mlib_aratura_cursor_checkstatevalid">
         <xsl:choose>                        
-            <xsl:when test="(boolean(@off) and not(normalize-space(@off)='')) and (boolean(@on) and not(normalize-space(@on)=''))">
+            <xsl:when test="not(normalize-space(@off)='') and not(normalize-space(@on)='')">
                 <xsl:text>(!(</xsl:text>
                 <xsl:value-of select="@on"/>
                 <xsl:text>).valid  &#38;&#38; !(</xsl:text>
@@ -257,11 +257,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="apply_mlib_aratura_cursor">
         <xsl:choose>                        
-            <xsl:when test="(boolean(@off) and not(normalize-space(@off)='')) or (boolean(@on) and not(normalize-space(@on)=''))">
+            <xsl:when test="not(normalize-space(@off)='') or  not(normalize-space(@on)='')">
                 <xsl:choose>                        
-                    <xsl:when test="(boolean(@roff) and not(normalize-space(@roff)='')) or (boolean(@ron) and not(normalize-space(@ron)='')) or (boolean(@rauto) and not(normalize-space(@rauto)=''))">
+                    <xsl:when test=" not(normalize-space(@roff)='') or not(normalize-space(@ron)='') or not(normalize-space(@rauto)='')">
                         <xsl:choose>                        
-                            <xsl:when test="(boolean(@rauto) and not(normalize-space(@rauto)='')) and (boolean(@auto) and not(normalize-space(@auto)=''))">
+                            <xsl:when test="not(normalize-space(@rauto)='') and  not(normalize-space(@auto)='')">
                                 <xsl:call-template name="apply_mlib_aratura_cursor_autocontrol"/>
                             </xsl:when>
                             <xsl:when test="(boolean(@auto) and not(normalize-space(@auto)=''))">
@@ -295,7 +295,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <g class="none">
             <xsl:variable name="envir"> 
                 <xsl:choose>
-                    <xsl:when test="boolean(@oncolor) and not(normalize-space(@oncolor)='')"> 
+                    <xsl:when test="not(normalize-space(@oncolor)='')"> 
                         <xsl:text>__</xsl:text>
                         <xsl:value-of select="@id"/>
                         <xsl:text>_armatclass</xsl:text>
@@ -306,14 +306,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>                
             </xsl:variable>
             <xsl:choose>                              
-                <xsl:when test="boolean(@filter) and not(@filter='')">
+                <xsl:when test="not(@filter='')">
                     <xsl:attribute name="filter">
                         <xsl:text>url(#filter_lib_armat1000)</xsl:text>
                     </xsl:attribute>
                 </xsl:when>
             </xsl:choose> 
             <xsl:choose>                        
-                <xsl:when test="(boolean(@on) and not(normalize-space(@on)='')) and (boolean(@off) and not(normalize-space(@off)=''))"> 
+                <xsl:when test="(not(normalize-space(@on)=''))  and not(normalize-space(@off)='')"> 
                     <xsl:attribute name="class">
                         <xsl:text>non</xsl:text> 
                     </xsl:attribute>
@@ -412,7 +412,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="apply_mlib_aratura_local">    
         <xsl:choose>
-            <xsl:when test="boolean(@local) and not(normalize-space(@local)='')">
+            <xsl:when test="not(normalize-space(@local)='')">
                 <g>
                     <xsl:attribute name="class">
                         <xsl:text>#{</xsl:text> 
@@ -442,7 +442,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="apply_mlib_aratura_auto">    
         <xsl:choose>
-            <xsl:when test="boolean(@auto) and not(normalize-space(@auto)='')">
+            <xsl:when test="not(normalize-space(@auto)='')">
                 <g>
                     <xsl:attribute name="class">
                         <xsl:text>#{</xsl:text> 
@@ -470,7 +470,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="apply_mlib_aratura_control">    
         <xsl:choose>
-            <xsl:when test="boolean(@control) and not(normalize-space(@control)='')">
+            <xsl:when test="not(normalize-space(@control)='')">
                 <g>
                     <xsl:attribute name="class">
                         <xsl:text>#{</xsl:text> 
@@ -506,11 +506,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="apply_mlib_aratura_sig">   
         <xsl:choose>                          
-            <xsl:when test="boolean(@don) and not(normalize-space(@don)='')"> 
+            <xsl:when test="not(normalize-space(@don)='')"> 
                 <g>
                     <xsl:attribute name="style">
                         <xsl:choose>                          
-                            <xsl:when test="boolean(@on) and not(normalize-space(@on)='')">                                               
+                            <xsl:when test="not(normalize-space(@on)='')">                                               
                                 <xsl:text>#{ (</xsl:text>
                                 <xsl:value-of select="@don"/>
                                 <xsl:text> &#38;&#38; !</xsl:text>
@@ -531,11 +531,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:when>
         </xsl:choose> 
         <xsl:choose>
-            <xsl:when test="boolean(@doff) and not(normalize-space(@doff)='')"> 
+            <xsl:when test="not(normalize-space(@doff)='')"> 
                 <g>
                     <xsl:attribute name="style">
                         <xsl:choose>                          
-                            <xsl:when test="boolean(@off) and not(normalize-space(@off)='')">                                                 
+                            <xsl:when test="not(normalize-space(@off)='')">                                                 
                                 <xsl:text>#{ (</xsl:text>
                                 <xsl:value-of select="@doff"/>
                                 <xsl:text> &#38;&#38; !</xsl:text>
@@ -1676,110 +1676,37 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </style>
         
         <defs>
-            <linearGradient x1="100%" y1="0%" x2="100%" y2="100%">
-                <xsl:attribute name="id">
-                    <xsl:value-of select="$gradienton_id"/>
-                </xsl:attribute>   
-                <stop offset="0%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_color1"/>
-                    </xsl:attribute>                         
-                </stop>
-                <stop offset="50%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_color2"/>
-                    </xsl:attribute>                         
-                </stop> 
-                <stop offset="100%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_color1"/>
-                    </xsl:attribute>                         
-                </stop>
-            </linearGradient>
             
-            <linearGradient x1="100%" y1="0%" x2="100%" y2="100%">
-                <xsl:attribute name="id">
-                    <xsl:value-of select="$gradientona_id"/>
-                </xsl:attribute>   
-                <stop offset="0%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_color2"/>
-                    </xsl:attribute>                         
-                </stop>
-                <stop offset="50%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_color1"/>
-                    </xsl:attribute>                         
-                </stop> 
-                <stop offset="100%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_color2"/>
-                    </xsl:attribute>                         
-                </stop>
-            </linearGradient>
+            <xsl:call-template name="apply_lib_gradient">
+                <xsl:with-param name="id" select="$gradienton_id"/>
+                <xsl:with-param name="color1" select="$var_color1"/>
+                <xsl:with-param name="color2" select="$var_color2"/>
+            </xsl:call-template>
             
-            <linearGradient x1="100%" y1="0%" x2="100%" y2="100%">
-                <xsl:attribute name="id">
-                    <xsl:value-of select="$gradientoff_id"/>
-                </xsl:attribute>   
-                <stop offset="0%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_oncolor1"/>
-                    </xsl:attribute>                         
-                </stop>
-                <stop offset="50%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_oncolor2"/>
-                    </xsl:attribute>                         
-                </stop> 
-                <stop offset="100%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_oncolor1"/>
-                    </xsl:attribute>                         
-                </stop>
-            </linearGradient>
+            <xsl:call-template name="apply_lib_gradient">
+                <xsl:with-param name="id" select="$gradientona_id"/>
+                <xsl:with-param name="color1" select="$var_color2"/>
+                <xsl:with-param name="color2" select="$var_color1"/>
+            </xsl:call-template>
             
-            <linearGradient x1="100%" y1="0%" x2="100%" y2="100%">
-                <xsl:attribute name="id">
-                    <xsl:value-of select="$gradientoffa_id"/>
-                </xsl:attribute>   
-                <stop offset="0%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_oncolor2"/>
-                    </xsl:attribute>                         
-                </stop>
-                <stop offset="50%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_oncolor1"/>
-                    </xsl:attribute>                         
-                </stop> 
-                <stop offset="100%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_oncolor2"/>
-                    </xsl:attribute>                         
-                </stop>
-            </linearGradient> 
+            <xsl:call-template name="apply_lib_gradient">
+                <xsl:with-param name="id" select="$gradientoff_id"/>
+                <xsl:with-param name="color1" select="$var_oncolor1"/>
+                <xsl:with-param name="color2" select="$var_oncolor2"/>
+            </xsl:call-template>
             
-            <linearGradient x1="100%" y1="0%" x2="100%" y2="100%">
-                <xsl:attribute name="id">
-                    <xsl:value-of select="$gradientdsbl_id"/>
-                </xsl:attribute>   
-                <stop offset="0%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_dsblcolor1"/>
-                    </xsl:attribute>                         
-                </stop>
-                <stop offset="50%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_dsblcolor2"/>
-                    </xsl:attribute>                         
-                </stop> 
-                <stop offset="100%">
-                    <xsl:attribute name="stop-color">
-                        <xsl:value-of select="$var_dsblcolor1"/>
-                    </xsl:attribute>                         
-                </stop>
-            </linearGradient>
+            <xsl:call-template name="apply_lib_gradient">
+                <xsl:with-param name="id" select="$gradientoffa_id"/>
+                <xsl:with-param name="color1" select="$var_oncolor2"/>
+                <xsl:with-param name="color2" select="$var_oncolor1"/>
+            </xsl:call-template>      
+            
+            <xsl:call-template name="apply_lib_gradient">
+                <xsl:with-param name="id" select="$gradientdsbl_id"/>
+                <xsl:with-param name="color1" select="$var_dsblcolor1"/>
+                <xsl:with-param name="color2" select="$var_dsblcolor2"/>
+            </xsl:call-template>            
+            
             
         </defs>    
     </xsl:template>  
@@ -2056,149 +1983,29 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
        
             <xsl:choose>
                 <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='') and boolean(@color2) and not(normalize-space(@color2)='')">
-                    <xsl:choose>
-                        <xsl:when test="not($gradtype='c')">                    
-                            <linearGradient  x2="100%" y2="100%">
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_rect_gradient</xsl:text>
-                                </xsl:attribute>
-                                <xsl:choose>
-                                    <xsl:when test="$gradtype='v'"> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:otherwise> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:otherwise>
-                                </xsl:choose>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="0.5">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color2"/>                                                         
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                            </linearGradient>
-                        </xsl:when>
-                        <xsl:otherwise>                            
-                            <radialGradient>
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_rect_gradient</xsl:text>
-                                </xsl:attribute>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:choose>
-                                            <xsl:when test="boolean(@color2) and not(normalize-space(@color2)='')">
-                                                <xsl:value-of select="@color2"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="@color1"/>
-                                            </xsl:otherwise> 
-                                        </xsl:choose> 
-                                    </xsl:attribute>  
-                                </stop>
-                            </radialGradient>                           
-                        </xsl:otherwise>
-                    </xsl:choose> 
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_rect_gradient</xsl:text>
+                        </xsl:with-param>
+                        <xsl:with-param name="gradienttype" select="@gradient-type"/>
+                        <xsl:with-param name="color1" select="@color1"/>
+                        <xsl:with-param name="color2" select="@color2"/>
+                    </xsl:call-template>
                 </xsl:when>    
             </xsl:choose>
-            
-            
-            
+                                 
             <xsl:choose>
                 <xsl:when test="boolean(@fillcolor1) and not(normalize-space(@fillcolor1)='') and boolean(@fillcolor2) and not(normalize-space(@fillcolor2)='')">
-                    <xsl:choose>
-                        <xsl:when test="not($gradtype='c')">                    
-                            <linearGradient  x2="100%" y2="100%">
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_fillrect_gradient</xsl:text>
-                                </xsl:attribute>
-                                <xsl:choose>
-                                    <xsl:when test="$gradtype='v'"> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:otherwise> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:otherwise>
-                                </xsl:choose>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@fillcolor1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="0.5">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@fillcolor2"/>                                                         
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@fillcolor1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                            </linearGradient>
-                        </xsl:when>
-                        <xsl:otherwise>                            
-                            <radialGradient>
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_fillrect_gradient</xsl:text>
-                                </xsl:attribute>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@fillcolor1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:choose>
-                                            <xsl:when test="boolean(@fillcolor2) and not(normalize-space(@fillcolor2)='')">
-                                                <xsl:value-of select="@fillcolor2"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="@fillcolor1"/>
-                                            </xsl:otherwise> 
-                                        </xsl:choose> 
-                                    </xsl:attribute>  
-                                </stop>
-                            </radialGradient>                           
-                        </xsl:otherwise>
-                    </xsl:choose> 
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_fillrect_gradient</xsl:text>
+                        </xsl:with-param>
+                        <xsl:with-param name="gradienttype" select="@gradient-type"/>
+                        <xsl:with-param name="color1" select="@fillcolor1"/>
+                        <xsl:with-param name="color2" select="@fillcolor2"/>
+                    </xsl:call-template>
                 </xsl:when>    
             </xsl:choose>                
             
@@ -2588,74 +2395,15 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:choose>
                 <xsl:when test="not(normalize-space(@color1)='') and not(normalize-space(@color2)='')">
-                    <xsl:choose>
-                        <xsl:when test="not($gradtype='c')">                    
-                            <linearGradient  x2="100%" y2="100%">
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_sensor_gradient</xsl:text>
-                                </xsl:attribute>
-                                <xsl:choose>
-                                    <xsl:when test="$gradtype='v'"> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:otherwise> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:otherwise>
-                                </xsl:choose>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="0.5">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color2"/>                                                         
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                            </linearGradient>
-                        </xsl:when>
-                        <xsl:otherwise>                            
-                            <radialGradient>
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_sensor_gradient</xsl:text>
-                                </xsl:attribute>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:choose>
-                                            <xsl:when test="not(normalize-space(@color2)='')">
-                                                <xsl:value-of select="@color2"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="@color1"/>
-                                            </xsl:otherwise> 
-                                        </xsl:choose> 
-                                    </xsl:attribute>  
-                                </stop>
-                            </radialGradient>                           
-                        </xsl:otherwise>
-                    </xsl:choose> 
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_sensor_gradient</xsl:text>
+                        </xsl:with-param>
+                        <xsl:with-param name="gradienttype" select="@gradient-type"/>
+                        <xsl:with-param name="color1" select="@color1"/>
+                        <xsl:with-param name="color2" select="@color2"/>
+                    </xsl:call-template>                
                 </xsl:when>    
             </xsl:choose>    
             
@@ -4037,150 +3785,56 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:variable>    
        
             <xsl:choose>
-                <xsl:when test="boolean(@color1) and not(normalize-space(@color1)='') and boolean(@color2) and not(normalize-space(@color2)='')">
-                    <xsl:choose>
-                        <xsl:when test="not($gradtype='c')">                    
-                            <linearGradient  x2="100%" y2="100%">
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_slider_gradient</xsl:text>
-                                </xsl:attribute>
-                                <xsl:choose>
-                                    <xsl:when test="$gradtype='v'"> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:otherwise> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:otherwise>
-                                </xsl:choose>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="0.5">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color2"/>                                                         
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                            </linearGradient>
-                        </xsl:when>
-                        <xsl:otherwise>                            
-                            <radialGradient>
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_slider_gradient</xsl:text>
-                                </xsl:attribute>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@color1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:choose>
-                                            <xsl:when test="boolean(@color2) and not(normalize-space(@color2)='')">
-                                                <xsl:value-of select="@color2"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="@color1"/>
-                                            </xsl:otherwise> 
-                                        </xsl:choose> 
-                                    </xsl:attribute>  
-                                </stop>
-                            </radialGradient>                           
-                        </xsl:otherwise>
-                    </xsl:choose> 
+                <xsl:when test="not(normalize-space(@color1)='') and not(normalize-space(@color2)='')">
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_slider_gradient</xsl:text>
+                        </xsl:with-param>
+                        <xsl:with-param name="gradienttype">
+                            <xsl:choose>
+                                <xsl:when test="boolean(@gradtype='v')">
+                                    <xsl:text>tb</xsl:text>
+                                </xsl:when>
+                                <xsl:when test="boolean(@gradtype='h')">
+                                    <xsl:text>lr</xsl:text>    
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:text>c</xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:with-param>
+                        <xsl:with-param name="color1" select="@color1"/>
+                        <xsl:with-param name="color2" select="@color2"/>
+                    </xsl:call-template>                       
                 </xsl:when>    
             </xsl:choose>
             
             
             
             <xsl:choose>
-                <xsl:when test="boolean(@fillcolor1) and not(normalize-space(@fillcolor1)='') and boolean(@fillcolor2) and not(normalize-space(@fillcolor2)='')">
-                    <xsl:choose>
-                        <xsl:when test="not($gradtype='c')">                    
-                            <linearGradient  x2="100%" y2="100%">
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_fillrect_gradient</xsl:text>
-                                </xsl:attribute>
-                                <xsl:choose>
-                                    <xsl:when test="$gradtype='v'"> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:otherwise> 
-                                        <xsl:attribute name="x1">
-                                            <xsl:text>100%</xsl:text>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="y1">
-                                            <xsl:text>0%</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:otherwise>
-                                </xsl:choose>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@fillcolor1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="0.5">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@fillcolor2"/>                                                         
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@fillcolor1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                            </linearGradient>
-                        </xsl:when>
-                        <xsl:otherwise>                            
-                            <radialGradient>
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_fillslider_gradient</xsl:text>
-                                </xsl:attribute>                               
-                                <stop  offset="0">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:value-of select="@fillcolor1"/>
-                                    </xsl:attribute>  
-                                </stop>
-                                <stop  offset="1">
-                                    <xsl:attribute name="stop-color">
-                                        <xsl:choose>
-                                            <xsl:when test="boolean(@fillcolor2) and not(normalize-space(@fillcolor2)='')">
-                                                <xsl:value-of select="@fillcolor2"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="@fillcolor1"/>
-                                            </xsl:otherwise> 
-                                        </xsl:choose> 
-                                    </xsl:attribute>  
-                                </stop>
-                            </radialGradient>                           
-                        </xsl:otherwise>
-                    </xsl:choose> 
+                <xsl:when test="not(normalize-space(@fillcolor1)='') and  not(normalize-space(@fillcolor2)='')">
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_fillrect_gradient</xsl:text>
+                        </xsl:with-param>
+                        <xsl:with-param name="gradienttype">
+                            <xsl:choose>
+                                <xsl:when test="boolean(@gradtype='v')">
+                                    <xsl:text>tb</xsl:text>
+                                </xsl:when>
+                                <xsl:when test="boolean(@gradtype='h')">
+                                    <xsl:text>lr</xsl:text>    
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:text>c</xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:with-param>
+                        <xsl:with-param name="color1" select="@fillcolor1"/>
+                        <xsl:with-param name="color2" select="@fillcolor2"/>
+                    </xsl:call-template>                        
                 </xsl:when>    
             </xsl:choose>                
             
@@ -4188,8 +3842,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
    
             <style type="text/css">
-                
-                
+                               
                 <xsl:text>
                 </xsl:text>
                 <xsl:text>#</xsl:text>

@@ -188,7 +188,77 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:attribute>
             </xsl:when>
         </xsl:choose>
-    </xsl:template>   
+    </xsl:template> 
+    
+    
+    <xsl:template name="apply_lib_gradient">
+        <xsl:param name="id"/>
+        <xsl:param name="gradienttype"/>
+        <xsl:param name="color1"/>
+        <xsl:param name="color2"/>
+        <xsl:choose>
+            <xsl:when test="not($gradienttype='c')">                    
+                <linearGradient  id="{$id}" x2="100%" y2="100%">
+                    <xsl:choose>
+                        <xsl:when test="$gradienttype='tb'"> 
+                            <xsl:attribute name="x1">
+                                <xsl:text>0%</xsl:text>
+                            </xsl:attribute>
+                            <xsl:attribute name="y1">
+                                <xsl:text>100%</xsl:text>
+                            </xsl:attribute>
+                        </xsl:when>
+                        <xsl:otherwise> 
+                            <xsl:attribute name="x1">
+                                <xsl:text>100%</xsl:text>
+                            </xsl:attribute>
+                            <xsl:attribute name="y1">
+                                <xsl:text>0%</xsl:text>
+                            </xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>                               
+                    <stop  offset="0">
+                        <xsl:attribute name="stop-color">
+                            <xsl:value-of select="$color1"/>
+                        </xsl:attribute>  
+                    </stop>
+                    <stop  offset="0.5">
+                        <xsl:attribute name="stop-color">
+                            <xsl:value-of select="$color2"/>                                                         
+                        </xsl:attribute>  
+                    </stop>
+                    <stop  offset="1">
+                        <xsl:attribute name="stop-color">
+                            <xsl:value-of select="$color1"/>
+                        </xsl:attribute>  
+                    </stop>
+                </linearGradient>
+            </xsl:when>
+            <xsl:otherwise>                            
+                <radialGradient id="{$id}">                             
+                    <stop  offset="0">
+                        <xsl:attribute name="stop-color">
+                            <xsl:value-of select="$color1"/>
+                        </xsl:attribute>  
+                    </stop>
+                    <stop  offset="1">
+                        <xsl:attribute name="stop-color">
+                            <xsl:choose>
+                                <xsl:when test="boolean($color2) and not(normalize-space($color2)='')">
+                                    <xsl:value-of select="$color2"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="$color1"/>
+                                </xsl:otherwise> 
+                            </xsl:choose> 
+                        </xsl:attribute>  
+                    </stop>
+                </radialGradient>                           
+            </xsl:otherwise>
+        </xsl:choose>        
+        
+    </xsl:template>
+        
     
     
     <xsl:template name="apply_lib_fillrectangle"> 
@@ -303,6 +373,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute> 
                 
     </xsl:template>   
+    
+    
+    
     
     
     
