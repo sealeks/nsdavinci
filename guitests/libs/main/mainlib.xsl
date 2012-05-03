@@ -7,7 +7,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:html="http://www.w3.org/TR/xhtml1"
 xmlns:xlink="http://www.w3.org/1999/xlink" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-extension-element-prefixes="mlib">
+xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
 
@@ -599,57 +599,13 @@ extension-element-prefixes="mlib">
     
     <xsl:template name="apply_mlib_aratura_event"> 
         <xsl:choose>             
-            <xsl:when test="boolean(@rauto) or boolean(@roff) or boolean(@ron)"> 
-                <xsl:variable name="armaturakind"> 
-                    <xsl:choose>
-                        <xsl:when test="not(boolean(@type)) or (@type='motorD') or (@type='motor') or (normalize-space(@type)='')">
-                            <xsl:text>motor</xsl:text>
-                        </xsl:when> 
-                        <xsl:otherwise>
-                            <xsl:text>valve</xsl:text>
-                        </xsl:otherwise>    
-                    </xsl:choose>        
-                </xsl:variable>
-                <xsl:choose>             
-                    <xsl:when test="boolean(@rauto) and not(normalize-space(@rauto)='')">   
-                        <xsl:attribute name="onclick">
-                            <!--xsl:call-template name="startcddata"/-->
-                            <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
-                            <xsl:text>mainlib.armatura_auto_popup(this, '</xsl:text>
-                            <xsl:value-of select="@header"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="$armaturakind"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@auto"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@ron"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@roff"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@rauto"/>                           
-                            <xsl:text>'</xsl:text>                           
-                            <xsl:text>);};</xsl:text>
-                            <!--xsl:call-template name="stopcddata"/-->
-                        </xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="onclick">
-                            <!--xsl:call-template name="startcddata"/-->
-                            <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
+            <xsl:when test="boolean(@rauto) or boolean(@roff) or boolean(@ron)">  
+                <xsl:attribute name="onclick">
+                    <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
                             <xsl:text>mainlib.armatura_popup(this, '</xsl:text>
-                            <xsl:value-of select="@header"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="$armaturakind"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@ron"/>
-                            <xsl:text>','</xsl:text>
-                            <xsl:value-of select="@roff"/>                           
-                            <xsl:text>'</xsl:text>                           
-                            <xsl:text>);};</xsl:text>
-                            <!--xsl:call-template name="stopcddata"/-->
-                        </xsl:attribute>  
-                    </xsl:otherwise>                            
-                </xsl:choose>
+                            <xsl:value-of select="@rauto"/>                                                    
+                            <xsl:text>');};</xsl:text>
+                </xsl:attribute>                   
             </xsl:when>               
         </xsl:choose>
     </xsl:template>  
@@ -750,6 +706,255 @@ extension-element-prefixes="mlib">
             </style>  
         </defs>
     </xsl:template>
+    
+    
+   <xsl:template name="apply_mlib_aratura_popup">
+       <defs>
+           
+            <xsl:variable name="typecontrol">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@ron)='') and not(normalize-space(@roff)='')">
+                        <xsl:text>onoff</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="not(normalize-space(@ron)='')">
+                        <xsl:text>on</xsl:text>
+                    </xsl:when> 
+                    <xsl:when test="not(normalize-space(@roff)='')">
+                        <xsl:text>off</xsl:text>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:variable>
+                
+            <xsl:variable name="disablecontrol">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@auto)='')">
+                        <xsl:text>onoff</xsl:text>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:variable>
+                
+            <xsl:variable name="localcontrol">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@rauto)='')">
+                        <xsl:text>onoff</xsl:text>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:variable> 
+            
+            <xsl:variable name="armaturakind"> 
+                    <xsl:choose>
+                        <xsl:when test="not(boolean(@type)) or (@type='motorD') or (@type='motor') or (normalize-space(@type)='')">
+                            <xsl:text>motor</xsl:text>
+                        </xsl:when> 
+                        <xsl:otherwise>
+                            <xsl:text>valve</xsl:text>
+                        </xsl:otherwise>    
+                    </xsl:choose>        
+            </xsl:variable>
+            
+            <xsl:variable name="oncaption">
+                    <xsl:choose>
+                        <xsl:when test="($armaturakind='motor')">
+                            <xsl:text>Пуск</xsl:text>
+                        </xsl:when> 
+                        <xsl:otherwise>
+                            <xsl:text>Открыть</xsl:text>
+                        </xsl:otherwise>    
+                    </xsl:choose>                
+            </xsl:variable>
+            
+            <xsl:variable name="offcaption">
+                    <xsl:choose>
+                        <xsl:when test="($armaturakind='motor')">
+                            <xsl:text>Стоп</xsl:text>
+                        </xsl:when> 
+                        <xsl:otherwise>
+                            <xsl:text>Закрыть</xsl:text>
+                        </xsl:otherwise>    
+                    </xsl:choose>                
+            </xsl:variable> 
+            
+            <xsl:variable name="stopcaption">
+                    <xsl:choose>
+                        <xsl:when test="($armaturakind='motor')">
+                            <xsl:text>Сброс</xsl:text>
+                        </xsl:when> 
+                        <xsl:otherwise>
+                            <xsl:text>Стоп</xsl:text>
+                        </xsl:otherwise>    
+                    </xsl:choose>                
+            </xsl:variable>
+            
+            <xsl:variable name="statevalid">
+                <xsl:choose>
+                    <xsl:when test="$typecontrol='onoff'">
+                        <xsl:value-of select="@ron"/>
+                        <xsl:text> || </xsl:text>
+                        <xsl:value-of select="@roff"/>
+                    </xsl:when>
+                    <xsl:when test="$typecontrol='on'">
+                        <xsl:value-of select="@ron"/>
+                    </xsl:when>
+                    <xsl:when test="$typecontrol='off'">
+                        <xsl:value-of select="@roff"/>
+                    </xsl:when>                        
+                </xsl:choose>    
+            </xsl:variable>   
+            
+            <xsl:variable name="fontstyle">
+                <xsl:text> textsize: 12px ; fill: white; </xsl:text>    
+            </xsl:variable>             
+            
+            <xsl:variable name="fullvalid">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@auto)='')  and not(normalize-space($statevalid)='')">
+                        <xsl:text>(!(</xsl:text>
+                        <xsl:value-of select="@auto"/>
+                        <xsl:text> || </xsl:text>
+                        <xsl:value-of select="$statevalid"/>
+                        <xsl:text>).valid || </xsl:text>
+                        <xsl:value-of select="@auto"/>
+                        <xsl:text>)</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="not(normalize-space($statevalid)='')">
+                        <xsl:text>(!(</xsl:text>
+                        <xsl:value-of select="$statevalid"/>
+                        <xsl:text>).valid)</xsl:text>                      
+                    </xsl:when>
+                    <xsl:when test="not(normalize-space(@auto)='')">
+                        <xsl:text>(!(</xsl:text>
+                        <xsl:value-of select="@auto"/>
+                        <xsl:text>).valid || </xsl:text>
+                        <xsl:value-of select="@auto"/>
+                        <xsl:text>)</xsl:text>
+                    </xsl:when>                                       
+                </xsl:choose>    
+            </xsl:variable>            
+            
+            
+            
+           <svg width="100%" height="100%"> 
+                <xsl:attribute name="id">
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_popup</xsl:text>
+                </xsl:attribute>
+                
+                <xsl:attribute name="viewBox">
+                    <xsl:choose>
+                        <xsl:when test="not(normalize-space(@rauto)='')">
+                            <xsl:text>0 0 200 250</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>0 0 200 200</xsl:text>
+                        </xsl:otherwise>   
+                    </xsl:choose>                                        
+                </xsl:attribute>
+                
+                
+                <xsl:variable name="popupbody">
+                    <sensor x="5" y="10" width="190" height="80" color1="#333" color2="#555" caption="{@header}" alighn="center" fontcolor="#eee" r="10" stroke="#eee" stroke-width="1">
+                    </sensor>
+                    <xsl:choose>
+                        <xsl:when test="$typecontrol='onoff'">
+                            <button x="5" y="100" width="190" height="30" param="{@ron}" color1="#080" color2="#0B0" caption="{$oncaption}" disable="{$fullvalid}" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_buttonon</xsl:text>
+                                </xsl:attribute> 
+                                <xsl:attribute name="param">
+                                    <xsl:value-of select="@roff"/>
+                                    <xsl:text> @ 0,</xsl:text>
+                                    <xsl:value-of select="@ron"/>
+                                    <xsl:text> @ 1</xsl:text>
+                                </xsl:attribute>
+                            </button>    
+                            <button x="5" y="133" width="190" height="30" param="{@roff}" color1="#888" color2="#BBB" oncolor1="#880" oncolor2="#BB0" caption="{$stopcaption}" disable="{$fullvalid}" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_buttonstop</xsl:text>
+                                </xsl:attribute> 
+                                <xsl:attribute name="param">
+                                    <xsl:value-of select="@ron"/>
+                                    <xsl:text> @ 0,</xsl:text>
+                                    <xsl:value-of select="@roff"/>
+                                    <xsl:text> @ 0</xsl:text>
+                                </xsl:attribute>
+                                <xsl:attribute name="state">
+                                    <xsl:value-of select="@ron"/>
+                                    <xsl:text> || </xsl:text>
+                                    <xsl:value-of select="@roff"/>
+                                </xsl:attribute>                                
+                            </button>
+                            <button x="5" y="164" width="190" height="30" param="{@roff}" color1="#800" color2="#B00" caption="{$offcaption}" disable="{$fullvalid}" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_buttonoff</xsl:text>
+                                </xsl:attribute> 
+                                <xsl:attribute name="param">
+                                    <xsl:value-of select="@ron"/>
+                                    <xsl:text> @ 0,</xsl:text>
+                                    <xsl:value-of select="@roff"/>
+                                    <xsl:text> @ 1</xsl:text>
+                                </xsl:attribute>
+                            </button>                            
+                        </xsl:when> 
+                        <xsl:when test="$typecontrol='on'">
+                            <button x="5" y="100" width="190" height="90" param="{@ron}"  state="{@ron}" type="tumbler" caption="{$oncaption}" oncaption="{$offcaption}" color1="#080" color2="#0B0" oncolor1="#800" oncolor2="#B00" disable="{$fullvalid}" r="5">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button</xsl:text>
+                                </xsl:attribute>                                
+                            </button>
+                        </xsl:when> 
+                        <xsl:when test="$typecontrol='off'">
+                            <button x="5" y="100" width="190" height="90" param="{@roff}" state="{@roff}" type="tumbler" caption="{$offcaption}" oncaption="{$oncaption}" oncolor1="#080" oncolor2="#0B0" color1="#800" color2="#B00" disable="{$fullvalid}" r="5">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button</xsl:text>
+                                </xsl:attribute>
+                            </button>    
+                        </xsl:when> 
+                    </xsl:choose>
+                    
+                    <xsl:choose>
+                        <xsl:when test="not(normalize-space(@rauto)='')">
+                            <button x="5" y="205" width="190" height="40" param="{@rauto}" state="{@rauto}" type="tumbler" caption="В автомат" oncaption="В дист." color1="#888" color2="#BBB" r="5">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button_local</xsl:text>
+                                </xsl:attribute>
+                                <xsl:attribute name="disable">
+                                    <xsl:text>!</xsl:text>
+                                    <xsl:value-of select="@rauto"/>
+                                    <xsl:text>.valid</xsl:text>
+                                </xsl:attribute>
+                            </button>   
+                        </xsl:when>
+                    </xsl:choose> 
+                </xsl:variable> 
+                    
+                
+                <xsl:for-each select="exsl:node-set($popupbody)/*">
+                    <xsl:choose>
+                        <xsl:when test="local-name()='button'">
+                            <xsl:call-template name="mlib_button"/>
+                        </xsl:when>
+                        <xsl:when test="local-name()='rect'">
+                            <xsl:call-template name="mlib_button"/>
+                        </xsl:when> 
+                        <xsl:when test="local-name()='sensor'">
+                            <xsl:call-template name="mlib_sensor"/>
+                        </xsl:when>                         
+                    </xsl:choose>
+                </xsl:for-each>    
+                
+           </svg>               
+       </defs>                   
+   </xsl:template>       
+    
+    
+    
+    
   
   
         <!--
@@ -792,6 +997,7 @@ extension-element-prefixes="mlib">
             
             <xsl:call-template name="apply_mlib_aratura_style"/>
             
+            <xsl:call-template name="apply_mlib_aratura_popup"/>
 
             <rect fill="white" stroke="white" opacity="0">
                 <xsl:call-template name="apply_rect"/> 
@@ -962,7 +1168,7 @@ extension-element-prefixes="mlib">
         <xsl:choose>                
             <xsl:when test="(boolean(@onclick) and not(normalize-space(@onclick)=''))">      
                 <xsl:attribute name="onclick">
-                    <xsl:text> if (this.getAttribute('state')!='disable') {</xsl:text> 
+                    <xsl:text> if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {</xsl:text> 
                     <xsl:value-of select="@onclick"/>
                     <xsl:text>;</xsl:text> 
                     <xsl:value-of select="$on_eventvar"/>
@@ -973,7 +1179,7 @@ extension-element-prefixes="mlib">
                 <xsl:choose>                
                     <xsl:when test="(boolean($on_eventvar) and not($on_eventvar=''))">      
                         <xsl:attribute name="onclick">
-                            <xsl:text> if (this.getAttribute('state')!='disable') {</xsl:text> 
+                            <xsl:text> if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {</xsl:text> 
                             <xsl:value-of select="$on_eventvar"/>
                             <xsl:text> };</xsl:text>                       
                         </xsl:attribute>
@@ -1784,7 +1990,7 @@ extension-element-prefixes="mlib">
     -->
     
     
-    <xsl:template match="//mlib:button" >   
+    <xsl:template match="//mlib:button" name="mlib_button">   
         <g>       
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>   
@@ -2295,7 +2501,7 @@ extension-element-prefixes="mlib">
    
     
     
-    <xsl:template match="//mlib:rect" >
+    <xsl:template match="//mlib:rect" name="mlib_rect">
         <g>
             
             <xsl:call-template name="apply_id"/>
@@ -2993,11 +3199,219 @@ extension-element-prefixes="mlib">
                 </g>                    
             </xsl:when>
         </xsl:choose>
-    </xsl:template>   
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_sensor_calcbutton">
+        <xsl:param name="num"/>
+        <xsl:attribute name="onclick">
+            <xsl:text>var txtel= document.getElementById('</xsl:text>
+            <xsl:value-of select="@id"/>
+            <xsl:text>_popup_sensorcalc_sensor_text</xsl:text>  
+            <xsl:text>'); if (txtel) { var newtxt= txtel.textContent+'</xsl:text>
+            <xsl:value-of select="$num"/>               
+            <xsl:text>'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}</xsl:text>
+        </xsl:attribute>
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_sensor_popup"> 
+              
+        <xsl:choose>
+            <xsl:when test="(@sensorevent='valueset') and not(normalize-space(@param)='')">     
+                <defs>
+                    <svg width="100%" height="100%" viewBox="0 0 128 250"> 
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_popup</xsl:text>
+                        </xsl:attribute>
+                        
+                        <xsl:variable name="fontstyle">
+                            <xsl:text>fill: yellow; font-size: 18;</xsl:text>                            
+                        </xsl:variable>
+                           
+      
+                        <xsl:variable name="popupbody">
+                            <sensor x="5" y="7" width="118" height="36" color1="#333"  color2="#555" caption="" r="5" fontcolor="yellow" fontstyle="font-size: 18;" stroke="#eee" stroke-width="1">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_sensorcalc</xsl:text>
+                                </xsl:attribute>
+                            </sensor> 
+                            <button x="5" y="50" width="38" height="38" caption="1" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button1</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">1</xsl:with-param>
+                                </xsl:call-template>
+                            </button>    
+                            <button x="45" y="50" width="38" height="38" caption="2" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button2</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">2</xsl:with-param>
+                                </xsl:call-template>                                
+                            </button>
+                            <button x="85" y="50" width="38" height="38" caption="3" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button3</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">3</xsl:with-param>
+                                </xsl:call-template>                                
+                            </button>                      
+                            <button x="5" y="90" width="38" height="38" caption="4" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button4</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">4</xsl:with-param>
+                                </xsl:call-template>                                
+                            </button>    
+                            <button x="45" y="90" width="38" height="38" caption="5" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button5</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">5</xsl:with-param>
+                                </xsl:call-template>                                
+                            </button>
+                            <button x="85" y="90" width="38" height="38" caption="6" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button6</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">6</xsl:with-param>
+                                </xsl:call-template>                                
+                            </button> 
+                            <button x="5" y="130" width="38" height="38" caption="7" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button7</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">7</xsl:with-param>
+                                </xsl:call-template>                                
+                            </button>    
+                            <button x="45" y="130" width="38" height="38" caption="8" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button8</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">8</xsl:with-param>
+                                </xsl:call-template>                                
+                            </button>
+                            <button x="85" y="130" width="38" height="38" caption="9" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_button9</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">9</xsl:with-param>
+                                </xsl:call-template>                                
+                            </button>    
+                            <button x="5" y="170" width="38" height="38" caption="." r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_buttondot</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">.</xsl:with-param>
+                                </xsl:call-template>
+                            </button>    
+                            <button x="45" y="170" width="38" height="38" caption="0" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_buttonn</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">0</xsl:with-param>
+                                </xsl:call-template>
+                            </button>
+                            <button x="85" y="170" width="38" height="38" caption="C" r="5" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_buttonc</xsl:text>
+                                </xsl:attribute>
+                                <xsl:attribute name="onclick">
+                                    <xsl:text>var txtel= document.getElementById('</xsl:text>
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_sensorcalc_sensor_text</xsl:text>  
+                                    <xsl:text>'); if (txtel) {if (txtel.textContent.length>0) {txtel.textContent=txtel.textContent.substring(0, txtel.textContent.length-1);}}</xsl:text>
+                                </xsl:attribute>
+                            </button>     
+                            <button x="5" y="210" width="38" height="38" caption="-" r="5"  fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_buttonnegativ</xsl:text>
+                                </xsl:attribute>
+                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                    <xsl:with-param name="num">-</xsl:with-param>
+                                </xsl:call-template>
+                            </button>    
+                            <button x="45" y="210" width="38" height="38" caption="x"  r="5" color1="#800" color2="#B00" fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_buttond</xsl:text>
+                                </xsl:attribute>
+                                <xsl:attribute name="onclick">
+                                    <xsl:text>var popuptmp= document.getElementById('</xsl:text>
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_body');  if (popuptmp) {if (popuptmp.clearpopup) {popuptmp.clearpopup();}}</xsl:text>
+                                </xsl:attribute>                                
+                            </button>
+                            <button x="85" y="210" width="38" height="38" caption="ok"  r="5" color1="#080" color2="#0B0"  fontstyle="{$fontstyle}">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_buttonok</xsl:text>
+                                </xsl:attribute>
+                                <xsl:attribute name="onclick">
+                                    <xsl:text>var txtel= document.getElementById('</xsl:text> 
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_sensorcalc_sensor_text</xsl:text>  
+                                    <xsl:text>'); if (txtel) { if (txtel.textContent.length>0) { $$(('</xsl:text>
+                                    <xsl:value-of select="@param"/> 
+                                    <xsl:text> @= ' + txtel.textContent));}}</xsl:text> 
+                                    <xsl:text>var popuptmp= document.getElementById('</xsl:text>
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_body');  if (popuptmp) {if (popuptmp.clearpopup) {popuptmp.clearpopup();}}</xsl:text>
+                                </xsl:attribute>                                
+                            </button>                     
+                        </xsl:variable>
+                
+                        <xsl:for-each select="exsl:node-set($popupbody)/*">
+                            <xsl:choose>
+                                <xsl:when test="local-name()='button'">
+                                    <xsl:call-template name="mlib_button"/>
+                                </xsl:when>
+                                <xsl:when test="local-name()='rect'">
+                                    <xsl:call-template name="mlib_button"/>
+                                </xsl:when> 
+                                <xsl:when test="local-name()='sensor'">
+                                    <xsl:call-template name="mlib_sensor"/>
+                                </xsl:when>                         
+                            </xsl:choose>
+                        </xsl:for-each>  
+                
+                
+                    </svg>
+                </defs>  
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
         
   
     
-    <xsl:template match="//mlib:sensor" >
+    <xsl:template match="//mlib:sensor" name="mlib_sensor">
         <g>
             
             <xsl:call-template name="apply_id"/>
@@ -3023,6 +3437,8 @@ extension-element-prefixes="mlib">
             <xsl:call-template name="apply_mlib_sensor_alarmstate"/> 
             
             <xsl:call-template name="apply_mlib_sensor_control"/>
+            
+            <xsl:call-template name="apply_mlib_sensor_popup"/>
                        
         </g>
     </xsl:template>
