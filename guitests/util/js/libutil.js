@@ -339,13 +339,17 @@ libutil.project.addtoformlist = function(els){
 
 libutil.project.add_design_style  = function(doc){
     if (doc.documentElement){
-        var dstyle = ".designer_selected { opacity: 0.8; outline: 1px solid red;} \n"+
-        "*[isgoupelement]{ outline: 1px dashed green; } \n"+
-        "*[isgoupelement].designer_selected { opacity: 0.8; outline: 1px solid red;}\n"+
+        var dstyle = ".designer_selected { opacity: 0.8 !important; outline: 1px solid red !important;} \n"+
+        "*[isgoupelement]{ outline: 1px dashed green !important; } \n"+
+        'g[cursor="pointer"]:hover { outline: 0px solid transparent  !important;} \n'+
+        'g[cursor="pointer"].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;} \n'+
+        "*[isgoupelement].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;}\n"+
+        "*[filter] { filter: url('') !important;} \n"+       
         "*[dv-visible] { display: block !important;} \n";;
     }
     libutil.html.create_style(doc.documentElement, dstyle);              
 }
+
 
 
 

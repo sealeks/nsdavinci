@@ -3717,25 +3717,27 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     <xsl:template match="//mlib:group">
-        <svg>
-            <xsl:attribute name="isgoupelement">
-                <xsl:text>true</xsl:text>
-            </xsl:attribute>
-            <xsl:call-template name="apply_rect"/>
+        <g>
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
-            <xsl:call-template name="apply_lib_mouseevent"/> 
+            <svg>
+                <xsl:attribute name="isgoupelement">
+                    <xsl:text>true</xsl:text>
+                </xsl:attribute>
+                <xsl:call-template name="apply_rect"/>
+                <xsl:call-template name="apply_lib_mouseevent"/> 
             
-            <g>
-                <xsl:call-template name="apply_svg_g_visible_binding"/>          
-                <rect stroke="white" fill="white" opacity="0.0">
-                    <xsl:call-template name="apply_0_0_width_height"/> 
-                </rect>
-                <g> 
-                    <xsl:call-template name="mlib_translate"/>
+                <g>
+                    <xsl:call-template name="apply_svg_g_visible_binding"/>          
+                    <rect stroke="white" fill="white" opacity="0.0">
+                        <xsl:call-template name="apply_0_0_width_height"/> 
+                    </rect>
+                    <g> 
+                        <xsl:call-template name="mlib_translate"/>
+                    </g>
                 </g>
-            </g>
-        </svg>
+            </svg>
+        </g>
     </xsl:template>    
     
     
@@ -4428,24 +4430,26 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
    
    
     <xsl:template match="//mlib:slider">
-        <svg>        
-            <xsl:call-template name="apply_rect"/>
+        <g>
             <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_mlib_schema"/>
-            <xsl:call-template name="apply_svg_g_visible_binding"/>           
-            <xsl:call-template name="apply_mlib_slider_style"/>
-            <g>           
-                <rect stroke="white" fill="white" opacity="0.0">
-                    <xsl:call-template name="apply_0_0_width_height"/> 
-                </rect>
+            <xsl:call-template name="apply_mlib_schema"/>            
+            <svg>        
+                <xsl:call-template name="apply_rect"/>
+                <xsl:call-template name="apply_svg_g_visible_binding"/>           
+                <xsl:call-template name="apply_mlib_slider_style"/>
+                <g>           
+                    <rect stroke="white" fill="white" opacity="0.0">
+                        <xsl:call-template name="apply_0_0_width_height"/> 
+                    </rect>
                 
-                <xsl:call-template name="apply_mlib_slider_sliderrect"/>
+                    <xsl:call-template name="apply_mlib_slider_sliderrect"/>
                 
-                <xsl:call-template name="apply_mlib_slider_sliderfillrect"/>
+                    <xsl:call-template name="apply_mlib_slider_sliderfillrect"/>
                 
-                <xsl:call-template name="apply_mlib_slider_buttoncontrol"/> 
-            </g>
-        </svg>
+                    <xsl:call-template name="apply_mlib_slider_buttoncontrol"/> 
+                </g>
+            </svg>
+        </g>
     </xsl:template>   
     
     

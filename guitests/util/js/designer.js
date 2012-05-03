@@ -1,6 +1,6 @@
 var designutil = {};
 
-
+designutil.SELECT_MODE = null;
 ///
 designutil.componentinfo = function(){
     this.elements = new Object();
@@ -72,7 +72,6 @@ designer.prototype.attach = function(el){
                 if (parentclass!='designer_selected'){
                 el.oldoncick = el.oncick;
                 el.onclick= function() {
-                    //alert('hhh');
                     if (el.hasAttribute('isgoupelement')){
                         if (document.red) document.red.click_canparented(el, event);
                     }
@@ -80,11 +79,7 @@ designer.prototype.attach = function(el){
                         if (document.red) document.red.click_component(event);
                     }}
                 };
-                
-                //el.addEventListener('keyup', function() {
-                //    if (document.red) document.red.keybord_dispatcher(event);
-                //});
-                
+
                 el.addEventListener('keyup', function() {
                     if (document.red) document.red.onmos();
                  });
@@ -110,47 +105,11 @@ designer.prototype.attach = function(el){
                     if (document.red) document.red.onmos();
                 };
                 
-                ////
-                
-                el.onmousemove = undefined;/*el.onmousemove;
-                el.onmousemove = function() {
-                    if (document.red) document.red.onmos();
-                };  */
-                el.onmousedown = undefined;/*el.onmousemove;
-                el.onmousedown = function() {
-                    if (document.red) document.red.onmos();
-                };*/
-                el.onmouseup = undefined;/*el.onmouseup;
-                el.onmouseup = function() {
-                    if (document.red) document.red.onmos();
-                };  */
-                el.oncontextmenu  = undefined;/*el.oncontextmenu;
-                el.oncontextmenu = function() {
-                    if (document.red) document.red.onmos();
-                };   */              
-                
-                
-                /*el.oldonmousemove = el.onmousemove;
-                el.onmousemove = function() {
-                    if (document.red) document.red.onmosnopropogate();
-                };
-                el.oldonmousedown = el.onmousedown;
-                el.onmousedown = function() {
-                    if (document.red) document.red.mousedown_component();
-                };
-                el.oldonmouseup = el.onmouseup;
-                el.onmouseup = function() {
-                    if (document.red) document.red.onmosnopropogate();
-                };
-                el.oldoncontextmenu = el.oncontextmenu;
-                el.oncontextmenu = function() {
-                    if (document.red) {
-                        if (document.red.isSelection(document.red.getTarget(event)))
-                            document.red.createContextMenu(event);
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                };*/
+                el.onmousemove = undefined;
+                el.onmousedown = undefined;
+                el.onmouseup = undefined;
+                el.oncontextmenu  = undefined;
+
             }
         }        
     }
@@ -469,9 +428,7 @@ designer.prototype.getDXinfo =  function (el){
                         dpath_val = dpath_val.substring(fnd[0].length, dpath_val.length );
                         fnd = dpath_val.match(/\s*[\-0-9\.]*/);
                         if (fnd && (fnd.length>0))  { 
-                            dpath_val = dpath_val.substring(0, fnd[0].length);
-
-                               console.log( 'X get d: ' + dpath + ' start: ' + dpath_strt + ' y: ' + dpath_val + ' stop: ' + dpath_stp); 
+                            dpath_val = dpath_val.substring(0, fnd[0].length); 
                                return {
                                    'start' : dpath_strt,
                                    'x' : dpath_val,
@@ -784,11 +741,20 @@ designer.prototype.copyFromClipBoard = function( x , y, prnt){
 designer.prototype.isSelection = function(el){
     if (el && this.selectedElemens) {
         for (var j=0; j< this.selectedElemens.length; ++j)
-            if (this.selectedElemens[j]==el) return true;
+            if (this.selectedElemens[j].getElement()==el) return true;
     }
     return false;        
 }
 
+
+designer.prototype.isSelectionParent = function(el){
+    if (el && this.selectedElemens) {
+        for (var j=0; j< this.selectedElemens.length; ++j)
+            if (this.selectedElemens[j].getElement().parentNode==el.parentNode) 
+                return false;
+    }
+    return true;        
+}
 
 designer.prototype.selectionCount = function(){
     return this.selectedElemens && this.selectedElemens.length > 0;        
@@ -920,6 +886,9 @@ designer.prototype.selectComponent = function(el, shift, ctnrl){
         }
         return false;
     }
+    
+    if (this.isSelectionParent(el))
+        this.clearSelections();
 
     if (!shift){
         this.clearSelections();
@@ -1534,13 +1503,20 @@ designutil.selectwraper.prototype.getParent = function(){
 }
 
 designutil.selectwraper.prototype.select = function(){
-    this.selement = this.document.createElementNS(libutil.SVG_NAMESPACE_URL, 'g');
+    
+    if (designutil.SELECT_MODE){ 
+        this.selement = this.document.createElementNS(libutil.SVG_NAMESPACE_URL, 'g');    
+        this.selement.appendChild(this.parent.replaceChild( this.selement , this.element));}
+    else{
+        this.selement = this.element;
+        this.oldclass=this.selement.getAttribute('class');
+    }
+    
     this.selement.setAttribute('class', 'designer_selected');
-    this.selement.appendChild(this.parent.replaceChild( this.selement , this.element));
     this.selement.designer=this.designer;
-    this.selement.addEventListener('keyup', function() {
+    /*this.selement.addEventListener('keyup', function() {
         if (this.designer) this.designer.keybord_dispatcher(event);
-    });
+    });*/
     this.selement.onmousemove = function() {
         if (this.designer) this.designer.mousemove_document();
     };
@@ -1563,10 +1539,19 @@ designutil.selectwraper.prototype.select = function(){
 
 designutil.selectwraper.prototype.deselect = function(){
     if (this.selement){
+        if (!designutil.SELECT_MODE)
+            this.selement.setAttribute('class', this.oldclass ? this.oldclass : '');
+        
+     if (designutil.SELECT_MODE){       
        this.selement.removeChild(this.element); 
        this.parent.replaceChild(this.element,this.selement);
        if (this.designer)
-           this.designer.updateElement(this.element);
+           this.designer.updateElement(this.element);}
+       
+       this.selement.onmousemove = undefined;
+       this.selement.onmousedown = undefined;
+       this.selement.onmouseup = undefined;
+       this.selement.oncontextmenu  = undefined;
        
     } 
 }
@@ -1575,10 +1560,15 @@ designutil.selectwraper.prototype.deselect = function(){
 designutil.selectwraper.prototype.getTmpTranslate =  function (el){
     if (el.hasAttribute('transform')){
         var attr = el.getAttribute('transform');
-        var matchstr = attr.match(/\s*translate\s*\(\s*\-?[0-9\.]+\s*\,\s*\-?[0-9\.]+\s*\)\s*/);
-        if (matchstr && matchstr.length==1)
-            return matchstr[0];
-    }
+        if (attr){
+            var matchstr = attr.match(/\s*translate\s*\(\s*\-?[0-9\.]+\s*\,\s*\-?[0-9\.]+\s*\)\s*/);
+            if (matchstr && matchstr.length==1){
+                return attr;
+            }
+            else{
+                return 'translate(0,0) '+attr; 
+        }
+    }}
     return null;
 }
 
