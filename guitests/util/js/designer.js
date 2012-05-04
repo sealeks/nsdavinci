@@ -392,8 +392,6 @@ designer.prototype.setSourseElementRect = function(x, y, width, height , el){
 
 designer.prototype.setElementRect = function(x, y, width, height , el){
     if (el){
-        console.log(x + ' ' + dsutl.trslt.getXname(el));
-        console.log(y + ' ' + dsutl.trslt.getYname(el));
         if (!el) return;
         if (x && dsutl.trslt.getXname(el)){
             switch(dsutl.trslt.getXname(el)){
@@ -414,6 +412,65 @@ designer.prototype.setElementRect = function(x, y, width, height , el){
 }
 
 
+designer.prototype.changeSourseElementRect = function(x, y, width , height, el){
+    var sel = this.getSourseElement(el);
+    if (sel){
+        var xnmame = dsutl.trslt.getXname(sel);
+        var ynmame = dsutl.trslt.getYname(sel);
+        var xval = null;
+        var yval = null;
+        if (x && xnmame){
+            switch(xnmame){
+                case 'd': {xval=(parseFloat(dsutl.trslt.getDXval(sel)) + x);break;}
+                case 'transform': {xval=(parseFloat(dsutl.trslt.getXTranslate(sel)) + x);break;} 
+                default: {xval=(parseFloat(sel.getAttribute(xnmame)) + x);}
+            }
+        }
+        if (y && ynmame){
+            switch(ynmame){
+                case 'd': {yval=(parseFloat(dsutl.trslt.getDYval(sel)) + y);break;}
+                case 'transform': {yval=(parseFloat(dsutl.trslt.getYTranslate(sel)) + y);break;} 
+                default: {yval=(parseFloat(sel.getAttribute(ynmame)) + y);}
+            }
+        }
+             
+        this.setSourseElementRect(  xval , yval ,
+            (width && dsutl.trslt.getWname(sel) ? parseFloat(sel.getAttribute(dsutl.trslt.getWname(sel))) + width : width) ,
+            (height && dsutl.trslt.getHname(sel)? parseFloat(sel.getAttribute(dsutl.trslt.getHname(sel))) + height : height) , el);
+    }
+
+}
+
+
+designer.prototype.changeElementRect = function(x, y, width , height, el){
+    if (el){
+        var xnmame = dsutl.trslt.getXname(el);
+        var ynmame = dsutl.trslt.getYname(el);
+        var xval = null;
+        var yval = null;
+        if (x && xnmame){
+            switch(xnmame){
+                case 'd': {xval=(parseFloat(dsutl.trslt.getDXval(el)) + x);break;}
+                case 'transform': {xval=(parseFloat(dsutl.trslt.getXTranslate(el)) + x);break;} 
+                default: {xval=(parseFloat(el.getAttribute(xnmame)) + x);}
+            }
+        }
+        if (y && ynmame){
+            switch(ynmame){
+                case 'd': {yval=(parseFloat(dsutl.trslt.getDYval(el)) + y);break;}
+                case 'transform': {yval=(parseFloat(dsutl.trslt.getYTranslate(el)) + y);break;} 
+                default: {yval=(parseFloat(el.getAttribute(ynmame)) + y);}
+            }
+        }
+             
+        this.setElementRect(  xval , yval ,
+            (width && dsutl.trslt.getWname(el) ? parseFloat(el.getAttribute(dsutl.trslt.getWname(el))) + width : width) ,
+            (height && dsutl.trslt.getHname(el)? parseFloat(el.getAttribute(dsutl.trslt.getHname(el))) + height : height) , el);
+    }
+
+}
+
+
 
 
 
@@ -424,9 +481,9 @@ designer.prototype.updateElement = function(el){
         var tel = this.getTransformElement(el.getAttribute('id'));
         var old = el.parentNode.replaceChild(tel ,el);
         this.attach(tel);
-        if (select){
+        if (select)
             this.repaceSelection(old, tel);
-        }
+        return tel;
     }
     else{
         for (var j=0; j< this.selectedElemens.length; ++j)
@@ -497,7 +554,7 @@ designer.prototype.cloneElements = function(el){
                 var prntel = el.parentNode;
                 prntel.appendChild(tel);
                 this.attach(tel);
-                this.changeRect(10,10, null, null, tel);
+                this.changeSourseElementRect(10,10, null, null, tel);
                 this.setSelection(tel);
                 this.updateElement(tel);
                 
@@ -536,8 +593,6 @@ designer.prototype.toFrontElements = function(el){
         
         for (var j=0; j< this.selectedElemens.length; ++j)
             this.toFrontElements(this.selectedElemens[j].getElement());
-     
-        //this.clearSelections();
 
     }   
 }
@@ -623,37 +678,27 @@ designer.prototype.copyFromClipBoard = function( x , y, prnt){
 }
 
 
-
-
-designer.prototype.changeRect = function(x, y, width , height, el){
-    var sel = this.getSourseElement(el);
-    if (sel){
-        var xnmame = dsutl.trslt.getXname(sel);
-        var ynmame = dsutl.trslt.getYname(sel);
-        var xval = null;
-        var yval = null;
-        if (x && xnmame){
-            switch(xnmame){
-                case 'd': {xval=(parseFloat(dsutl.trslt.getDXval(sel)) + x);break;}
-                case 'transform': {xval=(parseFloat(dsutl.trslt.getXTranslate(sel)) + x);break;} 
-                default: {xval=(parseFloat(sel.getAttribute(xnmame)) + x);}
-            }
-        }
-        if (y && ynmame){
-            switch(ynmame){
-                case 'd': {yval=(parseFloat(dsutl.trslt.getDYval(sel)) + y);break;}
-                case 'transform': {yval=(parseFloat(dsutl.trslt.getYTranslate(sel)) + y);break;} 
-                default: {yval=(parseFloat(sel.getAttribute(ynmame)) + y);}
-            }
-        }
-        
-        
-        this.setSourseElementRect(  xval , yval ,
-            (width && dsutl.trslt.getWname(sel) ? parseFloat(sel.getAttribute(dsutl.trslt.getWname(sel))) + width : width) ,
-            (height && dsutl.trslt.getHname(sel)? parseFloat(sel.getAttribute(dsutl.trslt.getHname(sel))) + height : height) , el);
+designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
+    if (created/* && x && y*/){
+        this.clearSelections();
+        var coneid=this.unicalIdGenerate(created , this.sourseDocument , null, created.localName);
+        var sprnt = prnt ? this.getSourseElement(prnt) : this.sourseDocument.documentElement;
+        prnt = prnt ? prnt : this.instantdocument.documentElement;
+        var el =sprnt.appendChild(created.cloneNode(true)); 
+        el.setAttribute('id',  coneid);
+        this.setElementRect(x,y, null, null, el);        
+        this.getTrasformDocument();        
+        var tel = this.getTransformElement(coneid);
+        prnt.appendChild(tel);
+        this.attach(tel);
+        this.setSelection(tel);
+        this.updateElement(tel);
+        this.setNeedSave();
+        return true;
     }
-
+    return false;
 }
+
 
 
     
@@ -670,6 +715,12 @@ designer.prototype.onmosnopropogate = function (){
 } 
 
 designer.prototype.clickComponent = function(){
+    //console.log('designer.prototype.clickComponent : x' + event.pageX + 'y' + event.pageY);
+    if (this.afterremove){
+        this.afterremove=undefined;
+        event.stopPropagation();
+        return;
+    }  
     var el= this.getTarget(event);
     dsutl.toolwin.setCurrentRedactor(window);
     this.selectComponent(el, event.shiftKey, event.ctrlKey);
@@ -677,51 +728,41 @@ designer.prototype.clickComponent = function(){
 }
 
 designer.prototype.clickCanParented = function(el, ev){
-    if (((!this.isSelection(el))) || (!this.newLibComponent((ev.pageX - el.x.baseVal.value).toString(), (ev.pageY - el.y.baseVal.value).toString(), el)))
-        if (document.red) document.red.clickComponent(ev);
+    var box = el.getBBox ? el.getBBox() : null;
+    console.log(box);
+    if (!(((!this.isSelection(el))) || (!box) || (!this.isNeedInsert(el)))) {
+        el = this.updateElement(el);
+        if (this.newLibComponent((ev.pageX - box.x).toString(), (ev.pageY - box.y).toString(), el)) {
+            el = this.updateElement(el);
+            event.stopPropagation();
+            return false;}}
+
+    if (document.red) document.red.clickComponent(ev); 
     event.stopPropagation();
     return false;
 }
 
 designer.prototype.clickParented = function(){
-    console.log('designer.prototype.clickParented : x' + event.pageX + 'y' + event.pageY);
     if (event && event.pageX.toString() && event.pageY.toString())
         this.newLibComponent(event.pageX.toString(), event.pageY.toString());
 }
 
 designer.prototype.newLibComponent = function(x, y , prnt){
-    var created = dsutl.toolwin.getSelectedComponent();
-    if (created && x && y){
-        console.log('designer.prototype.newLibComponent : x' + x + 'y' + y);
-        this.createLibComponent(x, y, created, prnt);
-        this.show_property();
-        dsutl.toolwin.clearSelectedComponent();
-        return true;
+    if (prnt){     
+        var created = dsutl.toolwin.getSelectedComponent();
+        if (created && x && y){
+            this.createLibComponent(x, y, created, prnt);
+            this.show_property();
+            dsutl.toolwin.clearSelectedComponent();
+            return true;
+        }
     }
-    return false;
+return false;
 }
 
-designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
-    if (created/* && x && y*/){
-        this.clearSelections();
-        var coneid=this.unicalIdGenerate(created , this.sourseDocument , null, created.localName);
-        var sprnt = prnt ? this.getSourseElement(prnt) : this.sourseDocument.documentElement;
-        prnt = prnt ? prnt : this.instantdocument.documentElement;
-        var el =sprnt.appendChild(created.cloneNode(true)); 
-        el.setAttribute('id',  coneid);
-        this.setElementRect(x,y, null, null, el);        
-        this.getTrasformDocument();        
-        var tel = this.getTransformElement(coneid);
-        prnt.appendChild(tel);
-        this.attach(tel);
-        this.setSelection(tel);
-        //chrect ? this.changeRect(x,y, null, null, el) : this.setSourseElementRect(x,y, null, null, tel);
-        this.updateElement(tel);
-        this.setNeedSave();
-        return true;
-    }
-    return false;
-}
+ //designer.prototype.hasNeedCreateElement = function(){
+  //var tmp= $$global(); 
+  //return tmp ? tmp['selectedComponent'] : null;}
 
 
 //  Выбор компонента на форме
@@ -842,28 +883,30 @@ designer.prototype.moveElements = function (event){
     
     var incr =event.altKey ? 10 : 1;
     
+    var isresize = false;
+
 
     for (var i=0;i < this.selectedElemens.length;++i){
         var el=this.selectedElemens[i].getElement();
         if (event.ctrlKey) {
             switch (event.keyIdentifier){
                 case 'Left':{
-                    this.changeRect(-incr, null, null, null, el);
+                    this.changeSourseElementRect(-incr, null, null, null, el);
                     this.selectedElemens[i].shiftRect(-incr, null);
                     break;
                 }
                 case 'Right':{
-                    this.changeRect( incr, null, null, null, el);
+                    this.changeSourseElementRect( incr, null, null, null, el);
                     this.selectedElemens[i].shiftRect(incr, null);
                     break;
                 }     
                 case 'Up':{
-                   this.changeRect(null,-incr,  null, null, el);
+                   this.changeSourseElementRect(null,-incr,  null, null, el);
                    this.selectedElemens[i].shiftRect(null, -incr);
                    break;
                 }
                 case 'Down':{
-                   this.changeRect(null,+ incr,  null, null, el);
+                   this.changeSourseElementRect(null,+ incr,  null, null, el);
                    this.selectedElemens[i].shiftRect(null, incr);
                    break;
                 }
@@ -872,23 +915,23 @@ designer.prototype.moveElements = function (event){
         if (event.shiftKey){
             switch (event.keyIdentifier){        
                 case 'Left':{
-                    this.changeRect(null, null, - incr, null, el);
-                    ismove=true;
+                    this.changeSourseElementRect(null, null, - incr, null, el);
+                    isresize=true;
                     break;
                 }
                 case 'Right':{
-                    this.changeRect(null, null, + incr, null, el);
-                    ismove=true;
+                    this.changeSourseElementRect(null, null, + incr, null, el);
+                    isresize=true;
                     break;
                 }   
                 case 'Up':{
-                    this.changeRect(null,  null, null, - incr,  el);
-                    ismove=true;
+                    this.changeSourseElementRect(null,  null, null, - incr,  el);
+                    isresize=true;
                     break;
                 }
                 case 'Down':{
-                    this.changeRect(null,  null, null, + incr,  el);
-                    ismove=true;
+                    this.changeSourseElementRect(null,  null, null, + incr,  el);
+                    isresize=true;
                     break;
                 }
             }            
@@ -896,49 +939,74 @@ designer.prototype.moveElements = function (event){
 
     }
     
+    if (isresize)
+        this.updateElement();
+    
    
 }
 
 
 
 designer.prototype.mousemoveDocument = function (){
-    if ((this.dragstartevent)){
+    if ((this.dragstartevent && this.draggedstart)){
         if (this.mousmoveevent){
             var xsh=event.pageX-this.mousmoveevent.pageX;
             var ysh=event.pageY-this.mousmoveevent.pageY;
             if (this.selectedElemens) {
                 for (var i=0;i < this.selectedElemens.length;++i){
-                    var el = this.selectedElemens[i].getElement();
                     this.selectedElemens[i].shiftRect(xsh, ysh);
-                }}
-                
-        }
-        if (this.inspectorFrame){
-            if (this.mousmoveevent){
-        }
+                }}           
         }
     }
     this.mousmoveevent=event;
 }
 
 
+
 designer.prototype.mousedownDocument = function (){
-    if ((event.button==0) && (!event.shiftKey)){
-        var trgt = this.getTarget(event)
-        if (this.selectedElemens){
-            if (this.selectedElemens.length>0){
-                for (var i=0; i<this.selectedElemens.length;++i){ 
-                    if (trgt==this.selectedElemens[i].getElement()){
-                        this.dragstartevent = event;
-                        return;
-                    }
+    if (event.button==0 && this.draggedstart) {
+        if ((event.button==0) && (this.isSelection(this.getTarget(event)))){
+            this.dragstartevent = event;
+            event.stopPropagation();
+            return;
+        }
+    }
+
+this.draggedstart=undefined;
+this.dragstartevent = undefined;
+this.mousmoveevent=undefined;
+}
+
+
+
+designer.prototype.mouseupDocument = function (){
+    if (event.button==0 && this.draggedstart){
+        if (this.mousmoveevent){
+            var xsh=event.pageX-this.mousmoveevent.pageX;
+            var ysh=event.pageY-this.mousmoveevent.pageY;
+            if (this.dragstartevent){ 
+                //console.log('capture mouseupDocument');
+                var sxsh=event.pageX-this.dragstartevent.pageX;
+                var sysh=event.pageY-this.dragstartevent.pageY;
+                if (this.selectedElemens && sxsh && sysh) {
+                    for (var i=0;i < this.selectedElemens.length;++i){
+                        var el = this.selectedElemens[i].getElement();
+                        this.changeSourseElementRect( sxsh, sysh , null, null,  el);
+                        this.selectedElemens[i].shiftRect(xsh, ysh);}                                     
+                    this.setNeedSave();
+                    //console.log('this.afterremove=true');
+                    this.afterremove=true;
+                    this.show_property(); 
                 }
+                                
+                event.stopPropagation();
             }
         }
     }
     this.draggedstart=undefined;
     this.dragstartevent = undefined;
     this.mousmoveevent=undefined;
+
 }
 
 
@@ -947,40 +1015,13 @@ designer.prototype.mousedownDocument = function (){
 designer.prototype.mousedownComponent = function (){
     if ((event.button==0)){
         var trgt = this.getTarget(event)
-        if ((this.isSelection(trgt)) && (!designer.prototype.isNeedInsert(trgt))){
+        if ((this.isSelection(trgt)) && (!this.isNeedInsert(trgt))){
             this.draggedstart=true;
             return;
         }
     }
-    this.draggedstart=undefined;
-}
-
-
-designer.prototype.mouseupDocument = function (){
-    if (event.button==0){
-        if (this.mousmoveevent){
-            var xsh=event.pageX-this.mousmoveevent.pageX;
-            var ysh=event.pageY-this.mousmoveevent.pageY;
-            if (this.draggedstart && this.dragstartevent){               
-                var sxsh=event.pageX-this.dragstartevent.pageX;
-                var sysh=event.pageY-this.dragstartevent.pageY;
-                //console.log('designer.prototype.mouseupDocument dx: ' + sxsh + ' dy: ' + sysh);
-                if (this.selectedElemens) {
-                    for (var i=0;i < this.selectedElemens.length;++i){
-                        var el = this.selectedElemens[i].getElement();
-                        this.changeRect( sxsh, sysh , null, null,  el);
-                        this.selectedElemens[i].shiftRect(xsh, ysh);
-                    }                   
-                    this.setNeedSave();
-                }
-                this.show_property();
-            }
-        }
-    }
-    this.draggedstart=undefined;
-    this.dragstartevent = undefined;
-    this.mousmoveevent=undefined;
-
+    event.stopPropagation();
+    this.draggedstart=undefined; 
 }
 
 

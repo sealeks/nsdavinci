@@ -3720,10 +3720,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <g>
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
-            <svg>
-                <xsl:attribute name="isgoupelement">
+            <xsl:attribute name="isgoupelement">
                     <xsl:text>true</xsl:text>
-                </xsl:attribute>
+            </xsl:attribute>
+            <svg>
+                
                 <xsl:call-template name="apply_rect"/>
                 <xsl:call-template name="apply_lib_mouseevent"/> 
             
