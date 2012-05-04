@@ -830,6 +830,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
             <xsl:call-template name="apply_lib_mouseevent"/>
+            <xsl:call-template name="apply_lib_translate"/>
             <line>        
                 <xsl:call-template name="apply_svg_x1"/>
                 <xsl:call-template name="apply_svg_y1"/>
@@ -841,7 +842,7 @@ extension-element-prefixes="svg">
                 <xsl:attribute name="stroke-linecap">
                     <xsl:value-of select="@stroke-linecap"/>
                 </xsl:attribute>
-                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:call-template name="apply_svg_filter"/>                 
                 <xsl:attribute name="style">
                     <xsl:value-of select="@style"/>
                 </xsl:attribute>  
@@ -855,6 +856,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
             <xsl:call-template name="apply_lib_mouseevent"/>
+            <xsl:call-template name="apply_lib_translate"/>
             <polyline>          
                 <xsl:call-template name="apply_svg_stroke"/>
                 <xsl:call-template name="apply_svg_stroke_width"/>
@@ -871,7 +873,7 @@ extension-element-prefixes="svg">
                 <xsl:call-template name="apply_svg_filter"/>
                 <xsl:attribute name="style">
                     <xsl:value-of select="@style"/>
-                </xsl:attribute>
+                </xsl:attribute>                 
                 <xsl:call-template name="apply_svg_fill"/>
                 <xsl:call-template name="apply_svg_opacity"/>  
             </polyline>
@@ -884,6 +886,7 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
             <xsl:call-template name="apply_lib_mouseevent"/>
+            <xsl:call-template name="apply_lib_translate"/> 
             <polygon>        
                 <xsl:call-template name="apply_svg_stroke"/>
                 <xsl:call-template name="apply_svg_stroke_width"/>

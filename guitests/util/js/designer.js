@@ -10,6 +10,9 @@ designutil.componentinfo = function(){
     this.creators = {};
 }
 
+
+designutil.translateutil = {};
+
 designutil.toolwin = {};
    
    
@@ -68,7 +71,7 @@ designer.prototype.attach = function(el){
             };
         }
         else{
-            if ((el.id!="") && (el.hasAttribute('isdesined'))) {
+            if ((el.hasAttribute)  && (el.id!="") && (el.hasAttribute('isdesined'))) {
                 var parentclass = el.parentNode.getAttribute('class');
                 if (parentclass!='designer_selected'){
                 el.oldoncick = el.oncick;
@@ -370,154 +373,28 @@ designer.prototype.setProperty = function(nm, val){
 }    
 
 
-designer.prototype.getXname =  function (el){
-    if (el.hasAttribute('x')) return 'x';
-    if (el.hasAttribute('cx')) return 'cx';
-    if (el.hasAttribute('x1')) return 'x1';
-    if (el.hasAttribute('d')) return 'd';
-    return null;
-}
 
-designer.prototype.getYname =  function (el){
-    if (el.hasAttribute('y')) return 'y';
-    if (el.hasAttribute('cy')) return 'cy';
-    if (el.hasAttribute('y1')) return 'y1';
-    if (el.hasAttribute('d')) return 'd';
-    return null;
-}
-
-designer.prototype.getWname =  function (el){
-    if (el.hasAttribute('width')) return 'width';
-    return null;
-}
-
-designer.prototype.getHname =  function (el){
-    if (el.hasAttribute('height')) return 'height';
-    return null;
-}
-
-
-designer.prototype.getDXinfo =  function (el){
-    if (el.hasAttribute('d')) {
-        var dpath = el.getAttribute('d');
-        var fnd = dpath.match(/\s*M[\-0-9\s\.\,]+/);
-        if (fnd && (fnd.length>0))  {   
-            var dpath_strt = dpath.substring(0,fnd[0].length);
-            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
-            fnd = dpath_strt.match(/\s*M\s*[\-0-9\.]+/);
-            if (fnd && (fnd.length>0))  {
-                dpath_stp = dpath_strt.substring(fnd[0].length, dpath_strt.length ) + dpath_stp;
-                fnd = dpath_strt.match(/\s*M\s*(?=[\-0-9\.]+)/);
-                if (fnd && (fnd.length>0))  {
-                    var dpath_val = dpath_strt.substring(fnd[0].length, dpath_strt.length );
-                    dpath_strt = dpath_strt.substring(0,fnd[0].length);
-                    fnd = dpath_val.match(/\s*(?=([\-0-9\.])+)/);
-                    if (fnd && (fnd.length>0))  {                    
-                        dpath_val = dpath_val.substring(fnd[0].length, dpath_val.length );
-                        fnd = dpath_val.match(/\s*[\-0-9\.]*/);
-                        if (fnd && (fnd.length>0))  { 
-                            dpath_val = dpath_val.substring(0, fnd[0].length); 
-                               return {
-                                   'start' : dpath_strt,
-                                   'x' : dpath_val,
-                                   'stop' :  dpath_stp
-                                   
-                               };
-                        }
-                    }
-                }                                       
-            }
-        }
-    };
-    return null;
-}
-
-designer.prototype.getDXval =  function (el){
-    if (el.hasAttribute('d')) {
-        try{
-        var dpathinfo = this.getDXinfo(el);
-        if (dpathinfo)
-            return parseFloat(dpathinfo.x);}
-        catch(error){}
-    }
-    return null;
-}
-
-designer.prototype.setDXval =  function (el , x){
-    if (el.hasAttribute('d')) {
-        var dpathinfo = this.getDXinfo(el);
-        if (dpathinfo)
-            el.setAttribute('d', dpathinfo.start + (x).toString() + dpathinfo.stop);
-    }
-}
-
-
-designer.prototype.getDYinfo =  function (el){
-    if (el.hasAttribute('d')){
-        var dpath = el.getAttribute('d');
-        var fnd = dpath.match(/\s*M[\-0-9\s\.\,]+/);
-        if (fnd && (fnd.length>0))  {   
-            var dpath_strt = dpath.substring(0,fnd[0].length);
-            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
-            fnd = dpath_strt.match(/\s*M\s*[\-0-9\.]+(\s|\,)/);
-            if (fnd && (fnd.length>0))  {
-                var dpath_val = dpath_strt.substring(fnd[0].length);
-                dpath_strt = dpath_strt.substring(0,fnd[0].length);
-                fnd = dpath_val.match(/[\-0-9\.]+/);
-                if (fnd && (fnd.length>0))  {                    
-                    dpath_val = fnd[0];
-                    try{
-                        return {
-                            'start' : dpath_strt,
-                            'y' : dpath_val,
-                            'stop' :  dpath_stp
-                                   
-                        };
-                    }
-                    catch(error){}
-                }
-            }
-        }
-    };
-    return null;
-}
-
-designer.prototype.getDYval =  function (el){
-    if (el.hasAttribute('d')) {
-        try{
-        var dpathinfo = this.getDYinfo(el);
-        if (dpathinfo)
-            return parseFloat(dpathinfo.y);}
-        catch(error){}
-    }
-    return null;
-}
-
-
-designer.prototype.setDYval =  function (el , y){
-    if (el.hasAttribute('d') && y) {
-        var dpathinfo = this.getDYinfo(el);
-        if (dpathinfo)
-            el.setAttribute('d', dpathinfo.start + (y).toString() + dpathinfo.stop);
-    }
-}
 
 designer.prototype.setElementRect = function(x, y, width, height , el){
     if (el){
         var sel = this.getSourseElement(el);
+        //console.log(x + ' ' + designutil.translateutil.getXname(sel));
+        //console.log(y + ' ' + designutil.translateutil.getYname(sel));
         if (!sel) return;
-        if (x && this.getXname(sel)){
-            switch(this.getXname(sel)){
-            case 'd': {this.setDXval( sel, x);break;}   
-            default:sel.setAttribute( this.getXname(sel), x);}}
-        if (y && this.getYname(sel)){
-            switch(this.getYname(sel)){
-            case 'd': {this.setDYval( sel, y);break;}   
-            default:sel.setAttribute( this.getYname(sel), y);}}
-        if (width && this.getWname(sel))
-            sel.setAttribute( this.getWname(sel) , width);
-        if (height  && this.getHname(sel))
-            sel.setAttribute( this.getHname(sel), height);
+        if (x && designutil.translateutil.getXname(sel)){
+            switch(designutil.translateutil.getXname(sel)){
+            case 'd': {designutil.translateutil.setDXval( sel, x);break;}
+            case 'transform': {designutil.translateutil.setXTranslate( sel, x);break;}
+            default: { sel.setAttribute( designutil.translateutil.getXname(sel), x);}}}
+        if (y && designutil.translateutil.getYname(sel)){
+            switch(designutil.translateutil.getYname(sel)){
+            case 'd': {designutil.translateutil.setDYval( sel, y);break;}
+            case 'transform': {designutil.translateutil.setYTranslate( sel, y);break;}
+            default: { sel.setAttribute( designutil.translateutil.getYname(sel), y);}}}
+        if (width && designutil.translateutil.getWname(sel))
+            sel.setAttribute( designutil.translateutil.getWname(sel) , width);
+        if (height  && designutil.translateutil.getHname(sel))
+            sel.setAttribute( designutil.translateutil.getHname(sel), height);
         this.setNeedSave();
         return;
     }
@@ -719,8 +596,8 @@ designer.prototype.copyFromClipBoard = function( x , y, prnt){
     if (tmp.clipboard && tmp.clipboard.length>0)
     for (var i=0;i < tmp.clipboard.length;++i)
         if (tmp.clipboard[i]){
-            x = this.getXname(tmp.clipboard[i])=='d' ? 10 : x;
-            y = this.getYname(tmp.clipboard[i])=='d' ? 10 : y;
+            x = designutil.translateutil.getXname(tmp.clipboard[i])=='d' ? 10 : x;
+            y = designutil.translateutil.getYname(tmp.clipboard[i])=='d' ? 10 : y;
             this.createLibComponent(x, y, tmp.clipboard[i], prnt, tmp.clipboard.length > 1 )
         }
 }
@@ -731,12 +608,32 @@ designer.prototype.copyFromClipBoard = function( x , y, prnt){
 designer.prototype.changeRect = function(x, y, width , height, el){
     var sel = this.getSourseElement(el);
     if (sel){
-        var xnmame = this.getXname(sel);
-        var ynmame = this.getYname(sel);
-        this.setElementRect( ((x && xnmame && xnmame!='d') ? parseFloat(sel.getAttribute(xnmame)) + x : parseFloat(this.getDXval(sel)) + x) ,
-            ((y && ynmame && ynmame!='d') ? parseFloat(sel.getAttribute(ynmame)) + y : parseFloat(this.getDYval(sel)) + y) ,
-            (width && this.getWname(sel) ? parseFloat(sel.getAttribute(this.getWname(sel))) + width : width) ,
-            (height && this.getHname(sel)? parseFloat(sel.getAttribute(this.getHname(sel))) + height : height) , el);
+        var xnmame = designutil.translateutil.getXname(sel);
+        var ynmame = designutil.translateutil.getYname(sel);
+        var xval = null;
+        var yval = null;
+        if (x && xnmame){
+            switch(xnmame){
+                case 'd': {xval=(parseFloat(designutil.translateutil.getDXval(sel)) + x);break;}
+                case 'transform': {xval=(parseFloat(designutil.translateutil.getXTranslate(sel)) + x); break;} 
+                default: {xval=(parseFloat(sel.getAttribute(xnmame)) + x);}
+            }
+        }
+        if (y && ynmame){
+            switch(ynmame){
+                case 'd': {yval=(parseFloat(designutil.translateutil.getDYval(sel)) + y);break;}
+                case 'transform': {yval=(parseFloat(designutil.translateutil.getYTranslate(sel)) + y); break;} 
+                default: {yval=(parseFloat(sel.getAttribute(ynmame)) + y);}
+            }
+        }
+        
+        //console.log(x + '  ' + y);
+        //console.log(designutil.translateutil.getXTranslate(sel) + '  ' + designutil.translateutil.getYTranslate(sel));
+        //console.log(xval + '  ' + yval);
+        
+        this.setElementRect(  xval , yval ,
+            (width && designutil.translateutil.getWname(sel) ? parseFloat(sel.getAttribute(designutil.translateutil.getWname(sel))) + width : width) ,
+            (height && designutil.translateutil.getHname(sel)? parseFloat(sel.getAttribute(designutil.translateutil.getHname(sel))) + height : height) , el);
     }
 
 }
@@ -778,6 +675,7 @@ designer.prototype.newLibComponent = function(x, y , prnt){
     var created = designutil.toolwin.getSelectedComponent();
     if (created && x && y){
         this.createLibComponent(x, y, created, prnt);
+        designutil.toolwin.clearSelectedComponent();
         return true;
     }
     return false;
@@ -999,7 +897,6 @@ designer.prototype.mousemoveDocument = function (){
             if (this.selectedElemens) {
                 for (var i=0;i < this.selectedElemens.length;++i){
                     var el = this.selectedElemens[i].getElement();
-                    this.changeRect( xsh, ysh , null, null,  el);
                     this.selectedElemens[i].shiftRect(xsh, ysh);
                 }}
                 
@@ -1053,11 +950,14 @@ designer.prototype.mouseupDocument = function (){
         if (this.mousmoveevent){
             var xsh=event.pageX-this.mousmoveevent.pageX;
             var ysh=event.pageY-this.mousmoveevent.pageY;
-            if (this.draggedstart){
+            if (this.draggedstart && this.dragstartevent){               
+                var sxsh=event.pageX-this.dragstartevent.pageX;
+                var sysh=event.pageY-this.dragstartevent.pageY;
+                //console.log('designer.prototype.mouseupDocument dx: ' + sxsh + ' dy: ' + sysh);
                 if (this.selectedElemens) {
                     for (var i=0;i < this.selectedElemens.length;++i){
                         var el = this.selectedElemens[i].getElement();
-                        this.changeRect( xsh, ysh , null, null,  el);
+                        this.changeRect( sxsh, sysh , null, null,  el);
                         this.selectedElemens[i].shiftRect(xsh, ysh);
                     }                   
                     this.setNeedSave();
@@ -1550,8 +1450,43 @@ designutil.selectwraper.prototype.deselect = function(){
     } 
 }
 
+designutil.selectwraper.prototype.shiftRect = function(x, y){
+        designutil.translateutil.setShiftXTranslate(this.selement, x);
+        designutil.translateutil.setShiftYTranslate(this.selement, y);
+}
 
-designutil.selectwraper.prototype.getTmpTranslate =  function (el){
+
+
+//  translateutol
+
+designutil.translateutil.getXname =  function (el){
+    if (el.hasAttribute('x')) return 'x';
+    if (el.hasAttribute('cx')) return 'cx';
+    if (el.hasAttribute('d')) return 'd';
+    if (el.hasAttribute('transform')) return 'transform';
+    return null;
+}
+
+designutil.translateutil.getYname =  function (el){
+    if (el.hasAttribute('y')) return 'y';
+    if (el.hasAttribute('cy')) return 'cy';
+    if (el.hasAttribute('d')) return 'd';
+    if (el.hasAttribute('transform')) return 'transform';
+    return null;
+}
+
+designutil.translateutil.getWname =  function (el){
+    if (el.hasAttribute('width')) return 'width';
+    return null;
+}
+
+designutil.translateutil.getHname =  function (el){
+    if (el.hasAttribute('height')) return 'height';
+    return null;
+}
+
+
+designutil.translateutil.getTmpTranslate =  function (el){
     if (el.hasAttribute('transform')){
         var attr = el.getAttribute('transform');
         if (attr){
@@ -1569,8 +1504,8 @@ designutil.selectwraper.prototype.getTmpTranslate =  function (el){
 
 
 
-designutil.selectwraper.prototype.getinfoXTranslate =  function (el){
-    var traslateattr = this.getTmpTranslate(el);
+designutil.translateutil.getinfoXTranslate =  function (el){
+    var traslateattr = designutil.translateutil.getTmpTranslate(el);
     if (traslateattr){
         try{
         var traslateattr_xmatch =traslateattr.match(/(?:\s*translate\s*\(\s*)/);
@@ -1591,17 +1526,25 @@ designutil.selectwraper.prototype.getinfoXTranslate =  function (el){
     return null;
 }
 
-designutil.selectwraper.prototype.getXTranslate =  function (el){
-    var info = this.getinfoXTranslate(el);
+designutil.translateutil.getXTranslate =  function (el){
+    var info = designutil.translateutil.getinfoXTranslate(el);
+    console.log(info);
     if (info){
         return parseFloat(info.x);
     }
     return null;
 }
 
-designutil.selectwraper.prototype.setShiftXTranslate =  function (el , x){
+designutil.translateutil.setXTranslate =  function (el, x){
+    var info = designutil.translateutil.getinfoXTranslate(el);
+    if (info){
+        el.setAttribute('transform', info.start + x  + info.stop);
+    }
+}
+
+designutil.translateutil.setShiftXTranslate =  function (el , x){
     if ((x==null) || (x==undefined) || (x==0)) return;
-    var info = this.getinfoXTranslate(el);
+    var info = designutil.translateutil.getinfoXTranslate(el);
     if (info){
         el.setAttribute('transform', info.start + (x + parseFloat(info.x)).toString() + info.stop);       
     }
@@ -1610,8 +1553,8 @@ designutil.selectwraper.prototype.setShiftXTranslate =  function (el , x){
     }
 }
 
-designutil.selectwraper.prototype.getinfoYTranslate =  function (el){
-    var traslateattr = this.getTmpTranslate(el);
+designutil.translateutil.getinfoYTranslate =  function (el){
+    var traslateattr = designutil.translateutil.getTmpTranslate(el);
     if (traslateattr){
         try{
         var traslateattr_xmatch =traslateattr.match(/(?:\s*translate\s*\(\s*\-?[0-9\.]+\s*\,)/);
@@ -1632,18 +1575,25 @@ designutil.selectwraper.prototype.getinfoYTranslate =  function (el){
     return null;
 }
 
-designutil.selectwraper.prototype.getYTranslate =  function (el){
-    var info = this.getinfoYTranslate(el);
+designutil.translateutil.getYTranslate =  function (el){
+    var info = designutil.translateutil.getinfoYTranslate(el);
     if (info){
         return parseFloat(info.y);
     }
     return null;
 }
 
+designutil.translateutil.setYTranslate =  function (el, y){
+    var info = designutil.translateutil.getinfoYTranslate(el);
+    if (info){
+        el.setAttribute('transform', info.start + y  + info.stop);
+    }
+}
 
-designutil.selectwraper.prototype.setShiftYTranslate =  function (el , y){
+
+designutil.translateutil.setShiftYTranslate =  function (el , y){
     if ((y==null) || (y==undefined) || (y==0)) return;
-    var info = this.getinfoYTranslate(el);
+    var info = designutil.translateutil.getinfoYTranslate(el);
     if (info){
         el.setAttribute('transform', info.start + (y + parseFloat(info.y)).toString() + info.stop);       
     }
@@ -1653,10 +1603,113 @@ designutil.selectwraper.prototype.setShiftYTranslate =  function (el , y){
 }
 
 
-designutil.selectwraper.prototype.shiftRect = function(x, y){
-        this.setShiftXTranslate(this.selement, x);
-        this.setShiftYTranslate(this.selement, y);
+
+
+designutil.translateutil.getDXinfo =  function (el){
+    if (el.hasAttribute('d')) {
+        var dpath = el.getAttribute('d');
+        var fnd = dpath.match(/\s*M[\-0-9\s\.\,]+/);
+        if (fnd && (fnd.length>0))  {   
+            var dpath_strt = dpath.substring(0,fnd[0].length);
+            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
+            fnd = dpath_strt.match(/\s*M\s*[\-0-9\.]+/);
+            if (fnd && (fnd.length>0))  {
+                dpath_stp = dpath_strt.substring(fnd[0].length, dpath_strt.length ) + dpath_stp;
+                fnd = dpath_strt.match(/\s*M\s*(?=[\-0-9\.]+)/);
+                if (fnd && (fnd.length>0))  {
+                    var dpath_val = dpath_strt.substring(fnd[0].length, dpath_strt.length );
+                    dpath_strt = dpath_strt.substring(0,fnd[0].length);
+                    fnd = dpath_val.match(/\s*(?=([\-0-9\.])+)/);
+                    if (fnd && (fnd.length>0))  {                    
+                        dpath_val = dpath_val.substring(fnd[0].length, dpath_val.length );
+                        fnd = dpath_val.match(/\s*[\-0-9\.]*/);
+                        if (fnd && (fnd.length>0))  { 
+                            dpath_val = dpath_val.substring(0, fnd[0].length); 
+                               return {
+                                   'start' : dpath_strt,
+                                   'x' : dpath_val,
+                                   'stop' :  dpath_stp
+                                   
+                               };
+                        }
+                    }
+                }                                       
+            }
+        }
+    };
+    return null;
 }
+
+designutil.translateutil.getDXval =  function (el){
+    if (el.hasAttribute('d')) {
+        try{
+        var dpathinfo = designutil.translateutil.getDXinfo(el);
+        if (dpathinfo)
+            return parseFloat(dpathinfo.x);}
+        catch(error){}
+    }
+    return null;
+}
+
+designutil.translateutil.setDXval =  function (el , x){
+    if (el.hasAttribute('d')) {
+        var dpathinfo = designutil.translateutil.getDXinfo(el);
+        if (dpathinfo)
+            el.setAttribute('d', dpathinfo.start + (x).toString() + dpathinfo.stop);
+    }
+}
+
+
+designutil.translateutil.getDYinfo =  function (el){
+    if (el.hasAttribute('d')){
+        var dpath = el.getAttribute('d');
+        var fnd = dpath.match(/\s*M[\-0-9\s\.\,]+/);
+        if (fnd && (fnd.length>0))  {   
+            var dpath_strt = dpath.substring(0,fnd[0].length);
+            var dpath_stp = dpath.substring(fnd[0].length, dpath.length );
+            fnd = dpath_strt.match(/\s*M\s*[\-0-9\.]+(\s|\,)/);
+            if (fnd && (fnd.length>0))  {
+                var dpath_val = dpath_strt.substring(fnd[0].length);
+                dpath_strt = dpath_strt.substring(0,fnd[0].length);
+                fnd = dpath_val.match(/[\-0-9\.]+/);
+                if (fnd && (fnd.length>0))  {                    
+                    dpath_val = fnd[0];
+                    try{
+                        return {
+                            'start' : dpath_strt,
+                            'y' : dpath_val,
+                            'stop' :  dpath_stp
+                                   
+                        };
+                    }
+                    catch(error){}
+                }
+            }
+        }
+    };
+    return null;
+}
+
+designutil.translateutil.getDYval =  function (el){
+    if (el.hasAttribute('d')) {
+        try{
+        var dpathinfo = designutil.translateutil.getDYinfo(el);
+        if (dpathinfo)
+            return parseFloat(dpathinfo.y);}
+        catch(error){}
+    }
+    return null;
+}
+
+
+designutil.translateutil.setDYval =  function (el , y){
+    if (el.hasAttribute('d') && y) {
+        var dpathinfo = designutil.translateutil.getDYinfo(el);
+        if (dpathinfo)
+            el.setAttribute('d', dpathinfo.start + (y).toString() + dpathinfo.stop);
+    }
+}
+
 
 
 
@@ -2395,6 +2448,11 @@ designutil.toolwin.setSelectedComponent = function(tool, comp){
 designutil.toolwin.getSelectedComponent = function(){
     var tmp = designutil.toolwin.setSelectedComponent();
     return (tmp && tmp.tool && tmp.component)? libutil.project.get_components(tmp.tool, tmp.component): null;
+}
+
+designutil.toolwin.clearSelectedComponent = function(){
+    var tmp= $$global();
+    tmp['selectedComponent']=undefined;
 }
 
 

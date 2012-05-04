@@ -171,6 +171,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:value-of select="@width - 8"/>
         </xsl:attribute>
     </xsl:template> 
+    
+    
+    
+    <xsl:template name="apply_lib_translate"> 
+        <xsl:attribute name="transform">
+            <xsl:value-of select="@transform"/>
+        </xsl:attribute>             
+    </xsl:template> 
 
     
    
