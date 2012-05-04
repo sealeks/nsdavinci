@@ -151,8 +151,8 @@ function exit(){
 function init_project_controller(){
     libutil.global.getStartupDoc(document);   
     libutil.project.init_form();
-    if ($$editable() && designutil.toolwin) 
-        designutil.toolwin.getMainWindow();
+    if ($$editable() && dsutl.toolwin) 
+        dsutl.toolwin.getMainWindow();
 }
 
 //
