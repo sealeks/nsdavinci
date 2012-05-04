@@ -50,6 +50,7 @@ function designer(doc){
         event.stopPropagation();
         event.preventDefault();  
     });        
+    
     this.attach(this.instantdocument.documentElement);
     
     this.needsave=false;
@@ -375,46 +376,56 @@ designer.prototype.setProperty = function(nm, val){
 
 
 
-designer.prototype.setElementRect = function(x, y, width, height , el){
+designer.prototype.setSourseElementRect = function(x, y, width, height , el){
     if (el){
-        var sel = this.getSourseElement(el);
-        //console.log(x + ' ' + dsutl.trslt.getXname(sel));
-        //console.log(y + ' ' + dsutl.trslt.getYname(sel));
-        if (!sel) return;
-        if (x && dsutl.trslt.getXname(sel)){
-            switch(dsutl.trslt.getXname(sel)){
-            case 'd': {dsutl.trslt.setDXval( sel, x);break;}
-            case 'transform': {dsutl.trslt.setXTranslate( sel, x);break;}
-            default: { sel.setAttribute( dsutl.trslt.getXname(sel), x);}}}
-        if (y && dsutl.trslt.getYname(sel)){
-            switch(dsutl.trslt.getYname(sel)){
-            case 'd': {dsutl.trslt.setDYval( sel, y);break;}
-            case 'transform': {dsutl.trslt.setYTranslate( sel, y);break;}
-            default: { sel.setAttribute( dsutl.trslt.getYname(sel), y);}}}
-        if (width && dsutl.trslt.getWname(sel))
-            sel.setAttribute( dsutl.trslt.getWname(sel) , width);
-        if (height  && dsutl.trslt.getHname(sel))
-            sel.setAttribute( dsutl.trslt.getHname(sel), height);
+        this.setElementRect(x, y, width, height , this.getSourseElement(el));
         this.setNeedSave();
         return;
     }
     if ((this.selectedElemens ) || (this.selectedElemens.length>0)){  
         for (var j=0; j< this.selectedElemens.length; ++j)
-            this.setElementRect(x, y, width, height, this.selectedElemens[j].getElement());
+            this.setSourseElementRect(x, y, width, height, this.selectedElemens[j].getElement());
     }
   
 }
 
 
+designer.prototype.setElementRect = function(x, y, width, height , el){
+    if (el){
+        console.log(x + ' ' + dsutl.trslt.getXname(el));
+        console.log(y + ' ' + dsutl.trslt.getYname(el));
+        if (!el) return;
+        if (x && dsutl.trslt.getXname(el)){
+            switch(dsutl.trslt.getXname(el)){
+            case 'd': {dsutl.trslt.setDXval( el, x);break;}
+            case 'transform': {dsutl.trslt.setXTranslate( el, x);break;}
+            default: {el.setAttribute( dsutl.trslt.getXname(el), x);}}}
+        if (y && dsutl.trslt.getYname(el)){
+            switch(dsutl.trslt.getYname(el)){
+            case 'd': {dsutl.trslt.setDYval( el, y);break;}
+            case 'transform': {dsutl.trslt.setYTranslate( el, y);break;}
+            default: {el.setAttribute( dsutl.trslt.getYname(el), y);}}}
+        if (width && dsutl.trslt.getWname(el))
+            el.setAttribute( dsutl.trslt.getWname(el) , width);
+        if (height  && dsutl.trslt.getHname(el))
+            el.setAttribute( dsutl.trslt.getHname(el), height);
+        return;
+    } 
+}
+
+
+
+
+
 designer.prototype.updateElement = function(el){
     if (el) {
+        console.log('designer.prototype.updateElement: '+el);
         var select = this.isSelection(el);
         var tel = this.getTransformElement(el.getAttribute('id'));
         var old = el.parentNode.replaceChild(tel ,el);
         this.attach(tel);
         if (select){
-            this.repaceSelectedElemens(old, tel);
-            this.setSelectedClass(tel);
+            this.repaceSelection(old, tel);
         }
     }
     else{
@@ -454,6 +465,7 @@ designer.prototype.save = function(){
 
 designer.prototype.deleteElements = function(el){
     if (el){
+        this.clearSelection(el);
         if (this.sourseDocument){
             var source = this.getSourseElement(el);
             if (source){
@@ -473,6 +485,7 @@ designer.prototype.deleteElements = function(el){
 designer.prototype.cloneElements = function(el){
     if (el){
         if (this.sourseDocument){
+            this.clearSelection(el);
             var source = this.getSourseElement(el);
             if (source){
                 var el_c=source.cloneNode(true);
@@ -485,7 +498,9 @@ designer.prototype.cloneElements = function(el){
                 prntel.appendChild(tel);
                 this.attach(tel);
                 this.changeRect(10,10, null, null, tel);
+                this.setSelection(tel);
                 this.updateElement(tel);
+                
             }
         }
     }
@@ -501,6 +516,7 @@ designer.prototype.cloneElements = function(el){
 designer.prototype.toFrontElements = function(el){
     if (el){
         var elprnt = el.parentNode;
+        this.clearSelection(el);
         if (this.sourseDocument){
             var sel = this.getSourseElement(el);
             if (sel){
@@ -512,6 +528,7 @@ designer.prototype.toFrontElements = function(el){
                 prnt.appendChild(cel);
                 var rem = elprnt.removeChild(el);
                 elprnt.appendChild(rem);
+                this.setSelection(rem);
             }
         }
     }
@@ -520,7 +537,7 @@ designer.prototype.toFrontElements = function(el){
         for (var j=0; j< this.selectedElemens.length; ++j)
             this.toFrontElements(this.selectedElemens[j].getElement());
      
-        this.clearSelections();
+        //this.clearSelections();
 
     }   
 }
@@ -529,6 +546,7 @@ designer.prototype.toBackElements = function(el){
     if (el){
         var elprnt = el.parentNode;
         if (this.sourseDocument){
+            this.clearSelection(el);
             var sel = this.getSourseElement(el);
             if (sel){
                 var prnt = sel.parentNode;
@@ -539,6 +557,7 @@ designer.prototype.toBackElements = function(el){
                 prnt.insertBefore(cel, prnt.firstElementChild);
                 var rem = elprnt.removeChild(el);
                 elprnt.insertBefore(rem, elprnt.firstElementChild);
+                this.setSelection(rem);
             }
         }
     }
@@ -547,7 +566,7 @@ designer.prototype.toBackElements = function(el){
         for (var j=0; j< this.selectedElemens.length; ++j) 
             this.toBackElements(this.selectedElemens[j].getElement());
         
-        this.clearSelections();
+        
 
     }   
 }
@@ -600,6 +619,7 @@ designer.prototype.copyFromClipBoard = function( x , y, prnt){
             y = dsutl.trslt.getYname(tmp.clipboard[i])=='d' ? 10 : y;
             this.createLibComponent(x, y, tmp.clipboard[i], prnt, tmp.clipboard.length > 1 )
         }
+    
 }
 
 
@@ -615,23 +635,20 @@ designer.prototype.changeRect = function(x, y, width , height, el){
         if (x && xnmame){
             switch(xnmame){
                 case 'd': {xval=(parseFloat(dsutl.trslt.getDXval(sel)) + x);break;}
-                case 'transform': {xval=(parseFloat(dsutl.trslt.getXTranslate(sel)) + x); break;} 
+                case 'transform': {xval=(parseFloat(dsutl.trslt.getXTranslate(sel)) + x);break;} 
                 default: {xval=(parseFloat(sel.getAttribute(xnmame)) + x);}
             }
         }
         if (y && ynmame){
             switch(ynmame){
                 case 'd': {yval=(parseFloat(dsutl.trslt.getDYval(sel)) + y);break;}
-                case 'transform': {yval=(parseFloat(dsutl.trslt.getYTranslate(sel)) + y); break;} 
+                case 'transform': {yval=(parseFloat(dsutl.trslt.getYTranslate(sel)) + y);break;} 
                 default: {yval=(parseFloat(sel.getAttribute(ynmame)) + y);}
             }
         }
         
-        //console.log(x + '  ' + y);
-        //console.log(dsutl.trslt.getXTranslate(sel) + '  ' + dsutl.trslt.getYTranslate(sel));
-        //console.log(xval + '  ' + yval);
         
-        this.setElementRect(  xval , yval ,
+        this.setSourseElementRect(  xval , yval ,
             (width && dsutl.trslt.getWname(sel) ? parseFloat(sel.getAttribute(dsutl.trslt.getWname(sel))) + width : width) ,
             (height && dsutl.trslt.getHname(sel)? parseFloat(sel.getAttribute(dsutl.trslt.getHname(sel))) + height : height) , el);
     }
@@ -667,6 +684,7 @@ designer.prototype.clickCanParented = function(el, ev){
 }
 
 designer.prototype.clickParented = function(){
+    console.log('designer.prototype.clickParented : x' + event.pageX + 'y' + event.pageY);
     if (event && event.pageX.toString() && event.pageY.toString())
         this.newLibComponent(event.pageX.toString(), event.pageY.toString());
 }
@@ -674,7 +692,9 @@ designer.prototype.clickParented = function(){
 designer.prototype.newLibComponent = function(x, y , prnt){
     var created = dsutl.toolwin.getSelectedComponent();
     if (created && x && y){
+        console.log('designer.prototype.newLibComponent : x' + x + 'y' + y);
         this.createLibComponent(x, y, created, prnt);
+        this.show_property();
         dsutl.toolwin.clearSelectedComponent();
         return true;
     }
@@ -683,16 +703,19 @@ designer.prototype.newLibComponent = function(x, y , prnt){
 
 designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
     if (created/* && x && y*/){
+        this.clearSelections();
         var coneid=this.unicalIdGenerate(created , this.sourseDocument , null, created.localName);
         var sprnt = prnt ? this.getSourseElement(prnt) : this.sourseDocument.documentElement;
         prnt = prnt ? prnt : this.instantdocument.documentElement;
         var el =sprnt.appendChild(created.cloneNode(true)); 
-        el.setAttribute('id',  coneid);        
-        this.getTrasformDocument();
+        el.setAttribute('id',  coneid);
+        this.setElementRect(x,y, null, null, el);        
+        this.getTrasformDocument();        
         var tel = this.getTransformElement(coneid);
         prnt.appendChild(tel);
         this.attach(tel);
-        chrect ? this.changeRect(x,y, null, null, el) : this.setElementRect(x,y, null, null, tel);
+        this.setSelection(tel);
+        //chrect ? this.changeRect(x,y, null, null, el) : this.setSourseElementRect(x,y, null, null, tel);
         this.updateElement(tel);
         this.setNeedSave();
         return true;
@@ -700,6 +723,8 @@ designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
     return false;
 }
 
+
+//  Выбор компонента на форме
 
 
 designer.prototype.isSelection = function(el){
@@ -724,7 +749,11 @@ designer.prototype.selectionCount = function(){
     return this.selectedElemens && this.selectedElemens.length > 0;        
 }
 
-
+designer.prototype.setSelection = function(el){
+    if (this.selectedElemens==null)
+        this.selectedElemens = [];
+    this.selectedElemens.push( new dsutl.selectwraper(el));
+}
 
 // очистка выделения элемента
 designer.prototype.clearSelection = function(el){
@@ -735,6 +764,11 @@ designer.prototype.clearSelection = function(el){
                 this.selectedElemens.splice(i,1);
                 break;
             }
+}
+
+designer.prototype.repaceSelection = function(old, newel){
+    this.clearSelection(old);
+    this.setSelection(newel);           
 }
 
 
@@ -751,53 +785,31 @@ designer.prototype.clearSelections = function (){
 }
 
 
-designer.prototype.repaceSelectedElemens = function(old, newel){
-    for (var j=0; j< this.selectedElemens.length; ++j){
-        if (this.selectedElemens[j].getElement()==old){
-            this.clearSelection(old);
-            this.selectedElemens.push(new dsutl.selectwraper(newel));            
-        }
-    }
-    return false;
-}
 
 /*выделение элемента*/
 designer.prototype.selectComponent = function(el, shift, ctnrl){
-    if (this.selectedElemens==null){
+    if (this.selectedElemens==null)
         this.selectedElemens = [];
-    }
     
-    
-    var el_class = el.getAttribute('class');
-    if (el_class=="designer_selected"){
-        if (shift)
-            clearSelection(el);
-        return false;
-    }
-    
+    //console.log('designer.prototype.selectComponent');
+      
     if (this.isSelectionParent(el))
         this.clearSelections();
-
+    
     if (!shift){
         this.clearSelections();
-        this.selectedElemens.length=0;
-        this.selectedElemens.push( new dsutl.selectwraper(el));
-        this.show_property(el);
-
+        this.setSelection(el);
+        
     }
     else{
-        var finded=false;
-        for (var i=0;i < this.selectedElemens.length;++i){
-            if (this.selectedElemens[i]==el){
-                finded=true;
-                break;
-            }
+        if (this.isSelection(el)){
+            this.clearSelection(el);
         }
-        if (!finded){
-            this.selectedElemens.push(new dsutl.selectwraper(el));
-            this.show_property(el);
+        else{
+            this.setSelection(el);          
         }
     }
+    this.show_property();
 }
 
 designer.prototype.isNeedInsert = function (el){
@@ -935,8 +947,7 @@ designer.prototype.mousedownDocument = function (){
 designer.prototype.mousedownComponent = function (){
     if ((event.button==0)){
         var trgt = this.getTarget(event)
-        var cls = trgt.getAttribute('class');
-        if ((cls) && (cls.search('designer_selected')!=-1) && (!designer.prototype.isNeedInsert(trgt))){
+        if ((this.isSelection(trgt)) && (!designer.prototype.isNeedInsert(trgt))){
             this.draggedstart=true;
             return;
         }
@@ -971,6 +982,8 @@ designer.prototype.mouseupDocument = function (){
     this.mousmoveevent=undefined;
 
 }
+
+
 
 designer.prototype.contextmenue = function (){
     this.createContextMenu(event);
@@ -1116,6 +1129,7 @@ designer.prototype.ContextMenuComponent = function(tbody){
             document.red.toFrontElements();
             document.red.ContextMenuDestroy();
             document.red.setNeedSave();
+            event.stopPropagation();
         } );
         
     this.ContextMenuButton(tbody, 'Send to Back', this.selectionCount() ,
@@ -1123,6 +1137,7 @@ designer.prototype.ContextMenuComponent = function(tbody){
             document.red.toBackElements();
             document.red.ContextMenuDestroy();
             document.red.setNeedSave();
+            event.stopPropagation();
         } );  
         
     this.ContextMenuButton(tbody, 'Delete', this.selectionCount(),
@@ -1130,6 +1145,7 @@ designer.prototype.ContextMenuComponent = function(tbody){
             document.red.deleteElements();
             document.red.ContextMenuDestroy();
             document.red.setNeedSave();
+            event.stopPropagation();
         } );  
  
     this.ContextMenuButton(tbody, 'Clone', this.selectionCount(),
@@ -1137,6 +1153,7 @@ designer.prototype.ContextMenuComponent = function(tbody){
             document.red.cloneElements();
             document.red.ContextMenuDestroy();
             document.red.setNeedSave();
+            event.stopPropagation();
         } ); 
         
     this.ContextMenuButton(tbody, 'Copy', this.selectionCount(),
@@ -1144,6 +1161,7 @@ designer.prototype.ContextMenuComponent = function(tbody){
             document.red.pastToClipBoard();
             document.red.ContextMenuDestroy();
             document.red.setNeedSave();
+            event.stopPropagation();
         } ); 
 
 
@@ -1152,6 +1170,7 @@ designer.prototype.ContextMenuComponent = function(tbody){
             document.red.pastToClipBoard(true);
             document.red.ContextMenuDestroy();
             document.red.setNeedSave();
+            event.stopPropagation();
         } ); 
         
         
@@ -1161,11 +1180,13 @@ designer.prototype.ContextMenuComponent = function(tbody){
             document.red.copyFromClipBoard(prn ? parseFloat(prn.getAttribute('x')) : null, prn ? parseFloat(prn.getAttribute('y')) : null);
             document.red.ContextMenuDestroy();
             document.red.setNeedSave();
+            event.stopPropagation();
         } );        
         
     this.ContextMenuButton(tbody, 'Close', true,
         function(){
             document.red.ContextMenuDestroy();
+            event.stopPropagation();
         } );          
        
 }
@@ -1528,7 +1549,7 @@ dsutl.trslt.getinfoXTranslate =  function (el){
 
 dsutl.trslt.getXTranslate =  function (el){
     var info = dsutl.trslt.getinfoXTranslate(el);
-    console.log(info);
+    //console.log(info);
     if (info){
         return parseFloat(info.x);
     }

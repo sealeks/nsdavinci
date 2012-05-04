@@ -188,7 +188,7 @@
         <xsd:annotation>
             <xsd:appinfo>  
                 <lib:creator name="svg:line" hint="line">
-                    <svg:line  x1="200" y1="200" x2="300" y2="300" stroke-width="3" stroke="black"  transform="translate(0,0)"/>
+                    <svg:line  x1="0" y1="0" x2="100" y2="100" stroke-width="3" stroke="black"  transform="translate(0,0)"/>
                 </lib:creator>
             </xsd:appinfo>
         </xsd:annotation> 
@@ -235,7 +235,7 @@
         <xsd:annotation>
             <xsd:appinfo>          
                 <lib:creator name="svg:polyline" hint="polyline">
-                    <svg:polyline points="200,200 300,300" stroke-width="3" stroke="black" fill="none"  transform="translate(0,0)"/>
+                    <svg:polyline points="0,0 100,100" stroke-width="3" stroke="black" fill="none"  transform="translate(0,0)"/>
                 </lib:creator>
             </xsd:appinfo>
         </xsd:annotation> 
@@ -281,7 +281,7 @@
         <xsd:annotation>
             <xsd:appinfo>          
                 <lib:creator name="svg:polygon" hint="polygon">
-                    <svg:polygon points="200,200 300,200 300,300 200,300" stroke-width="3" stroke="black" fill="red"  transform="translate(0,0)"/>
+                    <svg:polygon points="0,0 200,100 200,200 100,200" stroke-width="3" stroke="black" fill="red"  transform="translate(0,0)"/>
                 </lib:creator>
             </xsd:appinfo>
         </xsd:annotation> 
