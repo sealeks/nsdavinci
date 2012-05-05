@@ -189,10 +189,12 @@ mainlib.get_popupbody  = function(el, width, height){
     }
     
     el.popup.onmouseout = function(ev){
-         
+        
         if (!libutil.dom.check_is_parent (el.popup,ev.toElement,true)){
+            //console.profile('mainlib.get_popupbody.onmouseout');
             el.popup.parentNode.removeChild(el.popup);
             el.popup=undefined;
+            //console.profileEnd('mainlib.get_popupbody.onmouseout');
         }
         
        
@@ -201,15 +203,18 @@ mainlib.get_popupbody  = function(el, width, height){
     el.popup.onmousedown= function(){
         
         if (event.target==el.popup){
-  
+            //console.profile(mainlib.get_popupbody.onmouseout);
             if (el.popup.popupbody.useelement){
                 el.popup.popupbody.useelement.setAttributeNS("http://www.w3.org/1999/xlink",'href','');
             }
          
             if (el.popup){
+                
                 el.popup.parentNode.removeChild(el.popup);
                 el.popup=undefined;
+                console.profileEnd();
             }
+            //console.profile(mainlib.get_popupbody.onmouseout);
         }
     }; 
       
@@ -220,17 +225,18 @@ mainlib.get_popupbody  = function(el, width, height){
 
 
 mainlib.armatura_popup = function(el, rauto){
-    
+    //console.profile('mainlib.armatura_popup');
     try{
         
         var body = mainlib.get_popupbody(el,150, (libutil.util.trim(rauto)=='') ? 150 : 188);
         
         document.getElementById(el.getAttribute('id') + '_popup');
            
+           
         var use = libutil.svg.create_use(body);
         body.useelement=use;
         use.setAttributeNS(libutil.XLINK_NAMESPACE_URL,'href','#'+el.getAttribute('id') + '_popup');
-     
+        
     /*var litedoc = libutil.xslttransform.literootDocument();
     
         var litedocElement = litedoc.documentElement;
@@ -251,6 +257,7 @@ mainlib.armatura_popup = function(el, rauto){
     catch(error){
         throw console.error('mainlib.armatura_popup error: ' + error);
     }  
+    //console.profileEnd('mainlib.armatura_popup');
 
 }
 

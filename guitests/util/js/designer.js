@@ -650,7 +650,7 @@ designer.prototype.copyFromClipBoard = function(rect , mpoint , prn){
     //console.log('x:' + x + 'y:' + y);
     if (tmp.clipboard && tmp.clipboard.length>0){
     this.clearSelections();
-    prn = prn !=  this.instantdocument.documentElement ?  this.updateElement(prn) : prn;
+    
     for (var i=0;i < tmp.clipboard.length;++i){
         if (tmp.clipboard[i]){
             var bndsel = dsutl.trslt.getBoundElements([tmp.clipboard[i]]);
@@ -1202,6 +1202,7 @@ designer.prototype.ContextMenuComponent = function(tbody , trgt){
             if (tmp  && tmp.clipboard && tmp.clipboard.length>0){
             var prn= trgt ? (trgt.hasAttribute('isgoupelement') ? trgt : document.red.instantdocument.documentElement )
                        : document.red.instantdocument.documentElement;
+            prn = prn !=  document.red.instantdocument.documentElement ?  document.red.updateElement(prn) : prn;           
             if (prn == document.red.instantdocument.documentElement){
                var boxs = prn  && prn.getClientRects ? prn.getClientRects() : null;
                var box = boxs && boxs.length ? boxs[0] : null;
