@@ -46,7 +46,7 @@ function designer(doc){
     });    
     this.instantdocument.addEventListener('contextmenu' ,function (ev) {
         if (document.red)
-            document.red.createContextMenu(ev);
+            document.red.createContextMenu(document.red.instantdocument.documentElement);
         event.stopPropagation();
         event.preventDefault();  
     });        
@@ -65,7 +65,7 @@ designer.prototype.attach = function(el){
             el.onclick = function() {
                 if (document.red){
                     document.red.clearSelections();
-                    document.red.clickParented(el);
+                    document.red.clickParented(document.red.instantdocument.documentElement);
                     dsutl.toolwin.setCurrentRedactor(window);
                     document.red.show_property(document.documentElement);
                 }
@@ -393,20 +393,24 @@ designer.prototype.setSourseElementRect = function(x, y, width, height , el){
 designer.prototype.setElementRect = function(x, y, width, height , el){
     if (el){
         if (!el) return;
-        if (x && dsutl.trslt.getXname(el)){
-            switch(dsutl.trslt.getXname(el)){
+        var xn = dsutl.trslt.getXname(el);
+        var yn = dsutl.trslt.getYname(el);
+        var hn = dsutl.trslt.getHname(el);
+        var wn = dsutl.trslt.getWname(el);
+        if (x && xn){
+            switch(xn){
             case 'd': {dsutl.trslt.setDXval( el, x);break;}
             case 'transform': {dsutl.trslt.setXTranslate( el, x);break;}
-            default: {el.setAttribute( dsutl.trslt.getXname(el), x);}}}
-        if (y && dsutl.trslt.getYname(el)){
-            switch(dsutl.trslt.getYname(el)){
+            default: {el.setAttribute( xn , x);}}}
+        if (y && yn){
+            switch(yn){
             case 'd': {dsutl.trslt.setDYval( el, y);break;}
             case 'transform': {dsutl.trslt.setYTranslate( el, y);break;}
-            default: {el.setAttribute( dsutl.trslt.getYname(el), y);}}}
-        if (width && dsutl.trslt.getWname(el))
-            el.setAttribute( dsutl.trslt.getWname(el) , width);
-        if (height  && dsutl.trslt.getHname(el))
-            el.setAttribute( dsutl.trslt.getHname(el), height);
+            default: {el.setAttribute( yn , y);}}}
+        if (width && wn)
+            el.setAttribute( wn , width);
+        if (height  && hn )
+            el.setAttribute( hn, height);
         return;
     } 
 }
@@ -415,30 +419,8 @@ designer.prototype.setElementRect = function(x, y, width, height , el){
 designer.prototype.changeSourseElementRect = function(x, y, width , height, el){
     var sel = this.getSourseElement(el);
     if (sel){
-        var xnmame = dsutl.trslt.getXname(sel);
-        var ynmame = dsutl.trslt.getYname(sel);
-        var xval = null;
-        var yval = null;
-        if (x && xnmame){
-            switch(xnmame){
-                case 'd': {xval=(parseFloat(dsutl.trslt.getDXval(sel)) + x);break;}
-                case 'transform': {xval=(parseFloat(dsutl.trslt.getXTranslate(sel)) + x);break;} 
-                default: {xval=(parseFloat(sel.getAttribute(xnmame)) + x);}
-            }
-        }
-        if (y && ynmame){
-            switch(ynmame){
-                case 'd': {yval=(parseFloat(dsutl.trslt.getDYval(sel)) + y);break;}
-                case 'transform': {yval=(parseFloat(dsutl.trslt.getYTranslate(sel)) + y);break;} 
-                default: {yval=(parseFloat(sel.getAttribute(ynmame)) + y);}
-            }
-        }
-             
-        this.setSourseElementRect(  xval , yval ,
-            (width && dsutl.trslt.getWname(sel) ? parseFloat(sel.getAttribute(dsutl.trslt.getWname(sel))) + width : width) ,
-            (height && dsutl.trslt.getHname(sel)? parseFloat(sel.getAttribute(dsutl.trslt.getHname(sel))) + height : height) , el);
+        this.changeElementRect(x, y, width , height, sel);
     }
-
 }
 
 
@@ -476,7 +458,7 @@ designer.prototype.changeElementRect = function(x, y, width , height, el){
 
 designer.prototype.updateElement = function(el){
     if (el) {
-        console.log('designer.prototype.updateElement: '+el);
+        //console.log('designer.prototype.updateElement: '+el);
         var select = this.isSelection(el);
         var tel = this.getTransformElement(el.getAttribute('id'));
         var old = el.parentNode.replaceChild(tel ,el);
@@ -521,8 +503,7 @@ designer.prototype.save = function(){
 
 
 designer.prototype.deleteElements = function(el){
-    if (el){
-        this.clearSelection(el);
+    if (el){        
         if (this.sourseDocument){
             var source = this.getSourseElement(el);
             if (source){
@@ -534,15 +515,14 @@ designer.prototype.deleteElements = function(el){
     else{
         for (var j=0; j< this.selectedElemens.length; ++j)
             this.deleteElements(this.selectedElemens[j].getElement());
-       
-        this.selectedElemens.length=0;
+        this.clearSelection();
+
     }   
 }
 
 designer.prototype.cloneElements = function(el){
     if (el){
         if (this.sourseDocument){
-            this.clearSelection(el);
             var source = this.getSourseElement(el);
             if (source){
                 var el_c=source.cloneNode(true);
@@ -555,7 +535,7 @@ designer.prototype.cloneElements = function(el){
                 prntel.appendChild(tel);
                 this.attach(tel);
                 this.changeSourseElementRect(10,10, null, null, tel);
-                this.setSelection(tel);
+                this.repaceSelection(el, tel);
                 this.updateElement(tel);
                 
             }
@@ -573,7 +553,6 @@ designer.prototype.cloneElements = function(el){
 designer.prototype.toFrontElements = function(el){
     if (el){
         var elprnt = el.parentNode;
-        this.clearSelection(el);
         if (this.sourseDocument){
             var sel = this.getSourseElement(el);
             if (sel){
@@ -585,23 +564,22 @@ designer.prototype.toFrontElements = function(el){
                 prnt.appendChild(cel);
                 var rem = elprnt.removeChild(el);
                 elprnt.appendChild(rem);
-                this.setSelection(rem);
+                this.repaceSelection(el, rem);
             }
         }
     }
-    else{
-        
+    else{       
         for (var j=0; j< this.selectedElemens.length; ++j)
             this.toFrontElements(this.selectedElemens[j].getElement());
-
     }   
 }
+
+
 
 designer.prototype.toBackElements = function(el){
     if (el){
         var elprnt = el.parentNode;
         if (this.sourseDocument){
-            this.clearSelection(el);
             var sel = this.getSourseElement(el);
             if (sel){
                 var prnt = sel.parentNode;
@@ -612,17 +590,13 @@ designer.prototype.toBackElements = function(el){
                 prnt.insertBefore(cel, prnt.firstElementChild);
                 var rem = elprnt.removeChild(el);
                 elprnt.insertBefore(rem, elprnt.firstElementChild);
-                this.setSelection(rem);
+                this.repaceSelection(el, rem);
             }
         }
     }
-    else{
-        
+    else{       
         for (var j=0; j< this.selectedElemens.length; ++j) 
             this.toBackElements(this.selectedElemens[j].getElement());
-        
-        
-
     }   
 }
 
@@ -649,7 +623,8 @@ designer.prototype.pastToClipBoard = function(clear){
                     prnt.removeChild(this.selectedElemens[i].getElement());
                     prnts.removeChild(el);}
             }
-       this.selectedElemens=[];     
+       if (clear)     
+            this.clearSelections();     
     }
 }
         
@@ -664,23 +639,35 @@ designer.prototype.getClipBoard = function(){
     return tmp.clipboard;
 }   
 
-designer.prototype.copyFromClipBoard = function( x , y, prnt){
+designer.prototype.copyFromClipBoard = function(rect , mpoint , prn){
+    //console.log(rect,mpoint, prn)
     var tmp=$$global();
-    //alert(x + '  --- '+ y);
-    if (tmp.clipboard && tmp.clipboard.length>0)
-    for (var i=0;i < tmp.clipboard.length;++i)
+    var x = mpoint.x ? mpoint.x : 0;
+    var y = mpoint.y ? mpoint.y : 0;
+    var bnds = dsutl.trslt.getBoundElements(tmp.clipboard);
+    x = x && bnds.x ? x - bnds.x : 0;
+    y = y && bnds.y ? y - bnds.y : 0; 
+    //console.log('x:' + x + 'y:' + y);
+    if (tmp.clipboard && tmp.clipboard.length>0){
+    this.clearSelections();
+    prn = prn !=  this.instantdocument.documentElement ?  this.updateElement(prn) : prn;
+    for (var i=0;i < tmp.clipboard.length;++i){
         if (tmp.clipboard[i]){
-            x = dsutl.trslt.getXname(tmp.clipboard[i])=='d' ? 10 : x;
-            y = dsutl.trslt.getYname(tmp.clipboard[i])=='d' ? 10 : y;
-            this.createLibComponent(x, y, tmp.clipboard[i], prnt, tmp.clipboard.length > 1 )
-        }
-    
+            var bndsel = dsutl.trslt.getBoundElements([tmp.clipboard[i]]);
+            //console.log('num:' + i + ' basis:' + bndsel);
+            var rsltbnd = dsutl.trslt.inParentBoundElements( rect , bndsel.x ? bndsel.x + x : x, bndsel.y ? bndsel.y + y : y);
+            //console.log('num:' + i + ' result:' + rsltbnd);
+            var sel = this.createLibComponent(rsltbnd.x, rsltbnd.y, tmp.clipboard[i], prn);
+        }}
+     prn = prn !=  this.instantdocument.documentElement ?  this.updateElement(prn) : prn;}
+    this.show_property();
+
 }
 
 
-designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
-    if (created/* && x && y*/){
-        this.clearSelections();
+designer.prototype.createLibComponent = function(x, y , created, prnt){
+    if (created){
+        
         var coneid=this.unicalIdGenerate(created , this.sourseDocument , null, created.localName);
         var sprnt = prnt ? this.getSourseElement(prnt) : this.sourseDocument.documentElement;
         prnt = prnt ? prnt : this.instantdocument.documentElement;
@@ -694,7 +681,7 @@ designer.prototype.createLibComponent = function(x, y , created, prnt, chrect){
         this.setSelection(tel);
         this.updateElement(tel);
         this.setNeedSave();
-        return true;
+        return tel;
     }
     return false;
 }
@@ -715,7 +702,6 @@ designer.prototype.onmosnopropogate = function (){
 } 
 
 designer.prototype.clickComponent = function(){
-    //console.log('designer.prototype.clickComponent : x' + event.pageX + 'y' + event.pageY);
     if (this.afterremove){
         this.afterremove=undefined;
         event.stopPropagation();
@@ -729,7 +715,7 @@ designer.prototype.clickComponent = function(){
 
 designer.prototype.clickCanParented = function(el, ev){
     var box = el.getBBox ? el.getBBox() : null;
-    console.log(box);
+    //console.log(box);
     if (!(((!this.isSelection(el))) || (!box) || (!this.isNeedInsert(el)))) {
         el = this.updateElement(el);
         if (this.newLibComponent((ev.pageX - box.x).toString(), (ev.pageY - box.y).toString(), el)) {
@@ -742,15 +728,16 @@ designer.prototype.clickCanParented = function(el, ev){
     return false;
 }
 
-designer.prototype.clickParented = function(){
+designer.prototype.clickParented = function(prnt){
     if (event && event.pageX.toString() && event.pageY.toString())
-        this.newLibComponent(event.pageX.toString(), event.pageY.toString());
+        this.newLibComponent(event.pageX.toString(), event.pageY.toString(), prnt);
 }
 
 designer.prototype.newLibComponent = function(x, y , prnt){
     if (prnt){     
         var created = dsutl.toolwin.getSelectedComponent();
         if (created && x && y){
+            this.clearSelections();
             this.createLibComponent(x, y, created, prnt);
             this.show_property();
             dsutl.toolwin.clearSelectedComponent();
@@ -760,9 +747,6 @@ designer.prototype.newLibComponent = function(x, y , prnt){
 return false;
 }
 
- //designer.prototype.hasNeedCreateElement = function(){
-  //var tmp= $$global(); 
-  //return tmp ? tmp['selectedComponent'] : null;}
 
 
 //  Выбор компонента на форме
@@ -808,8 +792,12 @@ designer.prototype.clearSelection = function(el){
 }
 
 designer.prototype.repaceSelection = function(old, newel){
-    this.clearSelection(old);
-    this.setSelection(newel);           
+    if (this.selectedElemens!=null)
+        for (var i=0;i < this.selectedElemens.length;++i)
+            if (this.selectedElemens[i].getElement()==old){
+                this.selectedElemens[i].deselect();
+                this.selectedElemens[i]=new dsutl.selectwraper(newel)
+            }         
 }
 
 
@@ -1026,13 +1014,6 @@ designer.prototype.mousedownComponent = function (){
 
 
 
-designer.prototype.contextmenue = function (){
-    this.createContextMenu(event);
-    event.stopPropagation();
-    event.preventDefault();    
-}
-
-
 
 
 //  ****/
@@ -1097,7 +1078,7 @@ designer.prototype.createWindow = function(id, top, left, width, height){
 
 // контекстное меню
 
-designer.prototype.createContextMenu = function(){
+designer.prototype.createContextMenu = function(trgt){
 
 
     var l= event.pageX;
@@ -1142,7 +1123,7 @@ designer.prototype.createContextMenu = function(){
            
     var tbody= libutil.html.create_tbody(table);
        
-    this.ContextMenuComponent(tbody);
+    this.ContextMenuComponent(tbody,  trgt);
     
     this.contextmenu.onmouseout=function(){
         if (event.fromElement==this) {
@@ -1163,7 +1144,7 @@ designer.prototype.ContextMenuButton = function(tbody, name, enable, func){
 
 
 
-designer.prototype.ContextMenuComponent = function(tbody){
+designer.prototype.ContextMenuComponent = function(tbody , trgt){
     
     this.ContextMenuButton(tbody, 'Bring to Front', this.selectionCount() ,
         function(){
@@ -1217,8 +1198,30 @@ designer.prototype.ContextMenuComponent = function(tbody){
         
     this.ContextMenuButton(tbody, 'Past', this.getClipBoard(),
         function(){
-            var prn=tbody.parentNode.parentNode.parentNode.parentNode.parentNode;
-            document.red.copyFromClipBoard(prn ? parseFloat(prn.getAttribute('x')) : null, prn ? parseFloat(prn.getAttribute('y')) : null);
+            var tmp=$$global();
+            if (tmp  && tmp.clipboard && tmp.clipboard.length>0){
+            var prn= trgt ? (trgt.hasAttribute('isgoupelement') ? trgt : document.red.instantdocument.documentElement )
+                       : document.red.instantdocument.documentElement;
+            if (prn == document.red.instantdocument.documentElement){
+               var boxs = prn  && prn.getClientRects ? prn.getClientRects() : null;
+               var box = boxs && boxs.length ? boxs[0] : null;
+               var rect = box ? {'x' : box.top , 'y' : box.left , 'w' : box.width , 'h' : box.height} : null;}
+           else{
+               var box = prn && prn.getBBox ? prn.getBBox() : null;
+               var rect = box ? {'x' : box.x , 'y' : box.y , 'w' : box.width , 'h' : box.height} : null;
+           }
+           if (rect && event){
+               console.log(tbody.getBoundingClientRect());
+               var mx = tbody.getBoundingClientRect().left - rect.x;
+               var my = tbody.getBoundingClientRect().top - rect.y; 
+               var mpoint = {'x' : mx , 'y' : my};
+               rect = {'w' : rect.w  , 'h' : rect.h , 'x' : 0 , 'y' : 0};
+               document.red.copyFromClipBoard(rect , mpoint , prn);
+               //console.log(rect,mpoint, prn)
+           }
+            //document.red.copyFromClipBoard(rect.x , rect.y, prn);
+
+            }
             document.red.ContextMenuDestroy();
             document.red.setNeedSave();
             event.stopPropagation();
@@ -1470,9 +1473,7 @@ dsutl.selectwraper.prototype.select = function(){
     
     this.selement.setAttribute('class', 'designer_selected');
     this.selement.designer=this.designer;
-    /*this.selement.addEventListener('keyup', function() {
-        if (this.designer) this.designer.keybordDispatcherd(event);
-    });*/
+
     this.selement.onmousemove = function() {
         if (this.designer) this.designer.mousemoveDocument();
     };
@@ -1485,7 +1486,7 @@ dsutl.selectwraper.prototype.select = function(){
     this.selement.oncontextmenu = function() {
         if (this.designer) {
             if (this.designer.isSelection(this.designer.getTarget(event)))
-                this.designer.createContextMenu(event);
+                this.designer.createContextMenu(this.designer.getTarget(event));
             event.preventDefault();
             event.stopPropagation();
         }
@@ -1513,8 +1514,7 @@ dsutl.selectwraper.prototype.deselect = function(){
 }
 
 dsutl.selectwraper.prototype.shiftRect = function(x, y){
-        dsutl.trslt.setShiftXTranslate(this.selement, x);
-        dsutl.trslt.setShiftYTranslate(this.selement, y);
+        dsutl.trslt.setShiftXYTranslate(this.selement, x , y);
 }
 
 
@@ -1664,6 +1664,22 @@ dsutl.trslt.setShiftYTranslate =  function (el , y){
     }
 }
 
+dsutl.trslt.setShiftXYTranslate =  function (el , x , y){
+    if ((y==null) || (y==undefined)) return y = 0;
+    if ((x==null) || (x==undefined)) return x = 0; 
+    if (y || x){
+    var infoX = dsutl.trslt.getinfoXTranslate(el);
+    var infoY = dsutl.trslt.getinfoYTranslate(el);
+    //console.log(infoX);
+    //console.log(infoY);
+    if (infoX && infoY){
+        el.setAttribute('transform', infoX.start + (x + parseFloat(infoX.x)).toString()+','+ (y + parseFloat(infoY.y)).toString() + infoY.stop);       
+    }
+    else{       
+        el.setAttribute('transform', 'translate('+ x.toString()+','+y.toString() + ')');
+    }}
+}
+
 
 
 
@@ -1773,7 +1789,124 @@ dsutl.trslt.setDYval =  function (el , y){
 }
 
 
+dsutl.trslt.getBoundsElements  =  function (elements , defaultwh){
+    if (elements && (elements.length>0)){
+        var bounds = [];
+        defaultwh = defaultwh ? defaultwh : 40;
+        for (var i=0;i < elements.length;++i){
+            var x = null;
+            var y = null;
+            var w = null;
+            var h = null;            
+            var el = elements[i];
+            var xn = dsutl.trslt.getXname(el);
+            var yn = dsutl.trslt.getYname(el);
+            var hn = dsutl.trslt.getHname(el);
+            var wn = dsutl.trslt.getWname(el);
+            if (xn){
+                switch(xn){
+                    case 'd': {
+                        x = dsutl.trslt.getDXval( el);
+                        break;
+                    }
+                    case 'transform': {
+                        x = dsutl.trslt.getXTranslate( el);
+                        break;
+                    }
+                    default: {
+                        x = parseFloat(el.getAttribute(xn));
+                        x = (x!=x) ? null : x;
+                    }
+                }
+            }
+            if (yn){
+                switch(yn){
+                    case 'd': {
+                        y = dsutl.trslt.getDYval( el);
+                        break;
+                    }
+                    case 'transform': {
+                        y = dsutl.trslt.getYTranslate( el);
+                        break;
+                    }
+                    default: {
+                        y = parseFloat(el.getAttribute( yn));
+                        y = (y!=y) ? null : y;
+                    }
+                }
+            }
+            if (wn){
+                w = parseFloat(el.getAttribute( wn ));
+                w = (w!=w) ? defaultwh : w;
+                
+            }           
+            if (hn ){
+                h = parseFloat(el.getAttribute( hn));
+                h = (h!=h) ? defaultwh : h;
+            }
+            bounds.push({'x': x ? x : 0 , 
+                         'y': y ? y : 0 ,
+                         'h': h!==null ? y + h : y + defaultwh ,
+                         'w': w!==null ? x + w : x + defaultwh});
+        }
+        //console.log(bounds);
+        return bounds;
+}
+return null;  
+}
 
+
+dsutl.trslt.getBoundElements  =  function (elements , defaultwh){
+var bounds = dsutl.trslt.getBoundsElements(elements, defaultwh);
+if (bounds){
+    var bound= null;
+    var x = null;
+    var y = null;
+    var w = null;
+    var h = null; 
+        for (var i=0;i < bounds.length;++i){ 
+            if (bounds[i].x!==null){
+                if (x===null) 
+                    x=bounds[i].x;
+                else
+                    x= bounds[i].x<x ?  bounds[i].x : x;
+            }
+            if (bounds[i].y!==null){
+                if (y===null) 
+                    y=bounds[i].y;
+                else
+                    y=bounds[i].y<y ? bounds[i].y :  y ;
+            }           
+            if (bounds[i].h!==null){
+                if (h===null) 
+                    h=bounds[i].h;
+                else
+                    h= bounds[i].h>h ?  bounds[i].h : h;
+            }
+            if (bounds[i].w!==null){
+                if (w===null) 
+                    w=bounds[i].w;
+                else
+                    w=bounds[i].w>w ? bounds[i].w :  w ;
+            }           
+        }        
+        bound = {'x': x , 'y': y, 'h': h, 'w': w};
+        //console.log(bound);
+        return bound;
+}
+    return null;    
+}
+
+
+dsutl.trslt.inParentBoundElements  =  function (parentrect,  x , y){
+ 
+    if (x<0) x=0;
+    if (y<0) y=0;             
+    if (x>parentrect.w) x=parentrect.w - 40;
+    if (y>parentrect.h) y=parentrect.h - 40;        
+
+    return {'x' : x , 'y' : y}
+}
 
 
 /*

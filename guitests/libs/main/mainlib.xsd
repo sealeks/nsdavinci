@@ -318,8 +318,6 @@
         <xsd:attribute name="height" type="xsd:string" default="100"/>
         <xsd:attribute name="translate-x" type="xsd:string"/>
         <xsd:attribute name="translate-y" type="xsd:string"/>
-        <xsd:attribute name="rotate-x" type="xsd:string"/>
-        <xsd:attribute name="rotate-y" type="xsd:string"/>
         <xsd:attribute name="rotate-angle" type="xsd:string"/>
         <xsd:attribute name="rotate-angle-binding" type="lib:expression"/>
         <xsd:attribute name="scale" type="xsd:string"/>
