@@ -655,7 +655,7 @@ designer.prototype.copyFromClipBoard = function(rect , mpoint , prn){
         if (tmp.clipboard[i]){
             var bndsel = dsutl.trslt.getBoundElements([tmp.clipboard[i]]);
             //console.log('num:' + i + ' basis:' + bndsel);
-            var rsltbnd = dsutl.trslt.inParentBoundElements( rect , bndsel.x ? bndsel.x + x : x, bndsel.y ? bndsel.y + y : y);
+            var rsltbnd = dsutl.trslt.inParentBoundElements( rect , bndsel.x ? bndsel.x + x : x, bndsel.y ? bndsel.y + y : y );
             //console.log('num:' + i + ' result:' + rsltbnd);
             var sel = this.createLibComponent(rsltbnd.x, rsltbnd.y, tmp.clipboard[i], prn);
         }}
@@ -1217,9 +1217,8 @@ designer.prototype.ContextMenuComponent = function(tbody , trgt){
                var mpoint = {'x' : mx , 'y' : my};
                rect = {'w' : rect.w  , 'h' : rect.h , 'x' : 0 , 'y' : 0};
                document.red.copyFromClipBoard(rect , mpoint , prn);
-               //console.log(rect,mpoint, prn)
            }
-            //document.red.copyFromClipBoard(rect.x , rect.y, prn);
+
 
             }
             document.red.ContextMenuDestroy();
@@ -1898,12 +1897,13 @@ if (bounds){
 }
 
 
-dsutl.trslt.inParentBoundElements  =  function (parentrect,  x , y){
- 
+dsutl.trslt.inParentBoundElements  =  function (parentrect,  x , y , w , h){
+    if (w==null) w =40;
+    if (h==null) h =40;
     if (x<0) x=0;
     if (y<0) y=0;             
-    if (x>parentrect.w) x=parentrect.w - 40;
-    if (y>parentrect.h) y=parentrect.h - 40;        
+    if (x>parentrect.w) x=parentrect.w - w;
+    if (y>parentrect.h) y=parentrect.h - h;        
 
     return {'x' : x , 'y' : y}
 }
