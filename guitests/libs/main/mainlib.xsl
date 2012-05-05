@@ -2673,9 +2673,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:text>#{ (</xsl:text>
                         <xsl:value-of select="@param"/>
                         <xsl:text>).valid ? </xsl:text>
-                        <xsl:text> format(</xsl:text>
+                        <xsl:text> (</xsl:text>
                         <xsl:value-of select="@param"/>
-                        <xsl:text> , '%8.1f') : '</xsl:text>
+                        <xsl:text> ) : '</xsl:text>
                         <xsl:value-of select="$textdefault"/>
                         <xsl:text>' :default</xsl:text> 
                         <xsl:value-of select="$textdefault"/>
