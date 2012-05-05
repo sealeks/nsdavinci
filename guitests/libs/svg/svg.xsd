@@ -204,7 +204,7 @@
             <xsd:attribute name="y2" type="xsd:string" default="0"/>
             <xsd:attribute name="y2-binding" type="lib:expression" default="0"/>
             
-            <xsd:attribute name="trasform" type="xsd:string" default=""/>            
+            <xsd:attribute name="transform" type="xsd:string" default=""/>            
             
             <xsd:attribute name="stroke-width" type="xsd:string"/>
             <xsd:attribute name="stroke-width-binding" type="lib:expression"/>
@@ -244,7 +244,7 @@
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="points" type="xsd:string" default="0"/> 
             
-            <xsd:attribute name="trasform" type="xsd:string" default=""/>           
+            <xsd:attribute name="transform" type="xsd:string" default=""/>           
             
             <xsd:attribute name="stroke-width" type="xsd:string"/>
             <xsd:attribute name="stroke-width-binding" type="lib:expression"/>
@@ -291,7 +291,7 @@
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="points" type="xsd:string"/> 
             
-            <xsd:attribute name="trasform" type="xsd:string" default=""/>             
+            <xsd:attribute name="transform" type="xsd:string" default=""/>             
             
             <xsd:attribute name="stroke-width" type="xsd:string"/>
             <xsd:attribute name="stroke-width-binding" type="lib:expression"/>
@@ -336,7 +336,7 @@
             <xsd:attribute name="id" type="xsd:ID" use="required"/>
             <xsd:attribute name="d" type="xsd:string"/>  
             
-            <xsd:attribute name="trasform" type="xsd:string" default=""/> 
+            <xsd:attribute name="transform" type="xsd:string" default=""/> 
             
             <xsd:attribute name="stroke-width" type="xsd:string"/>
             <xsd:attribute name="stroke-width-binding" type="lib:expression"/>
