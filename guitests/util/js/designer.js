@@ -2331,6 +2331,10 @@ dsutl.toolwin.getFormInspector = function (force){
     
         var objdoc =tmp.formtool.document;
         tmp.formtool.onunload=dsutl.toolwin.destroyFormInspector;
+        tmp.formtool.onmousewheel = function (){
+            event.stopPropagation();
+            event.preventDefault();
+        }
 
         var body=objdoc.getElementsByTagName('body')[0];
         var head=objdoc.getElementsByTagName('head')[0];
@@ -2931,7 +2935,7 @@ dsutl.toolwin.removeFormFromProject =function(name){
 }
 
 dsutl.toolwin.propertydialog = function(name, value){
-    return libutil.window.create_modal('../util/html/propertydialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
+    return libutil.window.create_modal('../util/html/javascriptdialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
 }                
                 
                 
