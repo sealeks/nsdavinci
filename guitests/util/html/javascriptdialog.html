@@ -4,9 +4,9 @@
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="../js/libutil.js"></script>
-        <script src="../js_ext/codemirror/lib/codemirror.js"></script>
+        <script type="text/javascript" src="../js_ext/codemirror/lib/codemirror.js"></script>
         <link rel="stylesheet" href="../js_ext/codemirror/lib/codemirror.css">
-        <script src="../js_ext/codemirrormode/javascript/javascript.js"></script>
+        <script type="text/javascript" src="../js_ext/codemirror/mode/javascript/javascript.js"></script>
         <style type="text/css">
             body { 
                 padding: 0px 0px;
@@ -31,12 +31,10 @@
                 
             }
         </style>
-        <script type="text/javascript"> 
-            var myCodeMirror = CodeMirror.fromTextArea(document.getElementById('text'));
-        </script>
+
     </head>
 
-    <body onload="var val =libutil.global.getGlobalPropertyEditor().value;document.getElementById('text').innerHTML=val; " >
+    <body onload="var val =libutil.global.getGlobalPropertyEditor().value;document.getElementById('text').innerHTML=val; myCodeMirror = CodeMirror.fromTextArea(document.getElementById('text'));" >
         <table class="nullblock">
             <tr>  
                 <td class="nullblock">    

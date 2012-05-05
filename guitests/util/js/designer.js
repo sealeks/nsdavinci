@@ -2935,7 +2935,7 @@ dsutl.toolwin.removeFormFromProject =function(name){
 }
 
 dsutl.toolwin.propertydialog = function(name, value){
-    return libutil.window.create_modal('../util/html/javascriptdialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
+    return libutil.window.create_modal('../util/html/propertydialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
 }                
                 
                 
