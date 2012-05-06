@@ -525,18 +525,31 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r)
     
     var docelem = document.documentElement;
     
-    var svg =libutil.svg.create_svg(docelem, xc , yc ,  hc , wc);
+    var svg =libutil.svg.create_element('svg', docelem, [{'name' : 'x', 'value': xc},
+                                                         {'name' : 'y', 'value': yc},
+                                                         {'name' : 'width', 'value': wc},
+                                                         {'name' : 'height', 'value': hc}]);
     
-    libutil.svg.create_rect(svg, 0 , 0 ,  hc  , wc,  null , null , popupstyle ? popupstyle : 'fill: white; opacity: 0.0;', null);
+    libutil.svg.create_element('rect', svg, [{'name' : 'x', 'value':  0},
+                                             {'name' : 'y', 'value':  0},
+                                             {'name' : 'width', 'value': wc},
+                                             {'name' : 'height', 'value': hc},
+                                             {'name' : 'style', 'value': popupstyle ? popupstyle : 'fill: white; opacity: 0.0;'}]);
     
-    svg.popupbody = libutil.svg.create_svg(svg, dir==1 ? wh : 0 , dir==2 ? hh : 0 ,  H , W);
+    svg.popupbody = libutil.svg.create_element('svg', svg, [{'name' : 'x', 'value': dir==1 ? wh : 0},
+                                                            {'name' : 'y', 'value':  dir==2 ? hh : 0},
+                                                            {'name' : 'width', 'value': W},
+                                                            {'name' : 'height', 'value': H}]);
     
-    var rct = libutil.svg.create_rect(svg.popupbody, 0 , 0 ,  H  , W,  null , null , bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;', null);
+    var rct = libutil.svg.create_element('rect', svg.popupbody , [{'name' : 'x', 'value':  0},
+                                                        {'name' : 'y', 'value':  0},
+                                                        {'name' : 'width', 'value': W},
+                                                        {'name' : 'height', 'value': H},
+                                                        {'name' : 'rx', 'value': r },
+                                                        {'name' : 'ry', 'value': r },
+                                                        {'name' : 'style', 'value': bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'}]);
     
-    if (r){
-       rct.setAttribute('rx',r); 
-       rct.setAttribute('ry',r);
-    }
+
     
     return svg;
 }
@@ -647,6 +660,7 @@ libutil.window.create_modal = function(url,  caption, value ,top, left, width, h
     
     var ret = libutil.global.getGlobalPropertyEditor();
     if (!ret || ret==value) return null;
+    console.log('return ' + ret)
     libutil.global.setGlobalPropertyEditor();
     return ret;
 }
@@ -686,118 +700,41 @@ libutil.regex.check = function (value, expr){
 
 
 libutil.html.create = function (name, parent){
-    if (!parent) return;
     var newel = parent.ownerDocument.createElementNS(libutil.XHTML_NAMESPACE_URL, name);
-    if (parent) parent.appendChild(newel);
+    parent.appendChild(newel);
     return newel;
 }
 
-libutil.html.create_html = function (parent, style){  
-    var newel = libutil.html.create('html', parent);
-    if (!newel) return;
-    if (style) newel.setAttribute('style', style);
+libutil.html.create_element = function (name, parent, attr){
+    var newel = parent.ownerDocument.createElementNS(libutil.XHTML_NAMESPACE_URL, name);
+    if (attr){
+        for (var i=0; i < attr.length; ++i){
+           if (attr[i].value) 
+               newel.setAttribute(attr[i].name, attr[i].value); 
+        }
+    }
+    parent.appendChild(newel);
     return newel;
 }
 
-
-libutil.html.create_head = function (parent, style){  
-    var newel = libutil.html.create('head', parent);
-    if (!newel) return;
-    if (parent) parent.appendChild(newel);
-    if (style) 
-        libutil.html.create_style(newel, style)
-    return newel;
-}
-
-libutil.html.create_body = function (parent, style, classnm){
-    var newel = libutil.html.create('body', parent);
-    if (!newel) return;
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.className=classnm;
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
-
-libutil.html.create_tbody = function (parent, style, classnm){
-    var newel = libutil.html.create('tbody', parent);
-    if (!newel) return;
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.className=classnm;
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
-
-libutil.html.create_table = function (parent, style, classnm){
-    var newel = libutil.html.create('table', parent);
-    if (!newel) return;
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.className=classnm;
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
-
-
-libutil.html.create_th = function (parent, style, classnm){
-    var newel = libutil.html.create('th', parent);
-    if (!newel) return;
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.className=classnm;
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
 
 libutil.html.create_tabel_header = function (tr, style, classnm, arr){
     for (var i=0; i < arr.length; ++i){
-        var th = libutil.html.create_th(tr, style, classnm);
+        var th = libutil.html.create_element('th', tr,  [{'name' : 'style', 'value': style},
+                                                         {'name' : 'class', 'value': classnm}]);
         th.innerHTML=arr[i];
     } 
 }
 
-libutil.html.create_tr = function (parent, style, classnm){
-    var newel = libutil.html.create('tr', parent);
-    if (!newel) return;
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.className=classnm;
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
 
-libutil.html.create_td = function (parent, style, classnm){
-    var newel = libutil.html.create('td', parent);
-    if (!newel) return;
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.className=classnm;
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
-
-libutil.html.create_div = function (parent, style, classnm){
-    var newel = libutil.html.create('div', parent);
-    if (!newel) return;
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.className=classnm;
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
-
-libutil.html.create_span = function (parent, style, classnm){
-    var newel = libutil.html.create('span', parent);
-    if (!newel) return;
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.className=classnm;
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
-
-libutil.html.create_link = function (parent, rel, type, href){
+libutil.html.create_link = function (parent , href){
     var newel = libutil.html.create('link', parent);
     if (!newel) return;
-    newel.setAttribute('rel', rel ? rel : 'stylesheet');
-    newel.setAttribute('type', type ? type : 'text/css');
+    newel.setAttribute('rel', 'stylesheet');
+    newel.setAttribute('type',  'text/css');
     if (href) newel.setAttribute('href', href);
     return newel;
 }
-
 
 
 libutil.html.create_style = function (parent,  style){
@@ -864,11 +801,11 @@ libutil.html.create_tool = function (doc, nametool, names, hints, funcs, size, h
         var result = {};
         if (body) {
             if (header){
-                var divhead = libutil.html.create_div(body, headerstyle); 
+                var divhead = libutil.html.create_element('div' , body ,[{'name' : 'style' , 'value' : headerstyle}]); 
                 divhead.innerHTML=header;
             }
             libutil.html.create_tool_style(doc, nametool, names,  size);
-            var div = libutil.html.create_div(body);
+            var div = libutil.html.create_element('div' , body );
             div.setAttribute('class','toolbar');
             for (var i=0;i<names.length;++i){
                 var btn = libutil.html.create_button( div,null,nametool+'-item toggleable '+names[i],'', (funcs && funcs.length > i) ? funcs[i] : null);               
@@ -876,7 +813,7 @@ libutil.html.create_tool = function (doc, nametool, names, hints, funcs, size, h
                 btn.nametool=nametool;
                 if ( hints &&  hints.length>i)
                     btn.setAttribute('title', hints[i])
-                var dv = libutil.html.create_div(btn,null,nametool+'-icon');
+                var dv = libutil.html.create_element('div' , btn ,[{'name' : 'class' , 'value' : nametool+'-icon'}]);
                 if (hints &&  hints.length>i)
                     dv.setAttribute('title', hints[i]);
                 result[names[i]] = btn;
@@ -988,61 +925,16 @@ libutil.svg.create = function (name, parent){
     return newel;
 }
 
-libutil.svg.create_svg = function (parent, x, y,  height, width, view){
-    
-    var newel = libutil.svg.create('svg', parent);
-    if (!newel) return;
-    if (x || x==0) newel.setAttribute('x', parseFloat(x));
-    if (y || y==0) newel.setAttribute('y', parseFloat(y));
-    if (width || width==0) newel.setAttribute('width', parseFloat(width));
-    if (height || height==0) newel.setAttribute('height', parseFloat(height));    
-    if (view) newel.setAttribute('viewBox', view);
-    return newel;
-}
-
-
-libutil.svg.create_use = function (parent, x, y,  height, width){
-    
-    var newel = libutil.svg.create('use', parent);
-    if (!newel) return;
-    if (x || x==0) newel.setAttribute('x', parseFloat(x));
-    if (y || y==0) newel.setAttribute('y', parseFloat(y));
-    if (width || width==0) newel.setAttribute('width', parseFloat(width));
-    if (height || height==0) newel.setAttribute('height', parseFloat(height));    
-    return newel;
-}
-
-libutil.svg.create_g = function (parent){
-    
-    var newel = libutil.svg.create('g', parent);
-    return newel;
-}
-
-
-libutil.svg.create_rect = function (parent, x, y,  height, width,  rx, ry, style, classnm){
-    
-    var newel = libutil.svg.create('rect', parent);
-    if (!newel) return;
-    if (x || x==0) newel.setAttribute('x', parseFloat(x));
-    if (y || y==0) newel.setAttribute('y', parseFloat(y));
-    if (width || width==0) newel.setAttribute('width', parseFloat(width));
-    if (height || height==0) newel.setAttribute('height', parseFloat(height));    
-    if (rx) newel.setAttribute('rx', parseFloat(rx));
-    if (ry) newel.setAttribute('ry', parseFloat(ry));
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.setAttribute('class', classnm);
-    return newel;
-}
-
-libutil.svg.create_circle = function (parent, x, y,  r,  style, classnm){
-    
-    var newel = libutil.svg.create('circle', parent);
-    if (!newel) return;
-    if (x || x==0) newel.setAttribute('cx', parseFloat(x));
-    if (y || y==0) newel.setAttribute('cy', parseFloat(y));
-    if (r || r==0) newel.setAttribute('r', parseFloat(r));
-    if (style) newel.setAttribute('style', style);
-    if (classnm) newel.setAttribute('class', classnm);
+libutil.svg.create_element = function (name, parent, attr){
+    if (!parent) return;
+    var newel = parent.ownerDocument.createElementNS(libutil.SVG_NAMESPACE_URL, name);
+    if (attr){
+        for (var i=0; i < attr.length; ++i){
+           if (attr[i].value) 
+               newel.setAttribute(attr[i].name, attr[i].value); 
+        }
+    }
+    if (parent) parent.appendChild(newel);
     return newel;
 }
 
@@ -1061,74 +953,30 @@ libutil.svg.create_text = function (parent, x, y,  style, classnm, text){
     return newel;
 }
 
-libutil.svg.create_foreignObject = function (parent, x, y, height, width){
-    
-    var newel = libutil.svg.create('foreignObject', parent);
-    if (!newel) return;
-    if (x || x==0) newel.setAttribute('x', parseFloat(x));
-    if (y || y==0) newel.setAttribute('y', parseFloat(y));
-    if (width || width==0) newel.setAttribute('width', parseFloat(width));
-    if (height || height==0) newel.setAttribute('height', parseFloat(height));
-    
-    return newel;
-}
-
-libutil.svg.foriegn_text = function (parent, x, y, height, width, text, style){
-    
-    var newel = libutil.svg.create_foreignObject(parent, x, y, height, width);
-    
-    var body = libutil.html.create_body(newel, 'margin: 0px;  height: '+height+'px; ');
-    
-    var div = libutil.html.create_div(body, style + ' overflow: hidden;');
-    
-    var span = libutil.html.create_span(div, 'line-height: '+ height/2 + 'px;');
-    
-    var headertextnode=parent.ownerDocument.createTextNode(text);
-    
-    span.appendChild(headertextnode);
-    
-
-}
 
 
-libutil.svg.create_header = function (parent, x, y,  height, width, rx, ry,  rectstyle, text, htmltextstyle){
+libutil.svg.create_button = function (parent, x, y, width, height, rx, ry,  rectstyle, rectclass,   text, textstyle){
 
-    var newheadrect =  libutil.svg.create_rect( parent, 
-        x, y,  height, width, rx , ry, rectstyle);
-   
-    newheadrect.onmouseout = function() {
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-    } 
-         
-    var headersvg=libutil.svg.create_svg(parent, 
-        x ,y, height, width);
-   
-   
-    var headertext=libutil.svg.foriegn_text(headersvg, 0 , 0  , height, width ,text,
-        htmltextstyle);
-    
-    return newheadrect;
-    
-}
+    var headersvg=libutil.svg.create_element('svg', parent , [{'name' : 'x', 'value': x},
+                                                         {'name' : 'y', 'value': y},
+                                                         {'name' : 'width', 'value': width},
+                                                         {'name' : 'height', 'value': height}]);   
 
-libutil.svg.create_button = function (parent, x, y,  height, width, rx, ry,  rectstyle, rectclass,   text, textstyle){
-
-    var headersvg=libutil.svg.create_svg(parent, 
-        x,y, height, width);   
-
-    var newheadrect =  libutil.svg.create_rect( headersvg, 
-        0, 0,  height, width, rx , ry,  rectstyle, rectclass);
+    libutil.svg.create_element('rect', parent, [{'name' : 'x', 'value':  0},
+                                                {'name' : 'y', 'value':  0},
+                                                {'name' : 'width', 'value': width},
+                                                {'name' : 'height', 'value': height},
+                                                {'name' : 'rx', 'value': rx},
+                                                {'name' : 'ry', 'value': ry},                                                           
+                                                {'name' : 'style', 'value': rectstyle},
+                                                {'name' : 'class', 'value': rectclass}]);
                                        
     headersvg.onmouseout = function() {
         event.preventDefault();
         event.stopPropagation();
         return;
     }                                        
-                                       
-                                
-                                       
+                             
     var headertext=libutil.svg.create_text(headersvg,
         width / 2, height / 2, 
         textstyle,
@@ -1159,16 +1007,19 @@ libutil.www.create_window = function(doc, id, x, y, width, height, style){
         var root = doc.documentElement;
         if (root) {
      
-            var result = libutil.svg.create_foreignObject(doc.documentElement,  x ? x : 0, y ? y : 0, height ? height : 300, width ? width : 300 );
+            var result = svg.create_element('foreignObject', doc.documentElement, [{'name' : 'x', 'value':  x ? x : 0},
+                                                                                   {'name' : 'y', 'value':  y ? y : 0},
+                                                                                   {'name' : 'width', 'value': width ? width : 300},
+                                                                                   {'name' : 'height', 'value': height ? height : 300}]);
             result.setAttribute('id',id);
             
-            var html = libutil.html.create_html(result);
+            var html = libutil.html.create_element('html' , result);
             
-            libutil.html.create_head(html,style);
+            libutil.html.create_element('head', html,[{'name' : 'style', 'value':  style}]);
             
-            var body= libutil.html.create_body(html);
+            var body= libutil.html.create_element( 'body' ,html);
             
-            var bodydiv= libutil.html.create_div(body);
+            var bodydiv= libutil.html.create_element('div' , body );
            
             
             result.bindelement=bodydiv;
@@ -1321,9 +1172,10 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
 ///////////////////////////////////////////////
 
 libutil.dom.clearChildNode = function (element){
+    if (element){
     while (element.hasChildNodes()) 
         element.removeChild(element.lastChild);
-}
+}}
 
 
 
