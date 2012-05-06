@@ -11,6 +11,7 @@
             body { 
                 padding: 0px 0px;
                 margin: 0px 0px;
+                
             }
             textarea { 
                 padding: 0px 0px;
@@ -30,14 +31,26 @@
                 width: 100px;
                 
             }
+            .CodeMirror{
+                height: 100%;
+                font-size: 13px !important;
+                font-family: serif !important;
+            }
+            
+            .CodeMirror-scroll{
+                height: 100%;
+            }
+            
+            
         </style>
 
     </head>
 
-    <body onload="var val =libutil.global.getGlobalPropertyEditor().value;document.getElementById('text').innerHTML=val; myCodeMirror = CodeMirror.fromTextArea(document.getElementById('text'));" >
+    <body onload="var val =libutil.global.getGlobalPropertyEditor().value; var el = document.getElementById('text');  el.innerHTML=val;  varCodeMirror = CodeMirror(function(elt) {el.parentNode.replaceChild(elt, el);} , {value: val} );" >
         <table class="nullblock">
             <tr>  
-                <td class="nullblock">    
+                <td class="nullblock" > 
+   
                     <textarea id="text">
                     </textarea>
                 </td>
@@ -45,7 +58,7 @@
             <tr>  
                 <td class="nullblock" style="text-align: right;">
                     <button onclick="libutil.global.setGlobalPropertyEditor(null);window.close();"> Cancel </button>
-                    <button onclick="libutil.global.setGlobalPropertyEditor(document.getElementById('text').value);window.close();"> OK </button>
+                    <button onclick="libutil.global.setGlobalPropertyEditor({ 'value' : varCodeMirror.getValue()}); window.close();"> OK </button>
                 </td>
             </tr>
         </table>

@@ -1118,10 +1118,10 @@ designer.prototype.createContextMenu = function(trgt){
         
     libutil.html.create_style(this.contextmenu.bindelement,styletxt); 
    
-    var table = libutil.html.create_table(this.contextmenu.bindelement, null, 'scrollable');
+    var table = libutil.html.create_element('table' ,this.contextmenu.bindelement ,[{'name' : 'class' , 'value' : 'scrollable'}]);
     table.setAttribute('width' , '100%');
            
-    var tbody= libutil.html.create_tbody(table);
+    var tbody= libutil.html.create_element('tbody', table);
        
     this.ContextMenuComponent(tbody,  trgt);
     
@@ -1135,8 +1135,8 @@ designer.prototype.createContextMenu = function(trgt){
 designer.prototype.ContextMenuButton = function(tbody, name, enable, func){
     
     var btn = libutil.html.create_button( 
-        libutil.html.create_td(
-            libutil.html.create_tr(tbody)), null , null, name, func);
+        libutil.html.create_element('td',
+            libutil.html.create_element('tr' ,tbody)), null , null, name, func);
     if (!enable)  btn.setAttribute('disabled','disabled');      
 
 }
@@ -1261,23 +1261,23 @@ designer.prototype.show_property = function(){
     
     libutil.dom.clearChildNode(this.inspectortbody);   
 
-    var trh= libutil.html.create_tr(this.inspectortbody);
+    var trh= libutil.html.create_element('tr' ,this.inspectortbody);
 
             
-    var th1= libutil.html.create_th(trh);
+    var th1= libutil.html.create_element('th', trh);
     th1.setAttribute('width','50%');
     th1.innerHTML='Attribute';
             
-    var th2= libutil.html.create_th(trh);
+    var th2= libutil.html.create_element('th', trh);
     th2.setAttribute('width','50%');
     th2.innerHTML='Value';
 
                             
     for (var i=0; i<attriblist.length; ++i ){
         
-        var tr= libutil.html.create_tr(this.inspectortbody);
+        var tr= libutil.html.create_element('tr' , this.inspectortbody);
        
-        var td1= libutil.html.create_td(tr);
+        var td1= libutil.html.create_element('td', tr);
         td1.innerHTML=attriblist[i]['name'];
         
         var typenm= attriblist[i]['typename'];
@@ -1286,7 +1286,7 @@ designer.prototype.show_property = function(){
             ((typenm=='lib:tag') ? 'statictag' :
             ((typenm=='lib:event') ? 'staticevent' :'static' )));
    
-        var td2= libutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var td2= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0;'} ] );
         var val=this.getAttributeValue(attriblist[i]['name']);
         td2.innerHTML= val ? val : "";
         
@@ -1332,8 +1332,8 @@ designer.prototype.property_row_focus = function(event){
         
         if (type<=2 && event.button>0){           
             var retval = dsutl.toolwin.propertydialog(td['name'], value);
-            if (retval) 
-                this.setProperty(td.prop_dvn,retval);
+            if (retval && retval.value) 
+                this.setProperty(td.prop_dvn,retval.value);
             event.preventDefault();
             event.stopPropagation();
             return;
@@ -2196,6 +2196,9 @@ dsutl.toolwin.getMainWindow = function (){
 
 
 
+
+
+
 dsutl.toolwin.setMainWindowToolStatus = function (val){ 
     if ((val==1 || !val)) 
         libutil.www.set_tbwindow_btnstatus('maintool', null, 'save', dsutl.toolwin.isNeedSave() ?  'on' :  'disabled');
@@ -2228,6 +2231,26 @@ dsutl.toolwin.destroyMainWindow = function(){
 }
 
 
+dsutl.toolwin.createmenue = function (doc, x , y){
+   var docel = doc.documentElement;
+   if (docel){
+       
+   }
+    
+}
+
+
+dsutl.toolwin.createmenuebutton = function (parent, x , y , width, height, caption , id){
+   if (parent){
+       libutil.svg.create_element('svg', parent, [{'name' : 'x', 'value': x},
+                                                  {'name' : 'y', 'value': y},
+                                                  {'name' : 'width', 'value': width},
+                                                  {'name' : 'height', 'value': height}])
+   }
+    
+}
+
+
 ///  Object inspector
 
 dsutl.toolwin.getObjectInspector = function (force){
@@ -2240,13 +2263,13 @@ dsutl.toolwin.getObjectInspector = function (force){
         objectinspectorwin.onunload=dsutl.toolwin.destroyObjectInspector;
         var objdoc =objectinspectorwin.document;
         var body=objdoc.getElementsByTagName('body')[0];
-        var div = libutil.html.create_div(libutil.html.create_div(body),null,"scrollWrapper");
-        var table = libutil.html.create_table(div,null,"scrollable");
-        var tbody = libutil.html.create_tbody(table);
-        var tr = libutil.html.create_tr(tbody);
-        var th1 =libutil.html.create_th(tr);
+        var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{'name' : 'class' , 'value' : 'scrollWrapper'}]);
+        var table = libutil.html.create_element('table' ,div,[{'name' : 'class' , 'value' : 'scrollable'}]);
+        var tbody = libutil.html.create_element('tbody', table);
+        var tr = libutil.html.create_element('tr' ,tbody);
+        var th1 =libutil.html.create_element('th', tr);
         th1.innerHTML='Имя';
-        var th2 =libutil.html.create_th(tr);
+        var th2 =libutil.html.create_element('th', tr);
         th2.innerHTML='Значение';
         tmp.objectinspectortbody=tbody;
         var current=dsutl.toolwin.getCurrentRedactor();
@@ -2338,11 +2361,11 @@ dsutl.toolwin.getFormInspector = function (force){
 
         var body=objdoc.getElementsByTagName('body')[0];
         var head=objdoc.getElementsByTagName('head')[0];
-        libutil.html.create_link(head, 'stylesheet', 'text/css',"../util/css/forminspector.css");
-        var div = libutil.html.create_div(libutil.html.create_div(body),null,"scrollWrapper");
-        var table = libutil.html.create_table(div,null,"scrollable");
-        var tbody = libutil.html.create_tbody(table);
-        libutil.html.create_tr(tbody);
+        libutil.html.create_link(head, "../util/css/forminspector.css");
+        var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{'name' : 'class' , 'value' : 'scrollWrapper'}]);
+        var table = libutil.html.create_element('table' ,div,[{'name' : 'class' , 'value' : 'scrollable'}]);
+        var tbody = libutil.html.create_element('tbody', table);
+        libutil.html.create_element('tr' , tbody);
         tmp.formtooltbody=tbody;
     }
  
@@ -2369,7 +2392,7 @@ dsutl.toolwin.fillFormInspector = function (){
     
     libutil.dom.clearChildNode(tbody);   
 
-    var tr = libutil.html.create_tr(tbody);
+    var tr = libutil.html.create_element('tr' ,tbody);
     
     libutil.html.create_tabel_header(tr,null,null,
         ['Файл','id','caption','x','y','width','height','visible','alltop','resize','decorate','modal','0/X','-']);
@@ -2380,9 +2403,9 @@ dsutl.toolwin.fillFormInspector = function (){
     for (var i=0; i<fl.length; ++i ){
         var formname=fl[i]['name'];
         formname=formname.toString();
-        var tr= libutil.html.create_tr(tbody);
+        var tr= libutil.html.create_element('tr' ,tbody);
        
-        var td1= libutil.html.create_td(tr);
+        var td1= libutil.html.create_element('td', tr);
         td1.innerHTML=fl[i]['file'] ? fl[i]['file'] : "";
         
         td1.className='static';
@@ -2399,12 +2422,12 @@ dsutl.toolwin.fillFormInspector = function (){
         dsutl.toolwin.fiCreateRow(tr,fl[i],'decorated', '50px');
         dsutl.toolwin.fiCreateRow(tr,fl[i],'modal', '50px');        
         
-        var td11= libutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var td11= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
         var btno = libutil.html.create_button( td11,'height: 15px;',null,'');
         btno.setAttribute('onclick','dsutl.toolwin.resetwindow("'+formname+ '");');
  
         
-        var td13= libutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0; ');
+        var td13= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
         var btnd = libutil.html.create_button( td13,'height: 15px;',null,'');
         btnd.setAttribute('onclick','dsutl.toolwin.removeFormFromProject("'+formname+ '");');
     
@@ -2412,7 +2435,7 @@ dsutl.toolwin.fillFormInspector = function (){
 }
 
 dsutl.toolwin.fiCreateRow = function(tr, tblrow, name, width, lst){
-    var td= libutil.html.create_td(tr, 'margin: 0 0 0 0; padding: 0 0 0 0;' + width ? 'width: ' + width + ';' : '');
+    var td= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0;' + width ? 'width: ' + width + ';' : ''}]);
     var tmp= tblrow[name] ? tblrow[name] : '';
     if (lst)
         td.lst=lst; 

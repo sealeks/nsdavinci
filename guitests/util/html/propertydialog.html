@@ -42,7 +42,7 @@
             <tr>  
                 <td class="nullblock" style="text-align: right;">
                     <button onclick="libutil.global.setGlobalPropertyEditor(null);window.close();"> Cancel </button>
-                    <button onclick="libutil.global.setGlobalPropertyEditor(document.getElementById('text').value);window.close();"> OK </button>
+                    <button onclick="libutil.global.setGlobalPropertyEditor({ 'value' : document.getElementById('text').value});window.close();"> OK </button>
                 </td>
             </tr>
         </table>

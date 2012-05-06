@@ -233,7 +233,7 @@ mainlib.armatura_popup = function(el, rauto){
         document.getElementById(el.getAttribute('id') + '_popup');
            
            
-        var use = libutil.svg.create_use(body);
+        var use = libutil.svg.create_element('use', body);
         body.useelement=use;
         use.setAttributeNS(libutil.XLINK_NAMESPACE_URL,'href','#'+el.getAttribute('id') + '_popup');
         
@@ -241,7 +241,10 @@ mainlib.armatura_popup = function(el, rauto){
     
         var litedocElement = litedoc.documentElement;
     
-        var root = libutil.svg.create_svg(litedocElement, 0 , 0,  200, 200);
+        var root =libutil.svg.create_element('svg', litedocElement , [{'name' : 'x', 'value': 0},
+                                                                     {'name' : 'y', 'value': 0},
+                                                                     {'name' : 'width', 'value': 200},
+                                                                     {'name' : 'height', 'value': 200}]); 
         root.setAttribute('id', popup_id);
 
         mainlib.armatura_popup_content(popup_id, root ,  type,  ron, roff);
@@ -286,7 +289,7 @@ mainlib.valueset_click =  function (el, nm, width){
         
         var defs = document.getElementById(el.getAttribute('id') + '_popup');
         
-        var use = libutil.svg.create_use(body);
+        var use = libutil.svg.create_element('use', body);
         body.useelement=use;
         use.setAttributeNS("http://www.w3.org/1999/xlink",'href','#'+el.getAttribute('id') + '_popup');
         
