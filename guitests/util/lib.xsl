@@ -8,6 +8,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:import href="libstyle.xsl"/>
+    <xsl:import href="scriptinclude.xsl"/>
 
     <xsl:include href="../libs/main/mainlib.xsl" xsi:schemaLocation="../libs/main/mainlib.xsd"/>
     <xsl:include href="../libs/svg/svg.xsl" xsi:schemaLocation="../libs/svg/svg.xsd"/>
@@ -31,6 +32,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute>
         <script type="text/javascript" xlink:href="../util/js/libutil.js"></script>
         <script type="text/javascript" xlink:href="../util/js/designer.js"></script>
+        <xsl:call-template name="lib_script_include"/>
         <xsl:call-template name="includelib"/> 
         <xsl:call-template name="lib_svgstyle"/> 
         <xsl:apply-templates/>
