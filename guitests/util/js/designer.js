@@ -46,7 +46,7 @@ function designer(doc){
     });    
     this.instantdocument.addEventListener('contextmenu' ,function (ev) {
         if (document.red)
-            document.red.createContextMenu(document.red.instantdocument.documentElement);
+            document.red.getMainMenue(document.red.instantdocument.documentElement);
         event.stopPropagation();
         event.preventDefault();  
     });        
@@ -1016,235 +1016,131 @@ designer.prototype.mousedownComponent = function (){
 
 
 
-//  ****/
-
-
-designer.prototype.createWindow = function(id, top, left, width, height){
-   
-    if (this.instantdocument){
-
-        var style=' body { margin: 0 0; padding: 0 0; -webkit-user-select: none;}'+
-        'div.scrollHeader{'+  
-        'margin: 0 0; padding: 0 0; border-top-right-radius: 6px; border-top-left-radius: 6px;'+
-        'border:  1px solid #000022; background: #000044; color: yellow; padding: 4px; -webkit-user-select: none;}'+  
-                
-        'div.scrollWrapper{'+
-                
-        'overflow:scroll; margin: 0 0; padding: 0 0;'+
-        'border:  1px solid grey;}'+
-                
-        'table.scrollable{'+
-        'border-collapse:collapse;'+
-        'text-align: left;'+
-        'font-size: 12px;'+
-        'background:#f0f0f0;'+
-        '}'+
-        'table.scrollable th{'+
-        'border: 1px solid #999999;'+
-        'background:#e0e0e0;'+
-        'position: relative;'+
-        'padding-left: 6px;'+
-        'background-position: 100% 100%;'+
-        '}'+
-        'table.scrollable tbody{'+
-        'overflow:auto;'+
-        'border-spacing: 0px'+
-        '}'+
-        'table.scrollable td.static{ background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#aaa));'+
-        'border: 1px solid gray; '+
-        'padding: 0px 0px;'+
-        '}' +
-        'table.scrollable td{'+
-        'border: 1px solid gray; '+
-        'padding: 0px 0px;'+
-        '}' +
-        'table.scrollable td input{'+
-        'display: block; width: 100%; border: 0px; color: black;'+
-        'padding: 0px 0px; font-size: 12px; '+
-        '}' +
-        'table.scrollable td select{'+
-        'display: block; width: 100%; border: 0px; color: black;'+
-        'padding: 0px 0px; font-size: 12px;'+
-        '}' +
-        '.diffvalue{'+
-        'background: #808080;'+
-        '}';                
-            
-        var result = libutil.www.create_window(this.instantdocument, id, top, left, height, width, style);
-        return result;
-    }
-    return undefined;
-}
 
 // контекстное меню
 
-designer.prototype.createContextMenu = function(trgt){
 
-
-    var l= event.pageX;
-    var t= event.pageY;
-    
-    var el = event.target;
-    var isRoot=(el==this.instantdocument.documentElement);
-    //if (isRoot) return;
-
-    if (!isRoot){
-        el= this.getTarget(event);
-        if (!el) return;
-    }
-    
-    if (this.contextmenu)
-        this.ContextMenuDestroy();
-
-    
-    this.contextmenu = this.createWindow('context_menue', l - 10 , t - 10 , 600, 200);
-
-    var styletxt=' body { margin: 0 0; padding: 0 0; -webkit-user-select: none;}'+
-    'table *{'+
-    'padding: 0 0;'+
-    'margin: 0 0;'+  
-    'border: 0;'+
-    'border-collapse: collapse;'+
-    '}'+           
-          
-    'button {'+
-    'border: 2px outset buttonface;'+
-    'padding: 0 0;'+
-    'margin: 0 0;'+
-    'width: 100%;'+
-    'outline-width: 0px;'+
-                
-    '}';  
-        
-    libutil.html.create_style(this.contextmenu.bindelement,styletxt); 
-   
-    var table = libutil.html.create_element('table' ,this.contextmenu.bindelement ,[{'name' : 'class' , 'value' : 'scrollable'}]);
-    table.setAttribute('width' , '100%');
-           
-    var tbody= libutil.html.create_element('tbody', table);
-       
-    this.ContextMenuComponent(tbody,  trgt);
-    
-    this.contextmenu.onmouseout=function(){
-        if (event.fromElement==this) {
-            document.red.ContextMenuDestroy();
-        }
-    }
-}
-
-designer.prototype.ContextMenuButton = function(tbody, name, enable, func){
-    
-    var btn = libutil.html.create_button( 
-        libutil.html.create_element('td',
-            libutil.html.create_element('tr' ,tbody)), null , null, name, func);
-    if (!enable)  btn.setAttribute('disabled','disabled');      
-
-}
-
-
-
-
-designer.prototype.ContextMenuComponent = function(tbody , trgt){
-    
-    this.ContextMenuButton(tbody, 'Bring to Front', this.selectionCount() ,
-        function(){
-            document.red.toFrontElements();
-            document.red.ContextMenuDestroy();
-            document.red.setNeedSave();
-            event.stopPropagation();
-        } );
-        
-    this.ContextMenuButton(tbody, 'Send to Back', this.selectionCount() ,
-        function(){
-            document.red.toBackElements();
-            document.red.ContextMenuDestroy();
-            document.red.setNeedSave();
-            event.stopPropagation();
-        } );  
-        
-    this.ContextMenuButton(tbody, 'Delete', this.selectionCount(),
-        function(){
-            document.red.deleteElements();
-            document.red.ContextMenuDestroy();
-            document.red.setNeedSave();
-            event.stopPropagation();
-        } );  
+designer.prototype.getMainMenue = function(){
+    if (!this.___maimenue){
+        var items =[{'name' : 'Bring to Front',
+                      'id' : 'bringtofront',
+                      'active' : function(){return document.red.selectionCount() ? '' : 'disable';},
+                      'func' : function(){
+                                  document.red.toFrontElements();
+                                  document.red.hideMainMenue();
+                                  document.red.setNeedSave();
+                                  event.stopPropagation();}},
+                    {'name' : 'Send to Back',
+                      'id' : 'sendtoback',
+                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
+                      'func' : function(){
+                                  document.red.toBackElements();
+                                  document.red.hideMainMenue();
+                                  document.red.setNeedSave();
+                                  event.stopPropagation();}},  
+                    {'name' : 'Delete',
+                      'id' : 'delete',
+                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
+                      'func' : function(){
+                                  document.red.deleteElements();
+                                  document.red.hideMainMenue();
+                                  document.red.setNeedSave();
+                                  event.stopPropagation();}}, 
  
-    this.ContextMenuButton(tbody, 'Clone', this.selectionCount(),
-        function(){
-            document.red.cloneElements();
-            document.red.ContextMenuDestroy();
-            document.red.setNeedSave();
-            event.stopPropagation();
-        } ); 
+                    {'name' : 'Clone',
+                      'id' : 'clone',
+                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
+                      'func' : function(){
+                                  document.red.cloneElements();
+                                  document.red.hideMainMenue();
+                                  document.red.setNeedSave();
+                                  event.stopPropagation();}}, 
         
-    this.ContextMenuButton(tbody, 'Copy', this.selectionCount(),
-        function(){
-            document.red.pastToClipBoard();
-            document.red.ContextMenuDestroy();
-            document.red.setNeedSave();
-            event.stopPropagation();
-        } ); 
+                    {'name' : 'Copy',
+                      'id' : 'copy',
+                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
+                      'func' : function(){
+                                  document.red.pastToClipBoard();
+                                  document.red.hideMainMenue();
+                                  document.red.setNeedSave();
+                                  event.stopPropagation();}}, 
+
+                    {'name' : 'Cut',
+                      'id' : 'cut',
+                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
+                      'func' : function(){
+                                  document.red.pastToClipBoard(true);
+                                  document.red.hideMainMenue();
+                                  document.red.setNeedSave();
+                                  event.stopPropagation();}},
+     
+                    {'name' : 'Past',
+                      'id' : 'past',
+                      'active' : function(){return document.red.getClipBoard() ? '' : 'disable'},
+                      'func' : function(){
+                                if (document.red.selectionCount()>1){
+                                   document.red.hideMainMenue();                                 
+                                   event.stopPropagation();
+                                }
+                                if (document.red.selectionCount()==0){
+                                   var trgt = document.red.instantdocument.documentElement;
+                                }
+                                else {
+                                    var trgt = document.red.selectedElemens[0].getElement();
+                                }                               
 
 
-    this.ContextMenuButton(tbody, 'Cut', this.selectionCount(),
-        function(){
-            document.red.pastToClipBoard(true);
-            document.red.ContextMenuDestroy();
-            document.red.setNeedSave();
-            event.stopPropagation();
-        } ); 
-        
-        
-    this.ContextMenuButton(tbody, 'Past', this.getClipBoard(),
-        function(){
-            var tmp=$$global();
-            if (tmp  && tmp.clipboard && tmp.clipboard.length>0){
-            var prn= trgt ? (trgt.hasAttribute('isgoupelement') ? trgt : document.red.instantdocument.documentElement )
-                       : document.red.instantdocument.documentElement;
-            prn = prn !=  document.red.instantdocument.documentElement ?  document.red.updateElement(prn) : prn;           
-            if (prn == document.red.instantdocument.documentElement){
-               var boxs = prn  && prn.getClientRects ? prn.getClientRects() : null;
-               var box = boxs && boxs.length ? boxs[0] : null;
-               var rect = box ? {'x' : box.top , 'y' : box.left , 'w' : box.width , 'h' : box.height} : null;}
-           else{
-               var box = prn && prn.getBBox ? prn.getBBox() : null;
-               var rect = box ? {'x' : box.x , 'y' : box.y , 'w' : box.width , 'h' : box.height} : null;
-           }
-           if (rect && event){
-               console.log(tbody.getBoundingClientRect());
-               var mx = tbody.getBoundingClientRect().left - rect.x;
-               var my = tbody.getBoundingClientRect().top - rect.y; 
-               var mpoint = {'x' : mx , 'y' : my};
-               rect = {'w' : rect.w  , 'h' : rect.h , 'x' : 0 , 'y' : 0};
-               document.red.copyFromClipBoard(rect , mpoint , prn);
-           }
+                                 var tmp=$$global();
+                                 if (tmp  && tmp.clipboard && tmp.clipboard.length>0){
+                                 var prn= trgt ? (trgt.hasAttribute('isgoupelement') ? trgt : document.red.instantdocument.documentElement )
+                                   : document.red.instantdocument.documentElement;
+                                 prn = prn !=  document.red.instantdocument.documentElement ?  document.red.updateElement(prn) : prn;           
+                                 //var rect = libutil.geometry.boundrect(prn);
+                                 if (prn == document.red.instantdocument.documentElement){
+                                      var boxs = prn  && prn.getClientRects ? prn.getClientRects() : null;
+                                      var box = boxs && boxs.length ? boxs[0] : null;
+                                      var rect = box ? {'x' : box.top , 'y' : box.left , 'w' : box.width , 'h' : box.height} : null;}
+                                 else{
+                                      var box = libutil.geometry.boundrect(prn);
+                                      var rect = box ? {'x' : box.x , 'y' : box.y , 'w' : box.width , 'h' : box.height} : null;}
+                                 if (rect && event){
+                                      var mx = document.red.___maimenue.body.getBoundingClientRect().left - rect.x;
+                                      var my = document.red.___maimenue.body.getBoundingClientRect().top - rect.y; 
+                                      var mpoint = {'x' : mx , 'y' : my};
+                                      rect = {'w' : rect.w  , 'h' : rect.h , 'x' : 0 , 'y' : 0};
+                                      document.red.copyFromClipBoard(rect , mpoint , prn);}}
+                                 document.red.setNeedSave();
+                                 document.red.hideMainMenue();                                 
+                                 event.stopPropagation();}}];        
 
+        this.___maimenue = new dsutl.menue(items);}
 
-            }
-            document.red.ContextMenuDestroy();
-            document.red.setNeedSave();
-            event.stopPropagation();
-        } );        
-        
-    this.ContextMenuButton(tbody, 'Close', true,
-        function(){
-            document.red.ContextMenuDestroy();
-            event.stopPropagation();
-        } );          
-       
-}
-
-
-
-designer.prototype.ContextMenuDestroy = function(){
     
-    if (this.contextmenu){
-        this.contextmenu.parentNode.removeChild(this.contextmenu);
-    }
-    this.contextmenu=undefined;
+        var el = event.target;
+        var isRoot=(el==this.instantdocument.documentElement);
+
+        if (!isRoot){
+            el= this.getTarget(event);
+            if (!el) return;
+        }
+        this.showMainMenue(event.pageX, event.pageY, el);
 
 }
+
+
+designer.prototype.showMainMenue = function(x, y,  trgt){
+    if (this.___maimenue){
+        this.___maimenue.hide();
+        this.___maimenue.check();
+        this.___maimenue.show(x, y,  trgt);}    
+}
+
+designer.prototype.hideMainMenue = function(){
+    if (this.___maimenue)
+        this.___maimenue.hide();    
+}
+
+
 
 // Инспектор объектов
 
@@ -1471,6 +1367,9 @@ dsutl.selectwraper.prototype.select = function(){
         this.oldclass=this.selement.getAttribute('class');
     }
     
+    //this.hlselement =
+    //this.initHighLight();
+    
     this.selement.setAttribute('class', 'designer_selected');
     this.selement.designer=this.designer;
 
@@ -1486,12 +1385,24 @@ dsutl.selectwraper.prototype.select = function(){
     this.selement.oncontextmenu = function() {
         if (this.designer) {
             if (this.designer.isSelection(this.designer.getTarget(event)))
-                this.designer.createContextMenu(this.designer.getTarget(event));
+                this.designer.getMainMenue(this.designer.getTarget(event));
             event.preventDefault();
             event.stopPropagation();
         }
     };
 }
+
+/*dsutl.selectwraper.prototype.initHighLight = function(){
+    var box = libutil.geometry.boundrect(this.selement);
+    if (!box) {
+        return null;}
+    console.log(box);
+    this.helement = libutil.svg.create_element_no_insert('rect',this.parent,[{ 'name' : 'x' , 'value' : box.x}, {'name' : 'y' , 'value' : box.y}, 
+                                                                              {'name' : 'width' , 'value' : box.w},  {'name' : 'height' , 'value' : box.h}, 
+                                                                              {'name' : 'class' , 'value' : 'highlight-selected'}]);
+    this.parent.insertBefore( this.helement, this.element.nextSibling)                                                                      
+    
+}*/
 
 
 dsutl.selectwraper.prototype.deselect = function(){
@@ -2153,7 +2064,216 @@ dsutl.componentinfo.prototype.read_creators =  function(doc){
     }
 }
 
+//  menue
 
+
+dsutl.MAINMENU_BUTTON_HEIGHT = 22;
+dsutl.MAINMENU_WIDTH = 150;
+dsutl.MAINMENU_BUTTON_OFFCOLOR = '#555';
+dsutl.MAINMENU_BUTTON_ONCOLOR = '#222';
+dsutl.MAINMENU_BUTTON_DSBLCOLOR1 = '#333';
+dsutl.MAINMENU_BUTTON_DSBLCOLOR2 = '#444';
+dsutl.MAINMENU_COLOR = '#333';
+dsutl.MAINMENU_TEXT_COLOR = 'white';
+dsutl.MAINMENU_TEXT_ONCOLOR = '#3F3';
+dsutl.MAINMENU_TEXT_DSBLCOLOR = '#AAA';
+dsutl.MAINMENU_TEXT_SIZE = 11;
+dsutl.MAINMENU_R = 5;
+
+            
+dsutl.menue = function (items){
+   this.document = document;
+   this.dosigner = document.red;
+   this.documentElement = document.documentElement;
+   if (this.documentElement){
+        
+        this.body = libutil.svg.create_element('svg', document.documentElement , [{'name' : 'x' , 'value' : 0},
+                                                      {'name' : 'y' , 'value' : 0},
+                                                      {'name' : 'width' , 'value' : dsutl.MAINMENU_WIDTH},
+                                                      {'name' : 'height' , 'value' : items.length * dsutl.MAINMENU_BUTTON_HEIGHT}
+                                                      /*{'name' : 'disable' , 'value' : 'disable'}*/]); 
+                                                  
+                                                  
+                                                   
+        this.bodyrect = libutil.svg.create_element('rect', this.body , [{'name' : 'x' , 'value' : 0},
+                                                      {'name' : 'y' , 'value' : 0},
+                                                      {'name' : 'width' , 'value' : dsutl.MAINMENU_WIDTH},
+                                                      {'name' : 'height' , 'value' : items.length * dsutl.MAINMENU_BUTTON_HEIGHT},
+                                                      {'name' : 'rx' , 'value' : dsutl.MAINMENU_R},
+                                                      {'name' : 'ry' , 'value' : dsutl.MAINMENU_R},                                                      
+                                                      {'name' : 'style' , 'value' : 'fill: '+ dsutl.MAINMENU_COLOR +'; opacity: 0.9; stroke-width: 0;'}]); 
+                                                  
+        this.setstyle(); 
+        this.buttons =[];
+        var buttons =[];
+        for (var i=0; i<items.length; ++i ){                                          
+              var btn = libutil.svg.create_button(this.body, 0, dsutl.MAINMENU_BUTTON_HEIGHT * i, dsutl.MAINMENU_WIDTH , 
+                                        dsutl.MAINMENU_BUTTON_HEIGHT, dsutl.MAINMENU_R, dsutl.MAINMENU_R,  null , '__mainmenuclass',
+                                        items[i].name , null , '__mainmenuclass') ;
+              buttons.push(btn); 
+              btn.func =items[i].func;
+              btn.onclick = function(){
+                 if (this.getAttribute('disable')!='disable'){
+                     this.func();
+                 }
+             };
+             btn.checkstatefunc =items[i].active;
+             btn.checkstate = function (){this.setAttribute('disable', this.checkstatefunc ? this.checkstatefunc() : '') ;}
+             this.buttons.push(btn);
+            
+     }
+     
+     var menue = this;
+     var body = this.body;
+
+     this.body.onmouseout = function(ev){        
+        if (!libutil.dom.check_is_parent (body,ev.toElement,true)){
+            menue.hide();}}
+         
+         
+   }
+    
+}  
+
+dsutl.menue.prototype.show = function(x, y){
+    this.body.setAttribute('x', x);
+    this.body.setAttribute('y', y);
+    this.document.documentElement.appendChild(this.body);
+}
+
+dsutl.menue.prototype.check = function(){
+    if (this.buttons){
+        for (var i=0; i<this.buttons.length; ++i ){
+            this.buttons[i].checkstate();
+        }
+    }
+}
+
+dsutl.menue.prototype.hide = function(){
+    libutil.dom.removeCild(this.documentElement, this.body);
+}
+
+dsutl.menue.prototype.getBody = function(){
+    return this.body;
+}
+
+dsutl.menue.prototype.setstyle = function(){
+
+    var defs = libutil.svg.create_element('defs', this.body);
+    libutil.svg.create_gradient('linearGradient' , defs,[{'name' : 'id' , 'value' : '___mainmenue___gradienton'},
+                                            {'name' : 'x1' , 'value' : '100%'},
+                                            {'name' : 'y1' , 'value' : '0%'},
+                                            {'name' : 'x2' , 'value' : '100%'},
+                                            {'name' : 'y2' , 'value' : '100%'}],
+                                            [{'offset' : 0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_ONCOLOR} , {'offset' : 0.5 , 'stopcolor' : dsutl.MAINMENU_BUTTON_OFFCOLOR} , {'offset' : 1.0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_ONCOLOR}]);
+                                            
+    libutil.svg.create_gradient('linearGradient' , defs,[{'name' : 'id' , 'value' : '___mainmenue___gradientoff'},
+                                            {'name' : 'x1' , 'value' : '100%'},
+                                            {'name' : 'y1' , 'value' : '0%'},
+                                            {'name' : 'x2' , 'value' : '100%'},
+                                            {'name' : 'y2' , 'value' : '100%'}],
+                                            [{'offset' : 0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_OFFCOLOR} , {'offset' : 0.5 , 'stopcolor' : dsutl.MAINMENU_BUTTON_ONCOLOR} , {'offset' : 1.0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_OFFCOLOR}]);
+                                            
+    libutil.svg.create_gradient('linearGradient' , defs,[{'name' : 'id' , 'value' : '___mainmenue___gradientdsbl'},
+                                            {'name' : 'x1' , 'value' : '100%'},
+                                            {'name' : 'y1' , 'value' : '0%'},
+                                            {'name' : 'x2' , 'value' : '100%'},
+                                            {'name' : 'y2' , 'value' : '100%'}],
+                                            [{'offset' : 0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_DSBLCOLOR2} ,{'offset' : 0.5 , 'stopcolor' : dsutl.MAINMENU_BUTTON_DSBLCOLOR1}, {'offset' : 1.0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_DSBLCOLOR2}]);                                            
+                                            
+    var style="svg > svg > rect.__mainmenuclass{\n"+
+              "fill: url(#___mainmenue___gradienton);\n"+
+              "stroke: #333\n"+
+              "stroke-width: 1;\n"+ 
+              "}\n"+
+              
+              "svg  > svg > rect.__mainmenuclass{\n"+
+              "cursor: pointer;\n"+
+              "}\n"+
+
+              "svg  > svg:hover > rect.__mainmenuclass{\n"+
+              "fill: url(#___mainmenue___gradientoff);\n"+
+              "stroke: #BBB;\n"+
+              "stroke-width: 1;\n"+
+              "}\n"+
+
+
+              "svg  > svg:active > rect.__mainmenuclass{\n"+
+              "fill: url(#___mainmenue___gradienton);\n"+
+              "stroke: #BBB;\n"+
+              "stroke-width: 1;\n"+
+              "}\n"+
+
+
+              "svg  > svg[disable='disable'] > rect.__mainmenuclass{\n"+
+              "fill: url(#___mainmenue___gradientdsbl);\n"+
+              "stroke: #333;\n"+
+              "stroke-width: 1; \n"+
+              "cursor: none;\n"+
+              "}\n"+
+
+              "svg  > svg[disable='disable']:hover > rect.__mainmenuclass{\n"+
+              "fill: url(#___mainmenue___gradientdsbl);\n"+
+              "stroke: #333;\n"+
+              "stroke-width: 1;\n"+
+              "cursor: none;\n"+
+              "}\n"+
+
+
+              "svg  > svg[disable='disable']:active > rect.__mainmenuclass{\n"+
+              "fill: url(#___mainmenue___gradientdsbl);\n"+
+              "stroke: #333;\n"+
+              "stroke-width: 1;\n"+
+              "cursor: none;\n"+
+              "}\n"+
+              
+              "svg > svg >  text.__mainmenuclass{\n"+
+              "fill: "+dsutl.MAINMENU_TEXT_COLOR+";\n"+
+              "}\n"+
+
+              "svg > svg:hover >  text.__mainmenuclass{\n"+
+              "fill: "+dsutl.MAINMENU_TEXT_ONCOLOR+";\n"+
+              "}\n"+
+
+
+              "svg  > svg:active > text.__mainmenuclass{\n"+
+              "fill: "+dsutl.MAINMENU_TEXT_ONCOLOR+";\n"+
+              "font-weight: bold;\n"+
+              "}\n"+
+
+
+              "svg > svg[disable='disable'] >  text.__mainmenuclass{\n"+
+              "fill: "+dsutl.MAINMENU_TEXT_DSBLCOLOR+";\n"+
+              "font-weight: normal;\n"+
+              "cursor: none;\n"+
+              "}\n"+
+
+              "svg > svg:hover[disable='disable']  >   text.__mainmenuclass{\n"+
+              "fill: "+dsutl.MAINMENU_TEXT_DSBLCOLOR+";\n"+
+              "font-weight: normal;\n"+
+              "cursor: none;\n"+
+              "}\n"+
+
+
+              "svg  > svg[disable='disable']:active > text.__mainmenuclass{\n"+
+              "fill: "+dsutl.MAINMENU_TEXT_DSBLCOLOR+";\n"+
+              "font-weight: normal;\n"+
+              "cursor: none;\n"+
+              "}\n"+
+
+
+              "svg  > svg > text.__mainmenuclass{\n"+
+              "font-size: "+dsutl.MAINMENU_TEXT_SIZE+"px;\n"+
+              "cursor: pointer;\n"+
+              "}";
+          
+    var styleel  = libutil.html.create_style(defs, style);
+
+
+}
+            
+            
+            
             
 /*
 
@@ -2231,24 +2351,10 @@ dsutl.toolwin.destroyMainWindow = function(){
 }
 
 
-dsutl.toolwin.createmenue = function (doc, x , y){
-   var docel = doc.documentElement;
-   if (docel){
-       
-   }
-    
-}
 
 
-dsutl.toolwin.createmenuebutton = function (parent, x , y , width, height, caption , id){
-   if (parent){
-       libutil.svg.create_element('svg', parent, [{'name' : 'x', 'value': x},
-                                                  {'name' : 'y', 'value': y},
-                                                  {'name' : 'width', 'value': width},
-                                                  {'name' : 'height', 'value': height}])
-   }
-    
-}
+
+
 
 
 ///  Object inspector
