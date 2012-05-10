@@ -41,6 +41,8 @@ libutil.XHTML_NAMESPACE_URL =  'http://www.w3.org/1999/xhtml';
 
 libutil.XLINK_NAMESPACE_URL =  'http://www.w3.org/1999/xlink';
 
+libutil.XSLT_NAMESPACE_URL =  'http://www.w3.org/1999/XSL/Transform';
+
 libutil.test = {};
 
 
@@ -193,6 +195,13 @@ libutil.global.getLibList = function (){
     return (tmp && tmp.liblist) ? tmp.liblist : null;
 }
 
+libutil.global.getScriptList = function (){
+    var tmp=$$global();
+    if (tmp && !tmp.scriptlist)
+        tmp.scriptlist=[];
+    return (tmp && tmp.scriptlist) ? tmp.scriptlist : null;
+}
+
 libutil.global.getStartupDoc = function (doc){
     var tmp=$$global();
     if (tmp && !tmp.startupdocument && doc)
@@ -221,6 +230,9 @@ libutil.startup.init = function(){
         libutil.project.add_design_style(document);
         libutil.startup.initdesigner(window.name, document.red);
         set_win_designer(window, document.red);
+    }
+    else{
+        //libutil.project.setScriptInfoElements(document);
     }
     window.onunload=formclose_win;
 
@@ -252,19 +264,18 @@ libutil.project.init_form = function(){
             
             tmp.projectPath=projectPath;
             
-            var els=doc.getElementsByTagName('form');
-                                 
+            var els=doc.getElementsByTagName('form');                                 
             var ellib=doc.getElementsByTagName('lib');
-                                
+                                          
             if (els)
                 for (var i=0; i<els.length;++i)   
                     libutil.project.addtoformlist(els[i]);
                           
-            if (ellib)  {
-     
+            if (ellib)  {     
                 for (var i=0; i<ellib.length;++i)
-                    libutil.project.addtoliblist(ellib[i],i);
-            }
+                    libutil.project.addtoliblist(ellib[i],i);}
+                
+            libutil.project.setXSLTScriptList();     
 
         }
         catch(error){ 
@@ -418,6 +429,94 @@ libutil.project.getFormInfo = function(name){
     return null;        
 }
 
+libutil.project.getXSLTScriptElements = function(){
+    var href="../util/scriptinclude.xsl";
+    var doc = libutil.dom.readDoc(href);
+    var root = doc.getElementById('scriptlist');
+    return root;   
+}
+
+libutil.project.getXSLTScriptList = function(){
+    var list=libutil.project.getXSLTScriptElements();
+    if (list==null){
+        console.error('Not find XSL liblist');
+        return null;
+    }      
+    var result=[];
+    if (list){        
+        for(var e=list.firstChild; e; e=e.nextSibling){
+            if ((e.getAttribute) && (e.localName=='call-template') && (e.getAttribute('name')=='lib_script_include_file')){
+                for(var ep=e.firstChild; ep; ep=ep.nextSibling){
+                if ((ep.getAttribute) && (ep.localName=='with-param') && (ep.getAttribute('name')=='file') && (ep.textContent!='')){
+                   result.push({'file' : ep.textContent})
+                }
+            }
+        }
+    }  
+}
+return result;
+}
+
+libutil.project.setXSLTScriptList = function(){
+   var tmp=$$global();
+   if (tmp)   
+       tmp.scriptlist = libutil.project.getXSLTScriptList();   
+}
+
+libutil.project.insertXSLTScriptList = function(file){
+    var list=libutil.project.getXSLTScriptElements();
+    if (list){
+        for(var i=0; i < list.length; ++i){
+            if (list[i].file==file)
+                return false;
+        }
+        list = libutil.project.getXSLTScriptElements();
+        for(var e=list.firstChild; e; e=e.nextSibling){
+            if ((e.getAttribute) && (e.localName=='call-template') && (e.getAttribute('name')=='lib_script_include_file')){
+                for(var ep=e.firstChild; ep; ep=ep.nextSibling){
+                    if ((ep.getAttribute) && (ep.localName=='with-param') && (ep.getAttribute('name')=='file')){
+                        if (ep.textContent=='' || !ep.textContent){
+                                var newel = e.cloneNode(true);
+                                newel.childNodes[1].textContent=file;
+                                e.parentNode.appendChild(newel);
+                                libutil.dom.writeDoc(newel.ownerDocument);
+                                libutil.project.setXSLTScriptList();
+                                return true;                       
+                        }
+                    }
+                }
+        }    
+        }
+    console.error('Not set XSL liblist');
+    return false;
+}
+return null;
+}
+
+libutil.project.removeXSLTScriptList = function(file){
+    if (file=='') return true;
+    var list=libutil.project.getXSLTScriptElements();
+    if (list){
+        list = libutil.project.getXSLTScriptElements();
+        for(var e=list.firstChild; e; e=e.nextSibling){
+            if ((e.getAttribute) && (e.localName=='call-template') && (e.getAttribute('name')=='lib_script_include_file')){
+                for(var ep=e.firstChild; ep; ep=ep.nextSibling){
+                    if ((ep.getAttribute) && (ep.localName=='with-param') && (ep.getAttribute('name')=='file') && (ep.textContent==file)){
+                        var parent = e.parentNode;
+                        parent.removeChild(e);
+                        libutil.dom.writeDoc(parent.ownerDocument);
+                        libutil.project.setXSLTScriptList();
+                        return true;
+                    }
+                }
+            }                
+        }
+        console.error('Not remove XSL liblist');
+        return false;
+    }
+    return null;
+}
+
 
 //
 
@@ -548,8 +647,8 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r)
                                                         {'name' : 'y', 'value':  0},
                                                         {'name' : 'width', 'value': W},
                                                         {'name' : 'height', 'value': H},
-                                                        {'name' : 'rx', 'value': r },
-                                                        {'name' : 'ry', 'value': r },
+                                                        {'name' : 'rx', 'value': r},
+                                                        {'name' : 'ry', 'value': r},
                                                         {'name' : 'style', 'value': bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'}]);
     
 
@@ -689,6 +788,8 @@ libutil.window.createhtml = function(name , caption, top, left, width, height, t
     return newwin;
     
 }
+
+
 
 
 
@@ -1035,7 +1136,7 @@ libutil.www.create_window = function(doc, id, x, y, width, height, style){
         var root = doc.documentElement;
         if (root) {
      
-            var result = libutil.svg.create_element('foreignObject', doc.documentElement, [{'name' : 'id', 'value':  id },
+            var result = libutil.svg.create_element('foreignObject', doc.documentElement, [{'name' : 'id', 'value':  id},
                                                                                    {'name' : 'x', 'value':  x ? x : 0},
                                                                                    {'name' : 'y', 'value':  y ? y : 0},
                                                                                    {'name' : 'width', 'value': width ? width : 300},
@@ -1297,7 +1398,7 @@ libutil.dom.readDoc = function (url){
 
 
 libutil.dom.writeDoc = function (doc){
-    if (doc && $$writefile){
+    if (doc && window.$$writefile){
         var xmls = new XMLSerializer();  
         var data= xmls.serializeToString(doc); 
         $$writefile(doc.baseURI,data);

@@ -1012,6 +1012,48 @@ designer.prototype.mousedownComponent = function (){
     this.draggedstart=undefined; 
 }
 
+designer.prototype.getPartOfScript = function (val){
+
+   var ind=val.search(/\nif\s\(\(window\.\$\$editable\)\&\&\(\!window\.\$\$editable\(\)\)\)\{\n/);
+   if (ind!=-1) val=val.substring(51);
+   val= (val.length>3) ? val.substring(0, val.length-4) : '';
+   return val;
+}
+
+designer.prototype.getRootScript = function (){
+   if (!this.sourseDocument) return null;
+   var script = this.sourseDocument.getElementById('rootscript') ? this.sourseDocument.getElementById('rootscript').textContent : '';
+   script = this.getPartOfScript(script);
+   var retval = dsutl.toolwin.scriptdialog('script', script);
+   if (retval && retval.value && (retval.value!=script)){ 
+          this.setRootScript(retval.value);
+          this.setNeedSave();}
+   event.preventDefault();
+   event.stopPropagation();
+}
+
+designer.prototype.setRootScript = function (val){
+   if (!this.sourseDocument) return;
+   var rootscriptel = this.sourseDocument.getElementById('rootscript');
+   if (!rootscriptel){
+       var scriptel = this.sourseDocument.createElement('script');
+       scriptel.setAttribute('type', "text/javascript");
+       scriptel.setAttribute('id', "rootscript");
+       this.sourseDocument.documentElement.insertBefore(scriptel, this.sourseDocument.documentElement.firstElementChild);
+       rootscriptel = this.sourseDocument.getElementById('rootscript');
+   }
+   if (rootscriptel){
+    var selfscript =this.sourseDocument.createCDATASection('\nif ((window.$$editable)&&(!window.$$editable())){\n'+
+           val.toString()+''+
+           '\n};\n');
+   libutil.dom.clearChildNode(rootscriptel);    
+   rootscriptel.appendChild(selfscript); 
+}
+   else{
+       console.error("Script didn't  save");
+   }
+}
+
 
 
 
@@ -1111,6 +1153,13 @@ designer.prototype.getMainMenue = function(){
                                       document.red.copyFromClipBoard(rect , mpoint , prn);}}
                                  document.red.setNeedSave();
                                  document.red.hideMainMenue();                                 
+                                 event.stopPropagation();}},
+                     {'name' : 'Script',
+                      'id' : 'script',
+                      'active' : function(){return !document.red.selectionCount() ? '' : 'disable'},
+                      'func' : function(){
+                                 document.red.hideMainMenue();
+                                 document.red.getRootScript();
                                  event.stopPropagation();}}];        
 
         this.___maimenue = new dsutl.menue(items);}
@@ -3065,11 +3114,48 @@ dsutl.toolwin.removeFormFromProject =function(name){
 
 dsutl.toolwin.propertydialog = function(name, value){
     return libutil.window.create_modal('../util/html/propertydialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
-}                
+}
+
+
+dsutl.toolwin.scriptdialog = function(name, value){
+    return libutil.window.create_modal('../util/html/javascriptdialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
+}   
                 
                 
                 
-                
+//
+
+dsutl.toolwin.newscript = function(file, exists){
+    var tmp=$$global();
+    var prjpath=tmp.projectPath;
+    if (file.length>4){
+        var fileext=file.substring(file.length-3);
+        if (fileext=='.js'){
+            var txt = '/*    */';
+            if (libutil.project.insertXSLTScriptList(file)){
+               console.log(prjpath.toString()+file);
+               if (!exists) 
+                   $$writefile(prjpath.toString()+file,txt); 
+               return true;}
+        }
+    }
+    console.error('Script did not create');
+    return false;
+}
+
+dsutl.toolwin.removescript = function(file){
+    var tmp=$$global();
+    var prjpath=tmp.projectPath;
+    if (file.length>4){
+        var fileext=file.substring(file.length-3);
+        if (fileext=='.js'){
+            if (libutil.project.removeXSLTScriptList(file)){
+               return true;}
+        }
+    }
+    console.error('Script did not create');
+    return false;
+}
   
         
                         
