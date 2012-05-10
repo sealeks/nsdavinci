@@ -23,6 +23,8 @@ libutil.xslttransform = {};
 
 libutil.document = {};
 
+libutil.geometry = {};
+
 libutil.global = {};
 
 libutil.error = {};
@@ -339,12 +341,13 @@ libutil.project.addtoformlist = function(els){
 
 libutil.project.add_design_style  = function(doc){
     if (doc.documentElement){
-        var dstyle = ".designer_selected { opacity: 0.8 !important; outline: 1px solid red !important;} \n"+
+        var dstyle = ".designer_selected { opacity: 0.8 !important; outline: 1px solid #E00 !important;} \n"+
         "*[isgoupelement]{ outline: 1px dashed green !important; } \n"+
         'g[cursor="pointer"]:hover { outline: 0px solid transparent  !important;} \n'+
         'g[cursor="pointer"].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;} \n'+
         "*[isgoupelement].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;}\n"+
-        "*[filter] { filter: url('') !important;} \n"+       
+        "*[filter] { filter: url('') !important;} \n"+ 
+        ".highlight-selected{ fill: none !important; stroke-width: 1 !important; stroke: red !important;}\n"+ 
         "*[dv-visible] { display: block !important;} \n";;
     }
     libutil.html.create_style(doc.documentElement, dstyle);              
@@ -698,6 +701,19 @@ libutil.regex.check = function (value, expr){
 
 //
 
+//
+
+libutil.geometry.boundrect = function (el){
+    var box = el && el.getBBox ? el.getBBox() : null;
+    var rect = box ? {'x' : box.x , 'y' : box.y , 'w' : box.width , 'h' : box.height} : null;
+    if (rect) return rect;
+    var boxs = el  && el.getClientRects ? el.getClientRects() : null;
+    var box = boxs && boxs.length ? boxs[0] : null;
+    return box ? {'x' : box.top , 'y' : box.left , 'w' : box.width , 'h' : box.height} : null;
+}
+
+//
+
 
 libutil.html.create = function (name, parent){
     var newel = parent.ownerDocument.createElementNS(libutil.XHTML_NAMESPACE_URL, name);
@@ -713,7 +729,8 @@ libutil.html.create_element = function (name, parent, attr){
                newel.setAttribute(attr[i].name, attr[i].value); 
         }
     }
-    parent.appendChild(newel);
+    if (parent)
+        parent.appendChild(newel);
     return newel;
 }
 
@@ -926,7 +943,6 @@ libutil.svg.create = function (name, parent){
 }
 
 libutil.svg.create_element = function (name, parent, attr){
-    if (!parent) return;
     var newel = parent.ownerDocument.createElementNS(libutil.SVG_NAMESPACE_URL, name);
     if (attr){
         for (var i=0; i < attr.length; ++i){
@@ -934,7 +950,19 @@ libutil.svg.create_element = function (name, parent, attr){
                newel.setAttribute(attr[i].name, attr[i].value); 
         }
     }
-    if (parent) parent.appendChild(newel);
+    if (parent) 
+        parent.appendChild(newel);
+    return newel;
+}
+
+libutil.svg.create_element_no_insert = function (name, parent, attr){
+    var newel = parent.ownerDocument.createElementNS(libutil.SVG_NAMESPACE_URL, name);
+    if (attr){
+        for (var i=0; i < attr.length; ++i){
+           if (attr[i].value) 
+               newel.setAttribute(attr[i].name, attr[i].value); 
+        }
+    }
     return newel;
 }
 
@@ -946,50 +974,50 @@ libutil.svg.create_text = function (parent, x, y,  style, classnm, text){
     if (y || y==0) newel.setAttribute('y', parseFloat(y));  
     if (style) newel.setAttribute('style', style);
     if (classnm) newel.setAttribute('class', classnm);
-    if (text){
-        var textdat = parent.ownerDocument.createTextNode(text);    
-        newel.appendChild(textdat);
-    }
+    newel.textContent=text;
     return newel;
 }
 
 
 
-libutil.svg.create_button = function (parent, x, y, width, height, rx, ry,  rectstyle, rectclass,   text, textstyle){
+libutil.svg.create_button = function (parent, x, y, width, height, rx, ry,  rectstyle, rectclass,   text, textstyle, textclass){
 
     var headersvg=libutil.svg.create_element('svg', parent , [{'name' : 'x', 'value': x},
                                                          {'name' : 'y', 'value': y},
                                                          {'name' : 'width', 'value': width},
                                                          {'name' : 'height', 'value': height}]);   
 
-    libutil.svg.create_element('rect', parent, [{'name' : 'x', 'value':  0},
+    libutil.svg.create_element('rect', headersvg, [{'name' : 'x', 'value':  0},
                                                 {'name' : 'y', 'value':  0},
                                                 {'name' : 'width', 'value': width},
                                                 {'name' : 'height', 'value': height},
                                                 {'name' : 'rx', 'value': rx},
-                                                {'name' : 'ry', 'value': ry},                                                           
+                                                {'name' : 'ry', 'value': ry}, 
                                                 {'name' : 'style', 'value': rectstyle},
                                                 {'name' : 'class', 'value': rectclass}]);
-                                       
-    headersvg.onmouseout = function() {
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-    }                                        
+                                    
                              
-    var headertext=libutil.svg.create_text(headersvg,
+    libutil.svg.create_text(headersvg,
         width / 2, height / 2, 
         textstyle,
-        'central_svgnatext');
+        'central_svgnatext ' +  textclass, text);
 
-    
-    var headertextnode=parent.ownerDocument.createTextNode(text);
-    
-    headertext.appendChild(headertextnode);
     
     return headersvg;                                    
 
     
+}
+
+libutil.svg.create_gradient = function (name ,parent, attr, colors){
+    if (colors){
+    var gradient=libutil.svg.create_element(name , parent , attr); 
+    for (var i=0; i < colors.length; ++i){
+        libutil.svg.create_element('stop', gradient , [{'name' : 'offset' , 'value' : colors[i].offset ? colors[i].offset : 0},
+                                                       {'name' : 'stop-color' , 'value' : colors[i].stopcolor ? colors[i].stopcolor : '#000'}])
+    }
+    return gradient;
+}
+    return null;                                       
 }
 
 
@@ -1007,12 +1035,11 @@ libutil.www.create_window = function(doc, id, x, y, width, height, style){
         var root = doc.documentElement;
         if (root) {
      
-            var result = svg.create_element('foreignObject', doc.documentElement, [{'name' : 'x', 'value':  x ? x : 0},
+            var result = libutil.svg.create_element('foreignObject', doc.documentElement, [{'name' : 'id', 'value':  id },
+                                                                                   {'name' : 'x', 'value':  x ? x : 0},
                                                                                    {'name' : 'y', 'value':  y ? y : 0},
                                                                                    {'name' : 'width', 'value': width ? width : 300},
-                                                                                   {'name' : 'height', 'value': height ? height : 300}]);
-            result.setAttribute('id',id);
-            
+                                                                                   {'name' : 'height', 'value': height ? height : 300}]);         
             var html = libutil.html.create_element('html' , result);
             
             libutil.html.create_element('head', html,[{'name' : 'style', 'value':  style}]);
@@ -1245,6 +1272,14 @@ libutil.dom.findChildByTagName = function (el, name){
     return null;
 }
 
+libutil.dom.removeCild = function (parent, el){
+    for(var e=parent.firstElementChild; e; e=e.nextElementSibling){
+        if (e==el) {
+            parent.removeChild(el);
+            break;
+        }
+    }
+}
 
 
 libutil.dom.readDoc = function (url){ 
