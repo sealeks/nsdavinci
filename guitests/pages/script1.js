@@ -4,5 +4,3 @@
  */
 
 console.log('script1');
-
-
