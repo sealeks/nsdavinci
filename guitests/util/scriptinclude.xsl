@@ -17,11 +17,11 @@
         </xsl:call-template>          
             
         
-        <xsl:call-template name="lib_script_include_file">
-            <xsl:with-param name="file">script1.js</xsl:with-param>
-        </xsl:call-template>
+        
 
-    </xsl:template>
+    <xsl:call-template name="lib_script_include_file">
+            <xsl:with-param name="file">script1.js</xsl:with-param>
+        </xsl:call-template></xsl:template>
 
 
 </xsl:stylesheet>

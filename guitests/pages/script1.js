@@ -3,4 +3,4 @@
  * and open the template in the editor.
  */
 
-console.log('script12245');
+console.log('script12245ррр');
