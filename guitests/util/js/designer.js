@@ -1012,49 +1012,96 @@ designer.prototype.mousedownComponent = function (){
     this.draggedstart=undefined; 
 }
 
-designer.prototype.getPartOfScript = function (val){
+// Script
 
-   var ind=val.search(/\nif\s\(\(window\.\$\$editable\)\&\&\(\!window\.\$\$editable\(\)\)\)\{\n/);
-   if (ind!=-1) val=val.substring(51);
-   val= (val.length>3) ? val.substring(0, val.length-4) : '';
-   return val;
-}
 
-designer.prototype.getRootScript = function (){
-   if (!this.sourseDocument) return null;
-   var script = this.sourseDocument.getElementById('rootscript') ? this.sourseDocument.getElementById('rootscript').textContent : '';
-   script = this.getPartOfScript(script);
+
+designer.prototype.getScript = function (doc,name, func, start ,stop){
+   if (!doc) return null;
+   var script = doc.getElementById(name) ? doc.getElementById(name).textContent : '';
+   script = func(script);
    var retval = dsutl.toolwin.scriptdialog('script', script);
-   if (retval && retval.value && (retval.value!=script)){ 
-          this.setRootScript(retval.value);
-          this.setNeedSave();}
-   event.preventDefault();
-   event.stopPropagation();
+   if (retval && (retval.value || retval.value=='') && (retval.value!=script)) { 
+          this.setScript(doc, name,retval.value, start, stop);
+          return true;}
+   return false;   
 }
 
-designer.prototype.setRootScript = function (val){
-   if (!this.sourseDocument) return;
-   var rootscriptel = this.sourseDocument.getElementById('rootscript');
+designer.prototype.setScript = function (doc, name, val , start ,stop){
+   if (!doc) return;
+   var rootscriptel = doc.getElementById(name);
    if (!rootscriptel){
-       var scriptel = this.sourseDocument.createElement('script');
+       var scriptel = doc.createElement('script');
        scriptel.setAttribute('type', "text/javascript");
-       scriptel.setAttribute('id', "rootscript");
-       this.sourseDocument.documentElement.insertBefore(scriptel, this.sourseDocument.documentElement.firstElementChild);
-       rootscriptel = this.sourseDocument.getElementById('rootscript');
+       scriptel.setAttribute('id', name);
+       doc.documentElement.insertBefore(scriptel, doc.documentElement.firstElementChild);
+       rootscriptel = doc.getElementById(name);
    }
    if (rootscriptel){
-    var selfscript =this.sourseDocument.createCDATASection('\nif ((window.$$editable)&&(!window.$$editable())){\n'+
+    var selfscript =doc.createCDATASection(start+
            val.toString()+''+
-           '\n};\n');
+           stop);
    libutil.dom.clearChildNode(rootscriptel);    
    rootscriptel.appendChild(selfscript); 
 }
    else{
-       console.error("Script didn't  save");
+       console.error(" Root Script didn't  save");
    }
 }
 
+//
 
+
+designer.prototype.getRootScript = function (){
+   var doc = this.sourseDocument;
+   if (this.getScript(doc, 'rootscript',
+                  function (val){
+                      var ind=val.search(/\nif\s\(\(window\.\$\$editable\)\&\&\(\!window\.\$\$editable\(\)\)\)\{\n/);
+                      if (ind!=-1) val=val.substring(51);
+                      return (val.length>3) ? val.substring(0, val.length-4) : '';},
+                      '\nif ((window.$$editable)&&(!window.$$editable())){\n',
+                      '\n};\n'))
+       this.setNeedSave();
+       event.preventDefault();
+       event.stopPropagation();
+   
+}
+
+
+// StartScript
+
+
+designer.prototype.getStartScript = function (){
+   var doc = libutil.global.getStartupDoc();
+   if (this.getScript(doc, 'startscript',
+                  function (val){
+                      var ind=val.search(/\nif\s\(\(window\.\$\$editable\)\&\&\(\!window\.\$\$editable\(\)\)\)\{\n/);
+                      if (ind!=-1) val=val.substring(51);
+                      return (val.length>3) ? val.substring(0, val.length-4) : '';},
+                      '\nif ((window.$$editable)&&(!window.$$editable())){\n',
+                      '\n};\n'))
+       libutil.dom.writeDoc(doc);
+       event.preventDefault();
+       event.stopPropagation();
+}
+
+
+// StopScript
+
+
+designer.prototype.getStopScript = function (){
+   var doc = libutil.global.getStartupDoc();
+   if (this.getScript(doc, 'stopscript',
+                  function (val){
+                      var ind=val.search(/\nfunction ___global___unload\(\)\{\n/);
+                      if (ind!=-1) val=val.substring(32);
+                      return (val.length>3) ? val.substring(0, val.length-4) : '';},
+                      '\nfunction ___global___unload(){\n',
+                      '\n};\n'))
+       libutil.dom.writeDoc(doc);
+       event.preventDefault();
+       event.stopPropagation();
+}
 
 
 
@@ -1160,6 +1207,20 @@ designer.prototype.getMainMenue = function(){
                       'func' : function(){
                                  document.red.hideMainMenue();
                                  document.red.getRootScript();
+                                 event.stopPropagation();}},
+                     {'name' : 'StartScript',
+                      'id' : 'startscript',
+                      'active' : function(){return !document.red.selectionCount() ? '' : 'disable'},
+                      'func' : function(){
+                                 document.red.hideMainMenue();
+                                 document.red.getStartScript();
+                                 event.stopPropagation();}},
+                     {'name' : 'StopScript',
+                      'id' : 'stopscript',
+                      'active' : function(){return !document.red.selectionCount() ? '' : 'disable'},
+                      'func' : function(){
+                                 document.red.hideMainMenue();
+                                 document.red.getStopScript();
                                  event.stopPropagation();}}];        
 
         this.___maimenue = new dsutl.menue(items);}
@@ -3126,15 +3187,14 @@ dsutl.toolwin.scriptdialog = function(name, value){
 //
 
 dsutl.toolwin.newscript = function(file, exists){
-    var tmp=$$global();
-    var prjpath=tmp.projectPath;
+    var prjpath=window.$$global ?  window.$$global().projectPath : null;
     if (file.length>4){
         var fileext=file.substring(file.length-3);
         if (fileext=='.js'){
             var txt = '/*    */';
             if (libutil.project.insertXSLTScriptList(file)){
                console.log(prjpath.toString()+file);
-               if (!exists) 
+               if (!exists && prjpath) 
                    $$writefile(prjpath.toString()+file,txt); 
                return true;}
         }
@@ -3144,8 +3204,7 @@ dsutl.toolwin.newscript = function(file, exists){
 }
 
 dsutl.toolwin.removescript = function(file){
-    var tmp=$$global();
-    var prjpath=tmp.projectPath;
+    //var prjpath=window.$$global ?  window.$$global().projectPath : null;
     if (file.length>4){
         var fileext=file.substring(file.length-3);
         if (fileext=='.js'){
@@ -3156,6 +3215,9 @@ dsutl.toolwin.removescript = function(file){
     console.error('Script did not create');
     return false;
 }
+
+
+
   
         
                         
