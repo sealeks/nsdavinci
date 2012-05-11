@@ -55,7 +55,7 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
         parent.removeChild(el.movelement);
     }
     
-    var dupl = libutil.dom.duplicate_element(el, false, ['id','captured','onmousedown', 'onmouseup']);
+    var dupl = libutil.dom.duplicateElement(el, false, ['id','captured','onmousedown', 'onmouseup']);
 
     el.movelement = dupl;
     
@@ -145,7 +145,7 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
     
     parent.onmouseout = function(ev){
 
-        if (!libutil.dom.check_is_parent (parent,ev.toElement,true)){
+        if (!libutil.dom.checkIsParent (parent,ev.toElement,true)){
             selfremove();
             el.onmouseup();
         }
@@ -187,7 +187,7 @@ mainlib.get_popupbody  = function(el, width, height){
     
     el.popup.onmouseout = function(ev){
         
-        if (!libutil.dom.check_is_parent (el.popup,ev.toElement,true)){
+        if (!libutil.dom.checkIsParent (el.popup,ev.toElement,true)){
             //console.profile('mainlib.get_popupbody.onmouseout');
             el.popup.setAttribute('style', 'display: none;');
             //console.profileEnd('mainlib.get_popupbody.onmouseout');
