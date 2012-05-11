@@ -1105,6 +1105,32 @@ designer.prototype.getStopScript = function (){
 
 
 
+// FileScript
+
+designer.prototype.getFileScriptData = function (path){
+if (path)
+var doc = libutil.dom.readDoc(path,true);
+return doc ? doc : null;    
+}
+
+designer.prototype.getFileScript = function (file){
+    var prjpath=window.$$global ?  window.$$global().projectPath : null;
+    if (prjpath && file){
+        var path = prjpath.toString() + file;
+        var data = this.getFileScriptData(path);
+        if (data || data==''){
+            var retval = dsutl.toolwin.scriptdialog('script :'+ file, data);
+            if (retval && (retval.value || retval.value=='') && (retval.value!=data)) { 
+                $$writefile(path,retval.value)
+                return true;
+            }                  
+        }
+    }
+    console.error('File script change error')
+    return false;
+}
+
+
 
 // контекстное меню
 
@@ -2785,6 +2811,169 @@ dsutl.toolwin.destroyFormInspector = function(){
         tmp.formtooltbody=undefined; 
     dsutl.toolwin.setMainWindowToolStatus(3);  
 }
+
+//
+
+/* Script Inspector */
+
+//
+
+dsutl.toolwin.getScriptInspector = function (force){
+    var tmp=$$global();
+    if (!tmp.scripttool && !force) return null;
+    if (tmp && !tmp.scripttool){
+
+        libutil.www.create_tbwindow('scripttool', 'Окна' ,'600','100', '600','200','yes','yes',null,null,
+            ['add', 'new'],
+            ['Добавить из файла','Новый скрипт'],
+            [
+            function() {
+                dsutl.toolwin.addwindowfromfile();             
+            },
+            function() {
+                dsutl.toolwin.addnewwindow();
+            }]);
+    
+        var objdoc =tmp.scripttool.document;
+        tmp.scripttool.onunload=dsutl.toolwin.destroyScriptInspector;
+        tmp.scripttool.onmousewheel = function (){
+            event.stopPropagation();
+            event.preventDefault();
+        }
+
+        var body=objdoc.getElementsByTagName('body')[0];
+        var head=objdoc.getElementsByTagName('head')[0];
+        libutil.html.create_link(head, "../util/css/forminspector.css");
+        var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{'name' : 'class' , 'value' : 'scrollWrapper'}]);
+        var table = libutil.html.create_element('table' ,div,[{'name' : 'class' , 'value' : 'scrollable'}]);
+        var tbody = libutil.html.create_element('tbody', table);
+        libutil.html.create_element('tr' , tbody);
+        tmp.scripttooltbody=tbody;
+    }
+ 
+    dsutl.toolwin.fillScriptInspector();
+    return (tmp && tmp.scripttool) ? tmp.scripttool : null;
+}
+
+
+dsutl.toolwin.resetScriptInspector = function(){
+    var vis =  dsutl.toolwin.getScriptInspector();
+    var tmp=$$global();
+    if (vis && tmp.scripttool)
+        tmp.scripttool.close();
+    else
+        dsutl.toolwin.getScriptInspector(true);
+    var tmp=$$global();
+    tmp.scripttool.focus();
+    //dsutl.toolwin.setMainWindowToolStatus(3);
+        
+} 
+
+dsutl.toolwin.fillScriptInspector = function (){
+    var tmp=$$global();
+    var tbody = tmp.scripttooltbody;
+    
+    libutil.dom.clearChildNode(tbody);   
+
+    var tr = libutil.html.create_element('tr' ,tbody);
+    
+    libutil.html.create_tabel_header(tr,null,null,
+        ['Файл','id','caption','x','y','width','height','visible','alltop','resize','decorate','modal','0/X','-']);
+   
+    var fl= libutil.global.getFormList();
+ 
+                            
+    for (var i=0; i<fl.length; ++i ){
+        var formname=fl[i]['name'];
+        formname=formname.toString();
+        var tr= libutil.html.create_element('tr' ,tbody);
+       
+        var td1= libutil.html.create_element('td', tr);
+        td1.innerHTML=fl[i]['file'] ? fl[i]['file'] : "";
+        
+        td1.className='static';
+   
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'name');
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'caption');
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'left', '50px');       
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'top', '50px');
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'width', '50px');       
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'height', '50px'); 
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'visible', '50px');
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'allwaystop', '50px');       
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'resizable', '50px');
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'decorated', '50px');
+        dsutl.toolwin.fiCreateRow(tr,fl[i],'modal', '50px');        
+        
+        var td11= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
+        var btno = libutil.html.create_button( td11,'height: 15px;',null,'');
+        btno.setAttribute('onclick','dsutl.toolwin.resetwindow("'+formname+ '");');
+ 
+        
+        var td13= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
+        var btnd = libutil.html.create_button( td13,'height: 15px;',null,'');
+        btnd.setAttribute('onclick','dsutl.toolwin.removeFormFromProject("'+formname+ '");');
+    
+    }
+}
+
+dsutl.toolwin.siCreateRow = function(tr, tblrow, name, width, lst){
+    var td= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0;' + width ? 'width: ' + width + ';' : ''}]);
+    var tmp= tblrow[name] ? tblrow[name] : '';
+    if (lst)
+        td.lst=lst; 
+    td.innerHTML= tmp;
+    td.elem=tblrow;
+    td.value=tmp;
+    td.propname=name;
+    td.onclick=function(ev) {
+        dsutl.toolwin.fiPropertyRowFocus(ev);    
+    }
+}
+
+
+
+dsutl.toolwin.fiPropertyRowFocus = function(ev){
+    try{
+        var td = ev.target;
+        libutil.dom.clearChildNode(td);
+        if (td.lst)
+            var edit=libutil.html.create_select(ev.target, 'text', td.value, td.lst);
+        else
+            var edit=libutil.html.create_input(ev.target, 'text', td.value);
+       
+    
+        edit.focus();
+        edit.oldval=td.value;  
+ 
+        edit.onblur= function(ev) {
+            dsutl.toolwin.fiPropertyLeaveFocus(ev);
+        }
+
+        edit.addEventListener( 'keyup' ,function (ev) {       
+            if ((ev.keyIdentifier=="Enter"))
+                dsutl.toolwin.fiPropertyLeaveFocus(ev);
+            else 
+                ev.stopPropagation();
+        });  
+        ev.preventDefault();
+        ev.stopPropagation();
+    }
+    catch(error){
+        alert(error);
+    }
+}
+
+
+dsutl.toolwin.destroyScriptInspector = function(){
+    var tmp=$$global();
+    if (tmp && tmp.scripttool)
+        tmp.scripttool=undefined;
+    if (tmp && tmp.scripttooltbody)
+        tmp.scripttooltbody=undefined; 
+    dsutl.toolwin.setMainWindowToolStatus(3);  
+}
+
 
 //
 
