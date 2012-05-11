@@ -2578,7 +2578,7 @@ dsutl.menue = function (items){
      var body = this.body;
 
      this.body.onmouseout = function(ev){        
-        if (!libutil.dom.check_is_parent (body,ev.toElement,true)){
+        if (!libutil.dom.checkIsParent (body,ev.toElement,true)){
             menue.hide();}}
          
          
