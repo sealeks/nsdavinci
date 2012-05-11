@@ -1394,18 +1394,20 @@ libutil.dom.removeCild = function (parent, el){
 }
 
 
-libutil.dom.readDoc = function (url){ 
+libutil.dom.readDoc = function (url , text){ 
     try{
         var xmlHttp=new XMLHttpRequest();
         xmlHttp.open("GET",url,false);
         xmlHttp.send(null);
-        return xmlHttp.responseXML;
+        return text ? xmlHttp.responseText : xmlHttp.responseXML;
     }
     catch(exception){
         alert(exception);
     }
     return null;
 }
+
+
 
 
 libutil.dom.writeDoc = function (doc){
