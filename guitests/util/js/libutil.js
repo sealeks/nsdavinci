@@ -806,8 +806,7 @@ libutil.window.createhtml = function(name , caption, top, left, width, height, t
 //
 
 libutil.regex.check = function (value, expr){
-    var re= new RegExp(expr);
-    return re.test(value);
+    return expr.test(value);
 }
 
 //
@@ -1416,15 +1415,6 @@ libutil.dom.writeDoc = function (doc){
         $$writefile(doc.baseURI,data);
     }
 }
-
-/*
- 
- 
- script
- 
- 
- */
-
 
 
 /* 
