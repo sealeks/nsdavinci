@@ -2741,7 +2741,7 @@ dsutl.menue.prototype.setstyle = function(){
 dsutl.toolwin.getMainWindow = function (){
     libutil.www.create_tbwindow('maintool', 'Редактор' ,'100' , '100', '600','64','yes','yes',null,null,
         ['save','objinsp', 'forminsp','libinsp', 'scriptinsp' ,'exit'],
-        ['Сохранить','Редактор свойств', 'Редактор форм','Панель компонентов', 'Скрипт' ,'Выход'],
+        ['Сохранить','Редактор свойств', 'Редактор форм','Панель компонентов', 'Скрипты' ,'Выход'],
         [function() {
             dsutl.io.saveall();
         },
@@ -2785,6 +2785,8 @@ dsutl.toolwin.setMainWindowToolStatus = function (val){
         libutil.www.set_tbwindow_btnstatus('maintool', null, 'forminsp', dsutl.toolwin.getFormInspector() ?  'off' :  'on');
     if ((val==4 || !val)) 
         libutil.www.set_tbwindow_btnstatus('maintool', null, 'libinsp', dsutl.toolwin.getLibInspector() ?  'off' :  'on');
+    if ((val==5 || !val)){
+        libutil.www.set_tbwindow_btnstatus('maintool', null, 'scriptinsp', dsutl.toolwin.getScriptInspector() ?  'off' :  'on'); }   
 }
 
 
@@ -3197,6 +3199,7 @@ dsutl.toolwin.resetScriptInspector = function(){
         dsutl.toolwin.getScriptInspector(true);
     var tmp=$$global();
     tmp.scripttool.focus();
+    dsutl.toolwin.setMainWindowToolStatus(5);
 
         
 } 
@@ -3246,7 +3249,7 @@ dsutl.toolwin.destroyScriptInspector = function(){
         tmp.scripttool=undefined;
     if (tmp && tmp.scripttooltbody)
         tmp.scripttooltbody=undefined; 
-    //dsutl.toolwin.setMainWindowToolStatus(3);  
+    dsutl.toolwin.setMainWindowToolStatus(5);  
 }
 
 
