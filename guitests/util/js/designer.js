@@ -2933,7 +2933,7 @@ dsutl.toolwin.siCreateRow = function(tr, tblrow, name, width, lst){
 
 
 
-dsutl.toolwin.fiPropertyRowFocus = function(ev){
+dsutl.toolwin.siPropertyRowFocus = function(ev){
     try{
         var td = ev.target;
         libutil.dom.clearChildNode(td);
