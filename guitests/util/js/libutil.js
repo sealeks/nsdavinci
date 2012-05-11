@@ -33,6 +33,8 @@ libutil.regex = {};
 
 libutil.validator = {};
 
+libutil.script = {};
+
 libutil.LIB_NAMESPACE_URL =  'http://dvnci/lib';
 
 libutil.SVG_NAMESPACE_URL =  'http://www.w3.org/2000/svg';
@@ -146,20 +148,39 @@ function formclose_allwin(){
 }
 
 function exit(){
-    //if ($$editable()) return;
-    $$exit();
-    window.close();
+    if (window.$$global && window.$$global().___mainwindow){
+        var win = window.$$global().___mainwindow;
+        var unloadscript = !window.$$editable || !window.$$editable();
+        if (unloadscript && win.___global___unload)
+            win.___global___unload();
+        win.onunload=function(){$$exit();}
+        win.$$global().___mainwindow.close();
+        win.$$global().___mainwindow=undefined;}
+    else{
+       $$exit();
+       window.close();}
+}
+
+
+function exitmain(win){
+    
 }
 
 
 function init_project_controller(){
     libutil.global.getStartupDoc(document);   
     libutil.project.init_form();
-    if ($$editable() && dsutl.toolwin) 
+    if (window.$$editable && window.$$editable() && dsutl.toolwin) 
         dsutl.toolwin.getMainWindow();
+    var tmp = window.$$global ? window.$$global() : null;
+    if (tmp){
+        tmp['___mainwindow'] = window;}
+
 }
 
 //
+
+
 
 
 
@@ -182,57 +203,47 @@ libutil.util.trim = function(str){
 
 
 libutil.global.getFormList = function (){
-    var tmp=$$global();
-    if (tmp && !tmp.formlist)
-        tmp.formlist=[];
-    return (tmp && tmp.formlist) ? tmp.formlist : null;
+    if (window.$$global && !window.$$global().formlist)
+        window.$$global().formlist=[];
+    return window.$$global ? window.$$global().formlist : null;
 }
 
 libutil.global.getLibList = function (){
-    var tmp=$$global();
-    if (tmp && !tmp.liblist)
-        tmp.liblist=[];
-    return (tmp && tmp.liblist) ? tmp.liblist : null;
+    if (window.$$global && !window.$$global().liblist)
+        window.$$global().liblist=[];
+    return window.$$global ? window.$$global().liblist : null;
 }
 
 libutil.global.getScriptList = function (){
-    var tmp=$$global();
-    if (tmp && !tmp.scriptlist)
-        tmp.scriptlist=[];
-    return (tmp && tmp.scriptlist) ? tmp.scriptlist : null;
+    if (window.$$global && !window.$$global().scriptlist)
+        window.$$global().scriptlist=[];
+    return window.$$global ? window.$$global().scriptlist : null;
 }
 
 libutil.global.getStartupDoc = function (doc){
-    var tmp=$$global();
-    if (tmp && !tmp.startupdocument && doc)
-        tmp.startupdocument=doc;
-    return (tmp && tmp.startupdocument) ? tmp.startupdocument : null;
+    if (window.$$global && !window.$$global().startupdocument && doc)
+        window.$$global().startupdocument=doc;
+    return window.$$global ? window.$$global().startupdocument : null;
 }
 
 libutil.global.getGlobalPropertyEditor = function (){
-    var tmp=$$global();
-    return tmp.globalpropertydialog;   
+    return window.$$global ? window.$$global().globalpropertydialog : null;   
 }
 
 libutil.global.setGlobalPropertyEditor = function (val){
-    var tmp=$$global();
-    tmp.globalpropertydialog=val;   
+    if (window.$$global) 
+        window.$$global().globalpropertydialog=val;   
 }
 
 //
 
 libutil.startup.init = function(){
-    window.addEventListener('message', function () {
-        window.close();
-    }, false);
+
     if ((window.$$editable) && ($$editable())){
         document.red = new designer(document);
         libutil.project.add_design_style(document);
         libutil.startup.initdesigner(window.name, document.red);
         set_win_designer(window, document.red);
-    }
-    else{
-        //libutil.project.setScriptInfoElements(document);
     }
     window.onunload=formclose_win;
 
@@ -1404,6 +1415,16 @@ libutil.dom.writeDoc = function (doc){
         $$writefile(doc.baseURI,data);
     }
 }
+
+/*
+ 
+ 
+ script
+ 
+ 
+ */
+
+
 
 /* 
 
