@@ -14,6 +14,10 @@ dsutl.componentinfo = function(){
 dsutl.trslt = {};
 
 dsutl.toolwin = {};
+
+dsutl.script = {};
+
+
    
    
    
@@ -1012,22 +1016,39 @@ designer.prototype.mousedownComponent = function (){
     this.draggedstart=undefined; 
 }
 
+
+designer.prototype.getRootScript = function (){
+   var doc = this.sourseDocument;
+   if (dsutl.script.getScript(doc, 'rootscript',
+                  function (val){
+                      var ind=val.search(/\nif\s\(\(window\.\$\$editable\)\&\&\(\!window\.\$\$editable\(\)\)\)\{\n/);
+                      if (ind!=-1) val=val.substring(51);
+                      return (val.length>3) ? val.substring(0, val.length-4) : '';},
+                      '\nif ((window.$$editable)&&(!window.$$editable())){\n',
+                      '\n};\n'))
+       this.setNeedSave();
+       event.preventDefault();
+       event.stopPropagation();
+   
+}
+
+
+
+
 // Script
 
-
-
-designer.prototype.getScript = function (doc,name, func, start ,stop){
+dsutl.script.getScript = function (doc,name, func, start ,stop){
    if (!doc) return null;
    var script = doc.getElementById(name) ? doc.getElementById(name).textContent : '';
    script = func(script);
-   var retval = dsutl.toolwin.scriptdialog('script', script);
+   var retval = dsutl.script.scriptdialog('script', script);
    if (retval && (retval.value || retval.value=='') && (retval.value!=script)) { 
-          this.setScript(doc, name,retval.value, start, stop);
+          dsutl.script.setScript(doc, name,retval.value, start, stop);
           return true;}
    return false;   
 }
 
-designer.prototype.setScript = function (doc, name, val , start ,stop){
+dsutl.script.setScript = function (doc, name, val , start ,stop){
    if (!doc) return;
    var rootscriptel = doc.getElementById(name);
    if (!rootscriptel){
@@ -1049,31 +1070,14 @@ designer.prototype.setScript = function (doc, name, val , start ,stop){
    }
 }
 
-//
-
-
-designer.prototype.getRootScript = function (){
-   var doc = this.sourseDocument;
-   if (this.getScript(doc, 'rootscript',
-                  function (val){
-                      var ind=val.search(/\nif\s\(\(window\.\$\$editable\)\&\&\(\!window\.\$\$editable\(\)\)\)\{\n/);
-                      if (ind!=-1) val=val.substring(51);
-                      return (val.length>3) ? val.substring(0, val.length-4) : '';},
-                      '\nif ((window.$$editable)&&(!window.$$editable())){\n',
-                      '\n};\n'))
-       this.setNeedSave();
-       event.preventDefault();
-       event.stopPropagation();
-   
-}
 
 
 // StartScript
 
 
-designer.prototype.getStartScript = function (){
+dsutl.script.getStartScript = function (){
    var doc = libutil.global.getStartupDoc();
-   if (this.getScript(doc, 'startscript',
+   if (dsutl.script.getScript(doc, 'startscript',
                   function (val){
                       var ind=val.search(/\nif\s\(\(window\.\$\$editable\)\&\&\(\!window\.\$\$editable\(\)\)\)\{\n/);
                       if (ind!=-1) val=val.substring(51);
@@ -1089,9 +1093,9 @@ designer.prototype.getStartScript = function (){
 // StopScript
 
 
-designer.prototype.getStopScript = function (){
+dsutl.script.getStopScript = function (){
    var doc = libutil.global.getStartupDoc();
-   if (this.getScript(doc, 'stopscript',
+   if (dsutl.script.getScript(doc, 'stopscript',
                   function (val){
                       var ind=val.search(/\nfunction ___global___unload\(\)\{\n/);
                       if (ind!=-1) val=val.substring(32);
@@ -1107,19 +1111,19 @@ designer.prototype.getStopScript = function (){
 
 // FileScript
 
-designer.prototype.getFileScriptData = function (path){
+dsutl.script.getFileScriptData = function (path){
 if (path)
 var doc = libutil.dom.readDoc(path,true);
 return doc ? doc : null;    
 }
 
-designer.prototype.getFileScript = function (file){
+dsutl.script.getFileScript = function (file){
     var prjpath=window.$$global ?  window.$$global().projectPath : null;
     if (prjpath && file){
         var path = prjpath.toString() + file;
-        var data = this.getFileScriptData(path);
+        var data = dsutl.script.getFileScriptData(path);
         if (data || data==''){
-            var retval = dsutl.toolwin.scriptdialog('script :'+ file, data);
+            var retval = dsutl.script.scriptdialog('script :'+ file, data);
             if (retval && (retval.value || retval.value=='') && (retval.value!=data)) { 
                 $$writefile(path,retval.value)
                 return true;
@@ -1130,6 +1134,10 @@ designer.prototype.getFileScript = function (file){
     return false;
 }
 
+
+dsutl.script.scriptdialog = function(name, value){
+    return libutil.window.create_modal('../util/html/javascriptdialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
+}  
 
 
 // контекстное меню
@@ -1239,14 +1247,14 @@ designer.prototype.getMainMenue = function(){
                       'active' : function(){return !document.red.selectionCount() ? '' : 'disable'},
                       'func' : function(){
                                  document.red.hideMainMenue();
-                                 document.red.getStartScript();
+                                 dsutl.script.getStartScript();
                                  event.stopPropagation();}},
                      {'name' : 'StopScript',
                       'id' : 'stopscript',
                       'active' : function(){return !document.red.selectionCount() ? '' : 'disable'},
                       'func' : function(){
                                  document.red.hideMainMenue();
-                                 document.red.getStopScript();
+                                 dsutl.script.getStopScript();
                                  event.stopPropagation();}}];        
 
         this.___maimenue = new dsutl.menue(items);}
@@ -2422,8 +2430,8 @@ dsutl.menue.prototype.setstyle = function(){
                 
 dsutl.toolwin.getMainWindow = function (){
     libutil.www.create_tbwindow('maintool', 'Редактор' ,'100' , '100', '600','64','yes','yes',null,null,
-        ['save','objinsp', 'forminsp','libinsp', 'exit'],
-        ['Сохранить','Редактор свойств', 'Редактор форм','Панель компонентов', 'Выход'],
+        ['save','objinsp', 'forminsp','libinsp', 'scriptinsp' ,'exit'],
+        ['Сохранить','Редактор свойств', 'Редактор форм','Панель компонентов', 'Скрипт' ,'Выход'],
         [function() {
             dsutl.toolwin.SaveAll();
         },
@@ -2435,6 +2443,9 @@ dsutl.toolwin.getMainWindow = function (){
         },
         function() {
             dsutl.toolwin.resetLibInspector();
+        }, 
+        function() {
+            dsutl.toolwin.resetScriptInspector();
         },           
         function() {
             dsutl.toolwin.destroyMainWindow();
@@ -2823,15 +2834,23 @@ dsutl.toolwin.getScriptInspector = function (force){
     if (!tmp.scripttool && !force) return null;
     if (tmp && !tmp.scripttool){
 
-        libutil.www.create_tbwindow('scripttool', 'Окна' ,'600','100', '600','200','yes','yes',null,null,
-            ['add', 'new'],
-            ['Добавить из файла','Новый скрипт'],
+        libutil.www.create_tbwindow('scripttool', 'Скрипты' ,'600','100', '600','200','yes','yes',null,null,
+            ['startcsript', 'stopscript', 'add', 'new'],
+            ['Стартовый скрипт', 'Стоповый скрипт', 'Добавить из файла','Новый скрипт'],
             [
             function() {
-                dsutl.toolwin.addwindowfromfile();             
+                dsutl.script.getStartScript();
             },
             function() {
-                dsutl.toolwin.addnewwindow();
+                dsutl.script.getStopScript();
+            },                
+            function() {
+                dsutl.toolwin.addscriptfromfile();
+                dsutl.toolwin.fillScriptInspector();
+            },
+            function() {
+                dsutl.toolwin.addnewscript();
+                dsutl.toolwin.fillScriptInspector();
             }]);
     
         var objdoc =tmp.scripttool.document;
@@ -2843,7 +2862,7 @@ dsutl.toolwin.getScriptInspector = function (force){
 
         var body=objdoc.getElementsByTagName('body')[0];
         var head=objdoc.getElementsByTagName('head')[0];
-        libutil.html.create_link(head, "../util/css/forminspector.css");
+        libutil.html.create_link(head, "../util/css/scriptinspector.css");
         var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{'name' : 'class' , 'value' : 'scrollWrapper'}]);
         var table = libutil.html.create_element('table' ,div,[{'name' : 'class' , 'value' : 'scrollable'}]);
         var tbody = libutil.html.create_element('tbody', table);
@@ -2865,7 +2884,7 @@ dsutl.toolwin.resetScriptInspector = function(){
         dsutl.toolwin.getScriptInspector(true);
     var tmp=$$global();
     tmp.scripttool.focus();
-    //dsutl.toolwin.setMainWindowToolStatus(3);
+
         
 } 
 
@@ -2878,91 +2897,34 @@ dsutl.toolwin.fillScriptInspector = function (){
     var tr = libutil.html.create_element('tr' ,tbody);
     
     libutil.html.create_tabel_header(tr,null,null,
-        ['Файл','id','caption','x','y','width','height','visible','alltop','resize','decorate','modal','0/X','-']);
+        ['Файл','Редактировать','-']);
    
-    var fl= libutil.global.getFormList();
+    var sl= libutil.global.getScriptList();
  
                             
-    for (var i=0; i<fl.length; ++i ){
-        var formname=fl[i]['name'];
-        formname=formname.toString();
+    for (var i=0; i<sl.length; ++i ){
+        var scriptname=sl[i]['file'].toString();
+
         var tr= libutil.html.create_element('tr' ,tbody);
        
-        var td1= libutil.html.create_element('td', tr);
-        td1.innerHTML=fl[i]['file'] ? fl[i]['file'] : "";
+        var td= libutil.html.create_element('td', tr);
+        td.innerHTML=scriptname;       
+        td.className='static';
         
-        td1.className='static';
-   
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'name');
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'caption');
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'left', '50px');       
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'top', '50px');
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'width', '50px');       
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'height', '50px'); 
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'visible', '50px');
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'allwaystop', '50px');       
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'resizable', '50px');
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'decorated', '50px');
-        dsutl.toolwin.fiCreateRow(tr,fl[i],'modal', '50px');        
         
         var td11= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
         var btno = libutil.html.create_button( td11,'height: 15px;',null,'');
-        btno.setAttribute('onclick','dsutl.toolwin.resetwindow("'+formname+ '");');
+        btno.setAttribute('onclick','dsutl.script.getFileScript("'+scriptname+ '");');
  
         
         var td13= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
         var btnd = libutil.html.create_button( td13,'height: 15px;',null,'');
-        btnd.setAttribute('onclick','dsutl.toolwin.removeFormFromProject("'+formname+ '");');
+        btnd.setAttribute('onclick','dsutl.toolwin.removescript("'+scriptname+ '");dsutl.toolwin.fillScriptInspector()');
     
     }
 }
 
-dsutl.toolwin.siCreateRow = function(tr, tblrow, name, width, lst){
-    var td= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0;' + width ? 'width: ' + width + ';' : ''}]);
-    var tmp= tblrow[name] ? tblrow[name] : '';
-    if (lst)
-        td.lst=lst; 
-    td.innerHTML= tmp;
-    td.elem=tblrow;
-    td.value=tmp;
-    td.propname=name;
-    td.onclick=function(ev) {
-        dsutl.toolwin.fiPropertyRowFocus(ev);    
-    }
-}
 
-
-
-dsutl.toolwin.siPropertyRowFocus = function(ev){
-    try{
-        var td = ev.target;
-        libutil.dom.clearChildNode(td);
-        if (td.lst)
-            var edit=libutil.html.create_select(ev.target, 'text', td.value, td.lst);
-        else
-            var edit=libutil.html.create_input(ev.target, 'text', td.value);
-       
-    
-        edit.focus();
-        edit.oldval=td.value;  
- 
-        edit.onblur= function(ev) {
-            dsutl.toolwin.fiPropertyLeaveFocus(ev);
-        }
-
-        edit.addEventListener( 'keyup' ,function (ev) {       
-            if ((ev.keyIdentifier=="Enter"))
-                dsutl.toolwin.fiPropertyLeaveFocus(ev);
-            else 
-                ev.stopPropagation();
-        });  
-        ev.preventDefault();
-        ev.stopPropagation();
-    }
-    catch(error){
-        alert(error);
-    }
-}
 
 
 dsutl.toolwin.destroyScriptInspector = function(){
@@ -2971,7 +2933,7 @@ dsutl.toolwin.destroyScriptInspector = function(){
         tmp.scripttool=undefined;
     if (tmp && tmp.scripttooltbody)
         tmp.scripttooltbody=undefined; 
-    dsutl.toolwin.setMainWindowToolStatus(3);  
+    //dsutl.toolwin.setMainWindowToolStatus(3);  
 }
 
 
@@ -3265,7 +3227,7 @@ dsutl.toolwin.addwindowfromfile = function (){
 dsutl.toolwin.addnewwindow = function (){
     var openfile= prompt('Введите имя файла','');
     if (!openfile || openfile=='') return;          
-    if (!libutil.regex.check(openfile,'[A-Za-z][A-Za-z0-9]*\\.(xml|html|htm)')){
+    if (!libutil.regex.check(openfile,/[A-Za-z][A-Za-z0-9]*\.(xml|html|htm)/)){
         alert('Имя формы '+openfile+' некорректно!');
         return;
     }
@@ -3362,14 +3324,7 @@ dsutl.toolwin.removeFormFromProject =function(name){
     }
 }
 
-dsutl.toolwin.propertydialog = function(name, value){
-    return libutil.window.create_modal('../util/html/propertydialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
-}
-
-
-dsutl.toolwin.scriptdialog = function(name, value){
-    return libutil.window.create_modal('../util/html/javascriptdialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
-}   
+ 
                 
                 
                 
@@ -3393,16 +3348,52 @@ dsutl.toolwin.newscript = function(file, exists){
 }
 
 dsutl.toolwin.removescript = function(file){
-    //var prjpath=window.$$global ?  window.$$global().projectPath : null;
+    if (confirm('Удалить скрипт "'+file+'" из проекта?')){
     if (file.length>4){
         var fileext=file.substring(file.length-3);
         if (fileext=='.js'){
             if (libutil.project.removeXSLTScriptList(file)){
                return true;}
         }
-    }
-    console.error('Script did not create');
+    }}
+    console.error('Script did not delete');
     return false;
+}
+
+
+dsutl.toolwin.addscriptfromfile = function (){
+    var openfile= prompt('Введите имя файла','');
+    if (!openfile || openfile=='') return; 
+    var openddoc = libutil.dom.readDoc(openfile, true);
+    if (!openddoc){
+        alert('Документ '+openfile+' не был открыт!');
+        return;
+    }   
+    dsutl.toolwin.newscript(openfile, true);
+}
+               
+dsutl.toolwin.addnewscript = function (){
+    var openfile= prompt('Введите имя файла','');
+    if (!openfile || openfile=='') return;          
+    if (!libutil.regex.check(openfile,/[A-Za-z][A-Za-z0-9]*\.js/)){
+        alert('Имя файла '+openfile+' некорректно!');
+        return;
+    }             
+    var openddoc = libutil.dom.readDoc(openfile, true);
+    if (openddoc){
+        alert('Документ '+openfile+' уже существует!!');
+        return;
+    }
+    dsutl.toolwin.newscript(openfile);
+          
+}
+
+
+//
+
+
+dsutl.toolwin.propertydialog = function(name, value){
+    return libutil.window.create_modal('../util/html/propertydialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
 }
 
 

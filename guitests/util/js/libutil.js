@@ -162,9 +162,6 @@ function exit(){
 }
 
 
-function exitmain(win){
-    
-}
 
 
 function init_project_controller(){
@@ -238,12 +235,14 @@ libutil.global.setGlobalPropertyEditor = function (val){
 //
 
 libutil.startup.init = function(){
-
+    var tmp  = window.$$global ? window.$$global() : null;
     if ((window.$$editable) && ($$editable())){
         document.red = new designer(document);
         libutil.project.add_design_style(document);
         libutil.startup.initdesigner(window.name, document.red);
         set_win_designer(window, document.red);
+        if (tmp)
+           tmp.currentred=document.red;
     }
     window.onunload=formclose_win;
 
