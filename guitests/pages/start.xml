@@ -18,7 +18,7 @@ if ((window.$$editable)&&(!window.$$editable())){
 //alert('startscript: ' + window.document.URL);
 simproccessor  = [];
 
-SIMULATIONTICK = 1000;
+SIMULATIONTICK = 100;
 
 function add_simulation(sim){ 
        simproccessor.push(sim);
@@ -48,7 +48,8 @@ window.simTick = setInterval(simulation_execute, SIMULATIONTICK );
 
 
 add_simulation ( new simulator.initializer('m1::c1' , 1 , 0));
-
+add_simulation ( new simulator.valueobserver('m1::h2' , null , 'm1::h1' ,null));
+add_simulation ( new simulator.valueobserver('m1::h3' , null , 'm1::h2' ,null));
 
 
   

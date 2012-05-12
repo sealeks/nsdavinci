@@ -22,13 +22,13 @@ simulator.initializer = function(tag ,start , stop){
 
 simulator.initializer.prototype.atach = function(){
     
-    window.$$((this.tag + ' @= ' + this.start).toString())
+    window.$$((this.tag + ' @ ' + this.start).toString())
 }
 
 
 simulator.initializer.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0)){
-       window.$$((this.tag + ' @= ' + this.stop).toString());}
+       window.$$((this.tag + ' @ ' + this.stop).toString());}
 }
 
 simulator.initializer.prototype.execute = function(){
@@ -38,15 +38,15 @@ simulator.initializer.prototype.execute = function(){
 
 // casevalue
 
-/*simulator.valueobserver = function(tag ,start , source ,stop){
+simulator.valueobserver = function(tag ,start , source ,stop){
   this.tag = tag;
   if (source){
       this.valid = true;
       this.source = source;
   }
-  if (start)
+  if (start || start==0)
         this.start = start;
-  if (stop)
+  if (stop || start==0)
         this.stop = stop;    
   if (this.valid){
       this.atach();
@@ -54,16 +54,16 @@ simulator.initializer.prototype.execute = function(){
 }
 
 simulator.valueobserver.prototype.atach = function(){
-    if (this.valid && this.stop)
-       $$(this.tag + ' @= ' + this.start);
+    if (this.valid && (this.start || this.start==0))
+       $$(this.tag + ' @ ' + this.start);
 }
 
 
 simulator.valueobserver.prototype.detach = function(){
-    if (this.valid && this.stop)
-       $$(this.tag + ' @= ' + this.stop)
+    if (this.valid && (this.start || this.start==0))
+       $$(this.tag + ' @ ' + this.stop)
 }
 
 simulator.valueobserver.prototype.execute = function(){
-    $$(this.tag + ' @= ' + this.source);
-}*/
+    $$(' (' + this.tag + ' != (' + this.source + ')) ? (' + this.tag + ' @ (' + this.source + ')) : 0');
+}
