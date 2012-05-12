@@ -207,6 +207,9 @@ mainlib.armatura_popup = function(el, rauto){
 
 mainlib.valueset_click =  function (el, nm, width){
     if (el.popup){
+        var text = document.getElementById(el.getAttribute('id') + '_popup_sensorcalc_sensor_text');       
+        if (text)
+            text.textContent='';
         el.popup.setAttribute('style', '');
         return;
     }
