@@ -1,15 +1,52 @@
+<?xml-stylesheet href="../util/libscript.xsl" type="text/xsl"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 576 324" enable-background="new 0 0 576 324" xml:space="preserve" xmlns:xml="http://www.w3.org/XML/1998/namespace" onload="init_project_controller()">
-    <script type="text/javascript" xlink:href="../util/js/libutil.js"/><script type="text/javascript" xlink:href="../util/js/designer.js"/><script type="text/javascript" xlink:href="script1.js"/>
+    <script type="text/javascript" xlink:href="../util/js/libutil.js"/>
+    <script type="text/javascript" xlink:href="../util/js/designer.js"/>
+    <script type="text/javascript" xlink:href="script1.js"/>
 
 <script type="text/javascript" xlink:href="../util/js/designer.js"/> 
 <script type="text/javascript" xlink:href="../util/js/libutil.js"/> 
 <script type="text/javascript" id="stopscript"><![CDATA[
 function ___global___unload(){
+if (window.simTick) clearInterval(window.simTick);
+if (window.simulation_detach) simulation_detach();
+   
 
 };
 ]]></script>
 <script type="text/javascript" id="startscript"><![CDATA[
 if ((window.$$editable)&&(!window.$$editable())){
+//alert('startscript: ' + window.document.URL);
+simproccessor  = [];
+
+SIMULATIONTICK = 1000;
+
+function add_simulation(sim){ 
+       simproccessor.push(sim);
+       
+}
+
+function  simulation_execute(){
+  for (var i=0; i < simproccessor.length; ++i){
+      simproccessor[i].execute();
+  }
+}
+
+function simulation_detach(){
+  for (var i=0; i < simproccessor.length; ++i){
+      simproccessor[i].detach();
+  }
+}
+
+
+
+window.simTick = setInterval(simulation_execute, SIMULATIONTICK );
+
+add_simulation ( new simulator.initializer('m1::c1' , 1 , 0));
+
+
+
+  
 
 };
 ]]></script>
