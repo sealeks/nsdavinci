@@ -2480,7 +2480,7 @@ dsutl.io.saveall = function(){
     var fdoc = libutil.global.getStartupDoc();
     if (fdoc && fdoc.needsave) {
         libutil.dom.writeDoc(fdoc);
-        fdoc = libutil.global.getStartupDoc();
+        fdoc = libutil.global.getStartupDoc(fdoc);
         fdoc.needsave=undefined;
     }    
     dsutl.toolwin.setMainWindowToolStatus();
