@@ -218,8 +218,8 @@ libutil.global.getScriptList = function (){
 }
 
 libutil.global.getStartupDoc = function (doc){
-    if (window.$$global && !window.$$global().startupdocument && doc)
-        window.$$global().startupdocument=doc;
+    if (window.$$global && doc)
+        window.$$global().startupdocument=libutil.dom.readDoc(doc.URL);
     return window.$$global ? window.$$global().startupdocument : null;
 }
 
