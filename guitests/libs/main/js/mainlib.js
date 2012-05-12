@@ -7,42 +7,6 @@ mainlib.NAMESPACE_URL = 'http://dvnci/mlib';
 mainlib.element = {};
 
 
-mainlib.element.create = function (name, parent){
-    if (!parent) return;
-    var newel = parent.ownerDocument.createElementNS(mainlib.NAMESPACE_URL, name);
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
-
-
-mainlib.element.create_button = function (parent, id, caption, x , y, width, height){
-    if (!parent) return;
-    var newel = mainlib.element.create('button', parent);
-    if (!newel) return;
-    if (id) newel.setAttribute('id', id);
-    if (caption) newel.setAttribute('caption', caption);
-    if (x) newel.setAttribute('x', x);
-    if (y) newel.setAttribute('y', y);
-    if (width) newel.setAttribute('width', width);
-    if (height) newel.setAttribute('height', height);
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
-
-mainlib.element.create_rect = function (parent, id, x , y, width, height){
-    if (!parent) return;
-    var newel = mainlib.element.create('rect', parent);
-    if (!newel) return;
-    if (id) newel.setAttribute('id', id);
-    if (x) newel.setAttribute('x', x);
-    if (y) newel.setAttribute('y', y);
-    if (width) newel.setAttribute('width', width);
-    if (height) newel.setAttribute('height', height);
-    if (parent) parent.appendChild(newel);
-    return newel;
-}
-
-
 mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag, live, wait){
     
     var parent=el.parentNode;
@@ -231,31 +195,12 @@ mainlib.armatura_popup = function(el, rauto){
         var use = libutil.svg.create_element('use', body);
         body.useelement=use;
         use.setAttributeNS(libutil.XLINK_NAMESPACE_URL,'href','#'+el.getAttribute('id') + '_popup');
-        
-    /*var litedoc = libutil.xslttransform.literootDocument();
-    
-        var litedocElement = litedoc.documentElement;
-    
-        var root =libutil.svg.create_element('svg', litedocElement , [{'name' : 'x', 'value': 0},
-                                                                     {'name' : 'y', 'value': 0},
-                                                                     {'name' : 'width', 'value': 200},
-                                                                     {'name' : 'height', 'value': 200}]); 
-        root.setAttribute('id', popup_id);
 
-        mainlib.armatura_popup_content(popup_id, root ,  type,  ron, roff);
- 
-        var generated = libutil.xslttransform.tranform_and_getById(litedoc,popup_id);
-          
-        mainlib.armatura_popup_header(body,header);
-    
-        body.appendChild(generated);*/
-    
- 
     }
     catch(error){
         throw console.error('mainlib.armatura_popup error: ' + error);
     }  
-    //console.profileEnd('mainlib.armatura_popup');
+
 
 }
 

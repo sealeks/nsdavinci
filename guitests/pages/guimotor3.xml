@@ -9,7 +9,6 @@
 <script type="text/javascript" id="rootscript"><![CDATA[
 if ((window.$$editable)&&(!window.$$editable())){
 console.log('Come in page script');
-
 function registrateTest(){
   if (!window.testTick){
     window.testTick = setInterval(function(){

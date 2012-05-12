@@ -1191,7 +1191,7 @@ dsutl.script.add = function (exists){
 
 
 dsutl.script.scriptdialog = function(name, value){
-    return libutil.window.create_modal('../util/html/javascriptdialog.html',name , value, '20%', '20%', '60%', '60%', '1', 'yes');       
+    return libutil.window.create_modal('../util/html/javascriptdialog.html',name , value, '0%', '0%', '100%', '100%', '0', '0');       
 }  
 
 
