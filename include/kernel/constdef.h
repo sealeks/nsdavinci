@@ -1021,10 +1021,13 @@ namespace dvnci {
     
     const std::string WSP_STRING_WO_SP                     = "\x9\xD\xA";
     const std::string WSP_STRING                           = "\x20\x9\xD\xA";
+
     
     const std::wstring WWSP_STRING_WO_SP                     = L"\x9\xD\xA";
-    const std::wstring WWSP_STRING                           = L"\x20\x9\xD\xA";    
+    const std::wstring WWSP_STRING                           = L"\x20\x9\xD\xA";
 
+    
+    const std::string STRING_NOASCII                       = "[^\\x0-\\x7F]{1,}";
     const std::string CORRECT_ENTETYNAME_REGEXTAMPL        = "[A-Za-z_\\$][A-Za-z_\\$0-9]*+";
     const std::string CORRECT_ENTETYFULLNAME_REGEXTAMPL    = CORRECT_ENTETYNAME_REGEXTAMPL + "::" + CORRECT_ENTETYNAME_REGEXTAMPL;
     const std::string EXCL_CORRECT_ENTETYNAME_REGEXTAMPL   = "^num$|^abs$|^real$|^bool$|^min$|^max$|^sin$|^cos$|^tan$|^sinh$|^cosh$|^tanh$|^pow$|^sqrt$|^sqr$|^nan$|^round$|^seil$|^format$"
@@ -1063,7 +1066,8 @@ namespace dvnci {
                                                                   CORRECT_ENTETYFULLNAME_REGEXTAMPL + "|" +
                                                                   CORRECT_ENTETYNAME_REGEXTAMPL + "|" +
                                                                   OPERATORS_REGEXTAMPL  + "|" +
-                                                                  NUMBER_REGEXTAMPL_EXT + ")";
+                                                                  NUMBER_REGEXTAMPL_EXT  + "|" +   
+                                                                  STRING_NOASCII + ")";
 
     const boost::regex FULLEXPR_REGEX                     = boost::regex(FULLEXPR_REGEXTAMPL);
 
