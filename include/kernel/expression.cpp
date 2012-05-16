@@ -179,7 +179,7 @@ namespace dvnci {
             operator_name_map::const_iterator it = OPERATOR_NAME_MAP.find(val);
             return (it != OPERATOR_NAME_MAP.end()) ? it->second : "nodef";}
 
-        const_type parseconstype(std::string& val, bool& flt) {
+        const_type parseconstype(std::string& val, bool& flt, bool isint) {
             flt = false;
             std::string::size_type posFloat = val.find_last_of("f");
             if (val.find_first_of(".") != std::string::npos) {
@@ -201,13 +201,13 @@ namespace dvnci {
                 val = val.substr(1);
                 return oct_const;}
             if (flt) return real_const;
-            return dec_const;}
+			return isint ? dec_const : real_const;}
 
         calc_token test_const_token(std::string val) {
             boost::regex ex(NUMBER_REGEXTAMPL_EXT);
             boost::smatch xResults;
             if (boost::regex_match(val, xResults, ex)) {
-                //DEBUG_STR_VAL_DVNCI(ISNUMERIC_CONST, val)
+                DEBUG_STR_VAL_DVNCI(ISNUMERIC_CONST, val)
                 std::string::size_type posLong = val.find_last_of("l");
                 std::string::size_type posUnsign = val.find_last_of("u");
                 std::string::size_type posLongUnsign = val.find_first_of("lu");
@@ -227,7 +227,7 @@ namespace dvnci {
                 //DEBUG_VAL_DVNCI(isLong)
                 //DEBUG_VAL_DVNCI(isUnsign)
                 //DEBUG_VAL_DVNCI(val)
-                switch (parseconstype(val, isFloat)) {
+                switch (parseconstype(val, isFloat, isLong || isUnsign)) {
                     case real_const:{
                         if (isFloat) {
                             float tmpfl = 0;
