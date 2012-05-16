@@ -25,17 +25,39 @@ namespace dvnci {
 
     typedef boost::shared_ptr<expression_listener> expression_listener_ptr;
 
+    
+    class alarms_table{
+    public:
+        alarms_table(const vect_alarms_row& val_): val(val_){};
+        const vect_alarms_row& val;
+    };
+    
+    
     class alarms_listener {
     public:
         virtual void event(const vect_alarms_row& val) = 0;};
 
     typedef boost::shared_ptr<alarms_listener> alarms_listener_ptr;
+    
+    
+    class trends_table{
+    public:
+        trends_table(const short_values_table& val_): val(val_){};
+        const short_values_table& val;
+    };    
 
     class trend_listener {
     public:
-        virtual bool event(const std::vector<short_value>& val) = 0;};
+        virtual bool event(const short_values_table& val) = 0;};
 
     typedef boost::shared_ptr<trend_listener> trend_listener_ptr;
+    
+    
+    class journal_table{
+    public:
+        journal_table(const vect_journal_row& val_): val(val_){};
+        const vect_journal_row& val;
+    };
 
 
 
@@ -178,9 +200,9 @@ namespace dvnci {
                     return true;}
                 return false;}
 
-            bool regist_trend_listener(const std::string& expr, trendlistener_type_ptr listener) {
+            bool regist_trend_listener(const str_vect& exprs, trendlistener_type_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                if (!intf->exists(expr)) return false;
+                //if (!intf->exists(expr)) return false;
                 expression_pair extmp(expression_type_ptr(new expression_type(expr, intf)), short_value());
                 trendexpression_iterator itb = trends_map.left.lower_bound(extmp);
                 trendexpression_iterator ite = trends_map.left.upper_bound(extmp);
@@ -299,7 +321,8 @@ namespace dvnci {
                         std::string expr = itf->second.first->expressionstr();
                         std::vector<short_value> tmpvct;
                         intf->select_trendbuff(expr, tmpvct);
-                        (*it)->event(tmpvct);}}
+                       // (*it)->event(tmpvct);
+					}}
                 newtrendset.clear();
                 return true;}
 
@@ -313,8 +336,9 @@ namespace dvnci {
                         rslt = true;
                         std::vector<short_value> tmpvct;
                         vl.time(now());
-                        tmpvct.push_back(vl);
-                        it->second->event(tmpvct);}}
+                        //tmpvct.push_back(vl);
+                        //it->second->event(tmpvct);
+					}}
                 return rslt;}
 
             virtual bool initialize() {
