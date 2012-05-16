@@ -233,9 +233,9 @@ namespace dvnci {
                     return true;}
                 return false;}
 
-            short_value execute(const std::string& expr) {
+            short_value execute(const std::string& expr, bool testmode = false) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                expression_type_ptr cmd = expression_type_ptr(new expression_type(expr, intf));
+                expression_type_ptr cmd = expression_type_ptr(new expression_type(expr, intf, testmode));
                 if (cmd) {
                     cmd->active(true);
                     return cmd->value();}
@@ -246,14 +246,22 @@ namespace dvnci {
                     for (updatedlistener_set_iterator it = updatedset.begin(); it != updatedset.end(); ++it) {
                         listeners_iterator itf = expressions_map.right.find(*it);
                         if (itf != expressions_map.right.end()) {
-                            (*it)->event(itf->second.second);}
-}
+                            (*it)->event(itf->second.second);}}
                     updatedset.clear();}
 
                 internal_alarm_exec();
                 internal_trend_exec();
 
                 return true;}
+
+            void detachall(){
+		THD_EXCLUSIVE_LOCK(mtx);
+                expressions_map.clear();
+                trends_map.clear();
+                alarms_listeners.clear();
+                alarms.clear();
+                updatedset.clear();
+                newtrendset.clear();}
 
 
         protected:
@@ -314,6 +322,8 @@ namespace dvnci {
 
             virtual bool uninitialize() {
                 return true;}
+            
+
 
             interface_type_ptr intf;
             guidtype alarm_version;
