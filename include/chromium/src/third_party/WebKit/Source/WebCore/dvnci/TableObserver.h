@@ -5,8 +5,8 @@
  * Created on 24 Декабрь 2011 г., 18:49
  */
 
-#ifndef DVNCIALARMOBSERVER_H
-#define	DVNCIALARMOBSERVER_H
+#ifndef DVNCITABLEOBSERVER_H
+#define	DVNCITABLEOBSERVER_H
 
 
 #include "QualifiedName.h"
@@ -49,9 +49,6 @@ namespace WebCore {
 
         DVNAlarmEvent(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) ;
 
-        String group;
-        String agroup;
-
     } ;
 
 
@@ -80,10 +77,7 @@ namespace WebCore {
 
     protected:
 
-        DVNAlarmEvent(const AtomicString& eventType, const dvnci::journal_table& value, PassRefPtr<EventTarget> target) ;
-
-        String group;
-        String agroup;
+        DVNJournalEvent(const AtomicString& eventType, const dvnci::journal_table& value, PassRefPtr<EventTarget> target) ;
 
 
     } ;
@@ -114,10 +108,7 @@ namespace WebCore {
 
     protected:
 
-        DVNAlarmEvent(const AtomicString& eventType, const dvnci::debug_table& value, PassRefPtr<EventTarget> target) ;
-
-        String group;
-        String agroup;
+        DVNDebugEvent(const AtomicString& eventType, const dvnci::debug_table& value, PassRefPtr<EventTarget> target) ;
 
 
     } ;

@@ -5,8 +5,8 @@
  * Created on 24 Декабрь 2011 г., 18:49
  */
 
-#ifndef DVNCITRENDOBSERVER_H
-#define	DVNCITRENDOBSERVER_H
+#ifndef DVNCIVALUEOBSERVER_H
+#define	DVNCIVALUEOBSERVER_H
 
 
 #include "QualifiedName.h"

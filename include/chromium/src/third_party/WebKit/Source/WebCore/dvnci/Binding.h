@@ -14,8 +14,8 @@
 #include <v8.h>
 
 #include "Observer.h"
-#include "AlarmObserver.h"
-#include "TrendObserver.h"
+#include "TableObserver.h"
+#include "ValueObserver.h"
 
 
 
