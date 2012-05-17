@@ -22,16 +22,18 @@ namespace dvnci {
 }
 
 namespace WebCore {
+    
+    
 
-    class DVNTrendEvent : public Event {
+    class DVNTrendsEvent : public Event {
     public:
 
-        static PassRefPtr<DVNTrendEvent> create(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target);
+        static PassRefPtr<DVNTrendsEvent> create(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target);
 
-        virtual ~DVNTrendEvent() {
+        virtual ~DVNTrendsEvent() {
         }
 
-        virtual bool isDVNTrendEvent() const {
+        virtual bool isDVNTrendsEvent() const {
             return true;
         }
 
@@ -39,11 +41,11 @@ namespace WebCore {
 
     protected:
 
-        DVNTrendEvent(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target) ;
+        DVNTrendsEvent(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target) ;
     } ;
 
 
-    v8::Handle<v8::Value> toV8(DVNTrendEvent* impl);
+    v8::Handle<v8::Value> toV8(DVNTrendsEvent* impl);
 
 
 

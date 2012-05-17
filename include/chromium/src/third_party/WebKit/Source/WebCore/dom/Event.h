@@ -150,9 +150,9 @@ namespace WebCore {
 #if ENABLE(MEDIA_STREAM)
         virtual bool isStreamEvent() const;
 #endif
-        virtual bool isDVNAlarmEvent() const;
+        virtual bool isDVNAlarmsEvent() const;
         virtual bool isDVNAlarmStateEvent() const;        
-        virtual bool isDVNTrendEvent() const;
+        virtual bool isDVNTrendsEvent() const;
         virtual bool isDVNExpressionEvent() const;
         virtual bool isDVNJournalEvent() const;
         virtual bool isDVNCommandsEvent() const;

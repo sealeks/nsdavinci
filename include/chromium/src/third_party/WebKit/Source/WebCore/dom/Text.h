@@ -64,7 +64,7 @@ private:
 
     virtual PassRefPtr<Text> virtualCreate(const String&);
 
-	WebCore::DVNCI::Observer setter;
+    WebCore::DVNCI::Observer setter;
 
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;

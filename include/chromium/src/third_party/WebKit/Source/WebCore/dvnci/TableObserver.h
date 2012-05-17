@@ -31,15 +31,15 @@ namespace WebCore {
     ///////////////////////////////////////////    
     
 
-    class DVNAlarmEvent : public Event {
+    class DVNAlarmsEvent : public Event {
     public:
 
-        static PassRefPtr<DVNAlarmEvent> create(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target);
+        static PassRefPtr<DVNAlarmsEvent> create(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target);
 
-        virtual ~DVNAlarmEvent() {
+        virtual ~DVNAlarmsEvent() {
         }
 
-        virtual bool isDVNAlarmEvent() const {
+        virtual bool isDVNAlarmsEvent() const {
             return true;
         }
 
@@ -47,12 +47,12 @@ namespace WebCore {
 
     protected:
 
-        DVNAlarmEvent(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) ;
+        DVNAlarmsEvent(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) ;
 
     } ;
 
 
-    v8::Handle<v8::Value> toV8(DVNAlarmEvent* impl);
+    v8::Handle<v8::Value> toV8(DVNAlarmsEvent* impl);
     
     
     

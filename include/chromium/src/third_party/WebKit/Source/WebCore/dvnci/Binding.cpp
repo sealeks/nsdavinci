@@ -41,6 +41,9 @@ bool BrowserDVNCI_isEditable();
 
 const int TICK_DVNCI_DURATION = 500;
 
+
+
+
 struct guichrome_terminated_thread {
 
     guichrome_terminated_thread(dvnci::chrome_executor_ptr inf_) : inf(inf_), th(inf_) {
@@ -59,6 +62,10 @@ private:
     boost::thread th;
 } ;
 
+
+
+
+
 dvnci::chrome_executor_ptr getexecutordvnci() {
     static dvnci::fspath basepath = dvnci::getlocalbasepath();
     static dvnci::tagsbase_ptr kintf = dvnci::krnl::factory::build(basepath, 0);
@@ -66,6 +73,9 @@ dvnci::chrome_executor_ptr getexecutordvnci() {
     static guichrome_terminated_thread dvnth(DVNCI_INTERFACE);
     return /*BrowserDVNCI_isEditable() ? dvnci::chrome_executor_ptr() :*/ DVNCI_INTERFACE;
 }
+
+
+
 
 void shutdown_dvnci_interface() {
     dvnci::chrome_executor_ptr intf = getexecutordvnci();
@@ -76,6 +86,11 @@ void shutdown_dvnci_interface() {
         }
     }
 }
+
+
+
+
+
 
 void dvnciMain(void* cntxt) {
     typedef boost::shared_ptr<dvnci::datetime> time_ptr;
@@ -114,33 +129,9 @@ namespace WebCore {
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////////// 
+        
 
-        AttributeObserver::AttributeObserver
-        (Attribute * const attr, const AtomicString& val) :
-        AbstractObserver(attr, val), attribute(attr), elem(attr ? attr->element_ext() : 0), value(val) {
-        }
-
-        void AttributeObserver::setvalue(const String& val) {
-        }
-
-        AttributeObserver::~AttributeObserver() {
-        }
-
-
-
-        // 
-
-        TextNodeObserver::TextNodeObserver
-        (Text * const txt, const String& val) : AbstractObserver(txt, val), text(txt), value() {
-        }
-
-        void TextNodeObserver::setvalue(const String& val) {
-        }
-
-        TextNodeObserver::~TextNodeObserver() {
-        }
-
-        class AttributeObserverImpl : public AttributeObserver {
+        class AttributeObserverImpl : public DVNDOMValueObserver {
 
             class attribute_expression_listener : public dvnci::expression_listener {
             public:
@@ -172,7 +163,8 @@ namespace WebCore {
 
         public:
 
-            AttributeObserverImpl(Attribute * const attr, const AtomicString& val, const std::wstring& deflt = L"") : AttributeObserver(attr, val), defaultvalue("") {
+            AttributeObserverImpl(Attribute * const attr, const AtomicString& val, const std::wstring& deflt = L"") : 
+                 attribute(attr), elem(attr ? attr->element_ext() : 0), value(val), defaultvalue("") {
                 registrate(elem, val);
             }
 
@@ -230,11 +222,20 @@ namespace WebCore {
                 }
             }
 
+            Attribute * const              attribute;
+            Element * const                elem;
+            String                         value;
             dvnci::expression_listener_ptr exrptr;
-            dvnci::chrome_executor_ptr intf;
-            std::string exprstr;
-            AtomicString defaultvalue;
+            dvnci::chrome_executor_ptr     intf;
+            std::string                    exprstr;
+            AtomicString                   defaultvalue;
+            
         } ;
+        
+        //////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////
+        
+        
 
         class TextNodeObserverImpl : public TextNodeObserver {
 
@@ -261,7 +262,7 @@ namespace WebCore {
 
         public:
 
-            TextNodeObserverImpl(Text * const txt, const String& val) : TextNodeObserver(txt, val) , defaultvalue("") {
+            TextNodeObserverImpl(Text * const txt, const String& val) : text(txt), value(val) , defaultvalue("") {
                 registrate(txt, val);
             }
 
@@ -315,19 +316,48 @@ namespace WebCore {
                     intf->unregist_expr_listener(exrptr);
                 }
             }
-
+            
+            Text * const                   text;
+            String                         value;
             dvnci::expression_listener_ptr exrptr;
-            dvnci::chrome_executor_ptr intf;
-            std::string exprstr;
-            String defaultvalue;
+            dvnci::chrome_executor_ptr     intf;
+            std::string                    exprstr;
+            String                         defaultvalue;
         } ;
-
+        
+        
+        
+        
+                
+        
+        ////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        
+        
+        
+        impl_reftype DVNDOMValueObserver::DVNDOMValueObserver(Attribute * const el, const AtomicString& val){
+            return adoptRef(new AttributeObserverImpl(attr, val));
+        }
+        
+        
+        impl_reftype DVNDOMValueObserver::DVNDOMValueObserver(Text * const txt, const String& val){
+            return adoptRef(new TextNodeObserverImpl(txt, val));
+            
+        }
+        
+        
+        
+        
+        ////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        
+        
         Observer::Observer(Attribute * const attr, const AtomicString& val) {
             if ((attr) && (val.find("#{") != WTF::notFound) && (val.find("}") != WTF::notFound)) {
                 initdvnciMain();
                 if (!valid()) {
                     impl = impl_reftype();
-                    impl = adoptRef(new AttributeObserverImpl(attr, val));
+                    impl = DVNDOMValueObserver::create(attr, val);
                 }
             }
         }
@@ -339,7 +369,7 @@ namespace WebCore {
                     if (!valid()) {
                         if (impl)
                             impl = impl_reftype();
-                        impl = adoptRef(new TextNodeObserverImpl(txt, val));
+                        impl = DVNDOMValueObserver::create(txt, val);
                     }
                 }
             }
@@ -349,11 +379,13 @@ namespace WebCore {
             return impl ? impl->valid() : false;
         }
 
-        Observer::~Observer() {
-        }
 
 
 
+        
+        
+        
+        
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////

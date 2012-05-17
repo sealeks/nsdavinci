@@ -76,7 +76,7 @@ namespace WebCore {
         return handle_scope.Close(array);
     }
 
-    v8::Handle<v8::Value> toV8(DVNTrendEvent* impl) {
+    v8::Handle<v8::Value> toV8(DVNTrendsEvent* impl) {
 
         if (!impl)
             return v8::Null();
@@ -89,14 +89,14 @@ namespace WebCore {
 
     }
 
-    class DVNTrendEventImpl : public DVNTrendEvent {
+    class DVNTrendsEventImpl : public DVNTrendsEvent {
     public:
 
-        DVNTrendEventImpl(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target) : DVNTrendEvent(eventType, value,  target), tabl(value) {
+        DVNTrendsEventImpl(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target) : DVNTrendsEvent(eventType, value,  target), tabl(value) {
 
         }
 
-        virtual ~DVNTrendEventImpl() {
+        virtual ~DVNTrendsEventImpl() {
         }
 
         virtual const dvnci::trends_table& table() {
@@ -107,11 +107,11 @@ namespace WebCore {
         dvnci::trends_table tabl;
     } ;
 
-    PassRefPtr<DVNTrendEvent> DVNTrendEvent::create(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target) {
-        return adoptRef(new DVNTrendEventImpl(eventType, value, target));
+    PassRefPtr<DVNTrendsEvent> DVNTrendsEvent::create(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target) {
+        return adoptRef(new DVNTrendsEventImpl(eventType, value, target));
     }
 
-    DVNTrendEvent::DVNTrendEvent(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target) :
+    DVNTrendsEvent::DVNTrendsEvent(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target) :
     Event(eventType, false, false) {
         setTarget(target);
     }

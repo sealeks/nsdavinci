@@ -50,7 +50,7 @@ namespace WebCore {
     
     
 
-    v8::Handle<v8::Value> toV8(DVNAlarmEvent* impl) {
+    v8::Handle<v8::Value> toV8(DVNAlarmsEvent* impl) {
         
         if (!impl)
             return v8::Null();
@@ -71,14 +71,14 @@ namespace WebCore {
     
     
 
-    class DVNAlarmEventImpl : public DVNAlarmEvent {
+    class DVNAlarmsEventImpl : public DVNAlarmsEvent {
     public:
 
-        DVNAlarmEventImpl(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) :
-        DVNAlarmEvent(eventType, value, target), tabl(value) {
+        DVNAlarmsEventImpl(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) :
+        DVNAlarmsEvent(eventType, value, target), tabl(value) {
         }
 
-        virtual ~DVNAlarmEventImpl() {
+        virtual ~DVNAlarmsEventImpl() {
         }
 
         virtual const dvnci::alarms_table& table() {
@@ -94,11 +94,11 @@ namespace WebCore {
     
     
 
-    PassRefPtr<DVNAlarmEvent> DVNAlarmEvent::create(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) {
-        return adoptRef(new DVNAlarmEventImpl(eventType, value, target));
+    PassRefPtr<DVNAlarmsEvent> DVNAlarmsEvent::create(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) {
+        return adoptRef(new DVNAlarmsEventImpl(eventType, value, target));
     }
 
-    DVNAlarmEvent::DVNAlarmEvent(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) : Event(eventType, false, false) {
+    DVNAlarmsEvent::DVNAlarmsEvent(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) : Event(eventType, false, false) {
         setTarget(target);
     }
 

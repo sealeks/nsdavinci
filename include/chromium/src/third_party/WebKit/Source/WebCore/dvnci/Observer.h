@@ -48,7 +48,7 @@ namespace WebCore {
        AtomicString expression(const AtomicString&);
        AtomicString defaultexpression(const AtomicString&);
        
-        // AbstractObserver
+        // DVNDOMValueObserver
 
    }
 
