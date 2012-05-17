@@ -24,20 +24,19 @@ namespace WebCore {
 
 
     namespace DVNCI {
-        
-    
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////         
-        
-      
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////         
+
         class DVNDOMValueObserver : public RefCounted<DVNDOMValueObserver> {
         public:
 
             static WTF::RefPtr<DVNDOMValueObserver> DVNDOMValueObserver(Attribute * const el, const AtomicString& val);
             static WTF::RefPtr<DVNDOMValueObserver> DVNDOMValueObserver(Text * const txt, const String& val);
-            
+
             virtual ~DVNDOMValueObserver() {
-            };
+            }
 
             virtual void setvalue(const String& val) {
             }
@@ -46,48 +45,41 @@ namespace WebCore {
                 return false;
             }
 
-            
+
         protected:
-            
-            DVNDOMValueObserver() {};
-            
+
+            DVNDOMValueObserver() {
+            }
+
         };
 
 
-        
-        typedef WTF::RefPtr<DVNDOMValueObserver> impl_reftype;       
+
+        typedef WTF::RefPtr<DVNDOMValueObserver> impl_reftype;
 
         // Observer        
 
         class Observer {
-
         public:
-            
+
             Observer(Attribute * const attr, const AtomicString& val);
-            
+
             Observer(Text * const txt, const String& val);
 
             Observer() : impl() {
             };
-            
+
             bool valid() const;
-            
-            virtual ~Observer(){};
-            
+
+            virtual ~Observer() {
+            };
+
         private:
-            
+
             impl_reftype impl;
-            
+
         };
-
-
     }
-
-
-
-
-
-
 
 
 }
