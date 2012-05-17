@@ -135,7 +135,6 @@
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Attribute.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Attribute.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Element.cpp</itemPath>
-                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Element.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventNames.h</itemPath>
@@ -144,15 +143,13 @@
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.h</itemPath>
                 </logicalFolder>
                 <logicalFolder name="dvnci" displayName="dvnci" projectFiles="true">
-                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/AlarmObserver.cpp</itemPath>
-                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/AlarmObserver.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.h</itemPath>
-                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Observer.cpp</itemPath>
-                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Observer.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ScriptBinding.h</itemPath>
-                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TrendObserver.cpp</itemPath>
-                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TrendObserver.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ValueObserver.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ValueObserver.h</itemPath>
                 </logicalFolder>
                 <logicalFolder name="html" displayName="html" projectFiles="true">
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/html/HTMLElement.h</itemPath>
@@ -171,7 +168,6 @@
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/Chrome.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/ChromeClient.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/DOMWindow.cpp</itemPath>
-                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/DOMWindow.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/FrameView.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/SecurityOrigin.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/page/WindowFeatures.cpp</itemPath>

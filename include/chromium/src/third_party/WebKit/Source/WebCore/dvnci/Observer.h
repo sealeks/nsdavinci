@@ -20,25 +20,6 @@
 
 namespace WebCore {
 
- 
-
-    class Attr;
-    class CSSStyleDeclaration;
-    class Element;
-    class NamedNodeMap;
-    class Text;
-    class Attribute;
-    class DOMWindow;
-    class Event;
-
-    class ClientRect;
-    class ClientRectList;
-    class DOMStringMap;
-    class DOMTokenList;
-    class ElementRareData;
-    class IntSize;
-    class ShadowRoot;
-    class WebKitAnimationList;
 
 
    namespace DVNCI{

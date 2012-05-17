@@ -7,7 +7,7 @@
 
 #include "config.h"
 #include "Attribute.h"
-#include "TrendObserver.h"
+#include "TableObserver.h"
 
 
 #include "DOMWindow.h"
@@ -130,7 +130,7 @@ namespace WebCore {
         if (!impl)
             return v8::Null();
 
-        const dvnci::vect_alarms_row& vect = impl->table().val;
+        const dvnci::vect_journal_row& vect = impl->table().val;
 
         v8::HandleScope handle_scope;
 
@@ -149,7 +149,7 @@ namespace WebCore {
     class DVNJournalEventImpl : public DVNJournalEvent {
     public:
 
-        DVNJournalEventImpl(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) :
+        DVNJournalEventImpl(const AtomicString& eventType, const dvnci::journal_table& value, PassRefPtr<EventTarget> target) :
         DVNJournalEvent(eventType, value, target), tabl(value) {
         }
 
@@ -206,7 +206,7 @@ namespace WebCore {
         if (!impl)
             return v8::Null();
 
-        const dvnci::vect_alarms_row& vect = impl->table().val;
+        const dvnci::vect_debug_row& vect = impl->table().val;
 
         v8::HandleScope handle_scope;
 
@@ -225,7 +225,7 @@ namespace WebCore {
     class DVNDebugEventImpl : public DVNDebugEvent {
     public:
 
-        DVNDebugEventImpl(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) :
+        DVNDebugEventImpl(const AtomicString& eventType, const dvnci::debug_table& value, PassRefPtr<EventTarget> target) :
         DVNDebugEvent(eventType, value, target), tabl(value) {
         }
 

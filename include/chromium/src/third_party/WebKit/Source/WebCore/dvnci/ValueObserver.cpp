@@ -7,7 +7,7 @@
 
 #include "config.h"
 #include "Attribute.h"
-#include "TrendObserver.h"
+#include "ValueObserver.h"
 
 
 #include "DOMWindow.h"

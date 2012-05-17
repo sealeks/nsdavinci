@@ -147,7 +147,7 @@ namespace WebCore {
 
         public:
 
-            AttributeObserverImpl(Attribute * const attr, const AtomicString& val, const std::wstring& deflt = L"") :
+            AttributeObserverImpl(Attribute * const attr, const AtomicString& val) :
             attribute(attr), elem(attr ? attr->element_ext() : 0), value(val), defaultvalue("") {
                 registrate(elem, val);
             }
@@ -215,10 +215,13 @@ namespace WebCore {
 
         };
 
+
+
+
         //////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////
 
-        class TextNodeObserverImpl : public TextNodeObserver {
+        class TextNodeObserverImpl : public DVNDOMValueObserver {
 
             class text_expression_listener : public dvnci::expression_listener {
             public:
@@ -243,7 +246,7 @@ namespace WebCore {
 
         public:
 
-            TextNodeObserverImpl(Text * const txt, const String& val) : text(txt), value(val), defaultvalue("") {
+            TextNodeObserverImpl(Text * const txt, const String& val) :  text(txt), value(val), defaultvalue("") {
                 registrate(txt, val);
             }
 
@@ -314,11 +317,11 @@ namespace WebCore {
         ////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////
 
-        impl_reftype DVNDOMValueObserver::DVNDOMValueObserver(Attribute * const el, const AtomicString& val) {
-            return adoptRef(new AttributeObserverImpl(attr, val));
+        impl_reftype DVNDOMValueObserver::create(Attribute * const el, const AtomicString& val) {
+            return adoptRef(new AttributeObserverImpl(el, val));
         }
 
-        impl_reftype DVNDOMValueObserver::DVNDOMValueObserver(Text * const txt, const String& val) {
+        impl_reftype DVNDOMValueObserver::create(Text * const txt, const String& val) {
             return adoptRef(new TextNodeObserverImpl(txt, val));
 
         }
@@ -610,7 +613,7 @@ namespace WebCore {
         }
 
         WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createDebugObserver(EventTarget * const evtarget, const String& filter) {
-            return adoptRef(new ExpressionObserverImpl(evtarget, tag));
+            return adoptRef(new AbstractEventObserver(evtarget));
         }
 
         WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createTrendsObserver(EventTarget * const evtarget, const Vector<String>& tags, int period) {

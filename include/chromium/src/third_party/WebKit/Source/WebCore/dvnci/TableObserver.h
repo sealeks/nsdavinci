@@ -104,7 +104,7 @@ namespace WebCore {
             return true;
         }
 
-        virtual const dvnci::journal_table& table()  = 0;
+        virtual const dvnci::debug_table& table()  = 0;
 
     protected:
 
