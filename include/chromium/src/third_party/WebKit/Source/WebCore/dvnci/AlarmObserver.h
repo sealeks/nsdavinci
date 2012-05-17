@@ -16,66 +16,25 @@
 #include "Event.h"
 #include <v8.h>
 
+namespace dvnci {
+    class  alarms_table;
+    class  journal_table;
+    class  debug_table;
+    }
+
 
 
 namespace WebCore {
-
-
-    namespace DVNCI {
-
-
-        // AlarmEvent
-
-        struct alarmrow {
-            double time;
-            int level;
-            int kvit;
-            WTF::CString tag;
-            WTF::CString text;
-            WTF::CString value;
-            int type;
-        };
-
-        class alarmtable : public RefCounted<alarmtable> {
-        public:
-
-            alarmtable(int sz) : size_(sz) {
-                table = new alarmrow[size_];
-            };
-
-            virtual ~alarmtable() {
-                delete[] table;
-            };
-
-            int size() const {
-                return size_;
-            }
-
-            alarmrow* get(int i) {
-                if ((i < 0) || (i >= size_)) {
-                    return 0;
-                }
-                return &table[i];
-            }
-        protected:
-            int size_;
-            alarmrow* table;
-        };
-
-        
-        
-
-    }
     
     
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////    
     
 
     class DVNAlarmEvent : public Event {
     public:
 
-        static PassRefPtr<DVNAlarmEvent> create(const AtomicString& eventType, PassRefPtr<WebCore::DVNCI::alarmtable> value, PassRefPtr<EventTarget> target) {
-            return adoptRef(new DVNAlarmEvent(eventType, value, target));
-        }
+        static PassRefPtr<DVNAlarmEvent> create(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target);
 
         virtual ~DVNAlarmEvent() {
         }
@@ -84,27 +43,87 @@ namespace WebCore {
             return true;
         }
 
-        WebCore::DVNCI::alarmtable* table() {
-            return tabl.get();
-        }
+        virtual const dvnci::alarms_table& table()  = 0;
 
     protected:
 
-        DVNAlarmEvent(const AtomicString& eventType, PassRefPtr<WebCore::DVNCI::alarmtable> value, PassRefPtr<EventTarget> target) : Event(eventType, false, false), tabl(value) {
-            setTarget(target);
-        }
+        DVNAlarmEvent(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) ;
 
-    private:
+        String group;
+        String agroup;
 
-        PassRefPtr<WebCore::DVNCI::alarmtable> tabl;
-    };
-
-
-
-    v8::Handle<v8::Value> toV8(WebCore::DVNCI::alarmrow* impl);
+    } ;
 
 
     v8::Handle<v8::Value> toV8(DVNAlarmEvent* impl);
+    
+    
+    
+    
+    
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+
+    class DVNJournalEvent : public Event {
+    public:
+
+        static PassRefPtr<DVNJournalEvent> create(const AtomicString& eventType, const dvnci::journal_table& value, PassRefPtr<EventTarget> target);
+
+        virtual ~DVNJournalEvent() {
+        }
+
+        virtual bool isDVNJournalEvent() const {
+            return true;
+        }
+
+        virtual const dvnci::journal_table& table()  = 0;
+
+    protected:
+
+        DVNAlarmEvent(const AtomicString& eventType, const dvnci::journal_table& value, PassRefPtr<EventTarget> target) ;
+
+        String group;
+        String agroup;
+
+
+    } ;
+
+
+    v8::Handle<v8::Value> toV8(DVNJournalEvent* impl);   
+    
+    
+    
+    
+    
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+
+    class DVNDebugEvent : public Event {
+    public:
+
+        static PassRefPtr<DVNDebugEvent> create(const AtomicString& eventType, const dvnci::debug_table& value, PassRefPtr<EventTarget> target);
+
+        virtual ~DVNDebugEvent() {
+        }
+
+        virtual bool isDVNDebugEvent() const {
+            return true;
+        }
+
+        virtual const dvnci::journal_table& table()  = 0;
+
+    protected:
+
+        DVNAlarmEvent(const AtomicString& eventType, const dvnci::debug_table& value, PassRefPtr<EventTarget> target) ;
+
+        String group;
+        String agroup;
+
+
+    } ;
+
+
+    v8::Handle<v8::Value> toV8(DVNDebugEvent* impl);       
 
 
 }

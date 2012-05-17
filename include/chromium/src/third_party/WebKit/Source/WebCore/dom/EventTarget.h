@@ -38,6 +38,14 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicStringHash.h>
 
+namespace dvnci {
+    struct short_value;
+    class  alarms_table;
+    class  trends_table;
+    class  journal_table;
+    class  debug_table;
+    }
+
 namespace WebCore {
 
     class AudioContext;
@@ -70,6 +78,39 @@ namespace WebCore {
     class Worker;
     class XMLHttpRequest;
     class XMLHttpRequestUpload;
+
+    class EventTarget;
+
+    namespace DVNCI {
+
+        class AbstractEventObserver : public RefCounted<AbstractEventObserver> {
+        public:
+
+            AbstractEventObserver(EventTarget * const evtarget ) : eventtarget(evtarget) {
+            };
+
+            virtual ~AbstractEventObserver() {
+            };
+
+            static WTF::RefPtr<AbstractEventObserver> createAlarmsObserver(EventTarget * const evtarget , const String& group = "", const String& agroup = "");
+            static WTF::RefPtr<AbstractEventObserver> createJournalObserver(EventTarget * const evtarget ,  const String& filter = "");
+            static WTF::RefPtr<AbstractEventObserver> createDebugObserver(EventTarget * const evtarget ,  const String& filter = "");            
+            static WTF::RefPtr<AbstractEventObserver> createTrendsObserver(EventTarget * const evtarget , const Vector<String>& tags, int period = 0);
+            static WTF::RefPtr<AbstractEventObserver> createExpressionObserver(EventTarget * const evtarget ,  const String& tag);
+
+        protected:
+
+            EventTarget * const target() {
+                return eventtarget;
+            }
+            
+        private:
+            EventTarget * const eventtarget;
+        };      
+
+    }
+
+    typedef HashMap<RefPtr<EventListener>, RefPtr<WebCore::DVNCI::AbstractEventObserver> > DVNCIEventListenerMap;
 
     typedef int ExceptionCode;
 
@@ -172,6 +213,30 @@ namespace WebCore {
         bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&); // DOM API
         virtual void uncaughtExceptionInEventHandler();
 
+
+        RefPtr<EventListener> findDvnciListener(RefPtr<EventListener> val);
+        bool removeDvnciListener(RefPtr<EventListener> val);
+        bool addDvnciListener(RefPtr<EventListener> val, RefPtr<WebCore::DVNCI::AbstractEventObserver> observer);
+        
+        
+        virtual bool addExpressionEventListener(const String& tag, RefPtr<EventListener>);
+        virtual bool removeExpressionEventListener(EventListener*);
+        virtual bool addAlarmsEventListener(RefPtr<EventListener>, const String& group = "", const String& agroup = "");
+        virtual bool removeAlarmsEventListener(EventListener*);
+        virtual bool addJournalEventListener(RefPtr<EventListener>, const String& filter = "");
+        virtual bool removeJournalEventListener(EventListener*);
+        virtual bool addDebugEventListener(RefPtr<EventListener>, const String& filter = "");
+        virtual bool removeDebugEventListener(EventListener*);
+        virtual bool addTrendsEventListener(RefPtr<EventListener> , const Vector<String>& tags, int period = 0);
+        virtual bool removeTrendsEventListener(EventListener*);
+
+
+        virtual void dispatchAlarmsEvent(const dvnci::alarms_table& value);
+        virtual void dispatchTrendsEvent(const dvnci::trends_table& value); 
+        virtual void dispatchJournalEvent(const dvnci::journal_table& value);
+        virtual void dispatchDebugEvent(const dvnci::debug_table& value);        
+        virtual void dispatchExpressionEvent(const dvnci::short_value& value);
+
         // Used for legacy "onEvent" attribute APIs.
         bool setAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
         bool clearAttributeEventListener(const AtomicString& eventType);
@@ -196,6 +261,9 @@ namespace WebCore {
         virtual EventTargetData* ensureEventTargetData() = 0;
 
     private:
+        
+        DVNCIEventListenerMap    dvnciListeners;
+                
         virtual void refEventTarget() = 0;
         virtual void derefEventTarget() = 0;
         

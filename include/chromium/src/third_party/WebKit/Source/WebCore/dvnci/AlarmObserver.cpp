@@ -17,71 +17,166 @@
 #include <wtf/Threading.h>
 
 
-
+#include <winsock2.h>
+#include <custom/gui_executor.h>
 
 
 
 
 
 namespace WebCore {
+    
+    
+    
+    
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    
 
-    v8::Handle<v8::Value> toV8(WebCore::DVNCI::alarmrow* impl) {
+    v8::Handle<v8::Value> toV8(const dvnci::alarms_row& impl) {
 
         v8::HandleScope handle_scope;
 
-        v8::Handle<v8::Array> array = v8::Array::New(5);
+        v8::Handle<v8::Object> evnt = v8::Object::New();
+        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl.time)));
+        evnt->Set(v8::String::New("level"), v8::Integer::New(impl.level));
+        evnt->Set(v8::String::New("kvit"), v8::Boolean::New(impl.kvit));
+        evnt->Set(v8::String::New("tag"), v8::String::New(impl.tag.c_str(), impl.tag.size()));
+        evnt->Set(v8::String::New("message"), v8::String::New(impl.text.c_str(), impl.text.size()));
+        evnt->Set(v8::String::New("value"), v8::String::New(impl.value.c_str(), impl.value.size()));
 
-        if (array.IsEmpty())
-            return v8::Handle<v8::Array > ();
-
-        if (impl) {
-            array->Set(0, v8::Date::New(impl->time));
-            array->Set(1, v8::Integer::New(impl->level));
-            array->Set(2, v8::Integer::New(impl->kvit));
-            array->Set(3, impl->tag.data() ? v8::String::New(impl->tag.data()) : v8::Null());
-            array->Set(4, impl->text.data() ? v8::String::New(impl->text.data()) : v8::Null());
-            array->Set(5, impl->value.data() ? v8::String::New(impl->value.data()) : v8::Null());
-        } else {
-            array->Set(0, v8::Null());
-            array->Set(1, v8::Null());
-            array->Set(2, v8::Null());
-            array->Set(3, v8::Null());
-            array->Set(4, v8::Null());
-            array->Set(5, v8::Null());
-        }
-
-        // Return the value through Close.
-        return handle_scope.Close(array);
+        return handle_scope.Close(evnt);
     }
+    
+    
 
     v8::Handle<v8::Value> toV8(DVNAlarmEvent* impl) {
+        
         if (!impl)
             return v8::Null();
 
-        if (!impl->table())
-            return v8::Null();
-
-        if (impl->table()->size() == 0)
-            return v8::Null();
+        const dvnci::vect_alarms_row& vect = impl->table().val;
 
         v8::HandleScope handle_scope;
 
-        v8::Handle<v8::Array> array = v8::Array::New(impl->table()->size());
+        v8::Handle<v8::Array> array = v8::Array::New(vect.size());
 
-        // Return an empty result if there was an error creating the array.
-        if (array.IsEmpty())
-            return v8::Handle<v8::Array > ();
+        int i = 0;
+        for (dvnci::vect_alarms_row::const_iterator it = vect.begin(); it != vect.end(); ++it)
+            array->Set(i++, toV8(*it));
 
-        // Fill out the values
-        for (int i = 0; i < impl->table()->size(); ++i) {
-            array->Set(i, toV8(impl->table()->get(i)));
+        return handle_scope.Close(array);
+
+    }
+    
+    
+
+    class DVNAlarmEventImpl : public DVNAlarmEvent {
+    public:
+
+        DVNAlarmEventImpl(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) :
+        DVNAlarmEvent(eventType, value, target), tabl(value) {
         }
 
+        virtual ~DVNAlarmEventImpl() {
+        }
 
-        // Return the value through Close.
-        return handle_scope.Close(array);
+        virtual const dvnci::alarms_table& table() {
+            return tabl;
+        }
+
+    protected:
+
+        dvnci::alarms_table tabl;
+
+    } ;
+    
+    
+    
+
+    PassRefPtr<DVNAlarmEvent> DVNAlarmEvent::create(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) {
+        return adoptRef(new DVNAlarmEventImpl(eventType, value, target));
     }
 
+    DVNAlarmEvent::DVNAlarmEvent(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) : Event(eventType, false, false) {
+        setTarget(target);
+    }
+
+    
+    
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    
+
+    v8::Handle<v8::Value> toV8(const dvnci::journal_row& impl) {
+
+        v8::HandleScope handle_scope;
+
+        v8::Handle<v8::Object> evnt = v8::Object::New();
+        /*evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl.time)));
+        evnt->Set(v8::String::New("level"), v8::Integer::New(impl.level));
+        evnt->Set(v8::String::New("kvit"), v8::Boolean::New(impl.kvit));
+        evnt->Set(v8::String::New("tag"), v8::String::New(impl.tag.c_str(), impl.tag.size()));
+        evnt->Set(v8::String::New("message"), v8::String::New(impl.text.c_str(), impl.text.size()));
+        evnt->Set(v8::String::New("value"), v8::String::New(impl.value.c_str(), impl.value.size()));*/
+
+        return handle_scope.Close(evnt);
+    }
+    
+    
+
+    v8::Handle<v8::Value> toV8(DVNJournalEvent* impl) {
+        
+        if (!impl)
+            return v8::Null();
+
+        const dvnci::vect_alarms_row& vect = impl->table().val;
+
+        v8::HandleScope handle_scope;
+
+        v8::Handle<v8::Array> array = v8::Array::New(vect.size());
+
+        int i = 0;
+        for (dvnci::vect_journal_row::const_iterator it = vect.begin(); it != vect.end(); ++it)
+            array->Set(i++, toV8(*it));
+
+        return handle_scope.Close(array);
+
+    }
+    
+    
+
+    class DVNJournalEventImpl : public DVNJournalEvent {
+    public:
+
+        DVNJournalEventImpl(const AtomicString& eventType, const dvnci::alarms_table& value, PassRefPtr<EventTarget> target) :
+        DVNJournalEvent(eventType, value, target), tabl(value) {
+        }
+
+        virtual ~DVNJournalEventImpl() {
+        }
+
+        virtual const dvnci::journal_table& table() {
+            return tabl;
+        }
+
+    protected:
+
+        dvnci::journal_table tabl;
+
+    } ;
+    
+    
+    
+
+    PassRefPtr<DVNJournalEvent> DVNJournalEvent::create(const AtomicString& eventType, const dvnci::journal_table& value, PassRefPtr<EventTarget> target) {
+        return adoptRef(new DVNJournalEventImpl(eventType, value, target));
+    }
+
+    DVNJournalEvent::DVNJournalEvent(const AtomicString& eventType, const dvnci::journal_table& value, PassRefPtr<EventTarget> target) : Event(eventType, false, false) {
+        setTarget(target);
+    }    
+    
 
 
 }

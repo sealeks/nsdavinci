@@ -3,6 +3,10 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="chromium" displayName="chromium" projectFiles="true">
       <logicalFolder name="src" displayName="src" projectFiles="true">
+        <logicalFolder name="base" displayName="base" projectFiles="true">
+          <itemPath>../../include/chromium/src/base/command_line.cc</itemPath>
+          <itemPath>../../include/chromium/src/base/command_line.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="chrome" displayName="chrome" projectFiles="true">
           <logicalFolder name="app" displayName="app" projectFiles="true">
             <itemPath>../../include/chromium/src/chrome/app/chrome_main.cc</itemPath>
@@ -117,6 +121,9 @@
               </logicalFolder>
               <logicalFolder name="WebCore" displayName="WebCore" projectFiles="true">
                 <logicalFolder name="bindings" displayName="bindings" projectFiles="true">
+                  <logicalFolder name="generic" displayName="generic" projectFiles="true">
+                    <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/generic/BindingSecurity.h</itemPath>
+                  </logicalFolder>
                   <logicalFolder name="v8" displayName="v8" projectFiles="true">
                     <logicalFolder name="custom" displayName="custom" projectFiles="true">
                       <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/custom/V8EventCustom.cpp</itemPath>

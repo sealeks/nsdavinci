@@ -16,58 +16,17 @@
 #include "Event.h"
 #include <v8.h>
 
-
+namespace dvnci {
+    struct short_value;
+    class trends_table;
+}
 
 namespace WebCore {
-
-
-    namespace DVNCI {
-
-
-
-        struct trendrow {
-            double value;
-            double time;
-        };
-
-        class trendtable : public RefCounted<trendtable> {
-        public:
-
-            trendtable(int sz) : size_(sz) {
-                table = new trendrow[size_];
-            };
-
-            virtual ~trendtable() {
-                delete[] table;
-            };
-
-            int size() const {
-                return size_;
-            }
-
-            trendrow* get(int i) {
-                if ((i < 0) || (i >= size_)) {
-                    return 0;
-                }
-                return &table[i];
-            }
-        protected:
-            int size_;
-            trendrow* table;
-        };
-        
-        
-
-    }
-    
-    
 
     class DVNTrendEvent : public Event {
     public:
 
-        static PassRefPtr<DVNTrendEvent> create(const AtomicString& eventType, PassRefPtr<WebCore::DVNCI::trendtable> value, PassRefPtr<EventTarget> target) {
-            return adoptRef(new DVNTrendEvent(eventType, value, target));
-        }
+        static PassRefPtr<DVNTrendEvent> create(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target);
 
         virtual ~DVNTrendEvent() {
         }
@@ -76,29 +35,42 @@ namespace WebCore {
             return true;
         }
 
-        WebCore::DVNCI::trendtable* table() {
-            return tabl.get();
-        }
+        virtual const dvnci::trends_table& table() = 0;
 
     protected:
 
-        DVNTrendEvent(const AtomicString& eventType, PassRefPtr<WebCore::DVNCI::trendtable> value, PassRefPtr<EventTarget> target) :
-        Event(eventType, false, false), tabl(value) {
-            setTarget(target);
+        DVNTrendEvent(const AtomicString& eventType, const dvnci::trends_table& value, PassRefPtr<EventTarget> target) ;
+    } ;
+
+
+    v8::Handle<v8::Value> toV8(DVNTrendEvent* impl);
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class DVNExpressionEvent : public Event {
+    public:
+
+        static PassRefPtr<DVNExpressionEvent> create(const AtomicString& eventType, const dvnci::short_value& val, PassRefPtr<EventTarget> target);
+
+        virtual ~DVNExpressionEvent() {
         }
 
-    private:
+        virtual bool isDVNExpressionEvent() const {
+            return true;
+        }
 
-        PassRefPtr<WebCore::DVNCI::trendtable> tabl;
-    };
+        virtual dvnci::short_value value() = 0;
+
+    protected:
+
+        DVNExpressionEvent(const AtomicString& eventType, const dvnci::short_value& val, PassRefPtr<EventTarget> target);
+
+    } ;
 
 
-    v8::Handle<v8::Value> toV8(WebCore::DVNCI::trendrow* impl);
-
-
-    v8::Handle<v8::Value> toV8(DVNTrendEvent* impl, v8::Handle<v8::Value> vl);
-
-
+    v8::Handle<v8::Value> toV8(DVNExpressionEvent* impl);
 
 
 }

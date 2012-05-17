@@ -129,96 +129,19 @@ namespace WebCore {
             impl_reftype impl;
             
         };
-        
-        
-        
-        
-
-        
-        
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////         
-        
-        
-
-        class AbstractAlarmObserver : public RefCounted<AbstractAlarmObserver> {
-        public:
-
-            AbstractAlarmObserver(DOMWindow * const domwin = 0) {
-            };
-			AbstractAlarmObserver(Element * const elem){
-            };
-
-            virtual ~AbstractAlarmObserver() {
-            };
-        };
-        
-        
-
-        class AlarmObserver {
-            
-            typedef WTF::RefPtr<AbstractAlarmObserver> impl_reftype;
-
-        public:
-            
-            AlarmObserver(DOMWindow * const domwin = 0);
-			AlarmObserver(Element * const elem);
-
-            virtual ~AlarmObserver() {
-            };
-            
-        private:
-            
-            impl_reftype impl;
-            
-        };
-        
-        
-        
-
-        
-        
-//////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////// 
-        
-        
-        
-
-        class AbstractTrendObserver : public RefCounted<AbstractTrendObserver> {
-        public:
-            
-            AbstractTrendObserver(Element * const domelem = 0){
-            };
-
-            virtual ~AbstractTrendObserver() {
-            };
-        };
-        
-        
-        
-
-        class TrendObserver {
-            
-            typedef WTF::RefPtr<AbstractTrendObserver> impl_reftype;
-
-        public:
-
-            TrendObserver(Element * const domelem = 0) ;
-
-
-            virtual ~TrendObserver() {
-            };
-            
-        private:
-            
-            impl_reftype impl;
-            
-        };
 
 
 
 
     }
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
 
 }
 
