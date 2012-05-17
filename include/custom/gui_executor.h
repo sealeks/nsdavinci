@@ -35,7 +35,30 @@ namespace dvnci {
     
     class alarms_listener {
     public:
-        virtual void event(const vect_alarms_row& val) = 0;};
+        alarms_listener(const std::string& grp="", const std::string& agrp="") 
+                : group_(trim_copy(grp)), agroup_(trim_copy(agrp)), version_(0) {
+                filtered_=((agroup()!="") || (group()!=""));}
+        virtual ~alarms_listener(){}
+        virtual void event(const vect_alarms_row& val) = 0;
+        std::string group() const{
+            return trim_copy(group_);}
+        std::string agroup() const{
+            return trim_copy(agroup_);}
+        bool filtered() const{
+            return filtered_;}
+        vect_alarms_row& table(){
+            return table_;}
+        guidtype version() const{
+            return version_;} 
+        void version(guidtype ver){
+            version_=ver;}        
+    private:
+        
+        std::string     group_;
+        std::string     agroup_;
+        guidtype        version_;        
+        bool            filtered_;
+        vect_alarms_row table_;};
 
     typedef boost::shared_ptr<alarms_listener> alarms_listener_ptr;
     
@@ -48,9 +71,27 @@ namespace dvnci {
 
     class trend_listener {
     public:
-        virtual bool event(const short_values_table& val) = 0;};
+        trend_listener(const str_vect& tgs, num64 histmilisec = 0) : tags_(tgs), history_(histmilisec) {}
+        virtual ~trend_listener(){}
+        virtual bool event(const short_values_table& val) = 0;
+        
+        num64 history() const { return history_>0 ? history_ : 0;}
+        const str_vect& tags() const { return tags_;}
+        /*bool remove(const std::string& val) {
+            str_vect::iterator it = std::find(tags_.begin(), tags_.end(), val);
+            if (it != tags_.end()) {
+                tags_.erase(it);
+                return true;}
+            return false;}*/
+
+    private:
+        str_vect       tags_;
+        num64          history_;
+    
+    };
 
     typedef boost::shared_ptr<trend_listener> trend_listener_ptr;
+    
     
     
     class journal_table{
@@ -58,6 +99,29 @@ namespace dvnci {
         journal_table(const vect_journal_row& val_): val(val_){};
         const vect_journal_row& val;
     };
+    
+    
+    class journal_listener {
+    public:
+        virtual void event(const vect_journal_row& val) = 0;};
+
+    typedef boost::shared_ptr<journal_listener> journal_listener_ptr;
+    
+    
+    
+    class debug_table{
+    public:
+        debug_table(const vect_debug_row& val_): val(val_){};
+        const vect_debug_row& val;
+    };
+    
+    class debug_listener {
+    public:
+        virtual void event(const vect_debug_row& val) = 0;};
+
+    typedef boost::shared_ptr<debug_listener> debug_listener_ptr;
+    
+    
 
 
 
@@ -125,21 +189,10 @@ namespace dvnci {
             typedef std::set<listener_type_ptr, listener_less> updatedlistener_set;
             typedef typename updatedlistener_set::iterator updatedlistener_set_iterator;
 
-
-            typedef boost::bimaps::set_of<trendlistener_type_ptr, trendlistener_less> trendlistener_set;
-            typedef boost::bimaps::bimap<expressions, trendlistener_set > expression_trendlisteners_map;
-            typedef typename expression_trendlisteners_map::value_type trendvalue_type;
-            typedef typename expression_trendlisteners_map::left_map trendexpression_map;
-            typedef typename expression_trendlisteners_map::left_map::range_type trendleft_range;
-            typedef typename expression_trendlisteners_map::left_map::const_range_type trendconst_left_range;
-            typedef typename expression_trendlisteners_map::right_map trendlisteners_map;
-            typedef typename expression_trendlisteners_map::left_iterator trendexpression_iterator;
-            typedef typename expression_trendlisteners_map::left_const_iterator trendexpression_const_iterator;
-            typedef typename expression_trendlisteners_map::right_iterator trendlisteners_iterator;
-            typedef typename expression_trendlisteners_map::right_const_iterator trendlisteners_const_iterator;
-
-            typedef std::set<trendlistener_type_ptr, trendlistener_less> newtrendlistener_set;
-            typedef typename newtrendlistener_set::iterator newtrendlistener_set_iterator;
+            
+            typedef std::set<trendlistener_type_ptr, trendlistener_less >     trendlistener_set;
+            typedef typename trendlistener_set::const_iterator                trendlistener_constiterator;
+            
 
             struct alarms_listener_less :
             public std::binary_function<alarms_listener_ptr, alarms_listener_ptr, bool> {
@@ -147,9 +200,12 @@ namespace dvnci {
                 bool operator()(const alarms_listener_ptr& ls,
                         const alarms_listener_ptr & rs) const {
                     return ((intptr_t) ls.get()) < ((intptr_t) rs.get());}};
+                    
+                    
 
             typedef std::set<alarms_listener_ptr, alarms_listener_less > alarms_listener_set;
             typedef typename alarms_listener_set::iterator alarms_listener_iterator;
+            
 
             gui_executor(interface_type_ptr inf) : executable(), intf(inf), alarm_version(0) {};
 
@@ -200,44 +256,24 @@ namespace dvnci {
                     return true;}
                 return false;}
 
-            bool regist_trend_listener(const str_vect& exprs, trendlistener_type_ptr listener) {
+            bool regist_trend_listener(trendlistener_type_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                //if (!intf->exists(expr)) return false;
-                expression_pair extmp(expression_type_ptr(new expression_type(expr, intf)), short_value());
-                trendexpression_iterator itb = trends_map.left.lower_bound(extmp);
-                trendexpression_iterator ite = trends_map.left.upper_bound(extmp);
-                if (itb == ite) {
-                    trendvalue_type val(extmp, listener);
-                    trends_map.insert(val);
-                    itb = trends_map.left.lower_bound(extmp);
-                    ite = trends_map.left.upper_bound(extmp);
-                    if (itb == ite)
-                        return false;
-                    //std::vector<short_value> tmpvct;
-                    //intf->select_trendbuff(expr, tmpvct);
-                    newtrendset.insert(listener);}
-                else {
-                    trendvalue_type val(itb->first, listener);
-                    trends_map.insert(val);
-                    itb = trends_map.left.lower_bound(extmp);
-                    ite = trends_map.left.upper_bound(extmp);
-                    if (itb == ite)
-                        return false;
-                    //std::vector<short_value> tmpvct;       
-                    //intf->select_trendbuff(expr, tmpvct);
-                    newtrendset.insert(listener);}
-
-                return true;}
+                
+                if (trends_set.find(listener)==trends_set.end()){
+                    trends_set.insert(listener);
+                    newtrendset.insert(listener);
+                    return true;
+                }
+                return false;}
 
             bool unregist_trend_listener(trendlistener_type_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                trendlisteners_iterator itb = trends_map.right.lower_bound(listener);
-                trendlisteners_iterator ite = trends_map.right.upper_bound(listener);
                 if (newtrendset.find(listener)!=newtrendset.end())
-                    newtrendset.erase(listener);
-                if (itb != ite) {
-                    trends_map.right.erase(itb->first);
-                    return true;}
+                        newtrendset.erase(listener);
+                if (trends_set.find(listener)!=trends_set.end()){
+                    trends_set.erase(listener);
+                    return true;
+                }
                 return false;}
 
             bool regist_alarm_listener(alarms_listener_ptr listener) {
@@ -279,7 +315,7 @@ namespace dvnci {
             void detachall(){
 		THD_EXCLUSIVE_LOCK(mtx);
                 expressions_map.clear();
-                trends_map.clear();
+                trends_set.clear();
                 alarms_listeners.clear();
                 alarms.clear();
                 updatedset.clear();
@@ -308,37 +344,43 @@ namespace dvnci {
                 if (lst != alarm_version) {
                     for (alarms_listener_iterator it = alarms_listeners.begin();
                             it != alarms_listeners.end(); ++it) {
-                        (*it)->event(alarms);}
+                        if (!(*it)->filtered()) {
+                            (*it)->event(alarms);}
+                        else {
+                            guidtype lstc = (*it)->version();
+                            intf->select_alarms<alarms_row, guidtype>((*it)->table(), lstc, (*it)->agroup(), (*it)->group() );
+                            if (lstc != (*it)->version())
+                                (*it)->event((*it)->table());}}
                     return true;}
                 return false;}
 
             bool init_trend_listener() {
                 if (newtrendset.empty())
                     return false;
-                for (newtrendlistener_set_iterator it = newtrendset.begin(); it != newtrendset.end(); ++it) {
-                    trendlisteners_iterator itf = trends_map.right.find(*it);
-                    if (itf != trends_map.right.end()) {
-                        std::string expr = itf->second.first->expressionstr();
-                        std::vector<short_value> tmpvct;
-                        intf->select_trendbuff(expr, tmpvct);
-                       // (*it)->event(tmpvct);
-					}}
+                for (trendlistener_constiterator it=newtrendset.begin(); it!=newtrendset.end(); ++it) {
+                        short_values_table tmptable;
+                        datetime from = (*it)->history() ? incmillisecond(now() , -((*it)->history()) ) : nill_time;
+                        intf->select_trendsbuff((*it)->tags(), tmptable, from);
+                        (*it)->event(tmptable);}
                 newtrendset.clear();
                 return true;}
 
             bool internal_trend_exec() {
-                bool rslt = init_trend_listener();
                 THD_EXCLUSIVE_LOCK(mtx);
-                for (trendexpression_iterator it = trends_map.left.begin(); it != trends_map.left.end(); ++it) {
-                    short_value vl = it->first.first->value();
-                    if ((vl != it->first.second) || (secondsbetween(it->first.second.time(), vl.time()) > 1)) {
-                        it->first.second = vl;
-                        rslt = true;
-                        std::vector<short_value> tmpvct;
-                        vl.time(now());
-                        //tmpvct.push_back(vl);
-                        //it->second->event(tmpvct);
-					}}
+                bool rslt = init_trend_listener();               
+                for (trendlistener_constiterator it=trends_set.begin(); it!=trends_set.end(); ++it) {
+                    trendlistener_type_ptr listener_ptr=*it;
+                    const str_vect& tags = listener_ptr->tags();
+                    short_values_table tmptable;
+                    for (str_vect::const_iterator ittag = tags.begin(); ittag != tags.end(); ++ittag) {
+                        short_value val = intf->value_shv(*ittag);
+                        num32 error = 0;
+                        if (val.time().is_special()){
+                            if (!intf->exists(*ittag))
+                                error = 2;
+                            val.time(now());}
+                        tmptable.push_back(short_values_row(tag_info_pair(*ittag,error) , short_value_vect(1, val)));}
+                    listener_ptr->event(tmptable);}
                 return rslt;}
 
             virtual bool initialize() {
@@ -349,15 +391,15 @@ namespace dvnci {
             
 
 
-            interface_type_ptr intf;
-            guidtype alarm_version;
-            boost::mutex mtx;
+            interface_type_ptr       intf;
+            guidtype                 alarm_version;
+            boost::mutex             mtx;
             expression_listeners_map expressions_map;
-            expression_trendlisteners_map trends_map;
-            alarms_listener_set alarms_listeners;
-            vect_alarms_row alarms;
-            updatedlistener_set updatedset;
-            newtrendlistener_set newtrendset;};}
+            trendlistener_set        trends_set;
+            alarms_listener_set      alarms_listeners;
+            vect_alarms_row          alarms;
+            updatedlistener_set      updatedset;
+            trendlistener_set        newtrendset;};}
 
     typedef dvnci::custom::gui_executor<tagsbase > chrome_gui_executor;
     typedef callable_shared_ptr<chrome_gui_executor> chrome_executor_ptr;}
