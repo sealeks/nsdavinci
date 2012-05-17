@@ -191,10 +191,10 @@ v8::Handle<v8::Value> toV8(Event* impl)
     if (impl->isStreamEvent())
         return toV8(static_cast<StreamEvent*>(impl));
 #endif
-    if (impl->isDVNAlarmEvent())
-        return toV8(static_cast<DVNAlarmEvent*>(impl));
-    if (impl->isDVNTrendEvent())
-        return toV8(static_cast<DVNTrendEvent*>(impl));
+    if (impl->isDVNAlarmsEvent())
+        return toV8(static_cast<DVNAlarmsEvent*>(impl));
+    if (impl->isDVNTrendsEvent())
+        return toV8(static_cast<DVNTrendsEvent*>(impl));
     if (impl->isDVNExpressionEvent())
         return toV8(static_cast<DVNExpressionEvent*>(impl));
     if (impl->isDVNJournalEvent())

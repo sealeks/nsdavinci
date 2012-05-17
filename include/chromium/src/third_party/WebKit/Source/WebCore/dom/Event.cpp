@@ -257,7 +257,7 @@ bool Event::isStreamEvent() const
 }
 #endif
 
-bool Event::isDVNAlarmEvent() const
+bool Event::isDVNAlarmsEvent() const
 {
     return false;
 }
@@ -267,7 +267,7 @@ bool Event::isDVNAlarmStateEvent() const
     return false;
 }
 
-bool Event::isDVNTrendEvent() const
+bool Event::isDVNTrendsEvent() const
 {
     return false;
 }

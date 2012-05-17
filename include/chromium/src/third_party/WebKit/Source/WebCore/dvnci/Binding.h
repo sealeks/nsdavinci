@@ -23,24 +23,21 @@
 namespace WebCore {
 
 
-
-
-
     namespace DVNCI {
         
     
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////         
         
-
-        class AbstractObserver : public RefCounted<AbstractObserver> {
+      
+        class DVNDOMValueObserver : public RefCounted<DVNDOMValueObserver> {
         public:
 
-            AbstractObserver(Attribute * const el, const AtomicString& val) {
+            static WTF::RefPtr<DVNDOMValueObserver> DVNDOMValueObserver(Attribute * const el, const AtomicString& val);
+            static WTF::RefPtr<DVNDOMValueObserver> DVNDOMValueObserver(Text * const txt, const String& val);
+            
+            virtual ~DVNDOMValueObserver() {
             };
-
-            AbstractObserver(Text * const txt, const String& val) {
-            }
 
             virtual void setvalue(const String& val) {
             }
@@ -49,67 +46,20 @@ namespace WebCore {
                 return false;
             }
 
-            virtual ~AbstractObserver() {
-            };
             
-        };
-
-
-
-
-
-        // AttributeObserver        
-
-        class AttributeObserver : public AbstractObserver {
-        public:
-            AttributeObserver(Attribute * const el, const AtomicString& val);
-            
-            virtual void setvalue(const String& val);
-
-            virtual bool valid() const {
-                return false;
-            }
-            
-            virtual ~AttributeObserver();
-
         protected:
             
-            Attribute * const attribute;
-            Element * const elem;
-            String value;
+            DVNDOMValueObserver() {};
             
         };
 
 
-
-        // TextNodeObserver         
-
-        class TextNodeObserver : public AbstractObserver {
-        public:
-            TextNodeObserver(Text * const txt, const String& val);
-            
-            virtual void setvalue(const String& val);
-
-            virtual bool valid() const {
-                return false;
-            }
-            
-            virtual ~TextNodeObserver();
-
-        protected:
-            
-            Text * const text;
-            String value;
-            
-        };
-
-
-
+        
+        typedef WTF::RefPtr<DVNDOMValueObserver> impl_reftype;       
 
         // Observer        
 
         class Observer {
-            typedef WTF::RefPtr<AbstractObserver> impl_reftype;
 
         public:
             
@@ -122,7 +72,7 @@ namespace WebCore {
             
             bool valid() const;
             
-            virtual ~Observer();
+            virtual ~Observer(){};
             
         private:
             
@@ -131,11 +81,8 @@ namespace WebCore {
         };
 
 
-
-
     }
 
-	//////////////////////////////////////////////////////////////////////////////////////////
 
 
 

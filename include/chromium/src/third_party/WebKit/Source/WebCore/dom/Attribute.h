@@ -135,7 +135,7 @@ private:
     QualifiedName m_name;
     AtomicString m_value;
     RefPtr<CSSMappedAttributeDeclaration> m_styleDecl;
-	DVNCI::Observer setter;};
+    DVNCI::Observer setter;};
 
 
 } // namespace WebCore
