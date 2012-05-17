@@ -37,6 +37,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+#include "dvnci/Binding.h"
+
 using namespace WTF;
 
 namespace WebCore {
@@ -78,6 +80,7 @@ EventTargetData::~EventTargetData()
 
 EventTarget::~EventTarget()
 {
+	dvnciListeners.clear();
 }
 
 EventSource* EventTarget::toEventSource()
@@ -445,6 +448,107 @@ EventListener* EventListenerIterator::nextListener()
     }
     return 0;
 }
+
+    bool EventTarget::addExpressionEventListener(const String& tag, RefPtr<EventListener> listener) {
+        if (!findDvnciListener(listener)) {
+            addEventListener(eventNames().expressionEvent, listener, false);
+            return addDvnciListener(listener, RefPtr<WebCore::DVNCI::AbstractEventObserver > (
+                    WebCore::DVNCI::AbstractEventObserver::createExpressionObserver(this, tag)));
+        }
+        return false;
+    }
+
+    bool EventTarget::removeExpressionEventListener(EventListener* listener) {
+        removeEventListener(eventNames().expressionEvent ,  listener, false);
+        return removeDvnciListener(RefPtr<EventListener > (listener));
+    };
+
+    bool EventTarget::addAlarmsEventListener(RefPtr<EventListener> listener, const String& group, const String& agroup) {
+        if (!findDvnciListener(listener)) {
+            addEventListener(eventNames().alarmsEvent ,  listener, false);
+            return addDvnciListener(listener, RefPtr<WebCore::DVNCI::AbstractEventObserver > (
+                    WebCore::DVNCI::AbstractEventObserver::createAlarmsObserver(this ,  group, agroup)));
+        }
+        return false;
+    }
+
+    bool EventTarget::removeAlarmsEventListener(EventListener* listener) {
+        removeEventListener(eventNames().alarmsEvent ,  listener, false);
+        return removeDvnciListener(RefPtr<EventListener > (listener));
+    };
+
+    bool EventTarget::addTrendsEventListener(RefPtr<EventListener> listener, const Vector<String>& tags, int period) {
+        if (!findDvnciListener(listener)) {
+            addEventListener(eventNames().trendsEvent ,  listener, false);
+            return addDvnciListener(listener, RefPtr<WebCore::DVNCI::AbstractEventObserver > (
+                    WebCore::DVNCI::AbstractEventObserver::createTrendsObserver(this ,  tags,  period)));
+        }
+        return false;
+    }
+
+    bool EventTarget::removeTrendsEventListener(EventListener* listener) {
+        removeEventListener(eventNames().trendsEvent ,  listener, false);
+        return removeDvnciListener(RefPtr<EventListener > (listener));
+    };
+
+    bool EventTarget::addJournalEventListener(RefPtr<EventListener>, const String& filter) {
+        return false;
+    };
+
+    bool EventTarget::removeJournalEventListener(EventListener*) {
+        return false;
+    };
+    
+    bool EventTarget::addDebugEventListener(RefPtr<EventListener>, const String& filter) {
+        return false;
+    };
+
+    bool EventTarget::removeDebugEventListener(EventListener*) {
+        return false;
+    };    
+
+    RefPtr<EventListener> EventTarget::findDvnciListener(RefPtr<EventListener> val) {
+        DVNCIEventListenerMap::iterator result = dvnciListeners.find(val);
+        return  result != dvnciListeners.end() ? result->first : RefPtr<EventListener > ();
+    }
+
+    bool EventTarget::removeDvnciListener(RefPtr<EventListener> val) {
+        RefPtr<EventListener> find = findDvnciListener(val);
+        if (!find) return false;
+        dvnciListeners.remove(val);
+        return true;
+    }
+
+    bool EventTarget::addDvnciListener(RefPtr<EventListener> val, RefPtr<WebCore::DVNCI::AbstractEventObserver> observer) {
+        dvnciListeners.add(val , observer);
+        return true;
+    }
+
+    void EventTarget::dispatchAlarmsEvent(const dvnci::alarms_table& value) {
+        RefPtr<Event> alarmsEvent(DVNAlarmEvent::create(eventNames().alarmsEvent, value, this));
+        dispatchEvent(alarmsEvent);
+    }
+
+    void EventTarget::dispatchTrendsEvent(const dvnci::trends_table& value) {
+        RefPtr<Event> trendsEvent(DVNTrendEvent::create(eventNames().trendsEvent, value, this));
+        dispatchEvent(trendsEvent);
+    }
+
+    void EventTarget::dispatchExpressionEvent(const dvnci::short_value& value) {
+        RefPtr<Event> expressionEvent(DVNExpressionEvent::create(eventNames().expressionEvent, value, this));
+        dispatchEvent(expressionEvent);
+    }
+
+    void EventTarget::dispatchJournalEvent(const dvnci::journal_table& value) {
+        //RefPtr<Event> trendEvent(DVNTrendEvent::create(eventNames().trendEvent, value, this));
+        //dispatchEvent(trendEvent);
+    }
+    
+    void EventTarget::dispatchDebugEvent(const dvnci::debug_table& value) {
+        //RefPtr<Event> trendEvent(DVNTrendEvent::create(eventNames().trendEvent, value, this));
+        //dispatchEvent(trendEvent);
+    }
+    
 
 } // namespace WebCore
 

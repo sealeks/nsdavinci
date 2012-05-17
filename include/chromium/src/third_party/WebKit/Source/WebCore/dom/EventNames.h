@@ -180,9 +180,21 @@ namespace WebCore {
     \
     macro(audioprocess) \
     \
-    macro(alarm) \
+    macro(alarms) \
     \
-    macro(trend) \
+    macro(alarmstate) \
+    \
+    macro(trends) \
+    \
+    macro(expression) \
+    \
+    macro(journal) \
+    \
+    macro(clients) \
+    \
+   macro(commads) \
+    \
+   macro(debug) \
     \
 // end of DOM_EVENT_NAMES_FOR_EACH
 

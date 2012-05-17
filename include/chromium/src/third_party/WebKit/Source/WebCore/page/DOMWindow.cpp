@@ -395,8 +395,7 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
 
 DOMWindow::DOMWindow(Frame* frame)
     : m_shouldPrintWhenFinishedLoading(false)
-    , m_frame(frame),
-    alarmeventlistener()
+    , m_frame(frame)
 {
 }
 
@@ -408,7 +407,6 @@ DOMWindow::~DOMWindow()
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);
 }
-
 
 ScriptExecutionContext* DOMWindow::scriptExecutionContext() const
 {
@@ -1584,17 +1582,6 @@ void DOMWindow::dispatchLoadEvent()
     InspectorInstrumentation::loadEventFired(frame(), url());
 }
 
-void DOMWindow::dispatchAlarmEvent(PassRefPtr<WebCore::DVNCI::alarmtable> value)
-{
-    RefPtr<Event> alarmEvent(DVNAlarmEvent::create(eventNames().alarmEvent, value, this));
-    dispatchEvent(alarmEvent, document());
-}
-
-
-void DOMWindow::setalarmlistener(bool vl){
-	alarmeventlistener = WebCore::DVNCI::AlarmObserver(vl ? this : 0);
-}
-
 bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)
 {
     RefPtr<EventTarget> protect = this;
@@ -1847,7 +1834,7 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
     windowFeatures.y = windowRect.y();
     windowFeatures.height = windowRect.height();
     windowFeatures.width = windowRect.width();
-	windowFeatures.param = windowFeaturesString;
+    windowFeatures.param = windowFeaturesString;
 
     Frame* result = createWindow(urlString, frameName, windowFeatures, activeWindow, firstFrame, m_frame);
     return result ? result->domWindow() : 0;

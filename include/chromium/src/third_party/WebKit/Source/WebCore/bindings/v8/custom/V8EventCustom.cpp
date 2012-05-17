@@ -194,7 +194,13 @@ v8::Handle<v8::Value> toV8(Event* impl)
     if (impl->isDVNAlarmEvent())
         return toV8(static_cast<DVNAlarmEvent*>(impl));
     if (impl->isDVNTrendEvent())
-        return toV8(static_cast<DVNTrendEvent*>(impl), V8Event::wrap(impl));
+        return toV8(static_cast<DVNTrendEvent*>(impl));
+    if (impl->isDVNExpressionEvent())
+        return toV8(static_cast<DVNExpressionEvent*>(impl));
+    if (impl->isDVNJournalEvent())
+        return toV8(static_cast<DVNJournalEvent*>(impl));
+    if (impl->isDVNDebugEvent())
+        return toV8(static_cast<DVNDebugEvent*>(impl));    
     return V8Event::wrap(impl);
 }
 } // namespace WebCore

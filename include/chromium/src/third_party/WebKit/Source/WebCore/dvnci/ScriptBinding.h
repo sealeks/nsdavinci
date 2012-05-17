@@ -13,6 +13,7 @@
 
 #include "Page.h"
 #include "Chrome.h"
+#include "EventTarget.h"
 
 #include <winsock2.h>
 #include <custom/gui_executor.h>
@@ -20,7 +21,33 @@
 #include <kernel/constdef.h>
 #include <kernel/systemutil.h>
 
+/*
+ 
+ $$(expr [,handler])   ?!
+ $$check(expr [,handler])  ?!
+ $$error(expr [,handler])   ?!
+ $$exit()
+ $$writefile()
+ $$filelist([ext]) !!!!
+ $$fileexists((file|dir))  !!!!
+ $$kill()
+ $$editable()
+ $$runtime()
+ $$global()
+ element.onalarm = handler  - delete
+ element.ontrend = handler - delete
+ addExpressionListener(handler, expr)
+ removeExpressionListener(handler)
+ addAlarmsListener(handler[, group, agroup])
+ removeAlarmsListener(handler)
+ addTrendsListener(handler, taglist, period)
+ removTrendsListener(handler)
+ 
+ 
+ */
+
 dvnci::chrome_executor_ptr getexecutordvnci();
+void shutdown_dvnci_interface();
 bool BrowserDVNCI_isEditable();
 bool BrowserDVNCI_isRuntime();
 
@@ -38,6 +65,7 @@ namespace WebCore {
         return v8::Number::New(val.value<double>());
     }
 
+    
     static v8::Handle<v8::Value> dvnci_execCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_exec");
         if (args.Length() > 0) {
@@ -51,8 +79,7 @@ namespace WebCore {
         return v8::Undefined();
     }
 
-
-
+    
     static v8::Handle<v8::Value> dvnci_exprtestCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_test");
         if (args.Length() > 0) {
@@ -60,13 +87,28 @@ namespace WebCore {
             if (exec) {
                 v8::Handle<v8::Value> arg = args[0];
                 v8::String::Utf8Value value(arg);
-                dvnci::short_value val = exec->execute(std::string(*value, value.length()));
+                return dvnci_value_conv(exec->execute(std::string(*value, value.length()), true));
+            }
+        }
+        return v8::Undefined();
+    }
+
+    
+    static v8::Handle<v8::Value> dvnci_exprerrorCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_error");
+        if (args.Length() > 0) {
+            dvnci::chrome_executor_ptr exec = getexecutordvnci();
+            if (exec) {
+                v8::Handle<v8::Value> arg = args[0];
+                v8::String::Utf8Value value(arg);
+                dvnci::short_value val = exec->execute(std::string(*value, value.length()), true);
                 return v8::Integer::New(val.error());
             }
         }
         return v8::Undefined();
     }
 
+    
     static v8::Handle<v8::Value> dvnci_writefileCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_writefile");
         bool rslt = 0;
@@ -81,112 +123,214 @@ namespace WebCore {
         return v8::Boolean::New(rslt);
     }
 
+    
     static v8::Handle<v8::Value> dvnci_exitCallback(const v8::Arguments& args) {
 
         INC_STATS("DOM.DOMWindow.dvnci_exit");
         V8BindingState* state = V8BindingState::Only();
 
         DOMWindow* activeWindow = state->activeWindow();
+        shutdown_dvnci_interface();
         if (activeWindow && activeWindow->frame() && activeWindow->frame()->page() && activeWindow->frame()->page()->chrome())
             activeWindow->frame()->page()->chrome()->exitBrowser();
         return v8::Undefined();
     }
 
-    static v8::Handle<v8::Value> dvnci_isEditableCallback(const v8::Arguments& args) {
+    
+    static v8::Handle<v8::Value> dvnci_shutdownCallback(const v8::Arguments& args) {
 
+        INC_STATS("DOM.DOMWindow.dvnci_shutdown");
+
+        shutdown_dvnci_interface();
+
+        return v8::Undefined();
+    }
+
+    
+    static v8::Handle<v8::Value> dvnci_isEditableCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_isEditable");
         return v8::Boolean::New(BrowserDVNCI_isEditable());
     }
 
+    
     static v8::Handle<v8::Value> dvnci_isRuntimeCallback(const v8::Arguments& args) {
 
         INC_STATS("DOM.DOMWindow.dvnci_isRuntime");
         return v8::Boolean::New(BrowserDVNCI_isRuntime());
     }
 
+    
     static v8::Handle<v8::Value> dvnci_GlobalObject(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_globalobject");
-		v8::HandleScope handle_scope;
+        v8::HandleScope handle_scope;
         static v8::Persistent<v8::Object> global = v8::Persistent<v8::Object>::New(v8::Object::New());
-		static v8::Handle<v8::Value> value = global->ToObject();
+        static v8::Handle<v8::Value> value = global->ToObject();
         return handle_scope.Close(value);
     }
 
-    namespace DVNCI {
-
-        static v8::Handle<v8::Value> onalarmeventAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info) {
-            INC_STATS("DOM.DOMWindow.onalarm._get");
-            v8::Handle<v8::Object> holder = info.Holder();
-            DOMWindow* imp = reinterpret_cast<DOMWindow*> (holder->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
-            if (!imp->document())
-                return v8::Handle<v8::Value > ();
-            return imp->onalarm() ? v8::Handle<v8::Value > (static_cast<V8AbstractEventListener*> (imp->onalarm())->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value > (v8::Null());
+    static v8::Handle<v8::Value> addExpressionEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.addExpressionEventListener()");
+        bool rslt = false;
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        if ((impl) && (args.Length() > 1)) {
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+            if (listener && (args[1]->IsString())) {
+                String tag = toWebCoreString(args[1]);
+                rslt = impl->addExpressionEventListener(tag, listener);
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
         }
-
-        static void onalarmeventAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
-            INC_STATS("DOM.DOMWindow.onalarm._set");
-            v8::Handle<v8::Object> holder = info.Holder();
-            DOMWindow* imp = reinterpret_cast<DOMWindow*> (holder->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
-            if (!imp->document())
-                return;
-            //return;
-            transferHiddenDependency(info.Holder(), imp->onalarm(), value, v8DefaultWrapperInternalFieldCount + 0);
-            imp->setOnalarm(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate));
-            imp->setalarmlistener(imp->onalarm());
-            return;
-
-        }
-
-        static v8::Handle<v8::Value> ontrendAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info) {
-            INC_STATS("DOM.Element.ontrend._get");
-            Element* imp = V8Element::toNative(info.Holder());
-            return imp->ontrend() ? v8::Handle<v8::Value > (static_cast<V8AbstractEventListener*> (imp->ontrend())->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value > (v8::Null());
-        }
-
-        static void ontrendAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
-            INC_STATS("DOM.Element.ontrend._set");
-            Element* imp = V8Element::toNative(info.Holder());
-            imp->setOntrend(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate));
-            imp->settrendlistener(imp->ontrend());
-            return;
-        }
-
-		static v8::Handle<v8::Value> onalarmElAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info) {
-            INC_STATS("DOM.Element.onalarmEl._get");
-            Element* imp = V8Element::toNative(info.Holder());
-            return imp->onalarm() ? v8::Handle<v8::Value > (static_cast<V8AbstractEventListener*> (imp->onalarm())->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value > (v8::Null());
-        }
-
-        static void onalarmElAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
-            INC_STATS("DOM.Element.onalarmEl._set");
-            Element* imp = V8Element::toNative(info.Holder());
-            imp->setOnalarm(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate));
-            imp->setalarmlistener(imp->onalarm());
-            return;
-        }
+        return v8::Boolean::New(rslt);
     }
 
+    static v8::Handle<v8::Value> removeExpressionEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.removeExpressionEventListener()");
+        bool rslt = false;
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        if (args.Length() > 0) {
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+            if (listener) {
+                rslt = impl->removeExpressionEventListener(listener.get ());
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
+        }
+        return v8::Boolean::New(rslt);
+    }
+
+    static v8::Handle<v8::Value> addAlarmsEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.addAlarmsEventListener()");
+
+        String group = args.Length() > 1 ? toWebCoreString(args[1]) : "";
+        String agroup = args.Length() > 2 ? toWebCoreString(args[2]) : "";
+
+        bool rslt = false;
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        if ((impl) && (args.Length() > 0)) {
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+            if (listener) {
+                String tag = toWebCoreString(args[0]);
+                rslt = impl->addAlarmsEventListener(listener, group, agroup);
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
+        }
+        return v8::Boolean::New(rslt);
+    }
+
+    static v8::Handle<v8::Value> removeAlarmsEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.removeAlarmsEventListener()");
+
+        bool rslt = false;
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        if (args.Length() > 0) {
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+            if (listener) {
+                rslt = impl->removeAlarmsEventListener(listener.get ());
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
+        }
+        return v8::Boolean::New(rslt);
+    }
+
+    static v8::Handle<v8::Value> addJournalEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.addJournalEventListener()");
+
+
+        return v8::Undefined();
+    }
+
+    static v8::Handle<v8::Value> removeJournalEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.removeJournalEventListener()");
+
+        return v8::Undefined();
+    }
+
+    static v8::Handle<v8::Value> addTrendsEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.addTrendsEventListener()");
+
+        bool rslt = false;
+
+        int period = 0;
+        if (args.Length() > 2) {
+            bool ok = true;
+            period = toInt32(args[2], ok);
+            if (!ok)
+                period = 0;
+        }
+
+
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+
+        if ((impl) && (args.Length() > 1) && (args[1]->IsArray() || args[1]->IsString())) {
+            Vector<String> tags;
+            if (args[1]->IsString()) {
+                tags.append(toWebCoreString(args[1]->ToString()));
+            }
+            else {
+                v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(args[1]);
+                for (uint32_t i = 0; i < array->Length(); i++) {
+                    if (array->Get(i)->IsString())
+                        tags.append(toWebCoreString(array->Get(i)->ToString()));
+                }
+            }
+
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+
+            if (listener && (!tags.isEmpty())) {
+                rslt = impl->addTrendsEventListener(listener, tags, period);
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
+        }
+        return v8::Boolean::New(rslt);
+    }
+
+    static v8::Handle<v8::Value> removeTrendsEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.removeTrendsEventListener()");
+
+        bool rslt = false;
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        if (args.Length() > 0) {
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+            if (listener) {
+                rslt = impl->removeTrendsEventListener(listener.get ());
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
+        }
+        return v8::Boolean::New(rslt);
+    }
+
+
+
     static const BatchedCallback ext_DOMWindowCallbacks[] = {
-        {"dvnci_exec", dvnci_execCallback},
-		{"execute", dvnci_execCallback},
-        {"dvnci_value", dvnci_execCallback},
-		{"expression", dvnci_execCallback},
-        {"dvnci_writefile", dvnci_writefileCallback},
-        {"dvnci_test", dvnci_exprtestCallback},
-        {"dvnci_exit", dvnci_exitCallback},
-        {"dvnci_iseditable", dvnci_isEditableCallback},
-        {"dvnci_isruntime", dvnci_isRuntimeCallback},
-		{"dvnci_globalobject", dvnci_GlobalObject},
+        {"$$", dvnci_execCallback},
+        {"$$writefile", dvnci_writefileCallback},
+        {"$$check", dvnci_exprtestCallback},
+        {"$$error", dvnci_exprerrorCallback},
+        {"$$exit", dvnci_exitCallback},
+        {"$$kill", dvnci_shutdownCallback},
+        {"$$editable", dvnci_isEditableCallback},
+        {"$$runtime", dvnci_isRuntimeCallback},
+        {"$$global", dvnci_GlobalObject},
+        {"addExpressionListener", addExpressionEventListenerCallback},
+        {"removeExpressionListener", removeExpressionEventListenerCallback},
+        {"addAlarmsListener", addAlarmsEventListenerCallback},
+        {"removeAlarmsListener", removeAlarmsEventListenerCallback},
+        {"addTrendsListener", addTrendsEventListenerCallback},
+        {"removeTrendsListener", removeTrendsEventListenerCallback},
+        {"addJournalListener", addJournalEventListenerCallback},
+        {"removeJournalListener", removeJournalEventListenerCallback},
+        {"$$global", dvnci_GlobalObject},
     };
 
-    static const BatchedAttribute ext_DOMWindowAttrs[] = {
-        {"onalarm", DVNCI::onalarmeventAttrGetter, DVNCI::onalarmeventAttrSetter, 0, static_cast<v8::AccessControl> (v8::DEFAULT), static_cast<v8::PropertyAttribute> (v8::None), 1},
 
-    };
-
-    static const BatchedAttribute ext_ElementAttrs[] = {
-        {"ontrend", DVNCI::ontrendAttrGetter, DVNCI::ontrendAttrSetter, 0, static_cast<v8::AccessControl> (v8::DEFAULT), static_cast<v8::PropertyAttribute> (v8::None | v8::DontEnum), 0 /* on instance */},
-		{"onalarm", DVNCI::onalarmElAttrGetter, DVNCI::onalarmElAttrSetter, 0, static_cast<v8::AccessControl> (v8::DEFAULT), static_cast<v8::PropertyAttribute> (v8::None | v8::DontEnum), 0 /* on instance */},
+    static const BatchedCallback ext_ElementCallbacks[] = {
+        {"addExpressionListener", addExpressionEventListenerCallback},
+        {"removeExpressionListener", removeExpressionEventListenerCallback},
+        {"addAlarmsListener", addAlarmsEventListenerCallback},
+        {"removeAlarmsListener", removeAlarmsEventListenerCallback},
+        {"addTrendsListener", addTrendsEventListenerCallback},
+        {"removeTrendsListener", removeTrendsEventListenerCallback},
+        {"addJournalListener", addJournalEventListenerCallback},
+        {"removeJournalListener", removeJournalEventListenerCallback},
     };
 
     void dvnci_external_registrate(v8::Persistent<v8::FunctionTemplate> desc, const char *interfaceName, v8::Local<v8::ObjectTemplate> instance) {
@@ -198,14 +342,12 @@ namespace WebCore {
                     ext_DOMWindowCallbacks, WTF_ARRAY_LENGTH(ext_DOMWindowCallbacks));
         }
 
-        if (WTF::CString(interfaceName) == WTF::CString("DOMWindow")) {
-            batchConfigureAttributes(instance, desc->PrototypeTemplate(),
-                    ext_DOMWindowAttrs, WTF_ARRAY_LENGTH(ext_DOMWindowAttrs));
-        }
-
         if (WTF::CString(interfaceName) == WTF::CString("Element")) {
-            batchConfigureAttributes(instance, desc->PrototypeTemplate(),
-                    ext_ElementAttrs, WTF_ARRAY_LENGTH(ext_ElementAttrs));
+            v8::Local<v8::Signature> defaultSignature = v8::Signature::New(desc);
+            batchConfigureCallbacks(desc->PrototypeTemplate(),
+                    defaultSignature,
+                    static_cast<v8::PropertyAttribute> (v8::DontDelete),
+                    ext_DOMWindowCallbacks, WTF_ARRAY_LENGTH(ext_ElementCallbacks));
         }
 
     }

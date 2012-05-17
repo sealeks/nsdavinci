@@ -262,7 +262,37 @@ bool Event::isDVNAlarmEvent() const
     return false;
 }
 
+bool Event::isDVNAlarmStateEvent() const
+{
+    return false;
+}
+
 bool Event::isDVNTrendEvent() const
+{
+    return false;
+}
+
+bool Event::isDVNExpressionEvent() const
+{
+    return false;
+}
+
+bool Event::isDVNJournalEvent() const
+{
+    return false;
+}
+
+bool Event::isDVNCommandsEvent() const
+{
+    return false;
+}
+
+bool Event::isDVNClientsEvent() const
+{
+    return false;
+}
+
+bool Event::isDVNDebugEvent() const
 {
     return false;
 }

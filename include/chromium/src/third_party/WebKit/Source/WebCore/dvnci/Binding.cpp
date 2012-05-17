@@ -10,6 +10,7 @@
 #include "Binding.h"
 #include "Element.h"
 #include "Text.h"
+#include "EventTarget.h"
 
 #include "DOMWindow.h"
 
@@ -40,56 +41,72 @@ bool BrowserDVNCI_isEditable();
 
 const int TICK_DVNCI_DURATION = 500;
 
- struct guichrome_terminated_thread{
-	  guichrome_terminated_thread(dvnci::chrome_executor_ptr inf_): inf(inf_),th(inf_) {}
+struct guichrome_terminated_thread {
 
-	  ~guichrome_terminated_thread(){
-	     inf.terminate();
-         th.join();}
+    guichrome_terminated_thread(dvnci::chrome_executor_ptr inf_) : inf(inf_), th(inf_) {
+    }
 
-  private:
-	  dvnci::chrome_executor_ptr inf;
-	  boost::thread th;
-  };
+    ~guichrome_terminated_thread() {
+        if (inf && (!inf->terminated())) {
+            inf->detachall();
+            inf.terminate();
+        }
+        th.join();
+    }
+
+private:
+    dvnci::chrome_executor_ptr inf;
+    boost::thread th;
+} ;
 
 dvnci::chrome_executor_ptr getexecutordvnci() {
     static dvnci::fspath basepath = dvnci::getlocalbasepath();
     static dvnci::tagsbase_ptr kintf = dvnci::krnl::factory::build(basepath, 0);
     static dvnci::chrome_executor_ptr DVNCI_INTERFACE = dvnci::chrome_executor_ptr(new dvnci::chrome_gui_executor(kintf));
     static guichrome_terminated_thread dvnth(DVNCI_INTERFACE);
-	return /*BrowserDVNCI_isEditable() ? dvnci::chrome_executor_ptr() :*/ DVNCI_INTERFACE;
+    return /*BrowserDVNCI_isEditable() ? dvnci::chrome_executor_ptr() :*/ DVNCI_INTERFACE;
 }
 
+void shutdown_dvnci_interface() {
+    dvnci::chrome_executor_ptr intf = getexecutordvnci();
+    if (intf) {
+        if (!intf->terminated()) {
+            intf->detachall();
+            intf.terminate();
+        }
+    }
+}
 
-void dvnciMain(void* cntxt){
-	typedef boost::shared_ptr<dvnci::datetime> time_ptr;
+void dvnciMain(void* cntxt) {
+    typedef boost::shared_ptr<dvnci::datetime> time_ptr;
     static time_ptr tick = time_ptr( new dvnci::datetime());
     static dvnci::chrome_executor_ptr intf = getexecutordvnci();
 
-	if (intf && ((tick->is_special()) || 
-		(dvnci::abs(dvnci::millisecondsbetween(*tick, dvnci::now()))>TICK_DVNCI_DURATION))){
-		tick.swap(time_ptr( new dvnci::datetime(dvnci::now())));
-		intf->call();
-	}
+    if (intf && ((tick->is_special()) ||
+            (dvnci::abs(dvnci::millisecondsbetween(*tick, dvnci::now())) > TICK_DVNCI_DURATION))) {
+        tick.swap(time_ptr( new dvnci::datetime(dvnci::now())));
+        intf->call();
+    }
     WTF::callOnMainThread(dvnciMain, 0, TICK_DVNCI_DURATION);
-    
+
 }
 
 void (*dvnciMainVar)(void*) = 0;
 
-void initdvnciMain(){
-	if (!dvnciMainVar){
-	    dvnciMainVar = dvnciMain;
-	    WTF::callOnMainThread(dvnciMain, 0);}
+void initdvnciMain() {
+    if (!dvnciMainVar) {
+        dvnciMainVar = dvnciMain;
+        WTF::callOnMainThread(dvnciMain, 0);
+    }
 }
 
 
 
 namespace WebCore {
     namespace DVNCI {
-        
-        
-        
+
+
+
 
         const String NULLDEFAULTSTRING = " ";
 
@@ -97,8 +114,6 @@ namespace WebCore {
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////////// 
-        
-        
 
         AttributeObserver::AttributeObserver
         (Attribute * const attr, const AtomicString& val) :
@@ -130,23 +145,30 @@ namespace WebCore {
             class attribute_expression_listener : public dvnci::expression_listener {
             public:
 
-                attribute_expression_listener(AttributeObserverImpl * const lsnr, const std::wstring& deflt = L"") : listener(lsnr), stdvl() {
+                attribute_expression_listener(AttributeObserverImpl * const lsnr, const std::wstring& deflt = L"") : listener(lsnr), stdvl(), dfltvl(deflt) {
                 }
 
                 virtual ~attribute_expression_listener() {
                 }
 
                 virtual void event(const dvnci::short_value& val) {
-                    stdvl = dvnci::utf8_to_wstr(val.value<std::string > ());
+                    stdvl = val.valid() ? dvnci::utf8_to_wstr( val.value<std::string > ()) : dfltvl;
                     vl = String( stdvl.c_str(), stdvl.size());
-                    listener->setvalue( val.valid() ? vl : listener->deflt());
+                    listener->setvalue( vl );
+                }
+
+                void setdefault() {
+                    stdvl =  dfltvl;
+                    vl = String( stdvl.c_str(), stdvl.size());
+                    listener->setvalue( vl );
                 }
 
             private:
                 AttributeObserverImpl * const listener;
                 std::wstring stdvl;
+                std::wstring dfltvl;
                 String vl;
-            };
+            } ;
 
         public:
 
@@ -155,14 +177,13 @@ namespace WebCore {
             }
 
             virtual void setvalue(const String& val) {
-                
+
                 if (elem && attribute) {
                     ExceptionCode ec;
                     attribute->setValue(val);
                     elem->setAttribute(attribute->name(), attribute->value(), ec);
                 }
             }
-
 
             virtual ~AttributeObserverImpl() {
                 unregistrate();
@@ -171,8 +192,8 @@ namespace WebCore {
             virtual bool valid() const {
                 return exrptr;
             }
-            
-            const String& deflt() const{
+
+            const AtomicString& deflt() const {
                 return defaultvalue;
             }
 
@@ -182,20 +203,24 @@ namespace WebCore {
             dvnci::expression_listener_ptr registrate(Element * const el, const AtomicString& val) {
                 std::wstring tmpw = std::wstring(val.characters(), val.length());
                 std::wstring tmpdef = dvnci::attribute_default_expression(tmpw);
-                tmpw = dvnci::attribute_expression(tmpw);              
-                defaultvalue = String(tmpdef.c_str(),tmpdef.size());
-                setvalue(defaultvalue);
+                tmpw = dvnci::attribute_expression(tmpw);
+                defaultvalue = String(tmpdef.c_str(), tmpdef.size());
+
                 if (tmpw.empty()) {
+                    setvalue(defaultvalue);
                     return dvnci::expression_listener_ptr();
                 }
                 intf = getexecutordvnci();
                 if (intf) {
                     exprstr = dvnci::wstr_to_utf8(tmpw);
                     exrptr = dvnci::expression_listener_ptr(new attribute_expression_listener(this, tmpdef));
-                    if (exrptr) {
-                            intf->regist_expr_listener(exprstr, exrptr);}
+                    /*if (exrptr.get())
+                         static_cast<attribute_expression_listener*>(exrptr.get())->setdefault();*/
+                    intf->regist_expr_listener(exprstr, exrptr);
                     return exrptr;
                 }
+                else
+                    setvalue(defaultvalue);
                 return dvnci::expression_listener_ptr();
             }
 
@@ -208,10 +233,8 @@ namespace WebCore {
             dvnci::expression_listener_ptr exrptr;
             dvnci::chrome_executor_ptr intf;
             std::string exprstr;
-            String defaultvalue;
-        };
-        
-        
+            AtomicString defaultvalue;
+        } ;
 
         class TextNodeObserverImpl : public TextNodeObserver {
 
@@ -234,7 +257,7 @@ namespace WebCore {
                 TextNodeObserverImpl * const listener;
                 std::wstring stdvl;
                 String vl;
-            };
+            } ;
 
         public:
 
@@ -245,7 +268,8 @@ namespace WebCore {
             virtual void setvalue(const String& val) {
                 if (text) {
                     ExceptionCode ec;
-                    text->replaceWholeText(val, ec);;
+                    text->replaceWholeText(val, ec);
+                    ;
                 }
             }
 
@@ -256,10 +280,9 @@ namespace WebCore {
             virtual bool valid() const {
                 return exrptr;
             }
-            
-                        
-            const String& deflt() const{
-				return defaultvalue.length() ? defaultvalue : NULLDEFAULTSTRING;
+
+            const String& deflt() const {
+                return defaultvalue.length() ? defaultvalue : NULLDEFAULTSTRING;
             }
 
 
@@ -270,7 +293,7 @@ namespace WebCore {
                 std::wstring tmpw = std::wstring(val.characters(), val.length());
                 std::wstring tmpdef = dvnci::attribute_default_expression(tmpw);
                 tmpw = dvnci::attribute_expression(tmpw);
-				defaultvalue = String(tmpdef.c_str(),tmpdef.size());
+                defaultvalue = String(tmpdef.c_str(), tmpdef.size());
                 setvalue(deflt());
                 if (tmpw.empty()) {
                     return dvnci::expression_listener_ptr();
@@ -280,7 +303,7 @@ namespace WebCore {
                     exprstr = dvnci::wstr_to_utf8(tmpw);
                     exrptr = dvnci::expression_listener_ptr(new text_expression_listener(this, tmpdef));
                     if (exrptr) {
-                           intf->regist_expr_listener(exprstr, exrptr);
+                        intf->regist_expr_listener(exprstr, exrptr);
                     }
                     return exrptr;
                 }
@@ -297,7 +320,7 @@ namespace WebCore {
             dvnci::chrome_executor_ptr intf;
             std::string exprstr;
             String defaultvalue;
-        };
+        } ;
 
         Observer::Observer(Attribute * const attr, const AtomicString& val) {
             if ((attr) && (val.find("#{") != WTF::notFound) && (val.find("}") != WTF::notFound)) {
@@ -336,25 +359,13 @@ namespace WebCore {
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////////// 
 
-        class AlarmObserverImpl : public AbstractAlarmObserver {
-
-            class alarmtable_impl : public alarmtable {
-            public:
-
-                alarmtable_impl(const dvnci::vect_alarms_row& row) : alarmtable(row.size()) {
-                    size_t i = 0;
-                    for (dvnci::vect_alarms_row::const_iterator it = row.begin(); it != row.end(); ++it) {
-                        alarmrow tmp = {dvnci::datetime_to_epoch_msc(it->time), it->level, it->kvit, it->tag.c_str(), it->text.c_str(), it->value.c_str(), it->type};
-                        table[i++] = tmp;
-                    }
-                }
-            };
+        class AlarmsObserverImpl : public AbstractEventObserver {
 
             class alarm_listener : public dvnci::alarms_listener {
-                friend class AlarmObserverImpl;
+                friend class AlarmsObserverImpl ;
             public:
 
-                alarm_listener(AlarmObserverImpl * const lsnr) : listener(lsnr) {
+                alarm_listener(AlarmsObserverImpl  * const lsnr) : listener(lsnr) {
                 }
 
                 virtual ~alarm_listener() {
@@ -365,28 +376,23 @@ namespace WebCore {
                 }
 
             private:
-                AlarmObserverImpl * const listener;
-            };
+                AlarmsObserverImpl  * const listener;
+            } ;
 
         public:
 
-            AlarmObserverImpl(DOMWindow * const domwin) : AbstractAlarmObserver(), win(domwin), element(0) {
-                registrate();
-            }
-
-			AlarmObserverImpl(Element * const elem) : AbstractAlarmObserver(), win(0), element(elem) {
+            AlarmsObserverImpl(EventTarget * const evtarget , const String& group_,  const String& agroup_) : AbstractEventObserver(evtarget), group(group_), agroup(agroup_)  {
+                initdvnciMain();
                 registrate();
             }
 
             virtual void notyfy(const dvnci::vect_alarms_row& val) {
-                if (alarmlsnrptr  && (win || element)) {
-                    if (win) win->dispatchAlarmEvent(adoptRef(new alarmtable_impl(val)));
-					if (element) element->dispatchAlarmEvent(adoptRef(new alarmtable_impl(val)));
+                if (alarmlsnrptr  && (target())) {
+                    target()->dispatchAlarmsEvent(dvnci::alarms_table(val));
                 }
             }
 
-
-            virtual ~AlarmObserverImpl() {
+            virtual ~AlarmsObserverImpl() {
                 unregistrate();
             };
 
@@ -416,30 +422,12 @@ namespace WebCore {
 
             }
 
+            String group;
+            String agroup;
             dvnci::alarms_listener_ptr alarmlsnrptr;
             dvnci::chrome_executor_ptr intf;
             dvnci::vect_alarms_row value;
-            WebCore::DOMWindow * const win;
-			WebCore::Element * const element;
-        };
-        
-        
-
-        AlarmObserver::AlarmObserver(DOMWindow * const domwin) {
-            if (domwin){
-                initdvnciMain();
-                impl = adoptRef(new AlarmObserverImpl(domwin));}
-            else
-                impl = impl_reftype();
-        }
-
-        AlarmObserver::AlarmObserver(Element * const elem) {
-            if (elem){
-                initdvnciMain();
-                impl = adoptRef(new AlarmObserverImpl(elem));}
-            else
-                impl = impl_reftype();
-        }
+        } ;
 
 
 
@@ -448,53 +436,41 @@ namespace WebCore {
         //////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////      
 
-        class TrendObserverImpl : public AbstractTrendObserver {
-
-            class trendtable_impl : public trendtable {
-            public:
-
-                trendtable_impl(const std::vector<dvnci::short_value>& val) : trendtable(val.size()) {
-                    size_t i = 0;
-                    for (std::vector<dvnci::short_value>::const_iterator it = val.begin(); it != val.end(); ++it) {
-                        trendrow tmp = {it->value<double>(), dvnci::datetime_to_epoch_msc(it->time())};
-                        table[i++] = tmp;
-                    }
-                }
-            };
+        class TrendsObserverImpl : public AbstractEventObserver {
 
             class trend_listener : public dvnci::trend_listener {
-                friend class TrendObserverImpl;
+                friend class TrendsObserverImpl;
             public:
 
-                trend_listener(TrendObserverImpl * const lsnr) : listener(lsnr) {
+                trend_listener(TrendsObserverImpl * const lsnr, const dvnci::str_vect& tgs, dvnci::num64 histmilisec) : dvnci::trend_listener(tgs, histmilisec),  listener(lsnr) {
                 }
 
                 virtual ~trend_listener() {
                 }
 
-                virtual bool event(const std::vector<dvnci::short_value>& val) {
+                virtual bool event(const dvnci::short_values_table& val) {
                     listener->notyfy(val);
                     return true;
                 }
 
             private:
-                TrendObserverImpl * const listener;
-            };
+                TrendsObserverImpl * const listener;
+            } ;
 
         public:
 
-            TrendObserverImpl(Element * const domelem) : AbstractTrendObserver(), elem(domelem) {
+            TrendsObserverImpl(EventTarget * const evtarget , const Vector<String>& tags_, int period_ = 0) : AbstractEventObserver(evtarget), tags(tags_), period(period_) {
+                initdvnciMain();
                 registrate();
             }
 
-            virtual void notyfy(const std::vector<dvnci::short_value>& val) {
-                if (trendlsnrptr && elem) {
-                    elem->dispatchTrendEvent(adoptRef(new trendtable_impl(val)));
+            virtual void notyfy(const dvnci::short_values_table& val) {
+                if (trendlsnrptr && target()) {
+                    target()->dispatchTrendsEvent(dvnci::trends_table(val));
                 }
             }
 
-
-            virtual ~TrendObserverImpl() {
+            virtual ~TrendsObserverImpl() {
                 unregistrate();
             };
 
@@ -509,14 +485,15 @@ namespace WebCore {
 
             dvnci::trend_listener_ptr registrate() {
                 intf = getexecutordvnci();
-                if (elem && intf && (elem->hasAttribute(L"desc"))) {
-                    const AtomicString& attr = elem->getAttribute(L"desc");
-                    std::wstring tmpw = std::wstring(attr.characters(), attr.length());
-                    trendlsnrptr = dvnci::trend_listener_ptr(new trend_listener(this));
-                    return intf->regist_trend_listener(
-                            dvnci::wstr_to_utf8(tmpw), trendlsnrptr) ? trendlsnrptr : dvnci::trend_listener_ptr();
+                dvnci::str_vect tgs;
+                for (Vector<String>::const_iterator it = tags.begin(); it != tags.end(); ++it)
+                    if (!it->isEmpty())
+                        tgs.push_back(std::string(it->utf8().data()));
+                if (target() && intf && tgs.size()) {
+                    trendlsnrptr = dvnci::trend_listener_ptr(new trend_listener(this, tgs, period));
+                    intf->regist_trend_listener( trendlsnrptr);
                 }
-                return dvnci::trend_listener_ptr();
+                return trendlsnrptr;
             }
 
             void unregistrate() {
@@ -525,22 +502,114 @@ namespace WebCore {
                 }
             }
 
+            Vector<String> tags;
+            int period;
             dvnci::trend_listener_ptr trendlsnrptr;
             dvnci::chrome_executor_ptr intf;
             std::vector<dvnci::short_value> value;
-            WebCore::Element * const elem;
-        };
-        
-        
-        
-        
+        } ;
 
-        TrendObserver::TrendObserver(Element * const domelm) {
-            if (domelm){
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////      
+
+        class ExpressionObserverImpl : public AbstractEventObserver {
+
+            class expression_listener : public dvnci::expression_listener {
+            public:
+
+                expression_listener(ExpressionObserverImpl * const lsnr) : listener(lsnr) {
+                }
+
+                virtual ~expression_listener() {
+                }
+
+                virtual void event(const dvnci::short_value& val) {
+                    listener->notyfy( val);
+                }
+
+
+            private:
+                ExpressionObserverImpl * const listener;
+            } ;
+
+        public:
+
+            ExpressionObserverImpl(EventTarget * const evtarget , const String& tag_) : AbstractEventObserver(evtarget), tag(tag_) {
                 initdvnciMain();
-                impl = adoptRef(new TrendObserverImpl(domelm));}
-            else
-                impl = impl_reftype();
+                registrate();
+            }
+
+            virtual void notyfy(const dvnci::short_value& val) {
+                if (expressionptr && target()) {
+                    value = val;
+                    target()->dispatchExpressionEvent(value);
+                }
+            }
+
+            virtual ~ExpressionObserverImpl() {
+                unregistrate();
+            };
+
+            virtual bool valid() const {
+                return expressionptr;
+            }
+
+
+
+
+        private:
+
+            dvnci::expression_listener_ptr registrate() {
+
+                std::string tmp = dvnci::wstr_to_utf8(std::wstring(tag.characters(), tag.length()));
+                intf = getexecutordvnci();
+                if (intf) {
+                    expressionptr = dvnci::expression_listener_ptr(new expression_listener(this));
+                    if (expressionptr)
+                        intf->regist_expr_listener(tmp, expressionptr);
+                }
+                return expressionptr;
+            }
+
+            void unregistrate() {
+                if ((intf) && (expressionptr)) {
+                    intf->unregist_expr_listener(expressionptr);
+                }
+            }
+
+            dvnci::expression_listener_ptr   expressionptr;
+            dvnci::chrome_executor_ptr      intf;
+            String                                     tag;
+            dvnci::short_value           value;
+        } ;
+
+
+
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+        WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createAlarmsObserver(EventTarget * const evtarget , const String& group, const String& agroup) {
+            return adoptRef( new AlarmsObserverImpl(evtarget, group, agroup));
+        }
+
+        WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createJournalObserver(EventTarget * const evtarget ,  const String& filter) {
+            return adoptRef( new AbstractEventObserver(evtarget));
+        }
+        
+        WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createDebugObserver(EventTarget * const evtarget ,  const String& filter) {
+            return adoptRef( new ExpressionObserverImpl (evtarget, tag));
+        }
+
+        WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createTrendsObserver(EventTarget * const evtarget , const Vector<String>& tags, int period) {
+            return adoptRef( new TrendsObserverImpl(evtarget, tags, period));
+        }
+
+        WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createExpressionObserver(EventTarget * const evtarget ,  const String& tag) {
+            return adoptRef( new ExpressionObserverImpl (evtarget, tag));
         }
 
     }
