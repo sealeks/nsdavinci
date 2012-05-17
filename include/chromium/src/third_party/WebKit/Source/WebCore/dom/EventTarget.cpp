@@ -525,12 +525,12 @@ EventListener* EventListenerIterator::nextListener()
     }
 
     void EventTarget::dispatchAlarmsEvent(const dvnci::alarms_table& value) {
-        RefPtr<Event> alarmsEvent(DVNAlarmEvent::create(eventNames().alarmsEvent, value, this));
+        RefPtr<Event> alarmsEvent(DVNAlarmsEvent::create(eventNames().alarmsEvent, value, this));
         dispatchEvent(alarmsEvent);
     }
 
     void EventTarget::dispatchTrendsEvent(const dvnci::trends_table& value) {
-        RefPtr<Event> trendsEvent(DVNTrendEvent::create(eventNames().trendsEvent, value, this));
+        RefPtr<Event> trendsEvent(DVNTrendsEvent::create(eventNames().trendsEvent, value, this));
         dispatchEvent(trendsEvent);
     }
 

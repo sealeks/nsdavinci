@@ -59,7 +59,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/2033115731/browser_init.o \
 	${OBJECTDIR}/_ext/693821776/browser_main.o \
 	${OBJECTDIR}/_ext/1481901799/test_shell_main.o \
-	${OBJECTDIR}/_ext/626163327/Observer.o \
 	${OBJECTDIR}/_ext/237341856/RenderSVGResourceFilter.o \
 	${OBJECTDIR}/_ext/1773406014/interstitial_page.o \
 	${OBJECTDIR}/_ext/2090250122/render_widget.o \
@@ -78,11 +77,12 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1372717311/Text.o \
 	${OBJECTDIR}/_ext/395780272/Chrome.o \
 	${OBJECTDIR}/_ext/1266577833/chrome_main.o \
+	${OBJECTDIR}/_ext/626163327/TableObserver.o \
 	${OBJECTDIR}/_ext/2090250122/renderer_main_platform_delegate_win.o \
 	${OBJECTDIR}/_ext/1181948482/V8EventCustom.o \
-	${OBJECTDIR}/_ext/626163327/TrendObserver.o \
 	${OBJECTDIR}/_ext/1135401168/browser_frame_win.o \
 	${OBJECTDIR}/_ext/1325941802/render_view_host.o \
+	${OBJECTDIR}/_ext/626163327/ValueObserver.o \
 	${OBJECTDIR}/_ext/175573947/dragged_tab_controller.o \
 	${OBJECTDIR}/_ext/722456513/tab_contents_view_views.o \
 	${OBJECTDIR}/_ext/395780272/DOMWindow.o \
@@ -90,7 +90,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1183789274/MainThreadChromium.o \
 	${OBJECTDIR}/_ext/373131870/content_switches.o \
 	${OBJECTDIR}/_ext/1519183961/CachedResource.o \
-	${OBJECTDIR}/_ext/626163327/AlarmObserver.o \
 	${OBJECTDIR}/_ext/106943053/ChromeClientImpl.o \
 	${OBJECTDIR}/_ext/1773406014/tab_contents_delegate.o
 
@@ -244,11 +243,6 @@ ${OBJECTDIR}/_ext/1481901799/test_shell_main.o: ../../include/chromium/src/webki
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1481901799/test_shell_main.o ../../include/chromium/src/webkit/tools/test_shell/test_shell_main.cc
 
-${OBJECTDIR}/_ext/626163327/Observer.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Observer.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/626163327
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/626163327/Observer.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Observer.cpp
-
 ${OBJECTDIR}/_ext/237341856/RenderSVGResourceFilter.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGResourceFilter.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/237341856
 	${RM} $@.d
@@ -339,6 +333,11 @@ ${OBJECTDIR}/_ext/1266577833/chrome_main.o: ../../include/chromium/src/chrome/ap
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1266577833/chrome_main.o ../../include/chromium/src/chrome/app/chrome_main.cc
 
+${OBJECTDIR}/_ext/626163327/TableObserver.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/626163327
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/626163327/TableObserver.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.cpp
+
 ${OBJECTDIR}/_ext/2090250122/renderer_main_platform_delegate_win.o: ../../include/chromium/src/content/renderer/renderer_main_platform_delegate_win.cc 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2090250122
 	${RM} $@.d
@@ -349,11 +348,6 @@ ${OBJECTDIR}/_ext/1181948482/V8EventCustom.o: ../../include/chromium/src/third_p
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1181948482/V8EventCustom.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/custom/V8EventCustom.cpp
 
-${OBJECTDIR}/_ext/626163327/TrendObserver.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TrendObserver.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/626163327
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/626163327/TrendObserver.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TrendObserver.cpp
-
 ${OBJECTDIR}/_ext/1135401168/browser_frame_win.o: ../../include/chromium/src/chrome/browser/ui/views/frame/browser_frame_win.cc 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1135401168
 	${RM} $@.d
@@ -363,6 +357,11 @@ ${OBJECTDIR}/_ext/1325941802/render_view_host.o: ../../include/chromium/src/cont
 	${MKDIR} -p ${OBJECTDIR}/_ext/1325941802
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1325941802/render_view_host.o ../../include/chromium/src/content/browser/renderer_host/render_view_host.cc
+
+${OBJECTDIR}/_ext/626163327/ValueObserver.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ValueObserver.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/626163327
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/626163327/ValueObserver.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ValueObserver.cpp
 
 ${OBJECTDIR}/_ext/175573947/dragged_tab_controller.o: ../../include/chromium/src/chrome/browser/ui/views/tabs/dragged_tab_controller.cc 
 	${MKDIR} -p ${OBJECTDIR}/_ext/175573947
@@ -398,11 +397,6 @@ ${OBJECTDIR}/_ext/1519183961/CachedResource.o: ../../include/chromium/src/third_
 	${MKDIR} -p ${OBJECTDIR}/_ext/1519183961
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1519183961/CachedResource.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResource.cpp
-
-${OBJECTDIR}/_ext/626163327/AlarmObserver.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/AlarmObserver.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/626163327
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/626163327/AlarmObserver.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/AlarmObserver.cpp
 
 ${OBJECTDIR}/_ext/106943053/ChromeClientImpl.o: ../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromeClientImpl.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/106943053

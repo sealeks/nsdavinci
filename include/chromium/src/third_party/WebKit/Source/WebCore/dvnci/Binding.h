@@ -13,7 +13,7 @@
 #include <wtf/RefPtr.h>
 #include <v8.h>
 
-#include "Observer.h"
+
 #include "TableObserver.h"
 #include "ValueObserver.h"
 
@@ -21,6 +21,24 @@
 
 
 namespace WebCore {
+
+    class Attr;
+    class CSSStyleDeclaration;
+    class Element;
+    class NamedNodeMap;
+    class Text;
+    class Attribute;
+    class DOMWindow;
+    class Event;
+
+    class ClientRect;
+    class ClientRectList;
+    class DOMStringMap;
+    class DOMTokenList;
+    class ElementRareData;
+    class IntSize;
+    class ShadowRoot;
+    class WebKitAnimationList;
 
 
     namespace DVNCI {
@@ -32,8 +50,8 @@ namespace WebCore {
         class DVNDOMValueObserver : public RefCounted<DVNDOMValueObserver> {
         public:
 
-            static WTF::RefPtr<DVNDOMValueObserver> DVNDOMValueObserver(Attribute * const el, const AtomicString& val);
-            static WTF::RefPtr<DVNDOMValueObserver> DVNDOMValueObserver(Text * const txt, const String& val);
+            static WTF::RefPtr<DVNDOMValueObserver> create(Attribute * const el, const AtomicString& val);
+            static WTF::RefPtr<DVNDOMValueObserver> create(Text * const txt, const String& val);
 
             virtual ~DVNDOMValueObserver() {
             }
