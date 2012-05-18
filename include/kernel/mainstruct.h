@@ -2484,7 +2484,18 @@ namespace dvnci {
       std::string  value;
       std::string  user;}; 
       
-    typedef std::vector<journal_row >  vect_journal_row;       
+    typedef std::vector<journal_row >  vect_journal_row; 
+    
+    
+    struct debug_row {
+        num64   index;
+        unum64  guid;
+        datetime   time;
+        std::string  message;
+        num64  level;
+        num64  appid;};
+
+    typedef std::vector<debug_row>     vect_debug_row;
 
 #pragma  pack(pop)
 
