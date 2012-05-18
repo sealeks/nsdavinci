@@ -5,18 +5,24 @@
 
 <script type="text/javascript" xlink:href="../util/js/designer.js"/> 
 <script type="text/javascript" xlink:href="../util/js/libutil.js"/> 
-<script type="text/javascript" id="stopscript">
+<script type="text/javascript" id="stopscript"><![CDATA[
 function ___global___unload(){
 if (window.simTick) clearInterval(window.simTick);
 if (window.simulation_detach) simulation_detach();
    
 
+
+
 };
-</script>
+]]></script>
 <script type="text/javascript" id="startscript"><![CDATA[
 if ((window.$$editable)&&(!window.$$editable())){
 //alert('startscript: ' + window.document.URL);
 simproccessor  = [];
+
+
+
+
 
 SIMULATIONTICK = 100;
 
@@ -50,6 +56,10 @@ window.simTick = setInterval(simulation_execute, SIMULATIONTICK );
 add_simulation ( new simulator.initializer('m1::c1' , 1 , 0));
 add_simulation ( new simulator.valueobserver('m1::h2' , null , 'm1::h1' ,null));
 add_simulation ( new simulator.valueobserver('m1::h3' , null , 'm1::h2' ,null));
+
+setInterval(function(){$$('m1::c1 @ (m1::c1 ? 0 : 1)')}, 2000 );
+setInterval(function(){$$('m1::h1 @ (now.sec)')}, 3000 );
+setInterval(function(){$$('#')}, 20000 );
 
 
   
