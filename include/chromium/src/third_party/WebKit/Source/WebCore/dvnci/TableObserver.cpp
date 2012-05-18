@@ -60,10 +60,30 @@ namespace WebCore {
         v8::HandleScope handle_scope;
 
         v8::Handle<v8::Array> array = v8::Array::New(vect.size());
+        
+        int maxlevel = 0;
+        int actuallevel = 0;
+        bool allkvit = false;
 
         int i = 0;
-        for (dvnci::vect_alarms_row::const_iterator it = vect.begin(); it != vect.end(); ++it)
+
+        v8::Handle<v8::Object> evnt = v8::Object::New();
+
+        for (dvnci::vect_alarms_row::const_iterator it = vect.begin(); it != vect.end(); ++it) {
+            if (it->level > maxlevel)
+                maxlevel = it->level;
+            if (!it->kvit) {
+                allkvit = true;
+                if (it->level > actuallevel)
+                    actuallevel = it->level;
+            }
             array->Set(i++, toV8(*it));
+        }
+
+        evnt->Set(v8::String::New("table"), array);
+        evnt->Set(v8::String::New("maxlevel"), v8::Integer::New(maxlevel));
+        evnt->Set(v8::String::New("actuallevel"), v8::Integer::New(actuallevel));
+        evnt->Set(v8::String::New("allkvit"), v8::Boolean::New(allkvit));
 
         return handle_scope.Close(array);
 
@@ -113,12 +133,15 @@ namespace WebCore {
         v8::HandleScope handle_scope;
 
         v8::Handle<v8::Object> evnt = v8::Object::New();
-        /*evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl.time)));
+        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl.time)));
+        evnt->Set(v8::String::New("guid"), v8::Integer::New(impl.guid));
+        evnt->Set(v8::String::New("type"), v8::Integer::New(impl.type));
         evnt->Set(v8::String::New("level"), v8::Integer::New(impl.level));
-        evnt->Set(v8::String::New("kvit"), v8::Boolean::New(impl.kvit));
         evnt->Set(v8::String::New("tag"), v8::String::New(impl.tag.c_str(), impl.tag.size()));
         evnt->Set(v8::String::New("message"), v8::String::New(impl.text.c_str(), impl.text.size()));
-        evnt->Set(v8::String::New("value"), v8::String::New(impl.value.c_str(), impl.value.size()));*/
+        evnt->Set(v8::String::New("agroup"), v8::String::New(impl.agroup.c_str(), impl.agroup.size()));
+        evnt->Set(v8::String::New("user"), v8::String::New(impl.user.c_str(), impl.user.size()));
+        evnt->Set(v8::String::New("value"), v8::String::New(impl.value.c_str(), impl.value.size()));
 
         return handle_scope.Close(evnt);
     }
@@ -189,12 +212,11 @@ namespace WebCore {
         v8::HandleScope handle_scope;
 
         v8::Handle<v8::Object> evnt = v8::Object::New();
-        /*evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl.time)));
+        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl.time)));
         evnt->Set(v8::String::New("level"), v8::Integer::New(impl.level));
-        evnt->Set(v8::String::New("kvit"), v8::Boolean::New(impl.kvit));
-        evnt->Set(v8::String::New("tag"), v8::String::New(impl.tag.c_str(), impl.tag.size()));
-        evnt->Set(v8::String::New("message"), v8::String::New(impl.text.c_str(), impl.text.size()));
-        evnt->Set(v8::String::New("value"), v8::String::New(impl.value.c_str(), impl.value.size()));*/
+        evnt->Set(v8::String::New("app"), v8::Integer::New(impl.appid));
+        evnt->Set(v8::String::New("message"), v8::String::New(impl.message.c_str(), impl.message.size()));
+
 
         return handle_scope.Close(evnt);
     }
