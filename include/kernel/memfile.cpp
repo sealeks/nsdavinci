@@ -1987,7 +1987,20 @@ namespace dvnci {
         while (it != idset.end()) {
             if (accessrules()->exists(*it)) {
                 val.insert(iteminfo_pair(*it, name_with_type(accessrules()->name(*it), NT_ACCESSRULE)));}
-            it++;}}    
+            it++;}} 
+    
+    
+    
+    bool tagsbase::select_trendsbuff(const str_vect& names, short_values_table& vl, const datetime& from_, const datetime& to_, const double& lgdb) const {
+        vl.clear();
+        for (str_vect::const_iterator it=names.begin(); it!=names.end();++it){
+            short_value_vect row;
+            select_trendbuff(*it, row , from_, to_, lgdb);
+            size_type ind = operator ()(*it);
+            num32 error = ((ind!=npos) && (logged(ind))) ? BUFFER_READ_INIT : BUFFER_READ_ERROR;
+            vl.push_back(short_values_row(tag_info_pair(*it, error) , row));}
+        return true;}    
+    
     
 
     bool tagsbase::select_reportvals_by_time(const datetime& tm, indx_double_map& vlmap) const {

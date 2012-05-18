@@ -267,13 +267,15 @@ namespace dvnci {
 
             vect.clear();
 
-            bool filtered = ((grpindx != npos) || (agrpindx != npos));
+            bool filtereda =  (agrpindx != npos);
+            bool filteredg =  (grpindx != npos);
+            bool filtered = filtereda || filteredg;
+
 
             size_type i = npos;
             for (size_type j = 0; j < count(); ++j) {
                 i = reverse_index(j);
-                if ((!filtered) || ((grpindx == npos) && (agrpindx == npos)) ||
-                        (grpindx = group(reverse_index(i))) || (agrpindx = agroup(reverse_index(i)))) {
+                if ((!filtered) || ((filtered) && (filtereda && (agrpindx == agroup(i))) || (filteredg && (grpindx == group(i))))) {
                     datetime tm = time(i);
                     T tmp = {tm , tag (i) , text(i),
                         static_cast<B> (kvit(i)), static_cast<B> (level(i)), static_cast<B> (type(i)), value(i)};
@@ -2143,7 +2145,7 @@ namespace dvnci {
         bool select_trendbuff(const std::string& nm, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const {
             return select_trendbuff(operator ()(nm), vl, from_, to_, lgdb);}
         
-        bool select_trendbuff(size_type id, std::vector<short_value>& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
+        bool select_trendbuff(size_type id, short_value_vect& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
             dt_val_map tmpvl;
             vl.clear();
             bool rslt=valbuffers()->select(logkey(id), tmpvl, from_, to_, lgdb);
@@ -2151,10 +2153,12 @@ namespace dvnci {
               vl.push_back(short_value(it->second, it->first));}
             return rslt;}
 
-        bool select_trendbuff(const std::string& nm, std::vector<short_value>& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
+        bool select_trendbuff(const std::string& nm, short_value_vect& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const  {
             return select_trendbuff(operator ()(nm), vl, from_, to_, lgdb);}
+                
+        bool select_trendsbuff(const str_vect& names, short_values_table& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time, const double& lgdb = NULL_DOUBLE) const;
         
-        
+
         
         bool select_reportbuff(size_type id, dt_val_map& vl, const datetime& from_ = nill_time, const datetime& to_ = nill_time) const {
             return reportbuffers()->select(reportkey(id), vl, from_, to_);}
@@ -2196,6 +2200,9 @@ namespace dvnci {
         template<typename T, typename B>
         size_t select_debug(std::vector<T>& vect, guidtype& gid, size_t& curs, size_t& cnt) const {
             return debug()->get<T, B > (vect, gid, curs, cnt);}
+        
+        size_t select_debug(vect_debug_row& vect, guidtype& gid, size_t& curs, size_t& cnt) const {
+            return debug()->get<debug_row, num64 > (vect, gid, curs, cnt);}        
 
         guidtype guid_debug() {
             return debug()->gloubnum();}
@@ -2218,6 +2225,9 @@ namespace dvnci {
         
         size_t select_alarms(vect_alarms_row& vect, guidtype& vers, size_type agrp = npos, size_type grp = npos ) const {
             return alarms()->get<alarms_row, num64 > (vect, vers, agrp, grp);}
+        
+        size_t select_alarms(vect_alarms_row& vect, guidtype& vers, std::string agrp , const std::string grp ) const {
+            return alarms()->get<alarms_row, num64 > (vect, vers, (*agroups())(agrp), (*groups())(grp));}        
        
         
         
@@ -2500,7 +2510,7 @@ namespace dvnci {
 
 
 
-        // РєРѕРЅС„РёРіСѓСЂРёСЂРѕРІР°РЅРёРµ Р±Р°Р·С‹
+        // Ð Ñ”Ð Ñ•Ð Ð…Ð¡â€žÐ Ñ‘Ð Ñ–Ð¡Ñ“Ð¡Ð‚Ð Ñ‘Ð¡Ð‚Ð Ñ•Ð Ð†Ð Â°Ð Ð…Ð Ñ‘Ð Âµ Ð Â±Ð Â°Ð Â·Ð¡â€¹
 
         void texttagcnt(size_t val);
 

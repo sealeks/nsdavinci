@@ -280,6 +280,10 @@ namespace dvnci {
     const  num64 DVNCI_VERSION   = 0x4;
 
     const  size_t  MAX_NUM32_SIGNED = 0x1000; //FFFFFFF;
+    
+    const  num32   BUFFER_READ_INIT = 0x1;
+    const  num32   BUFFER_READ_CURRENT = 0x0;
+    const  num32   BUFFER_READ_ERROR = 0x2;    
 
     const size_t  DVNCI_MAXVALUESTRSIZE   = 0xFC;
 
@@ -501,7 +505,7 @@ namespace dvnci {
 
     typedef num32 ns_error;
 
-    typedef std::vector<indx>                                                                    date_tame_vect;
+    typedef std::vector<datetime>                                                                date_tame_vect;
 
     typedef std::pair<std::string, indx>                                                         str_indx_pair;
     typedef std::map<std::string, indx, std::less<std::string>, std::allocator<str_indx_pair > > str_indx_map;
