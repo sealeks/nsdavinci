@@ -138,6 +138,8 @@
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventNames.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.cpp</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/StyledElement.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.h</itemPath>
