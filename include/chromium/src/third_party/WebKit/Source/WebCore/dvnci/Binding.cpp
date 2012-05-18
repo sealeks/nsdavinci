@@ -377,7 +377,7 @@ namespace WebCore {
                 friend class AlarmsObserverImpl;
             public:
 
-                alarm_listener(AlarmsObserverImpl * const lsnr) : listener(lsnr) {
+                alarm_listener(AlarmsObserverImpl * const lsnr, const std::string& grp="", const std::string& agrp="") : dvnci::alarms_listener(grp, agrp) , listener(lsnr) {
                 }
 
                 virtual ~alarm_listener() {
@@ -420,7 +420,8 @@ namespace WebCore {
             dvnci::alarms_listener_ptr registrate() {
                 intf = getexecutordvnci();
                 if (intf) {
-                    alarmlsnrptr = dvnci::alarms_listener_ptr(new alarm_listener(this));
+                    alarmlsnrptr = dvnci::alarms_listener_ptr(
+                            new alarm_listener(this, std::string(group.utf8().data()), std::string(agroup.utf8().data())));
                     intf->regist_alarm_listener(alarmlsnrptr);
                     return alarmlsnrptr;
                 }
@@ -442,6 +443,151 @@ namespace WebCore {
         };
 
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+        class JournalObserverImpl : public AbstractEventObserver {
+
+            class journal_listener : public dvnci::journal_listener {
+                friend class JournalObserverImpl;
+            public:
+
+                journal_listener(JournalObserverImpl * const lsnr) : dvnci::journal_listener() , listener(lsnr) {
+                }
+
+                virtual ~journal_listener() {
+                }
+
+                virtual void event(const dvnci::vect_journal_row& val) {
+                    listener->notyfy(val);
+                }
+
+            private:
+                JournalObserverImpl * const listener;
+            };
+
+        public:
+
+            JournalObserverImpl(EventTarget * const evtarget, const String& filter_) : AbstractEventObserver(evtarget), filter(filter_)  {
+                initdvnciMain();
+                registrate();
+            }
+
+            virtual void notyfy(const dvnci::vect_journal_row& val) {
+                if (journallsnrptr && (target())) {
+                    target()->dispatchJournalEvent(dvnci::journal_table(val));
+                }
+            }
+
+            virtual ~JournalObserverImpl() {
+                unregistrate();
+            };
+
+            virtual bool valid() const {
+                return journallsnrptr;
+            }
+
+
+
+
+        private:
+
+            dvnci::journal_listener_ptr registrate() {
+                intf = getexecutordvnci();
+                if (intf) {
+                    journallsnrptr = dvnci::journal_listener_ptr(
+                            new journal_listener(this));
+                    intf->regist_journal_listener(journallsnrptr);
+                    return journallsnrptr;
+                }
+                return dvnci::journal_listener_ptr();
+            }
+
+            void unregistrate() {
+                if ((intf) && (journallsnrptr)) {
+                    intf->unregist_journal_listener(journallsnrptr);
+                }
+
+            }
+
+            String filter;
+            dvnci::journal_listener_ptr journallsnrptr;
+            dvnci::chrome_executor_ptr intf;
+            dvnci::vect_journal_row value;
+        };
+        
+        
+        
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+        class DebugObserverImpl : public AbstractEventObserver {
+
+            class debug_listener : public dvnci::debug_listener {
+                friend class DebugObserverImpl;
+            public:
+
+                debug_listener(DebugObserverImpl * const lsnr) : dvnci::debug_listener() , listener(lsnr) {
+                }
+
+                virtual ~debug_listener() {
+                }
+
+                virtual void event(const dvnci::vect_debug_row& val) {
+                    listener->notyfy(val);
+                }
+
+            private:
+                DebugObserverImpl * const listener;
+            };
+
+        public:
+
+            DebugObserverImpl(EventTarget * const evtarget, const String& filter_) : AbstractEventObserver(evtarget), filter(filter_)  {
+                initdvnciMain();
+                registrate();
+            }
+
+            virtual void notyfy(const dvnci::vect_debug_row& val) {
+                if (debuglsnrptr && (target())) {
+                    target()->dispatchDebugEvent(dvnci::debug_table(val));
+                }
+            }
+
+            virtual ~DebugObserverImpl() {
+                unregistrate();
+            };
+
+            virtual bool valid() const {
+                return debuglsnrptr;
+            }
+
+
+        private:
+
+            dvnci::debug_listener_ptr registrate() {
+                intf = getexecutordvnci();
+                if (intf) {
+                    debuglsnrptr = dvnci::debug_listener_ptr(
+                            new debug_listener(this));
+                    intf->regist_debug_listener(debuglsnrptr);
+                    return debuglsnrptr;
+                }
+                return dvnci::debug_listener_ptr();
+            }
+
+            void unregistrate() {
+                if ((intf) && (debuglsnrptr)) {
+                    intf->unregist_debug_listener(debuglsnrptr);
+                }
+
+            }
+
+            String filter;
+            dvnci::debug_listener_ptr debuglsnrptr;
+            dvnci::chrome_executor_ptr intf;
+            dvnci::vect_debug_row value;
+        };        
 
 
 
@@ -609,11 +755,11 @@ namespace WebCore {
         }
 
         WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createJournalObserver(EventTarget * const evtarget, const String& filter) {
-            return adoptRef(new AbstractEventObserver(evtarget));
+            return adoptRef(new JournalObserverImpl(evtarget, filter));
         }
 
         WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createDebugObserver(EventTarget * const evtarget, const String& filter) {
-            return adoptRef(new AbstractEventObserver(evtarget));
+            return adoptRef(new DebugObserverImpl(evtarget , filter));
         }
 
         WTF::RefPtr<AbstractEventObserver> AbstractEventObserver::createTrendsObserver(EventTarget * const evtarget, const Vector<String>& tags, int period) {

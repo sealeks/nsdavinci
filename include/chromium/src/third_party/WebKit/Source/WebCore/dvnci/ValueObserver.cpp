@@ -66,10 +66,13 @@ namespace WebCore {
         int i = 0;
         for (dvnci::short_values_table::const_iterator it = vect.begin(); it != vect.end(); ++it) {
             v8::Handle<v8::Object> evnt = v8::Object::New();
-            evnt->Set(v8::String::New("start"), v8::Boolean::New(it->first.second));
+            evnt->Set(v8::String::New("start"), v8::Boolean::New(it->first.second == 1));
             evnt->Set(v8::String::New("tag"), v8::String::New(it->first.first.c_str(), it->first.first.size()));
             evnt->Set(v8::String::New("id"), v8::Integer::New(i));
-            evnt->Set(v8::String::New("data"), toV8(it->second));
+            if (it->first.second > 1)
+                evnt->Set(v8::String::New("error"), v8::Boolean::New(true));
+            else
+                evnt->Set(v8::String::New("data"), toV8(it->second));
             array->Set(i++, evnt);
         }
 

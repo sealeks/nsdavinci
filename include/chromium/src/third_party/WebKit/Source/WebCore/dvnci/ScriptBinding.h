@@ -38,7 +38,7 @@
  element.ontrend = handler - delete
  addExpressionListener(handler, expr)
  removeExpressionListener(handler)
- addAlarmsListener(handler[, group, agroup])
+ addAlarmsListener(handler[, agroup, group])
  removeAlarmsListener(handler)
  addTrendsListener(handler, taglist, period)
  removTrendsListener(handler)
@@ -200,15 +200,14 @@ namespace WebCore {
     static v8::Handle<v8::Value> addAlarmsEventListenerCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.addAlarmsEventListener()");
 
-        String group = args.Length() > 1 ? toWebCoreString(args[1]) : "";
-        String agroup = args.Length() > 2 ? toWebCoreString(args[2]) : "";
+        String agroup = args.Length() > 1 ? toWebCoreString(args[1]) : "";
+        String group = args.Length() > 2 ? toWebCoreString(args[2]) : "";
 
         bool rslt = false;
         EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
         if ((impl) && (args.Length() > 0)) {
             RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
             if (listener) {
-                String tag = toWebCoreString(args[0]);
                 rslt = impl->addAlarmsEventListener(listener, group, agroup);
                 //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
             }
@@ -233,16 +232,65 @@ namespace WebCore {
 
     static v8::Handle<v8::Value> addJournalEventListenerCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.addJournalEventListener()");
+        String filter = args.Length() > 1 ? toWebCoreString(args[1]) : "";
 
-
-        return v8::Undefined();
+        bool rslt = false;
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        if ((impl) && (args.Length() > 0)) {
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+            if (listener) {
+                rslt = impl->addJournalEventListener(listener, filter);
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
+        }
+        return v8::Boolean::New(rslt);
     }
 
     static v8::Handle<v8::Value> removeJournalEventListenerCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.removeJournalEventListener()");
 
-        return v8::Undefined();
+        bool rslt = false;
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        if (args.Length() > 0) {
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+            if (listener) {
+                rslt = impl->removeJournalEventListener(listener.get ());
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
+        }
+        return v8::Boolean::New(rslt);
     }
+    
+    static v8::Handle<v8::Value> addDebugEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.addDebugEventListener()");
+        
+        String filter = args.Length() > 1 ? toWebCoreString(args[1]) : "";
+
+        bool rslt = false;
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        if ((impl) && (args.Length() > 0)) {
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+            if (listener) {
+                rslt = impl->addDebugEventListener(listener, filter);
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
+        }
+        return v8::Boolean::New(rslt);
+    }
+
+    static v8::Handle<v8::Value> removeDebugEventListenerCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.removeDebugEventListener()");
+        bool rslt = false;
+        EventTarget* impl = reinterpret_cast<EventTarget*> (args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        if (args.Length() > 0) {
+            RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[0], false, ListenerFindOrCreate);
+            if (listener) {
+                rslt = impl->removeDebugEventListener(listener.get ());
+                //createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
+            }
+        }
+        return v8::Boolean::New(rslt);
+    }    
 
     static v8::Handle<v8::Value> addTrendsEventListenerCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.addTrendsEventListener()");
@@ -318,6 +366,8 @@ namespace WebCore {
         {"removeTrendsListener", removeTrendsEventListenerCallback},
         {"addJournalListener", addJournalEventListenerCallback},
         {"removeJournalListener", removeJournalEventListenerCallback},
+        {"addDebugListener", addDebugEventListenerCallback},
+        {"removeDebugListener", removeDebugEventListenerCallback},        
         {"$$global", dvnci_GlobalObject},
     };
 
@@ -331,6 +381,8 @@ namespace WebCore {
         {"removeTrendsListener", removeTrendsEventListenerCallback},
         {"addJournalListener", addJournalEventListenerCallback},
         {"removeJournalListener", removeJournalEventListenerCallback},
+        {"addDebugListener", addDebugEventListenerCallback},
+        {"removeDebugListener", removeDebugEventListenerCallback},
     };
 
     void dvnci_external_registrate(v8::Persistent<v8::FunctionTemplate> desc, const char *interfaceName, v8::Local<v8::ObjectTemplate> instance) {
