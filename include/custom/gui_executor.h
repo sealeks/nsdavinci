@@ -77,12 +77,9 @@ namespace dvnci {
         
         num64 history() const { return history_>0 ? history_ : 0;}
         const str_vect& tags() const { return tags_;}
-        /*bool remove(const std::string& val) {
-            str_vect::iterator it = std::find(tags_.begin(), tags_.end(), val);
-            if (it != tags_.end()) {
-                tags_.erase(it);
-                return true;}
-            return false;}*/
+        void  remove(const str_vect& rem) { 
+            for (str_vect::const_iterator it = rem.begin(); it != rem.end(); ++it)
+                tags_.erase(std::remove(tags_.begin(),tags_.end(),*it), tags_.end());}
 
     private:
         str_vect       tags_;
@@ -131,6 +128,8 @@ namespace dvnci {
 
                 class gui_executor : public executable {
         public:
+            
+            static const size_t MAX_TABLE_SIZE = MAX_NUM32_SIGNED;
 
             typedef INTF interface_type;
             typedef membase_sync_ptr_tmpl<interface_type> interface_type_ptr;
@@ -206,8 +205,43 @@ namespace dvnci {
             typedef std::set<alarms_listener_ptr, alarms_listener_less > alarms_listener_set;
             typedef typename alarms_listener_set::iterator alarms_listener_iterator;
             
+            
+            struct journal_listener_less :
+            public std::binary_function<journal_listener_ptr, journal_listener_ptr, bool> {
 
-            gui_executor(interface_type_ptr inf) : executable(), intf(inf), alarm_version(0) {};
+                bool operator()(const journal_listener_ptr& ls,
+                        const journal_listener_ptr & rs) const {
+                    return ((intptr_t) ls.get()) < ((intptr_t) rs.get());}};            
+            
+            
+            typedef std::deque<journal_row>                                journal_table_deq;
+            typedef typename journal_table_deq::iterator                   journal_table_iterator;
+            typedef std::set<journal_listener_ptr, journal_listener_less > journal_listener_set;
+            typedef typename journal_listener_set::iterator                journal_listener_iterator;   
+            
+            
+            struct debug_listener_less :
+            public std::binary_function<debug_listener_ptr, debug_listener_ptr, bool> {
+
+                bool operator()(const debug_listener_ptr& ls,
+                        const debug_listener_ptr & rs) const {
+                    return ((intptr_t) ls.get()) < ((intptr_t) rs.get());}};            
+            
+            
+            typedef std::deque<debug_row>                                  debug_table_deq;
+            typedef typename debug_table_deq::iterator                     debug_table_iterator;
+            typedef std::set<debug_listener_ptr, debug_listener_less >     debug_listener_set;
+            typedef typename debug_listener_set::iterator                  debug_listener_iterator;    
+            
+            
+            
+            
+            
+
+            gui_executor(interface_type_ptr inf) : 
+                 executable(), intf(inf), alarm_version(0), 
+                 journal_version(0), journal_crnt(0), journal_cnt(0),
+                 debug_version(0) , debug_crnt(0), debug_cnt(0) {};
 
             virtual ~gui_executor() {};
 
@@ -290,6 +324,52 @@ namespace dvnci {
                     alarms_listeners.erase(listener);
                     return true;}
                 return false;}
+            
+            
+            bool regist_journal_listener(journal_listener_ptr listener) {
+                THD_EXCLUSIVE_LOCK(mtx);
+                if (journal_listeners.find(listener) == journal_listeners.end()) {
+                    journal_listeners.insert(listener);
+                    init_journal_listener(listener);
+                    return true;}
+                return false;}
+            
+            void init_journal_listener(journal_listener_ptr listener) {
+                vect_journal_row journalnew(journal.begin(),journal.end());
+                listener->event(journalnew);}             
+                       
+
+            bool unregist_journal_listener(journal_listener_ptr listener) {
+                THD_EXCLUSIVE_LOCK(mtx);
+                if (journal_listeners.find(listener) != journal_listeners.end()) {
+                    journal_listeners.erase(listener);
+                    return true;}
+                return false;} 
+            
+            
+            
+            bool regist_debug_listener(debug_listener_ptr listener) {
+                THD_EXCLUSIVE_LOCK(mtx);
+                if (debug_listeners.find(listener) == debug_listeners.end()) {
+                    debug_listeners.insert(listener);
+                    init_debug_listener(listener);
+                    return true;}
+                return false;}
+            
+            void init_debug_listener(debug_listener_ptr listener) {
+                vect_debug_row debugnew(debug.begin(),debug.end());
+                listener->event(debugnew);}            
+                       
+
+            bool unregist_debug_listener(debug_listener_ptr listener) {
+                THD_EXCLUSIVE_LOCK(mtx);
+                if (debug_listeners.find(listener) != debug_listeners.end()) {
+                    debug_listeners.erase(listener);
+                    return true;}
+                return false;}            
+                        
+            
+            
 
             short_value execute(const std::string& expr, bool testmode = false) {
                 THD_EXCLUSIVE_LOCK(mtx);
@@ -308,6 +388,8 @@ namespace dvnci {
                     updatedset.clear();}
 
                 internal_alarm_exec();
+                internal_journal_exec();
+                internal_debug_exec();                
                 internal_trend_exec();
 
                 return true;}
@@ -335,6 +417,39 @@ namespace dvnci {
                         updatedset.insert(it->second);}}
                 return rslt;}
 
+            
+            bool init_trend_listener() {
+                if (newtrendset.empty())
+                    return false;
+                for (trendlistener_constiterator it=newtrendset.begin(); it!=newtrendset.end(); ++it) {
+                        str_vect need_remove;
+                        for (str_vect::const_iterator ittag = (*it)->tags().begin(); ittag != (*it)->tags().end(); ++ittag)
+                            if (!intf->exists(*ittag))
+                                need_remove.push_back(*ittag);
+                        short_values_table tmptable;
+                        datetime from = (*it)->history() ? incmillisecond(now() , -((*it)->history()) ) : nill_time;
+                        intf->select_trendsbuff((*it)->tags(), tmptable, from);
+                        (*it)->event(tmptable);
+                        (*it)->remove(need_remove);}
+                newtrendset.clear();
+                return true;}
+
+            bool internal_trend_exec() {
+                THD_EXCLUSIVE_LOCK(mtx);
+                bool rslt = init_trend_listener();               
+                for (trendlistener_constiterator it=trends_set.begin(); it!=trends_set.end(); ++it) {
+                    trendlistener_type_ptr listener_ptr=*it;
+                    short_values_table tmptable;
+                    for (str_vect::const_iterator ittag = listener_ptr->tags().begin(); ittag != listener_ptr->tags().end(); ++ittag) {
+                        short_value val = intf->value_shv(*ittag);
+                        if (val.time().is_special())
+                            val.time(now());
+                        tmptable.push_back(short_values_row(tag_info_pair(*ittag, BUFFER_READ_CURRENT) , short_value_vect(1, val)));}
+                    listener_ptr->event(tmptable);}
+                return rslt;}
+            
+            
+
             bool internal_alarm_exec() {
                 THD_EXCLUSIVE_LOCK(mtx);
                 if (alarms_listeners.empty())
@@ -348,41 +463,65 @@ namespace dvnci {
                             (*it)->event(alarms);}
                         else {
                             guidtype lstc = (*it)->version();
-                            intf->select_alarms<alarms_row, guidtype>((*it)->table(), lstc, (*it)->agroup(), (*it)->group() );
+                            intf->select_alarms((*it)->table(), lstc, (*it)->agroup(), (*it)->group() );
                             if (lstc != (*it)->version())
                                 (*it)->event((*it)->table());}}
                     return true;}
                 return false;}
-
-            bool init_trend_listener() {
-                if (newtrendset.empty())
-                    return false;
-                for (trendlistener_constiterator it=newtrendset.begin(); it!=newtrendset.end(); ++it) {
-                        short_values_table tmptable;
-                        datetime from = (*it)->history() ? incmillisecond(now() , -((*it)->history()) ) : nill_time;
-                        intf->select_trendsbuff((*it)->tags(), tmptable, from);
-                        (*it)->event(tmptable);}
-                newtrendset.clear();
-                return true;}
-
-            bool internal_trend_exec() {
+            
+            
+            bool internal_journal_exec() {
                 THD_EXCLUSIVE_LOCK(mtx);
-                bool rslt = init_trend_listener();               
-                for (trendlistener_constiterator it=trends_set.begin(); it!=trends_set.end(); ++it) {
-                    trendlistener_type_ptr listener_ptr=*it;
-                    const str_vect& tags = listener_ptr->tags();
-                    short_values_table tmptable;
-                    for (str_vect::const_iterator ittag = tags.begin(); ittag != tags.end(); ++ittag) {
-                        short_value val = intf->value_shv(*ittag);
-                        num32 error = 0;
-                        if (val.time().is_special()){
-                            if (!intf->exists(*ittag))
-                                error = 2;
-                            val.time(now());}
-                        tmptable.push_back(short_values_row(tag_info_pair(*ittag,error) , short_value_vect(1, val)));}
-                    listener_ptr->event(tmptable);}
-                return rslt;}
-
+                if (journal_listeners.empty())
+                    return false;
+                guidtype lst = journal_version;
+                vect_journal_row journalnew;
+                intf->select_journal(journalnew, journal_version, journal_crnt, journal_cnt);
+                if (!journalnew.empty())
+                    insert_to_journal(journalnew);                  
+                if (lst != journal_version) {
+                    for (journal_listener_iterator it = journal_listeners.begin();
+                            it != journal_listeners.end(); ++it) {
+                            (*it)->event(journalnew);}
+                    return true;}
+                return false;}
+            
+            bool insert_to_journal(const vect_journal_row& vect) {
+               size_t newsize = vect.size() + journal.size();
+               if (newsize>MAX_TABLE_SIZE){
+                   size_t needdelete = newsize - MAX_TABLE_SIZE;                   
+                   journal.erase(journal.begin(), needdelete<=journal.size() ? journal.begin() + needdelete : journal.end());}
+               journal.insert(journal.end(),vect.begin(), vect.end());
+               return true;}
+            
+            
+            
+            bool internal_debug_exec() {
+                THD_EXCLUSIVE_LOCK(mtx);
+                if (debug_listeners.empty())
+                    return false;
+                guidtype lst = debug_version;
+                vect_debug_row debugnew;
+                intf->select_debug(debugnew, debug_version, debug_crnt, debug_cnt);
+                if (!debugnew.empty())
+                    insert_to_debug(debugnew);                  
+                if (lst != debug_version) {
+                    for (debug_listener_iterator it = debug_listeners.begin();
+                            it != debug_listeners.end(); ++it) {
+                            (*it)->event(debugnew);}
+                    return true;}
+                return false;}
+            
+            bool insert_to_debug(const vect_debug_row& vect) {
+               size_t newsize = vect.size() + debug.size();
+               if (newsize>MAX_TABLE_SIZE){
+                   size_t needdelete = newsize - MAX_TABLE_SIZE;                   
+                   debug.erase(debug.begin(), needdelete<=debug.size() ? debug.begin() + needdelete : debug.end());}
+               debug.insert(debug.end(),vect.begin(), vect.end());
+               return true;}        
+            
+            
+            
             virtual bool initialize() {
                 return intf;}
 
@@ -393,11 +532,21 @@ namespace dvnci {
 
             interface_type_ptr       intf;
             guidtype                 alarm_version;
+            guidtype                 journal_version;
+            size_t                   journal_crnt;
+            size_t                   journal_cnt;            
+            guidtype                 debug_version;
+            size_t                   debug_crnt;
+            size_t                   debug_cnt;              
             boost::mutex             mtx;
             expression_listeners_map expressions_map;
             trendlistener_set        trends_set;
             alarms_listener_set      alarms_listeners;
             vect_alarms_row          alarms;
+            journal_table_deq        journal;
+            journal_listener_set     journal_listeners;            
+            debug_table_deq          debug;
+            debug_listener_set       debug_listeners;          
             updatedlistener_set      updatedset;
             trendlistener_set        newtrendset;};}
 
