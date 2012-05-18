@@ -80,7 +80,6 @@ EventTargetData::~EventTargetData()
 
 EventTarget::~EventTarget()
 {
-	dvnciListeners.clear();
 }
 
 EventSource* EventTarget::toEventSource()
@@ -409,6 +408,7 @@ const EventListenerVector& EventTarget::getEventListeners(const AtomicString& ev
 
 void EventTarget::removeAllEventListeners()
 {
+	dvnciListeners.clear();
     EventTargetData* d = eventTargetData();
     if (!d)
         return;
@@ -491,20 +491,32 @@ EventListener* EventListenerIterator::nextListener()
         return removeDvnciListener(RefPtr<EventListener > (listener));
     };
 
-    bool EventTarget::addJournalEventListener(RefPtr<EventListener>, const String& filter) {
+    bool EventTarget::addJournalEventListener(RefPtr<EventListener> listener, const String& filter) {
+        if (!findDvnciListener(listener)) {
+            addEventListener(eventNames().journalEvent ,  listener, false);
+            return addDvnciListener(listener, RefPtr<WebCore::DVNCI::AbstractEventObserver > (
+                    WebCore::DVNCI::AbstractEventObserver::createJournalObserver(this ,  filter)));
+        }
         return false;
     };
 
-    bool EventTarget::removeJournalEventListener(EventListener*) {
-        return false;
+    bool EventTarget::removeJournalEventListener(EventListener*  listener) {
+        removeEventListener(eventNames().journalEvent ,  listener, false);
+        return removeDvnciListener(RefPtr<EventListener > (listener));
     };
     
-    bool EventTarget::addDebugEventListener(RefPtr<EventListener>, const String& filter) {
+    bool EventTarget::addDebugEventListener(RefPtr<EventListener>  listener, const String& filter) {
+        if (!findDvnciListener(listener)) {
+            addEventListener(eventNames().debugEvent ,  listener, false);
+            return addDvnciListener(listener, RefPtr<WebCore::DVNCI::AbstractEventObserver > (
+                    WebCore::DVNCI::AbstractEventObserver::createDebugObserver(this ,  filter)));
+        }
         return false;
     };
 
-    bool EventTarget::removeDebugEventListener(EventListener*) {
-        return false;
+    bool EventTarget::removeDebugEventListener(EventListener*  listener) {
+        removeEventListener(eventNames().debugEvent ,  listener, false);
+        return removeDvnciListener(RefPtr<EventListener > (listener));
     };    
 
     RefPtr<EventListener> EventTarget::findDvnciListener(RefPtr<EventListener> val) {
@@ -540,13 +552,13 @@ EventListener* EventListenerIterator::nextListener()
     }
 
     void EventTarget::dispatchJournalEvent(const dvnci::journal_table& value) {
-        //RefPtr<Event> trendEvent(DVNTrendEvent::create(eventNames().trendEvent, value, this));
-        //dispatchEvent(trendEvent);
+        RefPtr<Event> journalEvent(DVNJournalEvent::create(eventNames().journalEvent, value, this));
+        dispatchEvent(journalEvent);
     }
     
     void EventTarget::dispatchDebugEvent(const dvnci::debug_table& value) {
-        //RefPtr<Event> trendEvent(DVNTrendEvent::create(eventNames().trendEvent, value, this));
-        //dispatchEvent(trendEvent);
+        RefPtr<Event> debugEvent(DVNDebugEvent::create(eventNames().debugEvent, value, this));
+        dispatchEvent(debugEvent);
     }
     
 
