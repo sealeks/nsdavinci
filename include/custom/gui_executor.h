@@ -2,7 +2,7 @@
  * File:   gui_executor.h
  * Author: sealeks@mail.ru
  *
- * Created on 13 Июль 2011 г., 18:32
+ * Created on 13 Ð˜ÑŽÐ»ÑŒ 2011 Ð³., 18:32
  */
 
 #ifndef GUI_EXECUTOR_H
@@ -40,7 +40,7 @@ namespace dvnci {
     typedef boost::shared_ptr<root_listener>          root_listener_ptr;
             
     typedef std::multiset<root_listener_ptr >         rootlistener_set;
-    typedef rootlistener_set::iterator          rootlistener_set_iterator;         
+    typedef rootlistener_set::iterator                rootlistener_set_iterator;         
         
         
     
@@ -64,9 +64,7 @@ namespace dvnci {
             return false;} 
                         
     protected:        
-        valuetype       value_;
-           
-    };
+        valuetype       value_;};
     
    
     class expression_listener : public template_listener<short_value > {
@@ -107,15 +105,16 @@ namespace dvnci {
         virtual bool set(const short_values_table& val){
                 needupdate(true);
                 if (!value_.empty()){
-                    
-                }
+                    for (short_values_table::const_iterator it = val.begin(); it != val.end(); ++it)
+                        insert(*it);}
+                else
+                    value_=val;                     
                 return true;} 
         
         void insert(const short_values_row& val){
-                for (short_values_table::iterator it = value_.begin(); it != value_.end(); ++it)
-                    if (it->first.first==val.first.first)
-                        it->second.insert(it->second.end(), val.second.begin(),val.second.end());
-                return true;}        
+                short_values_table::iterator it=value_.find(val.first);
+                if (it!=value_.end()){
+                    it->second.insert(it->second.end(), val.second.begin(),val.second.end());}}        
         
                
         num64 history() const { return history_>0 ? history_ : 0;}        
@@ -187,7 +186,22 @@ namespace dvnci {
     
     class journal_listener : public template_listener<vect_journal_row > {
     public:
-        journal_listener() : template_listener<vect_journal_row >() {}};
+        journal_listener() : template_listener<vect_journal_row >() {}
+        
+        virtual bool execute() {
+                bool result = template_listener<vect_journal_row >::execute();
+                value_.clear();
+                return result;}
+        
+        virtual bool set(const vect_journal_row& val){
+                needupdate(true);
+                if (!value_.empty())
+                    value_.insert(value_.end(),val.begin(), val.end());
+                else
+                    value_=val;                     
+                return true;} 
+        
+    };
 
     typedef boost::shared_ptr<journal_listener> journal_listener_ptr;
     
@@ -201,7 +215,21 @@ namespace dvnci {
     
     class debug_listener : public template_listener<vect_debug_row> {
     public:
-        debug_listener() : template_listener<vect_debug_row >() {}}; 
+        debug_listener() : template_listener<vect_debug_row >() {}
+    
+        virtual bool execute() {
+                bool result = template_listener<vect_debug_row >::execute();
+                value_.clear();
+                return result;}
+        
+        virtual bool set(const vect_debug_row& val){
+                needupdate(true);
+                if (!value_.empty())
+                    value_.insert(value_.end(),val.begin(), val.end());
+                else
+                    value_=val;                     
+                return true;}   
+    }; 
 
     typedef boost::shared_ptr<debug_listener> debug_listener_ptr;
     
@@ -329,6 +357,7 @@ namespace dvnci {
 
             bool unregist_expr_listener(listener_type_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
+                remove_from_update(listener);
                 listeners_iterator itb = expressions_map.right.lower_bound(listener);
                 listeners_iterator ite = expressions_map.right.upper_bound(listener);
                 if (itb != ite) {
@@ -337,8 +366,7 @@ namespace dvnci {
                 return false;}
 
             bool regist_trend_listener(trendlistener_type_ptr listener) {
-                THD_EXCLUSIVE_LOCK(mtx);
-                
+                THD_EXCLUSIVE_LOCK(mtx);              
                 if (trends_set.find(listener)==trends_set.end()){
                     trends_set.insert(listener);
                     newtrendset.insert(listener);
@@ -348,13 +376,9 @@ namespace dvnci {
 
             bool unregist_trend_listener(trendlistener_type_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                if (newtrendset.find(listener)!=newtrendset.end())
-                        newtrendset.erase(listener);
-                if (trends_set.find(listener)!=trends_set.end()){
-                    trends_set.erase(listener);
-                    return true;
-                }
-                return false;}
+                remove_from_update(listener);                
+                newtrendset.erase(listener);
+                return trends_set.erase(listener);}
 
             bool regist_alarm_listener(alarms_listener_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
@@ -365,31 +389,26 @@ namespace dvnci {
 
             bool unregist_alarm_listener(alarms_listener_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                if (alarms_listeners.find(listener) != alarms_listeners.end()) {
-                    alarms_listeners.erase(listener);
-                    return true;}
-                return false;}
+                remove_from_update(listener);   
+                alarmupdatemap.erase(listener);
+                return alarms_listeners.erase(listener);}
             
             
             bool regist_journal_listener(journal_listener_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
                 if (journal_listeners.find(listener) == journal_listeners.end()) {
                     journal_listeners.insert(listener);
-                    init_journal_listener(listener);
+                    newjournal_listeners.insert(listener);
                     return true;}
                 return false;}
-            
-            void init_journal_listener(journal_listener_ptr listener) {
-                vect_journal_row journalnew(journal.begin(),journal.end());
-                listener->event(journalnew);}             
+                        
                        
 
             bool unregist_journal_listener(journal_listener_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                if (journal_listeners.find(listener) != journal_listeners.end()) {
-                    journal_listeners.erase(listener);
-                    return true;}
-                return false;} 
+                remove_from_update(listener);
+                newjournal_listeners.erase(listener);
+                return journal_listeners.erase(listener);} 
             
             
             
@@ -397,21 +416,16 @@ namespace dvnci {
                 THD_EXCLUSIVE_LOCK(mtx);
                 if (debug_listeners.find(listener) == debug_listeners.end()) {
                     debug_listeners.insert(listener);
-                    init_debug_listener(listener);
+                    newdebug_listeners.insert(listener);
                     return true;}
                 return false;}
             
-            void init_debug_listener(debug_listener_ptr listener) {
-                vect_debug_row debugnew(debug.begin(),debug.end());
-                listener->event(debugnew);}            
                        
-
             bool unregist_debug_listener(debug_listener_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                if (debug_listeners.find(listener) != debug_listeners.end()) {
-                    debug_listeners.erase(listener);
-                    return true;}
-                return false;}                                                            
+                remove_from_update(listener);
+                newdebug_listeners.erase(listener);
+                return debug_listeners.erase(listener);}                                                            
 
             short_value execute(const std::string& expr, bool testmode = false) {
                 THD_EXCLUSIVE_LOCK(mtx);
@@ -425,19 +439,32 @@ namespace dvnci {
                     THD_EXCLUSIVE_LOCK(mtx);               
                     for (rootlistener_set_iterator it = updatemap.begin(); it != updatemap.end(); ++it) {
                         (*it)->execute();}
+                    updatemap.clear();
+                    for (alarms_listener_iterator it = alarmupdatemap.begin(); it != alarmupdatemap.end(); ++it) {
+                        (*it)->event(alarms);}
                     updatemap.clear();}                    
                 return true;}
+            
 
             void detachall(){
 		THD_EXCLUSIVE_LOCK(mtx);
+                updatemap.clear();
                 expressions_map.clear();
                 trends_set.clear();
+                newtrendset.clear();
+                alarmupdatemap.clear();
                 alarms_listeners.clear();
                 alarms.clear();
-                newtrendset.clear();}
+                newjournal_listeners.clear();
+                journal_listeners.clear();
+                newdebug_listeners.clear();
+                debug_listeners.clear();}
 
 
         protected:
+            
+            void remove_from_update(root_listener_ptr val){
+                  updatemap.erase(val);}
 
             bool internal_expr_exec() {
                 bool rslt = false;
@@ -448,7 +475,7 @@ namespace dvnci {
                 return rslt;}
 
             
-            bool init_trend_listener() {
+            bool init_trend_listeners() {
                 if (newtrendset.empty())
                     return false;
                 for (trendlistener_constiterator it=newtrendset.begin(); it!=newtrendset.end(); ++it) {
@@ -467,7 +494,7 @@ namespace dvnci {
 
             bool internal_trend_exec() {
                 THD_EXCLUSIVE_LOCK(mtx);
-                bool rslt = init_trend_listener();
+                bool rslt = init_trend_listeners();
                 for (trendlistener_constiterator it=trends_set.begin(); it!=trends_set.end(); ++it) {
                     trendlistener_type_ptr listener_ptr=*it;
                     if (newtrendset.find(listener_ptr)==newtrendset.end()) {
@@ -476,7 +503,7 @@ namespace dvnci {
                         short_value val = intf->value_shv(*ittag);
                         if (val.time().is_special())
                             val.time(now());
-                        tmptable.push_back(short_values_row(tag_info_pair(*ittag, BUFFER_READ_CURRENT) , short_value_vect(1, val)));}
+                        tmptable.insert(short_values_row(tag_info_pair(*ittag, BUFFER_READ_CURRENT) , short_value_vect(1, val)));}
                     (*it)->set(tmptable);
                     updatemap.insert(*it);}}                       
                 return rslt;}
@@ -493,8 +520,8 @@ namespace dvnci {
                     for (alarms_listener_iterator it = alarms_listeners.begin();
                             it != alarms_listeners.end(); ++it) {
                         if (!(*it)->filtered()) {
-                            (*it)->set(alarms);
-                            updatemap.insert(*it);}
+                            (*it)->set(vect_alarms_row());
+                            alarmupdatemap.insert(*it);}
                         else {
                             guidtype lstc = (*it)->version();
                             intf->select_alarms((*it)->table(), lstc, (*it)->agroup(), (*it)->group() );
@@ -505,8 +532,20 @@ namespace dvnci {
                 return false;}
             
             
+            bool init_journal_listeners() {
+                if (newjournal_listeners.empty())
+                    return false;
+                for (journal_listener_iterator it = newjournal_listeners.begin();
+                            it != newjournal_listeners.end(); ++it) {
+                    (*it)->set(vect_journal_row(journal.begin(),journal.end()));}           
+                newjournal_listeners.clear();
+                return true;}
+                
+            
+            
             bool internal_journal_exec() {
                 THD_EXCLUSIVE_LOCK(mtx);
+                init_journal_listeners();
                 if (journal_listeners.empty())
                     return false;
                 guidtype lst = journal_version;
@@ -532,8 +571,20 @@ namespace dvnci {
             
             
             
+            bool init_debug_listeners() {
+                if (newdebug_listeners.empty())
+                    return false;
+                for (debug_listener_iterator it = newdebug_listeners.begin();
+                            it != newdebug_listeners.end(); ++it) {
+                    (*it)->set(vect_debug_row(debug.begin(),debug.end()));}              
+                newdebug_listeners.clear();
+                return true;}
+            
+            
+            
             bool internal_debug_exec() {
                 THD_EXCLUSIVE_LOCK(mtx);
+                init_debug_listeners();
                 if (debug_listeners.empty())
                     return false;
                 guidtype lst = debug_version;
@@ -578,19 +629,23 @@ namespace dvnci {
                        
             guidtype                 alarm_version;
             alarms_listener_set      alarms_listeners;
-            vect_alarms_row          alarms;            
+            vect_alarms_row          alarms;
+            alarms_listener_set      alarmupdatemap;
+
             
             guidtype                 journal_version;
             size_t                   journal_crnt;
             size_t                   journal_cnt;   
             journal_table_deq        journal;
             journal_listener_set     journal_listeners;
+            journal_listener_set     newjournal_listeners;
             
             guidtype                 debug_version;
             size_t                   debug_crnt;
             size_t                   debug_cnt; 
             debug_table_deq          debug;
-            debug_listener_set       debug_listeners;};}
+            debug_listener_set       debug_listeners;
+            debug_listener_set       newdebug_listeners;};}
 
     typedef dvnci::custom::gui_executor<tagsbase >   chrome_gui_executor;
     typedef callable_shared_ptr<chrome_gui_executor> chrome_executor_ptr;}
