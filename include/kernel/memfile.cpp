@@ -1998,7 +1998,7 @@ namespace dvnci {
             select_trendbuff(*it, row , from_, to_, lgdb);
             size_type ind = operator ()(*it);
             num32 error = ((ind!=npos) && (logged(ind))) ? BUFFER_READ_INIT : BUFFER_READ_ERROR;
-            vl.push_back(short_values_row(tag_info_pair(*it, error) , row));}
+            vl.insert(short_values_row(tag_info_pair(*it, error) , row));}
         return true;}    
     
     
