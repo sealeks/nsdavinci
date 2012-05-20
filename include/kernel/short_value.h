@@ -156,6 +156,23 @@ namespace dvnci {
     
     template <>
     std::wstring short_value::value<std::wstring>() const;
+    
+    typedef std::vector<short_value>                    short_value_vect;
+    
+    typedef std::pair<std::string , num32>              tag_info_pair;
+    
+    
+    typedef std::pair<tag_info_pair , short_value_vect> short_values_row;
+    
+    struct tag_info_pair_less :
+    public std::binary_function<tag_info_pair, tag_info_pair, bool> {
+
+        bool operator()(const tag_info_pair& ls,
+                const tag_info_pair& rs) const {
+            return ls.first < rs.first;}};
+            
+    typedef std::map< tag_info_pair, short_value_vect, tag_info_pair_less >   short_values_table;     
+
 
 } ;
 
