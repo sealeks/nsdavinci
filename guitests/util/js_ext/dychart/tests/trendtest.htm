@@ -34,7 +34,7 @@
                         var dt = [];
                         var cnt = datatrend.length>1000 ? 1000 : datatrend.length;
  			    for (i = cnt; i >= 1; i--) { 
-				  dt.push([ new Date(datatrend[datatrend.length-i][0] - 1000* 3600* 4),
+				  dt.push([ new Date(datatrend[datatrend.length-i][0]),
 					    (datatrend[datatrend.length-i][1])
                                   ]);} 
                         cld.data=dt;            
@@ -52,12 +52,12 @@
                        // };                      
                    }
                    else {
-                       cld.data.push([ new Date(datatrend[0][0] - 1000* 3600* 4), datatrend[0][1]]);
+                       cld.data.push([ new Date(datatrend[0][0]), datatrend[0][1]]);
                        cld.chart.updateOptions( { 'file': cld.data  } );
                        
                      // var series = elem.chart.series[0];
                       //l=iiii[0];
-                     // series.addPoint([(datatrend[0][0] - 1000* 3600* 4), datatrend[0][1]], true, true);
+                     // series.addPoint([(datatrend[0][0]), datatrend[0][1]], true, true);
                       
                    }
                 //elem.ontrend= testontrend;
