@@ -11,7 +11,7 @@ function registratetrend(elem, tag) {
     var eltr = document.getElementById(elem);
     if (eltr!=null) {
         eltr.setAttribute('desc', tag);
-        eltr.ontrend= testontrend;
+        window.addTrendsListener(function(){testontrend(event);} );
     };
 
 }
@@ -92,7 +92,7 @@ function testontrend(ev) {
                     series: [{
                         name: elem.desc,
                         data: (function() {		
-                            var cnt = datatrend.length>1000 ? 1000 : datatrend.length;
+                            var cnt = datatrend.length>10000 ? 10000 : datatrend.length;
                             var data = [];
 							
                             for (i = cnt; i >= 1; i--) { 
