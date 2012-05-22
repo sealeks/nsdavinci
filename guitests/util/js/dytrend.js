@@ -20,7 +20,7 @@ function testontrend(ev) {
                 var dt = [];
                 var cnt = datatrend.length>1000 ? 1000 : datatrend.length;
                 for (i = cnt; i >= 1; i--) { 
-                    dt.push([ new Date(datatrend[datatrend.length-i][0] - 1000* 3600* 4),
+                    dt.push([ new Date(datatrend[datatrend.length-i][0]),
                         (datatrend[datatrend.length-i][1])
                         ]);
                 } 
@@ -34,7 +34,7 @@ function testontrend(ev) {
                 });                
             }
             else {
-                elem.data.push([ new Date(datatrend[0][0] - 1000* 3600* 4), datatrend[0][1]]);
+                elem.data.push([ new Date(datatrend[0][0]), datatrend[0][1]]);
                 elem.chart.updateOptions( {
                     'file': elem.data
                 } );

@@ -1349,11 +1349,11 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
 
 ///////////////////////////////////////////////
 
-Highcharts.setOptions({
+/*Highcharts.setOptions({
     global: {
         useUTC: false
     }
-});
+});*/
 
 libutil.trendchart = function(elid, tags, hist, colors){
     try{
@@ -1424,7 +1424,7 @@ libutil.trendchart.prototype.checkdata =function (val, i){
     }
     else{
         if (this.null_datastate[i] && (val[1]!==null)){
-            this.add_nullperiod({'start' : this.null_datastate[i] - 1000* 3600* 4 , 'stop' : val[0] - 1000* 3600* 4})
+            this.add_nullperiod({'start' : this.null_datastate[i] , 'stop' : val[0]})
             this.null_datastate[i]=null;
         } 
     }      
@@ -1492,7 +1492,7 @@ libutil.trendchart.prototype.startSeries = function(ev) {
                 //if (((parseInt(dt[1]) /10) % 2) ==0)
                 //    dt[1]=null;
                 item.data.push({
-                    x: (dt[0] - 1000* 3600* 4),
+                    x: (dt[0]),
                     y: this.checkdata(dt,i)
                 });
             }                                                       
@@ -1513,7 +1513,7 @@ libutil.trendchart.prototype.addSeries = function(ev){
         if (ev[i].data){
             for (var j = 0 ; j < ev[i].data.length ; j++) {
             var dt = ev[i].data[j];
-            this.element.chart.series[i].addPoint([(dt[0] - 1000* 3600* 4), this.checkdata(dt,i)], i==(ev.length-1), false , false);}}						
+            this.element.chart.series[i].addPoint([(dt[0]), this.checkdata(dt,i)], i==(ev.length-1), false , false);}}						
     }
     this.update_null_data();
     this.update_data();}

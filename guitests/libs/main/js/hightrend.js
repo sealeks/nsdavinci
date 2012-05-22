@@ -97,7 +97,7 @@ function testontrend(ev) {
 							
                             for (i = cnt; i >= 1; i--) { 
                                 data.push({
-                                    x: (datatrend[datatrend.length-i][0] - 1000* 3600* 4),
+                                    x: (datatrend[datatrend.length-i][0]),
                                     y: (datatrend[datatrend.length-i][1])
                                 });
                             }                                                       
@@ -108,7 +108,7 @@ function testontrend(ev) {
             }
             else {
                 var series = elem.chart.series[0];
-                series.addPoint([(datatrend[0][0] - 1000* 3600* 4), datatrend[0][1]], true, true);
+                series.addPoint([(datatrend[0][0]), datatrend[0][1]], true, true);
                       
             }
 
