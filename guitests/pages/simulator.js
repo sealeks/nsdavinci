@@ -8,6 +8,7 @@ var simulator = {};
 
 
 simulator.initializer = function(tag ,start , stop){
+    
   this.tag = tag;
   if (start || start==0){
       this.valid = true;
@@ -21,7 +22,6 @@ simulator.initializer = function(tag ,start , stop){
 }
 
 simulator.initializer.prototype.atach = function(){
-    
     window.$$((this.tag + ' @ ' + this.start).toString())
 }
 

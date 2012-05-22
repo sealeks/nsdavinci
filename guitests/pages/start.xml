@@ -10,7 +10,7 @@ function ___global___unload(){
 if (window.simTick) clearInterval(window.simTick);
 if (window.simulation_detach) simulation_detach();
    
-
+alert('Stop');
 
 
 };
@@ -19,6 +19,7 @@ if (window.simulation_detach) simulation_detach();
 if ((window.$$editable)&&(!window.$$editable())){
 //alert('startscript: ' + window.document.URL);
 simproccessor  = [];
+
 
 
 
@@ -42,6 +43,8 @@ function simulation_detach(){
       simproccessor[i].detach();
   }
 }
+
+
 
 
 

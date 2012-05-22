@@ -50,17 +50,6 @@ libutil.test = {};
 
 
 
-libutil.alarmtable = function(el){
-    
-    this.alarmelement=libutil.dom.findElementByTagName(el,'table');
-    if (this.alarmelement){
-        this.alarmelement.alarlistener=this;
-        this.alarmelement.onalarm=function(ev){
-            this.alarlistener.execute(ev);
-        }
-    }
-}
-
 
 function formopen(name){
     if ((!window.$$editable) || ($$editable())) return;
@@ -186,6 +175,16 @@ libutil.util.remove_element_arr = function(arr,ind){
         arr[i]=arr[i+1];
     if (ind<arr.length) 
         arr.length=arr.length-1;
+}
+
+libutil.util.insert_element_arr = function(arr, elem ,ind){
+    if (arr.length==ind)
+        arr.push(elem);
+    arr.push(arr[arr.length-1])
+    for (var i=arr.length-2; i> ind;--i){
+        arr[i]==arr[i-1];
+    }
+    arr[ind] = elem;
 }
 
 
@@ -1244,9 +1243,32 @@ libutil.www.set_tbwindow_btnstatus = function (name, tools, btnname , state){
 }
 
 
-//
+///////////////////////////////////////////////
 
+libutil.alarmtable = function(el){
+    try{
+    this.alarmelement=libutil.dom.findElementByTagName(el,'table');
+    if (this.alarmelement){
+        var ts = this;
+        this.handler = function(){
+            ts.execute(event);
+        }
+        var rslt = window.addAlarmsListener(this.handler);
+        this.init= rslt;
+        if (!this.init){
+            console.error('AlarmsListener didnt add');
+            this.handler=undefined;
+            return false;}}}
+   catch(error){
+       console.error('Alarms set error: ' + error );}
+return this.init;
+}
 
+libutil.alarmtable.prototype.detach = function() {
+    if (this.handler)
+        if (!window.removeAlarmsListener(this.handler))
+            console.error('AlarmsListener didnt remove');
+}
 
 libutil.alarmtable.prototype.execute = function(evnt) {
     this.cleartable();   
@@ -1283,42 +1305,340 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
 
     if (el.children.length==0) return;
     var tr  = document.createElementNS(libutil.XHTML_NAMESPACE_URL,'tr');
-    if (arr[2]==0){
-        tr.setAttribute("class", (arr[1]>2) ? "avaron" : ((arr[1]>1) ? "alarmon" : "noticeon"));
+    if (!arr.kvit){
+        tr.setAttribute("class", (arr.level>2) ? "avaron" : ((arr.level>1) ? "alarmon" : "noticeon"));
     }
     else{
-        tr.setAttribute("class", (arr[1]>2) ? "avarkvit" : ((arr[1]>1) ? "alarmkvit" : "noticekvit"));
+        tr.setAttribute("class", (arr.level>2) ? "avarkvit" : ((arr.level>1) ? "alarmkvit" : "noticekvit"));
     }
 
       
-    for (var i=0; i<arr.length-1 ;++i){
-        if ((i==0) || (i>2)){
-            var td = document.createElement('td');
-            if (i==0){
-                var tm= new Date(0,0,0, arr[i].getHours() ,arr[i].getMinutes() 
-                    +arr[i].getTimezoneOffset(),arr[i].getSeconds());
-                var ta = document.createTextNode(tm.toLocaleTimeString());
-                var sp = document.createElementNS(libutil.XHTML_NAMESPACE_URL,'span');
-                sp.setAttribute("class", "smallfont");
-                sp.appendChild(ta);
-                td.appendChild(sp);
-                tr.appendChild(td);
-            }
-            else{
-                var ta = document.createTextNode(arr[i]);
-                var sp = document.createElement('span');
-                sp.setAttribute("class", "smallfont");
-                sp.appendChild(ta);
-                td.appendChild(sp);
-                tr.appendChild(td);
-            }
-        }
-    }
-      
+  
+    var td = document.createElement('td');
+    
+    var tm= new Date(0,0,0, arr.time.getHours() ,arr.time.getMinutes() 
+        +arr.time.getTimezoneOffset(),arr.time.getSeconds());
+    var ta = document.createTextNode(tm.toLocaleTimeString());
+    var sp = document.createElementNS(libutil.XHTML_NAMESPACE_URL,'span');
+    sp.setAttribute("class", "smallfont");
+    sp.appendChild(ta);
+    td.appendChild(sp);
+    tr.appendChild(td);
+    
+    
+    td = document.createElement('td');
+    
+    ta = document.createTextNode(arr.tag);
+    sp = document.createElement('span');
+    sp.setAttribute("class", "smallfont");
+    sp.appendChild(ta);
+    td.appendChild(sp);
+    tr.appendChild(td);
+    
+    td = document.createElement('td');
+    
+    ta = document.createTextNode(arr.message);
+    sp = document.createElement('span');
+    sp.setAttribute("class", "smallfont");
+    sp.appendChild(ta);
+    td.appendChild(sp);
+    tr.appendChild(td);    
+ 
     el.appendChild(tr);
 }
 
 ///////////////////////////////////////////////
+
+Highcharts.setOptions({
+    global: {
+        useUTC: false
+    }
+});
+
+libutil.trendchart = function(elid, tags, hist, colors){
+    try{
+    this.element = document.getElementById(elid);
+    if (this.element){
+        if (tags.length){
+        if (!hist) hist=0;
+        this.period = hist * 1000;
+        var ts = this;
+        this.tags = tags;
+        this.colors = colors;
+        this.null_datastate = [];
+        this.serias_lastvalue = [];
+        this.null_datachange = false;
+        this.null_periods = [];
+        for (var i=0;i<tags.length;++i){
+            this.null_datastate[i]=null;
+            this.serias_lastvalue[i]=null;}
+        this.handler = function(){
+            ts.execute(event);}
+        
+        var rslt = window.addTrendsListener( this.handler, tags, this.period );
+        this.init = rslt;
+        if (!this.init){
+            console.error('TrendsListener didnt set');
+            this.handler=undefined;}}
+    }
+    else {console.error('Not find trend element');}}
+    catch(error){
+        console.error('Trends set error: ' + error );
+    }
+}
+
+libutil.trendchart.prototype.detach = function() {
+    if (this.handler)
+        if (!window.removeTrendsListener(this.handler))
+            console.error('AlarmsListener didnt remove');
+}
+
+libutil.trendchart.prototype.currentStart = function() {
+    return (new Date() - this.period );
+}
+
+
+libutil.trendchart.prototype.add_nullperiod =function (period){
+    //var laststate = 0;
+    var start = period.start;
+    var stop = period.stop;    
+    for (var i=0;i<this.null_periods.length;++i){
+        
+        var state = (stop < this.null_periods[i].start) ? 0 :
+                    ((stop <= this.null_periods[i].stop) ? 1 :
+                    ((start <= this.null_periods[i].stop) ? 2 : 3));
+        if (stop>this.null_periods[i].stop)        
+        switch(state) {
+           case 0:  {libutil.util.insert_element_arr(this.null_periods,period,i); this.null_datachange=true; return;}
+           case 1:  {this.null_periods[i].start = start; this.null_periods[i].stop = this.null_periods[i].stop; this.null_datachange=true; return;}
+           case 2:  {this.null_periods[i].start = this.null_periods[i].start; this.null_periods[i].stop = stop; this.null_datachange=true; return;}  
+        }                   
+    }
+   this.null_datachange=true; 
+   this.null_periods.push(period);
+}
+
+libutil.trendchart.prototype.checkdata =function (val, i){
+    if (!this.null_datastate[i] && (val[1]===null)){
+        this.null_datastate[i]=val[0];
+    }
+    else{
+        if (this.null_datastate[i] && (val[1]!==null)){
+            this.add_nullperiod({'start' : this.null_datastate[i] - 1000* 3600* 4 , 'stop' : val[0] - 1000* 3600* 4})
+            this.null_datastate[i]=null;
+        } 
+    }      
+    return val[1];
+}
+
+libutil.trendchart.prototype.addBound =function (){
+    this.chart.xAxis[0].removePlotBand();
+    for (var i = 0 ; i < this.null_periods.length; i++){
+        this.chart.xAxis[0].addPlotBand({
+                       from : this.null_periods[i].start , 
+                       to : this.null_periods[i].stop,
+                       color : 'gray',
+                       opacity: 0.3});
+    }
+}
+
+
+
+
+
+libutil.trendchart.prototype.update_null_data =function (){
+  if (this.null_datachange){
+    this.addBound();  
+    this.null_datachange =false;  
+  }
+}
+
+
+libutil.trendchart.prototype.update_data =function (){
+    var now = this.currentStart();
+    var updated = false;
+    var change = true;
+    while(change){
+    change =false;
+    for (var i=0; i<this.element.chart.series.length; ++i){
+       if (this.element.chart.series[i].data.length) {
+           //console.log( 'now:' + new Date(now) + ' data:' + new Date(this.element.chart.series[i].data[0].x));
+           if (this.element.chart.series[i].data[0].x< now){
+               this.element.chart.series[i].data[0].remove(false,false);
+               updated = true;
+               change = true;
+               
+       }
+  }}
+}
+if (updated)
+    this.element.chart.redraw();
+}
+
+
+
+
+libutil.trendchart.prototype.startSeries = function(ev) {
+    var series = [];
+    for (var i=0;i<ev.length;++i){
+        if (ev[i].data){
+            var item = {
+                //'yAxis': i ? i : undefined,
+                'name': ev[i].tag, 
+                'data' : []
+            };						
+            for (var j = 0 ; j < ev[i].data.length; j++) { 
+                var dt = ev[i].data[j];
+                //if (((parseInt(dt[1]) /10) % 2) ==0)
+                //    dt[1]=null;
+                item.data.push({
+                    x: (dt[0] - 1000* 3600* 4),
+                    y: this.checkdata(dt,i)
+                });
+            }                                                       
+            series.push(item);
+        }
+    }
+    console.log(this.null_periods);
+    
+    return series;
+}
+
+
+
+
+libutil.trendchart.prototype.addSeries = function(ev){
+    if (this.element){
+    for (var i=0;i<ev.length;++i)
+        if (ev[i].data){
+            for (var j = 0 ; j < ev[i].data.length ; j++) {
+            var dt = ev[i].data[j];
+            this.element.chart.series[i].addPoint([(dt[0] - 1000* 3600* 4), this.checkdata(dt,i)], i==(ev.length-1), false , false);}}						
+    }
+    this.update_null_data();
+    this.update_data();}
+
+
+
+
+libutil.trendchart.prototype.execute = function(ev) {
+    if (ev && (ev.length)){
+        var ts =this;
+        var elem=this.element;
+
+        if ((elem!=null) && (ev.length)){
+            
+            if (elem.chart==null){
+     
+                
+                this.chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: elem.id ,
+                        defaultSeriesType: 'line',
+                        marginRight: 10,
+                        backgroundColor: "#FFF",
+                        borderColor: "#111",
+                        events: {
+                            load: ts.execute
+                        }
+                    },
+                    title: {
+                        text:  elem.getAttribute('desc')
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        tickPixelInterval: 105,
+                        plotLines: [{
+                            value: 1,
+                            width: 1,
+                            color: '#808080'
+                        }],
+                       plotBands: [],
+                       gridLineWidth : 1
+                    },
+                    yAxis: function(){
+                            var rslt =[];
+                            for (var i=0;i<this.tags.length;++i){
+                              rslt.push({
+                              title: {text: 'Rainfall',
+                                      style: {
+                                           color: '#4572A7'}},
+
+                              labels: {
+                                      formatter: function() {
+                                       return this.value;} } ,
+                              style:  {
+                                  color: '#4572A7'
+                              },    
+                              opposite: true});
+                          return rslt;
+                        }
+
+ 
+                     
+                        
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return '<b>'+ this.series.name +'</b><br/>'+
+                            Highcharts.dateFormat('%H:%M:%S', this.x) +'<br/>'+ 
+                            Highcharts.numberFormat(this.y, 2);
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    credits: {
+                        enabled: false
+                    },                    
+                    plotOptions: {
+                        series: {
+  
+                           marker: {
+                                enabled: false,
+                                states: {
+                                    hover: {
+                                        enabled: false
+                                    }
+                                }
+                            }
+                        },
+                        line: {
+                            allowPointSelect: false,
+                            lineWidth: 1.5,
+                             states: {
+                                    hover: {
+                                        enabled: false,
+                                        radius: 3
+                                    }
+                                },
+                                shadow: false
+                            //color: '#FF0000'
+                        }
+                    },
+
+ 
+                    names : this.tags,
+                    colors : (this.colors ? this.colors : Highcharts.getOptions().colors),
+                    series: this.startSeries(ev)
+                });   
+                
+                this.element.chart = this.chart;
+                this.addBound();
+            }
+            else {
+                this.addSeries(ev);
+                      
+            }
+
+        }
+    }
+}
+
+/////////////////////////////////////////////////
 
 libutil.dom.clearChildNode = function (element){
     if (element){
