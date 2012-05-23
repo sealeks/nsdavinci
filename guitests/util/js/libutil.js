@@ -1349,13 +1349,14 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
 
 ///////////////////////////////////////////////
 
-/*Highcharts.setOptions({
-    global: {
-        useUTC: false
-    }
-});*/
+
 
 libutil.trendchart = function(elid, tags, hist, colors){
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
     try{
     this.element = document.getElementById(elid);
     if (this.element){
@@ -1394,57 +1395,8 @@ libutil.trendchart.prototype.detach = function() {
 }
 
 libutil.trendchart.prototype.currentStart = function() {
-    return (new Date() - this.period );
+    return (new Date() - this.period - 0 ) ;
 }
-
-
-libutil.trendchart.prototype.add_nullperiod =function (period){
-    //var laststate = 0;
-    var start = period.start;
-    var stop = period.stop;    
-    for (var i=0;i<this.null_periods.length;++i){
-        
-        var state = (stop < this.null_periods[i].start) ? 0 :
-                    ((stop <= this.null_periods[i].stop) ? 1 :
-                    ((start <= this.null_periods[i].stop) ? 2 : 3));
-        if (stop>this.null_periods[i].stop)        
-        switch(state) {
-           case 0:  {libutil.util.insert_element_arr(this.null_periods,period,i); this.null_datachange=true; return;}
-           case 1:  {this.null_periods[i].start = start; this.null_periods[i].stop = this.null_periods[i].stop; this.null_datachange=true; return;}
-           case 2:  {this.null_periods[i].start = this.null_periods[i].start; this.null_periods[i].stop = stop; this.null_datachange=true; return;}  
-        }                   
-    }
-   this.null_datachange=true; 
-   this.null_periods.push(period);
-}
-
-libutil.trendchart.prototype.checkdata =function (val, i){
-    if (!this.null_datastate[i] && (val[1]===null)){
-        this.null_datastate[i]=val[0];
-    }
-    else{
-        if (this.null_datastate[i] && (val[1]!==null)){
-            this.add_nullperiod({'start' : this.null_datastate[i] , 'stop' : val[0]})
-            this.null_datastate[i]=null;
-        } 
-    }      
-    return val[1];
-}
-
-libutil.trendchart.prototype.addBound =function (){
-    this.chart.xAxis[0].removePlotBand();
-    for (var i = 0 ; i < this.null_periods.length; i++){
-        this.chart.xAxis[0].addPlotBand({
-                       from : this.null_periods[i].start , 
-                       to : this.null_periods[i].stop,
-                       color : 'gray',
-                       opacity: 0.3});
-    }
-}
-
-
-
-
 
 libutil.trendchart.prototype.update_null_data =function (){
   if (this.null_datachange){
@@ -1455,7 +1407,7 @@ libutil.trendchart.prototype.update_null_data =function (){
 
 
 libutil.trendchart.prototype.update_data =function (){
-    var now = this.currentStart();
+    var now = this.currentStart()-0;
     var updated = false;
     var change = true;
     while(change){
@@ -1463,7 +1415,7 @@ libutil.trendchart.prototype.update_data =function (){
     for (var i=0; i<this.element.chart.series.length; ++i){
        if (this.element.chart.series[i].data.length) {
            //console.log( 'now:' + new Date(now) + ' data:' + new Date(this.element.chart.series[i].data[0].x));
-           if (this.element.chart.series[i].data[0].x< now){
+           if (this.element.chart.series[i].data[0].x< (now-0)) {
                this.element.chart.series[i].data[0].remove(false,false);
                updated = true;
                change = true;
@@ -1473,6 +1425,59 @@ libutil.trendchart.prototype.update_data =function (){
 }
 if (updated)
     this.element.chart.redraw();
+}
+
+
+libutil.trendchart.prototype.add_nullperiod =function (period){
+    var start = period.start;
+    var stop = period.stop;    
+    for (var i=0;i<this.null_periods.length;++i){
+        
+        var state = (stop < this.null_periods[i].start) ? 0 :
+                    ((stop <= this.null_periods[i].stop) ? 1 :
+                    ((start <= this.null_periods[i].stop) ? 2 : 3));
+        if (stop>this.null_periods[i].stop)        
+        switch(state) {
+           case 0:  {libutil.util.insert_element_arr(this.null_periods,period,i);
+                     this.null_datachange=true;
+                     return;}
+           case 1:  {this.null_periods[i].start = start;
+                     this.null_periods[i].stop = this.null_periods[i].stop;
+                     this.null_datachange=true;
+                     return;}
+           case 2:  {this.null_periods[i].start = this.null_periods[i].start;
+                     this.null_periods[i].stop = stop;
+                     this.null_datachange=true;
+                     return;}  
+        }                   
+    }
+   this.null_datachange=true; 
+   this.null_periods.push(period);
+}
+
+libutil.trendchart.prototype.addBound =function (){
+    this.chart.xAxis[0].removePlotBand();
+    for (var i = 0 ; i < this.null_periods.length; i++){
+        this.chart.xAxis[0].addPlotBand({
+                       from : this.null_periods[i].start , 
+                       to : this.null_periods[i].stop,
+                       color : '#DDD',
+                       opacity: 0.3});
+    }
+}
+
+libutil.trendchart.prototype.checkdata =function (val, i){
+     val[0]=val[0]+0;
+    if (!this.null_datastate[i] && (val[1]===null)){
+        this.null_datastate[i]=val[0];
+    }
+    else{
+        if (this.null_datastate[i] && (val[1]!==null)){
+            this.add_nullperiod({'start' : this.null_datastate[i] , 'stop' : val[0]})
+            this.null_datastate[i]=null;
+        } 
+    } 
+    return {x : val[0]-0, y : val[1]};
 }
 
 
@@ -1489,17 +1494,14 @@ libutil.trendchart.prototype.startSeries = function(ev) {
             };						
             for (var j = 0 ; j < ev[i].data.length; j++) { 
                 var dt = ev[i].data[j];
-                //if (((parseInt(dt[1]) /10) % 2) ==0)
-                //    dt[1]=null;
-                item.data.push({
-                    x: (dt[0]),
-                    y: this.checkdata(dt,i)
-                });
+                if (((parseInt(dt[0].getMinutes() /5)) % (i+2)) ==0)
+                    dt[1]=null;
+                item.data.push(this.checkdata(dt,i));
             }                                                       
             series.push(item);
         }
     }
-    console.log(this.null_periods);
+    //console.log(this.null_periods);
     
     return series;
 }
@@ -1513,7 +1515,10 @@ libutil.trendchart.prototype.addSeries = function(ev){
         if (ev[i].data){
             for (var j = 0 ; j < ev[i].data.length ; j++) {
             var dt = ev[i].data[j];
-            this.element.chart.series[i].addPoint([(dt[0]), this.checkdata(dt,i)], i==(ev.length-1), false , false);}}						
+            if (((parseInt(dt[0].getMinutes() /5)) % (i+2)) ==0)
+                    dt[1]=null;
+            dt = this.checkdata(dt,i)    
+            this.element.chart.series[i].addPoint([dt.x , dt.y], i==(ev.length-1), false , false);}}						
     }
     this.update_null_data();
     this.update_data();}
@@ -1566,7 +1571,7 @@ libutil.trendchart.prototype.execute = function(ev) {
 
                               labels: {
                                       formatter: function() {
-                                       return this.value;} } ,
+                                       return this.value;}} ,
                               style:  {
                                   color: '#4572A7'
                               },    
