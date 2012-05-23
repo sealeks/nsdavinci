@@ -1367,11 +1367,13 @@ libutil.trendchart = function(elid, tags, hist, colors){
         this.tags = tags;
         this.colors = colors;
         this.null_datastate = [];
+        this.last_datastate = [];
         this.serias_lastvalue = [];
         this.null_datachange = false;
         this.null_periods = [];
         for (var i=0;i<tags.length;++i){
             this.null_datastate[i]=null;
+            this.last_datastate[i]=null;
             this.serias_lastvalue[i]=null;}
         this.handler = function(){
             ts.execute(event);}
@@ -1395,44 +1397,13 @@ libutil.trendchart.prototype.detach = function() {
 }
 
 libutil.trendchart.prototype.currentStart = function() {
-    return (new Date() - this.period - 0 ) ;
+    return (new Date() - this.period).valueOf() ;
 }
-
-libutil.trendchart.prototype.update_null_data =function (){
-  if (this.null_datachange){
-    this.addBound();  
-    this.null_datachange =false;  
-  }
-}
-
-
-libutil.trendchart.prototype.update_data =function (){
-    var now = this.currentStart()-0;
-    var updated = false;
-    var change = true;
-    while(change){
-    change =false;
-    for (var i=0; i<this.element.chart.series.length; ++i){
-       if (this.element.chart.series[i].data.length) {
-           //console.log( 'now:' + new Date(now) + ' data:' + new Date(this.element.chart.series[i].data[0].x));
-           if (this.element.chart.series[i].data[0].x< (now-0)) {
-               this.element.chart.series[i].data[0].remove(false,false);
-               updated = true;
-               change = true;
-               
-       }
-  }}
-}
-if (updated)
-    this.element.chart.redraw();
-}
-
 
 libutil.trendchart.prototype.add_nullperiod =function (period){
     var start = period.start;
     var stop = period.stop;    
     for (var i=0;i<this.null_periods.length;++i){
-        
         var state = (stop < this.null_periods[i].start) ? 0 :
                     ((stop <= this.null_periods[i].stop) ? 1 :
                     ((start <= this.null_periods[i].stop) ? 2 : 3));
@@ -1455,54 +1426,96 @@ libutil.trendchart.prototype.add_nullperiod =function (period){
    this.null_periods.push(period);
 }
 
-libutil.trendchart.prototype.addBound =function (){
-    this.chart.xAxis[0].removePlotBand();
-    for (var i = 0 ; i < this.null_periods.length; i++){
-        this.chart.xAxis[0].addPlotBand({
-                       from : this.null_periods[i].start , 
-                       to : this.null_periods[i].stop,
-                       color : '#DDD',
-                       opacity: 0.3});
-    }
+libutil.trendchart.prototype.update_null_data =function (){
+  if (this.null_datachange){
+    this.addBound();  
+    this.null_datachange =false;  
+  }
 }
 
-libutil.trendchart.prototype.checkdata =function (val, i){
-     val[0]=val[0]+0;
+
+libutil.trendchart.prototype.update_data =function (){
+    var now = this.currentStart();
+    var updated = false;
+
+    for (var i=0; i<this.element.chart.series.length; ++i){
+       if (this.element.chart.series[i].data.length) {
+           //console.log( 'now:' + new Date(now) + ' data:' + new Date(this.element.chart.series[i].data[0].x));
+           if (this.element.chart.series[i].data[0].x< now) {
+               while((this.element.chart.series[i].data.length>1) && (this.element.chart.series[i].data[1].x<now))
+                  this.element.chart.series[i].data[0].remove(false,false);
+               if (this.element.chart.series[i].data[0].x< now){
+                  var val = this.element.chart.series[i].data[0];
+                  var valnext = (this.element.chart.series[i].data.length>1) ? this.element.chart.series[i].data[0] : null;
+                  var yval = (val.y!==null) && (valnext.y!==null) ? ((valnext.y + val.y) / 2) : val.y;
+                  val.x= now;
+                  val.y= yval;
+                  this.element.chart.series[i].data[0].update(val); }                               
+               updated = true;             
+  }}
+}
+return updated;
+}
+
+
+
+libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
+    val[0]=val[0].valueOf();
+    
+    if (init){
+       var now = this.currentStart();
+       if (now<val[0]){
+               this.add_nullperiod({'start' : now , 'stop' : val[0]});
+               arr.push({x : now, y : null})
+       }
+    }  
+    
     if (!this.null_datastate[i] && (val[1]===null)){
-        this.null_datastate[i]=val[0];
+        this.null_datastate[i]=this.last_datastate[i] ? this.last_datastate[i] : val[0];
     }
     else{
         if (this.null_datastate[i] && (val[1]!==null)){
             this.add_nullperiod({'start' : this.null_datastate[i] , 'stop' : val[0]})
             this.null_datastate[i]=null;
         } 
-    } 
-    return {x : val[0]-0, y : val[1]};
+    }
+    this.last_datastate[i]=val[0];
+    if (arr) 
+        arr.push({x : val[0], y : val[1]});
+    else
+        return {x : val[0], y : val[1]};
 }
 
 
+libutil.trendchart.prototype.addBound =function (){
+    this.chart.xAxis[0].removePlotBand();
+    for (var i = 0 ; i < this.null_periods.length; i++){
+        this.chart.xAxis[0].addPlotBand({
+                       from : this.null_periods[i].start , 
+                       to : this.null_periods[i].stop,
+                       color : '#DDD'});
+    }
+}
 
 
 libutil.trendchart.prototype.startSeries = function(ev) {
     var series = [];
+    var now = this.currentStart()
     for (var i=0;i<ev.length;++i){
         if (ev[i].data){
             var item = {
-                //'yAxis': i ? i : undefined,
                 'name': ev[i].tag, 
                 'data' : []
             };						
             for (var j = 0 ; j < ev[i].data.length; j++) { 
                 var dt = ev[i].data[j];
-                if (((parseInt(dt[0].getMinutes() /5)) % (i+2)) ==0)
+                if (((parseInt(dt[0].getMinutes() /1)) % (2)) ==0)
                     dt[1]=null;
-                item.data.push(this.checkdata(dt,i));
+                this.checkdata(item.data, dt,i,j==0);
             }                                                       
             series.push(item);
         }
     }
-    //console.log(this.null_periods);
-    
     return series;
 }
 
@@ -1510,18 +1523,23 @@ libutil.trendchart.prototype.startSeries = function(ev) {
 
 
 libutil.trendchart.prototype.addSeries = function(ev){
-    if (this.element){
+    var updated = false;
     for (var i=0;i<ev.length;++i)
         if (ev[i].data){
             for (var j = 0 ; j < ev[i].data.length ; j++) {
             var dt = ev[i].data[j];
-            if (((parseInt(dt[0].getMinutes() /5)) % (i+2)) ==0)
+            if (((parseInt(dt[0].getMinutes() /1)) % (2)) ==0)
                     dt[1]=null;
-            dt = this.checkdata(dt,i)    
-            this.element.chart.series[i].addPoint([dt.x , dt.y], i==(ev.length-1), false , false);}}						
-    }
-    this.update_null_data();
-    this.update_data();}
+            dt = this.checkdata(null, dt,i)    
+            this.element.chart.series[i].addPoint([dt.x , dt.y], false , false , false);
+            updated = true;}}						
+
+    var updated1 = this.update_null_data();
+    var updated2 = this.update_data();
+    if (updated || updated1 || updated2)
+    this.element.chart.redraw();
+        
+}
 
 
 
@@ -1543,6 +1561,7 @@ libutil.trendchart.prototype.execute = function(ev) {
                         marginRight: 10,
                         backgroundColor: "#FFF",
                         borderColor: "#111",
+                        animation: false,
                         events: {
                             load: ts.execute
                         }
