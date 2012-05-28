@@ -13,6 +13,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
 
     <xsl:template name="mainlib">  
         <script type="text/javascript" xlink:href="../libs/main/js/mainlib.js"></script>   
+        <script type="text/javascript" xlink:href="../util/js_ext/hightchart/jquery.min.js"></script>
+        <script type="text/javascript" xlink:href="../util/js_ext/hightchart/highcharts.js"></script>        
     </xsl:template>
     
       
@@ -2363,7 +2365,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:when test="boolean(@sensorevent='graph')">
                         <xsl:attribute name="onclick">
                             <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
-                            <xsl:text>mainlib.graph_click('</xsl:text> 
+                            <xsl:text>mainlib.graph_click(this, '</xsl:text> 
                             <xsl:value-of select="@param"/>
                             <xsl:text>')</xsl:text>  
                         </xsl:attribute> 

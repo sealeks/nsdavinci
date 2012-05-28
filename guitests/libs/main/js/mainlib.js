@@ -131,13 +131,13 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
 
 
 
-mainlib.get_popupbody  = function(el, width, height){
+mainlib.get_popupbody  = function(el, width, height, remfunc){
     
     if (el.popup){
         return;
     }
 
-    el.popup = libutil.popup.createsvgs(el,width,height,0, null, 'fill: #333; opacity: 0.5;', null, 10);
+    el.popup = libutil.popup.createsvgs(el,width,height,0, null, 'fill: #333; opacity: 0.5; ', null, 10);
     
     el.popup.setAttribute('cursor', 'pointer');
     
@@ -153,8 +153,12 @@ mainlib.get_popupbody  = function(el, width, height){
         
         if (!libutil.dom.checkIsParent (el.popup,ev.toElement,true)){
             //console.profile('mainlib.get_popupbody.onmouseout');
-            el.popup.setAttribute('style', 'display: none;');
+            
             //console.profileEnd('mainlib.get_popupbody.onmouseout');
+            if (remfunc)
+                    remfunc();
+            else
+               el.popup.setAttribute('style', 'display: none;'); 
         }
         
        
@@ -167,7 +171,10 @@ mainlib.get_popupbody  = function(el, width, height){
          
             if (el.popup){
                 
-                el.popup.setAttribute('style', 'display: none;');
+                if (remfunc)
+                    remfunc();
+                else
+                    el.popup.setAttribute('style', 'display: none;');
                 //console.profileEnd();
             }
             //console.profile(mainlib.get_popupbody.onmouseout);
@@ -251,7 +258,63 @@ mainlib.valueset_click =  function (el, nm, width){
     
 //gw.appendChild(btnonrect);
     
-mainlib.graph_click =  function (nm){
+mainlib.graph_click =  function (el, nm){
+    
+     //if (el.popup){
+       
+        //el.popup.setAttribute('style', '');
+      //  return;
+  //  }
+  
+    var width = 400;
+    var height = 200;
+    var padding = 3;
+    
+ 
+    var body = mainlib.get_popupbody(el,400,200, function() { if (el.popup) el.popup.parentNode.removeChild(el.popup); el.popup=undefined; });
+
+    body.setAttribute('id',el.getAttribute('id') + '_popup_body');
+    
+    var result = libutil.svg.create_element('foreignObject', body, [{
+        name : 'x', 
+        value:  0
+        },
+        {
+        name : 'y', 
+        value:  0
+        },
+        {
+        name : 'width', 
+        value: width
+        },
+        {
+        name : 'height', 
+        value : height
+        }]);   
+    
+    var html = libutil.html.create_element('html' , result);
+            
+    var head = libutil.html.create_element('head', html,[{
+    }]);
+
+    //libutil.html.create_element('script', head , [{ name: 'type' , value: "text/javascript"}, { name: 'src' , value: "../util/js_ext/hightchart/highcharts.js"}]);
+    //libutil.html.create_element('script', head , [{ name: 'type' , value: "text/javascript"}, { name: 'src' , value: "../util/js_ext/hightchart/jquery.min.js"}]);
+
+
+
+            
+    var htmlbody= libutil.html.create_element( 'body' ,html, [{name: 'style', value: 'margin: 0; padding: '+ padding + 'px'}]);
+            
+    var bodydiv= libutil.html.create_element('div' , htmlbody, [{ name : 'id' , value: el.getAttribute('id') + '_popup_graph'}] );
+    
+    var script = libutil.html.create_element('script', head );
+    script.textContent="test = new libutil.trendchart('"+el.getAttribute('id') + '_popup_graph'+
+        "',['"+nm+"'], 600, ['red','green','blue','#880'], " + (width - 2* padding) + ", " + (height - 2* padding)+")";
+    
+        
+    
+    return;
+    
     var tgnm=nm;
     var idtgnm=nm + '_divelem';
     var newwin = open('', event.target , "toolbar=0,location=0,left=400,top=200, width=650,height=250");

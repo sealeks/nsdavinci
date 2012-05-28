@@ -10,7 +10,7 @@ function ___global___unload(){
 if (window.simTick) clearInterval(window.simTick);
 if (window.simulation_detach) simulation_detach();
    
-alert('Stop');
+//alert('Stop');
 
 
 };

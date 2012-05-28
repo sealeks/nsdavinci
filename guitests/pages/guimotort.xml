@@ -4,4 +4,5 @@
 <script id="rootscript" type="text/javascript"> 
 </script>      
 <mlib:armatura x="274" y="233" height="60" width="60" id="name10" on="m1::c1" environment="gaz" ron="m1::c1" type="bolt" alarms="m1::c2" filter="filter"/>
+
 </svg:svg> 
