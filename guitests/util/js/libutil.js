@@ -638,29 +638,29 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r)
     
     var docelem = document.documentElement;
     
-    var svg =libutil.svg.create_element('svg', docelem, [{'name' : 'x', 'value': xc},
-                                                         {'name' : 'y', 'value': yc},
-                                                         {'name' : 'width', 'value': wc},
-                                                         {'name' : 'height', 'value': hc}]);
+    var svg =libutil.svg.create_element('svg', docelem, [{name : 'x', value: xc},
+                                                         {name : 'y', value: yc},
+                                                         {name : 'width', value: wc},
+                                                         {name : 'height', value: hc}]);
     
-    libutil.svg.create_element('rect', svg, [{'name' : 'x', 'value':  0},
-                                             {'name' : 'y', 'value':  0},
-                                             {'name' : 'width', 'value': wc},
-                                             {'name' : 'height', 'value': hc},
-                                             {'name' : 'style', 'value': popupstyle ? popupstyle : 'fill: white; opacity: 0.0;'}]);
+    libutil.svg.create_element('rect', svg, [{name : 'x', value:  0},
+                                             {name : 'y', value:  0},
+                                             {name : 'width', value: wc},
+                                             {name : 'height', value: hc},
+                                             {name : 'style', value: popupstyle ? popupstyle : 'fill: white; opacity: 0.0;'}]);
     
-    svg.popupbody = libutil.svg.create_element('svg', svg, [{'name' : 'x', 'value': dir==1 ? wh : 0},
-                                                            {'name' : 'y', 'value':  dir==2 ? hh : 0},
-                                                            {'name' : 'width', 'value': W},
-                                                            {'name' : 'height', 'value': H}]);
+    svg.popupbody = libutil.svg.create_element('svg', svg, [{name : 'x', value: dir==1 ? wh : 0},
+                                                            {name : 'y', value:  dir==2 ? hh : 0},
+                                                            {name : 'width', value: W},
+                                                            {name : 'height', value: H}]);
     
-    var rct = libutil.svg.create_element('rect', svg.popupbody , [{'name' : 'x', 'value':  0},
-                                                        {'name' : 'y', 'value':  0},
-                                                        {'name' : 'width', 'value': W},
-                                                        {'name' : 'height', 'value': H},
-                                                        {'name' : 'rx', 'value': r},
-                                                        {'name' : 'ry', 'value': r},
-                                                        {'name' : 'style', 'value': bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'}]);
+    var rct = libutil.svg.create_element('rect', svg.popupbody , [{name : 'x', value:  0},
+                                                        {name : 'y', value:  0},
+                                                        {name : 'width', value: W},
+                                                        {name : 'height', value: H},
+                                                        {name : 'rx', value: r},
+                                                        {name : 'ry', value: r},
+                                                        {name : 'style', value: bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'}]);
     
 
     
@@ -767,7 +767,7 @@ libutil.window.create_modal = function(url,  caption, value ,top, left, width, h
     (nodecorate ? ',decorated=no' : '') +
     ';'
     libutil.global.setGlobalPropertyEditor({
-        'value': value
+        value: value
     });
     window.showModalDialog(url, null , tmp);
     
@@ -816,11 +816,11 @@ libutil.regex.check = function (value, expr){
 
 libutil.geometry.boundrect = function (el){
     var box = el && el.getBBox ? el.getBBox() : null;
-    var rect = box ? {'x' : box.x , 'y' : box.y , 'w' : box.width , 'h' : box.height} : null;
+    var rect = box ? {x : box.x , y : box.y , w : box.width , h : box.height} : null;
     if (rect) return rect;
     var boxs = el  && el.getClientRects ? el.getClientRects() : null;
     var box = boxs && boxs.length ? boxs[0] : null;
-    return box ? {'x' : box.top , 'y' : box.left , 'w' : box.width , 'h' : box.height} : null;
+    return box ? {x : box.top , y : box.left , w : box.width , h : box.height} : null;
 }
 
 
@@ -864,8 +864,8 @@ libutil.html.create_element_not_insert = function (name, parent, attr){
 
 libutil.html.create_tabel_header = function (tr, style, classnm, arr){
     for (var i=0; i < arr.length; ++i){
-        var th = libutil.html.create_element('th', tr,  [{'name' : 'style', 'value': style},
-                                                         {'name' : 'class', 'value': classnm}]);
+        var th = libutil.html.create_element('th', tr,  [{name : 'style', value: style},
+                                                         {name : 'class', value: classnm}]);
         th.innerHTML=arr[i];
     } 
 }
@@ -945,7 +945,7 @@ libutil.html.create_tool = function (doc, nametool, names, hints, funcs, size, h
         var result = {};
         if (body) {
             if (header){
-                var divhead = libutil.html.create_element('div' , body ,[{'name' : 'style' , 'value' : headerstyle}]); 
+                var divhead = libutil.html.create_element('div' , body ,[{name : 'style' , value : headerstyle}]); 
                 divhead.innerHTML=header;
             }
             libutil.html.create_tool_style(doc, nametool, names,  size);
@@ -957,7 +957,7 @@ libutil.html.create_tool = function (doc, nametool, names, hints, funcs, size, h
                 btn.nametool=nametool;
                 if ( hints &&  hints.length>i)
                     btn.setAttribute('title', hints[i])
-                var dv = libutil.html.create_element('div' , btn ,[{'name' : 'class' , 'value' : nametool+'-icon'}]);
+                var dv = libutil.html.create_element('div' , btn ,[{name : 'class' , value : nametool+'-icon'}]);
                 if (hints &&  hints.length>i)
                     dv.setAttribute('title', hints[i]);
                 result[names[i]] = btn;
@@ -1109,19 +1109,19 @@ libutil.svg.create_text = function (parent, x, y,  style, classnm, text){
 
 libutil.svg.create_button = function (parent, x, y, width, height, rx, ry,  rectstyle, rectclass,   text, textstyle, textclass){
 
-    var headersvg=libutil.svg.create_element('svg', parent , [{'name' : 'x', 'value': x},
-                                                         {'name' : 'y', 'value': y},
-                                                         {'name' : 'width', 'value': width},
-                                                         {'name' : 'height', 'value': height}]);   
+    var headersvg=libutil.svg.create_element('svg', parent , [{name : 'x', value: x},
+                                                         {name : 'y', value: y},
+                                                         {name : 'width', value: width},
+                                                         {name : 'height', value: height}]);   
 
-    libutil.svg.create_element('rect', headersvg, [{'name' : 'x', 'value':  0},
-                                                {'name' : 'y', 'value':  0},
-                                                {'name' : 'width', 'value': width},
-                                                {'name' : 'height', 'value': height},
-                                                {'name' : 'rx', 'value': rx},
-                                                {'name' : 'ry', 'value': ry}, 
-                                                {'name' : 'style', 'value': rectstyle},
-                                                {'name' : 'class', 'value': rectclass}]);
+    libutil.svg.create_element('rect', headersvg, [{name : 'x', value:  0},
+                                                {name : 'y', value:  0},
+                                                {name : 'width', value: width},
+                                                {name : 'height', value: height},
+                                                {name : 'rx', value: rx},
+                                                {name : 'ry', value: ry}, 
+                                                {name : 'style', value: rectstyle},
+                                                {name : 'class', value: rectclass}]);
                                     
                              
     libutil.svg.create_text(headersvg,
@@ -1139,8 +1139,8 @@ libutil.svg.create_gradient = function (name ,parent, attr, colors){
     if (colors){
     var gradient=libutil.svg.create_element(name , parent , attr); 
     for (var i=0; i < colors.length; ++i){
-        libutil.svg.create_element('stop', gradient , [{'name' : 'offset' , 'value' : colors[i].offset ? colors[i].offset : 0},
-                                                       {'name' : 'stop-color' , 'value' : colors[i].stopcolor ? colors[i].stopcolor : '#000'}])
+        libutil.svg.create_element('stop', gradient , [{name : 'offset' , value : colors[i].offset ? colors[i].offset : 0},
+                                                       {name : 'stop-color' , value : colors[i].stopcolor ? colors[i].stopcolor : '#000'}])
     }
     return gradient;
 }
@@ -1162,14 +1162,14 @@ libutil.www.create_window = function(doc, id, x, y, width, height, style){
         var root = doc.documentElement;
         if (root) {
      
-            var result = libutil.svg.create_element('foreignObject', doc.documentElement, [{'name' : 'id', 'value':  id},
-                                                                                   {'name' : 'x', 'value':  x ? x : 0},
-                                                                                   {'name' : 'y', 'value':  y ? y : 0},
-                                                                                   {'name' : 'width', 'value': width ? width : 300},
-                                                                                   {'name' : 'height', 'value': height ? height : 300}]);         
+            var result = libutil.svg.create_element('foreignObject', doc.documentElement, [{name : 'id', value:  id},
+                                                                                   {name : 'x', value:  x ? x : 0},
+                                                                                   {name : 'y', value:  y ? y : 0},
+                                                                                   {name : 'width', value: width ? width : 300},
+                                                                                   {name : 'height', value: height ? height : 300}]);         
             var html = libutil.html.create_element('html' , result);
             
-            libutil.html.create_element('head', html,[{'name' : 'style', 'value':  style}]);
+            libutil.html.create_element('head', html,[{name : 'style', value:  style}]);
             
             var body= libutil.html.create_element( 'body' ,html);
             
@@ -1685,7 +1685,7 @@ libutil.trendchart.prototype.startSeries = function(ev) {
     for (var i=0;i<ev.length;++i){
         if (ev[i].data){
             var item = {
-                'name': ev[i].tag, 
+                name: ev[i].tag, 
                 'yAxis': i,
                 'data' : [],
                 marker: {
