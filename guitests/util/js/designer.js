@@ -1200,62 +1200,62 @@ dsutl.script.scriptdialog = function(name, value){
 
 designer.prototype.getMainMenue = function(){
     if (!this.___maimenue){
-        var items =[{'name' : 'Bring to Front',
-                      'id' : 'bringtofront',
-                      'active' : function(){return document.red.selectionCount() ? '' : 'disable';},
-                      'func' : function(){
+        var items =[{name : 'Bring to Front',
+                     id : 'bringtofront',
+                     active : function(){return document.red.selectionCount() ? '' : 'disable';},
+                     func : function(){
                                   document.red.toFrontElements();
                                   document.red.hideMainMenue();
                                   document.red.setNeedSave();
                                   event.stopPropagation();}},
-                    {'name' : 'Send to Back',
-                      'id' : 'sendtoback',
-                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
-                      'func' : function(){
+                    {name : 'Send to Back',
+                     id : 'sendtoback',
+                     active : function(){return document.red.selectionCount() ? '' : 'disable'},
+                     func : function(){
                                   document.red.toBackElements();
                                   document.red.hideMainMenue();
                                   document.red.setNeedSave();
                                   event.stopPropagation();}},  
-                    {'name' : 'Delete',
-                      'id' : 'delete',
-                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
-                      'func' : function(){
+                    {name : 'Delete',
+                     id : 'delete',
+                     active : function(){return document.red.selectionCount() ? '' : 'disable'},
+                     func : function(){
                                   document.red.deleteElements();
                                   document.red.hideMainMenue();
                                   document.red.setNeedSave();
                                   event.stopPropagation();}}, 
  
-                    {'name' : 'Clone',
-                      'id' : 'clone',
-                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
-                      'func' : function(){
+                    {name : 'Clone',
+                     id : 'clone',
+                     active : function(){return document.red.selectionCount() ? '' : 'disable'},
+                     func : function(){
                                   document.red.cloneElements();
                                   document.red.hideMainMenue();
                                   document.red.setNeedSave();
                                   event.stopPropagation();}}, 
         
-                    {'name' : 'Copy',
-                      'id' : 'copy',
-                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
-                      'func' : function(){
+                    {name : 'Copy',
+                     id : 'copy',
+                     active : function(){return document.red.selectionCount() ? '' : 'disable'},
+                     func : function(){
                                   document.red.pastToClipBoard();
                                   document.red.hideMainMenue();
                                   document.red.setNeedSave();
                                   event.stopPropagation();}}, 
 
-                    {'name' : 'Cut',
-                      'id' : 'cut',
-                      'active' : function(){return document.red.selectionCount() ? '' : 'disable'},
-                      'func' : function(){
+                    {name : 'Cut',
+                     id : 'cut',
+                     active : function(){return document.red.selectionCount() ? '' : 'disable'},
+                     func : function(){
                                   document.red.pastToClipBoard(true);
                                   document.red.hideMainMenue();
                                   document.red.setNeedSave();
                                   event.stopPropagation();}},
      
-                    {'name' : 'Past',
-                      'id' : 'past',
-                      'active' : function(){return document.red.getClipBoard() ? '' : 'disable'},
-                      'func' : function(){
+                    {name : 'Past',
+                     id : 'past',
+                     active : function(){return document.red.getClipBoard() ? '' : 'disable'},
+                     func : function(){
                                 if (document.red.selectionCount()>1){
                                    document.red.hideMainMenue();                                 
                                    event.stopPropagation();
@@ -1277,37 +1277,37 @@ designer.prototype.getMainMenue = function(){
                                  if (prn == document.red.instantdocument.documentElement){
                                       var boxs = prn  && prn.getClientRects ? prn.getClientRects() : null;
                                       var box = boxs && boxs.length ? boxs[0] : null;
-                                      var rect = box ? {'x' : box.top , 'y' : box.left , 'w' : box.width , 'h' : box.height} : null;}
+                                      var rect = box ? {x : box.top , y : box.left , w : box.width , h : box.height} : null;}
                                  else{
                                       var box = libutil.geometry.boundrect(prn);
-                                      var rect = box ? {'x' : box.x , 'y' : box.y , 'w' : box.width , 'h' : box.height} : null;}
+                                      var rect = box ? {x : box.x , y : box.y , w : box.width , h : box.height} : null;}
                                  if (rect && event){
                                       var mx = document.red.___maimenue.body.getBoundingClientRect().left - rect.x;
                                       var my = document.red.___maimenue.body.getBoundingClientRect().top - rect.y; 
-                                      var mpoint = {'x' : mx , 'y' : my};
-                                      rect = {'w' : rect.w  , 'h' : rect.h , 'x' : 0 , 'y' : 0};
+                                      var mpoint = {x : mx , y : my};
+                                      rect = {w : rect.w  , h : rect.h , x : 0 , y : 0};
                                       document.red.copyFromClipBoard(rect , mpoint , prn);}}
                                  document.red.setNeedSave();
                                  document.red.hideMainMenue();                                 
                                  event.stopPropagation();}},
-                     {'name' : 'Script',
-                      'id' : 'script',
-                      'active' : function(){return '';},
-                      'func' : function(){
+                     {name : 'Script',
+                      id : 'script',
+                      active : function(){return '';},
+                      func: function(){
                                  document.red.hideMainMenue();
                                  document.red.getRootScript();
                                  event.stopPropagation();}},
-                     {'name' : 'StartScript',
-                      'id' : 'startscript',
-                      'active' : function(){return '';},
-                      'func' : function(){
+                     {name : 'StartScript',
+                      id : 'startscript',
+                      active : function(){return '';},
+                      func : function(){
                                  document.red.hideMainMenue();
                                  dsutl.script.getStartScript();
                                  event.stopPropagation();}},
-                     {'name' : 'StopScript',
-                      'id' : 'stopscript',
-                      'active' : function(){return '';},
-                      'func' : function(){
+                     {name : 'StopScript',
+                      id : 'stopscript',
+                      active : function(){return '';},
+                      func : function(){
                                  document.red.hideMainMenue();
                                  dsutl.script.getStopScript();
                                  event.stopPropagation();}}];        
@@ -1381,7 +1381,7 @@ designer.prototype.show_property = function(){
             ((typenm=='lib:tag') ? 'statictag' :
             ((typenm=='lib:event') ? 'staticevent' :'static' )));
    
-        var td2= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0;'} ] );
+        var td2= libutil.html.create_element('td', tr, [ {name : 'style' , value : 'margin: 0 0 0 0; padding: 0 0 0 0;'} ] );
         var val=this.getAttributeValue(attriblist[i]['name']);
         td2.innerHTML= val ? val : "";
         
@@ -1596,9 +1596,9 @@ dsutl.selectwraper.prototype.select = function(){
     if (!box) {
         return null;}
     console.log(box);
-    this.helement = libutil.svg.create_element_no_insert('rect',this.parent,[{ 'name' : 'x' , 'value' : box.x}, {'name' : 'y' , 'value' : box.y}, 
-                                                                              {'name' : 'width' , 'value' : box.w},  {'name' : 'height' , 'value' : box.h}, 
-                                                                              {'name' : 'class' , 'value' : 'highlight-selected'}]);
+    this.helement = libutil.svg.create_element_no_insert('rect',this.parent,[{ name : 'x' , value : box.x}, {name : 'y' , value : box.y}, 
+                                                                              {name : 'width' , value : box.w},  {name : 'height' , value : box.h}, 
+                                                                              {name : 'class' , value : 'highlight-selected'}]);
     this.parent.insertBefore( this.helement, this.element.nextSibling)                                                                      
     
 }*/
@@ -1740,9 +1740,9 @@ dsutl.trslt.getinfoYTranslate =  function (el){
                 var midle = traslateattr_xmatch[0];
                 var stp = rest.substring(midle.length);
                 return{
-                    'start' : strt,
-                    'y' : midle,
-                    'stop' : stp}
+                    start : strt,
+                    y : midle,
+                    stop : stp}
         }}}
         catch(error){
             console.error('dsutl.trslt.getinfoYTranslate: ' + error);
@@ -1811,9 +1811,9 @@ dsutl.trslt.getDXinfo =  function (el){
                 dpath_stp = dpath_stp.substring(fnd[0].length);
                 //console.log('DX: ' + dpath_strt +' : ' + dpath_val + ' : '+ dpath_stp);
                         return {
-                            'start' : dpath_strt,
-                            'x' :     dpath_val,
-                            'stop' :  dpath_stp                                 
+                            start : dpath_strt,
+                            x :     dpath_val,
+                            stop :  dpath_stp                                 
                         };
                     }
                 }
@@ -1854,9 +1854,9 @@ dsutl.trslt.getDYinfo =  function (el){
                 dpath_stp = dpath_stp.substring(fnd[0].length);
                 //console.log('DY: ' + dpath_strt +' : ' + dpath_val + ' : '+ dpath_stp);
                         return {
-                            'start' : dpath_strt,
-                            'y' : dpath_val,
-                            'stop' :  dpath_stp                                 
+                            start : dpath_strt,
+                            y : dpath_val,
+                            stop :  dpath_stp                                 
                         };
                     }
                 }
@@ -1940,10 +1940,10 @@ dsutl.trslt.getBoundsElements  =  function (elements , defaultwh){
                 h = parseFloat(el.getAttribute( hn));
                 h = (h!=h) ? defaultwh : h;
             }
-            bounds.push({'x': x ? x : 0 , 
-                         'y': y ? y : 0 ,
-                         'h': h!==null ? y + h : y + defaultwh ,
-                         'w': w!==null ? x + w : x + defaultwh});
+            bounds.push({x: x ? x : 0 , 
+                         y: y ? y : 0 ,
+                         h: h!==null ? y + h : y + defaultwh ,
+                         w: w!==null ? x + w : x + defaultwh});
         }
         //console.log(bounds);
         return bounds;
@@ -1986,7 +1986,7 @@ if (bounds){
                     w=bounds[i].w>w ? bounds[i].w :  w ;
             }           
         }        
-        bound = {'x': x , 'y': y, 'h': h, 'w': w};
+        bound = {x: x , y: y, h: h, w: w};
         //console.log(bound);
         return bound;
 }
@@ -2001,8 +2001,7 @@ dsutl.trslt.inParentBoundElements  =  function (parentrect,  x , y , w , h){
     if (y<0) y=0;             
     if (x>parentrect.w) x=parentrect.w - w;
     if (y>parentrect.h) y=parentrect.h - h;        
-
-    return {'x' : x , 'y' : y}
+    return {x : x , y : y}
 }
 
 
@@ -2082,9 +2081,9 @@ dsutl.componentinfo.prototype.attributes_for_nullschema = function (el){
     var result =[];
     for (var i=0; i< el.attributes.length; ++i){
         result.push({
-            'name' : el.attributes[i].name , 
-            'type' : null, 
-            'use' : null, 
+            name : el.attributes[i].name , 
+            type : null, 
+            use : null, 
             'default' : null
         })
                 
@@ -2103,23 +2102,23 @@ dsutl.componentinfo.prototype.read_types =  function(doc, pref){
                 nm = pref ? (pref + ':' + nm) : nm; 
                 if (info)
                     this.types[nm] = {
-                        'name' : nm , 
-                        'type' : info.type, 
-                        'base' : info['base'], 
-                        'regex' : info['regex'],  
-                        'list' : info['list'],
-                        'validator': (els[i] && els[i].hasAttributeNS(libutil.LIB_NAMESPACE_URL,'validator') ? 
+                        name : nm , 
+                        type : info.type, 
+                        base : info['base'], 
+                        regex : info['regex'],  
+                        list : info['list'],
+                        validator: (els[i] && els[i].hasAttributeNS(libutil.LIB_NAMESPACE_URL,'validator') ? 
                             els[i].getAttributeNS(libutil.LIB_NAMESPACE_URL,'validator') : null)
                     };
                     
             }
             else
                 this.types[nm] = {
-                    'name' : nm , 
-                    'type' : 0, 
-                    'base' : null, 
-                    'regex' : null,  
-                    'list' : null
+                    name : nm , 
+                    type : 0, 
+                    base : null, 
+                    regex : null,  
+                    list : null
                 } 
         }
     }
@@ -2133,20 +2132,20 @@ dsutl.componentinfo.prototype.read_simple_type =  function(el){
         }
     }
     return {
-        'type': 0, 
-        'base': null, 
-        'regex': null, 
-        'list': null
+        type: 0, 
+        base: null, 
+        regex: null, 
+        list: null
     };
 }
 
 dsutl.componentinfo.prototype.read_restriction_type =  function(el, prnt){
     if ((!el) || (el.childElementCount==0))
         return {
-            'type': 0, 
-            'base': null, 
-            'regex': null, 
-            'list': null
+            type: 0, 
+            base: null, 
+            regex: null, 
+            list: null
         };
     var type=0;
     var base=el.getAttribute('base');
@@ -2178,10 +2177,10 @@ dsutl.componentinfo.prototype.read_restriction_type =  function(el, prnt){
         } 
     }
     return {
-        'type': type, 
-        'base': base, 
-        'regex': regex, 
-        'list': list
+        type: type, 
+        base: base, 
+        regex: regex, 
+        list: list
     };
 }
             
@@ -2197,9 +2196,9 @@ dsutl.componentinfo.prototype.read_elements =  function(doc, pref){
             nm = pref /*&& nm!='svg'*/ ? (pref + ':' + nm) : nm;
             if (nm){
                 this.elements[nm]={
-                    'name' : els[i].getAttribute('name'),
-                    'type' : els[i].getAttribute('type'),
-                    'attributes' : null
+                    name : els[i].getAttribute('name'),
+                    type : els[i].getAttribute('type'),
+                    attributes : null
                 };
                 this.read_attributes(els[i],this.elements[nm]);
             }
@@ -2217,11 +2216,11 @@ dsutl.componentinfo.prototype.read_attributes = function(el,  info){
     for (var ch=typeel.firstElementChild; ch; ch=ch.nextElementSibling)
         if ((ch.localName=='attribute') && (ch.getAttribute('name')))
             result[ch.getAttribute('name')] = {
-                'name' : ch.getAttribute('name') , 
-                'type' : this.get_attribute(ch.getAttribute('type')), 
-                'use' : ch.getAttribute('use'), 
+                name : ch.getAttribute('name') , 
+                type : this.get_attribute(ch.getAttribute('type')), 
+                use : ch.getAttribute('use'), 
                 'default' : ch.getAttribute('default'),
-                'typename' : ch.getAttribute('type')
+                typename : ch.getAttribute('type')
             };
                 
     info.attributes=result;
@@ -2241,8 +2240,8 @@ dsutl.componentinfo.prototype.read_creators =  function(doc){
                 var el = els[i].firstElementChild;
                 if ((nm) && (nm!='') && (el))
                     this.creators[nm] = {
-                        'name' : nm , 
-                        'template' : el
+                        name : nm , 
+                        template : el
                     };
                     
             }        
@@ -2538,21 +2537,21 @@ dsutl.menue = function (items){
    this.documentElement = document.documentElement;
    if (this.documentElement){
         
-        this.body = libutil.svg.create_element('svg', document.documentElement , [{'name' : 'x' , 'value' : 0},
-                                                      {'name' : 'y' , 'value' : 0},
-                                                      {'name' : 'width' , 'value' : dsutl.MAINMENU_WIDTH},
-                                                      {'name' : 'height' , 'value' : items.length * dsutl.MAINMENU_BUTTON_HEIGHT}
-                                                      /*{'name' : 'disable' , 'value' : 'disable'}*/]); 
+        this.body = libutil.svg.create_element('svg', document.documentElement , [{name : 'x' , value : 0},
+                                                      {name : 'y' , value : 0},
+                                                      {name : 'width' , value : dsutl.MAINMENU_WIDTH},
+                                                      {name : 'height' , value : items.length * dsutl.MAINMENU_BUTTON_HEIGHT}
+                                                      /*{name : 'disable' , value : 'disable'}*/]); 
                                                   
                                                   
                                                    
-        this.bodyrect = libutil.svg.create_element('rect', this.body , [{'name' : 'x' , 'value' : 0},
-                                                      {'name' : 'y' , 'value' : 0},
-                                                      {'name' : 'width' , 'value' : dsutl.MAINMENU_WIDTH},
-                                                      {'name' : 'height' , 'value' : items.length * dsutl.MAINMENU_BUTTON_HEIGHT},
-                                                      {'name' : 'rx' , 'value' : dsutl.MAINMENU_R},
-                                                      {'name' : 'ry' , 'value' : dsutl.MAINMENU_R},                                                      
-                                                      {'name' : 'style' , 'value' : 'fill: '+ dsutl.MAINMENU_COLOR +'; opacity: 0.9; stroke-width: 0;'}]); 
+        this.bodyrect = libutil.svg.create_element('rect', this.body , [{name : 'x' , value : 0},
+                                                      {name : 'y' , value : 0},
+                                                      {name : 'width' , value : dsutl.MAINMENU_WIDTH},
+                                                      {name : 'height' , value : items.length * dsutl.MAINMENU_BUTTON_HEIGHT},
+                                                      {name : 'rx' , value : dsutl.MAINMENU_R},
+                                                      {name : 'ry' , value : dsutl.MAINMENU_R},                                                      
+                                                      {name : 'style' , value : 'fill: '+ dsutl.MAINMENU_COLOR +'; opacity: 0.9; stroke-width: 0;'}]); 
                                                   
         this.setstyle(); 
         this.buttons =[];
@@ -2611,26 +2610,32 @@ dsutl.menue.prototype.getBody = function(){
 dsutl.menue.prototype.setstyle = function(){
 
     var defs = libutil.svg.create_element('defs', this.body);
-    libutil.svg.create_gradient('linearGradient' , defs,[{'name' : 'id' , 'value' : '___mainmenue___gradienton'},
-                                            {'name' : 'x1' , 'value' : '100%'},
-                                            {'name' : 'y1' , 'value' : '0%'},
-                                            {'name' : 'x2' , 'value' : '100%'},
-                                            {'name' : 'y2' , 'value' : '100%'}],
-                                            [{'offset' : 0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_ONCOLOR} , {'offset' : 0.5 , 'stopcolor' : dsutl.MAINMENU_BUTTON_OFFCOLOR} , {'offset' : 1.0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_ONCOLOR}]);
+    libutil.svg.create_gradient('linearGradient' , defs,[{name : 'id' , value : '___mainmenue___gradienton'},
+                                            {name : 'x1' , value : '100%'},
+                                            {name : 'y1' , value : '0%'},
+                                            {name : 'x2' , value : '100%'},
+                                            {name : 'y2' , value : '100%'}],
+                                            [{offset : 0 , stopcolor : dsutl.MAINMENU_BUTTON_ONCOLOR} , 
+                                             {offset : 0.5 , stopcolor : dsutl.MAINMENU_BUTTON_OFFCOLOR} ,
+                                             {offset : 1.0 , stopcolor : dsutl.MAINMENU_BUTTON_ONCOLOR}]);
                                             
-    libutil.svg.create_gradient('linearGradient' , defs,[{'name' : 'id' , 'value' : '___mainmenue___gradientoff'},
-                                            {'name' : 'x1' , 'value' : '100%'},
-                                            {'name' : 'y1' , 'value' : '0%'},
-                                            {'name' : 'x2' , 'value' : '100%'},
-                                            {'name' : 'y2' , 'value' : '100%'}],
-                                            [{'offset' : 0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_OFFCOLOR} , {'offset' : 0.5 , 'stopcolor' : dsutl.MAINMENU_BUTTON_ONCOLOR} , {'offset' : 1.0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_OFFCOLOR}]);
+    libutil.svg.create_gradient('linearGradient' , defs,[{name : 'id' , value : '___mainmenue___gradientoff'},
+                                            {name : 'x1' , value : '100%'},
+                                            {name : 'y1' , value : '0%'},
+                                            {name : 'x2' , value : '100%'},
+                                            {name : 'y2' , value : '100%'}],
+                                            [{offset : 0 , stopcolor : dsutl.MAINMENU_BUTTON_OFFCOLOR} , 
+                                             {offset : 0.5 , stopcolor : dsutl.MAINMENU_BUTTON_ONCOLOR} , 
+                                             {offset : 1.0 , stopcolor : dsutl.MAINMENU_BUTTON_OFFCOLOR}]);
                                             
-    libutil.svg.create_gradient('linearGradient' , defs,[{'name' : 'id' , 'value' : '___mainmenue___gradientdsbl'},
-                                            {'name' : 'x1' , 'value' : '100%'},
-                                            {'name' : 'y1' , 'value' : '0%'},
-                                            {'name' : 'x2' , 'value' : '100%'},
-                                            {'name' : 'y2' , 'value' : '100%'}],
-                                            [{'offset' : 0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_DSBLCOLOR2} ,{'offset' : 0.5 , 'stopcolor' : dsutl.MAINMENU_BUTTON_DSBLCOLOR1}, {'offset' : 1.0 , 'stopcolor' : dsutl.MAINMENU_BUTTON_DSBLCOLOR2}]);                                            
+    libutil.svg.create_gradient('linearGradient' , defs,[{name : 'id' , value : '___mainmenue___gradientdsbl'},
+                                            {name : 'x1' , value : '100%'},
+                                            {name : 'y1' , value : '0%'},
+                                            {name : 'x2' , value : '100%'},
+                                            {name : 'y2' , value : '100%'}],
+                                            [{offset : 0 , stopcolor : dsutl.MAINMENU_BUTTON_DSBLCOLOR2} ,
+                                             {offset : 0.5 , stopcolor : dsutl.MAINMENU_BUTTON_DSBLCOLOR1},
+                                             {offset : 1.0 , stopcolor : dsutl.MAINMENU_BUTTON_DSBLCOLOR2}]);                                            
                                             
     var style="svg > svg > rect.__mainmenuclass{\n"+
               "fill: url(#___mainmenue___gradienton);\n"+
@@ -2828,8 +2833,8 @@ dsutl.toolwin.getObjectInspector = function (force){
         objectinspectorwin.onunload=dsutl.toolwin.destroyObjectInspector;
         var objdoc =objectinspectorwin.document;
         var body=objdoc.getElementsByTagName('body')[0];
-        var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{'name' : 'class' , 'value' : 'scrollWrapper'}]);
-        var table = libutil.html.create_element('table' ,div,[{'name' : 'class' , 'value' : 'scrollable'}]);
+        var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{name : 'class' , value : 'scrollWrapper'}]);
+        var table = libutil.html.create_element('table' ,div,[{name : 'class' , value : 'scrollable'}]);
         var tbody = libutil.html.create_element('tbody', table);
         var tr = libutil.html.create_element('tr' ,tbody);
         var th1 =libutil.html.create_element('th', tr);
@@ -2927,8 +2932,8 @@ dsutl.toolwin.getFormInspector = function (force){
         var body=objdoc.getElementsByTagName('body')[0];
         var head=objdoc.getElementsByTagName('head')[0];
         libutil.html.create_link(head, "../util/css/forminspector.css");
-        var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{'name' : 'class' , 'value' : 'scrollWrapper'}]);
-        var table = libutil.html.create_element('table' ,div,[{'name' : 'class' , 'value' : 'scrollable'}]);
+        var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{name : 'class' , value : 'scrollWrapper'}]);
+        var table = libutil.html.create_element('table' ,div,[{name : 'class' , value : 'scrollable'}]);
         var tbody = libutil.html.create_element('tbody', table);
         libutil.html.create_element('tr' , tbody);
         tmp.formtooltbody=tbody;
@@ -2989,12 +2994,12 @@ dsutl.toolwin.fillFormInspector = function (){
         dsutl.toolwin.fiCreateRow(tr,fl[i],'decorated', '50px');
         dsutl.toolwin.fiCreateRow(tr,fl[i],'modal', '50px');        
         
-        var td11= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
+        var td11= libutil.html.create_element('td', tr, [ {name : 'style' , value : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
         var btno = libutil.html.create_button( td11,'height: 15px;',null,'');
         btno.setAttribute('onclick','dsutl.form.reset("'+formname+ '");');
  
         
-        var td13= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
+        var td13= libutil.html.create_element('td', tr, [ {name : 'style' , value : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
         var btnd = libutil.html.create_button( td13,'height: 15px;',null,'');
         btnd.setAttribute('onclick','dsutl.form.remove("'+formname+ '");');
     
@@ -3002,7 +3007,7 @@ dsutl.toolwin.fillFormInspector = function (){
 }
 
 dsutl.toolwin.fiCreateRow = function(tr, tblrow, name, width, lst){
-    var td= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0;' + width ? 'width: ' + width + ';' : ''}]);
+    var td= libutil.html.create_element('td', tr, [ {name : 'style' , value : 'margin: 0 0 0 0; padding: 0 0 0 0;' + width ? 'width: ' + width + ';' : ''}]);
     var tmp= tblrow[name] ? tblrow[name] : '';
     if (lst)
         td.lst=lst; 
@@ -3178,8 +3183,8 @@ dsutl.toolwin.getScriptInspector = function (force){
         var body=objdoc.getElementsByTagName('body')[0];
         var head=objdoc.getElementsByTagName('head')[0];
         libutil.html.create_link(head, "../util/css/scriptinspector.css");
-        var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{'name' : 'class' , 'value' : 'scrollWrapper'}]);
-        var table = libutil.html.create_element('table' ,div,[{'name' : 'class' , 'value' : 'scrollable'}]);
+        var div = libutil.html.create_element('div' ,libutil.html.create_element('div', body),[{name : 'class' , value : 'scrollWrapper'}]);
+        var table = libutil.html.create_element('table' ,div,[{name : 'class' , value : 'scrollable'}]);
         var tbody = libutil.html.create_element('tbody', table);
         libutil.html.create_element('tr' , tbody);
         tmp.scripttooltbody=tbody;
@@ -3228,12 +3233,12 @@ dsutl.toolwin.fillScriptInspector = function (){
         td.className='static';
         
         
-        var td11= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
+        var td11= libutil.html.create_element('td', tr, [ {name : 'style' , value : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
         var btno = libutil.html.create_button( td11,'height: 15px;',null,'');
         btno.setAttribute('onclick','dsutl.script.getFileScript("'+scriptname+ '");');
  
         
-        var td13= libutil.html.create_element('td', tr, [ {'name' : 'style' , 'value' : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
+        var td13= libutil.html.create_element('td', tr, [ {name : 'style' , value : 'margin: 0 0 0 0; padding: 0 0 0 0; '}]);
         var btnd = libutil.html.create_button( td13,'height: 15px;',null,'');
         btnd.setAttribute('onclick','dsutl.script.remove("'+scriptname+ '");dsutl.toolwin.fillScriptInspector()');
     

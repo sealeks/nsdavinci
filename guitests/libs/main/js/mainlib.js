@@ -152,9 +152,6 @@ mainlib.get_popupbody  = function(el, width, height, remfunc){
     el.popup.onmouseout = function(ev){
         
         if (!libutil.dom.checkIsParent (el.popup,ev.toElement,true)){
-            //console.profile('mainlib.get_popupbody.onmouseout');
-            
-            //console.profileEnd('mainlib.get_popupbody.onmouseout');
             if (remfunc)
                     remfunc();
             else
@@ -183,6 +180,105 @@ mainlib.get_popupbody  = function(el, width, height, remfunc){
       
     return el.popup.popupbody;  
 }
+
+
+
+mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
+    
+    if (el.popup){
+        return;
+    }
+
+    el.popup = libutil.popup.createsvgs(el,width,height,4, null , 'fill: #333; opacity: 0.5; ', 'fill: #333; opacity: 0.1; ', 10);
+    //el.popupclone = el.popup.cloneNode(true);
+   // el.popup.appendChild(el.popup.parentNode);
+    //el.popupclone.setStyle('fill: #333; opacity: 0.1;');
+
+    var mainpopup = el.popup; 
+    var hoverrect = mainpopup.hoverrect;
+    var btnparent = el.popup;
+    var btnpos = el.popup.buttonposition;
+    
+    var size = btnpos.width < btnpos.height ? 
+        btnpos.width : btnpos.height;
+    var cx = btnpos.x + btnpos.width / 2;
+    var cy = btnpos.y + btnpos.height / 2;
+    var sizeR = size / 2;
+    if (sizeR>16) sizeR= 16; 
+    var x = cx - sizeR / 2;
+    var y = cy - sizeR / 2;
+    if (btnpos.dir===0 || btnpos.dir==2)
+        x = btnpos.width - 2 * sizeR; 
+    if (btnpos.dir==1 || btnpos.dir==3)
+        y = btnpos.height - 2 * sizeR;    
+    this.closebutton = libutil.svg.create_element( 'image', btnparent,   [{
+        name : 'x' , 
+        value: x
+    },
+
+    {
+        name : 'y' , 
+        value: y
+    },      
+
+    {
+        name : 'height' , 
+        value: sizeR
+    },
+
+    {
+        name : 'width' , 
+        value: sizeR
+    }]);
+
+    this.closebutton.setAttributeNS(libutil.XLINK_NAMESPACE_URL, 'xlink:href', '../util/css/res/close.svg' );
+
+    this.closebutton.onclick = function(ev){       
+            if (remfunc)
+                    remfunc();
+            else
+               el.popup.parentNode.removeChild(el.popup);      
+    
+    }
+    
+
+    
+    hoverrect.onmousemove = function(ev){
+        if (ev.target==hoverrect && hoverrect.captured){
+            if ((hoverrect.captured.x!=ev.x) || (hoverrect.captured.y!=ev.y)) {
+                //mainpopup.setAttribute('style', 'dysplay: none');
+                var shiftX = hoverrect.captured.x - ev.x;
+                var shiftY = hoverrect.captured.y - ev.y;
+                mainpopup.setAttribute('transform', 'translate('+(-shiftX)+','+(-shiftY)+')' );
+                //mainpopup.setAttribute('y', parseInt(mainpopup.getAttribute('y'))-shiftY );
+                //mainpopup.setAttribute('style', '');
+                console.log('popup mousevove', shiftX, shiftY);
+                //hoverrect.captured=ev;
+            }
+        }
+    }
+    
+    hoverrect.onmouseup = function(ev){
+        if (ev.target==hoverrect){
+             hoverrect.captured = undefined;
+            console.log('popup mouseup')
+        }        
+    }
+    
+    hoverrect.onmousedown = function(ev){
+        if (ev.target==hoverrect){ 
+          hoverrect.captured = ev;
+          console.log('popup mousedown')
+        }            
+    }
+   
+        
+    
+    el.popup.setAttribute('cursor', 'pointer');
+   
+    return el.popup.popupbody;  
+}
+
 
 
 
@@ -270,8 +366,7 @@ mainlib.graph_click =  function (el, nm){
     var height = 200;
     var padding = 3;
     
- 
-    var body = mainlib.get_popupbody(el,400,200, function() {if (el.popup) el.popup.parentNode.removeChild(el.popup); el.popup=undefined; });
+    var body = mainlib.get_staticpopupbody(el,400,200, function() {if (el.popup) el.popup.parentNode.removeChild(el.popup);el.popup=undefined;});
     
 
     body.setAttribute('id',el.getAttribute('id') + '_popup_body');
@@ -298,55 +393,22 @@ mainlib.graph_click =  function (el, nm){
     var head = libutil.html.create_element('head', html,[{
     }]);
 
-    //libutil.html.create_element('script', head , [{ name: 'type' , value: "text/javascript"}, { name: 'src' , value: "../util/js_ext/hightchart/highcharts.js"}]);
-    //libutil.html.create_element('script', head , [{ name: 'type' , value: "text/javascript"}, { name: 'src' , value: "../util/js_ext/hightchart/jquery.min.js"}]);
 
-     
     var htmlbody= libutil.html.create_element( 'body' ,html, [{name: 'style', value: 'margin: 0; padding: '+ padding + 'px'}]);
             
-    var bodydiv= libutil.html.create_element('div' , htmlbody, [{ name : 'id' , value: el.getAttribute('id') + '_popup_graph'}] );
+    var bodydiv= libutil.html.create_element('div' , htmlbody, [{name : 'id' , value: el.getAttribute('id') + '_popup_graph'}] );
     
     
     var script = libutil.html.create_element('script', head );
 
     script.textContent="test = new libutil.trendchart('"+el.getAttribute('id') + '_popup_graph'+"','"+
                                                          el.getAttribute('id') + '_popup_body'+
-                                                         "', "+"['"+nm+"'], 600, ['red','green','blue','#880'], " + 
+                                                         "', "+"['"+nm+"'], 2600, ['red','green','blue','#880'], " + 
                                                          (width - 2* padding) + ", " + (height - 2* padding)+")";
     
         
     
-    return;
-    
-    /*var tgnm=nm;
-    var idtgnm=nm + '_divelem';
-    var newwin = open('', event.target , "toolbar=0,location=0,left=400,top=200, width=650,height=250");
-    newwin.document.open();    
-    newwin.document.write('<?xml version="1.0" encoding="UTF-8"?>');
-    newwin.document.write('   <html>');
-    newwin.document.write('      <head>');
-    newwin.document.write('<script type="text/javascript" src="../util/js_ext/hightchart/jquery.min.js"></script>');
-    newwin.document.write('<script type="text/javascript" src="../util/js_ext/hightchart/highcharts.js"></script>');
-    newwin.document.write('<script type="text/javascript" src="../util/js_ext/hightchart/exporting.js"></script>');
-    newwin.document.write('<script type="text/javascript" src="../libs/main/js/hightrend.js"></script>');
-    newwin.document.write('<script type="text/javascript">');
-            
-    newwin.document.write('      function initform() {');
-    newwin.document.write('      registratetrend("');
-    newwin.document.write(idtgnm);
-    newwin.document.write('", "');
-    newwin.document.write(tgnm);
-    newwin.document.write('");}');
-		                                     
-    newwin.document.write('</script>');
-    newwin.document.write('</head>');
-    newwin.document.write('<body style="width: 100%; height: 100%; margin: 0 0; padding 0 0;" onload="initform()">');
-    newwin.document.write('        <div id="');
-    newwin.document.write(idtgnm);
-    newwin.document.write('" style="width: 100%; height: 100%; margin: 0 0; padding 0 0;"></div>');
-    newwin.document.write('</body>');
-    newwin.document.write('</html>');
-    newwin.document.close();*/
+
 }
 
 

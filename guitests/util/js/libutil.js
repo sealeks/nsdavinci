@@ -642,11 +642,15 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r)
                                                          {name : 'y', value: yc},
                                                          {name : 'width', value: wc},
                                                          {name : 'height', value: hc}]);
+                                                     
+                                                    
     
-    libutil.svg.create_element('rect', svg, [{name : 'x', value:  0},
+    svg.hoverrect = libutil.svg.create_element('rect', svg, [{name : 'x', value:  0},
                                              {name : 'y', value:  0},
                                              {name : 'width', value: wc},
                                              {name : 'height', value: hc},
+                                             {name : 'rx', value: r},
+                                             {name : 'ry', value: r},                                             
                                              {name : 'style', value: popupstyle ? popupstyle : 'fill: white; opacity: 0.0;'}]);
     
     svg.popupbody = libutil.svg.create_element('svg', svg, [{name : 'x', value: dir==1 ? wh : 0},
@@ -662,6 +666,9 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r)
                                                         {name : 'ry', value: r},
                                                         {name : 'style', value: bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'}]);
     
+    svg.buttonposition = { x : dir==3 ? W : 0, y :  dir==0 ? H : 0, 
+                          width: (dir==0 || dir==2) ? W  : wh ,   height: (dir==1 || dir==3) ? H : hh , dir : dir };
+    //console.log('svg.buttonposition', svg.buttonposition);
 
     
     return svg;
@@ -1447,7 +1454,7 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height){
             ts.execute(event);}
         
         
-        var rslt = window.addTrendsListener( this.handler, tags, this.period + libutil.trendchart.WAITDELT );
+        var rslt = this.element.addTrendsListener( this.handler, tags, this.period + libutil.trendchart.WAITDELT );
         this.init = rslt;
         if (!this.init){
             console.error('TrendsListener didnt set');
@@ -1471,7 +1478,7 @@ libutil.trendchart.WAITDELT = 10000;
 
 libutil.trendchart.prototype.detach = function() {
     if (this.handler)
-        if (!window.removeTrendsListener(this.handler))
+        if (!this.element.removeTrendsListener(this.handler))
             console.error('TrendsListener didnt remove');
     if (this.chart)
         this.chart.destroy;
@@ -1581,15 +1588,15 @@ libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
         var now = this.currentStart();
         if (now<val[0]){
             this.add_nullperiod({
-                'start' : now , 
-                'stop' : val[0]
+                start : now , 
+                stop : val[0]
                 });
             arr.push({
                 x : now, 
                 y : null
             });
-            this.null_lines.push({'time' : val[0] ,
-                                  'color' : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
+            this.null_lines.push({time : val[0] ,
+                                  color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
         }
     }  
     
@@ -1597,8 +1604,8 @@ libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
         
         this.null_datastate[i]=this.last_datastate[i] ? this.last_datastate[i] : val[0];
         
-        this.null_lines.push({'time' : this.null_datastate[i] ,
-                               'color' : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
+        this.null_lines.push({time : this.null_datastate[i] ,
+                               color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
 
         
         if (this.current_null_periods==null){
@@ -1622,13 +1629,13 @@ libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
     else{
         if (this.null_datastate[i] && (val[1]!==null)){
             
-            this.null_lines.push({'time' : val[0] , 
-                                  'color' : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
+            this.null_lines.push({time : val[0] , 
+                                  color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
 
             
             this.add_nullperiod({
-                'start' : this.null_datastate[i] , 
-                'stop' : val[0]
+                start : this.null_datastate[i] , 
+                stop : val[0]
                 })
             this.null_datastate[i]=null;
             if ((this.current_null_periods!=null)){
@@ -1686,8 +1693,8 @@ libutil.trendchart.prototype.startSeries = function(ev) {
         if (ev[i].data){
             var item = {
                 name: ev[i].tag, 
-                'yAxis': i,
-                'data' : [],
+                yAxis: i,
+                data : [],
                 marker: {
                     enabled: false,
                     states: {
