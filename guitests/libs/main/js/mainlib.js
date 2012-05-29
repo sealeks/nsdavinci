@@ -271,7 +271,8 @@ mainlib.graph_click =  function (el, nm){
     var padding = 3;
     
  
-    var body = mainlib.get_popupbody(el,400,200, function() { if (el.popup) el.popup.parentNode.removeChild(el.popup); el.popup=undefined; });
+    var body = mainlib.get_popupbody(el,400,200, function() {if (el.popup) el.popup.parentNode.removeChild(el.popup); el.popup=undefined; });
+    
 
     body.setAttribute('id',el.getAttribute('id') + '_popup_body');
     
@@ -300,22 +301,24 @@ mainlib.graph_click =  function (el, nm){
     //libutil.html.create_element('script', head , [{ name: 'type' , value: "text/javascript"}, { name: 'src' , value: "../util/js_ext/hightchart/highcharts.js"}]);
     //libutil.html.create_element('script', head , [{ name: 'type' , value: "text/javascript"}, { name: 'src' , value: "../util/js_ext/hightchart/jquery.min.js"}]);
 
-
-
-            
+     
     var htmlbody= libutil.html.create_element( 'body' ,html, [{name: 'style', value: 'margin: 0; padding: '+ padding + 'px'}]);
             
     var bodydiv= libutil.html.create_element('div' , htmlbody, [{ name : 'id' , value: el.getAttribute('id') + '_popup_graph'}] );
     
+    
     var script = libutil.html.create_element('script', head );
-    script.textContent="test = new libutil.trendchart('"+el.getAttribute('id') + '_popup_graph'+
-        "',['"+nm+"'], 600, ['red','green','blue','#880'], " + (width - 2* padding) + ", " + (height - 2* padding)+")";
+
+    script.textContent="test = new libutil.trendchart('"+el.getAttribute('id') + '_popup_graph'+"','"+
+                                                         el.getAttribute('id') + '_popup_body'+
+                                                         "', "+"['"+nm+"'], 600, ['red','green','blue','#880'], " + 
+                                                         (width - 2* padding) + ", " + (height - 2* padding)+")";
     
         
     
     return;
     
-    var tgnm=nm;
+    /*var tgnm=nm;
     var idtgnm=nm + '_divelem';
     var newwin = open('', event.target , "toolbar=0,location=0,left=400,top=200, width=650,height=250");
     newwin.document.open();    
@@ -343,7 +346,7 @@ mainlib.graph_click =  function (el, nm){
     newwin.document.write('" style="width: 100%; height: 100%; margin: 0 0; padding 0 0;"></div>');
     newwin.document.write('</body>');
     newwin.document.write('</html>');
-    newwin.document.close();
+    newwin.document.close();*/
 }
 
 

@@ -823,6 +823,10 @@ libutil.geometry.boundrect = function (el){
     return box ? {'x' : box.top , 'y' : box.left , 'w' : box.width , 'h' : box.height} : null;
 }
 
+
+
+
+
 //
 
 
@@ -1353,7 +1357,7 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
 
 
 
-libutil.trendchart = function(elid, tags, hist, colors, width, height){
+libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height){
     Highcharts.setOptions({
         global: {
             useUTC: false
@@ -1390,7 +1394,10 @@ libutil.trendchart = function(elid, tags, hist, colors, width, height){
     
     try{
     this.element = document.getElementById(elid);
+    this.thtobblerbody = document.getElementById(throbid);
     if (this.element){
+        if (this.thtobblerbody)
+            this.element.trobbler = new libutil.proggress.throbber(this.thtobblerbody);
         if (tags.length){
         if (!hist) hist=0;
         this.period = hist * 1000;
@@ -1439,12 +1446,8 @@ libutil.trendchart = function(elid, tags, hist, colors, width, height){
         this.handler = function(){
             ts.execute(event);}
         
-        this.element.style.width = '400px';
-        this.element.style.height = '200px';
-        //this.throb = new libutil.proggress.Throbber( this.element );
-        //this.throb.throb(); 
         
-        var rslt = window.addTrendsListener( this.handler, tags, this.period );
+        var rslt = window.addTrendsListener( this.handler, tags, this.period + libutil.trendchart.WAITDELT );
         this.init = rslt;
         if (!this.init){
             console.error('TrendsListener didnt set');
@@ -1463,6 +1466,8 @@ libutil.trendchart = function(elid, tags, hist, colors, width, height){
         console.error('Trends set error: ' + error );
     }
 }
+
+libutil.trendchart.WAITDELT = 10000;
 
 libutil.trendchart.prototype.detach = function() {
     if (this.handler)
@@ -1759,6 +1764,9 @@ libutil.trendchart.prototype.execute = function(ev) {
         if ((elem!=null) && (ev.length)){
             
             if (elem.chart==null){
+                
+                if (this.element.trobbler)
+                    this.element.trobbler.destroy();
                    
                 this.chart = new Highcharts.Chart({
                     chart: {
@@ -1943,58 +1951,30 @@ libutil.dom.writeDoc = function (doc){
 
 
     // Throbber constructor
-libutil.proggress.Throbber = function(container) {
-  this.options = {
-    speedMS: 100,
-    center: 4,
-    thickness: 3,
-    spokes:8,
-    color: [0,0,0],
-    style: "line" //set to "balls" for a different style of throbber
-  };
-  this.t = container;
-  this.c = document.createElementNS(libutil.XHTML_NAMESPACE_URL, 'canvas');
-  this.c.width = this.t.offsetWidth;
-  this.c.height = this.t.offsetHeight;
-  this.t.appendChild(this.c);
-  this.throb = function() {
-    var ctx = this.c.getContext("2d");
-    ctx.translate(this.c.width/2, this.c.height/2);
-    var w = Math.floor(Math.min(this.c.width,this.c.height)/2);
-    var self = this;
-    var o = self.options;
-    var draw = function() {
-      ctx.clearRect(-self.c.width/2,-self.c.height/2,self.c.width,self.c.height)
-      ctx.restore();
-      ctx.shadowOffsetX = ctx.shadowOffsetY = 1;
-        ctx.shadowBlur = 2;
-        ctx.shadowColor = "rgba(220, 220, 220, 0.5)";
-        for (var i = 0; i < o.spokes; i++) {
-        r = 255-Math.floor((255-o.color[0]) / o.spokes * i);
-        g = 255-Math.floor((255-o.color[1]) / o.spokes * i);
-        b = 255-Math.floor((255-o.color[2]) / o.spokes * i);
-          ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
-        if(o.style == "balls") {
-          ctx.beginPath();
-          ctx.moveTo(w,0)
-          ctx.arc(w-Math.floor(Math.PI*2*w/o.spokes/3),0,Math.floor(Math.PI*2*w/o.spokes/3),0,Math.PI*2,true);
-          ctx.fill();
-        } else { ctx.fillRect(o.center, -Math.floor(o.thickness/2), w-o.center, o.thickness); }
-        ctx.rotate(Math.PI/(o.spokes/2))
-        if(i == 0) { ctx.save(); }  
-      }
-    };
-    draw();
-    this.timer = setInterval(draw,this.options.speedMS);  
-  };
-  this.stop = function() {
-    clearInterval(this.timer);
-    this.c.getContext("2d").clearRect(-this.c.width/2,-this.c.height/2,this.c.width,this.c.height)
-  };
+libutil.proggress.throbber = function(container) {
+  this.parent = container;
+  var size = container.width.baseVal.value < container.height.baseVal.value ? container.width.baseVal.value : container.height.baseVal.value;
+  var cx = container.width.baseVal.value / 2;
+  var cy = container.height.baseVal.value / 2;
+  var sizeR = size * libutil.proggress.throbber.RELATIVE_SIZE ;
+  var x = cx - sizeR / 2;
+  var y = cy - sizeR / 2;
+  this.trob = libutil.svg.create_element( 'image', this.parent,   [{ name : 'x' , value: x},
+                                                                   { name : 'y' , value: y},      
+                                                                   { name : 'height' , value: sizeR},
+                                                                   { name : 'width' , value: sizeR}]);
+  this.trob.setAttributeNS(libutil.XLINK_NAMESPACE_URL, 'xlink:href', '../util/css/res/throbber.svg' );
+  return this;
 };
 
 
+libutil.proggress.throbber.RELATIVE_SIZE = 0.3;
 
+
+libutil.proggress.throbber.prototype.destroy = function(){
+   if (this.parent && this.trob)
+       this.parent.removeChild(this.trob);
+}
 
 
 /* 
