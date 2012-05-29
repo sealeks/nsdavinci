@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 15.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="tro_copy_1_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" width="70px" height="70px" viewBox="0 0 70 70" enable-background="new 0 0 70 70" xml:space="preserve">
+<path fill="#FFFFFF" fill-opacity="0.2" d="M35,0.618C16.011,0.618,0.618,16.011,0.618,35c0,18.989,15.393,34.382,34.382,34.382
+	c18.989,0,34.382-15.393,34.382-34.382C69.382,16.011,53.989,0.618,35,0.618z M35,59.296c-13.419,0-24.297-10.877-24.297-24.296
+	c0-13.418,10.878-24.296,24.297-24.296S59.296,21.581,59.296,35C59.296,48.418,48.419,59.296,35,59.296z"/>
+<g>
+	<g id="_x33_">
+		<g>
+			<radialGradient id="SVGID_1_" cx="35.6143" cy="35.292" r="31.1428" gradientUnits="userSpaceOnUse">
+				<stop  offset="0.8727" style="stop-color:#008C00"/>
+				<stop  offset="0.878" style="stop-color:#008D00"/>
+				<stop  offset="0.9304" style="stop-color:#009700"/>
+				<stop  offset="1" style="stop-color:#009A00"/>
+			</radialGradient>
+			<path fill-rule="evenodd" clip-rule="evenodd" fill="url(#SVGID_1_)" d="M66.171,27.87l-5.443-0.539
+				c0.725,2.432,1.127,5.002,1.127,7.669c0,14.831-12.023,26.854-26.854,26.854c-0.979,0-1.943-0.06-2.895-0.161l-3.352,4.673
+				c2.021,0.399,4.107,0.614,6.244,0.614c17.662,0,31.98-14.318,31.98-31.979C66.979,32.548,66.694,30.164,66.171,27.87z"/>
+		</g>
+	</g>
+	<g id="_x32_">
+		<g>
+			<radialGradient id="SVGID_2_" cx="34.5967" cy="35.0874" r="32.1573" gradientUnits="userSpaceOnUse">
+				<stop  offset="0.8727" style="stop-color:#00B500"/>
+				<stop  offset="0.9057" style="stop-color:#00C300"/>
+				<stop  offset="0.9462" style="stop-color:#00CD00"/>
+				<stop  offset="1" style="stop-color:#00D000"/>
+			</radialGradient>
+			<path fill-rule="evenodd" clip-rule="evenodd" fill="url(#SVGID_2_)" d="M8.147,35c0-5.921,1.939-11.376,5.185-15.815
+				l-2.378-5.255C6.019,19.558,3.021,26.927,3.021,35c0,14.399,9.519,26.573,22.605,30.58l3.205-4.467
+				C16.979,58.321,8.147,47.704,8.147,35z"/>
+		</g>
+	</g>
+	<g id="_x31_">
+		<g>
+			<radialGradient id="SVGID_3_" cx="34.9692" cy="34.5098" r="31.4968" fx="33.2734" fy="30.6638" gradientUnits="userSpaceOnUse">
+				<stop  offset="0.8727" style="stop-color:#00A500"/>
+				<stop  offset="0.8939" style="stop-color:#00AC00"/>
+				<stop  offset="0.9394" style="stop-color:#00B600"/>
+				<stop  offset="1" style="stop-color:#00B900"/>
+			</radialGradient>
+			<path fill-rule="evenodd" clip-rule="evenodd" fill="url(#SVGID_3_)" d="M34.999,3.021c-8.427,0-16.088,3.266-21.801,8.593
+				l2.265,5.003c4.897-5.203,11.828-8.47,19.538-8.47c10.986,0,20.418,6.606,24.576,16.056l5.72,0.566
+				C61.028,12.127,49.081,3.021,34.999,3.021z"/>
+		</g>
+	</g>
+	<animateTransform
+			attributeName="transform"
+			type="rotate"
+			values="15,35,35; 30,35,35; 45,35,35; 60,35,35; 75,35,35; 90,35,35; 105,35,35; 120,35,35; 135,35,35; 150,35,35; 165,35,35; 180,35,35; 195,35,35; 210,35,35; 225,35,35; 240,35,35; 255,35,35; 270,35,35; 285,35,35; 300,35,35; 315,35,35; 330,35,35; 345,35,35; 360,35,35"
+			dur="1s"
+			calcMode="discrete"
+			repeatCount="indefinite"
+		/>
+</g>
+</svg>
