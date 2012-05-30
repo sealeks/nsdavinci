@@ -370,6 +370,7 @@ libutil.project.add_design_style  = function(doc){
         "*[isgoupelement].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;}\n"+
         "*[filter] { filter: url('') !important;} \n"+ 
         ".highlight-selected{ fill: none !important; stroke-width: 1 !important; stroke: red !important;}\n"+ 
+        ".design_captured {display: block !important;}\n"+ 
         "*[dv-visible] { display: block !important;} \n";;
     }
     libutil.html.create_style(doc.documentElement, dstyle);              
@@ -666,10 +667,10 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r)
                                                         {name : 'ry', value: r},
                                                         {name : 'style', value: bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'}]);
                                                     
-    svg.boundspopup = { x: xc , y: yc, width: wc, height: hc};                                                
+    svg.boundspopup = {x: xc , y: yc, width: wc, height: hc};                                                
     
-    svg.buttonposition = { x : dir==3 ? W : 0, y :  dir==0 ? H : 0, 
-                          width: (dir==0 || dir==2) ? W  : wh ,   height: (dir==1 || dir==3) ? H : hh , dir : dir };
+    svg.buttonposition = {x : dir==3 ? W : 0, y :  dir==0 ? H : 0, 
+                          width: (dir==0 || dir==2) ? W  : wh ,   height: (dir==1 || dir==3) ? H : hh , dir : dir};
     //console.log('svg.buttonposition', svg.buttonposition);
 
     
@@ -1366,7 +1367,7 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
 
 
 
-libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height){
+libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, r){
     Highcharts.setOptions({
         global: {
             useUTC: false
@@ -1385,6 +1386,7 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height){
     var defaultseriestype = undefined;
     var title = undefined;
     var fontsize = undefined;
+
     
     var backgroundcolor = "#FFF";
     var disablecolor = "#777";  
@@ -1407,6 +1409,7 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height){
     if (this.element){
         if (this.thtobblerbody)
             this.element.trobbler = new libutil.proggress.throbber(this.thtobblerbody);
+        //if ((!window.$$editable) || ($$editable())) return;
         if (tags.length){
         if (!hist) hist=0;
         this.period = hist * 1000;
@@ -1427,6 +1430,7 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height){
         
         this.fontsize = fontsize ? fontsize : (height ? parseInt(height / 20) : undefined );
         this.shadow = shadow ? true : false;
+        this.bordeRradius = (r || r==0) ? r : 5;
 
         this.defaultseriestype =  defaultseriestype ? defaultseriestype : 'line';
         
@@ -1476,7 +1480,7 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height){
     }
 }
 
-libutil.trendchart.WAITDELT = 10000;
+libutil.trendchart.WAITDELT = 6000;
 
 libutil.trendchart.prototype.detach = function() {
     if (this.handler)
@@ -1788,6 +1792,9 @@ libutil.trendchart.prototype.execute = function(ev) {
                         
 
                     },
+                    tooltip: {
+                        borderRadius: this.bordeRradius
+                    },
 
                     title: {
                         text:  this.title
@@ -1970,10 +1977,10 @@ libutil.proggress.throbber = function(container) {
   var sizeR = size * libutil.proggress.throbber.RELATIVE_SIZE ;
   var x = cx - sizeR / 2;
   var y = cy - sizeR / 2;
-  this.trob = libutil.svg.create_element( 'image', this.parent,   [{ name : 'x' , value: x},
-                                                                   { name : 'y' , value: y},      
-                                                                   { name : 'height' , value: sizeR},
-                                                                   { name : 'width' , value: sizeR}]);
+  this.trob = libutil.svg.create_element( 'image', this.parent,   [{name : 'x' , value: x},
+                                                                   {name : 'y' , value: y},      
+                                                                   {name : 'height' , value: sizeR},
+                                                                   {name : 'width' , value: sizeR}]);
   this.trob.setAttributeNS(libutil.XLINK_NAMESPACE_URL, 'xlink:href', '../util/css/res/throbber.svg' );
   return this;
 };
