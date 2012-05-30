@@ -3482,7 +3482,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:value-of select="$rectvarfont"/>
                             </xsl:attribute>  
                             <script type="text/javascript">                           
-                                <xsl:text>var testsalarm=new libutil.alarmtable(this.document.getElementById('</xsl:text>
+                                <xsl:text>new libutil.alarmtable(this.document.getElementById('</xsl:text>
                                 <xsl:value-of select="@id"/>
                                 <xsl:text>'));</xsl:text>
                             </script>
@@ -4454,6 +4454,99 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </svg>
         </g>
     </xsl:template>   
+    
+    
+    
+    <!--    Компонент отображающий клапан или график
+    ||_______________________________________________________________________________________________________________________________________||
+    ||_______________________________________________________________________________________________________________________________________||
+    ||_______________________________________________________________________________________________________________________________________||    
+    --> 
+    
+    <xsl:template match="//mlib:chart">
+        <g>  
+            <xsl:call-template name="apply_id"/>            
+            <xsl:call-template name="apply_mlib_schema"/>
+            <svg>        
+                <xsl:attribute name="id">
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_chartbackground</xsl:text>                 
+                </xsl:attribute>            
+                <xsl:call-template name="apply_rect"/>          
+                <rect>                 
+                    <xsl:call-template name="apply_0_0_width_height"/>
+                    <xsl:call-template name="apply_r"/>                   
+                </rect>   
+            </svg>            
+            <foreignObject>
+                <xsl:call-template name="apply_rect"/>
+                <html xmlns="http://www.w3.org/1999/xhtml">
+                    <head xmlns="http://www.w3.org/1999/xhtml">
+                                          
+                    </head>    
+                    <body xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px 0px; margin: 0px 0px;">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px 0px; margin: 0px 0px;">
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="@id"/>
+                                <xsl:text>_chartbody</xsl:text>                            
+                            </xsl:attribute>                             
+                        </div>
+                        <xsl:choose>                      
+                            <xsl:when test="not(normalize-space(@params)='')">                         
+                                <script xmlns="http://www.w3.org/1999/xhtml"  type="text/javascript">
+                                    <xsl:text>new libutil.trendchart('</xsl:text>
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_chartbody' , '</xsl:text>
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_chartbackground' , [</xsl:text>
+                                    <xsl:value-of select="@params"/>
+                                    <xsl:text>] ,  </xsl:text>
+                                    <xsl:choose>                      
+                                        <xsl:when test="not(normalize-space(@period)='')"> 
+                                            <xsl:value-of select="@period"/>
+                                        </xsl:when>  
+                                        <xsl:otherwise>
+                                            <xsl:text>600</xsl:text>
+                                        </xsl:otherwise>   
+                                    </xsl:choose> 
+                                    <xsl:text> , </xsl:text>
+                                    <xsl:choose>                      
+                                        <xsl:when test="not(normalize-space(@colors)='')"> 
+                                            <xsl:text> [</xsl:text>
+                                            <xsl:value-of select="@colors"/>
+                                            <xsl:text>]  </xsl:text>
+                                        </xsl:when>  
+                                        <xsl:otherwise>
+                                            <xsl:text>null</xsl:text>
+                                        </xsl:otherwise>   
+                                    </xsl:choose>                                   
+                                    <xsl:text> ,  </xsl:text>
+                                    <xsl:value-of select="@width"/>
+                                    <xsl:text> ,  </xsl:text>
+                                    <xsl:value-of select="@height"/> 
+                                    <xsl:text> ,  </xsl:text>
+                                    <xsl:choose>                      
+                                        <xsl:when test="not(normalize-space(@r)='')"> 
+                                            <xsl:value-of select="@r"/>
+                                        </xsl:when>  
+                                        <xsl:otherwise>
+                                            <xsl:text>5</xsl:text>
+                                        </xsl:otherwise>   
+                                    </xsl:choose>                                    
+                                    <xsl:text> )  </xsl:text>                           
+                                </script>
+                            </xsl:when>          
+                        </xsl:choose>    
+                    </body>
+                </html>
+            </foreignObject>
+            <rect style="fill: white; opacity: 0; stoke: none; stroke-width: 0; display: none;" class="design_captured">              
+                <xsl:call-template name="apply_rect"/>
+                <xsl:call-template name="apply_r"/>                
+            </rect>             
+        </g>        
+    </xsl:template>         
+    
     
     
 </xsl:stylesheet>

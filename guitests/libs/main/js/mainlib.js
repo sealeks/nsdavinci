@@ -502,7 +502,7 @@ mainlib.graph_click =  function (el, nm){
      
     var script = libutil.html.create_element('script', head );
 
-    script.textContent="test = new libutil.trendchart('"+el.getAttribute('id') + '_popup_graph'+"','"+
+    script.textContent="new libutil.trendchart('"+el.getAttribute('id') + '_popup_graph'+"','"+
                                                          el.getAttribute('id') + '_popup_body'+
                                                          "', "+"['"+nm+"'], 600, ['red','green','blue','#880'], " + 
                                                          (width - 2* padding) + ", " + (height - 2* padding)+")";
