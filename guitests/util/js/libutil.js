@@ -665,6 +665,8 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r)
                                                         {name : 'rx', value: r},
                                                         {name : 'ry', value: r},
                                                         {name : 'style', value: bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'}]);
+                                                    
+    svg.boundspopup = { x: xc , y: yc, width: wc, height: hc};                                                
     
     svg.buttonposition = { x : dir==3 ? W : 0, y :  dir==0 ? H : 0, 
                           width: (dir==0 || dir==2) ? W  : wh ,   height: (dir==1 || dir==3) ? H : hh , dir : dir };
@@ -1783,8 +1785,10 @@ libutil.trendchart.prototype.execute = function(ev) {
                         defaultSeriesType: this.defaultseriestype,
                         backgroundColor: this.backgroundcolor,
                         animation: this.animation
+                        
 
                     },
+
                     title: {
                         text:  this.title
                     },
