@@ -315,7 +315,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         
         
         <xsl:choose>
-            <xsl:when test="not(normalize-space(@param)='')">               
+            <xsl:when test="not(normalize-space($param)='')">               
                 <xsl:choose>
                     <xsl:when test="$landsc='h'">
                         <xsl:attribute name="width">
@@ -367,16 +367,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:otherwise>
         </xsl:choose> 
         
-        <xsl:choose>
-            <xsl:when test="not(normalize-space(@stroke-width)='')">
-                <xsl:attribute name="stroke-width">
+        <xsl:attribute name="stroke-width">                
+            <xsl:choose>          
+                <xsl:when test="not(normalize-space($stroke-width)='')">
                     <xsl:value-of select="$stroke-width"/>
-                </xsl:attribute> 
-            </xsl:when>
-            <xsl:otherwise> 
-                <xsl:text>1</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise> 
+                    <xsl:text>1</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:attribute> 
          
         <xsl:attribute name="stroke">
             <xsl:text>trasparent</xsl:text>
