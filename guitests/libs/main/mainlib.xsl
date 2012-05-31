@@ -4475,11 +4475,28 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:call-template name="apply_rect"/>          
                 <rect>                 
                     <xsl:call-template name="apply_0_0_width_height"/>
-                    <xsl:call-template name="apply_r"/>                   
+                    <xsl:call-template name="apply_r"/>
+                    <xsl:attribute name="style">
+                        <xsl:choose>                      
+                            <xsl:when test="not(normalize-space(@layer-style)='')">                            
+                                <xsl:value-of select="@layer-style"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>fill: #777; opacity: 0.5; stroke: #333; stroke-width: 1;</xsl:text>
+                            </xsl:otherwise>                                                         
+                        </xsl:choose> 
+                    </xsl:attribute>                    
                 </rect>   
-            </svg>            
-            <foreignObject>
+            </svg>    
+            <svg>
                 <xsl:call-template name="apply_rect"/>
+            <foreignObject>
+                    <xsl:attribute name="height">
+                        <xsl:value-of select="@height"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="width">
+                        <xsl:value-of select="@width"/>
+                    </xsl:attribute>
                 <html xmlns="http://www.w3.org/1999/xhtml">
                     <head xmlns="http://www.w3.org/1999/xhtml">
                                           
@@ -4494,7 +4511,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:choose>                      
                             <xsl:when test="not(normalize-space(@params)='')">                         
                                 <script xmlns="http://www.w3.org/1999/xhtml"  type="text/javascript">
-                                    <xsl:text>new libutil.trendchart('</xsl:text>
+                                    <xsl:text>try { new libutil.trendchart('</xsl:text>
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_chartbody' , '</xsl:text>
                                     <xsl:value-of select="@id"/>
@@ -4532,14 +4549,26 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                         <xsl:otherwise>
                                             <xsl:text>5</xsl:text>
                                         </xsl:otherwise>   
+                                    </xsl:choose> 
+                                    <xsl:text> ,  </xsl:text>
+                                    <xsl:choose>                      
+                                        <xsl:when test="not(normalize-space(@option)='')"> 
+                                            <xsl:value-of select="@option"/>
+                                        </xsl:when>  
+                                        <xsl:otherwise>
+                                            <xsl:text>null</xsl:text>
+                                        </xsl:otherwise>   
                                     </xsl:choose>                                    
-                                    <xsl:text> )  </xsl:text>                           
+                                    <xsl:text> ); }  catch(error){</xsl:text> 
+                                        
+                                    <xsl:text> }</xsl:text> 
                                 </script>
                             </xsl:when>          
                         </xsl:choose>    
                     </body>
                 </html>
             </foreignObject>
+            </svg>
             <rect style="fill: white; opacity: 0; stoke: none; stroke-width: 0; display: none;" class="design_captured">              
                 <xsl:call-template name="apply_rect"/>
                 <xsl:call-template name="apply_r"/>                

@@ -390,7 +390,9 @@
         <xsd:attribute name="r" type="xsd:string" default="5"/>
         <xsd:attribute name="params" type="xsd:string"/>
         <xsd:attribute name="colors" type="xsd:string"/> 
-        <xsd:attribute name="period" type="xsd:string"/> 
+        <xsd:attribute name="period" type="xsd:string"/>
+        <xsd:attribute name="option" type="xsd:string"/>
+        <xsd:attribute name="layer-style" type="xsd:string"/>
     </xsd:complexType>
 </xsd:element>
 

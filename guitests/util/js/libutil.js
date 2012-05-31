@@ -1367,7 +1367,7 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
 
 
 
-libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, r){
+libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, r, option){
     Highcharts.setOptions({
         global: {
             useUTC: false
@@ -1388,28 +1388,76 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, 
     var fontsize = undefined;
 
     
-    var backgroundcolor = "#FFF";
+    var backgroundcolor = {
+        linearGradient: ['100%', '0%', '100%', '100%'],
+        stops: [
+        [0, '#DDD'],
+        [0.5, '#FFF'],
+        [1, '#AAA']]
+    };
+    
     var disablecolor = "#777";  
+ 
     
-    var disablegradient = {start: "#222", stop: "#666"};
-    
-    
-    backgroundcolor =  {
-                linearGradient: ['100%', '0%', '100%', '100%'],
-                stops: [
-                    [0, '#BBB'],
-                    [0.5, '#FFF'],
-                    [1, '#AAA']]
-                        };
+    if (option){
+        if (option.constructor == Object){
+            for(var key in option) {
+                switch(key){
+                    case 'background':{
+                         if (option[key].constructor == Array){
+                            backgroundcolor = {
+                                linearGradient: ['100%', '0%', '100%', '100%'],
+                                stops: option[key]}}
+                         if (option[key].constructor == String){
+                            backgroundcolor = option[key]}
+                        break;
+                    }
+                    case 'animation':{
+                        animation = option[key];    
+                        break;     
+                    }
+                    case 'lineWidth':{
+                        linewidth = parseInt(option[key]);    
+                        break;     
+                    }
+                    case 'axisWidth':{
+                        axiswidth = parseInt(option[key]);    
+                        break;     
+                    }   
+                    case 'axisColor':{
+                        axisYcolor = option[key];   
+                        break;     
+                    }
+                    case 'axisXColor':{
+                        axisXcolor = option[key];   
+                        break;     
+                    }                      
+                    case 'shadow':{
+                        shadow = option[key];    
+                        break;     
+                    }  
+                    case 'seriestype':{
+                        defaultseriestype = option[key];    
+                        break;     
+                    }  
+                    case 'disableColor':{
+                        disablecolor = option[key];    
+                        break;     
+                    }                     
+                }
+            }        
+        }}
+             
     
     
     try{
+    if ((!window.$$editable) || ($$editable())) return;
     this.element = document.getElementById(elid);
     this.thtobblerbody = document.getElementById(throbid);
     if (this.element){
         if (this.thtobblerbody)
             this.element.trobbler = new libutil.proggress.throbber(this.thtobblerbody);
-        //if ((!window.$$editable) || ($$editable())) return;
+        
         if (tags.length){
         if (!hist) hist=0;
         this.period = hist * 1000;
@@ -1420,17 +1468,21 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, 
         this.colors = colors ? colors : Highcharts.getOptions().colors;
         this.disablecolor = disablecolor ? disablecolor : "#AAA";
         this.backgroundcolor = backgroundcolor ? backgroundcolor : "#EEE";
-        this.axisXcolor = axisXcolor!==undefined ? axisXcolor : undefined;
-        this.axisYcolor = axisYcolor!==undefined ? axisYcolor : this.axisXcolor;
+        this.axisYcolor = axisYcolor!==undefined ? axisYcolor : undefined;
+        this.axisXcolor = axisXcolor!==undefined ? axisXcolor : this.axisYcolor;
         
         this.width = width;
         this.height = height;
         this.linewidth = linewidth ? linewidth : 1;
         this.axiswidth = axiswidth ? axiswidth : 1;
         
-        this.fontsize = fontsize ? fontsize : (height ? parseInt(height / 20) : undefined );
+        var minBound = height < width ? height : width;
+        
+        this.fontsize = fontsize ? fontsize : (minBound ? parseInt(minBound / 30) : undefined );
+        
+        if (this.fontsize < 8) this.fontsize*=1.5;
         this.shadow = shadow ? true : false;
-        this.bordeRradius = (r || r==0) ? r : 5;
+        this.borderRadius = (r || r==0) ? r : 5;
 
         this.defaultseriestype =  defaultseriestype ? defaultseriestype : 'line';
         
@@ -1792,9 +1844,6 @@ libutil.trendchart.prototype.execute = function(ev) {
                         
 
                     },
-                    tooltip: {
-                        borderRadius: this.bordeRradius
-                    },
 
                     title: {
                         text:  this.title
@@ -1812,6 +1861,7 @@ libutil.trendchart.prototype.execute = function(ev) {
                     },
                     yAxis: this.YAxis(),
                     tooltip: {
+                        borderRadius: this.borderRadius,
                         formatter: function() {
                             return '<b>'+ this.series.name +'</b><br/>'+
                             Highcharts.dateFormat('%H:%M:%S', this.x) +'<br/>'+ 
