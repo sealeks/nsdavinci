@@ -2,7 +2,7 @@
 
 <mlib:button id="button1" x="4" y="4" height="40" width="280" r="10" caption="Выход" onclick="exit();" color1="#F00" color2="#A00" fontstyle="fill: white; font-size: 15px; font-weight: bold;"/>
 <mlib:button id="button2" x="4" y="43" height="40" width="280" r="1" caption="1o" onclick="formopen('f1');"/>
-<mlib:button id="button3" x="4" y="82" height="40" width="280" r="1" caption="2o" onclick="formopen('f2');"/>
-<mlib:button id="button6" x="4" y="122" height="40" width="280" r="1" caption="3o" onclick="formopen('f5');"/>
-<mlib:button id="button0" x="4" y="163" height="40" width="280" r="1" caption="3c" onclick="formclose('f5');"/>
+<mlib:button id="button3" x="4" y="82" height="40" width="280" r="1" caption="2o" onclick="formopen('te');"/>
+<mlib:button id="button6" x="4" y="122" height="40" width="280" r="1" caption="3o" onclick="formopen('guimotor3');"/>
+
 </svg:svg>

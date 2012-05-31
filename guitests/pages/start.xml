@@ -55,14 +55,20 @@ window.simTick = setInterval(simulation_execute, SIMULATIONTICK );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+add_simulation ( new simulator.initializer('in_pos' , 0 , 0));
+add_simulation ( new simulator.initializer('out_pos' , 0 , 0));
+add_simulation ( new simulator.initializer('level' , 0 , 0));
 
-add_simulation ( new simulator.initializer('m1::c1' , 1 , 0));
-add_simulation ( new simulator.valueobserver('m1::h2' , null , 'm1::h1' ,null));
-add_simulation ( new simulator.valueobserver('m1::h3' , null , 'm1::h2' ,null));
+add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-out_pos)/10000 * level.maxeu' ,null));
 
-setInterval(function(){$$('m1::c1 @ (m1::c1 ? 0 : 1)')}, 2000 );
-setInterval(function(){$$('m1::h1 @ (now.sec)')}, 3000 );
-setInterval(function(){$$('#')}, 20000 );
+
+//add_simulation ( new simulator.initializer('m1::c1' , 1 , 0));
+//add_simulation ( new simulator.valueobserver('m1::h2' , null , 'm1::h1' ,null));
+//add_simulation ( new simulator.valueobserver('m1::h3' , null , 'm1::h2' ,null));
+
+//setInterval(function(){$$('m1::c1 @ (m1::c1 ? 0 : 1)')}, 2000 );
+//setInterval(function(){$$('m1::h1 @ (now.sec)')}, 3000 );
+//setInterval(function(){$$('#')}, 20000 );
 
 
   
@@ -75,7 +81,7 @@ setInterval(function(){$$('#')}, 20000 );
   <form name="guimotor2" file="guimotor2.xml" caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no" visible="false"/>
   <form name="testopen" file="testopen.xml" caption="Мазут" left="85%" top="0%" width="15%" height="100%" decorated="no"/>
   <form name="guimotor3" file="guimotor3.xml" caption="Мазут" left="0%" top="0%" width="85%" height="85%" decorated="no"/>
-  <form name="falarm" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no" visible="true"/>
+  <form name="falarm" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no" visible="true"/><form name="te" file="test.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/>
   
   <scriptfile name="script1" file="script1.js"/>
 

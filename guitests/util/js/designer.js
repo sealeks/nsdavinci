@@ -319,6 +319,7 @@ designer.prototype.getAttributeList = function(el) {
 
 designer.prototype.getAttributeValue = function(name, el){
     if (el){
+        //console.log('designer.prototype.getAttributeValue',name)
         return this.getSourseElement(el) ? this.getSourseElement(el).getAttribute(name) : undefined;
     }  
     if ((!this.selectedElemens ) || (this.selectedElemens.length==0)) 
@@ -350,6 +351,7 @@ return undefined;
 
 designer.prototype.setAttributeValue = function(name, val, el){
     if (el){
+        console.log('designer.prototype.setAttributeValue',name , val)
         if (name=='id'){
             if (this.sourseDocument.getElementById(val))
                 return;
@@ -1498,18 +1500,23 @@ designer.prototype.property_row_focus = function(event){
 designer.prototype.property_event = function(el){
     
     el.onblur= function() {
-        if (document.red) document.red.property_leave_focus(el);
+        var element =el;
+        //console.log('designer.prototype.property_event blur', element)
+        if (document.red) document.red.property_leave_focus(element);
     }
-    el.addEventListener( 'keyup' ,function (ev) {       
+    el.addEventListener( 'keyup' ,function (ev) {
+        var element =el;
+        //console.log('designer.prototype.property_event key', element)
         if ((ev.keyIdentifier=="Enter"))
-            document.red.property_leave_focus(el);
+            document.red.property_leave_focus(element);
         else 
-            event.stopPropagation();
+            ev.stopPropagation();
     });    
 }
 
 
 designer.prototype.property_leave_focus = function(el){
+    //console.log('property_leave_focus', el)
     var oldval=el.oldval;
     var value =el.value;
     var td=el.parentNode;
@@ -1519,7 +1526,7 @@ designer.prototype.property_leave_focus = function(el){
         this.setProperty(td.prop_dvn,value);
     }
     event.stopPropagation();
-    event.stopPropagation();   
+    //event.stopPropagation();   
 }
 
 
