@@ -2377,18 +2377,18 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:choose>
                     <xsl:when test="boolean(@sensorevent='valueset')"> 
                         <xsl:attribute name="onclick">
-                            <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
-                            <xsl:text>mainlib.valueset_click(this, '</xsl:text>
+                            <xsl:text> if (mainlib.check_click(this, event))  </xsl:text> 
+                            <xsl:text>mainlib.valueset_click(mainlib.check_click(this), '</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>',</xsl:text>
                             <xsl:value-of select="@width * 1.3"/>
-                            <xsl:text>)</xsl:text> 
+                            <xsl:text>) </xsl:text> 
                         </xsl:attribute>    
                     </xsl:when>
                     <xsl:when test="boolean(@sensorevent='graph')">
                         <xsl:attribute name="onclick">
-                            <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
-                            <xsl:text>mainlib.graph_click(this, '</xsl:text> 
+                            <xsl:text>if (mainlib.check_click(this, event))  </xsl:text> 
+                            <xsl:text>mainlib.graph_click(mainlib.check_click(this), '</xsl:text> 
                             <xsl:value-of select="@param"/>
                             <xsl:text>')</xsl:text>  
                         </xsl:attribute> 
@@ -3875,7 +3875,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:text>
                 <xsl:text>#</xsl:text>
                 <xsl:value-of select="@id"/>
-                <xsl:text>_sliderbutton[captured="captured"] {         
+                <xsl:text>_sliderbutton.captured {         
                             opacity: 0;}
                 </xsl:text>  
                 
@@ -4390,9 +4390,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:value-of select="$buttonsize div 2"/>      
             </xsl:attribute>
             
-            
+          
             <xsl:attribute name="onmousedown">   
-                <xsl:text>if (this.getAttribute('cursor')=='pointer') {this.setAttribute('captured','captured');mainlib.create_shadow_slider(this,</xsl:text>
+                <xsl:text> this.tmpslidertarget = mainlib.check_click(this); if (this.tmpslidertarget) {this.tmpslidertarget.setAttribute('class','captured');mainlib.create_shadow_slider(this.tmpslidertarget,</xsl:text>
                 <xsl:value-of select="$x1"/>
                 <xsl:text> ,  </xsl:text> 
                 <xsl:value-of select="$y1"/>
@@ -4424,8 +4424,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:text>);}</xsl:text>             
             </xsl:attribute>  
             
+            
             <xsl:attribute name="onmouseup">   
-                <xsl:text>if (this.hasAttribute('captured'))  this.removeAttribute('captured')</xsl:text>            
+                <xsl:text>this.tmpslidertarget = mainlib.check_click(this); if (this.tmpslidertarget.hasAttribute('class'))  {  console.log('removeslidershadow');  this.tmpslidertarget.setAttribute('class',''); }</xsl:text>            
             </xsl:attribute> 
             
             <xsl:call-template name="mlib_slider_cursor"/>
@@ -4455,7 +4456,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template> 
    
    
-    <xsl:template match="//mlib:slider">
+    <xsl:template match="//mlib:slider" name="mlib_slider">
         <g>
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>            
@@ -4480,13 +4481,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     
-    <!--    Компонент отображающий клапан или график
+    <!--    Компонент отображающий  график
     ||_______________________________________________________________________________________________________________________________________||
     ||_______________________________________________________________________________________________________________________________________||
     ||_______________________________________________________________________________________________________________________________________||    
     --> 
     
-    <xsl:template match="//mlib:chart">
+    <xsl:template match="//mlib:chart"  name="mlib_chart">
         <g>  
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
@@ -4599,6 +4600,189 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </g>        
     </xsl:template>         
     
+ <!--    Компонент отображающий  регулятор
+    ||_______________________________________________________________________________________________________________________________________||
+    ||_______________________________________________________________________________________________________________________________________||
+    ||_______________________________________________________________________________________________________________________________________||    
+    --> 
     
+    <xsl:template name="mlib_regulator_cursor">
+        <xsl:attribute name="cursor">
+            <xsl:choose>
+                <xsl:when test="not(normalize-space(@param-sp)='') and not(normalize-space(@actuator-sp)='')">                  
+                    <xsl:text>pointer</xsl:text>    
+                </xsl:when>  
+                <xsl:when test="not(normalize-space(@actuator-sp)='')">                  
+                    <xsl:text>pointer</xsl:text>    
+                </xsl:when> 
+                <xsl:otherwise>
+                    <xsl:text>none</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:attribute>          
+    </xsl:template> 
+    
+    <xsl:template name="mlib_regulator_event">
+        <xsl:choose>
+            <xsl:when test="not(normalize-space(@param-sp)='') and not(normalize-space(@actuator-sp)='')">                  
+                <xsl:attribute name="onclick">
+                    <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
+                    <xsl:text>mainlib.regulator_click(this,null) </xsl:text> 
+                </xsl:attribute>    
+            </xsl:when>  
+            <xsl:when test="not(normalize-space(@actuator-sp)='')">                  
+                <xsl:attribute name="onclick">
+                    <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
+                    <xsl:text>mainlib.regulator_click(this,true) </xsl:text> 
+                </xsl:attribute>    
+            </xsl:when> 
+        </xsl:choose>
+    </xsl:template> 
+    
+    <xsl:template name="apply_mlib_regulator_popup">
+        <defs>           
+            <svg width="100%" height="100%"> 
+                <xsl:attribute name="id">
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>_popup</xsl:text>
+                </xsl:attribute>   
+                
+                <xsl:variable name="popupbody">
+                   <mlib:sensor x="5" y="5" height="50" width="240" stroke="#ccc" stroke-width="1" r="4"  color1="#333" color2="#666" alighn="center" fontcolor="#eee" fontstyle="font-size: 12">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_sensor_head</xsl:text>                            
+                        </xsl:attribute> 
+                        <xsl:attribute name="caption">
+                            <xsl:value-of select="@header"/>                         
+                        </xsl:attribute>                            
+                    </mlib:sensor>                    
+                    <mlib:sensor x="5" y="58" height="110" width="240" stroke="#ccc" stroke-width="1" r="4"  color1="#333" color2="#666" caption="" alighn="center" fontcolor="#eee">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_sensor_headset</xsl:text>                            
+                        </xsl:attribute>                         
+                   </mlib:sensor>                       
+                <!--mlib:chart x="5" y="170" height="145" width="240" id="chart0" r="10" params="'level'" period="600" option="{ background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]}" colors="'0e0'"/-->
+                    <mlib:sensor x="10" y="86" height="18" width="60" stroke="#eee" stroke-width="0.5" r="2" id="sensor2" environment="" format="%3.0f" fontstyle="font-size: 12" color1="#111" color2="#333" fontcolor="#0e0">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_sensor_actuator</xsl:text>                            
+                        </xsl:attribute>  
+                        <xsl:attribute name="param">
+                            <xsl:value-of select="@actuator"/>                            
+                        </xsl:attribute>                       
+                    </mlib:sensor>                    
+                    <mlib:sensor x="135" y="86" height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"  environment=""  format="%3.0f" fontstyle="font-size: 12" sensorevent="valueset" color1="#111" color2="#333" fontcolor="#0e0">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_sensor_actuator_sp</xsl:text>                            
+                        </xsl:attribute>  
+                        <xsl:attribute name="param">
+                            <xsl:value-of select="@actuator-sp"/>                            
+                        </xsl:attribute>                      
+                    </mlib:sensor>   
+                    <mlib:slider x="3" y="139" height="12" width="244"  fillenvironment="" color1="#333" color2="#111" gradient-type="lr"  fillcolor1="#0e0" fillcolor2="#0a0">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_slider_actuator_sp</xsl:text>                            
+                        </xsl:attribute>  
+                        <xsl:attribute name="param">
+                            <xsl:value-of select="@actuator-sp"/>                            
+                        </xsl:attribute>                            
+                   </mlib:slider>                    
+                    <mlib:rect x="15" y="130" height="5" width="220" stroke="#000" r="1" stroke-width="0.5" fillenvironment=""  fillcolor1="#0e0" fillcolor2="#0a0" color1="#333" color2="#111">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_rect_actuator</xsl:text>                            
+                        </xsl:attribute>  
+                        <xsl:attribute name="param">
+                            <xsl:value-of select="@actuator"/>                            
+                        </xsl:attribute>                      
+                    </mlib:rect>
+                    <text x="9" y="76" text="Положение ИМ" fill="#eee" style="font-size: 11;">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_text_actuator_spheader</xsl:text>                            
+                        </xsl:attribute> 
+                    </text>   
+                    <text x="136" y="76" text="Задание" fill="#eee" style="font-size: 11;">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_text_actuator_spvalue</xsl:text>                            
+                        </xsl:attribute>                         
+                    </text>  
+                    <text x="15" y="119" text="Положение клапана" fill="#eee" id="text2" style="font-size: 11;">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_text_actuator_pos</xsl:text>                            
+                        </xsl:attribute>                          
+                    </text>  
+                </xsl:variable> 
+                    
+                
+            <xsl:for-each select="exsl:node-set($popupbody)/*">
+                <xsl:choose>
+                    <xsl:when test="local-name()='button'">
+                        <xsl:call-template name="mlib_button"/>
+                    </xsl:when>
+                    <xsl:when test="local-name()='rect'">
+                        <xsl:call-template name="mlib_rect"/>
+                    </xsl:when> 
+                    <xsl:when test="local-name()='sensor'">
+                        <xsl:call-template name="mlib_sensor"/>
+                    </xsl:when> 
+                    <xsl:when test="local-name()='slider'">
+                        <xsl:call-template name="mlib_slider"/>
+                    </xsl:when>    
+                    <xsl:when test="local-name()='text'">
+                        <xsl:call-template name="svg_text"/>
+                    </xsl:when>                                     
+                </xsl:choose>
+            </xsl:for-each>
+            
+                <!--foreignObject x="5" y="170" height="145" width="240">
+
+                    <html xmlns="http://www.w3.org/1999/xhtml">
+                        <head xmlns="http://www.w3.org/1999/xhtml">
+                                          
+                        </head>    
+                        <body xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px 0px; margin: 0px 0px;">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px 0px; margin: 0px 0px;">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_chartbody</xsl:text>                            
+                                </xsl:attribute>                             
+                            </div>
+                        </body>
+                    </html>
+                </foreignObject--> 
+                
+            </svg>            
+        </defs>                   
+    </xsl:template>               
+    
+
+    
+    <xsl:template match="//mlib:regulator">
+        <g>  
+            <xsl:call-template name="apply_id"/>            
+            <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:attribute name="isinvisibleelement">
+                <xsl:text>true</xsl:text>
+            </xsl:attribute>
+            <xsl:call-template name="apply_rect"/>  
+            <xsl:call-template name="mlib_regulator_event"/>
+            <xsl:call-template name="mlib_regulator_cursor"/>
+            <xsl:call-template name="apply_mlib_regulator_popup"/>
+
+            <svg>                   
+                <xsl:call-template name="apply_rect"/>  
+                <rect style="fill: white; stroke : white; opacity: 0">                 
+                    <xsl:call-template name="apply_0_0_width_height"/>
+                </rect>
+            </svg>    
+        </g>        
+    </xsl:template>            
     
 </xsl:stylesheet>
