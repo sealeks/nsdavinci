@@ -81,7 +81,7 @@ add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-o
   <form name="guimotor2" file="guimotor2.xml" caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no" visible="false"/>
   <form name="testopen" file="testopen.xml" caption="Мазут" left="85%" top="0%" width="15%" height="100%" decorated="no"/>
   
-  <form name="falarm" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no" visible="true"/><form name="te" file="test.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/><form name="gu" file="guimotor3.xml" left="0%" top="0%" width="85%" height="85%" caption="gu" decorated="no"/>
+  <form name="falarm" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no" visible="true"/><form name="te" file="test.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/><form name="gu" file="guimotor3.xml" left="0%" top="0%" width="85%" height="85%" caption="gu" decorated="no" visible="false"/>
   
   <scriptfile name="script1" file="script1.js"/>
 

@@ -127,6 +127,7 @@
         <xsd:attribute name="oncolor" type="xsd:string"/>
         <xsd:attribute name="offcolor" type="xsd:string"/>
         <xsd:attribute name="on" type="lib:expression"/>
+        <xsd:attribute name="position" type="lib:tag"/>
         <xsd:attribute name="off" type="lib:expression"/>
         <xsd:attribute name="local" type="lib:expression"/>
         <xsd:attribute name="auto" type="lib:expression"/>
