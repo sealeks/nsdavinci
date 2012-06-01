@@ -8,6 +8,12 @@ mainlib.CHART_WIDTH = 350;
 
 mainlib.CHART_HEIGHT = 180;
 
+mainlib.REGULATOR_WIDTH = 250;
+
+mainlib.REGULATOR_S_HEIGHT = 320;
+
+mainlib.REGULATOR_F_HEIGHT = 400;
+
 mainlib.POPUP_R = 10;
 
 mainlib.POPUP_BODY_STYLE = 'fill: #333; opacity: 0.5; ';
@@ -511,6 +517,21 @@ mainlib.graph_click =  function (el, nm){
     
 
 }
+
+
+mainlib.regulator_click =  function (el, smp){
+    
+    
+    var body = mainlib.get_staticpopupbody(el,mainlib.REGULATOR_WIDTH , smp ? mainlib.REGULATOR_S_HEIGHT : mainlib.REGULATOR_F_HEIGHT, 
+              function() {if (el.popup) el.popup.parentNode.removeChild(el.popup);el.popup=undefined;});
+    
+    if (!body && el.popup) return;
+ 
+
+   
+
+}
+
 
 
 
