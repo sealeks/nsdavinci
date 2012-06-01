@@ -365,9 +365,11 @@ libutil.project.add_design_style  = function(doc){
     if (doc.documentElement){
         var dstyle = ".designer_selected { opacity: 0.8 !important; outline: 1px solid #E00 !important;} \n"+
         "*[isgoupelement]{ outline: 1px dashed green !important; } \n"+
+        "*[isinvisibleelement]{ outline: 1px solid green !important; } \n"+
         'g[cursor="pointer"]:hover { outline: 0px solid transparent  !important;} \n'+
         'g[cursor="pointer"].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;} \n'+
         "*[isgoupelement].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;}\n"+
+        "*[isinvisibleelement].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;}\n"+
         "*[filter] { filter: url('') !important;} \n"+ 
         ".highlight-selected{ fill: none !important; stroke-width: 1 !important; stroke: red !important;}\n"+ 
         ".design_captured {display: block !important;}\n"+ 
@@ -617,7 +619,7 @@ libutil.popup.finddirect = function(el, W, H, yd){
     return 2;
 }
 
-libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r){
+libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r , shift){
     
 
     if ((dir==undefined) || (dir==null)) {
@@ -626,8 +628,15 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r)
     
     var bounds=libutil.popup.getbound(el, W, H, yd, dir);
     
+
+    
     var h0 = parseFloat(el.getAttribute('height'));
-    var w0 = parseFloat(el.getAttribute('width'));  
+    var w0 = parseFloat(el.getAttribute('width'));
+    
+    if (shift){
+        bounds.x = bounds.x + shift.left;
+        bounds.y = bounds.y + shift.top;
+    }
     
     var hh= h0 + 2*yd;
     var wh= w0 + 2*yd;

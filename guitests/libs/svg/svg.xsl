@@ -935,7 +935,7 @@ extension-element-prefixes="svg">
     
     
     
-    <xsl:template match="//svg:text"> 
+    <xsl:template match="//svg:text" name="svg_text"> 
         <g>
             <xsl:call-template name="apply_svg_g_visible_binding"/>
             <xsl:call-template name="apply_id"/>

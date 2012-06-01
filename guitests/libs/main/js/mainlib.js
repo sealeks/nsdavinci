@@ -25,6 +25,18 @@ mainlib.POPUP_MOVE_STYLE = 'fill: white; fill-opacity: 0.01; stroke: green; stro
 mainlib.element = {};
 
 
+mainlib.check_click = function(el , ev){
+    if (el && el.correspondingUseElement && el.correspondingUseElement.parentNode){
+        var needofsetrect = el.correspondingUseElement.parentNode.getBoundingClientRect();
+        console.log('bbox',needofsetrect);
+    }
+    var target =el.correspondingElement ? el.correspondingElement : el;
+    if (target && target.getAttribute && target.getAttribute('cursor')=='pointer'){
+        target.needofsetrect = needofsetrect;
+        return target;}
+    return null;
+}
+
 mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag, live, wait){
     
     var parent=el.parentNode;
@@ -129,16 +141,16 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
 
         if (!libutil.dom.checkIsParent (parent,ev.toElement,true)){
             selfremove();
-            el.onmouseup();
+            el.onmouseup(ev);
         }
     }
     
     parent.onmouseup = function(ev){
         if (el.movelement){
-            el.movelement.onmouseup();
+            el.movelement.onmouseup(ev);
         }
         else{
-            el.onmouseup();
+            el.onmouseup(ev);
         }
         
 
@@ -149,13 +161,13 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
 
 
 
-mainlib.get_popupbody  = function(el, width, height, remfunc){
+mainlib.get_popupbody  = function(el, width, height, remfunc , shift){
     
     if (el.popup){
         return;
     }
 
-    el.popup = libutil.popup.createsvgs(el,width,height,0, null, mainlib.POPUP_BODY_STYLE , null, mainlib.POPUP_R);
+    el.popup = libutil.popup.createsvgs(el,width,height,0, null, mainlib.POPUP_BODY_STYLE , null, mainlib.POPUP_R, shift);
     
     el.popup.setAttribute('cursor', 'pointer');
     
@@ -428,8 +440,10 @@ mainlib.valueset_click =  function (el, nm, width){
     
     try{
         if (width<100) width=100;
+        
+
    
-        var body = mainlib.get_popupbody(el,width,parseFloat(width)* 2.05);
+        var body = mainlib.get_popupbody(el,width,parseFloat(width)* 2.05, null,el.needofsetrect);
         body.setAttribute('id',el.getAttribute('id') + '_popup_body');
         
         var text = document.getElementById(el.getAttribute('id') + '_popup_sensorcalc_sensor_text');
@@ -521,12 +535,105 @@ mainlib.graph_click =  function (el, nm){
 
 mainlib.regulator_click =  function (el, smp){
     
+    var createchart = function() {
+        var chartdiv = document.getElementById(el.getAttribute('id') + '_chartbody');
+        if (chartdiv){
+            el.popup.chart = new libutil.trendchart(el.getAttribute('id') + '_popup_graph',null,['level'],600, null ,240,145);
+        }
+    }
     
-    var body = mainlib.get_staticpopupbody(el,mainlib.REGULATOR_WIDTH , smp ? mainlib.REGULATOR_S_HEIGHT : mainlib.REGULATOR_F_HEIGHT, 
-              function() {if (el.popup) el.popup.parentNode.removeChild(el.popup);el.popup=undefined;});
+    if (el.popup){
+        el.popup.setAttribute('style', '');
+        if (!el.popup.chart){
+            createchart();
+        }
+        return;
+    }  
+    try{
+
+   
+        var body = mainlib.get_staticpopupbody(el,mainlib.REGULATOR_WIDTH , smp ? mainlib.REGULATOR_S_HEIGHT : mainlib.REGULATOR_F_HEIGHT, 
+            function() {
+                el.popup.setAttribute('style', 'display: none;');
+                if (el.popup.chart){
+                    el.popup.chart.detach();
+                    el.popup.chart = undefined;
+                }
+            });
+            
+        body.setAttribute('id',el.getAttribute('id') + '_popup_body');
     
-    if (!body && el.popup) return;
- 
+        if (!body && el.popup) return;
+        
+        
+        
+        var trpopup =document.getElementById(el.getAttribute('id') + '_popup_body');
+        if (trpopup){
+            trpopup.clearpopup = function(){
+                el.popup.setAttribute('style', 'display: none;');
+            }
+        }   
+            
+            
+            
+        var result = libutil.svg.create_element('foreignObject', body, [{
+            name : 'x', 
+            value:  5
+        },
+        {
+            name : 'y', 
+            value:  170
+        },
+        {
+            name : 'width', 
+            value: 240
+        },
+        {
+            name : 'height', 
+            value : 145
+        }]);   
+    
+        var html = libutil.html.create_element('html' , result);
+            
+        var head = libutil.html.create_element('head', html,[{
+            }]);
+
+
+        var htmlbody= libutil.html.create_element( 'body' ,html, [{
+            name: 'style', 
+            value: 'margin: 0; padding: '+ 0 + 'px'
+            }]);
+            
+        var bodydiv= libutil.html.create_element('div' , htmlbody, [{
+            name : 'id' , 
+            value: el.getAttribute('id') + '_popup_graph'
+            },
+
+            {
+            name: 'style' , 
+            value: '-webkit-user-select: none'
+        }] );
+    
+    
+     
+
+    
+    
+        
+        var defs = document.getElementById(el.getAttribute('id') + '_popup_rootbody');
+        
+        var use = libutil.svg.create_element('use', body);
+        body.useelement=use;
+        use.setAttributeNS("http://www.w3.org/1999/xlink",'href','#'+el.getAttribute('id') + '_popup');
+        
+        createchart();
+        
+    
+    }
+    catch(error){
+        throw error;
+    }  
+
 
    
 
