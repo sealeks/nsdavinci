@@ -101,10 +101,33 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="apply_mlib_araturatype_regul">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
-        <path d="M 500,650 L 500, 380" fill="none" stroke-width="20"/>
+        <path d="M 500,650 L 500, 450" fill="none" stroke-width="20"/>
+        <path d="M 430,550 L 570, 550" fill="none" stroke-width="20"/>
+        <path d="M 430,500 L 570, 500" fill="none" stroke-width="20"/>
         <circle cx="500" cy="320" r="120" stroke-width="20"/>
-        <path d="M 450 370 L 450 270 L 500 320 L 550 270 L 550 370" stroke-width="20" fill="none"/>
+        <path d="M 500,240 L 500, 400" fill="none" stroke-width="40" >
+            <xsl:choose>                         
+                <xsl:when test="not(normalize-space(@position)='')"> 
+                    <xsl:attribute name="transform">
+                        <xsl:text>#{ (</xsl:text>
+                        <xsl:value-of select="@position"/>
+                        <xsl:text>).valid  ? ('rotate(' + format(((</xsl:text>
+                        <xsl:value-of select="@position"/>
+                        <xsl:text> - </xsl:text>
+                        <xsl:value-of select="@position"/>
+                        <xsl:text>.mineu)/(</xsl:text>
+                        <xsl:value-of select="@position"/>
+                        <xsl:text>.maxeu - </xsl:text>
+                        <xsl:value-of select="@position"/>
+                        <xsl:text>.mineu) * 90), '%3.0f') + ' , 500 , 320)') : '' :default }</xsl:text>             
+                    </xsl:attribute>                    
+                </xsl:when>   
+            </xsl:choose> 
+            <animate attributeName="class" attributeType="CSS" values="0;1" fill="freeze" keyTimes="0;.5" dur="1000ms"  repeatCount="indefinite" calcMode="discrete"/>                
+        </path>
     </xsl:template>
+    
+    
     
 
     
