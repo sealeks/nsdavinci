@@ -1488,7 +1488,7 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, 
         
         this.fontsize = fontsize ? fontsize : (minBound ? parseInt(minBound / 30) : undefined );
         
-        if (this.fontsize < 8) this.fontsize*=1.5;
+        if (this.fontsize < 8) this.fontsize=8;
         this.shadow = shadow ? true : false;
         this.borderRadius = (r || r==0) ? r : 5;
 

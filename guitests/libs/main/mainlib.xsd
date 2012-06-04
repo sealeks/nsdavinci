@@ -263,7 +263,7 @@
     <xsd:annotation>
         <xsd:appinfo>
             <lib:creator name="mlib:path" hint="path">
-                <mlib:path stroke-width="5" d=" M0,0 l 100,100"/>
+                <mlib:path stroke-width="5" d=" M0,0 l 100,100" stroke="#bbb"/>
             </lib:creator>
         </xsd:appinfo>
     </xsd:annotation>
@@ -412,14 +412,17 @@
         <xsd:attribute name="y" type="xsd:string" default="0"/>
         <xsd:attribute name="width" type="xsd:string" default="200"/>
         <xsd:attribute name="height" type="xsd:string" default="400"/>
-        <xsd:attribute name="header" type="xsd:string" default=""/> 
+        <xsd:attribute name="header" type="xsd:string" default=""/>    
+        <xsd:attribute name="period" type="lib:string"/>
         <xsd:attribute name="param" type="lib:expression"/>
         <xsd:attribute name="param-flysp" type="lib:expression"/>     
         <xsd:attribute name="param-sp" type="lib:tag"/>
-        <xsd:attribute name="param-format" type="xsd:string"/>
+        <xsd:attribute name="param-color" type="xsd:string"/>
+        <xsd:attribute name="param-format" type="xsd:string"/> 
         <xsd:attribute name="auto" type="lib:tag"/>           
         <xsd:attribute name="actuator" type="lib:expression"/>
         <xsd:attribute name="actuator-sp" type="lib:tag"/>
+        <xsd:attribute name="actuator-color" type="xsd:string"/>
         <xsd:attribute name="actuator-format" type="xsd:string"/>        
     </xsd:complexType>
 </xsd:element>
