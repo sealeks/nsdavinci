@@ -4606,6 +4606,222 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     ||_______________________________________________________________________________________________________________________________________||    
     --> 
     
+    <xsl:template name="mlib_regulator_control">
+        <xsl:param name="shift"/>
+        <xsl:param name="preff"/>
+        <xsl:param name="param"/>
+        <xsl:param name="param-sp"/>
+        <xsl:param name="header"/>
+        <xsl:param name="headerparam"/>
+        <xsl:param name="headerparam-sp"/>    
+        <xsl:param name="format"/>
+        <xsl:param name="disable"/>        
+        <mlib:sensor x="5" height="110" width="240" stroke="#ccc" stroke-width="1" r="4"  color1="#333" color2="#666" caption="" alighn="center" fontcolor="#eee">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_sensor_headset_</xsl:text>
+                <xsl:value-of select="$preff"/>  
+            </xsl:attribute> 
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift"/>                            
+            </xsl:attribute> 
+        </mlib:sensor>                       
+        <mlib:sensor x="10"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2" id="sensor2" environment=""  fontstyle="font-size: 12" color1="#111" color2="#333" fontcolor="#0e0">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_sensor_</xsl:text>
+                <xsl:value-of select="$preff"/>
+            </xsl:attribute>  
+            <xsl:attribute name="param">
+                <xsl:value-of select="$param"/>                            
+            </xsl:attribute> 
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 32"/>                            
+            </xsl:attribute>  
+            <xsl:attribute name="format">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space($format)='')">  
+                        <xsl:value-of select="$format"/> 
+                    </xsl:when> 
+                    <xsl:otherwise>
+                        <xsl:text>%3.0f</xsl:text>
+                    </xsl:otherwise>                      
+                </xsl:choose>                       
+            </xsl:attribute>             
+        </mlib:sensor>                    
+        <mlib:sensor x="135"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"  environment=""  fontstyle="font-size: 12" sensorevent="valueset" color1="#111" color2="#333" fontcolor="#0e0">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_sensor_</xsl:text>
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_sp</xsl:text>
+            </xsl:attribute>  
+            <xsl:attribute name="param">
+                <xsl:value-of select="$param-sp"/>                            
+            </xsl:attribute> 
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 32"/>                            
+            </xsl:attribute>
+            <xsl:attribute name="format">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space($format)='')">  
+                        <xsl:value-of select="$format"/> 
+                    </xsl:when> 
+                    <xsl:otherwise>
+                        <xsl:text>%3.0f</xsl:text>
+                    </xsl:otherwise>                      
+                </xsl:choose>                       
+            </xsl:attribute>  
+            <xsl:attribute name="disable">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space($disable)='')">  
+                        <xsl:value-of select="$disable"/> 
+                    </xsl:when> 
+                </xsl:choose>
+            </xsl:attribute>                
+        </mlib:sensor>   
+        <mlib:slider x="3" height="12" width="244"  fillenvironment="" color1="#333" color2="#111" gradient-type="lr"  fillcolor1="#0e0" fillcolor2="#0a0">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_slider_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_sp</xsl:text>
+            </xsl:attribute>  
+            <xsl:attribute name="param">
+                <xsl:value-of select="$param-sp"/>                            
+            </xsl:attribute> 
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 82"/>                            
+            </xsl:attribute> 
+            <xsl:attribute name="disable">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space($disable)='')">  
+                        <xsl:value-of select="$disable"/> 
+                    </xsl:when> 
+                </xsl:choose>
+            </xsl:attribute>             
+        </mlib:slider>                    
+        <mlib:rect x="15" height="5" width="220" stroke="#000" r="1" stroke-width="0.5" fillenvironment=""  fillcolor1="#0e0" fillcolor2="#0a0" color1="#333" color2="#111">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_rect_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+            </xsl:attribute>  
+            <xsl:attribute name="param">
+                <xsl:value-of select="$param"/>                            
+            </xsl:attribute>   
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 72"/>                            
+            </xsl:attribute>               
+        </mlib:rect>
+        <text x="9"  fill="#eee" style="font-size: 11;">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_text_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_spheader</xsl:text> 
+            </xsl:attribute> 
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 28"/>                            
+            </xsl:attribute>   
+            <xsl:attribute name="text">
+                <xsl:value-of select="$headerparam"/>                            
+            </xsl:attribute>   
+        </text>   
+        <text x="136"  fill="#eee" style="font-size: 11;">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_text_</xsl:text>
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_spvalue</xsl:text>
+            </xsl:attribute>  
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 28"/>                            
+            </xsl:attribute>   
+            <xsl:attribute name="text">
+                <xsl:value-of select="$headerparam-sp"/>                            
+            </xsl:attribute>              
+        </text>  
+        <text x="15" fill="#eee" id="text2" style="font-size: 11;">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_text_</xsl:text>  
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_pos</xsl:text> 
+            </xsl:attribute>   
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 67"/>                            
+            </xsl:attribute>    
+            <xsl:attribute name="text">
+                <xsl:value-of select="$headerparam"/>  
+            </xsl:attribute>              
+        </text> 
+        <text x="9" fill="#eee" id="text2" style="font-size: 12;">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_text_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_name</xsl:text>
+            </xsl:attribute>   
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 12"/>                            
+            </xsl:attribute> 
+            <xsl:attribute name="text">
+                <xsl:value-of select="$header"/>                            
+            </xsl:attribute>              
+        </text>         
+    </xsl:template> 
+    
+    <xsl:template name="mlib_regulator_autocontrol">
+        <xsl:param name="shift"/>
+        <xsl:param name="preff"/>        
+        <xsl:param name="param"/>
+        <mlib:sensor x="5" y="171" height="55" width="240" stroke="#ccc" stroke-width="1" r="4" color1="#333" color2="#666" caption="" alighn="center" fontcolor="#eee">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_autobackground_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_name</xsl:text>
+            </xsl:attribute> 
+        </mlib:sensor>  
+        <text x="9" y="181" text="Автоват/Дистанция" fill="#eee" style="font-size: 11;">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_autoheader_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_name</xsl:text>
+            </xsl:attribute>             
+        </text>  
+        <mlib:button x="65" y="185" height="35" width="35" caption="Д" r="4" type="tumbler" color1="#0A0" color2="#0F0" oncolor1="#333" oncolor2="#111" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;">
+             <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_auto_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_buttonauto</xsl:text>
+            </xsl:attribute>        
+             <xsl:attribute name="param">
+                <xsl:value-of select="$param"/>
+            </xsl:attribute>  
+              <xsl:attribute name="state">
+                <xsl:value-of select="$param"/>
+            </xsl:attribute>             
+        </mlib:button>         
+        <mlib:button x="150" y="185" height="35" width="35" caption="А" r="4" type="tumbler" color1="#333" color2="#111" oncolor1="#0A0" oncolor2="#0F0" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;">
+             <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_auto_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_buttonlocal</xsl:text>
+            </xsl:attribute>   
+             <xsl:attribute name="param">
+                <xsl:value-of select="$param"/>
+            </xsl:attribute>  
+              <xsl:attribute name="state">
+                <xsl:value-of select="$param"/>
+            </xsl:attribute>            
+        </mlib:button>
+    </xsl:template>    
+    
     <xsl:template name="mlib_regulator_cursor">
         <xsl:attribute name="cursor">
             <xsl:choose>
@@ -4656,68 +4872,51 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:attribute name="caption">
                             <xsl:value-of select="@header"/>                         
                         </xsl:attribute>                            
-                    </mlib:sensor>                    
-                    <mlib:sensor x="5" y="58" height="110" width="240" stroke="#ccc" stroke-width="1" r="4"  color1="#333" color2="#666" caption="" alighn="center" fontcolor="#eee">
-                        <xsl:attribute name="id">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_sensor_headset</xsl:text>                            
-                        </xsl:attribute>                         
-                   </mlib:sensor>                       
-                <!--mlib:chart x="5" y="170" height="145" width="240" id="chart0" r="10" params="'level'" period="600" option="{ background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]}" colors="'0e0'"/-->
-                    <mlib:sensor x="10" y="86" height="18" width="60" stroke="#eee" stroke-width="0.5" r="2" id="sensor2" environment="" format="%3.0f" fontstyle="font-size: 12" color1="#111" color2="#333" fontcolor="#0e0">
-                        <xsl:attribute name="id">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_sensor_actuator</xsl:text>                            
-                        </xsl:attribute>  
-                        <xsl:attribute name="param">
-                            <xsl:value-of select="@actuator"/>                            
-                        </xsl:attribute>                       
-                    </mlib:sensor>                    
-                    <mlib:sensor x="135" y="86" height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"  environment=""  format="%3.0f" fontstyle="font-size: 12" sensorevent="valueset" color1="#111" color2="#333" fontcolor="#0e0">
-                        <xsl:attribute name="id">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_sensor_actuator_sp</xsl:text>                            
-                        </xsl:attribute>  
-                        <xsl:attribute name="param">
-                            <xsl:value-of select="@actuator-sp"/>                            
-                        </xsl:attribute>                      
-                    </mlib:sensor>   
-                    <mlib:slider x="3" y="139" height="12" width="244"  fillenvironment="" color1="#333" color2="#111" gradient-type="lr"  fillcolor1="#0e0" fillcolor2="#0a0">
-                        <xsl:attribute name="id">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_slider_actuator_sp</xsl:text>                            
-                        </xsl:attribute>  
-                        <xsl:attribute name="param">
-                            <xsl:value-of select="@actuator-sp"/>                            
-                        </xsl:attribute>                            
-                   </mlib:slider>                    
-                    <mlib:rect x="15" y="130" height="5" width="220" stroke="#000" r="1" stroke-width="0.5" fillenvironment=""  fillcolor1="#0e0" fillcolor2="#0a0" color1="#333" color2="#111">
-                        <xsl:attribute name="id">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_rect_actuator</xsl:text>                            
-                        </xsl:attribute>  
-                        <xsl:attribute name="param">
-                            <xsl:value-of select="@actuator"/>                            
-                        </xsl:attribute>                      
-                    </mlib:rect>
-                    <text x="9" y="76" text="Положение ИМ" fill="#eee" style="font-size: 11;">
-                        <xsl:attribute name="id">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_text_actuator_spheader</xsl:text>                            
-                        </xsl:attribute> 
-                    </text>   
-                    <text x="136" y="76" text="Задание" fill="#eee" style="font-size: 11;">
-                        <xsl:attribute name="id">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_text_actuator_spvalue</xsl:text>                            
-                        </xsl:attribute>                         
-                    </text>  
-                    <text x="15" y="119" text="Положение клапана" fill="#eee" id="text2" style="font-size: 11;">
-                        <xsl:attribute name="id">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_text_actuator_pos</xsl:text>                            
-                        </xsl:attribute>                          
-                    </text>  
+                    </mlib:sensor>  
+ 
+                    <xsl:choose>
+                        <xsl:when test="not(normalize-space(@param-sp)='') and not(normalize-space(@actuator-sp)='') and not(normalize-space(@auto)='')">                    
+                            <xsl:call-template name="mlib_regulator_control"> 
+                                <xsl:with-param name="shift" select="58"/>
+                                <xsl:with-param name="preff" select="param"/>
+                                <xsl:with-param name="param" select="@param"/>
+                                <xsl:with-param name="param-sp" select="@param-sp"/>
+                                <xsl:with-param name="format" select="@param-format"/>
+                                <xsl:with-param name="header">Управление регулятором</xsl:with-param>
+                                <xsl:with-param name="headerparam">Параметер</xsl:with-param>
+                                <xsl:with-param name="headerparam-sp">Задание</xsl:with-param>                              
+                            </xsl:call-template> 
+                            <xsl:call-template name="mlib_regulator_autocontrol"> 
+                                <xsl:with-param name="shift" select="162"/>
+                                <xsl:with-param name="preff" select="autoset"/>
+                                <xsl:with-param name="param" select="@auto"/>                        
+                            </xsl:call-template>                             
+                            <xsl:call-template name="mlib_regulator_control"> 
+                                <xsl:with-param name="shift" select="230"/>
+                                <xsl:with-param name="preff" select="actuator"/>
+                                <xsl:with-param name="param" select="@actuator"/>
+                                <xsl:with-param name="param-sp" select="@actuator-sp"/>
+                                <xsl:with-param name="format" select="@actuator-format"/>
+                                <xsl:with-param name="header">Управление ИМ</xsl:with-param>
+                                <xsl:with-param name="headerparam">Положение ИМ</xsl:with-param>
+                                <xsl:with-param name="headerparam-sp">Задание ИМ</xsl:with-param>     
+                                <xsl:with-param name="disable" select="@auto"/> 
+                            </xsl:call-template>                             
+                        </xsl:when> 
+                        <xsl:when test="not(normalize-space(@param-sp)='')">                    
+                            <xsl:call-template name="mlib_regulator_control"> 
+                                <xsl:with-param name="shift" select="58"/>
+                                <xsl:with-param name="preff" select="actuator"/>
+                                <xsl:with-param name="param" select="@actuator"/>
+                                <xsl:with-param name="param-sp" select="@actuator-sp"/>
+                                <xsl:with-param name="format" select="@actuator-format"/>
+                                <xsl:with-param name="header">Управление ИМ</xsl:with-param>
+                                <xsl:with-param name="headerparam">Положение ИМ</xsl:with-param>
+                                <xsl:with-param name="headerparam-sp">Задание ИМ</xsl:with-param> 
+                               
+                            </xsl:call-template> 
+                        </xsl:when>                         
+                    </xsl:choose>                    
                 </xsl:variable> 
                     
                 
@@ -4739,24 +4938,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:call-template name="svg_text"/>
                     </xsl:when>                                     
                 </xsl:choose>
-            </xsl:for-each>
-            
-                <!--foreignObject x="5" y="170" height="145" width="240">
-
-                    <html xmlns="http://www.w3.org/1999/xhtml">
-                        <head xmlns="http://www.w3.org/1999/xhtml">
-                                          
-                        </head>    
-                        <body xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px 0px; margin: 0px 0px;">
-                            <div xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px 0px; margin: 0px 0px;">
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                    <xsl:text>_chartbody</xsl:text>                            
-                                </xsl:attribute>                             
-                            </div>
-                        </body>
-                    </html>
-                </foreignObject--> 
+            </xsl:for-each>           
                 
             </svg>            
         </defs>                   

@@ -411,12 +411,16 @@
         <xsd:attribute name="x" type="xsd:string" default="0"/>
         <xsd:attribute name="y" type="xsd:string" default="0"/>
         <xsd:attribute name="width" type="xsd:string" default="200"/>
-        <xsd:attribute name="height" type="xsd:string" default="400"/> 
+        <xsd:attribute name="height" type="xsd:string" default="400"/>
+        <xsd:attribute name="header" type="xsd:string" default=""/> 
         <xsd:attribute name="param" type="lib:expression"/>
-        <xsd:attribute name="param-flysp" type="lib:expression"/>
+        <xsd:attribute name="param-flysp" type="lib:expression"/>     
         <xsd:attribute name="param-sp" type="lib:tag"/>
+        <xsd:attribute name="param-format" type="xsd:string"/>
+        <xsd:attribute name="auto" type="lib:tag"/>           
         <xsd:attribute name="actuator" type="lib:expression"/>
         <xsd:attribute name="actuator-sp" type="lib:tag"/>
+        <xsd:attribute name="actuator-format" type="xsd:string"/>        
     </xsd:complexType>
 </xsd:element>
 

@@ -1384,6 +1384,7 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, 
     });
     
 
+    this.sort(tags,colors);
     var width=width;
     var height=height;
     var linewidth = 1;
@@ -1472,9 +1473,7 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, 
         this.period = hist * 1000;
         var ts = this;
         
-        this.tags = tags;
-        
-        this.colors = colors ? colors : Highcharts.getOptions().colors;
+
         this.disablecolor = disablecolor ? disablecolor : "#AAA";
         this.backgroundcolor = backgroundcolor ? backgroundcolor : "#EEE";
         this.axisYcolor = axisYcolor!==undefined ? axisYcolor : undefined;
@@ -1543,14 +1542,31 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, 
 
 libutil.trendchart.WAITDELT = 6000;
 
+libutil.trendchart.prototype.sort = function(tags,colors){
+    if (!tags || !colors || tags.constructor != Array){
+          this.tags = tags;     
+          this.colors = colors;
+          return;
+    };
+    var tmp = [];
+    for (var i=0; i<tags.length;++i){
+        tmp.push({tag: tags[i], color: colors.length>i ? colors[i]: 'red'});}
+    tmp.sort(function(x1,x2){return x1.tag<x2.tag ? -1 : (x1.tag>x2.tag) ? 1 : 0});
+    this.tags=[];
+    this.colors=[];
+    for (var i=0; i<tmp.length;++i){
+        this.tags.push(tmp[i].tag);
+        this.colors.push(tmp[i].color);
+    }
+}
+
 libutil.trendchart.prototype.detach = function() {
     if (this.handler)
         if (!this.element.removeTrendsListener(this.handler))
             console.error('TrendsListener didnt remove');
     if (this.chart)
-        this.chart.destroy;
-        //else
-        //    console.log('TrendsListener succesfull removed');
+        this.chart.destroy();
+        this.element.chart=undefined;
 }
 
 libutil.trendchart.prototype.currentStart = function() {
@@ -1812,6 +1828,8 @@ libutil.trendchart.prototype.YAxis = function(){
         rslt.push({
         gridLineWidth : this.axiswidth,
         gridLineColor: this.axisYcolor,
+        minPadding: 0.0,
+        maxPadding: 0.0,
         labels: {
             formatter: function() {
                 return this.value;
