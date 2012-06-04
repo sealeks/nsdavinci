@@ -1,14 +1,18 @@
-<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-color: #bbb;" fillcolor1="#0e0" color1="#333" fillcolor2="#0a0" fillenvironment="" color2="#111" y="0" x="0">  
+<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-color: #bbb;" fillcolor1="#0e0" color1="#333" fillcolor2="#0a0" fillenvironment="" color2="#111" y="0" x="0" oncaption="#0F0" oncolor1="#0A0">  
     <mlib:sensor x="5" y="58" height="110" width="240" stroke="#ccc" stroke-width="1" r="4" id="sensor4" color1="#333" color2="#666" caption="" alighn="center" fontcolor="#eee"/>
     <mlib:slider x="200" y="615" height="20" width="400" id="slider1" param="out_pos"/>
     <mlib:sensor x="5" y="5" height="50" width="240" stroke="#ccc" stroke-width="1" r="4" id="sensor1" color1="#333" color2="#666" caption="Воздушный шибер" alighn="center" fontcolor="#eee" fontstyle="font-size: 12"/>
-    <mlib:chart x="5" y="170" height="145" width="240" id="chart0" r="10" params="'level'" period="600" option="{ background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]}" colors="'0e0'"/>
+    
     <mlib:sensor x="10" y="86" height="18" width="60" stroke="#eee" stroke-width="0.5" r="2" id="sensor2" environment="" param="in_pos" format="%3.0f" fontstyle="font-size: 12" color1="#111" color2="#333" fontcolor="#0e0"/>
     <mlib:sensor x="135" y="86" height="18" width="60" stroke="#eee" stroke-width="0.5" r="2" id="sensor3" environment="" param="in_pos" format="%3.0f" fontstyle="font-size: 12" sensorevent="valueset" color1="#111" color2="#333" fontcolor="#0e0"/>
     <mlib:slider x="3" y="139" height="12" width="244" id="slider2" fillenvironment="" color1="#333" color2="#111" gradient-type="lr" param="in_pos" fillcolor1="#0e0" fillcolor2="#0a0"/>
     <mlib:rect x="15" y="130" height="5" width="220" stroke="#000" r="1" stroke-width="0.5" id="rect2" fillenvironment="" param="in_pos" fillcolor1="#0e0" fillcolor2="#0a0" color1="#333" color2="#111"/>
-    <svg:text x="9" y="76" text="Положение ИМ" fill="#eee" id="text0" style="font-size: 11;"/>
-    <svg:text x="136" y="76" text="Задание" fill="#eee" id="text1" style="font-size: 11;"/>
+    <svg:text x="11" y="81" text="Положение ИМ" fill="#eee" id="text0" style="font-size: 11;"/>
+    <svg:text x="138" y="81" text="Задание" fill="#eee" id="text1" style="font-size: 11;"/>
     <svg:text x="15" y="119" text="Положение клапана" fill="#eee" id="text2" style="font-size: 11;"/>
+<svg:text x="9" y="69" text="Управление клапаном" fill="#eee" id="text3" style="font-size: 11;"/>
+<mlib:sensor x="5" y="171" height="55" width="240" stroke="#ccc" stroke-width="1" r="4" id="sensor0" color1="#333" color2="#666" caption="" alighn="center" fontcolor="#eee"/>
+<svg:text x="9" y="181" text="Автоват/Дистанция" fill="#eee" id="text4" style="font-size: 11;"/>
+<mlib:button x="65" y="185" height="35" width="35" caption="А" id="button0" r="4" type="tumbler" param="m::c1" color1="#0A0" color2="#0F0" oncolor1="#333" oncolor2="#111" state="m::c1" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;"/>
+<mlib:button x="150" y="185" height="35" width="35" caption="Д" id="button1" r="4" type="tumbler" param="m::c1" color1="#333" color2="#111" oncolor1="#0A0" oncolor2="#0F0" state="m::c1" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;"/>
 </svg>

@@ -8,11 +8,13 @@ mainlib.CHART_WIDTH = 350;
 
 mainlib.CHART_HEIGHT = 180;
 
+mainlib.CHART_PADDING = 5;
+
 mainlib.REGULATOR_WIDTH = 250;
 
 mainlib.REGULATOR_S_HEIGHT = 320;
 
-mainlib.REGULATOR_F_HEIGHT = 400;
+mainlib.REGULATOR_F_HEIGHT = 494;
 
 mainlib.POPUP_R = 10;
 
@@ -28,7 +30,7 @@ mainlib.element = {};
 mainlib.check_click = function(el , ev){
     if (el && el.correspondingUseElement && el.correspondingUseElement.parentNode){
         var needofsetrect = el.correspondingUseElement.parentNode.getBoundingClientRect();
-        console.log('bbox',needofsetrect);
+        //console.log('bbox',needofsetrect);
     }
     var target =el.correspondingElement ? el.correspondingElement : el;
     if (target && target.getAttribute && target.getAttribute('cursor')=='pointer'){
@@ -100,7 +102,6 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
     dupl.onmouseup=function(ev){
         var newv = dupl.vertical ? ev.y - dupl.starty : ev.x - dupl.startx;
         if (newv){            
-            //console.log('dupl.onmouseup');
             var newval = (dupl.vertical ? dupl.startcy  : dupl.startcx) + newv;
             var cmdlength = dupl.vertical ? (dupl.reverse ? dupl.maxy - newval:  newval - dupl.miny) 
             : (dupl.reverse ? dupl.maxx - newval: newval - dupl.minx);
@@ -201,10 +202,9 @@ mainlib.get_popupbody  = function(el, width, height, remfunc , shift){
                 if (remfunc)
                     remfunc();
                 else
-                    el.popup.setAttribute('style', 'display: none;');
-                //console.profileEnd();
+                    el.popup.setAttribute('style', 'display: none;');               
             }
-            //console.profile(mainlib.get_popupbody.onmouseout);
+           
         }
     }; 
       
@@ -266,6 +266,7 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
             rootbody.setAttribute('y', y);
             if (func ) func();
             rootbody.style.display='block';
+            rootbody.needofsetrect = rootbody.getBoundingClientRect();
         },10);
     }
     
@@ -317,13 +318,14 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
             value : mainlib.POPUP_MOVE_STYLE
         }]);
     
+    
+    
         el.hoverrect.onselectstart = function(ev){
            ev.stopPropagation();
            ev.preventDefault();
            return false;}
        
-        
-    
+          
     
         el.hoverrect.onmousemove = function(ev){
             if (ev.target==el.hoverrect && el.hoverrect.captured){
@@ -440,10 +442,12 @@ mainlib.valueset_click =  function (el, nm, width){
     
     try{
         if (width<100) width=100;
-        
-
+       
    
-        var body = mainlib.get_popupbody(el,width,parseFloat(width)* 2.05, null,el.needofsetrect);
+        var body = mainlib.get_popupbody(el,width,parseFloat(width)* 2.05, 
+                                         el.needofsetrect ? function() {if (el.popup) el.popup.parentNode.removeChild(el.popup);el.popup=undefined;} : null, 
+                                         el.needofsetrect);
+                                         
         body.setAttribute('id',el.getAttribute('id') + '_popup_body');
         
         var text = document.getElementById(el.getAttribute('id') + '_popup_sensorcalc_sensor_text');
@@ -474,23 +478,16 @@ mainlib.valueset_click =  function (el, nm, width){
     }  
 }
 
-    
-//gw.appendChild(btnonrect);
-    
+   
 mainlib.graph_click =  function (el, nm){
-    
 
-  
-    var width = mainlib.CHART_WIDTH;
-    var height = mainlib.CHART_HEIGHT;
-    var padding = 3;
+    var elementId =  el.getAttribute('id');
     
-    var body = mainlib.get_staticpopupbody(el,mainlib.CHART_WIDTH,mainlib.CHART_HEIGHT, function() {if (el.popup) el.popup.parentNode.removeChild(el.popup);el.popup=undefined;});
-    
+    var body = mainlib.get_staticpopupbody(el,mainlib.CHART_WIDTH,mainlib.CHART_HEIGHT, 
+                                           function() {if (el.popup) el.popup.parentNode.removeChild(el.popup);el.popup=undefined;}); 
     if (!body && el.popup) return;
- 
 
-    body.setAttribute('id',el.getAttribute('id') + '_popup_body');
+    body.setAttribute('id',elementId + '_popup_body');
     
     var result = libutil.svg.create_element('foreignObject', body, [{
         name : 'x', 
@@ -502,11 +499,11 @@ mainlib.graph_click =  function (el, nm){
         },
         {
         name : 'width', 
-        value: width
+        value: mainlib.CHART_WIDTH
         },
         {
         name : 'height', 
-        value : height
+        value : mainlib.CHART_HEIGHT
         }]);   
     
     var html = libutil.html.create_element('html' , result);
@@ -514,35 +511,50 @@ mainlib.graph_click =  function (el, nm){
     var head = libutil.html.create_element('head', html,[{
     }]);
 
-
-    var htmlbody= libutil.html.create_element( 'body' ,html, [{name: 'style', value: 'margin: 0; padding: '+ padding + 'px'}]);
+    var htmlbody= libutil.html.create_element( 'body' ,html, [{name: 'style', value: 'margin: 0; padding: '+ mainlib.CHART_PADDING + 'px'}]);
             
-    var bodydiv= libutil.html.create_element('div' , htmlbody, [{name : 'id' , value: el.getAttribute('id') + '_popup_graph'},
-                                                                 {name: 'style' , value: '-webkit-user-select: none'}] );
-     
+    var bodydiv= libutil.html.create_element('div' , htmlbody, [{name : 'id' , value: elementId + '_popup_graph'},
+                                                                 {name: 'style' , value: '-webkit-user-select: none'}] );    
     var script = libutil.html.create_element('script', head );
 
-    script.textContent="new libutil.trendchart('"+el.getAttribute('id') + '_popup_graph'+"','"+
-                                                         el.getAttribute('id') + '_popup_body'+
+    script.textContent="new libutil.trendchart('"+elementId + '_popup_graph'+"','"+
+                                                         elementId + '_popup_body'+
                                                          "', "+"['"+nm+"'], 600, ['red','green','blue','#880'], " + 
-                                                         (width - 2* padding) + ", " + (height - 2* padding)+")";
-    
-        
-    
-
+                                                         (mainlib.CHART_WIDTH - 2* mainlib.CHART_PADDING) + ", " +
+                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+")";
+           
 }
 
 
+
 mainlib.regulator_click =  function (el, smp){
-    
+
+    var elementId =  el.getAttribute('id');
+     
     var createchart = function() {
-        var chartdiv = document.getElementById(el.getAttribute('id') + '_chartbody');
+        var chartdiv = document.getElementById(elementId + '_popup_graph');
         if (chartdiv){
-            el.popup.chart = new libutil.trendchart(el.getAttribute('id') + '_popup_graph',null,['level'],600, null ,240,145);
+            
+            el.popup.chart = new libutil.trendchart(elementId + '_popup_graph',
+                                                    elementId + '_chart_background',['level'],600, ['0e0'] ,240, 145, 5,  
+                                                    { background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]});
         }
     }
     
+    var getbody = function(){
+        return mainlib.get_staticpopupbody(el,mainlib.REGULATOR_WIDTH ,
+            smp ? mainlib.REGULATOR_S_HEIGHT : mainlib.REGULATOR_F_HEIGHT, 
+            function() {
+                el.popup.setAttribute('style', 'display: none;');
+                if (el.popup.chart){
+                    el.popup.chart.detach();
+                    el.popup.chart = undefined;
+                }
+            });       
+    }
+    
     if (el.popup){
+        getbody();
         el.popup.setAttribute('style', '');
         if (!el.popup.chart){
             createchart();
@@ -552,37 +564,48 @@ mainlib.regulator_click =  function (el, smp){
     try{
 
    
-        var body = mainlib.get_staticpopupbody(el,mainlib.REGULATOR_WIDTH , smp ? mainlib.REGULATOR_S_HEIGHT : mainlib.REGULATOR_F_HEIGHT, 
-            function() {
-                el.popup.setAttribute('style', 'display: none;');
-                if (el.popup.chart){
-                    el.popup.chart.detach();
-                    el.popup.chart = undefined;
-                }
-            });
-            
-        body.setAttribute('id',el.getAttribute('id') + '_popup_body');
+        var body = getbody();
+         
+        body.setAttribute('id',elementId + '_popup_body');
     
         if (!body && el.popup) return;
         
-        
-        
-        var trpopup =document.getElementById(el.getAttribute('id') + '_popup_body');
+        var trpopup =document.getElementById(elementId + '_popup_body');
         if (trpopup){
             trpopup.clearpopup = function(){
                 el.popup.setAttribute('style', 'display: none;');
             }
-        }   
-            
-            
-            
-        var result = libutil.svg.create_element('foreignObject', body, [{
+        }  
+        
+                
+        var chartbackground = libutil.svg.create_element('svg', body, [{
             name : 'x', 
             value:  5
         },
         {
             name : 'y', 
-            value:  170
+            value:  smp ? 170 : 170 + (mainlib.REGULATOR_F_HEIGHT-mainlib.REGULATOR_S_HEIGHT)
+        },
+        {
+            name : 'width', 
+            value: 240
+        },
+        {
+            name : 'height', 
+            value : 145
+        }]);
+    
+        chartbackground.setAttribute('id',elementId + '_chart_background');
+    
+    
+                       
+        var result = libutil.svg.create_element('foreignObject', chartbackground, [{
+            name : 'x', 
+            value:  0
+        },
+        {
+            name : 'y', 
+            value:  0
         },
         {
             name : 'width', 
@@ -606,7 +629,7 @@ mainlib.regulator_click =  function (el, smp){
             
         var bodydiv= libutil.html.create_element('div' , htmlbody, [{
             name : 'id' , 
-            value: el.getAttribute('id') + '_popup_graph'
+            value: elementId + '_popup_graph'
             },
 
             {
@@ -614,17 +637,13 @@ mainlib.regulator_click =  function (el, smp){
             value: '-webkit-user-select: none'
         }] );
     
-    
-     
 
-    
-    
         
-        var defs = document.getElementById(el.getAttribute('id') + '_popup_rootbody');
+        var defs = document.getElementById(elementId + '_popup_rootbody');
         
         var use = libutil.svg.create_element('use', body);
         body.useelement=use;
-        use.setAttributeNS("http://www.w3.org/1999/xlink",'href','#'+el.getAttribute('id') + '_popup');
+        use.setAttributeNS("http://www.w3.org/1999/xlink",'href','#'+elementId + '_popup');
         
         createchart();
         
@@ -633,9 +652,6 @@ mainlib.regulator_click =  function (el, smp){
     catch(error){
         throw error;
     }  
-
-
-   
 
 }
 
