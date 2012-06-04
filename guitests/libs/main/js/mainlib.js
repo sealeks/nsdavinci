@@ -86,6 +86,11 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
         }
     }
     
+    dupl.onselectstart = function(ev){
+           ev.stopPropagation();
+           ev.preventDefault();
+           return false;}
+    
     dupl.onmousemove = function(ev){
         var newv = dupl.vertical ? ev.y - dupl.starty : ev.x - dupl.startx;
         if (newv){
@@ -99,6 +104,7 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
         }  
     }
     
+    
     dupl.onmouseup=function(ev){
         var newv = dupl.vertical ? ev.y - dupl.starty : ev.x - dupl.startx;
         if (newv){            
@@ -109,7 +115,7 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
             setTimeout(function() {
                 selfremove();
                 el.onmouseup();
-            }, (wait && parseInt(wait)) ? wait : 1000  );
+            }, (wait && parseInt(wait)) ? wait : 3000  );
         }
         else{
             selfremove();
@@ -129,6 +135,11 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
             console.log('Command slider no set:' + error)
         }
     }
+    
+    parent.onselectstart = function(ev){
+           ev.stopPropagation();
+           ev.preventDefault();
+           return false;}
     
     parent.onmousemove = function(ev){
         if (el.movelement) {
@@ -534,10 +545,12 @@ mainlib.regulator_click =  function (el, smp){
     var createchart = function() {
         var chartdiv = document.getElementById(elementId + '_popup_graph');
         if (chartdiv){
-            
+            //console.log('charts',eval(el.getAttribute('charts')));
+            //console.log('colors',eval(el.getAttribute('colors')));
+            var period = el.getAttribute('period').valueOf() ?    el.getAttribute('period').valueOf() : 600;
             el.popup.chart = new libutil.trendchart(elementId + '_popup_graph',
-                                                    elementId + '_chart_background',['level'],600, ['0e0'] ,240, 145, 5,  
-                                                    { background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]});
+                                                    elementId + '_chart_background',eval(el.getAttribute('charts')),period, eval(el.getAttribute('colors')) ,240, 145, 5,  
+                                                    {background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]});
         }
     }
     

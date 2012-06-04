@@ -1,4 +1,4 @@
-<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-color: #bbb;" fillcolor1="#0e0" color1="#333" fillcolor2="#0a0" fillenvironment="" color2="#111" y="0" x="0">
+<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-color: #bbb;" fillcolor1="#0e0" color1="#333" fillcolor2="#0a0" fillenvironment="" color2="#111" y="0" x="0" on="1">
     
     
     
@@ -8,4 +8,11 @@
     
     
     
-<mlib:rect x="483" y="358" height="200" width="200" stroke="#050" r="4" stroke-width="1" id="rect0" color1="#AAA" color2="#EEE" direction="bt" param="level" fillcolor1="#500" fillcolor2="#900" gradient-type="tb"/><mlib:sensor x="507" y="311" height="30" width="150" stroke="white" stroke-width="1" r="4" id="sensor0" format="%9.0f" param="r::a" sensorevent="graph"/><mlib:slider x="890" y="289" height="20" width="400" id="slider0" param="in_pos"/><mlib:slider x="200" y="615" height="20" width="400" id="slider1" param="out_pos"/><mlib:armatura x="644" y="127" height="50" width="50" id="armatura0" type="regul" position="in_pos" on="in_pos&gt;0" oncolor="" offcolor="" environment="gaz"/><mlib:regulator x="645" y="129" height="50" width="50" id="regulator0" param="in_pos" actuator="in_pos" actuator-sp="in_pos" header="Регулятор" param-sp="in_pos" auto="m::c1" param-format="%3.1f"/><mlib:chart x="1043" y="441" height="200" width="400" id="chart0" r="5" params="'sin_cyc_min','r::a'" colors="'red','green'"/></svg>
+    <mlib:armatura x="430" y="649" height="50" width="50" id="armatura1" type="regul" position="out_pos" on="out_pos&gt;0" oncolor="#088" offcolor="#222" environment="gaz" rotate="90"/>
+    <mlib:rect x="483" y="358" height="200" width="200" stroke="#050" r="4" stroke-width="1" id="rect0" color1="#AAA" color2="#EEE" direction="bt" param="level" fillcolor1="#088" fillcolor2="#0bb" gradient-type="tb"/>
+    <mlib:sensor x="487" y="313" height="25" width="80" stroke="white" stroke-width="1" r="4" id="sensor0" format="%9.0f" param="level" sensorevent="graph"/>
+    <mlib:armatura x="699" y="217" height="50" width="50" id="armatura0" type="regul" position="in_pos" on="in_pos&gt;0" oncolor="#088" offcolor="#222" environment="gaz" rotate="90"/>
+    <mlib:regulator x="693" y="217" height="50" width="50" id="regulator0" param="level" actuator="in_pos" actuator-sp="in_sp" header="Регулятор" param-sp="" auto="" param-format="%3.1f" param-color="#0dd" period="300"/>
+    <mlib:regulator x="429" y="648" height="50" width="50" id="regulator1" param="level" actuator="out_pos" actuator-sp="out_sp" header="Регулятор" param-sp="level_sp" auto="auto" param-format="%3.0f" param-color="#0dd" period="300"/>
+    <mlib:path stroke-width="4" d=" M497,559 l 0 50 -50 0 0 50" id="path0" stroke="#099" filter="filter1" on="level"/>
+<mlib:path stroke-width="4" d=" M446,689 l 0 50 -50 0 0 50" id="path1" stroke="#099" filter="filter1" on="level &amp;&amp; out_pos"/><mlib:path stroke-width="4" d=" M717,257 l 0 50 -50 0 0 50" id="path2" stroke="#099" filter="filter1" on="in_pos"/><mlib:path stroke-width="4" d=" M768,126 l 0 50 -50 0 0 50" id="path3" stroke="#099" filter="filter1" on="1"/></svg>

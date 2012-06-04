@@ -1,7 +1,6 @@
 <?xml-stylesheet href="../util/libscript.xsl" type="text/xsl"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 576 324" enable-background="new 0 0 576 324" xml:space="preserve" xmlns:xml="http://www.w3.org/XML/1998/namespace" onload="init_project_controller()"><script type="text/javascript" xlink:href="../util/js/libutil.js"/><script type="text/javascript" xlink:href="../util/js/designer.js"/><script type="text/javascript" xlink:href="simulator.js"/>
     <script type="text/javascript" xlink:href="../util/js/libutil.js"/>
     <script type="text/javascript" xlink:href="../util/js/designer.js"/>
-    <script type="text/javascript" xlink:href="script1.js"/>
 
 <script type="text/javascript" xlink:href="../util/js/designer.js"/> 
 <script type="text/javascript" xlink:href="../util/js/libutil.js"/> 
@@ -55,12 +54,21 @@ window.simTick = setInterval(simulation_execute, SIMULATIONTICK );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-add_simulation ( new simulator.initializer('in_pos' , 0 , 0));
-add_simulation ( new simulator.initializer('out_pos' , 0 , 0));
-add_simulation ( new simulator.initializer('level' , 0 , 0));
+add_simulation ( new simulator.initializer('in_pos' , 50 , 50));
+add_simulation ( new simulator.initializer('in_sp' , 50 , 50));
+add_simulation ( new simulator.initializer('auto' , 0 , 0))
 
-add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-out_pos)/10000 * level.maxeu' ,null));
+add_simulation ( new simulator.initializer('out_pos' , 50 , 50));
+add_simulation ( new simulator.initializer('out_sp' , 50 , 50));
+add_simulation ( new simulator.initializer('level' , 50 , 50));
+add_simulation ( new simulator.initializer('level_sp' , 50 , 50));
 
+add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-out_pos)/50000 * level.maxeu' ,null));
+
+add_simulation ( new simulator.actuator('in_pos' , 'in_sp'));
+//add_simulation ( new simulator.actuator('out_pos' , 'out_sp'));
+
+add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp', 'auto' , 'true'));
 
 //add_simulation ( new simulator.initializer('m1::c1' , 1 , 0));
 //add_simulation ( new simulator.valueobserver('m1::h2' , null , 'm1::h1' ,null));
