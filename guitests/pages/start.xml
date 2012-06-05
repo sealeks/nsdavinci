@@ -61,6 +61,7 @@ add_simulation ( new simulator.initializer('auto' , 0 , 0))
 add_simulation ( new simulator.initializer('out_pos' , 50 , 50));
 add_simulation ( new simulator.initializer('out_sp' , 50 , 50));
 add_simulation ( new simulator.initializer('level' , 50 , 50));
+add_simulation ( new simulator.initializer('level0' , 50 , 50));
 add_simulation ( new simulator.initializer('level_sp' , 50 , 50));
 
 add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-out_pos)/50000 * level.maxeu' ,null));
@@ -68,7 +69,7 @@ add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-o
 add_simulation ( new simulator.actuator('in_pos' , 'in_sp'));
 //add_simulation ( new simulator.actuator('out_pos' , 'out_sp'));
 
-add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp', 'auto' , 'true'));
+add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp', 'auto' , true, 'level_p', 'level_i', 'level_d' ));
 
 //add_simulation ( new simulator.initializer('m1::c1' , 1 , 0));
 //add_simulation ( new simulator.valueobserver('m1::h2' , null , 'm1::h1' ,null));
@@ -89,7 +90,7 @@ add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp
   <form name="guimotor2" file="guimotor2.xml" caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no" visible="false"/>
   <form name="testopen" file="testopen.xml" caption="Мазут" left="85%" top="0%" width="15%" height="100%" decorated="no"/>
   
-  <form name="falarm" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no" visible="true"/><form name="te" file="test.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/><form name="gu" file="guimotor3.xml" left="0%" top="0%" width="85%" height="85%" caption="gu" decorated="no" visible="false"/>
+  <form name="falarm" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no" visible="true"/><form name="te" file="test.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/>
   
   <scriptfile name="script1" file="script1.js"/>
 

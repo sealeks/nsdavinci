@@ -289,11 +289,11 @@ designer.prototype.getAttributeList = function(el) {
         }
         else{
             var attr = this.getAttributeList(this.instantdocument.documentElement); 
-            attrs.push(attr);
+            if (attr) attrs.push(attr);
         }
             
        
-        if (attrs.lenght==0) 
+        if (!attrs.length) 
             return null; 
         attr = attrs[0];
         for(var key in attr.attributes){
