@@ -336,6 +336,11 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
            ev.preventDefault();
            return false;}
        
+         el.hoverrect.ondragstart = function(ev){
+           ev.stopPropagation();
+           ev.preventDefault();
+           return false;}
+       
           
     
         el.hoverrect.onmousemove = function(ev){

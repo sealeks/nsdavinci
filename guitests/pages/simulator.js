@@ -67,6 +67,57 @@ simulator.valueobserver.prototype.detach = function(){
 simulator.valueobserver.prototype.execute = function(){
     $$(' ' + this.tag + ' @ (' + this.source + ')');
 }
+
+
+// differeciator
+
+simulator.differeciator = function(tag ,start , source ,stop){
+  this.tag = tag;
+  if (source){
+      this.valid = true;
+      this.source = source;
+  }
+  if (start || start==0)
+        this.start = start;
+  if (stop || start==0)
+        this.stop = stop;    
+  if (this.valid){
+      this.atach();
+  }     
+}
+
+simulator.differeciator.prototype.atach = function(){
+ 
+     if (this.valid && (this.start || this.start==0))
+       $$(this.tag + ' @ ' + this.start);
+ 
+    var ts = this;
+    
+    this.diffhandler = function(){ts.diffevent(event);};
+    if (window.addExpressionListener( this.diffhandler , this.source))
+        this.diffset=true; 
+    else
+       console.log('AddExpressionListener source no regist');
+}
+
+
+simulator.differeciator.prototype.detach = function(){
+    if (this.valid && (this.start || this.start==0))
+       $$(this.tag + ' @ ' + this.stop)
+    if (this.diffhandler && this.diffset)
+        window.removeExpressionListener( this.autohandler);
+}
+
+simulator.differeciator.prototype.execute = function(){
+   
+}
+
+simulator.differeciator.prototype.diffevent = function(event){
+    if (event.expression==this.source){
+       $$(this.tag + ' @ ' + event.value)
+       console.log(this.tag,event.value);
+        }      
+}
  
 // simulator.actuator
 
@@ -117,13 +168,12 @@ simulator.regulator  = function(val, valsp, pos, possp, auto,  rev, kp , ki , kd
     this.diffstate = 0;
    
     
-
-        
-    
-    this.kp= kp===undefined ? 4.5 : kp;
-    this.ki= ki===undefined ? 0.5 : ki;
-    this.kd= kd===undefined ? 1.5 : kd;
+  
+    this.kp= kp===undefined ? 4.8 : kp;
+    this.ki= ki===undefined ? 2.0 : ki;
+    this.kd= kd===undefined ? 20 : kd;
     this.tick= tick;
+    
    
     this.possp=possp; 
     this.auto=auto;    
@@ -157,7 +207,23 @@ simulator.regulator.prototype.atach = function(){
     if (window.addExpressionListener( this.diffhandler , this.diff))
         this.diffset=true;
     else
-       console.log('AddExpressionListener diff no regist'); 
+       console.log('AddExpressionListener diff no regist');
+   
+   this.kphandler = function(){ts.kpevent(event);};
+   
+   if (this.kp.constructor == String && window.addExpressionListener( this.kphandler , this.kp)){
+        this.kpset=this.kp; this.kp=0;}
+    
+   this.kihandler = function(){ts.kievent(event);};
+   
+   if (this.ki.constructor == String && window.addExpressionListener( this.kihandler , this.ki)){
+        this.kiset=this.ki; this.ki=0;} 
+    
+   this.kdhandler = function(){ts.kdevent(event);};
+   
+   if (this.kd.constructor == String && window.addExpressionListener( this.kdhandler , this.kd)){
+        this.kdset=this.kd; this.kd=0;}       
+
 }
 
 
@@ -166,6 +232,12 @@ simulator.regulator.prototype.detach = function(){
         window.removeExpressionListener( this.autohandler);
     if (this.diffhandler && this.diffset)
         window.removeExpressionListener( this.diffhandler);    
+    if (this.kphandler && this.kpset)
+        window.removeExpressionListener( this.kphandler);
+    if (this.kihandler && this.kiset)
+        window.removeExpressionListener( this.kihandler);
+    if (this.kdhandler && this.kdset)
+        window.removeExpressionListener( this.kdhandler);      
 }
 
 simulator.regulator.prototype.autoevent = function(event){
@@ -177,8 +249,28 @@ simulator.regulator.prototype.autoevent = function(event){
             this.D = 0;
             this.olddiff=undefined;
         }
-    }
-        
+    }       
+}
+
+simulator.regulator.prototype.kpevent = function(event){
+    if (event.expression==this.kpset){
+        this.kp = event.value; 
+        console.log('kp:',this.kp);
+    }       
+}
+
+simulator.regulator.prototype.kievent = function(event){
+    if (event.expression==this.kiset){
+        this.ki = event.value; 
+        console.log('ki:',this.ki);
+    }       
+}
+
+simulator.regulator.prototype.kdevent = function(event){
+    if (event.expression==this.kdset){
+        this.kd = event.value; 
+        console.log('kd:',this.kd);
+    }       
 }
 
 simulator.regulator.prototype.diffevent = function(event){
@@ -194,16 +286,17 @@ simulator.regulator.prototype.diffevent = function(event){
             this.olddiff=event.value;
         }
         else{
-            var newD =  (this.olddiff-event.value) * this.kd /10 ;
+            var newD =  (event.value - this.olddiff) * this.kd * 10 ;
             this.D =  ((newD>-1) && (newD<1)) ? newD : this.D ;
             this.olddiff=event.value;
         }
-        console.log(this.K,this.I,this.D );
+        //console.log(this.K,this.I,this.D );
     }
 }
 
 simulator.regulator.prototype.delt = function(){
-     var rslt = (this.K+this.I);
+     var rslt = (this.K+this.I+ this.D);
+     //console.log(this.K,this.I,this.D , rslt);
      return (rslt<-1) ? - 1 : ((rslt>1) ? 1 : rslt)
 }
 
