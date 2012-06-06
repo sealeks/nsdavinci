@@ -32,7 +32,7 @@ simulator.initializer.prototype.detach = function(){
 }
 
 simulator.initializer.prototype.execute = function(){
-     //alert('execute'); 
+ 
 }
 
 
@@ -304,14 +304,35 @@ simulator.regulator.prototype.execute = function(){
         var ts = this;
         var tmp = new Date();
         var curtime = tmp.getTime() + 0;
-        if (this.lasttime && this.error){
-            var difftime = curtime - this.lasttime;
-            this.I =  this.kp * (this.error * (curtime - this.lasttime)) / (this.ki ? this.ki : Infinity) / 1000;}
+        var difftime = curtime - this.lasttime;
+        var difftime_d = curtime - this.perflasttime;
+        if (this.lasttime && this.error){         
+            this.I =  this.kp * (this.error * (difftime)) / (this.ki ? this.ki : Infinity) / 1000;}
         
+        if (this.lasttime && (this.error ||this.lasttime || this.perflasterror)) {
+            if (this.lasttime && this.perflasttime){
+                this.D = this.kp * (this.error - 2 * this.lasterror +  this.perflasterror) / (difftime_d ? difftime_d : Infinity) * this.kd;}
+            else{
+                if (this.lasttime)
+                    this.D = this.kp * (this.error - this.lasterror) / (difftime ? difftime : Infinity) * this.kd;
+                else
+                    this.D = 0;
+            }
+        }
+        
+        this.perflasttime = this.lasttime;
         this.lasttime = curtime + 0 ;
+        
+        this.perflasterror = this.lasterror;
+        this.lasterror = this.error ;
+        
         //console.log('integral ',this.error, difftime, this.I );
-        if (this.I)
-        setTimeout( function() {console.log( tmp , 'add integral', ts.I * 100);ts.actuator.spdiff(ts.I * 100);} , 1);
+        console.log('diff ',this.error, difftime_d, this.D );
+        
+        var d_and_i = this.I + this.D;
+        
+        if (d_and_i)
+        setTimeout( function() {/*console.log( tmp , 'add integral_and_diff', d_and_i * 100);*/ts.actuator.spdiff(d_and_i * 100);} , 1);
         
     }
     if (this.actuator){
