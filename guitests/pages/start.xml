@@ -56,7 +56,7 @@ window.simTick = setInterval(simulation_execute, SIMULATIONTICK );
 
 add_simulation ( new simulator.initializer('in_pos' , 50 , 50));
 add_simulation ( new simulator.initializer('in_sp' , 50 , 50));
-add_simulation ( new simulator.initializer('auto' , 0 , 0))
+add_simulation ( new simulator.initializer('auto' , 1 , 0))
 
 add_simulation ( new simulator.initializer('out_pos' , 50 , 50));
 add_simulation ( new simulator.initializer('out_sp' , 50 , 50));
@@ -64,7 +64,7 @@ add_simulation ( new simulator.initializer('level' , 50 , 50));
 add_simulation ( new simulator.initializer('level0' , 50 , 50));
 add_simulation ( new simulator.initializer('level_sp' , 50 , 50));
 
-add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-out_pos)/50000 * level.maxeu' ,null));
+add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-out_pos)/60000 * level.maxeu' ,null));
 
 add_simulation ( new simulator.actuator('in_pos' , 'in_sp'));
 //add_simulation ( new simulator.actuator('out_pos' , 'out_sp'));

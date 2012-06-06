@@ -128,6 +128,10 @@ simulator.actuator  = function(pos, sp, tick){
     this.enable=true;
 }
 
+simulator.actuator.prototype.position = function(){
+    return this.pos;
+}
+
 simulator.actuator.prototype.atach = function(){
 
 }
@@ -212,17 +216,17 @@ simulator.regulator.prototype.atach = function(){
    this.kphandler = function(){ts.kpevent(event);};
    
    if (this.kp.constructor == String && window.addExpressionListener( this.kphandler , this.kp)){
-        this.kpset=this.kp; this.kp=0;}
+        this.kpset=this.kp;this.kp=0;}
     
    this.kihandler = function(){ts.kievent(event);};
    
    if (this.ki.constructor == String && window.addExpressionListener( this.kihandler , this.ki)){
-        this.kiset=this.ki; this.ki=0;} 
+        this.kiset=this.ki;this.ki=0;} 
     
    this.kdhandler = function(){ts.kdevent(event);};
    
    if (this.kd.constructor == String && window.addExpressionListener( this.kdhandler , this.kd)){
-        this.kdset=this.kd; this.kd=0;}       
+        this.kdset=this.kd;this.kd=0;}       
 
 }
 
@@ -275,35 +279,40 @@ simulator.regulator.prototype.kdevent = function(event){
 
 simulator.regulator.prototype.diffevent = function(event){
     if (event.expression==this.diff){
+        var ts = this;
+        this.K = this.kp * (event.value - (this.kplast===undefined ? 0 : this.kplast));
+        this.error = event.value;
+   
+        this.kplast = event.value;
+
+        console.log('proportial ',event.value, this.K );
         
-        this.K = this.kp * event.value;
-        
-        var newI = this.I + ((event.value) * this.ki) / 10;
-        //console.log('newI ',newI);
-        this.I = ((newI>-1) && (newI<1)) ? newI : this.I ;
-        
-        if (this.olddiff===undefined){
-            this.olddiff=event.value;
-        }
-        else{
-            var newD =  (event.value - this.olddiff) * this.kd * 10 ;
-            this.D =  ((newD>-1) && (newD<1)) ? newD : this.D ;
-            this.olddiff=event.value;
-        }
-        //console.log(this.K,this.I,this.D );
+        if (this.K)
+        setTimeout( function() {/*console.log('add',ts.K * 100)*/;ts.actuator.spdiff(ts.K * 100);} , 1);
+
     }
 }
 
 simulator.regulator.prototype.delt = function(){
      var rslt = (this.K+this.I+ this.D);
-     //console.log(this.K,this.I,this.D , rslt);
+     //console.log('p : ', this.K, 'i : '  ,this.I,  'd :', this.D , 'sum' ,  rslt);
      return (rslt<-1) ? - 1 : ((rslt>1) ? 1 : rslt)
 }
 
 simulator.regulator.prototype.execute = function(){
     if (this.autostate && this.actuator){
-        //console.log('delt',this.delt());
-        this.actuator.spdiff(this.delt()/5);
+        var ts = this;
+        var tmp = new Date();
+        var curtime = tmp.getTime() + 0;
+        if (this.lasttime && this.error){
+            var difftime = curtime - this.lasttime;
+            this.I =  this.kp * (this.error * (curtime - this.lasttime)) / (this.ki ? this.ki : Infinity) / 1000;}
+        
+        this.lasttime = curtime + 0 ;
+        //console.log('integral ',this.error, difftime, this.I );
+        if (this.I)
+        setTimeout( function() {console.log( tmp , 'add integral', ts.I * 100);ts.actuator.spdiff(ts.I * 100);} , 1);
+        
     }
     if (this.actuator){
        this.actuator.execute(); 
