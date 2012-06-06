@@ -274,8 +274,8 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
     var rootbodyreplace = function(x,y ,func){
         rootbody.style.display='none';
         setTimeout( function(){
-            rootbody.setAttribute('x', x + parseInt(rootbody.getAttribute('x')));
-            rootbody.setAttribute('y', y + parseInt(rootbody.getAttribute('y')));
+            rootbody.setAttribute('x', x/* + parseInt(rootbody.getAttribute('x'))*/);
+            rootbody.setAttribute('y', y/* + parseInt(rootbody.getAttribute('y'))*/);
             //console.log('offset',x, y/* parseInt(rootbody.getAttribute('x')), x - parseInt(rootbody.getAttribute('x')),y - parseInt(rootbody.getAttribute('y'))*/);
             if (func ) func();
             rootbody.style.display='block';
@@ -414,7 +414,8 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
                     el.hoverrectrootel.parentNode.removeChild(el.hoverrectrootel);
                     return;
                 }     
-                rootbodyreplace(parseInt(ev.x - el.hoverrect.capturedstart.x),parseInt(ev.y - el.hoverrect.capturedstart.y),
+                rootbodyreplace(parseInt(ev.x - el.hoverrect.capturedstart.x) +  parseInt(rootbody.getAttribute('x')),
+                                parseInt(ev.y - el.hoverrect.capturedstart.y) +  parseInt(rootbody.getAttribute('y')),
                                          function(){el.hoverrectrootel.parentNode.removeChild(el.hoverrectrootel);} );
             }        
         }

@@ -842,6 +842,12 @@ extension-element-prefixes="svg">
                 <xsl:attribute name="stroke-linecap">
                     <xsl:value-of select="@stroke-linecap"/>
                 </xsl:attribute>
+                <xsl:attribute name="stroke-dashoffset">
+                    <xsl:value-of select="@stroke-dashoffset"/>
+                </xsl:attribute>
+                <xsl:attribute name="stroke-dasharray">
+                    <xsl:value-of select="@stroke-dasharray"/>
+                </xsl:attribute>                
                 <xsl:call-template name="apply_svg_filter"/>                 
                 <xsl:attribute name="style">
                     <xsl:value-of select="@style"/>
