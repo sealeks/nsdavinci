@@ -156,8 +156,18 @@ function exit(){
 
 
 function init_project_controller(){
-    libutil.global.getStartupDoc(document);   
-    libutil.project.init_form();
+    libutil.global.getStartupDoc(document);
+    try{
+    var elp=libutil.global.getStartupDoc().getElementsByTagName('project')[0];
+    console.log(elp);
+    var projectPath=elp.getAttribute('path');
+    console.log(projectPath);
+    $$global().loadwin = window.open(projectPath+ 'load.xml', 'initialisate' , "caption=initialisate;left=0%;top=0%;width=100%;height=100%;decorated=no;allwaystop=yes");
+    setTimeout(function(){libutil.project.init_form();}, 1500);}
+    catch(error){
+        console.error('init_project_controller error:',error);
+        libutil.project.init_form();}
+    
     if (window.$$editable && window.$$editable() && dsutl.toolwin) 
         dsutl.toolwin.getMainWindow();
     var tmp = window.$$global ? window.$$global() : null;
@@ -268,7 +278,7 @@ libutil.project.init_form = function(){
     var doc = libutil.global.getStartupDoc();
     if (doc){
         try{
-            
+                                   
             var tmp=$$global();
             var elp=doc.getElementsByTagName('project')[0];
             var projectPath=elp.getAttribute('path');
@@ -285,6 +295,11 @@ libutil.project.init_form = function(){
             if (ellib)  {     
                 for (var i=0; i<ellib.length;++i)
                     libutil.project.addtoliblist(ellib[i],i);}
+                
+            if ($$global().loadwin) setTimeout(function(){$$global().loadwin.close()}, 3000);                
+                
+
+            
                 
             libutil.project.setXSLTScriptList();     
 
