@@ -35,6 +35,24 @@
         </xsd:restriction>
     </xsd:simpleType>   
     
+    <!--xsd:simpleType name="stroke-dasharray">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="miter"></xsd:enumeration>
+            <xsd:enumeration value="round"></xsd:enumeration>
+            <xsd:enumeration value="bevel"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType> 
+    
+        <xsd:simpleType name="stroke-dashoffset">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="miter"></xsd:enumeration>
+            <xsd:enumeration value="round"></xsd:enumeration>
+            <xsd:enumeration value="bevel"></xsd:enumeration>
+            <xsd:enumeration value=""></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType-->
+    
     <!-- ////////////////////////////////////////////  -->
          
     <xsd:element name="circle">
@@ -213,6 +231,8 @@
             <xsd:attribute name="stroke-opacity-binding" type="xsd:string"/>            
             <xsd:attribute name="stroke-binding" type="lib:expression"/>
             <xsd:attribute name="stroke-linecap" type="svg:stroke-linecap"/>
+            <xsd:attribute name="stroke-dashoffset" type="xsd:string"/>
+            <xsd:attribute name="stroke-dasharray" type="xsd:string"/>
             
             <xsd:attribute name="filter" type="svg:filtertype"/> 
             <xsd:attribute name="style" type="xsd:string"/>  
