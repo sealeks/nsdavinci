@@ -246,7 +246,8 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
     if (btnpos.dir===0 || btnpos.dir==2)
         x = btnpos.width - 2 * sizeR; 
     if (btnpos.dir==1 || btnpos.dir==3)
-        y = btnpos.height - 2 * sizeR;    
+        y = btnpos.height - 2 * sizeR;   
+    
     this.closebutton = libutil.svg.create_element( 'image', btnparent,   [{
         name : 'x' , 
         value: x
@@ -273,8 +274,9 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
     var rootbodyreplace = function(x,y ,func){
         rootbody.style.display='none';
         setTimeout( function(){
-            rootbody.setAttribute('x', x);
-            rootbody.setAttribute('y', y);
+            rootbody.setAttribute('x', x + parseInt(rootbody.getAttribute('x')));
+            rootbody.setAttribute('y', y + parseInt(rootbody.getAttribute('y')));
+            console.log('offset',x, y/* parseInt(rootbody.getAttribute('x')), x - parseInt(rootbody.getAttribute('x')),y - parseInt(rootbody.getAttribute('y'))*/);
             if (func ) func();
             rootbody.style.display='block';
             rootbody.needofsetrect = rootbody.getBoundingClientRect();
@@ -288,15 +290,37 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
 
         
     var cteateshadowboby = function(){
+        
+        el.hoverrectrootel = libutil.svg.create_element('svg', rootbody.parentNode  , [
+            {   name : 'x', 
+                value:  rootbody.x.baseVal.value-400
+            },
 
-        el.hoverrect = libutil.svg.create_element('rect', rootbody  , [{
+            {
+                name : 'y', 
+                value:  rootbody.y.baseVal.value-400
+            },
+
+            {
+                name : 'width', 
+                value: rootbody.width.baseVal.value+800
+            },
+
+            {
+                name : 'height', 
+                value: rootbody.height.baseVal.value+800
+            }]);
+        
+    
+
+        el.hoverrectshadow = libutil.svg.create_element('rect', el.hoverrectrootel  , [{
             name : 'x', 
-            value:  rootbody.x.baseVal.value
+            value:  400
         },
 
         {
             name : 'y', 
-            value:  rootbody.y.baseVal.value
+            value:  400
         },
 
         {
@@ -329,6 +353,37 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
             value : mainlib.POPUP_MOVE_STYLE
         }]);
     
+           el.hoverrect = libutil.svg.create_element('rect', el.hoverrectrootel  , [{
+                name : 'x', 
+                value:  0
+            },
+
+            {
+                name : 'y', 
+                value:  0
+            },
+
+            {
+                name : 'width', 
+                value: rootbody.width.baseVal.value+800
+            },
+
+            {
+                name : 'height', 
+                value: rootbody.height.baseVal.value+800
+            },
+ 
+            {
+                name : 'cursor', 
+                value: 'pointer'
+            },             
+
+
+            {
+                name : 'style', 
+                value : 'opacity: 0; fill: white;'
+            }]);
+    
     
     
         el.hoverrect.onselectstart = function(ev){
@@ -344,8 +399,8 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
                     var shiftX = el.hoverrect.captured.x - ev.x;
                     var shiftY = el.hoverrect.captured.y - ev.y;
                     
-                    el.hoverrect.setAttribute('x', parseInt(el.hoverrect.getAttribute('x'))-shiftX );
-                    el.hoverrect.setAttribute('y', parseInt(el.hoverrect.getAttribute('y'))-shiftY );
+                    el.hoverrectrootel.setAttribute('x', parseInt(el.hoverrectrootel.getAttribute('x'))-shiftX );
+                    el.hoverrectrootel.setAttribute('y', parseInt(el.hoverrectrootel.getAttribute('y'))-shiftY );
                     el.hoverrect.changerect =true;
                     el.hoverrect.captured=ev;
                 }
@@ -356,16 +411,17 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
             if (ev.target==el.hoverrect){
                 el.hoverrect.captured = undefined;                
                 if (!el.hoverrect.changerect){
-                    el.hoverrect.parentNode.removeChild(el.hoverrect);
+                    el.hoverrectrootel.parentNode.removeChild(el.hoverrectrootel);
                     return;
                 }     
-                rootbodyreplace(parseInt(el.hoverrect.getAttribute('x')),parseInt(el.hoverrect.getAttribute('y')),
-                                         function(){el.hoverrect.parentNode.removeChild(el.hoverrect);} );
+                rootbodyreplace(parseInt(ev.x - el.hoverrect.capturedstart.x),parseInt(ev.y - el.hoverrect.capturedstart.y),
+                                         function(){el.hoverrectrootel.parentNode.removeChild(el.hoverrectrootel);} );
             }        
         }
     
         el.hoverrect.onmousedown = function(ev){
             el.hoverrect.captured = ev;
+            el.hoverrect.capturedstart = ev;
             //console.log('shadow mousedown');
             ev.stopPropagation();            
         }
@@ -377,7 +433,7 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
             }          
         }        
     
-    rootbody.parentNode.appendChild(el.hoverrect);}   
+    /*rootbody.parentNode.appendChild(el.hoverrect);*/}   
 
     this.closebutton.setAttributeNS(libutil.XLINK_NAMESPACE_URL, 'xlink:href', '../util/css/res/close.svg' );
 

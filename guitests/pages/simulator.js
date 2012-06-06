@@ -150,7 +150,6 @@ simulator.actuator.prototype.spdiff = function(val){
 }
 
 simulator.actuator.prototype.execute = function(){
-    //alert(' (abs(' + this.pos + ' - '+ this.sp + ') < ' + this.tick + ') ? (' + this.pos + ' @ (' + this.pos + ' + ((' + this.sp + '-' + this.pos + ')<0 ? (- ' + this.tick + ') : ('+ this.tick + ')  ))) : 0');
     $$('(abs(' + this.pos + ' - '+ this.sp + ') > ' + this.tick + ') ? (' + this.pos + ' @ (' + this.pos + ' + (' + this.sp + '<' + this.pos + ' ? (- ' + this.tick + ') : ('+ this.tick + ')  ))) : 0 ');
 }
 
@@ -173,9 +172,9 @@ simulator.regulator  = function(val, valsp, pos, possp, auto,  rev, kp , ki , kd
    
     
   
-    this.kp= kp===undefined ? 4.8 : kp;
-    this.ki= ki===undefined ? 2.0 : ki;
-    this.kd= kd===undefined ? 20 : kd;
+    this.kp= kp===undefined ? 1 : kp;
+    this.ki= ki===undefined ? 10 : ki;
+    this.kd= kd===undefined ? 1 : kd;
     this.tick= tick;
     
    
