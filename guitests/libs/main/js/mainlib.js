@@ -276,7 +276,7 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
         setTimeout( function(){
             rootbody.setAttribute('x', x + parseInt(rootbody.getAttribute('x')));
             rootbody.setAttribute('y', y + parseInt(rootbody.getAttribute('y')));
-            console.log('offset',x, y/* parseInt(rootbody.getAttribute('x')), x - parseInt(rootbody.getAttribute('x')),y - parseInt(rootbody.getAttribute('y'))*/);
+            //console.log('offset',x, y/* parseInt(rootbody.getAttribute('x')), x - parseInt(rootbody.getAttribute('x')),y - parseInt(rootbody.getAttribute('y'))*/);
             if (func ) func();
             rootbody.style.display='block';
             rootbody.needofsetrect = rootbody.getBoundingClientRect();
