@@ -3821,10 +3821,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         </xsl:with-param>
                         <xsl:with-param name="gradienttype">
                             <xsl:choose>
-                                <xsl:when test="boolean(@gradtype='v')">
+                                <xsl:when test="boolean($gradtype='v')">
                                     <xsl:text>tb</xsl:text>
                                 </xsl:when>
-                                <xsl:when test="boolean(@gradtype='h')">
+                                <xsl:when test="boolean($gradtype='h')">
                                     <xsl:text>lr</xsl:text>    
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -3845,14 +3845,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:call-template name="apply_lib_gradient">
                         <xsl:with-param name="id">
                             <xsl:value-of select="@id"/>
-                            <xsl:text>_fillrect_gradient</xsl:text>
+                            <xsl:text>_fillslider_gradient</xsl:text>
                         </xsl:with-param>
                         <xsl:with-param name="gradienttype">
                             <xsl:choose>
-                                <xsl:when test="boolean(@gradtype='v')">
+                                <xsl:when test="boolean($gradtype='v')">
                                     <xsl:text>tb</xsl:text>
                                 </xsl:when>
-                                <xsl:when test="boolean(@gradtype='h')">
+                                <xsl:when test="boolean($gradtype='h')">
                                     <xsl:text>lr</xsl:text>    
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -4614,7 +4614,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:param name="headerparam-sp"/>    
         <xsl:param name="format"/>
         <xsl:param name="disable"/>  
-        <xsl:param name="color"/>  
+        <xsl:param name="color"/> 
+        <xsl:param name="color2"/> 
         <mlib:sensor x="5" height="110" width="240" stroke="#ccc" stroke-width="1" r="4"  color1="#333" color2="#666" caption="" alighn="center" fontcolor="#eee">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -4639,7 +4640,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:attribute>
             <xsl:attribute name="fontcolor">
                 <xsl:value-of select="$color"/>                            
-            </xsl:attribute>
+            </xsl:attribute>               
             <xsl:attribute name="format">
                 <xsl:choose>
                     <xsl:when test="not(normalize-space($format)='')">  
@@ -4685,7 +4686,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>
             </xsl:attribute>                
         </mlib:sensor>   
-        <mlib:slider x="3" height="12" width="244"  fillenvironment="" color1="#333" color2="#111" gradient-type="lr"  fillcolor1="#0e0" fillcolor2="#0a0">
+        <mlib:slider x="3" height="12" width="244"  fillenvironment="" color1="#333" color2="#111" gradient-type="lr"  > 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_slider_</xsl:text> 
@@ -4704,9 +4705,21 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:value-of select="$disable"/> 
                     </xsl:when> 
                 </xsl:choose>
-            </xsl:attribute>             
+            </xsl:attribute>
+            <xsl:attribute name="fillcolor1">
+                <xsl:value-of select="$color"/>                            
+            </xsl:attribute> 
+            <xsl:attribute name="fillcolor2">
+                <xsl:value-of select="$color2"/>                            
+            </xsl:attribute>
+            <xsl:attribute name="slidercolor2">
+                <xsl:value-of select="$color"/>                            
+            </xsl:attribute> 
+            <xsl:attribute name="slidercolor1">
+                <xsl:text>#a00</xsl:text>                             
+            </xsl:attribute>
         </mlib:slider>                    
-        <mlib:rect x="15" height="5" width="220" stroke="#000" r="1" stroke-width="0.5" fillenvironment=""  fillcolor1="#0e0" fillcolor2="#0a0" color1="#333" color2="#111">
+        <mlib:rect x="15" height="5" width="220" stroke="#000" r="1" stroke-width="0.5" fillenvironment=""  color1="#333" color2="#111"> 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_rect_</xsl:text> 
@@ -4717,7 +4730,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:attribute>   
             <xsl:attribute name="y">
                 <xsl:value-of select="$shift + 72"/>                            
-            </xsl:attribute>               
+            </xsl:attribute> 
+            <xsl:attribute name="fillcolor1">
+                <xsl:value-of select="$color"/>                            
+            </xsl:attribute> 
+            <xsl:attribute name="fillcolor2">
+                <xsl:value-of select="$color2"/>                            
+            </xsl:attribute>            
         </mlib:rect>
         <text x="9"  fill="#eee" style="font-size: 11;">
             <xsl:attribute name="id">
@@ -4797,7 +4816,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:text>_name</xsl:text>
             </xsl:attribute>             
         </text>  
-        <mlib:button x="65" y="185" height="35" width="35" caption="Д" r="4" type="tumbler" color1="#0A0" color2="#0F0" oncolor1="#333" oncolor2="#111" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;">
+        <mlib:button x="65" y="185" height="35" width="35" caption="Д" r="4"  color1="#0A0" color2="#0F0" oncolor1="#333" oncolor2="#111" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;">
              <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_auto_</xsl:text> 
@@ -4806,12 +4825,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:attribute>        
              <xsl:attribute name="param">
                 <xsl:value-of select="$param"/>
+                <xsl:text> @ 0</xsl:text>
             </xsl:attribute>  
               <xsl:attribute name="state">
                 <xsl:value-of select="$param"/>
             </xsl:attribute>             
         </mlib:button>         
-        <mlib:button x="150" y="185" height="35" width="35" caption="А" r="4" type="tumbler" color1="#333" color2="#111" oncolor1="#0A0" oncolor2="#0F0" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;">
+        <mlib:button x="150" y="185" height="35" width="35" caption="А" r="4"  color1="#333" color2="#111" oncolor1="#0A0" oncolor2="#0F0" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;">
              <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_auto_</xsl:text> 
@@ -4820,6 +4840,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:attribute>   
              <xsl:attribute name="param">
                 <xsl:value-of select="$param"/>
+                <xsl:text> @ 1</xsl:text>
             </xsl:attribute>  
               <xsl:attribute name="state">
                 <xsl:value-of select="$param"/>
@@ -4898,8 +4919,15 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                         <xsl:otherwise>
                                             <xsl:text>#00d</xsl:text>
                                         </xsl:otherwise> 
-                                    </xsl:choose>
+                                    </xsl:choose>                                    
                                 </xsl:with-param>
+                                <xsl:with-param name="color2"> 
+                                    <xsl:choose>
+                                        <xsl:when test="not(normalize-space(@param-color2)='')">
+                                            <xsl:value-of select="@param-color2"/>
+                                        </xsl:when> 
+                                    </xsl:choose>
+                                </xsl:with-param>                                  
                             </xsl:call-template> 
                             <xsl:call-template name="mlib_regulator_autocontrol"> 
                                 <xsl:with-param name="shift" select="162"/>
@@ -4925,6 +4953,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                             <xsl:text>#0e0</xsl:text>
                                         </xsl:otherwise> 
                                     </xsl:choose>
+                                </xsl:with-param> 
+                                <xsl:with-param name="color2"> 
+                                    <xsl:choose>
+                                        <xsl:when test="not(normalize-space(@actuator-color2)='')">
+                                            <xsl:value-of select="@param-color2"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>#0a0</xsl:text>
+                                        </xsl:otherwise> 
+                                    </xsl:choose>
                                 </xsl:with-param>                                
                             </xsl:call-template>                             
                         </xsl:when> 
@@ -4945,6 +4983,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <xsl:text>#0e0</xsl:text>
+                                        </xsl:otherwise> 
+                                    </xsl:choose>
+                                </xsl:with-param>
+                                <xsl:with-param name="color2"> 
+                                    <xsl:choose>
+                                        <xsl:when test="not(normalize-space(@actuator-color2)='')">
+                                            <xsl:value-of select="@param-color2"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>#0a0</xsl:text>
                                         </xsl:otherwise> 
                                     </xsl:choose>
                                 </xsl:with-param>  
