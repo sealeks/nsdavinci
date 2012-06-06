@@ -323,11 +323,10 @@ namespace dvnci {
                         if (terminated()) break;
                         boost::xtime xt_loop;
                         bool updated = internal_expr_exec();
-                        updated = updated ? true : internal_alarm_exec();
-                        updated = updated ? true : internal_trend_exec();
-                        newtrendset.clear();
-                        updated = updated ? true : internal_journal_exec();
-                        updated = updated ? true : internal_debug_exec();                          
+                        internal_alarm_exec();
+                        internal_trend_exec();
+                        internal_journal_exec();
+                        internal_debug_exec();                          
                         addmillisec_to_now(xt_loop, updated ? 200 : 600);
                         boost::thread::sleep(xt_loop);}
                     if (terminated()) break;}
@@ -501,8 +500,8 @@ namespace dvnci {
                     short_values_table tmptable;
                     for (str_vect::const_iterator ittag = listener_ptr->tags().begin(); ittag != listener_ptr->tags().end(); ++ittag) {
                         short_value val = intf->value_shv(*ittag);
-                        if (val.time().is_special())
-                            val.time(now());
+                        //if (val.time().is_special())
+                        val.time(now());
                         tmptable.insert(short_values_row(tag_info_pair(*ittag, BUFFER_READ_CURRENT) , short_value_vect(1, val)));}
                     (*it)->set(tmptable);
                     updatemap.insert(*it);}}                       
