@@ -336,11 +336,6 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
            ev.preventDefault();
            return false;}
        
-         el.hoverrect.ondragstart = function(ev){
-           ev.stopPropagation();
-           ev.preventDefault();
-           return false;}
-       
           
     
         el.hoverrect.onmousemove = function(ev){
@@ -378,7 +373,8 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
         el.hoverrect.onmouseout = function(ev){
             if (ev.target==el.hoverrect && el.hoverrect.captured){
                 el.hoverrect.onmouseup(ev);
-                ev.stopPropagation();}          
+                ev.stopPropagation();
+            }          
         }        
     
     rootbody.parentNode.appendChild(el.hoverrect);}   

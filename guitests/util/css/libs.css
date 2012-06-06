@@ -243,6 +243,10 @@ text-anchor: end;
 dominant-baseline: central; 
 -webkit-user-select: none;}
 
+*{
+ -webkit-user-select: none;   
+}
+
 
 
 
