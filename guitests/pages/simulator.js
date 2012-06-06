@@ -285,7 +285,7 @@ simulator.regulator.prototype.diffevent = function(event){
    
         this.kplast = event.value;
 
-        console.log('proportial ',event.value, this.K );
+        //console.log('proportial ',event.value, this.K );
         
         if (this.K)
         setTimeout( function() {/*console.log('add',ts.K * 100)*/;ts.actuator.spdiff(ts.K * 100);} , 1);
