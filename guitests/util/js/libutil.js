@@ -296,7 +296,7 @@ libutil.project.init_form = function(){
                 for (var i=0; i<ellib.length;++i)
                     libutil.project.addtoliblist(ellib[i],i);}
                 
-            if ($$global().loadwin) setTimeout(function(){$$global().loadwin.close()}, 3000);                
+            if ($$global().loadwin) setTimeout(function(){$$global().loadwin.close()}, 5000);                
                 
 
             
