@@ -64,22 +64,23 @@ add_simulation ( new simulator.initializer('level' , 50 , 50));
 add_simulation ( new simulator.initializer('level0' , 50 , 50));
 add_simulation ( new simulator.initializer('level_sp' , 50 , 50));
 
+add_simulation ( new simulator.initializer('v1on' , 0 , 0));
+add_simulation ( new simulator.initializer('v1off' , 1 , 0));
+add_simulation ( new simulator.initializer('rv1on' , 0 , 0));
+add_simulation ( new simulator.initializer('rv1off' , 0 , 0));
+add_simulation ( new simulator.initializer('dv1on' , 0 , 0));
+add_simulation ( new simulator.initializer('dv1off' , 0 , 0));
+
 add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-out_pos)/60000 * level.maxeu' ,null));
 
 add_simulation ( new simulator.actuator('in_pos' , 'in_sp'));
-//add_simulation ( new simulator.actuator('out_pos' , 'out_sp'));
 
 add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp', 'auto' , true, 'level_p', 'level_i', 'level_d' ));
 
-//add_simulation ( new simulator.initializer('m1::c1' , 1 , 0));
-//add_simulation ( new simulator.valueobserver('m1::h2' , null , 'm1::h1' ,null));
-//add_simulation ( new simulator.valueobserver('m1::h3' , null , 'm1::h2' ,null));
-
-//setInterval(function(){$$('m1::c1 @ (m1::c1 ? 0 : 1)')}, 2000 );
-//setInterval(function(){$$('m1::h1 @ (now.sec)')}, 3000 );
-//setInterval(function(){$$('#')}, 20000 );
-
-
+add_simulation (new simulator.valve('v1on', 'v1off' , 'dv1on', 'dv1off', 'rv1on', 'rv1off', 5000, 5000 ));
+//add_simulation (new simulator.valve('v1on', 'v1off' , 'dv1on', /*'dv1off'*/null, 'rv1on', /*'rv1off'*/null, 5000, 1 ));
+//add_simulation (new simulator.valve('v1on', 'v1off' , /*'dv1on'*/null, 'dv1off', /*'rv1on'*/null, 'rv1off', 1, 5000 ));
+//add_simulation (new simulator.valve('v1on', null , null , null, 'rv1on', null, 5000, 1 ));
   
 
 };
