@@ -2638,13 +2638,27 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:choose>
             <xsl:when test="not(normalize-space(@param)='')">                  
                 <xsl:choose>
-                    <xsl:when test="((@sensorevent='valueset') or (@sensorevent='graph'))">                  
+                    <xsl:when test="@sensorevent='valueset' and not(normalize-space(@disable)='')">                  
+                        <xsl:attribute name="cursor">
+                            <xsl:text>#{ </xsl:text>
+                            <xsl:value-of select="@disable"/>
+                            <xsl:text>  ?  'none' : 'pointer' :default none }</xsl:text>                            
+                        </xsl:attribute>                       
+                    </xsl:when>
+                    <xsl:when test="@sensorevent='valueset'">                  
                         <xsl:attribute name="cursor">
                             <xsl:text>#{ (</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>).valid  ? 'pointer' : 'none' :default none }</xsl:text>                            
                         </xsl:attribute>                       
-                    </xsl:when>
+                    </xsl:when>                    
+                    <xsl:when test="@sensorevent='graph'">                  
+                        <xsl:attribute name="cursor">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? 'pointer' : 'none' :default none }</xsl:text>                            
+                        </xsl:attribute>                       
+                    </xsl:when>                    
                     <xsl:otherwise>
                         <xsl:attribute name="cursor">
                             <xsl:text>none</xsl:text>
@@ -4440,13 +4454,20 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="mlib_slider_cursor">
         <xsl:choose>
+            <xsl:when test="not(normalize-space(@param)='') and not(normalize-space(@disable)='')">                                
+                <xsl:attribute name="cursor">
+                    <xsl:text>#{ </xsl:text>
+                    <xsl:value-of select="@disable"/>
+                    <xsl:text>  ?  'none' : 'pointer' :default none }</xsl:text>                       
+                </xsl:attribute>                       
+            </xsl:when>
             <xsl:when test="not(normalize-space(@param)='')">                                
                 <xsl:attribute name="cursor">
                     <xsl:text>#{ (</xsl:text>
                     <xsl:value-of select="@param"/>
                     <xsl:text>).valid  ? 'pointer' : 'none' :default none }</xsl:text>                            
                 </xsl:attribute>                       
-            </xsl:when>
+            </xsl:when>            
             <xsl:otherwise>
                 <xsl:attribute name="cursor">
                     <xsl:text>none</xsl:text>
@@ -4686,6 +4707,232 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>
             </xsl:attribute>                
         </mlib:sensor>   
+        <mlib:button x="200"  height="15" width="15" caption="+"  alighn="center"  dsblfontstyle="font-size: 4; fill: #333;" disable="level_sp &gt;= level_sp.maxeu">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_buttoninc_</xsl:text>
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_sp</xsl:text>
+            </xsl:attribute>   
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 28"/>                            
+            </xsl:attribute>
+            <xsl:attribute name="fontstyle">
+                <xsl:text>font-size: 4; fill: </xsl:text> 
+                <xsl:value-of select="$color"/>
+                <xsl:text>;</xsl:text>
+            </xsl:attribute> 
+            <xsl:attribute name="onclick">
+                <xsl:text>$$('((</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text> &lt;</xsl:text> 
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>.maxeu) &amp;&amp; (</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>.valid)) ? (</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>@ (</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>+ (</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>.maxeu-</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>.mineu) / 100)) : 0')</xsl:text> 
+                <xsl:text>;</xsl:text>
+            </xsl:attribute>
+            <xsl:attribute name="disable">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space($disable)='')">
+                        <xsl:value-of select="$param-sp"/> 
+                        <xsl:text>&gt;=</xsl:text>
+                        <xsl:value-of select="$param-sp"/>
+                        <xsl:text>.maxeu ||</xsl:text>
+                        <xsl:value-of select="$disable"/> 
+                    </xsl:when> 
+                    <xsl:otherwise>
+                        <xsl:value-of select="$param-sp"/> 
+                        <xsl:text>&gt;=</xsl:text>
+                        <xsl:value-of select="$param-sp"/>
+                        <xsl:text>.maxeu</xsl:text>
+                    </xsl:otherwise> 
+                </xsl:choose>                
+            </xsl:attribute> 
+        </mlib:button>
+        <mlib:button x="200" height="15" width="15" caption="-"  alighn="center"  dsblfontstyle="font-size: 4; fill: #333;">        
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_buttondec_</xsl:text>
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_sp</xsl:text>
+            </xsl:attribute> 
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 40"/>                            
+            </xsl:attribute> 
+            <xsl:attribute name="fontstyle">
+                <xsl:text>font-size: 4; fill: </xsl:text> 
+                <xsl:value-of select="$color"/>
+                <xsl:text>;</xsl:text>
+            </xsl:attribute>  
+            <xsl:attribute name="onclick">
+                <xsl:text>$$('((</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text> &gt;</xsl:text> 
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>.mineu) &amp;&amp; (</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>.valid)) ? (</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>@ (</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>- (</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>.maxeu-</xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>.mineu) / 100)) : 0')</xsl:text> 
+                <xsl:text>;</xsl:text>
+            </xsl:attribute> 
+            <xsl:attribute name="disable">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space($disable)='')">
+                        <xsl:value-of select="$param-sp"/> 
+                        <xsl:text>&lt;=</xsl:text>
+                        <xsl:value-of select="$param-sp"/>
+                        <xsl:text>.mineu ||</xsl:text>
+                        <xsl:value-of select="$disable"/> 
+                    </xsl:when> 
+                    <xsl:otherwise>
+                        <xsl:value-of select="$param-sp"/> 
+                        <xsl:text>&lt;=</xsl:text>
+                        <xsl:value-of select="$param-sp"/>
+                        <xsl:text>.mineu</xsl:text>
+                    </xsl:otherwise> 
+                </xsl:choose>                
+            </xsl:attribute>             
+        </mlib:button>
+        <line stroke="#eee" stroke-width="4" x1="0" y1="0" x2="221" y2="0" stroke-dasharray="1 109">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_scalehigh_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_name</xsl:text>
+            </xsl:attribute>   
+            <xsl:attribute name="transform">
+                <xsl:text>translate(15 ,</xsl:text> 
+                <xsl:value-of select="$shift + 94"/> 
+                <xsl:text>)</xsl:text>
+            </xsl:attribute>               
+        </line> 
+        <line stroke="#eee" stroke-width="2"  x1="0" y1="0" x2="221" y2="0" stroke-dasharray="1 21">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_scalelow_</xsl:text> 
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_name</xsl:text>
+            </xsl:attribute>   
+            <xsl:attribute name="transform">
+                <xsl:text>translate(15 ,</xsl:text> 
+                <xsl:value-of select="$shift + 94"/> 
+                <xsl:text>)</xsl:text>
+            </xsl:attribute>               
+        </line>  
+        <text x="8" fill="#eee"  style="text-anchor: start; font-size: 8;">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_textleftval_</xsl:text>  
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_pos</xsl:text> 
+            </xsl:attribute>   
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 105"/>                            
+            </xsl:attribute>    
+            <xsl:attribute name="text">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space($param)='')">  
+                        <xsl:text>#{ format(</xsl:text>
+                        <xsl:value-of select="$param"/>
+                        <xsl:text>.mineu , '</xsl:text> 
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space($format)='')">
+                                <xsl:value-of select="$format"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>%3.0f</xsl:text>
+                            </xsl:otherwise> 
+                        </xsl:choose>                                    
+                        <xsl:text>') :default 0}</xsl:text> 
+                    </xsl:when> 
+                    <xsl:otherwise>
+                        <xsl:text>0</xsl:text>
+                    </xsl:otherwise> 
+                </xsl:choose>  
+            </xsl:attribute>              
+        </text> 
+        <text x="240" fill="#eee"  style="text-anchor: end; font-size: 8;">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_textrightval_</xsl:text>  
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_pos</xsl:text> 
+            </xsl:attribute>   
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 105"/>                            
+            </xsl:attribute>    
+            <xsl:attribute name="text">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space($param)='')">  
+                        <xsl:text>#{ format(</xsl:text>
+                        <xsl:value-of select="$param"/>
+                        <xsl:text>.maxeu , '</xsl:text> 
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space($format)='')">
+                                <xsl:value-of select="$format"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>%3.0f</xsl:text>
+                            </xsl:otherwise> 
+                        </xsl:choose>                                    
+                        <xsl:text>') :default 100}</xsl:text> 
+                    </xsl:when> 
+                    <xsl:otherwise>
+                        <xsl:text>100</xsl:text>
+                    </xsl:otherwise> 
+                </xsl:choose>  
+            </xsl:attribute>              
+        </text> 
+        <text x="125" fill="#eee"  style="text-anchor: middle; font-size: 8;">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_textcenterval_</xsl:text>  
+                <xsl:value-of select="$preff"/>
+                <xsl:text>_pos</xsl:text> 
+            </xsl:attribute>   
+            <xsl:attribute name="y">
+                <xsl:value-of select="$shift + 105"/>                            
+            </xsl:attribute>    
+            <xsl:attribute name="text">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space($param)='')">  
+                        <xsl:text>#{ format((</xsl:text>
+                        <xsl:value-of select="$param"/>
+                        <xsl:text>.maxeu -</xsl:text>
+                        <xsl:value-of select="$param"/>
+                        <xsl:text>.mineu) /2 , '</xsl:text> 
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space($format)='')">
+                                <xsl:value-of select="$format"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>%3.0f</xsl:text>
+                            </xsl:otherwise> 
+                        </xsl:choose>                                    
+                        <xsl:text>') :default 50}</xsl:text>
+                    </xsl:when> 
+                    <xsl:otherwise>
+                        <xsl:text>50</xsl:text>
+                    </xsl:otherwise> 
+                </xsl:choose>  
+            </xsl:attribute>              
+        </text>         
         <mlib:slider x="3" height="12" width="244"  fillenvironment="" color1="#333" color2="#111" gradient-type="lr"  > 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -4718,7 +4965,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="slidercolor1">
                 <xsl:text>#a00</xsl:text>                             
             </xsl:attribute>
-        </mlib:slider>                    
+        </mlib:slider>  
+
         <mlib:rect x="15" height="5" width="220" stroke="#000" r="1" stroke-width="0.5" fillenvironment=""  color1="#333" color2="#111"> 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -4749,8 +4997,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:value-of select="$shift + 28"/>                            
             </xsl:attribute>   
             <xsl:attribute name="text">
-                <xsl:value-of select="$headerparam"/>                            
-            </xsl:attribute>   
+                <xsl:text>#{ </xsl:text>
+                <xsl:value-of select="$param"/>
+                <xsl:text>.comment!='' ? '</xsl:text> 
+                <xsl:value-of select="$headerparam"/>
+                <xsl:text>' : '</xsl:text>
+                <xsl:value-of select="$headerparam"/> 
+                <xsl:text>' :default </xsl:text>
+                <xsl:value-of select="$headerparam"/>
+                <xsl:text>}</xsl:text>
+            </xsl:attribute>                              
         </text>   
         <text x="136"  fill="#eee" style="font-size: 11;">
             <xsl:attribute name="id">
@@ -4763,10 +5019,18 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:value-of select="$shift + 28"/>                            
             </xsl:attribute>   
             <xsl:attribute name="text">
-                <xsl:value-of select="$headerparam-sp"/>                            
-            </xsl:attribute>              
+                <xsl:text>#{ </xsl:text>
+                <xsl:value-of select="$param-sp"/>
+                <xsl:text>.comment!='' ? '</xsl:text> 
+                <xsl:value-of select="$headerparam-sp"/>
+                <xsl:text>' : '</xsl:text>
+                <xsl:value-of select="$headerparam-sp"/> 
+                <xsl:text>' :default </xsl:text>
+                <xsl:value-of select="$headerparam-sp"/>
+                <xsl:text>}</xsl:text>
+            </xsl:attribute>            
         </text>  
-        <text x="15" fill="#eee" id="text2" style="font-size: 11;">
+        <text x="15" fill="#eee" style="font-size: 11;">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_text_</xsl:text>  
@@ -4777,10 +5041,18 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:value-of select="$shift + 67"/>                            
             </xsl:attribute>    
             <xsl:attribute name="text">
-                <xsl:value-of select="$headerparam"/>  
+                <xsl:text>#{ </xsl:text>
+                <xsl:value-of select="$param"/>
+                <xsl:text>.comment!='' ? '</xsl:text> 
+                <xsl:value-of select="$headerparam"/>
+                <xsl:text>' : '</xsl:text>
+                <xsl:value-of select="$headerparam"/> 
+                <xsl:text>' :default </xsl:text>
+                <xsl:value-of select="$headerparam"/>
+                <xsl:text>}</xsl:text>
             </xsl:attribute>              
         </text> 
-        <text x="9" fill="#eee" id="text2" style="font-size: 12;">
+        <text x="9" fill="#eee" style="font-size: 12;">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_text_</xsl:text> 
@@ -4793,7 +5065,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="text">
                 <xsl:value-of select="$header"/>                            
             </xsl:attribute>              
-        </text>         
+        </text>
+
     </xsl:template> 
     
     <xsl:template name="mlib_regulator_autocontrol">
@@ -4910,7 +5183,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:with-param name="format" select="@param-format"/>
                                 <xsl:with-param name="header">Управление регулятором</xsl:with-param>
                                 <xsl:with-param name="headerparam">Параметер</xsl:with-param>
-                                <xsl:with-param name="headerparam-sp">Задание</xsl:with-param>  
+                                <xsl:with-param name="headerparam-sp">Задание</xsl:with-param>                                
                                 <xsl:with-param name="color"> 
                                     <xsl:choose>
                                         <xsl:when test="not(normalize-space(@param-color)='')">
@@ -4943,7 +5216,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:with-param name="header">Управление ИМ</xsl:with-param>
                                 <xsl:with-param name="headerparam">Положение ИМ</xsl:with-param>
                                 <xsl:with-param name="headerparam-sp">Задание ИМ</xsl:with-param>     
-                                <xsl:with-param name="disable" select="@auto"/> 
+                                <xsl:with-param name="disable" select="@auto"/>                                
                                 <xsl:with-param name="color"> 
                                     <xsl:choose>
                                         <xsl:when test="not(normalize-space(@actuator-color)='')">
@@ -5018,7 +5291,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:when>    
                     <xsl:when test="local-name()='text'">
                         <xsl:call-template name="svg_text"/>
-                    </xsl:when>                                     
+                    </xsl:when>
+                    <xsl:when test="local-name()='line'">
+                        <xsl:call-template name="svg_line"/>
+                    </xsl:when>   
                 </xsl:choose>
             </xsl:for-each>           
                 
