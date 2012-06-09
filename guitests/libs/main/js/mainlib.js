@@ -47,7 +47,6 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
         parent.onmousemove=undefined;
         parent.onmouseout=undefined;
         parent.onmouseup=undefined;
-        //console.log('parent.onmousemove deleted INIT');
         parent.removeChild(el.movelement);
     }
     
@@ -274,9 +273,8 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
     var rootbodyreplace = function(x,y ,func){
         rootbody.style.display='none';
         setTimeout( function(){
-            rootbody.setAttribute('x', x/* + parseInt(rootbody.getAttribute('x'))*/);
-            rootbody.setAttribute('y', y/* + parseInt(rootbody.getAttribute('y'))*/);
-            //console.log('offset',x, y/* parseInt(rootbody.getAttribute('x')), x - parseInt(rootbody.getAttribute('x')),y - parseInt(rootbody.getAttribute('y'))*/);
+            rootbody.setAttribute('x', x);
+            rootbody.setAttribute('y', y);
             if (func ) func();
             rootbody.style.display='block';
             rootbody.needofsetrect = rootbody.getBoundingClientRect();
@@ -434,7 +432,7 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
             }          
         }        
     
-    /*rootbody.parentNode.appendChild(el.hoverrect);*/}   
+    }   
 
     this.closebutton.setAttributeNS(libutil.XLINK_NAMESPACE_URL, 'xlink:href', '../util/css/res/close.svg' );
 
@@ -547,6 +545,13 @@ mainlib.valueset_click =  function (el, nm, width){
     }  
 }
 
+mainlib.valueedit_click =  function (el, nm){
+  var parent =  el.parentNode;
+  var dupl = libutil.dom.duplicateElement(el, true, ['id','captured','onclik']);  
+   
+  
+}
+
    
 mainlib.graph_click =  function (el, nm){
 
@@ -603,8 +608,6 @@ mainlib.regulator_click =  function (el, smp){
     var createchart = function() {
         var chartdiv = document.getElementById(elementId + '_popup_graph');
         if (chartdiv){
-            //console.log('charts',eval(el.getAttribute('charts')));
-            //console.log('colors',eval(el.getAttribute('colors')));
             var period = el.getAttribute('period').valueOf() ?    el.getAttribute('period').valueOf() : 600;
             el.popup.chart = new libutil.trendchart(elementId + '_popup_graph',
                                                     elementId + '_chart_background',eval(el.getAttribute('charts')),period, eval(el.getAttribute('colors')) ,240, 145, 5,  
