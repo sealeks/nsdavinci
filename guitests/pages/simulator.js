@@ -632,6 +632,10 @@ simulator.actuator.prototype.sp = function(val){
     $$(this.sp + ' @  '+ val );
 }
 
+simulator.actuator.prototype.normalize = function(){
+    $$(this.sp + ' @  '+ this.pos );
+}
+
 simulator.actuator.prototype.spdiff = function(val){
     $$(this.sp + ' @  ('+ this.sp + ' + '+ val + ')' );
 }
@@ -731,14 +735,24 @@ simulator.regulator.prototype.detach = function(){
 }
 
 simulator.regulator.prototype.autoevent = function(event){
-    if (event.expression==this.auto){
-        this.autostate = event.value; 
-        if (!event.value){
+    if (event.expression==this.auto){        
+        if (this.autostate != event.value){           
+            var ts =this;
             this.K = 0;
             this.I = 0;
             this.D = 0;
             this.olddiff=undefined;
-        }
+            this.error = undefined;
+            this.lasterror = undefined;
+            this.preflasterror = undefined;
+            this.lasttime = undefined;
+            this.preflasttime = undefined;
+            this.kplast = undefined;
+            if(!event.value){
+            if (this.actuator)
+                setTimeout(function(){ts.actuator.normalize()},1);
+        }}
+        this.autostate = event.value;
     }       
 }
 
@@ -764,18 +778,10 @@ simulator.regulator.prototype.kdevent = function(event){
 }
 
 simulator.regulator.prototype.diffevent = function(event){
-    if (event.expression==this.diff){
-        var ts = this;
+    if (event.expression==this.diff && this.autostate){
         this.K = this.K + this.kp * (event.value - (this.kplast===undefined ? 0 : this.kplast));
-        this.error = event.value;
-   
+        this.error = event.value;  
         this.kplast = event.value;
-        
-        //console.log('proportial ',event.value, this.K );
-        
-        //if (this.K)
-        //setTimeout( function() {/*console.log('add',ts.K * 100)*/;ts.actuator.spdiff(ts.K * 100);} , 1);
-
     }
 }
 
@@ -787,6 +793,7 @@ simulator.regulator.prototype.delt = function(){
 
 simulator.regulator.prototype.execute = function(){
     if (this.autostate && this.actuator){
+        console.log('this.autostate ',this.autostate );
         var ts = this;
         var tmp = new Date();
         var curtime = tmp.getTime() + 0;
