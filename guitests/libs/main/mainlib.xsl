@@ -24,6 +24,222 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute-->  
     </xsl:template>
     
+    
+    
+    
+    
+    
+    <!--
+    
+    config popup
+    
+    -->
+    
+    
+    
+ 
+    <!--xsl:template name="mlib_config_list_check">
+        <xsl:choose>
+            <xsl:when test="not(normalize-space(@config)='')"> 
+            <xsl:text>; else mainlib.config_click(mainlib.check_click(this) </xsl:text>
+            <xsl:text>)</xsl:text>
+            </xsl:when>
+        </xsl:choose>         
+    </xsl:template-->
+    
+    
+    <xsl:template name="mlib_config_popup_row">
+        <xsl:param name="token"/>
+        <xsl:param name="hdr"/>
+        <xsl:param name="frmt"/>
+        <xsl:param name="depth"/> 
+        
+        <xsl:variable name="format">
+            <xsl:choose> 
+                <xsl:when test="normalize-space($frmt)=''">
+                    <xsl:value-of select="$frmt"/>
+                </xsl:when>  
+                <xsl:otherwise>
+                    <xsl:text>%3.2f</xsl:text>
+                </xsl:otherwise>        
+            </xsl:choose>            
+        </xsl:variable> 
+        
+        <xsl:variable name="header">
+            <xsl:choose> 
+                <xsl:when test="normalize-space($hdr)=''">
+                    <xsl:value-of select="$hdr"/>
+                </xsl:when>  
+                <xsl:otherwise>
+                    <xsl:text>token</xsl:text>
+                </xsl:otherwise>        
+            </xsl:choose>            
+        </xsl:variable>         
+        
+        <mlib:sensor x="5"  height="22" width="156" stroke="#eee" stroke-width="1" r="4"  color1="#333" color2="#666"  alighn="left" fontcolor="yellow" fontstyle="font-size: 11">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_popup_config_rowheader</xsl:text>
+                <xsl:value-of select="$depth"/>
+            </xsl:attribute>
+            <xsl:attribute name="caption">
+                <xsl:value-of select="$hdr"/>
+            </xsl:attribute>
+            <xsl:attribute name="y">
+                <xsl:value-of select="30 + ($depth -1) * 24"/>
+            </xsl:attribute>  
+       </mlib:sensor>
+        <mlib:sensor x="162"  height="22" width="82" stroke="#0e0" stroke-width="1" r="4"  color1="#001" color2="#003" caption="" alighn="right" fontcolor="#0e0" fontstyle="font-size: 11" sensorevent="valueedit">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_popup_config_setter</xsl:text>
+                <xsl:value-of select="$depth"/>
+            </xsl:attribute>
+            <xsl:attribute name="param">
+                <xsl:value-of select="$token"/>
+            </xsl:attribute> 
+            <xsl:attribute name="format">
+                <xsl:value-of select="$format"/>
+            </xsl:attribute>             
+            <xsl:attribute name="y">
+                <xsl:value-of select="30 + ($depth -1) * 24"/>
+            </xsl:attribute>              
+        </mlib:sensor>
+    </xsl:template>  
+    
+    
+    <xsl:template name="mlib_config_popup_split" mode="split">
+        <xsl:param name="str" select="."/>
+        <xsl:param name="hdrs"/>
+        <xsl:param name="frmts"/>
+        <xsl:param name="worddiv" select="','"/>
+        <xsl:param name="depth"/>
+        
+        <xsl:variable name="depthvar">
+            <xsl:choose> 
+                <xsl:when test="normalize-space($depth)=''">
+                    <xsl:text>0</xsl:text>
+                </xsl:when>  
+                <xsl:otherwise>
+                    <xsl:value-of select="$depth + 1"/>
+                </xsl:otherwise>        
+            </xsl:choose> 
+        </xsl:variable>
+        
+        <xsl:choose> 
+            <xsl:when test="contains($str,$worddiv)">
+                <xsl:call-template name="mlib_config_popup_row">
+                    <xsl:with-param name="token" select="substring-before($str, $worddiv)"/>
+                    <xsl:with-param name="frmt" select="substring-before($frmts, $worddiv)"/>
+                    <xsl:with-param name="hdr" select="substring-before($hdrs, $worddiv)"/>
+                    <xsl:with-param name="depth" select="$depthvar"/>
+                </xsl:call-template>
+                <xsl:call-template name="mlib_config_popup_split"> 
+                    <xsl:with-param name="str" select="substring-after($str, $worddiv)"/>
+                    <xsl:with-param name="frmts" select="substring-after($frmts, $worddiv)"/>
+                    <xsl:with-param name="hdrs" select="substring-after($hdrs, $worddiv)"/>                    
+                    <xsl:with-param name="worddiv" select="$worddiv"/>
+                    <xsl:with-param name="depth" select="$depthvar"/>
+                </xsl:call-template>
+            </xsl:when>
+ 
+            <xsl:otherwise>
+                <xsl:call-template name="mlib_config_popup_row">
+                    <xsl:with-param name="token" select="$str"/>
+                    <xsl:with-param name="frmt" select="$frmts"/>
+                    <xsl:with-param name="hdr" select="$hdrs"/>
+                    <xsl:with-param name="depth" select="$depthvar"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+ 
+        </xsl:choose>
+    </xsl:template>
+      
+    
+    <xsl:template name="mlib_config_popup">
+        <xsl:param name="header"/>
+        <xsl:choose>
+            <xsl:when test="not(normalize-space(@config)='')"> 
+            
+                <xsl:variable name="headervar">
+                    <xsl:choose>
+                        <xsl:when test="not(normalize-space($header)='')">
+                            <xsl:value-of select="$header"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>Настройки</xsl:text>
+                        </xsl:otherwise>    
+                    </xsl:choose>
+                </xsl:variable>  
+                
+                <defs>
+                    <script type="text/javascript">
+                        <xsl:text>document.getElementById('</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>').addEventListener('contextmenu' ,function (ev) {
+                        if (mainlib.check_click(this, event)) {  
+                            mainlib.config_click(mainlib.check_click(this));
+                            event.stopPropagation();
+                            event.preventDefault();}}); </xsl:text>                    
+                    </script>
+                    <svg> 
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>_popup_config</xsl:text>
+                        </xsl:attribute>                        
+                
+                        <xsl:variable name="popupbody">
+                            <mlib:sensor x="5" y="2" height="26" width="240" stroke="#ccc" stroke-width="1" r="4" id="sensor1" color1="#333" color2="#666"  alighn="center" fontcolor="#eee" fontstyle="font-size: 12">
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_popup_config_header</xsl:text>
+                                </xsl:attribute>  
+                                <xsl:attribute name="caption">
+                                    <xsl:choose>
+                                        <xsl:when test="not(normalize-space(@config-header)='')">
+                                            <xsl:value-of select="@config-header"/>
+                                        </xsl:when> 
+                                        <xsl:otherwise>
+                                            <xsl:choose>
+                                                <xsl:when test="not(normalize-space(@param)='')">
+                                                     <xsl:value-of select="$headervar"/>
+                                                     <xsl:text> </xsl:text>
+                                                     <xsl:value-of select="@param"/>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="$headervar"/>
+                                                </xsl:otherwise>    
+                                            </xsl:choose> 
+                                        </xsl:otherwise>
+                                    </xsl:choose>                                                                       
+                                </xsl:attribute> 
+                            </mlib:sensor>
+                            <xsl:call-template name="mlib_config_popup_split">
+                                <xsl:with-param name="str" select="@config"/>
+                                <xsl:with-param name="hdrs" select="@config-headers"/>
+                                <xsl:with-param name="frmts" select="@config-formats"/>
+                                <xsl:with-param name="worddiv">,</xsl:with-param>
+                                <xsl:with-param name="depth">0</xsl:with-param>
+                            </xsl:call-template> 
+                        </xsl:variable>
+                        
+                        <xsl:for-each select="exsl:node-set($popupbody)/*">
+                            <xsl:choose>
+                                <xsl:when test="local-name()='rect'">
+                                    <xsl:call-template name="mlib_button"/>
+                                </xsl:when> 
+                                <xsl:when test="local-name()='sensor'">
+                                    <xsl:call-template name="mlib_sensor"/>
+                                </xsl:when>                         
+                            </xsl:choose>
+                        </xsl:for-each> 
+                        
+                    </svg> 
+                </defs>
+            </xsl:when>
+        </xsl:choose>         
+    </xsl:template>
+    
 
      
     
@@ -2377,28 +2593,52 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:choose>
                     <xsl:when test="boolean(@sensorevent='valueset')"> 
                         <xsl:attribute name="onclick">
-                            <xsl:text> if (mainlib.check_click(this, event))  </xsl:text> 
-                            <xsl:text>mainlib.valueset_click(mainlib.check_click(this), '</xsl:text>
+                            <xsl:text> if (mainlib.check_click(this, event)) {  </xsl:text> 
+                            <xsl:text>if (event.button==0) mainlib.valueset_click(mainlib.check_click(this), '</xsl:text>
                             <xsl:value-of select="@param"/>
                             <xsl:text>',</xsl:text>
                             <xsl:value-of select="@width * 1.3"/>
                             <xsl:text>) </xsl:text> 
+                             <!--xsl:call-template name="mlib_config_list_check"/-->
+                             <xsl:text>} </xsl:text> 
                         </xsl:attribute>    
                     </xsl:when>
                     <xsl:when test="boolean(@sensorevent='valueedit')"> 
                         <xsl:attribute name="onclick">
-                            <xsl:text> if (mainlib.check_click(this, event))  </xsl:text> 
-                            <xsl:text>mainlib.valueedit_click(mainlib.check_click(this), '</xsl:text>
+                            <xsl:text> if (mainlib.check_click(this, event))  {</xsl:text> 
+                            <xsl:text>if (event.button==0) mainlib.valueedit_click(mainlib.check_click(this), '</xsl:text>
                             <xsl:value-of select="@param"/>
-                            <xsl:text>) </xsl:text> 
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@alighn"/>                            
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@r"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@stroke"/>
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@stroke-width"/>   
+                            <xsl:text>','</xsl:text>
+                            <xsl:value-of select="@color1"/>
+                            <xsl:text>','</xsl:text>                            
+                            <xsl:value-of select="@color2"/>
+                            <xsl:text>','</xsl:text>                            
+                            <xsl:value-of select="@format"/>
+                            <xsl:text>','</xsl:text>                            
+                            <xsl:value-of select="@fontcolor"/> 
+                            <xsl:text>','</xsl:text>                            
+                            <xsl:value-of select="@fontstyle"/>  
+                             <xsl:text>') </xsl:text>    
+                             <!--xsl:call-template name="mlib_config_list_check"/-->
+                             <xsl:text>} </xsl:text>                              
                         </xsl:attribute>    
                     </xsl:when>                    
                     <xsl:when test="boolean(@sensorevent='graph')">
                         <xsl:attribute name="onclick">
-                            <xsl:text>if (mainlib.check_click(this, event))  </xsl:text> 
-                            <xsl:text>mainlib.graph_click(mainlib.check_click(this), '</xsl:text> 
+                            <xsl:text>if (mainlib.check_click(this, event))  {</xsl:text> 
+                            <xsl:text>if (event.button==0) mainlib.graph_click(mainlib.check_click(this), '</xsl:text> 
                             <xsl:value-of select="@param"/>
-                            <xsl:text>')</xsl:text>  
+                            <xsl:text>') </xsl:text>  
+                             <!--xsl:call-template name="mlib_config_list_check"/-->
+                             <xsl:text>} </xsl:text>                               
                         </xsl:attribute> 
                     </xsl:when>     
                 </xsl:choose>                    
@@ -2617,6 +2857,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="mlib_sensor_rect">   
         <rect>        
+                
+            <xsl:attribute name="id">
+                <xsl:value-of select="@id"/>
+                <xsl:text>_sensor_rect</xsl:text>
+            </xsl:attribute>                   
                 
             <xsl:call-template name="apply_rect"/>
                 
@@ -3203,9 +3448,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:when>
         </xsl:choose>
     </xsl:template>
-        
-  
     
+
+        
     <xsl:template match="//mlib:sensor" name="mlib_sensor">
         <g>
             
@@ -5152,22 +5397,20 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:choose>
             <xsl:when test="not(normalize-space(@param-sp)='') and not(normalize-space(@actuator-sp)='')">                  
                 <xsl:attribute name="onclick">
-                    <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
-                    <xsl:text>mainlib.regulator_click(this,null) </xsl:text> 
+                    <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
+                    <xsl:text>if (event.button==0) mainlib.regulator_click(this,null) </xsl:text> 
+                    <!--xsl:call-template name="mlib_config_list_check"/-->
+                    <xsl:text>} </xsl:text>                     
                 </xsl:attribute>    
             </xsl:when>  
-            <xsl:when test="not(normalize-space(@actuator-sp)='')">                  
+            <xsl:when test="not(normalize-space(@actuator-sp)='') or not(normalize-space(@param-sp)='')">                  
                 <xsl:attribute name="onclick">
-                    <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
-                    <xsl:text>mainlib.regulator_click(this,true) </xsl:text> 
+                    <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
+                    <xsl:text>if (event.button==0) mainlib.regulator_click(this,true) </xsl:text> 
+                    <!--xsl:call-template name="mlib_config_list_check"/-->
+                    <xsl:text>} </xsl:text>                       
                 </xsl:attribute>    
-            </xsl:when> 
-            <xsl:when test="not(normalize-space(@param-sp)='')">                  
-                <xsl:attribute name="onclick">
-                    <xsl:text>if (this.getAttribute('cursor')=='pointer') </xsl:text> 
-                    <xsl:text>mainlib.regulator_click(this,true) </xsl:text> 
-                </xsl:attribute>    
-            </xsl:when>             
+            </xsl:when>            
         </xsl:choose>
     </xsl:template> 
     
@@ -5360,7 +5603,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="isinvisibleelement">
                 <xsl:text>true</xsl:text>
             </xsl:attribute>
-            <xsl:call-template name="apply_rect"/>  
+            <xsl:call-template name="apply_rect"/> 
             <xsl:choose>
                 <xsl:when test="not(normalize-space(@param)='') and not(normalize-space(@actuator)='')">
                     <xsl:attribute name="charts">
@@ -5445,6 +5688,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:call-template name="mlib_regulator_event"/>
             <xsl:call-template name="mlib_regulator_cursor"/>
             <xsl:call-template name="apply_mlib_regulator_popup"/>
+            <xsl:call-template name="mlib_config_popup"/>
                      
             <svg>                   
                 <xsl:call-template name="apply_rect"/>  

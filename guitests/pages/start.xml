@@ -91,7 +91,9 @@ add_simulation (new simulator.valve('v1on', 'v1off' , 'dv1on', 'dv1off', 'rv1on'
   <form name="guimotor2" file="guimotor2.xml" caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no" visible="false"/>
   <form name="testopen" file="testopen.xml" caption="Мазут" left="85%" top="0%" width="15%" height="100%" decorated="no"/>
   
-  <form name="falarm" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no" visible="true"/><form name="te" file="test.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/>
+  <form name="falarm" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no" visible="true"/>
+  <form name="te" file="test.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/>
+  <!--form name="tes" file="atest.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/-->
   
   <scriptfile name="script1" file="script1.js"/>
 

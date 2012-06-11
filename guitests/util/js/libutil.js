@@ -162,7 +162,8 @@ function init_project_controller(){
     console.log(elp);
     var projectPath=elp.getAttribute('path');
     console.log(projectPath);
-    $$global().loadwin = window.open(projectPath+ 'load.xml', 'initialisate' , "caption=initialisate;left=0%;top=0%;width=100%;height=100%;decorated=no;allwaystop=yes");
+    $$global().loadwin = window.open(projectPath+ 'load.xml', 'initialisate' , 
+                                     "caption=initialisate;left=0%;top=0%;width=100%;height=100%;decorated=no;allwaystop=yes");
     setTimeout(function(){libutil.project.init_form();}, 1500);}
     catch(error){
         console.error('init_project_controller error:',error);
@@ -255,8 +256,13 @@ libutil.startup.init = function(){
         if (tmp)
            tmp.currentred=document.red;
     }
+    else{
+        document.addEventListener('contextmenu' ,function () {
+        event.stopPropagation();
+        event.preventDefault();  
+    });  
+    }
     window.onunload=formclose_win;
-
 }
 
 libutil.startup.initdesigner = function(name, red){
