@@ -172,67 +172,71 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
 
 
 
-mainlib.get_popupbody  = function(el, width, height, remfunc , shift){
+mainlib.get_popupbody  = function(el, width, height, remfunc , shift, namepopup){
     
-    if (el.popup){
+    if (!namepopup) namepopup='popup';
+    
+    if (el[namepopup]){
         return;
     }
 
-    el.popup = libutil.popup.createsvgs(el,width,height,0, null, mainlib.POPUP_BODY_STYLE , null, mainlib.POPUP_R, shift);
+    el[namepopup] = libutil.popup.createsvgs(el,width,height,0, null, mainlib.POPUP_BODY_STYLE , null, mainlib.POPUP_R, shift);
     
-    el.popup.setAttribute('cursor', 'pointer');
+    el[namepopup].setAttribute('cursor', 'pointer');
     
 
     
-    if (el.popup.firstChild) {
-        el.popup.firstChild.onclick= function(){
-            el.popup.setAttribute('style', 'display: none;');
+    if (el[namepopup].firstChild) {
+        el[namepopup].firstChild.onclick= function(){
+            el[namepopup].setAttribute('style', 'display: none;');
         };
     }
     
-    el.popup.onmouseout = function(ev){
+    el[namepopup].onmouseout = function(ev){
         
-        if (!libutil.dom.checkIsParent (el.popup,ev.toElement,true)){
+        if (!libutil.dom.checkIsParent (el[namepopup],ev.toElement,true)){
             if (remfunc)
                     remfunc();
             else
-               el.popup.setAttribute('style', 'display: none;'); 
+               el[namepopup].setAttribute('style', 'display: none;'); 
         }
         
        
     };  
 
-    el.popup.onmousedown= function(){
+    el[namepopup].onmousedown= function(){
         
-        if (event.target==el.popup){
+        if (event.target==el[namepopup]){
 
          
-            if (el.popup){
+            if (el[namepopup]){
                 
                 if (remfunc)
                     remfunc();
                 else
-                    el.popup.setAttribute('style', 'display: none;');               
+                    el[namepopup].setAttribute('style', 'display: none;');               
             }
            
         }
     }; 
       
-    return el.popup.popupbody;  
+    return el[namepopup].popupbody;  
 }
 
 
 
-mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
+mainlib.get_staticpopupbody  = function(el, width, height, remfunc, shift, namepopup){
     
-    if (!el.popup){
-    el.popup = libutil.popup.createsvgs(el,width,height,4, null , mainlib.POPUP_BODY_STYLE , 
+    if (!namepopup) namepopup='popup';
+    
+    if (!el[namepopup]){
+    el[namepopup] = libutil.popup.createsvgs(el,width,height,4, null , mainlib.POPUP_BODY_STYLE , 
                                         mainlib.POPUP_STATIC_STYLE , mainlib.POPUP_R);
 
-    var mainpopup = el.popup; 
+    var mainpopup = el[namepopup]; 
     var hoverrect = mainpopup.hoverrect;
-    var btnparent = el.popup;
-    var btnpos = el.popup.buttonposition;
+    var btnparent = el[namepopup];
+    var btnpos = el[namepopup].buttonposition;
     
     var size = btnpos.width < btnpos.height ? 
         btnpos.width : btnpos.height;
@@ -268,7 +272,7 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
     }]);
 
 
-    var rootbody = el.popup;
+    var rootbody = el[namepopup];
     
     var rootbodyreplace = function(x,y ,func){
         rootbody.style.display='none';
@@ -282,7 +286,7 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
     }
     
     
-    el.popup.rootbodyreplace=rootbodyreplace;
+    el[namepopup].rootbodyreplace=rootbodyreplace;
     
     
 
@@ -440,7 +444,7 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
             if (remfunc)
                 remfunc();
             else
-                el.popup.parentNode.removeChild(el.popup);      
+                el[namepopup].parentNode.removeChild(el[namepopup]);      
     
     }
     
@@ -458,15 +462,15 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc){
         }            
     }
               
-    el.popup.setAttribute('cursor', 'pointer');
+    el[namepopup].setAttribute('cursor', 'pointer');
     }
     else
     {
-       el.popup.rootbodyreplace(el.popup.boundspopup.x , el.popup.boundspopup.y);
+       el[namepopup].rootbodyreplace(el[namepopup].boundspopup.x , el[namepopup].boundspopup.y);
        return null;
     }    
    
-    return el.popup.popupbody;  
+    return el[namepopup].popupbody;  
 }
 
 
@@ -545,9 +549,94 @@ mainlib.valueset_click =  function (el, nm, width){
     }  
 }
 
-mainlib.valueedit_click =  function (el, nm){
-  var parent =  el.parentNode;
-  var dupl = libutil.dom.duplicateElement(el, true, ['id','captured','onclik']);  
+
+
+mainlib.valueedit_click =  function (el, nm, alighn, r, stroke, strokewidth, color1, color2, format, fontcolor, fontstyle){
+    
+  var parent =  el.needofsetrect ? document.documentElement : el.parentNode;
+  
+  var tag = nm;
+  
+  var elementId =  el.getAttribute('id');
+  
+  var text = document.getElementById(elementId + '_sensor_text');
+  
+  var rect =  document.getElementById(elementId + '_sensor_rect');
+  
+  if (!text || !rect) return;
+  
+  var x = parseInt(rect.getAttribute('x'));
+  var y = parseInt(rect.getAttribute('y'));
+  var width = parseInt(rect.getAttribute('width'));
+  var height = parseInt(rect.getAttribute('height'));
+  
+  if (el.needofsetrect) x=x+el.needofsetrect.left;
+  if (el.needofsetrect) y=y+el.needofsetrect.top;
+  
+  if (!format) format = '%9.0f';
+  
+  var editstyle = 'margin: 0 1; padding: 0 5px ;-webkit-user-select: text; -webkit-border-radius: ' +  ((r && parseInt(r)) ? r : '0') + 'px; ';
+  editstyle = editstyle + 'border-color: transparent' +  /*(stroke ? stroke : '#0e0') +*/ '; '; 
+  editstyle = editstyle + 'border-width: 0px; ';
+  editstyle = editstyle + 'text-align: ' +  (alighn ? alighn : 'right') + '; ';
+  editstyle = editstyle + 'background-color: ' +  (color1 ? color1 : '#111') + '; ';
+  editstyle = editstyle + 'color: ' +  (fontcolor ? fontcolor : '#eee') + '; ';
+  editstyle = editstyle + 'height: ' + height + 'px; ';
+  editstyle = editstyle + 'width: ' + (width - 10) + 'px; ';
+  editstyle = editstyle +  (text.style ? text.style.cssText : '') + '; ';
+  
+   
+  var result = libutil.svg.create_element('foreignObject', parent , [{
+        name : 'x', 
+        value:  x
+        },
+        {
+        name : 'y', 
+        value:  y
+        },
+        {
+        name : 'width', 
+        value: width
+        },
+        {
+        name : 'height', 
+        value : height
+        }]);
+    
+    el.editelement =result;
+    
+    var html = libutil.html.create_element('html' , result);
+            
+    var head = libutil.html.create_element('head', html,[{
+    }]);
+
+    var htmlbody= libutil.html.create_element( 'body' ,html, [{name: 'style', value: 'margin: 0; padding: 0;'}]);
+            
+    var bodydiv= libutil.html.create_element('div' , htmlbody, [{name: 'style' , value: '-webkit-user-select: text;'}] );  
+                                                             
+    var val = $$('format('+tag+"'"+ format+ "')");                                                         
+                                                             
+    var edit = libutil.html.create_element('input' , bodydiv, [{name: 'value', value: val },
+                                                               {name: 'type', value: 'text' },
+                                                               {name: 'style', value: editstyle}]);
+                                                           
+                                                           
+                                                           
+    result.onmouseout = function(ev){
+        if (parent && el.editelement){
+            parent.removeChild(el.editelement);
+        }       
+    }  
+
+    edit.addEventListener( 'keyup' ,function (ev) {       
+            if ((ev.keyIdentifier=="Enter")){
+                $$(tag+" @ "+ edit.value);
+                result.onmouseout(ev);
+            }});
+        
+    edit.focus();    
+    
+    //edit.textContent = "yyy";
    
   
 }
@@ -726,7 +815,50 @@ mainlib.regulator_click =  function (el, smp){
     catch(error){
         throw error;
     }  
+    
+}
 
+mainlib.config_click = function (el){
+ 
+    if (el.configpopup){
+        if (el.configpopup.getAttribute('style')!='') el.configpopup.setAttribute('style', '');
+        else  el.configpopup.setAttribute('style', 'display: none;');
+        return;
+    }
+    
+    var elementId =  el.getAttribute('id');
+    var defs = document.getElementById(elementId + '_popup_config');
+    
+    if (!defs) return;
+    
+    try{
+        
+        var width=250;
+        
+        var height = 30 + (defs.childNodes.length  - 1) * 12 + 4;
+       
+   
+        var body = mainlib.get_staticpopupbody(el,width,height, 
+                                         function() {if (el.configpopup) 
+                                                      el.configpopup.setAttribute('style', 'display: none;');}, 
+                                         el.needofsetrect, 'configpopup');
+                                         
+        body.setAttribute('id', elementId + '_popup_config_body');
+        
+                  
+        
+        var use = libutil.svg.create_element('use', body);
+        body.useelement=use;
+        use.setAttributeNS("http://www.w3.org/1999/xlink",'href','#' + elementId + '_popup_config');
+        
+        
+        
+    }
+    catch(error){
+        throw error;
+    }  
+
+    
 }
 
 

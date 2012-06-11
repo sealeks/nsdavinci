@@ -426,7 +426,11 @@
         <xsd:attribute name="actuator-sp" type="lib:tag"/>
         <xsd:attribute name="actuator-color" type="xsd:string"/>
         <xsd:attribute name="actuator-color" type="xsd:string"/>
-        <xsd:attribute name="actuator-format" type="xsd:string"/>        
+        <xsd:attribute name="actuator-format" type="xsd:string"/>    
+        <xsd:attribute name="config" type="lib:taglist"/> 
+        <xsd:attribute name="config-header" type="xsd:string"/>
+        <xsd:attribute name="config-headers" type="xsd:string"/>        
+        <xsd:attribute name="config-formats" type="xsd:string"/>
     </xsd:complexType>
 </xsd:element>
 
