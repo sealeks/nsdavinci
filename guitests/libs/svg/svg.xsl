@@ -1007,9 +1007,9 @@ extension-element-prefixes="svg">
             <xsl:call-template name="apply_id"/>
             <xsl:call-template name="apply_svg_schema"/>
             <xsl:call-template name="apply_lib_mouseevent"/>
-            <xsl:call-template name="apply_ismaybeinvisible"/>
-            <image>
-                 
+            <xsl:call-template name="apply_ismaybeinvisible"/>            
+            <image preserveAspectRatio="meet">
+                <xsl:call-template name="apply_cental_rotate"/> 
                 <xsl:call-template name="apply_svg_x"/>
                 <xsl:call-template name="apply_svg_y"/>
                 <xsl:call-template name="apply_svg_width"/>

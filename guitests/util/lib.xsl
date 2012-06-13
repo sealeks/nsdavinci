@@ -107,6 +107,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute>
     </xsl:template>
     
+    <xsl:template name="apply_transform"> 
+        <xsl:choose>
+            <xsl:when test="not(normalize-space(@transform)='')">
+                <xsl:attribute name="transform">
+                    <xsl:value-of select="@transform"/>
+                </xsl:attribute>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>                
+    
     <xsl:template name="apply_parametred_rect"> 
         <xsl:param name="x"/>
         <xsl:param name="y"/>
