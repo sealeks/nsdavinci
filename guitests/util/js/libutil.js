@@ -350,8 +350,9 @@ libutil.project.buildparam = function(el){
 libutil.project.addtoformlist = function(els){
     var tmp=$$global();
     var prjpath=tmp.projectPath;
-    var path = prjpath && els.getAttribute('file') ? prjpath.toString() + els.getAttribute('file').toString() : 
-    els.getAttribute('file') ? els.getAttribute('file').toString() : null;
+    /*var isdesign = ((window.$$editable) && ($$editable()));*/
+    var file = /*isdesign ?*/ els.getAttribute('file') /*: libutil.regex.add_postfix_file(els.getAttribute('file'),'_output')*/;
+    var path = prjpath && file ? prjpath.toString() + file.toString() : null;
     if (path){            
         var param = libutil.project.buildparam(els);
         var visible =((els.hasAttribute('visible')) && (els.getAttribute('visible')=='false')) ? false : true;
@@ -386,6 +387,7 @@ libutil.project.add_design_style  = function(doc){
     if (doc.documentElement){
         var dstyle = ".designer_selected { opacity: 0.8 !important; outline: 1px solid #E00 !important;} \n"+
         "*[isgoupelement]{ outline: 1px dashed green !important; } \n"+
+        "*[ismaybeinvisible]{ outline: 1px dashed yellow !important; } \n"+
         "*[isinvisibleelement]{ outline: 1px solid green !important; } \n"+
         'g[cursor="pointer"]:hover { outline: 0px solid transparent  !important;} \n'+
         'g[cursor="pointer"].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;} \n'+
@@ -398,7 +400,6 @@ libutil.project.add_design_style  = function(doc){
     }
     libutil.html.create_style(doc.documentElement, dstyle);              
 }
-
 
 
 
@@ -848,6 +849,10 @@ libutil.window.createhtml = function(name , caption, top, left, width, height, t
 
 libutil.regex.check = function (value, expr){
     return expr.test(value);
+}
+
+libutil.regex.add_postfix_file = function (value, expr){
+    return value.substring(0,value.length-4)+expr+value.substring(value.length-4);
 }
 
 //
@@ -2056,11 +2061,11 @@ libutil.dom.readDoc = function (url , text){
 }
 
 
-libutil.dom.writeDoc = function (doc){
+libutil.dom.writeDoc = function (doc, postfix){
     if (doc && window.$$writefile){
         var xmls = new XMLSerializer();  
         var data= xmls.serializeToString(doc); 
-        $$writefile(doc.baseURI,data);
+        $$writefile(/*postfix ? */doc.baseURI /*: libutil.regex.add_postfix_file(doc.baseURI,postfix)*/,data);
     }
 }
       

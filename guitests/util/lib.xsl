@@ -86,6 +86,12 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>      
     </xsl:template>    
     
+    <xsl:template name="apply_ismaybeinvisible">
+        <xsl:attribute name="ismaybeinvisible">
+            <xsl:text>true</xsl:text>
+        </xsl:attribute>
+    </xsl:template>
+    
     <xsl:template name="apply_rect"> 
         <xsl:attribute name="x">
             <xsl:value-of select="@x"/>

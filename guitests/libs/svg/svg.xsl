@@ -421,6 +421,41 @@ extension-element-prefixes="svg">
         </xsl:choose>     
     </xsl:template> 
     
+    <xsl:template name="apply_svg_href">        
+        <xsl:choose>
+            <xsl:when test="not(normalize-space(@xlink:href)='') and not(normalize-space(@href-binding)='') ">
+                <xsl:attribute name="xlink:href">
+                    <xsl:text> #{ ( </xsl:text>
+                    <xsl:value-of select="@href-binding"/>
+                    <xsl:text> ).valid  ? (</xsl:text>
+                    <xsl:value-of select="@href-binding"/>
+                    <xsl:text>) : </xsl:text>
+                    <xsl:value-of select="@href"/>
+                    <xsl:text> :default </xsl:text>
+                    <xsl:value-of select="@href"/>
+                    <xsl:text> } </xsl:text> 
+                </xsl:attribute>
+            </xsl:when>
+            <xsl:when test="(normalize-space(@xlink:href)='')">
+                <xsl:attribute name="xlink:href">
+                    <xsl:value-of select="@href"/>
+                </xsl:attribute>
+            </xsl:when>
+            <xsl:when test="not(normalize-space(@href-binding)='')">
+                <xsl:attribute name="xlink:href">
+                    <xsl:text> #{ ( </xsl:text>
+                    <xsl:value-of select="@href-binding"/>
+                    <xsl:text> ).valid  ? (</xsl:text>
+                    <xsl:value-of select="@href-binding"/>
+                    <xsl:text>) : </xsl:text>
+                    <xsl:text>'' :default </xsl:text>
+                    <xsl:text></xsl:text>
+                    <xsl:text> } </xsl:text>
+                </xsl:attribute>
+            </xsl:when>                   
+        </xsl:choose>     
+    </xsl:template>     
+    
     <xsl:template name="apply_svg_stroke">        
         <xsl:choose>
             <xsl:when test="(boolean(@stroke) and not(normalize-space(@stroke)='')) and (boolean(@stroke-binding) and not(normalize-space(@stroke-binding)='')) ">
@@ -965,5 +1000,32 @@ extension-element-prefixes="svg">
             </text>  
         </g>
     </xsl:template> 
+    
+    <xsl:template match="//svg:image"> 
+        <g>
+            <xsl:call-template name="apply_svg_g_visible_binding"/>
+            <xsl:call-template name="apply_id"/>
+            <xsl:call-template name="apply_svg_schema"/>
+            <xsl:call-template name="apply_lib_mouseevent"/>
+            <xsl:call-template name="apply_ismaybeinvisible"/>
+            <image>
+                 
+                <xsl:call-template name="apply_svg_x"/>
+                <xsl:call-template name="apply_svg_y"/>
+                <xsl:call-template name="apply_svg_width"/>
+                <xsl:call-template name="apply_svg_height"/>
+                <xsl:call-template name="apply_svg_href"/> 
+                <xsl:call-template name="apply_svg_stroke"/>
+                <xsl:call-template name="apply_svg_stroke_width"/>
+                <xsl:call-template name="apply_svg_stroke_opacity"/> 
+                <xsl:call-template name="apply_svg_opacity"/>  
+                <xsl:call-template name="apply_svg_filter"/>
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>
+  
+            </image>   
+        </g>
+    </xsl:template>     
     
 </xsl:stylesheet>

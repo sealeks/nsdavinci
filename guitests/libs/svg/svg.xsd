@@ -437,6 +437,59 @@
         </xsd:complexType>
     </xsd:element> 
     
+    <!-- Image -->
+    
+    <xsd:element name="image">
+        <xsd:annotation>
+            <xsd:appinfo>         
+                <lib:creator name="svg:image" hint="image">
+                    <svg:image  x="" y="" width="50" height="50"/>
+                </lib:creator>  
+            </xsd:appinfo>
+        </xsd:annotation> 
+        
+        <xsd:complexType>
+            <xsd:attribute name="id" type="xsd:ID" use="required"/>
+            <xsd:attribute name="x" type="xsd:string" default="0"/>
+            <xsd:attribute name="x-binding" type="lib:expression" default="0"/>
+            <xsd:attribute name="y" type="xsd:string" default="0"/>
+            <xsd:attribute name="y-binding" type="lib:expression" default="0"/> 
+            <xsd:attribute name="width" type="xsd:string" default="0"/>
+            <xsd:attribute name="width-binding" type="lib:expression" default="0"/>
+            <xsd:attribute name="height" type="xsd:string" default="0"/>
+            <xsd:attribute name="height-binding" type="lib:expression" default="0"/>
+            
+            <xsd:attribute name="href" type="xsd:string" default="0"/>
+            <xsd:attribute name="href-binding" type="lib:expression" default="0"/>
+            
+            <xsd:attribute name="stroke-width" type="xsd:string"/>
+            <xsd:attribute name="stroke-width-binding" type="lib:expression"/>
+            <xsd:attribute name="stroke" type="xsd:string"/>
+            <xsd:attribute name="stroke-binding" type="lib:expression"/>
+            <xsd:attribute name="stroke-opacity" type="xsd:string"/>
+            <xsd:attribute name="stroke-opacity-binding" type="lib:expression"/>            
+            <xsd:attribute name="fill" type="xsd:string"/>
+            <xsd:attribute name="fill-binding" type="lib:expression"/>
+            <xsd:attribute name="opacity" type="xsd:string"/>
+            <xsd:attribute name="opacity-binding" type="lib:expression"/> 
+            
+            <xsd:attribute name="filter" type="svg:filtertype"/> 
+            <xsd:attribute name="style" type="xsd:string"/>  
+            <xsd:attribute name="visible-binding" type="lib:expression"/>
+            
+            <xsd:attribute name="onclick"  type="lib:event"/>
+            <xsd:attribute name="ondblclick" type="lib:event"/>
+            <xsd:attribute name="onmouseup" type="lib:event"/>
+            <xsd:attribute name="onmousedown" type="lib:event"/>
+            <xsd:attribute name="onmousemove" type="lib:event"/> 
+            <xsd:attribute name="onmouseout" type="lib:event"/>
+            <xsd:attribute name="onmouseover" type="lib:event"/>
+            <xsd:attribute name="onmousewheel" type="lib:event"/> 
+            
+        </xsd:complexType>
+    </xsd:element>    
+    
+    
     <xsd:element name="svg">
    
         <!--xsd:annotation>

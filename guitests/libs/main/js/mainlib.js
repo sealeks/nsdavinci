@@ -175,12 +175,24 @@ mainlib.create_shadow_slider =  function (el, x1, y1 , x2, y2 , direction , tag,
 mainlib.get_popupbody  = function(el, width, height, remfunc , shift, namepopup){
     
     if (!namepopup) namepopup='popup';
+    var namepopupold='old'+namepopup;
     
     if (el[namepopup]){
         return;
     }
 
     el[namepopup] = libutil.popup.createsvgs(el,width,height,0, null, mainlib.POPUP_BODY_STYLE , null, mainlib.POPUP_R, shift);
+    
+    if (el[namepopupold]){
+        var x=parseInt(el[namepopup].getAttribute('x'));
+        var y=parseInt(el[namepopup].getAttribute('y'));
+        el[namepopup].parentNode.removeChild(el[namepopup]);
+        el[namepopup]=el[namepopupold];
+        el[namepopup].setAttribute('x', x);
+        el[namepopup].setAttribute('y', y);
+        el[namepopup].setAttribute('style', '');
+        return undefined;
+    }
     
     el[namepopup].setAttribute('cursor', 'pointer');
     
@@ -294,7 +306,7 @@ mainlib.get_staticpopupbody  = function(el, width, height, remfunc, shift, namep
     var cteateshadowboby = function(){
         
         el.hoverrectrootel = libutil.svg.create_element('svg', rootbody.parentNode  , [
-            {   name : 'x', 
+            {name : 'x', 
                 value:  rootbody.x.baseVal.value-400
             },
 
@@ -516,21 +528,32 @@ mainlib.valueset_click =  function (el, nm, width){
        
    
         var body = mainlib.get_popupbody(el,width,parseFloat(width)* 2.05, 
-                                         el.needofsetrect ? function() {if (el.popup) el.popup.parentNode.removeChild(el.popup);el.popup=undefined;} : null, 
+                                         el.needofsetrect ? function() {
+                                             if (el.popup) {el.popup.setAttribute('style', 'display: none;');el.oldpopup= el.popup;el.popup=undefined;}} : null, 
                                          el.needofsetrect);
-                                         
-        body.setAttribute('id',el.getAttribute('id') + '_popup_body');
-        
+       
         var text = document.getElementById(el.getAttribute('id') + '_popup_sensorcalc_sensor_text');
         
         if (text)
-            text.textContent='';
+            text.textContent='';   
+        
+        if (!body)  return;
+            
+                                         
+        body.setAttribute('id',el.getAttribute('id') + '_popup_body');
+        
+
         
         var trpopup =document.getElementById(el.getAttribute('id') + '_popup_body');
         if (trpopup){
             trpopup.clearpopup = function(){
-                el.popup.setAttribute('style', 'display: none;');
-            }
+                if (el.needofsetrect){
+                   if (el.popup) {el.popup.setAttribute('style', 'display: none;'); el.oldpopup= el.popup;el.popup=undefined;}}
+                else {
+                    el.popup.setAttribute('style', 'display: none;');}
+                }
+                
+
         }   
             
             
@@ -616,8 +639,8 @@ mainlib.valueedit_click =  function (el, nm, alighn, r, stroke, strokewidth, col
                                                              
     var val = $$('format('+tag+"'"+ format+ "')");                                                         
                                                              
-    var edit = libutil.html.create_element('input' , bodydiv, [{name: 'value', value: val },
-                                                               {name: 'type', value: 'text' },
+    var edit = libutil.html.create_element('input' , bodydiv, [{name: 'value', value: val},
+                                                               {name: 'type', value: 'text'},
                                                                {name: 'style', value: editstyle}]);
                                                            
                                                            

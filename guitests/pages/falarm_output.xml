@@ -1,0 +1,169 @@
+<?xml-stylesheet href="../util/css/libs.css"?><svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="" onload="libutil.startup.init()" version="1.1"><script type="text/javascript" xlink:href="../util/js/libutil.js"/><script type="text/javascript" xlink:href="../util/js/designer.js"/><script type="text/javascript" xlink:href="simulator.js"/><script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" type="text/javascript" xlink:href="../libs/main/js/mainlib.js"/><script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" type="text/javascript" xlink:href="../util/js_ext/hightchart/jquery.min.js"/><script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" type="text/javascript" xlink:href="../util/js_ext/hightchart/highcharts.js"/><defs xmlns:html="http://www.w3.org/TR/xhtml1"><filter id="filter_lib_armat1000" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/><feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut"><fePointLight x="50000" y="50000" z="200000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_lib1" x="0%" y="0%" width="100%" height="100%"><feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/><feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut"><fePointLight x="50000" y="100000" z="200000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_lib2" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/><feSpecularLighting in="blur" surfaceScale="6" specularConstant=".6" specularExponent="5" lighting-color="#bbbbbb" result="specOut"><fePointLight x="0" y="0" z="20000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_lib3" filterUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%"><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/><feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut"><fePointLight x="0" y="0" z="20000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_lib4" filterUnits="userSpaceOnUse"><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/><feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut"><fePointLight x="0" y="0" z="20000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_null"/><linearGradient id="gradientnone_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#F7F7F7"/><stop offset="0.5" style="stop-color:#D1D1D1"/><stop offset="1" style="stop-color:#ECECEC"/></linearGradient><linearGradient id="gradientnone_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#F7F7F7"/><stop offset="0.5" style="stop-color:#D1D1D1"/><stop offset="1" style="stop-color:#ECECEC"/></linearGradient><radialGradient id="gradientnone_c"><stop offset="0" style="stop-color:#F7F7F7"/><stop offset="1" style="stop-color:#D1D1D1"/></radialGradient><linearGradient id="gradientblack_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#333"/><stop offset="0.5" style="stop-color:#000"/><stop offset="1" style="stop-color:#333"/></linearGradient><linearGradient id="gradienblack_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#000"/><stop offset="0.5" style="stop-color:#333"/><stop offset="1" style="stop-color:#000"/></linearGradient><radialGradient id="gradientblack_c"><stop offset="0" style="stop-color:#333"/><stop offset="1" style="stop-color:#000"/></radialGradient><linearGradient id="gradientalarm_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#a92"/><stop offset="0.5" style="stop-color:#f92"/><stop offset="1" style="stop-color:#f92"/></linearGradient><linearGradient id="gradientalarm_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#a92"/><stop offset="0.5" style="stop-color:#f92"/><stop offset="1" style="stop-color:#f92"/></linearGradient><radialGradient id="gradientalarm_c"><stop offset="0" style="stop-color:#a92"/><stop offset="0.5" style="stop-color:#f92"/></radialGradient><linearGradient id="gradientaccident_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#AA0000"/><stop offset="0.5" style="stop-color:#FF0000"/><stop offset="1" style="stop-color:#AA0000"/></linearGradient><linearGradient id="gradientaccident_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#AA0000"/><stop offset="0.5" style="stop-color:#FF0000"/><stop offset="1" style="stop-color:#AA0000"/></linearGradient><radialGradient id="gradientaccident_c"><stop offset="0" style="stop-color:#AA0000"/><stop offset="1" style="stop-color:#FF0000"/></radialGradient><linearGradient id="gradientnotice_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#AAAA00"/><stop offset="0.5" style="stop-color:#FFFF00"/><stop offset="1" style="stop-color:#AAAA00"/></linearGradient><linearGradient id="gradientnotice_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#AAAA00"/><stop offset="0.5" style="stop-color:#FFFF00"/><stop offset="1" style="stop-color:#AAAA00"/></linearGradient><radialGradient id="gradientnotice_c"><stop offset="0" style="stop-color:#AAAA00"/><stop offset="1" style="stop-color:#FFFF00"/></radialGradient><linearGradient id="gradientgaz_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#FFFF44"/><stop offset="0.5" style="stop-color:#DDDD22"/><stop offset="1" style="stop-color:#FFFF44"/></linearGradient><linearGradient id="gradientgaz_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#FFFF44"/><stop offset="0.5" style="stop-color:#DDDD22"/><stop offset="1" style="stop-color:#FFFF44"/></linearGradient><radialGradient id="gradientgaz_c"><stop offset="0" style="stop-color:#FFFF44"/><stop offset="1" style="stop-color:#DDDD22"/></radialGradient><linearGradient id="gradientwater_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#55FFAA"/><stop offset="0.5" style="stop-color:#33CC99"/><stop offset="1" style="stop-color:#55FFAA"/></linearGradient><linearGradient id="gradientwater_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#55FFAA"/><stop offset="0.5" style="stop-color:#33CC99"/><stop offset="1" style="stop-color:#55FFAA"/></linearGradient><radialGradient id="gradientwater_c"><stop offset="0" style="stop-color:#55FFAA"/><stop offset="1" style="stop-color:#33CC99"/></radialGradient><linearGradient id="gradientair_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#55BBFF"/><stop offset="0.5" style="stop-color:#3399FF"/><stop offset="1" style="stop-color:#55BBFF"/></linearGradient><linearGradient id="gradientair_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#55BBFF"/><stop offset="0.5" style="stop-color:#3399FF"/><stop offset="1" style="stop-color:#55BBFF"/></linearGradient><radialGradient id="gradientair_c"><stop offset="0" style="stop-color:#55BBFF"/><stop offset="1" style="stop-color:#3399FF"/></radialGradient><linearGradient id="gradientoil_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#FF8855"/><stop offset="0.5" style="stop-color:#CC6633"/><stop offset="1" style="stop-color:#FF8855"/></linearGradient><linearGradient id="gradientoil_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#FF8855"/><stop offset="0.5" style="stop-color:#CC6633"/><stop offset="1" style="stop-color:#FF8855"/></linearGradient><radialGradient id="gradientoil_c"><stop offset="0" style="stop-color:#FF8855"/><stop offset="1" style="stop-color:#CC6633"/></radialGradient><linearGradient id="gradientstream_h" x1="100%" y1="0%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#CC33CC"/><stop offset="0.5" style="stop-color:#FF00FF"/><stop offset="1" style="stop-color:#CC33CC"/></linearGradient><linearGradient id="gradientstrem_v" x1="0%" y1="100%" x2="100%" y2="100%"><stop offset="0" style="stop-color:#CC33CC"/><stop offset="0.5" style="stop-color:#FF00FF"/><stop offset="1" style="stop-color:#CC33CC"/></linearGradient><radialGradient id="gradientstrem_c"><stop offset="0" style="stop-color:#CC33CC"/><stop offset="1" style="stop-color:#FF00FF"/></radialGradient></defs>
+    <foreignObject xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" x="0" y="0" height="160" width="1500" id="name0" isdesined="isdesined"><html xmlns="http://www.w3.org/1999/xhtml" style=" -webkit-user-select: none;"><head><script type="text/javascript" src="../util/js/libutil.js"></script><style type="text/css">
+                        body{
+                          -webkit-user-select: none;
+                          margin: 0px 0px; 
+                          padding: 0px 0px;}
+
+                        div{
+                          float:left;
+                          overflow:scroll;
+                          height: 100%;
+                          width: 100%;
+                          border:  1px solid grey;
+                          background-color: white;}
+
+                        table{
+                          border-collapse:collapse;
+                          text-align: left;                          
+                          font-family: sans-serif;
+                          background:#f0f0f0;}
+
+                        tbody{
+                          overflow:auto;
+                          margin: 0; 
+                          width: 100%;}
+
+                        tr{
+                          display: table-row;
+                          border-spacing: 0;
+                          border: 1px solid #999999;}
+
+                        th{
+                          display: table-cell;
+                          border: 1px solid #999999;
+                          position: relative;
+                          padding: 4px 4px;
+                          font-size: larger;
+                          text-shadow: black 1px 1px 0px, #aaa  0 0 1em;
+                          color: white;
+                          background:  -webkit-linear-gradient(#333 0%, #111 50%, #333 100%);}
+                            
+                        td{
+                          display: table-cell;
+                          border: 1px;                         
+                          padding: 3px;
+                          border: 1px solid #999999;
+                          background:   -webkit-linear-gradient(#eee 0%, #ddd 50%, #eee 100%);}
+
+
+                        tr.avaron{
+                          color: red;
+                          font-weight: bold;}
+
+                        tr.alarmon{
+                          color: orange;
+                          font-weight: bold;}
+
+                        tr.noticeon{
+                          color: darksalmon;
+                          font-weight: bold;}
+
+                        tr.avarkvit{
+                          color:  dimgray;
+                          font-weight: normal;}
+
+                        tr.alarmkvit{
+                          color:  darkgrey;
+                          font-weight: normal;}
+
+                        tr.noticekvit{
+                          color:  lightsteelblue;
+                          font-weight: normal;} 
+                          
+                    </style></head><body style=" width: 1500px; height: 160px;"><div><table style=" width: 1500px;font-size: 10px;"><script type="text/javascript">new libutil.alarmtable(this.document.getElementById('name0'));</script><tbody><tr style=" width: 1500px;"><th>Время</th><th>Тэг</th><th>Сообщение</th></tr></tbody></table></div></body></html></foreignObject>
+    <g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="name1" isdesined="isdesined" x="1501" y="1" height="160" width="130" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {$$('#');; };"><svg x="1501" y="1" height="160" width="130" class="name1__mlibbuttonstyle" state=""><style type="text/css">
+                
+            g#name1 svg  text.name1__mlibbuttonstyle {
+            
+                 font-size: 18;
+                 fill: white;
+                 font-weight: bold;
+                    text-anchor: middle;
+                 dominant-baseline: central; 
+                 -webkit-user-select: none;}
+                 
+            g#name1 svg[state="off"] &gt; svg &gt;  text.name1__mlibbuttonstyle {
+            
+                 font-size: 18;
+                 fill: white;
+                 font-weight: bold;
+                    ;}
+           
+            g#name1 svg[state="disable"] &gt; svg &gt;  text.name1__mlibbuttonstyle {
+            
+                 font-size: 18;
+                 fill: #666;
+                    ;}
+           
+            g#name1 svg *.name1__mlibbuttonstyle{
+                cursor: pointer;}
+          
+            g#name1 svg[state="disable"] *.name1__mlibbuttonstyle{
+                cursor: default;}
+          
+            g#name1 svg &gt; g &gt; rect.name1__mlibbuttonstyle {
+                fill: transparent;}
+                 
+            g#name1 svg &gt; rect.name1__mlibbuttonstyle {
+                fill: url(#name1__gradienton);} 
+            
+            g#name1 svg:hover &gt; rect.name1__mlibbuttonstyle {               
+                -webkit-svg-shadow: 3px 3px  3px rgba(0, 0, 0, 0.5);}
+         
+            g#name1 svg:active &gt; rect.name1__mlibbuttonstyle {
+                fill: url(#name1__gradientona);  
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                 
+            g#name1 svg &gt; g &gt; rect.name1__mlibbuttonstyle {
+            
+                stroke: 
+            #333;
+                stroke-width: 1;}   
+                    
+            g#name1 svg:hover &gt; g &gt; rect.name1__mlibbuttonstyle {
+            
+                stroke: 
+            #555;
+                stroke-width: 1;}                  
+       
+            g#name1 svg[state="off"] &gt; rect.name1__mlibbuttonstyle {
+                fill: url(#name1__gradientoff);} 
+                    
+            g#name1 svg[state="off"]:active &gt; rect.name1__mlibbuttonstyle {
+                fill: url(#name1__gradientoffa);}           
+           
+            g#name1 svg[state="off"] &gt; g &gt; rect.name1__mlibbuttonstyle {
+            
+                stroke: 
+            #555;
+                stroke-width: 1;}   
+                    
+            g#name1 svg[state="off"]:hover &gt; g &gt; rect.name1__mlibbuttonstyle {
+            
+                stroke: 
+            #333;
+                stroke-width: 1;}            
+           
+            g#name1 svg[state="disable"] &gt; rect.name1__mlibbuttonstyle , g#name1 svg[state="disable"]:hover &gt; rect.name1__mlibbuttonstyle , g#name1 svg[state="disable"]:active &gt; rect.name1__mlibbuttonstyle {
+                 fill: url(#name1__gradientdsbl); 
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                
+            g#name1 svg[state="disable"] &gt; g &gt; rect.name1__mlibbuttonstyle , g#name1 svg[state="disable"]:hover &gt; g &gt; rect.name1__mlibbuttonstyle , g#name1 svg[state="disable"]:active &gt; g &gt;rect.name1__mlibbuttonstyle {
+                 stroke-width: 0;
+                 stroke: none;}
+                 
+                 
+            </style><defs><linearGradient id="name1__gradienton" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#333"/><stop offset="0.5" stop-color="#555"/><stop offset="1" stop-color="#333"/></linearGradient><linearGradient id="name1__gradientona" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#555"/><stop offset="0.5" stop-color="#333"/><stop offset="1" stop-color="#555"/></linearGradient><linearGradient id="name1__gradientoff" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#333"/><stop offset="0.5" stop-color="#555"/><stop offset="1" stop-color="#333"/></linearGradient><linearGradient id="name1__gradientoffa" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#555"/><stop offset="0.5" stop-color="#333"/><stop offset="1" stop-color="#555"/></linearGradient><linearGradient id="name1__gradientdsbl" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#777"/><stop offset="0.5" stop-color="#AAA"/><stop offset="1" stop-color="#777"/></linearGradient></defs><rect role="button" aria-pressed="true" x="2" y="2" height="156" width="126" class="name1__mlibbuttonstyle" rx="1" ry="1"/><svg x="4" y="4" height="152" width="122" class="name1__mlibbuttonstyle"><text x="61" y="76" class="name1__mlibbuttonstyle">Квит</text></svg><g class="name1__mlibbuttonstyle"><rect x="4" y="4" height="152" width="122" class="name1__mlibbuttonstyle" rx="1" ry="1"/></g></svg></g>
+<style xmlns="http://www.w3.org/1999/xhtml" type="text/css">.designer_selected { opacity: 0.8 !important; outline: 1px solid #E00 !important;} 
+*[isgoupelement]{ outline: 1px dashed green !important; } 
+*[isinvisibleelement]{ outline: 1px solid green !important; } 
+g[cursor="pointer"]:hover { outline: 0px solid transparent  !important;} 
+g[cursor="pointer"].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;} 
+*[isgoupelement].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;}
+*[isinvisibleelement].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;}
+*[filter] { filter: url('') !important;} 
+.highlight-selected{ fill: none !important; stroke-width: 1 !important; stroke: red !important;}
+.design_captured {display: block !important;}
+*[dv-visible] { display: block !important;} 
+</style></svg:svg>
