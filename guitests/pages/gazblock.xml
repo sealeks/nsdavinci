@@ -1,0 +1,27 @@
+<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?><svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-color: #777;" d=" M297,166 h 120 m -60 -60 v 60">
+    <svg:circle cx="731" cy="170" r="120" fill="#003" stroke="#333" stroke-width="6" id="circle0"/><svg:ellipse cx="672" cy="166" rx="50" ry="15" fill="yellow" stroke="" stroke-width="0" id="ellipse0" visible-binding="Flame1" opacity="0.8"/><mlib:path stroke-width="4" d=" M297,165 h 120 m -60 -60 v 119 m -20 0 h 80" id="path2" stroke="#dd0" filter="filter1" on="!gz_off &amp;&amp; ! pzk1_1_off"/>
+    <mlib:path stroke-width="4" d=" M107,375 v -200 c 0 0 0 -10  10 -10 h 150 m -50 0 v 50 c 0 0 0 10 10 10 h 40" id="path0" stroke="#dd0" filter="filter1" on="!gz_off"/>
+    <mlib:armatura x="257" y="133" height="50" width="50" id="armatura0" type="cvalve" oncolor="#dd0" offcolor="#022" on="pzk1_1_on" off="pzk1_1_off" ron="pzk1_1_ron" roff="" don="pzk1_1_don" doff="pzk1_1_doff" header="ПЗК1.1"/>
+    <mlib:armatura x="407" y="133" height="50" width="50" id="armatura1" type="cvalve" oncolor="#dd0" offcolor="#022" on="pzk1_2_on" off="pzk1_2_off" ron="pzk1_2_ron" roff="" don="pzk1_2_don" doff="pzk1_2_doff" header="ПЗК1.1"/>
+    <mlib:armatura x="408" y="190" height="50" width="50" id="armatura4" type="cvalve" oncolor="#dd0" offcolor="#022" on="kz1_on" off="" ron="kz1_ron" roff="" don="kz1_don" doff="" header="КЗ1"/>
+    <mlib:path stroke-width="4" d=" M298,224 h 30" id="path3" stroke="#dd0" filter="filter1" on="!gz_off &amp;&amp; (! pzk1_1_off || ko1_on)"/>
+    <mlib:path stroke-width="4" d=" M448,165 h 60" id="path4" stroke="#dd0" filter="filter1" on="!gz_off &amp;&amp; ! pzk1_1_off &amp;&amp; ! pzk1_2_off"/>
+    <mlib:path stroke-width="4" d=" M505,166 h 100" id="path5" stroke="#dd0" filter="filter1" on="!gz_off &amp;amp;&amp;amp; ! pzk1_1_off &amp;amp;&amp;amp; ! pzk1_2_off"/>
+    <mlib:armatura x="468" y="133" height="50" width="50" id="armatura5" type="regul" oncolor="#dd0" offcolor="#022" on="v1on" off="" ron="rv1on" roff="" don="rv1on" doff=""/>
+    <mlib:path stroke-width="3" d=" M447,224 h 90 c 0 0 10 0 10 -10 v -20 c 0 0 0 -10 10 -10 h 60" id="path6" stroke="#dd0" filter="" on="!gz_off &amp;&amp; ! pzk1_1_off &amp;&amp; kz1_on"/>
+    <mlib:armatura x="89" y="366" height="50" width="50" id="armatura6" type="regul" oncolor="#dd0" offcolor="#022" on="v1on" off="" ron="rv1on" roff="" don="rv1on" doff="" rotate="90"/>
+    <mlib:path stroke-width="4" d=" M357,50 v 30" id="path7" stroke="yellow" filter="filter1" on="!gz_off &amp;&amp; !pzk1_1_off &amp;&amp;  !kb1_off"/>
+    <mlib:path stroke-width="4" d=" M107,407 v 82" id="path8" stroke="#dd0" filter="filter1" on="!gz_off"/>
+    <svg:text x="298" y="150" text="1pzk" fill="yellow" id="text0" style="font-size: 10"/>
+    <mlib:armatura x="258" y="192" height="50" width="50" id="armatura3" type="cvalve" oncolor="#dd0" offcolor="#022" on="ko1_on" off="" ron="ko1_ron" roff="" don="ko1_don" doff="" header="КО1"/>
+    <svg:text x="451" y="150" text="2pzk" fill="yellow" id="text1" style="font-size: 10"/>
+    <svg:text x="300" y="210" text="3ko" fill="yellow" id="text2" style="font-size: 10"/>
+    <svg:text x="367" y="75" text="4kb" fill="yellow" id="text3" style="font-size: 10"/>
+    <svg:text x="452" y="210" text="5kz" fill="yellow" id="text4" style="font-size: 10"/>
+    <svg:text x="125" y="372" text="0prz" fill="yellow" id="text5" style="font-size: 10"/>
+    <svg:text x="534" y="149" text="6prz" fill="yellow" id="text6" style="font-size: 10"/>
+    <mlib:armatura x="341" y="69" height="45" width="45" id="armatura2" type="ovalve" oncolor="yellow" offcolor="#022" on="" off="kb1_off" ron="" roff="kb1_roff" don="kb1_doff" doff="" rotate="90" header="КБ1"/>
+    <mlib:armatura x="89" y="478" height="50" width="50" id="armatura7" type="bolt" oncolor="#dd0" offcolor="#022" on="gz_on" off="gz_off" ron="gz_ron" roff="gz_roff" don="gz_don" doff="gz_doff" rotate="90" header="ГЗ"/>
+    <mlib:path stroke-width="4" d=" M107,519 v 82" id="path9" stroke="#dd0" filter="filter1" on="1"/>
+    <svg:text x="124" y="485" text="gz" fill="yellow" id="text7" style="font-size: 10"/>
+<svg:text x="318" y="187" text="min" fill="" id="text8" fill-binding="pg1_min ? 'yellow' : 'gray'"/><svg:text x="318" y="199" text="max" fill="" id="text9" fill-binding="pg1_max ? 'yellow' : 'gray'"/><svg:line x1="0" y1="0" x2="0" y2="15" stroke-width="3" stroke="#dd0" transform="translate(332,215)" id="line0"/><mlib:rect x="603" y="159" height="15" width="20" stroke="#333" r="2" stroke-width="1" id="rect0" color1="#666" color2="#aaa"/><svg:ellipse cx="642" cy="182" rx="15" ry="5" fill="yellow" stroke="" stroke-width="0" id="ellipse1" visible-binding="Flame1z" opacity="0.8"/><mlib:rect x="608" y="182" height="5" width="20" stroke="#333" r="2" stroke-width="1" id="rect1" color1="#666" color2="#aaa"/><svg:image x="776" y="405" width="400" height="400" id="image0" href="../util/css/res/throbber.svg"/></svg:svg>

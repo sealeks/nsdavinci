@@ -77,22 +77,37 @@ add_simulation ( new simulator.actuator('in_pos' , 'in_sp'));
 
 add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp', 'auto' , true, 'level_p', 'level_i', 'level_d' ));
 
-add_simulation (new simulator.valve('v1on', 'v1off' , 'dv1on', 'dv1off', 'rv1on', 'rv1off', 5000, 5000 ));
-//add_simulation (new simulator.valve('v1on', 'v1off' , 'dv1on', /*'dv1off'*/null, 'rv1on', /*'rv1off'*/null, 5000, 1 ));
-//add_simulation (new simulator.valve('v1on', 'v1off' , /*'dv1on'*/null, 'dv1off', /*'rv1on'*/null, 'rv1off', 1, 5000 ));
-//add_simulation (new simulator.valve('v1on', null , null , null, 'rv1on', null, 5000, 1 ));
-  
+
+
+// Газовый тракт
+
+
+   var gz = simulator.valve_init(2,'gz_on', 'gz_off' , 'gz_don', 'gz_doff', 'gz_ron', 'gz_roff', 10000, 10000 );
+   var pzk1_1 = simulator.valve_init(2,'pzk1_1_on', 'pzk1_1_off' , 'pzk1_1_don', null, 'pzk1_1_ron', null , 10000, 0 );
+   var pzk1_2 = simulator.valve_init(2,'pzk1_2_on', 'pzk1_2_off' , 'pzk1_2_don', null, 'pzk1_2_ron', null , 10000, 0 );
+   var ko1 = simulator.valve_init(2,'ko1_on', null , null, null, 'ko1_ron', null , 100, 100 );
+   var kz1 = simulator.valve_init(2,'kz1_on', null , null, null, 'kz1_ron', null , 100, 100 );
+   var kb1 = simulator.valve_init(1,null, 'kb1_off' , null , null , null , 'kb1_roff' , 100, 100 );
+
+   add_simulation (new simulator.booldelayer('pg1_min' ,0 , 'ko1_on && !gz_off' ,0, 1,0, 5000,0));
+   add_simulation (new simulator.booldelayer('pg1_max' ,0 , 'ko1_on && !gz_off' ,0, 1,0, 10000,0));
+   add_simulation (new simulator.booldelayer('pg1_min' ,null , '!pzk1_1_off && !gz_off' ,null, 1, 0, 0 ,0));
+   add_simulation (new simulator.booldelayer('pg1_max' ,null , '!pzk1_1_off && !gz_off' ,null, 1, 0, 0 ,0));  
+   
+   add_simulation (new simulator.booldelayer('Flame1' ,0 , '!pzk1_1_off && !pzk1_2_off && !gz_off' ,0, 1,0, 5000,0));
+   add_simulation (new simulator.booldelayer('Flame1z' ,0 , '!pzk1_1_off && kz1_on && !gz_off' ,0, 1,0, 5000,0));
 
 };
 ]]></script>
 <project path="file:///F:/Project/davinci/guitests/pages/">
 
   
-  <form name="guimotor2" file="guimotor2.xml" caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no" visible="false"/>
+  <form name="guimotor3" file="guimotor3.xml" caption="Газ" left="0%" top="0%" width="85%" height="85%" decorated="no" visible="false"/>
   <form name="testopen" file="testopen.xml" caption="Мазут" left="85%" top="0%" width="15%" height="100%" decorated="no"/>
   
   <form name="falarm" file="falarm.xml" left="0%" top="85%" width="85%" height="15%" caption="fa" decorated="no" visible="true"/>
-  <form name="te" file="test.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/>
+  <form name="test" file="test.xml" left="0%" top="00%" width="85%" height="85%" caption="test" decorated="no"/>
+  <form name="gazblock" file="gazblock.xml" left="0%" top="0%" width="85%" height="85%" caption="gazblock" decorated="no"/>
   <!--form name="tes" file="atest.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/-->
   
   <scriptfile name="script1" file="script1.js"/>

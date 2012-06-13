@@ -69,6 +69,67 @@ simulator.valueobserver.prototype.execute = function(){
 }
 
 
+// delayer
+
+simulator.booldelayer = function(tag ,start , source ,stop, onvalue, offvalue, ontimeout, offtimeout){
+  this.tag = tag;
+  if (source && onvalue || offvalue){
+      this.valid = true;
+      this.source = source;
+      this.onvalue = onvalue;
+      this.offvalue = offvalue;
+  }
+  this.ontimeout = ontimeout ? ontimeout : 1000;
+  this.offtimeout = offtimeout ? offtimeout : 1000;
+  if (start || start==0)
+        this.start = start;
+  if (stop || start==0)
+        this.stop = stop;    
+  if (this.valid){
+      this.atach();
+  }     
+}
+
+simulator.booldelayer.prototype.atach = function(){
+    
+    var ts =this;
+    if (this.source){
+        this.sourcehandler = function(){
+            ts.sourceevent(event);
+        };
+        if (window.addExpressionListener( this.sourcehandler , this.source))
+            this.sourceset=true; 
+        else
+            console.log('AddExpressionListener source no regist');
+    }
+    
+    if (this.valid && (this.start || this.start==0))
+       $$(this.tag + ' @ ' + this.start);
+}
+
+
+simulator.booldelayer.prototype.detach = function(){
+    if (this.valid && (this.start || this.start==0))
+       $$(this.tag + ' @ ' + this.stop)
+    if (this.sourcehandler && this.sourceset)
+        window.removeExpressionListener( this.sourcehandler);
+}
+
+simulator.booldelayer.prototype.execute = function(){
+    
+}
+
+simulator.booldelayer.prototype.sourceevent = function(){
+    if (event.expression==this.source && event.valid){     
+        var ts = this;
+        if (event.value && this.onvalue!==undefined && !ts.state)
+        setTimeout(function(){console.log('on delay fire');$$(ts.tag +' @ '+ts.onvalue); ts.state = 1;}, ts.ontimeout );
+        if (!event.value && this.offvalue!==undefined && ts.state)
+        setTimeout(function(){console.log('off delay fire');$$(ts.tag +' @ '+ts.offvalue); ts.state = 0;},ts.offtimeout);
+}    
+}
+
+
 // differeciator
 
 simulator.differeciator = function(tag ,start , source ,stop){
@@ -122,6 +183,17 @@ simulator.differeciator.prototype.diffevent = function(event){
 
 
 // simulator.valvle
+simulator.valve_init  = function(state, on, off, don, doff, ron, roff, timeopen, timeclose , initpos){
+   if (on) add_simulation ( new simulator.initializer(on , state==1 ? 1 : 0 , 0));
+   if (off) add_simulation ( new simulator.initializer(off , state==2 ? 1 : 0 , 0));
+   if (don) add_simulation ( new simulator.initializer(don , 0 , 0));
+   if (doff) add_simulation ( new simulator.initializer(doff , 0 , 0));
+   if (ron) add_simulation ( new simulator.initializer(ron , 0 , 0));
+   if (roff) add_simulation ( new simulator.initializer(roff , 0 , 0));
+   var valve_ = new simulator.valve(on, off  , don, doff , ron, roff , timeopen, timeclose );
+   add_simulation (valve_);
+   return valve_;
+}
 
 simulator.valve  = function(on, off, don, doff, ron, roff, timeopen, timeclose , initpos){
     this.on= on;
@@ -819,8 +891,8 @@ simulator.regulator.prototype.execute = function(){
         this.perflasterror = this.lasterror;
         this.lasterror = this.error ;
         
-        if (this.K) console.log('prop ',this.K );
-        console.log( this.I, this.D );
+        //if (this.K) console.log('prop ',this.K );
+        //console.log( this.I, this.D );
         
         var d_and_i_and_k = this.I + this.D + this.K;
         

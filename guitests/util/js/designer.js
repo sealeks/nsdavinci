@@ -501,9 +501,12 @@ designer.prototype.updateRoot = function(){
 }
 
 
+
+
 designer.prototype.save = function(){
     if (this.sourseDocument){
         libutil.dom.writeDoc(this.sourseDocument);
+        //libutil.dom.writeDoc(this.instantdocument,'_output');
         this.needsave=false;
     }  
 }
@@ -778,6 +781,7 @@ designer.prototype.isSelectionParent = function(el){
 }
 
 designer.prototype.selectionCount = function(){
+    if (!this.selectedElemens) this.selectedElemens=[];
     return this.selectedElemens && this.selectedElemens.length > 0;        
 }
 
@@ -2367,7 +2371,7 @@ dsutl.form.add = function (exists){
 
     var openfile= prompt('Введите имя файла','');
     if (!openfile || openfile=='') return;          
-    if (!libutil.regex.check(openfile,/[A-Za-z][A-Za-z0-9]*[\.xml]?/)){
+    if (!libutil.regex.check(openfile,/[A-Za-z][A-Za-z0-9]*[\.xml]?/) && (libutil.regex.check(openfile,/_output/))){
         alert('Имя файла '+openfile+' некорректно!');
         return;
     }    
@@ -2383,7 +2387,7 @@ dsutl.form.add = function (exists){
         alert('Документ '+openfile+' не существует!!');
         return;        
     }
-    var match = openfile.match(/[A-Za-z][A-Za-z0-9]/);
+    var match = openfile.match(/[A-Za-z][A-Za-z0-9]*/);
     if (match.length==0){
         alert('Ошибка при обработке '+openfile+' !');
         return;}
@@ -2408,10 +2412,10 @@ dsutl.toolwin.addform = function(file, name, exists){
         var newel=elp.ownerDocument.createElement('form');
         newel.setAttribute('name',name);
         newel.setAttribute('file',file);
-        newel.setAttribute('left','10%');
-        newel.setAttribute('top','10%');
-        newel.setAttribute('width','50%');
-        newel.setAttribute('height','50%');
+        newel.setAttribute('left','0%');
+        newel.setAttribute('top','0%');
+        newel.setAttribute('width','85%');
+        newel.setAttribute('height','85%');
         newel.setAttribute('caption',name);
         newel.setAttribute('decorated','no');
         elp.insertBefore(newel,el ? el.nextSibling : null);
