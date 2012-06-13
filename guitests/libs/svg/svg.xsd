@@ -476,6 +476,7 @@
             <xsd:attribute name="filter" type="svg:filtertype"/> 
             <xsd:attribute name="style" type="xsd:string"/>  
             <xsd:attribute name="visible-binding" type="lib:expression"/>
+            <xsd:attribute name="rotate" type="xsd:string"/>
             
             <xsd:attribute name="onclick"  type="lib:event"/>
             <xsd:attribute name="ondblclick" type="lib:event"/>
