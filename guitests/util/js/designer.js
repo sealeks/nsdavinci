@@ -118,7 +118,9 @@ designer.prototype.attach = function(el){
                 el.onmousemove = undefined;
                 el.onmousedown = undefined;
                 el.onmouseup = undefined;
-                el.oncontextmenu  = undefined;
+                el.oncontextmenu  = function () {
+                     event.stopPropagation();
+                     event.preventDefault();};
 
             }
         }        
@@ -1602,17 +1604,6 @@ dsutl.selectwraper.prototype.select = function(){
     };
 }
 
-/*dsutl.selectwraper.prototype.initHighLight = function(){
-    var box = libutil.geometry.boundrect(this.selement);
-    if (!box) {
-        return null;}
-    console.log(box);
-    this.helement = libutil.svg.create_element_no_insert('rect',this.parent,[{ name : 'x' , value : box.x}, {name : 'y' , value : box.y}, 
-                                                                              {name : 'width' , value : box.w},  {name : 'height' , value : box.h}, 
-                                                                              {name : 'class' , value : 'highlight-selected'}]);
-    this.parent.insertBefore( this.helement, this.element.nextSibling)                                                                      
-    
-}*/
 
 
 dsutl.selectwraper.prototype.deselect = function(){
@@ -1629,7 +1620,9 @@ dsutl.selectwraper.prototype.deselect = function(){
        this.selement.onmousemove = undefined;
        this.selement.onmousedown = undefined;
        this.selement.onmouseup = undefined;
-       this.selement.oncontextmenu  = undefined;
+       this.selement.oncontextmenu  = function () {
+                     event.stopPropagation();
+                     event.preventDefault();};
        
     } 
 }

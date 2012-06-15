@@ -35,9 +35,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     -->
     
+
     
     
- 
     <!--xsl:template name="mlib_config_list_check">
         <xsl:choose>
             <xsl:when test="not(normalize-space(@config)='')"> 
@@ -174,13 +174,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 
                 <defs>
                     <script type="text/javascript">
-                        <xsl:text>document.getElementById('</xsl:text>
+                        
+                        <xsl:text>if ((window.$$editable) &#38;&#38; (!$$editable())) { document.getElementById('</xsl:text>
                         <xsl:value-of select="@id"/>
                         <xsl:text>').addEventListener('contextmenu' ,function (ev) {
                         if (mainlib.check_click(this, event)) {  
                             mainlib.config_click(mainlib.check_click(this));
                             event.stopPropagation();
-                            event.preventDefault();}}); </xsl:text>                    
+                            event.preventDefault();}});} </xsl:text>                    
                     </script>
                     <svg> 
                         <xsl:attribute name="id">
@@ -3479,6 +3480,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:call-template name="apply_mlib_sensor_control"/>
             
             <xsl:call-template name="apply_mlib_sensor_popup"/>
+            
+            <xsl:call-template name="mlib_config_popup"/>
                        
         </g>
     </xsl:template>

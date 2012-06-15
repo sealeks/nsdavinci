@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
-	width="100%" height="100%" style="color: transparent;">
+	width="100" height="100" style="color: transparent;">
 <radialGradient id="r" fy="20">
 	<stop offset=".05" stop-color="orange"/>
 	<stop offset=".15" stop-color="orange"/>
@@ -10,7 +10,7 @@
 	<stop offset=".95" stop-color="yellow" stop-opacity="0"/>
 	<stop offset="1" stop-color="yellow" stop-opacity="0"/>
 </radialGradient>
-<ellipse fill="url(#r)" cx="50%" cy="50%" rx="40%" ry="40%">
+<ellipse fill="url(#r)" cx="50" cy="50" rx="40" ry="50" transform="rotate(90, 50, 50)">
 <animate attributeName="rx" dur="0.3s" values="45%;35%;45%;40%;45%" keyTimes="0; .4;.5;.6;  1" 
  repeatCount="indefinite"/>
 </ellipse>

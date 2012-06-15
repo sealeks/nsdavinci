@@ -40,4 +40,4 @@
     <mlib:armatura x="1284" y="698" height="50" width="50" id="armatura3" type="cvalve" oncolor="#088" offcolor="#022" on="v1on" off="v1off" ron="rv1on" roff="" don="dv1on" doff=""/>
     <mlib:armatura x="1413" y="385" height="50" width="50" id="armatura4" type="ovalve" oncolor="#088" offcolor="#022" on="v1on" off="v1off" ron="" roff="rv1off" don="" doff="dv1off"/>
     <mlib:armatura x="1130" y="659" height="50" width="50" id="armatura5" type="cvalve" oncolor="#088" offcolor="#022" on="v1on" off="" ron="rv1on" roff="" don="rv1on" doff=""/>
-</svg>
+<svg:path d=" M1117,313 v 350 c 250 250 250 -550 0 -350 z" stroke-width="1" stroke="black" fill="#002" transform="translate(0,0)" id="path9"/></svg>
