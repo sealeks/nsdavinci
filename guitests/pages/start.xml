@@ -103,6 +103,8 @@ var gz = simulator.valve_init(2,'gz_on', 'gz_off' , 'gz_don', 'gz_doff', 'gz_ron
 
 // Газовый тракт
 
+
+ var gazblock = function(pref){
    add_simulation ( new simulator.initializer('mopress1' , 0 , 0));
    add_simulation ( new simulator.initializer('ropress1' , 0 , 0));
    add_simulation ( new simulator.initializer('mrozz1' , 0 , 0));
@@ -182,7 +184,9 @@ var gz = simulator.valve_init(2,'gz_on', 'gz_off' , 'gz_don', 'gz_doff', 'gz_ron
     
     
                                                           
-                                                         
+   }
+   
+   gazblock();
 
 };
 ]]></script>
