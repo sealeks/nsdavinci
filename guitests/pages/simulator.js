@@ -60,7 +60,7 @@ simulator.valueobserver.prototype.atach = function(){
 
 
 simulator.valueobserver.prototype.detach = function(){
-    if (this.valid && (this.start || this.start==0))
+    if (this.valid && (this.stop || this.stop==0))
        $$(this.tag + ' @ ' + this.stop)
 }
 
@@ -109,7 +109,7 @@ simulator.booldelayer.prototype.atach = function(){
 
 
 simulator.booldelayer.prototype.detach = function(){
-    if (this.valid && (this.start || this.start==0))
+    if (this.valid && (this.stop || this.stop==0))
        $$(this.tag + ' @ ' + this.stop)
     if (this.sourcehandler && this.sourceset)
         window.removeExpressionListener( this.sourcehandler);
@@ -123,9 +123,9 @@ simulator.booldelayer.prototype.sourceevent = function(){
     if (event.expression==this.source && event.valid){     
         var ts = this;
         if (event.value && this.onvalue!==undefined && !ts.state)
-        setTimeout(function(){console.log('on delay fire');$$(ts.tag +' @ '+ts.onvalue); ts.state = 1;}, ts.ontimeout );
+        setTimeout(function(){console.log('on delay fire');$$(ts.tag +' @ '+ts.onvalue);ts.state = 1;}, ts.ontimeout );
         if (!event.value && this.offvalue!==undefined && ts.state)
-        setTimeout(function(){console.log('off delay fire');$$(ts.tag +' @ '+ts.offvalue); ts.state = 0;},ts.offtimeout);
+        setTimeout(function(){console.log('off delay fire');$$(ts.tag +' @ '+ts.offvalue);ts.state = 0;},ts.offtimeout);
 }    
 }
 
@@ -163,7 +163,7 @@ simulator.differeciator.prototype.atach = function(){
 
 
 simulator.differeciator.prototype.detach = function(){
-    if (this.valid && (this.start || this.start==0))
+    if (this.valid && (this.stop || this.stop==0))
        $$(this.tag + ' @ ' + this.stop)
     if (this.diffhandler && this.diffset)
         window.removeExpressionListener( this.autohandler);
@@ -174,22 +174,24 @@ simulator.differeciator.prototype.execute = function(){
 }
 
 simulator.differeciator.prototype.diffevent = function(event){
+    var ts = this;
     if (event.expression==this.source){
-       $$(this.tag + ' @ ' + event.value)
-       console.log(this.tag,event.value);
+       setTimeout(function(){$$(ts.tag + ' @ ' + event.value);},0);
+       //console.log(this.tag,event.value);
         }      
 }
 
 
 
 // simulator.valvle
-simulator.valve_init  = function(state, on, off, don, doff, ron, roff, timeopen, timeclose , initpos){
+simulator.valve_init  = function(state, on, off, don, doff, ron, roff, timeopen, timeclose , auto){
    if (on) add_simulation ( new simulator.initializer(on , state==1 ? 1 : 0 , 0));
    if (off) add_simulation ( new simulator.initializer(off , state==2 ? 1 : 0 , 0));
    if (don) add_simulation ( new simulator.initializer(don , 0 , 0));
    if (doff) add_simulation ( new simulator.initializer(doff , 0 , 0));
    if (ron) add_simulation ( new simulator.initializer(ron , 0 , 0));
    if (roff) add_simulation ( new simulator.initializer(roff , 0 , 0));
+   if (auto) add_simulation ( new simulator.initializer(auto , 0 , 0));
    var valve_ = new simulator.valve(on, off  , don, doff , ron, roff , timeopen, timeclose );
    add_simulation (valve_);
    return valve_;
@@ -650,7 +652,10 @@ simulator.valve.prototype.onevent = function(event){
         if (!event.value && this._on){
             this._on=0;
             if (this.state==1) this.state=0;
-        }       
+        }
+        if (this.okfunk && (event.value || (!event.value && !this.off))){
+            setTimeout(function(){if (ts.okfunk) {ts.okfunk();ts.okfunk=undefined;ts.cancelfunk=undefined;}},0);
+        }
     }       
 }
 
@@ -669,7 +674,10 @@ simulator.valve.prototype.offevent = function(event){
         if (!event.value && this._off){
             this._off=0;
             if (this.state==2) this.state=0;
-        }       
+        }
+        if (this.okfunk && (event.value || (!event.value && !this.on))){
+            setTimeout(function(){if (ts.okfunk) {ts.okfunk();ts.okfunk=undefined;ts.cancelfunk=undefined;}},0);
+        }        
     }         
 }
 
@@ -677,14 +685,56 @@ simulator.valve.prototype.offevent = function(event){
 simulator.valve.prototype.execute = function(){
   
 }
+
+simulator.valve.prototype.shedule = function(sp,okfunk,cancelfnc){
+    var ts = this;
+    if (sp){
+        if (ts._on || (!ts.on && !ts._off)){
+           if (okfunk) okfunk(); 
+        }
+        else{
+           ts.okfunk = okfunk;
+           ts.cancelfnc = cancelfnc;
+           if (ts.ron){
+               setTimeout(function(){$$(ts.ron + ' @ 1')},0)
+               return;}
+           if (ts.roff){
+               setTimeout(function(){$$(ts.roff + ' @ 0')},0)
+               return;}
+           if (cancelfnc) cancelfnc();
+           ts.okfunk = undefined;
+           ts.cancelfnc = undefined;           
+        }
+    }
+    else{
+        if (ts._off  || (!ts.off && !ts._on)){
+           if (okfunk) okfunk(); 
+        }
+        else{
+           ts.okfunk = okfunk;
+           ts.cancelfnc = cancelfnc;
+           if (ts.roff){
+               setTimeout(function(){$$(ts.roff + ' @ 1')},0)
+               return;}
+           if (ts.ron){
+               setTimeout(function(){$$(ts.ron + ' @ 0')},0)
+               return;}
+           if (cancelfnc) cancelfnc();
+           ts.okfunk = undefined;
+           ts.cancelfnc = undefined;           
+        }
+    }          
+}
  
 // simulator.actuator
 
 simulator.actuator  = function(pos, sp, tick){
     this.pos= pos;
     this.sp=sp;
+    this.diff = 'abs('+sp+'-'+pos+')';
     this.tick=tick ? tick : 0.05;
     this.enable=true;
+    this.atach();
 }
 
 simulator.actuator.prototype.position = function(){
@@ -692,28 +742,54 @@ simulator.actuator.prototype.position = function(){
 }
 
 simulator.actuator.prototype.atach = function(){
-
+    var ts=this;
+    if (this.sp){
+        this.sphandler = function(){
+            ts.spevent(event);
+        };
+        if (window.addExpressionListener( this.sphandler , this.diff))
+            this.spset=true; 
+        else
+            console.log('AddExpressionListener sp no regist');
+    }
 }
 
 
 simulator.actuator.prototype.detach = function(){
-
+    if (this.sphandler && this.spset)
+        window.removeExpressionListener( this.sphandler);
 }
 
 simulator.actuator.prototype.sp = function(val){
+    console.log('sp actuator set',val);
     $$(this.sp + ' @  '+ val );
 }
 
 simulator.actuator.prototype.normalize = function(){
+    ('actuator normalize');
     $$(this.sp + ' @  '+ this.pos );
 }
 
 simulator.actuator.prototype.spdiff = function(val){
+    if ((val<0 ? -val : val)>2) console.log('diff actuator set',val);
     $$(this.sp + ' @  ('+ this.sp + ' + '+ val + ')' );
 }
 
+simulator.actuator.prototype.spevent = function(event){
+    var ts=this;
+    if (event.expression==this.diff && event.valid){ 
+    
+    /*setTimeout(function(){$$('(abs(' + ts.pos + ' - '+ ts.sp + ') > ' + ts.tick + ') ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts.tick + ') : ('+ ts.tick + ')  ))) : ('+ 
+        '(abs(' + ts.pos + ' - '+ ts.sp + ') > 0) ? (' + ts.pos + ' @ ' + ts.sp + ') : 0' + 
+        ') ');},100);  */      
+    }
+}    
+
 simulator.actuator.prototype.execute = function(){
-    $$('(abs(' + this.pos + ' - '+ this.sp + ') > ' + this.tick + ') ? (' + this.pos + ' @ (' + this.pos + ' + (' + this.sp + '<' + this.pos + ' ? (- ' + this.tick + ') : ('+ this.tick + ')  ))) : 0 ');
+var ts=this;
+$$('(abs(' + ts.pos + ' - '+ ts.sp + ')) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts.tick + ') : ('+ ts.tick + ')  ))) : ('+ 
+        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid)) ? (' + ts.pos + ' @ ' + ts.pos + ') : 0' + 
+        ') ');
 }
 
 
@@ -747,6 +823,9 @@ simulator.regulator  = function(val, valsp, pos, possp, auto,  rev, kp , ki , kd
     this.K = 0;
     this.I = 0;
     this.D = 0;
+    this.error = 0;
+    this.lasterror = 0;
+    this.preflasterror = 0;
     this.olddiff=undefined;
     
     this.atach();
@@ -814,16 +893,20 @@ simulator.regulator.prototype.autoevent = function(event){
             this.I = 0;
             this.D = 0;
             this.olddiff=undefined;
-            this.error = undefined;
-            this.lasterror = undefined;
-            this.preflasterror = undefined;
+            this.error = 0;
+            this.lasterror = 0;
+            this.preflasterror = 0;
             this.lasttime = undefined;
             this.preflasttime = undefined;
-            this.kplast = undefined;
+            this.kplast = 0;
             if(!event.value){
             if (this.actuator)
                 setTimeout(function(){ts.actuator.normalize()},1);
-        }}
+            }
+            else{              
+                setTimeout(function(){console.log('to auto',$$(ts.diff));ts.diffevent({expression : ts.diff, value: $$(ts.diff), valid: 100 })},1);
+            }    
+    }
         this.autostate = event.value;
     }       
 }
@@ -865,7 +948,7 @@ simulator.regulator.prototype.delt = function(){
 
 simulator.regulator.prototype.execute = function(){
     if (this.autostate && this.actuator){
-        console.log('this.autostate ',this.autostate );
+        //console.log('this.autostate ',this.autostate );
         var ts = this;
         var tmp = new Date();
         var curtime = tmp.getTime() + 0;
@@ -891,13 +974,15 @@ simulator.regulator.prototype.execute = function(){
         this.perflasterror = this.lasterror;
         this.lasterror = this.error ;
         
-        //if (this.K) console.log('prop ',this.K );
+        //if (this.K) 
+            //console.log('prop ',this.K );
         //console.log( this.I, this.D );
         
         var d_and_i_and_k = this.I + this.D + this.K;
         
-        if (d_and_i_and_k)
-        ts.actuator.spdiff(d_and_i_and_k * 100);;
+        if (d_and_i_and_k){
+        if ((d_and_i_and_k<0 ? -d_and_i_and_k : d_and_i_and_k) *100>2) console.log( 'd_and_i_and_k',this.K*100,this.I*100,this.D*100,d_and_i_and_k*100)
+        ts.actuator.spdiff(d_and_i_and_k * 100);;}
      
         this.K=0;
         
@@ -906,3 +991,177 @@ simulator.regulator.prototype.execute = function(){
        this.actuator.execute(); 
     }
 }
+
+
+//  sheduler
+
+simulator.sheduler = function(start , source ,stop, shedulelist){
+  if (source && shedulelist){
+      this.valid = true;
+      this.source = source;
+      this.shedulelist = shedulelist;
+  }
+  if (start || start==0)
+        this.start = start;
+  if (stop || start==0)
+        this.stop = stop;    
+  if (this.valid){
+      this.atach();
+  }     
+}
+
+simulator.sheduler.prototype.atach = function(){
+    
+    var ts =this;
+    if (this.source){
+        this.sourcehandler = function(){
+            ts.sourceevent(event);
+        };
+        if (window.addExpressionListener( this.sourcehandler , this.source))
+            this.sourceset=true; 
+        else
+            console.log('AddExpressionListener source no regist');
+    }
+    
+    if (this.valid && (this.start || this.start==0))
+       $$(this.source + ' @ ' + this.start);
+}
+
+
+simulator.sheduler.prototype.detach = function(){
+    if (this.sourcehandler && this.sourceset)
+        window.removeExpressionListener( this.sourcehandler);   
+    if (this.valid && (this.stop || this.stop==0))
+       $$(this.source + ' @ ' + this.stop)
+
+}
+
+simulator.sheduler.prototype.execute = function(){
+    
+}
+
+simulator.sheduler.prototype.sourceevent = function(){
+    if (event.expression==this.source && event.valid){     
+        var ts = this;
+        if (event.value){
+            this.set = 1;
+            for (var i=this.shedulelist.length-1; i>=0; --i){
+                    var shedulerow= ts.shedulelist[i]; 
+                    var sh = new simulator.sheduler.task(shedulerow.shedule,shedulerow.sp, 
+                             nextsh ? nextsh : {
+                                 execute: function(){setTimeout(function(){if (ts.okfunk)
+                                     ts.okfunk();ts.okfunk =undefined;ts.cancelfnc =undefined;},0)}} );
+                    ts.shedulelist[i].sh = sh;
+                    var nextsh = sh;
+            }
+            if (sh) sh.execute();                            
+        }
+        else{
+            this.set = 0;
+        }
+}    
+}
+
+
+simulator.sheduler.prototype.shedule = function(sp,okfunk,cancelfnc){
+    if (this.set){
+        if (okfunk){okfunk()}
+    }
+    else{
+        var ts = this;
+        ts.okfunk = okfunk;
+        ts.cancelfnc = cancelfnc;
+        setTimeout(function(){$$(ts.source + ' @ 1')},0);       
+    }
+}
+
+
+
+//  sheduler.task
+
+simulator.sheduler.task = function(sheduler, sp, nextsheduler, cancelfunc){
+    this.sheduler = sheduler;
+    this.sp = sp;
+    this.nextsheduler = nextsheduler;
+    this.cancelfunc = cancelfunc ? cancelfunc : function(){};
+}
+
+simulator.sheduler.task.prototype.execute = function(){
+    var tss = this;
+    var nextcall = tss.nextsheduler ? function(){tss.nextsheduler.execute()} : 
+        function(){
+        $$(tss.sourse +' @ 0');};
+    setTimeout(function(){
+        tss.sheduler.shedule(tss.sp, nextcall ,tss.cancelfunc)},0);
+}
+
+//  sheduler.timeoutshedule
+
+simulator.sheduler.timeoutshedule = function(timeout){
+    this.timeout = timeout ? timeout : 0 ;
+}
+
+simulator.sheduler.timeoutshedule.prototype.shedule = function(sp,okfunk,cancelfnc){
+    var tss = this;
+    this.okfunk = okfunk;
+    this.cancelfnc = cancelfnc;
+    setTimeout(function(){
+        tss.okfunk();tss.okfunk = undefined;tss.cancelfnc = undefined;},tss.timeout); 
+}
+
+//  sheduler.commandshedule
+
+simulator.sheduler.commandshedule = function(func,timeout){
+    this.func = func ? func : function(){} ;
+    this.timeout = timeout ? timeout : 0 ;
+}
+
+simulator.sheduler.commandshedule.prototype.shedule = function(sp,okfunk,cancelfnc){
+    var tss = this;
+    this.okfunk = okfunk;
+    this.cancelfnc = cancelfnc;
+    setTimeout(function(){
+        tss.func();tss.okfunk();tss.okfunk = undefined;tss.cancelfnc = undefined;},tss.timeout); 
+}
+
+//  sheduler.commandshedule
+
+simulator.sheduler.checkvalueshedule = function(value, timeout){
+    this.value = value ? value : function(){} ;
+    this.source = value;
+}
+
+simulator.sheduler.checkvalueshedule.prototype.atach = function(){
+    
+    var ts =this;
+    if (this.source){
+        this.sourcehandler = function(){
+            ts.sourceevent(event);
+        };
+        if (window.addExpressionListener( this.sourcehandler , this.source))
+            this.sourceset=true; 
+        else
+            console.log('AddExpressionListener source no regist');
+    }
+}
+
+
+simulator.sheduler.checkvalueshedule.prototype.detach = function(){
+    if (this.sourcehandler && this.sourceset)
+        window.removeExpressionListener( this.sourcehandler);
+}
+
+simulator.sheduler.checkvalueshedule.prototype.shedule = function(sp,okfunk,cancelfnc){
+    var tss = this;
+    this.okfunk = okfunk;
+    this.cancelfnc = cancelfnc;
+    setTimeout(function(){
+        tss.atach();},0); 
+}
+
+simulator.sheduler.checkvalueshedule.prototype.sourceevent = function(){
+    if (event.expression==this.source && event.valid){     
+        if (event.value){
+           var tss = this;
+           setTimeout(function(){tss.okfunk();tss.okfunk = undefined;tss.cancelfnc = undefined;tss.detach();},0);
+}}}
