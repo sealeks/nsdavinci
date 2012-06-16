@@ -38,7 +38,7 @@ namespace WebCore {
         v8::HandleScope handle_scope;
 
         v8::Handle<v8::Object> evnt = v8::Object::New();
-        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl.time)));
+        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc_utc(impl.time)));
         evnt->Set(v8::String::New("level"), v8::Integer::New(impl.level));
         evnt->Set(v8::String::New("kvit"), v8::Boolean::New(impl.kvit));
         evnt->Set(v8::String::New("tag"), v8::String::New(impl.tag.c_str(), impl.tag.size()));
@@ -133,7 +133,7 @@ namespace WebCore {
         v8::HandleScope handle_scope;
 
         v8::Handle<v8::Object> evnt = v8::Object::New();
-        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl.time)));
+        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc_utc(impl.time)));
         evnt->Set(v8::String::New("guid"), v8::Integer::New(impl.guid));
         evnt->Set(v8::String::New("type"), v8::Integer::New(impl.type));
         evnt->Set(v8::String::New("level"), v8::Integer::New(impl.level));
@@ -212,7 +212,7 @@ namespace WebCore {
         v8::HandleScope handle_scope;
 
         v8::Handle<v8::Object> evnt = v8::Object::New();
-        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl.time)));
+        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc_utc(impl.time)));
         evnt->Set(v8::String::New("level"), v8::Integer::New(impl.level));
         evnt->Set(v8::String::New("app"), v8::Integer::New(impl.appid));
         evnt->Set(v8::String::New("message"), v8::String::New(impl.message.c_str(), impl.message.size()));

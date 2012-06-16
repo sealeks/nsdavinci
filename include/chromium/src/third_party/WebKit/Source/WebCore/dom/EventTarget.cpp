@@ -546,8 +546,8 @@ EventListener* EventListenerIterator::nextListener()
         dispatchEvent(trendsEvent);
     }
 
-    void EventTarget::dispatchExpressionEvent(const dvnci::short_value& value) {
-        RefPtr<Event> expressionEvent(DVNExpressionEvent::create(eventNames().expressionEvent, value, this));
+    void EventTarget::dispatchExpressionEvent(const dvnci::short_value& value, const String& expr) {
+        RefPtr<Event> expressionEvent(DVNExpressionEvent::create(eventNames().expressionEvent, value, expr, this));
         dispatchEvent(expressionEvent);
     }
 

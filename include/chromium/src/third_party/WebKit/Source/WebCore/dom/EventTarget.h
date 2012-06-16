@@ -235,7 +235,7 @@ namespace WebCore {
         virtual void dispatchTrendsEvent(const dvnci::trends_table& value); 
         virtual void dispatchJournalEvent(const dvnci::journal_table& value);
         virtual void dispatchDebugEvent(const dvnci::debug_table& value);        
-        virtual void dispatchExpressionEvent(const dvnci::short_value& value);
+        virtual void dispatchExpressionEvent(const dvnci::short_value& value, const String& expr);
 
         // Used for legacy "onEvent" attribute APIs.
         bool setAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
