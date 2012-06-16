@@ -2065,7 +2065,7 @@ libutil.dom.writeDoc = function (doc, postfix){
     if (doc && window.$$writefile){
         var xmls = new XMLSerializer();  
         var data= xmls.serializeToString(doc); 
-        $$writefile(/*postfix ? */doc.baseURI /*: libutil.regex.add_postfix_file(doc.baseURI,postfix)*/,data);
+        $$writefile(postfix ?  libutil.regex.add_postfix_file(doc.baseURI,postfix) : doc.baseURI,data);
     }
 }
       

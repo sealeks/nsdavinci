@@ -3761,9 +3761,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                           font-weight: normal;} 
                           
                     </style>    
+                    <script type="text/javascript">                           
+                        <xsl:text>document.alarmfunc___ = function(){ console.log('document.alarmfunc___'); document.alarmobj___ = new libutil.alarmtable(document.getElementById('</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>'));} </xsl:text>
+                    </script>
                 </head>
 
-                <body xmlns="http://www.w3.org/1999/xhtml">
+                <body xmlns="http://www.w3.org/1999/xhtml" onload="document.alarmfunc___()">
                     <xsl:attribute name="style">                    
                         <xsl:value-of select="$rectvarw"/>
                         <xsl:value-of select="$rectvarh"/>
@@ -3774,11 +3779,6 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:value-of select="$rectvarw"/>
                                 <xsl:value-of select="$rectvarfont"/>
                             </xsl:attribute>  
-                            <script type="text/javascript">                           
-                                <xsl:text>new libutil.alarmtable(this.document.getElementById('</xsl:text>
-                                <xsl:value-of select="@id"/>
-                                <xsl:text>'));</xsl:text>
-                            </script>
                             <tbody xmlns="http://www.w3.org/1999/xhtml">       
                                 <tr> 
                                     <xsl:attribute name="style">                    

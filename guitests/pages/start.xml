@@ -73,9 +73,9 @@ add_simulation ( new simulator.initializer('dv1off' , 0 , 0));
 
 add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-out_pos)/10000 * level.maxeu' ,null));
 
-//add_simulation ( new simulator.actuator('in_pos' , 'in_sp', 0.3));
+add_simulation ( new simulator.actuator('in_pos' , 'in_sp', 0.3));
 
-//add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp', 'auto' , true, 'level_p', 'level_i', 'level_d', 0.3 ));
+add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp', 'auto' , true, 'level_p', 'level_i', 'level_d', 0.3 ));
 
 // Котел
 
@@ -182,11 +182,11 @@ var gz = simulator.valve_init(2,'gz_on', 'gz_off' , 'gz_don', 'gz_doff', 'gz_ron
                                                           
      add_simulation (stop1); 
     
+    }
     
+    gazblock();
                                                           
-   }
-   
-   gazblock();
+                                                         
 
 };
 ]]></script>
