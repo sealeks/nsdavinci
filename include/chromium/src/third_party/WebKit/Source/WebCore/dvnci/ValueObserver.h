@@ -54,7 +54,7 @@ namespace WebCore {
     class DVNExpressionEvent : public Event {
     public:
 
-        static PassRefPtr<DVNExpressionEvent> create(const AtomicString& eventType, const dvnci::short_value& val, PassRefPtr<EventTarget> target);
+        static PassRefPtr<DVNExpressionEvent> create(const AtomicString& eventType, const dvnci::short_value& val, const String& expr, PassRefPtr<EventTarget> target);
 
         virtual ~DVNExpressionEvent() {
         }
@@ -64,10 +64,19 @@ namespace WebCore {
         }
 
         virtual dvnci::short_value value() = 0;
+        
+        String expression() const {
+            return expression_;            
+        }       
 
     protected:
 
-        DVNExpressionEvent(const AtomicString& eventType, const dvnci::short_value& val, PassRefPtr<EventTarget> target);
+        DVNExpressionEvent(const AtomicString& eventType, const dvnci::short_value& val, const String& expr, PassRefPtr<EventTarget> target);
+        
+
+    private: 
+        
+        String expression_;        
 
     } ;
 

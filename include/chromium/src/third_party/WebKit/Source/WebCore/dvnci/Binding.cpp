@@ -128,13 +128,13 @@ namespace WebCore {
 
                 virtual void event(const dvnci::short_value& val) {
                     stdvl = val.valid() ? dvnci::utf8_to_wstr(val.value<std::string > ()) : dfltvl;
-                    vl = String(stdvl.c_str(), stdvl.size());
+                    vl = stdvl.empty() ? String() : String(stdvl.c_str(), stdvl.size());
                     listener->setvalue(vl);
                 }
 
                 void setdefault() {
                     stdvl = dfltvl;
-                    vl = String(stdvl.c_str(), stdvl.size());
+                    vl = stdvl.empty() ? String() : String(stdvl.c_str(), stdvl.size());
                     listener->setvalue(vl);
                 }
 
@@ -180,7 +180,7 @@ namespace WebCore {
                 std::wstring tmpw = std::wstring(val.characters(), val.length());
                 std::wstring tmpdef = dvnci::attribute_default_expression(tmpw);
                 tmpw = dvnci::attribute_expression(tmpw);
-                defaultvalue = String(tmpdef.c_str(), tmpdef.size());
+                defaultvalue = tmpdef.empty() ? String() : String(tmpdef.c_str(), tmpdef.size());
 
                 if (tmpw.empty()) {
                     setvalue(defaultvalue);
@@ -234,7 +234,7 @@ namespace WebCore {
 
                 virtual void event(const dvnci::short_value& val) {
                     stdvl = dvnci::utf8_to_wstr(val.value<std::string > ());
-                    vl = String(stdvl.c_str(), stdvl.size());
+                    vl =  stdvl.empty() ? String() : String(stdvl.c_str(), stdvl.size());
                     listener->setvalue(val.valid() ? vl : listener->deflt());
                 }
 
@@ -278,7 +278,7 @@ namespace WebCore {
                 std::wstring tmpw = std::wstring(val.characters(), val.length());
                 std::wstring tmpdef = dvnci::attribute_default_expression(tmpw);
                 tmpw = dvnci::attribute_expression(tmpw);
-                defaultvalue = String(tmpdef.c_str(), tmpdef.size());
+                defaultvalue =  tmpdef.empty() ? String() : String(tmpdef.c_str(), tmpdef.size());
                 setvalue(deflt());
                 if (tmpw.empty()) {
                     return dvnci::expression_listener_ptr();
@@ -606,9 +606,8 @@ namespace WebCore {
                 virtual ~trend_listener() {
                 }
 
-                virtual bool event(const dvnci::short_values_table& val) {
+                virtual void event(const dvnci::short_values_table& val) {
                     listener->notyfy(val);
-                    return true;
                 }
 
             private:
@@ -702,7 +701,7 @@ namespace WebCore {
             virtual void notyfy(const dvnci::short_value& val) {
                 if (expressionptr && target()) {
                     value = val;
-                    target()->dispatchExpressionEvent(value);
+                    target()->dispatchExpressionEvent(value, tag);
                 }
             }
 

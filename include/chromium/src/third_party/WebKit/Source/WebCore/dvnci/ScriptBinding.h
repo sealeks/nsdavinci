@@ -399,7 +399,7 @@ namespace WebCore {
             batchConfigureCallbacks(desc->PrototypeTemplate(),
                     defaultSignature,
                     static_cast<v8::PropertyAttribute> (v8::DontDelete),
-                    ext_DOMWindowCallbacks, WTF_ARRAY_LENGTH(ext_ElementCallbacks));
+                    ext_ElementCallbacks, WTF_ARRAY_LENGTH(ext_ElementCallbacks));
         }
 
     }
