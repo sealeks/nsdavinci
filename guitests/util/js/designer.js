@@ -508,7 +508,7 @@ designer.prototype.updateRoot = function(){
 designer.prototype.save = function(){
     if (this.sourseDocument){
         libutil.dom.writeDoc(this.sourseDocument);
-        //libutil.dom.writeDoc(this.instantdocument,'_output');
+        //libutil.dom.writeDoc(this.xsltProcessor.transformToDocument(this.instantdocument),'_output');
         this.needsave=false;
     }  
 }
