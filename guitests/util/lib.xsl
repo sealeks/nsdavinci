@@ -107,6 +107,17 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute>
     </xsl:template>
     
+   <xsl:template name="apply_title">
+        <xsl:param name="title"/>
+        <xsl:choose>
+            <xsl:when test="not(normalize-space($title)='')">
+                <xsl:attribute name="title">
+                    <xsl:value-of select="$title"/>
+                </xsl:attribute>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template> 
+    
     <xsl:template name="apply_transform"> 
         <xsl:choose>
             <xsl:when test="not(normalize-space(@transform)='')">

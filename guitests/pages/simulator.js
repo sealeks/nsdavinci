@@ -974,9 +974,9 @@ simulator.regulator.prototype.execute = function(){
         this.perflasterror = this.lasterror;
         this.lasterror = this.error ;
         
-        //if (this.K) 
-            //console.log('prop ',this.K );
-        //console.log( this.I, this.D );
+        if (this.K) 
+            console.log('prop ',this.K );
+        console.log( this.I, this.D );
         
         var d_and_i_and_k = this.I + this.D + this.K;
         

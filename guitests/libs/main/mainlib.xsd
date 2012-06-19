@@ -417,7 +417,7 @@
         <xsd:attribute name="y" type="xsd:string" default="0"/>
         <xsd:attribute name="width" type="xsd:string" default="200"/>
         <xsd:attribute name="height" type="xsd:string" default="400"/>
-        <xsd:attribute name="header" type="xsd:string" default=""/>    
+            <xsd:attribute name="header" type="xsd:string" default=""/>    
         <xsd:attribute name="period" type="lib:string"/>
         <xsd:attribute name="param" type="lib:expression"/>
         <xsd:attribute name="param-flysp" type="lib:expression"/>     
