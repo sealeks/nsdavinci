@@ -56,7 +56,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         
         <xsl:variable name="format">
             <xsl:choose> 
-                <xsl:when test="normalize-space($frmt)=''">
+                <xsl:when test="not(normalize-space($frmt))=''">
                     <xsl:value-of select="$frmt"/>
                 </xsl:when>  
                 <xsl:otherwise>
@@ -2637,6 +2637,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             <xsl:text>if (mainlib.check_click(this, event))  {</xsl:text> 
                             <xsl:text>if (event.button==0) mainlib.graph_click(mainlib.check_click(this), '</xsl:text> 
                             <xsl:value-of select="@param"/>
+                            <xsl:text>','</xsl:text>  
+                            <xsl:value-of select="@fontcolor"/>
                             <xsl:text>') </xsl:text>  
                              <!--xsl:call-template name="mlib_config_list_check"/-->
                              <xsl:text>} </xsl:text>                               
@@ -3704,8 +3706,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
 
                         table{
                           border-collapse:collapse;
-                          text-align: left;                          
-                          font-family: sans-serif;
+                          text-align: left;     
+                          font-size: 13px;
+                          font-family: Georgia, 'Times New Roman', Times, serif;
                           background:#f0f0f0;}
 
                         tbody{
@@ -3723,7 +3726,6 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                           border: 1px solid #999999;
                           position: relative;
                           padding: 4px 4px;
-                          font-size: larger;
                           text-shadow: black 1px 1px 0px, #aaa  0 0 1em;
                           color: white;
                           background:  -webkit-linear-gradient(#333 0%, #111 50%, #333 100%);}
@@ -3732,29 +3734,32 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                           display: table-cell;
                           border: 1px;                         
                           padding: 3px;
-                          border: 1px solid #999999;
-                          background:   -webkit-linear-gradient(#eee 0%, #ddd 50%, #eee 100%);}
+                          border: 1px solid #999999;}
 
 
                         tr.avaron{
-                          color: red;
-                          font-weight: bold;}
+                          color: yellow;
+                          font-weight: bold;
+                          background:  -webkit-linear-gradient(#600 0%, #b00 50%, #600 100%);}
 
                         tr.alarmon{
-                          color: orange;
-                          font-weight: bold;}
+                          color: #220;
+                          font-weight: bold;
+                          background:  -webkit-linear-gradient(#f90 0%, #f60 50%, #f90 100%);}
 
                         tr.noticeon{
                           color: darksalmon;
                           font-weight: bold;}
 
                         tr.avarkvit{
-                          color:  dimgray;
-                          font-weight: normal;}
+                          color:  red;
+                          font-weight: normal;                         
+                          background:   -webkit-linear-gradient(#eee 0%, #ddd 50%, #eee 100%);}
 
                         tr.alarmkvit{
-                          color:  darkgrey;
-                          font-weight: normal;}
+                          color:  #c60;
+                          font-weight: normal;                         
+                          background:   -webkit-linear-gradient(#eee 0%, #ddd 50%, #eee 100%);}
 
                         tr.noticekvit{
                           color:  lightsteelblue;
@@ -3784,8 +3789,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:attribute name="style">                    
                                         <xsl:value-of select="$rectvarw"/>
                                     </xsl:attribute>  
-                                    <th >Время</th>
-                                    <th >Тэг</th>
+                                    <th width="100">Время</th>
+                                    <th width="150">Имя</th>
                                     <th >Сообщение</th>
                                 </tr>
                             </tbody>
@@ -5603,6 +5608,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <g>  
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_title">
+                <xsl:with-param name="title" select="@header"/>
+            </xsl:call-template> 
             <xsl:attribute name="isinvisibleelement">
                 <xsl:text>true</xsl:text>
             </xsl:attribute>

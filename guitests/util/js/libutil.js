@@ -1479,7 +1479,11 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, 
                     case 'disableColor':{
                         disablecolor = option[key];    
                         break;     
-                    }                     
+                    } 
+                    case 'title':{
+                        title = option[key];    
+                        break;     
+                    }                    
                 }
             }        
         }}
@@ -1899,7 +1903,12 @@ libutil.trendchart.prototype.execute = function(ev) {
                     },
 
                     title: {
-                        text:  this.title
+                        text:  this.title,
+                        style:{ 'font-size' : '11px'},
+                        align: 'left',
+                        x: 5,
+                        verticalAlign: 'top',
+                        y: 5
                     },
                     xAxis: {
                        type: 'datetime',

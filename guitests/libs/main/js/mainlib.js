@@ -665,9 +665,11 @@ mainlib.valueedit_click =  function (el, nm, alighn, r, stroke, strokewidth, col
 }
 
    
-mainlib.graph_click =  function (el, nm){
+mainlib.graph_click =  function (el, nm, color){
 
     var elementId =  el.getAttribute('id');
+    
+    if (!color) color='red';
     
     var body = mainlib.get_staticpopupbody(el,mainlib.CHART_WIDTH,mainlib.CHART_HEIGHT, 
                                            function() {if (el.popup) el.popup.parentNode.removeChild(el.popup);el.popup=undefined;}); 
@@ -702,12 +704,14 @@ mainlib.graph_click =  function (el, nm){
     var bodydiv= libutil.html.create_element('div' , htmlbody, [{name : 'id' , value: elementId + '_popup_graph'},
                                                                  {name: 'style' , value: '-webkit-user-select: none'}] );    
     var script = libutil.html.create_element('script', head );
+    
+    var title = $$(nm+'.comment');
 
     script.textContent="new libutil.trendchart('"+elementId + '_popup_graph'+"','"+
                                                          elementId + '_popup_body'+
-                                                         "', "+"['"+nm+"'], 600, ['red','green','blue','#880'], " + 
+                                                         "', "+"['"+nm+"'], 600, ['"+color+"','green','blue','#880'], " + 
                                                          (mainlib.CHART_WIDTH - 2* mainlib.CHART_PADDING) + ", " +
-                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+")";
+                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ (title ? ", 5 , { title: '"+title+"'})" : " )");
            
 }
 
