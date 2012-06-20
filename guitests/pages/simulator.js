@@ -181,6 +181,63 @@ simulator.differeciator.prototype.diffevent = function(event){
         }      
 }
 
+// differeciator
+
+simulator.inertial_differeciator = function(tag,  period ,start , source ,stop){
+  this.tag = tag;
+  if (source){
+      this.valid = true;
+      this.source = source;
+      this.period=period /7;
+  }
+  if (start || start==0)
+        this.start = start;
+  if (stop || start==0)
+        this.stop = stop;    
+  if (this.valid){
+      this.atach();
+  
+  }     
+}
+
+simulator.inertial_differeciator.prototype.atach = function(){
+ 
+     if (this.valid && (this.start || this.start==0))
+       $$(this.tag + ' @ ' + this.start);
+ 
+    var ts = this;
+    
+    this.diffhandler = function(){ts.diffevent(event);};
+    if (window.addExpressionListener( this.diffhandler , this.source))
+        this.diffset=true; 
+    else
+       console.log('AddExpressionListener source no regist');
+}
+
+
+simulator.inertial_differeciator.prototype.detach = function(){
+    if (this.valid && (this.stop || this.stop==0))
+       $$(this.tag + ' @ ' + this.stop)
+    if (this.diffhandler && this.diffset)
+        window.removeExpressionListener( this.autohandler);
+}
+
+simulator.inertial_differeciator.prototype.execute = function(){
+   var ts = this;
+   if (this.value){
+       for (var i=0;i<7;i++){
+           var valport = 4 / 11 / Math.pow (2,((i-3) < 0  ? (3-i) : (i-3))) * this.value / 10;
+           setTimeout(function(){$$(ts.tag + ' @ ('+ ts.tag + ' + (' + valport +'))');}, i *ts.period);
+           setTimeout(function(){$$(ts.tag + ' @ ('+ ts.tag + ' - (' + valport +'))');}, (i+1) *ts.period);
+       }
+   }
+}
+
+simulator.inertial_differeciator.prototype.diffevent = function(event){
+    if (event.expression==this.source && event.valid){       
+       this.value = event.value;}      
+}
+
 
 
 // simulator.valvle
