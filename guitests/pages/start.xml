@@ -226,7 +226,8 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
  add_simulation (start);
  
  var stop = new simulator.sheduler(0,'rstop',0,[  {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('rstop1 @ 1');})},
-                                                  {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('rstop2 @ 1');})}]);
+                                                  {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('rstop2 @ 1');})},
+                                                  {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('rstop @ 0');})}]);
    
  add_simulation (stop);    
  
@@ -360,12 +361,12 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
 <project path="file:///F:/Project/davinci/guitests/pages/">
 
   
-  <form name="guimotor3" file="guimotor3.xml" caption="Газ" left="0%" top="0%" width="92%" height="85%" decorated="no" visible="false"/>
+  
   <form name="testopen" file="testopen.xml" caption="Мазут" left="92%" top="0%" width="15%" height="100%" decorated="no"/>
   
   <form name="falarm" file="falarm.xml" left="0%" top="85%" width="92%" height="15%" caption="fa" decorated="no" visible="true"/>
   <!--form name="test" file="test.xml" left="0%" top="00%" width="92%" height="85%" caption="test" decorated="no"/-->
-  <form name="gazblock" file="gazblock.xml" left="0%" top="0%" width="92%" height="85%" caption="gazblock" decorated="no"/>
+  <form name="gazblock" file="gazblock.xml" left="0%" top="0%" width="92%" height="85%" caption="gazblock" decorated="no"/><form name="test" file="test.xml" left="0%" top="0%" width="100%" height="100%" caption="test" decorated="no"/>
   <!--form name="tes" file="atest.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/-->
   
   <scriptfile name="script1" file="script1.js"/>
