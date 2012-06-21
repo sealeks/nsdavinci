@@ -515,11 +515,19 @@ mainlib.armatura_popup = function(el, rauto){
 
 
 mainlib.valueset_click =  function (el, nm, width){
-    if (el.popup){
-        var text = document.getElementById(el.getAttribute('id') + '_popup_sensorcalc_sensor_text');       
+    
+    var popupid = 'calcpopup__';
+    var okbutton = document.getElementById(popupid  + '_popup_buttonok');
+    var text = document.getElementById(popupid  + '_popup_sensorcalc_sensor_text'); 
+    var tag = nm;
+    
+    if (el.popup){       
         if (text)
             text.textContent='';
         el.popup.setAttribute('style', '');
+        okbutton.onclick = function(){
+            $$(tag + ' @ ' + text.textContent);
+            if (el.popup.trpopup && el.popup.trpopup.clearpopup) el.popup.trpopup.clearpopup(); };
         return;
     }
     
@@ -529,28 +537,32 @@ mainlib.valueset_click =  function (el, nm, width){
    
         var body = mainlib.get_popupbody(el,width,parseFloat(width)* 2.05, 
                                          el.needofsetrect ? function() {
-                                             if (el.popup) {el.popup.setAttribute('style', 'display: none;');el.oldpopup= el.popup;el.popup=undefined;}} : null, 
+                                             if (el.popup) {el.popup.setAttribute('style', 'display: none;');okbutton.onclick = undefined; el.oldpopup= el.popup;el.popup=undefined;}} : null, 
                                          el.needofsetrect);
        
-        var text = document.getElementById(el.getAttribute('id') + '_popup_sensorcalc_sensor_text');
         
         if (text)
             text.textContent='';   
         
-        if (!body)  return;
+        if (!body){
+            okbutton.onclick = function(){
+            $$(tag + ' @ ' + text.textContent);
+            if (el.popup.trpopup.clearpopup && el.popup.trpopup.clearpopup) el.popup.trpopup.clearpopup(); };
+        return;
+        } 
             
                                          
         body.setAttribute('id',el.getAttribute('id') + '_popup_body');
         
 
         
-        var trpopup =document.getElementById(el.getAttribute('id') + '_popup_body');
-        if (trpopup){
-            trpopup.clearpopup = function(){
+        el.popup.trpopup =document.getElementById(el.getAttribute('id') + '_popup_body');
+        if (el.popup.trpopup){
+            el.popup.trpopup.clearpopup = function(){
                 if (el.needofsetrect){
-                   if (el.popup) {el.popup.setAttribute('style', 'display: none;'); el.oldpopup= el.popup;el.popup=undefined;}}
+                   if (el.popup) {el.popup.setAttribute('style', 'display: none;'); el.oldpopup= el.popup;el.popup=undefined;okbutton.onclick = undefined;}}
                 else {
-                    el.popup.setAttribute('style', 'display: none;');}
+                    el.popup.setAttribute('style', 'display: none;');okbutton.onclick = undefined;}
                 }
                 
 
@@ -558,11 +570,14 @@ mainlib.valueset_click =  function (el, nm, width){
             
             
         
-        var defs = document.getElementById(el.getAttribute('id') + '_popup');
+        var defs = document.getElementById(popupid  + '_popup');
         
         var use = libutil.svg.create_element('use', body);
         body.useelement=use;
-        use.setAttributeNS("http://www.w3.org/1999/xlink",'href','#'+el.getAttribute('id') + '_popup');
+        use.setAttributeNS("http://www.w3.org/1999/xlink",'href','#'+popupid  + '_popup');
+        okbutton.onclick = function(){
+            $$(tag + ' @ ' + text.textContent);
+            if (el.popup.trpopup.clearpopup && el.popup.trpopup.clearpopup) el.popup.trpopup.clearpopup(); };
         
         
         
