@@ -54,7 +54,7 @@ window.INVIRENMENTTEMP =17;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*add_simulation ( new simulator.initializer('in_pos' , 50 , 50));
+add_simulation ( new simulator.initializer('in_pos' , 50 , 50));
 add_simulation ( new simulator.initializer('in_sp' , 50 , 50));
 add_simulation ( new simulator.initializer('auto' , 1 , 0));
 
@@ -75,7 +75,7 @@ add_simulation ( new simulator.valueobserver('level' , null , 'level + (in_pos-o
 
 add_simulation ( new simulator.actuator('in_pos' , 'in_sp', 0.3));
 
-add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp', 'auto' , true, 'level_p', 'level_i', 'level_d', 0.3 ));*/
+add_simulation (new simulator.regulator('level', 'level_sp', 'out_pos' , 'out_sp', 'auto' , true, 'level_p', 'level_i', 'level_d', 0.3 ));
 
 // Котел
 
@@ -96,6 +96,7 @@ add_simulation ( new simulator.initializer('tp2' , window.INVIRENMENTTEMP , 0));
 add_simulation ( new simulator.initializer('tp3' , window.INVIRENMENTTEMP , 0));
 add_simulation ( new simulator.initializer('tp4' , window.INVIRENMENTTEMP , 0));
 add_simulation ( new simulator.initializer('td1' , window.INVIRENMENTTEMP , 0));
+add_simulation ( new simulator.initializer('td_control' , 0 , 0));
 add_simulation ( new simulator.initializer('td2' , window.INVIRENMENTTEMP , 0));
 add_simulation ( new simulator.initializer('td3' , window.INVIRENMENTTEMP , 0));
 add_simulation ( new simulator.initializer('td4' , window.INVIRENMENTTEMP , 0));
@@ -156,7 +157,12 @@ add_simulation ( new simulator.initializer('mstartok' , 0 , 0));
 add_simulation ( new simulator.initializer('mstart' , 0 , 0));
 add_simulation ( new simulator.initializer('mstartdym' , 0 , 0));
 add_simulation ( new simulator.initializer('mstartvent' , 0 , 0));
+add_simulation ( new simulator.initializer('mwork' , 0 , 0));
+add_simulation ( new simulator.initializer('mrozz' , 0 , 0));
+add_simulation ( new simulator.initializer('mprogrev' , 0 , 0));
+
 add_simulation ( new simulator.initializer('rstart',0,0));
+add_simulation ( new simulator.initializer('rstop' , 0 , 0));
 
 add_simulation ( new simulator.initializer('dym_don' , 0 , 0));
 add_simulation ( new simulator.initializer('dym_doff' , 0 , 0));
@@ -181,12 +187,12 @@ add_simulation ( new simulator.differeciator('fa' , 0 , 'p5/10*100000' ,0));
 add_simulation ( new simulator.valueobserver('p6' , 0 , '((fg+fa)*(td1+273)/290 - fd)/500' ,0));
 add_simulation ( new simulator.valueobserver('l' , 0 , '(!wz3_off) ? (l- 0.1 + 0.1 * (ru_pos/100)) : (l + 0.1 * (ru_pos/100))' ,0));
 add_simulation ( new simulator.inertial_differeciator('q1',30000, 0,'(fg / 3600 * ' + window.BURNING_WARM + ')',0));
-add_simulation ( new simulator.valueobserver('td1',0,'(q1 / ((fg + fa)/ 3600 * 1.5) + '+ window.INVIRENMENTTEMP + ')',0));
+add_simulation ( new simulator.valueobserver('td1',0,'(q1 / ((fg + fa)/ 3600 * 2) + '+ window.INVIRENMENTTEMP + ')',0));
 
 add_simulation (new simulator.regulator('pg0', 'pg0_sp', 'prz_pos' , 'prz_sp', 'pg0_auto' , false, 'pg0_kp', 'pg0_ki', 'pg0_kd', 0.5 ));
 add_simulation (new simulator.regulator('p5', 'p5_sp', 'nav_pos' , 'nav_sp', 'p5_auto' , false, 'p5_kp', 'p5_ki', 'p5_kd', 0.6 ));
 add_simulation (new simulator.regulator('p6', 'p6_sp', 'nad_pos' , 'nad_sp', 'p6_auto' , true, 'p6_kp', 'p6_ki', 'p6_kd', 0.2 ));
-add_simulation (new simulator.regulator('l', 'l_sp', 'ru_pos' , 'ru_sp', 'l_auto' , false, 'l_kp', 'l_ki', 'l_kd', 0.8 ));
+add_simulation (new simulator.regulator('l', 'l_sp', 'ru_pos' , 'ru_sp', 'l_auto' , false, 'l_kp', 'l_ki', 'l_kd', 1 ));
 add_simulation (new simulator.regulator('t1', 't1_sp', 'rtp_pos' , 'rtp_sp', 't1_auto' , true, 't1_kp', 't1_ki', 't1_kd', 0.05 ));
 
 
@@ -202,21 +208,41 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
 
 
  var start = new simulator.sheduler(0,'rstart',0,[  {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstart @ 1');})},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartdym @ 1');})},
                                                     {sp: 1, shedule: dym},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('p6_auto @ 1,p6_sp @ -20');})},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartvent @ 1');})},
                                                     {sp: 1, shedule: vent},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartdym @ 0');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('sh1_sp @ 100,sh2_sp @ 100');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('p5_auto @ 1,p5_sp @ p5_start');})},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartvent @ 0');})},
                                                     {sp: 1, shedule: gz},
-                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartok @ 1');})},
-                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartok @ 1');})},
-                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p3_control @ 1');})},
-                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p4_control @ 1');})},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartok @ 1');})},                                                  
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p6_control @ 1');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstart @ 0');})}]
                                                     );
                                                           
- add_simulation (start);   
+ add_simulation (start);
+ 
+ var stop = new simulator.sheduler(0,'rstop',0,[  {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('rstop1 @ 1');})},
+                                                  {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('rstop2 @ 1');})}]);
+   
+ add_simulation (stop);    
+ 
+ add_simulation (new simulator.booldelayer('l_control' ,0 , 'flame1 || flame2' ,0, 1,0, 0,0));
+ add_simulation (new simulator.booldelayer('p8_control' ,0 , 'flame1 || flame2' ,0, 1,0, 0,0));
+ add_simulation (new simulator.booldelayer('p9_control' ,0 , 'flame1 || flame2' ,0, 1,0, 0,0));
+ add_simulation (new simulator.booldelayer('t1_control' ,0 , '(flame1 || flame2) && !gpz_off' ,0, 1,0, 0,0));
+ add_simulation (new simulator.booldelayer('td1_control' ,0 , '(flame1 || flame2)' ,0, 1,0, 0,0));
+ add_simulation (new simulator.booldelayer('mrozz' ,0 , '(mrozz1 || mrozz2)' ,0, 1,0, 5, 0,5));
+ add_simulation (new simulator.booldelayer('mprogrev' ,0 , '((flame1 || flame2) && gpz_off)' ,0, 1,0, 0,5000));
+ add_simulation (new simulator.booldelayer('mwork' ,0 , '((flame1 || flame2) && !gpz_off)' ,0, 1,0, 0,5000));
+ 
+   
+ var avar = new simulator.sheduler(0,'av',0,[{sp: 0, shedule: stop}]);                                                    
+                                                          
+ add_simulation (avar);  
 
 // Газовый тракт
 
@@ -266,7 +292,7 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
    this['opress'+pref] = new simulator.sheduler(0,'ropress'+pref,0,[  {sp: 1, shedule: new simulator.sheduler.commandshedule(function(){$$('mopress'+pref+' @ 1');})},
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('ropress'+pref+' @ 0');})},
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('pg0_auto @ 1,pg0_sp @ pg0_start');})},
-                                                          {sp: 0, shedule: new simulator.sheduler.checkvalueshedule('abs(pg0-20)<2')},
+                                                          {sp: 0, shedule: new simulator.sheduler.checkvalueshedule('abs(pg0-pg0_start)<2')},
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('pzk'+pref+'_1_auto @ 1,pzk'+pref+'_2_auto @ 1,ko'+pref+'_auto @ 1,kb'+pref+'_auto @ 1,kz'+pref+'_auto @ 1');})},
                                                              
                                                           {sp: 0, shedule: this['kb'+pref]},
@@ -291,7 +317,9 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('prz'+pref+'_sp @ 100');})},
                                                           {sp: 0, shedule: new simulator.sheduler.checkvalueshedule('abs(prz'+pref+'_pos-100)<3')},
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mwork'+pref+' @ 1');})},
-                                                          {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p'+pref+'_control @ 1');})}
+                                                          {sp: 1, shedule: new simulator.sheduler.commandshedule(function(){$$('mrozz'+pref+' @ 0');})},
+                                                          {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p'+pref+'_control @ 1');})},
+                                                          {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p'+ (pref=='1' ? '3' : '4') +'_control @ 1');})}
                                                           ]);
                                                           
     add_simulation (this['rozz'+pref]); 
@@ -309,10 +337,16 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('prz'+pref+'_sp @ 0');})},
                                                           {sp: 0, shedule: new simulator.sheduler.checkvalueshedule('abs(prz'+pref+'_pos-0)<3')},
                                                           {sp: 0, shedule: this['kb'+pref]},
+                                                          {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p'+pref+'_control @ 0');})},
+                                                          {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p'+ (pref=='1' ? '3' : '4') +'_control @ 0');})},
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('mstop'+pref+' @ 0');})},
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('pzk'+pref+'_1_auto @ 0,pzk'+pref+'_2_auto @ 0,ko'+pref+'_auto @ 0,kb'+pref+'_auto @ 0,kz'+pref+'_auto @ 0');})}]);
                                                           
-     add_simulation (this['stop'+pref]); 
+     add_simulation (this['stop'+pref]);
+     
+     this['avar'+pref] = new simulator.sheduler(0,'av'+pref+'',0,[ {sp: 0, shedule: this['stop'+pref]}]);
+                                                          
+     add_simulation (this['stop'+pref]);
     
     }
     

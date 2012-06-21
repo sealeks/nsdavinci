@@ -13,7 +13,7 @@ onload=" try{ this.image = document.createElementNS('http://www.w3.org/2000/svg'
          this.image.setAttribute('y', y );
          this.image.setAttribute('width', size );
          this.image.setAttribute('height', size );         
-         this.image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '../util/css/res/Chromiumthrobber.svg' );} catch(error){ }">
+         this.image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '../util/css/res/throbber.svg' );} catch(error){ }">
 
     
 </svg:svg>
