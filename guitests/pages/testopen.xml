@@ -5,4 +5,4 @@
 
 
 
-</svg:svg>
+<mlib:button id="button0" x="119" y="1055" height="20" width="20" r="3" caption="" onclick="formopen('test');" color1="#F00" color2="#A00" fontstyle="fill: white; font-size: 12px; font-weight: bold;"/></svg:svg>

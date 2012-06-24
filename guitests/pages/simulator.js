@@ -183,13 +183,16 @@ simulator.differeciator.prototype.diffevent = function(event){
 
 // differeciator
 
-simulator.inertial_differeciator = function(tag,  period ,start , source ,stop){
+simulator.inertial_differeciator = function(tag,  period ,start , source ,stop, delay){
   this.tag = tag;
   if (source){
       this.valid = true;
       this.source = source;
       this.period=period /7;
   }
+  this.delay = /*delay ? delay :*/ 1000;
+  var dt = new Date();
+  this.lasttime = dt.getTime() + 0;
   if (start || start==0)
         this.start = start;
   if (stop || start==0)
@@ -198,7 +201,40 @@ simulator.inertial_differeciator = function(tag,  period ,start , source ,stop){
       this.atach();
   
   }     
+  this.values=[0,0,0,0,0,0,0];
+  this.id=0;
+  this.current=0;
 }
+
+simulator.inertial_differeciator.prototype.add = function(i, val){
+    this.values[(this.current+i)<this.values.length ? this.current+i: i+this.current-this.values.length]= 
+        this.values[(this.current+i)<this.values.length ? this.current+i: i+this.current-this.values.length] + val;
+}
+
+simulator.inertial_differeciator.prototype.get= function(){
+    return this.values[this.current];
+}
+
+simulator.inertial_differeciator.prototype.clear= function(){
+    this.values[this.current]=0;
+}
+
+simulator.inertial_differeciator.prototype.inc= function(){
+    this.current = (this.current+1)<this.values.length ? this.current+1 : 0;
+}
+
+simulator.inertial_differeciator.prototype.set= function(){
+    
+    for (var i=0;i<this.values.length;i++){
+        var valport = 4 / 11 / Math.pow (2,((i-3) < 0  ? (3-i) : (i-3))) * this.value / (1000 / this.delay);
+        this.add(i,valport)       
+    }
+    var curr = this.get();
+    this.clear();
+    this.inc();
+    return curr;
+}
+
 
 simulator.inertial_differeciator.prototype.atach = function(){
  
@@ -224,13 +260,14 @@ simulator.inertial_differeciator.prototype.detach = function(){
 
 simulator.inertial_differeciator.prototype.execute = function(){
    var ts = this;
-   if (this.value){
-       for (var i=0;i<7;i++){
-           var valport = 4 / 11 / Math.pow (2,((i-3) < 0  ? (3-i) : (i-3))) * this.value / 10;
-           setTimeout(function(){$$(ts.tag + ' @ ('+ ts.tag + ' + (' + valport +'))');}, i *ts.period);
-           setTimeout(function(){$$(ts.tag + ' @ ('+ ts.tag + ' - (' + valport +'))');}, (i+1) *ts.period);
+       var dt = new Date();
+       var curtime = dt.getTime() + 0;
+       if ((this.lasttime+this.delay)<=curtime){
+       this.lasttime=curtime;
+       var val = this.set(this.value);
+       console.log('settt = ', val)
+       setTimeout(function(){$$(ts.tag + ' @ ' + val );}, 0);
        }
-   }
 }
 
 simulator.inertial_differeciator.prototype.diffevent = function(event){
@@ -1031,9 +1068,9 @@ simulator.regulator.prototype.execute = function(){
         this.perflasterror = this.lasterror;
         this.lasterror = this.error ;
         
-        if (this.K) 
-            console.log('prop ',this.K );
-        console.log( this.I, this.D );
+       // if (this.K) 
+       //     console.log('prop ',this.K );
+       // console.log( this.I, this.D );
         
         var d_and_i_and_k = this.I + this.D + this.K;
         

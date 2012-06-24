@@ -157,7 +157,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
       
     
     <xsl:template name="mlib_config_popup">
-        <!--xsl:param name="header"/>
+        <xsl:param name="header"/>
         <xsl:choose>
             <xsl:when test="not(normalize-space(@config)='')"> 
             
@@ -238,7 +238,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </svg> 
                 </defs>
             </xsl:when>
-        </xsl:choose-->         
+        </xsl:choose>         
     </xsl:template>
     
 
