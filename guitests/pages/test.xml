@@ -40,4 +40,4 @@
     
     
     
-<mlib:button id="button0" x="564" y="438" height="35" width="155" r="3" caption="Выход" onclick="exit();" color1="#F00" color2="#A00" fontstyle="fill: white; font-size: 12px; font-weight: bold;"/></svg>
+<mlib:button id="button0" x="7" y="4" height="35" width="155" r="3" caption="Выход" onclick="exit();" color1="#F00" color2="#A00" fontstyle="fill: white; font-size: 12px; font-weight: bold;"/><mlib:button id="button1" x="1609" y="878" height="35" width="155" r="3" caption="R" onclick="formopen('gazblock');" color1="#003" color2="#006" fontstyle="fill: white; font-size: 12px; font-weight: bold;"/></svg>
