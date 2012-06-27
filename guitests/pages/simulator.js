@@ -181,16 +181,68 @@ simulator.differeciator.prototype.diffevent = function(event){
         }      
 }
 
+
+// random_value
+
+simulator.random_value = function(tag ,mediana, deviation){
+  this.tag = tag;
+
+  this.valid = true;
+  this.mediana = mediana ? mediana : 0.5;
+  this.deviation = deviation ? deviation : 0.005;
+  if (this.valid){
+      this.atach();
+  }     
+}
+
+simulator.random_value.prototype.atach = function(){
+    
+    var ts = this;
+    $$(ts.tag + ' @ (' + ts.mediana + ' * ('+ts.tag + '.maxeu - '+ts.tag + '.mineu) + '+ts.tag + '.mineu)');
+ 
+    
+    
+    /*this.diffhandler = function(){ts.diffevent(event);};
+    if (window.addExpressionListener( this.diffhandler , this.source))
+        this.diffset=true; 
+    else
+       console.log('AddExpressionListener source no regist');*/
+}
+
+
+simulator.random_value.prototype.detach = function(){
+
+       $$(this.tag + ' @ 0')
+    /*if (this.diffhandler && this.diffset)
+        window.removeExpressionListener( this.autohandler);*/
+}
+
+simulator.random_value.prototype.execute = function(){
+    var ts = this;
+    $$(ts.tag + ' @ ( ' + ts.tag + ' + ('+ts.tag + '.maxeu - '+ts.tag + '.mineu) * '+ts.deviation + '* (rnd()*2-1)/2)');
+}
+
+/*simulator.random_value.prototype.diffevent = function(event){
+    var ts = this;
+    if (event.expression==this.source){
+       setTimeout(function(){$$(ts.tag + ' @ ' + event.value);},0);
+       //console.log(this.tag,event.value);
+        }      
+}*/
+
+
 // differeciator
 
-simulator.inertial_differeciator = function(tag,  period ,start , source ,stop, delay){
+simulator.inertial_differeciator = function(tag,  period ,start , source ,stop, delay, count){
   this.tag = tag;
   if (source){
       this.valid = true;
       this.source = source;
       this.period=period /7;
   }
-  this.delay = /*delay ? delay :*/ 1000;
+  this.delay = delay ? delay : 1000;
+  if (this.delay<100) this.delay=100;
+  this.count = count ? count : 7;
   var dt = new Date();
   this.lasttime = dt.getTime() + 0;
   if (start || start==0)
@@ -201,7 +253,22 @@ simulator.inertial_differeciator = function(tag,  period ,start , source ,stop, 
       this.atach();
   
   }     
-  this.values=[0,0,0,0,0,0,0];
+  if (this.count<3) this.count=3;
+  if (this.count>99) this.count=99;
+  if (this.count % 2) this.count=this.count+1;
+
+  this.values=[];
+  for (var i=0;i<this.count;++i)
+      this.values.push(0);
+  this.mediana =   (this.count-1) / 2;
+  
+  this.koef = 2;
+  var hh =0.5;
+  for (var k=1;k<this.mediana;++k){
+      this.koef = this.koef + hh;
+      hh = hh / 2;
+  }
+  this.koef = 1 /this.koef;
   this.id=0;
   this.current=0;
 }
@@ -226,7 +293,7 @@ simulator.inertial_differeciator.prototype.inc= function(){
 simulator.inertial_differeciator.prototype.set= function(){
     
     for (var i=0;i<this.values.length;i++){
-        var valport = 4 / 11 / Math.pow (2,((i-3) < 0  ? (3-i) : (i-3))) * this.value / (1000 / this.delay);
+        var valport = this.koef / Math.pow (2,((i-this.mediana) < 0  ? (this.mediana-i) : (i-this.mediana))) * this.value /* (1000 / this.delay)*/;
         this.add(i,valport)       
     }
     var curr = this.get();
@@ -265,7 +332,7 @@ simulator.inertial_differeciator.prototype.execute = function(){
        if ((this.lasttime+this.delay)<=curtime){
        this.lasttime=curtime;
        var val = this.set(this.value);
-       console.log('settt = ', val)
+       //console.log('settt = ', val)
        setTimeout(function(){$$(ts.tag + ' @ ' + val );}, 0);
        }
 }
@@ -826,7 +893,13 @@ simulator.actuator  = function(pos, sp, tick){
     this.pos= pos;
     this.sp=sp;
     this.diff = 'abs('+sp+'-'+pos+')';
-    this.tick=tick ? tick : 0.05;
+    this.enable=true;
+    if (!tick)
+       this._tick=0.05;
+    else{
+        if (parseFloat(tick)==parseFloat(tick)) this._tick=parseFloat(tick) / 10;
+        else this.tick= '('+tick+ '/10)';
+    }
     this.enable=true;
     this.atach();
 }
@@ -846,17 +919,33 @@ simulator.actuator.prototype.atach = function(){
         else
             console.log('AddExpressionListener sp no regist');
     }
+    if (this.tick){
+        this._tick=0.05;
+        this.tickhandler = function(){
+            ts.tickevent(event);
+        };
+        if (window.addExpressionListener( this.tickhandler , this.tick))
+            this.tickset=true; 
+        else
+            console.log('AddExpressionListener tick no regist');
+    }
 }
 
 
 simulator.actuator.prototype.detach = function(){
     if (this.sphandler && this.spset)
         window.removeExpressionListener( this.sphandler);
+    if (this.tickhandler && this.tickset)
+        window.removeExpressionListener( this.tickhandler);    
 }
 
 simulator.actuator.prototype.sp = function(val){
     console.log('sp actuator set',val);
     $$(this.sp + ' @  '+ val );
+}
+
+simulator.actuator.prototype.setenable= function(val){
+    this.enable=val;
 }
 
 simulator.actuator.prototype.normalize = function(){
@@ -872,25 +961,33 @@ simulator.actuator.prototype.spdiff = function(val){
 simulator.actuator.prototype.spevent = function(event){
     var ts=this;
     if (event.expression==this.diff && event.valid){ 
-    
+       
+    }
+}    
+
+simulator.actuator.prototype.tickevent = function(event){
+    var ts=this;
+    if (event.expression==this.tick && event.valid && this.enable){ 
+         this._tick=event.value;
     /*setTimeout(function(){$$('(abs(' + ts.pos + ' - '+ ts.sp + ') > ' + ts.tick + ') ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts.tick + ') : ('+ ts.tick + ')  ))) : ('+ 
         '(abs(' + ts.pos + ' - '+ ts.sp + ') > 0) ? (' + ts.pos + ' @ ' + ts.sp + ') : 0' + 
         ') ');},100);  */      
     }
-}    
+} 
 
 simulator.actuator.prototype.execute = function(){
 var ts=this;
-$$('(abs(' + ts.pos + ' - '+ ts.sp + ')) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts.tick + ') : ('+ ts.tick + ')  ))) : ('+ 
-        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid)) ? (' + ts.pos + ' @ ' + ts.pos + ') : 0' + 
-        ') ');
+if (this.enable){
+$$('(abs(' + ts.pos + ' - '+ ts.sp + ')) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
+        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid)) ? (' + ts.pos + ' @ ' + ts.pos + ') : (' + ts.pos + ' @ ' + ts.pos + ')' + 
+        ') ');}
 }
 
 
 //  regulator
 
 
-simulator.regulator  = function(val, valsp, pos, possp, auto,  rev, kp , ki , kd , tick){
+simulator.regulator  = function(val, valsp, pos, possp, auto,  rev, kp , ki , kd , tick, enable){
     this.val= val;
     this.valsp=valsp;
     this.pos= pos;
@@ -902,8 +999,11 @@ simulator.regulator  = function(val, valsp, pos, possp, auto,  rev, kp , ki , kd
   
     this.diff = !rev ? '(' + valsp + ' - ' + val + ') / ('+val+'.maxeu - '+val+'.mineu)' : '(' + val + ' - ' + valsp + ') / ('+val+'.maxeu - '+val+'.mineu)';
     this.diffstate = 0;
-   
     
+    if (!enable)
+        this._enable=true; 
+    else 
+        this.enable=enable;
   
     this.kp= kp===undefined ? 1 : kp;
     this.ki= ki===undefined ? 10 : ki;
@@ -948,6 +1048,7 @@ simulator.regulator.prototype.atach = function(){
     else
        console.log('AddExpressionListener diff no regist');
    
+   
    this.kphandler = function(){ts.kpevent(event);};
    
    if (this.kp.constructor == String && window.addExpressionListener( this.kphandler , this.kp)){
@@ -961,7 +1062,12 @@ simulator.regulator.prototype.atach = function(){
    this.kdhandler = function(){ts.kdevent(event);};
    
    if (this.kd.constructor == String && window.addExpressionListener( this.kdhandler , this.kd)){
-        this.kdset=this.kd;this.kd=0;}       
+        this.kdset=this.kd;this.kd=0;}  
+    
+   this.enablehandler = function(){ts.enableevent(event);};
+   
+   if (this.enable && this.enable.constructor == String && window.addExpressionListener( this.enablehandler , this.enable)){
+        this.enableset=this.enable;}    
 
 }
 
@@ -976,8 +1082,20 @@ simulator.regulator.prototype.detach = function(){
     if (this.kihandler && this.kiset)
         window.removeExpressionListener( this.kihandler);
     if (this.kdhandler && this.kdset)
-        window.removeExpressionListener( this.kdhandler);      
+        window.removeExpressionListener( this.kdhandler); 
+    if (this.enablehandler && this.enableset)
+        window.removeExpressionListener( this.enablehandler);    
 }
+
+simulator.regulator.prototype.enableevent = function(event){
+    if (event.expression==this.enable){        
+        this._enable=event.value;
+        this.actuator.setenable(event.value);
+        if (event.value){
+            this.K = 0;
+            this.I = 0;
+            this.D = 0;}    
+}}    
 
 simulator.regulator.prototype.autoevent = function(event){
     if (event.expression==this.auto){        
