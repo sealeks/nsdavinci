@@ -5621,6 +5621,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <g>  
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_svg_g_visible_binding"/> 
             <xsl:call-template name="apply_title">
                 <xsl:with-param name="title" select="@header"/>
             </xsl:call-template> 
