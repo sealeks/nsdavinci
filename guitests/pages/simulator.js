@@ -949,12 +949,15 @@ simulator.actuator.prototype.setenable= function(val){
 }
 
 simulator.actuator.prototype.normalize = function(){
-    ('actuator normalize');
+    console.log('actuator normalize');
     $$(this.sp + ' @  '+ this.pos );
 }
 
 simulator.actuator.prototype.spdiff = function(val){
     if ((val<0 ? -val : val)>2) console.log('diff actuator set',val);
+    if (val===undefined || val===null || val!=val){
+        console.log('diff actuator set undef',val);
+       return;}
     $$(this.sp + ' @  ('+ this.sp + ' + '+ val + ')' );
 }
 
@@ -968,18 +971,15 @@ simulator.actuator.prototype.spevent = function(event){
 simulator.actuator.prototype.tickevent = function(event){
     var ts=this;
     if (event.expression==this.tick && event.valid && this.enable){ 
-         this._tick=event.value;
-    /*setTimeout(function(){$$('(abs(' + ts.pos + ' - '+ ts.sp + ') > ' + ts.tick + ') ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts.tick + ') : ('+ ts.tick + ')  ))) : ('+ 
-        '(abs(' + ts.pos + ' - '+ ts.sp + ') > 0) ? (' + ts.pos + ' @ ' + ts.sp + ') : 0' + 
-        ') ');},100);  */      
+         this._tick=event.value;     
     }
 } 
 
 simulator.actuator.prototype.execute = function(){
 var ts=this;
 if (this.enable){
-$$('(abs(' + ts.pos + ' - '+ ts.sp + ')) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
-        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid)) ? (' + ts.pos + ' @ ' + ts.pos + ') : (' + ts.pos + ' @ ' + ts.pos + ')' + 
+$$('(abs(' + ts.pos + ' - '+ ts.sp + ') && ('+ts.sp+'.valid)) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
+        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid)) ? (' + ts.pos + ' @ ' + ts.sp + ') : (' + ts.pos + ' @ ' + ts.pos + ')' + 
         ') ');}
 }
 
@@ -1375,5 +1375,5 @@ simulator.sheduler.checkvalueshedule.prototype.sourceevent = function(){
     if (event.expression==this.source && event.valid){     
         if (event.value){
            var tss = this;
-           setTimeout(function(){tss.okfunk();tss.okfunk = undefined;tss.cancelfnc = undefined;tss.detach();},0);
+           setTimeout(function(){if (tss.okfunk) tss.okfunk();tss.okfunk = undefined;tss.cancelfnc = undefined;tss.detach();},0);
 }}}

@@ -117,6 +117,9 @@ window.WATER_TO_VAPOR_WARM =2200;
 // коэфициент эффективночти работы ПО
 window.WATER_PO_KO =0.6;
 
+// коэфициент усиления давления пара по парообразованию
+window.WATER_V_KO =2.5;
+
 
 add_simulation ( new simulator.initializer('fg' , 0 , 0));
 add_simulation ( new simulator.initializer('q1' , 0 , 0));
@@ -199,6 +202,9 @@ add_simulation ( new simulator.initializer('rtp_pos' , 0 , 0));
 add_simulation ( new simulator.initializer('rtp_sp' , 0 , 0));
 add_simulation ( new simulator.initializer('t1_auto' , 0 , 0));
 
+add_simulation ( new simulator.initializer('m::c1' , 0 , 0));
+add_simulation ( new simulator.initializer('m::c2' , 0 , 0));
+
 
 add_simulation ( new simulator.initializer('mstartok' , 0 , 0));
 add_simulation ( new simulator.initializer('mstart' , 0 , 0));
@@ -257,14 +263,9 @@ add_simulation (new simulator.valueobserver('fp' , 0 , '(!ppz_off) ? (fvp) :((!g
 // баланс парообразования
 add_simulation (new simulator.valueobserver('p_balance' , 0 , 'fvp - fp' ,0));
 // давление пара в барабане котла
-add_simulation ( new simulator.valueobserver('p8' , null , ' ((p_balance) ? (p8 + p_balance / 36000) : p8)' ,null));
+add_simulation ( new simulator.valueobserver('p8' , null , ' ((p_balance) ? ((p8 + p_balance / 36000 *'+window.WATER_V_KO+')) : p8)' ,null));
 add_simulation ( new simulator.valueobserver('l' , null , ' ((fvp) ? (l - fvp / 36000 / 4 * 630) : l)' ,null));
-//add_simulation ( new simulator.valueobserver('p8' , null , ' ((pp >=0.01) ? (p8 + 0.25 + (0 * (pp @@ 0))) : p8)' ,null));
 
-//add_simulation ( new simulator.valueobserver('pp' , null , '(tp1 >= (tk-1)) ? (PP + (q1 /'+ window.WATER_TO_VAPOR_WARM +'/ (vw * ((l-l.mineu)/(l.maxeu-l.mineu)) * 1000)  / 10) * qo1) :  pp ' ,null));
-
-
-//add_simulation ( new simulator.valueobserver('tw5' , null , '(tp1 < tk) ? (tp1 + ((q1  /'+ window.WATER_WARM +'/ (vw * 1000)  / 10) * qo1 )) :  tp1 ' ,null));
 
 add_simulation ( new simulator.inertial_differeciator('qo1',30000, 0,'((fp>0) ? '+ window.PART_MN +' : ' + window.PART_MNS + ' )',0,1000,15));
 add_simulation ( new simulator.inertial_differeciator('qo2',30000, 0,'((fp>0) ? '+ window.PART_2 +' : 0.00 )',0,1000,15));
@@ -291,7 +292,11 @@ add_simulation ( new simulator.valueobserver('t1',null,'fp >0 ? (q1 * qo2  / (fp
 //add_simulation ( new simulator.valueobserver('tp2',null,'fw / 3600 * 1000 * ' + window.WATER_WARM  + ' + tw4',0));
 
 
-add_simulation ( new simulator.random_value('fpp' ,0.1, 0.0003 ));
+//add_simulation ( new simulator.random_value('fpp' ,0.1, 0.0003 ));
+add_simulation ( new simulator.valueobserver('fpp' ,null,'m::i1 ? (20+m::i1) : 20',0 ));
+
+add_simulation (new simulator.booldelayer('m::c1' ,0 , 'flame1' ,0, 1,0, 0,0));
+add_simulation (new simulator.booldelayer('m::c2' ,0 , 'flame2' ,0, 1,0, 0,0));
 
 add_simulation (new simulator.regulator('pg0', 'pg0_sp', 'prz_pos' , 'prz_sp', 'pg0_auto && !br' , false, 'pg0_kp', 'pg0_ki', 'pg0_kd', 'pg0_tick', '!br' ));
 add_simulation (new simulator.regulator('p8', 'p8_sp', 'prz_pos' , 'prz_sp', 'pg0_auto && br' , false, 'pg0_kp', 'pg0_ki', 'pg0_kd', 'p8_tick', 'br' ));
@@ -334,6 +339,10 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
                                                     );
                                                           
  add_simulation (start);
+ 
+ var startM = new simulator.sheduler(0,'m::d1 && !(mstart || mstartok)',0,[{sp: 0, shedule: start}]);
+ 
+  add_simulation (startM);
  
  var stop = new simulator.sheduler(0,'rstop',0,[  {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('rstop1 @ 1');})},
                                                   {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('rstop2 @ 1');})},
