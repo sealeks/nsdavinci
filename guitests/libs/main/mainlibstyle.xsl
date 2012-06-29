@@ -16,14 +16,14 @@ extension-element-prefixes="mlib">
 
  
    <xsl:template name="apply_mlib_gradients">
-        <style type="text/css">      
+  
         <!-- light gray -->
-        <linearGradient id="__gradient_mlib_light_gray_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_light_gray_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#aaa"/>
             <stop offset="0.5" stop-color="#fff"/>
             <stop offset="1" stop-color="#aaa"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_light_gray_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_light_gray_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#aaa"/>
             <stop offset="0.5" stop-color="#fff"/>
             <stop offset="1" stop-color="#aaa"/>
@@ -34,12 +34,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
        
         <!-- midle gray -->
-        <linearGradient id="__gradient_mlib_midle_gray_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_midle_gray_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#888"/>
             <stop offset="0.5" stop-color="#aaa"/>
             <stop offset="1" stop-color="#888"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_midle_gray_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_midle_gray_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#888"/>
             <stop offset="0.5" stop-color="#aaa"/>
             <stop offset="1" stop-color="#888"/>
@@ -50,12 +50,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
         
         <!-- dark gray -->
-        <linearGradient id="__gradient_mlib_dark_gray_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_dark_gray_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#111"/>
             <stop offset="0.5" stop-color="#333"/>
             <stop offset="1" stop-color="#111"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_dark_gray_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_dark_gray_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#111"/>
             <stop offset="0.5" stop-color="#333"/>
             <stop offset="1" stop-color="#111"/>
@@ -66,12 +66,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>    
         
         <!-- light blue -->
-        <linearGradient id="__gradient_mlib_light_blue_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_light_blue_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#00a"/>
             <stop offset="0.5" stop-color="#00f"/>
             <stop offset="1" stop-color="#00a"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_light_blue_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_light_blue_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#00a"/>
             <stop offset="0.5" stop-color="#00f"/>
             <stop offset="1" stop-color="#00a"/>
@@ -82,12 +82,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
        
         <!-- midle blue -->
-        <linearGradient id="__gradient_mlib_midle_blue_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_midle_blue_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#008"/>
             <stop offset="0.5" stop-color="#00a"/>
             <stop offset="1" stop-color="#008"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_midle_blue_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_midle_blue_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#008"/>
             <stop offset="0.5" stop-color="#00a"/>
             <stop offset="1" stop-color="#008"/>
@@ -98,12 +98,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
         
         <!-- dark blue -->
-        <linearGradient id="__gradient_mlib_dark_blue_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_dark_blue_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#001"/>
             <stop offset="0.5" stop-color="#003"/>
             <stop offset="1" stop-color="#001"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_dark_blue_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_dark_blue_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#001"/>
             <stop offset="0.5" stop-color="#003"/>
             <stop offset="1" stop-color="#001"/>
@@ -114,12 +114,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>  
         
         <!-- light green -->
-        <linearGradient id="__gradient_mlib_light_green_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_light_green_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#0a0"/>
             <stop offset="0.5" stop-color="#0f0"/>
             <stop offset="1" stop-color="#0a0"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_light_green_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_light_green_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#0a0"/>
             <stop offset="0.5" stop-color="#0f0"/>
             <stop offset="1" stop-color="#0a0"/>
@@ -130,12 +130,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
        
         <!-- midle green -->
-        <linearGradient id="__gradient_mlib_midle_green_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_midle_green_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#080"/>
             <stop offset="0.5" stop-color="#0a0"/>
             <stop offset="1" stop-color="#080"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_midle_green_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_midle_green_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#080"/>
             <stop offset="0.5" stop-color="#0a0"/>
             <stop offset="1" stop-color="#080"/>
@@ -146,12 +146,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
         
         <!-- dark green -->
-        <linearGradient id="__gradient_mlib_dark_green_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_dark_green_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#010"/>
             <stop offset="0.5" stop-color="#030"/>
             <stop offset="1" stop-color="#010"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_dark_green_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_dark_green_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#010"/>
             <stop offset="0.5" stop-color="#030"/>
             <stop offset="1" stop-color="#010"/>
@@ -162,12 +162,12 @@ extension-element-prefixes="mlib">
 	</radialGradient> 
         
       <!-- light red -->
-        <linearGradient id="__gradient_mlib_light_red_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_light_red_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#a00"/>
             <stop offset="0.5" stop-color="#f00"/>
             <stop offset="1" stop-color="#a00"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_light_red_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_light_red_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#a00"/>
             <stop offset="0.5" stop-color="#f00"/>
             <stop offset="1" stop-color="#a00"/>
@@ -178,12 +178,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
        
         <!-- midle red -->
-        <linearGradient id="__gradient_mlib_midle_red_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_midle_red_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#800"/>
             <stop offset="0.5" stop-color="#a00"/>
             <stop offset="1" stop-color="#800"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_midle_red_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_midle_red_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#800"/>
             <stop offset="0.5" stop-color="#a00"/>
             <stop offset="1" stop-color="#800"/>
@@ -194,12 +194,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
         
         <!-- dark red -->
-        <linearGradient id="__gradient_mlib_dark_red_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_dark_red_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#100"/>
             <stop offset="0.5" stop-color="#300"/>
             <stop offset="1" stop-color="#100"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_dark_red_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_dark_red_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#100"/>
             <stop offset="0.5" stop-color="#300"/>
             <stop offset="1" stop-color="#100"/>
@@ -210,12 +210,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
         
         <!-- gaz -->
-        <linearGradient id="__gradient_mlib_gaz_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_gaz_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#880"/>
             <stop offset="0.5" stop-color="#dd0"/>
             <stop offset="1" stop-color="#880"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_gaz_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_gaz_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#dd0"/>
             <stop offset="0.5" stop-color="#880"/>
             <stop offset="1" stop-color="#dd0"/>
@@ -226,12 +226,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>  
         
         <!-- air -->
-        <linearGradient id="__gradient_mlib_air_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_air_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#028"/>
             <stop offset="0.5" stop-color="#04b"/>
             <stop offset="1" stop-color="#028"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_air_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_air_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#04b"/>
             <stop offset="0.5" stop-color="#028"/>
             <stop offset="1" stop-color="#04b"/>
@@ -242,12 +242,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
         
         <!-- water -->
-        <linearGradient id="__gradient_mlib_water_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_water_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#093"/>
             <stop offset="0.5" stop-color="#0a6"/>
             <stop offset="1" stop-color="#093"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_water_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_water_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#0a6"/>
             <stop offset="0.5" stop-color="#093"/>
             <stop offset="1" stop-color="#0a6"/>
@@ -258,12 +258,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>  
         
         <!-- smoke -->
-        <linearGradient id="__gradient_mlib_smoke_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_smoke_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#999"/>
             <stop offset="0.5" stop-color="#ccc"/>
             <stop offset="1" stop-color="#999"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_smoke_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_smoke_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#ccc"/>
             <stop offset="0.5" stop-color="#999"/>
             <stop offset="1" stop-color="#ccc"/>
@@ -274,12 +274,12 @@ extension-element-prefixes="mlib">
 	</radialGradient> 
         
         <!-- vapor -->
-        <linearGradient id="__gradient_mlib_vapor_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_vapor_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#a33"/>
             <stop offset="0.5" stop-color="#d55"/>
             <stop offset="1" stop-color="#a33"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_vapor_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_vapor_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#d55"/>
             <stop offset="0.5" stop-color="#a33"/>
             <stop offset="1" stop-color="#d55"/>
@@ -290,12 +290,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
         
         <!-- stream -->
-        <linearGradient id="__gradient_mlib_stream_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_stream_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#c3c"/>
             <stop offset="0.5" stop-color="#f0f"/>
             <stop offset="1" stop-color="#c3c"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_stream_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_stream_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#f0f"/>
             <stop offset="0.5" stop-color="#c3c"/>
             <stop offset="1" stop-color="#f0f"/>
@@ -306,12 +306,12 @@ extension-element-prefixes="mlib">
 	</radialGradient> 
         
         <!-- oil -->
-        <linearGradient id="__gradient_mlib_oil_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_oil_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#c63"/>
             <stop offset="0.5" stop-color="#f85"/>
             <stop offset="1" stop-color="#c63"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_oil_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_oil_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#f85"/>
             <stop offset="0.5" stop-color="#c63"/>
             <stop offset="1" stop-color="#f85"/>
@@ -322,12 +322,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>           
         
         <!-- notice -->
-        <linearGradient id="__gradient_mlib_notice_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_notice_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#aa0"/>
             <stop offset="0.5" stop-color="#ff0"/>
             <stop offset="1" stop-color="#aa0"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_notice_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_notice_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#ff0"/>
             <stop offset="0.5" stop-color="#aa0"/>
             <stop offset="1" stop-color="#ff0"/>
@@ -338,12 +338,12 @@ extension-element-prefixes="mlib">
 	</radialGradient> 
         
         <!-- alarm -->
-        <linearGradient id="__gradient_mlib_alarm_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_alarm_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#a92"/>
             <stop offset="0.5" stop-color="#f92"/>
             <stop offset="1" stop-color="#a92"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_alarm_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_alarm_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#f92"/>
             <stop offset="0.5" stop-color="#a92"/>
             <stop offset="1" stop-color="#f92"/>
@@ -354,12 +354,12 @@ extension-element-prefixes="mlib">
 	</radialGradient>
         
         <!-- accident -->
-        <linearGradient id="__gradient_mlib_accident_v" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_accident_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#a00"/>
             <stop offset="0.5" stop-color="#f00"/>
             <stop offset="1" stop-color="#a00"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_accident_h" x2="100%" y2="100%" x1="0%" y1="100%">
+        <linearGradient id="__gradient_mlib_accident_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#f00"/>
             <stop offset="0.5" stop-color="#a00"/>
             <stop offset="1" stop-color="#f00"/>
@@ -371,7 +371,7 @@ extension-element-prefixes="mlib">
 
         
         
-        
+         <style type="text/css">           
         <!--
           light_gray
           midle_gray
