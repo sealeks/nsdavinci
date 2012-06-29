@@ -26,9 +26,349 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute-->  
     </xsl:template>
     
-    
-    
-    
+          <!--
+          light_gray
+          midle_gray
+          dark_gray
+          light_blue
+          midle_blue
+          dark_blue 
+          light_green
+          midle_green
+          dark_green          
+          light_red
+          midle_red
+          dark_red  
+          gaz
+          water
+          air
+          vapor
+          oil
+          stream
+          smoke
+          notice
+          alarm
+          accident
+        -->  
+    <xsl:template name="mlib_gradient_select">
+        <xsl:param name="invir"/>
+        <xsl:param name="gradtype"/>
+        <xsl:choose> 
+            <xsl:when test="normalize-space($invir)='light_gray'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_light_gray_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_light_gray_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_light_gray_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:when test="normalize-space($invir)='midle_gray'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_midle_gray_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_midle_gray_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_midle_gray_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:when test="normalize-space($invir)='dark_gray'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_dark_gray_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_dark_gray_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_dark_gray_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when> 
+            
+            <xsl:when test="normalize-space($invir)='light_blue'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_light_blue_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_light_blue_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_light_blue_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:when test="normalize-space($invir)='midle_blue'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_midle_blue_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_midle_blue_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_midle_blue_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:when test="normalize-space($invir)='dark_blue'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_dark_blue_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_dark_blue_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_dark_blue_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>    
+            
+            <xsl:when test="normalize-space($invir)='light_green'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_light_green_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_light_green_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_light_green_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:when test="normalize-space($invir)='midle_green'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_midle_green_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_midle_green_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_midle_green_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:when test="normalize-space($invir)='dark_green'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_dark_green_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_dark_green_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_dark_green_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>  
+            
+            <xsl:when test="normalize-space($invir)='light_red'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_light_red_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_light_red_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_light_red_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:when test="normalize-space($invir)='midle_red'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_midle_red_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_midle_red_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_midle_red_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:when test="normalize-space($invir)='dark_red'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_dark_red_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_dark_red_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_dark_red_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>  
+            
+            <xsl:when test="normalize-space($invir)='gaz'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_gaz_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_gaz_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_gaz_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>   
+            
+            <xsl:when test="normalize-space($invir)='water'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_water_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_water_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_water_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>  
+            
+            <xsl:when test="normalize-space($invir)='air'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_air_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_air_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_air_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when> 
+            
+            <xsl:when test="normalize-space($invir)='vapor'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_vapor_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_vapor_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_vapor_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>  
+            
+            <xsl:when test="normalize-space($invir)='oil'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_oil_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_oil_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_oil_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when> 
+            
+            <xsl:when test="normalize-space($invir)='stream'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_stream_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_stream_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_stream_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>        
+            
+             <xsl:when test="normalize-space($invir)='smoke'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_smoke_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_smoke_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_smoke_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>   
+            
+            <xsl:when test="normalize-space($invir)='notice'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_notice_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_notice_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_notice_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>  
+            
+            <xsl:when test="normalize-space($invir)='alarm'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_alarm_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_alarm_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_alarm_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>    
+            
+            <xsl:when test="normalize-space($invir)='accident'">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_accident_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_accident_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_accident_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:when>             
+            
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_dark_blue_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_dark_blue_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_dark_blue_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:otherwise>        
+        </xsl:choose>   
+    </xsl:template>    
     
     
     <!--
@@ -38,16 +378,6 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
     
 
-    
-    
-    <!--xsl:template name="mlib_config_list_check">
-        <xsl:choose>
-            <xsl:when test="not(normalize-space(@config)='')"> 
-            <xsl:text>; else mainlib.config_click(mainlib.check_click(this) </xsl:text>
-            <xsl:text>)</xsl:text>
-            </xsl:when>
-        </xsl:choose>         
-    </xsl:template-->
     
     
     <xsl:template name="mlib_config_popup_row">
@@ -2656,22 +2986,24 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     <xsl:template name="mlib_sensor_style">
+
         <xsl:choose>
-            <xsl:when test="normalize-space(@environment)='' and not(normalize-space(@color1)='') and not(normalize-space(@color2)='')">        
+            <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') or not(normalize-space(@color2)=''))">   
+                <xsl:variable name="gradtype">
+                    <xsl:choose>
+                        <xsl:when test="(@gradient-type='tb')">
+                            <xsl:text>v</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="(@gradient-type='c')">
+                            <xsl:text>c</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>h</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>    
+                </xsl:variable>
                 <defs>
-                    <!--xsl:variable name="gradtype">
-                        <xsl:choose>
-                            <xsl:when test="(@gradient-type='tb')">
-                                <xsl:text>v</xsl:text>
-                            </xsl:when>
-                            <xsl:when test="(@gradient-type='c')">
-                                <xsl:text>c</xsl:text>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:text>h</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose>    
-                    </xsl:variable-->   
+   
             
                     <xsl:choose>
                         <xsl:when test="not(normalize-space(@color1)='') and not(normalize-space(@color2)='')">
@@ -2701,21 +3033,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:text>);}
                                 </xsl:text>        
                             </xsl:when>
-                            <!--xsl:when test="not(normalize-space(@color1)='')">
-                                <xsl:text>fill : </xsl:text>
-                                <xsl:value-of select="@color1"/>
-                                <xsl:text>;}
-                                </xsl:text>        
-                            </xsl:when>
-                            <xsl:when test="(@environment='gaz') or (@environment='water') or (@environment='air') or (@environment='oil') or (@environment='stream')">
-                                <xsl:text>fill : url(#</xsl:text>
-                                <xsl:text>gradient</xsl:text>
-                                <xsl:value-of select="@environment"/>
-                                <xsl:text>_</xsl:text>
-                                <xsl:value-of select="$gradtype"/>
-                                <xsl:text>);}
-                                </xsl:text>     
-                            </xsl:when-->
+
                             <xsl:otherwise> 
                                 <xsl:text>fill : url(#</xsl:text>
                                 <xsl:text>gradientnone</xsl:text>
@@ -2764,26 +3082,67 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     <xsl:template name="mlib_sensor_fill">
-        <xsl:choose>         
+                    <xsl:variable name="gradtype">
+                <xsl:choose>
+                    <xsl:when test="(@gradient-type='tb')">
+                        <xsl:text>v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="(@gradient-type='c')">
+                        <xsl:text>c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>    
+            </xsl:variable> 
+            
+            <xsl:variable name="gradnone">
+                <xsl:choose>
+                    <xsl:when test="($gradtype='tb')">
+                        <xsl:text>__fill_mlib_class_light_gray_v</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="($gradtype='c')">
+                        <xsl:text>__fill_mlib_class_light_gray_c</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>__fill_mlib_class_light_gray_h</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>    
+            </xsl:variable> 
+            
+            <xsl:variable name="gradon">
+                <xsl:choose>
+                    <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') or not(normalize-space(@color2)=''))">                   
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_sensor_gradient_classon</xsl:text> 
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="mlib_gradient_select">
+                            <xsl:with-param name="invir" select="@environment"><xsl:value-of select="@environment"/></xsl:with-param>
+                            <xsl:with-param name="gradtype"><xsl:value-of select="$gradtype"/></xsl:with-param>  
+                        </xsl:call-template>
+                    </xsl:otherwise>    
+                </xsl:choose>                 
+            </xsl:variable> 
+        <xsl:choose>      
+             
+            
             <xsl:when test="not(normalize-space(@param)='')">                  
                 <xsl:attribute name="class">
                     <xsl:text>#{ (</xsl:text>
                     <xsl:value-of select="@param"/>
                     <xsl:text>).valid  ? '</xsl:text>
-                    <xsl:value-of select="@id"/>
-                    <xsl:text>_sensor_gradient_classon</xsl:text>
-                    <xsl:text>' : '</xsl:text>
-                    <xsl:value-of select="@id"/>
-                    <xsl:text>_sensor_gradient_classnone</xsl:text>
+                    <xsl:value-of select="$gradon"/>
+                    <xsl:text>' : '</xsl:text>                   
+                    <xsl:value-of select="$gradnone"/>
                     <xsl:text>' :default </xsl:text>
-                    <xsl:value-of select="@id"/>
-                    <xsl:text>_sensor_gradient_classnone }</xsl:text>
+                    <xsl:value-of select="$gradnone"/>
+                    <xsl:text> }</xsl:text>
                 </xsl:attribute>                       
             </xsl:when>                      
             <xsl:otherwise>
                 <xsl:attribute name="class">
-                    <xsl:value-of select="@id"/>
-                    <xsl:text>_sensor_gradient_classon</xsl:text>
+                    <xsl:value-of select="$gradon"/>
                 </xsl:attribute>    
             </xsl:otherwise> 
         </xsl:choose>         
