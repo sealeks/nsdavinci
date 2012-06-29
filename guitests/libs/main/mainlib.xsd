@@ -37,11 +37,28 @@
         
 <xsd:simpleType name="environment">
     <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="light_gray"/>
+        <xsd:enumeration value="midle_gray"/>
+        <xsd:enumeration value="dark_gray"/>
+        <xsd:enumeration value="light_blue"/>
+        <xsd:enumeration value="midle_blue"/>
+        <xsd:enumeration value="dark_blue"/> 
+        <xsd:enumeration value="light_green"/>
+        <xsd:enumeration value="midle_green"/>
+        <xsd:enumeration value="dark_green"/>          
+        <xsd:enumeration value="light_red"/>
+        <xsd:enumeration value="midle_red"/>
+        <xsd:enumeration value="dark_red"/>  
         <xsd:enumeration value="gaz"/>
         <xsd:enumeration value="water"/>
         <xsd:enumeration value="air"/>
-        <xsd:enumeration value="stream"/>
+        <xsd:enumeration value="vapor"/>
         <xsd:enumeration value="oil"/>
+        <xsd:enumeration value="stream"/>
+        <xsd:enumeration value="smoke"/>
+        <xsd:enumeration value="notice"/>
+        <xsd:enumeration value="alarm"/>
+        <xsd:enumeration value="accident"/>        
         <xsd:enumeration value=""/>
     </xsd:restriction>
 </xsd:simpleType>

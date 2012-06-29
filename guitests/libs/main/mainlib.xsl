@@ -9,12 +9,14 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
-    
+    <xsl:import href="mainlibstyle.xsl"/>   
 
     <xsl:template name="mainlib">  
+        <xsl:call-template name="apply_mlib_style"/>
         <script type="text/javascript" xlink:href="../libs/main/js/mainlib.js"></script>   
         <script type="text/javascript" xlink:href="../util/js_ext/hightchart/jquery.min.js"></script>
         <script type="text/javascript" xlink:href="../util/js_ext/hightchart/highcharts.js"></script>
+        
     </xsl:template>
     
       
@@ -2654,175 +2656,107 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     <xsl:template name="mlib_sensor_style">
-        <defs>
-            <xsl:variable name="gradtype">
-                <xsl:choose>
-                    <xsl:when test="(@gradient-type='tb')">
-                        <xsl:text>v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="(@gradient-type='c')">
-                        <xsl:text>c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose>    
-            </xsl:variable>   
+        <xsl:choose>
+            <xsl:when test="normalize-space(@environment)='' and not(normalize-space(@color1)='') and not(normalize-space(@color2)='')">        
+                <defs>
+                    <!--xsl:variable name="gradtype">
+                        <xsl:choose>
+                            <xsl:when test="(@gradient-type='tb')">
+                                <xsl:text>v</xsl:text>
+                            </xsl:when>
+                            <xsl:when test="(@gradient-type='c')">
+                                <xsl:text>c</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>h</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>    
+                    </xsl:variable-->   
             
-            <xsl:choose>
-                <xsl:when test="not(normalize-space(@color1)='') and not(normalize-space(@color2)='')">
-                    <xsl:call-template name="apply_lib_gradient">
-                        <xsl:with-param name="id">
-                            <xsl:value-of select="@id"/>
-                            <xsl:text>_sensor_gradient</xsl:text>
-                        </xsl:with-param>
-                        <xsl:with-param name="gradienttype" select="@gradient-type"/>
-                        <xsl:with-param name="color1" select="@color1"/>
-                        <xsl:with-param name="color2" select="@color2"/>
-                    </xsl:call-template>                
-                </xsl:when>    
-            </xsl:choose>    
+                    <xsl:choose>
+                        <xsl:when test="not(normalize-space(@color1)='') and not(normalize-space(@color2)='')">
+                            <xsl:call-template name="apply_lib_gradient">
+                                <xsl:with-param name="id">
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text>_sensor_gradient</xsl:text>
+                                </xsl:with-param>
+                                <xsl:with-param name="gradienttype" select="@gradient-type"/>
+                                <xsl:with-param name="color1" select="@color1"/>
+                                <xsl:with-param name="color2" select="@color2"/>
+                            </xsl:call-template>                
+                        </xsl:when>    
+                    </xsl:choose>    
             
-            <style type="text/css">
+                    <style type="text/css">
                 
-                <xsl:text>rect.</xsl:text>
-                <xsl:value-of select="@id"/>
-                <xsl:text>_sensor_gradient_classon {
-                </xsl:text>
-                <xsl:choose>
-                    <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">
-                        <xsl:text>fill : url(#</xsl:text>
+                        <xsl:text>rect.</xsl:text>
                         <xsl:value-of select="@id"/>
-                        <xsl:text>_sensor_gradient</xsl:text>
-                        <xsl:text>);}
-                        </xsl:text>        
-                    </xsl:when>
-                    <xsl:when test="not(normalize-space(@color1)='')">
-                        <xsl:text>fill : </xsl:text>
-                        <xsl:value-of select="@color1"/>
-                        <xsl:text>;}
-                        </xsl:text>        
-                    </xsl:when>
-                    <xsl:when test="(@environment='gaz') or (@environment='water') or (@environment='air') or (@environment='oil') or (@environment='stream')">
-                        <xsl:text>fill : url(#</xsl:text>
-                        <xsl:text>gradient</xsl:text>
-                        <xsl:value-of select="@environment"/>
-                        <xsl:text>_</xsl:text>
-                        <xsl:value-of select="$gradtype"/>
-                        <xsl:text>);}
-                        </xsl:text>     
-                    </xsl:when>
-                    <xsl:otherwise> 
-                        <xsl:text>fill : url(#</xsl:text>
-                        <xsl:text>gradientnone</xsl:text>
-                        <xsl:text>_</xsl:text>
-                        <xsl:value-of select="$gradtype"/>
-                        <xsl:text>);}
-                        </xsl:text> 
-                    </xsl:otherwise>                    
-                </xsl:choose>
-                
-                <xsl:text>
-                </xsl:text>    
-                <xsl:text>rect.</xsl:text>
-                <xsl:value-of select="@id"/>
-                <xsl:text>_sensor_gradient_classnone {
-                </xsl:text>
-                <xsl:choose>
-                    <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">
-                        <xsl:text>fill : url(#</xsl:text>
-                        <xsl:text>gradientnone</xsl:text>
-                        <xsl:text>_</xsl:text>
-                        <xsl:value-of select="$gradtype"/>                
-                        <xsl:text>);</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise> 
-                        <xsl:text>fill : #F7F7F7;</xsl:text>                
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:text>}
-                </xsl:text>
-                
-                <xsl:text>
-                </xsl:text>    
-                <xsl:text>rect.</xsl:text>
-                <xsl:value-of select="@id"/>
-                <xsl:text>_sensor_gradient_classaccident {
-                </xsl:text>
-                <xsl:choose>
-                    <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">                
-                        <xsl:text>fill : url(#</xsl:text>
-                        <xsl:text>gradientaccident</xsl:text>
-                        <xsl:text>_</xsl:text>
-                        <xsl:value-of select="$gradtype"/>                
-                        <xsl:text>);</xsl:text> 
-                    </xsl:when>
-                    <xsl:otherwise> 
-                        <xsl:text>fill : #FF0000;</xsl:text>                
-                    </xsl:otherwise>
-                </xsl:choose>                
-                <xsl:text>}
-                </xsl:text>                
-
-                <xsl:text>
-                </xsl:text>    
-                <xsl:text>rect.</xsl:text>
-                <xsl:value-of select="@id"/>
-                <xsl:text>_sensor_gradient_classalarm {
-                </xsl:text>
-                <xsl:choose>
-                    <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">                   
-                        <xsl:text>fill : url(#</xsl:text>
-                        <xsl:text>gradientalarm</xsl:text>
-                        <xsl:text>_</xsl:text>
-                        <xsl:value-of select="$gradtype"/>                
-                        <xsl:text>);</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise> 
-                        <xsl:text>fill : #a09020;</xsl:text>                
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:text>}
-                </xsl:text>
-                
- 
-                
-                <xsl:text>
-                </xsl:text>    
-                <xsl:text>#</xsl:text>
-                <xsl:value-of select="@id"/>
-                <xsl:text>_sensor_text {
-                </xsl:text>
-                <xsl:choose>
-                    <xsl:when test="boolean(@alighn) and (@alighn='left')">                    
-                        <xsl:text>text-anchor: start;</xsl:text> 
-                    </xsl:when>
-                    <xsl:when test="boolean(@alighn) and (@alighn='center')">                  
-                        <xsl:text>text-anchor: middle;</xsl:text> 
-                    </xsl:when>                    
-                    <xsl:otherwise> 
-                        <xsl:text>text-anchor: end;</xsl:text>    
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:choose>
-                    <xsl:when test="not(normalize-space(@fontcolor)='') ">                   
-                        <xsl:text>
-                        fill : 
+                        <xsl:text>_sensor_gradient_classon {
                         </xsl:text>
-                        <xsl:value-of select="@fontcolor"/>                
-                        <xsl:text>;</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise> 
-                        <xsl:text></xsl:text>                
-                    </xsl:otherwise>
-                </xsl:choose>  
-                <xsl:text>                  
-                dominant-baseline: central;  
-                -webkit-user-select: none;}
-                </xsl:text> 
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">
+                                <xsl:text>fill : url(#</xsl:text>
+                                <xsl:value-of select="@id"/>
+                                <xsl:text>_sensor_gradient</xsl:text>
+                                <xsl:text>);}
+                                </xsl:text>        
+                            </xsl:when>
+                            <!--xsl:when test="not(normalize-space(@color1)='')">
+                                <xsl:text>fill : </xsl:text>
+                                <xsl:value-of select="@color1"/>
+                                <xsl:text>;}
+                                </xsl:text>        
+                            </xsl:when>
+                            <xsl:when test="(@environment='gaz') or (@environment='water') or (@environment='air') or (@environment='oil') or (@environment='stream')">
+                                <xsl:text>fill : url(#</xsl:text>
+                                <xsl:text>gradient</xsl:text>
+                                <xsl:value-of select="@environment"/>
+                                <xsl:text>_</xsl:text>
+                                <xsl:value-of select="$gradtype"/>
+                                <xsl:text>);}
+                                </xsl:text>     
+                            </xsl:when-->
+                            <xsl:otherwise> 
+                                <xsl:text>fill : url(#</xsl:text>
+                                <xsl:text>gradientnone</xsl:text>
+                                <xsl:text>_</xsl:text>
+                                <xsl:value-of select="$gradtype"/>
+                                <xsl:text>);}
+                                </xsl:text> 
+                            </xsl:otherwise>                    
+                        </xsl:choose>
                 
-            </style>  
-        </defs>                
+                        <xsl:text>
+                        </xsl:text>    
+                        <xsl:text>rect.</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_sensor_gradient_classnone {
+                        </xsl:text>
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space(@color1)='')  and not(normalize-space(@color2)='')">
+                                <xsl:text>fill : url(#</xsl:text>
+                                <xsl:text>gradientnone</xsl:text>
+                                <xsl:text>_</xsl:text>
+                                <xsl:value-of select="$gradtype"/>                
+                                <xsl:text>);</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise> 
+                                <xsl:text>fill : #F7F7F7;</xsl:text>                
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:text>}
+                        </xsl:text>
+                
+                        <xsl:text>
+                        </xsl:text>    
+
+                
+
+                
+                    </style>  
+                </defs>   
+            </xsl:when>
+        </xsl:choose>                            
     </xsl:template>      
     
     
@@ -3097,27 +3031,43 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:otherwise>
                 </xsl:choose>
                             
-                                
-                <xsl:choose>                              
-                    <xsl:when test="not(@fontstyle='')">
-                        <xsl:attribute name="style">
+                <xsl:attribute name="style">                                       
+                    <xsl:choose>
+                        <xsl:when test="boolean(@alighn) and (@alighn='left')">                    
+                            <xsl:text>text-anchor: start; dominant-baseline: central;  -webkit-user-select: none;</xsl:text> 
+                        </xsl:when>
+                        <xsl:when test="boolean(@alighn) and (@alighn='center')">                  
+                            <xsl:text>text-anchor: middle; dominant-baseline: central;  -webkit-user-select: none;</xsl:text> 
+                        </xsl:when>                    
+                        <xsl:otherwise> 
+                            <xsl:text>text-anchor: end; dominant-baseline: central;  -webkit-user-select: none;</xsl:text>    
+                        </xsl:otherwise>
+                    </xsl:choose> 
+                    <xsl:choose>
+                        <xsl:when test="not(normalize-space(@fontcolor)='') ">                   
+                            <xsl:text>fill :  </xsl:text>
+                            <xsl:value-of select="@fontcolor"/>                
+                            <xsl:text>;</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise> 
+                            <xsl:text>;</xsl:text>                
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:choose>                              
+                        <xsl:when test="not(@fontstyle='')">
                             <xsl:value-of select="@fontstyle"/>
-                        </xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="style">
+                            <xsl:text>;</xsl:text>  
+                        </xsl:when>    
+                        <xsl:otherwise>
                             <xsl:text>fill: white; </xsl:text>
                             <xsl:text>fill-size:  </xsl:text>
                             <xsl:value-of select="@height div 1.5"/>
-                            <xsl:text>;</xsl:text>
-                        </xsl:attribute>                                    
-                    </xsl:otherwise>
-                </xsl:choose>  
-                
-                <xsl:attribute name="class">
-                    <xsl:value-of select="@id"/>
-                    <xsl:text>_sensor_text_class</xsl:text>
-                </xsl:attribute>                
+                            <xsl:text>;</xsl:text>                                        
+                        </xsl:otherwise>
+                    </xsl:choose>                                                       
+                </xsl:attribute>
+
+               
                                                    
                 <xsl:call-template name="mlib_sensor_textcontent"/>
 
