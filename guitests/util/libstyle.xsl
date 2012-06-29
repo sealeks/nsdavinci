@@ -97,7 +97,7 @@ extension-element-prefixes="mlib">
      
      <xsl:template name="apply_lib_gradients"> 
     
-          <linearGradient id="gradientnone_h"  x1="100%" y1="0%" x2="100%" y2="100%">
+          <!--linearGradient id="gradientnone_h"  x1="100%" y1="0%" x2="100%" y2="100%">
 		<stop  offset="0" style="stop-color:#F7F7F7"/>
 		<stop  offset="0.5" style="stop-color:#D1D1D1"/>
 		<stop  offset="1" style="stop-color:#ECECEC"/>
@@ -282,7 +282,7 @@ extension-element-prefixes="mlib">
         <radialGradient id="gradientstrem_c">
 		<stop  offset="0" style="stop-color:#CC33CC"/>
 		<stop  offset="1" style="stop-color:#FF00FF"/>
-	</radialGradient>       
+	</radialGradient-->       
         
     
      </xsl:template>     
