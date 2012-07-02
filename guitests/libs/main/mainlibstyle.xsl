@@ -580,7 +580,75 @@ extension-element-prefixes="mlib">
         .__fill_mlib_class_accident_h {
                 fill : url(#__gradient_mlib_accident_h);}  
         .__fill_mlib_class_accident_c {
-                fill : url(#__gradient_mlib_accident_c);}                 
+                fill : url(#__gradient_mlib_accident_c);}  
+                
+                
+                
+        g.__mlib_button_default svg  text {         
+                 font-size: 18;
+                 fill: white;
+                 font-weight: bold;
+                 text-anchor: middle;
+                 dominant-baseline: central; 
+                 -webkit-user-select: none;}
+                 
+        g.__mlib_button_default svg[state="off"] > svg >  text {           
+                 font-size: 18;
+                 fill: white;
+                 font-weight: bold;}
+           
+        g.__mlib_button_default svg[state="disable"] > svg >  text {            
+                 font-size: 18;
+                 fill: #666;}
+           
+        g.__mlib_button_default svg *{
+                cursor: pointer;}
+          
+        g.__mlib_button_default svg[state="disable"] *{
+                cursor: default;}
+          
+        g.__mlib_button_default svg > g > rect {
+                fill: transparent;}
+                 
+        g.__mlib_button_default svg > rect {
+                fill: url(#button0__gradienton);} 
+            
+        g.__mlib_button_default svg:hover > rect {               
+                -webkit-svg-shadow: 3px 3px  3px rgba(0, 0, 0, 0.5);}
+         
+        g.__mlib_button_default svg:active > rect{
+                fill: url(#button0__gradientona);  
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                 
+        g.__mlib_button_default svg > g > rect {           
+                stroke: #333;
+                stroke-width: 1;}   
+                    
+        g.__mlib_button_default svg:hover > g > rect {           
+                stroke: #555;
+                stroke-width: 1;}                  
+       
+        g.__mlib_button_default svg[state="off"] > rect {
+                fill: url(#button0__gradientoff);} 
+                    
+        g.__mlib_button_default svg[state="off"]:active > rect {
+                fill: url(#button0__gradientoffa);}           
+           
+        g.__mlib_button_default svg[state="off"] > g > rect {        
+                stroke: #555;
+                stroke-width: 1;}   
+                    
+        g.__mlib_button_default svg[state="off"]:hover > g > rect {         
+                stroke:  #333;
+                stroke-width: 1;}            
+           
+        g.__mlib_button_default svg[state="disable"] > rect , g.__mlib_button_default svg[state="disable"]:hover > rect , g.__mlib_button_default svg[state="disable"]:active > rect {
+                 fill: url(#button0__gradientdsbl); 
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                
+        g.__mlib_button_default svg[state="disable"] > g > rect , g.__mlib_button_default svg[state="disable"]:hover > g > rect , g.__mlib_button_default svg[state="disable"]:active > g > rect {
+                 stroke-width: 0;
+                 stroke: none;}                
         
         
         </style>

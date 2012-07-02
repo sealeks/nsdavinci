@@ -522,7 +522,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         </xsl:attribute>                        
                 
                         <xsl:variable name="popupbody">
-                            <mlib:sensor x="5" y="2" height="26" width="240" stroke="#ccc" stroke-width="1" r="4" id="sensor1" color1="#333" color2="#666"  alighn="center" fontcolor="#eee" fontstyle="font-size: 12">
+                            <mlib:sensor x="5" y="2" height="26" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="midle_red"  alighn="center" fontcolor="#eee" fontstyle="font-size: 12">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_popup_config_header</xsl:text>
@@ -1891,7 +1891,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
  
     <xsl:template name="apply_mlib_button_style">
         
-        <!--xsl:variable name="buttonstyle"> 
+        <xsl:variable name="buttonstyle"> 
             <xsl:text>.</xsl:text>
             <xsl:value-of select="@id"/>
             <xsl:text>__mlibbuttonstyle</xsl:text>
@@ -2282,7 +2282,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:call-template>            
             
             
-        </defs-->    
+        </defs>    
     </xsl:template>  
      
     <!--
@@ -5342,8 +5342,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:param name="disable"/>  
         <xsl:param name="color"/> 
         <xsl:param name="color2"/> 
-        <xsl:param name="envirenment"/>
-        <xsl:param name="fillenvirenment"/>
+        <xsl:param name="еnvironment"/>
+        <xsl:param name="fillеnvironment"/>
 
         <mlib:sensor x="5" height="110" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="midle_gray" caption="" alighn="center" fontcolor="#eee">
             <xsl:attribute name="id">
@@ -5641,7 +5641,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>  
             </xsl:attribute>              
         </text>         
-        <mlib:slider x="3" height="12" width="244"  color1="#333" color2="#111" gradient-type="lr"  > 
+        <mlib:slider x="3" height="12" width="244" gradient-type="lr"> 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_slider_</xsl:text> 
@@ -5651,11 +5651,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="param">
                 <xsl:value-of select="$param-sp"/>                            
             </xsl:attribute>
-            <xsl:attribute name="envirenment">    
-                 <xsl:value-of select="$envirenment"/>
+            <xsl:attribute name="environment">    
+                 <xsl:value-of select="$еnvironment"/>
             </xsl:attribute>
-            <xsl:attribute name="fillenvirenment">            
-                <xsl:value-of select="$fillenvirenment"/>
+            <xsl:attribute name="fillenvironment">            
+                <xsl:value-of select="$fillеnvironment"/>
             </xsl:attribute>           
             <xsl:attribute name="y">
                 <xsl:value-of select="$shift + 82"/>                            
@@ -5670,9 +5670,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="fillcolor1">
                 <xsl:value-of select="$color"/>                            
             </xsl:attribute> 
-            <xsl:attribute name="fillcolor2">
+            <!--xsl:attribute name="fillcolor2">
                 <xsl:value-of select="$color2"/>                            
-            </xsl:attribute>
+            </xsl:attribute-->
             <xsl:attribute name="slidercolor2">
                 <xsl:value-of select="$color"/>                            
             </xsl:attribute> 
@@ -5681,7 +5681,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:attribute>
         </mlib:slider>  
 
-        <mlib:rect x="15" height="5" width="220" stroke="#000" r="1" stroke-width="0.5"  color1="#333" color2="#111"> 
+        <mlib:rect x="15" height="5" width="220" stroke="#000" r="1" stroke-width="0.5"> 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_rect_</xsl:text> 
@@ -5693,24 +5693,18 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="y">
                 <xsl:value-of select="$shift + 72"/>                            
             </xsl:attribute> 
-            <xsl:attribute name="envirenment">    
-                 <xsl:value-of select="$envirenment"/>
+            <xsl:attribute name="environment">    
+                 <xsl:value-of select="$еnvironment"/>
             </xsl:attribute>
-            <xsl:attribute name="fillenvirenment">            
-                <xsl:value-of select="$fillenvirenment"/>
+            <xsl:attribute name="fillenvironment">            
+                <xsl:value-of select="$fillеnvironment"/>
             </xsl:attribute>             
             <xsl:attribute name="fillcolor1">
                 <xsl:value-of select="$color"/>                            
             </xsl:attribute> 
-            <xsl:attribute name="fillcolor2">
+            <!--xsl:attribute name="fillcolor2">
                 <xsl:value-of select="$color2"/>                            
-            </xsl:attribute> 
-            <xsl:attribute name="envirenment">    
-                <xsl:value-of select="$envirenment"/>
-            </xsl:attribute>
-            <xsl:attribute name="fillenvirenment">            
-                <xsl:value-of select="$fillenvirenment"/>
-            </xsl:attribute>  
+            </xsl:attribute--> 
         </mlib:rect>
         <text x="9"  fill="#eee" style="font-size: 11;">
             <xsl:attribute name="id">
@@ -5917,14 +5911,17 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:with-param name="header">Управление регулятором</xsl:with-param>
                                 <xsl:with-param name="headerparam">Параметер</xsl:with-param>
                                 <xsl:with-param name="headerparam-sp">Задание</xsl:with-param>
-                                <xsl:with-param name="envirenment">
+                                <xsl:with-param name="fillеnvironment">
                                     <xsl:choose>
-                                        <xsl:when test="not(normalize-space(@param-envirenment)='')">
-                                            <xsl:value-of select="@param-envirenment"/>
+                                        <xsl:when test="not(normalize-space(@param-environment)='')">
+                                            <xsl:value-of select="@param-environment"/>
                                         </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>light_green</xsl:text>
+                                        </xsl:otherwise> 
                                     </xsl:choose>
                                 </xsl:with-param>
-                                <xsl:with-param name="fillеnvirenment">dark_gray</xsl:with-param>    
+                                <xsl:with-param name="еnvironment">dark_gray</xsl:with-param>  
                                 <xsl:with-param name="color">       
                                     <xsl:choose>
                                         <xsl:when test="not(normalize-space(@param-color)='')">
@@ -5958,14 +5955,17 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:with-param name="headerparam">Положение ИМ</xsl:with-param>
                                 <xsl:with-param name="headerparam-sp">Задание ИМ</xsl:with-param>     
                                 <xsl:with-param name="disable" select="@auto"/>  
-                                <xsl:with-param name="envirenment">
+                                <xsl:with-param name="fillеnvironment">
                                     <xsl:choose>
-                                        <xsl:when test="not(normalize-space(@actuator-envirenment)='')">
-                                            <xsl:value-of select="@actuator-envirenment"/>
+                                        <xsl:when test="not(normalize-space(@actuator-еnvironment)='')">
+                                            <xsl:value-of select="@actuator-еnvironment"/>
                                         </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>light_green</xsl:text>
+                                        </xsl:otherwise> 
                                     </xsl:choose>
                                 </xsl:with-param>
-                                <xsl:with-param name="fillеnvirenment">dark_gray</xsl:with-param>                                
+                                <xsl:with-param name="еnvironment">dark_gray</xsl:with-param>                               
                                 <xsl:with-param name="color"> 
                                     <xsl:choose>
                                         <xsl:when test="not(normalize-space(@actuator-color)='')">
@@ -5998,14 +5998,17 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:with-param name="header">Управление ИМ</xsl:with-param>
                                 <xsl:with-param name="headerparam">Положение ИМ</xsl:with-param>
                                 <xsl:with-param name="headerparam-sp">Задание ИМ</xsl:with-param> 
-                                <xsl:with-param name="envirenment">
+                                <xsl:with-param name="fillеnvironment">
                                     <xsl:choose>
-                                        <xsl:when test="not(normalize-space(@actuator-envirenment)='')">
-                                            <xsl:value-of select="@actuator-envirenment"/>
+                                        <xsl:when test="not(normalize-space(@actuator-еnvironment)='')">
+                                            <xsl:value-of select="@actuator-еnvironment"/>
                                         </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>light_green</xsl:text>
+                                        </xsl:otherwise> 
                                     </xsl:choose>
                                 </xsl:with-param>
-                                <xsl:with-param name="fillеnvirenment">dark_gray</xsl:with-param>                                
+                                <xsl:with-param name="еnvironment">dark_gray</xsl:with-param>                             
                                 <xsl:with-param name="color"> 
                                     <xsl:choose>
                                         <xsl:when test="not(normalize-space(@actuator-color)='')">
@@ -6035,17 +6038,20 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:with-param name="param" select="@param"/>
                                 <xsl:with-param name="param-sp" select="@param-sp"/>
                                 <xsl:with-param name="format" select="@param-format"/>
-                                <xsl:with-param name="header">Управление ИМ</xsl:with-param>
-                                <xsl:with-param name="headerparam">Положение ИМ</xsl:with-param>
-                                <xsl:with-param name="headerparam-sp">Задание ИМ</xsl:with-param> 
-                                <xsl:with-param name="envirenment">
+                                <xsl:with-param name="header">Управление регулятором</xsl:with-param>
+                                <xsl:with-param name="headerparam">Значение</xsl:with-param>
+                                <xsl:with-param name="headerparam-sp">Задание </xsl:with-param> 
+                                <xsl:with-param name="fillеnvironment">
                                     <xsl:choose>
-                                        <xsl:when test="not(normalize-space(@param-envirenment)='')">
-                                            <xsl:value-of select="@param-envirenment"/>
+                                        <xsl:when test="not(normalize-space(@param-environment)='')">
+                                            <xsl:value-of select="@param-environment"/>
                                         </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>light_green</xsl:text>
+                                        </xsl:otherwise> 
                                     </xsl:choose>
                                 </xsl:with-param>
-                                <xsl:with-param name="fillеnvirenment">dark_gray</xsl:with-param>  
+                                <xsl:with-param name="еnvironment">dark_gray</xsl:with-param>  
                                 <xsl:with-param name="color"> 
                                     <xsl:choose>
                                         <xsl:when test="not(normalize-space(@param-color)='')">
