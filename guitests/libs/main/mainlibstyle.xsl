@@ -35,18 +35,18 @@ extension-element-prefixes="mlib">
        
         <!-- midle gray -->
         <linearGradient id="__gradient_mlib_midle_gray_v" y2="100%" x1="0%" y1="100%" x2="100%">
-            <stop offset="0" stop-color="#888"/>
-            <stop offset="0.5" stop-color="#aaa"/>
-            <stop offset="1" stop-color="#888"/>
+            <stop offset="0" stop-color="#666"/>
+            <stop offset="0.5" stop-color="#999"/>
+            <stop offset="1" stop-color="#666"/>
         </linearGradient>
         <linearGradient id="__gradient_mlib_midle_gray_h" x2="100%" y2="100%" x1="100%" y1="0%">
-            <stop offset="0" stop-color="#888"/>
-            <stop offset="0.5" stop-color="#aaa"/>
-            <stop offset="1" stop-color="#888"/>
+            <stop offset="0" stop-color="#999"/>
+            <stop offset="0.5" stop-color="#666"/>
+            <stop offset="1" stop-color="#999"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_midle_gray_c">
-		<stop  offset="0" style="stop-color:#888"/>
-		<stop  offset="1" style="stop-color:#aaa"/>
+		<stop  offset="0" style="stop-color:#666"/>
+		<stop  offset="1" style="stop-color:#999"/>
 	</radialGradient>
         
         <!-- dark gray -->
@@ -244,17 +244,17 @@ extension-element-prefixes="mlib">
         <!-- water -->
         <linearGradient id="__gradient_mlib_water_v" y2="100%" x1="0%" y1="100%" x2="100%">
             <stop offset="0" stop-color="#093"/>
-            <stop offset="0.5" stop-color="#0a6"/>
+            <stop offset="0.5" stop-color="#0c5"/>
             <stop offset="1" stop-color="#093"/>
         </linearGradient>
         <linearGradient id="__gradient_mlib_water_h" x2="100%" y2="100%" x1="100%" y1="0%">
-            <stop offset="0" stop-color="#0a6"/>
+            <stop offset="0" stop-color="#0c5"/>
             <stop offset="0.5" stop-color="#093"/>
-            <stop offset="1" stop-color="#0a6"/>
+            <stop offset="1" stop-color="#0c5"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_water_c">
 		<stop  offset="0" style="stop-color:#093"/>
-		<stop  offset="1" style="stop-color:#0a6"/>
+		<stop  offset="1" style="stop-color:#0c5"/>
 	</radialGradient>  
         
         <!-- smoke -->
