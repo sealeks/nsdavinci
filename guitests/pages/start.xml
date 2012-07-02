@@ -488,9 +488,9 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
   
   <form name="falarm" file="falarm.xml" left="0%" top="85%" width="92%" height="15%" caption="fa" decorated="no" visible="true"/>
   <!--form name="test" file="test.xml" left="0%" top="00%" width="92%" height="85%" caption="test" decorated="no"/-->
-  <form name="test" file="test.xml" left="0%" top="0%" width="92%" height="85%" caption="test" decorated="no"/>
+  <!--form name="test" file="test.xml" left="0%" top="0%" width="92%" height="85%" caption="test" decorated="no"/-->
   <form name="gazblock" file="gazblock.xml" left="0%" top="0%" width="92%" height="85%" caption="gazblock" decorated="no"/>
-  <!--form name="rrr" file="rrr.xml" left="0%" top="0%" width="85%" height="85%" caption="rrr" decorated="no"/-->
+  <form name="rrr" file="rrr.xml" left="0%" top="0%" width="85%" height="85%" caption="rrr" decorated="no"/>
   <!--form name="tes" file="atest.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/-->
   
   <scriptfile name="script1" file="script1.js"/>
