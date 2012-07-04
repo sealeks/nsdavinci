@@ -94,6 +94,17 @@
         <xsd:enumeration value=""/>
     </xsd:restriction>
 </xsd:simpleType>
+
+<xsd:simpleType name="buttonkind">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="red"/>
+        <xsd:enumeration value="green"/>
+        <xsd:enumeration value="rg"/>
+        <xsd:enumeration value="gr"/>
+        <xsd:enumeration value="custom"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
         
 <xsd:simpleType name="filtertype">
     <xsd:restriction base="xsd:string">
@@ -257,6 +268,7 @@
         <xsd:attribute name="r" type="xsd:string"/>
         <xsd:attribute name="alighn" type="mlib:alighn"/>
         <xsd:attribute name="type" type="mlib:buttontype"/>
+        <xsd:attribute name="kind" type="mlib:buttonkind"/>
         <xsd:attribute name="caption" type="xsd:string"/>
         <xsd:attribute name="color1" type="xsd:string"/>
         <xsd:attribute name="color2" type="xsd:string"/>

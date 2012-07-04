@@ -29,8 +29,22 @@
 .onoil
 {
   stroke: black;
-  fill: #CC6633;
+  fill: #C63;
 }
+
+.onsmoke
+{
+  stroke: black;
+  fill: #CCC;
+}
+
+.onvapor
+{
+  stroke: black;
+  fill: #d55;
+}
+
+
 
 .on
 {
@@ -68,6 +82,18 @@
 {
   fill: #383838;
   stroke: #CC6633;
+}
+
+.offsmoke
+{
+  fill: black;
+  stroke: #CCC;
+}
+
+.offvapor
+{
+  fill: black;
+  stroke: #d55;
 }
 
 .off

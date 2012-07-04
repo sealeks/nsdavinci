@@ -164,7 +164,7 @@ function init_project_controller(){
     console.log(projectPath);
     $$global().loadwin = window.open(projectPath+ 'load.xml', 'initialisate' , 
                                      "caption=initialisate;left=0%;top=0%;width=100%;height=100%;decorated=no;allwaystop=yes");
-    setTimeout(function(){libutil.project.init_form();}, 500);}
+    setTimeout(function(){libutil.project.init_form();}, 600);}
     catch(error){
         console.error('init_project_controller error:',error);
         libutil.project.init_form();}
@@ -302,7 +302,7 @@ libutil.project.init_form = function(){
                 for (var i=0; i<ellib.length;++i)
                     libutil.project.addtoliblist(ellib[i],i);}
                 
-            if ($$global().loadwin) setTimeout(function(){$$global().loadwin.close()}, 1500);                
+            if ($$global().loadwin) setTimeout(function(){$$global().loadwin.close()}, 2000);                
                 
 
             

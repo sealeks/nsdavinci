@@ -869,13 +869,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <g class="none">
             <xsl:variable name="envir"> 
                 <xsl:choose>
-                    <xsl:when test="not(normalize-space(@oncolor)='')"> 
-                        <xsl:text>__</xsl:text>
-                        <xsl:value-of select="@id"/>
-                        <xsl:text>_armatclass</xsl:text>
+                    <xsl:when test="not(normalize-space(@environment)='')"> 
+                        <xsl:value-of select="@environment"/> 
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="@environment"/> 
+                        <xsl:text>__</xsl:text>
+                        <xsl:value-of select="@id"/>
+                        <xsl:text>_armatclass</xsl:text>                        
                     </xsl:otherwise>
                 </xsl:choose>                
             </xsl:variable>
@@ -1192,93 +1192,58 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     <xsl:template name="apply_mlib_aratura_style">
-        <defs>
-            <style type="text/css">
-                <xsl:text>  
-            
-                </xsl:text>
-                <xsl:text>  g#</xsl:text>
-                <xsl:value-of select="@id"/>
-                <xsl:text>[cursor="pointer"] {</xsl:text>
-                <xsl:text>
-                outline: 1px solid transparent;
-                cursor: pointer;}
-                </xsl:text>
-            
-                <xsl:text>  g#</xsl:text>
-                <xsl:value-of select="@id"/>
-                <xsl:text>[cursor="pointer"]:hover {</xsl:text>
-                <xsl:text>
-                outline: 1px solid #40FF00;
-                cursor: pointer;}
-                </xsl:text>
-            
-                <xsl:text> 
-                
-                </xsl:text>
-                <xsl:text>  g#</xsl:text>
-                <xsl:value-of select="@id"/>
-                <xsl:text> {</xsl:text>
-                <xsl:text> 
-              
-               cursor: none;}
-                </xsl:text>
-            
-            
-                <xsl:text>  g#</xsl:text>
-                <xsl:value-of select="@id"/>
-                <xsl:text>:hover {</xsl:text>
-                <xsl:text> 
-               
-               cursor: none;}
-                </xsl:text>
-            
-                <xsl:choose>
-                    <xsl:when test="boolean(@oncolor) and not(normalize-space(@oncolor)='')">
-                        <xsl:variable name="offcolor">
-                            <xsl:choose>
-                                <xsl:when test="boolean(@offcolor) and not(normalize-space(@offcolor)='')">
-                                    <xsl:value-of select="@offcolor"/>
-                                </xsl:when>
-                                <xsl:otherwise> 
-                                    <xsl:text>black</xsl:text>
-                                </xsl:otherwise> 
-                            </xsl:choose>
-                        </xsl:variable>
-                        <xsl:text> 
+        <xsl:choose> 
+            <xsl:when test="normalize-space(@environment)=''">
+                <defs>
+                    <style type="text/css">          
+                        <xsl:choose>
+                            <xsl:when test="boolean(@oncolor) and not(normalize-space(@oncolor)='')">
+                                <xsl:variable name="offcolor">
+                                    <xsl:choose>
+                                        <xsl:when test="boolean(@offcolor) and not(normalize-space(@offcolor)='')">
+                                            <xsl:value-of select="@offcolor"/>
+                                        </xsl:when>
+                                        <xsl:otherwise> 
+                                            <xsl:text>black</xsl:text>
+                                        </xsl:otherwise> 
+                                    </xsl:choose>
+                                </xsl:variable>
+                                <xsl:text> 
                    
-                        </xsl:text>
-                        <xsl:text>.on__</xsl:text>
-                        <xsl:value-of select="@id"/>
-                        <xsl:text>_armatclass {</xsl:text>
-                        <xsl:text>stroke: </xsl:text>
-                        <xsl:value-of select="$offcolor"/>
-                        <xsl:text>; </xsl:text>
-                        <xsl:text>fill: </xsl:text>
-                        <xsl:value-of select="@oncolor"/>
-                        <xsl:text>;} 
-                        </xsl:text>
-                        <xsl:text> 
+                                </xsl:text>
+                                <xsl:text>.on__</xsl:text>
+                                <xsl:value-of select="@id"/>
+                                <xsl:text>_armatclass {</xsl:text>
+                                <xsl:text>stroke: </xsl:text>
+                                <xsl:value-of select="$offcolor"/>
+                                <xsl:text>; </xsl:text>
+                                <xsl:text>fill: </xsl:text>
+                                <xsl:value-of select="@oncolor"/>
+                                <xsl:text>;} 
+                                </xsl:text>
+                                <xsl:text> 
                   
-                        </xsl:text>                  
-                        <xsl:text>.off__</xsl:text>
-                        <xsl:value-of select="@id"/>
-                        <xsl:text>_armatclass {</xsl:text>
-                        <xsl:text>stroke: </xsl:text>
-                        <xsl:value-of select="@oncolor"/>
-                        <xsl:text>; </xsl:text>
-                        <xsl:text>fill: </xsl:text>
-                        <xsl:value-of select="$offcolor"/>
-                        <xsl:text>;} 
+                                </xsl:text>                  
+                                <xsl:text>.off__</xsl:text>
+                                <xsl:value-of select="@id"/>
+                                <xsl:text>_armatclass {</xsl:text>
+                                <xsl:text>stroke: </xsl:text>
+                                <xsl:value-of select="@oncolor"/>
+                                <xsl:text>; </xsl:text>
+                                <xsl:text>fill: </xsl:text>
+                                <xsl:value-of select="$offcolor"/>
+                                <xsl:text>;} 
+                                </xsl:text>
+                            </xsl:when>
+                        </xsl:choose>   
+            
+            
+                        <xsl:text> 
                         </xsl:text>
-                    </xsl:when>
-                </xsl:choose>   
-            
-            
-                <xsl:text> 
-                </xsl:text>
-            </style>  
-        </defs>
+                    </style>  
+                </defs>
+            </xsl:when> 
+        </xsl:choose> 
     </xsl:template>
     
     
@@ -1376,7 +1341,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:variable>   
             
             <xsl:variable name="fontstyle">
-                <xsl:text> textsize: 12px ; fill: white; </xsl:text>    
+                <xsl:text> font-size: 14 ; fill: white; </xsl:text>    
             </xsl:variable>             
             
             <xsl:variable name="fullvalid">
@@ -1430,7 +1395,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </sensor>
                     <xsl:choose>
                         <xsl:when test="$typecontrol='onoff'">
-                            <button x="5" y="100" width="190" height="30" param="{@ron}" color1="#080" color2="#0B0" caption="{$oncaption}" disable="{$fullvalid}" r="5" fontstyle="{$fontstyle}">
+                            <button x="5" y="100" width="190" height="30" param="{@ron}" kind="green" caption="{$oncaption}" disable="{$fullvalid}" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_popup_buttonon</xsl:text>
@@ -1442,7 +1407,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:text> @ 1</xsl:text>
                                 </xsl:attribute>
                             </button>    
-                            <button x="5" y="133" width="190" height="30" param="{@roff}" color1="#888" color2="#BBB" oncolor1="#880" oncolor2="#BB0" caption="{$stopcaption}" disable="{$fullvalid}" r="5" fontstyle="{$fontstyle}">
+                            <button x="5" y="133" width="190" height="30" param="{@roff}" kind="custom" caption="{$stopcaption}" disable="{$fullvalid}" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_popup_buttonstop</xsl:text>
@@ -1459,7 +1424,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="@roff"/>
                                 </xsl:attribute>                                
                             </button>
-                            <button x="5" y="164" width="190" height="30" param="{@roff}" color1="#800" color2="#B00" caption="{$offcaption}" disable="{$fullvalid}" r="5" fontstyle="{$fontstyle}">
+                            <button x="5" y="164" width="190" height="30" param="{@roff}" kind="red" caption="{$offcaption}" disable="{$fullvalid}" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_popup_buttonoff</xsl:text>
@@ -1473,7 +1438,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             </button>                            
                         </xsl:when> 
                         <xsl:when test="$typecontrol='on'">
-                            <button x="5" y="100" width="190" height="90" param="{@ron}"  state="{@ron}" type="tumbler" caption="{$oncaption}" oncaption="{$offcaption}" color1="#080" color2="#0B0" oncolor1="#800" oncolor2="#B00" disable="{$fullvalid}" r="5">
+                            <button x="5" y="100" width="190" height="90" param="{@ron}"  state="{@ron}" type="tumbler" fontstyle="font-size: 16; fill: #eee;" caption="{$oncaption}" oncaption="{$offcaption}" kind="gr" disable="{$fullvalid}" r="5">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_popup_button</xsl:text>
@@ -1481,7 +1446,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             </button>
                         </xsl:when> 
                         <xsl:when test="$typecontrol='off'">
-                            <button x="5" y="100" width="190" height="90" param="{@roff}" state="{@roff}" type="tumbler" caption="{$offcaption}" oncaption="{$oncaption}" oncolor1="#080" oncolor2="#0B0" color1="#800" color2="#B00" disable="{$fullvalid}" r="5">
+                            <button x="5" y="100" width="190" height="90" param="{@roff}" state="{@roff}" type="tumbler" fontstyle="font-size: 16;  fill: #eee;" caption="{$offcaption}" oncaption="{$oncaption}" kind="rg" disable="{$fullvalid}" r="5">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_popup_button</xsl:text>
@@ -1492,7 +1457,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     
                     <xsl:choose>
                         <xsl:when test="not(normalize-space(@rauto)='')">
-                            <button x="5" y="205" width="190" height="40" param="{@rauto}" state="{@rauto}" type="tumbler" caption="В автомат" oncaption="В дист." color1="#888" color2="#BBB" r="5">
+                            <button x="5" y="205" width="190" height="40" param="{@rauto}" state="{@rauto}" type="tumbler" caption="В автомат" oncaption="В дист." kind="custom"  r="5">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_popup_button_local</xsl:text>
@@ -1879,126 +1844,46 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     <xsl:template name="apply_mlib_button_class">
+        <xsl:choose>
+            <xsl:when test="(normalize-space(@kind)='')"> 
+                <xsl:attribute name="class">
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>__mlibbuttonstyle</xsl:text>
+                </xsl:attribute> 
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+    
+    
+    <xsl:template name="apply_mlib_button_rectclass">
         <xsl:variable name="buttonstyle">
-            <xsl:value-of select="@id"/>
-            <xsl:text>__mlibbuttonstyle</xsl:text>
+            <xsl:choose>
+                <xsl:when test="(normalize-space(@kind)='')"> 
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>__mlibbuttonstyle</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>__mlib__button_</xsl:text>
+                    <xsl:value-of select="@kind"/>
+                </xsl:otherwise> 
+            </xsl:choose>
         </xsl:variable>
         <xsl:attribute name="class">
             <xsl:value-of select="$buttonstyle"/>
         </xsl:attribute> 
     </xsl:template>
     
- 
-    <xsl:template name="apply_mlib_button_style">
-        
-        <xsl:variable name="buttonstyle"> 
-            <xsl:text>.</xsl:text>
-            <xsl:value-of select="@id"/>
-            <xsl:text>__mlibbuttonstyle</xsl:text>
-        </xsl:variable>
-        
-        <xsl:variable name="gradienton_id"> 
-            <xsl:value-of select="@id"/>
-            <xsl:text>__gradienton</xsl:text>
-        </xsl:variable>
-        <xsl:variable name="gradientona_id"> 
-            <xsl:value-of select="@id"/>
-            <xsl:text>__gradientona</xsl:text>
-        </xsl:variable>
-        <xsl:variable name="gradientoff_id"> 
-            <xsl:value-of select="@id"/>
-            <xsl:text>__gradientoff</xsl:text>
-        </xsl:variable>
-        <xsl:variable name="gradientoffa_id"> 
-            <xsl:value-of select="@id"/>
-            <xsl:text>__gradientoffa</xsl:text>
-        </xsl:variable>
-        <xsl:variable name="gradientdsbl_id"> 
-            <xsl:value-of select="@id"/>
-            <xsl:text>__gradientdsbl</xsl:text>
-        </xsl:variable>
-        <xsl:variable name="mainselector_id"> 
-            <xsl:text>g#</xsl:text>
-            <xsl:value-of select="@id"/>
-            <xsl:text disable-output-escaping="yes"> svg</xsl:text>
-        </xsl:variable>
-        
-        <xsl:variable name="var_color1">
+     <xsl:template name="apply_mlib_button_textclass">
+         
+      <xsl:variable name="var_fontstyle">
             <xsl:choose>
-                <xsl:when test="(boolean(@color1) and not(@color1=''))">
-                    <xsl:value-of select="@color1"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>#333</xsl:text>
-                </xsl:otherwise>     
-            </xsl:choose> 
-        </xsl:variable>
-        
-        <xsl:variable name="var_color2">
-            <xsl:choose>
-                <xsl:when test="(boolean(@color2) and not(@color2=''))">
-                    <xsl:value-of select="@color2"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>#555</xsl:text>
-                </xsl:otherwise>     
-            </xsl:choose> 
-        </xsl:variable>
-        
-        <xsl:variable name="var_oncolor1">
-            <xsl:choose>
-                <xsl:when test="(boolean(@oncolor1) and not(@oncolor1=''))">
-                    <xsl:value-of select="@oncolor1"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>#333</xsl:text>
-                </xsl:otherwise>     
-            </xsl:choose> 
-        </xsl:variable>
-        
-        <xsl:variable name="var_oncolor2">
-            <xsl:choose>
-                <xsl:when test="(boolean(@oncolor2) and not(@oncolor2=''))">
-                    <xsl:value-of select="@oncolor2"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>#555</xsl:text>
-                </xsl:otherwise>     
-            </xsl:choose> 
-        </xsl:variable> 
-        
-        <xsl:variable name="var_dsblcolor1">
-            <xsl:choose>
-                <xsl:when test="(boolean(@dsblcolor1) and not(normalize-space(@dsblcolor1)=''))">
-                    <xsl:value-of select="@dsblcolor1"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>#777</xsl:text>
-                </xsl:otherwise>     
-            </xsl:choose> 
-        </xsl:variable>
-        
-        <xsl:variable name="var_dsblcolor2">
-            <xsl:choose>
-                <xsl:when test="(boolean(@dsblcolor2) and not(normalize-space(@dsblcolor2)=''))">
-                    <xsl:value-of select="@dsblcolor2"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>#AAA</xsl:text>
-                </xsl:otherwise>     
-            </xsl:choose> 
-        </xsl:variable>
-        
-        <xsl:variable name="var_fontstyle">
-            <xsl:choose>
-                <xsl:when test="(boolean(@fontstyle) and not(normalize-space(@fontstyle)=''))">
+                <xsl:when test="not(normalize-space(@fontstyle)='')">
                     <xsl:value-of select="@fontstyle"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:text>
-                 font-size: 18;
+                 font-size: 14;
                  fill: white;
-                 font-weight: bold;
                     </xsl:text>
                 </xsl:otherwise>     
             </xsl:choose> 
@@ -2006,7 +1891,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         
         <xsl:variable name="var_offfontstyle">
             <xsl:choose>
-                <xsl:when test="(boolean(@offfontstyle) and not(normalize-space(@offfontstyle)=''))">
+                <xsl:when test="not(normalize-space(@offfontstyle)='')">
                     <xsl:value-of select="@offfontstyle"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -2017,272 +1902,306 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         
         <xsl:variable name="var_dsblfontstyle">
             <xsl:choose>
-                <xsl:when test="(boolean(@dsblfontstyle) and not(normalize-space(@dsblfontstyle)=''))">
+                <xsl:when test="not(normalize-space(@dsblfontstyle)='')">
                     <xsl:value-of select="@dsblfontstyle"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:text>
-                 font-size: 18;
+                 font-size: 14;
                  fill: #666;
                     </xsl:text>
                 </xsl:otherwise>     
             </xsl:choose> 
-        </xsl:variable>
-        
-        <style type="text/css">
-            <xsl:text>
-                
-            </xsl:text>
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text>  text</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:value-of select="$var_fontstyle"/>      
-            <xsl:choose> 
-                <xsl:when test="boolean(@alighn='left')"> 
-                    <xsl:text>text-anchor: start;</xsl:text>
-                </xsl:when>
-                <xsl:when test="boolean(@alighn='right')"> 
-                    <xsl:text>text-anchor: end;</xsl:text>
-                </xsl:when>
-                <xsl:otherwise> 
-                    <xsl:text>text-anchor: middle;</xsl:text>
-                </xsl:otherwise> 
-            </xsl:choose>
-            <xsl:text disable-output-escaping="yes">
-                 dominant-baseline: central; 
-                 -webkit-user-select: none;}
-                 
-            </xsl:text> 
-               
-            <xsl:value-of select="$mainselector_id"/>  
-            <xsl:text disable-output-escaping="yes">[state="off"] > svg >  text</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:value-of select="$var_offfontstyle"/>   
-            <xsl:text>;}
-           
-            </xsl:text>
-                 
-            <xsl:value-of select="$mainselector_id"/>  
-            <xsl:text disable-output-escaping="yes">[state="disable"] > svg >  text</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:value-of select="$var_dsblfontstyle"/>   
-            <xsl:text>;}
-           
-            </xsl:text>
-       
-     
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text> *</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text>{
-                cursor: pointer;}
-          
-            </xsl:text> 
-            
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text>[state="disable"] *</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text>{
-                cursor: default;}
-          
-            </xsl:text>    
-            
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes"> > g > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-                fill: transparent;}
-                 
-            </xsl:text>    
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes"> > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:text>    </xsl:text>
-            <xsl:value-of select="normalize-space('fill:  url(#')"/>
-            <xsl:value-of select="$gradienton_id"/>
-            <xsl:value-of select="normalize-space(');}')"/>           
-            <xsl:text > 
-            
-            </xsl:text>    
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">:hover > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {               
-                -webkit-svg-shadow: 3px 3px  3px rgba(0, 0, 0, 0.5);}
+        </xsl:variable>         
          
-            </xsl:text>    
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">:active > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:text>    </xsl:text>
-            <xsl:value-of select="normalize-space('fill:  url(#')"/>
-            <xsl:value-of select="$gradientona_id"/>
-            <xsl:value-of select="normalize-space(');')"/>            
-            <xsl:text disable-output-escaping="yes">  
-                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
-                 
-            </xsl:text> 
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes"> > g > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:text>
-                stroke: 
-            </xsl:text>
-            <xsl:value-of select="$var_color1"/>
-            <xsl:text >;
-                stroke-width: 1;}   
-                    
-            </xsl:text>    
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">:hover > g > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:text>
-                stroke: 
-            </xsl:text>
-            <xsl:value-of select="$var_color2"/>
-            <xsl:text >;
-                stroke-width: 1;}                  
-       
-            </xsl:text>    
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="off"] > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:text>    </xsl:text>
-            <xsl:value-of select="normalize-space('fill:  url(#')"/>
-            <xsl:value-of select="$gradientoff_id"/>
-            <xsl:value-of select="normalize-space(');}')"/>           
-            <xsl:text disable-output-escaping="yes"> 
-                    
-            </xsl:text>    
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="off"]:active > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:text>    </xsl:text>
-            <xsl:value-of select="normalize-space('fill:  url(#')"/>
-            <xsl:value-of select="$gradientoffa_id"/>
-            <xsl:value-of select="normalize-space(');}')"/>           
-            <xsl:text disable-output-escaping="yes">           
-           
-            </xsl:text> 
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="off"] > g > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:text>
-                stroke: 
-            </xsl:text>
-            <xsl:value-of select="$var_oncolor2"/>
-            <xsl:text >;
-                stroke-width: 1;}   
-                    
-            </xsl:text>    
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="off"]:hover > g > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:text>
-                stroke: 
-            </xsl:text>
-            <xsl:value-of select="$var_oncolor1"/>
-            <xsl:text >;
-                stroke-width: 1;}            
-           
-            </xsl:text>           
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"] > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> , </xsl:text>
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"]:hover > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> , </xsl:text>
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"]:active > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-            </xsl:text>
-            <xsl:text>     </xsl:text>               
-            <xsl:value-of select="normalize-space('fill:  url(#')"/>
-            <xsl:value-of select="$gradientdsbl_id"/>
-            <xsl:value-of select="normalize-space(');')"/>            
-            <xsl:text disable-output-escaping="yes"> 
-                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
-                
-            </xsl:text> 
-                
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"] > g > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> , </xsl:text>
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"]:hover > g > rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> , </xsl:text>
-            <xsl:value-of select="$mainselector_id"/>
-            <xsl:text disable-output-escaping="yes">[state="disable"]:active > g >rect</xsl:text>
-            <xsl:value-of select="$buttonstyle"/>
-            <xsl:text> {
-                 stroke-width: 0;
-                 stroke: none;}
-                 
-                 
-            </xsl:text>  
-        </style>
+        <xsl:attribute name="class">
+             <xsl:text>__mlib_button_default</xsl:text>
+        </xsl:attribute> 
         
-        <defs>
+        <xsl:attribute name="style">
+            <xsl:choose>                
+                <xsl:when test="(boolean(@disable) and not(normalize-space(@disable)=''))">                                    
+                    <xsl:choose>                   
+                        <xsl:when test="(boolean(@state) and not(normalize-space(@state)=''))">   
+                            <xsl:text>#{ (!(</xsl:text>
+                            <xsl:value-of select="@disable"/>
+                            <xsl:text>) &#38;&#38; (</xsl:text>
+                            <xsl:value-of select="@disable"/>
+                            <xsl:text>).valid) ? ( </xsl:text>
+                            <xsl:text> (</xsl:text>
+                            <xsl:value-of select="@state"/>
+                            <xsl:text>) ? '</xsl:text> 
+                            <xsl:value-of select="$var_offfontstyle"/>
+                            <xsl:text>' : '</xsl:text> 
+                            <xsl:value-of select="$var_fontstyle"/>
+                            <xsl:text>' </xsl:text>  
+                            <xsl:text>): '</xsl:text> 
+                            <xsl:value-of select="$var_dsblfontstyle"/>
+                            <xsl:text>' :default </xsl:text> 
+                            <xsl:value-of select="$var_dsblfontstyle"/>
+                            <xsl:text>}</xsl:text>             
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>#{ (!(</xsl:text>
+                            <xsl:value-of select="@disable"/>
+                            <xsl:text>)&#38;&#38; (</xsl:text>
+                            <xsl:value-of select="@disable"/>
+                            <xsl:text>).valid) ? '</xsl:text>
+                            <xsl:value-of select="$var_fontstyle"/>
+                            <xsl:text>' : '</xsl:text>
+                            <xsl:value-of select="$var_dsblfontstyle"/>
+                            <xsl:text>' :default </xsl:text> 
+                            <xsl:value-of select="$var_dsblfontstyle"/>
+                            <xsl:text>}</xsl:text>    
+                        </xsl:otherwise>    
+                    </xsl:choose>               
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:choose>                   
+                        <xsl:when test="not(normalize-space(@state)='')">                                        
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@state"/>
+                            <xsl:text>) ? '</xsl:text>
+                            <xsl:value-of select="$var_offfontstyle"/>
+                            <xsl:text>' : '</xsl:text>
+                            <xsl:value-of select="$var_fontstyle"/>
+                            <xsl:text>' :default </xsl:text>
+                            <xsl:value-of select="$var_fontstyle"/>
+                            <xsl:text>}</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>                                        
+                            <xsl:value-of select="$var_fontstyle"/>                    
+                        </xsl:otherwise>    
+                    </xsl:choose>
+                </xsl:otherwise>    
+            </xsl:choose>
+        </xsl:attribute>         
+        
+        
+       
+    </xsl:template>
+    
+ 
+    <xsl:template name="apply_mlib_button_style">       
+        <xsl:choose>                
+            <xsl:when test="(normalize-space(@kind)='')">        
+                <xsl:variable name="buttonstyle"> 
+                    <xsl:text>.</xsl:text>
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>__mlibbuttonstyle</xsl:text>
+                </xsl:variable>
+        
+                <xsl:variable name="gradienton_id"> 
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>__gradienton</xsl:text>
+                </xsl:variable>
+                <xsl:variable name="gradientona_id"> 
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>__gradientona</xsl:text>
+                </xsl:variable>
+                <xsl:variable name="gradientoff_id"> 
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>__gradientoff</xsl:text>
+                </xsl:variable>
+                <xsl:variable name="gradientoffa_id"> 
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>__gradientoffa</xsl:text>
+                </xsl:variable>
+                <xsl:variable name="gradientdsbl_id"> 
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>__gradientdsbl</xsl:text>
+                </xsl:variable>
+                <xsl:variable name="mainselector_id"> 
+                    <xsl:text>g#</xsl:text>
+                    <xsl:value-of select="@id"/>
+                    <xsl:text disable-output-escaping="yes"> > svg</xsl:text>
+                </xsl:variable>
+        
+                <xsl:variable name="var_color1">
+                    <xsl:choose>
+                        <xsl:when test="(boolean(@color1) and not(@color1=''))">
+                            <xsl:value-of select="@color1"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>#333</xsl:text>
+                        </xsl:otherwise>     
+                    </xsl:choose> 
+                </xsl:variable>
+        
+                <xsl:variable name="var_color2">
+                    <xsl:choose>
+                        <xsl:when test="(boolean(@color2) and not(@color2=''))">
+                            <xsl:value-of select="@color2"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>#555</xsl:text>
+                        </xsl:otherwise>     
+                    </xsl:choose> 
+                </xsl:variable>
+        
+                <xsl:variable name="var_oncolor1">
+                    <xsl:choose>
+                        <xsl:when test="(boolean(@oncolor1) and not(@oncolor1=''))">
+                            <xsl:value-of select="@oncolor1"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>#333</xsl:text>
+                        </xsl:otherwise>     
+                    </xsl:choose> 
+                </xsl:variable>
+        
+                <xsl:variable name="var_oncolor2">
+                    <xsl:choose>
+                        <xsl:when test="(boolean(@oncolor2) and not(@oncolor2=''))">
+                            <xsl:value-of select="@oncolor2"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>#555</xsl:text>
+                        </xsl:otherwise>     
+                    </xsl:choose> 
+                </xsl:variable> 
+        
+                <xsl:variable name="var_dsblcolor1">
+                    <xsl:choose>
+                        <xsl:when test="(boolean(@dsblcolor1) and not(normalize-space(@dsblcolor1)=''))">
+                            <xsl:value-of select="@dsblcolor1"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>#777</xsl:text>
+                        </xsl:otherwise>     
+                    </xsl:choose> 
+                </xsl:variable>
+        
+                <xsl:variable name="var_dsblcolor2">
+                    <xsl:choose>
+                        <xsl:when test="(boolean(@dsblcolor2) and not(normalize-space(@dsblcolor2)=''))">
+                            <xsl:value-of select="@dsblcolor2"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>#AAA</xsl:text>
+                        </xsl:otherwise>     
+                    </xsl:choose> 
+                </xsl:variable>
+        
+        
+                <style type="text/css">
+
+
+                    <xsl:value-of select="$mainselector_id"/>
+                    <xsl:text disable-output-escaping="yes"> > rect</xsl:text>
+                    <xsl:value-of select="$buttonstyle"/>
+                    <xsl:text> {
+                    </xsl:text>
+                    <xsl:text>    </xsl:text>
+                    <xsl:value-of select="normalize-space('fill:  url(#')"/>
+                    <xsl:value-of select="$gradienton_id"/>
+                    <xsl:value-of select="normalize-space(');}')"/>           
+                    <xsl:text > 
             
-            <xsl:call-template name="apply_lib_gradient">
-                <xsl:with-param name="id" select="$gradienton_id"/>
-                <xsl:with-param name="color1" select="$var_color1"/>
-                <xsl:with-param name="color2" select="$var_color2"/>
-            </xsl:call-template>
+                    </xsl:text>    
+   
+                    <xsl:value-of select="$mainselector_id"/>
+                    <xsl:text disable-output-escaping="yes">:active > rect</xsl:text>
+                    <xsl:value-of select="$buttonstyle"/>
+                    <xsl:text> {
+                    </xsl:text>
+                    <xsl:text>    </xsl:text>
+                    <xsl:value-of select="normalize-space('fill:  url(#')"/>
+                    <xsl:value-of select="$gradientona_id"/>
+                    <xsl:value-of select="normalize-space(');')"/>            
+                    <xsl:text disable-output-escaping="yes">  
+                 
+                    </xsl:text> 
+
+    
+                    <xsl:value-of select="$mainselector_id"/>
+                    <xsl:text disable-output-escaping="yes">[state="off"] > rect</xsl:text>
+                    <xsl:value-of select="$buttonstyle"/>
+                    <xsl:text> {
+                    </xsl:text>
+                    <xsl:text>    </xsl:text>
+                    <xsl:value-of select="normalize-space('fill:  url(#')"/>
+                    <xsl:value-of select="$gradientoff_id"/>
+                    <xsl:value-of select="normalize-space(');}')"/>           
+                    <xsl:text disable-output-escaping="yes"> 
+                    
+                    </xsl:text>    
+                    <xsl:value-of select="$mainselector_id"/>
+                    <xsl:text disable-output-escaping="yes">[state="off"]:active > rect</xsl:text>
+                    <xsl:value-of select="$buttonstyle"/>
+                    <xsl:text> {
+                    </xsl:text>
+                    <xsl:text>    </xsl:text>
+                    <xsl:value-of select="normalize-space('fill:  url(#')"/>
+                    <xsl:value-of select="$gradientoffa_id"/>
+                    <xsl:value-of select="normalize-space(');}')"/>           
+                    <xsl:text disable-output-escaping="yes">           
+
+ 
+           
+           
+                    </xsl:text>           
+                    <xsl:value-of select="$mainselector_id"/>
+                    <xsl:text disable-output-escaping="yes">[state="disable"] > rect</xsl:text>
+                    <xsl:value-of select="$buttonstyle"/>
+                    <xsl:text> , </xsl:text>
+                    <xsl:value-of select="$mainselector_id"/>
+                    <xsl:text disable-output-escaping="yes">[state="disable"]:hover > rect</xsl:text>
+                    <xsl:value-of select="$buttonstyle"/>
+                    <xsl:text> , </xsl:text>
+                    <xsl:value-of select="$mainselector_id"/>
+                    <xsl:text disable-output-escaping="yes">[state="disable"]:active > rect</xsl:text>
+                    <xsl:value-of select="$buttonstyle"/>
+                    <xsl:text> {
+                    </xsl:text>
+                    <xsl:text>     </xsl:text>               
+                    <xsl:value-of select="normalize-space('fill:  url(#')"/>
+                    <xsl:value-of select="$gradientdsbl_id"/>
+                    <xsl:value-of select="normalize-space(');')"/>            
+                    <xsl:text disable-output-escaping="yes"> } 
+                
+                    </xsl:text> 
+                
+
+                </style>
+        
+                <defs>
             
-            <xsl:call-template name="apply_lib_gradient">
-                <xsl:with-param name="id" select="$gradientona_id"/>
-                <xsl:with-param name="color1" select="$var_color2"/>
-                <xsl:with-param name="color2" select="$var_color1"/>
-            </xsl:call-template>
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id" select="$gradienton_id"/>
+                        <xsl:with-param name="color1" select="$var_color1"/>
+                        <xsl:with-param name="color2" select="$var_color2"/>
+                    </xsl:call-template>
             
-            <xsl:call-template name="apply_lib_gradient">
-                <xsl:with-param name="id" select="$gradientoff_id"/>
-                <xsl:with-param name="color1" select="$var_oncolor1"/>
-                <xsl:with-param name="color2" select="$var_oncolor2"/>
-            </xsl:call-template>
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id" select="$gradientona_id"/>
+                        <xsl:with-param name="color1" select="$var_color2"/>
+                        <xsl:with-param name="color2" select="$var_color1"/>
+                    </xsl:call-template>
             
-            <xsl:call-template name="apply_lib_gradient">
-                <xsl:with-param name="id" select="$gradientoffa_id"/>
-                <xsl:with-param name="color1" select="$var_oncolor2"/>
-                <xsl:with-param name="color2" select="$var_oncolor1"/>
-            </xsl:call-template>      
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id" select="$gradientoff_id"/>
+                        <xsl:with-param name="color1" select="$var_oncolor1"/>
+                        <xsl:with-param name="color2" select="$var_oncolor2"/>
+                    </xsl:call-template>
             
-            <xsl:call-template name="apply_lib_gradient">
-                <xsl:with-param name="id" select="$gradientdsbl_id"/>
-                <xsl:with-param name="color1" select="$var_dsblcolor1"/>
-                <xsl:with-param name="color2" select="$var_dsblcolor2"/>
-            </xsl:call-template>            
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id" select="$gradientoffa_id"/>
+                        <xsl:with-param name="color1" select="$var_oncolor2"/>
+                        <xsl:with-param name="color2" select="$var_oncolor1"/>
+                    </xsl:call-template>      
+            
+                    <xsl:call-template name="apply_lib_gradient">
+                        <xsl:with-param name="id" select="$gradientdsbl_id"/>
+                        <xsl:with-param name="color1" select="$var_dsblcolor1"/>
+                        <xsl:with-param name="color2" select="$var_dsblcolor2"/>
+                    </xsl:call-template>            
             
             
-        </defs>    
+                </defs>   
+                  
+            </xsl:when>   
+        </xsl:choose>   
     </xsl:template>  
      
     <!--
@@ -2292,9 +2211,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     --> 
     
     <xsl:template name="apply_mlib_button_body"> 
-        <svg>
+        <svg class="__mlib_button_default">
             <xsl:call-template name="apply_rect"/>
-            <xsl:call-template name="apply_mlib_button_class"/>
+            <!--xsl:call-template name="apply_mlib_button_class"/-->
             <xsl:call-template name="apply_mlib_button_state"/>
             <xsl:call-template name="apply_mlib_button_style"/>          
             <rect role="button" aria-pressed="true"> 
@@ -2310,13 +2229,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:attribute name="width">
                     <xsl:value-of select="@width - 4"/>
                 </xsl:attribute>
-                <xsl:call-template name="apply_mlib_button_class"/>
+                <xsl:call-template name="apply_mlib_button_rectclass"/>
                 <xsl:call-template name="apply_r"/>
             </rect>   
             <xsl:call-template name="apply_mlib_button_caption"/>
             <g>
                 <xsl:call-template name="apply_mlib_button_class"/>
-                <rect>
+                <rect class="__mlib_button_default">
                     
                     <xsl:attribute name="x">
                         <xsl:value-of select="4"/>
@@ -2475,8 +2394,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:attribute name="y">
                     <xsl:value-of select="(@height - 8) div 2"/>
                 </xsl:attribute>     
-                <xsl:call-template name="apply_mlib_button_class"/>
+                <xsl:call-template name="apply_mlib_button_textclass"/>
                 <xsl:call-template name="apply_mlib_button_caption_value"/>
+                
             </text>
         </svg>     
     </xsl:template>
@@ -3658,7 +3578,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:text>_popup_sensorcalc</xsl:text>
                                 </xsl:attribute>
                             </sensor> 
-                            <button x="5" y="50" width="38" height="38" caption="1" r="5" fontstyle="{$fontstyle}">
+                            <button x="5" y="50" width="38" height="38" kind="custom" caption="1" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button1</xsl:text>
@@ -3668,7 +3588,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>
                             </button>    
-                            <button x="45" y="50" width="38" height="38" caption="2" r="5" fontstyle="{$fontstyle}">
+                            <button x="45" y="50" width="38" height="38" kind="custom" caption="2" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button2</xsl:text>
@@ -3678,7 +3598,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
                             </button>
-                            <button x="85" y="50" width="38" height="38" caption="3" r="5" fontstyle="{$fontstyle}">
+                            <button x="85" y="50" width="38" height="38" kind="custom" caption="3" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button3</xsl:text>
@@ -3688,7 +3608,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
                             </button>                      
-                            <button x="5" y="90" width="38" height="38" caption="4" r="5" fontstyle="{$fontstyle}">
+                            <button x="5" y="90" width="38" height="38" kind="custom" caption="4" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button4</xsl:text>
@@ -3698,7 +3618,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
                             </button>    
-                            <button x="45" y="90" width="38" height="38" caption="5" r="5" fontstyle="{$fontstyle}">
+                            <button x="45" y="90" width="38" height="38" kind="custom" caption="5" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button5</xsl:text>
@@ -3708,7 +3628,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
                             </button>
-                            <button x="85" y="90" width="38" height="38" caption="6" r="5" fontstyle="{$fontstyle}">
+                            <button x="85" y="90" width="38" height="38" kind="custom" caption="6" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button6</xsl:text>
@@ -3718,7 +3638,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
                             </button> 
-                            <button x="5" y="130" width="38" height="38" caption="7" r="5" fontstyle="{$fontstyle}">
+                            <button x="5" y="130" width="38" height="38" kind="custom" caption="7" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button7</xsl:text>
@@ -3728,7 +3648,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
                             </button>    
-                            <button x="45" y="130" width="38" height="38" caption="8" r="5" fontstyle="{$fontstyle}">
+                            <button x="45" y="130" width="38" height="38" kind="custom" caption="8" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button8</xsl:text>
@@ -3738,7 +3658,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
                             </button>
-                            <button x="85" y="130" width="38" height="38" caption="9" r="5" fontstyle="{$fontstyle}">
+                            <button x="85" y="130" width="38" height="38" kind="custom" caption="9" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button9</xsl:text>
@@ -3748,7 +3668,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
                             </button>    
-                            <button x="5" y="170" width="38" height="38" caption="." r="5" fontstyle="{$fontstyle}">
+                            <button x="5" y="170" width="38" height="38" kind="custom" caption="." r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_buttondot</xsl:text>
@@ -3758,7 +3678,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>
                             </button>    
-                            <button x="45" y="170" width="38" height="38" caption="0" r="5" fontstyle="{$fontstyle}">
+                            <button x="45" y="170" width="38" height="38" kind="custom" caption="0" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_buttonn</xsl:text>
@@ -3768,7 +3688,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>
                             </button>
-                            <button x="85" y="170" width="38" height="38" caption="C" r="5" fontstyle="{$fontstyle}">
+                            <button x="85" y="170" width="38" height="38" kind="custom" caption="C" r="5" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_buttonc</xsl:text>
@@ -3780,7 +3700,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:text>'); if (txtel) {if (txtel.textContent.length>0) {txtel.textContent=txtel.textContent.substring(0, txtel.textContent.length-1);}}</xsl:text>
                                 </xsl:attribute>
                             </button>     
-                            <button x="5" y="210" width="38" height="38" caption="-" r="5"  fontstyle="{$fontstyle}">
+                            <button x="5" y="210" width="38" height="38" kind="custom" caption="-" r="5"  fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_buttonnegativ</xsl:text>
@@ -3790,7 +3710,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>
                             </button>    
-                            <button x="45" y="210" width="38" height="38" caption="x"  r="5" color1="#800" color2="#B00" fontstyle="{$fontstyle}">
+                            <button x="45" y="210" width="38" height="38" kind="red" caption="x"  r="5" color1="#800" color2="#B00" fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_buttond</xsl:text>
@@ -3801,22 +3721,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:text>_popup_body');  if (popuptmp) {if (popuptmp.clearpopup) {popuptmp.clearpopup();}}</xsl:text>
                                 </xsl:attribute>                                
                             </button>
-                            <button x="85" y="210" width="38" height="38" caption="ok"  r="5" color1="#080" color2="#0B0"  fontstyle="{$fontstyle}">
+                            <button x="85" y="210" width="38" height="38" kind="green" caption="ok"  r="5" color1="#080" color2="#0B0"  fontstyle="{$fontstyle}">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_buttonok</xsl:text>
-                                </xsl:attribute>
-                                <!--xsl:attribute name="onclick">
-                                    <xsl:text>var txtel= document.getElementById('</xsl:text> 
-                                    <xsl:value-of select="$id"/>
-                                    <xsl:text>_popup_sensorcalc_sensor_text</xsl:text>  
-                                    <xsl:text>'); if (txtel) { if (txtel.textContent.length>0) { $$(('</xsl:text>
-                                    <xsl:value-of select="@param"/> 
-                                    <xsl:text> @= ' + txtel.textContent));}}</xsl:text> 
-                                    <xsl:text>var popuptmp= document.getElementById('</xsl:text>
-                                    <xsl:value-of select="$id"/>
-                                    <xsl:text>_popup_body');  if (popuptmp) {if (popuptmp.clearpopup) {popuptmp.clearpopup();}}</xsl:text>
-                                </xsl:attribute-->                                
+                                </xsl:attribute>                            
                             </button>                     
                         </xsl:variable>
                 
@@ -5345,7 +5254,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:param name="еnvironment"/>
         <xsl:param name="fillеnvironment"/>
 
-        <mlib:sensor x="5" height="110" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="midle_gray" caption="" alighn="center" fontcolor="#eee">
+        <mlib:rect x="5" height="110" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="dark_gray" caption="" alighn="center" fontcolor="#eee">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_headset_</xsl:text>
@@ -5354,7 +5263,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="y">
                 <xsl:value-of select="$shift"/>                            
             </xsl:attribute> 
-        </mlib:sensor>                       
+        </mlib:rect>                       
         <mlib:sensor x="10"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"   fontstyle="font-size: 12" environment="dark_gray">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -5415,7 +5324,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>
             </xsl:attribute>                
         </mlib:sensor>   
-        <mlib:button x="200"  height="15" width="15" caption="+"  alighn="center"  dsblfontstyle="font-size: 4; fill: #333;" disable="level_sp &gt;= level_sp.maxeu">
+        <mlib:button x="200"  height="15" width="15" caption="+"  kind="custom" alighn="center"  dsblfontstyle="font-size: 4; fill: #333;" disable="level_sp &gt;= level_sp.maxeu">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_buttoninc_</xsl:text>
@@ -5466,7 +5375,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>                
             </xsl:attribute> 
         </mlib:button>
-        <mlib:button x="200" height="15" width="15" caption="-"  alighn="center"  dsblfontstyle="font-size: 4; fill: #333;">        
+        <mlib:button x="200" height="15" width="15" caption="-" kind="custom" alighn="center"  dsblfontstyle="font-size: 4; fill: #333;">        
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_buttondec_</xsl:text>
@@ -5793,14 +5702,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:param name="shift"/>
         <xsl:param name="preff"/>        
         <xsl:param name="param"/>
-        <mlib:sensor x="5" y="171" height="55" width="240" stroke="#ccc" stroke-width="1" r="4" environment="midle_gray" caption="" alighn="center" fontcolor="#eee">
+        <mlib:rect x="5" y="171" height="55" width="240" stroke="#ccc" stroke-width="1" r="4" environment="dark_gray" caption="" alighn="center" fontcolor="#eee">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_autobackground_</xsl:text> 
                 <xsl:value-of select="$preff"/>
                 <xsl:text>_name</xsl:text>
             </xsl:attribute> 
-        </mlib:sensor>  
+        </mlib:rect>  
         <text x="9" y="181" text="Автоват/Дистанция" fill="#eee" style="font-size: 11;">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -5809,7 +5718,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:text>_name</xsl:text>
             </xsl:attribute>             
         </text>  
-        <mlib:button x="65" y="185" height="35" width="35" caption="Д" r="4"  color1="#0A0" color2="#0F0" oncolor1="#333" oncolor2="#111" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;">
+        <mlib:button x="65" y="185" height="35" width="35" caption="Д" r="4"  kind="green" fontstyle="font-size: 13; fill: #eee;" offfontstyle="font-size: 13; fill: #eee;">
              <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_auto_</xsl:text> 
@@ -5820,11 +5729,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:value-of select="$param"/>
                 <xsl:text> @ 0</xsl:text>
             </xsl:attribute>  
-              <xsl:attribute name="state">
+              <xsl:attribute name="state">                
                 <xsl:value-of select="$param"/>
             </xsl:attribute>             
         </mlib:button>         
-        <mlib:button x="150" y="185" height="35" width="35" caption="А" r="4"  color1="#333" color2="#111" oncolor1="#0A0" oncolor2="#0F0" dsblfontstyle="" fontstyle="font-size: 13; fill: #666;">
+        <mlib:button x="150" y="185" height="35" width="35" caption="А" r="4" kind="green"  fontstyle="font-size: 13; fill: #eee;" offfontstyle="font-size: 13; fill: #eee;">
              <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_auto_</xsl:text> 
@@ -5836,6 +5745,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:text> @ 1</xsl:text>
             </xsl:attribute>  
               <xsl:attribute name="state">
+                  <xsl:text>!</xsl:text>
                 <xsl:value-of select="$param"/>
             </xsl:attribute>            
         </mlib:button>
@@ -5890,7 +5800,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:attribute>   
                 
                 <xsl:variable name="popupbody">
-                   <mlib:sensor x="5" y="5" height="50" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="midle_gray" alighn="center" fontcolor="#eee" fontstyle="font-size: 12">
+                   <mlib:rect x="5" y="5" height="50" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="dark_gray" alighn="center" fontcolor="#eee" fontstyle="font-size: 12">
                         <xsl:attribute name="id">
                             <xsl:value-of select="@id"/>
                             <xsl:text>_sensor_head</xsl:text>                            
@@ -5898,7 +5808,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:attribute name="caption">
                             <xsl:value-of select="@header"/>                         
                         </xsl:attribute>                            
-                    </mlib:sensor>  
+                    </mlib:rect>  
  
                     <xsl:choose>
                         <xsl:when test="not(normalize-space(@param-sp)='') and not(normalize-space(@actuator-sp)='') and not(normalize-space(@auto)='')">                    
