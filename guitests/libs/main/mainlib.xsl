@@ -9,10 +9,9 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
-    <xsl:import href="mainlibstyle.xsl"/>   
+
 
     <xsl:template name="mainlib">  
-        <xsl:call-template name="apply_mlib_style"/>
         <script type="text/javascript" xlink:href="../libs/main/js/mainlib.js"></script>   
         <script type="text/javascript" xlink:href="../util/js_ext/hightchart/jquery.min.js"></script>
         <script type="text/javascript" xlink:href="../util/js_ext/hightchart/highcharts.js"></script>
@@ -5254,7 +5253,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:param name="еnvironment"/>
         <xsl:param name="fillеnvironment"/>
 
-        <mlib:rect x="5" height="110" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="dark_gray" caption="" alighn="center" fontcolor="#eee">
+        <svg:svgrect x="5" height="110" width="240" fill="#333" stroke="#ccc" stroke-width="1" r="4">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_headset_</xsl:text>
@@ -5263,7 +5262,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="y">
                 <xsl:value-of select="$shift"/>                            
             </xsl:attribute> 
-        </mlib:rect>                       
+        </svg:svgrect>                       
         <mlib:sensor x="10"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"   fontstyle="font-size: 12" environment="dark_gray">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -5702,14 +5701,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:param name="shift"/>
         <xsl:param name="preff"/>        
         <xsl:param name="param"/>
-        <mlib:rect x="5" y="171" height="55" width="240" stroke="#ccc" stroke-width="1" r="4" environment="dark_gray" caption="" alighn="center" fontcolor="#eee">
+        <svg:svgrect x="5" y="171" height="55" width="240" fill="#333" stroke="#ccc" stroke-width="1" r="4">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_autobackground_</xsl:text> 
                 <xsl:value-of select="$preff"/>
                 <xsl:text>_name</xsl:text>
             </xsl:attribute> 
-        </mlib:rect>  
+        </svg:svgrect>  
         <text x="9" y="181" text="Автоват/Дистанция" fill="#eee" style="font-size: 11;">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -5800,16 +5799,22 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:attribute>   
                 
                 <xsl:variable name="popupbody">
-                   <mlib:rect x="5" y="5" height="50" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="dark_gray" alighn="center" fontcolor="#eee" fontstyle="font-size: 12">
+                   <svg:svgrect x="5" y="5" height="50" width="240" fill="#333" stroke="#ccc" stroke-width="1" r="4">
                         <xsl:attribute name="id">
                             <xsl:value-of select="@id"/>
                             <xsl:text>_sensor_head</xsl:text>                            
-                        </xsl:attribute> 
-                        <xsl:attribute name="caption">
+                        </xsl:attribute>                             
+                    </svg:svgrect> 
+                    <text y="35" x="120" fill="#eee"  style="text-anchor: middle; font-size: 14;">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>__sensor_headtext</xsl:text>  
+                        </xsl:attribute>  
+                        <xsl:attribute name="text">
                             <xsl:value-of select="@header"/>                         
-                        </xsl:attribute>                            
-                    </mlib:rect>  
- 
+                        </xsl:attribute>                         
+                    </text> 
+    
                     <xsl:choose>
                         <xsl:when test="not(normalize-space(@param-sp)='') and not(normalize-space(@actuator-sp)='') and not(normalize-space(@auto)='')">                    
                             <xsl:call-template name="mlib_regulator_control"> 
@@ -6004,6 +6009,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:when>    
                     <xsl:when test="local-name()='text'">
                         <xsl:call-template name="svg_text"/>
+                    </xsl:when>
+                    <xsl:when test="local-name()='svgrect'">
+                        <xsl:call-template name="svg_rect"/>
                     </xsl:when>
                     <xsl:when test="local-name()='line'">
                         <xsl:call-template name="svg_line"/>
