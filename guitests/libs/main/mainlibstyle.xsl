@@ -44,6 +44,11 @@ extension-element-prefixes="mlib">
             <stop offset="0.5" stop-color="#666"/>
             <stop offset="1" stop-color="#999"/>
         </linearGradient>
+        <linearGradient id="__gradient_mlib_midle_gray_ho" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#666"/>
+            <stop offset="0.5" stop-color="#999"/>
+            <stop offset="1" stop-color="#666"/>
+        </linearGradient>        
         <radialGradient id="__gradient_mlib_midle_gray_c">
 		<stop  offset="0" style="stop-color:#666"/>
 		<stop  offset="1" style="stop-color:#999"/>
@@ -60,6 +65,11 @@ extension-element-prefixes="mlib">
             <stop offset="0.5" stop-color="#333"/>
             <stop offset="1" stop-color="#111"/>
         </linearGradient>
+        <linearGradient id="__gradient_mlib_dark_gray_h0" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#333"/>
+            <stop offset="0.5" stop-color="#111"/>
+            <stop offset="1" stop-color="#333"/>
+        </linearGradient>        
         <radialGradient id="__gradient_mlib_dark_gray_c">
 		<stop  offset="0" style="stop-color:#111"/>
 		<stop  offset="1" style="stop-color:#333"/>
@@ -140,6 +150,11 @@ extension-element-prefixes="mlib">
             <stop offset="0.5" stop-color="#0a0"/>
             <stop offset="1" stop-color="#080"/>
         </linearGradient>
+        <linearGradient id="__gradient_mlib_midle_green_ho" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#0a0"/>
+            <stop offset="0.5" stop-color="#080"/>
+            <stop offset="1" stop-color="#0a0"/>
+        </linearGradient>        
         <radialGradient id="__gradient_mlib_midle_green_c">
 		<stop  offset="0" style="stop-color:#080"/>
 		<stop  offset="1" style="stop-color:#0a0"/>
@@ -187,6 +202,11 @@ extension-element-prefixes="mlib">
             <stop offset="0" stop-color="#800"/>
             <stop offset="0.5" stop-color="#a00"/>
             <stop offset="1" stop-color="#800"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_midle_red_ho" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#a00"/>
+            <stop offset="0.5" stop-color="#800"/>
+            <stop offset="1" stop-color="#a00"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_midle_red_c">
 		<stop  offset="0" style="stop-color:#800"/>
@@ -580,75 +600,173 @@ extension-element-prefixes="mlib">
         .__fill_mlib_class_accident_h {
                 fill : url(#__gradient_mlib_accident_h);}  
         .__fill_mlib_class_accident_c {
-                fill : url(#__gradient_mlib_accident_c);}  
+                fill : url(#__gradient_mlib_accident_c);} 
                 
                 
                 
-        g.__mlib_button_default svg  text {         
-                 font-size: 18;
-                 fill: white;
+        <!--  armatura -->
+        
+         .__mlib_armatura[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                
+         .__mlib_armatura[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                               
+         .__mlib_armatura {             
+               cursor: none;}
+                     
+         .__mlib_armatura:hover {            
+               cursor: none;}
+                 
+                    
+         
+         
+         
+         
+        <!-- button  -->
+                
+        svg svg text.__mlib_button_default {         
                  font-weight: bold;
                  text-anchor: middle;
                  dominant-baseline: central; 
                  -webkit-user-select: none;}
                  
-        g.__mlib_button_default svg[state="off"] > svg >  text {           
-                 font-size: 18;
-                 fill: white;
-                 font-weight: bold;}
            
-        g.__mlib_button_default svg[state="disable"] > svg >  text {            
-                 font-size: 18;
-                 fill: #666;}
+        svg[state="disable"] svg text.__mlib_button_default {            
+                 font-weight: normal;}
            
-        g.__mlib_button_default svg *{
+        svg.__mlib_button_default > g > rect {
                 cursor: pointer;}
           
-        g.__mlib_button_default svg[state="disable"] *{
+        svg[state="disable"].__mlib_button_default > g > rect {
                 cursor: default;}
           
-        g.__mlib_button_default svg > g > rect {
+        svg.__mlib_button_default  > g  > rect {
                 fill: transparent;}
+                
+        svg[state="off"].__mlib_button_default >   rect {        
+                stroke: #555;
+                stroke-width: 1;}   
+                    
+        svg[state="off"].__mlib_button_default:hover >  rect {         
+                stroke:  #333;
+                stroke-width: 1;}                  
+                
+        svg[state="disable"].__mlib_button_default >  rect , svg[state="disable"].__mlib_button_default:hover >  rect:hover , svg[state="disable"].__mlib_button_default >  rect:active {
+                 stroke-width: 0;
+                 stroke: none;}  
                  
-        g.__mlib_button_default svg > rect {
-                fill: url(#button0__gradienton);} 
-            
-        g.__mlib_button_default svg:hover > rect {               
+        svg[state="disable"].__mlib_button_default > rect , svg[state="disable"].__mlib_button_default:hover > rect , svg[state="disable"].__mlib_button_default:active > rect {
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);}  
+                
+        svg.__mlib_button_default:hover > rect {               
                 -webkit-svg-shadow: 3px 3px  3px rgba(0, 0, 0, 0.5);}
          
-        g.__mlib_button_default svg:active > rect{
-                fill: url(#button0__gradientona);  
-                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
-                 
-        g.__mlib_button_default svg > g > rect {           
-                stroke: #333;
-                stroke-width: 1;}   
-                    
-        g.__mlib_button_default svg:hover > g > rect {           
-                stroke: #555;
-                stroke-width: 1;}                  
-       
-        g.__mlib_button_default svg[state="off"] > rect {
-                fill: url(#button0__gradientoff);} 
-                    
-        g.__mlib_button_default svg[state="off"]:active > rect {
-                fill: url(#button0__gradientoffa);}           
-           
-        g.__mlib_button_default svg[state="off"] > g > rect {        
-                stroke: #555;
-                stroke-width: 1;}   
-                    
-        g.__mlib_button_default svg[state="off"]:hover > g > rect {         
-                stroke:  #333;
-                stroke-width: 1;}            
-           
-        g.__mlib_button_default svg[state="disable"] > rect , g.__mlib_button_default svg[state="disable"]:hover > rect , g.__mlib_button_default svg[state="disable"]:active > rect {
-                 fill: url(#button0__gradientdsbl); 
+        svg.__mlib_button_default:active > rect{
                 -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
                 
-        g.__mlib_button_default svg[state="disable"] > g > rect , g.__mlib_button_default svg[state="disable"]:hover > g > rect , g.__mlib_button_default svg[state="disable"]:active > g > rect {
-                 stroke-width: 0;
-                 stroke: none;}                
+ 
+
+
+        .__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_green_h);} 
+            
+        svg[state=""]:active > rect.__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_green_ho);}  
+                 
+        svg[state="off"] > rect.__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_gray_h);} 
+                    
+        svg[state="off"]:active > rect.__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_gray_h0);}               
+           
+        svg[state="disable"] > rect.__mlib__button_green ,
+        svg[state="disable"]:hover > rect.__mlib__button_green ,
+        svg[state="disable"]:active > rect.__mlib__button_green {
+                 fill: url(#__gradient_mlib_dark_gray_h); }  
+
+
+
+
+        .__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_h);}
+            
+        svg[state=""]:active > rect.__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_ho);}  
+                 
+        svg[state="off"] > rect.__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_h);} 
+                    
+        svg[state="off"]:active > rect.__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_h0);}               
+           
+        svg[state="disable"] > rect.__mlib__button_red ,
+        svg[state="disable"]:hover > rect.__mlib__button_red ,
+        svg[state="disable"]:active > rect.__mlib__button_red {
+                 fill: url(#__gradient_mlib_dark_gray_h); }
+                 
+   
+
+ 
+        .__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_gray_h);} 
+            
+        svg[state=""]:active > rect.__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_gray_h0);}  
+                 
+        svg[state="off"] > rect.__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_gray_h);} 
+                    
+        svg[state="off"]:active > rect.__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_gray_h0);}               
+           
+        svg[state="disable"] > rect.__mlib__button_custom ,
+        svg[state="disable"]:hover > rect.__mlib__button_custom ,
+        svg[state="disable"]:active > rect.__mlib__button_custom {
+                 fill: url(#__gradient_mlib_dark_gray_h); }  
+                 
+                 
+                 
+        .__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_red_h);} 
+            
+        svg[state=""]:active > rect.__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_red_h0);}  
+                 
+        svg[state="off"] > rect.__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_green_h);} 
+                    
+        svg[state="off"]:active > rect.__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_green_ho);}               
+           
+        svg[state="disable"] > rect.__mlib__button_rg ,
+        svg[state="disable"]:hover > rect.__mlib__button_rg ,
+        svg[state="disable"]:active > rect.__mlib__button_rg {
+                 fill: url(#__gradient_mlib_dark_gray_h); }
+                 
+
+        .__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_green_h);} 
+            
+        svg[state=""]:active > rect.__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_green_h0);}  
+                 
+        svg[state="off"] > rect.__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_red_h);} 
+                    
+        svg[state="off"]:active > rect.__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_red_ho);}               
+           
+        svg[state="disable"] > rect.__mlib__button_gr ,
+        svg[state="disable"]:hover > rect.__mlib__button_gr ,
+        svg[state="disable"]:active > rect.__mlib__button_gr {
+                 fill: url(#__gradient_mlib_dark_gray_h); }
+   
+               
+                
+              
         
         
         </style>
