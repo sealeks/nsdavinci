@@ -35,12 +35,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:call-template name="lib_script_include"/>
         <xsl:call-template name="includelib"/> 
         
-        <xsl:apply-templates/>
-        
         <xsl:call-template name="apply_mlib_sensor_popup">
             <xsl:with-param name="id">calcpopup__</xsl:with-param>
         </xsl:call-template>
         <xsl:call-template name="lib_svgstyle"/>
+        <xsl:apply-templates/>        
         </xsl:copy> 
         
     </xsl:template>

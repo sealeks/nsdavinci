@@ -439,7 +439,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>  
     
     
-    <xsl:template name="mlib_config_popup_split" mode="split">
+    <xsl:template name="mlib_config_popup_split" >
         <xsl:param name="str" select="."/>
         <xsl:param name="hdrs"/>
         <xsl:param name="frmts"/>
