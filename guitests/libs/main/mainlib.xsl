@@ -48,6 +48,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
           notice
           alarm
           accident
+          dark_fill
+          dark_button
         -->  
     <xsl:template name="mlib_gradient_select">
         <xsl:param name="invir"/>
@@ -351,6 +353,18 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:text>__fill_mlib_class_accident_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
+            </xsl:when>    
+            
+           <xsl:when test="normalize-space($invir)='dark_fill'">
+                 
+                        <xsl:text>__fill_mlib_class_dark_fill</xsl:text>
+               
+            </xsl:when>  
+            
+           <xsl:when test="normalize-space($invir)='dark_button'">
+                 
+                      <xsl:text>__fill_mlib_class_dark_button</xsl:text>
+                
             </xsl:when>             
             
             <xsl:otherwise>
@@ -5836,7 +5850,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                         </xsl:otherwise> 
                                     </xsl:choose>
                                 </xsl:with-param>
-                                <xsl:with-param name="еnvironment">dark_gray</xsl:with-param>  
+                                <xsl:with-param name="еnvironment">dark_fill</xsl:with-param>  
                                 <xsl:with-param name="color">       
                                     <xsl:choose>
                                         <xsl:when test="not(normalize-space(@param-color)='')">
@@ -6020,7 +6034,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:for-each>           
                 
             </svg>            
-        </defs>                   
+        </defs>  
     </xsl:template>               
     
 

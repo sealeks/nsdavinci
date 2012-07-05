@@ -140,6 +140,16 @@ extension-element-prefixes="mlib">
             <stop offset="0.5" stop-color="#333"/>
             <stop offset="1" stop-color="#111"/>
         </linearGradient>
+        <linearGradient id="__gradient_mlib_dark_fill" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#111"/>
+            <stop offset="0.5" stop-color="#333"/>
+            <stop offset="1" stop-color="#111"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_dark_button" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#111"/>
+            <stop offset="0.5" stop-color="#333"/>
+            <stop offset="1" stop-color="#111"/>
+        </linearGradient>        
         <linearGradient id="__gradient_mlib_dark_gray_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#111"/>
             <stop offset="0.5" stop-color="#333"/>
@@ -518,6 +528,10 @@ extension-element-prefixes="mlib">
         <!-- dark gray -->                  
         .__fill_mlib_class_dark_gray_v {
                 fill : url(#__gradient_mlib_dark_gray_v);}
+        .__fill_mlib_class_dark_fill {
+                fill : url(#__gradient_mlib_dark_fill);}    
+        .__fill_mlib_class_dark_button {
+                fill : url(#__gradient_mlib_dark_button);}                   
         .__fill_mlib_class_dark_gray_h {
                 fill : url(#__gradient_mlib_dark_gray_h);}  
         .__fill_mlib_class_dark_gray_c {
@@ -791,13 +805,13 @@ extension-element-prefixes="mlib">
 
  
         .__mlib__button_custom {
-                fill: url(#__gradient_mlib_dark_gray_h);} 
+                fill: url(#__fill_mlib_class_dark_button);} 
             
         svg[state=""]:active > rect.__mlib__button_custom {
                 fill: url(#__gradient_mlib_dark_gray_h0);}  
                  
         svg[state="off"] > rect.__mlib__button_custom {
-                fill: url(#__gradient_mlib_dark_gray_h);} 
+                fill: url(#__fill_mlib_class_dark_button);} 
                     
         svg[state="off"]:active > rect.__mlib__button_custom {
                 fill: url(#__gradient_mlib_dark_gray_h0);}               
@@ -805,7 +819,7 @@ extension-element-prefixes="mlib">
         svg[state="disable"] > rect.__mlib__button_custom ,
         svg[state="disable"]:hover > rect.__mlib__button_custom ,
         svg[state="disable"]:active > rect.__mlib__button_custom {
-                 fill: url(#__gradient_mlib_dark_gray_h); }  
+                 fill: url(#__gradient_mlib_midle_gray_h); }  
                  
                  
                  

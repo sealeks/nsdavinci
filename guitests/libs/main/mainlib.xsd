@@ -58,7 +58,9 @@
         <xsd:enumeration value="smoke"/>
         <xsd:enumeration value="notice"/>
         <xsd:enumeration value="alarm"/>
-        <xsd:enumeration value="accident"/>        
+        <xsd:enumeration value="accident"/>   
+        <xsd:enumeration value="dark_fill"/>
+        <xsd:enumeration value="dark_button"/>  
         <xsd:enumeration value=""/>
     </xsd:restriction>
 </xsd:simpleType>
