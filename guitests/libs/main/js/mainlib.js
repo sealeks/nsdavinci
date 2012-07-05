@@ -726,7 +726,7 @@ mainlib.graph_click =  function (el, nm, color){
                                                          elementId + '_popup_body'+
                                                          "', "+"['"+nm+"'], 600, ['"+color+"','green','blue','#880'], " + 
                                                          (mainlib.CHART_WIDTH - 2* mainlib.CHART_PADDING) + ", " +
-                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ (title ? ", 5 , { title: '"+title+"'})" : " )");
+                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ (title ? ", 5 , { title: '"+title+"',background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]})" : ", 5 , {background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]})");
            
 }
 
