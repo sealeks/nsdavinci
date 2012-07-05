@@ -1025,7 +1025,7 @@ simulator.actuator.prototype.execute = function(){
 var ts=this;
 if (this.enable){
 $$('(abs(' + ts.pos + ' - '+ ts.sp + ') && ('+ts.sp+'.valid)  && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
-        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid) && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ ' + ts.sp + ') : (' + ts.pos + ' @ ' + ts.pos + ')' + 
+        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid) && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ ' + ts.sp + ') : (1)' + 
         ') ');}
 }
 
