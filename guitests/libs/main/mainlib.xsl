@@ -421,7 +421,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:choose>            
         </xsl:variable>         
         
-        <mlib:sensor x="5"  height="22" width="156" stroke="#eee" stroke-width="1" r="4"  environment="dark_gray"   alighn="left" fontcolor="yellow" fontstyle="font-size: 11">
+        <mlib:sensor x="5"  height="22" width="156" stroke="#eee" stroke-width="1" r="4"  color1="#111"   alighn="left" fontcolor="yellow" fontstyle="font-size: 11">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_popup_config_rowheader</xsl:text>
@@ -434,7 +434,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:value-of select="30 + ($depth -1) * 24"/>
             </xsl:attribute>  
        </mlib:sensor>
-        <mlib:sensor x="162"  height="22" width="82" stroke="#0e0" stroke-width="1" r="4"  environment="dark_blue" caption="" alighn="right" fontcolor="#0e0" fontstyle="font-size: 11" sensorevent="valueedit">
+        <mlib:sensor x="162"  height="22" width="82" stroke="#0e0" stroke-width="1" r="4"  color1="#001" caption="" alighn="right" fontcolor="#0e0" fontstyle="font-size: 11" sensorevent="valueedit">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_popup_config_setter</xsl:text>
@@ -2470,7 +2470,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:choose>    
         </xsl:variable>
        <xsl:choose>
-            <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') or not(normalize-space(@color2)=''))">   
+            <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') and not(normalize-space(@color2)=''))">   
                 <defs>
    
             
@@ -2545,10 +2545,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:when>
         </xsl:choose>  
         <xsl:choose>
-            <xsl:when test="normalize-space(@fillenvironment)='' and (not(normalize-space(@fillcolor1)='') or not(normalize-space(@fillcolor2)=''))">   
-                <defs>
-   
-            
+            <xsl:when test="normalize-space(@fillenvironment)='' and (not(normalize-space(@fillcolor1)='') and not(normalize-space(@fillcolor2)=''))">   
+                <defs>      
                     <xsl:choose>
                         <xsl:when test="not(normalize-space(@fillcolor1)='') and not(normalize-space(@fillcolor2)='')">
                             <xsl:call-template name="apply_lib_gradient">
@@ -2653,7 +2651,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
         <xsl:variable name="gradon">
             <xsl:choose>
-                <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') or not(normalize-space(@color2)=''))">                   
+                <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') and not(normalize-space(@color2)=''))">                   
                     <xsl:value-of select="@id"/>
                     <xsl:text>_rect_gradient_classon</xsl:text> 
                 </xsl:when>
@@ -2669,26 +2667,51 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:otherwise>    
             </xsl:choose>                 
         </xsl:variable> 
-        <xsl:choose>               
-            <xsl:when test="not(normalize-space(@param)='')">                  
-                <xsl:attribute name="class">
-                    <xsl:text>#{ (</xsl:text>
-                    <xsl:value-of select="@param"/>
-                    <xsl:text>).valid  ? '</xsl:text>
-                    <xsl:value-of select="$gradon"/>
-                    <xsl:text>' : '</xsl:text>                   
-                    <xsl:value-of select="$gradnone"/>
-                    <xsl:text>' :default </xsl:text>
-                    <xsl:value-of select="$gradnone"/>
-                    <xsl:text> }</xsl:text>
-                </xsl:attribute>                       
-            </xsl:when>                      
+        
+        <xsl:choose>                 
+            <xsl:when test="not(normalize-space(@environment)='') or (not(normalize-space(@color1)='') and not(normalize-space(@color2)=''))"> 
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@param)='')">                  
+                        <xsl:attribute name="class">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? '</xsl:text>
+                            <xsl:value-of select="$gradon"/>
+                            <xsl:text>' : '</xsl:text>                   
+                            <xsl:value-of select="$gradnone"/>
+                            <xsl:text>' :default </xsl:text>
+                            <xsl:value-of select="$gradnone"/>
+                            <xsl:text> }</xsl:text>
+                        </xsl:attribute>                       
+                    </xsl:when>                      
+                    <xsl:otherwise>
+                        <xsl:attribute name="class">
+                            <xsl:value-of select="$gradon"/>
+                        </xsl:attribute>    
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
             <xsl:otherwise>
-                <xsl:attribute name="class">
-                    <xsl:value-of select="$gradon"/>
-                </xsl:attribute>    
-            </xsl:otherwise> 
-        </xsl:choose>      
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@param)='')">                  
+                        <xsl:attribute name="fill">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? '</xsl:text>
+                            <xsl:value-of select="@color1"/>
+                            <xsl:text>' : '#333' :default #333</xsl:text>
+                            <xsl:text> }</xsl:text>
+                        </xsl:attribute>                       
+                    </xsl:when>                      
+                    <xsl:otherwise>
+                        <xsl:attribute name="fill">
+                            <xsl:value-of select="@color1"/>
+                        </xsl:attribute>    
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>    
+        </xsl:choose>
+        
     </xsl:template> 
     
      <!-- rect -->   
@@ -2719,6 +2742,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     <xsl:template name="mlib_fillrect_rectclass">  
+    
         <xsl:variable name="gradtype">
             <xsl:choose>
                 <xsl:when test="(@gradient-type='tb')">
@@ -2807,45 +2831,84 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:otherwise>
             </xsl:choose>                  
         </xsl:variable>  
- 
-        <xsl:choose>
-            <xsl:when test="not(normalize-space(@param)='')">            
+        
+        
+        <xsl:choose>                 
+            <xsl:when test="not(normalize-space(@fillenvironment)='') or (not(normalize-space(@fillcolor1)='') and not(normalize-space(@fillcolor2)=''))">  
                 <xsl:choose>
-                    <xsl:when test="not(normalize-space(@alarms)='')"> 
-                    
-                        <xsl:call-template name="apply_lib_alarmcheckstate_animate">
-                            <xsl:with-param name="attributeName">class</xsl:with-param>
-                            <xsl:with-param name="attributeType">XML</xsl:with-param>
-                            <xsl:with-param name="calcMode">discrete</xsl:with-param>
-                            <xsl:with-param name="alarms" select="@alarms"/>
-                            <xsl:with-param name="accident">
-                                <xsl:value-of select="$gradaccident"/>
-                            </xsl:with-param>
-                            <xsl:with-param name="alarm">
-                                <xsl:value-of select="$gradalarm"/>                     
-                            </xsl:with-param>
-                            <xsl:with-param name="notice">
-                                <xsl:value-of select="$gradnotice"/>
-                            </xsl:with-param>
-                        </xsl:call-template>
-                                                   
-                    </xsl:when>
-                    <xsl:otherwise> 
-                        <xsl:attribute name="class">
-                            <xsl:text>#{ (</xsl:text>
-                            <xsl:value-of select="@param"/>
-                            <xsl:text>).valid  ? '</xsl:text>
-                            <xsl:value-of select="$gradon"/> 
-                            <xsl:text>' : '</xsl:text>
-                            <xsl:value-of select="$gradnone"/> 
-                            <xsl:text>' :default </xsl:text> 
-                            <xsl:value-of select="$gradnone"/> 
-                            <xsl:text>_}</xsl:text> 
-                        </xsl:attribute> 
-                    </xsl:otherwise>                
-                </xsl:choose>                                
-            </xsl:when>    
-        </xsl:choose> 
+                    <xsl:when test="not(normalize-space(@param)='')">            
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space(@alarms)='')">                    
+                                <xsl:call-template name="apply_lib_alarmcheckstate_animate">
+                                    <xsl:with-param name="attributeName">class</xsl:with-param>
+                                    <xsl:with-param name="attributeType">XML</xsl:with-param>
+                                    <xsl:with-param name="calcMode">discrete</xsl:with-param>
+                                    <xsl:with-param name="alarms" select="@alarms"/>
+                                    <xsl:with-param name="accident">
+                                        <xsl:value-of select="$gradaccident"/>
+                                    </xsl:with-param>
+                                    <xsl:with-param name="alarm">
+                                        <xsl:value-of select="$gradalarm"/>                     
+                                    </xsl:with-param>
+                                    <xsl:with-param name="notice">
+                                        <xsl:value-of select="$gradnotice"/>
+                                    </xsl:with-param>
+                                </xsl:call-template>                                                  
+                            </xsl:when>
+                            <xsl:otherwise> 
+                                <xsl:attribute name="class">
+                                    <xsl:text>#{ (</xsl:text>
+                                    <xsl:value-of select="@param"/>
+                                    <xsl:text>).valid  ? '</xsl:text>
+                                    <xsl:value-of select="$gradon"/> 
+                                    <xsl:text>' : '</xsl:text>
+                                    <xsl:value-of select="$gradnone"/> 
+                                    <xsl:text>' :default </xsl:text> 
+                                    <xsl:value-of select="$gradnone"/> 
+                                    <xsl:text>_}</xsl:text> 
+                                </xsl:attribute> 
+                            </xsl:otherwise>                
+                        </xsl:choose>                                
+                    </xsl:when>    
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:otherwise> 
+               <xsl:choose>
+                    <xsl:when test="not(normalize-space(@param)='')">            
+                        <xsl:choose>
+                            <xsl:when test="not(normalize-space(@alarms)='')">                    
+                                <xsl:call-template name="apply_lib_alarmcheckstate_animate">
+                                    <xsl:with-param name="attributeName">fill</xsl:with-param>
+                                    <xsl:with-param name="attributeType">XML</xsl:with-param>
+                                    <xsl:with-param name="calcMode">discrete</xsl:with-param>
+                                    <xsl:with-param name="alarms" select="@alarms"/>
+                                    <xsl:with-param name="accident">
+                                        <xsl:text>red</xsl:text> 
+                                    </xsl:with-param>
+                                    <xsl:with-param name="alarm">
+                                        <xsl:text>#EEAD0E</xsl:text>                   
+                                    </xsl:with-param>
+                                    <xsl:with-param name="notice">
+                                        <xsl:text>#FF0</xsl:text>
+                                    </xsl:with-param>
+                                </xsl:call-template>                                                  
+                            </xsl:when>
+                            <xsl:otherwise> 
+                                <xsl:attribute name="fill">
+                                    <xsl:text>#{ (</xsl:text>
+                                    <xsl:value-of select="@param"/>
+                                    <xsl:text>).valid  ? '</xsl:text> 
+                                    <xsl:value-of select="@fillcolor1"/> 
+                                    <xsl:text>' : '#888' :default #888</xsl:text> 
+                                    <xsl:text>}</xsl:text> 
+                                </xsl:attribute> 
+                            </xsl:otherwise>                
+                        </xsl:choose>                                
+                    </xsl:when>    
+                </xsl:choose> 
+            </xsl:otherwise>  
+        </xsl:choose>        
+        
     </xsl:template>     
     
     
@@ -2988,7 +3051,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     <xsl:template name="mlib_sensor_style">
 
         <xsl:choose>
-            <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') or not(normalize-space(@color2)=''))">   
+            <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') and not(normalize-space(@color2)=''))">   
                 <xsl:variable name="gradtype">
                     <xsl:choose>
                         <xsl:when test="(@gradient-type='tb')">
@@ -3112,7 +3175,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
         <xsl:variable name="gradon">
             <xsl:choose>
-                <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') or not(normalize-space(@color2)=''))">                   
+                <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') and not(normalize-space(@color2)=''))">                   
                     <xsl:value-of select="@id"/>
                     <xsl:text>_sensor_gradient_classon</xsl:text> 
                 </xsl:when>
@@ -3128,26 +3191,50 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:otherwise>    
             </xsl:choose>                 
         </xsl:variable> 
-        <xsl:choose>               
-            <xsl:when test="not(normalize-space(@param)='')">                  
-                <xsl:attribute name="class">
-                    <xsl:text>#{ (</xsl:text>
-                    <xsl:value-of select="@param"/>
-                    <xsl:text>).valid  ? '</xsl:text>
-                    <xsl:value-of select="$gradon"/>
-                    <xsl:text>' : '</xsl:text>                   
-                    <xsl:value-of select="$gradnone"/>
-                    <xsl:text>' :default </xsl:text>
-                    <xsl:value-of select="$gradnone"/>
-                    <xsl:text> }</xsl:text>
-                </xsl:attribute>                       
-            </xsl:when>                      
+        
+        <xsl:choose>                 
+            <xsl:when test="not(normalize-space(@environment)='') or (not(normalize-space(@color1)='') and not(normalize-space(@color2)=''))"> 
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@param)='')">                  
+                        <xsl:attribute name="class">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? '</xsl:text>
+                            <xsl:value-of select="$gradon"/>
+                            <xsl:text>' : '</xsl:text>                   
+                            <xsl:value-of select="$gradnone"/>
+                            <xsl:text>' :default </xsl:text>
+                            <xsl:value-of select="$gradnone"/>
+                            <xsl:text> }</xsl:text>
+                        </xsl:attribute>                       
+                    </xsl:when>                      
+                    <xsl:otherwise>
+                        <xsl:attribute name="class">
+                            <xsl:value-of select="$gradon"/>
+                        </xsl:attribute>    
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
             <xsl:otherwise>
-                <xsl:attribute name="class">
-                    <xsl:value-of select="$gradon"/>
-                </xsl:attribute>    
-            </xsl:otherwise> 
-        </xsl:choose>         
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@param)='')">                  
+                        <xsl:attribute name="fill">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? '</xsl:text>
+                            <xsl:value-of select="@color1"/>
+                            <xsl:text>' : '#333' :default #333</xsl:text>
+                            <xsl:text> }</xsl:text>
+                        </xsl:attribute>                       
+                    </xsl:when>                      
+                    <xsl:otherwise>
+                        <xsl:attribute name="fill">
+                            <xsl:value-of select="@color1"/>
+                        </xsl:attribute>    
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>    
+        </xsl:choose>     
     </xsl:template> 
       
     
@@ -4377,7 +4464,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:choose>    
         </xsl:variable>
        <xsl:choose>
-            <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') or not(normalize-space(@color2)=''))">   
+            <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') and not(normalize-space(@color2)=''))">   
                 <defs>
    
             
@@ -4452,7 +4539,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:when>
         </xsl:choose>  
         <xsl:choose>
-            <xsl:when test="normalize-space(@fillenvironment)='' and (not(normalize-space(@fillcolor1)='') or not(normalize-space(@fillcolor2)=''))">   
+            <xsl:when test="normalize-space(@fillenvironment)='' and (not(normalize-space(@fillcolor1)='') and not(normalize-space(@fillcolor2)=''))">   
                 <defs>
    
             
@@ -4601,27 +4688,50 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:choose>                 
         </xsl:variable> 
         
-        <xsl:attribute name="class">
-            <xsl:choose> 
-                <xsl:when test="not(normalize-space(@param)='')">  
-                    <xsl:text>#{ </xsl:text>
-                    <xsl:text>(</xsl:text>
-                    <xsl:value-of select="@param"/>
-                    <xsl:text>).valid ? '</xsl:text>
-                    <xsl:value-of select="$gradon"/>
-                    <xsl:text>' : '</xsl:text>
-                    <xsl:value-of select="$gradnone"/>
-                    <xsl:text>' :default </xsl:text>
-                    <xsl:value-of select="$gradnone"/>
-                    <xsl:text> }</xsl:text>            
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:attribute name="class">
-                        <xsl:value-of select="$gradon"/>
-                    </xsl:attribute>                      
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:attribute>       
+        <xsl:choose>                 
+            <xsl:when test="not(normalize-space(@environment)='') or (not(normalize-space(@color1)='') and not(normalize-space(@color2)=''))"> 
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@param)='')">                  
+                        <xsl:attribute name="class">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? '</xsl:text>
+                            <xsl:value-of select="$gradon"/>
+                            <xsl:text>' : '</xsl:text>                   
+                            <xsl:value-of select="$gradnone"/>
+                            <xsl:text>' :default </xsl:text>
+                            <xsl:value-of select="$gradnone"/>
+                            <xsl:text> }</xsl:text>
+                        </xsl:attribute>                       
+                    </xsl:when>                      
+                    <xsl:otherwise>
+                        <xsl:attribute name="class">
+                            <xsl:value-of select="$gradon"/>
+                        </xsl:attribute>    
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@param)='')">                  
+                        <xsl:attribute name="fill">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? '</xsl:text>
+                            <xsl:value-of select="@color1"/>
+                            <xsl:text>' : '#333' :default #333</xsl:text>
+                            <xsl:text> }</xsl:text>
+                        </xsl:attribute>                       
+                    </xsl:when>                      
+                    <xsl:otherwise>
+                        <xsl:attribute name="fill">
+                            <xsl:value-of select="@color1"/>
+                        </xsl:attribute>    
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>    
+        </xsl:choose> 
+        
     </xsl:template>      
     
     
@@ -4661,7 +4771,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     <xsl:template name="apply_mlib_slider_sliderfillrectclass"> 
-     <xsl:variable name="gradtype">
+        <xsl:variable name="gradtype">
             <xsl:choose>
                 <xsl:when test="(@gradient-type='tb')">
                     <xsl:text>v</xsl:text>
@@ -4708,27 +4818,40 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:choose>                 
         </xsl:variable> 
         
-        <xsl:attribute name="class">
-            <xsl:choose> 
-                <xsl:when test="not(normalize-space(@param)='')">  
-                    <xsl:text>#{ </xsl:text>
-                    <xsl:text>(</xsl:text>
-                    <xsl:value-of select="@param"/>
-                    <xsl:text>).valid ? '</xsl:text>
-                    <xsl:value-of select="$gradon"/>
-                    <xsl:text>' : '</xsl:text>
-                    <xsl:value-of select="$gradnone"/>
-                    <xsl:text>' :default </xsl:text>
-                    <xsl:value-of select="$gradnone"/>
-                    <xsl:text> }</xsl:text>            
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:attribute name="class">
-                        <xsl:value-of select="$gradon"/>
-                    </xsl:attribute>                      
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:attribute>       
+        <xsl:choose>                 
+            <xsl:when test="not(normalize-space(@fillenvironment)='') or (not(normalize-space(@fillcolor1)='') and not(normalize-space(@fillcolor2)=''))">  
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@param)='')">             
+                        <xsl:attribute name="class">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? '</xsl:text>
+                            <xsl:value-of select="$gradon"/> 
+                            <xsl:text>' : '</xsl:text>
+                            <xsl:value-of select="$gradnone"/> 
+                            <xsl:text>' :default </xsl:text> 
+                            <xsl:value-of select="$gradnone"/> 
+                            <xsl:text>_}</xsl:text> 
+                        </xsl:attribute>                             
+                    </xsl:when>    
+                </xsl:choose> 
+            </xsl:when>
+            <xsl:otherwise> 
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@param)='')">            
+                        <xsl:attribute name="fill">
+                            <xsl:text>#{ (</xsl:text>
+                            <xsl:value-of select="@param"/>
+                            <xsl:text>).valid  ? '</xsl:text> 
+                            <xsl:value-of select="@fillcolor1"/> 
+                            <xsl:text>' : '#888' :default #888</xsl:text> 
+                            <xsl:text>}</xsl:text> 
+                        </xsl:attribute>                       
+                    </xsl:when>    
+                </xsl:choose> 
+            </xsl:otherwise>  
+        </xsl:choose> 
+        
     </xsl:template>     
     
     <xsl:template name="apply_mlib_slider_sliderfillrect"> 
@@ -5158,7 +5281,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </rect>   
             </svg>    
             <svg>
-                <xsl:call-template name="apply_rect"/>
+            <xsl:call-template name="apply_rect"/>
             <foreignObject>
                     <xsl:attribute name="height">
                         <xsl:value-of select="@height"/>
@@ -5277,7 +5400,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:value-of select="$shift"/>                            
             </xsl:attribute> 
         </svgrect>                       
-        <mlib:sensor x="10"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"   fontstyle="font-size: 12" environment="dark_gray">
+        <mlib:sensor x="10"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"   fontstyle="font-size: 12" color1="#001">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_</xsl:text>
@@ -5303,7 +5426,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>                       
             </xsl:attribute>             
         </mlib:sensor>                    
-        <mlib:sensor x="135"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2" environment="dark_gray"  fontstyle="font-size: 12" sensorevent="valueset" >
+        <mlib:sensor x="135"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2" color1="#001"  fontstyle="font-size: 12" sensorevent="valueset" >
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_</xsl:text>
@@ -5563,7 +5686,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>  
             </xsl:attribute>              
         </text>         
-        <mlib:slider x="3" height="12" width="244" gradient-type="lr"> 
+        <mlib:slider x="3" height="12" width="244" color1="#111" fillcolor1="#0e0" gradient-type="lr"> 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_slider_</xsl:text> 
@@ -5573,9 +5696,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="param">
                 <xsl:value-of select="$param-sp"/>                            
             </xsl:attribute>
-            <xsl:attribute name="environment">    
+            <!--xsl:attribute name="environment">    
                  <xsl:value-of select="$еnvironment"/>
-            </xsl:attribute>
+            </xsl:attribute-->
             <xsl:attribute name="fillenvironment">            
                 <xsl:value-of select="$fillеnvironment"/>
             </xsl:attribute>           
@@ -5589,9 +5712,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:when> 
                 </xsl:choose>
             </xsl:attribute>
-            <xsl:attribute name="fillcolor1">
+            <!--xsl:attribute name="fillcolor1">
                 <xsl:value-of select="$color"/>                            
-            </xsl:attribute> 
+            </xsl:attribute--> 
             <!--xsl:attribute name="fillcolor2">
                 <xsl:value-of select="$color2"/>                            
             </xsl:attribute-->
@@ -5603,7 +5726,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:attribute>
         </mlib:slider>  
 
-        <mlib:rect x="15" height="5" width="220" stroke="#000" r="1" stroke-width="0.5"> 
+        <mlib:rect x="15" height="5" width="220" color1="#111" fillcolor1="#0e0" stroke="#000" r="1" stroke-width="0.5"> 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_rect_</xsl:text> 
@@ -5615,15 +5738,15 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="y">
                 <xsl:value-of select="$shift + 72"/>                            
             </xsl:attribute> 
-            <xsl:attribute name="environment">    
+            <!--xsl:attribute name="environment">    
                  <xsl:value-of select="$еnvironment"/>
-            </xsl:attribute>
+            </xsl:attribute-->
             <xsl:attribute name="fillenvironment">            
                 <xsl:value-of select="$fillеnvironment"/>
             </xsl:attribute>             
-            <xsl:attribute name="fillcolor1">
+            <!--xsl:attribute name="fillcolor1">
                 <xsl:value-of select="$color"/>                            
-            </xsl:attribute> 
+            </xsl:attribute--> 
             <!--xsl:attribute name="fillcolor2">
                 <xsl:value-of select="$color2"/>                            
             </xsl:attribute--> 
