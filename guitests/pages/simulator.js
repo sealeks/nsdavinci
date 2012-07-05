@@ -6,6 +6,38 @@ var simulator = {};
 
 // initializer
 
+simulator.expressionevent = function(handler, source, root){
+    this.handler = handler;
+    this.source = source;
+    this.window=window;
+    this.root=root;
+    this.documentElement=window.document.documentElement;
+    this.create();
+    this.regist();
+    
+}
+
+simulator.expressionevent.prototype.create = function(){
+    this.element= this.documentElement.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    this.documentElement.appendChild(this.element);
+}
+
+simulator.expressionevent.prototype.regist = function(){
+    var ts= this.root;
+    //console.log('---',this.element,this.handler , this.source);
+    if (this.element.addExpressionListener( this.handler , this.source))
+        this.sourceset=true; 
+    else
+        console.log('AddExpressionListener source no regist');    
+}
+
+simulator.expressionevent.prototype.unregist = function(){
+    if (this.element && this.handler && this.sourceset){
+        this.element.removeExpressionListener( this.handler);
+        if (this.element.parentNode) this.element.parentNode.removeChild(this.element);
+      }
+}
+
 
 simulator.initializer = function(tag ,start , stop){
     
@@ -97,10 +129,11 @@ simulator.booldelayer.prototype.atach = function(){
         this.sourcehandler = function(){
             ts.sourceevent(event);
         };
-        if (window.addExpressionListener( this.sourcehandler , this.source))
+        this.sourceset = new simulator.expressionevent(this.sourcehandler , this.source, this);
+        /*if (window.addExpressionListener( this.sourcehandler , this.source))
             this.sourceset=true; 
         else
-            console.log('AddExpressionListener source no regist');
+            console.log('AddExpressionListener source no regist');*/
     }
     
     if (this.valid && (this.start || this.start==0))
@@ -112,7 +145,7 @@ simulator.booldelayer.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0))
        $$(this.tag + ' @ ' + this.stop)
     if (this.sourcehandler && this.sourceset)
-        window.removeExpressionListener( this.sourcehandler);
+        this.sourceset.unregist();
 }
 
 simulator.booldelayer.prototype.execute = function(){
@@ -155,10 +188,11 @@ simulator.differeciator.prototype.atach = function(){
     var ts = this;
     
     this.diffhandler = function(){ts.diffevent(event);};
-    if (window.addExpressionListener( this.diffhandler , this.source))
+    /*if (window.addExpressionListener( this.diffhandler , this.source))
         this.diffset=true; 
     else
-       console.log('AddExpressionListener source no regist');
+       console.log('AddExpressionListener source no regist');*/
+    this.diffset = new simulator.expressionevent( this.diffhandler , this.source, this);
 }
 
 
@@ -166,7 +200,8 @@ simulator.differeciator.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0))
        $$(this.tag + ' @ ' + this.stop)
     if (this.diffhandler && this.diffset)
-        window.removeExpressionListener( this.autohandler);
+        //window.removeExpressionListener( this.autohandler);
+        this.diffset.unregist();    
 }
 
 simulator.differeciator.prototype.execute = function(){
@@ -311,10 +346,11 @@ simulator.inertial_differeciator.prototype.atach = function(){
     var ts = this;
     
     this.diffhandler = function(){ts.diffevent(event);};
-    if (window.addExpressionListener( this.diffhandler , this.source))
-        this.diffset=true; 
-    else
-       console.log('AddExpressionListener source no regist');
+    //if (window.addExpressionListener( this.diffhandler , this.source))
+    //    this.diffset=true; 
+    //else
+    //   console.log('AddExpressionListener source no regist');
+    this.diffset = new simulator.expressionevent( this.diffhandler , this.source, this);
 }
 
 
@@ -322,7 +358,8 @@ simulator.inertial_differeciator.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0))
        $$(this.tag + ' @ ' + this.stop)
     if (this.diffhandler && this.diffset)
-        window.removeExpressionListener( this.autohandler);
+        //window.removeExpressionListener( this.autohandler);
+        this.diffset.unregist();
 }
 
 simulator.inertial_differeciator.prototype.execute = function(){
@@ -381,77 +418,83 @@ simulator.valve.prototype.atach = function(){
         this.ronhandler = function(){
             ts.ronevent(event);
         };
-        if (window.addExpressionListener( this.ronhandler , this.ron))
-            this.ronset=true; 
-        else
-            console.log('AddExpressionListener ronno regist');
+        //if (window.addExpressionListener( this.ronhandler , this.ron))
+        //    this.ronset=true; 
+        //else
+        //     console.log('AddExpressionListener ronno regist');
+        this.ronset = new simulator.expressionevent(this.ronhandler , this.ron, this);
     }
     
     if (this.roff){
         this.roffhandler = function(){
             ts.roffevent(event);
         };
-        if (window.addExpressionListener( this.roffhandler , this.roff))
-            this.roffset=true; 
-        else
-            console.log('AddExpressionListener ronoff regist');
+        //if (window.addExpressionListener( this.roffhandler , this.roff))
+        //    this.roffset=true; 
+        //else
+        //    console.log('AddExpressionListener ronoff regist');
+        this.roffset = new simulator.expressionevent(this.roffhandler , this.roff, this);
     }
     
     if (this.don){
         this.donhandler = function(){
             ts.donevent(event);
         };
-        if (window.addExpressionListener( this.donhandler , this.don))
-            this.donset=true; 
-        else
-            console.log('AddExpressionListener donno regist');
+        //if (window.addExpressionListener( this.donhandler , this.don))
+        //    this.donset=true; 
+        //else
+        //    console.log('AddExpressionListener donno regist');
+        this.donset = new simulator.expressionevent(this.donhandler , this.don, this);
     }
     
     if (this.doff){
         this.doffhandler = function(){
             ts.doffevent(event);
         };
-        if (window.addExpressionListener( this.doffhandler , this.doff))
-            this.doffset=true; 
-        else
-            console.log('AddExpressionListener doffno regist');
+        //if (window.addExpressionListener( this.doffhandler , this.doff))
+        //    this.doffset=true; 
+        //else
+        //    console.log('AddExpressionListener doffno regist');
+        this.doffset = new simulator.expressionevent(this.doffhandler , this.doff, this);
     }
     
     if (this.on){
         this.onhandler = function(){
             ts.onevent(event);
         };
-        if (window.addExpressionListener( this.onhandler , this.on))
-            this.onset=true; 
-        else
-            console.log('AddExpressionListener onno regist');
+        //if (window.addExpressionListener( this.onhandler , this.on))
+        //    this.onset=true; 
+        //else
+        //    console.log('AddExpressionListener onno regist');
+        this.onset = new simulator.expressionevent(this.onhandler , this.on, this);
     }
     
     if (this.off){
         this.offhandler = function(){
             ts.offevent(event);
         };
-        if (window.addExpressionListener( this.offhandler , this.off))
-            this.offset=true; 
-        else
-            console.log('AddExpressionListener offno regist');
+        //if (window.addExpressionListener( this.offhandler , this.off))
+        ///   this.offset=true; 
+        //else
+        //    console.log('AddExpressionListener offno regist');
+        this.offset = new simulator.expressionevent(this.offhandler , this.off, this);
     }    
    
 }
 
 simulator.valve.prototype.detach = function(){
     if (this.ronhandler && this.ronset)
-        window.removeExpressionListener( this.ronhandler);
+        this.ronset.unregist();//window.removeExpressionListener( this.ronhandler);
     if (this.roffhandler && this.roffset)
-        window.removeExpressionListener( this.roffhandler);
+        this.roffset.unregist();//window.removeExpressionListener( this.roffhandler);
     if (this.donhandler && this.donset)
-        window.removeExpressionListener( this.donhandler);
+        this.donset.unregist();//window.removeExpressionListener( this.donhandler);
     if (this.doffhandler && this.doffset)
-        window.removeExpressionListener( this.doffhandler);
+        this.doffset.unregist();//window.removeExpressionListener( this.doffhandler);
     if (this.onhandler && this.onset)
-        window.removeExpressionListener( this.onhandler);
+        this.onset.unregist();//window.removeExpressionListener( this.onhandler);
     if (this.offhandler && this.offset)
-        window.removeExpressionListener( this.offhandler);    
+        this.offset.unregist();//window.removeExpressionListener( this.offhandler);    
 }
 
 
@@ -914,29 +957,31 @@ simulator.actuator.prototype.atach = function(){
         this.sphandler = function(){
             ts.spevent(event);
         };
-        if (window.addExpressionListener( this.sphandler , this.diff))
-            this.spset=true; 
-        else
-            console.log('AddExpressionListener sp no regist');
+        //if (window.addExpressionListener( this.sphandler , this.diff))
+        //    this.spset=true; 
+        //else
+        //    console.log('AddExpressionListener sp no regist');
+        this.spset=new simulator.expressionevent(this.sphandler , this.diff, this);
     }
     if (this.tick){
         this._tick=0.05;
         this.tickhandler = function(){
             ts.tickevent(event);
         };
-        if (window.addExpressionListener( this.tickhandler , this.tick))
-            this.tickset=true; 
-        else
-            console.log('AddExpressionListener tick no regist');
+        //if (window.addExpressionListener( this.tickhandler , this.tick))
+        //    this.tickset=true; 
+        //else
+        //    console.log('AddExpressionListener tick no regist');
+        this.tickset=new simulator.expressionevent(this.tickhandler , this.tick, this);
     }
 }
 
 
 simulator.actuator.prototype.detach = function(){
     if (this.sphandler && this.spset)
-        window.removeExpressionListener( this.sphandler);
+        this.spset.unregist();//window.removeExpressionListener( this.sphandler);
     if (this.tickhandler && this.tickset)
-        window.removeExpressionListener( this.tickhandler);    
+        this.tickset.unregist();//window.removeExpressionListener( this.tickhandler);    
 }
 
 simulator.actuator.prototype.sp = function(val){
@@ -1036,66 +1081,70 @@ simulator.regulator.prototype.atach = function(){
     //console.log('attach regulator');
     
     this.autohandler = function(){ts.autoevent(event);};
-    if (window.addExpressionListener( this.autohandler , this.auto))
-        this.autoset=true; 
-    else
-       console.log('AddExpressionListener auto no regist');     
+    //if (window.addExpressionListener( this.autohandler , this.auto))
+    //    this.autoset=true; 
+    //else
+    //   console.log('AddExpressionListener auto no regist');
+    this.autoset = new simulator.expressionevent(this.autohandler , this.auto, this);
 
     this.diffhandler = function(){ts.diffevent(event);};
     
-    if (window.addExpressionListener( this.diffhandler , this.diff))
-        this.diffset=true;
-    else
-       console.log('AddExpressionListener diff no regist');
+    //if (window.addExpressionListener( this.diffhandler , this.diff))
+    //    this.diffset=true;
+    //else
+    //   console.log('AddExpressionListener diff no regist');
+    this.diffset = new simulator.expressionevent(this.diffhandler , this.diff, this);
    
    
    this.kphandler = function(){ts.kpevent(event);};
    
-   if (this.kp.constructor == String && window.addExpressionListener( this.kphandler , this.kp)){
-        this.kpset=this.kp;this.kp=0;}
+   if (this.kp.constructor == String){
+        this.kpset=new simulator.expressionevent(this.kphandler , this.kp, this);this.kp=0;}
+    //this.diffset = new simulator.expressionevent(this.diffhandler , this.diff, this);
     
    this.kihandler = function(){ts.kievent(event);};
    
-   if (this.ki.constructor == String && window.addExpressionListener( this.kihandler , this.ki)){
-        this.kiset=this.ki;this.ki=0;} 
+   if (this.ki.constructor == String){
+        this.kiset=new simulator.expressionevent(this.kihandler , this.ki, this);this.ki=0;} 
     
    this.kdhandler = function(){ts.kdevent(event);};
    
-   if (this.kd.constructor == String && window.addExpressionListener( this.kdhandler , this.kd)){
-        this.kdset=this.kd;this.kd=0;}  
+   if (this.kd.constructor == String){
+        this.kdset=new simulator.expressionevent(this.kdhandler , this.kd, this);this.kd=0;}  
     
    this.enablehandler = function(){ts.enableevent(event);};
    
-   if (this.enable && this.enable.constructor == String && window.addExpressionListener( this.enablehandler , this.enable)){
-        this.enableset=this.enable;}    
+   if (this.enable && this.enable.constructor == String){
+        this.enableset=new simulator.expressionevent(this.enablehandler , this.enable, this);}    
 
 }
 
 
 simulator.regulator.prototype.detach = function(){
     if (this.autohandler && this.autoset)
-        window.removeExpressionListener( this.autohandler);
+        this.autoset.unregist();//window.removeExpressionListener( this.autohandler);
     if (this.diffhandler && this.diffset)
-        window.removeExpressionListener( this.diffhandler);    
+        this.diffset.unregist();//window.removeExpressionListener( this.diffhandler);    
     if (this.kphandler && this.kpset)
-        window.removeExpressionListener( this.kphandler);
+        this.kpset.unregist();//window.removeExpressionListener( this.kphandler);
     if (this.kihandler && this.kiset)
-        window.removeExpressionListener( this.kihandler);
+        this.kiset.unregist();//window.removeExpressionListener( this.kihandler);
     if (this.kdhandler && this.kdset)
-        window.removeExpressionListener( this.kdhandler); 
+        this.kdset.unregist();//window.removeExpressionListener( this.kdhandler); 
     if (this.enablehandler && this.enableset)
-        window.removeExpressionListener( this.enablehandler);    
+        this.enableset.unregist();//window.removeExpressionListener( this.enablehandler);    
 }
 
 simulator.regulator.prototype.enableevent = function(event){
-    if (event.expression==this.enable){        
+    //if (event.expression==this.enable){        
         this._enable=event.value;
         this.actuator.setenable(event.value);
         if (event.value){
             this.K = 0;
             this.I = 0;
             this.D = 0;}    
-}}    
+//}
+}    
 
 simulator.regulator.prototype.autoevent = function(event){
     if (event.expression==this.auto){        
@@ -1124,24 +1173,24 @@ simulator.regulator.prototype.autoevent = function(event){
 }
 
 simulator.regulator.prototype.kpevent = function(event){
-    if (event.expression==this.kpset){
+    //if (event.expression==this.kpset){
         this.kp = event.value; 
         console.log('kp:',this.kp);
-    }       
+    //}       
 }
 
 simulator.regulator.prototype.kievent = function(event){
-    if (event.expression==this.kiset){
+    //if (event.expression==this.kiset){
         this.ki = event.value; 
         console.log('ki:',this.ki);
-    }       
+    //}       
 }
 
 simulator.regulator.prototype.kdevent = function(event){
-    if (event.expression==this.kdset){
+    //if (event.expression==this.kdset){
         this.kd = event.value; 
         console.log('kd:',this.kd);
-    }       
+    //}       
 }
 
 simulator.regulator.prototype.diffevent = function(event){
@@ -1229,10 +1278,11 @@ simulator.sheduler.prototype.atach = function(){
         this.sourcehandler = function(){
             ts.sourceevent(event);
         };
-        if (window.addExpressionListener( this.sourcehandler , this.source))
-            this.sourceset=true; 
-        else
-            console.log('AddExpressionListener source no regist');
+        //if (window.addExpressionListener( this.sourcehandler , this.source))
+        //    this.sourceset=true; 
+        //else
+        //    console.log('AddExpressionListener source no regist');
+        this.sourceset = new simulator.expressionevent(this.sourcehandler , this.source, this);
     }
     
     if (this.valid && (this.start || this.start==0))
@@ -1242,7 +1292,7 @@ simulator.sheduler.prototype.atach = function(){
 
 simulator.sheduler.prototype.detach = function(){
     if (this.sourcehandler && this.sourceset)
-        window.removeExpressionListener( this.sourcehandler);   
+        this.sourceset.unregist();//window.removeExpressionListener( this.sourcehandler);   
     if (this.valid && (this.stop || this.stop==0))
        $$(this.source + ' @ ' + this.stop)
 
@@ -1350,17 +1400,18 @@ simulator.sheduler.checkvalueshedule.prototype.atach = function(){
         this.sourcehandler = function(){
             ts.sourceevent(event);
         };
-        if (window.addExpressionListener( this.sourcehandler , this.source))
-            this.sourceset=true; 
-        else
-            console.log('AddExpressionListener source no regist');
+        //if (window.addExpressionListener( this.sourcehandler , this.source))
+        //    this.sourceset=true; 
+        //else
+        //    console.log('AddExpressionListener source no regist');
+        this.sourceset = new simulator.expressionevent(this.sourcehandler , this.source, this)
     }
 }
 
 
 simulator.sheduler.checkvalueshedule.prototype.detach = function(){
     if (this.sourcehandler && this.sourceset)
-        window.removeExpressionListener( this.sourcehandler);
+        this.sourceset.unregist();//window.removeExpressionListener( this.sourcehandler);
 }
 
 simulator.sheduler.checkvalueshedule.prototype.shedule = function(sp,okfunk,cancelfnc){

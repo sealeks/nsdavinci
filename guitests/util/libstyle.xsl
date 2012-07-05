@@ -103,6 +103,11 @@ extension-element-prefixes="mlib">
             <stop offset="0.5" stop-color="#fff"/>
             <stop offset="1" stop-color="#aaa"/>
         </linearGradient>
+        <linearGradient id="__gradient_mlib_dark_buttond" y2="100%" x1="0%" y1="100%" x2="100%">
+            <stop offset="0" stop-color="#aaa"/>
+            <stop offset="0.5" stop-color="#fff"/>
+            <stop offset="1" stop-color="#aaa"/>
+        </linearGradient>        
         <linearGradient id="__gradient_mlib_light_gray_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#aaa"/>
             <stop offset="0.5" stop-color="#fff"/>
@@ -149,13 +154,18 @@ extension-element-prefixes="mlib">
             <stop offset="0" stop-color="#111"/>
             <stop offset="0.5" stop-color="#333"/>
             <stop offset="1" stop-color="#111"/>
-        </linearGradient>        
+        </linearGradient>  
+        <linearGradient id="__gradient_mlib_dark_buttono" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#333"/>
+            <stop offset="0.5" stop-color="#111"/>
+            <stop offset="1" stop-color="#333"/>
+        </linearGradient>            
         <linearGradient id="__gradient_mlib_dark_gray_h" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#111"/>
             <stop offset="0.5" stop-color="#333"/>
             <stop offset="1" stop-color="#111"/>
         </linearGradient>
-        <linearGradient id="__gradient_mlib_dark_gray_h0" x2="100%" y2="100%" x1="100%" y1="0%">
+        <linearGradient id="__gradient_mlib_dark_gray_ho" x2="100%" y2="100%" x1="100%" y1="0%">
             <stop offset="0" stop-color="#333"/>
             <stop offset="0.5" stop-color="#111"/>
             <stop offset="1" stop-color="#333"/>
@@ -774,7 +784,7 @@ extension-element-prefixes="mlib">
                 fill: url(#__gradient_mlib_midle_gray_h);} 
                     
         svg[state="off"]:active > rect.__mlib__button_green {
-                fill: url(#__gradient_mlib_midle_gray_h0);}               
+                fill: url(#__gradient_mlib_midle_gray_ho);}               
            
         svg[state="disable"] > rect.__mlib__button_green ,
         svg[state="disable"]:hover > rect.__mlib__button_green ,
@@ -794,7 +804,7 @@ extension-element-prefixes="mlib">
                 fill: url(#__gradient_mlib_midle_red_h);} 
                     
         svg[state="off"]:active > rect.__mlib__button_red {
-                fill: url(#__gradient_mlib_midle_red_h0);}               
+                fill: url(#__gradient_mlib_midle_red_ho);}               
            
         svg[state="disable"] > rect.__mlib__button_red ,
         svg[state="disable"]:hover > rect.__mlib__button_red ,
@@ -805,21 +815,21 @@ extension-element-prefixes="mlib">
 
  
         .__mlib__button_custom {
-                fill: url(#__fill_mlib_class_dark_button);} 
+                fill: url(#__gradient_mlib_dark_button);} 
             
         svg[state=""]:active > rect.__mlib__button_custom {
-                fill: url(#__gradient_mlib_dark_gray_h0);}  
+                fill: url(#__gradient_mlib_dark_buttono);}  
                  
         svg[state="off"] > rect.__mlib__button_custom {
-                fill: url(#__fill_mlib_class_dark_button);} 
+                fill: url(#__gradient_mlib_dark_button);} 
                     
         svg[state="off"]:active > rect.__mlib__button_custom {
-                fill: url(#__gradient_mlib_dark_gray_h0);}               
+                fill: url(#__gradient_mlib_dark_buttono);}               
            
         svg[state="disable"] > rect.__mlib__button_custom ,
         svg[state="disable"]:hover > rect.__mlib__button_custom ,
         svg[state="disable"]:active > rect.__mlib__button_custom {
-                 fill: url(#__gradient_mlib_midle_gray_h); }  
+                 fill: url(#__gradient_mlib_dark_buttond); }  
                  
                  
                  
@@ -827,7 +837,7 @@ extension-element-prefixes="mlib">
                 fill: url(#__gradient_mlib_midle_red_h);} 
             
         svg[state=""]:active > rect.__mlib__button_rg {
-                fill: url(#__gradient_mlib_midle_red_h0);}  
+                fill: url(#__gradient_mlib_midle_red_ho);}  
                  
         svg[state="off"] > rect.__mlib__button_rg {
                 fill: url(#__gradient_mlib_midle_green_h);} 
@@ -845,7 +855,7 @@ extension-element-prefixes="mlib">
                 fill: url(#__gradient_mlib_midle_green_h);} 
             
         svg[state=""]:active > rect.__mlib__button_gr {
-                fill: url(#__gradient_mlib_midle_green_h0);}  
+                fill: url(#__gradient_mlib_midle_green_ho);}  
                  
         svg[state="off"] > rect.__mlib__button_gr {
                 fill: url(#__gradient_mlib_midle_red_h);} 
