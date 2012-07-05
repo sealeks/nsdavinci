@@ -18,11 +18,11 @@ mainlib.REGULATOR_F_HEIGHT = 494;
 
 mainlib.POPUP_R = 10;
 
-mainlib.POPUP_BODY_STYLE = 'fill: #333; opacity: 0.5; ';
+mainlib.POPUP_BODY_STYLE = 'fill: #333; opacity: 0.1; ';
 
-mainlib.POPUP_STATIC_STYLE = 'fill: #333; fill-opacity: 0.1; stroke: #888; stroke-width: 0.5; stroke-opacity: 1.0 ';
+mainlib.POPUP_STATIC_STYLE = 'fill: #333; fill-opacity: 0.4; stroke: yellow; stroke-width: 1; stroke-opacity: 1.0 ';
 
-mainlib.POPUP_MOVE_STYLE = 'fill: white; fill-opacity: 0.01; stroke: green; stroke-width: 0.5; stroke-opacity: 1.0'
+mainlib.POPUP_MOVE_STYLE = 'fill: yellow; fill-opacity: 0.3; stroke: green; stroke-width: 1; stroke-opacity: 1.0'
 
 mainlib.element = {};
 
@@ -726,7 +726,7 @@ mainlib.graph_click =  function (el, nm, color){
                                                          elementId + '_popup_body'+
                                                          "', "+"['"+nm+"'], 600, ['"+color+"','green','blue','#880'], " + 
                                                          (mainlib.CHART_WIDTH - 2* mainlib.CHART_PADDING) + ", " +
-                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ (title ? ", 5 , { title: '"+title+"',background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]})" : ", 5 , {background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]})");
+                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ (title ? ", 5 , { title: '"+title+"',background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})" : ", 5 , {background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})");
            
 }
 
