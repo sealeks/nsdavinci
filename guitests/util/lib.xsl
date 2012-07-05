@@ -49,11 +49,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:call-template name="mainlib"/>     
     </xsl:template> 
     
-    <xsl:template match="*|@*|text()">
+    <!--xsl:template match="*|@*|text()">
         <xsl:element name="{local-name()}">
             <xsl:apply-templates select="*|@*|text()"/>
         </xsl:element>
-    </xsl:template>
+    </xsl:template-->
     
 
     <xsl:template match="@*">

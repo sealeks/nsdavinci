@@ -5253,7 +5253,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:param name="еnvironment"/>
         <xsl:param name="fillеnvironment"/>
 
-        <svg:svgrect x="5" height="110" width="240" fill="#333" stroke="#ccc" stroke-width="1" r="4">
+        <svgrect x="5" height="110" width="240" fill="#333" stroke="#ccc" stroke-width="1" r="4">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_headset_</xsl:text>
@@ -5262,7 +5262,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="y">
                 <xsl:value-of select="$shift"/>                            
             </xsl:attribute> 
-        </svg:svgrect>                       
+        </svgrect>                       
         <mlib:sensor x="10"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"   fontstyle="font-size: 12" environment="dark_gray">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -5701,14 +5701,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:param name="shift"/>
         <xsl:param name="preff"/>        
         <xsl:param name="param"/>
-        <svg:svgrect x="5" y="171" height="55" width="240" fill="#333" stroke="#ccc" stroke-width="1" r="4">
+        <svgrect x="5" y="171" height="55" width="240" fill="#333" stroke="#ccc" stroke-width="1" r="4">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_autobackground_</xsl:text> 
                 <xsl:value-of select="$preff"/>
                 <xsl:text>_name</xsl:text>
             </xsl:attribute> 
-        </svg:svgrect>  
+        </svgrect>  
         <text x="9" y="181" text="Автоват/Дистанция" fill="#eee" style="font-size: 11;">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -5799,12 +5799,12 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:attribute>   
                 
                 <xsl:variable name="popupbody">
-                   <svg:svgrect x="5" y="5" height="50" width="240" fill="#333" stroke="#ccc" stroke-width="1" r="4">
+                   <svgrect x="5" y="5" height="50" width="240" fill="#333" stroke="#ccc" stroke-width="1" r="4">
                         <xsl:attribute name="id">
                             <xsl:value-of select="@id"/>
                             <xsl:text>_sensor_head</xsl:text>                            
                         </xsl:attribute>                             
-                    </svg:svgrect> 
+                    </svgrect> 
                     <text y="35" x="120" fill="#eee"  style="text-anchor: middle; font-size: 14;">
                         <xsl:attribute name="id">
                             <xsl:value-of select="@id"/>
