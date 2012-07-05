@@ -990,6 +990,7 @@ simulator.actuator.prototype.sp = function(val){
 }
 
 simulator.actuator.prototype.setenable= function(val){
+    console.log('sp actuator enable',val)
     this.enable=val;
 }
 
@@ -1023,8 +1024,8 @@ simulator.actuator.prototype.tickevent = function(event){
 simulator.actuator.prototype.execute = function(){
 var ts=this;
 if (this.enable){
-$$('(abs(' + ts.pos + ' - '+ ts.sp + ') && ('+ts.sp+'.valid)) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
-        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid)) ? (' + ts.pos + ' @ ' + ts.sp + ') : (' + ts.pos + ' @ ' + ts.pos + ')' + 
+$$('(abs(' + ts.pos + ' - '+ ts.sp + ') && ('+ts.sp+'.valid)  && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
+        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid) && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ ' + ts.sp + ') : (' + ts.pos + ' @ ' + ts.pos + ')' + 
         ') ');}
 }
 
