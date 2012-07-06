@@ -153,7 +153,7 @@ namespace dvnci {
             virtual calc_token getack(const calc_token& it) {
                 return false;}
 
-            virtual calc_token getalarmack(const calc_token& it) {
+            virtual calc_token getnack(const calc_token& it) {
                return false;}
 
             virtual calc_token assignexpr(const calc_token& it) {
