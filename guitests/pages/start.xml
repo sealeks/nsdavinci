@@ -186,6 +186,9 @@ add_simulation ( new simulator.initializer('nav_pos' , 0 , 0));
 add_simulation ( new simulator.initializer('nav_sp' , 0 , 0));
 add_simulation ( new simulator.initializer('p5_auto' , 1 , 0));
 
+add_simulation ( new simulator.initializer('p8_sp' , 4 , 0));
+add_simulation ( new simulator.initializer('p8_auto' , 1 , 0));
+
 
 add_simulation ( new simulator.initializer('nad_pos' , 0 , 0));
 add_simulation ( new simulator.initializer('nad_sp' , 0 , 0));
@@ -198,7 +201,7 @@ add_simulation ( new simulator.initializer('ru_sp' , 0 , 0));
 add_simulation ( new simulator.initializer('l_auto' , 1 , 0));
 
 
-add_simulation ( new simulator.initializer('t1_sp' , 0 , 0));
+add_simulation ( new simulator.initializer('t1_sp' , 320 , 0));
 add_simulation ( new simulator.initializer('rtp_pos' , 0 , 0));
 add_simulation ( new simulator.initializer('rtp_sp' , 0 , 0));
 add_simulation ( new simulator.initializer('t1_auto' , 0 , 0));
@@ -487,8 +490,7 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
   <form name="testopen" file="testopen.xml" caption="Мазут" left="92%" top="0%" width="15%" height="100%" decorated="no"/>
   
   <form name="falarm" file="falarm.xml" left="0%" top="85%" width="92%" height="15%" caption="fa" decorated="no" visible="true"/>
-  <!--form name="test" file="test.xml" left="0%" top="00%" width="92%" height="85%" caption="test" decorated="no"/-->
-  <!--form name="test" file="test.xml" left="0%" top="0%" width="92%" height="85%" caption="test" decorated="no"/-->
+  <form name="test" file="test.xml" left="0%" top="0%" width="92%" height="85%" caption="test" decorated="no"/>
   <form name="gazblock" file="gazblock.xml" left="0%" top="0%" width="92%" height="85%" caption="gazblock" decorated="no"/>
   <!--form name="rrr" file="rrr.xml" left="0%" top="0%" width="85%" height="85%" caption="rrr" decorated="no"/-->
   <!--form name="tes" file="atest.xml" left="0%" top="00%" width="85%" height="85%" caption="te" decorated="no"/-->

@@ -613,7 +613,7 @@ mainlib.valueedit_click =  function (el, nm, alighn, r, stroke, strokewidth, col
   
   if (!format) format = '%9.0f';
   
-  var editstyle = 'margin: 0 1; padding: 0 5px ;-webkit-user-select: text; -webkit-border-radius: ' +  ((r && parseInt(r)) ? r : '0') + 'px; ';
+  var editstyle = 'margin: 0 1; padding: 0 5px ; -webkit-border-radius: ' +  ((r && parseInt(r)) ? r : '0') + 'px; ';
   editstyle = editstyle + 'border-color: transparent' +  /*(stroke ? stroke : '#0e0') +*/ '; '; 
   editstyle = editstyle + 'border-width: 0px; ';
   editstyle = editstyle + 'text-align: ' +  (alighn ? alighn : 'right') + '; ';
@@ -622,6 +622,7 @@ mainlib.valueedit_click =  function (el, nm, alighn, r, stroke, strokewidth, col
   editstyle = editstyle + 'height: ' + height + 'px; ';
   editstyle = editstyle + 'width: ' + (width - 10) + 'px; ';
   editstyle = editstyle +  (text.style ? text.style.cssText : '') + '; ';
+  editstyle = editstyle +  ' -webkit-user-select: text;';
   
    
   var result = libutil.svg.create_element('foreignObject', parent , [{
