@@ -130,10 +130,6 @@ simulator.booldelayer.prototype.atach = function(){
             ts.sourceevent(event);
         };
         this.sourceset = new simulator.expressionevent(this.sourcehandler , this.source, this);
-        /*if (window.addExpressionListener( this.sourcehandler , this.source))
-            this.sourceset=true; 
-        else
-            console.log('AddExpressionListener source no regist');*/
     }
     
     if (this.valid && (this.start || this.start==0))
@@ -188,10 +184,6 @@ simulator.differeciator.prototype.atach = function(){
     var ts = this;
     
     this.diffhandler = function(){ts.diffevent(event);};
-    /*if (window.addExpressionListener( this.diffhandler , this.source))
-        this.diffset=true; 
-    else
-       console.log('AddExpressionListener source no regist');*/
     this.diffset = new simulator.expressionevent( this.diffhandler , this.source, this);
 }
 
@@ -346,10 +338,6 @@ simulator.inertial_differeciator.prototype.atach = function(){
     var ts = this;
     
     this.diffhandler = function(){ts.diffevent(event);};
-    //if (window.addExpressionListener( this.diffhandler , this.source))
-    //    this.diffset=true; 
-    //else
-    //   console.log('AddExpressionListener source no regist');
     this.diffset = new simulator.expressionevent( this.diffhandler , this.source, this);
 }
 
@@ -358,7 +346,6 @@ simulator.inertial_differeciator.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0))
        $$(this.tag + ' @ ' + this.stop)
     if (this.diffhandler && this.diffset)
-        //window.removeExpressionListener( this.autohandler);
         this.diffset.unregist();
 }
 
@@ -369,7 +356,6 @@ simulator.inertial_differeciator.prototype.execute = function(){
        if ((this.lasttime+this.delay)<=curtime){
        this.lasttime=curtime;
        var val = this.set(this.value);
-       //console.log('settt = ', val)
        setTimeout(function(){$$(ts.tag + ' @ ' + val );}, 0);
        }
 }
@@ -418,10 +404,6 @@ simulator.valve.prototype.atach = function(){
         this.ronhandler = function(){
             ts.ronevent(event);
         };
-        //if (window.addExpressionListener( this.ronhandler , this.ron))
-        //    this.ronset=true; 
-        //else
-        //     console.log('AddExpressionListener ronno regist');
         this.ronset = new simulator.expressionevent(this.ronhandler , this.ron, this);
     }
     
@@ -429,10 +411,6 @@ simulator.valve.prototype.atach = function(){
         this.roffhandler = function(){
             ts.roffevent(event);
         };
-        //if (window.addExpressionListener( this.roffhandler , this.roff))
-        //    this.roffset=true; 
-        //else
-        //    console.log('AddExpressionListener ronoff regist');
         this.roffset = new simulator.expressionevent(this.roffhandler , this.roff, this);
     }
     
@@ -440,10 +418,6 @@ simulator.valve.prototype.atach = function(){
         this.donhandler = function(){
             ts.donevent(event);
         };
-        //if (window.addExpressionListener( this.donhandler , this.don))
-        //    this.donset=true; 
-        //else
-        //    console.log('AddExpressionListener donno regist');
         this.donset = new simulator.expressionevent(this.donhandler , this.don, this);
     }
     
@@ -451,10 +425,6 @@ simulator.valve.prototype.atach = function(){
         this.doffhandler = function(){
             ts.doffevent(event);
         };
-        //if (window.addExpressionListener( this.doffhandler , this.doff))
-        //    this.doffset=true; 
-        //else
-        //    console.log('AddExpressionListener doffno regist');
         this.doffset = new simulator.expressionevent(this.doffhandler , this.doff, this);
     }
     
@@ -462,10 +432,6 @@ simulator.valve.prototype.atach = function(){
         this.onhandler = function(){
             ts.onevent(event);
         };
-        //if (window.addExpressionListener( this.onhandler , this.on))
-        //    this.onset=true; 
-        //else
-        //    console.log('AddExpressionListener onno regist');
         this.onset = new simulator.expressionevent(this.onhandler , this.on, this);
     }
     
@@ -473,10 +439,6 @@ simulator.valve.prototype.atach = function(){
         this.offhandler = function(){
             ts.offevent(event);
         };
-        //if (window.addExpressionListener( this.offhandler , this.off))
-        ///   this.offset=true; 
-        //else
-        //    console.log('AddExpressionListener offno regist');
         this.offset = new simulator.expressionevent(this.offhandler , this.off, this);
     }    
    
@@ -935,7 +897,7 @@ simulator.valve.prototype.shedule = function(sp,okfunk,cancelfnc){
 simulator.actuator  = function(pos, sp, tick){
     this.pos= pos;
     this.sp=sp;
-    this.diff = 'abs('+sp+'-'+pos+')';
+    this.sp = sp;
     this.enable=true;
     if (!tick)
        this._tick=0.05;
@@ -957,21 +919,13 @@ simulator.actuator.prototype.atach = function(){
         this.sphandler = function(){
             ts.spevent(event);
         };
-        //if (window.addExpressionListener( this.sphandler , this.diff))
-        //    this.spset=true; 
-        //else
-        //    console.log('AddExpressionListener sp no regist');
-        this.spset=new simulator.expressionevent(this.sphandler , this.diff, this);
+        this.spset=new simulator.expressionevent(this.sphandler , this.sp, this);
     }
     if (this.tick){
         this._tick=0.05;
         this.tickhandler = function(){
             ts.tickevent(event);
         };
-        //if (window.addExpressionListener( this.tickhandler , this.tick))
-        //    this.tickset=true; 
-        //else
-        //    console.log('AddExpressionListener tick no regist');
         this.tickset=new simulator.expressionevent(this.tickhandler , this.tick, this);
     }
 }
@@ -984,10 +938,10 @@ simulator.actuator.prototype.detach = function(){
         this.tickset.unregist();//window.removeExpressionListener( this.tickhandler);    
 }
 
-simulator.actuator.prototype.sp = function(val){
+/*simulator.actuator.prototype.sp = function(val){
     console.log('sp actuator set',val);
     $$(this.sp + ' @  '+ val );
-}
+}*/
 
 simulator.actuator.prototype.setenable= function(val){
     console.log('sp actuator enable',val)
@@ -1008,24 +962,23 @@ simulator.actuator.prototype.spdiff = function(val){
 }
 
 simulator.actuator.prototype.spevent = function(event){
-    var ts=this;
-    if (event.expression==this.diff && event.valid){ 
-       
+    if (event.expression==this.sp){     
+       this._sp= event.valid ? event.value : undefined;
     }
 }    
 
 simulator.actuator.prototype.tickevent = function(event){
     var ts=this;
-    if (event.expression==this.tick && event.valid && this.enable){ 
-         this._tick=event.value;     
+    if (event.expression==this.tick && this.enable){ 
+         this._tick= event.valid ? event.value : undefined;     
     }
 } 
 
 simulator.actuator.prototype.execute = function(){
 var ts=this;
-if (this.enable){
-$$('(abs(' + ts.pos + ' - '+ ts.sp + ') && ('+ts.sp+'.valid)  && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts.sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
-        '((abs(' + ts.pos + ' - '+ ts.sp + ') > 0) && ('+ts.sp+'.valid) && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ ' + ts.sp + ') : (1)' + 
+if (this.enable && this._sp!==undefined && ts._tick!==undefined){
+$$('(abs(' + ts.pos + ' - '+ ts._sp + ') && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts._sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
+        '((abs(' + ts.pos + ' - '+ ts._sp + ') > 0) &&  ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ ' + ts._sp + ') : (1)' + 
         ') ');}
 }
 
@@ -1082,26 +1035,18 @@ simulator.regulator.prototype.atach = function(){
     //console.log('attach regulator');
     
     this.autohandler = function(){ts.autoevent(event);};
-    //if (window.addExpressionListener( this.autohandler , this.auto))
-    //    this.autoset=true; 
-    //else
-    //   console.log('AddExpressionListener auto no regist');
-    this.autoset = new simulator.expressionevent(this.autohandler , this.auto, this);
+    if (this.auto)
+        this.autoset = new simulator.expressionevent(this.autohandler , this.auto, this);
 
     this.diffhandler = function(){ts.diffevent(event);};
-    
-    //if (window.addExpressionListener( this.diffhandler , this.diff))
-    //    this.diffset=true;
-    //else
-    //   console.log('AddExpressionListener diff no regist');
-    this.diffset = new simulator.expressionevent(this.diffhandler , this.diff, this);
+    if (this.diff)
+        this.diffset = new simulator.expressionevent(this.diffhandler , this.diff, this);
    
    
    this.kphandler = function(){ts.kpevent(event);};
    
    if (this.kp.constructor == String){
         this.kpset=new simulator.expressionevent(this.kphandler , this.kp, this);this.kp=0;}
-    //this.diffset = new simulator.expressionevent(this.diffhandler , this.diff, this);
     
    this.kihandler = function(){ts.kievent(event);};
    
@@ -1279,10 +1224,7 @@ simulator.sheduler.prototype.atach = function(){
         this.sourcehandler = function(){
             ts.sourceevent(event);
         };
-        //if (window.addExpressionListener( this.sourcehandler , this.source))
-        //    this.sourceset=true; 
-        //else
-        //    console.log('AddExpressionListener source no regist');
+
         this.sourceset = new simulator.expressionevent(this.sourcehandler , this.source, this);
     }
     
@@ -1401,10 +1343,6 @@ simulator.sheduler.checkvalueshedule.prototype.atach = function(){
         this.sourcehandler = function(){
             ts.sourceevent(event);
         };
-        //if (window.addExpressionListener( this.sourcehandler , this.source))
-        //    this.sourceset=true; 
-        //else
-        //    console.log('AddExpressionListener source no regist');
         this.sourceset = new simulator.expressionevent(this.sourcehandler , this.source, this)
     }
 }
