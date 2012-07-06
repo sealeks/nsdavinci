@@ -385,6 +385,7 @@ const std::string DEMONADD_OPERATION_STR = "demonadd ";
 const std::string DEMONREM_OPERATION_STR = "demonrem ";
 const std::string DEMONLST_OPERATION_STR = "demonlst";
 const std::string DEMONINS_OPERATION_STR = "demonins";
+const std::string DELETETAG_OPERATION_STR = "deletetag ";
 
 const int DEFAULT_OPERATION = 0;
 const int EXIT_OPERATION = 1;
@@ -402,6 +403,7 @@ const int DEMONADD_OPERATION = 12;
 const int DEMONREM_OPERATION = 13;
 const int DEMONLST_OPERATION = 14;
 const int DEMONINS_OPERATION = 15;
+const int DELETETAG_OPERATION = 16;
 
 int operation(std::string& vl, const std::string& oper, int operid){
     dvnci::lower_copy(vl);
@@ -430,6 +432,7 @@ int getoperate(std::string& vl){
    if (operation(vl,DEMONREM_OPERATION_STR ,DEMONREM_OPERATION)==DEMONREM_OPERATION) return DEMONREM_OPERATION;
    if (operation(vl,DEMONLST_OPERATION_STR ,DEMONLST_OPERATION)==DEMONLST_OPERATION) return DEMONLST_OPERATION;
    if (operation(vl,DEMONINS_OPERATION_STR ,DEMONINS_OPERATION)==DEMONINS_OPERATION) return DEMONINS_OPERATION; 
+   if (operation(vl,DELETETAG_OPERATION_STR ,DELETETAG_OPERATION)==DELETETAG_OPERATION) return DELETETAG_OPERATION; 
    std::cout << "_____________________________________________"  << std::endl;
    std::cout  << "No parse line " << vl  << " !" << std::endl;
    std::cout << "_____________________________________________"  << std::endl;
@@ -445,6 +448,7 @@ int main(int argc, char** argv)
   typedef gui_executor<tagsbase >                    test_gui_executor;
 
   std::string quit_in;
+  std::wstring wquit_in;
   basepath=dvnci::getlocalbasepath();
   intf = dvnci::krnl::factory::build(basepath);
 
@@ -452,7 +456,8 @@ int main(int argc, char** argv)
 
 test_immi_struct();
   while (true){
-      std::getline(std::cin,quit_in);
+      std::getline(std::wcin,wquit_in);
+      quit_in = wstr_to_utf8(wquit_in);
       try{
       switch (getoperate(quit_in)) {
           case EXIT_OPERATION : return 0;
@@ -460,9 +465,9 @@ test_immi_struct();
               indx ind = str_to<indx>(quit_in,npos);
               dt_val_map tmp;
               if (ind!=npos)
-                  intf->select_trendbuff(ind, tmp, nill_time, nill_time,15.0);
+                  intf->select_trendbuff(ind, tmp, nill_time, nill_time);
               else
-                 intf->select_trendbuff(quit_in, tmp, nill_time, nill_time,15.0);
+                 intf->select_trendbuff(quit_in, tmp, nill_time, nill_time);
               std::cout << tmp;
               break;}
           case REPORT_OPERATION:{
@@ -562,7 +567,8 @@ test_immi_struct();
                   std::cout << e.what()  << std::endl;}
               break;}
           case EXPR_OPERATION:{
-              expression expr(quit_in, intf);
+              wquit_in=wquit_in.substr(4);
+              expression expr(wquit_in, intf);
               //expression expr(quit_in);
               std::cout << "expr "  << expr.expressionstr() << std::endl;
 
@@ -578,7 +584,7 @@ test_immi_struct();
                     setdvnInvalid();
                   }}
           
-              std::cout << "value " << shv.value<std::string>() << std::endl;
+              std::wcout << "value " << shv.value<std::wstring>() << std::endl;
               if (expr.error()){
               std::cout << "error " << shv.error() << std::endl;
               }
@@ -628,6 +634,15 @@ test_immi_struct();
                
               std::cout <<   (*dms);
           break;}
+         
+          case DELETETAG_OPERATION :{
+              indx ind = str_to<indx>(quit_in,npos);
+              if (ind!=npos) {
+                  if (intf->delete_tag(ind)>0)
+                     std::cout << "Succses delete "  <<  std::endl; 
+              }
+          }
+              
          
           default:{}}
       std::cout << "_____________________________________________"  << std::endl;}
