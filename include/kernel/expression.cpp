@@ -344,6 +344,7 @@ namespace dvnci {
 
         calc_token operator+(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return (lside.value<double>() + rside.value<double>());                
                 case TYPE_DISCRET:  return (lside.value<bool>() || rside.value<bool>());
                 case TYPE_NUM64:    return (lside.value<num64 > () + rside.value<num64 > ());
                 case TYPE_UNUM64:   return (lside.value<unum64 > () + rside.value<unum64 > ());
@@ -361,6 +362,7 @@ namespace dvnci {
 
         calc_token operator-(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return (lside.value<double>()- rside.value<double>());                
                 case TYPE_DISCRET:  return NULL_DOUBLE;
                 case TYPE_NUM64:    return (lside.value<num64 > ())-(rside.value<num64 > ());
                 case TYPE_UNUM64:   return (lside.value<unum64 > () - rside.value<unum64 > ());
@@ -377,6 +379,7 @@ namespace dvnci {
 
         calc_token operator-(calc_token& nval) {
             switch (nval.type()) {
+                case TYPE_NODEF:    return -nval.value<double>();                
                 case TYPE_DISCRET:  return NULL_DOUBLE;
                 case TYPE_NUM64:    return (-nval.value<num64 > ());
                 case TYPE_UNUM64:   return (nval.value<unum64 > ());
@@ -393,6 +396,7 @@ namespace dvnci {
 
         calc_token operator*(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return (lside.value<double>() * rside.value<double>());                
                 case TYPE_DISCRET:  return (lside.value<bool>() && rside.value<bool>());
                 case TYPE_NUM64:    return (lside.value<num64 > () * rside.value<num64 > ());
                 case TYPE_UNUM64:   return (lside.value<unum64 > () * rside.value<unum64 > ());
@@ -409,6 +413,7 @@ namespace dvnci {
 
         calc_token operator/(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return (lside.value<double>() / rside.value<double>());               
                 case TYPE_DISCRET:{
                     return NULL_DOUBLE;}
                 case TYPE_NUM64:{
@@ -458,6 +463,7 @@ namespace dvnci {
 
         calc_token operator%(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return NULL_DOUBLE;
                 case TYPE_DISCRET:{
                     return NULL_DOUBLE;}
                 case TYPE_NUM64:{
@@ -500,6 +506,7 @@ namespace dvnci {
 
         bool operator==(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return (lside.value<double>() == rside.value<double>());
                 case TYPE_DISCRET:  return (lside.value<bool>() == rside.value<bool>());
                 case TYPE_NUM64:    return (lside.value<num64 > () == rside.value<num64 > ());
                 case TYPE_UNUM64:   return (lside.value<unum64 > () == rside.value<unum64 > ());
@@ -511,11 +518,13 @@ namespace dvnci {
                 case TYPE_UNUM8:    return (lside.value<unum8 > () == rside.value<unum8 > ());
                 case TYPE_DOUBLE:   return (lside.value<double>() == rside.value<double>());
                 case TYPE_FLOAT:    return (lside.value<float>() == rside.value<float>());
+                case TYPE_TEXT:      return (lside.value<std::string>() == rside.value<std::string>());
                 case TYPE_TM:       return (lside.tm() == rside.tm());}
             return (lside.value<double>() == rside.value<double>());}
 
         bool operator<(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return (lside.value<double>() < rside.value<double>());                
                 case TYPE_DISCRET:  return (lside.value<bool>() < rside.value<bool>());
                 case TYPE_NUM64:    return (lside.value<num64 > () < rside.value<num64 > ());
                 case TYPE_UNUM64:    return (lside.value<unum64 > () < rside.value<unum64 > ());
@@ -527,11 +536,13 @@ namespace dvnci {
                 case TYPE_UNUM8:    return (lside.value<unum8 > () < rside.value<unum8 > ());
                 case TYPE_DOUBLE:    return (lside.value<double>() < rside.value<double>());
                 case TYPE_FLOAT:    return (lside.value<float>() < rside.value<float>());
+                case TYPE_TEXT:      return (lside.value<std::string>() < rside.value<std::string>());
                 case TYPE_TM:       return (lside.tm() < rside.tm());}
             return (lside.value<double>() < rside.value<double>());}
 
         bool operator>(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return (lside.value<double>() > rside.value<double>());                
                 case TYPE_DISCRET:  return (lside.value<bool>() > rside.value<bool>());
                 case TYPE_NUM64:    return (lside.value<num64 > () > rside.value<num64 > ());
                 case TYPE_UNUM64:    return (lside.value<unum64 > () > rside.value<unum64 > ());
@@ -543,11 +554,13 @@ namespace dvnci {
                 case TYPE_UNUM8:    return (lside.value<unum8 > () > rside.value<unum8 > ());
                 case TYPE_DOUBLE:    return (lside.value<double>() > rside.value<double>());
                 case TYPE_FLOAT:    return (lside.value<float>() > rside.value<float>());
+                case TYPE_TEXT:      return (lside.value<std::string>() > rside.value<std::string>());
                 case TYPE_TM:       return (lside.tm() > rside.tm());}
             return (lside.value<double>() > rside.value<double>());}
 
         bool operator!(calc_token& nval) {
             switch (nval.type()) {
+                case TYPE_NODEF:    return (!nval.value<double>());               
                 case TYPE_DISCRET:  return !(nval.value<bool>());
                 case TYPE_NUM64:    return (nval.value<num64 > () == 0);
                 case TYPE_UNUM64:    return (nval.value<unum64 > () == 0);
@@ -559,11 +572,13 @@ namespace dvnci {
                 case TYPE_UNUM8:   return (nval.value<unum8 > () == 0);
                 case TYPE_DOUBLE:    return (nval.value<double>() == 0);
                 case TYPE_FLOAT:    return (nval.value<float>() == 0);
+                case TYPE_TEXT:      return (nval.value<std::string>() == "");
                 case TYPE_TM:        return NULL_DOUBLE;}
             return (nval.value<double>() == 0);}
 
         calc_token operator~(calc_token& nval) {
             switch (nval.type()) {
+                case TYPE_NODEF:    return (nval.value<double>()==0);                
                 case TYPE_DISCRET:  return !(nval.value<bool>());
                 case TYPE_NUM64:    return (~nval.value<num64 > ());
                 case TYPE_UNUM64:    return (~nval.value<unum64 > ());
@@ -580,6 +595,7 @@ namespace dvnci {
 
         bool operator&&(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:                 
                 case TYPE_NUM64:
                 case TYPE_UNUM64:
                 case TYPE_NUM32:
@@ -596,6 +612,7 @@ namespace dvnci {
 
         bool operator||(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:                
                 case TYPE_NUM64:
                 case TYPE_UNUM64:
                 case TYPE_NUM32:
@@ -612,6 +629,7 @@ namespace dvnci {
 
         calc_token operator&(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return (lside && rside);                
                 case TYPE_DISCRET:  return (lside && rside);
                 case TYPE_NUM64:    return (lside.value<num64 > () & rside.value<num64 > ());
                 case TYPE_UNUM64:    return (lside.value<unum64 > () & rside.value<unum64 > ());
@@ -628,6 +646,7 @@ namespace dvnci {
 
         calc_token operator|(const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {
+                case TYPE_NODEF:    return (lside || rside);                 
                 case TYPE_DISCRET:  return (lside || rside);
                 case TYPE_NUM64:    return (lside.value<num64 > () | rside.value<num64 > ());
                 case TYPE_UNUM64:    return (lside.value<unum64 > () | rside.value<unum64 > ());

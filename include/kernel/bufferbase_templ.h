@@ -262,7 +262,7 @@ namespace dvnci {
                size_t strt = index(0) + 1;
                pointtype* bgn = (pointtype*)&item[0];
                pointtype* end = (pointtype*)&item[strt];
-               pointtype tmp(static_cast<unum16> (secondsbetween(hdr.epoch(), tm)), 0);
+			   pointtype tmp(static_cast<unum16> (hdr.epoch() < tm ? secondsbetween(hdr.epoch(), tm) : 0) , 0);
                size_t fndlow = static_cast<size_t> (std::lower_bound(bgn, end , tmp ) - bgn);
                if (fndlow >0) {
                    return (fndlow==strt) ? 0 : index(fndlow);}
@@ -282,7 +282,7 @@ namespace dvnci {
         double value(size_t vl) const {
             if (index(vl)<maxcount()){
                unum16 tmp = item[index(vl)].value();
-               return tmp ? hdr.mineu() + static_cast<double> (tmp) / static_cast<double> (0xFFF0) * (hdr.maxeu() - hdr.mineu()) - 1 : NULL_DOUBLE;}
+               return tmp ? hdr.mineu() + static_cast<double> (tmp) / static_cast<double> (0xFFF0) * (hdr.maxeu() - hdr.mineu()) : NULL_DOUBLE;}
             return NULL_DOUBLE;}
 
         datetime time(size_t vl) const  {
