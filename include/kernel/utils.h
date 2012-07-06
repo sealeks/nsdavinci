@@ -487,6 +487,8 @@ namespace dvnci {
     //////////////////////////////////////////////////////////////////////////////////////
 
     datetime now();
+    datetime now_utc();
+    datetime local_to_utc(const datetime& val);
     num64 nownum64();
     boost::xtime utc_now();
 
@@ -509,6 +511,8 @@ namespace dvnci {
     num64 castnum64_from_datetime(datetime val);
     num64 datetime_to_epoch(const datetime& val);
     num64 datetime_to_epoch_msc(const datetime& val);
+    num64 datetime_to_epoch_msc(const datetime& val);
+    num64 datetime_to_epoch_msc_utc(const datetime& val);
     num64 datetime_to_epoch_minute(const datetime& val);
     num64 datetime_to_epoch_hour(const datetime& val);
     num64 datetime_to_epoch_day(const datetime& val);

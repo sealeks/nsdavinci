@@ -1,4 +1,5 @@
 #include <kernel/utils.h>
+#include <boost/date_time/local_time/local_time.hpp>
 
 #undef max
 #undef min
@@ -874,9 +875,16 @@ namespace dvnci {
 
 
     ////////////////////////////////////////////////////////////////////////////////////
+    
 
     datetime now() {
         return boost::posix_time::microsec_clock::local_time();}
+    
+    datetime now_utc(){
+        return boost::posix_time::microsec_clock::universal_time();}
+    
+    datetime local_to_utc(const datetime& val){
+        return val - ( boost::posix_time::second_clock::local_time() - boost::posix_time::second_clock::universal_time() );}
 
     boost::xtime utc_now() {
         boost::xtime xt;
@@ -977,6 +985,9 @@ namespace dvnci {
 
     num64 datetime_to_epoch_msc(const datetime& val) {
         return val.is_special() ? 0 : static_cast<num64> (static_cast<boost::posix_time::time_duration> (val - epoch_time).total_milliseconds());}
+    
+    num64 datetime_to_epoch_msc_utc(const datetime& val) {
+        return val.is_special() ? 0 : datetime_to_epoch_msc(local_to_utc(val));}
 
     num64 datetime_to_epoch_minute(const datetime& val) {
         return val.is_special() ? 0 : static_cast<num64> (static_cast<boost::posix_time::time_duration> (val - epoch_time).total_seconds() / 60);}
