@@ -229,6 +229,7 @@ add_simulation ( new simulator.initializer('fewelair_sp', 15 , 0));
 
 add_simulation ( new simulator.initializer('br' , 0 , 0));
 add_simulation ( new simulator.initializer('brv' , 0 , 0));
+add_simulation ( new simulator.initializer('mpg' , 0 , 0));
 
 
 
@@ -297,13 +298,14 @@ add_simulation ( new simulator.valueobserver('t1',null,'fp >0 ? (q1 * qo2  / (fp
 
 
 //add_simulation ( new simulator.random_value('fpp' ,0.1, 0.0003 ));
-add_simulation ( new simulator.valueobserver('fpp' ,null,'m::i1 ? (20+m::i1) : 20',0 ));
+//add_simulation ( new simulator.valueobserver('fpp' ,null,'m::i1 ? (20+m::i1) : 20',0 ));
+add_simulation ( new simulator.initializer('fpp' , 20 , 0));
 
 add_simulation (new simulator.booldelayer('m::c1' ,0 , 'flame1' ,0, 1,0, 0,0));
 add_simulation (new simulator.booldelayer('m::c2' ,0 , 'flame2' ,0, 1,0, 0,0));
 
 add_simulation (new simulator.regulator('pg0', 'pg0_sp', 'prz_pos' , 'prz_sp', 'pg0_auto && !br' , false, 'pg0_kp', 'pg0_ki', 'pg0_kd', 'pg0_tick', '!br' ));
-add_simulation (new simulator.regulator('p8', 'p8_sp', 'prz_pos' , 'prz_sp', 'pg0_auto && br' , false, 'pg0_kp', 'pg0_ki', 'pg0_kd', 'p8_tick', 'br' ));
+add_simulation (new simulator.regulator('p8', 'p8_sp', 'prz_pos' , 'prz_sp', 'pg0_auto && br' , false, 'p8_kp', 'p8_ki', 'p8_kd', 'p8_tick', 'br' ));
 
 add_simulation (new simulator.regulator('p5', 'p5_sp', 'nav_pos' , 'nav_sp', 'p5_auto  && !brv' , false, 'p5_kp', 'p5_ki', 'p5_kd','p5_tick' , '!brv'));
 add_simulation (new simulator.regulator('fewelair', 'fewelair_sp', 'nav_pos' , 'nav_sp', 'p5_auto && brv' , false, 'fewelair_kp', 'fewelair_ki', 'fewelair_kd','fewelair_tick' , 'brv'));
@@ -335,9 +337,14 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartdym @ 0');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('sh1_sp @ 100,sh2_sp @ 100');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('p5_auto @ 1,p5_sp @ p5_start');})},
-                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartvent @ 0');})},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartvent @ 0');})},                                                                                                     
+                                                    
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mpg @ 1');})},
                                                     {sp: 1, shedule: gz},
-                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartok @ 1');})},                                                  
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('pg0_auto @ 1,pg0_sp @ pg0_start');})},
+                                                    {sp: 0, shedule: new simulator.sheduler.checkvalueshedule('abs(pg0-pg0_start)<2')},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mpg @ 0');})},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartok @ 1');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p6_control @ 1');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstart @ 0');})}]
                                                     );
@@ -364,7 +371,10 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
  add_simulation (new simulator.booldelayer('mwork' ,0 , '((flame1 || flame2) && !gpz_off)' ,0, 1,0, 0,5000));
  
    
- var avar = new simulator.sheduler(0,'av',0,[{sp: 0, shedule: stop}]);                                                    
+ var avar = new simulator.sheduler(0,'av',0,[{sp: 0, shedule: stop},
+                                             {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('gpz_roff @ 1, ppz_ron @ 1');})},
+                                             {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('pg0_auto @ 1,pg0_sp @ pg0_start, br @ 0, brv @ 0');})},
+                                             {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('p5_auto @ 1,p5_sp @ p5_start');})}]);                                                    
                                                           
  add_simulation (avar);  
 
@@ -415,8 +425,7 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
    
    this['opress'+pref] = new simulator.sheduler(0,'ropress'+pref,0,[  {sp: 1, shedule: new simulator.sheduler.commandshedule(function(){$$('mopress'+pref+' @ 1');})},
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('ropress'+pref+' @ 0');})},
-                                                          {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('pg0_auto @ 1,pg0_sp @ pg0_start');})},
-                                                          {sp: 0, shedule: new simulator.sheduler.checkvalueshedule('abs(pg0-pg0_start)<2')},
+
                                                           {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('pzk'+pref+'_1_auto @ 1,pzk'+pref+'_2_auto @ 1,ko'+pref+'_auto @ 1,kb'+pref+'_auto @ 1,kz'+pref+'_auto @ 1');})},
                                                              
                                                           {sp: 0, shedule: this['kb'+pref]},
