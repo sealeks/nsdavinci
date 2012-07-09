@@ -958,24 +958,38 @@ simulator.actuator.prototype.spdiff = function(val){
     if (val===undefined || val===null || val!=val){
         console.log('diff actuator set undef',val);
        return;}
-    $$(this.sp + ' @  ('+ this.sp + ' + '+ val + ')' );
+    if (this._diff)
+        this._diff += val
+    else
+        this._diff = val;
+    if (this._diff<-100) this._diff=-100;
+    if (this._diff>100) this._diff=100;
+    //$$(this.sp + ' @@  ('+ this.sp + ' + '+ val + ')' );
 }
 
 simulator.actuator.prototype.spevent = function(event){
-    if (event.expression==this.sp){     
+    if (event.valid){     
        this._sp= event.valid ? event.value : undefined;
     }
 }    
 
 simulator.actuator.prototype.tickevent = function(event){
     var ts=this;
-    if (event.expression==this.tick && this.enable){ 
+    if (event.valid && this.enable){ 
          this._tick= event.valid ? event.value : undefined;     
     }
 } 
 
 simulator.actuator.prototype.execute = function(){
 var ts=this;
+var pos__=$$(ts.pos);
+if (this._sp==0 && pos__>5)
+console.log('sp  == 0',this.sp)
+if (this._diff){
+    var df=this.sp +' @ (&'+this.sp+'+ '+this._diff + ')';
+    $$(df);
+    this._diff=undefined;
+}
 if (this.enable && this._sp!==undefined && ts._tick!==undefined){
 $$('(abs(' + ts.pos + ' - '+ ts._sp + ') && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts._sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
         '((abs(' + ts.pos + ' - '+ ts._sp + ') > 0) &&  ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ ' + ts._sp + ') : (1)' + 
@@ -1082,18 +1096,18 @@ simulator.regulator.prototype.detach = function(){
 }
 
 simulator.regulator.prototype.enableevent = function(event){
-    //if (event.expression==this.enable){        
+    if (event.valid){        
         this._enable=event.value;
         this.actuator.setenable(event.value);
         if (event.value){
             this.K = 0;
             this.I = 0;
             this.D = 0;}    
-//}
+}
 }    
 
 simulator.regulator.prototype.autoevent = function(event){
-    if (event.expression==this.auto){        
+    if (event.valid){        
         if (this.autostate != event.value){           
             var ts =this;
             this.K = 0;
@@ -1119,28 +1133,28 @@ simulator.regulator.prototype.autoevent = function(event){
 }
 
 simulator.regulator.prototype.kpevent = function(event){
-    //if (event.expression==this.kpset){
+    if (event.valid){
         this.kp = event.value; 
         console.log('kp:',this.kp);
-    //}       
+    }       
 }
 
 simulator.regulator.prototype.kievent = function(event){
-    //if (event.expression==this.kiset){
+    if (event.valid){
         this.ki = event.value; 
         console.log('ki:',this.ki);
-    //}       
+    }       
 }
 
 simulator.regulator.prototype.kdevent = function(event){
-    //if (event.expression==this.kdset){
+    if (event.valid){
         this.kd = event.value; 
         console.log('kd:',this.kd);
-    //}       
+    }       
 }
 
 simulator.regulator.prototype.diffevent = function(event){
-    if (event.expression==this.diff && this.autostate){
+    if (event.valid && this.autostate){
         this.K = this.K + this.kp * (event.value - (this.kplast===undefined ? 0 : this.kplast));
         this.error = event.value;  
         this.kplast = event.value;
@@ -1184,11 +1198,13 @@ simulator.regulator.prototype.execute = function(){
        // if (this.K) 
        //     console.log('prop ',this.K );
        // console.log( this.I, this.D );
-        
-        var d_and_i_and_k = this.I + this.D + this.K;
-        
+        if (this.D && (this.D<-0.08)) this.D=-0.08;
+        if (this.D && (this.D>0.08)) this.D=0.08;
+        var d_and_i_and_k = (this.I ? this.I : 0) + (this.D ? this.D : 0)  + (this.K ? this.K : 0);
+        if (d_and_i_and_k<-1) d_and_i_and_k=-1;
+        if (d_and_i_and_k>1) d_and_i_and_k=1;
         if (d_and_i_and_k){
-        if ((d_and_i_and_k<0 ? -d_and_i_and_k : d_and_i_and_k) *100>2) console.log( 'd_and_i_and_k',this.K*100,this.I*100,this.D*100,d_and_i_and_k*100)
+        //if (this.valsp=='p8_sp') console.log( 'd_and_i_and_k p= % 4.2f, i= % 4.2f, d= % 4.8f, k= %4.2f',this.K*100,this.I*100,this.D*100,d_and_i_and_k*100)
         ts.actuator.spdiff(d_and_i_and_k * 100);;}
      
         this.K=0;
