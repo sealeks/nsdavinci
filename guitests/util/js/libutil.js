@@ -158,10 +158,13 @@ function exit(){
 function init_project_controller(){
     libutil.global.getStartupDoc(document);
     try{
-    var elp=libutil.global.getStartupDoc().getElementsByTagName('project')[0];
-    console.log(elp);
-    var projectPath=elp.getAttribute('path');
-    console.log(projectPath);
+    var tmp=$$global();
+    var projectPath=libutil.project.path_from_URL(document.URL);
+    tmp.projectPath=projectPath;
+   // var elp=libutil.global.getStartupDoc().getElementsByTagName('project')[0];
+    //console.log(elp);
+    //var projectPath=elp.getAttribute('path');
+    //console.log(projectPath);
     $$global().loadwin = window.open(projectPath+ 'load.xml', 'initialisate' , 
                                      "caption=initialisate;left=0%;top=0%;width=100%;height=100%;decorated=no;allwaystop=yes");
     setTimeout(function(){libutil.project.init_form();}, 1000);}
@@ -280,16 +283,23 @@ libutil.startup.initdesigner = function(name, red){
 
 //  project
 
+libutil.project.path_from_URL = function(url){
+    //alert(url);
+    var pathpos=url.search(/start\.xml/);
+    if (pathpos<0) return null;
+    //alert(url.substring(0,pathpos));
+    return url.substring(0,pathpos);   
+}
+
 libutil.project.init_form = function(){
     var doc = libutil.global.getStartupDoc();
     if (doc){
         try{
                                    
-            var tmp=$$global();
-            var elp=doc.getElementsByTagName('project')[0];
-            var projectPath=elp.getAttribute('path');
+            //var tmp=$$global();
+            //var projectPath=libutil.project.path_from_URL(document.URL);
             
-            tmp.projectPath=projectPath;
+            //tmp.projectPath=projectPath;
             
             var els=doc.getElementsByTagName('form');                                 
             var ellib=doc.getElementsByTagName('lib');
@@ -349,10 +359,9 @@ libutil.project.buildparam = function(el){
 
 libutil.project.addtoformlist = function(els){
     var tmp=$$global();
-    var prjpath=tmp.projectPath;
-    /*var isdesign = ((window.$$editable) && ($$editable()));*/
-    var file = /*isdesign ?*/ els.getAttribute('file') /*: libutil.regex.add_postfix_file(els.getAttribute('file'),'_output')*/;
-    var path = prjpath && file ? prjpath.toString() + file.toString() : null;
+
+    var file =  els.getAttribute('file');
+    var path = tmp.projectPath && file ? tmp.projectPath.toString() + file.toString() : null;
     if (path){            
         var param = libutil.project.buildparam(els);
         var visible =((els.hasAttribute('visible')) && (els.getAttribute('visible')=='false')) ? false : true;
