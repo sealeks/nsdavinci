@@ -182,16 +182,16 @@ add_simulation ( new simulator.initializer('prz_sp' , 0 , 0));
 add_simulation ( new simulator.initializer('pg0_auto' , 0 , 0));
 
 add_simulation ( new simulator.initializer('p5_sp' , 0 , 0));
-add_simulation ( new simulator.initializer('nav_pos' , 0 , 0));
-add_simulation ( new simulator.initializer('nav_sp' , 0 , 0));
-add_simulation ( new simulator.initializer('p5_auto' , 1 , 0));
+add_simulation ( new simulator.initializer('nav_pos' , 10 , 0));
+add_simulation ( new simulator.initializer('nav_sp' , 10 , 0));
+add_simulation ( new simulator.initializer('p5_auto' , 0 , 0));
 
 add_simulation ( new simulator.initializer('p8_sp' , 4 , 0));
 add_simulation ( new simulator.initializer('p8_auto' , 1 , 0));
 
 
-add_simulation ( new simulator.initializer('nad_pos' , 0 , 0));
-add_simulation ( new simulator.initializer('nad_sp' , 0 , 0));
+add_simulation ( new simulator.initializer('nad_pos' , 15 , 0));
+add_simulation ( new simulator.initializer('nad_sp' , 15 , 0));
 add_simulation ( new simulator.initializer('p6_auto' , 0 , 0));
 add_simulation ( new simulator.initializer('p6_sp' , -20 , 0));
 
@@ -268,7 +268,7 @@ add_simulation (new simulator.valueobserver('fp' , 0 , '(!ppz_off) ? (fvp) :((!g
 // баланс парообразования
 add_simulation (new simulator.valueobserver('p_balance' , 0 , 'fvp - fp' ,0));
 // давление пара в барабане котла
-add_simulation ( new simulator.valueobserver('p8' , null , ' ((p_balance) ? ((p8 + p_balance / 36000 *'+window.WATER_V_KO+')) : p8)' ,null));
+add_simulation ( new simulator.valueobserver('p8' , null , ' ((p_balance) ? ((p8 + p_balance / 36000 *'+window.WATER_V_KO+')) : ((!ppz_off) ?  (p8 - 0.0002) : p8))' ,null));
 add_simulation ( new simulator.valueobserver('l' , null , ' ((fvp) ? (l - fvp / 36000 / 4 * 630) : l)' ,null));
 
 
@@ -330,9 +330,25 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
 
  var start = new simulator.sheduler(0,'rstart',0,[  {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstart @ 1');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartdym @ 1');})},
+                                                    
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('br @ 0,brv @ 0');})},
+                                                    
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p5_auto @ 0');})},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('p6_auto @ 0');})},
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('nad_sp @ 0');})},
+                                                   
+                                                    {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('nav_sp @ 0');})},                                                    
+                                                    
+                                                    {sp: 0, shedule: new simulator.sheduler.checkvalueshedule('abs(nad_pos)<1')},                                                   
+                                                    {sp: 0, shedule: new simulator.sheduler.checkvalueshedule('abs(nav_pos)<1')},
+                                                    
                                                     {sp: 1, shedule: dym},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('p6_auto @ 1,p6_sp @ -20');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartvent @ 1');})},
+                                                    
+                                                    
+
+                                                    
                                                     {sp: 1, shedule: vent},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule(function(){$$('mstartdym @ 0');})},
                                                     {sp: 0, shedule: new simulator.sheduler.commandshedule( function(){$$('sh1_sp @ 100,sh2_sp @ 100');})},
@@ -492,7 +508,7 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
 
 };
 ]]></script>
-<project path="file:///F:/Project/davinci/guitests/pages/">
+<project>
 
   
   
