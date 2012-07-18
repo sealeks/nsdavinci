@@ -249,6 +249,7 @@
         <xsd:attribute name="config-header" type="xsd:string"/>
         <xsd:attribute name="config-headers" type="xsd:string"/>        
         <xsd:attribute name="config-formats" type="xsd:string"/>
+        <xsd:attribute name="period" type="xsd:string"/>
     </xsd:complexType>
 </xsd:element>
         
@@ -469,6 +470,7 @@
         <xsd:attribute name="config-headers" type="xsd:string"/>        
         <xsd:attribute name="config-formats" type="xsd:string"/>
         <xsd:attribute name="visible-binding" type="lib:expression"/>
+        <xsd:attribute name="period" type="xsd:string"/>
     </xsd:complexType>
 </xsd:element>
 

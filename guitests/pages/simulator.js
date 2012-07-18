@@ -42,11 +42,11 @@ simulator.expressionevent.prototype.unregist = function(){
 simulator.initializer = function(tag ,start , stop){
     
   this.tag = tag;
-  if (start || start==0){
+  //if (start || start==0){
       this.valid = true;
       this.start = start;
-  }
-  if (stop || stop==0)
+  //}
+  //if (stop || stop==0)
         this.stop = stop;
   if (this.valid){
       this.atach();
@@ -54,13 +54,14 @@ simulator.initializer = function(tag ,start , stop){
 }
 
 simulator.initializer.prototype.atach = function(){
-    window.$$((this.tag + ' @ ' + this.start).toString())
+    if (this.valid && (this.start || this.start==0 || this.start===null)) {
+       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
 }
 
 
 simulator.initializer.prototype.detach = function(){
-    if (this.valid && (this.stop || this.stop==0)){
-       window.$$((this.tag + ' @ ' + this.stop).toString());}
+    if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
+       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
 }
 
 simulator.initializer.prototype.execute = function(){
@@ -76,24 +77,24 @@ simulator.valueobserver = function(tag ,start , source ,stop){
       this.valid = true;
       this.source = source;
   }
-  if (start || start==0)
-        this.start = start;
-  if (stop || start==0)
-        this.stop = stop;    
+  //if (start || start==0)
+  this.start = start;
+  //if (stop || start==0)
+  this.stop = stop;    
   if (this.valid){
       this.atach();
   }     
 }
 
 simulator.valueobserver.prototype.atach = function(){
-    if (this.valid && (this.start || this.start==0))
-       $$(this.tag + ' @ ' + this.start);
+    if (this.valid && (this.start || this.start==0 || this.start===null)) {
+       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
 }
 
 
 simulator.valueobserver.prototype.detach = function(){
-    if (this.valid && (this.stop || this.stop==0))
-       $$(this.tag + ' @ ' + this.stop)
+    if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
+       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
 }
 
 simulator.valueobserver.prototype.execute = function(){
@@ -113,9 +114,9 @@ simulator.booldelayer = function(tag ,start , source ,stop, onvalue, offvalue, o
   }
   this.ontimeout = ontimeout ? ontimeout : 1000;
   this.offtimeout = offtimeout ? offtimeout : 1000;
-  if (start || start==0)
+  //if (start || start==0)
         this.start = start;
-  if (stop || start==0)
+  //if (stop || start==0)
         this.stop = stop;    
   if (this.valid){
       this.atach();
@@ -132,14 +133,14 @@ simulator.booldelayer.prototype.atach = function(){
         this.sourceset = new simulator.expressionevent(this.sourcehandler , this.source, this);
     }
     
-    if (this.valid && (this.start || this.start==0))
-       $$(this.tag + ' @ ' + this.start);
+    if (this.valid && (this.start || this.start==0 || this.start===null)) {
+       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
 }
 
 
 simulator.booldelayer.prototype.detach = function(){
-    if (this.valid && (this.stop || this.stop==0))
-       $$(this.tag + ' @ ' + this.stop)
+    if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
+       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
     if (this.sourcehandler && this.sourceset)
         this.sourceset.unregist();
 }
@@ -167,9 +168,9 @@ simulator.differeciator = function(tag ,start , source ,stop){
       this.valid = true;
       this.source = source;
   }
-  if (start || start==0)
+  //if (start || start==0)
         this.start = start;
-  if (stop || start==0)
+  //if (stop || start==0)
         this.stop = stop;    
   if (this.valid){
       this.atach();
@@ -178,8 +179,8 @@ simulator.differeciator = function(tag ,start , source ,stop){
 
 simulator.differeciator.prototype.atach = function(){
  
-     if (this.valid && (this.start || this.start==0))
-       $$(this.tag + ' @ ' + this.start);
+    if (this.valid && (this.start || this.start==0 || this.start===null)) {
+       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
  
     var ts = this;
     
@@ -189,8 +190,8 @@ simulator.differeciator.prototype.atach = function(){
 
 
 simulator.differeciator.prototype.detach = function(){
-    if (this.valid && (this.stop || this.stop==0))
-       $$(this.tag + ' @ ' + this.stop)
+    if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
+       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
     if (this.diffhandler && this.diffset)
         //window.removeExpressionListener( this.autohandler);
         this.diffset.unregist();    
@@ -202,7 +203,7 @@ simulator.differeciator.prototype.execute = function(){
 
 simulator.differeciator.prototype.diffevent = function(event){
     var ts = this;
-    if (event.expression==this.source){
+    if (event.valid){
        setTimeout(function(){$$(ts.tag + ' @ ' + event.value);},0);
        //console.log(this.tag,event.value);
         }      
@@ -272,9 +273,9 @@ simulator.inertial_differeciator = function(tag,  period ,start , source ,stop, 
   this.count = count ? count : 7;
   var dt = new Date();
   this.lasttime = dt.getTime() + 0;
-  if (start || start==0)
+  //if (start || start==0)
         this.start = start;
-  if (stop || start==0)
+  //if (stop || start==0)
         this.stop = stop;    
   if (this.valid){
       this.atach();
@@ -332,8 +333,8 @@ simulator.inertial_differeciator.prototype.set= function(){
 
 simulator.inertial_differeciator.prototype.atach = function(){
  
-     if (this.valid && (this.start || this.start==0))
-       $$(this.tag + ' @ ' + this.start);
+    if (this.valid && (this.start || this.start==0 || this.start===null)) {
+       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
  
     var ts = this;
     
@@ -343,8 +344,8 @@ simulator.inertial_differeciator.prototype.atach = function(){
 
 
 simulator.inertial_differeciator.prototype.detach = function(){
-    if (this.valid && (this.stop || this.stop==0))
-       $$(this.tag + ' @ ' + this.stop)
+    if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
+       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
     if (this.diffhandler && this.diffset)
         this.diffset.unregist();
 }
@@ -361,7 +362,7 @@ simulator.inertial_differeciator.prototype.execute = function(){
 }
 
 simulator.inertial_differeciator.prototype.diffevent = function(event){
-    if (event.expression==this.source && event.valid){       
+    if (event.valid){       
        this.value = event.value;}      
 }
 
@@ -369,13 +370,13 @@ simulator.inertial_differeciator.prototype.diffevent = function(event){
 
 // simulator.valvle
 simulator.valve_init  = function(state, on, off, don, doff, ron, roff, timeopen, timeclose , auto){
-   if (on) add_simulation ( new simulator.initializer(on , state==1 ? 1 : 0 , 0));
-   if (off) add_simulation ( new simulator.initializer(off , state==2 ? 1 : 0 , 0));
-   if (don) add_simulation ( new simulator.initializer(don , 0 , 0));
-   if (doff) add_simulation ( new simulator.initializer(doff , 0 , 0));
-   if (ron) add_simulation ( new simulator.initializer(ron , 0 , 0));
-   if (roff) add_simulation ( new simulator.initializer(roff , 0 , 0));
-   if (auto) add_simulation ( new simulator.initializer(auto , 0 , 0));
+   if (on) add_simulation ( new simulator.initializer(on , state==1 ? 1 : 0 , null));
+   if (off) add_simulation ( new simulator.initializer(off , state==2 ? 1 : 0 , null));
+   if (don) add_simulation ( new simulator.initializer(don , 0 , null));
+   if (doff) add_simulation ( new simulator.initializer(doff , 0 , null));
+   if (ron) add_simulation ( new simulator.initializer(ron , 0 , null));
+   if (roff) add_simulation ( new simulator.initializer(roff , 0 , null));
+   if (auto) add_simulation ( new simulator.initializer(auto , 0 , null));
    var valve_ = new simulator.valve(on, off  , don, doff , ron, roff , timeopen, timeclose );
    add_simulation (valve_);
    return valve_;
