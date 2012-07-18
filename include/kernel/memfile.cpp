@@ -996,6 +996,8 @@ namespace dvnci {
 
     void tagsbase::valid(size_type id, vlvtype vld) {
         if (exists(id)) {
+            if (!vld &&  alarmed(id) && operator[](id)->alarmon()) 
+                insert_to_alarms(id, false);
             operator[](id)->valid(vld);}}
 
     bool tagsbase::reportbuffered(size_type id) const {
@@ -1356,6 +1358,10 @@ namespace dvnci {
 
     void tagsbase::send_command(size_type id, const short_value& val , addcmdtype queue ,  bool setval,  size_type clid) {
         if (exists(id)) {
+            if (val.null()){
+                write_val(id, val);
+                return;
+            }
             switch (type(id)) {
                 case TYPE_TEXT:{
                     return;}
