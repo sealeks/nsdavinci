@@ -109,8 +109,8 @@ namespace dvnci {
                 map["seil"] = func_ceiling;
                 map["round"] = func_round;
                 map["e"] = const_e;
-                map["null"] = NULL_DOUBLE;
                 map["nan"] = NULL_DOUBLE;
+                map["null"] = const_null;
                 map["pi"] = const_pi;
                 map["incmsc"] = func_incmsc;
                 map["incsec"] = func_incsec;
