@@ -2510,8 +2510,6 @@ namespace dvnci {
 
 
 
-        // Ð Ñ”Ð Ñ•Ð Ð…Ð¡â€žÐ Ñ‘Ð Ñ–Ð¡Ñ“Ð¡Ð‚Ð Ñ‘Ð¡Ð‚Ð Ñ•Ð Ð†Ð Â°Ð Ð…Ð Ñ‘Ð Âµ Ð Â±Ð Â°Ð Â·Ð¡â€¹
-
         void texttagcnt(size_t val);
 
         void archtagcnt(size_t val);
@@ -2983,7 +2981,7 @@ namespace dvnci {
                 switch (groups()->appid(group(id))) {
                     case NS_GROUP_SYSTEM:
                     case NS_GROUP_SYSTEMVAR:{
-                        valid(id, FULL_VALID);
+                        //valid(id, FULL_VALID);
                         write_val<T > (id, val);
                         writetofile(id);
                         break;}

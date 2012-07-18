@@ -136,6 +136,9 @@ namespace dvnci {
         bool nan() const {
             return ((!type_) && (value<double>()!=value<double>()));}
         
+        bool null() const {
+            return ((!error_) && (!valid_));}
+        
          
 
     private:
