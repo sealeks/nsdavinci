@@ -1674,7 +1674,7 @@ libutil.trendchart.prototype.update_data =function (){
               if (this.element.chart.series[i].data[0].x< now){
                   var val = this.element.chart.series[i].data[0];
                   var valnext = (this.element.chart.series[i].data.length>1) ? this.element.chart.series[i].data[0] : null;
-                  var yval = (val.y!==null) && (valnext.y!==null) ? ((valnext.y + val.y) / 2) : val.y;
+                  var yval = (val.y!==null) && (valnext.y!==null) ? ((valnext.y/* + val.y*/)/* / 2*/) : val.y;
                   val.x= now;
                   val.y= yval;
                   this.element.chart.series[i].data[0].update(val);}                               
@@ -1705,26 +1705,38 @@ return updated;
 
 libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
     val[0]=val[0].valueOf();
-
+    if (val[1]!=val[1])
+        val[1]=null;
     if (init){
         var now = this.currentStart();
         if (now<val[0]){
-            this.add_nullperiod({
-                start : now , 
-                stop : val[0]
-                });
+            if (val[1]===null){
             arr.push({
                 x : now, 
                 y : null
             });
-            this.null_lines.push({time : val[0] ,
-                                  color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
+            this.current_null_periods_change=true;
+            this.null_datastate[i]=now;
+            this.current_null_periods ={
+                'start' : now, 
+                'counter' : 1
+            };  
+            this.current_null_periods_change=true;}
+        else
+          {
+            arr.push({
+                x : now, 
+                y : val[1]
+            });            
+        }}
+    else{
+         val[0]=now;    
         }
     }  
     
     if (!this.null_datastate[i] && (val[1]===null)){
         
-        this.null_datastate[i]=this.last_datastate[i] ? this.last_datastate[i] : val[0];
+        this.null_datastate[i]=/*this.last_datastate[i] ? this.last_datastate[i] :*/ val[0];
         
         this.null_lines.push({time : this.null_datastate[i] ,
                                color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
@@ -1741,11 +1753,18 @@ libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
             if ((!arr) && (this.null_datastate[i] < this.current_null_periods.start)){
                 
                 this.current_null_periods.start =  this.null_datastate[i];
-                //console.log('add nullcouter this case' +this.current_null_periods.counter)
+                console.log('add nullcouter this case' +this.current_null_periods.counter)
             }   
             this.current_null_periods.counter += 1;}
+        
         this.current_null_periods_change=true;
-        //console.log('add nullcouter: ' +this.current_null_periods.counter)
+        if (this.serias_lastvalue[i]!==null && arr){
+            arr.push({
+                x : val[0]-1, 
+                y : this.serias_lastvalue[i]
+            });
+        } 
+        console.log('new nullperiod: ' +new Date(this.null_datastate[i], val[1]))
          
     }
     else{
@@ -1759,6 +1778,7 @@ libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
                 start : this.null_datastate[i] , 
                 stop : val[0]
                 })
+                //console.log('add nullperiod: ',new Date(this.null_datastate[i]),new Date(val[0]));
             this.null_datastate[i]=null;
             if ((this.current_null_periods!=null)){
                 this.current_null_periods.counter-=1;
@@ -1771,6 +1791,8 @@ libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
             this.current_null_periods_change=true;
     } 
 }
+if (val[1]!==null)
+    this.serias_lastvalue[i]=val[1];
 this.last_datastate[i]=val[0];
 if (arr) 
     arr.push({
@@ -1800,7 +1822,7 @@ libutil.trendchart.prototype.addBound =function (){
         this.chart.xAxis[0].addPlotLine({
                        value : this.null_lines[i].time , 
                        width : 1,
-                       color : this.null_lines[i].color});
+                       color : /*this.null_lines[i].color*/'#EEE'});
     } 
     //this.current_null_periods_change=false;
 }
@@ -1905,14 +1927,15 @@ libutil.trendchart.prototype.execute = function(ev) {
                         renderTo: elem.id ,
                         defaultSeriesType: this.defaultseriestype,
                         backgroundColor: this.backgroundcolor,
-                        animation: this.animation
+                        animation: this.animation//,
+                        //type: 'spline'
                         
 
                     },
 
                     title: {
                         text:  this.title,
-                        style:{ 'font-size' : '11px'},
+                        style:{'font-size' : '11px'},
                         align: 'left',
                         x: 5,
                         verticalAlign: 'top',

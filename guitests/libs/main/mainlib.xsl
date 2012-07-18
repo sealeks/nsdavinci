@@ -3858,6 +3858,17 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:call-template name="apply_id"/>
             
             <xsl:call-template name="apply_mlib_schema"/>
+
+            <xsl:attribute name="period">            
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@period)='')"> 
+                        <xsl:value-of select="@period"/>
+                    </xsl:when>  
+                    <xsl:otherwise>
+                        <xsl:text>600</xsl:text>
+                    </xsl:otherwise>                
+                </xsl:choose> 
+            </xsl:attribute>
             
             <xsl:call-template name="apply_rect"/>
             
@@ -6166,6 +6177,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <g>  
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:attribute name="period">            
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(@period)='')"> 
+                        <xsl:value-of select="@period"/>
+                    </xsl:when>  
+                    <xsl:otherwise>
+                        <xsl:text>600</xsl:text>
+                    </xsl:otherwise>                
+                </xsl:choose> 
+            </xsl:attribute> 
             <xsl:call-template name="apply_svg_g_visible_binding"/> 
             <xsl:call-template name="apply_title">
                 <xsl:with-param name="title" select="@header"/>

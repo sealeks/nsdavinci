@@ -527,7 +527,7 @@ mainlib.valueset_click =  function (el, nm, width){
         el.popup.setAttribute('style', '');
         okbutton.onclick = function(){
             $$(tag + ' @ ' + text.textContent);
-            if (el.popup.trpopup && el.popup.trpopup.clearpopup) el.popup.trpopup.clearpopup(); };
+            if (el.popup.trpopup && el.popup.trpopup.clearpopup) el.popup.trpopup.clearpopup();};
         return;
     }
     
@@ -537,7 +537,7 @@ mainlib.valueset_click =  function (el, nm, width){
    
         var body = mainlib.get_popupbody(el,width,parseFloat(width)* 2.05, 
                                          el.needofsetrect ? function() {
-                                             if (el.popup) {el.popup.setAttribute('style', 'display: none;');okbutton.onclick = undefined; el.oldpopup= el.popup;el.popup=undefined;}} : null, 
+                                             if (el.popup) {el.popup.setAttribute('style', 'display: none;');okbutton.onclick = undefined;el.oldpopup= el.popup;el.popup=undefined;}} : null, 
                                          el.needofsetrect);
        
         
@@ -547,7 +547,7 @@ mainlib.valueset_click =  function (el, nm, width){
         if (!body){
             okbutton.onclick = function(){
             $$(tag + ' @ ' + text.textContent);
-            if (el.popup.trpopup.clearpopup && el.popup.trpopup.clearpopup) el.popup.trpopup.clearpopup(); };
+            if (el.popup.trpopup.clearpopup && el.popup.trpopup.clearpopup) el.popup.trpopup.clearpopup();};
         return;
         } 
             
@@ -560,7 +560,7 @@ mainlib.valueset_click =  function (el, nm, width){
         if (el.popup.trpopup){
             el.popup.trpopup.clearpopup = function(){
                 if (el.needofsetrect){
-                   if (el.popup) {el.popup.setAttribute('style', 'display: none;'); el.oldpopup= el.popup;el.popup=undefined;okbutton.onclick = undefined;}}
+                   if (el.popup) {el.popup.setAttribute('style', 'display: none;');el.oldpopup= el.popup;el.popup=undefined;okbutton.onclick = undefined;}}
                 else {
                     el.popup.setAttribute('style', 'display: none;');okbutton.onclick = undefined;}
                 }
@@ -577,7 +577,7 @@ mainlib.valueset_click =  function (el, nm, width){
         use.setAttributeNS("http://www.w3.org/1999/xlink",'href','#'+popupid  + '_popup');
         okbutton.onclick = function(){
             $$(tag + ' @ ' + text.textContent);
-            if (el.popup.trpopup.clearpopup && el.popup.trpopup.clearpopup) el.popup.trpopup.clearpopup(); };
+            if (el.popup.trpopup.clearpopup && el.popup.trpopup.clearpopup) el.popup.trpopup.clearpopup();};
         
         
         
@@ -685,6 +685,8 @@ mainlib.graph_click =  function (el, nm, color){
 
     var elementId =  el.getAttribute('id');
     
+    var period = (el.hasAttribute('period') && (parseInt(el.getAttribute('period'))==parseInt(el.getAttribute('period')))) ? parseInt(el.getAttribute('period')) : 600;
+    
     if (!color) color='red';
     
     var body = mainlib.get_staticpopupbody(el,mainlib.CHART_WIDTH,mainlib.CHART_HEIGHT, 
@@ -725,7 +727,7 @@ mainlib.graph_click =  function (el, nm, color){
 
     script.textContent="new libutil.trendchart('"+elementId + '_popup_graph'+"','"+
                                                          elementId + '_popup_body'+
-                                                         "', "+"['"+nm+"'], 600, ['"+color+"','green','blue','#880'], " + 
+                                                         "', "+"['"+nm+"'], "+period.toString()+", ['"+color+"','green','blue','#880'], " + 
                                                          (mainlib.CHART_WIDTH - 2* mainlib.CHART_PADDING) + ", " +
                                                          (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ (title ? ", 5 , { title: '"+title+"',background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})" : ", 5 , {background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})");
            
@@ -736,11 +738,13 @@ mainlib.graph_click =  function (el, nm, color){
 mainlib.regulator_click =  function (el, smp){
 
     var elementId =  el.getAttribute('id');
+    
+    var period = (el.hasAttribute('period') && (parseInt(el.getAttribute('period'))==parseInt(el.getAttribute('period')))) ? parseInt(el.getAttribute('period')) : 600;
      
     var createchart = function() {
         var chartdiv = document.getElementById(elementId + '_popup_graph');
         if (chartdiv){
-            var period = el.getAttribute('period').valueOf() ?    el.getAttribute('period').valueOf() : 600;
+            //var period = el.getAttribute('period').valueOf() ?    el.getAttribute('period').valueOf() : 600;
             el.popup.chart = new libutil.trendchart(elementId + '_popup_graph',
                                                     elementId + '_chart_background',eval(el.getAttribute('charts')),period, eval(el.getAttribute('colors')) ,240, 145, 5,  
                                                     {background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]});
