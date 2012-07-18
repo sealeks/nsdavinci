@@ -120,6 +120,7 @@ namespace dvnci {
             const_pi = 1057,
             const_nan = 1059,
             const_now = 1061,
+            const_null = 1063,
             oprt_selector = 1052, // .  1
             oprt_caseleftgroup = 1058, // [
             oprt_caserightgroup = 1060, // ]
@@ -413,6 +414,9 @@ namespace dvnci {
             bool isnan() const {
                 return (((operation_ == constant) && (num64_and_type_cast<double>(value(), type()) !=
                         num64_and_type_cast<double>(value(), type()))));}
+            
+            bool isnull() const {
+                return ((operation_ == constant) && (!iserror()) && (!valid()));}            
 
             bool isnumber() const {
                 return ((operation_ == expr) && (operation_ == constant));}
@@ -885,6 +889,11 @@ namespace dvnci {
                             case const_nan:{
                                 calcstack.push(calc_token(NULL_DOUBLE));
                                 break;}
+                            case const_null:{
+                                calc_token tmp = calc_token(0);
+                                tmp.valid(0);
+                                calcstack.push(tmp);
+                                break;}                            
                             case const_pi:{
                                 calcstack.push(calc_token(DV_PI_CONST));
                                 break;}
@@ -1023,14 +1032,14 @@ namespace dvnci {
                                         calcstack.pop();
                                         break;}
                                     calc_token rsideit = prepareitem(calcstack.top());
-                                    if (rsideit.valid() < FULL_VALID) {
-                                        //calcstack.pop();
+                                    if (rsideit.error()) {
+                                        calcstack.pop();
                                         calcstack.pop();
                                         break;}
                                     calcstack.pop();
                                     if ((intf) && (!calcstack.top().isnan()) && (calcstack.top().id() != npos)) {
-                                        if ((rsideit.valid() == FULL_VALID) && (!testmode())) {
-                                            intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), FULL_VALID),
+                                        if (!testmode()) {
+                                            intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), rsideit.valid(), rsideit.error()),
                                                     ((it->operation() == oprt_command) || (it->operation() == oprt_commandset))  ? acQueuedCommand :
                                                     (((it->operation() == oprt_command1) || (it->operation() == oprt_commandset1))  ? acNewCommand : acNullCommand),
                                                     ((it->operation() == oprt_commandset) || (it->operation() == oprt_commandset1) || (it->operation() ==  acNullCommand)));}
