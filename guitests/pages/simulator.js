@@ -983,9 +983,9 @@ simulator.actuator.prototype.tickevent = function(event){
 
 simulator.actuator.prototype.execute = function(){
 var ts=this;
-var pos__=$$(ts.pos);
-if (this._sp==0 && pos__>5)
-console.log('sp  == 0',this.sp)
+//var pos__=$$(ts.pos);
+//if (this._sp==0 && pos__>5)
+//console.log('sp  == 0',this.sp)
 if (this._diff){
     var df=this.sp +' @ (&'+this.sp+'+ '+this._diff + ')';
     $$(df);
@@ -1126,7 +1126,7 @@ simulator.regulator.prototype.autoevent = function(event){
                 setTimeout(function(){ts.actuator.normalize()},1);
             }
             else{              
-                setTimeout(function(){console.log('to auto',$$(ts.diff));ts.diffevent({expression : ts.diff, value: $$(ts.diff), valid: 100 })},1);
+                setTimeout(function(){$$(ts.diff, function(){ts.diffevent({expression : ts.diff, value: event.value, valid: 100 });})},1);
             }    
     }
         this.autostate = event.value;
