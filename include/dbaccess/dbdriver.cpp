@@ -32,7 +32,7 @@ namespace database {
                             tmp.eu = row.get<std::string > (3); //  iname
                             tmp.mineu = row.get<double>(4); //  mineu
                             tmp.maxeu = row.get<double>(5); //  maxeu
-                            tmp.type = static_cast<onum> (row.get<double>(6)); //  type
+                            tmp.type = static_cast<onum> (row.get<int>(6)); //  type
                             tmp.onmsg = (row.get<int>(7) != 0); //  onmsg
                             tmp.offmsg = (row.get<int>(8) != 0); //  offmsg
                             tmp.almsg = (row.get<int>(9) != 0); //  almsg

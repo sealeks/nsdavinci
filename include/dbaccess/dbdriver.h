@@ -14,6 +14,7 @@
 #include <kernel/templ.h>
 #include <kernel/error.h>
 #include <kernel/short_value.h>
+#include <kernel/mainstruct.h>
 
 #include <soci/soci.h>
 
@@ -61,6 +62,35 @@ namespace dvnci {
             bool        offmsg;
             bool        almsg;
             bool        logged;};
+            
+        struct resultheader_item {
+            indx        cod;
+            std::string name;
+            std::string comment;
+            std::string eu;
+            double      mineu;
+            double      maxeu;
+            ns_error    error;
+            friend bool operator<(const resultheader_item& ls,const resultheader_item& rs){
+                return ls.name < rs.name;}
+        };
+        
+        
+        typedef std::pair< resultheader_item, dt_val_map_ptr >                                                                  result_trend_pair;
+        
+        typedef std::pair< resultheader_item, dt_val_map_ptr >                                                                  result_trend_pair;
+        typedef std::map<resultheader_item,  dt_val_map_ptr, std::less<resultheader_item>, std::allocator<result_trend_pair > > result_trend_pair_map;
+        
+        
+        typedef std::pair< std::string, int >                                                                                   sql_resultheader;
+        
+        typedef std::vector<sql_resultheader >                                                                                  sql_header_vect;        
+        typedef std::vector<str_vect >                                                                                          str_table;
+        typedef std::pair< sql_header_vect, str_table >                                                                         sql_result;
+        typedef boost::shared_ptr< sql_result >                                                                                 sql_result_ptr;        
+        
+        
+            
 
 
         typedef std::pair<std::string, trenddef_item > str_trenddef_pair;
@@ -169,11 +199,20 @@ namespace dvnci {
                       if (base->exists(i)) {
                          short_value minval = base->mineu_shv(i);
                          short_value maxval = base->maxeu_shv(i);
-                         trenddef_item itmtmp = {i, base->name(i), base->comment(i), base->eu(i),  minval.value<double>(),maxval.value<double>(),
+                         trenddef_item itmtmp = {i, base->name(i), base->comment(i), base->eu(i) ,  minval.value<double>(),maxval.value<double>(),
                             base->type(i), base->onmsged(i), base->offmsged(i), base->alarmed(i), base->logged(i)};
                          tmpmap.insert(str_trenddef_pair(base->name(i) , itmtmp));}}
 
                  return insert_trendef_impl(tmpmap) ? 0 : NS_ERROR_NODEF;}
+            
+            bool select(const std::string& req, sql_result& result){
+                return select_impl(req, result);}
+            
+            bool select_journal(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_journal_row& result){
+                return select_journal_impl(start, stop, filter, result);}   
+            
+            bool select_debug(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_debug_row& result){
+                return select_debug_impl(start, stop, filter, result);}            
 
             //отчетная статистика по параметру  на основе данных по отчетам
 
@@ -228,7 +267,7 @@ namespace dvnci {
             state_connection state_;
             soci::session    sql;
             dbtableset_set   tables_;
-            date_tame_vect   res;
+            indx_vect        res;
 
             virtual bool getmeta() = 0;
 
@@ -268,6 +307,12 @@ namespace dvnci {
 
             virtual bool insert_osc_impl(const dvnci::datetime& tm, num32 id, num32 delt) {
                 return false;};
+                
+            virtual bool select_impl(const std::string& req, sql_result& result) = 0;
+            
+            virtual bool select_journal_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_journal_row& result) = 0; 
+            
+            virtual bool select_debug_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_debug_row& result) = 0;          
 
             virtual bool select_lastreporttime_impl(num32 id, num32 type, dvnci::datetime& tm) = 0;
 

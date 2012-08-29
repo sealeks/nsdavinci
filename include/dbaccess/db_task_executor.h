@@ -2,7 +2,7 @@
  * File:   db_task_executor.h
  * Author: Serg
  *
- * Created on 17 Август 2010 г., 12:22
+ * Created on 17 РђРІРіСѓСЃС‚ 2010 Рі., 12:22
  */
 
 #ifndef DB_TASK_EXECUTOR_H
@@ -18,91 +18,281 @@
 namespace dvnci {
     namespace database {
 
-        template <typename ResolveHandler>
-        struct db_task_unit {
-
-            db_task_unit() {};
-
-            db_task_unit(std::string tag_, dvnci::onum type_, dvnci::datetime starttime_,
-                    dvnci::datetime stoptime_, ResolveHandler * handler_) : tag(tag_), type(type_), starttime(starttime_), stoptime(stoptime_), handler(handler_) {};
-            std::string tag;
-            dvnci::onum type;
-            dvnci::datetime starttime;
-            dvnci::datetime stoptime;
-            ResolveHandler*  handler;} ;
-
-        template <typename ResolveHandler>
-        class db_task_executor : public dvnci::executable {
-            typedef typename std::deque<db_task_unit<ResolveHandler> > taskdeque;
-            
-            //static const size_t READBUFFERSIZE = 100;
-
+        class root_db_task {
         public:
 
-            db_task_executor(dvnci::num32 provider_type, std::string constr) : dvnci::executable() {
-                provider = provider_type;
-                connectstring = constr;}
+            root_db_task() {};
 
-            virtual ~db_task_executor() {};
+            ~root_db_task() {};
+            virtual bool execute() = 0;
 
-            void addtask(std::string tag_, dvnci::onum type_, dvnci::datetime starttime_,
-                    dvnci::datetime stoptime_, ResolveHandler* handler_) {
-                THD_EXCLUSIVE_LOCK(mtx);
-                DEBUG_STR_DVNCI(add report task)
-                db_task_unit<ResolveHandler> task(tag_, type_, starttime_, stoptime_, handler_);
-                tasks.push_back(task);}
+            dvnci::ns_error error() const {
+                return error_;}
 
-            bool gettask(db_task_unit<ResolveHandler>& task) {
-                THD_EXCLUSIVE_LOCK(mtx);
-                if (tasks.empty()) return false;
-                DEBUG_STR_DVNCI(get report task)
-                task = tasks.front();
-                tasks.pop_front();
+            void error(dvnci::ns_error val) {
+                error_ = val;}
+
+        protected:
+            dvnci::ns_error error_;} ;
+
+        typedef boost::shared_ptr<root_db_task>          root_db_task_ptr;
+
+        template<typename VALUETYPE>
+        class template_db_task : public root_db_task {
+        public:
+
+            typedef VALUETYPE    valuetype;
+
+            template_db_task() : root_db_task() {}
+
+            virtual void event(const valuetype& val, dvnci::ns_error error) = 0;
+
+            virtual bool execute() {
+                event(value_, error_);
                 return true;}
 
-            virtual bool operator()() {
-                db_task_unit<ResolveHandler> temp_task;
-                while (!terminated()) {
-                    boost::xtime xt_loop;
-                    if (init()) {
-                        if (gettask(temp_task)) {
-                            dvnci::dt_val_map datamap;
-                            datamap.clear();
-                            if (temp_task.handler) {
-                                THD_EXCLUSIVE_LOCK(temp_task.handler->mtx);
-                                if (dbdriver->select_report(0, temp_task.type, temp_task.starttime, temp_task.stoptime, datamap)) {
-                                    temp_task.handler->report_executed(temp_task.tag, datamap);}
-                                else
-                                    temp_task.handler->report_executed(temp_task.tag, datamap);}}
-                        addmillisec_to_now(xt_loop, 100);}
-                    else
-                        addmillisec_to_now(xt_loop, 1000);
-                    boost::thread::sleep(xt_loop);}
-                uninit();
+            virtual bool set(const valuetype& val) {
+                value_ = val;
                 return true;}
 
         protected:
+            valuetype       value_;} ;
+            
+        class db_task_executor;   
 
-            virtual bool initialize() {
-                dbdriver = bdconnectionfactory::build(provider, connectstring);
-                if (!dbdriver) return false;
-                dbdriver->connect();
-                if (!dbdriver->isconnected()) return false;
-                return true;}
+        class connect_db_task : public template_db_task<str_trenddef_map> {
+        public:
 
-            virtual bool uninitialize() {
-                if (dbdriver) {
-                    if (dbdriver->isconnected()) dbdriver->disconnect();}
-                return true;}
+            connect_db_task(num32 provider, const std::string& connectstring, bool trenddef = false, num32 timeout = 15) : template_db_task<str_trenddef_map>(),
+            provider_(provider), connectstring_(connectstring), trenddef_(trenddef), timeout_(timeout), executor_(0) {};
+
+            num32 provider() const {
+                return provider_;}
+
+            std::string connectstring() const {
+                return connectstring_;}
+            
+            bool trenddef() const {
+                return trenddef_;}            
+
+            num32 timeout() const {
+                return timeout_;}
+            
+            db_task_executor* executor() const {
+                return executor_;}            
+           
+            void executor(db_task_executor* val) {
+                executor_=val;}               
+
+        private:
+
+            num32 provider_;
+            std::string connectstring_;
+            bool trenddef_;
+            num32 timeout_;
+            db_task_executor* executor_;
+} ;
+
+        typedef boost::shared_ptr<connect_db_task>          connect_db_task_ptr;
+
+        class disconnect_db_task : public template_db_task<bool> {
+        public:
+
+            disconnect_db_task() : template_db_task<bool>() {};} ;
+
+        typedef boost::shared_ptr<disconnect_db_task>          disconnect_db_task_ptr;
+        
+        
+        
+        
+
+        class trend_db_task : public template_db_task<result_trend_pair_map> {
+        public:
+
+            trend_db_task(const str_set& tags, dvnci::datetime start,
+                    dvnci::datetime stop) : template_db_task<result_trend_pair_map>(), tags_(tags), start_(start), stop_(stop) {};
+
+            const str_set& tags() const {
+                return tags_;}
+
+            dvnci::datetime start() const {
+                return start_;}
+
+            dvnci::datetime stop() const {
+                return stop_;}
+
+        private:
+            str_set tags_;
+            dvnci::datetime start_;
+            dvnci::datetime stop_;} ;
+
+        typedef boost::shared_ptr<trend_db_task>          trend_db_task_ptr;
+        
+        
+        class report_db_task : public template_db_task<result_trend_pair_map> {
+        public:
+
+            report_db_task(const str_set& tags, dvnci::datetime start,
+                    dvnci::datetime stop) : template_db_task<result_trend_pair_map>(), tags_(tags), start_(start), stop_(stop) {};
+
+            const str_set& tags() const {
+                return tags_;}
+
+            dvnci::datetime start() const {
+                return start_;}
+
+            dvnci::datetime stop() const {
+                return stop_;}
+
+        private:
+            str_set tags_;
+            dvnci::datetime start_;
+            dvnci::datetime stop_;} ;
+
+        typedef boost::shared_ptr<report_db_task>          report_db_task_ptr;   
+        
+        
+        
+        
+        class select_db_task : public template_db_task<sql_result_ptr> {
+        public:
+
+            select_db_task(const std::string& req) : template_db_task<sql_result_ptr>(), req_(req) {};
+
+            const std::string& req() const {
+                return req_;}
+
+        private:
+            std::string req_;} ;
+
+        typedef boost::shared_ptr<select_db_task>          select_db_task_ptr;
+        
+        
+        
+        
+        class select_db_journal_task : public template_db_task<vect_journal_row_ptr> {
+        public:
+
+            select_db_journal_task(dvnci::datetime start, dvnci::datetime stop, const std::string& filter = "") : 
+            template_db_task<vect_journal_row_ptr>(), start_(start), stop_(stop), filter_(filter) {};
+
+            dvnci::datetime start() const {
+                return start_;}
+
+            dvnci::datetime stop() const {
+                return stop_;}            
+              
+            const std::string& filter() const {
+                return filter_;}
+
+        private:
+            dvnci::datetime start_;
+            dvnci::datetime stop_;            
+            std::string filter_;} ;
+
+        typedef boost::shared_ptr<select_db_journal_task>          select_db_journal_task_ptr;         
+        
+        
+        class select_db_debug_task : public template_db_task<vect_debug_row_ptr> {
+        public:
+
+            select_db_debug_task(dvnci::datetime start, dvnci::datetime stop, const std::string& filter = "") : 
+                  template_db_task<vect_debug_row_ptr>(), start_(start), stop_(stop), filter_(filter) {};
+
+            dvnci::datetime start() const {
+                return start_;}
+
+            dvnci::datetime stop() const {
+                return stop_;}           
+            
+            const std::string& filter() const {
+                return filter_;}
+
+        private:
+            dvnci::datetime start_;
+            dvnci::datetime stop_;            
+            std::string filter_;} ;
+
+        typedef boost::shared_ptr<select_db_debug_task>          select_db_debug_task_ptr;         
+        
+        
+        
+
+        class db_task_executor : public dvnci::executable {
+            
+            typedef std::deque<root_db_task_ptr>              root_db_task_deq;
+            typedef root_db_task_deq::iterator                root_db_task_iterator;
+            typedef std::deque<trend_db_task_ptr>             trend_db_task_deq;
+            typedef std::deque<report_db_task_ptr>            report_db_task_deq;
+            typedef std::deque<select_db_task_ptr>            select_db_task_deq; 
+            typedef std::deque<select_db_journal_task_ptr>    select_db_journal_task_deq;
+            typedef std::deque<select_db_debug_task_ptr>      select_db_debug_task_deq;            
+
+        public:
+
+            static const dvnci::ns_error SUCCESS = 0;
+            static const dvnci::ns_error NOCONNECT = 100;
+            static const dvnci::ns_error NOTRENDEF = 200;
+            static const dvnci::ns_error NOINDEX = 300;
+
+            db_task_executor(connect_db_task_ptr conntask) : dvnci::executable(),
+            conntask_(conntask), createtime_(now()), connecting_(true)  {}
+
+            bool insert_trend_task(trend_db_task_ptr val);
+            
+            bool insert_report_task(report_db_task_ptr val); 
+            
+            bool insert_select_task(select_db_task_ptr val); 
+            
+            bool insert_journal_task(select_db_journal_task_ptr val);
+            
+            bool insert_debug_task(select_db_debug_task_ptr val);              
+
+            virtual bool operator()();
+
+            bool call();
+            
+            bool disconnect();
+
+        protected:
+
+            virtual bool initialize();
+
+            virtual bool uninitialize();
+
+            bool execute_trend_task();
+            
+            bool execute_report_task();
+            
+            bool execute_select_task();
+            
+            bool execute_journal_task(); 
+            
+            bool execute_debug_task();           
+
+
+
         private:
 
             db_task_executor(const db_task_executor& orig) {};
 
-            dvnci::num32        provider;
-            std::string         connectstring;
-            dbdriver_ptr        dbdriver;
-            boost::mutex        mtx;
-            taskdeque           tasks;} ;}}
+            connect_db_task_ptr         conntask_;
+            dbdriver_ptr                dbdriver;
+            datetime                    createtime_;
+            volatile bool               connecting_;
+            boost::mutex                mtx;
+            str_trenddef_map            trenddef;
+            trend_db_task_deq           trend_tasks;
+            report_db_task_deq          report_tasks;
+            select_db_task_deq          select_tasks;
+            select_db_journal_task_deq  journal_tasks;
+            select_db_debug_task_deq    debug_tasks;            
+            root_db_task_deq            prepared_tasks;} ;
+
+        typedef callable_shared_ptr<db_task_executor>          db_task_executor_ptr;
+        
+        
+    }}
 
 #endif	/* DB_TASK_EXECUTOR_H */
 

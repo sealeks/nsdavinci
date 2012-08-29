@@ -66,6 +66,12 @@ namespace dvnci {
             bool insert_report_by_one_imp(num32 id, num32 type, const dt_val_map& values);
 
             virtual bool insert_report_impl(num32 id, num32 type, const dt_val_map& values);
+            
+            virtual bool select_impl(const std::string& req, sql_result& result);
+            
+            virtual bool select_journal_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_journal_row& result); 
+            
+            virtual bool select_debug_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_debug_row& result);             
 
             virtual bool select_lastreporttime_impl(num32 id, num32 type, dvnci::datetime& tm);
 
