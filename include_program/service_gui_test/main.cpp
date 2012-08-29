@@ -29,12 +29,13 @@ fspath                        basepath;
 
 class test_expression_listener : public expression_listener{
     public:
+		test_expression_listener() : expression_listener(false){}
         virtual void event(const short_value& val){
             std::cout << "event value =" << val.value<std::string>() << std::endl;};};  
             
 class test_alarm_listener : public alarms_listener{
     public:
-		test_alarm_listener() : alarms_listener("m1"){}
+		test_alarm_listener() : alarms_listener(){}
         virtual void event(const vect_alarms_row& val){
             std::cout << "alarm event size =" << val.size() << std::endl;
             for (vect_alarms_row::const_iterator it = val.begin(); it != val.end(); ++it) {
@@ -48,6 +49,16 @@ class test_journal_listener : public journal_listener{
             for (vect_journal_row::const_iterator it = val.begin(); it != val.end(); ++it) {
                 std::cout  << it->time << " " << it->tag << " " << it->text << " "<< std::endl;
             }};};     
+            
+class test_user_listener : public entety_listener {
+    public:
+        test_user_listener() : entety_listener(NT_USER){}
+        virtual void event(const iteminfo_map& val){
+            std::cout << "user info size =" << val.size() << std::endl;
+            for (iteminfo_map::const_iterator it = val.begin(); it != val.end(); ++it) {
+                std::cout  << it->first << "  name " << it->second.name()  << std::endl;
+            }};};            
+            
             
 class test_debug_listener : public debug_listener{
     public:
@@ -63,12 +74,14 @@ class test_trend_listener : public trend_listener{
         virtual void event(const short_values_table& val){
             //std::cout << "alarm event size =" << val.size() << std::endl;
             std::cout << "#############################"  << std::endl;
+			datetime ddd =now();
+			std::cout << "######## "  <<  dvnci::datetime_to_epoch_msc(ddd) << "######## "  <<  dvnci::datetime_to_epoch_msc_utc(ddd) << "##### "   <<  (dvnci::datetime_to_epoch_msc(ddd) - dvnci::datetime_to_epoch_msc_utc(ddd)) << std::endl;
             for (short_values_table::const_iterator it = val.begin(); it != val.end(); ++it) {
                     const short_values_row& row=*it;
                     std::cout << "--------------------------------"  << std::endl;
                     std::cout << "tag =" << row.first.first <<  " start =" << row.first.second << std::endl;
                     for (short_value_vect::const_iterator itval = row.second.begin(); itval != row.second.end(); ++itval) {                
-                            std::cout  << itval->time() << " - " << itval->value<std::string>() << std::endl;}
+                            std::cout  << local_to_utc( itval->time()) << " - " << itval->value<std::string>() << std::endl;}
             }};};    
                     
   typedef gui_executor<tagsbase >                                        test_gui_executor;
@@ -138,8 +151,9 @@ int main(int argc, char* argv[]){
   alarms_listener_ptr  lsnre = alarms_listener_ptr( new test_alarm_listener());
   journal_listener_ptr  lsnrj = journal_listener_ptr( new test_journal_listener());
   debug_listener_ptr  lsnrd = debug_listener_ptr( new test_debug_listener());
+  entety_listener_ptr  userlsnr = entety_listener_ptr( new test_user_listener());
   
-  trend_listener_ptr  lsnt = trend_listener_ptr( new test_trend_listener(tgs,100000));
+  trend_listener_ptr  lsnt = trend_listener_ptr( new test_trend_listener(tgs,30000));
   
   tagsbase_ptr kintf = dvnci::krnl::factory::build(basepath,  0);
   
@@ -151,11 +165,12 @@ int main(int argc, char* argv[]){
   
   //dynamic_cast<test_gui_executor*>(ex.operator->())->regist_expr_listener("r1::a", lsnr);
   //ex->regist_expr_listener("(m1::c4 ) ? '#motral' : ((m1::c3) ? '#motroff'  : ((m1::c2) ? '#motron'  : '#motranim')", lsnr1); 
-    //ex->regist_expr_listener("m1::c1", lsnr1);
+   // ex->regist_expr_listener("m::c1", lsnr1);
   // ex->regist_trend_listener(lsnt);
   //ex->regist_alarm_listener(lsnre); 
-  ex->regist_journal_listener(lsnrj);
+ // ex->regist_journal_listener(lsnrj);
   //ex->regist_debug_listener(lsnrd);
+    ex->regist_entety_listener(userlsnr);
   
 
 
