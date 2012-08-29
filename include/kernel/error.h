@@ -11,18 +11,21 @@
 #include <kernel/constdef.h>
 
 namespace dvnci {
+    
+    
+    //  < 0x100  предупреждения и уведомления
 
 
     // remote inf error
     const ns_error NS_ERROR_SUCCESS = 0;
     // неизвестная ошибка
-    const ns_error NS_ERROR_NODEF = 0x1;
+    const ns_error NS_ERROR_NODEF = 0x100;
     // не найден главный файл проекта
-    const ns_error NS_ERROR_MAPMEMORY = 0x3;
+    const ns_error NS_ERROR_MAPMEMORY = 0x300;
     // не найден главный файл проекта
-    const ns_error NS_ERROR_MAINFILENOTFOUND = 0x3;
+    const ns_error NS_ERROR_MAINFILENOTFOUND = 0x301;
     // некорректный ответ
-    const ns_error NS_ERROR_ERRRESP = 0x4;
+    const ns_error NS_ERROR_ERRRESP = 0x400;
     // ошибочная операция 
     const ns_error NS_ERROR_ENTITY_OPERATE = 0x10E;    
     // новый объект не может быть размещен в разделяемой памяти, необходим ремапинг объектов памяти
@@ -135,6 +138,35 @@ namespace dvnci {
     const ns_error ERROR_NO_DATABASE_CONN = 0x440;
     // ошибка при выполнении запроса с базой данных
     const ns_error ERROR_DATABASE_EXEC = 0x441;
+    
+    
+    // DATABASE error
+    
+    // нет соединения
+    const ns_error ERROR_DB_NOCONNECTION = 0x801; 
+    // разрыв соединения
+    const ns_error ERROR_DB_REFUSECONNECTION = 0x802;    
+    // неизвестная ошибка
+    const ns_error ERROR_DB_NODEF = 0x803;  
+    // провайдер не опредеолен или не поддерживается
+    const ns_error ERROR_DB_NOPROVIDER = 0x804;    
+    // ошибка авторизации
+    const ns_error ERROR_DB_AUTH = 0x806;
+    // неверный запрос
+    const ns_error ERROR_DB_SQLREQ = 0x808;
+    // нет файла описания
+    const ns_error ERROR_DB_NOTRENDDEF = 0x809; 
+    // не  найденн индекс для тега
+    const ns_error ERROR_DB_NOTRENDDEF = 0x80A;     
+    
+    
+    
+    inline ns_error dvn_error(const ns_error& val) {
+        return val > 0xFF ? val : 0;}
+    
+    inline ns_error dvn_warning(const ns_error& val) {
+        return val < 0x100 ? val : 0;}
+    
 
     class dvncierror;
 
