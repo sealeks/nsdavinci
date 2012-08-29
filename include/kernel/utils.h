@@ -487,9 +487,14 @@ namespace dvnci {
     //////////////////////////////////////////////////////////////////////////////////////
 
     datetime now();
-    datetime now_utc();
+    datetime now_local();
     datetime local_to_utc(const datetime& val);
+    datetime utc_to_local(const datetime& val);
+    boost::posix_time::time_duration time_zone_offset(const datetime& val);
+    double time_zone_hour_offset(const datetime& val);     
     num64 nownum64();
+    num64 nownum64_local();    
+    
     boost::xtime utc_now();
 
     boost::xtime utc_now_plus_millsec(timeouttype tmout);
