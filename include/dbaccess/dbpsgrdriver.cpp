@@ -7,6 +7,10 @@
 
 #include <dbaccess/dbpsgrdriver.h>
 
+#ifdef _MSC_VER
+ #include "soci-postgresql.h"
+#endif // _MSC_VER
+
 
 namespace dvnci {
 namespace database {
@@ -402,6 +406,186 @@ namespace database {
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);}
                     return false;}
+            
+            bool dbpsgrdriver::select_impl(const std::string& req_, sql_result& result) {
+            try {
+
+                std::string const& req = req_;
+
+                soci::rowset<soci::row> rs = (sql.prepare << req);
+                
+                bool wrhead =false;
+
+                for (soci::rowset<soci::row>::const_iterator it = rs.begin(); it != rs.end(); ++it) {
+                    
+                    soci::row const& row = *it;
+                    
+                    if (!wrhead){
+                        wrhead=true;
+                        for (std::size_t col = 0; col < row.size(); ++col)
+                           result.first.push_back(sql_resultheader(row.get_properties(col).get_name(),static_cast<int>(row.get_properties(col).get_data_type())));}
+
+                    str_vect tmprow;
+                    for (std::size_t col = 0; col < row.size(); ++col){
+                        if (row.get_indicator(col)==i_ok){
+                        switch (row.get_properties(col).get_data_type()){
+                                case dt_string: {tmprow.push_back(to_str(row.get<std::string>(col))); break;}
+                                case dt_date: {std::tm tmp=row.get<std::tm>(col);
+                                               tmprow.push_back(to_str(datetime(boost::gregorian::date(tmp.tm_year+1900,tmp.tm_mon,tmp.tm_mday),
+                                                       boost::posix_time::time_duration(tmp.tm_hour,tmp.tm_min,tmp.tm_sec)))); break;}
+                                case dt_double: {tmprow.push_back(to_str(row.get<double>(col))); break;}
+                                case dt_integer: {tmprow.push_back(to_str(row.get<int>(col))); break;}
+                                case dt_unsigned_long: {tmprow.push_back(to_str(row.get<unsigned long>(col))); break;}
+                                case dt_long_long:  {tmprow.push_back(to_str(static_cast<num64>(row.get<long long>(col)))); break;}
+                                default: {tmprow.push_back(""); break;}}}
+                        else
+                            tmprow.push_back("");}
+                    result.second.push_back(tmprow);}
+                return true;}
+            
+            catch (soci::soci_error const & e) {
+                DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
+                if (e.code() == LOOSING_CONNECTEON) raisdisconnect();
+                result.first.clear();
+                result.second.clear();
+                return false;}
+            catch (...) {
+                DEBUG_STR_DVNCI(UNDEFDBERROR);
+                result.first.clear();
+                result.second.clear();}
+            return false;}    
+            
+            
+            bool dbpsgrdriver::select_journal_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_journal_row& result){
+            try {
+                              
+                    str_set tabnameset;
+                    datetime tmptime = stop;
+                    
+                    while (tmptime > start) {
+                        std::string tn = dt_to_journaltabelname(tmptime);
+                        if (tableexist(tn)) tabnameset.insert(tn);
+                        incperiod(tmptime, dvnci::MONTH_TM, -1);}
+                    if ((dt_to_journaltabelname(tmptime) == dt_to_journaltabelname(start)) &&
+                            (tabnameset.find(dt_to_journaltabelname(start)) == tabnameset.end())) {
+                        if (tableexist(dt_to_journaltabelname(start))) tabnameset.insert(dt_to_journaltabelname(start));}
+
+                    if (tabnameset.empty()) {
+                        result.clear();
+                        return true;}
+
+                    std::string req_ = "select * from ";
+                    str_set::const_iterator it = tabnameset.begin();
+                    if (it != tabnameset.end()) {
+                        req_ = req_ + *it;
+                        ++it;
+                        while (it != tabnameset.end()) {
+                            req_ = req_ + " " + *it;
+                            ++it;}}
+                    else {
+                        result.clear();
+                        return true;}   
+                    
+                    req_ =req_ + " where  tm>=" + to_str<num64 > (castnum64_from_datetime(start)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stop));
+                    if (trim_copy(filter)!="") 
+                        req_ =req_ + " and (" +  trim_copy(filter) + ")";
+                    
+                    DEBUG_STR_DVNCI(req_);
+
+                    std::string const& req = req_;
+
+                    soci::rowset<soci::row> rs = (sql.prepare << req);
+
+                    for (soci::rowset<soci::row>::const_iterator it = rs.begin(); it != rs.end(); ++it) {
+                    
+                    soci::row const& row = *it;
+
+                    journal_row tmprow;
+                    tmprow.index = 0;//((row.get_indicator(0)==i_ok) && (row.size()>=0)) ?  static_cast<num64>(row.get<int>(0));
+                    tmprow.time = ((row.get_indicator(0)==i_ok) && (row.size()>=0)) ?  cast_datetime_fromnum64(row.get<num64>(0)) : nill_time;
+                    tmprow.tag = ((row.get_indicator(1)==i_ok) && (row.size()>=1)) ? row.get<std::string>(1) : "";    
+                    tmprow.text = ((row.get_indicator(2)==i_ok) && (row.size()>=2)) ?  row.get<std::string>(2) : "";
+                    tmprow.agroup = ((row.get_indicator(3)==i_ok) && (row.size()>=3)) ?  row.get<std::string>(3) : ""; 
+                    tmprow.type = ((row.get_indicator(4)==i_ok) && (row.size()>=4)) ?  static_cast<num64>(row.get<int>(4)) : 0;
+                    tmprow.level = ((row.get_indicator(5)==i_ok) && (row.size()>=5)) ?  static_cast<num64>(row.get<int>(5)) : 0;  
+                    tmprow.value = ((row.get_indicator(6)==i_ok) && (row.size()>=6)) ? row.get<std::string>(6) : "";    
+                    tmprow.user = ((row.get_indicator(7)==i_ok) && (row.size()>=7)) ?  row.get<std::string>(7) : "";
+                    
+                    result.push_back(tmprow);}                    
+
+                return true;}
+            
+            catch (soci::soci_error const & e) {
+                DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
+                if (e.code() == LOOSING_CONNECTEON) raisdisconnect();
+                result.clear();
+                return false;}
+            catch (...) {
+                DEBUG_STR_DVNCI(UNDEFDBERROR);
+                result.clear();}
+            return false;}
+            
+            bool dbpsgrdriver::select_debug_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_debug_row& result){
+            try {
+                
+                    str_set tabnameset;
+                    datetime tmptime = stop;
+                    
+                    while (tmptime > start) {
+                        std::string tn = dt_to_debugtabelname(tmptime);
+                        if (tableexist(tn)) tabnameset.insert(tn);
+                        incperiod(tmptime, dvnci::MONTH_TM, -1);}
+                    if ((dt_to_debugtabelname(tmptime) == dt_to_debugtabelname(start)) &&
+                            (tabnameset.find(dt_to_debugtabelname(start)) == tabnameset.end())) {
+                        if (tableexist(dt_to_debugtabelname(start))) tabnameset.insert(dt_to_debugtabelname(start));}
+
+                    if (tabnameset.empty()) {
+                        result.clear();
+                        return true;}
+
+                    std::string req_ = "select * from ";
+                    str_set::const_iterator it = tabnameset.begin();
+                    if (it != tabnameset.end()) {
+                        req_ = req_ + *it;
+                        ++it;
+                        while (it != tabnameset.end()) {
+                            req_ = req_ + " " + *it;
+                            ++it;}}
+                    else {
+                        result.clear();
+                        return true;} 
+                    
+                    req_ =req_ + " where  tm>=" + to_str<num64 > (castnum64_from_datetime(start)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stop));
+                    DEBUG_STR_DVNCI(req_);
+                    
+                    std::string const& req = req_;
+                    
+                    soci::rowset<soci::row> rs = (sql.prepare << req);
+
+                    for (soci::rowset<soci::row>::const_iterator it = rs.begin(); it != rs.end(); ++it) {
+                    
+                    soci::row const& row = *it;
+
+                    debug_row tmprow;
+                    tmprow.time = ((row.get_indicator(0)==i_ok) && (row.size()>=0)) ?  cast_datetime_fromnum64(row.get<num64>(0)) : nill_time; 
+                    tmprow.message = ((row.get_indicator(1)==i_ok) && (row.size()>=1)) ?  row.get<std::string>(1) : "";
+                    tmprow.appid = ((row.get_indicator(2)==i_ok) && (row.size()>=2)) ?  static_cast<num64>(row.get<int>(2)) : 0; 
+                    tmprow.level = ((row.get_indicator(3)==i_ok) && (row.size()>=3)) ?  static_cast<num64>(row.get<int>(3)) : 0;
+                    
+                    
+                    result.push_back(tmprow);}                     
+
+                return true;}
+            
+            catch (soci::soci_error const & e) {
+                DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
+                if (e.code() == LOOSING_CONNECTEON) raisdisconnect();
+                result.clear();
+                return false;}
+            catch (...) {
+                DEBUG_STR_DVNCI(UNDEFDBERROR);
+                result.clear();}
+            return false;}          
 
             bool dbpsgrdriver::select_lastreporttime_impl(num32 id, num32 type, dvnci::datetime& tm) {
                 try {
@@ -502,8 +686,11 @@ namespace database {
                     if (tabnameset.empty()) {
                         datamap.clear();
                         return true;}
-
+                    
                     std::string req_ = "select tm, val from ";
+
+                if (tabnameset.size() < 3) {
+
                     str_set::const_iterator it = tabnameset.begin();
                     if (it != tabnameset.end()) {
                         req_ = req_ + *it;
@@ -515,7 +702,18 @@ namespace database {
                         datamap.clear();
                         return true;}
 
-                    req_ = req_ + " where cod=" + to_str<num32 > (id) + " and tm>" + to_str<num64 > (castnum64_from_datetime(starttime)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stoptime));
+                    req_ = req_ + " where cod=" + to_str<num32 > (id) + " and tm>" + to_str<num64 > (castnum64_from_datetime(starttime)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stoptime));}
+                else {
+                    bool first = true;
+
+                    for (str_set::const_iterator it = tabnameset.begin(); it != tabnameset.end() ; ++it) {
+						if (first){
+							req_ = req_ + "  " + *it;
+							first = false;}
+                        else
+                            req_ = req_ + " union select tm, val from " + *it;
+                        req_ = req_ + " where cod=" + to_str<num32 > (id) + " and tm>" + to_str<num64 > (castnum64_from_datetime(starttime)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stoptime));}}
+                    
                     std::string const& req = req_;
 
                     DEBUG_VAL_DVNCI(req)
@@ -845,7 +1043,11 @@ namespace database {
                 if (isconnected()) disconnect();
                 try {
                     std::cout << connection_string() << std::endl;
+#ifdef _MSC_VER
+                    sql.open(postgresql, connection_string());
+#else
                     sql.open("postgresql", connection_string());
+#endif
                     state_ = st_connected;
                     init();
                     return true;}
