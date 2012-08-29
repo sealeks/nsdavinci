@@ -275,7 +275,7 @@ namespace dvnci {
             size_type i = npos;
             for (size_type j = 0; j < count(); ++j) {
                 i = reverse_index(j);
-                if ((!filtered) || ((filtered) && (filtereda && (agrpindx == agroup(i))) || (filteredg && (grpindx == group(i))))) {
+                if ((!filtered) || ((filtered) && ((filtereda && (agrpindx == agroup(i))) || (filteredg && (grpindx == group(i)))))) {
                     datetime tm = time(i);
                     T tmp = {tm , tag (i) , text(i),
                         static_cast<B> (kvit(i)), static_cast<B> (level(i)), static_cast<B> (type(i)), value(i)};
