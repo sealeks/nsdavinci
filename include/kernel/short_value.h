@@ -124,9 +124,9 @@ namespace dvnci {
            return  num64_and_type_cast(value_,type_, frmt);}
         
         friend bool operator!=(const short_value& ls, const short_value& rs){
-            if ((ls.type_==rs.type_) && (ls.valid_==rs.valid_)){
+            if ((ls.type_==rs.type_) && (ls.valid_==rs.valid_) && (ls.error_==rs.error_)){
                 return (ls.type_==TYPE_TEXT) ?
-                       (((ls.str_ptr && rs.str_ptr) && (*ls.str_ptr!=*rs.str_ptr)) || (ls.str_ptr != rs.str_ptr)) :
+                       (((ls.str_ptr && rs.str_ptr) && (*ls.str_ptr!=*rs.str_ptr))) :
                        (ls.value_!=rs.value_);}
             return true;}
         

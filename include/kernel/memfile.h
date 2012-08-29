@@ -1225,6 +1225,7 @@ namespace dvnci {
         debugbase_ptr               debug_;
         fspath                      fpath;
         guidtype                    handle_;
+        indx                        clientid_;
         mutable size_t              globalmemsize_;
         appidtype                   appid_;
         static interproc_namemutex* one_init_;
@@ -2314,6 +2315,16 @@ namespace dvnci {
 
         void notify_dbmanage(bool connectstate) {
             registry()->notify_dbmanage(connectstate ? MSG_DVNCDBCONNECT : MSG_DVNCDBDISCONNECT);}
+        
+        ns_error registrate_user(const std::string& usr,  const std::string& password );
+        
+        ns_error unregistrate_user();
+        
+        indx userid() const;
+        
+        std::string user() const;
+        
+        acclevtype accesslevel() const;
 
     protected:
 

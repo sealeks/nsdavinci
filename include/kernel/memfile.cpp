@@ -795,7 +795,7 @@ namespace dvnci {
         return (*one_init_);}
 
     tagsbase::tagsbase(const fspath& basepatht, appidtype app, eventtypeset evnts/* , lock_nameexclusive ontimeinit*/) :
-    templatebase<tagsstruct>(basepatht / MAIN_FILE_NAME , MAIN_MAP_NAME, EXTEND_MEMSHARE_TAG_SIZE ) , fpath(basepatht), globalmemsize_(0), appid_(app) {
+    templatebase<tagsstruct>(basepatht / MAIN_FILE_NAME , MAIN_MAP_NAME, EXTEND_MEMSHARE_TAG_SIZE ) , fpath(basepatht), globalmemsize_(0), appid_(app), clientid_(npos) {
 
         stringbs_ = stringbase_ptr(new stringbase(basepatht / STRING_FILE_NAME, STRING_MAP_NAME, EXTEND_MEMSHARE_STR_SIZE));
         valstrb_ =  stringvalue_base_ptr(new stringvalue_base(basepatht / VALSTRING_FILE_NAME , VALSTRING_MAP_NAME, texttagcnt(), EXTEND_MEMSHARE_STRSTATIC_SIZE));
@@ -2017,6 +2017,28 @@ namespace dvnci {
             else {
                 it->second = vl.second;}}
         return true;}
+    
+    
+    ns_error tagsbase::registrate_user(const std::string& usr,  const std::string& password){
+        if (users()->exists(usr)){
+            indx clid = users()->operator ()(usr);
+            if (users()->password(clid)==password){
+                clientid_=clid;
+                return 0;}}
+        return 1;}
+        
+    ns_error tagsbase::unregistrate_user(){
+        clientid_=npos; 
+        return 0;}
+        
+    indx  tagsbase::userid() const{
+        return clientid_;}
+        
+    std::string tagsbase::user() const{
+        return clientid_!=npos ? users()->name(clientid_) : "";}
+        
+    acclevtype tagsbase::accesslevel() const{
+        return clientid_!=npos ? users()->accesslevel(clientid_) : 0;} 
     
 
     void tagsbase::texttagcnt(size_t val) {
