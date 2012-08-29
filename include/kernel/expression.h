@@ -121,6 +121,8 @@ namespace dvnci {
             const_nan = 1059,
             const_now = 1061,
             const_null = 1063,
+            const_user = 1065,
+            const_access = 1067,            
             oprt_selector = 1052, // .  1
             oprt_caseleftgroup = 1058, // [
             oprt_caserightgroup = 1060, // ]
@@ -293,9 +295,13 @@ namespace dvnci {
                 return 0;};
 
             void send_command(indx id, const short_value& vl, addcmdtype queue = acQueuedCommand, indx clid = npos) {};
+                       
+            std::string user() const{ return "";}
+            
+            acclevtype accesslevel() const{ return 0;}
 
             void incref(indx id) {}
-
+            
             void decref(indx id) {}} ;
 
 
@@ -553,7 +559,7 @@ namespace dvnci {
 
             short_value value() {
                 calculate();
-                return error() ? short_value() : rslt.value_shv();}
+                return  /*error() ? short_value() :*/ rslt.value_shv();}
 
             vlvtype valid() const {
                 return (error_) ? 0 : rslt.valid();}
@@ -641,6 +647,10 @@ namespace dvnci {
             virtual calc_token geteu(const calc_token& it);
 
             virtual calc_token getalarmmsg(const calc_token& it);
+            
+            virtual calc_token getuser();
+            
+            virtual calc_token getaccess();            
 
             virtual calc_token getalarmlevel(const calc_token& it);
 
@@ -831,6 +841,18 @@ namespace dvnci {
             if (intf) {
                 return intf->alarmlevel(it.id());}
             throw dvncierror(ERROR_NILLINF);}
+        
+        template<typename BASEINTF, typename REFCOUNTER>
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::getuser() {
+            if (intf) {
+                return intf->user();}
+            return "";} 
+        
+        template<typename BASEINTF, typename REFCOUNTER>
+        calc_token expression_templ<BASEINTF, REFCOUNTER>::getaccess() {
+            if (intf) {
+                return intf->accesslevel();}
+            return 0;}          
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::calc_token_factory(const std::string& val) {
@@ -893,13 +915,19 @@ namespace dvnci {
                                 calc_token tmp = calc_token(0);
                                 tmp.valid(0);
                                 calcstack.push(tmp);
-                                break;}                            
+                                break;}                                                         
                             case const_pi:{
                                 calcstack.push(calc_token(DV_PI_CONST));
                                 break;}
                             case const_now:{
                                 calcstack.push(calc_token(now()));
                                 break;}
+                            case const_user:{
+                                calcstack.push(getuser());
+                                break;}
+                            case const_access:{
+                                calcstack.push(getaccess());
+                                break;}                              
                             case select_msc:
                             case select_sec:
                             case select_minute:

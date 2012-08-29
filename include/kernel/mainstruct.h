@@ -2471,6 +2471,7 @@ namespace dvnci {
       std::string  value;};
       
     typedef std::vector<alarms_row > vect_alarms_row; 
+    typedef boost::shared_ptr<vect_alarms_row >  vect_alarms_row_ptr;     
     
     struct journal_row {
       num64  index;
@@ -2485,6 +2486,7 @@ namespace dvnci {
       std::string  user;}; 
       
     typedef std::vector<journal_row >  vect_journal_row; 
+    typedef boost::shared_ptr<vect_journal_row >  vect_journal_row_ptr;
     
     
     struct debug_row {
@@ -2496,6 +2498,7 @@ namespace dvnci {
         num64  appid;};
 
     typedef std::vector<debug_row>     vect_debug_row;
+    typedef boost::shared_ptr<vect_debug_row >  vect_debug_row_ptr;    
 
 #pragma  pack(pop)
 

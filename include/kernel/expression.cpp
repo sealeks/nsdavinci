@@ -110,6 +110,8 @@ namespace dvnci {
                 map["round"] = func_round;
                 map["e"] = const_e;
                 map["nan"] = NULL_DOUBLE;
+                map["user"] = const_user;
+                map["access"] = const_access;
                 map["null"] = const_null;
                 map["pi"] = const_pi;
                 map["incmsc"] = func_incmsc;

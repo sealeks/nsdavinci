@@ -146,9 +146,13 @@ namespace dvnci {
     } ;
 
     struct trend_logline {
-
-        typedef logpoint<unum16, unum16, TREND_BUFFER_SIZE, TREND_EPOHPERIOD>  pointtype;
-        typedef pointtype::headertype                                          headertype;
+        
+        typedef unum16                                                             timetype;
+        typedef unum16                                                             datatype;
+        typedef logpoint<timetype, datatype, TREND_BUFFER_SIZE, TREND_EPOHPERIOD>  pointtype;
+        typedef pointtype::headertype                                              headertype;
+        
+        const static timetype MAXVALUE = (~((timetype)0)) ^ 0xF;
 
         trend_logline(double min = 0, double max = 0) : hdr(min, max) {}
 
@@ -161,10 +165,10 @@ namespace dvnci {
             double tmpmin = hdr.mineu();
             if (tmpmax < val) tmpvl = tmpmax;
             if (tmpmin > val) tmpvl = tmpmin;
-            unum16 tmptm = static_cast<unum16> (secondsbetween(hdr.epoch(), tim));
-            unum16 tmpval = 0;
+            timetype tmptm = static_cast<timetype> (secondsbetween(hdr.epoch(), tim));
+            datatype tmpval = 0;
             if ((val == val) && (tmpmax != tmpmin)) {
-                tmpval = 1 +  static_cast<unum16> ((tmpvl - tmpmin) / (tmpmax - tmpmin) * static_cast<double> (0xFFF0));}
+                tmpval = 1 +  static_cast<datatype> ((tmpvl - tmpmin) / (tmpmax - tmpmin) * static_cast<double> (MAXVALUE));}
             if ((!tmpval) && (value(0)!=value(0))) return;
             if ((hdr.count()) && (timenum(0) == tmptm))
                 set(tmptm, tmpval);
@@ -262,7 +266,7 @@ namespace dvnci {
                size_t strt = index(0) + 1;
                pointtype* bgn = (pointtype*)&item[0];
                pointtype* end = (pointtype*)&item[strt];
-               pointtype tmp(static_cast<unum16> (hdr.epoch() < tm ? secondsbetween(hdr.epoch(), tm) : 0) , 0);
+               pointtype tmp(static_cast<timetype> (hdr.epoch() < tm ? secondsbetween(hdr.epoch(), tm) : 0) , 0);
                size_t fndlow = static_cast<size_t> (std::lower_bound(bgn, end , tmp ) - bgn);
                if (fndlow >0) {
                    return (fndlow==strt) ? 0 : index(fndlow);}
@@ -281,22 +285,22 @@ namespace dvnci {
 
         double value(size_t vl) const {
             if (index(vl)<maxcount()){
-               unum16 tmp = item[index(vl)].value();
-               return tmp ? hdr.mineu() + static_cast<double> (tmp-1) / static_cast<double> (0xFFF0) * (hdr.maxeu() - hdr.mineu()) : NULL_DOUBLE;}
+               datatype tmp = item[index(vl)].value();
+               return tmp ? hdr.mineu() + static_cast<double> (tmp-1) / static_cast<double> (MAXVALUE) * (hdr.maxeu() - hdr.mineu()) : NULL_DOUBLE;}
             return NULL_DOUBLE;}
 
         datetime time(size_t vl) const  {
             if (index(vl)<maxcount()){
-               unum16 tmp = item[index(vl)].time();
+               timetype tmp = item[index(vl)].time();
                return tmp ? incsecond(hdr.epoch(), tmp) : nill_time;}
             return nill_time;}
 
-        unum16 timenum(size_t vl) const  {
+        timetype timenum(size_t vl) const  {
             if (index(vl)<maxcount()){
                return item[index(vl)].time();}
             return 0;}
 
-        void set(unum16 tm, unum16 val){
+        void set(timetype tm, datatype val){
             size_t ind = index(0);
             if (ind < maxcount()){
                 item[ind].set(tm,val);}}
