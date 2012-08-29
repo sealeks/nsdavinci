@@ -465,9 +465,9 @@ test_immi_struct();
               indx ind = str_to<indx>(quit_in,npos);
               dt_val_map tmp;
               if (ind!=npos)
-                  intf->select_trendbuff(ind, tmp, nill_time, nill_time);
+                  intf->select_trendbuff(ind, tmp, incminute(now(),-10), nill_time);
               else
-                 intf->select_trendbuff(quit_in, tmp, nill_time, nill_time);
+                 intf->select_trendbuff(quit_in, tmp, incminute(now(),-10), nill_time);
               std::cout << tmp;
               break;}
           case REPORT_OPERATION:{
