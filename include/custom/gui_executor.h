@@ -2,7 +2,7 @@
  * File:   gui_executor.h
  * Author: sealeks@mail.ru
  *
- * Created on 13 Ð˜ÑŽÐ»ÑŒ 2011 Ð³., 18:32
+ * Created on 13 ГђЛњГ‘ЕЅГђВ»Г‘Е’ 2011 ГђВі., 18:32
  */
 
 #ifndef GUI_EXECUTOR_H
@@ -24,15 +24,18 @@ namespace dvnci {
     class root_listener {
     public:
              
-        root_listener(){}
+        root_listener(bool single=false) : singletask_(single),needupdate_(true){}
         virtual ~root_listener(){}      
         virtual bool execute() = 0;       
         bool needupdate() const{
             return needupdate_;} 
         void needupdate(bool val){
-            needupdate_=val;}           
+            needupdate_=val;}  
+        bool singletask() const{
+            return singletask_;}         
         
-    protected:        
+    protected:
+        bool            singletask_;
         bool            needupdate_;}; 
         
  
@@ -50,7 +53,7 @@ namespace dvnci {
         
         typedef VALUETYPE    valuetype;
         
-        template_listener(bool needexec = false) : root_listener(){}
+        template_listener(bool single=false) : root_listener(single){}
         virtual void event(const valuetype& val) = 0;
         
         virtual bool execute() {
@@ -69,14 +72,20 @@ namespace dvnci {
    
     class expression_listener : public template_listener<short_value > {
     public:
-        expression_listener(bool needexec = false) 
-                : template_listener<short_value >(needexec){};
+        expression_listener(bool single=false,bool test=false) 
+                : template_listener<short_value >(single),testmode_(test) {};
         virtual bool set(const valuetype& val) {
-            if (val!=value_){
+            if (val!=value_ || singletask()){
                 needupdate(true);
                 value_=val;
                 return true;}
-            return false;}};
+            return false;}
+        bool testmode() const{
+            return testmode_;} 
+        
+    protected:
+        bool            testmode_;};         
+
 
 
     typedef boost::shared_ptr<expression_listener> expression_listener_ptr;
@@ -234,7 +243,69 @@ namespace dvnci {
     typedef boost::shared_ptr<debug_listener> debug_listener_ptr;
     
     
-
+    class entety_listener : public template_listener<iteminfo_map > {
+    public:
+        
+        entety_listener(nodetype enttp, indx parentid = dvnci::npos, const std::string& filter ="") 
+                : template_listener<iteminfo_map >(true), type_(enttp), parentid_(parentid), filter_(filter){};
+                
+        virtual bool set(const valuetype& val) {
+                needupdate(true);
+                value_=val;
+                return true;}
+        
+        std::string filter() const{
+            return filter_;} 
+        
+        indx parentid() const{
+            return parentid_;}
+        
+        nodetype type() const{
+            return type_;}         
+        
+    protected:
+        
+        nodetype          type_;
+        indx              parentid_;       
+        std::string       filter_;}; 
+        
+    typedef boost::shared_ptr<entety_listener> entety_listener_ptr;        
+        
+        
+        
+        
+    class registrate_listener : public template_listener<ns_error > {
+    public:
+        
+        static const int REGIST = 1;
+        static const int UNREGIST = 0;
+        
+        
+        registrate_listener(int type, const std::string& user ="", const std::string& password ="") 
+                : template_listener<ns_error >(true), type_(type), user_(user), password_(password) {};
+                
+        virtual bool set(const valuetype& val) {
+                needupdate(true);
+                value_=val;
+                return true;}
+        
+        std::string user() const{
+            return user_;} 
+        
+        std::string password() const{
+            return password_;}
+        
+        int type() const{
+            return type_;}         
+        
+    protected:
+        
+        int               type_;
+        std::string       user_;       
+        std::string       password_;};
+        
+        
+    typedef boost::shared_ptr<registrate_listener> registrate_listener_ptr;     
 
 
     namespace custom {
@@ -306,7 +377,13 @@ namespace dvnci {
             typedef std::deque<debug_row>                                          debug_table_deq;
             typedef typename debug_table_deq::iterator                             debug_table_iterator;
             typedef std::set<debug_listener_ptr >                                  debug_listener_set;
-            typedef typename debug_listener_set::iterator                          debug_listener_iterator;    
+            typedef typename debug_listener_set::iterator                          debug_listener_iterator;   
+            
+            typedef std::set<entety_listener_ptr >                                 entety_listener_set;
+            typedef typename entety_listener_set::iterator                         entety_listener_iterator;   
+            
+            typedef std::set<registrate_listener_ptr >                             registrate_listener_set;
+            typedef typename registrate_listener_set::iterator                     registrate_listener_iterator;             
             
           
 
@@ -326,15 +403,17 @@ namespace dvnci {
                         internal_alarm_exec();
                         internal_trend_exec();
                         internal_journal_exec();
-                        internal_debug_exec();                          
+                        internal_debug_exec();  
+                        internal_entety_exec();
+                        internal_registrate_exec();
                         addmillisec_to_now(xt_loop, updated ? 200 : 600);
                         boost::thread::sleep(xt_loop);}
                     if (terminated()) break;}
                 return true;}
 
-            bool regist_expr_listener(const std::string& expr, listener_type_ptr listener) {
+            bool regist_expr_listener(const std::string& expr, listener_type_ptr listener, bool testmode = false) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                expression_pair extmp(expression_type_ptr(new expression_type(expr, intf)), short_value());
+                expression_pair extmp(expression_type_ptr(new expression_type(expr, intf, testmode)), short_value());
                 expression_iterator itb = expressions_map.left.lower_bound(extmp);
                 expression_iterator ite = expressions_map.left.upper_bound(extmp);
                 if (itb == ite) {
@@ -357,12 +436,7 @@ namespace dvnci {
             bool unregist_expr_listener(listener_type_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
                 remove_from_update(listener);
-                listeners_iterator itb = expressions_map.right.lower_bound(listener);
-                listeners_iterator ite = expressions_map.right.upper_bound(listener);
-                if (itb != ite) {
-                    expressions_map.right.erase(itb->first);
-                    return true;}
-                return false;}
+                return internal_unregist_expr_listener(listener);}
 
             bool regist_trend_listener(trendlistener_type_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);              
@@ -424,24 +498,40 @@ namespace dvnci {
                 THD_EXCLUSIVE_LOCK(mtx);
                 remove_from_update(listener);
                 newdebug_listeners.erase(listener);
-                return debug_listeners.erase(listener);}                                                            
-
-            short_value execute(const std::string& expr, bool testmode = false) {
+                return debug_listeners.erase(listener);}
+            
+            
+            bool regist_entety_listener(entety_listener_ptr listener) {
                 THD_EXCLUSIVE_LOCK(mtx);
-                expression_type_ptr cmd = expression_type_ptr(new expression_type(expr, intf, testmode));
-                if (cmd) {
-                    cmd->active(true);
-                    return cmd->value();}
-                return short_value();}
+                entety_set.insert(listener);
+                return true;}
+            
+            
+            bool regist_registrate_listener(registrate_listener_ptr listener) {
+                THD_EXCLUSIVE_LOCK(mtx);
+                registrate_set.insert(listener);
+                return true;}
+            
+
+            bool execute(const std::string& expr, bool testmode = false) {
+                if (THD_TRY_LOCK(mtx)) {
+                    expression_type_ptr cmd = expression_type_ptr(new expression_type(expr, intf, testmode));
+                    if (cmd) {
+                        cmd->active(true);
+                        cmd->value();}
+                    return true;}
+                return false;}
 
             bool call() {{
                     THD_EXCLUSIVE_LOCK(mtx);               
                     for (rootlistener_set_iterator it = updatemap.begin(); it != updatemap.end(); ++it) {
-                        (*it)->execute();}
+                        (*it)->execute();
+                        if ((*it)->singletask())
+                            unregist(*it);}
                     updatemap.clear();
                     for (alarms_listener_iterator it = alarmupdatemap.begin(); it != alarmupdatemap.end(); ++it) {
                         (*it)->event(alarms);}
-                    updatemap.clear();}                    
+                    alarmupdatemap.clear();}                    
                 return true;}
             
 
@@ -449,6 +539,8 @@ namespace dvnci {
 		THD_EXCLUSIVE_LOCK(mtx);
                 updatemap.clear();
                 expressions_map.clear();
+                entety_set.clear();
+                registrate_set.clear();                
                 trends_set.clear();
                 newtrendset.clear();
                 alarmupdatemap.clear();
@@ -464,6 +556,28 @@ namespace dvnci {
             
             void remove_from_update(root_listener_ptr val){
                   updatemap.erase(val);}
+            
+            bool unregist(root_listener_ptr val) {
+                if (expressions_map.right.lower_bound(boost::shared_static_cast<listener_type>(val))!=
+                        expressions_map.right.upper_bound(boost::shared_static_cast<listener_type>(val))) {
+                    return internal_unregist_expr_listener(boost::shared_static_cast<listener_type>(val));}
+                if (entety_set.find(boost::shared_static_cast<entety_listener>(val))!=entety_set.end()) {
+                    entety_set.erase(boost::shared_static_cast<entety_listener>(val));
+                    return true;} 
+                if (registrate_set.find(boost::shared_static_cast<registrate_listener>(val))!=registrate_set.end()) {
+                    registrate_set.erase(boost::shared_static_cast<registrate_listener>(val));
+                    return true;}                               
+                return false;}
+            
+            bool internal_unregist_expr_listener(listener_type_ptr listener) {              
+                listeners_iterator itb = expressions_map.right.lower_bound(listener);
+                listeners_iterator ite = expressions_map.right.upper_bound(listener);
+                if (itb != ite) {
+                    expressions_map.right.erase(itb->first);
+                    return true;}
+                return false;}            
+            
+            
 
             bool internal_expr_exec() {
                 bool rslt = false;
@@ -472,6 +586,31 @@ namespace dvnci {
                     if (it->second->set(it->first.first->value()))
                         updatemap.insert(it->second);}
                 return rslt;}
+            
+            
+            bool internal_entety_exec() {
+                THD_EXCLUSIVE_LOCK(mtx);
+                for (entety_listener_iterator it = entety_set.begin(); it != entety_set.end(); ++it) {
+                    iteminfo_map result;
+                    intf->select_entities((*it)->type(), result, (*it)->parentid(), (*it)->filter());
+                    (*it)->set(result);
+                    updatemap.insert(*it);
+                    return true;}
+                return false;}
+            
+            bool internal_registrate_exec() {
+                bool rslt = false;
+                THD_EXCLUSIVE_LOCK(mtx);
+                for (registrate_listener_iterator it = registrate_set.begin(); it != registrate_set.end(); ++it) {
+                    ns_error result = 0;
+                    if ((*it)->type() == registrate_listener::REGIST) {
+                        result = intf->registrate_user((*it)->user(), (*it)->password());}
+                    else {
+                        result = intf->unregistrate_user();}
+                    (*it)->set(result);
+                    updatemap.insert(*it);
+                    return true;}
+                return false;}             
 
             
             bool init_trend_listeners() {
@@ -625,6 +764,10 @@ namespace dvnci {
                                    
             trendlistener_set        trends_set;
             trendlistener_set        newtrendset;
+            
+            entety_listener_set      entety_set;
+            
+            registrate_listener_set  registrate_set;            
                        
             guidtype                 alarm_version;
             alarms_listener_set      alarms_listeners;
