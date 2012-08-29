@@ -878,13 +878,23 @@ namespace dvnci {
     
 
     datetime now() {
-        return boost::posix_time::microsec_clock::local_time();}
-    
-    datetime now_utc(){
         return boost::posix_time::microsec_clock::universal_time();}
+    
+    datetime now_local(){
+        return boost::posix_time::microsec_clock::local_time();}
     
     datetime local_to_utc(const datetime& val){
         return val - ( boost::posix_time::second_clock::local_time() - boost::posix_time::second_clock::universal_time() );}
+    
+    datetime utc_to_local(const datetime& val){
+        return val + ( boost::posix_time::second_clock::local_time() - boost::posix_time::second_clock::universal_time() );}  
+    
+    boost::posix_time::time_duration time_zone_offset(const datetime& val){
+        return ( boost::posix_time::second_clock::local_time() - boost::posix_time::second_clock::universal_time());} 
+    
+    double time_zone_hour_offset(const datetime& val){
+        boost::posix_time::time_duration tmp = time_zone_offset(val);
+        return ((tmp.hours()*60+tmp.minutes())*1.0) / 60.0;}
 
     boost::xtime utc_now() {
         boost::xtime xt;
@@ -941,6 +951,9 @@ namespace dvnci {
 
     num64 nownum64() {
         return castnum64_from_datetime(now());}
+    
+    num64 nownum64_local() {
+        return castnum64_from_datetime(now_local());}    
 
     boost::posix_time::time_duration duration_between(datetime t1, datetime t2) {
         boost::posix_time::time_period td(t1, t2);
