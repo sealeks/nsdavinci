@@ -26,6 +26,9 @@
  $$(expr [,handler])   ?!
  $$check(expr [,handler])  ?!
  $$error(expr [,handler])   ?!
+ $$userlist(handler)  ?!
+ $$regist(handler, user, password )   ?!
+ $$unregist(handler)   ?!
  $$exit()
  $$writefile()
  $$filelist([ext]) !!!!
@@ -42,6 +45,24 @@
  removeAlarmsListener(handler)
  addTrendsListener(handler, taglist, period)
  removTrendsListener(handler)
+ * 
+ * 
+ //  DATABASE connection
+ 
+ connectSCDB( handler, provider, connectstring, timeout., returntrenddef)
+ 
+ in this handler error or DBObject
+ 
+ DBObject interface
+ 
+ func:
+    select_trenddef(handler)
+    select_trends(handler, tagnames, starttime, stoptime)
+    select_reports(handler, tagnames, starttime, stoptime)
+    select_journal(handler,  starttime, stoptime, filter)
+    select_debug(handler, starttime, stoptime, filter)
+    select(handler, sqlstr)
+    
  
  
  */
@@ -64,17 +85,21 @@ namespace WebCore {
         if (val.type() == dvnci::TYPE_TEXT) return v8::String::New(val.value<std::string > ().c_str());
         return v8::Number::New(val.value<double>());
     }
-
+    
     
     static v8::Handle<v8::Value> dvnci_execCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_exec");
         if (args.Length() > 0) {
-            dvnci::chrome_executor_ptr exec = getexecutordvnci();
-            if (exec) {
-                v8::Handle<v8::Value> arg = args[0];
-                v8::String::Utf8Value value(arg);
-                return dvnci_value_conv(exec->execute(std::string(*value, value.length())));
+            if (args.Length() == 1) {
+                dvnci::chrome_executor_ptr exec = getexecutordvnci();
+                if (exec) {
+                    v8::Handle<v8::Value> arg = args[0];
+                    v8::String::Utf8Value value(arg);
+                    bool rslt = exec->execute(std::string(*value, value.length()));
+                    if (rslt) return v8::Boolean::New(true);
+                }
             }
+            return dvnciExecute(DVNCI_EXECUTE_EXPRESSION, args);
         }
         return v8::Undefined();
     }
@@ -83,12 +108,7 @@ namespace WebCore {
     static v8::Handle<v8::Value> dvnci_exprtestCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_test");
         if (args.Length() > 0) {
-            dvnci::chrome_executor_ptr exec = getexecutordvnci();
-            if (exec) {
-                v8::Handle<v8::Value> arg = args[0];
-                v8::String::Utf8Value value(arg);
-                return dvnci_value_conv(exec->execute(std::string(*value, value.length()), true));
-            }
+            return dvnciExecute(DVNCI_EXECUTE_CHECK,args);
         }
         return v8::Undefined();
     }
@@ -97,16 +117,42 @@ namespace WebCore {
     static v8::Handle<v8::Value> dvnci_exprerrorCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_error");
         if (args.Length() > 0) {
-            dvnci::chrome_executor_ptr exec = getexecutordvnci();
-            if (exec) {
-                v8::Handle<v8::Value> arg = args[0];
-                v8::String::Utf8Value value(arg);
-                dvnci::short_value val = exec->execute(std::string(*value, value.length()), true);
-                return v8::Integer::New(val.error());
-            }
+            return dvnciExecute(DVNCI_EXECUTE_ERROR,args);
         }
         return v8::Undefined();
     }
+    
+    static v8::Handle<v8::Value> dvnci_userslistCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_userslist");
+        if (args.Length() > 0) {
+            return dvnciExecute(DVNCI_EXECUTE_USERLIST,args);
+        }
+        return v8::Undefined();
+    }
+
+    static v8::Handle<v8::Value> dvnci_entetylistCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_entetylist");
+        if (args.Length() > 0) {
+            return dvnciEntety(args);
+        }
+        return v8::Undefined();
+    }
+    
+    static v8::Handle<v8::Value> dvnci_registuserCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_registuser");
+        if (args.Length() > 0) {
+            return dvnciExecute(DVNCI_EXECUTE_REGIST,args);
+        }
+        return v8::Undefined();
+    }
+    
+     static v8::Handle<v8::Value> dvnci_unregistuserCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_unregistuser");
+        if (args.Length() > 0) {
+            return dvnciExecute(DVNCI_EXECUTE_UNREGIST,args);
+        }
+        return v8::Undefined();
+    }   
 
     
     static v8::Handle<v8::Value> dvnci_writefileCallback(const v8::Arguments& args) {
@@ -345,6 +391,15 @@ namespace WebCore {
         }
         return v8::Boolean::New(rslt);
     }
+    
+    
+    static v8::Handle<v8::Value> dvnci_connectSCDB(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_connectDB");
+        if (args.Length() > 2) {             
+            return dvnciSCDBConnection(args);
+        }
+        return v8::Undefined();
+    }    
 
 
 
@@ -353,6 +408,10 @@ namespace WebCore {
         {"$$writefile", dvnci_writefileCallback},
         {"$$check", dvnci_exprtestCallback},
         {"$$error", dvnci_exprerrorCallback},
+        {"$$users", dvnci_userslistCallback},
+        {"$$entety", dvnci_entetylistCallback},
+        {"$$registuser", dvnci_registuserCallback},
+        {"$$unregistuser", dvnci_unregistuserCallback},        
         {"$$exit", dvnci_exitCallback},
         {"$$kill", dvnci_shutdownCallback},
         {"$$editable", dvnci_isEditableCallback},
@@ -369,6 +428,7 @@ namespace WebCore {
         {"addDebugListener", addDebugEventListenerCallback},
         {"removeDebugListener", removeDebugEventListenerCallback},        
         {"$$global", dvnci_GlobalObject},
+        {"connectSCDB", dvnci_connectSCDB},        
     };
 
 

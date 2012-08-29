@@ -13,6 +13,12 @@
 #include "EventTarget.h"
 
 #include "DOMWindow.h"
+#include "V8BindingState.h"
+#include "V8DOMWindow.h"
+#include "V8HiddenPropertyName.h"
+#include "ExceptionCode.h"
+#include "ContentSecurityPolicy.h"
+#include "ScheduledAction.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/UnusedParam.h>
@@ -57,7 +63,7 @@ struct guichrome_terminated_thread {
 private:
     dvnci::chrome_executor_ptr inf;
     boost::thread th;
-};
+} ;
 
 dvnci::chrome_executor_ptr getexecutordvnci() {
     static dvnci::fspath basepath = dvnci::getlocalbasepath();
@@ -103,6 +109,9 @@ void initdvnciMain() {
 
 
 namespace WebCore {
+
+
+
     namespace DVNCI {
 
 
@@ -120,21 +129,21 @@ namespace WebCore {
             class attribute_expression_listener : public dvnci::expression_listener {
             public:
 
-                attribute_expression_listener(AttributeObserverImpl * const lsnr, const std::wstring& deflt = L"") : listener(lsnr), stdvl(), dfltvl(deflt) {
+                attribute_expression_listener(AttributeObserverImpl * const lsnr, const std::wstring& deflt = L"") : dvnci::expression_listener(), listener(lsnr), stdvl(), dfltvl(deflt) {
                 }
 
                 virtual ~attribute_expression_listener() {
                 }
 
                 virtual void event(const dvnci::short_value& val) {
-                    stdvl = val.valid() ? dvnci::utf8_to_wstr(val.value<std::string > ()) : dfltvl;
-                    vl = stdvl.empty() ? String() : String(stdvl.c_str(), stdvl.size());
+                    stdvl = (val.valid() && !val.error()) ? dvnci::utf8_to_wstr(val.value<std::string > ()) : dfltvl;
+                    vl = String(stdvl.c_str(), stdvl.size());
                     listener->setvalue(vl);
                 }
 
                 void setdefault() {
                     stdvl = dfltvl;
-                    vl = stdvl.empty() ? String() : String(stdvl.c_str(), stdvl.size());
+                    vl = String(stdvl.c_str(), stdvl.size());
                     listener->setvalue(vl);
                 }
 
@@ -143,7 +152,7 @@ namespace WebCore {
                 std::wstring stdvl;
                 std::wstring dfltvl;
                 String vl;
-            };
+            } ;
 
         public:
 
@@ -180,7 +189,7 @@ namespace WebCore {
                 std::wstring tmpw = std::wstring(val.characters(), val.length());
                 std::wstring tmpdef = dvnci::attribute_default_expression(tmpw);
                 tmpw = dvnci::attribute_expression(tmpw);
-                defaultvalue = tmpdef.empty() ? String() : String(tmpdef.c_str(), tmpdef.size());
+                defaultvalue = String(tmpdef.c_str(), tmpdef.size());
 
                 if (tmpw.empty()) {
                     setvalue(defaultvalue);
@@ -194,7 +203,8 @@ namespace WebCore {
                          static_cast<attribute_expression_listener*>(exrptr.get())->setdefault();*/
                     intf->regist_expr_listener(exprstr, exrptr);
                     return exrptr;
-                } else
+                }
+                else
                     setvalue(defaultvalue);
                 return dvnci::expression_listener_ptr();
             }
@@ -213,7 +223,7 @@ namespace WebCore {
             std::string exprstr;
             AtomicString defaultvalue;
 
-        };
+        } ;
 
 
 
@@ -226,7 +236,7 @@ namespace WebCore {
             class text_expression_listener : public dvnci::expression_listener {
             public:
 
-                text_expression_listener(TextNodeObserverImpl * const lsnr, const std::wstring& deflt = L"") : listener(lsnr), stdvl(), vl() {
+                text_expression_listener(TextNodeObserverImpl * const lsnr, const std::wstring& deflt = L"") : dvnci::expression_listener(), listener(lsnr), stdvl(), vl() {
                 }
 
                 virtual ~text_expression_listener() {
@@ -234,26 +244,26 @@ namespace WebCore {
 
                 virtual void event(const dvnci::short_value& val) {
                     stdvl = dvnci::utf8_to_wstr(val.value<std::string > ());
-                    vl =  stdvl.empty() ? String() : String(stdvl.c_str(), stdvl.size());
-                    listener->setvalue(val.valid() ? vl : listener->deflt());
+                    vl =  String(stdvl.c_str(), stdvl.size());
+                    listener->setvalue((val.valid() && !val.error())  ? vl : listener->deflt());
                 }
 
             private:
                 TextNodeObserverImpl * const listener;
                 std::wstring stdvl;
                 String vl;
-            };
+            } ;
 
         public:
 
-            TextNodeObserverImpl(Text * const txt, const String& val) :  text(txt), value(val), defaultvalue("") {
+            TextNodeObserverImpl(Text * const txt, const String& val) :  text(txt), value(val), defaultvalue("") , spacevalue(" ") {
                 registrate(txt, val);
             }
 
             virtual void setvalue(const String& val) {
                 if (text) {
                     ExceptionCode ec;
-                    text->replaceWholeText(val, ec);
+                    text->replaceWholeText(val.isEmpty() ? spacevalue : val, ec);
                     ;
                 }
             }
@@ -278,7 +288,7 @@ namespace WebCore {
                 std::wstring tmpw = std::wstring(val.characters(), val.length());
                 std::wstring tmpdef = dvnci::attribute_default_expression(tmpw);
                 tmpw = dvnci::attribute_expression(tmpw);
-                defaultvalue =  tmpdef.empty() ? String() : String(tmpdef.c_str(), tmpdef.size());
+                defaultvalue =  String(tmpdef.c_str(), tmpdef.size());
                 setvalue(deflt());
                 if (tmpw.empty()) {
                     return dvnci::expression_listener_ptr();
@@ -307,7 +317,8 @@ namespace WebCore {
             dvnci::chrome_executor_ptr intf;
             std::string exprstr;
             String defaultvalue;
-        };
+            String spacevalue;
+        } ;
 
 
 
@@ -377,7 +388,7 @@ namespace WebCore {
                 friend class AlarmsObserverImpl;
             public:
 
-                alarm_listener(AlarmsObserverImpl * const lsnr, const std::string& grp="", const std::string& agrp="") : dvnci::alarms_listener(grp, agrp) , listener(lsnr) {
+                alarm_listener(AlarmsObserverImpl * const lsnr, const std::string& grp = "", const std::string& agrp = "") : dvnci::alarms_listener(grp, agrp) , listener(lsnr) {
                 }
 
                 virtual ~alarm_listener() {
@@ -389,7 +400,7 @@ namespace WebCore {
 
             private:
                 AlarmsObserverImpl * const listener;
-            };
+            } ;
 
         public:
 
@@ -440,7 +451,7 @@ namespace WebCore {
             dvnci::alarms_listener_ptr alarmlsnrptr;
             dvnci::chrome_executor_ptr intf;
             dvnci::vect_alarms_row value;
-        };
+        } ;
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -464,7 +475,7 @@ namespace WebCore {
 
             private:
                 JournalObserverImpl * const listener;
-            };
+            } ;
 
         public:
 
@@ -514,10 +525,10 @@ namespace WebCore {
             dvnci::journal_listener_ptr journallsnrptr;
             dvnci::chrome_executor_ptr intf;
             dvnci::vect_journal_row value;
-        };
-        
-        
-        
+        } ;
+
+
+
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////////// 
 
@@ -539,7 +550,7 @@ namespace WebCore {
 
             private:
                 DebugObserverImpl * const listener;
-            };
+            } ;
 
         public:
 
@@ -587,7 +598,7 @@ namespace WebCore {
             dvnci::debug_listener_ptr debuglsnrptr;
             dvnci::chrome_executor_ptr intf;
             dvnci::vect_debug_row value;
-        };        
+        } ;
 
 
 
@@ -612,7 +623,7 @@ namespace WebCore {
 
             private:
                 TrendsObserverImpl * const listener;
-            };
+            } ;
 
         public:
 
@@ -664,7 +675,7 @@ namespace WebCore {
             dvnci::trend_listener_ptr trendlsnrptr;
             dvnci::chrome_executor_ptr intf;
             std::vector<dvnci::short_value> value;
-        };
+        } ;
 
 
 
@@ -689,7 +700,7 @@ namespace WebCore {
 
             private:
                 ExpressionObserverImpl * const listener;
-            };
+            } ;
 
         public:
 
@@ -740,7 +751,7 @@ namespace WebCore {
             dvnci::chrome_executor_ptr intf;
             String tag;
             dvnci::short_value value;
-        };
+        } ;
 
 
 
@@ -769,6 +780,473 @@ namespace WebCore {
             return adoptRef(new ExpressionObserverImpl(evtarget, tag));
         }
 
+        static v8::Handle<v8::Value> dvnci_shortvalue_conv_exec(const dvnci::short_value& val) {
+            if (val.nan()) return v8::Undefined();
+            if (val.valid() < 100) return v8::Null();
+            if (val.type() <= dvnci::TYPE_FLOAT) return v8::Number::New(val.type() != dvnci::TYPE_FLOAT ?
+                    val.value<double>() : static_cast<double> (val.value<float>()));
+            if (val.type() < dvnci::TYPE_DISCRET) return v8::Integer::New(static_cast<int32_t> (val.value<dvnci::num64 > ()));
+            if (val.type() == dvnci::TYPE_DISCRET) return v8::Boolean::New(val.value<bool>());
+            if (val.type() == dvnci::TYPE_TM) return v8::Date::New(dvnci::datetime_to_epoch_msc_utc(val.value<dvnci::datetime > ()));
+            if (val.type() == dvnci::TYPE_TEXT) return v8::String::New(val.value<std::string > ().c_str());
+            return v8::Number::New(val.value<double>());
+        }
+
+        class execute_expression_listener : public dvnci::expression_listener {
+        public:
+
+            execute_expression_listener(String expr, int type, v8::Handle<v8::Context> context, ScriptExecutionContext* scriptcontext, v8::Handle<v8::Function> func) :
+            dvnci::expression_listener(true), m_expression(expr), m_type(type),  m_context(context) ,  m_scriptcontext(scriptcontext) {
+                m_function = v8::Persistent<v8::Function>::New(func);
+            }
+
+            execute_expression_listener(String expr, int type) :
+            dvnci::expression_listener(true), m_expression(expr), m_type(type), m_scriptcontext(0) {
+            }
+
+            virtual ~execute_expression_listener() {
+
+                if (m_function.IsEmpty())
+                    return;
+                m_function.Dispose();
+            }
+
+            virtual void event(const dvnci::short_value& val) {
+
+
+                if (m_scriptcontext && !m_function.IsEmpty() && m_function->IsFunction()) {
+                    V8Proxy* proxy = V8Proxy::retrieve(m_scriptcontext);
+                    if (proxy) {
+                        v8::HandleScope handleScope;
+                        v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context.get());
+                        if (v8Context.IsEmpty())
+                            return; // JS may not be enabled.
+                        v8::Context::Scope scope(v8Context);
+
+                        v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
+                        v8::Local<v8::Value> savedEvent = v8Context->Global()->GetHiddenValue(eventSymbol);
+
+                        v8Context->Global()->SetHiddenValue(eventSymbol, conv(val, m_type));
+
+                        proxy->callFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), 0, 0);
+                        if (savedEvent.IsEmpty())
+                            v8Context->Global()->SetHiddenValue(eventSymbol, v8::Undefined());
+                        else
+                            v8Context->Global()->SetHiddenValue(eventSymbol, savedEvent);
+                    }
+                }
+            }
+
+
+        protected:
+
+            v8::Handle<v8::Value> conv(const dvnci::short_value& val, int code) {
+
+                switch (code) {
+                    case DVNCI_EXECUTE_EXPRESSION:
+                    case DVNCI_EXECUTE_CHECK:
+                    {
+
+                        v8::HandleScope handle_scope;
+
+                        v8::Handle<v8::Object> evnt = v8::Object::New();
+
+                        evnt->Set(v8::String::New("expression"), v8::String::New(m_expression.utf8().data(), m_expression.length()));
+                        evnt->Set(v8::String::New("value"), dvnci_shortvalue_conv_exec(val));
+                        evnt->Set(v8::String::New("valid"), v8::Integer::New(val.valid()));
+                        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc_utc(val.time())));
+                        evnt->Set(v8::String::New("error"), v8::Integer::New(val.error()));
+
+
+                        return handle_scope.Close(evnt);
+
+                    }
+
+                    case DVNCI_EXECUTE_ERROR:
+                    {
+
+                        v8::HandleScope handle_scope;
+
+                        v8::Handle<v8::Object> evnt = v8::Object::New();
+                        evnt->Set(v8::String::New("error"), v8::Integer::New(val.error()));
+                        return handle_scope.Close(evnt);
+                    }
+                }
+
+                return v8::Undefined();
+            }
+
+        private:
+            String m_expression;
+            int m_type;
+            v8::Persistent<v8::Value> m_function;
+            OwnHandle<v8::Context> m_context;
+            ScriptExecutionContext* m_scriptcontext;
+        } ;
+
+        class entety_expression_listener : public dvnci::entety_listener {
+        public:
+
+            entety_expression_listener(dvnci::nodetype enttp, dvnci::indx parentid, const std::string& filter , v8::Handle<v8::Context> context, ScriptExecutionContext* scriptcontext, v8::Handle<v8::Function> func) :
+            dvnci::entety_listener(enttp, parentid,  filter) , m_context(context) ,  m_scriptcontext(scriptcontext) {
+                m_function = v8::Persistent<v8::Function>::New(func);
+            }
+
+            virtual ~entety_expression_listener() {
+                if (m_function.IsEmpty())
+                    return;
+                m_function.Dispose();
+            }
+
+            virtual void event(const dvnci::iteminfo_map& val) {
+
+                if (m_scriptcontext && !m_function.IsEmpty() && m_function->IsFunction()) {
+                    V8Proxy* proxy = V8Proxy::retrieve(m_scriptcontext);
+                    if (proxy) {
+                        v8::HandleScope handleScope;
+                        v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context.get());
+                        if (v8Context.IsEmpty())
+                            return; // JS may not be enabled.
+                        v8::Context::Scope scope(v8Context);
+
+                        v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
+                        v8::Local<v8::Value> savedEvent = v8Context->Global()->GetHiddenValue(eventSymbol);
+
+                        v8Context->Global()->SetHiddenValue(eventSymbol, conv(val, type()));
+
+                        proxy->callFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), 0, 0);
+                        if (savedEvent.IsEmpty())
+                            v8Context->Global()->SetHiddenValue(eventSymbol, v8::Undefined());
+                        else
+                            v8Context->Global()->SetHiddenValue(eventSymbol, savedEvent);
+                    }
+                }
+            }
+
+        protected:
+
+            v8::Handle<v8::Value> conv(const dvnci::iteminfo_map& val, dvnci::nodetype type) {
+
+
+                v8::HandleScope handle_scope;
+
+                v8::Handle<v8::Object> evnt = v8::Object::New();
+
+                evnt->Set(v8::String::New("type"), v8::Integer::New(type));
+
+                v8::Handle<v8::Array> array = v8::Array::New(val.size());
+
+                int i = 0;
+
+                for (dvnci::iteminfo_map::const_iterator it = val.begin(); it != val.end(); ++it) {
+
+                    v8::HandleScope tmphandle_scope;
+
+                    v8::Handle<v8::Object> tmp = v8::Object::New();
+
+                    tmp->Set(v8::String::New("name"), v8::String::New(it->second.name().c_str(), it->second.name().size() ));
+                    tmp->Set(v8::String::New("type"), v8::Integer::New(it->second.typeex()));
+                    tmp->Set(v8::String::New("id"), v8::Integer::New(it->first));
+
+                    array->Set(i++, tmphandle_scope.Close(tmp));
+                }
+
+                evnt->Set(v8::String::New("list"), array);
+
+
+                return handle_scope.Close(evnt);
+            }
+
+
+        private:
+
+            v8::Persistent<v8::Value> m_function;
+            OwnHandle<v8::Context> m_context;
+            ScriptExecutionContext* m_scriptcontext;
+
+        } ;
+
+        class regitrate_expression_listener : public dvnci::registrate_listener {
+        public:
+
+            regitrate_expression_listener(const std::string& user, const std::string& password, v8::Handle<v8::Context> context, ScriptExecutionContext* scriptcontext, v8::Handle<v8::Function> func) :
+            dvnci::registrate_listener(dvnci::registrate_listener::REGIST, user,  password) , m_context(context) ,  m_scriptcontext(scriptcontext) {
+                m_function = v8::Persistent<v8::Function>::New(func);
+            }
+
+            regitrate_expression_listener(v8::Handle<v8::Context> context, ScriptExecutionContext* scriptcontext, v8::Handle<v8::Function> func) :
+            dvnci::registrate_listener(dvnci::registrate_listener::UNREGIST) , m_context(context) ,  m_scriptcontext(scriptcontext) {
+                m_function = v8::Persistent<v8::Function>::New(func);
+            }
+
+            virtual ~regitrate_expression_listener() {
+                if (m_function.IsEmpty())
+                    return;
+                m_function.Dispose();
+            }
+
+            virtual void event(const dvnci::ns_error& val) {
+
+                if (m_scriptcontext && !m_function.IsEmpty() && m_function->IsFunction()) {
+                    V8Proxy* proxy = V8Proxy::retrieve(m_scriptcontext);
+                    if (proxy) {
+
+                        v8::HandleScope handleScope;
+                        v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context.get());
+                        if (v8Context.IsEmpty())
+                            return; // JS may not be enabled.
+                        v8::Context::Scope scope(v8Context);
+
+                        v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
+                        v8::Local<v8::Value> savedEvent = v8Context->Global()->GetHiddenValue(eventSymbol);
+
+                        v8Context->Global()->SetHiddenValue(eventSymbol, conv(val));
+
+                        proxy->callFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), 0, 0);
+                        if (savedEvent.IsEmpty())
+                            v8Context->Global()->SetHiddenValue(eventSymbol, v8::Undefined());
+                        else
+                            v8Context->Global()->SetHiddenValue(eventSymbol, savedEvent);
+                    }
+                }
+            }
+
+        protected:
+
+            v8::Handle<v8::Value> conv(const dvnci::ns_error& val) {
+
+
+                v8::HandleScope handle_scope;
+
+                v8::Handle<v8::Object> evnt = v8::Object::New();
+
+                evnt->Set(v8::String::New("type"), v8::Integer::New(type()));
+
+                evnt->Set(v8::String::New("error"), v8::Integer::New(val));
+
+                evnt->Set(v8::String::New("success"), v8::Boolean::New(val == 0));
+
+                evnt->Set(v8::String::New("user"), v8::String::New(user().c_str(), user().size()));
+
+                return handle_scope.Close(evnt);
+            }
+
+
+        private:
+
+            v8::Persistent<v8::Value> m_function;
+            OwnHandle<v8::Context> m_context;
+            ScriptExecutionContext* m_scriptcontext;
+
+        } ;
+
+
+
     }
+
+    v8::Handle<v8::Value> dvnciExecute(int code, const v8::Arguments& args) {
+
+        int argumentCount = args.Length();
+
+        int callbackid = 100000;
+
+        initdvnciMain();
+
+        String stringarg1 = "";
+        String stringarg2 = "";
+
+
+        switch (code) {
+            case DVNCI_EXECUTE_EXPRESSION:
+            {
+                if (!argumentCount) return v8::Undefined();
+                callbackid = 1;
+                stringarg1 = toWebCoreString(args[0]) ;
+                break;
+            }
+            case DVNCI_EXECUTE_CHECK:
+            case DVNCI_EXECUTE_ERROR:
+            {
+                if (argumentCount < 2) return v8::Undefined();
+                callbackid = 1;
+                stringarg1 = toWebCoreString(args[0]) ;
+                break;
+            }
+            case DVNCI_EXECUTE_USERLIST:
+            {
+                if (!argumentCount) return v8::Undefined();
+                callbackid = 0;
+                break;
+            }
+            case DVNCI_EXECUTE_REGIST:
+            {
+                if (argumentCount < 3) return v8::Undefined();
+                callbackid = 0;
+                stringarg1 = toWebCoreString(args[1]) ;
+                stringarg2 = toWebCoreString(args[2]);
+                break;
+            }
+            case DVNCI_EXECUTE_UNREGIST:
+            {
+                if (!argumentCount) return v8::Undefined();
+                callbackid = 0;
+                break;
+            }
+        };
+
+
+        ScriptExecutionContext* scriptContext = 0;
+        DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
+        v8::Handle<v8::Value> function = callbackid < argumentCount ? args[callbackid] : v8::Handle<v8::Value > ();
+
+        bool hascallback = false;
+
+        if ( imp  &&  (imp->frame()) && (callbackid < argumentCount) && (scriptContext = static_cast<ScriptExecutionContext*> (imp->document()))) {
+
+            WTF::String functionString;
+            if (!function->IsFunction()) {
+                if (function->IsString())
+                    functionString = toWebCoreString(function);
+                else {
+                    v8::Handle<v8::Value> v8String = function->ToString();
+                    functionString = v8String.IsEmpty() ? "" : toWebCoreString(v8String);
+                }
+                hascallback = functionString.length();
+            }
+            else {
+                hascallback = true;
+            }
+        }
+
+
+        switch (code) {
+            case DVNCI_EXECUTE_EXPRESSION:
+            case DVNCI_EXECUTE_CHECK:
+            case DVNCI_EXECUTE_ERROR:
+            {
+                dvnci::chrome_executor_ptr intf = getexecutordvnci();
+                if (intf) {
+                    std::string exprstr = dvnci::wstr_to_utf8(std::wstring(stringarg1.characters(), stringarg1.length()));
+                    dvnci::expression_listener_ptr exrptr = hascallback ?
+                            dvnci::expression_listener_ptr(new WebCore::DVNCI::execute_expression_listener (stringarg1, code, V8Proxy::context(imp->frame()), scriptContext, v8::Handle<v8::Function>::Cast(function))) :
+                            dvnci::expression_listener_ptr(new WebCore::DVNCI::execute_expression_listener (stringarg1, code));
+                    bool rslt = intf->regist_expr_listener(exprstr, exrptr, code != DVNCI_EXECUTE_EXPRESSION);
+                    return v8::Boolean::New(rslt);
+                }
+            }
+
+            case DVNCI_EXECUTE_USERLIST:
+            {
+                dvnci::chrome_executor_ptr intf = getexecutordvnci();
+                if (intf && hascallback) {
+                    dvnci::entety_listener_ptr  exrptr = dvnci::entety_listener_ptr(
+                            new WebCore::DVNCI::entety_expression_listener (dvnci::NT_USER, dvnci::npos, "", V8Proxy::context(imp->frame()), scriptContext, v8::Handle<v8::Function>::Cast(function)));
+                    bool rslt = intf->regist_entety_listener(exrptr);
+                    return v8::Boolean::New(rslt);
+                }
+            }
+
+            case DVNCI_EXECUTE_REGIST:
+            {
+                dvnci::chrome_executor_ptr intf = getexecutordvnci();
+                if (intf && hascallback) {
+                    dvnci::registrate_listener_ptr  exrptr = dvnci::registrate_listener_ptr(
+                            new WebCore::DVNCI::regitrate_expression_listener(stringarg1.utf8().data(), stringarg2.utf8().data(), V8Proxy::context(imp->frame()), scriptContext, v8::Handle<v8::Function>::Cast(function)));
+                    bool rslt = intf->regist_registrate_listener(exrptr);
+                    return v8::Boolean::New(rslt);
+                }
+            }
+
+            case DVNCI_EXECUTE_UNREGIST:
+            {
+                dvnci::chrome_executor_ptr intf = getexecutordvnci();
+                if (intf && hascallback) {
+                    dvnci::registrate_listener_ptr  exrptr = dvnci::registrate_listener_ptr(
+                            new WebCore::DVNCI::regitrate_expression_listener (V8Proxy::context(imp->frame()), scriptContext, v8::Handle<v8::Function>::Cast(function)));
+                    bool rslt = intf->regist_registrate_listener(exrptr);
+                    return v8::Boolean::New(rslt);
+                }
+            }
+
+        }
+
+
+
+        return v8::Boolean::New(false);
+
+    }
+
+    v8::Handle<v8::Value> dvnciEntety(const v8::Arguments& args) {
+
+        int argumentCount = args.Length();
+
+        int callbackid = 0;
+
+        initdvnciMain();
+
+        dvnci::nodetype enttp = 0;
+
+        dvnci::indx parentid = dvnci::npos;
+
+        std::string filter = "";
+
+        int type = 0;
+
+        bool hascallback = false;
+
+        if (argumentCount > 1) {
+
+            enttp = static_cast<dvnci::nodetype> (toInt64(args[1]));
+
+            if (argumentCount > 2)
+                parentid = static_cast<dvnci::indx> (toInt64(args[2]));
+
+            if (argumentCount > 3) {
+                String fltr = toWebCoreString(args[3]);
+                filter  = std::string(fltr.utf8().data());
+            }
+
+            ScriptExecutionContext* scriptContext = 0;
+            DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
+            v8::Handle<v8::Value> function = callbackid < argumentCount ? args[callbackid] : v8::Handle<v8::Value > ();
+
+
+
+            if ( imp  &&  (imp->frame()) && (callbackid < argumentCount) && (scriptContext = static_cast<ScriptExecutionContext*> (imp->document()))) {
+
+                WTF::String functionString;
+                if (!function->IsFunction()) {
+                    if (function->IsString())
+                        functionString = toWebCoreString(function);
+                    else {
+                        v8::Handle<v8::Value> v8String = function->ToString();
+                        functionString = v8String.IsEmpty() ? "" : toWebCoreString(v8String);
+                    }
+                    hascallback = functionString.length();
+                }
+                else {
+                    hascallback = true;
+                }
+            }
+
+            if (enttp) {
+                dvnci::chrome_executor_ptr intf = getexecutordvnci();
+                if (intf && hascallback) {
+                    dvnci::entety_listener_ptr  exrptr = dvnci::entety_listener_ptr(
+                            new WebCore::DVNCI::entety_expression_listener (enttp, parentid, filter , V8Proxy::context(imp->frame()), scriptContext, v8::Handle<v8::Function>::Cast(function)));
+                    bool rslt = intf->regist_entety_listener(exrptr);
+                    return v8::Boolean::New(rslt);
+                }
+            }
+        }
+
+        return v8::Boolean::New(false);
+
+    }
+
+
+
+
+
 }
 
