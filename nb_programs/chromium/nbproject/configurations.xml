@@ -147,6 +147,7 @@
                 <logicalFolder name="dvnci" displayName="dvnci" projectFiles="true">
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.h</itemPath>
+                  <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/SCDBConnection.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ScriptBinding.h</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.cpp</itemPath>
                   <itemPath>../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.h</itemPath>

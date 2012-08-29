@@ -75,8 +75,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1388881251/chrome_switches.o \
 	${OBJECTDIR}/_ext/626163327/Binding.o \
 	${OBJECTDIR}/_ext/1372717311/Text.o \
-	${OBJECTDIR}/_ext/1372717311/EventTarget.o \
 	${OBJECTDIR}/_ext/395780272/Chrome.o \
+	${OBJECTDIR}/_ext/1372717311/EventTarget.o \
 	${OBJECTDIR}/_ext/1266577833/chrome_main.o \
 	${OBJECTDIR}/_ext/626163327/TableObserver.o \
 	${OBJECTDIR}/_ext/2090250122/renderer_main_platform_delegate_win.o \
@@ -88,6 +88,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/722456513/tab_contents_view_views.o \
 	${OBJECTDIR}/_ext/395780272/DOMWindow.o \
 	${OBJECTDIR}/_ext/314590153/balloon_host.o \
+	${OBJECTDIR}/_ext/626163327/SCDBConnection.o \
 	${OBJECTDIR}/_ext/1183789274/MainThreadChromium.o \
 	${OBJECTDIR}/_ext/373131870/content_switches.o \
 	${OBJECTDIR}/_ext/1519183961/CachedResource.o \
@@ -324,15 +325,15 @@ ${OBJECTDIR}/_ext/1372717311/Text.o: ../../include/chromium/src/third_party/WebK
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1372717311/Text.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.cpp
 
-${OBJECTDIR}/_ext/1372717311/EventTarget.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1372717311
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1372717311/EventTarget.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.cpp
-
 ${OBJECTDIR}/_ext/395780272/Chrome.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/page/Chrome.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/395780272
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/395780272/Chrome.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/page/Chrome.cpp
+
+${OBJECTDIR}/_ext/1372717311/EventTarget.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1372717311
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1372717311/EventTarget.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.cpp
 
 ${OBJECTDIR}/_ext/1266577833/chrome_main.o: ../../include/chromium/src/chrome/app/chrome_main.cc 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1266577833
@@ -388,6 +389,11 @@ ${OBJECTDIR}/_ext/314590153/balloon_host.o: ../../include/chromium/src/chrome/br
 	${MKDIR} -p ${OBJECTDIR}/_ext/314590153
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/314590153/balloon_host.o ../../include/chromium/src/chrome/browser/notifications/balloon_host.cc
+
+${OBJECTDIR}/_ext/626163327/SCDBConnection.o: ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/SCDBConnection.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/626163327
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/626163327/SCDBConnection.o ../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/SCDBConnection.cpp
 
 ${OBJECTDIR}/_ext/1183789274/MainThreadChromium.o: ../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/chromium/MainThreadChromium.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1183789274
