@@ -1376,9 +1376,9 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
   
     var td = document.createElement('td');
     
-    var tm= new Date(0,0,0, arr.time.getHours() ,arr.time.getMinutes() 
-        +arr.time.getTimezoneOffset(),arr.time.getSeconds());
-    var ta = document.createTextNode(tm.toLocaleTimeString());
+    //var tm= new Date(0,0,0, arr.time.getHours() ,arr.time.getMinutes() 
+    //    +arr.time.getTimezoneOffset(),arr.time.getSeconds());
+    var ta = document.createTextNode(arr.time.toLocaleTimeString());
     var sp = document.createElementNS(libutil.XHTML_NAMESPACE_URL,'span');
     sp.setAttribute("class", "smallfont");
     sp.appendChild(ta);
