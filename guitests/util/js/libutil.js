@@ -53,6 +53,8 @@ libutil.test = {};
 
 
 
+
+
 function formopen(name){
     if ((!window.$$editable) || ($$editable())) return;
     var fl =  libutil.global.getFormList();
@@ -144,12 +146,16 @@ function exit(){
         var unloadscript = !window.$$editable || !window.$$editable();
         if (unloadscript && win.___global___unload)
             win.___global___unload();
-        win.onunload=function(){$$exit();}
+        win.onunload=function(){
+            $$exit();
+        }
         win.$$global().___mainwindow.close();
-        win.$$global().___mainwindow=undefined;}
+        win.$$global().___mainwindow=undefined;
+    }
     else{
-       $$exit();
-       window.close();}
+        $$exit();
+        window.close();
+    }
 }
 
 
@@ -158,25 +164,30 @@ function exit(){
 function init_project_controller(){
     libutil.global.getStartupDoc(document);
     try{
-    var tmp=$$global();
-    var projectPath=libutil.project.path_from_URL(document.URL);
-    tmp.projectPath=projectPath;
-   // var elp=libutil.global.getStartupDoc().getElementsByTagName('project')[0];
-    //console.log(elp);
-    //var projectPath=elp.getAttribute('path');
-    //console.log(projectPath);
-    $$global().loadwin = window.open(projectPath+ 'load.xml', 'initialisate' , 
-                                     "caption=initialisate;left=0%;top=0%;width=100%;height=100%;decorated=no;allwaystop=yes");
-    setTimeout(function(){libutil.project.init_form();}, 1000);}
+        var tmp=$$global();
+        var projectPath=libutil.project.path_from_URL(document.URL);
+        tmp.projectPath=projectPath;
+        // var elp=libutil.global.getStartupDoc().getElementsByTagName('project')[0];
+        //console.log(elp);
+        //var projectPath=elp.getAttribute('path');
+        //console.log(projectPath);
+        $$global().loadwin = window.open(projectPath+ 'load.xml', 'initialisate' , 
+            "caption=initialisate;left=0%;top=0%;width=100%;height=100%;decorated=no;allwaystop=yes");
+        setTimeout(function(){
+            libutil.project.init_form();
+        }, 1000);
+    }
     catch(error){
         console.error('init_project_controller error:',error);
-        libutil.project.init_form();}
+        libutil.project.init_form();
+    }
     
     if (window.$$editable && window.$$editable() && dsutl.toolwin) 
         dsutl.toolwin.getMainWindow();
     var tmp = window.$$global ? window.$$global() : null;
     if (tmp){
-        tmp['___mainwindow'] = window;}
+        tmp['___mainwindow'] = window;
+    }
 
 }
 
@@ -257,13 +268,13 @@ libutil.startup.init = function(){
         libutil.startup.initdesigner(window.name, document.red);
         set_win_designer(window, document.red);
         if (tmp)
-           tmp.currentred=document.red;
+            tmp.currentred=document.red;
     }
     else{
         document.addEventListener('contextmenu' ,function () {
-        event.stopPropagation();
-        event.preventDefault();  
-    });  
+            event.stopPropagation();
+            event.preventDefault();  
+        });  
     }
     window.onunload=formclose_win;
 }
@@ -310,9 +321,12 @@ libutil.project.init_form = function(){
                           
             if (ellib)  {     
                 for (var i=0; i<ellib.length;++i)
-                    libutil.project.addtoliblist(ellib[i],i);}
+                    libutil.project.addtoliblist(ellib[i],i);
+            }
                 
-            if ($$global().loadwin) setTimeout(function(){$$global().loadwin.close()}, 2500);                
+            if ($$global().loadwin) setTimeout(function(){
+                $$global().loadwin.close()
+                }, 2500);                
                 
 
             
@@ -492,20 +506,22 @@ libutil.project.getXSLTScriptList = function(){
         for(var e=list.firstChild; e; e=e.nextSibling){
             if ((e.getAttribute) && (e.localName=='call-template') && (e.getAttribute('name')=='lib_script_include_file')){
                 for(var ep=e.firstChild; ep; ep=ep.nextSibling){
-                if ((ep.getAttribute) && (ep.localName=='with-param') && (ep.getAttribute('name')=='file') && (ep.textContent!='')){
-                   result.push({'file' : ep.textContent})
+                    if ((ep.getAttribute) && (ep.localName=='with-param') && (ep.getAttribute('name')=='file') && (ep.textContent!='')){
+                        result.push({
+                            'file' : ep.textContent
+                            })
+                    }
                 }
             }
-        }
-    }  
-}
-return result;
+        }  
+    }
+    return result;
 }
 
 libutil.project.setXSLTScriptList = function(){
-   var tmp=$$global();
-   if (tmp)   
-       tmp.scriptlist = libutil.project.getXSLTScriptList();   
+    var tmp=$$global();
+    if (tmp)   
+        tmp.scriptlist = libutil.project.getXSLTScriptList();   
 }
 
 libutil.project.insertXSLTScriptList = function(file){
@@ -521,21 +537,21 @@ libutil.project.insertXSLTScriptList = function(file){
                 for(var ep=e.firstChild; ep; ep=ep.nextSibling){
                     if ((ep.getAttribute) && (ep.localName=='with-param') && (ep.getAttribute('name')=='file')){
                         if (ep.textContent=='' || !ep.textContent){
-                                var newel = e.cloneNode(true);
-                                newel.childNodes[1].textContent=file;
-                                e.parentNode.appendChild(newel);
-                                libutil.dom.writeDoc(newel.ownerDocument);
-                                libutil.project.setXSLTScriptList();
-                                return true;                       
+                            var newel = e.cloneNode(true);
+                            newel.childNodes[1].textContent=file;
+                            e.parentNode.appendChild(newel);
+                            libutil.dom.writeDoc(newel.ownerDocument);
+                            libutil.project.setXSLTScriptList();
+                            return true;                       
                         }
                     }
                 }
-        }    
+            }    
         }
-    console.error('Not set XSL liblist');
-    return false;
-}
-return null;
+        console.error('Not set XSL liblist');
+        return false;
+    }
+    return null;
 }
 
 libutil.project.removeXSLTScriptList = function(file){
@@ -566,7 +582,7 @@ libutil.project.removeXSLTScriptList = function(file){
 //
 
 libutil.test.element = function(el){
-   console.log(el);
+    console.log(el);
 }
 
 //
@@ -679,38 +695,132 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r 
     
     var docelem = document.documentElement;
     
-    var svg =libutil.svg.create_element('svg', docelem, [{name : 'x', value: xc},
-                                                         {name : 'y', value: yc},
-                                                         {name : 'width', value: wc},
-                                                         {name : 'height', value: hc}]);
+    var svg =libutil.svg.create_element('svg', docelem, [{
+        name : 'x', 
+        value: xc
+    },
+
+    {
+        name : 'y', 
+        value: yc
+    },
+
+    {
+        name : 'width', 
+        value: wc
+    },
+
+    {
+        name : 'height', 
+        value: hc
+    }]);
                                                      
                                                     
     
-    svg.hoverrect = libutil.svg.create_element('rect', svg, [{name : 'x', value:  0},
-                                             {name : 'y', value:  0},
-                                             {name : 'width', value: wc},
-                                             {name : 'height', value: hc},
-                                             {name : 'rx', value: r},
-                                             {name : 'ry', value: r},                                             
-                                             {name : 'style', value: popupstyle ? popupstyle : 'fill: white; opacity: 0.0;'}]);
+    svg.hoverrect = libutil.svg.create_element('rect', svg, [{
+        name : 'x', 
+        value:  0
+    },
+
+    {
+        name : 'y', 
+        value:  0
+    },
+
+    {
+        name : 'width', 
+        value: wc
+    },
+
+    {
+        name : 'height', 
+        value: hc
+    },
+
+    {
+        name : 'rx', 
+        value: r
+    },
+
+    {
+        name : 'ry', 
+        value: r
+    },                                             
+
+    {
+        name : 'style', 
+        value: popupstyle ? popupstyle : 'fill: white; opacity: 0.0;'
+        }]);
     
-    svg.popupbody = libutil.svg.create_element('svg', svg, [{name : 'x', value: dir==1 ? wh : 0},
-                                                            {name : 'y', value:  dir==2 ? hh : 0},
-                                                            {name : 'width', value: W},
-                                                            {name : 'height', value: H}]);
+    svg.popupbody = libutil.svg.create_element('svg', svg, [{
+        name : 'x', 
+        value: dir==1 ? wh : 0
+        },
+
+        {
+        name : 'y', 
+        value:  dir==2 ? hh : 0
+        },
+
+        {
+        name : 'width', 
+        value: W
+    },
+
+    {
+        name : 'height', 
+        value: H
+    }]);
     
-    var rct = libutil.svg.create_element('rect', svg.popupbody , [{name : 'x', value:  0},
-                                                        {name : 'y', value:  0},
-                                                        {name : 'width', value: W},
-                                                        {name : 'height', value: H},
-                                                        {name : 'rx', value: r},
-                                                        {name : 'ry', value: r},
-                                                        {name : 'style', value: bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'}]);
+    var rct = libutil.svg.create_element('rect', svg.popupbody , [{
+        name : 'x', 
+        value:  0
+    },
+
+    {
+        name : 'y', 
+        value:  0
+    },
+
+    {
+        name : 'width', 
+        value: W
+    },
+
+    {
+        name : 'height', 
+        value: H
+    },
+
+    {
+        name : 'rx', 
+        value: r
+    },
+
+    {
+        name : 'ry', 
+        value: r
+    },
+
+    {
+        name : 'style', 
+        value: bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'
+        }]);
                                                     
-    svg.boundspopup = {x: xc , y: yc, width: wc, height: hc};                                                
+    svg.boundspopup = {
+        x: xc , 
+        y: yc, 
+        width: wc, 
+        height: hc
+    };                                                
     
-    svg.buttonposition = {x : dir==3 ? W : 0, y :  dir==0 ? H : 0, 
-                          width: (dir==0 || dir==2) ? W  : wh ,   height: (dir==1 || dir==3) ? H : hh , dir : dir};
+    svg.buttonposition = {
+        x : dir==3 ? W : 0, 
+        y :  dir==0 ? H : 0, 
+        width: (dir==0 || dir==2) ? W  : wh ,   
+        height: (dir==1 || dir==3) ? H : hh , 
+        dir : dir
+    };
     //console.log('svg.buttonposition', svg.buttonposition);
 
     
@@ -870,11 +980,21 @@ libutil.regex.add_postfix_file = function (value, expr){
 
 libutil.geometry.boundrect = function (el){
     var box = el && el.getBBox ? el.getBBox() : null;
-    var rect = box ? {x : box.x , y : box.y , w : box.width , h : box.height} : null;
+    var rect = box ? {
+        x : box.x , 
+        y : box.y , 
+        w : box.width , 
+        h : box.height
+        } : null;
     if (rect) return rect;
     var boxs = el  && el.getClientRects ? el.getClientRects() : null;
     var box = boxs && boxs.length ? boxs[0] : null;
-    return box ? {x : box.top , y : box.left , w : box.width , h : box.height} : null;
+    return box ? {
+        x : box.top , 
+        y : box.left , 
+        w : box.width , 
+        h : box.height
+        } : null;
 }
 
 
@@ -894,8 +1014,8 @@ libutil.html.create_element = function (name, parent, attr){
     var newel = parent.ownerDocument.createElementNS(libutil.XHTML_NAMESPACE_URL, name);
     if (attr){
         for (var i=0; i < attr.length; ++i){
-           if (attr[i].value) 
-               newel.setAttribute(attr[i].name, attr[i].value); 
+            if (attr[i].value) 
+                newel.setAttribute(attr[i].name, attr[i].value); 
         }
     }
     if (parent)
@@ -908,8 +1028,8 @@ libutil.html.create_element_not_insert = function (name, parent, attr){
     var newel = parent.ownerDocument.createElementNS(libutil.XHTML_NAMESPACE_URL, name);
     if (attr){
         for (var i=0; i < attr.length; ++i){
-           if (attr[i].value) 
-               newel.setAttribute(attr[i].name, attr[i].value); 
+            if (attr[i].value) 
+                newel.setAttribute(attr[i].name, attr[i].value); 
         }
     }
     return newel;
@@ -918,8 +1038,15 @@ libutil.html.create_element_not_insert = function (name, parent, attr){
 
 libutil.html.create_tabel_header = function (tr, style, classnm, arr){
     for (var i=0; i < arr.length; ++i){
-        var th = libutil.html.create_element('th', tr,  [{name : 'style', value: style},
-                                                         {name : 'class', value: classnm}]);
+        var th = libutil.html.create_element('th', tr,  [{
+            name : 'style', 
+            value: style
+        },
+
+        {
+            name : 'class', 
+            value: classnm
+        }]);
         th.innerHTML=arr[i];
     } 
 }
@@ -999,7 +1126,10 @@ libutil.html.create_tool = function (doc, nametool, names, hints, funcs, size, h
         var result = {};
         if (body) {
             if (header){
-                var divhead = libutil.html.create_element('div' , body ,[{name : 'style' , value : headerstyle}]); 
+                var divhead = libutil.html.create_element('div' , body ,[{
+                    name : 'style' , 
+                    value : headerstyle
+                }]); 
                 divhead.innerHTML=header;
             }
             libutil.html.create_tool_style(doc, nametool, names,  size);
@@ -1011,7 +1141,10 @@ libutil.html.create_tool = function (doc, nametool, names, hints, funcs, size, h
                 btn.nametool=nametool;
                 if ( hints &&  hints.length>i)
                     btn.setAttribute('title', hints[i])
-                var dv = libutil.html.create_element('div' , btn ,[{name : 'class' , value : nametool+'-icon'}]);
+                var dv = libutil.html.create_element('div' , btn ,[{
+                    name : 'class' , 
+                    value : nametool+'-icon'
+                    }]);
                 if (hints &&  hints.length>i)
                     dv.setAttribute('title', hints[i]);
                 result[names[i]] = btn;
@@ -1127,8 +1260,8 @@ libutil.svg.create_element = function (name, parent, attr){
     var newel = parent.ownerDocument.createElementNS(libutil.SVG_NAMESPACE_URL, name);
     if (attr){
         for (var i=0; i < attr.length; ++i){
-           if (attr[i].value) 
-               newel.setAttribute(attr[i].name, attr[i].value); 
+            if (attr[i].value) 
+                newel.setAttribute(attr[i].name, attr[i].value); 
         }
     }
     if (parent) 
@@ -1140,8 +1273,8 @@ libutil.svg.create_element_no_insert = function (name, parent, attr){
     var newel = parent.ownerDocument.createElementNS(libutil.SVG_NAMESPACE_URL, name);
     if (attr){
         for (var i=0; i < attr.length; ++i){
-           if (attr[i].value) 
-               newel.setAttribute(attr[i].name, attr[i].value); 
+            if (attr[i].value) 
+                newel.setAttribute(attr[i].name, attr[i].value); 
         }
     }
     return newel;
@@ -1163,19 +1296,65 @@ libutil.svg.create_text = function (parent, x, y,  style, classnm, text){
 
 libutil.svg.create_button = function (parent, x, y, width, height, rx, ry,  rectstyle, rectclass,   text, textstyle, textclass){
 
-    var headersvg=libutil.svg.create_element('svg', parent , [{name : 'x', value: x},
-                                                         {name : 'y', value: y},
-                                                         {name : 'width', value: width},
-                                                         {name : 'height', value: height}]);   
+    var headersvg=libutil.svg.create_element('svg', parent , [{
+        name : 'x', 
+        value: x
+    },
 
-    libutil.svg.create_element('rect', headersvg, [{name : 'x', value:  0},
-                                                {name : 'y', value:  0},
-                                                {name : 'width', value: width},
-                                                {name : 'height', value: height},
-                                                {name : 'rx', value: rx},
-                                                {name : 'ry', value: ry}, 
-                                                {name : 'style', value: rectstyle},
-                                                {name : 'class', value: rectclass}]);
+    {
+        name : 'y', 
+        value: y
+    },
+
+    {
+        name : 'width', 
+        value: width
+    },
+
+    {
+        name : 'height', 
+        value: height
+    }]);   
+
+    libutil.svg.create_element('rect', headersvg, [{
+        name : 'x', 
+        value:  0
+    },
+
+    {
+        name : 'y', 
+        value:  0
+    },
+
+    {
+        name : 'width', 
+        value: width
+    },
+
+    {
+        name : 'height', 
+        value: height
+    },
+
+    {
+        name : 'rx', 
+        value: rx
+    },
+
+    {
+        name : 'ry', 
+        value: ry
+    }, 
+
+    {
+        name : 'style', 
+        value: rectstyle
+    },
+
+    {
+        name : 'class', 
+        value: rectclass
+    }]);
                                     
                              
     libutil.svg.create_text(headersvg,
@@ -1191,13 +1370,20 @@ libutil.svg.create_button = function (parent, x, y, width, height, rx, ry,  rect
 
 libutil.svg.create_gradient = function (name ,parent, attr, colors){
     if (colors){
-    var gradient=libutil.svg.create_element(name , parent , attr); 
-    for (var i=0; i < colors.length; ++i){
-        libutil.svg.create_element('stop', gradient , [{name : 'offset' , value : colors[i].offset ? colors[i].offset : 0},
-                                                       {name : 'stop-color' , value : colors[i].stopcolor ? colors[i].stopcolor : '#000'}])
+        var gradient=libutil.svg.create_element(name , parent , attr); 
+        for (var i=0; i < colors.length; ++i){
+            libutil.svg.create_element('stop', gradient , [{
+                name : 'offset' , 
+                value : colors[i].offset ? colors[i].offset : 0
+                },
+
+                {
+                name : 'stop-color' , 
+                value : colors[i].stopcolor ? colors[i].stopcolor : '#000'
+                }])
+        }
+        return gradient;
     }
-    return gradient;
-}
     return null;                                       
 }
 
@@ -1216,14 +1402,36 @@ libutil.www.create_window = function(doc, id, x, y, width, height, style){
         var root = doc.documentElement;
         if (root) {
      
-            var result = libutil.svg.create_element('foreignObject', doc.documentElement, [{name : 'id', value:  id},
-                                                                                   {name : 'x', value:  x ? x : 0},
-                                                                                   {name : 'y', value:  y ? y : 0},
-                                                                                   {name : 'width', value: width ? width : 300},
-                                                                                   {name : 'height', value: height ? height : 300}]);         
+            var result = libutil.svg.create_element('foreignObject', doc.documentElement, [{
+                name : 'id', 
+                value:  id
+            },
+
+            {
+                name : 'x', 
+                value:  x ? x : 0
+                },
+
+                {
+                name : 'y', 
+                value:  y ? y : 0
+                },
+
+                {
+                name : 'width', 
+                value: width ? width : 300
+                },
+
+                {
+                name : 'height', 
+                value: height ? height : 300
+                }]);         
             var html = libutil.html.create_element('html' , result);
             
-            libutil.html.create_element('head', html,[{name : 'style', value:  style}]);
+            libutil.html.create_element('head', html,[{
+                name : 'style', 
+                value:  style
+            }]);
             
             var body= libutil.html.create_element( 'body' ,html);
             
@@ -1307,20 +1515,24 @@ libutil.www.set_tbwindow_btnstatus = function (name, tools, btnname , state){
 
 libutil.alarmtable = function(el){
     try{
-    this.alarmelement=libutil.dom.findElementByTagName(el,'table');
-    if (this.alarmelement){
-        var ts = this;
-        this.handler = function(){
-            ts.execute(event);
+        this.alarmelement=libutil.dom.findElementByTagName(el,'table');
+        if (this.alarmelement){
+            var ts = this;
+            this.handler = function(){
+                ts.execute(event);
+            }
+            var rslt = window.addAlarmsListener(this.handler);
+            this.init= rslt;
+            if (!this.init){
+                console.error('AlarmsListener didnt add');
+                this.handler=undefined;
+                return false;
+            }
         }
-        var rslt = window.addAlarmsListener(this.handler);
-        this.init= rslt;
-        if (!this.init){
-            console.error('AlarmsListener didnt add');
-            this.handler=undefined;
-            return false;}}}
-   catch(error){
-       console.error('Alarms set error: ' + error );}
+    }
+catch(error){
+    console.error('Alarms set error: ' + error );
+}
 return this.init;
 }
 
@@ -1411,7 +1623,7 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
 
 
 
-libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, r, option){
+libutil.trendchart = function(elid, throbid , sqlreq , tags, hist, colors, width, height, r, option){
     Highcharts.setOptions({
         global: {
             useUTC: false
@@ -1449,148 +1661,179 @@ libutil.trendchart = function(elid, throbid ,tags, hist, colors, width, height, 
             for(var key in option) {
                 switch(key){
                     case 'background':{
-                         if (option[key].constructor == Array){
+                        if (option[key].constructor == Array){
                             backgroundcolor = {
                                 linearGradient: ['100%', '0%', '100%', '100%'],
-                                stops: option[key]}}
-                         if (option[key].constructor == String){
-                            backgroundcolor = option[key]}
-                        break;
+                                stops: option[key]
+                                }
+                            }
+                    if (option[key].constructor == String){
+                        backgroundcolor = option[key]
+                        }
+                    break;
                     }
-                    case 'animation':{
-                        animation = option[key];    
-                        break;     
-                    }
-                    case 'lineWidth':{
-                        linewidth = parseInt(option[key]);    
-                        break;     
-                    }
-                    case 'axisWidth':{
-                        axiswidth = parseInt(option[key]);    
-                        break;     
-                    }   
-                    case 'axisColor':{
-                        axisYcolor = option[key];   
-                        break;     
-                    }
-                    case 'axisXColor':{
-                        axisXcolor = option[key];   
-                        break;     
-                    }                      
-                    case 'shadow':{
-                        shadow = option[key];    
-                        break;     
-                    }  
-                    case 'seriestype':{
-                        defaultseriestype = option[key];    
-                        break;     
-                    }  
-                    case 'disableColor':{
-                        disablecolor = option[key];    
-                        break;     
-                    } 
-                    case 'title':{
-                        title = option[key];    
-                        break;     
-                    }                    
+                case 'animation':{
+                    animation = option[key];    
+                    break;     
                 }
+                case 'lineWidth':{
+                    linewidth = parseInt(option[key]);    
+                    break;     
+                }
+                case 'axisWidth':{
+                    axiswidth = parseInt(option[key]);    
+                    break;     
+                }   
+                case 'axisColor':{
+                    axisYcolor = option[key];   
+                    break;     
+                }
+                case 'axisXColor':{
+                    axisXcolor = option[key];   
+                    break;     
+                }                      
+                case 'shadow':{
+                    shadow = option[key];    
+                    break;     
+                }  
+                case 'seriestype':{
+                    defaultseriestype = option[key];    
+                    break;     
+                }  
+                case 'disableColor':{
+                    disablecolor = option[key];    
+                    break;     
+                } 
+                case 'title':{
+                    title = option[key];    
+                    break;     
+                }                    
+            }
             }        
-        }}
+    }
+}
              
     
     
-    try{
+try{
     if ((!window.$$editable) || ($$editable())) return;
     this.element = document.getElementById(elid);
     this.thtobblerbody = document.getElementById(throbid);
     if (this.element){
         if (this.thtobblerbody)
             this.element.trobbler = new libutil.proggress.throbber(this.thtobblerbody);
-        
+        this.sqlreq = sqlreq;
         if (tags.length){
-        if (!hist) hist=0;
-        this.period = hist * 1000;
-        var ts = this;
-        
-
-        this.disablecolor = disablecolor ? disablecolor : "#AAA";
-        this.backgroundcolor = backgroundcolor ? backgroundcolor : "#EEE";
-        this.axisYcolor = axisYcolor!==undefined ? axisYcolor : undefined;
-        this.axisXcolor = axisXcolor!==undefined ? axisXcolor : this.axisYcolor;
-        
-        this.width = width;
-        this.height = height;
-        this.linewidth = linewidth ? linewidth : 1;
-        this.axiswidth = axiswidth ? axiswidth : 1;
-        
-        var minBound = height < width ? height : width;
-        
-        this.fontsize = fontsize ? fontsize : (minBound ? parseInt(minBound / 30) : undefined );
-        
-        if (this.fontsize < 8) this.fontsize=8;
-        this.shadow = shadow ? true : false;
-        this.borderRadius = (r || r==0) ? r : 5;
-
-        this.defaultseriestype =  defaultseriestype ? defaultseriestype : 'line';
-        
-        this.animation = animation ? true : false;
-        this.title=title ? title : null;
-        
-        
-        this.last_datastate = [];
-        this.serias_lastvalue = [];
-        
-        
-        this.null_datastate = [];
-        this.null_datachange = false;
-        this.null_periods = [];
-        this.null_lines = [];
-        //this.null_lines_change = false;
-        
-        this.current_null_periods = null;
-        this.current_null_periods_change = false;
-       
-        for (var i=0;i<tags.length;++i){
-            this.null_datastate[i]=null;
-            this.last_datastate[i]=null;
-            this.serias_lastvalue[i]=null;}
-        
-        this.handler = function(){
-            ts.execute(event);}
-        
-        
-        var rslt = this.element.addTrendsListener( this.handler, tags, this.period + libutil.trendchart.WAITDELT );
-        this.init = rslt;
-        if (!this.init){
-            console.error('TrendsListener didnt set');
-            this.handler=undefined;}
-        else{
             
-            var removeroot = function(){
-                //console.log('Remove graph root');
-                ts.detach();             
+            if (!this.sqlreq){
+                if (!hist) hist=0;
+                this.period = hist * 1000;
             }
-            this.element.addEventListener('DOMNodeRemovedFromDocument',removeroot, false);
-        }}
-    }
-    else {console.error('Not find trend element');}}
-    catch(error){
-        console.error('Trends set error: ' + error );
-    }
+            else{
+                this.start=hist.start;
+                this.stop=hist.stop;
+            }
+        
+            var ts = this;
+        
+
+            this.disablecolor = disablecolor ? disablecolor : "#AAA";
+            this.backgroundcolor = backgroundcolor ? backgroundcolor : "#EEE";
+            this.axisYcolor = axisYcolor!==undefined ? axisYcolor : undefined;
+            this.axisXcolor = axisXcolor!==undefined ? axisXcolor : this.axisYcolor;
+        
+            this.width = width;
+            this.height = height;
+            this.linewidth = linewidth ? linewidth : 1;
+            this.axiswidth = axiswidth ? axiswidth : 1;
+        
+            var minBound = height < width ? height : width;
+        
+            this.fontsize = fontsize ? fontsize : (minBound ? parseInt(minBound / 30) : undefined );
+        
+            if (this.fontsize < 8) this.fontsize=8;
+            this.shadow = shadow ? true : false;
+            this.borderRadius = (r || r==0) ? r : 5;
+
+            this.defaultseriestype =  defaultseriestype ? defaultseriestype : 'line';
+        
+            this.animation = animation ? true : false;
+            this.title=title ? title : null;
+        
+        
+            this.last_datastate = [];
+            this.serias_lastvalue = [];
+        
+        
+            this.null_datastate = [];
+            this.null_datachange = false;
+            this.null_periods = [];
+            this.null_lines = [];
+            //this.null_lines_change = false;
+        
+            this.current_null_periods = null;
+            this.current_null_periods_change = false;
+       
+            for (var i=0;i<tags.length;++i){
+                this.null_datastate[i]=null;
+                this.last_datastate[i]=null;
+                this.serias_lastvalue[i]=null;
+            }
+        
+            this.handler = function(){
+                ts.execute(event);
+            }
+        
+            if (!sqlreq)
+                var rslt = this.element.addTrendsListener( this.handler, tags, this.period + libutil.trendchart.WAITDELT );
+            else{
+                this.connection = sqlreq;
+                var rslt = this.connection.select_trends(this.handler,tags ,hist.start , hist.stop );         
+            }  
+        
+        
+            this.init = rslt;
+            if (!this.init){
+                console.error('TrendsListener didnt set');
+                this.handler=undefined;
+            }
+            else{
+            
+                var removeroot = function(){
+                    //console.log('Remove graph root');
+                    ts.detach();             
+                }
+                this.element.addEventListener('DOMNodeRemovedFromDocument',removeroot, false);
+            }
+        }
+}
+else {
+    console.error('Not find trend element');
+}
+}
+catch(error){
+    console.error('Trends set error: ' + error );
+}
 }
 
 libutil.trendchart.WAITDELT = 6000;
 
 libutil.trendchart.prototype.sort = function(tags,colors){
     if (!tags || !colors || tags.constructor != Array){
-          this.tags = tags;     
-          this.colors = colors;
-          return;
+        this.tags = tags;     
+        this.colors = colors;
+        return;
     };
     var tmp = [];
     for (var i=0; i<tags.length;++i){
-        tmp.push({tag: tags[i], color: colors.length>i ? colors[i]: 'red'});}
-    tmp.sort(function(x1,x2){return x1.tag<x2.tag ? -1 : (x1.tag>x2.tag) ? 1 : 0});
+        tmp.push({
+            tag: tags[i], 
+            color: colors.length>i ? colors[i]: 'red'
+            });
+    }
+    tmp.sort(function(x1,x2){
+        return x1.tag<x2.tag ? -1 : (x1.tag>x2.tag) ? 1 : 0
+        });
     this.tags=[];
     this.colors=[];
     for (var i=0; i<tmp.length;++i){
@@ -1600,64 +1843,71 @@ libutil.trendchart.prototype.sort = function(tags,colors){
 }
 
 libutil.trendchart.prototype.detach = function() {
-    if (this.handler)
+    if (this.handler && !this.sqlreq)
         if (!this.element.removeTrendsListener(this.handler))
             console.error('TrendsListener didnt remove');
     if (this.chart)
         this.chart.destroy();
-        this.element.chart=undefined;
+    this.element.chart=undefined;
 }
 
 libutil.trendchart.prototype.currentStart = function() {
-    return (new Date() - this.period).valueOf() ;
-}
+    return this.sqlreq ? this.start.valueOf() : (new Date() - this.period).valueOf() ;
+} 
 
 libutil.trendchart.prototype.add_nullperiod =function (period){
     var start = period.start;
     var stop = period.stop;    
     for (var i=0;i<this.null_periods.length;++i){
         var state = (stop < this.null_periods[i].start) ? 0 :
-                    (((stop <= this.null_periods[i].stop) || (start <= this.null_periods[i].stop)) ? 1 : 2);
+        (((stop <= this.null_periods[i].stop) || (start <= this.null_periods[i].stop)) ? 1 : 2);
         //if (stop>this.null_periods[i].stop)        
         switch(state) {
-           case 0:  {libutil.util.insert_element_arr(this.null_periods,period,i);
-                     this.null_datachange=true;
-                     //console.log('periods 0 : ' , this.null_periods, ' add ' , period);
-                     return;}
-           case 1:  {this.null_periods[i].start = start < this.null_periods[i].start ? start : this.null_periods[i].start;
-                     this.null_periods[i].stop = stop > this.null_periods[i].stop ? stop : this.null_periods[i].stop;
-                     //console.log('periods 1 : '  , this.null_periods, ' change ' + i , this.null_periods[i]);
-                     this.null_datachange=true;
-                     return;}
-      }                   
+            case 0:  {
+                
+                libutil.util.insert_element_arr(this.null_periods,period,i);
+                this.null_datachange=true;
+                //console.log('periods 0 : ' , this.null_periods, ' add ' , period);
+                return;
+            }
+            case 1:  {
+                
+                this.null_periods[i].start = start < this.null_periods[i].start ? start : this.null_periods[i].start;
+                this.null_periods[i].stop = stop > this.null_periods[i].stop ? stop : this.null_periods[i].stop;
+                //console.log('periods 1 : '  , this.null_periods, ' change ' + i , this.null_periods[i]);
+                this.null_datachange=true;
+                return;
+            }
+        }                   
     }
-   this.null_datachange=true; 
-   this.null_periods.push(period);
+    this.null_datachange=true; 
+    this.null_periods.push(period);
    
 }
 
 libutil.trendchart.prototype.update_null_data =function (){
 
-  if (this.current_null_periods_change){
-      if (this.current_null_periods){
-        this.chart.xAxis[0].removePlotBand('currentnulldata');  
-        this.chart.xAxis[0].addPlotBand({
-                       from : this.current_null_periods.start , 
-                       to : Number.POSITIVE_INFINITY,
-                       color : this.disablecolor,
-                       id: 'currentnulldata'});
-      }
-      else{
-        this.chart.xAxis[0].removePlotBand('currentnulldata');
-      } 
-      this.current_null_periods_change=false;      
-  }
+    if (this.current_null_periods_change){
+        if (this.current_null_periods){
+            this.chart.xAxis[0].removePlotBand('currentnulldata');  
+            this.chart.xAxis[0].addPlotBand({
+                from : this.current_null_periods.start , 
+                to : Number.POSITIVE_INFINITY,
+                color : this.disablecolor,
+                id: 'currentnulldata'
+            });
+        }
+        else{
+            this.chart.xAxis[0].removePlotBand('currentnulldata');
+        } 
+        this.current_null_periods_change=false;      
+    }
   
-  if (this.null_datachange){
-      //console.log('this.addBound() lines' , this.null_lines );
-    this.addBound();  
-    this.null_datachange =false;  
-  }
+    if (this.null_datachange){
+        //console.log('this.addBound() lines' , this.null_lines );
+        this.addBound();  
+        this.null_datachange =false;  
+    }
 }
 
 
@@ -1666,21 +1916,23 @@ libutil.trendchart.prototype.update_data =function (){
     var updated = false;
 
     for (var i=0; i<this.element.chart.series.length; ++i){
-       if (this.element.chart.series[i].data.length) {
-           //console.log( 'now:' + new Date(now) + ' data:' + new Date(this.element.chart.series[i].data[0].x));
-           if (this.element.chart.series[i].data[0].x< now) {
-               while((this.element.chart.series[i].data.length>1) && (this.element.chart.series[i].data[1].x<now))
-                  this.element.chart.series[i].data[0].remove(false,false);
-              if (this.element.chart.series[i].data[0].x< now){
-                  var val = this.element.chart.series[i].data[0];
-                  var valnext = (this.element.chart.series[i].data.length>1) ? this.element.chart.series[i].data[0] : null;
-                  var yval = (val.y!==null) && (valnext.y!==null) ? ((valnext.y/* + val.y*/)/* / 2*/) : val.y;
-                  val.x= now;
-                  val.y= yval;
-                  this.element.chart.series[i].data[0].update(val);}                               
-               updated = true;             
-  }}
-}
+        if (this.element.chart.series[i].data.length) {
+            //console.log( 'now:' + new Date(now) + ' data:' + new Date(this.element.chart.series[i].data[0].x));
+            if (this.element.chart.series[i].data[0].x< now) {
+                while((this.element.chart.series[i].data.length>1) && (this.element.chart.series[i].data[1].x<now))
+                    this.element.chart.series[i].data[0].remove(false,false);
+                if (this.element.chart.series[i].data[0].x< now){
+                    var val = this.element.chart.series[i].data[0];
+                    var valnext = (this.element.chart.series[i].data.length>1) ? this.element.chart.series[i].data[0] : null;
+                    var yval = (val.y!==null) && (valnext.y!==null) ? ((valnext.y/* + val.y*/)/* / 2*/) : val.y;
+                    val.x= now;
+                    val.y= yval;
+                    this.element.chart.series[i].data[0].update(val);
+                }                               
+                updated = true;             
+            }
+        }
+    }
 var haschange = true;
 var periodhaschange = false;
 while (haschange){
@@ -1690,13 +1942,15 @@ while (haschange){
         libutil.util.remove_element_arr(this.null_periods,0);
         this.null_datachange = true;
         haschange = true;
-        updated = true;}         
+        updated = true;
+    }         
 }
 if (periodhaschange){
     haschange = false;
     if (this.null_lines.length && this.null_lines[0].time<now){
         libutil.util.remove_element_arr(this.null_lines,0);
-        haschange = true;} 
+        haschange = true;
+    } 
 }
 return updated;
 }
@@ -1711,84 +1965,91 @@ libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
         var now = this.currentStart();
         if (now<val[0]){
             if (val[1]===null){
-            arr.push({
-                x : now, 
-                y : null
-            });
-            this.current_null_periods_change=true;
-            this.null_datastate[i]=now;
-            this.current_null_periods ={
-                'start' : now, 
-                'counter' : 1
-            };  
-            this.current_null_periods_change=true;}
-        else
-          {
-            arr.push({
-                x : now, 
-                y : val[1]
-            });            
-        }}
-    else{
-         val[0]=now;    
+                arr.push({
+                    x : now, 
+                    y : null
+                });
+                this.current_null_periods_change=true;
+                this.null_datastate[i]=now;
+                this.current_null_periods ={
+                    'start' : now, 
+                    'counter' : 1
+                };  
+                this.current_null_periods_change=true;
+            }
+            else
+            {
+                arr.push({
+                    x : now, 
+                    y : val[1]
+                });            
+            }
         }
-    }  
+    else{
+        val[0]=now;    
+    }
+}  
     
-    if (!this.null_datastate[i] && (val[1]===null)){
+if (!this.null_datastate[i] && (val[1]===null)){
         
-        this.null_datastate[i]=/*this.last_datastate[i] ? this.last_datastate[i] :*/ val[0];
+    this.null_datastate[i]=/*this.last_datastate[i] ? this.last_datastate[i] :*/ val[0];
         
-        this.null_lines.push({time : this.null_datastate[i] ,
-                               color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
+    this.null_lines.push({
+        time : this.null_datastate[i] ,
+        color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'
+        });
 
         
-        if (this.current_null_periods==null){
-            this.current_null_periods_change=true;
-            this.current_null_periods ={
-                'start' : this.null_datastate[i], 
-                'counter' : 1
-            };     
-        }
-        else{
-            if ((!arr) && (this.null_datastate[i] < this.current_null_periods.start)){
-                
-                this.current_null_periods.start =  this.null_datastate[i];
-                console.log('add nullcouter this case' +this.current_null_periods.counter)
-            }   
-            this.current_null_periods.counter += 1;}
-        
+    if (this.current_null_periods==null){
         this.current_null_periods_change=true;
-        if (this.serias_lastvalue[i]!==null && arr){
-            arr.push({
-                x : val[0]-1, 
-                y : this.serias_lastvalue[i]
-            });
-        } 
-        console.log('new nullperiod: ' +new Date(this.null_datastate[i], val[1]))
-         
+        this.current_null_periods ={
+            'start' : this.null_datastate[i], 
+            'counter' : 1
+        };     
     }
     else{
-        if (this.null_datastate[i] && (val[1]!==null)){
+        if ((!arr) && (this.null_datastate[i] < this.current_null_periods.start)){
+                
+            this.current_null_periods.start =  this.null_datastate[i];
+            console.log('add nullcouter this case' +this.current_null_periods.counter)
+        }   
+        this.current_null_periods.counter += 1;
+    }
+        
+    this.current_null_periods_change=true;
+    if (this.serias_lastvalue[i]!==null && arr){
+        arr.push({
+            x : val[0]-1, 
+            y : this.serias_lastvalue[i]
+        });
+    } 
+    console.log('new nullperiod: ' +new Date(this.null_datastate[i], val[1]))
+         
+}
+else{
+    if (this.null_datastate[i] && (val[1]!==null)){
             
-            this.null_lines.push({time : val[0] , 
-                                  color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'});
+        this.null_lines.push({
+            time : val[0] , 
+            color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'
+            });
 
             
-            this.add_nullperiod({
-                start : this.null_datastate[i] , 
-                stop : val[0]
-                })
-                //console.log('add nullperiod: ',new Date(this.null_datastate[i]),new Date(val[0]));
-            this.null_datastate[i]=null;
-            if ((this.current_null_periods!=null)){
-                this.current_null_periods.counter-=1;
-                //console.log('rem nullcouter: ' +this.current_null_periods.counter)
-                if (!this.current_null_periods.counter){
+        this.add_nullperiod({
+            start : this.null_datastate[i] , 
+            stop : val[0]
+        })
+        //console.log('add nullperiod: ',new Date(this.null_datastate[i]),new Date(val[0]));
+        this.null_datastate[i]=null;
+        if ((this.current_null_periods!=null)){
+            this.current_null_periods.counter-=1;
+            //console.log('rem nullcouter: ' +this.current_null_periods.counter)
+            if (!this.current_null_periods.counter){
                     
-                    this.current_null_periods = null;
-                }
+                this.current_null_periods = null;
             }
-            this.current_null_periods_change=true;
+        }
+        this.current_null_periods_change=true;
     } 
 }
 if (val[1]!==null)
@@ -1798,12 +2059,12 @@ if (arr)
     arr.push({
         x : val[0], 
         y : val[1]
-        });
+    });
 else
     return {
         x : val[0], 
         y : val[1]
-        };
+    };
 }
 
 
@@ -1813,18 +2074,20 @@ libutil.trendchart.prototype.addBound =function (){
     //console.log('lines count:' , this.null_lines.length, 'bounds count:' , this.null_periods.length );
     for (var i = 0 ; i < this.null_periods.length; i++){
         this.chart.xAxis[0].addPlotBand({
-                       from : this.null_periods[i].start , 
-                       to : this.null_periods[i].stop,
-                       color : this.disablecolor});
+            from : this.null_periods[i].start , 
+            to : this.null_periods[i].stop,
+            color : this.disablecolor
+            });
     }
     
     for (var i = 0 ; i < this.null_lines.length; i++){
         this.chart.xAxis[0].addPlotLine({
-                       value : this.null_lines[i].time , 
-                       width : 1,
-                       color : /*this.null_lines[i].color*/'#EEE'});
+            value : this.null_lines[i].time , 
+            width : 1,
+            color : /*this.null_lines[i].color*/'#EEE'
+        });
     } 
-    //this.current_null_periods_change=false;
+//this.current_null_periods_change=false;
 }
 
 
@@ -1847,16 +2110,17 @@ libutil.trendchart.prototype.startSeries = function(ev) {
                         }
                     }
                 }
-            }};						
-            for (var j = 0 ; j < ev[i].data.length; j++) { 
-                var dt = ev[i].data[j];
-                //if (((parseInt(dt[0].getMinutes() /1)) % (4)) ==i)
-                //    dt[1]=null;
-                this.checkdata(item.data, dt,i,j==0);
-        }
-            series.push(item);
+            }
+        };						
+    for (var j = 0 ; j < ev[i].data.length; j++) { 
+        var dt = ev[i].data[j];
+        //if (((parseInt(dt[0].getMinutes() /1)) % (4)) ==i)
+        //    dt[1]=null;
+        this.checkdata(item.data, dt,i,j==0);
     }
-    return series;
+    series.push(item);
+    }
+return series;
 }
 
 
@@ -1867,17 +2131,19 @@ libutil.trendchart.prototype.addSeries = function(ev){
     for (var i=0;i<ev.length;++i)
         if (ev[i].data){
             for (var j = 0 ; j < ev[i].data.length ; j++) {
-            var dt = ev[i].data[j];
-            //if (((parseInt(dt[0].getMinutes() /1)) % (4)) ==i)
-            //        dt[1]=null;
-            dt = this.checkdata(null, dt,i)    
-            this.element.chart.series[i].addPoint([dt.x , dt.y], false , false , false);
-            updated = true;}}						
+                var dt = ev[i].data[j];
+                //if (((parseInt(dt[0].getMinutes() /1)) % (4)) ==i)
+                //        dt[1]=null;
+                dt = this.checkdata(null, dt,i)    
+                this.element.chart.series[i].addPoint([dt.x , dt.y], false , false , false);
+                updated = true;
+            }
+            }						
 
-    var updated2 = this.update_data();
+var updated2 = this.update_data();
     var updated1 = this.update_null_data();
     if (updated || updated1 || updated2)
-    this.element.chart.redraw();
+        this.element.chart.redraw();
         
 }
 
@@ -1886,25 +2152,27 @@ libutil.trendchart.prototype.YAxis = function(){
     var rslt =[];
     for (var i=0;i<this.tags.length;++i){
         rslt.push({
-        gridLineWidth : this.axiswidth,
-        gridLineColor: this.axisYcolor,
-        minPadding: 0.0,
-        maxPadding: 0.0,
-        labels: {
-            formatter: function() {
-                return this.value;
-            },
+            gridLineWidth : this.axiswidth,
+            gridLineColor: this.axisYcolor,
+            minPadding: 0.0,
+            maxPadding: 0.0,
+            labels: {
+                formatter: function() {
+                    return this.value;
+                },
 
-            style:  {
-                color: this.colors.length > i ? this.colors[i] : 'red',
-                'font-size' : this.fontsize ? this.fontsize : undefined
-            }},
+                style:  {
+                    color: this.colors ? this.colors[i] : undefined,
+                    'font-size' : this.fontsize ? this.fontsize : undefined
+                }
+            },
         title: {
             text: null
         },    
         opposite: i ?  true : false
-    });}
-    return rslt;
+        });
+    }
+return rslt;
 }
 
 
@@ -1927,29 +2195,34 @@ libutil.trendchart.prototype.execute = function(ev) {
                         renderTo: elem.id ,
                         defaultSeriesType: this.defaultseriestype,
                         backgroundColor: this.backgroundcolor,
-                        animation: this.animation//,
+                        animation: this.animation,
                         //type: 'spline'
+                        zoomType: this.sqlreq ? 'xy' : undefined
                         
 
                     },
+                    
 
                     title: {
                         text:  this.title,
-                        style:{'font-size' : '11px'},
+                        style:{
+                            'font-size' : '11px'
+                        },
                         align: 'left',
                         x: 5,
                         verticalAlign: 'top',
                         y: 5
                     },
                     xAxis: {
-                       type: 'datetime',
-                       plotBands: [],
-                       gridLineWidth : this.axiswidth,
-                       gridLineColor: this.axisXcolor,
-                       labels: {
-                           style:  {
-                           'font-size' : this.fontsize ? this.fontsize : undefined}
-                       }
+                        type: 'datetime',
+                        plotBands: [],
+                        gridLineWidth : this.axiswidth,
+                        gridLineColor: this.axisXcolor,
+                        labels: {
+                            style:  {
+                                'font-size' : this.fontsize ? this.fontsize : undefined
+                                }
+                        }
                        
                     },
                     yAxis: this.YAxis(),
@@ -1975,12 +2248,12 @@ libutil.trendchart.prototype.execute = function(ev) {
                         line: {
                             allowPointSelect: false,
                             lineWidth: this.linewidth,
-                             states: {
-                                    hover: {
-                                        enabled: false,
-                                        radius: 3
-                                    }
-                                },
+                            states: {
+                                hover: {
+                                    enabled: false,
+                                    radius: 3
+                                }
+                            },
                             shadow: this.shadow
                         }
                     },
@@ -2005,9 +2278,10 @@ libutil.trendchart.prototype.execute = function(ev) {
 
 libutil.dom.clearChildNode = function (element){
     if (element){
-    while (element.hasChildNodes()) 
-        element.removeChild(element.lastChild);
-}}
+        while (element.hasChildNodes()) 
+            element.removeChild(element.lastChild);
+    }
+}
 
 
 
@@ -2035,10 +2309,11 @@ libutil.dom.duplicateElement  = function(el, deep, excluteattr){
     
     for (var i=0;i<el.attributes.length;++i){
         if (notexclude(el.attributes[i].localName)){
-        if (el.attributes[i].namespaceURI) 
-            duplicate.setAttributeNS(el.attributes[i].namespaceURI , el.attributes[i].localName, el.attributes[i].value);
-        else
-            duplicate.setAttribute(el.attributes[i].localName, el.attributes[i].value);} 
+            if (el.attributes[i].namespaceURI) 
+                duplicate.setAttributeNS(el.attributes[i].namespaceURI , el.attributes[i].localName, el.attributes[i].value);
+            else
+                duplicate.setAttribute(el.attributes[i].localName, el.attributes[i].value);
+        } 
     }
     
     if (deep || (deep==undefined)){
@@ -2111,21 +2386,36 @@ libutil.dom.writeDoc = function (doc, postfix){
       
 
 
-    // Throbber constructor
+// Throbber constructor
 libutil.proggress.throbber = function(container) {
-  this.parent = container;
-  var size = container.width.baseVal.value < container.height.baseVal.value ? container.width.baseVal.value : container.height.baseVal.value;
-  var cx = container.width.baseVal.value / 2;
-  var cy = container.height.baseVal.value / 2;
-  var sizeR = size * libutil.proggress.throbber.RELATIVE_SIZE ;
-  var x = cx - sizeR / 2;
-  var y = cy - sizeR / 2;
-  this.trob = libutil.svg.create_element( 'image', this.parent,   [{name : 'x' , value: x},
-                                                                   {name : 'y' , value: y},      
-                                                                   {name : 'height' , value: sizeR},
-                                                                   {name : 'width' , value: sizeR}]);
-  this.trob.setAttributeNS(libutil.XLINK_NAMESPACE_URL, 'xlink:href', '../util/css/res/throbber.svg' );
-  return this;
+    this.parent = container;
+    var size = container.width.baseVal.value < container.height.baseVal.value ? container.width.baseVal.value : container.height.baseVal.value;
+    var cx = container.width.baseVal.value / 2;
+    var cy = container.height.baseVal.value / 2;
+    var sizeR = size * libutil.proggress.throbber.RELATIVE_SIZE ;
+    var x = cx - sizeR / 2;
+    var y = cy - sizeR / 2;
+    this.trob = libutil.svg.create_element( 'image', this.parent,   [{
+        name : 'x' , 
+        value: x
+    },
+
+    {
+        name : 'y' , 
+        value: y
+    },      
+
+    {
+        name : 'height' , 
+        value: sizeR
+    },
+
+    {
+        name : 'width' , 
+        value: sizeR
+    }]);
+    this.trob.setAttributeNS(libutil.XLINK_NAMESPACE_URL, 'xlink:href', '../util/css/res/throbber.svg' );
+    return this;
 };
 
 
@@ -2133,8 +2423,8 @@ libutil.proggress.throbber.RELATIVE_SIZE = 0.3;
 
 
 libutil.proggress.throbber.prototype.destroy = function(){
-   if (this.parent && this.trob)
-       this.parent.removeChild(this.trob);
+    if (this.parent && this.trob)
+        this.parent.removeChild(this.trob);
 }
 
 
@@ -2178,7 +2468,263 @@ libutil.validator.regex = function(val , regex) {
 
 
 
+// trend_controller
+
 
   
+libutil.trend_controller = function(ev, el){
+    this.connection = ev.connection;
+
+    this.inittags(ev.tags);
+    this.element = el; 
+    this.items = [];
+    this.xml = this.getXMLData('AppMetaInfo.xml');
+    this.init();
+    this.setStart(new Date('Sep 04 2012 10:40:42'));
+    this.setStop(new Date('Sep 04 2012 12:40:42'));  
+    console.log(this);
+};
+
+
+libutil.trend_controller.prototype.getXMLData = function(file){
+    
+    var doc = libutil.dom.readDoc(file);             
+             
+    var result = [];
+                
+    var els = doc.getElementsByTagName('TrendList');
+                
+    for (var i=0;i<els.length;++i){
+        for(var e=els[i].firstElementChild; e; e=e.nextElementSibling){
+            var lst= e.getAttribute("name");                       
+            for(var el=e.firstElementChild; el; el=el.nextElementSibling){
+                var arr= el.getAttribute("name"); 
+                for(var et=el.firstElementChild; et; et=et.nextElementSibling){                               
+                    var tg = et.getAttribute("tg");
+                    if (this.base[tg])
+                    result.push({
+                        list: lst, 
+                        array: arr, 
+                        tag: tg,
+                        comment: this.base[tg].comment,
+                        eu: this.base[tg].eu,
+                        mineu: this.base[tg].mineu,
+                        maxeu: this.base[tg].maxeu
+                    })                         
+                }                                                        
+            }
+        }
+        break;
+    }              
+    return result;
+}; 
+
+
+libutil.trend_controller.prototype.inittags = function(val){
+    this.base={};
+    for (var i=0;i<val.length;++i){
+    this.base[val[i].name] = val[i];}
+}
+
+
+libutil.trend_controller.prototype.init = function(){
+    
+    $.datepicker.regional['ru'] = {
+        closeText: 'Закрыть',
+        prevText: '<Пред',
+        nextText: 'След>',
+        currentText: 'Сегодня',
+        monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь',
+        'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+        monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн',
+        'Июл','Авг','Сен','Окт','Ноя','Дек'],
+        dayNames: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
+        dayNamesShort: ['вск','пнд','втр','срд','чтв','птн','сбт'],
+        dayNamesMin: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+        weekHeader: 'Не',
+        dateFormat: 'dd.mm.yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+                
+    $.datepicker.setDefaults($.datepicker.regional['ru']);
+
+          
+    $.timepicker.regional['ru'] = {
+        timeOnlyTitle: 'Выберите время',
+        timeText: 'Время',
+        hourText: 'Часы',
+        minuteText: 'Минуты',
+        secondText: 'Секунды',
+        millisecText: 'миллисекунды',
+        currentText: 'Теперь',
+        closeText: 'Закрыть',
+        ampm: false
+    };
+    $.timepicker.setDefaults($.timepicker.regional['ru']); 
+                
+                
 
     
+ 
+                
+                
+    $('body').layout({ 
+        west__size:			250 
+        ,	
+        spacing_open:			3 
+        ,	
+        spacing_closed:			20 
+        ,	
+        north__spacing_open:	        0
+                    
+    });   
+                
+    $("#inner").layout({
+        south__size:			150 
+        ,	
+        spacing_open:			2 
+        ,	
+        spacing_closed:			20 
+    }); 
+                
+    var ts=this;             
+    this.selectgrid = $("#list").jqGrid({
+        data: this.xml,
+        datatype: "local",
+        height: 160,
+        scrollrows: true,
+        shrinkToFit: false,
+        colNames:['list','array', 'tag', 'comment', 'eu', 'mineu', 'maxeu'],
+        onSelectRow: function (rowId, status, e) {
+              if (!e || e.which === 1) {
+                 
+              }
+              ts.add(ts.xml[rowId].tag); 
+          },
+        colModel:[
+        {
+            name:'list',
+            index:'list',  
+            width:1, 
+            hidden: true
+        },
+{
+            name:'array',
+            index:'array', 
+            width:1, 
+            hidden: true
+        },
+
+        {
+            name:'tag',
+            index:'tag'
+        },
+        
+        {
+            name:'comment',
+            index:'comment'
+        },
+        
+        {
+            name:'eu',
+            index:'eu'
+        },   
+            
+        
+        {
+            name:'mineu',
+            index:'mineu'
+        },
+        
+        {
+            name:'maxeu',
+            index:'maxeu'
+        },        
+    
+		
+        ],
+   	
+        viewrecords: true,
+        multiselect: true,
+        grouping:true,
+        groupingView : {
+            groupField : ['list','array'],
+            groupSummary : [true],
+            groupColumnShow : [true],
+            groupText : ['<b>{0}</b>'],
+            groupCollapse : false,
+            groupOrder: ['asc']
+        }
+   	
+    });
+    
+    this.startpicker = $('#starttime').datetimepicker();
+    this.stoppicker = $('#stoptime').datetimepicker();
+                
+                
+}; 
+
+
+
+libutil.trend_controller.prototype.add = function(tag){
+    for (var i=0;i<this.items.length;++i){
+        if (this.items[i].name==tag)
+            return false;
+    }
+    if (this.base[tag]){
+            this.items.push({
+                name : tag, 
+                comment : this.base[tag].comment, 
+                eu : this.base[tag].eu,  
+                mineu : this.base[tag].mineu,  
+                maxeu : this.base[tag].maxeu
+                });
+            return true;
+        }
+    return false;    
+}
+
+libutil.trend_controller.prototype.remove = function(tag){
+    for (var i=0;i<this.items.length;++i){
+        if (this.items[i].name==tag){
+            libutil.util.remove_element_arr(this.items,i)
+            return false;
+        }
+    }
+return false;    
+}
+
+    
+libutil.trend_controller.prototype.tags = function(){
+    var rslt = [];
+    for (var i=0;i<this.items.length;++i)
+        rslt.push(this.items[i].name);   
+    return rslt;
+}    
+
+libutil.trend_controller.prototype.run = function(){
+    if (this.trendchart)
+        this.trendchart.detach(); 
+    this.trendchart = new libutil.trendchart( this.element , null, this.connection ,this.tags() ,
+    {
+        start: this.start , 
+        stop: this.stop
+        }, ['red','blue','#003']);
+}
+
+
+libutil.trend_controller.prototype.setStart = function(val){
+    this.start = val;
+    if (this.startpicker)
+           this.startpicker.datetimepicker('setDate', (this.start));      
+}
+
+libutil.trend_controller.prototype.setStop = function(val){
+    this.stop = val;
+    if (this.stoppicker)
+           this.stoppicker.datetimepicker('setDate', (this.stop));      
+}
+
