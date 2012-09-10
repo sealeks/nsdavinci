@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+    <head>
+
+
+        <style type="text/css">
+
+            body {
+                margin:0;
+                padding:0;
+            }
+            
+                        
+            em#runlabel {
+
+                text-indent: -6em;
+                display: block;
+                background: url(http://l.yimg.com/a/i/us/nt/b/purpley.1.0.gif) center center no-repeat;
+                width: 2em;
+                overflow: hidden;
+
+            }
+        </style>
+
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/fonts/fonts-min.css"/>
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/treeview/assets/skins/sam/treeview.css"/>
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/reset-fonts-grids/reset-fonts-grids.css" />
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/resize/assets/skins/sam/resize.css" />
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/layout/assets/skins/sam/layout.css" />
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/button/assets/skins/sam/button.css" />
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/reset/reset.css">
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/fonts/fonts.css">
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/container/assets/skins/sam/container.css">
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/menu/assets/skins/sam/menu.css">  
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/fonts/fonts-min.css" />
+        <link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/calendar/assets/skins/sam/calendar.css" />
+
+        <script type="text/javascript" src="../util/js_ext/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/treeview/treeview-min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/yahoo/yahoo-min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/event/event-min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/dom/dom-min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/element/element-min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/dragdrop/dragdrop-min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/resize/resize-min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/animation/animation-min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/layout/layout-min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/utilities/utilities.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/container/container.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/menu/menu.js"></script>   
+        <script type="text/javascript" src="../util/js_ext/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+        <script type="text/javascript" src="../util/js_ext/yui/build/calendar/calendar-min.js"></script>        
+
+        <script type="text/javascript" src="../util/js/libutil.js"></script> 
+        <script type="text/javascript" src="../util/js/designer.js"></script> 
+        <script type="text/javascript" src="../util/js_ext/hightchart/jquery.min.js"></script>
+        <script type="text/javascript" src="../util/js_ext/hightchart/highcharts.js"></script>
+        
+
+
+
+
+
+
+        <!--link rel="stylesheet" type="text/css" href="../util/js_ext/yui/build/treeview/assets/css/folders/tree.css"/-->
+
+        <style type="text/css">
+            #treewrapper {background: #fff; position:relative;}
+            #treediv {position:relative; width:250px; background: #fff; padding:1em;}
+            .icon-trend { display:block; height: 22px; padding-left: 20px; background: transparent url(../util/css/res/cdttrend.bmp) 2 2px no-repeat; }
+            .icon-array { display:block; height: 22px; padding-left: 20px; background: transparent url(../util/css/res/cdtTrendArr.bmp) 2 2px no-repeat; }
+            .icon-header { display:block; height: 22px; padding-left: 20px; background: transparent url(../util/css/res/cdtTrendHeader.bmp) 2 2px no-repeat; }
+            .icon-list { display:block; height: 22px; padding-left: 20px; background: transparent url(../util/css/res/cdtTrendList.bmp) 2 2px no-repeat; }
+            .htmlnodelabel { margin-left: 20px; }
+
+            .ygtvcheck0 { background: url(../util/css/res/check0.gif) 0 0 no-repeat;  width:16px; height:20px; float:left; cursor:pointer; }
+            .ygtvcheck1 { background: url(../util/css/res/check1.gif) 0 0 no-repeat; width:16px; height:20px; float:left; cursor:pointer; }
+            .ygtvcheck2 { background: url(../util/css/res/check2.gif) 0 0 no-repeat; width:16px; height:20px; float:left; cursor:pointer; }
+
+            .ygtv-edit-TaskNode  {	width: 190px;}
+            .ygtv-edit-TaskNode .ygtvcancel, .ygtv-edit-TextNode .ygtvok  {	border:none;}
+            .ygtv-edit-TaskNode .ygtv-button-container { float: right;}
+            .ygtv-edit-TaskNode .ygtv-input  input{	width: 140px;}
+            .whitebg {
+                background-color:white;
+            }            
+
+        </style>
+
+
+    </head>
+
+    <body class="yui-skin-sam">
+
+        <div id="left1">
+            <div id="treediv" class="whitebg ygtv-checkbox"> </div>
+        </div>
+        <div id="center1">
+            <div id="centerin1">
+            </div>	
+            <div id="bottom1">
+
+            </div>	
+        </div>    
+
+        <script type="text/javascript">
+            
+            
+            
+            
+            
+            this.loadhandler = function (connection){
+                         
+                 //alert('connect');
+                 new libutil.trendchart("centerin1", null, connection ,['sys::pg0','sys::p8','sys::l'],{ start: new Date('Sep 04 2012 10:40:42'), stop: new Date('Sep 04 2012 12:20:42')}, ['red','blue','#003']);
+            }     
+            
+            
+
+
+
+
+            window.getTrendmenue = function(file){
+                var doc = libutil.dom.readDoc(file);
+                var tree = new YAHOO.widget.TreeView("treediv");
+		//tree.setNodesProperty('propagateHighlightUp',false);
+		//tree.setNodesProperty('propagateHighlightDown',false);
+		tree.subscribe('clickEvent',function(v){
+                    if (v.node.labelStyle=='icon-trend') {
+                        tree.onEventToggleHighlight(v);
+                        //console.log(v)
+                        if (v.node.highlightState) 
+                            window.trendcontroller.add(v.node.label)
+                        else
+                            window.trendcontroller.remove(v.node.label)}});
+                
+                
+                
+                var root = tree.getRoot();
+                var top = new YAHOO.widget.TextNode("Тренды", root, true);
+                var els = doc.getElementsByTagName('TrendList');
+                
+                for (var i=0;i<els.length;++i){
+                    for(var e=els[i].firstElementChild; e; e=e.nextElementSibling){
+                        var hdr = new YAHOO.widget.TextNode(e.getAttribute("name"), top , false);
+                        hdr.labelStyle = "icon-list";
+                        for(var el=e.firstElementChild; el; el=el.nextElementSibling){
+                            var lst = new YAHOO.widget.TextNode(el.getAttribute("name"), hdr , false,false);
+                            lst.labelStyle = "icon-array";
+                            for(var et=el.firstElementChild; et; et=et.nextElementSibling){
+                                var tg = new YAHOO.widget.TextNode(et.getAttribute("tg"), lst , false);
+                                tg.labelStyle = "icon-trend";
+                             
+                             
+                            }                             
+                             
+                        }
+                    }
+                    break;
+                }
+                
+                tree.draw();
+            };
+
+
+            (function() {
+                var Dom = YAHOO.util.Dom,
+                Event = YAHOO.util.Event;
+
+                Event.onDOMReady(function() {
+        
+                    var layout = new YAHOO.widget.Layout({
+                        units: [
+                            { position: 'left',  width: 250, resize: true, gutter: '2px',  scroll: true, body: 'left1' },             
+                            { position: 'center', body: 'center1' }
+                        ]
+                    });
+                    
+                    layout.on('render', function() {
+                        var el = layout.getUnitByPosition('center').get('wrap');
+                        var layoutin = new YAHOO.widget.Layout(el, {
+                            
+                            units: [
+                                { position: 'bottom',  height: 200, resize: true, gutter: '2px',  scroll: true, body: 'bottom1' },          
+                                { position: 'center', body: 'centerin1' }
+                            ]
+                        });
+                        layoutin.on('render', function() {
+                            var el = layoutin.getUnitByPosition('bottom').get('wrap');
+                        
+                            var aItemData = [
+                                
+                         {text: "<em id=\"runlabel\" onclick=\"window.trendcontroller.run()\">Yahoo!</em>"}
+                            ];                        
+                        
+                            var oMenuBar = new YAHOO.widget.MenuBar("mymenubar", {
+                                lazyload: true, 
+                                itemdata: aItemData 
+                            });
+
+                            oMenuBar.render(document.body);
+                            
+                        
+                        
+
+                        });                       
+                        
+                        
+                        layoutin.render();
+                        $$connectSCDB( function(){ var evnt=event; setTimeout(function(){console.log(evnt); window.trendcontroller = new libutil.trend_controller(evnt,"centerin1")/*this.loadhandler(evnt.connection)*/},1);}, 1, 'database=test_1;user=postgres;password=1324');
+                    });
+                    layout.render();
+  
+                    //window.treefunc();
+                    window.getTrendmenue('AppMetaInfo.xml');
+                   
+
+        
+
+                });
+            })();
+
+
+
+
+
+        </script>
+
+
+    </body>
+</html>

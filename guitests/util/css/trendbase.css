@@ -1,0 +1,95 @@
+/* 
+    Document   : trendbase
+    Created on : 10.09.2012, 17:09:35
+    Author     : sealeks@mail.ru
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+body {
+    margin:0;
+    padding:0;
+    font-size: 10px;
+
+}
+
+.menue {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #111), color-stop(0.5, #555), color-stop(1, #111));
+    height: 30px;
+    text-align: center;
+}
+
+td:hover.menue {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #555), color-stop(0.5, #111), color-stop(1, #555));
+    height: 30px;
+}
+
+table {
+    border-collapse:collapse;
+    text-align: left;
+    font-size: 11px;
+    background:#f0f0f0; 
+    color: yellow;
+    width: 100%;
+}
+
+input {
+    background: -webkit-gradient(linear, left top, left bottom, from(#003), to(#005)); 
+    border-color: #777777;
+    border-width: 1px;
+    color: yellow;
+    border-radius: 4px 4px;
+
+}
+
+
+
+
+.ui-layout-pane { /* all 'panes' */ 
+    padding: 0px; 
+    background: #FFF; 
+    border-top: 1px solid #BBB;
+    border-bottom: 1px solid #BBB;
+}
+.ui-layout-pane-south {
+    border: 0px solid #BBB;
+} 
+.ui-layout-pane-west {
+    border-left: 0px solid #BBB;
+} 
+
+
+
+
+
+.ui-layout-resizer { /* all 'resizer-bars' */ 
+    background: #777; 
+}
+.ui-layout-resizer:hover { /* all 'resizer-bars' */ 
+    background: #FED; 
+}
+.ui-layout-resizer-west {
+    border-left: 1px solid #BBB;
+}
+
+.ui-layout-toggler { /* all 'toggler-buttons' */ 
+    background: #AAA; 
+} 
+.ui-layout-toggler:hover { /* all 'toggler-buttons' */ 
+    background: #FC3; 
+} 
+
+.outer-center ,
+.middle-center {
+    /* center pane that are 'containers' for a nested layout */ 
+    padding: 0; 
+    border: 0; 
+}            
+
+
+

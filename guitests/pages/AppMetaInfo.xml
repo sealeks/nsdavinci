@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta DBProvider="" constring="" host="">
+	<HomeList key="0">
+		<ReportArr key="0" />
+	</HomeList>
+	<ReportList key="0" />
+	<TrendList key="0">
+		<TrendHeader key="0" name="Котел 1">
+			<TrendArr key="0" name="Давления">
+				<trend key="0" tg="sys::pg0" />
+				<trend key="1" tg="sys::p5" />
+				<trend key="2" tg="sys::p6" />
+                                <trend key="2" tg="sys::fpp" />
+                                <trend key="2" tg="sys::l" />
+                                <trend key="2" tg="sys::td1" />
+			</TrendArr>
+		</TrendHeader>
+		<TrendHeader key="1" name="Котел 2">
+			<TrendArr key="0" name="Давления">
+				<trend key="0" tg="sys::pg0" />
+				<trend key="1" tg="sys::p5" />
+				<trend key="2" tg="sys::p6" />
+			</TrendArr>
+		</TrendHeader>                
+	</TrendList>
+	<MessageList key="0" />
+</meta>

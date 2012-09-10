@@ -13,7 +13,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
 
     <xsl:template name="mainlib">  
         <script type="text/javascript" xlink:href="../libs/main/js/mainlib.js"></script>   
-        <script type="text/javascript" xlink:href="../util/js_ext/hightchart/jquery.min.js"></script>
+        <script type="text/javascript" xlink:href="../util/js_ext/jquery/jquery.min.js"></script>
         <script type="text/javascript" xlink:href="../util/js_ext/hightchart/highcharts.js"></script>
         
     </xsl:template>
@@ -5318,9 +5318,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_chartbody' , '</xsl:text>
                                     <xsl:value-of select="@id"/>
-                                    <xsl:text>_chartbackground' , </xsl:text>
+                                    <xsl:text>_chartbackground' ,  null,  </xsl:text>
                                     <xsl:value-of select="@params"/>
-                                    <xsl:text> ,  </xsl:text>
+                                    <xsl:text> , </xsl:text>
                                     <xsl:choose>                      
                                         <xsl:when test="not(normalize-space(@period)='')"> 
                                             <xsl:value-of select="@period"/>
