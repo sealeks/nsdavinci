@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<meta DBProvider="" constring="" host="">
+<meta DBProvider="1" constring="database=test_1;user=postgres;password=1324" host="">
 	<HomeList key="0">
 		<ReportArr key="0" />
 	</HomeList>
@@ -13,6 +13,10 @@
                                 <trend key="2" tg="sys::fpp" />
                                 <trend key="2" tg="sys::l" />
                                 <trend key="2" tg="sys::td1" />
+                                <trend key="2" tg="sys::tw4" />
+                                <trend key="2" tg="sys::tw5" />
+                                <trend key="2" tg="sys::tp2" />
+                                <trend key="2" tg="sys::tp3" />
 			</TrendArr>
 		</TrendHeader>
 		<TrendHeader key="1" name="Котел 2">

@@ -20,13 +20,19 @@ and open the template in the editor.
 
         <link rel="stylesheet" media="all" type="text/css" href="../util/js_ext/jqueryui/lib/themes/ui-lightness/jquery.ui.all.css" />
         <link rel="stylesheet" media="all" type="text/css" href="../util/js_ext/jqueryui/plugin/timepicker/jquery-ui-timepicker-addon.css" />
+        <link rel="stylesheet" href="../util/js_ext/jqueryui/plugin/colorpicker/jquery.colorpicker.css" type="text/css" />
         
         <link rel="stylesheet" media="all" type="text/css" href="../util/js_ext/jqueryui/plugin/jqGrid/themes/ui.jqgrid.css" />
-        <link rel="stylesheet" media="all" type="text/css" href="../util/js_ext/jqueryui/plugin/jqGrid/themes/redmond/jquery-ui-1.8.2.custom.css"/>
+        <link rel="stylesheet" media="all" type="text/css" href="../util/js_ext/jqueryui/lib/themes/ui-darkness/jquery-ui-1.8.23.custom.css"/>
         <link rel="stylesheet" media="all" type="text/css" href="../util/css/trendbase.css" />
+
         
         <script type="text/javascript" src="../util/js_ext/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="../util/js_ext/jqueryui/js/jquery-ui.min.js"></script>
+        
+        <script type="text/javascript" src="../util/js_ext/jqueryui/lib/ui/jquery.ui.dialog.js"></script>
+        <script type="text/javascript" src="../util/js_ext/jqueryui/lib/ui/jquery.ui.accordion.js"></script>   
+        <script type="text/javascript" src="../util/js_ext/jqueryui/lib/ui/jquery.ui.tabs.js"></script>   
         
         
         
@@ -37,10 +43,12 @@ and open the template in the editor.
 
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/timepicker/jquery-ui-timepicker-addon.js"></script>
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/timepicker/jquery-ui-sliderAccess.js"></script>
+        
+        
+	<script type="text/javascript" src="../util/js_ext/jqueryui/plugin/colorpicker/jquery.colorpicker.js"></script>      
+        
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/layout/jquery.layout.js"></script>
         
-        
-
 
 
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/timepicker/jquery-ui-timepicker-addon.js"></script>
@@ -76,11 +84,17 @@ and open the template in the editor.
         
         
         <script type="text/javascript">  
+            
+            
                  
             $(document).ready(function(){
+                
+       
+                 //$('#runmodal').dialog({ modal: true, closeOnEscape: false, disabled: true, title: "Установка соединения"});
+                 new libutil.trend_controller();
+                 
+                 //$$connectSCDB( function(){ var evnt=event; setTimeout(function(){console.log(evnt); window.trendcontroller = new libutil.trend_controller(evnt,"centerin1")},1);}, 1, 'database=test_1;user=postgres;password=1324');
 
-                 $$connectSCDB( function(){ var evnt=event; setTimeout(function(){console.log(evnt); window.trendcontroller = new libutil.trend_controller(evnt,"centerin1")},1);}, 1, 'database=test_1;user=postgres;password=1324');
-               
             });    
             
             
@@ -91,14 +105,20 @@ and open the template in the editor.
     </head>
 
     <body> 
-
+       
+        <div  id="runmodal" style='display:none'>
+            <image src="../util/css/res/throbber.svg"/>
+        </div>
+        <div  id="runmodalalert" style='display:none'>
+            <div id="alerttext"></div>
+        </div>        
         <div class="ui-layout-north">
             <table width="100%">
                 <tr >
-                    <td class="menue" width="40px" onclick="window.trendcontroller.run()"> <div><img src="../util/css/res/get.png"/></div></td>
-                    <td class="menue" width="80px"> <input type="text" name="example1" id="starttime" value="" /> </td>
-                    <td class="menue" width="80px"> <input type="text" name="example1" id="stoptime" value="" /> </td>
-                    <td class="menue"> </td>
+                    <td class="menue" width="40px"> <div id="run-button" disable="true" onclick="window.trendcontroller.run()"/></div></td>
+                    <td class="menuestatic" width="80px"> <input type="text" name="example1" id="starttime" value="" /> </td>
+                    <td class="menuestatic" width="80px"> <input type="text" name="example1" id="stoptime" value="" /> </td>
+                    <td class="menuestatic"> </td>
                 </tr>
             </table>  
         </div>
@@ -109,12 +129,30 @@ and open the template in the editor.
 
             <div class="ui-layout-center">
 
-            <div id="centerin1">
+            <div id="chart-id">
+ 				<p><input type="text" maxlength="6" size="6" id="colorpickerField1" value="00ff00" /></p>
+				<p><input type="text" maxlength="6" size="6" id="colorpickerField3" value="0000ff" /></p>
+				<p><input type="text" maxlength="6" size="6" id="colorpickerField2" value="ff0000" /></p>
+				
             </div>
 
 
             </div> 
-	    <div class="ui-layout-south"><table id="list"></table></div>
+	    <div class="ui-layout-south">
+                <div id="tabs">
+                    <ul>
+                    <li><a href="#tabs-1">Select</a></li>
+		    <li><a href="#tabs-2">Выбрано</a></li>
+                    </ul>
+                    <div id="tabs-1" style="margin: 0 0; padding: 0 0; height: 140px;">
+                    <table id="list"></table>
+                    </div>
+                    <div id="tabs-2" style="margin: 0 0; padding: 0 0; height: 140px;">
+                    <table id="selectlist"></table>
+                    </div>                    
+               </div>
+                
+            </div>
 
         </div> 
 

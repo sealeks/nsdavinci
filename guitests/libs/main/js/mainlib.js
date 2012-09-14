@@ -725,11 +725,11 @@ mainlib.graph_click =  function (el, nm, color){
     
     var title = $$(nm+'.comment');
 
-    script.textContent="new libutil.trendchart('"+elementId + '_popup_graph'+"','"+
-                                                         elementId + "_popup_body' , null "+
-                                                         ", "+"['"+nm+"'], "+period.toString()+", ['"+color+"','green','blue','#880'], " + 
-                                                         (mainlib.CHART_WIDTH - 2* mainlib.CHART_PADDING) + ", " +
-                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ (title ? ", 5 , { title: '"+title+"',background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})" : ", 5 , {background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})");
+    script.textContent="new libutil.trendchart({ element: '"+elementId + '_popup_graph'+"', throbler : '"+
+                                                         elementId + "_popup_body' , tags : "+
+                                                         "['"+nm+"'], hist: "+period.toString()+", colors: ['"+color+"','green','blue','#880'], width: " + 
+                                                         (mainlib.CHART_WIDTH - 2* mainlib.CHART_PADDING) + ", height: " +
+                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ (title ? ", r: 5 ,  title: '"+title+"',background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})" : ", 5 , {background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})");
            
 }
 
@@ -745,9 +745,15 @@ mainlib.regulator_click =  function (el, smp){
         var chartdiv = document.getElementById(elementId + '_popup_graph');
         if (chartdiv){
             //var period = el.getAttribute('period').valueOf() ?    el.getAttribute('period').valueOf() : 600;
-            el.popup.chart = new libutil.trendchart(elementId + '_popup_graph',
-                                                    elementId + '_chart_background', null ,eval(el.getAttribute('charts')),period, eval(el.getAttribute('colors')) ,240, 145, 5,  
-                                                    {background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]});
+            el.popup.chart = new libutil.trendchart( { element : elementId + '_popup_graph', 
+                                                       throbler : elementId + '_chart_background', 
+                                                       tags: eval(el.getAttribute('charts')),
+                                                       hist: period, 
+                                                       colors: eval(el.getAttribute('colors')) ,
+                                                       width: 240, 
+                                                       height: 145,
+                                                       r: 5,  
+                                                       background: [[0 , '#333'],[0.5 , '#666'],[1 , '#333']]});
         }
     }
     

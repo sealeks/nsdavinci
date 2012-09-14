@@ -1623,7 +1623,7 @@ libutil.alarmtable.prototype.insertrow = function(el, arr) {
 
 
 
-libutil.trendchart = function(elid, throbid , sqlreq , tags, hist, colors, width, height, r, option){
+libutil.trendchart = function(option){
     Highcharts.setOptions({
         global: {
             useUTC: false
@@ -1631,9 +1631,18 @@ libutil.trendchart = function(elid, throbid , sqlreq , tags, hist, colors, width
     });
     
 
-    this.sort(tags,colors);
-    var width=width;
-    var height=height;
+    var elid=undefined;
+    var throbid=undefined;    
+    var width=undefined;
+    var height=undefined;
+    var colors=undefined;
+    var r=undefined;
+    var tags=undefined; 
+    var sqlreq = undefined;  
+    var start = undefined;  
+    var stop = undefined;  
+    var hist = undefined;
+    var callback=undefined;
     var linewidth = 1;
     var axiswidth = 0.5;
     var axisXcolor=undefined;
@@ -1672,6 +1681,14 @@ libutil.trendchart = function(elid, throbid , sqlreq , tags, hist, colors, width
                         }
                     break;
                     }
+                case 'element':{
+                    elid = option[key];    
+                    break;     
+                }
+                case 'throbler':{
+                    throbid = option[key];    
+                    break;     
+                }                    
                 case 'animation':{
                     animation = option[key];    
                     break;     
@@ -1707,16 +1724,62 @@ libutil.trendchart = function(elid, throbid , sqlreq , tags, hist, colors, width
                 case 'title':{
                     title = option[key];    
                     break;     
-                }                    
-            }
-            }        
+                } 
+                case 'width':{
+                    width = option[key].valueOf();    
+                    break;     
+                } 
+                case 'height':{
+                   height  = option[key];    
+                   break;     
+                }
+                case 'r':{
+                   r  = option[key];    
+                   break;     
+                } 
+                case 'start':{
+                   start  = option[key];    
+                   break;     
+                }
+                case 'stop':{
+                   stop  = option[key];    
+                   break;     
+                } 
+                case 'hist':{
+                   hist  = option[key];    
+                   break;     
+                }  
+                case 'connection':{
+                   sqlreq  = option[key];    
+                   break;     
+                }
+                case 'callback':{
+                   callback  = option[key];    
+                   break;     
+                }                
+                case 'colors':{
+                   if (option[key].constructor == Array){     
+                   colors  = option[key];}    
+                   break;     
+                } 
+                case 'tags':{
+                   if (option[key].constructor == Array){     
+                   tags  = option[key];}    
+                   break;     
+                }                 
+            }}        
     }
 }
+
+this.callback=callback;
+this.sort(tags,colors);
+if (start || stop)
+    hist={start: start, stop: stop};
              
     
-    
-try{
+  try{
     if ((!window.$$editable) || ($$editable())) return;
+    this.elid = elid;
     this.element = document.getElementById(elid);
     this.thtobblerbody = document.getElementById(throbid);
     if (this.element){
@@ -2099,7 +2162,8 @@ libutil.trendchart.prototype.startSeries = function(ev) {
     for (var i=0;i<ev.length;++i){
         if (ev[i].data){
             var item = {
-                name: ev[i].tag, 
+                id: this.elid+'___'+ev[i].name,
+                name: ev[i].comment ? ev[i].comment : '_______', 
                 yAxis: i,
                 data : [],
                 marker: {
@@ -2177,6 +2241,8 @@ return rslt;
 
 
 libutil.trendchart.prototype.execute = function(ev) {
+    if (this.callback)
+        this.callback(ev);
     if (ev && (ev.length)){
         var ts =this;
         var elem=this.element;
@@ -2271,6 +2337,17 @@ libutil.trendchart.prototype.execute = function(ev) {
             }
 
         }
+    }
+}
+
+libutil.trendchart.prototype.setcolor = function(id, color){
+    if (this.chart && this.chart.get(this.elid+'___'+id)){
+    this.chart.get(this.elid+'___'+id).color=color;}
+}
+
+libutil.trendchart.prototype.removeseries = function(id){
+    if (this.chart && this.chart.get(this.elid+'___'+id)){
+        this.chart.get(this.elid+'___'+id).remove();
     }
 }
 
@@ -2472,37 +2549,161 @@ libutil.validator.regex = function(val , regex) {
 
 
   
-libutil.trend_controller = function(ev, el){
-    this.connection = ev.connection;
+libutil.trend_controller = function(){
+    try{
 
-    this.inittags(ev.tags);
-    this.element = el; 
-    this.items = [];
-    this.xml = this.getXMLData('AppMetaInfo.xml');
-    this.init();
-    this.setStart(new Date('Sep 04 2012 10:40:42'));
-    this.setStop(new Date('Sep 04 2012 12:40:42'));  
-    console.log(this);
+        this.items = [];
+        this.getXMLData();
+        this.connect();
+        }
+    catch(error){      
+        this.modal(libutil.trend_controller.FATAL, error);
+    }  
 };
 
 
-libutil.trend_controller.prototype.getXMLData = function(file){
+libutil.trend_controller.MAX_PERIOD = 360000000;
+
+libutil.trend_controller.MIN_PERIOD = 60000;
+
+libutil.trend_controller.MID_PERIOD = 3600000;
+
+libutil.trend_controller.COLORS = [
+	'4572A7', 
+	'AA4643', 
+	'89A54E', 
+	'80699B', 
+	'3D96AE', 
+	'DB843D', 
+	'92A8CD', 
+	'A47D7C', 
+	'B5CA92'
+];
+
+libutil.trend_controller.APPINFOFILE = 'AppMetaInfo.xml';
+
+
+
+libutil.trend_controller.ERROR_NO_APPINFO = "Нет файла описания ";
+
+libutil.trend_controller.ERROR_WR_APPINFO = "Неверный формат ";
+
+libutil.trend_controller.ERROR_WR_APPTRINFO = "Несовпадение таблицы индексов и описания ";
+
+libutil.trend_controller.FATAL = 2;
+
+libutil.trend_controller.RETRY = 1;
+
+libutil.trend_controller.PROCCES = 0;
+
+
+
+libutil.trend_controller.prototype.connect = function(){
+    try{
+        var ts = this;
+        window.$$connectSCDB( 
+        function(){var evnt= event;
+            setTimeout( function(){ts.attach(evnt);},0)},
+        ts.provider, ts.connectionstring);
+        this.modal(libutil.trend_controller.PROCCES, "Установка соединения");
+        }
+    catch(error){      
+        this.modal(libutil.trend_controller.FATAL, error);
+    }  
+};
+
+
+libutil.trend_controller.prototype.attach = function(ev){
+    if (ev.error){
+        switch(ev.error){
+            case 2049: {var ts = this;this.modal(libutil.trend_controller.RETRY, ev.what, function(){ts.clearmodal();ts.connect()});break;}
+            default: {
+                this.modal(libutil.trend_controller.FATAL, ev.what);    
+            }
+        }
+        return;
+    }
+    window.trendcontroller = this;
+    this.connection = ev.connection;
+    this.inittags(ev.tags);
+    this.parseXMLData();
+    if (!this.xml.length){
+        this.modal(libutil.trend_controller.FATAL, libutil.trend_controller.ERROR_WR_APPTRINFO  + libutil.trend_controller.APPINFOFILE);
+        return;
+    }
+    this.init();
+    this.setStart(new Date('Sep 04 2012 10:40:42'));
+    this.setStop(new Date('Sep 04 2012 12:40:42'));
+    //this.setStart(new Date((new Date()).valueOf() - libutil.trend_controller.MID_PERIOD));
+    //this.setStop(new Date());  
+    this.updatedate();
+    this.requested=false;
+    this.setstate(); 
+    this.clearmodal();
     
-    var doc = libutil.dom.readDoc(file);             
+}
+
+libutil.trend_controller.prototype.getXMLData = function(){
+    
+    var doc = libutil.dom.readDoc(libutil.trend_controller.APPINFOFILE); 
+    
+    if (!doc) throw libutil.trend_controller.ERROR_NO_APPINFO  + libutil.trend_controller.APPINFOFILE;
              
-    var result = [];
-                
+    
+    var rootel = doc.getElementsByTagName('meta');
+    
+    if (!rootel || !rootel.length) throw (libutil.trend_controller.ERROR_WR_APPINFO + libutil.trend_controller.APPINFOFILE);
+    
+    rootel=rootel[0];
+    
+    this.connectionstring = rootel.getAttribute("constring");
+    
+    this.provider = rootel.getAttribute("DBProvider").valueOf();
+
+    if (!this.connectionstring || !this.provider) throw (libutil.trend_controller.ERROR_WR_APPINFO  + libutil.trend_controller.APPINFOFILE);
+               
     var els = doc.getElementsByTagName('TrendList');
-                
-    for (var i=0;i<els.length;++i){
-        for(var e=els[i].firstElementChild; e; e=e.nextElementSibling){
+    
+    if (!els || !els.length) throw (libutil.trend_controller.ERROR_WR_APPINFO  + libutil.trend_controller.APPINFOFILE);
+    
+    this.xmllist = els[0];
+                  
+};
+
+libutil.trend_controller.prototype.modal = function(state, message, call){
+    this.clearmodal();
+    switch(state){
+        case libutil.trend_controller.FATAL:{ if (document.getElementById('alerttext')) document.getElementById('alerttext').textContent=message ? message: ''; 
+                    $('#runmodalalert').dialog({modal: true, 
+                    resizable: false,closeOnEscape: false, disabled: true, title: "Фатальная ошибка", 
+                    dialogClass: "alert",  buttons: {"Выход": function() {document.close();}}});break;}
+        case libutil.trend_controller.RETRY:{var ts=this;if (document.getElementById('alerttext')) document.getElementById('alerttext').textContent=message ? message: ''; 
+                    $('#runmodalalert').dialog({modal: true, 
+                    resizable: false, closeOnEscape: false, disabled: true, title: "Oшибка", 
+                    dialogClass: "alert",  buttons: {"Выход": function() {document.close();}, "Повторить" :  call}});break;}
+        default:{
+           $('#runmodal').dialog({modal: true, resizable: false, closeOnEscape: false, disabled: true, title: message});     
+        }    
+    }
+}
+
+libutil.trend_controller.prototype.clearmodal = function(){
+    $('#runmodal').dialog('close');
+    $('#runmodalalert').dialog('close');
+    $('#runmodal').dialog('destroy');
+    $('#runmodalalert').dialog('destroy');
+}
+
+libutil.trend_controller.prototype.parseXMLData = function(){
+       this.xml= [];
+       for(var e=this.xmllist.firstElementChild; e; e=e.nextElementSibling){
             var lst= e.getAttribute("name");                       
             for(var el=e.firstElementChild; el; el=el.nextElementSibling){
                 var arr= el.getAttribute("name"); 
                 for(var et=el.firstElementChild; et; et=et.nextElementSibling){                               
                     var tg = et.getAttribute("tg");
                     if (this.base[tg])
-                    result.push({
+                    this.xml.push({
                         list: lst, 
                         array: arr, 
                         tag: tg,
@@ -2513,11 +2714,9 @@ libutil.trend_controller.prototype.getXMLData = function(file){
                     })                         
                 }                                                        
             }
-        }
-        break;
-    }              
-    return result;
-}; 
+        }   
+}
+
 
 
 libutil.trend_controller.prototype.inittags = function(val){
@@ -2565,12 +2764,7 @@ libutil.trend_controller.prototype.init = function(){
     };
     $.timepicker.setDefaults($.timepicker.regional['ru']); 
                 
-                
-
-    
- 
-                
-                
+          
     $('body').layout({ 
         west__size:			250 
         ,	
@@ -2583,26 +2777,38 @@ libutil.trend_controller.prototype.init = function(){
     });   
                 
     $("#inner").layout({
-        south__size:			150 
+        south__size:			200 
         ,	
         spacing_open:			2 
         ,	
         spacing_closed:			20 
     }); 
                 
-    var ts=this;             
-    this.selectgrid = $("#list").jqGrid({
+    var ts=this;    
+    
+    $("#tabs").tabs();   
+    
+    
+    this.listgrid = $("#list").jqGrid({
         data: this.xml,
+        autowidth: true,
         datatype: "local",
         height: 160,
         scrollrows: true,
         shrinkToFit: false,
+        cellLayout: 1,
         colNames:['list','array', 'tag', 'comment', 'eu', 'mineu', 'maxeu'],
         onSelectRow: function (rowId, status, e) {
-              if (!e || e.which === 1) {
-                 
+              var row = $("#list").jqGrid('getRowData',rowId);
+              if (status) {
+                 ts.add(row.tag); 
               }
-              ts.add(ts.xml[rowId].tag); 
+              else
+                  {
+                 ts.remove(row.tag); 
+              }
+              console.log(row.tag, status, e)
+          
           },
         colModel:[
         {
@@ -2625,7 +2831,8 @@ libutil.trend_controller.prototype.init = function(){
         
         {
             name:'comment',
-            index:'comment'
+            index:'comment',
+            width: 600
         },
         
         {
@@ -2661,27 +2868,147 @@ libutil.trend_controller.prototype.init = function(){
    	
     });
     
-    this.startpicker = $('#starttime').datetimepicker();
-    this.stoppicker = $('#stoptime').datetimepicker();
+    
+    $("#selectlist").jqGrid({
+        data: this.items,
+        autowidth: true,
+        datatype: "local",
+        height: 160,
+        scrollrows: true,
+        shrinkToFit: false,
+        cellLayout: 1,
+        colNames:['id', 'comment', 'eu', 'mineu', 'maxeu', 'coloredit' , ' ', 'color'],
+        colModel:[
+                    
+        {
+            name:'id',
+            index:'id'
+        },
+        
+        {
+            name:'comment',
+            index:'comment',
+            width: 600
+        },
+        
+        {
+            name:'eu',
+            index:'eu',
+            edittype: 'button'
+        },   
+            
+        
+        {
+            name:'mineu',
+            index:'mineu'
+        },
+        
+        {
+            name:'maxeu',
+            index:'maxeu'
+        },
+        {
+            name:'coloredit',
+            index:'coloredit'
+
+        }, 
+  
+        {name: 'oprt', width:80, fixed:true},
+                {
+            name:'color',
+            index:'color',
+            width: 1
+
+        },     
+		
+        ],
+   	
+        viewrecords: true,
+        
+        gridComplete: function(){ 
+           var ids = $("#selectlist").jqGrid('getDataIDs');
+           for(var i=0;i < ids.length;i++){
+               var row = $("#selectlist").jqGrid('getRowData',ids[i]);
+	       var col = "<input  style='background-color:#"+ row.color + "' type='text'  value='"+ row.color + "'  id='selectlist_selectcolor_"+ids[i]+"'/>";
+               var del = "<input style='height:22px;width:20px;' type='button' value='D'  onclick=\"window.trendcontroller.removeid('"+row.id+"')\"/>";
+               $("#selectlist").jqGrid('setCell',ids[i] ,'coloredit' ,col);
+	       $("#selectlist").jqGrid('setCell',ids[i] ,'oprt' ,del);
+               $('#selectlist_selectcolor_'+ids[i])[0].nameid=row.id;
+               $('#selectlist_selectcolor_'+ids[i]).colorpicker({
+                   close: function(ev,col){
+                       ev.target.setAttribute('style','background-color:#'+col.formatted);
+                       //ev.target.setAttribute('value','');
+                       //ev.target.textContent='';
+                       ts.setcolor(ev.target.nameid, col.formatted);
+                   },
+                   select: function(ev,col){
+                       ev.target.setAttribute('style','background-color:#'+col.formatted);
+                       //ev.target.setAttribute('value','');
+                       //ev.target.textContent='';
+                       //ts.setcolor(ev.target.nameid, col.formatted);
+                   }                   
+               });
+           }},  
+           
+
                 
-                
+
+           
+        sortname: 'id',
+
+        sortorder: "desc",
+        grouping:true,
+        groupingView : {
+            groupField : ['id'],
+            groupSummary : [true],
+            groupColumnShow : [true],
+            groupText : ['<b>{0}</b>'],
+            groupCollapse : false,
+            groupOrder: ['asc']
+        }
+        	
+    });  
+    
+    //$("#selectlist").jqGrid('navGrid','#pfrmac',{edit:false,add:false,del:false});
+    
+    this.startpicker = $('#starttime').datetimepicker({
+       onClose:  function(dateText, inst){
+                var dt = $(this).datetimepicker('getDate');
+                ts.setStart(dt);},
+       onSelect: function(dateText, inst){
+                /*var dt = $(this).datetimepicker('getDate');
+                ts.setStart(dt);*/}});
+    this.stoppicker = $('#stoptime').datetimepicker({
+       onClose: function(dateText, inst){
+                var dt = $(this).datetimepicker('getDate');
+                ts.setStop(dt);},        
+       onSelect: function(dateText, inst){
+                /*var dt = $(this).datetimepicker('getDate');*/}});
+     
+     this.runbutton = $('#run-button')[0];
+         
+                               
 }; 
 
 
 
 libutil.trend_controller.prototype.add = function(tag){
     for (var i=0;i<this.items.length;++i){
-        if (this.items[i].name==tag)
+        if (this.items[i].id==tag)
             return false;
     }
     if (this.base[tag]){
             this.items.push({
-                name : tag, 
+                oprt : '',            
+                id : tag, 
                 comment : this.base[tag].comment, 
                 eu : this.base[tag].eu,  
                 mineu : this.base[tag].mineu,  
-                maxeu : this.base[tag].maxeu
+                maxeu : this.base[tag].maxeu,
+                color: this.selectcolor(),
+                coloredit: ''
                 });
+            this.updateselect();                
             return true;
         }
     return false;    
@@ -2689,42 +3016,170 @@ libutil.trend_controller.prototype.add = function(tag){
 
 libutil.trend_controller.prototype.remove = function(tag){
     for (var i=0;i<this.items.length;++i){
-        if (this.items[i].name==tag){
-            libutil.util.remove_element_arr(this.items,i)
-            return false;
+        if (this.items[i].id==tag){
+            libutil.util.remove_element_arr(this.items,i);
+            this.updateselect(true);
+            return true;
         }
     }
 return false;    
 }
 
+libutil.trend_controller.prototype.removeid = function(id){
+    var fnd = null;
+    for (var i=0;i<this.items.length;++i){
+        if (this.items[i].id==id){
+            fnd=i;
+            break;
+        }
+    }
+    if (fnd===null) return false;         
+    var ids = $("#list").jqGrid('getDataIDs');
+    for(var i=0;i < ids.length;i++){
+        var row = $("#list").jqGrid('getRowData',ids[i]);
+        if (row && row.tag==id){
+            $("#list").jqGrid('setSelection',ids[i],false);
+        }
+    }
+    libutil.util.remove_element_arr(this.items,fnd);
+    if(this.trendchart)
+       this.trendchart.removeseries(id);
+    this.updateselect(true);
+    return true;      
+}
+
+libutil.trend_controller.prototype.selectcolor = function(){
+    var result = 'FF0000';
+    var j=0;
+    while (j<libutil.trend_controller.COLORS.length){
+       var fnd = false;
+       for (var i=0;i<this.items.length;++i){
+           if (this.items[i].color==libutil.trend_controller.COLORS[j])
+             fnd = true;}
+         if (!fnd) return libutil.trend_controller.COLORS[j];
+         j++;}
+    return result;
+}
+
+libutil.trend_controller.prototype.setcolor = function(id, col){
+    
+    for (var i=0;i<this.items.length;++i){
+       if (this.items[i].id==id){
+          if(this.trendchart)
+          this.trendchart.setcolor(id,'#'+col);
+          this.items[i].color=col;
+          this.requested=false;
+          this.setstate();
+          break;
+       } 
+    }
+}
+
+libutil.trend_controller.prototype.updateselect = function( req ) {
+     $("#selectlist").jqGrid('clearGridData');
+     for (var i=0;i<this.items.length;++i)
+     $("#selectlist").jqGrid('addRowData',(i+1).toString(),this.items[i]);    
+     
+     this.requested=req;
+     this.setstate();
+}
+
+
+
     
 libutil.trend_controller.prototype.tags = function(){
     var rslt = [];
     for (var i=0;i<this.items.length;++i)
-        rslt.push(this.items[i].name);   
+        rslt.push(this.items[i].id);   
     return rslt;
-}    
+}  
+
+libutil.trend_controller.prototype.colors = function(){
+    var rslt = [];
+    for (var i=0;i<this.items.length;++i)
+        rslt.push('#'+this.items[i].color);   
+    return rslt;
+} 
 
 libutil.trend_controller.prototype.run = function(){
+
+    this.modal(libutil.trend_controller.PROCCES, "Запрос данных");
     if (this.trendchart)
-        this.trendchart.detach(); 
-    this.trendchart = new libutil.trendchart( this.element , null, this.connection ,this.tags() ,
-    {
-        start: this.start , 
-        stop: this.stop
-        }, ['red','blue','#003']);
+        this.trendchart.detach();
+    var ts = this;
+    ts.requested=true;ts.setstate();
+    this.trendchart = new libutil.trendchart( 
+       { connection: this.connection , 
+         tags: this.tags(), 
+         element: "chart-id", 
+         colors: this.colors(),  
+         start: this.start , 
+         stop: this.stop, 
+         callback: function(){$('#runmodal').dialog('close'); ts.requested=true;ts.setstate();}});
+        
 }
 
 
 libutil.trend_controller.prototype.setStart = function(val){
-    this.start = val;
-    if (this.startpicker)
-           this.startpicker.datetimepicker('setDate', (this.start));      
+    if (this.start != val){
+             if (this.stop  && this.start){
+             var period = (this.stop.valueOf()-this.start.valueOf());
+             var potperiod = (this.stop.valueOf()-val.valueOf());
+             if (potperiod>libutil.trend_controller.MIN_PERIOD){
+                 if (potperiod>libutil.trend_controller.MAX_PERIOD)
+                 this.stop=new Date(val.valueOf() + libutil.trend_controller.MAX_PERIOD);  
+                 this.start=val;}
+             else{
+                 this.start=val;
+                 this.stop = new Date(val.valueOf() + libutil.trend_controller.MIN_PERIOD);
+             }         
+             this.normalizePeriod();
+           }
+           else{
+             this.start=val;
+             this.normalizePeriod();
+           }
+    }
 }
 
 libutil.trend_controller.prototype.setStop = function(val){
-    this.stop = val;
-    if (this.stoppicker)
-           this.stoppicker.datetimepicker('setDate', (this.stop));      
+    if (this.stop!= val){
+             if (this.stop  && this.start){
+             var period = (this.stop.valueOf()-this.start.valueOf());
+             var potperiod = (val.valueOf()-this.start.valueOf());
+             if (potperiod>libutil.trend_controller.MIN_PERIOD){
+                 if (potperiod>libutil.trend_controller.MAX_PERIOD)
+                 this.start=new Date(val.valueOf() - libutil.trend_controller.MAX_PERIOD);  
+                 this.stop=val;}
+             else{
+                 this.stop=val;
+                 this.start = new Date(val.valueOf() - libutil.trend_controller.MIN_PERIOD);
+             }         
+             this.normalizePeriod();
+           }
+           else{
+             this.stop=val;
+             this.normalizePeriod();
+           }
+    }
+}
+
+libutil.trend_controller.prototype.normalizePeriod = function(){
+    this.updatedate();
+    this.requested=false;
+    this.setstate();
+}
+
+libutil.trend_controller.prototype.updatedate = function(){
+    if (this.stoppicker && this.stop)
+           this.stoppicker.datetimepicker('setDate', (this.stop));
+    if (this.startpicker && this.start)
+           this.startpicker.datetimepicker('setDate', (this.start));        
+}
+
+
+libutil.trend_controller.prototype.setstate = function(){
+    if (this.runbutton)
+        this.runbutton.setAttribute('disable',(this.items.length && !this.requested) ? "false" : "true");
 }
 
