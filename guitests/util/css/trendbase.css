@@ -18,7 +18,13 @@ body {
 
 }
 
-.menue {
+td.menue {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #111), color-stop(0.5, #555), color-stop(1, #111));
+    height: 30px;
+    text-align: center;
+}
+
+td.menuestatic {
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #111), color-stop(0.5, #555), color-stop(1, #111));
     height: 30px;
     text-align: center;
@@ -27,6 +33,12 @@ body {
 td:hover.menue {
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #555), color-stop(0.5, #111), color-stop(1, #555));
     height: 30px;
+}
+
+td:hover.menue > div[disable='true']{
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #111), color-stop(0.5, #555), color-stop(1, #111));
+    height: 30px;
+    text-align: center;
 }
 
 table {
@@ -38,14 +50,27 @@ table {
     width: 100%;
 }
 
-input {
+div#run-button{
+    background: url('res/run_base.png') center no-repeat;
+    width: 24px;
+    height: 24px;
+    border-width: 0px;
+    paddin: auto;
+}
+
+div#run-button[disable='true']{
+    background: url('res/run_based.png') center no-repeat;
+}
+
+
+/*input {
     background: -webkit-gradient(linear, left top, left bottom, from(#003), to(#005)); 
     border-color: #777777;
     border-width: 1px;
     color: yellow;
     border-radius: 4px 4px;
 
-}
+}*/
 
 
 
@@ -89,7 +114,18 @@ input {
     /* center pane that are 'containers' for a nested layout */ 
     padding: 0; 
     border: 0; 
-}            
+}   
+
+#chart-id {
+   height: 100%; 
+   margin:0;
+   padding:0;
+}
+
+
+
+
+
 
 
 

@@ -5314,13 +5314,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:choose>                      
                             <xsl:when test="not(normalize-space(@params)='')">                         
                                 <script xmlns="http://www.w3.org/1999/xhtml"  type="text/javascript">
-                                    <xsl:text>try { new libutil.trendchart('</xsl:text>
+                                    <xsl:text>try { new libutil.trendchart( {element: '</xsl:text>
                                     <xsl:value-of select="@id"/>
-                                    <xsl:text>_chartbody' , '</xsl:text>
+                                    <xsl:text>_chartbody' , throbler: '</xsl:text>
                                     <xsl:value-of select="@id"/>
-                                    <xsl:text>_chartbackground' ,  null,  </xsl:text>
+                                    <xsl:text>_chartbackground' ,  tags:  </xsl:text>
                                     <xsl:value-of select="@params"/>
-                                    <xsl:text> , </xsl:text>
+                                    <xsl:text> , hist: </xsl:text>
                                     <xsl:choose>                      
                                         <xsl:when test="not(normalize-space(@period)='')"> 
                                             <xsl:value-of select="@period"/>
@@ -5329,7 +5329,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                             <xsl:text>600</xsl:text>
                                         </xsl:otherwise>   
                                     </xsl:choose> 
-                                    <xsl:text> , </xsl:text>
+                                    <xsl:text> , colors: </xsl:text>
                                     <xsl:choose>                      
                                         <xsl:when test="not(normalize-space(@colors)='')"> 
                                             <xsl:value-of select="@colors"/>
@@ -5338,11 +5338,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                             <xsl:text>null</xsl:text>
                                         </xsl:otherwise>   
                                     </xsl:choose>                                   
-                                    <xsl:text> ,  </xsl:text>
+                                    <xsl:text> , width: </xsl:text>
                                     <xsl:value-of select="@width"/>
-                                    <xsl:text> ,  </xsl:text>
+                                    <xsl:text> , height: </xsl:text>
                                     <xsl:value-of select="@height"/> 
-                                    <xsl:text> ,  </xsl:text>
+                                    <xsl:text> , r: </xsl:text>
                                     <xsl:choose>                      
                                         <xsl:when test="not(normalize-space(@r)='')"> 
                                             <xsl:value-of select="@r"/>
@@ -5357,10 +5357,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                             <xsl:value-of select="@option"/>
                                         </xsl:when>  
                                         <xsl:otherwise>
-                                            <xsl:text>null</xsl:text>
+                                            <xsl:text></xsl:text>
                                         </xsl:otherwise>   
                                     </xsl:choose>                                    
-                                    <xsl:text> ); }  catch(error){</xsl:text> 
+                                    <xsl:text> } ); }  catch(error){</xsl:text> 
                                         
                                     <xsl:text> }</xsl:text> 
                                 </script>
