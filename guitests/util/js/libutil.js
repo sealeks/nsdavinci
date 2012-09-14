@@ -219,6 +219,10 @@ libutil.util.trim = function(str){
     return str.replace(/(^\s+)|(\s+$)/g, "");
 }
 
+libutil.util.replacedelim = function(str){
+    return str.replace(/^\:/, "_");
+}
+
 
 
 
@@ -1652,6 +1656,8 @@ libutil.trendchart = function(option){
     var defaultseriestype = undefined;
     var title = undefined;
     var fontsize = undefined;
+    
+    this.ranges={};
 
     
     var backgroundcolor = {
@@ -1761,7 +1767,11 @@ libutil.trendchart = function(option){
                    if (option[key].constructor == Array){     
                    colors  = option[key];}    
                    break;     
-                } 
+                }
+                case 'ranges':{
+                   this.ranges  = option[key];   
+                   break;     
+                }                 
                 case 'tags':{
                    if (option[key].constructor == Array){     
                    tags  = option[key];}    
@@ -2220,6 +2230,8 @@ libutil.trendchart.prototype.YAxis = function(){
             gridLineColor: this.axisYcolor,
             minPadding: 0.0,
             maxPadding: 0.0,
+            min: this.ranges && this.ranges[this.tags[i]] ? this.ranges[this.tags[i]].min : null,
+            max: this.ranges && this.ranges[this.tags[i]] ? this.ranges[this.tags[i]].max : null,            
             labels: {
                 formatter: function() {
                     return this.value;
@@ -2348,6 +2360,27 @@ libutil.trendchart.prototype.setcolor = function(id, color){
 libutil.trendchart.prototype.removeseries = function(id){
     if (this.chart && this.chart.get(this.elid+'___'+id)){
         this.chart.get(this.elid+'___'+id).remove();
+    }
+}
+
+libutil.trendchart.prototype.getExtremes = function(id){
+    if (this.chart && this.chart.get(this.elid+'___'+id)){
+        return this.chart.get(this.elid+'___'+id).yAxis.getExtremes();
+    }
+}
+
+libutil.trendchart.prototype.setExtremes = function(id, min, max){
+    if (this.chart && this.chart.get(this.elid+'___'+id)){
+        this.chart.get(this.elid+'___'+id).yAxis.setExtremes(min,max);
+    }
+}
+
+libutil.trendchart.prototype.setExtremesAuto = function(id){
+    if (this.chart && this.chart.get(this.elid+'___'+id)){
+        var yax = this.chart.get(this.elid+'___'+id).yAxis;
+        var ext =yax.getExtremes();
+        if (ext)
+           yax.setExtremes(ext.dataMin,ext.dataMax);          
     }
 }
 
@@ -2553,6 +2586,15 @@ libutil.trend_controller = function(){
     try{
 
         this.items = [];
+        this.range={};
+        this.pugerange= function(){
+             var tmp={};
+             for(var key in this.range) {
+                if (this.range[key])
+                    tmp[key]=this.range[key];
+                    
+                }
+              this.range=tmp;}
         this.getXMLData();
         this.connect();
         }
@@ -2566,7 +2608,7 @@ libutil.trend_controller.MAX_PERIOD = 360000000;
 
 libutil.trend_controller.MIN_PERIOD = 60000;
 
-libutil.trend_controller.MID_PERIOD = 3600000;
+libutil.trend_controller.MID_PERIOD = 10800000;
 
 libutil.trend_controller.COLORS = [
 	'4572A7', 
@@ -2877,7 +2919,7 @@ libutil.trend_controller.prototype.init = function(){
         scrollrows: true,
         shrinkToFit: false,
         cellLayout: 1,
-        colNames:['id', 'comment', 'eu', 'mineu', 'maxeu', 'coloredit' , ' ', 'color'],
+        colNames:['id', 'comment', 'eu', 'mineu', 'maxeu', 'auto', 'range' ,'color' , ' ', 'color', 'auto', 'min', 'max'],
         colModel:[
                     
         {
@@ -2893,8 +2935,7 @@ libutil.trend_controller.prototype.init = function(){
         
         {
             name:'eu',
-            index:'eu',
-            edittype: 'button'
+            index:'eu'
         },   
             
         
@@ -2908,6 +2949,16 @@ libutil.trend_controller.prototype.init = function(){
             index:'maxeu'
         },
         {
+            name:'autoedit',
+            index:'autoedit',
+            width:30
+        },
+        {
+            name:'rangeedit',
+            index:'rengeedit',
+            width:260
+        },        
+        {
             name:'coloredit',
             index:'coloredit'
 
@@ -2919,53 +2970,75 @@ libutil.trend_controller.prototype.init = function(){
             index:'color',
             width: 1
 
-        },     
-		
+        },  
+        {
+            name:'auto',
+            index:'auto',
+            width: 1
+
+        },  
+        {
+            name:'min',
+            index:'min',
+            width: 1
+
+        },          
+        {
+            name:'max',
+            index:'max',
+            width: 1
+
+        }  		
         ],
    	
-        viewrecords: true,
+        viewrecords: false,
+        onSelectRow: function(id){
+
+	$('#selectlist').jqGrid('editRow',id,true);
+
+	},
         
         gridComplete: function(){ 
            var ids = $("#selectlist").jqGrid('getDataIDs');
            for(var i=0;i < ids.length;i++){
                var row = $("#selectlist").jqGrid('getRowData',ids[i]);
 	       var col = "<input  style='background-color:#"+ row.color + "' type='text'  value='"+ row.color + "'  id='selectlist_selectcolor_"+ids[i]+"'/>";
+               var aut = "<input style='height:22px;width:20px;' type='checkbox' " + (row.auto=="true" ? 'checked="true"' : '') + "  onchange=\"window.trendcontroller.setauto('"+row.id+"',this.checked)\"/>";
+               var range = "<div id='selectlist_selectrange_"+ids[i]+"' style='padding-left: 10px, padding-right: 10px;'/>";
                var del = "<input style='height:22px;width:20px;' type='button' value='D'  onclick=\"window.trendcontroller.removeid('"+row.id+"')\"/>";
                $("#selectlist").jqGrid('setCell',ids[i] ,'coloredit' ,col);
+               $("#selectlist").jqGrid('setCell',ids[i] ,'autoedit' ,aut);
 	       $("#selectlist").jqGrid('setCell',ids[i] ,'oprt' ,del);
+               if (row.auto!="true"){
+                   $("#selectlist").jqGrid('setCell',ids[i] ,'rangeedit' ,range);
+                   $('#selectlist_selectrange_'+ids[i])[0].nameid=row.id;}
                $('#selectlist_selectcolor_'+ids[i])[0].nameid=row.id;
+               
                $('#selectlist_selectcolor_'+ids[i]).colorpicker({
                    close: function(ev,col){
                        ev.target.setAttribute('style','background-color:#'+col.formatted);
-                       //ev.target.setAttribute('value','');
-                       //ev.target.textContent='';
                        ts.setcolor(ev.target.nameid, col.formatted);
                    },
                    select: function(ev,col){
                        ev.target.setAttribute('style','background-color:#'+col.formatted);
-                       //ev.target.setAttribute('value','');
-                       //ev.target.textContent='';
-                       //ts.setcolor(ev.target.nameid, col.formatted);
                    }                   
                });
-           }},  
+               if (row.auto!="true"){
+                   $('#selectlist_selectrange_'+ids[i]).slider({
+                       range: true,
+		        min: parseFloat(row.mineu),
+			max: parseFloat(row.maxeu),
+			values: window.trendcontroller.range[row.id] ? [ window.trendcontroller.range[row.id].min , window.trendcontroller.range[row.id].max ] : [ row.min.valueOf(), row.max.valueOf() ],
+                        change: function(ev, ui) {
+                            window.trendcontroller.setextremes(ev.target.nameid, ui.values[ 0 ],ui.values[ 1 ]) }
+               });
+               }
+           }} 
            
 
                 
 
            
-        sortname: 'id',
-
-        sortorder: "desc",
-        grouping:true,
-        groupingView : {
-            groupField : ['id'],
-            groupSummary : [true],
-            groupColumnShow : [true],
-            groupText : ['<b>{0}</b>'],
-            groupCollapse : false,
-            groupOrder: ['asc']
-        }
         	
     });  
     
@@ -3006,7 +3079,12 @@ libutil.trend_controller.prototype.add = function(tag){
                 mineu : this.base[tag].mineu,  
                 maxeu : this.base[tag].maxeu,
                 color: this.selectcolor(),
-                coloredit: ''
+                coloredit: '',
+                auto: true,
+                autoedit: '',
+                rangeedit: '',
+                min: this.base[tag].min,
+                max: this.base[tag].max
                 });
             this.updateselect();                
             return true;
@@ -3018,6 +3096,8 @@ libutil.trend_controller.prototype.remove = function(tag){
     for (var i=0;i<this.items.length;++i){
         if (this.items[i].id==tag){
             libutil.util.remove_element_arr(this.items,i);
+            this.range[tag] = undefined;
+            this.pugerange();
             this.updateselect(true);
             return true;
         }
@@ -3042,9 +3122,11 @@ libutil.trend_controller.prototype.removeid = function(id){
         }
     }
     libutil.util.remove_element_arr(this.items,fnd);
+    this.range[id] = undefined;
     if(this.trendchart)
        this.trendchart.removeseries(id);
     this.updateselect(true);
+    this.pugerange();
     return true;      
 }
 
@@ -3074,6 +3156,38 @@ libutil.trend_controller.prototype.setcolor = function(id, col){
        } 
     }
 }
+
+libutil.trend_controller.prototype.setauto = function(id, val){
+    
+    for (var i=0;i<this.items.length;++i){
+       if (this.items[i].id==id){
+          if (this.items[i].auto!=val){
+               if (!val){
+                 var ext=this.trendchart ? this.trendchart.getExtremes(id) : null;
+                 this.range[id] = { min : (ext ? ext.min : this.items[i].mineu),
+                                    max : (ext ? ext.max : this.items[i].maxeu)};}
+                 else{
+                 this.range[id] = undefined;  
+                 if (this.trendchart) 
+                     this.trendchart.setExtremesAuto(id);
+                 }           
+          this.items[i].auto=val;
+          this.updateselect();
+          this.pugerange();
+          break;
+       }} 
+    }
+}
+
+libutil.trend_controller.prototype.setextremes = function(id, min, max){
+    for (var i=0;i<this.items.length;++i){
+       if (this.items[i].id==id){
+          if(this.trendchart){
+              this.trendchart.setExtremes(id, min, max);
+              this.range[id] = { min : min,
+                                 max : max};
+          }   
+}}}
 
 libutil.trend_controller.prototype.updateselect = function( req ) {
      $("#selectlist").jqGrid('clearGridData');
@@ -3109,13 +3223,14 @@ libutil.trend_controller.prototype.run = function(){
     var ts = this;
     ts.requested=true;ts.setstate();
     this.trendchart = new libutil.trendchart( 
-       { connection: this.connection , 
+       {connection: this.connection , 
          tags: this.tags(), 
          element: "chart-id", 
          colors: this.colors(),  
          start: this.start , 
          stop: this.stop, 
-         callback: function(){$('#runmodal').dialog('close'); ts.requested=true;ts.setstate();}});
+         ranges: this.range,
+         callback: function(){$('#runmodal').dialog('close');ts.requested=true;ts.setstate();}});
         
 }
 
