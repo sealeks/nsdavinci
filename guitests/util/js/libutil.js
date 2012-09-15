@@ -1762,7 +1762,11 @@ libutil.trendchart = function(option){
                 case 'callback':{
                    callback  = option[key];    
                    break;     
-                }                
+                }      
+                case 'complete':{
+                   this.complete  = option[key];    
+                   break;     
+                }                  
                 case 'colors':{
                    if (option[key].constructor == Array){     
                    colors  = option[key];}    
@@ -2032,7 +2036,7 @@ return updated;
 
 libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
     val[0]=val[0].valueOf();
-    if (val[1]!=val[1])
+    if (val[1]!=val[1] || val[1]===null || val[1]===undefined)
         val[1]=null;
     if (init){
         var now = this.currentStart();
@@ -2185,13 +2189,15 @@ libutil.trendchart.prototype.startSeries = function(ev) {
                     }
                 }
             }
-        };						
+        };
+    if (this.start) 
+        this.checkdata(item.data, [this.start, undefined] ,i, true);        
     for (var j = 0 ; j < ev[i].data.length; j++) { 
         var dt = ev[i].data[j];
-        //if (((parseInt(dt[0].getMinutes() /1)) % (4)) ==i)
-        //    dt[1]=null;
-        this.checkdata(item.data, dt,i,j==0);
+        this.checkdata(item.data, dt,i,(j==0 && !this.start));
     }
+    if (this.stop) 
+        this.checkdata(item.data, [this.stop, undefined] ,i);
     series.push(item);
     }
 return series;
@@ -2342,6 +2348,8 @@ libutil.trendchart.prototype.execute = function(ev) {
                 
                 this.element.chart = this.chart;
                 this.addBound();
+                if (this.complete)
+                    this.complete();
             }
             else {
                 this.addSeries(ev);
@@ -2587,6 +2595,7 @@ libutil.trend_controller = function(){
 
         this.items = [];
         this.range={};
+        this.datarange={};
         this.pugerange= function(){
              var tmp={};
              for(var key in this.range) {
@@ -2594,7 +2603,14 @@ libutil.trend_controller = function(){
                     tmp[key]=this.range[key];
                     
                 }
-              this.range=tmp;}
+             this.range=tmp;
+             var datatmp={};
+             for(var key in this.datarange) {
+                if (this.datarange[key])
+                    datatmp[key]=this.datarange[key];
+                    
+                }
+              this.datarange=datatmp;}
         this.getXMLData();
         this.connect();
         }
@@ -2919,7 +2935,7 @@ libutil.trend_controller.prototype.init = function(){
         scrollrows: true,
         shrinkToFit: false,
         cellLayout: 1,
-        colNames:['id', 'comment', 'eu', 'mineu', 'maxeu', 'auto', 'range' ,'color' , ' ', 'color', 'auto', 'min', 'max'],
+        colNames:['id', 'comment', 'eu', 'range' ,'drange' ,'srange' , 'auto', 'range' ,'color' , ' ', 'color', 'auto', 'min', 'max', 'mineu', 'maxeu'],
         colModel:[
                     
         {
@@ -2936,18 +2952,19 @@ libutil.trend_controller.prototype.init = function(){
         {
             name:'eu',
             index:'eu'
-        },   
-            
-        
+        },  
         {
-            name:'mineu',
-            index:'mineu'
-        },
-        
+            name:'range',
+            index:'range'
+        },  
         {
-            name:'maxeu',
-            index:'maxeu'
-        },
+            name:'datarange',
+            index:'datarange'
+        },    
+        {
+            name:'selectrange',
+            index:'selectrange'
+        },          
         {
             name:'autoedit',
             index:'autoedit',
@@ -2988,7 +3005,18 @@ libutil.trend_controller.prototype.init = function(){
             index:'max',
             width: 1
 
-        }  		
+        },  	
+        {
+            name:'mineu',
+            index:'mineu',
+            width: 1            
+        },
+        
+        {
+            name:'maxeu',
+            index:'maxeu',
+            width: 1            
+        }	
         ],
    	
         viewrecords: false,
@@ -3083,8 +3111,11 @@ libutil.trend_controller.prototype.add = function(tag){
                 auto: true,
                 autoedit: '',
                 rangeedit: '',
-                min: this.base[tag].min,
-                max: this.base[tag].max
+                min: this.base[tag].mineu,
+                max: this.base[tag].max,
+                range: (this.base[tag].mineu + ' - ' + this.base[tag].maxeu),
+                selectrange: '',
+                datarange: ''
                 });
             this.updateselect();                
             return true;
@@ -3097,6 +3128,7 @@ libutil.trend_controller.prototype.remove = function(tag){
         if (this.items[i].id==tag){
             libutil.util.remove_element_arr(this.items,i);
             this.range[tag] = undefined;
+            this.datarange[tag] = undefined;
             this.pugerange();
             this.updateselect(true);
             return true;
@@ -3123,6 +3155,7 @@ libutil.trend_controller.prototype.removeid = function(id){
     }
     libutil.util.remove_element_arr(this.items,fnd);
     this.range[id] = undefined;
+    this.datarange[id] = undefined;    
     if(this.trendchart)
        this.trendchart.removeseries(id);
     this.updateselect(true);
@@ -3165,9 +3198,11 @@ libutil.trend_controller.prototype.setauto = function(id, val){
                if (!val){
                  var ext=this.trendchart ? this.trendchart.getExtremes(id) : null;
                  this.range[id] = { min : (ext ? ext.min : this.items[i].mineu),
-                                    max : (ext ? ext.max : this.items[i].maxeu)};}
+                                    max : (ext ? ext.max : this.items[i].maxeu)};
+                 this.items[i].selectrange= ext ? (this.range[id].min + ' - ' + this.range[id].max) : '';}          
                  else{
-                 this.range[id] = undefined;  
+                 this.range[id] = undefined; 
+                 this.items[i].selectrange= '';
                  if (this.trendchart) 
                      this.trendchart.setExtremesAuto(id);
                  }           
@@ -3186,8 +3221,23 @@ libutil.trend_controller.prototype.setextremes = function(id, min, max){
               this.trendchart.setExtremes(id, min, max);
               this.range[id] = { min : min,
                                  max : max};
+              this.items[i].selectrange=(min + ' - ' + max); 
+              this.updateselect();
           }   
 }}}
+
+libutil.trend_controller.prototype.updatedataextremes = function(){
+    for (var i=0;i<this.items.length;++i){
+              var id = this.items[i].id;
+              var ext=this.trendchart ? this.trendchart.getExtremes(id) : null;
+              this.datarange[id] = ext ? { min : ext.dataMin,
+                                 max : ext.dataMax} : undefined;
+                   
+              this.items[i].datarange= ext && (ext.dataMax || ext.dataMax===0) && (ext.dataMin || ext.dataMin===0) ? 
+                  (ext.dataMin.toFixed(2)  + ' - ' + ext.dataMax.toFixed(2)) : '';                                         
+          }  
+          this.updateselect(); 
+}
 
 libutil.trend_controller.prototype.updateselect = function( req ) {
      $("#selectlist").jqGrid('clearGridData');
@@ -3230,7 +3280,8 @@ libutil.trend_controller.prototype.run = function(){
          start: this.start , 
          stop: this.stop, 
          ranges: this.range,
-         callback: function(){$('#runmodal').dialog('close');ts.requested=true;ts.setstate();}});
+         callback: function(){$('#runmodal').dialog('close');ts.requested=true;ts.setstate();},
+         complete: function(){ts.updatedataextremes();}});
         
 }
 
