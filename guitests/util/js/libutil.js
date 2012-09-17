@@ -330,7 +330,7 @@ libutil.project.init_form = function(){
                 
             if ($$global().loadwin) setTimeout(function(){
                 $$global().loadwin.close()
-                }, 2500);                
+            }, 2500);                
                 
 
             
@@ -513,7 +513,7 @@ libutil.project.getXSLTScriptList = function(){
                     if ((ep.getAttribute) && (ep.localName=='with-param') && (ep.getAttribute('name')=='file') && (ep.textContent!='')){
                         result.push({
                             'file' : ep.textContent
-                            })
+                        })
                     }
                 }
             }
@@ -754,19 +754,19 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r 
     {
         name : 'style', 
         value: popupstyle ? popupstyle : 'fill: white; opacity: 0.0;'
-        }]);
+    }]);
     
     svg.popupbody = libutil.svg.create_element('svg', svg, [{
         name : 'x', 
         value: dir==1 ? wh : 0
-        },
+    },
 
-        {
+    {
         name : 'y', 
         value:  dir==2 ? hh : 0
-        },
+    },
 
-        {
+    {
         name : 'width', 
         value: W
     },
@@ -809,7 +809,7 @@ libutil.popup.createsvgs = function(el, W, H, yd, dir, bodystyle, popupstyle, r 
     {
         name : 'style', 
         value: bodystyle ?  bodystyle : 'fill: white; opacity: 1.0;'
-        }]);
+    }]);
                                                     
     svg.boundspopup = {
         x: xc , 
@@ -989,7 +989,7 @@ libutil.geometry.boundrect = function (el){
         y : box.y , 
         w : box.width , 
         h : box.height
-        } : null;
+    } : null;
     if (rect) return rect;
     var boxs = el  && el.getClientRects ? el.getClientRects() : null;
     var box = boxs && boxs.length ? boxs[0] : null;
@@ -998,7 +998,7 @@ libutil.geometry.boundrect = function (el){
         y : box.left , 
         w : box.width , 
         h : box.height
-        } : null;
+    } : null;
 }
 
 
@@ -1148,7 +1148,7 @@ libutil.html.create_tool = function (doc, nametool, names, hints, funcs, size, h
                 var dv = libutil.html.create_element('div' , btn ,[{
                     name : 'class' , 
                     value : nametool+'-icon'
-                    }]);
+                }]);
                 if (hints &&  hints.length>i)
                     dv.setAttribute('title', hints[i]);
                 result[names[i]] = btn;
@@ -1379,12 +1379,12 @@ libutil.svg.create_gradient = function (name ,parent, attr, colors){
             libutil.svg.create_element('stop', gradient , [{
                 name : 'offset' , 
                 value : colors[i].offset ? colors[i].offset : 0
-                },
+            },
 
-                {
+            {
                 name : 'stop-color' , 
                 value : colors[i].stopcolor ? colors[i].stopcolor : '#000'
-                }])
+            }])
         }
         return gradient;
     }
@@ -1414,22 +1414,22 @@ libutil.www.create_window = function(doc, id, x, y, width, height, style){
             {
                 name : 'x', 
                 value:  x ? x : 0
-                },
+            },
 
-                {
+            {
                 name : 'y', 
                 value:  y ? y : 0
-                },
+            },
 
-                {
+            {
                 name : 'width', 
                 value: width ? width : 300
-                },
+            },
 
-                {
+            {
                 name : 'height', 
                 value: height ? height : 300
-                }]);         
+            }]);         
             var html = libutil.html.create_element('html' , result);
             
             libutil.html.create_element('head', html,[{
@@ -1534,10 +1534,10 @@ libutil.alarmtable = function(el){
             }
         }
     }
-catch(error){
-    console.error('Alarms set error: ' + error );
-}
-return this.init;
+    catch(error){
+        console.error('Alarms set error: ' + error );
+    }
+    return this.init;
 }
 
 libutil.alarmtable.prototype.detach = function() {
@@ -1680,217 +1680,223 @@ libutil.trendchart = function(option){
                             backgroundcolor = {
                                 linearGradient: ['100%', '0%', '100%', '100%'],
                                 stops: option[key]
-                                }
                             }
-                    if (option[key].constructor == String){
-                        backgroundcolor = option[key]
                         }
-                    break;
+                        if (option[key].constructor == String){
+                            backgroundcolor = option[key]
+                        }
+                        break;
                     }
-                case 'element':{
-                    elid = option[key];    
-                    break;     
+                    case 'element':{
+                        elid = option[key];    
+                        break;     
+                    }
+                    case 'throbler':{
+                        throbid = option[key];    
+                        break;     
+                    }                    
+                    case 'animation':{
+                        animation = option[key];    
+                        break;     
+                    }
+                    case 'lineWidth':{
+                        linewidth = parseInt(option[key]);    
+                        break;     
+                    }
+                    case 'axisWidth':{
+                        axiswidth = parseInt(option[key]);    
+                        break;     
+                    }   
+                    case 'axisColor':{
+                        axisYcolor = option[key];   
+                        break;     
+                    }
+                    case 'axisXColor':{
+                        axisXcolor = option[key];   
+                        break;     
+                    }                      
+                    case 'shadow':{
+                        shadow = option[key];    
+                        break;     
+                    }  
+                    case 'seriestype':{
+                        defaultseriestype = option[key];    
+                        break;     
+                    }  
+                    case 'disableColor':{
+                        disablecolor = option[key];    
+                        break;     
+                    } 
+                    case 'title':{
+                        title = option[key];    
+                        break;     
+                    } 
+                    case 'width':{
+                        width = option[key].valueOf();    
+                        break;     
+                    } 
+                    case 'height':{
+                        height  = option[key];    
+                        break;     
+                    }
+                    case 'r':{
+                        r  = option[key];    
+                        break;     
+                    } 
+                    case 'start':{
+                        start  = option[key];    
+                        break;     
+                    }
+                    case 'stop':{
+                        stop  = option[key];    
+                        break;     
+                    } 
+                    case 'hist':{
+                        hist  = option[key];    
+                        break;     
+                    }  
+                    case 'connection':{
+                        sqlreq  = option[key];    
+                        break;     
+                    }
+                    case 'callback':{
+                        callback  = option[key];    
+                        break;     
+                    }      
+                    case 'complete':{
+                        this.complete  = option[key];    
+                        break;     
+                    }                  
+                    case 'colors':{
+                        if (option[key].constructor == Array){     
+                            colors  = option[key];
+                        }    
+                        break;     
+                    }
+                    case 'ranges':{
+                        this.ranges  = option[key];   
+                        break;     
+                    }                 
+                    case 'tags':{
+                        if (option[key].constructor == Array){     
+                            tags  = option[key];
+                        }    
+                        break;     
+                    }                 
                 }
-                case 'throbler':{
-                    throbid = option[key];    
-                    break;     
-                }                    
-                case 'animation':{
-                    animation = option[key];    
-                    break;     
-                }
-                case 'lineWidth':{
-                    linewidth = parseInt(option[key]);    
-                    break;     
-                }
-                case 'axisWidth':{
-                    axiswidth = parseInt(option[key]);    
-                    break;     
-                }   
-                case 'axisColor':{
-                    axisYcolor = option[key];   
-                    break;     
-                }
-                case 'axisXColor':{
-                    axisXcolor = option[key];   
-                    break;     
-                }                      
-                case 'shadow':{
-                    shadow = option[key];    
-                    break;     
-                }  
-                case 'seriestype':{
-                    defaultseriestype = option[key];    
-                    break;     
-                }  
-                case 'disableColor':{
-                    disablecolor = option[key];    
-                    break;     
-                } 
-                case 'title':{
-                    title = option[key];    
-                    break;     
-                } 
-                case 'width':{
-                    width = option[key].valueOf();    
-                    break;     
-                } 
-                case 'height':{
-                   height  = option[key];    
-                   break;     
-                }
-                case 'r':{
-                   r  = option[key];    
-                   break;     
-                } 
-                case 'start':{
-                   start  = option[key];    
-                   break;     
-                }
-                case 'stop':{
-                   stop  = option[key];    
-                   break;     
-                } 
-                case 'hist':{
-                   hist  = option[key];    
-                   break;     
-                }  
-                case 'connection':{
-                   sqlreq  = option[key];    
-                   break;     
-                }
-                case 'callback':{
-                   callback  = option[key];    
-                   break;     
-                }      
-                case 'complete':{
-                   this.complete  = option[key];    
-                   break;     
-                }                  
-                case 'colors':{
-                   if (option[key].constructor == Array){     
-                   colors  = option[key];}    
-                   break;     
-                }
-                case 'ranges':{
-                   this.ranges  = option[key];   
-                   break;     
-                }                 
-                case 'tags':{
-                   if (option[key].constructor == Array){     
-                   tags  = option[key];}    
-                   break;     
-                }                 
-            }}        
+            }        
+        }
     }
-}
 
-this.callback=callback;
-this.sort(tags,colors);
-if (start || stop)
-    hist={start: start, stop: stop};
+    this.callback=callback;
+    this.sort(tags,colors);
+    if (start || stop)
+        hist={
+            start: start, 
+            stop: stop
+        };
              
     
-  try{
-    if ((!window.$$editable) || ($$editable())) return;
-    this.elid = elid;
-    this.element = document.getElementById(elid);
-    this.thtobblerbody = document.getElementById(throbid);
-    if (this.element){
-        if (this.thtobblerbody)
-            this.element.trobbler = new libutil.proggress.throbber(this.thtobblerbody);
-        this.sqlreq = sqlreq;
-        if (tags.length){
+    try{
+        if ((!window.$$editable) || ($$editable())) return;
+        this.elid = elid;
+        this.element = document.getElementById(elid);
+        this.thtobblerbody = document.getElementById(throbid);
+        if (this.element){
+            if (this.thtobblerbody)
+                this.element.trobbler = new libutil.proggress.throbber(this.thtobblerbody);
+            this.sqlreq = sqlreq;
+            if (tags.length){
             
-            if (!this.sqlreq){
-                if (!hist) hist=0;
-                this.period = hist * 1000;
-            }
-            else{
-                this.start=hist.start;
-                this.stop=hist.stop;
-            }
-        
-            var ts = this;
-        
-
-            this.disablecolor = disablecolor ? disablecolor : "#AAA";
-            this.backgroundcolor = backgroundcolor ? backgroundcolor : "#EEE";
-            this.axisYcolor = axisYcolor!==undefined ? axisYcolor : undefined;
-            this.axisXcolor = axisXcolor!==undefined ? axisXcolor : this.axisYcolor;
-        
-            this.width = width;
-            this.height = height;
-            this.linewidth = linewidth ? linewidth : 1;
-            this.axiswidth = axiswidth ? axiswidth : 1;
-        
-            var minBound = height < width ? height : width;
-        
-            this.fontsize = fontsize ? fontsize : (minBound ? parseInt(minBound / 30) : undefined );
-        
-            if (this.fontsize < 8) this.fontsize=8;
-            this.shadow = shadow ? true : false;
-            this.borderRadius = (r || r==0) ? r : 5;
-
-            this.defaultseriestype =  defaultseriestype ? defaultseriestype : 'line';
-        
-            this.animation = animation ? true : false;
-            this.title=title ? title : null;
-        
-        
-            this.last_datastate = [];
-            this.serias_lastvalue = [];
-        
-        
-            this.null_datastate = [];
-            this.null_datachange = false;
-            this.null_periods = [];
-            this.null_lines = [];
-            //this.null_lines_change = false;
-        
-            this.current_null_periods = null;
-            this.current_null_periods_change = false;
-       
-            for (var i=0;i<tags.length;++i){
-                this.null_datastate[i]=null;
-                this.last_datastate[i]=null;
-                this.serias_lastvalue[i]=null;
-            }
-        
-            this.handler = function(){
-                ts.execute(event);
-            }
-        
-            if (!sqlreq)
-                var rslt = this.element.addTrendsListener( this.handler, tags, this.period + libutil.trendchart.WAITDELT );
-            else{
-                this.connection = sqlreq;
-                var rslt = this.connection.select_trends(this.handler,tags ,hist.start , hist.stop );         
-            }  
-        
-        
-            this.init = rslt;
-            if (!this.init){
-                console.error('TrendsListener didnt set');
-                this.handler=undefined;
-            }
-            else{
-            
-                var removeroot = function(){
-                    //console.log('Remove graph root');
-                    ts.detach();             
+                if (!this.sqlreq){
+                    if (!hist) hist=0;
+                    this.period = hist * 1000;
                 }
-                this.element.addEventListener('DOMNodeRemovedFromDocument',removeroot, false);
+                else{
+                    this.start=hist.start;
+                    this.stop=hist.stop;
+                }
+        
+                var ts = this;
+        
+
+                this.disablecolor = disablecolor ? disablecolor : "#AAA";
+                this.backgroundcolor = backgroundcolor ? backgroundcolor : "#EEE";
+                this.axisYcolor = axisYcolor!==undefined ? axisYcolor : undefined;
+                this.axisXcolor = axisXcolor!==undefined ? axisXcolor : this.axisYcolor;
+        
+                this.width = width;
+                this.height = height;
+                this.linewidth = linewidth ? linewidth : 1;
+                this.axiswidth = axiswidth ? axiswidth : 1;
+        
+                var minBound = height < width ? height : width;
+        
+                this.fontsize = fontsize ? fontsize : (minBound ? parseInt(minBound / 30) : undefined );
+        
+                if (this.fontsize < 8) this.fontsize=8;
+                this.shadow = shadow ? true : false;
+                this.borderRadius = (r || r==0) ? r : 5;
+
+                this.defaultseriestype =  defaultseriestype ? defaultseriestype : 'line';
+        
+                this.animation = animation ? true : false;
+                this.title=title ? title : null;
+        
+        
+                this.last_datastate = [];
+                this.serias_lastvalue = [];
+        
+        
+                this.null_datastate = [];
+                this.null_datachange = false;
+                this.null_periods = [];
+                this.null_lines = [];
+                //this.null_lines_change = false;
+        
+                this.current_null_periods = null;
+                this.current_null_periods_change = false;
+       
+                for (var i=0;i<tags.length;++i){
+                    this.null_datastate[i]=null;
+                    this.last_datastate[i]=null;
+                    this.serias_lastvalue[i]=null;
+                }
+        
+                this.handler = function(){
+                    ts.execute(event);
+                }
+        
+                if (!sqlreq)
+                    var rslt = this.element.addTrendsListener( this.handler, tags, this.period + libutil.trendchart.WAITDELT );
+                else{
+                    this.connection = sqlreq;
+                    var rslt = this.connection.select_trends(this.handler,tags ,hist.start , hist.stop );         
+                }  
+        
+        
+                this.init = rslt;
+                if (!this.init){
+                    console.error('TrendsListener didnt set');
+                    this.handler=undefined;
+                }
+                else{
+            
+                    var removeroot = function(){
+                        //console.log('Remove graph root');
+                        ts.detach();             
+                    }
+                    this.element.addEventListener('DOMNodeRemovedFromDocument',removeroot, false);
+                }
             }
         }
-}
-else {
-    console.error('Not find trend element');
-}
-}
-catch(error){
-    console.error('Trends set error: ' + error );
-}
+        else {
+            console.error('Not find trend element');
+        }
+    }
+    catch(error){
+        console.error('Trends set error: ' + error );
+    }
 }
 
 libutil.trendchart.WAITDELT = 6000;
@@ -1906,11 +1912,11 @@ libutil.trendchart.prototype.sort = function(tags,colors){
         tmp.push({
             tag: tags[i], 
             color: colors.length>i ? colors[i]: 'red'
-            });
+        });
     }
     tmp.sort(function(x1,x2){
         return x1.tag<x2.tag ? -1 : (x1.tag>x2.tag) ? 1 : 0
-        });
+    });
     this.tags=[];
     this.colors=[];
     for (var i=0; i<tmp.length;++i){
@@ -2010,31 +2016,31 @@ libutil.trendchart.prototype.update_data =function (){
             }
         }
     }
-var haschange = true;
-var periodhaschange = false;
-while (haschange){
-    var haschange = false;
-    if (this.null_periods.length && this.null_periods[0].stop<now){
-        periodhaschange=true;
-        libutil.util.remove_element_arr(this.null_periods,0);
-        this.null_datachange = true;
-        haschange = true;
-        updated = true;
-    }         
-}
-if (periodhaschange){
-    haschange = false;
-    if (this.null_lines.length && this.null_lines[0].time<now){
-        libutil.util.remove_element_arr(this.null_lines,0);
-        haschange = true;
-    } 
-}
-return updated;
+    var haschange = true;
+    var periodhaschange = false;
+    while (haschange){
+        var haschange = false;
+        if (this.null_periods.length && this.null_periods[0].stop<now){
+            periodhaschange=true;
+            libutil.util.remove_element_arr(this.null_periods,0);
+            this.null_datachange = true;
+            haschange = true;
+            updated = true;
+        }         
+    }
+    if (periodhaschange){
+        haschange = false;
+        if (this.null_lines.length && this.null_lines[0].time<now){
+            libutil.util.remove_element_arr(this.null_lines,0);
+            haschange = true;
+        } 
+    }
+    return updated;
 }
 
 
 
-libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
+libutil.trendchart.prototype.checkdata =function (arr, val, i ,init, close){
     val[0]=val[0].valueOf();
     if (val[1]!=val[1] || val[1]===null || val[1]===undefined)
         val[1]=null;
@@ -2062,86 +2068,86 @@ libutil.trendchart.prototype.checkdata =function (arr, val, i ,init){
                 });            
             }
         }
-    else{
-        val[0]=now;    
-    }
-}  
+        else{
+            val[0]=now;    
+        }
+    }  
     
-if (!this.null_datastate[i] && (val[1]===null)){
+    if (!this.null_datastate[i] && (val[1]===null)){
         
-    this.null_datastate[i]=/*this.last_datastate[i] ? this.last_datastate[i] :*/ val[0];
+        this.null_datastate[i]=/*this.last_datastate[i] ? this.last_datastate[i] :*/ val[0];
         
-    this.null_lines.push({
-        time : this.null_datastate[i] ,
-        color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'
+        this.null_lines.push({
+            time : this.null_datastate[i] ,
+            color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'
         });
 
         
-    if (this.current_null_periods==null){
+        if (this.current_null_periods==null){
+            this.current_null_periods_change=true;
+            this.current_null_periods ={
+                'start' : this.null_datastate[i], 
+                'counter' : 1
+            };     
+        }
+        else{
+            if ((!arr) && (this.null_datastate[i] < this.current_null_periods.start)){
+                
+                this.current_null_periods.start =  this.null_datastate[i];
+                console.log('add nullcouter this case' +this.current_null_periods.counter)
+            }   
+            this.current_null_periods.counter += 1;
+        }
+        
         this.current_null_periods_change=true;
-        this.current_null_periods ={
-            'start' : this.null_datastate[i], 
-            'counter' : 1
-        };     
+        if (this.serias_lastvalue[i]!==null && arr){
+            arr.push({
+                x : val[0]-1, 
+                y : this.serias_lastvalue[i]
+            });
+        } 
+        console.log('new nullperiod: ' +new Date(this.null_datastate[i], val[1]))
+         
     }
     else{
-        if ((!arr) && (this.null_datastate[i] < this.current_null_periods.start)){
-                
-            this.current_null_periods.start =  this.null_datastate[i];
-            console.log('add nullcouter this case' +this.current_null_periods.counter)
-        }   
-        this.current_null_periods.counter += 1;
-    }
-        
-    this.current_null_periods_change=true;
-    if (this.serias_lastvalue[i]!==null && arr){
-        arr.push({
-            x : val[0]-1, 
-            y : this.serias_lastvalue[i]
-        });
-    } 
-    console.log('new nullperiod: ' +new Date(this.null_datastate[i], val[1]))
-         
-}
-else{
-    if (this.null_datastate[i] && (val[1]!==null)){
+        if (this.null_datastate[i] && (val[1]!==null || close)){
             
-        this.null_lines.push({
-            time : val[0] , 
-            color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'
+            this.null_lines.push({
+                time : val[0] , 
+                color : (this.colors && this.colors.length>i) ? this.colors[i] : 'black'
             });
 
             
-        this.add_nullperiod({
-            start : this.null_datastate[i] , 
-            stop : val[0]
-        })
-        //console.log('add nullperiod: ',new Date(this.null_datastate[i]),new Date(val[0]));
-        this.null_datastate[i]=null;
-        if ((this.current_null_periods!=null)){
-            this.current_null_periods.counter-=1;
-            //console.log('rem nullcouter: ' +this.current_null_periods.counter)
-            if (!this.current_null_periods.counter){
+            this.add_nullperiod({
+                start : this.null_datastate[i] , 
+                stop : val[0]
+            })
+            //console.log('add nullperiod: ',new Date(this.null_datastate[i]),new Date(val[0]));
+            this.null_datastate[i]=null;
+            if ((this.current_null_periods!=null)){
+                this.current_null_periods.counter-=1;
+                //console.log('rem nullcouter: ' +this.current_null_periods.counter)
+                if (!this.current_null_periods.counter){
                     
-                this.current_null_periods = null;
+                    this.current_null_periods = null;
+                }
             }
-        }
-        this.current_null_periods_change=true;
-    } 
-}
-if (val[1]!==null)
-    this.serias_lastvalue[i]=val[1];
-this.last_datastate[i]=val[0];
-if (arr) 
-    arr.push({
-        x : val[0], 
-        y : val[1]
-    });
-else
-    return {
-        x : val[0], 
-        y : val[1]
-    };
+            this.current_null_periods_change=true;
+        } 
+    }
+    if (val[1]!==null)
+        this.serias_lastvalue[i]=val[1];
+    this.last_datastate[i]=val[0];
+    if (arr) 
+        arr.push({
+            x : val[0], 
+            y : val[1]
+        });
+    else
+        return {
+            x : val[0], 
+            y : val[1]
+        };
 }
 
 
@@ -2154,7 +2160,7 @@ libutil.trendchart.prototype.addBound =function (){
             from : this.null_periods[i].start , 
             to : this.null_periods[i].stop,
             color : this.disablecolor
-            });
+        });
     }
     
     for (var i = 0 ; i < this.null_lines.length; i++){
@@ -2190,17 +2196,17 @@ libutil.trendchart.prototype.startSeries = function(ev) {
                 }
             }
         };
-    if (this.start) 
-        this.checkdata(item.data, [this.start, undefined] ,i, true);        
-    for (var j = 0 ; j < ev[i].data.length; j++) { 
-        var dt = ev[i].data[j];
-        this.checkdata(item.data, dt,i,(j==0 && !this.start));
+        if (this.start) 
+            this.checkdata(item.data, [this.start, undefined] ,i, true);        
+        for (var j = 0 ; j < ev[i].data.length; j++) { 
+            var dt = ev[i].data[j];
+            this.checkdata(item.data, dt,i,(j==0 && !this.start));
+        }
+        if (this.stop) 
+            this.checkdata(item.data, [this.stop, undefined] ,i, false , true);
+        series.push(item);
     }
-    if (this.stop) 
-        this.checkdata(item.data, [this.stop, undefined] ,i);
-    series.push(item);
-    }
-return series;
+    return series;
 }
 
 
@@ -2218,9 +2224,9 @@ libutil.trendchart.prototype.addSeries = function(ev){
                 this.element.chart.series[i].addPoint([dt.x , dt.y], false , false , false);
                 updated = true;
             }
-            }						
+        }						
 
-var updated2 = this.update_data();
+    var updated2 = this.update_data();
     var updated1 = this.update_null_data();
     if (updated || updated1 || updated2)
         this.element.chart.redraw();
@@ -2248,13 +2254,13 @@ libutil.trendchart.prototype.YAxis = function(){
                     'font-size' : this.fontsize ? this.fontsize : undefined
                 }
             },
-        title: {
-            text: null
-        },    
-        opposite: i ?  true : false
+            title: {
+                text: null
+            },    
+            opposite: i ?  true : false
         });
     }
-return rslt;
+    return rslt;
 }
 
 
@@ -2305,7 +2311,7 @@ libutil.trendchart.prototype.execute = function(ev) {
                         labels: {
                             style:  {
                                 'font-size' : this.fontsize ? this.fontsize : undefined
-                                }
+                            }
                         }
                        
                     },
@@ -2362,7 +2368,8 @@ libutil.trendchart.prototype.execute = function(ev) {
 
 libutil.trendchart.prototype.setcolor = function(id, color){
     if (this.chart && this.chart.get(this.elid+'___'+id)){
-    this.chart.get(this.elid+'___'+id).color=color;}
+        this.chart.get(this.elid+'___'+id).color=color;
+    }
 }
 
 libutil.trendchart.prototype.removeseries = function(id){
@@ -2388,7 +2395,18 @@ libutil.trendchart.prototype.setExtremesAuto = function(id){
         var yax = this.chart.get(this.elid+'___'+id).yAxis;
         var ext =yax.getExtremes();
         if (ext)
-           yax.setExtremes(ext.dataMin,ext.dataMax);          
+            yax.setExtremes(ext.dataMin,ext.dataMax);          
+    }
+}
+
+libutil.trendchart.prototype.setSelect = function(id){
+    if (this.chart && this.selectedseries && this.chart.get(this.selectedseries+'___'+id)){
+        this.chart.get(this.selectedseries+'___'+id).select(false);
+    } 
+    this.selectedseries=undefined;
+    if (this.chart && this.chart.get(this.elid+'___'+id)){
+        this.selectedseries=id;
+        this.chart.get(this.elid+'___'+id).select(true);
     }
 }
 
@@ -2596,24 +2614,26 @@ libutil.trend_controller = function(){
         this.items = [];
         this.range={};
         this.datarange={};
+        this.base={};        
         this.pugerange= function(){
-             var tmp={};
-             for(var key in this.range) {
+            var tmp={};
+            for(var key in this.range) {
                 if (this.range[key])
                     tmp[key]=this.range[key];
                     
-                }
-             this.range=tmp;
-             var datatmp={};
-             for(var key in this.datarange) {
+            }
+            this.range=tmp;
+            var datatmp={};
+            for(var key in this.datarange) {
                 if (this.datarange[key])
                     datatmp[key]=this.datarange[key];
                     
-                }
-              this.datarange=datatmp;}
+            }
+            this.datarange=datatmp;
+        }
         this.getXMLData();
         this.connect();
-        }
+    }
     catch(error){      
         this.modal(libutil.trend_controller.FATAL, error);
     }  
@@ -2627,16 +2647,16 @@ libutil.trend_controller.MIN_PERIOD = 60000;
 libutil.trend_controller.MID_PERIOD = 10800000;
 
 libutil.trend_controller.COLORS = [
-	'4572A7', 
-	'AA4643', 
-	'89A54E', 
-	'80699B', 
-	'3D96AE', 
-	'DB843D', 
-	'92A8CD', 
-	'A47D7C', 
-	'B5CA92'
-];
+    '4572A7', 
+    'AA4643', 
+    '89A54E', 
+    '80699B', 
+    '3D96AE', 
+    'DB843D', 
+    '92A8CD', 
+    'A47D7C', 
+    'B5CA92'
+    ];
 
 libutil.trend_controller.APPINFOFILE = 'AppMetaInfo.xml';
 
@@ -2659,12 +2679,25 @@ libutil.trend_controller.PROCCES = 0;
 libutil.trend_controller.prototype.connect = function(){
     try{
         var ts = this;
+        this.xml= [];
+        this.init();
+        //this.setStart(new Date('Sep 10 2012 10:40:42'));
+        //this.setStop(new Date('Sep 10 2012 15:40:42'));
+        this.setStart(new Date('Sep 04 2012 10:40:42'));
+        this.setStop(new Date('Sep 04 2012 12:40:42'));         
+        //this.setStart(new Date((new Date()).valueOf() - libutil.trend_controller.MID_PERIOD));
+        //this.setStop(new Date());        
+        this.updatedate();       
         window.$$connectSCDB( 
-        function(){var evnt= event;
-            setTimeout( function(){ts.attach(evnt);},0)},
-        ts.provider, ts.connectionstring);
+            function(){
+                var evnt= event;
+                setTimeout( function(){
+                    ts.attach(evnt);
+                },0)
+            },
+            ts.provider, ts.connectionstring);
         this.modal(libutil.trend_controller.PROCCES, "Установка соединения");
-        }
+    }
     catch(error){      
         this.modal(libutil.trend_controller.FATAL, error);
     }  
@@ -2674,7 +2707,15 @@ libutil.trend_controller.prototype.connect = function(){
 libutil.trend_controller.prototype.attach = function(ev){
     if (ev.error){
         switch(ev.error){
-            case 2049: {var ts = this;this.modal(libutil.trend_controller.RETRY, ev.what, function(){ts.clearmodal();ts.connect()});break;}
+            case 2049: {
+                
+                var ts = this;
+                this.modal(libutil.trend_controller.RETRY, ev.what, function(){
+                    ts.clearmodal();
+                    ts.connect()
+                });
+                break;
+            }
             default: {
                 this.modal(libutil.trend_controller.FATAL, ev.what);    
             }
@@ -2689,12 +2730,8 @@ libutil.trend_controller.prototype.attach = function(ev){
         this.modal(libutil.trend_controller.FATAL, libutil.trend_controller.ERROR_WR_APPTRINFO  + libutil.trend_controller.APPINFOFILE);
         return;
     }
-    this.init();
-    this.setStart(new Date('Sep 04 2012 10:40:42'));
-    this.setStop(new Date('Sep 04 2012 12:40:42'));
-    //this.setStart(new Date((new Date()).valueOf() - libutil.trend_controller.MID_PERIOD));
-    //this.setStop(new Date());  
-    this.updatedate();
+    this.updatelist();
+
     this.requested=false;
     this.setstate(); 
     this.clearmodal();
@@ -2731,21 +2768,57 @@ libutil.trend_controller.prototype.getXMLData = function(){
 libutil.trend_controller.prototype.modal = function(state, message, call){
     this.clearmodal();
     switch(state){
-        case libutil.trend_controller.FATAL:{ if (document.getElementById('alerttext')) document.getElementById('alerttext').textContent=message ? message: ''; 
-                    $('#runmodalalert').dialog({modal: true, 
-                    resizable: false,closeOnEscape: false, disabled: true, title: "Фатальная ошибка", 
-                    dialogClass: "alert",  buttons: {"Выход": function() {document.close();}}});break;}
-        case libutil.trend_controller.RETRY:{var ts=this;if (document.getElementById('alerttext')) document.getElementById('alerttext').textContent=message ? message: ''; 
-                    $('#runmodalalert').dialog({modal: true, 
-                    resizable: false, closeOnEscape: false, disabled: true, title: "Oшибка", 
-                    dialogClass: "alert",  buttons: {"Выход": function() {document.close();}, "Повторить" :  call}});break;}
+        case libutil.trend_controller.FATAL:{
+            if (document.getElementById('alerttext')) document.getElementById('alerttext').textContent=message ? message: ''; 
+            $('#runmodalalert').dialog({
+                modal: true, 
+                resizable: false,
+                closeOnEscape: false, 
+                disabled: true, 
+                title: "Фатальная ошибка", 
+                dialogClass: "alert",  
+                buttons: {
+                    "Выход": function() {
+                        document.close();
+                    }
+                }
+            });
+            break;
+        }
+        case libutil.trend_controller.RETRY:{
+    
+            var ts=this;
+            if (document.getElementById('alerttext')) document.getElementById('alerttext').textContent=message ? message: ''; 
+            $('#runmodalalert').dialog({
+                modal: true, 
+                resizable: false, 
+                closeOnEscape: false, 
+                disabled: true, 
+                title: "Oшибка", 
+                dialogClass: "alert",  
+                buttons: {
+                    "Выход": function() {
+                        document.close();
+                    }, 
+                    "Повторить" :  call
+                }
+            });
+            break;
+        }
         default:{
-           $('#runmodal').dialog({modal: true, resizable: false, closeOnEscape: false, disabled: true, title: message});     
+            $('#runmodal').dialog({
+                modal: true, 
+                resizable: false, 
+                closeOnEscape: false, 
+                disabled: true, 
+                title: message
+            });     
         }    
     }
 }
 
 libutil.trend_controller.prototype.clearmodal = function(){
+
     $('#runmodal').dialog('close');
     $('#runmodalalert').dialog('close');
     $('#runmodal').dialog('destroy');
@@ -2753,14 +2826,13 @@ libutil.trend_controller.prototype.clearmodal = function(){
 }
 
 libutil.trend_controller.prototype.parseXMLData = function(){
-       this.xml= [];
-       for(var e=this.xmllist.firstElementChild; e; e=e.nextElementSibling){
-            var lst= e.getAttribute("name");                       
-            for(var el=e.firstElementChild; el; el=el.nextElementSibling){
-                var arr= el.getAttribute("name"); 
-                for(var et=el.firstElementChild; et; et=et.nextElementSibling){                               
-                    var tg = et.getAttribute("tg");
-                    if (this.base[tg])
+    for(var e=this.xmllist.firstElementChild; e; e=e.nextElementSibling){
+        var lst= e.getAttribute("name");                       
+        for(var el=e.firstElementChild; el; el=el.nextElementSibling){
+            var arr= el.getAttribute("name"); 
+            for(var et=el.firstElementChild; et; et=et.nextElementSibling){                               
+                var tg = et.getAttribute("tg");
+                if (this.base[tg])
                     this.xml.push({
                         list: lst, 
                         array: arr, 
@@ -2770,17 +2842,17 @@ libutil.trend_controller.prototype.parseXMLData = function(){
                         mineu: this.base[tg].mineu,
                         maxeu: this.base[tg].maxeu
                     })                         
-                }                                                        
-            }
-        }   
+            }                                                        
+        }
+    }   
 }
 
 
 
 libutil.trend_controller.prototype.inittags = function(val){
-    this.base={};
     for (var i=0;i<val.length;++i){
-    this.base[val[i].name] = val[i];}
+        this.base[val[i].name] = val[i];
+    }
 }
 
 
@@ -2824,11 +2896,11 @@ libutil.trend_controller.prototype.init = function(){
                 
           
     $('body').layout({ 
-        west__size:			250 
+        north__size:			32 
         ,	
-        spacing_open:			3 
+        spacing_open:			0 
         ,	
-        spacing_closed:			20 
+        spacing_closed:			0 
         ,	
         north__spacing_open:	        0
                     
@@ -2837,37 +2909,125 @@ libutil.trend_controller.prototype.init = function(){
     $("#inner").layout({
         south__size:			200 
         ,	
-        spacing_open:			2 
+        spacing_open:			0 
         ,	
-        spacing_closed:			20 
+        spacing_closed:			0 
     }); 
                 
     var ts=this;    
     
-    $("#tabs").tabs();   
+    $( "#run-button" ).button({
+        text: false,
+        disabled: true,
+        icons: {
+            primary: "ui-icon-arrowrefresh-1-w"
+        }
+    }).click(function() {
+        window.trendcontroller.run();
+    ;
+    })
+
+    $( "#select-button" ).button({
+        text: false,
+        disabled: true,       
+        icons: {
+            primary: "ui-icon-suitcase"
+        }
+    }).click(function() {
+        window.trendcontroller.resetselectpanel();
+    ;
+    });
+    
+    
+    $( "#left-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrow-1-w"
+        }
+    }).click(function() {
+        window.trendcontroller.setLeft();
+    });
+    
+    $( "#right-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrow-1-e"
+        }
+    }).click(function() {
+        window.trendcontroller.setRight();
+    ;
+    });   
+    
+    $( "#now-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrowstop-1-e"
+        }
+    }).click(function() {
+        window.trendcontroller.setNow();
+    ;
+    });  
+    
+    $( "#print-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-print"
+        }
+    }).click(function() {
+        //window.trendcontroller.setNow();
+    ;
+    });     
+
+
+    $("#select-panel" ).position({
+        of: $( "#top-menuemain" ),
+        my: 'center bottom',
+        at: 'center top'
+    });    
+    
+    this.setselectpanel(false);
+    
+    var panelheight = $("#select-panel" )[0].getClientRects ? $("#select-panel" )[0].getClientRects()[0].height : undefined;
+    var bottomheight = $("#select-table-bottom" )[0].getClientRects ? $("#select-table-bottom" )[0].getClientRects()[0].height : undefined;
+    
+    this.startpicker = $('#starttime').datetimepicker({
+        onClose:  function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStart(dt);
+        }
+    }).click(function(){ts.setselectpanel(false);});
+    this.stoppicker = $('#stoptime').datetimepicker({
+        onClose: function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStop(dt);
+        }
+    }).click(function(){ts.setselectpanel(false);});;  
     
     
     this.listgrid = $("#list").jqGrid({
         data: this.xml,
         autowidth: true,
         datatype: "local",
-        height: 160,
+        height: panelheight ? panelheight : 'auto',
         scrollrows: true,
-        shrinkToFit: false,
+        shrinkToFit: true,
         cellLayout: 1,
         colNames:['list','array', 'tag', 'comment', 'eu', 'mineu', 'maxeu'],
         onSelectRow: function (rowId, status, e) {
-              var row = $("#list").jqGrid('getRowData',rowId);
-              if (status) {
-                 ts.add(row.tag); 
-              }
-              else
-                  {
-                 ts.remove(row.tag); 
-              }
-              console.log(row.tag, status, e)
+            var row = $("#list").jqGrid('getRowData',rowId);
+            if (status) {
+                ts.add(row.tag); 
+            }
+            else
+            {
+                ts.remove(row.tag, rowId); 
+            }
           
-          },
+        },
         colModel:[
         {
             name:'list',
@@ -2875,7 +3035,7 @@ libutil.trend_controller.prototype.init = function(){
             width:1, 
             hidden: true
         },
-{
+        {
             name:'array',
             index:'array', 
             width:1, 
@@ -2917,21 +3077,26 @@ libutil.trend_controller.prototype.init = function(){
         grouping:true,
         groupingView : {
             groupField : ['list','array'],
-            groupSummary : [true],
-            groupColumnShow : [true],
+            groupSummary : [false],
+            groupColumnShow : [false],
             groupText : ['<b>{0}</b>'],
-            groupCollapse : false,
-            groupOrder: ['asc']
-        }
+            groupCollapse : true,
+            groupOrder: ['asc'],
+            groupCollapse: true
+        },
+        
+        caption: 'Выбор параметра'
    	
     });
+    
+
     
     
     $("#selectlist").jqGrid({
         data: this.items,
         autowidth: true,
         datatype: "local",
-        height: 160,
+        height: bottomheight ? bottomheight : 'auto',
         scrollrows: true,
         shrinkToFit: false,
         cellLayout: 1,
@@ -2981,8 +3146,13 @@ libutil.trend_controller.prototype.init = function(){
 
         }, 
   
-        {name: 'oprt', width:80, fixed:true},
-                {
+        {
+            name: 'oprt', 
+            width:35, 
+            fixed:true
+        },
+
+        {
             name:'color',
             index:'color',
             width: 1
@@ -3020,75 +3190,63 @@ libutil.trend_controller.prototype.init = function(){
         ],
    	
         viewrecords: false,
-        onSelectRow: function(id){
-
-	$('#selectlist').jqGrid('editRow',id,true);
-
-	},
-        
+        onSelectRow: function (rowId, status, e) {
+            var row = $("#selectlist").jqGrid('getRowData',rowId);
+            ts.setselect(row.id, status);         
+        },        
         gridComplete: function(){ 
-           var ids = $("#selectlist").jqGrid('getDataIDs');
-           for(var i=0;i < ids.length;i++){
-               var row = $("#selectlist").jqGrid('getRowData',ids[i]);
-	       var col = "<input  style='background-color:#"+ row.color + "' type='text'  value='"+ row.color + "'  id='selectlist_selectcolor_"+ids[i]+"'/>";
-               var aut = "<input style='height:22px;width:20px;' type='checkbox' " + (row.auto=="true" ? 'checked="true"' : '') + "  onchange=\"window.trendcontroller.setauto('"+row.id+"',this.checked)\"/>";
-               var range = "<div id='selectlist_selectrange_"+ids[i]+"' style='padding-left: 10px, padding-right: 10px;'/>";
-               var del = "<input style='height:22px;width:20px;' type='button' value='D'  onclick=\"window.trendcontroller.removeid('"+row.id+"')\"/>";
-               $("#selectlist").jqGrid('setCell',ids[i] ,'coloredit' ,col);
-               $("#selectlist").jqGrid('setCell',ids[i] ,'autoedit' ,aut);
-	       $("#selectlist").jqGrid('setCell',ids[i] ,'oprt' ,del);
-               if (row.auto!="true"){
-                   $("#selectlist").jqGrid('setCell',ids[i] ,'rangeedit' ,range);
-                   $('#selectlist_selectrange_'+ids[i])[0].nameid=row.id;}
-               $('#selectlist_selectcolor_'+ids[i])[0].nameid=row.id;
+            var ids = $("#selectlist").jqGrid('getDataIDs');
+            for(var i=0;i < ids.length;i++){
                
-               $('#selectlist_selectcolor_'+ids[i]).colorpicker({
-                   close: function(ev,col){
-                       ev.target.setAttribute('style','background-color:#'+col.formatted);
-                       ts.setcolor(ev.target.nameid, col.formatted);
-                   },
-                   select: function(ev,col){
-                       ev.target.setAttribute('style','background-color:#'+col.formatted);
-                   }                   
-               });
-               if (row.auto!="true"){
-                   $('#selectlist_selectrange_'+ids[i]).slider({
-                       range: true,
-		        min: parseFloat(row.mineu),
-			max: parseFloat(row.maxeu),
-			values: window.trendcontroller.range[row.id] ? [ window.trendcontroller.range[row.id].min , window.trendcontroller.range[row.id].max ] : [ row.min.valueOf(), row.max.valueOf() ],
+                var row = $("#selectlist").jqGrid('getRowData',ids[i]);
+                var colid = 'selectlist_selectcolor_'+ids[i];
+                var rangeid = 'selectlist_selectrange_'+ids[i];
+                var delid = 'selectlist_selectremove_'+ids[i];
+                var autostate= row.auto=="true" ? 'checked="true"' : '';
+               
+                var col =   "<input  class='color-selector-ui' style='background-color:#"+ row.color + "' type='text'  value='"+ row.color + "'  id='"+colid+"'/>";
+                var aut =   "<input  style='' type='checkbox' " + autostate + "  onchange=\"window.trendcontroller.setauto('"+row.id+"',this.checked)\"/>";
+                var range = "<div id='"+rangeid+"' style='padding-left: 10px, padding-right: 10px; width: 100%;'/>";
+                var del =   "<button id='"+delid+"' style='height: 18px' onclick=\"window.trendcontroller.remove('"+row.id+"')\">Удалить</button>";
+               
+                $("#selectlist").jqGrid('setCell',ids[i] ,'coloredit' ,col);
+                $("#selectlist").jqGrid('setCell',ids[i] ,'autoedit' ,aut);
+                $("#selectlist").jqGrid('setCell',ids[i] ,'oprt' ,del);
+   
+               
+                $('#'+colid)[0].nameid=row.id;              
+                $('#'+colid).colorpicker({
+                    close: function(ev,col){
+                        ev.target.setAttribute('style','background-color:#'+col.formatted);
+                        ts.setcolor(ev.target.nameid, col.formatted);
+                    },
+                    select: function(ev,col){
+                        ev.target.setAttribute('style','background-color:#'+col.formatted);
+                    }                   
+                });                             
+                if (row.auto!="true"){
+                    $("#selectlist").jqGrid('setCell',ids[i] ,'rangeedit' ,range);
+                    $('#'+rangeid)[0].nameid=row.id;
+                    $('#'+rangeid).slider({
+                        range: true,
+                        min: parseFloat(row.mineu),
+                        max: parseFloat(row.maxeu),
+                        values: window.trendcontroller.range[row.id] ? [ window.trendcontroller.range[row.id].min , window.trendcontroller.range[row.id].max ] : [ row.min.valueOf(), row.max.valueOf() ],
                         change: function(ev, ui) {
-                            window.trendcontroller.setextremes(ev.target.nameid, ui.values[ 0 ],ui.values[ 1 ]) }
-               });
-               }
-           }} 
-           
-
-                
-
-           
+                            window.trendcontroller.setextremes(ev.target.nameid, ui.values[ 0 ],ui.values[ 1 ])
+                        }
+                    });
+                }           
+                $('#'+delid).button({
+                    text: false,
+                    icons: {
+                        primary: "ui-icon-circle-minus"
+                    }
+                });
+            }
+        }         
         	
-    });  
-    
-    //$("#selectlist").jqGrid('navGrid','#pfrmac',{edit:false,add:false,del:false});
-    
-    this.startpicker = $('#starttime').datetimepicker({
-       onClose:  function(dateText, inst){
-                var dt = $(this).datetimepicker('getDate');
-                ts.setStart(dt);},
-       onSelect: function(dateText, inst){
-                /*var dt = $(this).datetimepicker('getDate');
-                ts.setStart(dt);*/}});
-    this.stoppicker = $('#stoptime').datetimepicker({
-       onClose: function(dateText, inst){
-                var dt = $(this).datetimepicker('getDate');
-                ts.setStop(dt);},        
-       onSelect: function(dateText, inst){
-                /*var dt = $(this).datetimepicker('getDate');*/}});
-     
-     this.runbutton = $('#run-button')[0];
-         
-                               
+    });                               
 }; 
 
 
@@ -3099,45 +3257,32 @@ libutil.trend_controller.prototype.add = function(tag){
             return false;
     }
     if (this.base[tag]){
-            this.items.push({
-                oprt : '',            
-                id : tag, 
-                comment : this.base[tag].comment, 
-                eu : this.base[tag].eu,  
-                mineu : this.base[tag].mineu,  
-                maxeu : this.base[tag].maxeu,
-                color: this.selectcolor(),
-                coloredit: '',
-                auto: true,
-                autoedit: '',
-                rangeedit: '',
-                min: this.base[tag].mineu,
-                max: this.base[tag].max,
-                range: (this.base[tag].mineu + ' - ' + this.base[tag].maxeu),
-                selectrange: '',
-                datarange: ''
-                });
-            this.updateselect();                
-            return true;
-        }
+        this.items.push({
+            oprt : '',            
+            id : tag, 
+            comment : this.base[tag].comment, 
+            eu : this.base[tag].eu,  
+            mineu : this.base[tag].mineu,  
+            maxeu : this.base[tag].maxeu,
+            color: this.selectcolor(),
+            coloredit: '',
+            auto: true,
+            autoedit: '',
+            rangeedit: '',
+            min: this.base[tag].mineu,
+            max: this.base[tag].max,
+            range: (this.base[tag].mineu + ' - ' + this.base[tag].maxeu),
+            selectrange: '',
+            datarange: ''
+        });
+        this.updateselect();                
+        return true;
+    }
     return false;    
 }
 
-libutil.trend_controller.prototype.remove = function(tag){
-    for (var i=0;i<this.items.length;++i){
-        if (this.items[i].id==tag){
-            libutil.util.remove_element_arr(this.items,i);
-            this.range[tag] = undefined;
-            this.datarange[tag] = undefined;
-            this.pugerange();
-            this.updateselect(true);
-            return true;
-        }
-    }
-return false;    
-}
 
-libutil.trend_controller.prototype.removeid = function(id){
+libutil.trend_controller.prototype.remove= function(id, exclude){
     var fnd = null;
     for (var i=0;i<this.items.length;++i){
         if (this.items[i].id==id){
@@ -3149,7 +3294,7 @@ libutil.trend_controller.prototype.removeid = function(id){
     var ids = $("#list").jqGrid('getDataIDs');
     for(var i=0;i < ids.length;i++){
         var row = $("#list").jqGrid('getRowData',ids[i]);
-        if (row && row.tag==id){
+        if (row && row.tag==id && (ids[i]!=exclude)) {
             $("#list").jqGrid('setSelection',ids[i],false);
         }
     }
@@ -3157,7 +3302,7 @@ libutil.trend_controller.prototype.removeid = function(id){
     this.range[id] = undefined;
     this.datarange[id] = undefined;    
     if(this.trendchart)
-       this.trendchart.removeseries(id);
+        this.trendchart.removeseries(id);
     this.updateselect(true);
     this.pugerange();
     return true;      
@@ -3167,87 +3312,48 @@ libutil.trend_controller.prototype.selectcolor = function(){
     var result = 'FF0000';
     var j=0;
     while (j<libutil.trend_controller.COLORS.length){
-       var fnd = false;
-       for (var i=0;i<this.items.length;++i){
-           if (this.items[i].color==libutil.trend_controller.COLORS[j])
-             fnd = true;}
-         if (!fnd) return libutil.trend_controller.COLORS[j];
-         j++;}
+        var fnd = false;
+        for (var i=0;i<this.items.length;++i){
+            if (this.items[i].color==libutil.trend_controller.COLORS[j])
+                fnd = true;
+        }
+        if (!fnd) return libutil.trend_controller.COLORS[j];
+        j++;
+    }
     return result;
 }
 
-libutil.trend_controller.prototype.setcolor = function(id, col){
-    
-    for (var i=0;i<this.items.length;++i){
-       if (this.items[i].id==id){
-          if(this.trendchart)
-          this.trendchart.setcolor(id,'#'+col);
-          this.items[i].color=col;
-          this.requested=false;
-          this.setstate();
-          break;
-       } 
-    }
-}
-
-libutil.trend_controller.prototype.setauto = function(id, val){
-    
-    for (var i=0;i<this.items.length;++i){
-       if (this.items[i].id==id){
-          if (this.items[i].auto!=val){
-               if (!val){
-                 var ext=this.trendchart ? this.trendchart.getExtremes(id) : null;
-                 this.range[id] = { min : (ext ? ext.min : this.items[i].mineu),
-                                    max : (ext ? ext.max : this.items[i].maxeu)};
-                 this.items[i].selectrange= ext ? (this.range[id].min + ' - ' + this.range[id].max) : '';}          
-                 else{
-                 this.range[id] = undefined; 
-                 this.items[i].selectrange= '';
-                 if (this.trendchart) 
-                     this.trendchart.setExtremesAuto(id);
-                 }           
-          this.items[i].auto=val;
-          this.updateselect();
-          this.pugerange();
-          break;
-       }} 
-    }
-}
-
-libutil.trend_controller.prototype.setextremes = function(id, min, max){
-    for (var i=0;i<this.items.length;++i){
-       if (this.items[i].id==id){
-          if(this.trendchart){
-              this.trendchart.setExtremes(id, min, max);
-              this.range[id] = { min : min,
-                                 max : max};
-              this.items[i].selectrange=(min + ' - ' + max); 
-              this.updateselect();
-          }   
-}}}
 
 libutil.trend_controller.prototype.updatedataextremes = function(){
     for (var i=0;i<this.items.length;++i){
-              var id = this.items[i].id;
-              var ext=this.trendchart ? this.trendchart.getExtremes(id) : null;
-              this.datarange[id] = ext ? { min : ext.dataMin,
-                                 max : ext.dataMax} : undefined;
+        var id = this.items[i].id;
+        var ext=this.trendchart ? this.trendchart.getExtremes(id) : null;
+        this.datarange[id] = ext ? {
+            min : ext.dataMin,
+            max : ext.dataMax
+        } : undefined;
                    
-              this.items[i].datarange= ext && (ext.dataMax || ext.dataMax===0) && (ext.dataMin || ext.dataMin===0) ? 
-                  (ext.dataMin.toFixed(2)  + ' - ' + ext.dataMax.toFixed(2)) : '';                                         
-          }  
-          this.updateselect(); 
+        this.items[i].datarange= ext && (ext.dataMax || ext.dataMax===0) && (ext.dataMin || ext.dataMin===0) ? 
+        (ext.dataMin.toFixed(2)  + ' - ' + ext.dataMax.toFixed(2)) : '';                                         
+    }  
+    this.updateselect(); 
 }
 
 libutil.trend_controller.prototype.updateselect = function( req ) {
-     $("#selectlist").jqGrid('clearGridData');
-     for (var i=0;i<this.items.length;++i)
-     $("#selectlist").jqGrid('addRowData',(i+1).toString(),this.items[i]);    
+    $("#selectlist").jqGrid('clearGridData');
+    for (var i=0;i<this.items.length;++i)
+        $("#selectlist").jqGrid('addRowData',(i+1).toString(),this.items[i]);    
      
-     this.requested=req;
-     this.setstate();
+    this.requested=req;
+    this.setstate();
 }
 
+libutil.trend_controller.prototype.updatelist = function( req ) {
+    $("#list").jqGrid('clearGridData');
+    for (var i=0;i<this.xml.length;++i)
+        $("#list").jqGrid('addRowData',(i+1).toString(),this.xml[i]);   
+        $("#list").trigger("reloadGrid");
+}
 
 
     
@@ -3266,68 +3372,110 @@ libutil.trend_controller.prototype.colors = function(){
 } 
 
 libutil.trend_controller.prototype.run = function(){
-
+    this.setselectpanel(false);
     this.modal(libutil.trend_controller.PROCCES, "Запрос данных");
     if (this.trendchart)
         this.trendchart.detach();
     var ts = this;
-    ts.requested=true;ts.setstate();
+    ts.requested=true;
+    ts.setstate();
     this.trendchart = new libutil.trendchart( 
-       {connection: this.connection , 
-         tags: this.tags(), 
-         element: "chart-id", 
-         colors: this.colors(),  
-         start: this.start , 
-         stop: this.stop, 
-         ranges: this.range,
-         callback: function(){$('#runmodal').dialog('close');ts.requested=true;ts.setstate();},
-         complete: function(){ts.updatedataextremes();}});
+    {
+        connection: this.connection , 
+        tags: this.tags(), 
+        element: "chart-id", 
+        colors: this.colors(),  
+        start: this.start , 
+        stop: this.stop, 
+        ranges: this.range,
+        callback: function(){
+            $('#runmodal').dialog('close');
+            ts.requested=true;
+            ts.setstate();
+        },
+        complete: function(){
+            ts.updatedataextremes();
+        }
+    });
         
 }
 
 
 libutil.trend_controller.prototype.setStart = function(val){
     if (this.start != val){
-             if (this.stop  && this.start){
-             var period = (this.stop.valueOf()-this.start.valueOf());
-             var potperiod = (this.stop.valueOf()-val.valueOf());
-             if (potperiod>libutil.trend_controller.MIN_PERIOD){
-                 if (potperiod>libutil.trend_controller.MAX_PERIOD)
-                 this.stop=new Date(val.valueOf() + libutil.trend_controller.MAX_PERIOD);  
-                 this.start=val;}
-             else{
-                 this.start=val;
-                 this.stop = new Date(val.valueOf() + libutil.trend_controller.MIN_PERIOD);
-             }         
-             this.normalizePeriod();
-           }
-           else{
-             this.start=val;
-             this.normalizePeriod();
-           }
+        if (this.stop  && this.start){
+            var period = (this.stop.valueOf()-this.start.valueOf());
+            var potperiod = (this.stop.valueOf()-val.valueOf());
+            if (potperiod>libutil.trend_controller.MIN_PERIOD){
+                if (potperiod>libutil.trend_controller.MAX_PERIOD)
+                    this.stop=new Date(val.valueOf() + libutil.trend_controller.MAX_PERIOD);  
+                this.start=val;
+            }
+            else{
+                this.start=val;
+                this.stop = new Date(val.valueOf() + libutil.trend_controller.MIN_PERIOD);
+            }         
+            this.normalizePeriod();
+        }
+        else{
+            this.start=val;
+            this.normalizePeriod();
+        }
     }
 }
 
 libutil.trend_controller.prototype.setStop = function(val){
     if (this.stop!= val){
-             if (this.stop  && this.start){
-             var period = (this.stop.valueOf()-this.start.valueOf());
-             var potperiod = (val.valueOf()-this.start.valueOf());
-             if (potperiod>libutil.trend_controller.MIN_PERIOD){
-                 if (potperiod>libutil.trend_controller.MAX_PERIOD)
-                 this.start=new Date(val.valueOf() - libutil.trend_controller.MAX_PERIOD);  
-                 this.stop=val;}
-             else{
-                 this.stop=val;
-                 this.start = new Date(val.valueOf() - libutil.trend_controller.MIN_PERIOD);
-             }         
-             this.normalizePeriod();
-           }
-           else{
-             this.stop=val;
-             this.normalizePeriod();
-           }
+        if (this.stop  && this.start){
+            var period = (this.stop.valueOf()-this.start.valueOf());
+            var potperiod = (val.valueOf()-this.start.valueOf());
+            if (potperiod>libutil.trend_controller.MIN_PERIOD){
+                if (potperiod>libutil.trend_controller.MAX_PERIOD)
+                    this.start=new Date(val.valueOf() - libutil.trend_controller.MAX_PERIOD);  
+                this.stop=val;
+            }
+            else{
+                this.stop=val;
+                this.start = new Date(val.valueOf() - libutil.trend_controller.MID_PERIOD);
+            }         
+            this.normalizePeriod();
+        }
+        else{
+            this.stop=val;
+            this.normalizePeriod();
+        }
     }
+}
+
+libutil.trend_controller.prototype.setLeft = function(){
+    var period = (this.stop.valueOf()-this.start.valueOf());
+    this.start=new Date(this.start.valueOf() - period);
+    this.stop=new Date(this.stop.valueOf() - period); 
+    this.normalizePeriod();
+    //this.run();
+}
+
+libutil.trend_controller.prototype.setRight = function(){
+    var period = (this.stop.valueOf()-this.start.valueOf());
+    if ((new Date()).valueOf()<this.stop.valueOf()) {
+       this.start=new Date((new Date()).valueOf() - period);
+       this.stop=new Date(this.start.valueOf() + period);         
+    }
+    else{
+       this.start=new Date(this.start.valueOf() + period);
+       this.stop=new Date(this.stop.valueOf() + period);        
+    }
+    this.normalizePeriod();
+    //this.run();
+}
+
+libutil.trend_controller.prototype.setNow = function(){
+    var period = (this.stop.valueOf()-this.start.valueOf());
+    this.start=new Date((new Date()).valueOf() - period);
+    this.stop=new Date(this.start.valueOf() + period);         
+   
+    this.normalizePeriod();
+    //this.run();
 }
 
 libutil.trend_controller.prototype.normalizePeriod = function(){
@@ -3338,14 +3486,95 @@ libutil.trend_controller.prototype.normalizePeriod = function(){
 
 libutil.trend_controller.prototype.updatedate = function(){
     if (this.stoppicker && this.stop)
-           this.stoppicker.datetimepicker('setDate', (this.stop));
+        this.stoppicker.datetimepicker('setDate', (this.stop));
     if (this.startpicker && this.start)
-           this.startpicker.datetimepicker('setDate', (this.start));        
+        this.startpicker.datetimepicker('setDate', (this.start));        
+}
+
+libutil.trend_controller.prototype.setcolor = function(id, col){
+    
+    for (var i=0;i<this.items.length;++i){
+        if (this.items[i].id==id){
+            if(this.trendchart)
+                this.trendchart.setcolor(id,'#'+col);
+            this.items[i].color=col;
+            this.requested=false;
+            this.setstate();
+            break;
+        } 
+    }
+}
+libutil.trend_controller.prototype.setselect = function(id, state){
+       if(this.trendchart)
+            this.trendchart.setSelect(id, state);
+}
+
+libutil.trend_controller.prototype.setauto = function(id, val){
+    
+    for (var i=0;i<this.items.length;++i){
+        if (this.items[i].id==id){
+            if (this.items[i].auto!=val){
+                if (!val){
+                    var ext=this.trendchart ? this.trendchart.getExtremes(id) : null;
+                    this.range[id] = {
+                        min : (ext ? ext.min : this.items[i].mineu),
+                        max : (ext ? ext.max : this.items[i].maxeu)
+                    };
+                    this.items[i].selectrange= ext ? (this.range[id].min + ' - ' + this.range[id].max) : '';
+                }          
+                else{
+                    this.range[id] = undefined; 
+                    this.items[i].selectrange= '';
+                    if (this.trendchart) 
+                        this.trendchart.setExtremesAuto(id);
+                }           
+                this.items[i].auto=val;
+                this.updateselect();
+                this.pugerange();
+                break;
+            }
+        } 
+    }
+}
+
+libutil.trend_controller.prototype.setextremes = function(id, min, max){
+    for (var i=0;i<this.items.length;++i){
+        if (this.items[i].id==id){
+            if(this.trendchart){
+                this.trendchart.setExtremes(id, min, max);
+                this.range[id] = {
+                    min : min,
+                    max : max
+                };
+                this.items[i].selectrange=(min + ' - ' + max); 
+                this.updateselect();
+            }   
+        }
+    }
+}
+
+
+
+libutil.trend_controller.prototype.setselectpanel = function(val){
+    var panel = $( "#select-panel" )[0];
+    panel.className = val ? 'ui-widget-content select-panel-visible' : 'ui-widget-content select-panel-hidden';
+    panel.visibility = val ? true : false;   
+}
+
+libutil.trend_controller.prototype.resetselectpanel = function(){
+    var panel = $( "#select-panel" )[0];
+    this.setselectpanel(!panel.visibility);    
 }
 
 
 libutil.trend_controller.prototype.setstate = function(){
-    if (this.runbutton)
-        this.runbutton.setAttribute('disable',(this.items.length && !this.requested) ? "false" : "true");
+    $( "#run-button" ).button((this.items.length && !this.requested && this.connection) ? "enable"  : "disable");
+    $( "#left-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");
+    $( "#right-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");
+    $( "#now-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");    
+    $( "#select-button" ).button((this.xml.length) ? "enable"  : "disable");
+    $( "#print-button" ).button((this.trendchart) ? "enable"  : "disable");
+    if (!this.items.length && this.xml.length)
+        this.setselectpanel(true);
 }
 
