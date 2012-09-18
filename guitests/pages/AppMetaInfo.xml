@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<meta DBProvider="1" constring="database=test_1;user=postgres;password=1324" host="">
+<meta DBProvider="1" constring="host=ALEXEEV;database=test_1;user=postgres;password=1324" host="">
 	<HomeList key="0">
 		<ReportArr key="0" />
 	</HomeList>
