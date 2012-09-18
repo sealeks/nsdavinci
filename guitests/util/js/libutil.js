@@ -2616,6 +2616,10 @@ libutil.database.ERROR_WR_APPINFO = "Неверный формат ";
 
 libutil.database.ERROR_WR_APPTRINFO = "Несовпадение таблицы индексов и описания ";
 
+libutil.database.MESSAGE_CONNECTING = "Установка соединения";
+
+libutil.database.MESSAGE_DATAREQUEST = "Запрос данных";
+
 libutil.database.FATAL = 2;
 
 libutil.database.RETRY = 1;
@@ -2650,6 +2654,22 @@ libutil.database.getXMLData = function(obj, root){
                   
 };
 
+libutil.database.reportError = function(ev, obj, noinit){
+        switch(ev.error){
+            case 2049: {               
+                var ts = obj;
+                libutil.database.modal(libutil.database.RETRY, ev.what, function(){
+                    libutil.database.clearmodal();
+                    ts.connect(noinit)
+                });
+                break;
+            }
+            default: {
+                libutil.database.modal(libutil.database.FATAL, ev.what);    
+            }
+        }
+        return;
+}
 
 libutil.database.modal = function(state, message, call){
     libutil.database.clearmodal();
@@ -2764,11 +2784,21 @@ libutil.trend_controller.COLORS = [
     ];
 
 
-libutil.trend_controller.prototype.connect = function(){
+libutil.trend_controller.prototype.connect = function(noinit){
     try{
         var ts = this;
         this.xml= [];
-        this.init();
+        var ts = this;
+        this.xml= []; 
+        this.base = {};
+        this.items=[];
+        this.connection = undefined;            
+        if (!noinit){ 
+            this.init();}
+        else{
+            this.updateselect();
+            this.updatelist();
+            this.setselectpanel(false);}
         //this.setStart(new Date('Sep 10 2012 10:40:42'));
         //this.setStop(new Date('Sep 10 2012 15:40:42'));
         //this.setStart(new Date('Sep 04 2012 10:40:42'));
@@ -2784,7 +2814,7 @@ libutil.trend_controller.prototype.connect = function(){
                 },0)
             },
             ts.provider, ts.connectionstring);
-        libutil.database.modal(libutil.database.PROCCESS, "Установка соединения");
+        libutil.database.modal(libutil.database.PROCCESS, libutil.database.MESSAGE_CONNECTING);
     }
     catch(error){      
         libutil.database.modal(libutil.database.FATAL, error);
@@ -2794,20 +2824,7 @@ libutil.trend_controller.prototype.connect = function(){
 
 libutil.trend_controller.prototype.attach = function(ev){
     if (ev.error){
-        switch(ev.error){
-            case 2049: {
-                
-                var ts = this;
-                libutil.database.modal(libutil.database.RETRY, ev.what, function(){
-                    libutil.database.clearmodal();
-                    ts.connect()
-                });
-                break;
-            }
-            default: {
-                libutil.database.modal(libutil.database.FATAL, ev.what);    
-            }
-        }
+        libutil.database.reportError(ev, this);
         return;
     }
     window.trendcontroller = this;
@@ -2831,6 +2848,7 @@ libutil.trend_controller.prototype.attach = function(ev){
 
 
 libutil.trend_controller.prototype.parseXMLData = function(){
+    this.xml=[];
     for(var e=this.xmllist.firstElementChild; e; e=e.nextElementSibling){
         var lst= e.getAttribute("name");                       
         for(var el=e.firstElementChild; el; el=el.nextElementSibling){
@@ -2855,6 +2873,7 @@ libutil.trend_controller.prototype.parseXMLData = function(){
 
 
 libutil.trend_controller.prototype.inittags = function(val){
+    this.base = {};
     for (var i=0;i<val.length;++i){
         this.base[val[i].name] = val[i];
     }
@@ -2893,7 +2912,7 @@ libutil.trend_controller.prototype.init = function(){
         minuteText: 'Минуты',
         secondText: 'Секунды',
         millisecText: 'миллисекунды',
-        currentText: 'Теперь',
+        currentText: 'Сейчас',
         closeText: 'Закрыть',
         ampm: false
     };
@@ -2969,7 +2988,7 @@ libutil.trend_controller.prototype.init = function(){
         text: false,
         disabled: true,        
         icons: {
-            primary: "ui-icon-arrowstop-1-e"
+            primary: "ui-icon-arrowthickstop-1-e"
         }
     }).click(function() {
         window.trendcontroller.setNow();
@@ -3021,7 +3040,7 @@ libutil.trend_controller.prototype.init = function(){
         scrollrows: true,
         shrinkToFit: true,
         cellLayout: 1,
-        colNames:['list','array', 'tag', 'comment', 'eu', 'mineu', 'maxeu'],
+        colNames:['list','array', 'Тег', 'Наименование', 'Ед. изм.', 'min', 'max'],
         onSelectRow: function (rowId, status, e) {
             var row = $("#list").jqGrid('getRowData',rowId);
             if (status) {
@@ -3076,7 +3095,7 @@ libutil.trend_controller.prototype.init = function(){
     
 		
         ],
-   	
+   	hidegrid: false,
         viewrecords: true,
         multiselect: true,
         grouping:true,
@@ -3105,7 +3124,7 @@ libutil.trend_controller.prototype.init = function(){
         scrollrows: true,
         shrinkToFit: false,
         cellLayout: 1,
-        colNames:['id', 'comment', 'eu', 'range' ,'drange' ,'srange' , 'auto', 'range' ,'color' , ' ', 'color', 'auto', 'min', 'max', 'mineu', 'maxeu'],
+        colNames:['Тэг', 'Наименование', 'Ед. изм.', 'Диапозон' ,'Диапозон данных' ,'Выбранный диапозон' , 'Авто', 'Выбор' ,'Цвет' , ' ', 'color', 'auto', 'min', 'max', 'mineu', 'maxeu'],
         colModel:[
                     
         {
@@ -3256,6 +3275,9 @@ libutil.trend_controller.prototype.init = function(){
 
 
 
+   
+
+
 libutil.trend_controller.prototype.add = function(tag){
     for (var i=0;i<this.items.length;++i){
         if (this.items[i].id==tag)
@@ -3378,7 +3400,7 @@ libutil.trend_controller.prototype.colors = function(){
 
 libutil.trend_controller.prototype.run = function(){
     this.setselectpanel(false);
-    libutil.database.modal(libutil.database.PROCCESS, "Запрос данных");
+    libutil.database.modal(libutil.database.PROCCESS, libutil.database.MESSAGE_DATAREQUEST );
     if (this.trendchart)
         this.trendchart.detach();
     var ts = this;
@@ -3393,10 +3415,15 @@ libutil.trend_controller.prototype.run = function(){
         start: this.start , 
         stop: this.stop, 
         ranges: this.range,
-        callback: function(){
+        callback: function(ev){
+            if (ev.error) {
+                  libutil.database.reportError(ev, ts, true);
+                  return;
+            }
+            else{
             $('#runmodal').dialog('close');
             ts.requested=true;
-            ts.setstate();
+            ts.setstate();}
         },
         complete: function(){
             ts.updatedataextremes();
@@ -3592,10 +3619,9 @@ libutil.journal_controller = function(){
     try{
 
         this.items = [];
-        this.range={};
         this.datarange={};
         this.base={};        
-        this.xmllist = libutil.database.getXMLData(this, 'TrendList');
+        this.xmllist = libutil.database.getXMLData(this, 'meta');
         this.connect();
     }
     catch(error){      
@@ -3603,3 +3629,376 @@ libutil.journal_controller = function(){
     }  
 };
 
+
+libutil.journal_controller.MAX_PERIOD = 2678400000;
+
+libutil.journal_controller.MIN_PERIOD = 60000;
+
+libutil.journal_controller.HOUR_PERIOD = 3600000;
+
+libutil.journal_controller.DAY_PERIOD = 86400000;
+
+
+libutil.journal_controller.prototype.connect = function(){
+    try{
+        var ts = this;
+        this.xml= [];
+        this.journal= [];
+        this.init();
+        //this.setStart(new Date('Sep 10 2012 10:40:42'));
+        //this.setStop(new Date('Sep 10 2012 15:40:42'));
+        //this.setStart(new Date('Sep 04 2012 10:40:42'));
+        //this.setStop(new Date('Sep 04 2012 12:40:42'));         
+        this.setStart(new Date((new Date()).valueOf() - libutil.journal_controller.DAY_PERIOD));
+        this.setStop(new Date());        
+        this.updatedate();       
+        window.$$connectSCDB( 
+            function(){
+                var evnt= event;
+                setTimeout( function(){
+                    ts.attach(evnt);
+                },0)
+            },
+            ts.provider, ts.connectionstring);
+        libutil.database.modal(libutil.database.PROCCESS, libutil.database.MESSAGE_CONNECTING);
+    }
+    catch(error){      
+        libutil.database.modal(libutil.database.FATAL, error);
+    }  
+};
+
+libutil.journal_controller.prototype.init = function(){
+    
+    $.datepicker.regional['ru'] = {
+        closeText: 'Закрыть',
+        prevText: '<Пред',
+        nextText: 'След>',
+        currentText: 'Сегодня',
+        monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь',
+        'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+        monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн',
+        'Июл','Авг','Сен','Окт','Ноя','Дек'],
+        dayNames: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
+        dayNamesShort: ['вск','пнд','втр','срд','чтв','птн','сбт'],
+        dayNamesMin: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+        weekHeader: 'Не',
+        dateFormat: 'dd.mm.yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+                
+    $.datepicker.setDefaults($.datepicker.regional['ru']);
+
+          
+    $.timepicker.regional['ru'] = {
+        timeOnlyTitle: 'Выберите время',
+        timeText: 'Время',
+        hourText: 'Часы',
+        minuteText: 'Минуты',
+        secondText: 'Секунды',
+        millisecText: 'миллисекунды',
+        currentText: 'Сейчас',
+        closeText: 'Закрыть',
+        ampm: false
+    };
+    $.timepicker.setDefaults($.timepicker.regional['ru']); 
+                
+          
+    $('body').layout({ 
+        north__size:			32 
+        ,	
+        spacing_open:			0 
+        ,	
+        spacing_closed:			0 
+        ,	
+        north__spacing_open:	        0
+                    
+    });   
+                
+    $("#inner").layout({
+        south__size:			200 
+        ,	
+        spacing_open:			0 
+        ,	
+        spacing_closed:			0 
+    }); 
+                
+    var ts=this;    
+    
+    $( "#run-button" ).button({
+        text: false,
+        disabled: true,
+        icons: {
+            primary: "ui-icon-arrowrefresh-1-w"
+        }
+    }).click(function() {
+        window.journalcontroller.run();
+    ;
+    })
+
+    /*$( "#select-button" ).button({
+        text: false,
+        disabled: true,       
+        icons: {
+            primary: "ui-icon-suitcase"
+        }
+    }).click(function() {
+        window.trendcontroller.resetselectpanel();
+    ;
+    });*/
+    
+    
+    $( "#day-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrowstop-1-e"
+        }
+    }).click(function() {
+        window.journalcontroller.setLastDay();
+    });
+    
+    $( "#hour-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrow-1-e"
+        }
+    }).click(function() {
+        window.journalcontroller.setLastHour();
+    ;
+    });   
+    
+    $( "#now-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrowthickstop-1-e"
+        }
+    }).click(function() {
+        window.journalcontroller.setNow();
+    ;
+    });  
+    
+    $( "#print-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-print"
+        }
+    }).click(function() {
+        //window.trendcontroller.setNow();
+    ;
+    });     
+
+    this.startpicker = $('#starttime').datetimepicker({
+        onClose:  function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStart(dt);
+        }
+    }).click(function(){});
+    this.stoppicker = $('#stoptime').datetimepicker({
+        onClose: function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStop(dt);
+        }
+    }).click(function(){});
+    
+    
+    this.tabgrid = $("#table-id").jqGrid({
+        data: this.journal,
+        autowidth: true,
+        datatype: "local",
+        height: 'auto',
+        scrollrows: true,
+        shrinkToFit: true,
+        cellLayout: 1,
+        colNames:['Тег', 'Время', 'Сообщение', 'Группа','Значение','User', 'Lev', 'Type'],
+        colModel:[
+        {
+            name:'tag',
+            index:'tag'
+        },
+        {
+            name:'time',
+            index:'time'
+        },
+
+        {
+            name:'text',
+            index:'text',
+            width: 600
+        },
+        {
+            name:'agroup',
+            index:'agroup',
+            width: 600
+        },        
+        
+        {
+            name:'value',
+            index:'value'
+        },
+        
+        {
+            name:'user',
+            index:'user'
+        },   
+            
+        
+        {
+            name:'level',
+            index:'level'
+        },
+        
+        {
+            name:'type',
+            index:'type'
+        },        
+    
+		
+        ],
+   	
+        viewrecords: true
+   	
+    });
+    
+    /*$("#select-panel" ).position({
+        of: $( "#top-menuemain" ),
+        my: 'center bottom',
+        at: 'center top'
+    });   */ 
+
+}
+
+libutil.journal_controller.prototype.attach = function(ev){
+    if (ev.error){
+        libutil.database.reportError(ev, this);
+        return;
+    }
+    window.journalcontroller = this;
+    this.connection = ev.connection;
+    this.requested=false;
+    this.setstate(); 
+    libutil.database.clearmodal();
+    
+}
+
+
+libutil.journal_controller.prototype.run = function(){
+    var ts=this;
+    libutil.database.modal(libutil.database.PROCCESS, libutil.database.MESSAGE_DATAREQUEST);
+    this.connection.select_journal ( function(){var evnt=event; window.journalcontroller.dataresponse(evnt); }, this.start , this.stop, this.filter());
+}
+
+libutil.journal_controller.prototype.dataresponse = function(ev){
+    this.journal = ev.table;
+    libutil.database.clearmodal();
+    this.filltable();
+}
+
+libutil.journal_controller.prototype.filltable = function() {
+    $("#table-id").jqGrid('clearGridData');
+    for (var i=0;i<this.journal.length;++i)
+        $("#table-id").jqGrid('addRowData',(i+1).toString(),this.journal[i]);      
+    this.requested=false;
+    this.setstate();
+}
+
+libutil.journal_controller.prototype.filter = function(){
+   
+    return undefined;
+}
+
+libutil.journal_controller.prototype.setStart = function(val){
+    if (this.start != val){
+        if (this.stop  && this.start){
+            var period = (this.stop.valueOf()-this.start.valueOf());
+            var potperiod = (this.stop.valueOf()-val.valueOf());
+            if (potperiod>libutil.journal_controller.MIN_PERIOD){
+                if (potperiod>libutil.journal_controller.MAX_PERIOD)
+                    this.stop=new Date(val.valueOf() + libutil.journal_controller.MAX_PERIOD);  
+                this.start=val;
+            }
+            else{
+                this.start=val;
+                this.stop = new Date(val.valueOf() + libutil.journal_controller.MIN_PERIOD);
+            }         
+            this.normalizePeriod();
+        }
+        else{
+            this.start=val;
+            this.normalizePeriod();
+        }
+    }
+}
+
+libutil.journal_controller.prototype.setStop = function(val){
+    if (this.stop!= val){
+        if (this.stop  && this.start){
+            var period = (this.stop.valueOf()-this.start.valueOf());
+            var potperiod = (val.valueOf()-this.start.valueOf());
+            if (potperiod>libutil.journal_controller.MIN_PERIOD){
+                if (potperiod>libutil.journal_controller.MAX_PERIOD)
+                    this.start=new Date(val.valueOf() - libutil.journal_controller.MAX_PERIOD);  
+                this.stop=val;
+            }
+            else{
+                this.stop=val;
+                this.start = new Date(val.valueOf() - libutil.journal_controller.MIN_PERIOD);
+            }         
+            this.normalizePeriod();
+        }
+        else{
+            this.stop=val;
+            this.normalizePeriod();
+        }
+    }
+}
+
+
+libutil.journal_controller.prototype.setLastHour = function(){
+    var period = libutil.journal_controller.HOUR_PERIOD;
+    this.start=new Date((new Date()).valueOf() - period);
+    this.stop=new Date(this.start.valueOf() + period);         
+    this.normalizePeriod();
+    this.run();
+}
+
+libutil.journal_controller.prototype.setLastDay = function(){
+    var period = libutil.journal_controller.DAY_PERIOD;
+    this.start=new Date((new Date()).valueOf() - period);
+    this.stop=new Date(this.start.valueOf() + period);         
+    this.normalizePeriod();
+    this.run();
+}
+
+libutil.journal_controller.prototype.setNow = function(){
+    var period = (this.stop.valueOf()-this.start.valueOf());
+    this.start=new Date((new Date()).valueOf() - period);
+    this.stop=new Date(this.start.valueOf() + period);         
+   
+    this.normalizePeriod();
+    this.run();
+}
+
+libutil.journal_controller.prototype.normalizePeriod = function(){
+    this.updatedate();
+    this.requested=false;
+    this.setstate();
+}
+
+libutil.journal_controller.prototype.updatedate = function(){
+    if (this.stoppicker && this.stop)
+        this.stoppicker.datetimepicker('setDate', (this.stop));
+    if (this.startpicker && this.start)
+        this.startpicker.datetimepicker('setDate', (this.start));        
+}
+
+libutil.journal_controller.prototype.setstate = function(){
+    $( "#run-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");
+    $( "#hour-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");
+    $( "#day-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");
+    $( "#now-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");} 
