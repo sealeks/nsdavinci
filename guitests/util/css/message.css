@@ -1,0 +1,140 @@
+/* 
+    Document   : message
+    Created on : 19.09.2012, 20:27:54
+    Author     : sealeks@mail.ru
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+/* journal  */
+
+.message-message-icon{
+    display: inline-block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat;
+    background-image: url('./res/message.png');
+    width: 16px;
+    height: 16px;   
+}
+
+.message-accedent-new{
+   /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #b00), color-stop(0.5, #700), color-stop(1, #b00));*/
+   color: #F00;
+   font-weight: bolder;
+}
+
+tr.message-accedent-new td span.message-message-icon{   
+    background-position: -0px -0px
+}
+
+.message-alarm-new{
+   /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #a70), color-stop(0.5, #730), color-stop(1, #a70));*/ 
+   color:#F39814;
+   font-weight: bolder;
+}
+
+tr.message-alarm-new td span.message-message-icon{  
+    background-position: -16px -0px
+}
+
+
+.message-warning-new{
+  /* background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #aa0), color-stop(0.5, #770), color-stop(1, #aa0)); */
+   color:#D8FA3C;
+   font-weight: bolder;
+}
+
+tr.message-warning-new td span.message-message-icon{
+    background-position: -32px -0px
+}
+
+.message-accedent-kvit{
+   /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #b00), color-stop(0.5, #700), color-stop(1, #b00));*/
+   color:#7F0055;
+}
+
+tr.message-accedent-kvit td span.message-message-icon{  
+    background-position: -0px -16px
+}
+
+.message-alarm-kvit{
+   /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #a70), color-stop(0.5, #730), color-stop(1, #a70));*/ 
+   color:#7678e2;
+}
+
+tr.message-alarm-kvit td span.message-message-icon{ 
+    background-position: -16px -16px
+}
+
+
+.message-warning-kvit{
+  /* background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #aa0), color-stop(0.5, #770), color-stop(1, #aa0)); */
+   color:#253B76;
+}
+
+tr.message-warning-kvit td span.message-message-icon{ 
+    background-position: -32px -16px
+}
+
+.message-accedent-out{
+   /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #b00), color-stop(0.5, #700), color-stop(1, #b00));*/
+   color:#BBB;
+}
+
+tr.message-accedent-out td span.message-message-icon{ 
+    background-position: -0px -32px
+}
+
+.message-alarm-out{
+   /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #a70), color-stop(0.5, #730), color-stop(1, #a70));*/ 
+   color:#999;
+}
+
+tr.message-alarm-out td span.message-message-icon{  
+    background-position: -16px -32px
+}
+
+
+.message-warning-out{
+  /* background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #aa0), color-stop(0.5, #770), color-stop(1, #aa0)); */
+   color:#777;
+}
+
+tr.message-warning-out td span.message-message-icon{   
+    background-position: -32px -32px
+}
+
+.message-message-command{
+   color:#00CD00;
+}
+
+tr.message-message-command td span.message-message-icon{ 
+    background-position: -80px -0px
+}
+
+.message-message-on{
+   color: #077;
+}
+
+tr.message-message-on td span.message-message-icon{
+    background-position: -48px -0px
+}
+
+.message-message-off{
+   color:#d7d4f0; 
+}
+
+tr.message-message-off td span.message-message-icon{  
+    background-position: -64px -0px
+}
+
+.message-message-event{
+    color: #08f;
+}
+
+tr.message-message-event td span.message-message-icon{
+    background-position: -96px -0px
+}

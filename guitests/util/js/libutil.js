@@ -2656,7 +2656,7 @@ libutil.database.getXMLData = function(obj, root){
 
 libutil.database.reportError = function(ev, obj, noinit){
         switch(ev.error){
-            case 2049: {               
+            case 2049: {
                 var ts = obj;
                 libutil.database.modal(libutil.database.RETRY, ev.what, function(){
                     libutil.database.clearmodal();
@@ -2729,7 +2729,50 @@ libutil.database.clearmodal = function(){
     $('#runmodalalert').dialog('destroy');
 }
 
+libutil.database.datepickerset = function(){
+    $.datepicker.regional['ru'] = {
+        closeText: 'Закрыть',
+        prevText: '<Пред',
+        nextText: 'След>',
+        currentText: 'Сегодня',
+        monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь',
+        'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+        monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн',
+        'Июл','Авг','Сен','Окт','Ноя','Дек'],
+        dayNames: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
+        dayNamesShort: ['вск','пнд','втр','срд','чтв','птн','сбт'],
+        dayNamesMin: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+        weekHeader: 'Не',
+        dateFormat: 'dd.mm.yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+                
+    $.datepicker.setDefaults($.datepicker.regional['ru']);
 
+          
+    $.timepicker.regional['ru'] = {
+        timeOnlyTitle: 'Выберите время',
+        timeText: 'Время',
+        hourText: 'Часы',
+        minuteText: 'Минуты',
+        secondText: 'Секунды',
+        millisecText: 'миллисекунды',
+        currentText: 'Сейчас',
+        closeText: 'Закрыть',
+        ampm: false
+    };
+    $.timepicker.setDefaults($.timepicker.regional['ru']);
+}
+
+libutil.database.date = function(date){
+    var d = date.getDate();
+    var m = date.getMonth()+1;
+    var y = date.getFullYear();
+    return '' + y +'-'+ (m<=9?'0'+m:m) +'-'+ (d<=9?'0'+d:d) + '  ' + date.toLocaleTimeString();
+}
 
 // trend_controller
   
@@ -2849,6 +2892,7 @@ libutil.trend_controller.prototype.attach = function(ev){
 
 libutil.trend_controller.prototype.parseXMLData = function(){
     this.xml=[];
+    var j=0;
     for(var e=this.xmllist.firstElementChild; e; e=e.nextElementSibling){
         var lst= e.getAttribute("name");                       
         for(var el=e.firstElementChild; el; el=el.nextElementSibling){
@@ -2863,7 +2907,8 @@ libutil.trend_controller.prototype.parseXMLData = function(){
                         comment: this.base[tg].comment,
                         eu: this.base[tg].eu,
                         mineu: this.base[tg].mineu,
-                        maxeu: this.base[tg].maxeu
+                        maxeu: this.base[tg].maxeu,
+                        rowid: (++j).toString()
                     })                         
             }                                                        
         }
@@ -2882,43 +2927,8 @@ libutil.trend_controller.prototype.inittags = function(val){
 
 libutil.trend_controller.prototype.init = function(){
     
-    $.datepicker.regional['ru'] = {
-        closeText: 'Закрыть',
-        prevText: '<Пред',
-        nextText: 'След>',
-        currentText: 'Сегодня',
-        monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь',
-        'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
-        monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн',
-        'Июл','Авг','Сен','Окт','Ноя','Дек'],
-        dayNames: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
-        dayNamesShort: ['вск','пнд','втр','срд','чтв','птн','сбт'],
-        dayNamesMin: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
-        weekHeader: 'Не',
-        dateFormat: 'dd.mm.yy',
-        firstDay: 1,
-        isRTL: false,
-        showMonthAfterYear: false,
-        yearSuffix: ''
-    };
-                
-    $.datepicker.setDefaults($.datepicker.regional['ru']);
-
-          
-    $.timepicker.regional['ru'] = {
-        timeOnlyTitle: 'Выберите время',
-        timeText: 'Время',
-        hourText: 'Часы',
-        minuteText: 'Минуты',
-        secondText: 'Секунды',
-        millisecText: 'миллисекунды',
-        currentText: 'Сейчас',
-        closeText: 'Закрыть',
-        ampm: false
-    };
-    $.timepicker.setDefaults($.timepicker.regional['ru']); 
-                
-          
+    libutil.database.datepickerset();
+                         
     $('body').layout({ 
         north__size:			32 
         ,	
@@ -3007,7 +3017,7 @@ libutil.trend_controller.prototype.init = function(){
     });     
 
 
-    $("#select-panel" ).position({
+    $("#select-panel-trend" ).position({
         of: $( "#top-menuemain" ),
         my: 'center bottom',
         at: 'center top'
@@ -3015,7 +3025,7 @@ libutil.trend_controller.prototype.init = function(){
     
     this.setselectpanel(false);
     
-    var panelheight = $("#select-panel" )[0].getClientRects ? $("#select-panel" )[0].getClientRects()[0].height : undefined;
+    var panelheight = $("#select-panel-trend" )[0].getClientRects ? $("#select-panel-trend" )[0].getClientRects()[0].height : undefined;
     var bottomheight = $("#select-table-bottom" )[0].getClientRects ? $("#select-table-bottom" )[0].getClientRects()[0].height : undefined;
     
     this.startpicker = $('#starttime').datetimepicker({
@@ -3330,7 +3340,7 @@ libutil.trend_controller.prototype.remove= function(id, exclude){
     this.datarange[id] = undefined;    
     if(this.trendchart)
         this.trendchart.removeseries(id);
-    this.updateselect(true);
+    this.updateselect();
     this.pugerange();
     return true;      
 }
@@ -3369,16 +3379,19 @@ libutil.trend_controller.prototype.updatedataextremes = function(){
 libutil.trend_controller.prototype.updateselect = function( req ) {
     $("#selectlist").jqGrid('clearGridData');
     for (var i=0;i<this.items.length;++i)
-        $("#selectlist").jqGrid('addRowData',(i+1).toString(),this.items[i]);    
-     
+        this.items[i].rowid=(i+1).toString();
+    //    $("#selectlist").jqGrid('addRowData',(i+1).toString(),this.items[i]);    
+    $("#selectlist").jqGrid('addRowData','rowid',this.items); 
     this.requested=req;
     this.setstate();
 }
 
 libutil.trend_controller.prototype.updatelist = function( req ) {
     $("#list").jqGrid('clearGridData');
-    for (var i=0;i<this.xml.length;++i)
-        $("#list").jqGrid('addRowData',(i+1).toString(),this.xml[i]);   
+    //for (var i=0;i<this.xml.length;++i)
+    //    this.xml[i].rowid=(i+1).toString();
+    //    $("#list").jqGrid('addRowData',(i+1).toString(),this.xml[i]); 
+        $("#list").jqGrid('addRowData',"rowid",this.xml);   
         $("#list").trigger("reloadGrid");
 }
 
@@ -3588,13 +3601,13 @@ libutil.trend_controller.prototype.setextremes = function(id, min, max){
 
 
 libutil.trend_controller.prototype.setselectpanel = function(val){
-    var panel = $( "#select-panel" )[0];
+    var panel = $( "#select-panel-trend" )[0];
     panel.className = val ? 'ui-widget-content select-panel-visible' : 'ui-widget-content select-panel-hidden';
     panel.visibility = val ? true : false;   
 }
 
 libutil.trend_controller.prototype.resetselectpanel = function(){
-    var panel = $( "#select-panel" )[0];
+    var panel = $( "#select-panel-trend" )[0];
     this.setselectpanel(!panel.visibility);    
 }
 
@@ -3645,11 +3658,11 @@ libutil.journal_controller.prototype.connect = function(){
         this.xml= [];
         this.journal= [];
         this.init();
-        //this.setStart(new Date('Sep 10 2012 10:40:42'));
+        this.setStart(new Date('Sep 01 2012 10:40:42'));
         //this.setStop(new Date('Sep 10 2012 15:40:42'));
         //this.setStart(new Date('Sep 04 2012 10:40:42'));
         //this.setStop(new Date('Sep 04 2012 12:40:42'));         
-        this.setStart(new Date((new Date()).valueOf() - libutil.journal_controller.DAY_PERIOD));
+        //this.setStart(new Date((new Date()).valueOf() - libutil.journal_controller.DAY_PERIOD));
         this.setStop(new Date());        
         this.updatedate();       
         window.$$connectSCDB( 
@@ -3669,42 +3682,8 @@ libutil.journal_controller.prototype.connect = function(){
 
 libutil.journal_controller.prototype.init = function(){
     
-    $.datepicker.regional['ru'] = {
-        closeText: 'Закрыть',
-        prevText: '<Пред',
-        nextText: 'След>',
-        currentText: 'Сегодня',
-        monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь',
-        'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
-        monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн',
-        'Июл','Авг','Сен','Окт','Ноя','Дек'],
-        dayNames: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
-        dayNamesShort: ['вск','пнд','втр','срд','чтв','птн','сбт'],
-        dayNamesMin: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
-        weekHeader: 'Не',
-        dateFormat: 'dd.mm.yy',
-        firstDay: 1,
-        isRTL: false,
-        showMonthAfterYear: false,
-        yearSuffix: ''
-    };
-                
-    $.datepicker.setDefaults($.datepicker.regional['ru']);
-
-          
-    $.timepicker.regional['ru'] = {
-        timeOnlyTitle: 'Выберите время',
-        timeText: 'Время',
-        hourText: 'Часы',
-        minuteText: 'Минуты',
-        secondText: 'Секунды',
-        millisecText: 'миллисекунды',
-        currentText: 'Сейчас',
-        closeText: 'Закрыть',
-        ampm: false
-    };
-    $.timepicker.setDefaults($.timepicker.regional['ru']); 
-                
+ 
+    libutil.database.datepickerset();            
           
     $('body').layout({ 
         north__size:			32 
@@ -3806,70 +3785,105 @@ libutil.journal_controller.prototype.init = function(){
         }
     }).click(function(){});
     
+    var tableheight = $("#inner" )[0].getClientRects ? $("#inner" )[0].getClientRects()[0].height : undefined;
+    
     
     this.tabgrid = $("#table-id").jqGrid({
         data: this.journal,
         autowidth: true,
         datatype: "local",
-        height: 'auto',
+        height: tableheight ? tableheight : 'auto',
         scrollrows: true,
         shrinkToFit: true,
-        cellLayout: 1,
-        colNames:['Тег', 'Время', 'Сообщение', 'Группа','Значение','User', 'Lev', 'Type'],
-        colModel:[
+        sortable: false,
+
+        colNames:[' ', 'Тег', 'Время', 'Сообщение', 'Группа','Значение','User', 'level', 'Type'],
+        gridComplete: function(){ 
+            var ids = $("#table-id").jqGrid('getDataIDs');
+            for(var i=0;i < ids.length;i++){
+                var imgid = 'table_id_img_'+ids[i];
+                var col =   "<span   class='message-message-icon' id='"+imgid+"'></span>";
+                var row = $("#table-id").jqGrid('getRowData',ids[i]);
+                $("#table-id").jqGrid('setCell',ids[i] ,'icon' ,col);
+                $("#table-id").jqGrid('setRowData',ids[i],undefined,window.journalcontroller ? window.journalcontroller.getClassRow(parseInt(row.type), parseInt(row.level)): undefined);
+                
+            }
+        },
+        colModel:[  
+        {
+            name:'icon',
+            index:'icon',
+            title: false,
+            width: 20,
+            sortable: false
+        },                    
         {
             name:'tag',
-            index:'tag'
+            index:'tag',
+            title: false,
+            sortable: false
         },
         {
             name:'time',
-            index:'time'
+            index:'time',
+            width: 150,
+            title: false
+            
         },
 
         {
             name:'text',
             index:'text',
-            width: 600
+            width: 600,
+            title: false,
+            sortable: false
         },
         {
             name:'agroup',
             index:'agroup',
-            width: 600
+            width: 100,
+            title: false,
+            sortable: false
         },        
         
         {
             name:'value',
-            index:'value'
+            index:'value',
+            title: false
+            
         },
         
         {
             name:'user',
-            index:'user'
-        },   
+            index:'user',
+            title: false,
+            sortable: false
             
-        
+        },   
         {
             name:'level',
-            index:'level'
-        },
-        
+            index:'level',
+            title: false,
+            width: 1
+        },  
+    
         {
             name:'type',
-            index:'type'
+            index:'type',
+            title: false,
+            width: 1
         },        
     
 		
         ],
-   	
-        viewrecords: true
+   	rowNum: 100000,
+        viewrecords: true,
+        sortable: true,
+        sortname: 'time',
+        sortorder: 'desc'
    	
     });
-    
-    /*$("#select-panel" ).position({
-        of: $( "#top-menuemain" ),
-        my: 'center bottom',
-        at: 'center top'
-    });   */ 
+
 
 }
 
@@ -3890,7 +3904,7 @@ libutil.journal_controller.prototype.attach = function(ev){
 libutil.journal_controller.prototype.run = function(){
     var ts=this;
     libutil.database.modal(libutil.database.PROCCESS, libutil.database.MESSAGE_DATAREQUEST);
-    this.connection.select_journal ( function(){var evnt=event; window.journalcontroller.dataresponse(evnt); }, this.start , this.stop, this.filter());
+    this.connection.select_journal ( function(){var evnt=event;window.journalcontroller.dataresponse(evnt);}, this.start , this.stop, this.filter());
 }
 
 libutil.journal_controller.prototype.dataresponse = function(ev){
@@ -3899,10 +3913,86 @@ libutil.journal_controller.prototype.dataresponse = function(ev){
     this.filltable();
 }
 
+   /* const msgtype msNew        = 0x00;
+    const msgtype msKvit       = 0x01;
+    const msgtype msOut        = 0x02;
+    const msgtype msOn         = 0x03;
+    const msgtype msOff        = 0x04;
+    const msgtype msCmd        = 0x05;
+    const msgtype msTimeEvent  = 0x06;
+    const msgtype msTimeAlarm  = 0x07;*/
+
+libutil.journal_controller.prototype.getClassRow = function( type,lev){
+    switch(type){
+        case 0:{
+            //msgtype msNew        = 0x00
+            switch(lev){
+                case 3:
+                    return 'message-accedent-new';
+                case 2:
+                    return 'message-alarm-new';            
+                case 1:
+                    return 'message-warning-new';         
+            }                
+            break;
+        }
+        case 1:{
+            //msgtype msKvit       = 0x01
+            switch(lev){
+                case 3:
+                    return 'message-accedent-kvit';
+                case 2:
+                    return 'message-alarm-kvit';            
+                case 1:
+                    return 'message-warning-rvit';         
+            }                
+            break;
+        }        
+        case 2:{
+            //msgtype msOut       = 0x02
+            switch(lev){
+                case 3:
+                    return 'message-accedent-out';
+                case 2:
+                    return 'message-alarm-out';            
+                case 1:
+                    return 'message-warning-out';         
+            }                
+            break;
+                
+         }
+        case 3:{
+            //msgtype msOn       = 0x03                
+            return 'message-message-on';             
+            break;                
+         }
+        case 4:{
+            //msgtype msOn       = 0x04                
+            return 'message-message-off';             
+            break;                
+         }  
+        case 5:{
+            //msgtype msCommand       = 0x05                
+            return 'message-message-command';             
+            break;                
+         }          
+        case 5:{
+            //msgtype msCommand       = 0x05                
+            return 'message-message-event';             
+            break;                
+         }} 
+    return '';
+}
+
 libutil.journal_controller.prototype.filltable = function() {
     $("#table-id").jqGrid('clearGridData');
-    for (var i=0;i<this.journal.length;++i)
-        $("#table-id").jqGrid('addRowData',(i+1).toString(),this.journal[i]);      
+    for (var j=0;j<this.journal.length;++j){
+        var i=j;//this.journal.length-1-j;
+        this.journal[i].time= libutil.database.date(this.journal[i].time);
+        this.journal[i].icon= '';
+        this.journal[i].rowid=(i+1).toString();} 
+         $("#table-id").jqGrid('addRowData',"rowid" ,this.journal);
+         $("#table-id").trigger("reloadGrid");
     this.requested=false;
     this.setstate();
 }
