@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta DBProvider="1" constring="host=ALEXEEV;database=test_1;user=postgres;password=1324" host="">
+	<HomeList key="0">
+		<ReportArr />
+	</HomeList>
+	<ReportList />
+	<TrendList key="0">
+		<TrendHeader name="Котел 1">
+			<TrendArr name="Давления">
+				<trend tg="sys::pg0" />
+				<trend tg="sys::p5" />
+				<trend tg="sys::p6" />
+                                <trend tg="sys::fpp" />
+                                <trend tg="sys::l" />
+                                <trend tg="sys::td1" />
+                                <trend tg="sys::tw4" />
+                                <trend tg="sys::tw5" />
+                                <trend tg="sys::tp2" />
+                                <trend tg="sys::tp3" />
+			</TrendArr>
+		</TrendHeader>
+		<TrendHeader name="Котел 2">
+			<TrendArr name="Давления">
+				<trend tg="sys::pg0" />
+				<trend tg="sys::p5" />
+				<trend tg="sys::p6" />
+			</TrendArr>
+		</TrendHeader>                
+	</TrendList>
+	<MessageList />
+</meta>
