@@ -29,6 +29,7 @@
 
         <script type="text/javascript" src="../util/js/libutil.js"></script> 
         <script type="text/javascript" src="../util/js/designer.js"></script> 
+        <script type="text/javascript" src="../util/js/database.js"></script>        
 
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/timepicker/jquery-ui-timepicker-addon.js"></script>
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/timepicker/jquery-ui-sliderAccess.js"></script>
@@ -60,7 +61,7 @@
         <script type="text/javascript">  
                          
             $(document).ready(function(){
-                new libutil.journal_controller();              
+                new dbutil.journal_controller();              
             });    
                   
         </script>
@@ -73,10 +74,15 @@
         <div  id="runmodalalert" style='display:none'>
             <div id="alerttext"></div>
         </div>   
-         
+        <div id="select-panel-journal" class="ui-widget-content select-panel-hidden">
+             <table id="check-list"></table>  
+             
+        </div>         
         <div class="ui-layout-north" id="top-menuemain">
             <div id="toolbar" class="ui-widget-header">
-                <!--button id="select-button">Выбор</button-->
+                <button id="select-button">Выбор</button>
+                <button id="nomessage-button">Скинуть все</button>                
+                <button id="allmessage-button">Выбрать все</button>
                 <button id="run-button">Запрос</button>
                 <span class="toolbar-delimeter-space" style="width: 30px;"></span>
 
