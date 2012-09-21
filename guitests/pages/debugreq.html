@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,6 +12,7 @@
         <link rel="stylesheet" media="all" type="text/css" href="../util/js_ext/jqueryui/plugin/jqGrid/themes/ui.jqgrid.css" />
         <link rel="stylesheet" media="all" type="text/css" href="../util/js_ext/jqueryui/lib/themes/ui-darkness/jquery-ui-1.8.23.custom.css"/>
         <link rel="stylesheet" media="all" type="text/css" href="../util/css/database.css" />
+        <link rel="stylesheet" media="all" type="text/css" href="../util/css/message.css" />        
 
         <script type="text/javascript" src="../util/js_ext/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="../util/js_ext/jqueryui/js/jquery-ui.min.js"></script>
@@ -29,7 +29,7 @@
 
         <script type="text/javascript" src="../util/js/libutil.js"></script> 
         <script type="text/javascript" src="../util/js/designer.js"></script> 
-        <script type="text/javascript" src="../util/js/database.js"></script> 
+        <script type="text/javascript" src="../util/js/database.js"></script>        
 
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/timepicker/jquery-ui-timepicker-addon.js"></script>
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/timepicker/jquery-ui-sliderAccess.js"></script>
@@ -50,9 +50,10 @@
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/jqGrid/src/grid.inlinedit.js"></script>
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/jqGrid/src/grid.loader.js"></script>
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/jqGrid/src/grid.treegrid.js"></script>
-
         <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/jqGrid/plugins/ui.multiselect.js"></script>
-        <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/jqGrid/plugins/jquery.tablednd.js"></script>   
+        <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/jqGrid/plugins/jquery.tablednd.js"></script>  
+        
+        <script type="text/javascript" src="../util/js_ext/jqueryui/plugin/jqGrid/src/jquery.fmatter.js"></script>        
 
         <script type="text/javascript" src="../util/js_ext/hightchart/highcharts.js"></script>
 
@@ -60,7 +61,7 @@
         <script type="text/javascript">  
                          
             $(document).ready(function(){
-                new dbutil.trend_controller();              
+                new dbutil.debug_controller();              
             });    
                   
         </script>
@@ -73,36 +74,35 @@
         <div  id="runmodalalert" style='display:none'>
             <div id="alerttext"></div>
         </div>   
-        <div id="select-panel-trend" class="ui-widget-content select-panel-hidden">
-             <table id="list"></table>  
-        </div>          
+        <div id="select-panel-debug" class="ui-widget-content select-panel-hidden">
+             <table id="check-list"></table>  
+             
+        </div>         
         <div class="ui-layout-north" id="top-menuemain">
             <div id="toolbar" class="ui-widget-header">
                 <button id="select-button">Выбор</button>
-                <button id="noparam-button">Скинуть все</button> 
+                <button id="nomessage-button">Скинуть все</button>                
+                <button id="allmessage-button">Выбрать все</button>
                 <span class="toolbar-delimeter-space" style="width: 30px;"></span>
                 <button id="run-button">Запрос</button>
-                <button id="left-button">На период раньше</button>
+
                 <span class="toolbar-delimeter-space" style="width: 10px;"></span>
                 c
                 <input type="text" id="starttime" class="datetime-selector-ui ui-widget-header" value="" /> 
                 по
                 <input type="text" id="stoptime" class="datetime-selector-ui ui-widget-header" value="" />
                 <span class="toolbar-delimeter-space" style="width: 10px;"></span>
-                <button id="right-button">На период позже</button>
+                <button id="day-button">Последний день</button>
+                <button id="hour-button">Последний час</button>
                 <button id="now-button">К настоященму времени</button>  
                 <span class="toolbar-delimeter-space" style="width: 20px;"></span>
                 <button id="print-button">Печать</button>  
             </div>          
         </div>
         <div class="ui-layout-center" id="inner">
-            <div class="ui-layout-center">
-                <div id="chart-id">
-                </div>
+            <div class="ui-layout-center ui-widget-content">
+                <table id="table-id"/>
             </div> 
-            <div id="select-table-bottom" class="ui-layout-south">
-                   <table id="selectlist"></table>
-            </div>
         </div> 
     </body> 
 </html>

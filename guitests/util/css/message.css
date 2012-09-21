@@ -20,6 +20,17 @@
     height: 16px;   
 }
 
+.message-fatal-new{
+   /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #b00), color-stop(0.5, #700), color-stop(1, #b00));*/
+   color: #A00;
+   font-weight: bolder;
+}
+
+tr.message-fatal-new td span.message-message-icon{   
+    background-position: -48px -16px
+}
+
+
 .message-accedent-new{
    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #b00), color-stop(0.5, #700), color-stop(1, #b00));*/
    color: #F00;
