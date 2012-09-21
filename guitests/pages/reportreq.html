@@ -60,7 +60,7 @@
         <script type="text/javascript">  
                          
             $(document).ready(function(){
-                new dbutil.trend_controller();              
+                new dbutil.report_controller();              
             });    
                   
         </script>
@@ -73,7 +73,7 @@
         <div  id="runmodalalert" style='display:none'>
             <div id="alerttext"></div>
         </div>   
-        <div id="select-panel-trend" class="ui-widget-content select-panel-hidden">
+        <div id="select-panel-report" class="ui-widget-content select-panel-hidden">
              <table id="list"></table>  
         </div>          
         <div class="ui-layout-north" id="top-menuemain">
@@ -92,7 +92,9 @@
                 <button id="right-button">На период позже</button>
                 <button id="now-button">К настоященму времени</button>  
                 <span class="toolbar-delimeter-space" style="width: 20px;"></span>
-                <button id="print-button">Печать</button>  
+                <button id="print-button">Печать</button>
+                <span class="toolbar-delimeter-space" style="width: 30px;"></span>
+                <div class="toolbar-header" id="report-header"></div>
             </div>          
         </div>
         <div class="ui-layout-center" id="inner">
@@ -100,9 +102,9 @@
                 <div id="chart-id">
                 </div>
             </div> 
-            <div id="select-table-bottom" class="ui-layout-south">
+            <!--div id="select-table-bottom" class="ui-layout-south">
                    <table id="selectlist"></table>
-            </div>
+            </div-->
         </div> 
     </body> 
 </html>

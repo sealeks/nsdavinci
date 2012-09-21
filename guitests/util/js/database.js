@@ -163,6 +163,83 @@ dbutil.database.datepickerset = function(){
     $.timepicker.setDefaults($.timepicker.regional['ru']);
 }
 
+
+dbutil.database.setStart = function(val, self, min, max){
+    if (self.start != val){
+        if (self.stop  && self.start){
+            var period = (self.stop.valueOf()-self.start.valueOf());
+            var potperiod = (self.stop.valueOf()-val.valueOf());
+            if (potperiod>min){
+                if (potperiod>max)
+                    self.stop=new Date(val.valueOf() + max);  
+                self.start=val;
+            }
+            else{
+                self.start=val;
+                self.stop = new Date(val.valueOf() + min);
+            }         
+            self.normalizePeriod();
+        }
+        else{
+            self.start=val;
+            self.normalizePeriod();
+        }
+    }
+}
+
+dbutil.database.setStop = function(val, self, min, mid, max ){
+    if (self.stop!= val){
+        if (self.stop  && self.start){
+            var period = (self.stop.valueOf()-self.start.valueOf());
+            var potperiod = (val.valueOf()-self.start.valueOf());
+            if (potperiod>min){
+                if (potperiod>max)
+                    self.start=new Date(val.valueOf() - max);  
+                self.stop=val;
+            }
+            else{
+                self.stop=val;
+                self.start = new Date(val.valueOf() - mid);
+            }         
+            self.normalizePeriod();
+        }
+        else{
+            self.stop=val;
+            self.normalizePeriod();
+        }
+    }
+}
+
+dbutil.database.setLeft = function(self){
+    var period = (self.stop.valueOf()-self.start.valueOf());
+    self.start=new Date(self.start.valueOf() - period);
+    self.stop=new Date(self.stop.valueOf() - period); 
+    self.normalizePeriod();
+    //self.run();
+}
+
+dbutil.database.setRight = function(self){
+    var period = (self.stop.valueOf()-self.start.valueOf());
+    if ((new Date()).valueOf()<self.stop.valueOf()) {
+       self.start=new Date((new Date()).valueOf() - period);
+       self.stop=new Date(self.start.valueOf() + period);         
+    }
+    else{
+       self.start=new Date(self.start.valueOf() + period);
+       self.stop=new Date(self.stop.valueOf() + period);        
+    }
+    self.normalizePeriod();
+    //self.run();
+}
+
+dbutil.database.setNow = function(self, per){
+    var period = per ? per : (self.stop.valueOf()-self.start.valueOf());
+    self.start=new Date((new Date()).valueOf() - period);
+    self.stop=new Date(self.start.valueOf() + period);         
+    self.normalizePeriod();
+    //self.run();
+}
+
 dbutil.database.date = function(date){
     var d = date.getDate();
     var m = date.getMonth()+1;
@@ -178,7 +255,8 @@ dbutil.trend_controller = function(){
         this.items = [];
         this.range={};
         this.datarange={};
-        this.base={};        
+        this.base={}; 
+        this.selectedid = {};
         this.pugerange= function(){
             var tmp={};
             for(var key in this.range) {
@@ -368,6 +446,17 @@ dbutil.trend_controller.prototype.init = function(){
     ;
     });
     
+    $( "#noparam-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-battery-0"
+        }
+    }).click(function() {
+        window.trendcontroller.removeall();
+    ;
+    });    
+    
     
     $( "#left-button" ).button({
         text: false,
@@ -446,15 +535,17 @@ dbutil.trend_controller.prototype.init = function(){
         scrollrows: true,
         shrinkToFit: true,
         cellLayout: 1,
-        colNames:['list','array', 'Тег', 'Наименование', 'Ед. изм.', 'min', 'max'],
+        colNames:['list','array', 'Тег', 'Наименование', 'Ед. изм.', 'min', 'max'],     
         onSelectRow: function (rowId, status, e) {
             var row = $("#list").jqGrid('getRowData',rowId);
             if (status) {
-                ts.add(row.tag); 
+                ts.add(row.tag);
+                ts.selectedid[rowId]=true;
             }
             else
             {
-                ts.remove(row.tag, rowId); 
+                ts.remove(row.tag, rowId);
+                ts.selectedid[rowId]=false;
             }
           
         },
@@ -501,6 +592,8 @@ dbutil.trend_controller.prototype.init = function(){
     
 		
         ],
+        rowNum: 100000,
+        //treeIcons: {plus:'ui-icon-circle-arrow-e',minus:'ui-icon-triangle-1-s',leaf:'ui-icon-radio-off'},
    	hidegrid: false,
         viewrecords: true,
         multiselect: true,
@@ -623,7 +716,8 @@ dbutil.trend_controller.prototype.init = function(){
         onSelectRow: function (rowId, status, e) {
             var row = $("#selectlist").jqGrid('getRowData',rowId);
             ts.setselect(row.id, status);         
-        },        
+        },  
+
         gridComplete: function(){ 
             var ids = $("#selectlist").jqGrid('getDataIDs');
             for(var i=0;i < ids.length;i++){
@@ -727,11 +821,12 @@ dbutil.trend_controller.prototype.remove= function(id, exclude){
     var ids = $("#list").jqGrid('getDataIDs');
     for(var i=0;i < ids.length;i++){
         var row = $("#list").jqGrid('getRowData',ids[i]);
-        if (row && row.tag==id && (ids[i]!=exclude)) {
+        if (row && row.tag==id && (ids[i]!=exclude) && this.selectedid[ids[i]]) {
+            this.selectedid[ids[i]]=false;
             $("#list").jqGrid('setSelection',ids[i],false);
         }
     }
-    dbutil.util.remove_element_arr(this.items,fnd);
+    libutil.util.remove_element_arr(this.items,fnd);
     this.range[id] = undefined;
     this.datarange[id] = undefined;    
     if(this.trendchart)
@@ -739,6 +834,20 @@ dbutil.trend_controller.prototype.remove= function(id, exclude){
     this.updateselect();
     this.pugerange();
     return true;      
+}
+
+dbutil.trend_controller.prototype.removeall= function(){
+    //for (var j=0;j<this.items.length;++j){
+    $("#list").jqGrid('resetSelection');
+ 
+    this.items = [];
+    this.range = {};
+    this.datarange = {}; 
+    if (this.trendchart)
+        this.trendchart.detach();
+    this.trendchart=undefined;
+    this.updateselect();
+    this.pugerange();        
 }
 
 dbutil.trend_controller.prototype.selectcolor = function(){
@@ -812,6 +921,7 @@ dbutil.trend_controller.prototype.run = function(){
     dbutil.database.modal(dbutil.database.PROCCESS, dbutil.database.MESSAGE_DATAREQUEST );
     if (this.trendchart)
         this.trendchart.detach();
+    this.trendchart=undefined;
     var ts = this;
     ts.requested=true;
     ts.setstate();
@@ -843,80 +953,23 @@ dbutil.trend_controller.prototype.run = function(){
 
 
 dbutil.trend_controller.prototype.setStart = function(val){
-    if (this.start != val){
-        if (this.stop  && this.start){
-            var period = (this.stop.valueOf()-this.start.valueOf());
-            var potperiod = (this.stop.valueOf()-val.valueOf());
-            if (potperiod>dbutil.trend_controller.MIN_PERIOD){
-                if (potperiod>dbutil.trend_controller.MAX_PERIOD)
-                    this.stop=new Date(val.valueOf() + dbutil.trend_controller.MAX_PERIOD);  
-                this.start=val;
-            }
-            else{
-                this.start=val;
-                this.stop = new Date(val.valueOf() + dbutil.trend_controller.MIN_PERIOD);
-            }         
-            this.normalizePeriod();
-        }
-        else{
-            this.start=val;
-            this.normalizePeriod();
-        }
-    }
+    dbutil.database.setStart(val, this, dbutil.trend_controller.MIN_PERIOD, dbutil.trend_controller.MAX_PERIOD);
 }
 
 dbutil.trend_controller.prototype.setStop = function(val){
-    if (this.stop!= val){
-        if (this.stop  && this.start){
-            var period = (this.stop.valueOf()-this.start.valueOf());
-            var potperiod = (val.valueOf()-this.start.valueOf());
-            if (potperiod>dbutil.trend_controller.MIN_PERIOD){
-                if (potperiod>dbutil.trend_controller.MAX_PERIOD)
-                    this.start=new Date(val.valueOf() - dbutil.trend_controller.MAX_PERIOD);  
-                this.stop=val;
-            }
-            else{
-                this.stop=val;
-                this.start = new Date(val.valueOf() - dbutil.trend_controller.MID_PERIOD);
-            }         
-            this.normalizePeriod();
-        }
-        else{
-            this.stop=val;
-            this.normalizePeriod();
-        }
-    }
+    dbutil.database.setStop(val, this, dbutil.trend_controller.MIN_PERIOD, dbutil.trend_controller.MID_PERIOD , dbutil.trend_controller.MAX_PERIOD);
 }
 
 dbutil.trend_controller.prototype.setLeft = function(){
-    var period = (this.stop.valueOf()-this.start.valueOf());
-    this.start=new Date(this.start.valueOf() - period);
-    this.stop=new Date(this.stop.valueOf() - period); 
-    this.normalizePeriod();
-    this.run();
+    dbutil.database.setLeft(this);
 }
 
 dbutil.trend_controller.prototype.setRight = function(){
-    var period = (this.stop.valueOf()-this.start.valueOf());
-    if ((new Date()).valueOf()<this.stop.valueOf()) {
-       this.start=new Date((new Date()).valueOf() - period);
-       this.stop=new Date(this.start.valueOf() + period);         
-    }
-    else{
-       this.start=new Date(this.start.valueOf() + period);
-       this.stop=new Date(this.stop.valueOf() + period);        
-    }
-    this.normalizePeriod();
-    this.run();
+    dbutil.database.setRight(this);
 }
 
 dbutil.trend_controller.prototype.setNow = function(){
-    var period = (this.stop.valueOf()-this.start.valueOf());
-    this.start=new Date((new Date()).valueOf() - period);
-    this.stop=new Date(this.start.valueOf() + period);         
-   
-    this.normalizePeriod();
-    this.run();
+    dbutil.database.setNow(this);
 }
 
 dbutil.trend_controller.prototype.normalizePeriod = function(){
@@ -1014,6 +1067,7 @@ dbutil.trend_controller.prototype.setstate = function(){
     $( "#right-button" ).button((this.items.length && !this.requested && this.connection) ? "enable"  : "disable");
     $( "#now-button" ).button((this.items.length && !this.requested && this.connection) ? "enable"  : "disable");    
     $( "#select-button" ).button((this.xml.length) ? "enable"  : "disable");
+    $( "#noparam-button" ).button((this.items.length && !this.requested && this.connection) ? "enable"  : "disable");
     $( "#print-button" ).button((this.trendchart) ? "enable"  : "disable");
     if (!this.items.length && this.xml.length)
         this.setselectpanel(true);
@@ -1570,79 +1624,31 @@ dbutil.journal_controller.prototype.filter = function(){
           rslt+= rslt=="" ? " ( " : " or ";
           rslt+= "( itype=" + dbutil.journal_controller.MESSAGE_TYPE[i].type + " and ilevel=" + dbutil.journal_controller.MESSAGE_TYPE[i].level+ " )";}}
   rslt+= rslt=="" ? " " : " )";
-  console.log('rslt', rslt);    
+  //console.log('rslt', rslt);    
   return rslt;
 }
 
 dbutil.journal_controller.prototype.setStart = function(val){
-    if (this.start != val){
-        if (this.stop  && this.start){
-            var period = (this.stop.valueOf()-this.start.valueOf());
-            var potperiod = (this.stop.valueOf()-val.valueOf());
-            if (potperiod>dbutil.journal_controller.MIN_PERIOD){
-                if (potperiod>dbutil.journal_controller.MAX_PERIOD)
-                    this.stop=new Date(val.valueOf() + dbutil.journal_controller.MAX_PERIOD);  
-                this.start=val;
-            }
-            else{
-                this.start=val;
-                this.stop = new Date(val.valueOf() + dbutil.journal_controller.MIN_PERIOD);
-            }         
-            this.normalizePeriod();
-        }
-        else{
-            this.start=val;
-            this.normalizePeriod();
-        }
-    }
+    dbutil.database.setStart(val, this, dbutil.journal_controller.MIN_PERIOD, dbutil.journal_controller.MAX_PERIOD);
 }
 
 dbutil.journal_controller.prototype.setStop = function(val){
-    if (this.stop!= val){
-        if (this.stop  && this.start){
-            var period = (this.stop.valueOf()-this.start.valueOf());
-            var potperiod = (val.valueOf()-this.start.valueOf());
-            if (potperiod>dbutil.journal_controller.MIN_PERIOD){
-                if (potperiod>dbutil.journal_controller.MAX_PERIOD)
-                    this.start=new Date(val.valueOf() - dbutil.journal_controller.MAX_PERIOD);  
-                this.stop=val;
-            }
-            else{
-                this.stop=val;
-                this.start = new Date(val.valueOf() - dbutil.journal_controller.MIN_PERIOD);
-            }         
-            this.normalizePeriod();
-        }
-        else{
-            this.stop=val;
-            this.normalizePeriod();
-        }
-    }
+    dbutil.database.setStop(val, this, dbutil.trend_controller.MIN_PERIOD, dbutil.journal_controller.DAY_PERIOD ,dbutil.trend_controller.MAX_PERIOD);
 }
 
 
 dbutil.journal_controller.prototype.setLastHour = function(){
-    var period = dbutil.journal_controller.HOUR_PERIOD;
-    this.start=new Date((new Date()).valueOf() - period);
-    this.stop=new Date(this.start.valueOf() + period);         
-    this.normalizePeriod();
+    dbutil.database.setNow(this, dbutil.journal_controller.HOUR_PERIOD);;
     this.run();
 }
 
 dbutil.journal_controller.prototype.setLastDay = function(){
-    var period = dbutil.journal_controller.DAY_PERIOD;
-    this.start=new Date((new Date()).valueOf() - period);
-    this.stop=new Date(this.start.valueOf() + period);         
-    this.normalizePeriod();
+    dbutil.database.setNow(this, dbutil.journal_controller.DAY_PERIOD);;
     this.run();
 }
 
 dbutil.journal_controller.prototype.setNow = function(){
-    var period = (this.stop.valueOf()-this.start.valueOf());
-    this.start=new Date((new Date()).valueOf() - period);
-    this.stop=new Date(this.start.valueOf() + period);         
-   
-    this.normalizePeriod();
+    dbutil.database.setNow(this);
     this.run();
 }
 
@@ -1680,3 +1686,1060 @@ dbutil.journal_controller.prototype.resetselectpanel = function(){
 }
 
 
+
+
+// debug_controller
+
+
+  
+dbutil.debug_controller = function(){
+    try{
+        //var tst = dbutil.debug_controller.getClass(0,3);
+        this.debug = [];
+        this.checked = dbutil.debug_controller.MSG_FULL;
+        this.base={};        
+        this.xmllist = dbutil.database.getXMLData(this, 'meta');
+        this.connect();
+    }
+    catch(error){      
+        dbutil.database.modal(dbutil.database.FATAL, error);
+    }  
+};
+
+
+dbutil.debug_controller.MAX_PERIOD = 2678400000;
+
+dbutil.debug_controller.MIN_PERIOD = 60000;
+
+dbutil.debug_controller.HOUR_PERIOD = 3600000;
+
+dbutil.debug_controller.DAY_PERIOD = 86400000;
+
+dbutil.debug_controller.MSG_FULL = 15;
+
+dbutil.debug_controller.MSG_NAME_ACCIDEND = "Фатальная ошибка";
+dbutil.debug_controller.MSG_NAME_ERROR = "Ошибка";
+dbutil.debug_controller.MSG_NAME_WARNING = "Предупреждение";
+dbutil.debug_controller.MSG_NAME_MESSAGE = "Уведомление";
+
+dbutil.debug_controller.MSG_CLASS_ACCIDEND = "message-fatal-new";
+dbutil.debug_controller.MSG_CLASS_ERROR = "message-accedent-new";
+dbutil.debug_controller.MSG_CLASS_WARNING = "message-alarm-new";
+dbutil.debug_controller.MSG_CLASS_MESSAGE = "message-warning-new";
+
+  /*const debuglvtype DEBUG_FATALERROR = 0;
+    const debuglvtype DEBUG_ERROR      = 1;
+    const debuglvtype DEBUG_WARNING    = 2;
+    const debuglvtype DEBUG_MESSAGE    = 3;*/
+
+dbutil.debug_controller.MESSAGE_TYPE =[
+    {rowid: "1", css: dbutil.debug_controller.MSG_CLASS_ACCIDEND,    name: dbutil.debug_controller.MSG_NAME_ACCIDEND, level: 0},
+    {rowid: "2", css: dbutil.debug_controller.MSG_CLASS_ERROR,   name: dbutil.debug_controller.MSG_NAME_ERROR, level: 1}, 
+    {rowid: "3", css: dbutil.debug_controller.MSG_CLASS_WARNING,    name: dbutil.debug_controller.MSG_NAME_WARNING, level: 2}, 
+    {rowid: "4", css: dbutil.debug_controller.MSG_CLASS_MESSAGE,       name: dbutil.debug_controller.MSG_NAME_MESSAGE, level: 3} 
+];
+
+
+dbutil.debug_controller.getClass = function(level){
+   if (!dbutil.debug_controller.CLASS_MAP){
+       dbutil.debug_controller.CLASS_MAP = {};
+       for (var i=0;i<dbutil.debug_controller.MESSAGE_TYPE.length;++i)
+           dbutil.debug_controller.CLASS_MAP[dbutil.debug_controller.MESSAGE_TYPE[i].level.toString()]=dbutil.debug_controller.MESSAGE_TYPE[i].css;
+   }   
+   var tp = dbutil.debug_controller.CLASS_MAP[level.toString()];
+   return tp ? tp : "";
+}
+
+dbutil.debug_controller.getTitle = function(level){
+   if (!dbutil.debug_controller.CLASS_TITLE){
+       dbutil.debug_controller.CLASS_TITLE = {};
+       for (var i=0;i<dbutil.debug_controller.MESSAGE_TYPE.length;++i)
+           dbutil.debug_controller.CLASS_TITLE[dbutil.debug_controller.MESSAGE_TYPE[i].level.toString()]=dbutil.debug_controller.MESSAGE_TYPE[i].css;
+   }   
+   var tt = dbutil.debug_controller.CLASS_TITLE[level.toString()];
+   return tt ? tt : "";
+}
+
+
+dbutil.debug_controller.prototype.connect = function(){
+    try{
+        var ts = this;
+        this.xml= [];
+        this.debug= [];
+        this.init();
+        this.setStart(new Date('Sep 01 2012 10:40:42'));
+        //this.setStop(new Date('Sep 10 2012 15:40:42'));
+        //this.setStart(new Date('Sep 04 2012 10:40:42'));
+        //this.setStop(new Date('Sep 04 2012 12:40:42'));         
+        //this.setStart(new Date((new Date()).valueOf() - dbutil.debug_controller.DAY_PERIOD));
+        this.setStop(/*new Date()*/new Date('Sep 21 2012 10:40:42'));        
+        this.updatedate();       
+        window.$$connectSCDB( 
+            function(){
+                var evnt= event;
+                setTimeout( function(){
+                    ts.attach(evnt);
+                },0)
+            },
+            ts.provider, ts.connectionstring);
+        dbutil.database.modal(dbutil.database.PROCCESS, dbutil.database.MESSAGE_CONNECTING);
+    }
+    catch(error){      
+        dbutil.database.modal(dbutil.database.FATAL, error);
+    }  
+};
+
+dbutil.debug_controller.prototype.init = function(){
+    
+ 
+    dbutil.database.datepickerset();            
+          
+    $('body').layout({ 
+        north__size:			32 
+        ,	
+        spacing_open:			0 
+        ,	
+        spacing_closed:			0 
+        ,	
+        north__spacing_open:	        0
+                    
+    });   
+                
+    $("#inner").layout({
+        south__size:			200 
+        ,	
+        spacing_open:			0 
+        ,	
+        spacing_closed:			0 
+    }); 
+                
+    var ts=this;    
+    
+    $( "#run-button" ).button({
+        text: false,
+        disabled: true,
+        icons: {
+            primary: "ui-icon-arrowrefresh-1-w"
+        }
+    }).click(function() {
+        window.debugcontroller.run();
+    ;
+    })
+
+    $( "#select-button" ).button({
+        text: false,
+        disabled: true,       
+        icons: {
+            primary: "ui-icon-suitcase"
+        }
+    }).click(function() {
+        window.debugcontroller.resetselectpanel();
+    ;
+    });
+    
+    
+    $( "#day-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrowstop-1-e"
+        }
+    }).click(function() {
+        window.debugcontroller.setLastDay();
+    });
+    
+    $( "#hour-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrow-1-e"
+        }
+    }).click(function() {
+        window.debugcontroller.setLastHour();
+    ;
+    });   
+    
+    $( "#now-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrowthickstop-1-e"
+        }
+    }).click(function() {
+        window.debugcontroller.setNow();
+    ;
+    });  
+    
+    $( "#allmessage-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-battery-3"
+        }
+    }).click(function() {
+        window.debugcontroller.checkall();
+    ;
+    });    
+    
+    $( "#nomessage-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-battery-0"
+        }
+    }).click(function() {
+        window.debugcontroller.checkno();
+    ;
+    });     
+    
+    $( "#print-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-print"
+        }
+    }).click(function() {
+        //window.trendcontroller.setNow();
+    ;
+    });     
+
+    this.startpicker = $('#starttime').datetimepicker({
+        onClose:  function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStart(dt);
+        }
+    }).click(function(){});
+    this.stoppicker = $('#stoptime').datetimepicker({
+        onClose: function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStop(dt);
+        }
+    }).click(function(){});
+    
+    $("#select-panel-debug" ).position({
+        of: $( "#top-menuemain" ),
+        my: 'left bottom',
+        at: 'left top'
+    });  
+    
+    this.setselectpanel(false);
+    
+    var tableheight = $("#inner" )[0].getClientRects ? $("#inner" )[0].getClientRects()[0].height : undefined;
+    
+    
+    this.tabgrid = $("#table-id").jqGrid({
+        data: this.debug,
+        autowidth: true,
+        datatype: "local",
+        height: tableheight ? tableheight : 'auto',
+        scrollrows: true,
+        shrinkToFit: true,
+        sortable: false,
+
+        colNames:[' ', 'Время', 'Текст','App', 'level'],
+        gridComplete: function(){ 
+            var ids = $("#table-id").jqGrid('getDataIDs');
+            for(var i=0;i < ids.length;i++){
+                var imgid = 'table_id_img_'+ids[i];
+                var col =   "<span   class='message-message-icon' id='"+imgid+"'></span>";
+                var row = $("#table-id").jqGrid('getRowData',ids[i]);
+                $("#table-id").jqGrid('setCell',ids[i] ,'icon' ,col);
+                $("#table-id").jqGrid('setRowData',ids[i],undefined,window.debugcontroller ? dbutil.debug_controller.getClass (parseInt(row.level)): undefined);
+                
+            }
+        },
+        colModel:[  
+        {
+            name:'icon',
+            index:'icon',
+            title: false,
+            width: 20,
+            sortable: false
+        },                    
+        {
+            name:'time',
+            index:'time',
+            width: 150,
+            title: false
+            
+        },
+
+        {
+            name:'message',
+            index:'message',
+            width: 600,
+            title: false,
+            sortable: false
+        },
+        {
+            name:'appid',
+            index:'appid',
+            width: 100,
+            title: false,
+            sortable: false
+        },        
+  
+        {
+            name:'level',
+            index:'level',
+            title: false,
+            width: 1
+        },  
+    
+       
+    
+		
+        ],
+   	rowNum: 100000,
+        viewrecords: true,
+        sortable: true,
+        sortname: 'time',
+        sortorder: 'desc'
+   	
+    });
+    
+     this.checkgrid = $("#check-list").jqGrid({
+        data: [],
+        autowidth: true,
+        datatype: "local",
+        height: 150,
+        scrollrows: true,
+        shrinkToFit: true,
+        sortable: false,
+
+        colNames:[' ', 'Тип', ' ', ''],
+        gridComplete: function(){ 
+            var ids = $("#check-list").jqGrid('getDataIDs');
+            for(var i=0;i < ids.length;i++){
+                var imgid = 'checklist_id_img_'+ids[i];          
+                var row = $("#check-list").jqGrid('getRowData',ids[i]);
+                var col =   "<span   class='message-message-icon' id='"+imgid+"'></span>";
+                var cheched=window.debugcontroller.getcheck(ids[i]) ? 'checked="true"' : '';
+                var check =   "<input  style='' type='checkbox' " + cheched + "  onchange=\"window.debugcontroller.setcheck('"+ids[i]+"',this.checked)\"/>";
+                $("#check-list").jqGrid('setCell',ids[i] ,'icon' ,col);
+                $("#check-list").jqGrid('setCell',ids[i] ,'check' ,check)
+                $("#check-list").jqGrid('setRowData',ids[i],undefined,window.debugcontroller ? dbutil.debug_controller.getClass (parseInt(row.level)): undefined);
+                
+            }
+        },
+        colModel:[  
+        {
+            name:'icon',
+            index:'icon',
+            title: false,
+            width: 20,
+            sortable: false
+        },                    
+        {
+            name:'name',
+            index:'name',
+            title: false,      
+            width: 250,
+            sortable: false
+        },
+        {
+            name:'check',
+            index:'check',
+            width: 30,
+            title: false,
+            sortable: false
+        },  
+        {
+            name:'level',
+            index:'level',
+            title: false,
+            width: 1
+        } 
+           
+    
+		
+        ],
+   	rowNum: 100000,
+        viewrecords: true,
+        sortable: true,
+        sortname: 'time',
+        sortorder: 'desc'
+   	
+    });
+    
+    
+
+
+}
+
+dbutil.debug_controller.prototype.attach = function(ev){
+    if (ev.error){
+        dbutil.database.reportError(ev, this);
+        return;
+    }
+    window.debugcontroller = this;
+    this.selecttable()
+    this.connection = ev.connection;
+    this.requested=false;
+    this.setstate(); 
+    dbutil.database.clearmodal();
+    
+}
+
+
+dbutil.debug_controller.prototype.run = function(){
+    var ts=this;
+    this.setselectpanel(false);
+    dbutil.database.modal(dbutil.database.PROCCESS, dbutil.database.MESSAGE_DATAREQUEST);
+    this.connection.select_debug ( function(){var evnt=event;window.debugcontroller.dataresponse(evnt);}, this.start , this.stop, this.filter());
+}
+
+dbutil.debug_controller.prototype.dataresponse = function(ev){
+    if (ev.error){
+        dbutil.database.reportError(ev, this);
+        return;
+    }
+    this.debug = ev.table;
+    dbutil.database.clearmodal();
+    this.filltable();
+}
+
+
+
+dbutil.debug_controller.prototype.filltable = function() {
+    $("#table-id").jqGrid('clearGridData');
+    for (var j=0;j<this.debug.length;++j){
+        var i=j;//this.debug.length-1-j;
+        this.debug[i].time= dbutil.database.date(this.debug[i].time);
+        this.debug[i].icon= '';
+        this.debug[i].rowid=(i+1).toString();} 
+    $("#table-id").jqGrid('addRowData',"rowid" ,this.debug);
+    $("#table-id").trigger("reloadGrid");
+    this.requested=false;
+    this.setstate();
+}
+
+dbutil.debug_controller.prototype.selecttable = function() {
+    this.checkitem=[];
+    for (var i=0;i<dbutil.debug_controller.MESSAGE_TYPE.length;++i){
+        this.checkitem.push(
+        {icon : '',
+         check: '',
+         rowid: dbutil.debug_controller.MESSAGE_TYPE[i].rowid,
+         name: dbutil.debug_controller.MESSAGE_TYPE[i].name,
+         level: dbutil.debug_controller.MESSAGE_TYPE[i].level,
+         type: dbutil.debug_controller.MESSAGE_TYPE[i].type
+    })};
+    $("#check-list").jqGrid('clearGridData');
+    $("#check-list").jqGrid('addRowData',"rowid" ,this.checkitem);
+    $("#check-list").trigger("reloadGrid");
+}
+
+dbutil.debug_controller.prototype.setcheck = function(rowid, state){
+var bitnum=parseInt(rowid);
+if (!bitnum) return false;
+if (state)
+    this.checked = this.checked | (1 << (bitnum-1));
+else
+    this.checked = this.checked & (~(1 << (bitnum-1)));
+this.setstate();
+$("#check-list").trigger("reloadGrid");}
+
+dbutil.debug_controller.prototype.getcheck = function(rowid){
+    var bitnum=parseInt(rowid);
+    if (!bitnum) return false;
+    return (this.checked & (1 << (bitnum-1))) ? true : false;}
+
+dbutil.debug_controller.prototype.checkall = function(rowid){
+this.checked = dbutil.debug_controller.MSG_FULL;
+this.setstate();
+$("#check-list").trigger("reloadGrid");}
+
+dbutil.debug_controller.prototype.checkno = function(rowid){
+this.checked = 0;
+this.setstate();
+$("#check-list").trigger("reloadGrid");}
+
+
+dbutil.debug_controller.prototype.filter = function(){
+  if (this.checked==dbutil.debug_controller.MSG_FULL)
+    return undefined;
+  var rslt=""
+  for (var i=0;i<dbutil.debug_controller.MESSAGE_TYPE.length;++i){
+      if (this.checked & (1 << (i))){
+          rslt+= rslt=="" ? " ( " : " or ";
+          rslt+= "(  \ilevel=" + dbutil.debug_controller.MESSAGE_TYPE[i].level+ " )";}}
+  rslt+= rslt=="" ? " " : " )";
+  //console.log('rslt', rslt);    
+  return rslt;
+}
+
+dbutil.debug_controller.prototype.setStart = function(val){
+    dbutil.database.setStart(val, this, dbutil.debug_controller.MIN_PERIOD, dbutil.debug_controller.MAX_PERIOD);
+}
+
+dbutil.debug_controller.prototype.setStop = function(val){
+    dbutil.database.setStop(val, this, dbutil.debug_controller.MIN_PERIOD, dbutil.debug_controller.HOUR_PERIOD, dbutil.debug_controller.MAX_PERIOD);
+}
+
+
+dbutil.debug_controller.prototype.setLastHour = function(){
+    dbutil.database.setNow(this, dbutil.debug_controller.HOUR_PERIOD);;
+    this.run();
+}
+
+dbutil.debug_controller.prototype.setLastDay = function(){
+    dbutil.database.setNow(this, dbutil.debug_controller.DAY_PERIOD);;
+    this.run();
+}
+
+dbutil.debug_controller.prototype.setNow = function(){
+    dbutil.database.setNow(this);;
+    this.run();
+}
+
+dbutil.debug_controller.prototype.normalizePeriod = function(){
+    this.updatedate();
+    this.requested=false;
+    this.setstate();
+}
+
+dbutil.debug_controller.prototype.updatedate = function(){
+    if (this.stoppicker && this.stop)
+        this.stoppicker.datetimepicker('setDate', (this.stop));
+    if (this.startpicker && this.start)
+        this.startpicker.datetimepicker('setDate', (this.start));        
+}
+
+dbutil.debug_controller.prototype.setstate = function(){
+    $( "#select-button" ).button((this.connection && this.checkitem && this.checkitem.length) ? "enable"  : "disable");
+    $( "#allmessage-button" ).button((this.connection && this.checkitem && this.checkitem.length && this.checked != dbutil.debug_controller.MSG_FULL) ? "enable"  : "disable");
+    $( "#nomessage-button" ).button((this.connection && this.checkitem && this.checkitem.length && this.checked) ? "enable"  : "disable");
+    $( "#run-button" ).button((!this.requested && this.connection && this.checked) ? "enable"  : "disable");
+    $( "#hour-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");
+    $( "#day-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");
+    $( "#now-button" ).button((!this.requested && this.connection) ? "enable"  : "disable");} 
+
+dbutil.debug_controller.prototype.setselectpanel = function(val){
+    var panel = $( "#select-panel-debug" )[0];
+    panel.className = val ? 'ui-widget-content select-panel-visible' : 'ui-widget-content select-panel-hidden';
+    panel.visibility = val ? true : false;   
+}
+
+dbutil.debug_controller.prototype.resetselectpanel = function(){
+    var panel = $( "#select-panel-debug" )[0];
+    this.setselectpanel(!panel.visibility);    
+}
+
+
+
+
+
+
+
+// report_controller
+/*
+    const tagtype  REPORTTYPE_YEAR             = 1  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_MIN              = 0x2  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_HOUR             = 0x3  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_DEC              = 0x4  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_DAY              = 0x5  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_MONTH            = 0x6  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_10MIN            = 0x7  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_30MIN            = 0x8  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_QVART            = 0x9  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_CUSTOM           = 0xA  | TYPE_REPORT;
+    const tagtype  REPORTTYPE_NONE             = 0x0  | TYPE_REPORT;*/
+
+
+  
+dbutil.report_controller = function(){
+    try{
+
+        this.items = [];
+        this.base={}; 
+        this.xmllist = dbutil.database.getXMLData(this, 'ReportList');
+        this.connect();
+    }
+    catch(error){      
+        dbutil.database.modal(dbutil.database.FATAL, error);
+    }  
+};
+
+
+dbutil.report_controller.REPORTTYPE_YEAR             = 1;
+dbutil.report_controller.REPORTTYPE_MIN              = 2;
+dbutil.report_controller.REPORTTYPE_HOUR             = 3;
+dbutil.report_controller.REPORTTYPE_DEC              = 4;
+dbutil.report_controller.REPORTTYPE_DAY              = 5;
+dbutil.report_controller.REPORTTYPE_MONTH            = 6;
+dbutil.report_controller.REPORTTYPE_10MIN            = 7;
+dbutil.report_controller.REPORTTYPE_30MIN            = 8;
+dbutil.report_controller.REPORTTYPE_QVART            = 9;
+
+dbutil.report_controller.getStartReportTime = function(type, time){
+    switch (type){
+      case dbutil.report_controller.REPORTTYPE_YEAR:  {time.setMonth(0);time.setDate(1);time.setHours(0);time.setMinutes(0);time.setSeconds(0);time.setMilliseconds(0);return time;}
+      case dbutil.report_controller.REPORTTYPE_HOUR:  {time.setMinutes(0);time.setSeconds(0);time.setMilliseconds(0);return time;}
+      case dbutil.report_controller.REPORTTYPE_DEC:   {time.setDate( (time.getDate() < 11) ?  1 : (time.getDate() < 21 ? 11 : 21) );time.setHours(0);time.setMinutes(0);time.setSeconds(0);time.setMilliseconds(0);return time;}
+      case dbutil.report_controller.REPORTTYPE_DAY:   {time.setHours(0);time.setMinutes(0);time.setSeconds(0);time.setMilliseconds(0);return time;}
+      case dbutil.report_controller.REPORTTYPE_MONTH: {time.setDate(1);time.setHours(0);time.setMinutes(0);time.setSeconds(0);time.setMilliseconds(0);return time;}
+      case dbutil.report_controller.REPORTTYPE_10MIN: {var minute =parseInt(time.getMinutes()/10)*10;time.setMinutes(minute);time.setSeconds(0);time.setMilliseconds(0);return time;}
+      case dbutil.report_controller.REPORTTYPE_30MIN: {var minute =parseInt(time.getMinutes()/30)*30;time.setMinutes(minute);time.setSeconds(0);time.setMilliseconds(0);return time;}
+      case dbutil.report_controller.REPORTTYPE_QVART: {var month =time.getMonth();time.setMonth( month<7 ? (month<4 ? 1 : 4) : (month<10 ? 7 : 10));time.setDate(1);time.setMinutes(0);time.setSeconds(0);time.setMilliseconds(0);return time;}      
+    }
+    return null;
+}
+
+dbutil.report_controller.getStopReportTime = function(type, time){
+    switch (type){
+      case dbutil.report_controller.REPORTTYPE_YEAR:  {time.setFullYear(time.getFullYear()+1);time = dbutil.report_controller.getStartReportTime(type, time);return time;}
+      case dbutil.report_controller.REPORTTYPE_HOUR:  {time.setHours(time.getHours()+1);time = dbutil.report_controller.getStartReportTime(type, time);return time;}
+      case dbutil.report_controller.REPORTTYPE_DEC:   {if (time.getDate()>20) {time.setDate(1);time.setMonth(time.getMonth()+1);} else time.setDate(time.getDate()+10);time = dbutil.report_controller.getStartReportTime(type, time);return time;}
+      case dbutil.report_controller.REPORTTYPE_DAY:   {time.setHours(time.getHours()+24);time = dbutil.report_controller.getStartReportTime(type, time);return time;}
+      case dbutil.report_controller.REPORTTYPE_MONTH: {time.setMonth(time.getMonth()+1);time = dbutil.report_controller.getStartReportTime(type, time);return time;}
+      case dbutil.report_controller.REPORTTYPE_10MIN: {time.setMinutes(time.getMinutes()+10);time = dbutil.report_controller.getStartReportTime(type, time);return time;}
+      case dbutil.report_controller.REPORTTYPE_30MIN: {time.setMinutes(time.getMinutes()+30);time = dbutil.report_controller.getStartReportTime(type, time);return time;}
+      case dbutil.report_controller.REPORTTYPE_QVART: {time.setMonth(time.getMonth()+3);time = dbutil.report_controller.getStartReportTime(type, time);return time;}      
+    }
+    return null;
+}
+
+dbutil.report_controller.incReportTime = function(type, time , cnt){
+    if (!cnt) return time;
+    switch (type){
+      case dbutil.report_controller.REPORTTYPE_YEAR:  {time.setFullYear(time.getFullYear()+cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_HOUR:  {time.setHours(time.getHours()+cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_DEC:   {if (time.getDate()>20) {time.setDate(1);time.setMonth(time.getMonth()+1);} else time.setDate(time.getDate()+10);return time;}
+      case dbutil.report_controller.REPORTTYPE_DAY:   {time.setHours(time.getDate()+cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_MONTH: {time.setMonth(time.getMonth()+1 * cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_10MIN: {time.setMinutes(time.getMinutes()+10 * cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_30MIN: {time.setMinutes(time.getMinutes()+30 * cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_QVART: {time.setMonth(time.getMonth()+3 * cnt);return time;}      
+    }
+    return null;    
+}
+
+dbutil.report_controller.reportRange = function(type, time){
+    return {start : dbutil.report_controller.getStartReportTime(type, new Date(time)), stop : dbutil.report_controller.getStopReportTime(type, new Date(time))};
+}
+
+dbutil.report_controller.reportRangeTest = function(type, time){
+    return {start : dbutil.database.date(dbutil.report_controller.getStartReportTime(type, time)), stop : dbutil.database.date(dbutil.report_controller.getStopReportTime(type, time))};
+}
+
+
+dbutil.report_controller.MAX_PERIOD = 360000000;
+
+dbutil.report_controller.MIN_PERIOD = 60000;
+
+dbutil.report_controller.MID_PERIOD = 10800000;
+
+
+dbutil.report_controller.prototype.connect = function(noinit){
+    try{
+        var ts = this;
+        this.xml= [];
+        var ts = this;
+        this.xml= []; 
+        this.base = {};
+        this.selected=null;
+        this.connection = undefined;            
+        if (!noinit){ 
+            this.init();}
+        else{
+            //this.updateselect();
+            this.updatelist();
+            this.setselectpanel(false);}
+        //this.setStart(new Date('Sep 10 2012 10:40:42'));
+        //this.setStop(new Date('Sep 10 2012 15:40:42'));
+        //this.setStart(new Date('Sep 04 2012 10:40:42'));
+        //this.setStop(new Date('Sep 04 2012 12:40:42'));         
+        //this.setStart(new Date((new Date()).valueOf() - dbutil.report_controller.MID_PERIOD));
+        //this.setStop(new Date());        
+        this.updatedate();       
+        window.$$connectSCDB( 
+            function(){
+                var evnt= event;
+                setTimeout( function(){
+                    ts.attach(evnt);
+                },0)
+            },
+            ts.provider, ts.connectionstring);
+        dbutil.database.modal(dbutil.database.PROCCESS, dbutil.database.MESSAGE_CONNECTING);
+    }
+    catch(error){      
+        dbutil.database.modal(dbutil.database.FATAL, error);
+    }  
+};
+
+
+dbutil.report_controller.prototype.attach = function(ev){
+    if (ev.error){
+        dbutil.database.reportError(ev, this);
+        return;
+    }
+    window.reportcontroller = this;
+    this.connection = ev.connection;
+    this.inittags(ev.tags);
+    this.parseXMLData();
+    //if (!this.xml.length){
+    //    dbutil.database.modal(dbutil.database.FATAL, dbutil.database.ERROR_WR_APPTRINFO  + dbutil.database.APPINFOFILE);
+    //    return;
+    //}
+    this.updatelist();
+
+    this.requested=false;
+    this.setstate(); 
+    dbutil.database.clearmodal();
+    
+}
+
+
+
+dbutil.report_controller.prototype.parseXMLData = function(){
+    this.xml=[];
+    var j=0;
+    for(var e=this.xmllist.firstElementChild; e; e=e.nextElementSibling){
+        var lst= e.getAttribute("name");                       
+        for(var el=e.firstElementChild; el; el=el.nextElementSibling){
+            var arr= el.getAttribute("name");
+            var delt = el.getAttribute("delt") ? parseInt(el.getAttribute("delt"))  : 0;
+            var group = el.getAttribute("group") ? parseInt(el.getAttribute("group")) : 1;
+            var sum = el.getAttribute("sum") ? parseInt(el.getAttribute("sum")) : 1;
+            var type = el.getAttribute("type") ? parseInt(el.getAttribute("type")) : 0;  
+            var initperiod = el.getAttribute("initperiod") ? parseInt(el.getAttribute("initperiod")) : 0;
+            var subperiod = el.getAttribute("subperiod") ? parseInt(el.getAttribute("subperiod")) : 0;            
+            var tags=[];
+            for(var et=el.firstElementChild; et; et=et.nextElementSibling){                               
+                var tg = et.getAttribute("tg");
+                var color = et.getAttribute("color");
+                var sumtype = et.getAttribute("sumtype") ? et.getAttribute("sumtype") : 1;
+                var round = et.getAttribute("round") ? et.getAttribute("round") : 0;
+                if (/*this.base[tg]*/true)
+                        tags.push({
+                        tag: tg,
+                        color: color,
+                        sumtype: sumtype,
+                        round: round
+                    })                         
+            }
+            this.xml.push({
+                list: lst,
+                name: arr,
+                delt: delt,
+                group: group,
+                sum: sum,
+                type: type,
+                initperiod: initperiod,
+                subperiod: subperiod,
+                tags: tags
+            });            
+        }
+    }   
+}
+
+
+
+dbutil.report_controller.prototype.inittags = function(val){
+    this.base = {};
+    for (var i=0;i<val.length;++i){
+        this.base[val[i].name] = val[i];
+    }
+}
+
+
+dbutil.report_controller.prototype.init = function(){
+    
+    dbutil.database.datepickerset();
+                         
+    $('body').layout({ 
+        north__size:			32 
+        ,	
+        spacing_open:			0 
+        ,	
+        spacing_closed:			0 
+        ,	
+        north__spacing_open:	        0
+                    
+    });   
+                
+    $("#inner").layout({
+        south__size:			200 
+        ,	
+        spacing_open:			0 
+        ,	
+        spacing_closed:			0 
+    }); 
+                
+    var ts=this;    
+    
+    $( "#run-button" ).button({
+        text: false,
+        disabled: true,
+        icons: {
+            primary: "ui-icon-arrowrefresh-1-w"
+        }
+    }).click(function() {
+        window.reportcontroller.run();
+    ;
+    })
+
+    $( "#select-button" ).button({
+        text: false,
+        disabled: true,       
+        icons: {
+            primary: "ui-icon-suitcase"
+        }
+    }).click(function() {
+        window.reportcontroller.resetselectpanel();
+    ;
+    });
+    
+    $( "#noparam-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-battery-0"
+        }
+    }).click(function() {
+        window.reportcontroller.removeall();
+    ;
+    });    
+    
+    
+    $( "#left-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrow-1-w"
+        }
+    }).click(function() {
+        window.reportcontroller.setLeft();
+    });
+    
+    $( "#right-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrow-1-e"
+        }
+    }).click(function() {
+        window.reportcontroller.setRight();
+    ;
+    });   
+    
+    $( "#now-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-arrowthickstop-1-e"
+        }
+    }).click(function() {
+        window.reportcontroller.setNow();
+    ;
+    });  
+    
+    $( "#print-button" ).button({
+        text: false,
+        disabled: true,        
+        icons: {
+            primary: "ui-icon-print"
+        }
+    }).click(function() {
+        //window.reportcontroller.setNow();
+    ;
+    });     
+
+
+    $("#select-panel-report" ).position({
+        of: $( "#top-menuemain" ),
+        my: 'left bottom',
+        at: 'left top'
+    });    
+    
+    this.setselectpanel(false);
+    
+    var panelheight = $("#select-panel-report" )[0].getClientRects ? $("#select-panel-report" )[0].getClientRects()[0].height : undefined;
+    
+    this.startpicker = $('#starttime').datetimepicker({
+        onClose:  function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStart(dt);
+        }
+    }).click(function(){ts.setselectpanel(false);});
+    this.stoppicker = $('#stoptime').datetimepicker({
+        onClose: function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStop(dt);
+        }
+    }).click(function(){ts.setselectpanel(false);});;  
+    
+    
+    this.listgrid = $("#list").jqGrid({
+        data: this.xml,
+        autowidth: true,
+        datatype: "local",
+        height: panelheight ? panelheight : 'auto',
+        scrollrows: true,
+        shrinkToFit: true,
+        cellLayout: 1,
+        colNames:['list','Наименование'], 
+        beforeSelectRow: function(){
+            $("#list").jqGrid('resetSelection');
+            return true;
+        },
+        onSelectRow: function (rowId, status, e) {
+            var row = $("#list").jqGrid('getRowData',rowId);
+            ts.select(status ? rowId : undefined);      
+        },
+        colModel:[
+        {
+            name:'list',
+            index:'list',  
+            width:1, 
+            hidden: true
+        },
+        {
+            name:'name',
+            index:'name', 
+            width:1000
+        }
+        
+    
+		
+        ],
+        rowNum: 100000,
+        //treeIcons: {plus:'ui-icon-circle-arrow-e',minus:'ui-icon-triangle-1-s',leaf:'ui-icon-radio-off'},
+   	hidegrid: false,
+        viewrecords: true,
+        grouping:true,
+        multiselect: true,
+        groupingView : {
+            groupField : ['list'],
+            groupSummary : [false],
+            groupColumnShow : [false],
+            groupText : ['<b>{0}</b>'],
+            groupCollapse : true,
+            groupOrder: ['asc'],
+            groupCollapse: true
+        },
+        
+        caption: 'Выбор отчета'
+   	
+    });
+      
+                              
+}; 
+
+
+
+dbutil.report_controller.prototype.updatelist = function( req ) {
+    $("#list").jqGrid('clearGridData');
+    for (var i=0;i<this.xml.length;++i)
+        this.xml[i].rowid=(i).toString();
+        $("#list").jqGrid('addRowData',"rowid",this.xml);   
+        $("#list").trigger("reloadGrid");
+}
+
+
+dbutil.report_controller.prototype.select = function(val){
+    //console.log('rowid', val)
+    this.selected = val ? this.xml[parseInt(val)] : undefined;
+    if (this.selected)
+        this.selectedtime = dbutil.report_controller.reportRange(this.selected.type , dbutil.report_controller.incReportTime(this.selected.type, new Date(), -this.selected.initperiod));
+    if (this.selectedtime && this.selectedtime.start && this.selectedtime.stop){
+        this.setStart(this.selectedtime.start);
+        this.setStop(this.selectedtime.stop);        
+        this.updatedate();        
+    }
+    else
+        {
+        this.selected = undefined;
+        }
+    this.showselect();
+}    
+
+dbutil.report_controller.prototype.showselect = function(){
+    var header = this.selected  ? (this.selected.list + '. '+ this.selected.name) : 'Не выбрано.';
+    header = header + ((this.selectedtime && this.selected)  ? (' c ' + dbutil.database.date(this.selectedtime.start) + ' по '+ dbutil.database.date(this.selectedtime.stop)) : '');
+    if (document.getElementById('report-header')) 
+        document.getElementById('report-header').textContent=header;
+} 
+
+
+
+dbutil.report_controller.prototype.run = function(){
+    this.setselectpanel(false);
+    dbutil.database.modal(dbutil.database.PROCCESS, dbutil.database.MESSAGE_DATAREQUEST );
+    var ts = this;
+    ts.requested=true;
+    ts.setstate();   
+}
+
+
+dbutil.report_controller.prototype.setStart = function(val){
+    this.start=val;
+}
+
+dbutil.report_controller.prototype.setStop = function(val){
+    this.stop=val;
+}
+
+dbutil.report_controller.prototype.setLeft = function(){
+    if (this.start && this.stop && this.selected){
+        var tm= new Date( (this.start.valueOf() + this.stop.valueOf()) /2);
+        this.selectedtime = dbutil.report_controller.reportRange(this.selected.type , dbutil.report_controller.incReportTime(this.selected.type, tm, -1));
+        this.updatedate();
+    }
+}
+
+dbutil.report_controller.prototype.setRight = function(){
+    if (this.start && this.stop &&  this.selected && (this.stop < new Date())){
+        var tm= new Date( (this.start.valueOf() + this.stop.valueOf()) /2);
+        this.selectedtime = dbutil.report_controller.reportRange(this.selected.type , dbutil.report_controller.incReportTime(this.selected.type, tm, 1));
+        this.updatedate();
+    }
+}
+
+dbutil.report_controller.prototype.setNow = function(){
+    if (this.start && this.stop &&  this.selected && (this.stop < new Date())){
+        var tm= new Date();
+        this.selectedtime = dbutil.report_controller.reportRange(this.selected.type , dbutil.report_controller.incReportTime(this.selected.type, tm, 1));
+        this.updatedate();
+    }
+}
+
+dbutil.report_controller.prototype.normalizePeriod = function(){
+    this.updatedate();
+    this.requested=false;
+    this.setstate();
+}
+
+dbutil.report_controller.prototype.updatedate = function(){
+    if (this.stoppicker)
+        this.stoppicker.datetimepicker('setDate', (this.stop));
+    if (this.startpicker)
+        this.startpicker.datetimepicker('setDate', (this.start));        
+}
+
+
+
+dbutil.report_controller.prototype.setselectpanel = function(val){
+    var panel = $( "#select-panel-report" )[0];
+    panel.className = val ? 'ui-widget-content select-panel-visible' : 'ui-widget-content select-panel-hidden';
+    panel.visibility = val ? true : false;   
+}
+
+dbutil.report_controller.prototype.resetselectpanel = function(){
+    var panel = $( "#select-panel-report" )[0];
+    this.setselectpanel(!panel.visibility);    
+}
+
+
+dbutil.report_controller.prototype.setstate = function(){
+    $( "#run-button" ).button((this.selected && this.start && this.stop && !this.requested && this.connection) ? "enable"  : "disable");
+    $( "#left-button" ).button((this.selected && this.start && this.stop  && !this.requested && this.connection) ? "enable"  : "disable");
+    $( "#right-button" ).button((this.selected && this.start && this.stop  && !this.requested && this.connection) ? "enable"  : "disable");
+    $( "#now-button" ).button((this.selected && this.start && this.stop && !this.requested && this.connection) ? "enable"  : "disable");    
+    $( "#select-button" ).button((this.xml.length) ? "enable"  : "disable");
+    $( "#noparam-button" ).button((this.items.length && !this.requested && this.connection) ? "enable"  : "disable");
+    $( "#print-button" ).button((false) ? "enable"  : "disable");
+    if (!this.selected && this.xml.length)
+        this.setselectpanel(true);
+}
