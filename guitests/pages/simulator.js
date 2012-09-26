@@ -226,7 +226,7 @@ simulator.random_value = function(tag ,mediana, deviation){
 simulator.random_value.prototype.atach = function(){
     
     var ts = this;
-    $$(ts.tag + ' @ (' + ts.mediana + ' * ('+ts.tag + '.maxeu - '+ts.tag + '.mineu) + '+ts.tag + '.mineu)');
+    $$(ts.tag + ' @ (' + ts.mediana + ' )');
  
     
     
