@@ -64,6 +64,13 @@
             });    
                   
         </script>
+        
+        <style  type="text/css">
+            #inner{
+                background-color: #ddd;
+            }
+        </style>
+        
     </head>
 
     <body>              
@@ -87,7 +94,7 @@
                 c
                 <input type="text" id="starttime" class="datetime-selector-ui ui-widget-header" value="" /> 
                 по
-                <input type="text" id="stoptime" class="datetime-selector-ui ui-widget-header" value="" />
+                <input type="text" id="stoptime" readonly="readonly" disabled="disabled" class="datetime-selector-ui ui-widget-header" value="" />
                 <span class="toolbar-delimeter-space" style="width: 10px;"></span>
                 <button id="right-button">На период позже</button>
                 <button id="now-button">К настоященму времени</button>  
@@ -98,9 +105,9 @@
             </div>          
         </div>
         <div class="ui-layout-center" id="inner">
-            <div class="ui-layout-center">
-                <div id="chart-id">
-                </div>
+            <div class="ui-layout-center-report">
+                 <div id="report-table-header"></div>
+                 <table id="report-table"></table> 
             </div> 
             <!--div id="select-table-bottom" class="ui-layout-south">
                    <table id="selectlist"></table>

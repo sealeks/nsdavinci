@@ -218,9 +218,10 @@ dbutil.database.setLeft = function(self){
     //self.run();
 }
 
-dbutil.database.setRight = function(self){
+dbutil.database.setRight = function(self, min){
+    var minperiod = min ? min : 0;
     var period = (self.stop.valueOf()-self.start.valueOf());
-    if ((new Date()).valueOf()<self.stop.valueOf()) {
+    if ((new Date()).valueOf()<(minperiod + period + self.start.valueOf())) {
        self.start=new Date((new Date()).valueOf() - period);
        self.stop=new Date(self.start.valueOf() + period);         
     }
@@ -247,6 +248,35 @@ dbutil.database.date = function(date){
     return '' + y +'-'+ (m<=9?'0'+m:m) +'-'+ (d<=9?'0'+d:d) + '  ' + date.toLocaleTimeString();
 }
 
+
+dbutil.database.createDatePicker = function(self, period){
+    var ts=self;
+    var perd = period ? period : 0;
+    ts.startpicker = $('#starttime').datetimepicker({
+        onClose:  function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStart(dt);
+        }
+    }).mouseenter(function(){
+        $(this).datetimepicker('option', 'maxDate', new Date(new Date().valueOf()-perd));
+        return false;
+    }).click(function(){
+        ts.setselectpanel(false);
+    });
+    ts.stoppicker = $('#stoptime').datetimepicker({
+        onClose: function(){
+            var dt = $(this).datetimepicker('getDate');
+            ts.setStop(dt);
+        }
+    }).mouseenter(function(){
+        $(this).datetimepicker('option', 'maxDate', new Date());
+        return false;
+    }).click(function(){
+        ts.setselectpanel(false);
+    });
+}    
+    
+    
 // trend_controller
   
 dbutil.trend_controller = function(){
@@ -513,19 +543,7 @@ dbutil.trend_controller.prototype.init = function(){
     var panelheight = $("#select-panel-trend" )[0].getClientRects ? $("#select-panel-trend" )[0].getClientRects()[0].height : undefined;
     var bottomheight = $("#select-table-bottom" )[0].getClientRects ? $("#select-table-bottom" )[0].getClientRects()[0].height : undefined;
     
-    this.startpicker = $('#starttime').datetimepicker({
-        onClose:  function(){
-            var dt = $(this).datetimepicker('getDate');
-            ts.setStart(dt);
-        }
-    }).click(function(){ts.setselectpanel(false);});
-    this.stoppicker = $('#stoptime').datetimepicker({
-        onClose: function(){
-            var dt = $(this).datetimepicker('getDate');
-            ts.setStop(dt);
-        }
-    }).click(function(){ts.setselectpanel(false);});;  
-    
+    dbutil.database.createDatePicker(this, dbutil.trend_controller.MIN_PERIOD);  
     
     this.listgrid = $("#list").jqGrid({
         data: this.xml,
@@ -965,7 +983,7 @@ dbutil.trend_controller.prototype.setLeft = function(){
 }
 
 dbutil.trend_controller.prototype.setRight = function(){
-    dbutil.database.setRight(this);
+    dbutil.database.setRight(this, dbutil.trend_controller.MIN_PERIOD);
 }
 
 dbutil.trend_controller.prototype.setNow = function(){
@@ -1195,11 +1213,11 @@ dbutil.journal_controller.prototype.connect = function(){
         this.xml= [];
         this.journal= [];
         this.init();
-        this.setStart(new Date('Sep 01 2012 10:40:42'));
+        //this.setStart(new Date('Sep 01 2012 10:40:42'));
         //this.setStop(new Date('Sep 10 2012 15:40:42'));
         //this.setStart(new Date('Sep 04 2012 10:40:42'));
         //this.setStop(new Date('Sep 04 2012 12:40:42'));         
-        //this.setStart(new Date((new Date()).valueOf() - dbutil.journal_controller.DAY_PERIOD));
+        this.setStart(new Date((new Date()).valueOf() - dbutil.journal_controller.DAY_PERIOD));
         this.setStop(new Date());        
         this.updatedate();       
         window.$$connectSCDB( 
@@ -1331,18 +1349,7 @@ dbutil.journal_controller.prototype.init = function(){
     ;
     });     
 
-    this.startpicker = $('#starttime').datetimepicker({
-        onClose:  function(){
-            var dt = $(this).datetimepicker('getDate');
-            ts.setStart(dt);
-        }
-    }).click(function(){});
-    this.stoppicker = $('#stoptime').datetimepicker({
-        onClose: function(){
-            var dt = $(this).datetimepicker('getDate');
-            ts.setStop(dt);
-        }
-    }).click(function(){});
+    dbutil.database.createDatePicker(this, dbutil.journal_controller.MIN_PERIOD);
     
     $("#select-panel-journal" ).position({
         of: $( "#top-menuemain" ),
@@ -1767,12 +1774,12 @@ dbutil.debug_controller.prototype.connect = function(){
         this.xml= [];
         this.debug= [];
         this.init();
-        this.setStart(new Date('Sep 01 2012 10:40:42'));
+        //this.setStart(new Date('Sep 01 2012 10:40:42'));
         //this.setStop(new Date('Sep 10 2012 15:40:42'));
         //this.setStart(new Date('Sep 04 2012 10:40:42'));
         //this.setStop(new Date('Sep 04 2012 12:40:42'));         
-        //this.setStart(new Date((new Date()).valueOf() - dbutil.debug_controller.DAY_PERIOD));
-        this.setStop(/*new Date()*/new Date('Sep 21 2012 10:40:42'));        
+        this.setStart(new Date((new Date()).valueOf() - dbutil.debug_controller.DAY_PERIOD));
+        this.setStop(new Date());        
         this.updatedate();       
         window.$$connectSCDB( 
             function(){
@@ -1903,18 +1910,7 @@ dbutil.debug_controller.prototype.init = function(){
     ;
     });     
 
-    this.startpicker = $('#starttime').datetimepicker({
-        onClose:  function(){
-            var dt = $(this).datetimepicker('getDate');
-            ts.setStart(dt);
-        }
-    }).click(function(){});
-    this.stoppicker = $('#stoptime').datetimepicker({
-        onClose: function(){
-            var dt = $(this).datetimepicker('getDate');
-            ts.setStop(dt);
-        }
-    }).click(function(){});
+    dbutil.database.createDatePicker(this, dbutil.trend_controller.MIN_PERIOD);
     
     $("#select-panel-debug" ).position({
         of: $( "#top-menuemain" ),
@@ -2306,7 +2302,7 @@ dbutil.report_controller.incReportTime = function(type, time , cnt){
       case dbutil.report_controller.REPORTTYPE_YEAR:  {time.setFullYear(time.getFullYear()+cnt);return time;}
       case dbutil.report_controller.REPORTTYPE_HOUR:  {time.setHours(time.getHours()+cnt);return time;}
       case dbutil.report_controller.REPORTTYPE_DEC:   {if (time.getDate()>20) {time.setDate(1);time.setMonth(time.getMonth()+1);} else time.setDate(time.getDate()+10);return time;}
-      case dbutil.report_controller.REPORTTYPE_DAY:   {time.setHours(time.getDate()+cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_DAY:   {time.setDate(time.getDate()+cnt);return time;}
       case dbutil.report_controller.REPORTTYPE_MONTH: {time.setMonth(time.getMonth()+1 * cnt);return time;}
       case dbutil.report_controller.REPORTTYPE_10MIN: {time.setMinutes(time.getMinutes()+10 * cnt);return time;}
       case dbutil.report_controller.REPORTTYPE_30MIN: {time.setMinutes(time.getMinutes()+30 * cnt);return time;}
@@ -2315,14 +2311,47 @@ dbutil.report_controller.incReportTime = function(type, time , cnt){
     return null;    
 }
 
+dbutil.report_controller.getColumnName = function(type, time){
+    var timet = new Date(time.valueOf()-1);
+    switch (type){
+      case dbutil.report_controller.REPORTTYPE_YEAR:  {return timet.getMonth();}
+      case dbutil.report_controller.REPORTTYPE_HOUR:  {return timet.getMinutes();}
+      case dbutil.report_controller.REPORTTYPE_DEC:   {return timet.getDate();}
+      case dbutil.report_controller.REPORTTYPE_DAY:   {return timet.getHours();}
+      case dbutil.report_controller.REPORTTYPE_MONTH: {return timet.getDate();}
+      case dbutil.report_controller.REPORTTYPE_MIN: {return timet.getMinutes();}      
+      case dbutil.report_controller.REPORTTYPE_10MIN: {return timet.getMinutes();}
+      case dbutil.report_controller.REPORTTYPE_30MIN: {return timet.getMinutes();}
+      case dbutil.report_controller.REPORTTYPE_QVART: {return  timet.getMonth();}      
+    }
+    return time.valueOf();    
+}
+
+
+dbutil.report_controller.setOptionPicker = function(type){
+    switch (type){
+      case dbutil.report_controller.REPORTTYPE_YEAR:  {time.setFullYear(time.getFullYear()+cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_HOUR:  {time.setHours(time.getHours()+cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_DEC:   {if (time.getDate()>20) {time.setDate(1);time.setMonth(time.getMonth()+1);} else time.setDate(time.getDate()+10);return time;}
+      case dbutil.report_controller.REPORTTYPE_DAY:   {time.setDate(time.getDate()+cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_MONTH: {time.setMonth(time.getMonth()+1 * cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_10MIN: {time.setMinutes(time.getMinutes()+10 * cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_30MIN: {time.setMinutes(time.getMinutes()+30 * cnt);return time;}
+      case dbutil.report_controller.REPORTTYPE_QVART: {time.setMonth(time.getMonth()+3 * cnt);return time;}      
+    }
+    return null;    
+}
+
+
+
 dbutil.report_controller.reportRange = function(type, time){
     return {start : dbutil.report_controller.getStartReportTime(type, new Date(time)), stop : dbutil.report_controller.getStopReportTime(type, new Date(time))};
 }
 
-dbutil.report_controller.reportRangeTest = function(type, time){
-    return {start : dbutil.database.date(dbutil.report_controller.getStartReportTime(type, time)), stop : dbutil.database.date(dbutil.report_controller.getStopReportTime(type, time))};
-}
 
+dbutil.report_controller.setDatePickerOption = function(self, type){
+
+}
 
 dbutil.report_controller.MAX_PERIOD = 360000000;
 
@@ -2343,15 +2372,9 @@ dbutil.report_controller.prototype.connect = function(noinit){
         if (!noinit){ 
             this.init();}
         else{
-            //this.updateselect();
             this.updatelist();
             this.setselectpanel(false);}
-        //this.setStart(new Date('Sep 10 2012 10:40:42'));
-        //this.setStop(new Date('Sep 10 2012 15:40:42'));
-        //this.setStart(new Date('Sep 04 2012 10:40:42'));
-        //this.setStop(new Date('Sep 04 2012 12:40:42'));         
-        //this.setStart(new Date((new Date()).valueOf() - dbutil.report_controller.MID_PERIOD));
-        //this.setStop(new Date());        
+    
         this.updatedate();       
         window.$$connectSCDB( 
             function(){
@@ -2378,10 +2401,6 @@ dbutil.report_controller.prototype.attach = function(ev){
     this.connection = ev.connection;
     this.inittags(ev.tags);
     this.parseXMLData();
-    //if (!this.xml.length){
-    //    dbutil.database.modal(dbutil.database.FATAL, dbutil.database.ERROR_WR_APPTRINFO  + dbutil.database.APPINFOFILE);
-    //    return;
-    //}
     this.updatelist();
 
     this.requested=false;
@@ -2560,7 +2579,7 @@ dbutil.report_controller.prototype.init = function(){
     this.startpicker = $('#starttime').datetimepicker({
         onClose:  function(){
             var dt = $(this).datetimepicker('getDate');
-            ts.setStart(dt);
+            ts.setTime(dt);
         }
     }).click(function(){ts.setselectpanel(false);});
     this.stoppicker = $('#stoptime').datetimepicker({
@@ -2568,7 +2587,7 @@ dbutil.report_controller.prototype.init = function(){
             var dt = $(this).datetimepicker('getDate');
             ts.setStop(dt);
         }
-    }).click(function(){ts.setselectpanel(false);});;  
+    }).click(function(){ts.setselectpanel(false);});  
     
     
     this.listgrid = $("#list").jqGrid({
@@ -2605,7 +2624,6 @@ dbutil.report_controller.prototype.init = function(){
 		
         ],
         rowNum: 100000,
-        //treeIcons: {plus:'ui-icon-circle-arrow-e',minus:'ui-icon-triangle-1-s',leaf:'ui-icon-radio-off'},
    	hidegrid: false,
         viewrecords: true,
         grouping:true,
@@ -2628,7 +2646,6 @@ dbutil.report_controller.prototype.init = function(){
 }; 
 
 
-
 dbutil.report_controller.prototype.updatelist = function( req ) {
     $("#list").jqGrid('clearGridData');
     for (var i=0;i<this.xml.length;++i)
@@ -2646,14 +2663,72 @@ dbutil.report_controller.prototype.select = function(val){
     if (this.selectedtime && this.selectedtime.start && this.selectedtime.stop){
         this.setStart(this.selectedtime.start);
         this.setStop(this.selectedtime.stop);        
-        this.updatedate();        
+        this.updatedate();
+        this.setstate();      
     }
     else
         {
         this.selected = undefined;
+       
         }
+    $("#report-table").jqGrid('GridUnload',true);
     this.showselect();
 }    
+
+
+dbutil.report_controller.prototype.tags = function(){
+    var tags = [];
+    if (this.selected.tags){
+         for (var i=0;i<this.selected.tags.length;++i)
+             tags.push(this.selected.tags[i].tag)
+    }
+return tags;
+}
+
+dbutil.report_controller.prototype.run = function(){
+    this.setselectpanel(false);
+    var ts = this;
+    if (this.connection && this.selected){
+        dbutil.database.modal(dbutil.database.PROCCESS, dbutil.database.MESSAGE_DATAREQUEST );
+        this.connection.select_reports( function(){var evnt = event;ts.dataresponse(evnt);}, ts.tags() , ts.start, ts.stop);
+    }
+    ts.requested=true;
+    ts.setstate();   
+}
+
+dbutil.report_controller.prototype.dataresponse = function(ev){
+    if (ev.error){
+        dbutil.database.reportError(ev, this);
+        return;
+    }
+    this.data = ev;
+    var table = [];
+    var header = ['name', 'comment' , 'eu'];
+    var tgs = this.selected.tags;
+    var headermodel = [{name: 'name', index: 'name',title: false,sortable: false, width : 80, fixed: true},{name: 'comment', index: 'comment',title: false,sortable: false, width: 250, fixed: true},{name: 'eu', index: 'eu',title: false,sortable: false}];
+    for (var i=0;i<this.data.tags.length;++i){
+        var row = {};
+        row.name=this.data.tags[i].name;
+        row.comment=this.base[row.name] ? this.base[row.name].comment : '';
+        row.eu=this.base[row.name] ? this.base[row.name].eu : '';
+        for (var j=0;j<this.data.tags[i].data.length;++j){
+            if (i==0){
+                headermodel.push({index: this.data.tags[i].data[j][0].getMinutes().toString(), name: this.data.tags[i].data[j][0].valueOf().toString(),
+                                  title: false,sortable: false, align: 'center'});
+                header.push(dbutil.report_controller.getColumnName(parseInt(this.selected.type), this.data.tags[i].data[j][0]));}
+            row[this.data.tags[i].data[j][0].valueOf().toString()]=this.data.tags[i].data[j][1].toFixed(tgs[i] && tgs[i].round ? parseInt(tgs[i].round) : 2);
+        }  
+        table.push(row);
+    }
+    this.table = table;
+    this.header=header;
+    this.headermodel=headermodel;
+    
+    dbutil.database.clearmodal();   
+    this.showreport();
+    this.requested=false;
+    this.setstate();
+}
 
 dbutil.report_controller.prototype.showselect = function(){
     var header = this.selected  ? (this.selected.list + '. '+ this.selected.name) : 'Не выбрано.';
@@ -2662,16 +2737,20 @@ dbutil.report_controller.prototype.showselect = function(){
         document.getElementById('report-header').textContent=header;
 } 
 
-
-
-dbutil.report_controller.prototype.run = function(){
-    this.setselectpanel(false);
-    dbutil.database.modal(dbutil.database.PROCCESS, dbutil.database.MESSAGE_DATAREQUEST );
-    var ts = this;
-    ts.requested=true;
-    ts.setstate();   
-}
-
+dbutil.report_controller.prototype.showreport = function(){
+     var tablewidth = $("#inner" ).length &&  $("#inner" )[0].getClientRects ? $("#inner" )[0].getClientRects()[0].width : undefined;
+     $("#report-table").jqGrid({
+        data: this.table,
+        //width: tablewidth * 0.8,
+        autowidth: true,
+        height: 'auto',
+        datatype: "local",
+        scrollrows: true,
+        shrinkToFit: true,
+        colNames: this.header, 
+        colModel:this.headermodel
+     });
+} 
 
 dbutil.report_controller.prototype.setStart = function(val){
     this.start=val;
@@ -2681,11 +2760,32 @@ dbutil.report_controller.prototype.setStop = function(val){
     this.stop=val;
 }
 
+dbutil.report_controller.prototype.setTime = function(val){
+    if (this.selected)    
+        this.selectedtime = dbutil.report_controller.reportRange(this.selected.type , dbutil.report_controller.incReportTime(this.selected.type, val));
+    if (this.selectedtime && this.selectedtime.start && this.selectedtime.stop){
+        this.setStart(this.selectedtime.start);
+        this.setStop(this.selectedtime.stop);        
+        this.updatedate();
+        this.setstate();
+        this.showselect();   
+        $("#report-table").jqGrid('GridUnload',true);
+        this.run();}
+}
+    
+    
+
 dbutil.report_controller.prototype.setLeft = function(){
     if (this.start && this.stop && this.selected){
         var tm= new Date( (this.start.valueOf() + this.stop.valueOf()) /2);
         this.selectedtime = dbutil.report_controller.reportRange(this.selected.type , dbutil.report_controller.incReportTime(this.selected.type, tm, -1));
+        this.setStart(this.selectedtime.start);
+        this.setStop(this.selectedtime.stop);             
         this.updatedate();
+        this.setstate();
+        this.showselect();
+        $("#report-table").jqGrid('GridUnload',true);
+        this.run();
     }
 }
 
@@ -2693,15 +2793,27 @@ dbutil.report_controller.prototype.setRight = function(){
     if (this.start && this.stop &&  this.selected && (this.stop < new Date())){
         var tm= new Date( (this.start.valueOf() + this.stop.valueOf()) /2);
         this.selectedtime = dbutil.report_controller.reportRange(this.selected.type , dbutil.report_controller.incReportTime(this.selected.type, tm, 1));
+        this.setStart(this.selectedtime.start);
+        this.setStop(this.selectedtime.stop);             
         this.updatedate();
+        this.setstate();
+        this.showselect();
+        $("#report-table").jqGrid('GridUnload',true);
+        this.run();        
     }
 }
 
 dbutil.report_controller.prototype.setNow = function(){
     if (this.start && this.stop &&  this.selected && (this.stop < new Date())){
         var tm= new Date();
-        this.selectedtime = dbutil.report_controller.reportRange(this.selected.type , dbutil.report_controller.incReportTime(this.selected.type, tm, 1));
+        this.selectedtime = dbutil.report_controller.reportRange(this.selected.type , dbutil.report_controller.incReportTime(this.selected.type, tm));
+        this.setStart(this.selectedtime.start);
+        this.setStop(this.selectedtime.stop);             
         this.updatedate();
+        this.setstate();
+        this.showselect();
+        $("#report-table").jqGrid('GridUnload',true);
+        this.run();        
     }
 }
 
@@ -2717,8 +2829,6 @@ dbutil.report_controller.prototype.updatedate = function(){
     if (this.startpicker)
         this.startpicker.datetimepicker('setDate', (this.start));        
 }
-
-
 
 dbutil.report_controller.prototype.setselectpanel = function(val){
     var panel = $( "#select-panel-report" )[0];
@@ -2742,4 +2852,9 @@ dbutil.report_controller.prototype.setstate = function(){
     $( "#print-button" ).button((false) ? "enable"  : "disable");
     if (!this.selected && this.xml.length)
         this.setselectpanel(true);
+    var header = this.selected  ? (this.selected.list + '. '+ this.selected.name) : 'Не выбрано.';
+    header = header + ((this.selectedtime && this.selected)  ? (' c ' + dbutil.database.date(this.selectedtime.start) + ' по '+ dbutil.database.date(this.selectedtime.stop)) : '');
+   if (document.getElementById('report-table-header') && this.selected) 
+        document.getElementById('report-table-header').textContent=header;
+    
 }
