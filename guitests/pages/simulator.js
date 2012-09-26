@@ -55,13 +55,13 @@ simulator.initializer = function(tag ,start , stop){
 
 simulator.initializer.prototype.atach = function(){
     if (this.valid && (this.start || this.start==0 || this.start===null)) {
-       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
+       window.$$(this.tag + ' @= ' + (this.start===null ? 'null' : this.start).toString());}
 }
 
 
 simulator.initializer.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
-       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
+       window.$$(this.tag + ' @= ' + (this.stop===null ? 'null' : this.stop).toString());}
 }
 
 simulator.initializer.prototype.execute = function(){
@@ -88,17 +88,17 @@ simulator.valueobserver = function(tag ,start , source ,stop){
 
 simulator.valueobserver.prototype.atach = function(){
     if (this.valid && (this.start || this.start==0 || this.start===null)) {
-       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
+       window.$$(this.tag + ' @= ' + (this.start===null ? 'null' : this.start).toString());}
 }
 
 
 simulator.valueobserver.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
-       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
+       window.$$(this.tag + ' @= ' + (this.stop===null ? 'null' : this.stop).toString());}
 }
 
 simulator.valueobserver.prototype.execute = function(){
-    $$(' ' + this.tag + ' @ (' + this.source + ')');
+    $$(' ' + this.tag + ' @= (' + this.source + ')');
 }
 
 
@@ -134,13 +134,13 @@ simulator.booldelayer.prototype.atach = function(){
     }
     
     if (this.valid && (this.start || this.start==0 || this.start===null)) {
-       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
+       window.$$(this.tag + ' @= ' + (this.start===null ? 'null' : this.start).toString());}
 }
 
 
 simulator.booldelayer.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
-       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
+       window.$$(this.tag + ' @= ' + (this.stop===null ? 'null' : this.stop).toString());}
     if (this.sourcehandler && this.sourceset)
         this.sourceset.unregist();
 }
@@ -153,9 +153,9 @@ simulator.booldelayer.prototype.sourceevent = function(){
     if (event.expression==this.source && event.valid){     
         var ts = this;
         if (event.value && this.onvalue!==undefined && !ts.state)
-        setTimeout(function(){console.log('on delay fire');$$(ts.tag +' @ '+ts.onvalue);ts.state = 1;}, ts.ontimeout );
+        setTimeout(function(){console.log('on delay fire');$$(ts.tag +' @= '+ts.onvalue);ts.state = 1;}, ts.ontimeout );
         if (!event.value && this.offvalue!==undefined && ts.state)
-        setTimeout(function(){console.log('off delay fire');$$(ts.tag +' @ '+ts.offvalue);ts.state = 0;},ts.offtimeout);
+        setTimeout(function(){console.log('off delay fire');$$(ts.tag +' @= '+ts.offvalue);ts.state = 0;},ts.offtimeout);
 }    
 }
 
@@ -180,7 +180,7 @@ simulator.differeciator = function(tag ,start , source ,stop){
 simulator.differeciator.prototype.atach = function(){
  
     if (this.valid && (this.start || this.start==0 || this.start===null)) {
-       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
+       window.$$(this.tag + ' @= ' + (this.start===null ? 'null' : this.start).toString());}
  
     var ts = this;
     
@@ -191,7 +191,7 @@ simulator.differeciator.prototype.atach = function(){
 
 simulator.differeciator.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
-       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
+       window.$$(this.tag + ' @= ' + (this.stop===null ? 'null' : this.stop).toString());}
     if (this.diffhandler && this.diffset)
         //window.removeExpressionListener( this.autohandler);
         this.diffset.unregist();    
@@ -204,7 +204,7 @@ simulator.differeciator.prototype.execute = function(){
 simulator.differeciator.prototype.diffevent = function(event){
     var ts = this;
     if (event.valid){
-       setTimeout(function(){$$(ts.tag + ' @ ' + event.value);},0);
+       setTimeout(function(){$$(ts.tag + ' @= ' + event.value);},0);
        //console.log(this.tag,event.value);
         }      
 }
@@ -226,7 +226,7 @@ simulator.random_value = function(tag ,mediana, deviation){
 simulator.random_value.prototype.atach = function(){
     
     var ts = this;
-    $$(ts.tag + ' @ (' + ts.mediana + ' )');
+    $$(ts.tag + ' @= (' + ts.mediana + ' )');
  
     
     
@@ -240,20 +240,20 @@ simulator.random_value.prototype.atach = function(){
 
 simulator.random_value.prototype.detach = function(){
 
-       $$(this.tag + ' @ 0')
+       $$(this.tag + ' @= 0')
     /*if (this.diffhandler && this.diffset)
         window.removeExpressionListener( this.autohandler);*/
 }
 
 simulator.random_value.prototype.execute = function(){
     var ts = this;
-    $$(ts.tag + ' @ ( ' + ts.tag + ' + ('+ts.tag + '.maxeu - '+ts.tag + '.mineu) * '+ts.deviation + '* (rnd()*2-1)/2)');
+    $$(ts.tag + ' @= ( ' + ts.tag + ' + ('+ts.tag + '.maxeu - '+ts.tag + '.mineu) * '+ts.deviation + '* (rnd()*2-1)/2)');
 }
 
 /*simulator.random_value.prototype.diffevent = function(event){
     var ts = this;
     if (event.expression==this.source){
-       setTimeout(function(){$$(ts.tag + ' @ ' + event.value);},0);
+       setTimeout(function(){$$(ts.tag + ' @= ' + event.value);},0);
        //console.log(this.tag,event.value);
         }      
 }*/
@@ -334,7 +334,7 @@ simulator.inertial_differeciator.prototype.set= function(){
 simulator.inertial_differeciator.prototype.atach = function(){
  
     if (this.valid && (this.start || this.start==0 || this.start===null)) {
-       window.$$(this.tag + ' @ ' + (this.start===null ? 'null' : this.start).toString());}
+       window.$$(this.tag + ' @= ' + (this.start===null ? 'null' : this.start).toString());}
  
     var ts = this;
     
@@ -345,7 +345,7 @@ simulator.inertial_differeciator.prototype.atach = function(){
 
 simulator.inertial_differeciator.prototype.detach = function(){
     if (this.valid && (this.stop || this.stop==0 || this.stop===null)) {
-       window.$$(this.tag + ' @ ' + (this.stop===null ? 'null' : this.stop).toString());}
+       window.$$(this.tag + ' @= ' + (this.stop===null ? 'null' : this.stop).toString());}
     if (this.diffhandler && this.diffset)
         this.diffset.unregist();
 }
@@ -357,7 +357,7 @@ simulator.inertial_differeciator.prototype.execute = function(){
        if ((this.lasttime+this.delay)<=curtime){
        this.lasttime=curtime;
        var val = this.set(this.value);
-       setTimeout(function(){$$(ts.tag + ' @ ' + val );}, 0);
+       setTimeout(function(){$$(ts.tag + ' @= ' + val );}, 0);
        }
 }
 
@@ -472,13 +472,13 @@ simulator.valve.prototype.ronevent = function(event){
             if (ts.don || ts.doff){
                 setTimeout(function(){
                     if (ts.on && ts._on){
-                        $$(ts.ron + ' @ 0');
+                        $$(ts.ron + ' @= 0');
                         return;
                     }                    
-                    if (ts.off && ts._off) $$(ts.off + ' @ 0');
-                    if (ts.roff && ts._roff) $$(ts.roff + ' @ 0');
-                    if (ts.doff && ts._doff) $$(ts.doff + ' @ 0');  
-                    if (ts.don && !ts._don) $$(ts.don + ' @ 1');
+                    if (ts.off && ts._off) $$(ts.off + ' @= 0');
+                    if (ts.roff && ts._roff) $$(ts.roff + ' @= 0');
+                    if (ts.doff && ts._doff) $$(ts.doff + ' @= 0');  
+                    if (ts.don && !ts._don) $$(ts.don + ' @= 1');
                 },1);
                 return;
             } 
@@ -492,11 +492,11 @@ simulator.valve.prototype.ronevent = function(event){
                 
                 if (ts.roff && ts._roff){
                 setTimeout(function(){
-                    $$(ts.roff + ' @ 0');
+                    $$(ts.roff + ' @= 0');
                 },1);} 
             
                 var intervalfunc= function(){
-                    if (ts.on) $$(ts.on + ' @ 1');
+                    if (ts.on) $$(ts.on + ' @= 1');
                     this.state=0;
                     if (ts.intervalid){
                         clearInterval(ts.intervalid);
@@ -516,12 +516,12 @@ simulator.valve.prototype.ronevent = function(event){
                 
                 if (ts.roff && ts._roff){
                     setTimeout(function(){
-                        $$(ts.roff + ' @ 0');
+                        $$(ts.roff + ' @= 0');
                     },1);
                 } 
             
                 var intervalfunc= function(){
-                    if (ts.off) $$(ts.off + ' @ 0');
+                    if (ts.off) $$(ts.off + ' @= 0');
                     this.state=0;
                     if (ts.intervalid){
                         clearInterval(ts.intervalid);
@@ -553,16 +553,16 @@ simulator.valve.prototype.ronevent = function(event){
       
                 if (ts.doff || ts.don){
                     setTimeout(function(){
-                        if (ts.doff && !ts._doff) $$(ts.doff + ' @ 1');
-                        if (ts.don) $$(ts.don + ' @ 0');
+                        if (ts.doff && !ts._doff) $$(ts.doff + ' @= 1');
+                        if (ts.don) $$(ts.don + ' @= 0');
                     },1);
                     return ;
                 }               
                 
             
                 var intervalfunc= function(){
-                    if (ts.off) $$(ts.off + ' @ 1');
-                    if (ts.on) $$(ts.on + ' @ 0');
+                    if (ts.off) $$(ts.off + ' @= 1');
+                    if (ts.on) $$(ts.on + ' @= 0');
                     this.state=0;
                     if (ts.intervalid){
                         clearInterval(ts.intervalid);
@@ -577,7 +577,7 @@ simulator.valve.prototype.ronevent = function(event){
             
             if (ts.don && ts._don)
              setTimeout(function(){
-                        if (ts.don) $$(ts.don + ' @ 0');},1);
+                        if (ts.don) $$(ts.don + ' @= 0');},1);
             
             
         }       
@@ -596,13 +596,13 @@ simulator.valve.prototype.roffevent = function(event){
             if (ts.don || ts.doff){
                 setTimeout(function(){
                      if (ts.off && ts._off){
-                        $$(ts.roff + ' @ 0');
+                        $$(ts.roff + ' @= 0');
                         return;
                     }    
-                    if (ts.on && ts._on) $$(ts.on + ' @ 0');
-                    if (ts.ron && ts._ron) $$(ts.ron + ' @ 0');
-                    if (ts.don && ts._don) $$(ts.don + ' @ 0');  
-                    if (ts.doff && !ts._doff) $$(ts.doff + ' @ 1');
+                    if (ts.on && ts._on) $$(ts.on + ' @= 0');
+                    if (ts.ron && ts._ron) $$(ts.ron + ' @= 0');
+                    if (ts.don && ts._don) $$(ts.don + ' @= 0');  
+                    if (ts.doff && !ts._doff) $$(ts.doff + ' @= 1');
                 },1);
                 return;
             } 
@@ -617,12 +617,12 @@ simulator.valve.prototype.roffevent = function(event){
                 
                 if (ts.ron && ts._ron){
                     setTimeout(function(){
-                        $$(ts.ron + ' @ 0');
+                        $$(ts.ron + ' @= 0');
                     },1);
                 } 
             
                 var intervalfunc= function(){
-                    if (ts.off) $$(ts.off + ' @ 1');
+                    if (ts.off) $$(ts.off + ' @= 1');
                     this.state=0;
                     if (ts.intervalid){
                         clearInterval(ts.intervalid);
@@ -644,11 +644,11 @@ simulator.valve.prototype.roffevent = function(event){
                 
                 if (ts.ron && ts._ron){
                 setTimeout(function(){
-                    $$(ts.ron + ' @ 0');
+                    $$(ts.ron + ' @= 0');
                 },1);} 
             
                 var intervalfunc= function(){
-                    if (ts.on) $$(ts.on + ' @ 0');
+                    if (ts.on) $$(ts.on + ' @= 0');
                     this.state=0;
                     if (ts.intervalid){
                         clearInterval(ts.intervalid);
@@ -678,16 +678,16 @@ simulator.valve.prototype.roffevent = function(event){
       
                 if (ts.doff || ts.don){
                     setTimeout(function(){
-                        if (ts.don && !ts._don) $$(ts.don + ' @ 1');
-                        if (ts.doff) $$(ts.doff + ' @ 0');
+                        if (ts.don && !ts._don) $$(ts.don + ' @= 1');
+                        if (ts.doff) $$(ts.doff + ' @= 0');
                     },1);
                     return ;
                 }               
                 
             
                 var intervalfunc= function(){
-                    if (ts.on) $$(ts.on + ' @ 1');
-                    if (ts.off) $$(ts.off + ' @ 0');
+                    if (ts.on) $$(ts.on + ' @= 1');
+                    if (ts.off) $$(ts.off + ' @= 0');
                     this.state=0;
                     if (ts.intervalid){
                         clearInterval(ts.intervalid);
@@ -702,7 +702,7 @@ simulator.valve.prototype.roffevent = function(event){
             
             if (ts.doff && ts._doff)
                 setTimeout(function(){
-                    if (ts.doff) $$(ts.doff + ' @ 0');
+                    if (ts.doff) $$(ts.doff + ' @= 0');
                 },1);
         }       
     }         
@@ -718,7 +718,7 @@ simulator.valve.prototype.donevent = function(event){
             this.intervalid=0;
             
             var intervalfunc= function(){
-                if (ts.on) $$(ts.on + ' @ 1');
+                if (ts.on) $$(ts.on + ' @= 1');
                 this.state=0;
                 if (ts.intervalid){
                     clearInterval(ts.intervalid);
@@ -739,8 +739,8 @@ simulator.valve.prototype.donevent = function(event){
            
                           
                 var intervalfunc= function(){
-                    if (ts.off) $$(ts.off + ' @ 1');
-                    if (ts.on) $$(ts.on + ' @ 0');
+                    if (ts.off) $$(ts.off + ' @= 1');
+                    if (ts.on) $$(ts.on + ' @= 0');
                     this.state=0;
                     if (ts.intervalid){
                         clearInterval(ts.intervalid);
@@ -766,8 +766,8 @@ simulator.valve.prototype.doffevent = function(event){
                 clearInterval(this.intervalid);
             this.intervalid=0;           
             var intervalfunc= function(){
-                if (ts.on) $$(ts.on + ' @ 0');
-                if (ts.off) $$(ts.off + ' @ 1');
+                if (ts.on) $$(ts.on + ' @= 0');
+                if (ts.off) $$(ts.off + ' @= 1');
                 this.state=0;
                 if (ts.intervalid){
                     clearInterval(ts.intervalid);
@@ -788,8 +788,8 @@ simulator.valve.prototype.doffevent = function(event){
            
                           
                 var intervalfunc= function(){
-                    if (ts.on) $$(ts.on + ' @ 1');
-                    if (ts.off) $$(ts.off + ' @ 0');
+                    if (ts.on) $$(ts.on + ' @= 1');
+                    if (ts.off) $$(ts.off + ' @= 0');
                     this.state=0;
                     if (ts.intervalid){
                         clearInterval(ts.intervalid);
@@ -811,7 +811,7 @@ simulator.valve.prototype.onevent = function(event){
         if (event.value && !this._on){
            this._on=1;
            this.state=1;
-            setTimeout(function(){if (ts.ron && ts._ron && ts.roff) $$(ts.ron + ' @ 0');},1);
+            setTimeout(function(){if (ts.ron && ts._ron && ts.roff) $$(ts.ron + ' @= 0');},1);
             if (this.intervalid)
                 clearInterval(this.intervalid);
             this.intervalid=0;              
@@ -833,7 +833,7 @@ simulator.valve.prototype.offevent = function(event){
         if (event.value && !this._off){
            this._off=1; 
            this.state=2;
-           setTimeout(function(){if (ts.roff && ts._roff && ts.ron) $$(ts.roff + ' @ 0');},1);
+           setTimeout(function(){if (ts.roff && ts._roff && ts.ron) $$(ts.roff + ' @= 0');},1);
            if (this.intervalid)
                 clearInterval(this.intervalid);
            this.intervalid=0;             
@@ -863,10 +863,10 @@ simulator.valve.prototype.shedule = function(sp,okfunk,cancelfnc){
            ts.okfunk = okfunk;
            ts.cancelfnc = cancelfnc;
            if (ts.ron){
-               setTimeout(function(){$$(ts.ron + ' @ 1')},0)
+               setTimeout(function(){$$(ts.ron + ' @= 1')},0)
                return;}
            if (ts.roff){
-               setTimeout(function(){$$(ts.roff + ' @ 0')},0)
+               setTimeout(function(){$$(ts.roff + ' @= 0')},0)
                return;}
            if (cancelfnc) cancelfnc();
            ts.okfunk = undefined;
@@ -881,10 +881,10 @@ simulator.valve.prototype.shedule = function(sp,okfunk,cancelfnc){
            ts.okfunk = okfunk;
            ts.cancelfnc = cancelfnc;
            if (ts.roff){
-               setTimeout(function(){$$(ts.roff + ' @ 1')},0)
+               setTimeout(function(){$$(ts.roff + ' @= 1')},0)
                return;}
            if (ts.ron){
-               setTimeout(function(){$$(ts.ron + ' @ 0')},0)
+               setTimeout(function(){$$(ts.ron + ' @= 0')},0)
                return;}
            if (cancelfnc) cancelfnc();
            ts.okfunk = undefined;
@@ -941,7 +941,7 @@ simulator.actuator.prototype.detach = function(){
 
 /*simulator.actuator.prototype.sp = function(val){
     console.log('sp actuator set',val);
-    $$(this.sp + ' @  '+ val );
+    $$(this.sp + ' @=  '+ val );
 }*/
 
 simulator.actuator.prototype.setenable= function(val){
@@ -951,7 +951,7 @@ simulator.actuator.prototype.setenable= function(val){
 
 simulator.actuator.prototype.normalize = function(){
     console.log('actuator normalize');
-    $$(this.sp + ' @  '+ this.pos );
+    $$(this.sp + ' @=  '+ this.pos );
 }
 
 simulator.actuator.prototype.spdiff = function(val){
@@ -965,7 +965,7 @@ simulator.actuator.prototype.spdiff = function(val){
         this._diff = val;
     if (this._diff<-100) this._diff=-100;
     if (this._diff>100) this._diff=100;
-    //$$(this.sp + ' @@  ('+ this.sp + ' + '+ val + ')' );
+    //$$(this.sp + ' @@=  ('+ this.sp + ' + '+ val + ')' );
 }
 
 simulator.actuator.prototype.spevent = function(event){
@@ -987,13 +987,13 @@ var ts=this;
 //if (this._sp==0 && pos__>5)
 //console.log('sp  == 0',this.sp)
 if (this._diff){
-    var df=this.sp +' @ (&'+this.sp+'+ '+this._diff + ')';
+    var df=this.sp +' @= (&'+this.sp+'+ '+this._diff + ')';
     $$(df);
     this._diff=undefined;
 }
 if (this.enable && this._sp!==undefined && ts._tick!==undefined){
-$$('(abs(' + ts.pos + ' - '+ ts._sp + ') && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ (' + ts.pos + ' + (' + ts._sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
-        '((abs(' + ts.pos + ' - '+ ts._sp + ') > 0) &&  ('+ts.pos+'.valid)) ? (' + ts.pos + ' @ ' + ts._sp + ') : (1)' + 
+$$('(abs(' + ts.pos + ' - '+ ts._sp + ') && ('+ts.pos+'.valid)) ? (' + ts.pos + ' @= (' + ts.pos + ' + (' + ts._sp + '<' + ts.pos + ' ? (- ' + ts._tick + ') : ('+ ts._tick + ')  ))) : ('+ 
+        '((abs(' + ts.pos + ' - '+ ts._sp + ') > 0) &&  ('+ts.pos+'.valid)) ? (' + ts.pos + ' @= ' + ts._sp + ') : (1)' + 
         ') ');}
 }
 
@@ -1246,7 +1246,7 @@ simulator.sheduler.prototype.atach = function(){
     }
     
     if (this.valid && (this.start || this.start==0))
-       $$(this.source + ' @ ' + this.start);
+       $$(this.source + ' @= ' + this.start);
 }
 
 
@@ -1254,7 +1254,7 @@ simulator.sheduler.prototype.detach = function(){
     if (this.sourcehandler && this.sourceset)
         this.sourceset.unregist();//window.removeExpressionListener( this.sourcehandler);   
     if (this.valid && (this.stop || this.stop==0))
-       $$(this.source + ' @ ' + this.stop)
+       $$(this.source + ' @= ' + this.stop)
 
 }
 
@@ -1293,7 +1293,7 @@ simulator.sheduler.prototype.shedule = function(sp,okfunk,cancelfnc){
         var ts = this;
         ts.okfunk = okfunk;
         ts.cancelfnc = cancelfnc;
-        setTimeout(function(){$$(ts.source + ' @ 1')},0);       
+        setTimeout(function(){$$(ts.source + ' @= 1')},0);       
     }
 }
 
@@ -1312,7 +1312,7 @@ simulator.sheduler.task.prototype.execute = function(){
     var tss = this;
     var nextcall = tss.nextsheduler ? function(){tss.nextsheduler.execute()} : 
         function(){
-        $$(tss.sourse +' @ 0');};
+        $$(tss.sourse +' @= 0');};
     setTimeout(function(){
         tss.sheduler.shedule(tss.sp, nextcall ,tss.cancelfunc)},0);
 }
