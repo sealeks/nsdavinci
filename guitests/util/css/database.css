@@ -135,3 +135,25 @@ body {
 }
 
 
+
+
+#report-table-header
+{
+
+    margin-top: 10px;
+    margin-bottom: 5px;
+    margin-left: 15px;
+    padding: 4px 10px;
+    text-align: left;
+    font-size: 200%;
+    color:#003;
+    
+}
+
+div.ui-layout-center-report{
+    margin: 20px;
+    padding: 10px;
+    
+}
+
+
