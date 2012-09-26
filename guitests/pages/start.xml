@@ -342,9 +342,9 @@ add_simulation ( new simulator.valueobserver('t1',window.INVIRENMENTTEMP,'fp >0 
 //add_simulation ( new simulator.valueobserver('tp2',window.INVIRENMENTTEMP,'fw / 3600 * 1000 * ' + window.WATER_WARM  + ' + tw4',null));
 
 
-//add_simulation ( new simulator.random_value('fpp' ,0.1, 0.0003 ));
+add_simulation ( new simulator.random_value('fpp' ,20 , 0.0015 ));
 //add_simulation ( new simulator.valueobserver('fpp' ,0,'m::i1 ? (20+m::i1) : 20',0 ));
-add_simulation ( new simulator.initializer('fpp' , 20 , null));
+//add_simulation ( new simulator.initializer('fpp' , 20 , null));
 
 add_simulation (new simulator.booldelayer('m::c1' ,0 , 'flame1' ,null, 1,0, 0,0));
 add_simulation (new simulator.booldelayer('m::c2' ,0 , 'flame2' ,null, 1,0, 0,0));
