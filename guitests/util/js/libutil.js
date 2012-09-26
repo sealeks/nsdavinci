@@ -1803,6 +1803,7 @@ libutil.trendchart = function(option){
         this.element = document.getElementById(elid);
         this.thtobblerbody = document.getElementById(throbid);
         if (this.element){
+            this.element.trendchart=this;
             if (this.thtobblerbody)
                 this.element.trobbler = new libutil.proggress.throbber(this.thtobblerbody);
             this.sqlreq = sqlreq;
@@ -1932,6 +1933,7 @@ libutil.trendchart.prototype.detach = function() {
     if (this.chart)
         this.chart.destroy();
     this.element.chart=undefined;
+    this.element.trendchart=undefined;
 }
 
 libutil.trendchart.prototype.currentStart = function() {
@@ -2408,6 +2410,14 @@ libutil.trendchart.prototype.setSelect = function(id){
         this.selectedseries=id;
         this.chart.get(this.elid+'___'+id).select(true);
     }
+}
+
+libutil.trendchart.prototype.setTitle = function(title){
+    if (this.chart)
+        this.chart.setTitle({ text: title });
+    else
+        this.title=title;
+    
 }
 
 /////////////////////////////////////////////////

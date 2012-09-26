@@ -653,9 +653,10 @@ mainlib.valueedit_click =  function (el, nm, alighn, r, stroke, strokewidth, col
             
     var bodydiv= libutil.html.create_element('div' , htmlbody, [{name: 'style' , value: '-webkit-user-select: text;'}] );  
                                                              
-    var val = $$('format('+tag+"'"+ format+ "')");                                                         
+    var val = $$('format('+tag+"'"+ format+ "')", function(){if (document.getElementById(elementId + '___editid')) document.getElementById(elementId + '___editid').setAttribute('value',event.value);  });                                                         
                                                              
-    var edit = libutil.html.create_element('input' , bodydiv, [{name: 'value', value: val},
+    var edit = libutil.html.create_element('input' , bodydiv, [{name: 'value', value: '?' },
+                                                               {name: 'id', value: (elementId + '___editid')},
                                                                {name: 'type', value: 'text'},
                                                                {name: 'style', value: editstyle}]);
                                                            
@@ -721,15 +722,20 @@ mainlib.graph_click =  function (el, nm, color){
             
     var bodydiv= libutil.html.create_element('div' , htmlbody, [{name : 'id' , value: elementId + '_popup_graph'},
                                                                  {name: 'style' , value: '-webkit-user-select: none'}] );    
+                                                             
+                                                             
     var script = libutil.html.create_element('script', head );
+
     
-    var title = $$(nm+'.comment');
+
 
     script.textContent="new libutil.trendchart({ element: '"+elementId + '_popup_graph'+"', throbler : '"+
                                                          elementId + "_popup_body' , tags : "+
                                                          "['"+nm+"'], hist: "+period.toString()+", colors: ['"+color+"','green','blue','#880'], width: " + 
                                                          (mainlib.CHART_WIDTH - 2* mainlib.CHART_PADDING) + ", height: " +
-                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ (title ? ", r: 5 ,  title: '"+title+"',background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})" : ", 5 , {background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]})");
+                                                         (mainlib.CHART_HEIGHT - 2* mainlib.CHART_PADDING)+ ", r: 5 , background: [[0 , '#222'],[0.5 , '#444'],[1 , '#222']]});\n"+
+                                                     
+                        "$$('"+ nm +".comment',function(){var el=document.getElementById('"+elementId+"_popup_graph'); console.log(el); if (el && el.trendchart && event.value) el.trendchart.setTitle(event.value) });"                                                     
            
 }
 
