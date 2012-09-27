@@ -566,8 +566,8 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
   <form name="falarm" file="falarm.xml" left="0%" top="85%" width="92%" height="15%" caption="fa" decorated="no" visible="true"/>
   <form name="test" file="test.xml" left="0%" top="0%" width="92%" height="85%" caption="test" decorated="no"/>
   <form name="gazblock" file="gazblock.xml" left="0%" top="0%" width="92%" height="85%" caption="gazblock" decorated="no"/>
-  <form name="trend" file="trendreq.html" left="0%" top="0%" width="92%" height="100%" caption="gazblock" decorated="no" visible="false"/>
-  <form name="journal" file="journalreq.html" left="0%" top="0%" width="92%" height="100%" caption="gazblock" decorated="no" visible="false"/>
+  <form name="trend" file="trendreq.html" left="0%" top="0%" width="92%" height="85%" caption="gazblock" decorated="no" visible="false"/>
+  <form name="journal" file="journalreq.html" left="0%" top="0%" width="92%" height="85%" caption="gazblock" decorated="no" visible="false"/>
   <!--form name="debug" file="debugreq.html" left="0%" top="0%" width="92%" height="100%" caption="gazblock" decorated="no" visible="false"/>
   <form name="report" file="reportreq.html" left="0%" top="0%" width="92%" height="100%" caption="gazblock" decorated="no" visible="false"/-->
   <!--form name="rrr" file="rrr.xml" left="0%" top="0%" width="85%" height="85%" caption="rrr" decorated="no"/-->
