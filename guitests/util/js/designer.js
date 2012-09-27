@@ -2368,7 +2368,7 @@ dsutl.form.add = function (exists){
         alert('Имя файла '+openfile+' некорректно!');
         return;
     }    
-    if (!libutil.regex.check(openfile,/[A-Za-z][A-Za-z0-9]*\.xml/)){
+    if (!libutil.regex.check(openfile,/[A-Za-z][A-Za-z0-9]*\.xml/) && !libutil.regex.check(openfile,/[A-Za-z][A-Za-z0-9]*\.html/)){
         openfile = openfile+ '.xml';
     }
     var openddoc = libutil.dom.readDoc(openfile);
