@@ -234,7 +234,17 @@ namespace boost {
                 std::string generate_header_TKPT_DT_single(const std::string& data, bool end);
 
                 std::string generate_header_TKPT_ER(int16_t dst, const std::string& errorreason = "", int8_t err = 0);
+                
+                
 
+                 const std::size_t MAX_SEVICE_TPDUSIZE = 256;
+
+
+                typedef boost::array<char, MAX_SEVICE_TPDUSIZE >                             databuff_type;
+                typedef boost::shared_ptr< databuff_type >                                            databuff_type_ptr;  
+
+                   
+                
                 class receive_seq {
                 public:
 
@@ -246,9 +256,13 @@ namespace boost {
                         continuous
                     } ;
 
-                    receive_seq(const mutable_buffer& buff) : buff_(buff), size_(0), cursor_(0),
+                    receive_seq(const mutable_buffer& buff) :sevice_buff_(),  buff_(buff), size_(0), cursor_(0),
                     state_(nodef), type_(NL), class_option_(0), reject_reason_(0), errcode_() {
                     }
+                    
+                    receive_seq() : sevice_buff_( new  databuff_type()), buff_(mutable_buffer(sevice_buff_->data(), sevice_buff_->size())), size_(0), cursor_(0),
+                    state_(nodef), type_(NL), class_option_(0), reject_reason_(0), errcode_() {
+                    }                   
 
                     mutable_buffer buffer() {
                         return buff_;
@@ -303,6 +317,7 @@ namespace boost {
 
                     operation_state check_tpdu(std::size_t& beg);
 
+                    databuff_type_ptr  sevice_buff_;                    
                     mutable_buffer    buff_;
                     std::size_t       size_;
                     std::size_t       cursor_;
@@ -312,13 +327,18 @@ namespace boost {
                     int8_t       reject_reason_;
                     protocol_options  options_;
                     boost::system::error_code errcode_;
+
                 } ;
 
                 typedef boost::shared_ptr<receive_seq>               receive_seq_ptr;
+                
+                
+                
 
                 class send_seq {
+                    
                     typedef std::vector<std::string>::iterator           lines_iterator;
-                    typedef std::vector<std::string>                     lines_type;
+                    typedef std::vector<std::string>                          lines_type;
 
                 public:
 
@@ -402,6 +422,8 @@ namespace boost {
                 } ;
 
                 typedef boost::shared_ptr<send_seq>               send_seq_ptr;
+                
+                
 
 
 
@@ -424,13 +446,8 @@ namespace boost {
 
                     void connect(const endpoint_type& peer_endpoint) {
                         boost::system::error_code ec;
-                        if (!is_open()) {
-                            this->get_service().open(this->get_implementation(),
-                                    peer_endpoint.protocol(), ec);
+                        if  (connect(peer_endpoint, ec) || ec)
                             boost::asio::detail::throw_error(ec, "connect");
-                        }
-                        this->get_service().connect(this->get_implementation(), peer_endpoint , ec);
-                        boost::asio::detail::throw_error(ec, "connect");
                     }
 
                     boost::system::error_code connect(const endpoint_type& peer_endpoint,
@@ -441,9 +458,7 @@ namespace boost {
                                 return ec;
                             }
                         }
-
-                        return this->get_service().connect(
-                                this->get_implementation(), peer_endpoint, ec);
+                        return connect_impl(peer_endpoint, ec);
                     }
 
 
@@ -457,9 +472,6 @@ namespace boost {
                             response
                         } ;
 
-                        typedef boost::array<char, 1024 >                             databuff_type;
-                        typedef boost::shared_ptr< databuff_type >            databuff_type_ptr;
-
                     public:
 
                         connect_op(stream_socket* socket , ConnectHandler handler ,
@@ -471,10 +483,7 @@ namespace boost {
                         peer_endpoint_(peer_endpoint),
                         start_(1),
                         send_(send_seq_ptr( new send_seq(socket->prot_option()))),
-                        receive_() {
-                            receive_arr = databuff_type_ptr( new databuff_type());
-                            receive_ = receive_seq_ptr( new receive_seq(mutable_buffer(receive_arr->data(), receive_arr->size())));
-                        }
+                        receive_(new receive_seq()) {}
 
                         void run() {
                             socket_->get_service().async_connect(socket_->get_implementation(), peer_endpoint_, *this);
@@ -585,7 +594,6 @@ namespace boost {
                         int                                                  start_;
                         send_seq_ptr                               send_;
                         receive_seq_ptr                           receive_;
-                        databuff_type_ptr                       receive_arr;
 
                     } ;
 
@@ -683,9 +691,6 @@ namespace boost {
                             refuse
                         } ;
 
-                        typedef boost::array<char, 1024 >                             databuff_type;
-                        typedef boost::shared_ptr< databuff_type >            databuff_type_ptr;
-
                     public:
 
                         accept_op(stream_socket* socket,  AcceptHandler handler) :
@@ -695,10 +700,7 @@ namespace boost {
                         options_(socket->prot_option()),
                         start_(1),
                         send_(),
-                        receive_() {
-                            receive_arr = databuff_type_ptr( new databuff_type());
-                            receive_ = receive_seq_ptr( new receive_seq(mutable_buffer(receive_arr->data(), receive_arr->size())));
-                        }
+                        receive_(new receive_seq()) {}
 
                         void run() {
                             boost::system::error_code ec;
@@ -837,7 +839,6 @@ namespace boost {
                         int                                                    start_;
                         send_seq_ptr                                 send_;
                         receive_seq_ptr                             receive_;
-                        databuff_type_ptr                         receive_arr;
 
                     } ;
 
@@ -858,7 +859,7 @@ namespace boost {
                             socket_base::message_flags flags) {
                         boost::system::error_code ec;
                         std::size_t s = this->get_service().send(
-                                this->get_implementation(), buffers, flags, pdusize_,  ec);
+                                this->get_implementation(), buffers, flags,  ec);
                         boost::asio::detail::throw_error(ec, "send");
                         return s;
                     }
@@ -867,7 +868,7 @@ namespace boost {
                     std::size_t send(const ConstBufferSequence& buffers,
                             socket_base::message_flags flags, boost::system::error_code& ec) {
                         return this->get_service().send(
-                                this->get_implementation(), buffers, flags, pdusize_, ec);
+                                this->get_implementation(), buffers, flags, ec);
                     }
 
                     template <typename SendHandler, typename Const_Buffers>
@@ -1017,33 +1018,33 @@ namespace boost {
                                     boost::system::error_code decc;
                                     handler_( decc,  0);
                                     return false;
-                                }                                
+                                }
                                 case DT:
                                 {
                                     return true;
                                 }
                                 case ER:
                                 {
+                                    boost::system::error_code ecc;
+                                    socket_->get_service().close(socket_->get_implementation(), ecc);
                                     handler_( ERROR__SEQ,  static_cast<const std::size_t&> (out_->size()));
                                     break;
                                 }
                                 case DR:
                                 {
+                                    boost::system::error_code ecc;
+                                    socket_->get_service().close(socket_->get_implementation(), ecc);
                                     handler_( ERROR_ECONNREFUSED ,  static_cast<const std::size_t&> (out_->size()));
                                     break;
                                 }
                                 default:
                                 {
+                                    boost::system::error_code ecc;
+                                    socket_->get_service().close(socket_->get_implementation(), ecc);
                                     handler_(ERROR__EPROTO ,  0);
                                 }
                             }
-                            boost::system::error_code ecc;
-	      /*try{
-                            if (socket_->is_open())
-	       socket_->get_service().close(socket_->get_implementation(), ecc);}
-	       catch(...){
-	       std::cout << "error!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-	       */
+
                             return false;
                         }
 
@@ -1137,6 +1138,42 @@ namespace boost {
 
 
                 private:
+
+                    boost::system::error_code connect_impl(const endpoint_type& peer_endpoint,
+                            boost::system::error_code& ec) {
+
+                        send_seq_ptr  send_ (send_seq_ptr( new send_seq(prot_option())));
+                        while (!ec && send_->ready())
+                            send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
+                        if (ec)
+                            return ec;
+
+                        /*if (receive_->state() == receive_seq::complete) {
+                             switch (receive_->type()) {
+                                 case CC:
+                                 {
+                                     handler_(ec);
+                                     socket_->correspond_prot_option(receive_->options());
+                                     std::cout << "connect_op success" << std::endl;
+                                     return;
+                                 }
+                                 case ER:
+                                 case DR:
+                                 {
+                                     boost::system::error_code ecc;
+                                     socket_->get_service().close(socket_->get_implementation() , ecc);
+                                     handler_(receive_->errcode() ? receive_->errcode() : ERROR_EIO);
+                                     std::cout << "connect_op refuse :" << receive_->errcode() << std::endl;
+                                     return;
+                                 }
+                             }
+                         }
+                         handler_(ERROR__EPROTO);  */
+
+                        return ec;
+                    }
+
+
                     tpdu_size        pdusize_;
                     protocol_options option_;
                 } ;
