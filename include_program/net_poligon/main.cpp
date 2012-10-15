@@ -147,9 +147,9 @@ class client
 {
 public:
   client(boost::asio::io_service& io_service,
-      rfc1006::resolver::iterator endpoint_iterator)
+      rfc1006::resolver::iterator endpoint_iterator, const std::string& called="")
     : io_service_(io_service),
-      socket_(io_service, boost::asio::ip::iec8073::SIZE256)
+      socket_(io_service, called)
   {
     rfc1006::endpoint endpoint = *endpoint_iterator;
     socket_.async_connect(endpoint,
@@ -284,7 +284,7 @@ typedef callable_shared_ptr< Server >                         server_ptr;
 struct Client{
     Client(boost::asio::io_service& serv, const std::string& host): terminated_(false), io_service(serv), resolver(io_service), query(boost::asio::ip::tcp::v4(), host , dvnci::to_str(port)), 
                         iterator(resolver.resolve(query)) ,                         
-                        client_(io_service, iterator) {}
+                        client_(io_service, iterator, "SERVER-TSEL") {}
     bool operator()(){
        // io_service.run(); 
         while(!terminated_){
