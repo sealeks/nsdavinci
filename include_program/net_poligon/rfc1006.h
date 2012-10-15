@@ -395,11 +395,11 @@ namespace boost {
                         //void constructDC(int16_t dst, int16_t src);       
 
 
-                        lines_type               lines_;
-                        lines_iterator           iterator_;
-                        operation_state          state_;
-                        tpdu_type                type_;
-                        std::size_t              size_;
+                        lines_type                      lines_;
+                        lines_iterator                iterator_;
+                        operation_state            state_;
+                        tpdu_type                      type_;
+                        std::size_t                      size_;
                         std::string::size_type   currentsize_;
                         std::string::size_type   currentiterator_;
                     } ;
@@ -730,14 +730,14 @@ namespace boost {
 
 
                             service_impl_type&                      service_impl_;
-                            implementation_type&                    impl;
-                            AcceptHandler                           handler_;
-                            stateconnection                         state_;
-                            protocol_options                        options_;
-                            int                                     start_;
-                            send_seq_ptr                            send_;
-                            receive_seq_ptr                         receive_;
-                            databuff_type_ptr                       receive_arr;
+                            implementation_type&                 impl;
+                            AcceptHandler                               handler_;
+                            stateconnection                            state_;
+                            protocol_options                          options_;
+                            int                                                    start_;
+                            send_seq_ptr                                 send_;
+                            receive_seq_ptr                             receive_;
+                            databuff_type_ptr                         receive_arr;
 
                         } ;
 
@@ -792,13 +792,13 @@ namespace boost {
 
                         private:
 
-                            service_impl_type&                      service_impl_;
-                            implementation_type&                    impl;
-                            SendHandler                             handler_;
-                            send_seq_ptr                            in_;
+                            service_impl_type&                                      service_impl_;
+                            implementation_type&                                 impl;
+                            SendHandler                                                  handler_;
+                            send_seq_ptr                                                 in_;
                             boost::asio::socket_base::message_flags flags_;
-                            std::size_t                             send_lower_;
-                            int                                     start_;
+                            std::size_t                                                       send_lower_;
+                            int                                                                    start_;
 
 
                         } ;
@@ -905,6 +905,11 @@ namespace boost {
                     template <typename Protocol>
                     boost::asio::io_service::id stream_socket_service<Protocol>::id;
                 }
+                
+                
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////stream_socket                
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
                 class stream_socket : public basic_stream_socket<tcp , datail::stream_socket_service<tcp> > {   
                 public:
@@ -1093,8 +1098,8 @@ namespace boost {
                         pdusize_ = val.pdusize();
                         std::cout << "correspond_prot_option tpdu size: " << tpdu_byte_size(pdusize_) << std::endl;
                         option_.dst_tsap(val.src_tsap());
-                        std::cout << "correspond_prot_option req  : " << val.tsap_calling() << std::endl;
-                        std::cout << "correspond_prot_option resp  : " << val.tsap_called() << std::endl;
+                        std::cout << "correspond_prot_option calling  : " << val.tsap_calling() << std::endl;
+                        std::cout << "correspond_prot_option called  : " << val.tsap_called() << std::endl;
                         std::cout << "correspond_prot_option dst id : " << option_.dst_tsap() << std::endl;
                         std::cout << "correspond_prot_option src id : " << option_.src_tsap() << std::endl;
                     }
@@ -1187,12 +1192,12 @@ namespace boost {
                             }
 
                         private:
-                            service_impl_type&   service_impl_;
+                            service_impl_type&       service_impl_;
                             implementation_type& impl_;
-                            Handler              handler_;
-                            Socket&              socket_;
-                            endpoint_type*       endpoint_;
-                            int16_t         src_;
+                            Handler                           handler_;
+                            Socket&                           socket_;
+                            endpoint_type*              endpoint_;
+                            int16_t                             src_;
 
                         } ;
 
@@ -1252,12 +1257,6 @@ namespace boost {
             public:
                 /// The type of a TCP endpoint.
                 typedef basic_endpoint<tcp>          endpoint;
-
-                /// (Deprecated: use resolver::query.) The type of a resolver query.
-                typedef basic_resolver_query<rfc1006>   resolver_query;
-
-                /// (Deprecated: use resolver::iterator.) The type of a resolver iterator.
-                typedef basic_resolver_iterator<rfc1006> resolver_iterator;
 
                 /// Construct to represent the IPv4 TCP protocol.
 
