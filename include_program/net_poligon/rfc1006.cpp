@@ -262,246 +262,252 @@ namespace boost {
                     return rslt;
                 }
 
+                void  receive_seq::reject_reason(int8_t val) {
+                    errcode_ = errorcode_by_reason(val);
+                    reject_reason_ = val;
+                }
 
+                void receive_seq::check() {
+                    while ((check_tpdu(cursor_) == repeat)) {
+                    };
+                }
 
-                namespace datail {
-
-                    void  receive_seq::reject_reason(int8_t val) {
-                        errcode_ = errorcode_by_reason(val);
-                        reject_reason_ = val;
+                receive_seq::operation_state receive_seq::check_tpdu(std::size_t& beg) {
+                    std::size_t oldbeg = beg;
+                    if (size_ < (beg + 2))
+                        return state(continuous);
+                    std::string hdr = std::string(boost::asio::buffer_cast<const char*>(buff_ + beg), 2);
+                    if (hdr != TKPT_START)
+                        return state(error);
+                    if (size_ < (beg + 4))
+                        return state(continuous);
+                    std::string strsz = std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 2)), 2);
+                    int16_t pdsz = 0;
+                    str_to_inttype(strsz, pdsz);
+                    pdsz = be_le_convert16(pdsz);
+                    if (pdsz < 0)
+                        return state(error);
+                    if (size_ < (beg + static_cast<std::size_t> (pdsz))) {
+                        return state(continuous);
                     }
-
-                    void receive_seq::check() {
-                        while ((check_tpdu(cursor_) == repeat)) {
-                        };
-                    }
-
-                    receive_seq::operation_state receive_seq::check_tpdu(std::size_t& beg) {
-                        std::size_t oldbeg = beg;
-                        if (size_ < (beg + 2))
-                            return state(continuous);
-                        std::string hdr = std::string(boost::asio::buffer_cast<const char*>(buff_ + beg), 2);
-                        if (hdr != TKPT_START)
-                            return state(error);
-                        if (size_ < (beg + 4))
-                            return state(continuous);
-                        std::string strsz = std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 2)), 2);
-                        int16_t pdsz = 0;
-                        str_to_inttype(strsz, pdsz);
-                        pdsz = be_le_convert16(pdsz);
-                        if (pdsz < 0)
-                            return state(error);
-                        if (size_ < (beg + static_cast<std::size_t> (pdsz))) {
-                            return state(continuous);
-                        }
-                        if (size_ < (beg + 6))
-                            return state(error);
-                        std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + (beg + 4)));
-                        if (size_ < (TKPT_LENGTH + li + 1))
-                            return state(error);
-                        int8_t nativetp = *boost::asio::buffer_cast<int8_t*>(buff_ + (beg + 5));
-                        type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
-                        /* запрос возможен и от др классов*/
-                        switch (type_) {
-                            case DT:
-                            {
-                                if (li != 2)
-                                    return state(error); /* !!должен быть только класс 0 см. 13.7*/
-                                int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + (beg + 6));
-                                if (eof == TPDU_ENDED) {
-                                    boost::array<mutable_buffer, 2 > bufsarr = {
-                                        mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
-                                        mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
-                                    };
-                                    buffer_copy(buff_, bufsarr);
-                                    size_ -= (TKPT_LENGTH + li + 1);
-                                    return state(complete);
-                                }
-                                if (eof != TPDU_CONTINIUE) {
-                                    return state(error);
-                                }
-                                beg = beg + static_cast<std::size_t> (pdsz);
+                    if (size_ < (beg + 6))
+                        return state(error);
+                    std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + (beg + 4)));
+                    if (size_ < (TKPT_LENGTH + li + 1))
+                        return state(error);
+                    int8_t nativetp = *boost::asio::buffer_cast<int8_t*>(buff_ + (beg + 5));
+                    type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
+                    /* запрос возможен и от др классов*/
+                    switch (type_) {
+                        case DT:
+                        {
+                            if (li != 2)
+                                return state(error); /* !!должен быть только класс 0 см. 13.7*/
+                            int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + (beg + 6));
+                            if (eof == TPDU_ENDED) {
                                 boost::array<mutable_buffer, 2 > bufsarr = {
                                     mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
                                     mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
                                 };
                                 buffer_copy(buff_, bufsarr);
                                 size_ -= (TKPT_LENGTH + li + 1);
-                                beg -= (TKPT_LENGTH + li + 1);
-                                return state(beg >= size_ ? continuous : repeat);
-                            }
-                            case CR:
-                            {
-                                if (li < 6)
-                                    return state(error); /* невозможно см. 13.3.1*/
-                                int16_t dst_tsap_ = 0;
-                                int16_t src_tsap_ = 0;
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
-                                dst_tsap_ = be_le_convert16(dst_tsap_);
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 2), src_tsap_);
-                                src_tsap_ = be_le_convert16(src_tsap_);
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 10)), 1), class_option_);
-                                headarvarvalues vars;
-                                if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
-                                    return state(error);
-                                options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                                 return state(complete);
                             }
-                            case CC:
-                            {
-                                if (li < 6)
-                                    return state(error); /* невозможно см. 13.3.1*/
-                                int16_t dst_tsap_ = 0;
-                                int16_t src_tsap_ = 0;
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
-                                dst_tsap_ = be_le_convert16(dst_tsap_);
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 2), src_tsap_);
-                                src_tsap_ = be_le_convert16(src_tsap_);
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 10)), 1), class_option_);
-                                headarvarvalues vars;
-                                if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
-                                    return state(error);
-                                options_ = protocol_options(dst_tsap_, src_tsap_, vars);
-                                return state(complete);
+                            if (eof != TPDU_CONTINIUE) {
+                                return state(error);
                             }
-                            case DR:
-                            {
-                                if (li < 6)
-                                    return state(error); /* невозможно см. 13.3.1*/
-                                int16_t dst_tsap_ = 0;
-                                int16_t src_tsap_ = 0;
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
-                                dst_tsap_ = be_le_convert16(dst_tsap_);
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 2), src_tsap_);
-                                src_tsap_ = be_le_convert16(src_tsap_);
-                                int8_t rsn;
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 10)), 1), rsn);
-                                reject_reason(rsn);
-                                headarvarvalues vars;
-                                if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
-                                    return state(error);
-                                options_ = protocol_options(dst_tsap_, src_tsap_, vars);
-                                return state(complete);
-                            }
-                            case ER:
-                            {
-                                if (li < 3)
-                                    return state(error); /* невозможно см. 13.3.1*/
-                                int16_t dst_tsap_ = 0;
-                                int16_t src_tsap_ = 0;
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
-                                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 1), reject_reason_);
-                                headarvarvalues vars;
-                                if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 3), vars))
-                                    return state(error);
-                                return state(complete);
-
-                            }
+                            beg = beg + static_cast<std::size_t> (pdsz);
+                            boost::array<mutable_buffer, 2 > bufsarr = {
+                                mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
+                                mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
+                            };
+                            buffer_copy(buff_, bufsarr);
+                            size_ -= (TKPT_LENGTH + li + 1);
+                            beg -= (TKPT_LENGTH + li + 1);
+                            return state(beg >= size_ ? continuous : repeat);
                         }
-                        return state(error);
-                    }
-
-
-                    ///////////////////////////////////////////////////////////////////////////////////////
-
-                    const_buffer send_seq::pop() {
-                        if (iterator_ == lines_.end())
-                            return const_buffer();
-                        const std::string& line = *iterator_;
-                        return const_buffer(boost::asio::buffer(line.data() + currentiterator_, currentsize_));
-                    }
-
-                    std::size_t  send_seq::size(std::size_t  sz) {
-                        if (!sz) return size_;
-                        if (iterator_ == lines_.end()) {
-                            state_ = complete;
-                            currentiterator_ = 0;
-                            currentsize_ = 0;
-                            return size_;
+                        case CR:
+                        {
+                            if (li < 6)
+                                return state(error); /* невозможно см. 13.3.1*/
+                            int16_t dst_tsap_ = 0;
+                            int16_t src_tsap_ = 0;
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
+                            dst_tsap_ = be_le_convert16(dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 2), src_tsap_);
+                            src_tsap_ = be_le_convert16(src_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 10)), 1), class_option_);
+                            headarvarvalues vars;
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
+                                return state(error);
+                            options_ = protocol_options(dst_tsap_, src_tsap_, vars);
+                            return state(complete);
                         }
-                        currentiterator_ += sz;
-                        if (currentiterator_ < currentsize_) {
-                            currentsize_ -= sz;
-                            state_ = continuous;
+                        case CC:
+                        {
+                            if (li < 6)
+                                return state(error); /* невозможно см. 13.3.1*/
+                            int16_t dst_tsap_ = 0;
+                            int16_t src_tsap_ = 0;
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
+                            dst_tsap_ = be_le_convert16(dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 2), src_tsap_);
+                            src_tsap_ = be_le_convert16(src_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 10)), 1), class_option_);
+                            headarvarvalues vars;
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
+                                return state(error);
+                            options_ = protocol_options(dst_tsap_, src_tsap_, vars);
+                            return state(complete);
                         }
-                        else {
-                            if (currentiterator_ == currentsize_) {
-                                iterator_++;
-                                if (iterator_ == lines_.end()) {
-                                    state_ = complete;
-                                    currentiterator_ = 0;
-                                    currentsize_ = 0;
-                                }
-                                else {
-                                    state_ = continuous;
-                                    currentiterator_ = 0;
-                                    currentsize_ = (*iterator_).size();
-                                }
+                        case DR:
+                        {
+                            if (li < 6)
+                                return state(error); /* невозможно см. 13.3.1*/
+                            int16_t dst_tsap_ = 0;
+                            int16_t src_tsap_ = 0;
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
+                            dst_tsap_ = be_le_convert16(dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 2), src_tsap_);
+                            src_tsap_ = be_le_convert16(src_tsap_);
+                            int8_t rsn;
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 10)), 1), rsn);
+                            reject_reason(rsn);
+                            headarvarvalues vars;
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
+                                return state(error);
+                            if (oldbeg) {
+                                boost::array<mutable_buffer, 2 > bufsarr = {
+                                    mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
+                                    mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
+                                };
+                                buffer_copy(buff_, bufsarr);
+                                size_ -= (TKPT_LENGTH + li + 1);
                             }
                             else {
-                                state_ = error;
-                                iterator_ = lines_.end();
+                                size_ = 0;
+                            }
+                            options_ = protocol_options(dst_tsap_, src_tsap_, vars);
+                            return state(complete);
+                        }
+                        case ER:
+                        {
+                            if (li < 3)
+                                return state(error); /* невозможно см. 13.3.1*/
+                            int16_t dst_tsap_ = 0;
+                            int16_t src_tsap_ = 0;
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 1), reject_reason_);
+                            headarvarvalues vars;
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 3), vars))
+                                return state(error);
+                            if (oldbeg) {
+                                boost::array<mutable_buffer, 2 > bufsarr = {
+                                    mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
+                                    mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
+                                };
+                                buffer_copy(buff_, bufsarr);
+                                size_ -= (TKPT_LENGTH + li + 1);
+                            }
+                            else {
+                                size_ = 0;
+                            }
+                            return state(complete);
+
+                        }
+                    }
+                    return state(error);
+                }
+
+
+                ///////////////////////////////////////////////////////////////////////////////////////
+
+                const_buffer send_seq::pop() {
+                    if (iterator_ == lines_.end())
+                        return const_buffer();
+                    const std::string& line = *iterator_;
+                    return const_buffer(boost::asio::buffer(line.data() + currentiterator_, currentsize_));
+                }
+
+                std::size_t  send_seq::size(std::size_t  sz) {
+                    if (!sz) return size_;
+                    if (iterator_ == lines_.end()) {
+                        state_ = complete;
+                        currentiterator_ = 0;
+                        currentsize_ = 0;
+                        return size_;
+                    }
+                    currentiterator_ += sz;
+                    if (currentiterator_ < currentsize_) {
+                        currentsize_ -= sz;
+                        state_ = continuous;
+                    }
+                    else {
+                        if (currentiterator_ == currentsize_) {
+                            iterator_++;
+                            if (iterator_ == lines_.end()) {
+                                state_ = complete;
                                 currentiterator_ = 0;
                                 currentsize_ = 0;
                             }
+                            else {
+                                state_ = continuous;
+                                currentiterator_ = 0;
+                                currentsize_ = (*iterator_).size();
+                            }
                         }
-                        return size_ += sz;
-                    }
-
-                    void send_seq::constructDT(const std::string& seq, tpdu_size pdusize) {
-                        std::string::size_type sz = tpdu_byte_size(pdusize);
-                        iterator_ = lines_.end();
-                        if (sz <= 3)
-                            return;
-                        sz -= 3;
-                        lines_.clear();
-                        std::string::size_type start = 0;
-                        do {
-                            if ((start + sz) < seq.size())
-                                lines_.push_back(std::string( generate_header_TKPT_DT_single(seq.substr(start, sz), false)));
-                            else
-                                lines_.push_back(std::string( generate_header_TKPT_DT_single(seq.substr(start), true)));
-                            start += sz;
+                        else {
+                            state_ = error;
+                            iterator_ = lines_.end();
+                            currentiterator_ = 0;
+                            currentsize_ = 0;
                         }
-                        while (start < seq.size());
-                        iterator_ = lines_.begin();
-                        currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
                     }
+                    return size_ += sz;
+                }
 
-                    void send_seq::constructCR(const protocol_options& opt) {
-                        lines_.push_back(std::string( generate_header_TKPT_CR(opt)));
-                        iterator_ = lines_.begin();
-                        currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                void send_seq::constructDT(const std::string& seq, tpdu_size pdusize) {
+                    std::string::size_type sz = tpdu_byte_size(pdusize);
+                    iterator_ = lines_.end();
+                    if (sz <= 3)
+                        return;
+                    sz -= 3;
+                    lines_.clear();
+                    std::string::size_type start = 0;
+                    do {
+                        if ((start + sz) < seq.size())
+                            lines_.push_back(std::string( generate_header_TKPT_DT_single(seq.substr(start, sz), false)));
+                        else
+                            lines_.push_back(std::string( generate_header_TKPT_DT_single(seq.substr(start), true)));
+                        start += sz;
                     }
+                    while (start < seq.size());
+                    iterator_ = lines_.begin();
+                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                }
 
-                    void send_seq::constructCC(const protocol_options& opt) {
-                        lines_.push_back(std::string( generate_header_TKPT_CC(opt)));
-                        iterator_ = lines_.begin();
-                        currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
-                    }
+                void send_seq::constructCR(const protocol_options& opt) {
+                    lines_.push_back(std::string( generate_header_TKPT_CR(opt)));
+                    iterator_ = lines_.begin();
+                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                }
 
-                    void send_seq::constructER(int16_t dst, const std::string& errorreason, int8_t err) {
-                        lines_.push_back(std::string( generate_header_TKPT_ER(dst, errorreason, err)));
-                        iterator_ = lines_.begin();
-                        currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
-                    }
+                void send_seq::constructCC(const protocol_options& opt) {
+                    lines_.push_back(std::string( generate_header_TKPT_CC(opt)));
+                    iterator_ = lines_.begin();
+                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                }
 
-                    void send_seq::constructDR(int16_t dst, int16_t src, int8_t rsn) {
-                        lines_.push_back(std::string( generate_header_TKPT_DR(dst, src , rsn)));
-                        iterator_ = lines_.begin();
-                        currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
-                    }
+                void send_seq::constructER(int16_t dst, const std::string& errorreason, int8_t err) {
+                    lines_.push_back(std::string( generate_header_TKPT_ER(dst, errorreason, err)));
+                    iterator_ = lines_.begin();
+                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                }
 
-                    /*void send_seq::constructDC(int16_t dst, int16_t src){
-                         lines_.push_back(std::string( generate_header_TKPT_DC(dst, src)));
-                         iterator_=lines_.begin();
-                         currentsize_= lines_.begin()!=lines_.end() ? lines_.begin()->size() : 0;          
-                    }*/
-
-                    //boost::asio::io_service::id stream_socket_service::id;
-
-                    //boost::asio::io_service::id socket_acceptor_service::id;      
-
+                void send_seq::constructDR(int16_t dst, int16_t src, int8_t rsn) {
+                    lines_.push_back(std::string( generate_header_TKPT_DR(dst, src , rsn)));
+                    iterator_ = lines_.begin();
+                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
                 }
 
             }
