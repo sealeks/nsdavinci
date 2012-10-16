@@ -424,7 +424,7 @@ namespace boost {
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //////////////////stream_socket                
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
 
                 class stream_socket : public basic_stream_socket<tcp > {
                 public:
@@ -868,6 +868,13 @@ namespace boost {
                                 accept_op<AcceptHandler > (const_cast<stream_socket*> (this), handler)));
                     }
 
+
+
+
+
+
+                    ///   Send operation  ///                          
+
                     template <typename ConstBufferSequence>
                     std::size_t send(const ConstBufferSequence& buffers) {
                         return send(buffers, 0);
@@ -877,17 +884,29 @@ namespace boost {
                     std::size_t send(const ConstBufferSequence& buffers,
                             socket_base::message_flags flags) {
                         boost::system::error_code ec;
-                        std::size_t s = this->get_service().send(
-                                this->get_implementation(), buffers, flags,  ec);
+                        std::size_t s = send(buffers, flags,  ec);
                         boost::asio::detail::throw_error(ec, "send");
                         return s;
                     }
 
                     template <typename ConstBufferSequence>
+                    std::size_t write_some(const ConstBufferSequence& buffers) {
+                        boost::system::error_code ec;
+                        std::size_t s = send(buffers, 0,  ec);
+                        boost::asio::detail::throw_error(ec, "write_some");
+                        return s;
+                    }
+
+                    template <typename ConstBufferSequence>
+                    std::size_t write_some(const ConstBufferSequence& buffers,
+                            boost::system::error_code& ec) {
+                        return send(buffers, 0, ec);
+                    }
+
+                    template <typename ConstBufferSequence>
                     std::size_t send(const ConstBufferSequence& buffers,
                             socket_base::message_flags flags, boost::system::error_code& ec) {
-                        return this->get_service().send(
-                                this->get_implementation(), buffers, flags, ec);
+                        return send_impl(buffers, flags, ec);
                     }
 
                     template <typename SendHandler, typename Const_Buffers>
@@ -928,7 +947,7 @@ namespace boost {
                                     }
                                 }
                             }
-                            handler_(ec, static_cast<const std::size_t&> (send_lower_));
+                            handler_(ec, static_cast<std::size_t> (send_lower_));
                         }
 
 
@@ -959,25 +978,52 @@ namespace boost {
                         this->get_io_service().post(boost::bind(&send_op<WriteHandler, ConstBufferSequence>::run, send_op<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
                     }
 
-                    template <typename ConstBufferSequence>
-                    std::size_t write_some(const ConstBufferSequence& buffers) {
-                        boost::system::error_code ec;
-                        std::size_t s = this->get_service().send(
-                                this->get_implementation(), buffers, 0, pdusize_, ec);
-                        boost::asio::detail::throw_error(ec, "write_some");
-                        return s;
-                    }
-
-                    template <typename ConstBufferSequence>
-                    std::size_t write_some(const ConstBufferSequence& buffers,
-                            boost::system::error_code& ec) {
-                        return this->get_service().send(this->get_implementation(), buffers, 0, pdusize_, ec);
-                    }
-
                     template <typename ConstBufferSequence, typename WriteHandler>
                     void async_write_some(const ConstBufferSequence& buffers,
                             BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
                         async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler);
+                    }
+
+
+
+
+
+
+
+                    ///   Recieve operation  ///     
+
+                    template <typename MutableBufferSequence>
+                    std::size_t receive(const MutableBufferSequence& buffers) {
+                        return receive<MutableBufferSequence > (buffer, 0);
+                    }
+
+                    template <typename MutableBufferSequence>
+                    std::size_t receive(const MutableBufferSequence& buffers,
+                            socket_base::message_flags flags) {
+                        boost::system::error_code ec;
+                        std::size_t s = receive( buffers, flags, ec);
+                        boost::asio::detail::throw_error(ec, "receive");
+                        return s;
+                    }
+
+                    template <typename MutableBufferSequence>
+                    std::size_t read_some(const MutableBufferSequence& buffers,
+                            boost::system::error_code& ec) {
+                        return receive(buffers, 0, ec);
+                    }
+
+                    template <typename MutableBufferSequence>
+                    std::size_t read_some(const MutableBufferSequence& buffers) {
+                        boost::system::error_code ec;
+                        std::size_t s =  receive(buffers, 0, ec);
+                        boost::asio::detail::throw_error(ec, "read_some");
+                        return s;
+                    }
+
+                    template <typename MutableBufferSequence>
+                    std::size_t receive(const MutableBufferSequence& buffers,
+                            socket_base::message_flags flags, boost::system::error_code& ec) {
+                        return receive_impl(buffers, flags, ec);
                     }
 
                     template <typename ReceiveHandler, typename Mutable_Buffers>
@@ -1024,7 +1070,7 @@ namespace boost {
                                     }
                                 }
                             };
-                            handler_(ec, static_cast<const std::size_t&> (out_->size()));
+                            handler_(ec, static_cast<std::size_t> (out_->size()));
                         }
 
 
@@ -1046,14 +1092,14 @@ namespace boost {
                                 {
                                     boost::system::error_code ecc;
                                     socket_->get_service().close(socket_->get_implementation(), ecc);
-                                    handler_( ERROR__SEQ,  static_cast<const std::size_t&> (out_->size()));
+                                    handler_( ERROR__SEQ,  static_cast<std::size_t> (out_->size()));
                                     break;
                                 }
                                 case DR:
                                 {
                                     boost::system::error_code ecc;
                                     socket_->get_service().close(socket_->get_implementation(), ecc);
-                                    handler_( ERROR_ECONNREFUSED ,  static_cast<const std::size_t&> (out_->size()));
+                                    handler_( ERROR_ECONNREFUSED ,  static_cast<std::size_t> (out_->size()));
                                     break;
                                 }
                                 default:
@@ -1074,44 +1120,6 @@ namespace boost {
                         boost::asio::socket_base::message_flags flags_;
                         int                                                                     start_;
                     } ;
-
-                    template <typename MutableBufferSequence>
-                    std::size_t receive(const MutableBufferSequence& buffers) {
-                        return receive<MutableBufferSequence > (buffer, 0);
-                    }
-
-                    template <typename MutableBufferSequence>
-                    std::size_t receive(const MutableBufferSequence& buffers,
-                            socket_base::message_flags flags) {
-                        boost::system::error_code ec;
-                        std::size_t s = this->get_service().receive(
-                                this->get_implementation(), buffers, flags, ec);
-                        boost::asio::detail::throw_error(ec, "receive");
-                        return s;
-                    }
-
-                    template <typename MutableBufferSequence>
-                    std::size_t receive(const MutableBufferSequence& buffers,
-                            socket_base::message_flags flags, boost::system::error_code& ec) {
-                        return this->get_service().receive(
-                                this->get_implementation(), buffers, flags, ec);
-                    }
-
-                    template <typename MutableBufferSequence>
-                    std::size_t read_some(const MutableBufferSequence& buffers,
-                            boost::system::error_code& ec) {
-                        return this->get_service().receive(
-                                this->get_implementation(), buffers, 0, ec);
-                    }
-
-                    template <typename MutableBufferSequence>
-                    std::size_t read_some(const MutableBufferSequence& buffers) {
-                        boost::system::error_code ec;
-                        std::size_t s = this->get_service().receive(
-                                this->get_implementation(), buffers, 0, ec);
-                        boost::asio::detail::throw_error(ec, "read_some");
-                        return s;
-                    }
 
                     template <typename MutableBufferSequence, typename ReadHandler>
                     void async_receive(const MutableBufferSequence& buffers,
@@ -1199,15 +1207,78 @@ namespace boost {
 
                     boost::system::error_code  check_accept_imp(int16_t  src,  boost::system::error_code& ec) {
                         option_.src_tsap(src);
+                        bool canseled = false;
                         receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
                         while (!ec && !receive_->ready()) {
                             receive_->size(this->get_service().receive(this->get_implementation(), boost::asio::buffer(
                                     receive_->buffer() + receive_->size()) , 0, ec));
                         }
                         if (ec)
-                            return ec;                        
-                        
+                            return ec;
+                        send_seq_ptr  send_ ;
+                        protocol_options options_ = this->prot_option();
+                        if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
+                            return ERROR__EPROTO;
+                        }
+                        if (!options_.tsap_called().empty() && options_.tsap_called() != receive_->options().tsap_called()) {
+                            canseled = true;
+                            send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), 5));
+                        }
+                        else {
+                            options_ = protocol_options(receive_->options().src_tsap(), options_.src_tsap(),
+                                    less_tpdu(receive_->options().pdusize(), options_.pdusize()),
+                                    options_.tsap_calling(), receive_->options().tsap_calling());
+                            send_ = send_seq_ptr( new send_seq(1, options_));
+                        }
+                        while (!ec && !send_->ready())
+                            send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
+                        if (ec)
+                            return ec;
+                        if (canseled ) {
+                            boost::system::error_code ecc;
+                            this->get_service().close(this->get_implementation(), ecc);
+                        }
+                        else {
+                            protocol_options  opt = receive_->options();
+                            opt.pdusize(options_.pdusize());
+                            correspond_prot_option(receive_->options());
+                        }
+                        return canseled ? ERROR_EDOM : ec;
+                    }
+
+                    template <typename ConstBufferSequence>
+                    std::size_t send_impl(const ConstBufferSequence& buffers,
+                            socket_base::message_flags flags, boost::system::error_code& ec) {
+                        send_seq_ptr  send_( new send_seq(buffers, pdusize()));
+                        while (!ec && !send_->ready())
+                            send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
                         return ec;
+                    }
+
+                    template <typename MutableBufferSequence>
+                    std::size_t receive_impl(const MutableBufferSequence& buffers,
+                            socket_base::message_flags flags, boost::system::error_code& ec) {
+                        receive_seq_ptr receive_( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers)));
+                        while (!ec && !receive_->ready()) {
+                            receive_->size(this->get_service().receive(this->get_implementation(), boost::asio::buffer(
+                                    receive_->buffer() + receive_->size()) , 0, ec));
+                        }
+                        if (ec)
+                            return ec;
+                        switch (receive_->type()) {
+                            case CR:  return 0;
+                            case DT:  return receive_->size();
+                            case ER:
+                            case DR:
+                            {
+                                boost::system::error_code ecc;
+                                this->get_service().close(this->get_implementation(), ecc);
+                                ec = ( receive_->type() == DR)  ? ERROR_ECONNREFUSED :  ERROR__SEQ ;
+                                return static_cast<std::size_t> (receive_->size());
+                            }
+                        }
+                        ec = ERROR__EPROTO;
+                        return 0;
                     }
 
 
