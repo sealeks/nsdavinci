@@ -123,6 +123,10 @@ namespace boost {
                 const boost::system::error_code ERROR_ECONNREFUSED  =  boost::system::error_code(boost::system::errc::connection_refused, boost::system::system_category());
 
 
+                const int8_t REJECT_REASON_NORM = '\x80'; // normal release
+                const int8_t REJECT_REASON_SESS = '\x02'; // session   error  
+                const int8_t REJECT_REASON_ADDR = '\x03'; // address   error 
+                 const int8_t REJECT_REASON_NODEF = '\x00'; // address   error               
 
                 boost::system::error_code errorcode_by_reason(int8_t val);
 
@@ -444,8 +448,8 @@ namespace boost {
 
                     void connect(const endpoint_type& peer_endpoint) {
                         boost::system::error_code ec;
-                        if  (connect(peer_endpoint, ec))
-                            boost::asio::detail::throw_error(ec, "connect");
+                        connect(peer_endpoint, ec);
+                        boost::asio::detail::throw_error(ec, "connect");
                     }
 
                     boost::system::error_code connect(const endpoint_type& peer_endpoint,
@@ -618,15 +622,26 @@ namespace boost {
 
 
 
-                    ///   Releease operation  ///                    
+                    ///   Releease operation  ///    
 
-                    class dissconnect_op {
+                    void releaseconnect(int8_t rsn) {
+                        boost::system::error_code ec;
+                        releaseconnect(rsn, ec);
+                        boost::asio::detail::throw_error(ec, "releaseconnect");
+                    }
+
+                    boost::system::error_code releaseconnect(int8_t rsn, boost::system::error_code& ec) {
+                        return releaseconnect_impl(rsn, ec);
+                    }
+
+                    template <typename ReleaseHandler>
+                    class releaseconnect_op {
                     public:
 
-                        dissconnect_op(stream_socket*   socket, int16_t dst,  int16_t src, int8_t rsn) :
+                        releaseconnect_op(stream_socket*  socket, ReleaseHandler handler, int8_t rsn) :
                         socket_(socket),
-                        send_(send_seq_ptr( new send_seq(dst,  src, rsn))),
-                        rsn_(rsn),
+						handler_(handler),
+                        send_(send_seq_ptr( new send_seq(socket->prot_option().dst_tsap(),  socket->prot_option().src_tsap(), rsn))),
                         start_(1) {
                         }
 
@@ -654,53 +669,47 @@ namespace boost {
                                         }
                                     }
                                 }
-                            };
+                            }
+                            handler_(ec);
                         }
 
 
                     private:
                         stream_socket*                                              socket_;
+                        ReleaseHandler                                              handler_;
                         send_seq_ptr                                                  send_;
-                        int8_t                                                                rsn_;
                         int                                                                     start_;
                     } ;
 
-                    void asyn_disconnect(int16_t dst,  int16_t src, int8_t rsn) {
+                    template <typename ReleaseHandler>
+                    void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler, 
+                               int8_t rsn = REJECT_REASON_NORM) {
+                        BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
                         if (is_open()) {
-                            this->get_io_service().post(boost::bind(&dissconnect_op::run,
-                                    dissconnect_op(const_cast<stream_socket*> (this), dst,  src, rsn)));
+                              this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
+                                  releaseconnect_op<ReleaseHandler >(const_cast<stream_socket*> (this), handler, rsn)));
                         }
+                        else
+                            handler(ERROR_ECONNREFUSED);
                     }
 
-                    /*void close() {
-
-                        boost::system::error_code ec;
-                        this->get_service().close(this->get_implementation(), ec);
-                        boost::asio::detail::throw_error(ec, "close");
-                    }
-
-                    boost::system::error_code close(boost::system::error_code& ec) {
-                        return this->get_service().close(this->get_implementation(), ec);
-                    }*/
 
 
 
 
 
-
-                    ///   Accept operation  ///
+                    ///  Check Accept operation  ///
 
                     void  check_accept(int16_t  src = 1) {
                         boost::system::error_code ec;
-                        if ( check_accept(src, ec))
-                            boost::asio::detail::throw_error(ec, "connect");
+                        boost::asio::detail::throw_error(ec, "connect");
                     }
 
                     boost::system::error_code  check_accept(int16_t  src,  boost::system::error_code& ec) {
                         return check_accept_imp(src, ec);
                     }
 
-                    template <typename AcceptHandler>
+                    template <typename CheckAcceptHandler>
                     class accept_op {
 
                         enum stateconnection {
@@ -711,7 +720,7 @@ namespace boost {
 
                     public:
 
-                        accept_op(stream_socket* socket,  AcceptHandler handler) :
+                        accept_op(stream_socket* socket,  CheckAcceptHandler handler) :
                         socket_(socket),
                         handler_(handler),
                         state_(wait),
@@ -817,7 +826,7 @@ namespace boost {
                                 return;
                             }
                             if (!options_.tsap_called().empty() && options_.tsap_called() != receive_->options().tsap_called()) {
-                                send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), 5));
+                                send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), REJECT_REASON_ADDR));
                                 state(refuse);
                                 operator()(ec, 0);
                                 return;
@@ -852,7 +861,7 @@ namespace boost {
 
 
                         stream_socket*                              socket_;
-                        AcceptHandler                               handler_;
+                        CheckAcceptHandler                    handler_;
                         stateconnection                            state_;
                         protocol_options                          options_;
                         int                                                    start_;
@@ -861,11 +870,11 @@ namespace boost {
 
                     } ;
 
-                    template <typename AcceptHandler>
-                    void asyn_check_accept(AcceptHandler handler, int16_t  src) {
+                    template <typename CheckAcceptHandler>
+                    void asyn_check_accept(CheckAcceptHandler handler, int16_t  src) {
                         option_.src_tsap(src);
-                        this->get_io_service().post(boost::bind(&accept_op<AcceptHandler>::run,
-                                accept_op<AcceptHandler > (const_cast<stream_socket*> (this), handler)));
+                        this->get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
+                                accept_op<CheckAcceptHandler > (const_cast<stream_socket*> (this), handler)));
                     }
 
 
@@ -1198,11 +1207,21 @@ namespace boost {
                                     boost::system::error_code ecc;
                                     this->get_service().close(this->get_implementation() , ecc);
                                     std::cout << "connect_op refuse :" << receive_->errcode() << std::endl;
-                                    return receive_->errcode() ? receive_->errcode() : ERROR_EIO;
+                                    return ec = receive_->errcode() ? receive_->errcode() : ERROR_EIO;
                                 }
                             }
                         }
-                        return ERROR__EPROTO;
+                        return ec = ERROR__EPROTO;
+                    }
+
+                    boost::system::error_code releaseconnect_impl(int8_t rsn, boost::system::error_code& ec) {
+                        if (is_open()) {
+                            send_seq_ptr  send_ (send_seq_ptr( new send_seq(prot_option().dst_tsap(), prot_option().src_tsap(), rsn)));
+                            while (!ec && !send_->ready())
+                                send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
+                            return ec;
+                        }
+                        return ec =  ERROR_ECONNREFUSED;
                     }
 
                     boost::system::error_code  check_accept_imp(int16_t  src,  boost::system::error_code& ec) {
@@ -1222,7 +1241,7 @@ namespace boost {
                         }
                         if (!options_.tsap_called().empty() && options_.tsap_called() != receive_->options().tsap_called()) {
                             canseled = true;
-                            send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), 5));
+                            send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), REJECT_REASON_ADDR));
                         }
                         else {
                             options_ = protocol_options(receive_->options().src_tsap(), options_.src_tsap(),
@@ -1243,7 +1262,7 @@ namespace boost {
                             opt.pdusize(options_.pdusize());
                             correspond_prot_option(receive_->options());
                         }
-                        return canseled ? ERROR_EDOM : ec;
+                        return ec = canseled ? ERROR_EDOM : ec;
                     }
 
                     template <typename ConstBufferSequence>
