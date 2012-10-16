@@ -20,6 +20,7 @@
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/buffer.hpp>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 
@@ -222,6 +223,79 @@ namespace boost {
                     headarvarvalues vars_;
                 } ;
 
+                class  send_buffer_impl {
+                public:
+                    typedef boost::shared_ptr<const_buffers_1>      const_buffs_ptr;
+                    typedef std::vector<const_buffs_ptr>                    vector_buffer;
+                    typedef vector_buffer::iterator                                  vector_buffer_iterator;
+
+                    send_buffer_impl() : size_(0) {
+                        iterator_ = buff_.begin();
+                    }
+
+                    virtual ~send_buffer_impl() {
+                    }
+
+                    const_buffers_1 pop() {
+                        return iterator_ == buff_.end() ? const_buffers_1(boost::asio::const_buffer()) : (*(*iterator_));
+                    }
+
+                    std::size_t  size(std::size_t  sz = 0) {
+                        if (sz == 0) return size_;
+                        if (iterator_ == buff_.end()) return 0;
+                        *iterator_ = const_buffs_ptr( new const_buffers_1(*(*iterator_) + sz));
+                        if (!buffer_size(*(*iterator_))) {
+                            size_ = 0;
+                            iterator_++;
+                        }
+                        return size_;
+                    }
+
+                    std::size_t  receivesize() {
+                        return  iterator_ == buff_.end() ? 0 : buffer_size(*(*iterator_));
+                    }
+
+                    bool ready() {
+                        iterator_ = buff_.end();
+                    }
+
+
+                protected:
+                    vector_buffer_iterator iterator_;
+                    vector_buffer                buff_;
+                    std::size_t                      size_;
+                } ;
+
+
+
+                typedef boost::shared_ptr<send_buffer_impl>      send_buffer_ptr;
+
+                class  sevice_send_buffer_impl : public send_buffer_impl {       
+                public:
+
+                    sevice_send_buffer_impl(const std::string& send) : send_buffer_impl(), send_(send) {
+                        buff_.push_back(const_buffs_ptr( new const_buffers_1(const_buffer(send_.data(), send_.size()))));
+                        iterator_ = buff_.begin();
+                    }
+                private:
+                    std::string send_;
+                } ;
+
+                class  data_send_buffer_impl : public send_buffer_impl {   
+                public:
+                    data_send_buffer_impl(const const_buffer& buff, tpdu_size pdusize) : send_buffer_impl()
+                    {
+                        construct(buff, pdusize);
+                        iterator_ = buff_.begin();
+                    }
+
+                    void construct(const const_buffer& buff, tpdu_size pdusize);
+
+                private:
+                    std::string size_;
+                    std::string sizeeof_;
+                } ;
+
 
                 bool parse_vars(const std::string& str, headarvarvalues& vars);
 
@@ -415,6 +489,7 @@ namespace boost {
                     operation_state            state_;
                     tpdu_type                      type_;
                     std::size_t                      size_;
+                    send_buffer_ptr           buf_;
                     std::string::size_type   currentsize_;
                     std::string::size_type   currentiterator_;
                 } ;
