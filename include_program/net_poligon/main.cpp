@@ -132,8 +132,8 @@ public:
             rfc1006::resolver::iterator endpoint_iterator, const std::string& called = "")
     : io_service_(io_service),
     socket_(io_service, called) {
-        rfc1006::endpoint endpoint = *endpoint_iterator;
-        socket_.async_connect(endpoint,
+        //rfc1006::endpoint endpoint = *endpoint_iterator;
+        boost::asio::async_connect(socket_, endpoint_iterator,
                 boost::bind(&client::handle_connect, this,
                 boost::asio::placeholders::error, ++endpoint_iterator));
     }
@@ -146,7 +146,7 @@ public:
 
     void release() {
               io_service_.reset();
-              socket_.asyn_releaseconnect(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+              boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
               io_service_.poll();
     }
 

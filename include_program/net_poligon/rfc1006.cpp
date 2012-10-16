@@ -173,7 +173,7 @@ namespace boost {
                             return;
                         }
                     }
-                    vars_.push_back(headarvarvalue(headarvar(VAR_MAXTPDU_SIZE, 1), inttype_to_str(static_cast<int8_t> (128))));
+                    vars_.push_back(headarvarvalue(headarvar(VAR_MAXTPDU_SIZE, 1), inttype_to_str(static_cast<int8_t> ('\x80'))));
                 }
 
                 void generate_TKPTDU(std::string& val) {

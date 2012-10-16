@@ -126,7 +126,7 @@ namespace boost {
                 const int8_t REJECT_REASON_NORM = '\x80'; // normal release
                 const int8_t REJECT_REASON_SESS = '\x02'; // session   error  
                 const int8_t REJECT_REASON_ADDR = '\x03'; // address   error 
-                 const int8_t REJECT_REASON_NODEF = '\x00'; // address   error               
+                const int8_t REJECT_REASON_NODEF = '\x00'; // address   error               
 
                 boost::system::error_code errorcode_by_reason(int8_t val);
 
@@ -640,7 +640,7 @@ namespace boost {
 
                         releaseconnect_op(stream_socket*  socket, ReleaseHandler handler, int8_t rsn) :
                         socket_(socket),
-						handler_(handler),
+                        handler_(handler),
                         send_(send_seq_ptr( new send_seq(socket->prot_option().dst_tsap(),  socket->prot_option().src_tsap(), rsn))),
                         start_(1) {
                         }
@@ -682,12 +682,12 @@ namespace boost {
                     } ;
 
                     template <typename ReleaseHandler>
-                    void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler, 
-                               int8_t rsn = REJECT_REASON_NORM) {
+                    void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
+                            int8_t rsn = REJECT_REASON_NORM) {
                         BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
                         if (is_open()) {
-                              this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
-                                  releaseconnect_op<ReleaseHandler >(const_cast<stream_socket*> (this), handler, rsn)));
+                            this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
+                                    releaseconnect_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, rsn)));
                         }
                         else
                             handler(ERROR_ECONNREFUSED);
@@ -1512,6 +1512,10 @@ namespace boost {
 
         } // namespace ip
 
+        template<typename ReleaseConnectHandler>
+        void asyn_releaseconnect( boost::asio::ip::iec8073::stream_socket& s, ReleaseConnectHandler  handler, int8_t rsn = boost::asio::ip::iec8073::REJECT_REASON_NORM) {
+            s.asyn_releaseconnect<ReleaseConnectHandler > (handler, rsn);
+        }
 
 
     } // namespace asio
