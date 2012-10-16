@@ -340,6 +340,17 @@ namespace boost {
                             headarvarvalues vars;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
                                 return state(error);
+                            if (oldbeg) {
+                                boost::array<mutable_buffer, 2 > bufsarr = {
+                                    mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
+                                    mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
+                                };
+                                buffer_copy(buff_, bufsarr);
+                                size_ -= (TKPT_LENGTH + li + 1);
+                            }
+                            else {
+                                size_ = 0;
+                            }                                                      
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             return state(complete);
                         }
@@ -363,7 +374,7 @@ namespace boost {
                         case DR:
                         {
                             if (li < 6)
-                                return state(error); /* невозможно см. 13.3.1*/
+                                return state(error); /* невозможно см. 13.3.2*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);

@@ -1266,7 +1266,7 @@ namespace boost {
                         if (ec)
                             return ec;
                         switch (receive_->type()) {
-                            case CR:  return 0;
+                            case CR:
                             case DT:  return receive_->size();
                             case ER:
                             case DR:
@@ -1277,6 +1277,8 @@ namespace boost {
                                 return static_cast<std::size_t> (receive_->size());
                             }
                         }
+                        boost::system::error_code ecc;
+                        this->get_service().close(this->get_implementation(), ecc);
                         ec = ERROR__EPROTO;
                         return 0;
                     }
