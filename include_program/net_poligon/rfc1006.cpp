@@ -188,12 +188,12 @@ namespace boost {
                     sizeeof_ = TKPT_START + inttype_to_str(eofsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_ENDED);
                     do {
                         if (boost::asio::buffer_size(tmpbuff) > pdusz) {
-                                buff_.push_back(const_buffs_ptr( new const_buffer(size_.data(), size_.size())));
-                                buff_.push_back(const_buffs_ptr(new const_buffer(buffer(tmpbuff , pdusz ))));                               
+                            buff_.push_back(const_buffs_ptr( new const_buffer(size_.data(), size_.size())));
+                            buff_.push_back(const_buffs_ptr(new const_buffer(buffer(tmpbuff , pdusz ))));
                         }
                         else {
                             buff_.push_back(const_buffs_ptr( new const_buffer(sizeeof_.data(), sizeeof_.size())));
-                            buff_.push_back(const_buffs_ptr(new const_buffer(buffer(tmpbuff , boost::asio::buffer_size(tmpbuff)))));                             
+                            buff_.push_back(const_buffs_ptr(new const_buffer(buffer(tmpbuff , boost::asio::buffer_size(tmpbuff)))));
                         }
                         tmpbuff = tmpbuff + pdusz;
                     }
