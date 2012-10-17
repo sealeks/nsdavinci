@@ -225,7 +225,7 @@ namespace boost {
 
                 class  send_buffer_impl {
                 public:
-                    typedef boost::shared_ptr<const_buffers_1>      const_buffs_ptr;
+                    typedef boost::shared_ptr<const_buffer>      const_buffs_ptr;
                     typedef std::vector<const_buffs_ptr>                    vector_buffer;
                     typedef vector_buffer::iterator                                  vector_buffer_iterator;
 
@@ -236,27 +236,28 @@ namespace boost {
                     virtual ~send_buffer_impl() {
                     }
 
-                    const_buffers_1 pop() {
-                        return iterator_ == buff_.end() ? const_buffers_1(boost::asio::const_buffer()) : (*(*iterator_));
+                    const_buffer pop() {
+                        return iterator_ == buff_.end() ? const_buffer(boost::asio::const_buffer()) : (*(*iterator_));
                     }
 
                     std::size_t  size(std::size_t  sz = 0) {
                         if (sz == 0) return size_;
                         if (iterator_ == buff_.end()) return 0;
-                        *iterator_ = const_buffs_ptr( new const_buffers_1(*(*iterator_) + sz));
+                        *iterator_ = const_buffs_ptr( new const_buffer(*(*iterator_) + sz));
                         if (!buffer_size(*(*iterator_))) {
                             size_ = 0;
                             iterator_++;
+                            return size_;
                         }
-                        return size_;
+                        return size_ += sz;
                     }
 
-                    std::size_t  receivesize() {
+                    std::size_t  receivesize() const {
                         return  iterator_ == buff_.end() ? 0 : buffer_size(*(*iterator_));
                     }
 
-                    bool ready() {
-                        iterator_ = buff_.end();
+                    bool ready() const {
+                        return iterator_ == buff_.end();
                     }
 
 
@@ -270,21 +271,21 @@ namespace boost {
 
                 typedef boost::shared_ptr<send_buffer_impl>      send_buffer_ptr;
 
-                class  sevice_send_buffer_impl : public send_buffer_impl {       
+                class  sevice_send_buffer_impl : public send_buffer_impl {
                 public:
 
                     sevice_send_buffer_impl(const std::string& send) : send_buffer_impl(), send_(send) {
-                        buff_.push_back(const_buffs_ptr( new const_buffers_1(const_buffer(send_.data(), send_.size()))));
+                        buff_.push_back(const_buffs_ptr( new const_buffer(const_buffer(send_.data(), send_.size()))));
                         iterator_ = buff_.begin();
                     }
                 private:
                     std::string send_;
                 } ;
 
-                class  data_send_buffer_impl : public send_buffer_impl {   
+                class  data_send_buffer_impl : public send_buffer_impl {
                 public:
-                    data_send_buffer_impl(const const_buffer& buff, tpdu_size pdusize) : send_buffer_impl()
-                    {
+
+                    data_send_buffer_impl(const const_buffer& buff, tpdu_size pdusize) : send_buffer_impl() {
                         construct(buff, pdusize);
                         iterator_ = buff_.begin();
                     }
@@ -414,56 +415,49 @@ namespace boost {
 
                 public:
 
-                    enum operation_state {
-                        nodef,
-                        complete,
-                        error,
-                        continuous
-                    } ;
-
                     send_seq(const const_buffer& buff, tpdu_size pdusize) :
-                    state_(nodef), type_(DT) , size_(0), currentsize_(0), currentiterator_(0)  {
-                        constructDT(std::string(boost::asio::buffer_cast<const char*>(buff), boost::asio::buffer_size(buff)), pdusize);
+                    type_(DT)  {
+                        constructDT(buff , pdusize);
                     }
 
                     send_seq(const protocol_options& opt) :
-                    state_(nodef), type_(CR) , size_(0), currentsize_(0), currentiterator_(0)  {
+                    type_(CR)   {
                         constructCR(opt);
                     }
 
                     send_seq(int16_t dst, const protocol_options& opt) :
-                    state_(nodef), type_(CC) , size_(0), currentsize_(0), currentiterator_(0)  {
+                    type_(CC)   {
                         constructCC(opt);
                     }
 
                     send_seq(int16_t dst, const std::string& errorreason, int8_t err) :
-                    state_(nodef), type_(ER) , size_(0), currentsize_(0), currentiterator_(0)  {
+                    type_(ER)   {
                         constructER(dst, errorreason, err );
                     }
 
                     send_seq(int16_t dst, int16_t src, int8_t rsn) :
-                    state_(nodef), type_(DR) , size_(0), currentsize_(0), currentiterator_(0)  {
+                    type_(DR)  {
                         constructDR(dst, src, rsn );
                     }
 
                     bool ready() const {
-                        return (state_ == complete) || (state_ == error);
+                        return (!buf_) ||  (buf_->ready());
                     }
 
-                    const_buffer pop();
+                    const_buffer pop() {
+                        return ready()  ?  const_buffer() : buf_->pop();
+                    }
 
-                    operation_state state() const {
-                        return state_;
+                    std::size_t  size(std::size_t  sz) {
+                        return ready() ? 0 : buf_->size(sz);
+                    }
+
+                    std::size_t  receivesize() const {
+                        return ready() ? 0 : buf_->receivesize();
                     }
 
                     tpdu_type type() const {
                         return type_;
-                    }
-
-                    std::size_t  size(std::size_t  sz = 0);
-
-                    std::size_t  receivesize() const {
-                        return currentsize_ > currentiterator_ ? currentsize_ - currentiterator_  : 0;
                     }
 
 
@@ -471,7 +465,7 @@ namespace boost {
 
                 private:
 
-                    void constructDT(const std::string& seq, tpdu_size pdusize);
+                    void constructDT(const const_buffer& buff , tpdu_size pdusize);
 
                     void constructCR(const protocol_options& opt);
 
@@ -481,17 +475,8 @@ namespace boost {
 
                     void constructDR(int16_t dst, int16_t src, int8_t rsn);
 
-                    //void constructDC(int16_t dst, int16_t src);       
-
-
-                    lines_type                      lines_;
-                    lines_iterator                iterator_;
-                    operation_state            state_;
                     tpdu_type                      type_;
-                    std::size_t                      size_;
                     send_buffer_ptr           buf_;
-                    std::string::size_type   currentsize_;
-                    std::string::size_type   currentiterator_;
                 } ;
 
                 typedef boost::shared_ptr<send_seq>               send_seq_ptr;
@@ -509,12 +494,12 @@ namespace boost {
                 public:
 
                     explicit stream_socket(boost::asio::io_service& io_service, const std::string& called = "")
-                    : basic_stream_socket<tcp>(io_service), pdusize_(SIZE2048), option_(0, 1, pdusize_, called) {
+                    : basic_stream_socket<tcp>(io_service), pdusize_(SIZE4), option_(0, 1, pdusize_, called) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const std::string& called = "")
-                    : basic_stream_socket<tcp >(io_service, endpoint), pdusize_(SIZE2048), option_(0, 1, pdusize_, called) {
+                    : basic_stream_socket<tcp >(io_service, endpoint), pdusize_(SIZE4), option_(0, 1, pdusize_, called) {
                     }
 
 
@@ -915,15 +900,11 @@ namespace boost {
                         }
 
                         void finish(const boost::system::error_code& ec) {
-                            if (send_->state() == send_seq::complete) {
-                                protocol_options  opt = receive_->options();
-                                opt.pdusize(options_.pdusize());
-                                socket_->correspond_prot_option(opt);
-                                handler_(ec);
-                                std::cout << "accept_op success" << std::endl;
-                                return;
-                            }
-                            handler_(ERROR__EPROTO);
+                            protocol_options  opt = receive_->options();
+                            opt.pdusize(options_.pdusize());
+                            socket_->correspond_prot_option(opt);
+                            handler_(ec);
+                            std::cout << "accept_op success" << std::endl;
                         }
 
                         void state(stateconnection st) {
