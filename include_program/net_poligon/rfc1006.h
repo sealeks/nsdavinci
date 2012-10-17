@@ -494,12 +494,12 @@ namespace boost {
                 public:
 
                     explicit stream_socket(boost::asio::io_service& io_service, const std::string& called = "")
-                    : basic_stream_socket<tcp>(io_service), pdusize_(SIZE4), option_(0, 1, pdusize_, called) {
+                    : basic_stream_socket<tcp>(io_service), pdusize_(SIZE2048), option_(0, 1, pdusize_, called) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const std::string& called = "")
-                    : basic_stream_socket<tcp >(io_service, endpoint), pdusize_(SIZE4), option_(0, 1, pdusize_, called) {
+                    : basic_stream_socket<tcp >(io_service, endpoint), pdusize_(SIZE2048), option_(0, 1, pdusize_, called) {
                     }
 
 
@@ -543,7 +543,6 @@ namespace boost {
                         state_(request),
                         options_(socket->prot_option()),
                         peer_endpoint_(peer_endpoint),
-                        start_(1),
                         send_(send_seq_ptr( new send_seq(socket->prot_option()))),
                         receive_(new receive_seq()) {
                         }
@@ -564,50 +563,27 @@ namespace boost {
                                 switch (state_) {
                                     case request:
                                     {
-                                        switch (start_) {
-                                            case 1:
-                                            {
-                                                start_ = 0;
-                                                socket_->get_service().async_send(socket_->get_implementation(),  boost::asio::buffer(send_->pop(), send_->receivesize()) , 0 , *this);
-                                                return;
-                                            }
-                                            default:
-                                            {
-                                                send_->size(bytes_transferred);
-                                                if (!send_->ready()) {
-                                                    socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()) , 0 , *this);
-                                                    return;
-                                                }
-                                                else {
-                                                    state(response);
-                                                    operator()(ec, 0);
-                                                    return;
-                                                }
-                                            }
+                                        send_->size(bytes_transferred);
+                                        if (!send_->ready()) {
+                                            socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()) , 0 , *this);
+                                            return;
+                                        }
+                                        else {
+                                            state(response);
+                                            operator()(ec, 0);
+                                            return;
                                         }
                                     }
                                     case response:
                                     {
-                                        switch (start_) {
-                                            case 1:
-                                            {
-                                                start_ = 0;
-                                                socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(
-                                                        receive_->buffer() + receive_->size()) , 0 , *this);
-                                                return;
-                                            }
-                                            default:
-                                            {
-                                                receive_->size(bytes_transferred);
-                                                if (!receive_->ready()) {
-                                                    socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(
-                                                            receive_->buffer() + receive_->size()) , 0 , *this);
-                                                    return;
-                                                }
-                                                finish(ec);
-                                                return;
-                                            }
+                                        receive_->size(bytes_transferred);
+                                        if (!receive_->ready()) {
+                                            socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(
+                                                    receive_->buffer() + receive_->size()) , 0 , *this);
+                                            return;
                                         }
+                                        finish(ec);
+                                        return;
                                     }
                                 }
                             }
@@ -623,8 +599,8 @@ namespace boost {
                                 switch (receive_->type()) {
                                     case CC:
                                     {
+                                        socket_->correspond_prot_option(receive_->options());                                        
                                         handler_(ec);
-                                        socket_->correspond_prot_option(receive_->options());
                                         std::cout << "connect_op success" << std::endl;
                                         return;
                                     }
@@ -645,7 +621,6 @@ namespace boost {
                         void state(stateconnection st) {
                             if (state_ != st) {
                                 state_ = st;
-                                start_ = 1;
                             }
                         }
 
@@ -654,7 +629,6 @@ namespace boost {
                         stateconnection                          state_;
                         protocol_options                        options_;
                         endpoint_type                             peer_endpoint_;
-                        int                                                  start_;
                         send_seq_ptr                               send_;
                         receive_seq_ptr                           receive_;
 
@@ -701,8 +675,7 @@ namespace boost {
                         releaseconnect_op(stream_socket*  socket, ReleaseHandler handler, int8_t rsn) :
                         socket_(socket),
                         handler_(handler),
-                        send_(send_seq_ptr( new send_seq(socket->prot_option().dst_tsap(),  socket->prot_option().src_tsap(), rsn))),
-                        start_(1) {
+                        send_(send_seq_ptr( new send_seq(socket->prot_option().dst_tsap(),  socket->prot_option().src_tsap(), rsn))) {
                         }
 
                         void run() {
@@ -713,21 +686,10 @@ namespace boost {
                         void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
                             std::size_t n = 0;
                             if (!ec) {
-                                switch (start_) {
-                                    case 1:
-                                    {
-                                        start_ = 0;
-                                        socket_->get_service().async_send(socket_->get_implementation(),  boost::asio::buffer(send_->pop(), send_->receivesize()) , 0 , *this);
-                                        return;
-                                    }
-                                    default:
-                                    {
-                                        send_->size(bytes_transferred);
-                                        if (!send_->ready()) {
-                                            socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()) , 0 , *this);
-                                            return;
-                                        }
-                                    }
+                                send_->size(bytes_transferred);
+                                if (!send_->ready()) {
+                                    socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()) , 0 , *this);
+                                    return;
                                 }
                             }
                             handler_(ec);
@@ -738,7 +700,6 @@ namespace boost {
                         stream_socket*                                              socket_;
                         ReleaseHandler                                              handler_;
                         send_seq_ptr                                                  send_;
-                        int                                                                     start_;
                     } ;
 
                     template <typename ReleaseHandler>
@@ -785,7 +746,6 @@ namespace boost {
                         handler_(handler),
                         state_(wait),
                         options_(socket->prot_option()),
-                        start_(1),
                         send_(),
                         receive_(new receive_seq()) {
                         }
@@ -800,74 +760,38 @@ namespace boost {
                                 switch (state_) {
                                     case wait:
                                     {
-                                        switch (start_) {
-                                            case 1:
-                                            {
-                                                start_ = 0;
-                                                socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(
-                                                        receive_->buffer() + receive_->size()) , 0 , *this);
-                                                return;
-                                            }
-                                            default:
-                                            {
-                                                receive_->size(bytes_transferred);
-                                                if (!receive_->ready()) {
-                                                    socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(
-                                                            receive_->buffer() + receive_->size()) , 0 , *this);
-                                                    return;
-                                                }
-                                                parse_response(ec);
-                                                return;
-                                            }
+                                        receive_->size(bytes_transferred);
+                                        if (!receive_->ready()) {
+                                            socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(
+                                                    receive_->buffer() + receive_->size()) , 0 , *this);
+                                            return;
                                         }
+                                        parse_response(ec);
+                                        return;
                                     }
                                     case send:
                                     {
-                                        switch (start_) {
-                                            case 1:
-                                            {
-                                                start_ = 0;
-                                                socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(),
-                                                        send_->receivesize()) , 0 , *this);
-                                                return;
-                                            }
-                                            default:
-                                            {
-                                                send_->size(bytes_transferred);
-                                                if (!send_->ready()) {
-                                                    socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(),
-                                                            send_->receivesize()) , 0 , *this);
-                                                    return;
-                                                }
-                                                finish(ec);
-                                                return;
-                                            }
+                                        send_->size(bytes_transferred);
+                                        if (!send_->ready()) {
+                                            socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(),
+                                                    send_->receivesize()) , 0 , *this);
+                                            return;
                                         }
+                                        finish(ec);
+                                        return;
                                     }
                                     case refuse:
                                     {
-                                        switch (start_) {
-                                            case 1:
-                                            {
-                                                start_ = 0;
-                                                socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(),
-                                                        send_->receivesize()) , 0 , *this);
-                                                return;
-                                            }
-                                            default:
-                                            {
-                                                send_->size(bytes_transferred);
-                                                if (!send_->ready()) {
-                                                    socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(),
-                                                            send_->receivesize()) , 0 , *this);
-                                                    return;
-                                                }
-                                                boost::system::error_code ecc;
-                                                socket_->get_service().close(socket_->get_implementation(), ecc);
-                                                handler_(ERROR_EDOM);
-                                                return;
-                                            }
+                                        send_->size(bytes_transferred);
+                                        if (!send_->ready()) {
+                                            socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(),
+                                                    send_->receivesize()) , 0 , *this);
+                                            return;
                                         }
+                                        boost::system::error_code ecc;
+                                        socket_->get_service().close(socket_->get_implementation(), ecc);
+                                        handler_(ERROR_EDOM);
+                                        return;
                                     }
                                 }
                             }
@@ -908,10 +832,8 @@ namespace boost {
                         }
 
                         void state(stateconnection st) {
-                            if (state_ != st) {
+                            if (state_ != st)
                                 state_ = st;
-                                start_ = 1;
-                            }
                         }
 
 
@@ -920,7 +842,6 @@ namespace boost {
                         CheckAcceptHandler                    handler_;
                         stateconnection                            state_;
                         protocol_options                          options_;
-                        int                                                    start_;
                         send_seq_ptr                                 send_;
                         receive_seq_ptr                             receive_;
 
@@ -984,8 +905,7 @@ namespace boost {
                         handler_(handler),
                         in_(send_seq_ptr( new send_seq(buffers, socket->pdusize()))),
                         flags_(flags),
-                        send_lower_(boost::asio::buffer_size(buffers)),
-                        start_(1) {
+                        send_lower_(boost::asio::buffer_size(buffers)) {
                         }
 
                         void run() {
@@ -995,21 +915,10 @@ namespace boost {
 
                         void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
                             if (!ec) {
-                                switch (start_) {
-                                    case 1:
-                                    {
-                                        start_ = 0;
-                                        socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(in_->pop(), in_->receivesize()) , flags_ , *this);
-                                        return;
-                                    }
-                                    default:
-                                    {
-                                        in_->size(bytes_transferred);
-                                        if (!in_->ready()) {
-                                            socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(in_->pop(), in_->receivesize()) , flags_ , *this);
-                                            return;
-                                        }
-                                    }
+                                in_->size(bytes_transferred);
+                                if (!in_->ready()) {
+                                    socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(in_->pop(), in_->receivesize()) , flags_ , *this);
+                                    return;
                                 }
                             }
                             handler_(ec, static_cast<std::size_t> (send_lower_));
@@ -1023,7 +932,6 @@ namespace boost {
                         send_seq_ptr                                                 in_;
                         boost::asio::socket_base::message_flags flags_;
                         std::size_t                                                       send_lower_;
-                        int                                                                    start_;
 
 
                     } ;
@@ -1101,8 +1009,7 @@ namespace boost {
                         handler_(handler),
                         out_(out),
                         buff_(buff),
-                        flags_(flags),
-                        start_(1) {
+                        flags_(flags) {
                         }
 
                         void run() {
@@ -1113,28 +1020,14 @@ namespace boost {
                         void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
                             std::size_t n = 0;
                             if (!ec) {
-                                switch (start_) {
-                                    case 1:
-                                    {
-                                        start_ = 0;
-                                        socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(
-                                                out_->buffer() + out_->size()) , flags_ , *this);
-                                        ;
-                                        return;
-                                    }
-                                    default:
-                                    {
-
-                                        out_->size(bytes_transferred);
-                                        if (!out_->ready()) {
-                                            socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(
-                                                    out_->buffer() + out_->size()) , flags_ , *this);
-                                            return;
-                                        }
-                                        if (!success()) return;
-                                    }
+                                out_->size(bytes_transferred);
+                                if (!out_->ready()) {
+                                    socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(
+                                            out_->buffer() + out_->size()) , flags_ , *this);
+                                    return;
                                 }
-                            };
+                                if (!success()) return;
+                            }
                             handler_(ec, static_cast<std::size_t> (out_->size()));
                         }
 
@@ -1183,7 +1076,6 @@ namespace boost {
                         const Mutable_Buffers&                               buff_;
                         receive_seq_ptr                                             out_;
                         boost::asio::socket_base::message_flags flags_;
-                        int                                                                     start_;
                     } ;
 
                     template <typename MutableBufferSequence, typename ReadHandler>
