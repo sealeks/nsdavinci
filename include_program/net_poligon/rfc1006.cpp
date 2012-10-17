@@ -51,7 +51,7 @@ namespace boost {
                         case TPDU_SIZE512: return 512;
                         case TPDU_SIZE256: return 256;
                         case TPDU_SIZE128: return 128;
-                        case TPDU_SIZE4: return 7;
+                        case TPDU_SIZE4: return 8;
                     }
                     return 0;
                 }
@@ -175,38 +175,30 @@ namespace boost {
                     }
                     vars_.push_back(headarvarvalue(headarvar(VAR_MAXTPDU_SIZE, 1), inttype_to_str(static_cast<int8_t> ('\x80'))));
                 }
-                
-                
+
                 void data_send_buffer_impl::construct(const const_buffer& buff, tpdu_size pdusize)  {
                     std::size_t pdusz = tpdu_byte_size(pdusize);
                     if (!pdusz) pdusz = 2048;
-                    pdusz-=3;             
+                    pdusz -= 3;
                     const_buffer tmpbuff = buff;
                     std::size_t sz = boost::asio::buffer_size(tmpbuff);
-                    uint16_t normalsz = be_le_convert16(static_cast<uint16_t>(pdusz + 7));
-                    uint16_t eofsz = be_le_convert16(static_cast<uint16_t> (((sz % pdusz) ? (sz % pdusz) : pdusz )+7));                     
-                    size_=TKPT_START+inttype_to_str(normalsz)+inttype_to_str('\x2')+inttype_to_str(DT_TPDU_ID)+inttype_to_str(TPDU_CONTINIUE);
-                    sizeeof_=TKPT_START+ inttype_to_str(eofsz)+inttype_to_str('\x2')+inttype_to_str(DT_TPDU_ID)+inttype_to_str(TPDU_ENDED);                                   
+                    uint16_t normalsz = be_le_convert16(static_cast<uint16_t> (pdusz + 7));
+                    uint16_t eofsz = be_le_convert16(static_cast<uint16_t> (((sz % pdusz) ? (sz % pdusz) : pdusz ) + 7));
+                    size_ = TKPT_START + inttype_to_str(normalsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_CONTINIUE);
+                    sizeeof_ = TKPT_START + inttype_to_str(eofsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_ENDED);
                     do {
-                        if (boost::asio::buffer_size(tmpbuff)>pdusz){
-                            boost::array<const_buffer, 2 > bufsarr = {
-                                const_buffer(size_.data(),size_.size()),
-                                const_buffer(boost::asio::buffer(tmpbuff ,pdusz ))
-                            };
-                             buff_.push_back(const_buffs_ptr( new const_buffers_1(buffer(bufsarr))));}
-                        else{
-                            boost::array<const_buffer, 2 > bufsarr = {
-                                const_buffer(sizeeof_.data(),sizeeof_.size()),
-                                const_buffer(boost::asio::buffer(tmpbuff ,boost::asio::buffer_size(tmpbuff)))
-                            };
-                             buff_.push_back(const_buffs_ptr( new const_buffers_1(buffer(bufsarr))));}
-                       tmpbuff=tmpbuff+pdusz;                      
+                        if (boost::asio::buffer_size(tmpbuff) > pdusz) {
+                                buff_.push_back(const_buffs_ptr( new const_buffer(size_.data(), size_.size())));
+                                buff_.push_back(const_buffs_ptr(new const_buffer(buffer(tmpbuff , pdusz ))));                               
+                        }
+                        else {
+                            buff_.push_back(const_buffs_ptr( new const_buffer(sizeeof_.data(), sizeeof_.size())));
+                            buff_.push_back(const_buffs_ptr(new const_buffer(buffer(tmpbuff , boost::asio::buffer_size(tmpbuff)))));                             
+                        }
+                        tmpbuff = tmpbuff + pdusz;
                     }
                     while (boost::asio::buffer_size(tmpbuff));
                 }
-                
-                
-                 
 
                 void generate_TKPTDU(std::string& val) {
                     val = TKPT_START + inttype_to_str(be_le_convert16(static_cast<int16_t> (val.size() + TKPT_LENGTH))) + val;
@@ -382,7 +374,7 @@ namespace boost {
                             }
                             else {
                                 size_ = 0;
-                            }                                                      
+                            }
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             return state(complete);
                         }
@@ -465,97 +457,24 @@ namespace boost {
 
                 ///////////////////////////////////////////////////////////////////////////////////////
 
-                const_buffer send_seq::pop() {
-                    if (iterator_ == lines_.end())
-                        return const_buffer();
-                    const std::string& line = *iterator_;
-                    return const_buffer(boost::asio::buffer(line.data() + currentiterator_, currentsize_));
-                }
-
-                std::size_t  send_seq::size(std::size_t  sz) {
-                    if (!sz) return size_;
-                    if (iterator_ == lines_.end()) {
-                        state_ = complete;
-                        currentiterator_ = 0;
-                        currentsize_ = 0;
-                        return size_;
-                    }
-                    currentiterator_ += sz;
-                    if (currentiterator_ < currentsize_) {
-                        currentsize_ -= sz;
-                        state_ = continuous;
-                    }
-                    else {
-                        if (currentiterator_ == currentsize_) {
-                            iterator_++;
-                            if (iterator_ == lines_.end()) {
-                                state_ = complete;
-                                currentiterator_ = 0;
-                                currentsize_ = 0;
-                            }
-                            else {
-                                state_ = continuous;
-                                currentiterator_ = 0;
-                                currentsize_ = (*iterator_).size();
-                            }
-                        }
-                        else {
-                            state_ = error;
-                            iterator_ = lines_.end();
-                            currentiterator_ = 0;
-                            currentsize_ = 0;
-                        }
-                    }
-                    return size_ += sz;
-                }
-
-                void send_seq::constructDT(const std::string& seq, tpdu_size pdusize) {
-                    buf_= send_buffer_ptr( new data_send_buffer_impl(const_buffer(seq.data(), seq.size() ), pdusize)); 
-                    std::string::size_type sz = tpdu_byte_size(pdusize);
-                    iterator_ = lines_.end();
-                    if (sz <= 3)
-                        return;
-                    sz -= 3;
-                    lines_.clear();
-                    std::string::size_type start = 0;
-                    do {
-                        if ((start + sz) < seq.size())
-                            lines_.push_back(std::string( generate_header_TKPT_DT_single(seq.substr(start, sz), false)));
-                        else
-                            lines_.push_back(std::string( generate_header_TKPT_DT_single(seq.substr(start), true)));
-                        start += sz;
-                    }
-                    while (start < seq.size());
-                    iterator_ = lines_.begin();
-                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                void send_seq::constructDT(const const_buffer& buff , tpdu_size pdusize) {
+                    buf_ = send_buffer_ptr( new data_send_buffer_impl(buff, pdusize));
                 }
 
                 void send_seq::constructCR(const protocol_options& opt) {
-                    buf_= send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_CR(opt)));
-                    lines_.push_back(std::string( generate_header_TKPT_CR(opt)));
-                    iterator_ = lines_.begin();
-                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                    buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_CR(opt)));
                 }
 
                 void send_seq::constructCC(const protocol_options& opt) {
-                    buf_= send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_CC(opt)));                    
-                    lines_.push_back(std::string( generate_header_TKPT_CC(opt)));
-                    iterator_ = lines_.begin();
-                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                    buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_CC(opt)));
                 }
 
                 void send_seq::constructER(int16_t dst, const std::string& errorreason, int8_t err) {
-                    buf_= send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_ER(dst, errorreason, err)));                    
-                    lines_.push_back(std::string( generate_header_TKPT_ER(dst, errorreason, err)));
-                    iterator_ = lines_.begin();
-                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                    buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_ER(dst, errorreason, err)));
                 }
 
                 void send_seq::constructDR(int16_t dst, int16_t src, int8_t rsn) {
-                    buf_= send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_DR(dst, src , rsn)));                         
-                    lines_.push_back(std::string( generate_header_TKPT_DR(dst, src , rsn)));
-                    iterator_ = lines_.begin();
-                    currentsize_ = lines_.begin() != lines_.end() ? lines_.begin()->size() : 0;
+                    buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_DR(dst, src , rsn)));
                 }
 
             }

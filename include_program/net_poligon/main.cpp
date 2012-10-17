@@ -40,7 +40,7 @@ class session {
 public:
 
     session(boost::asio::io_service& io_service)
-    : socket_(io_service, "SERVER-TSE") {
+    : socket_(io_service, "SERVER-TSEL") {
         std::cout << "New sesion\n";
     }
 
@@ -132,8 +132,8 @@ public:
             rfc1006::resolver::iterator endpoint_iterator, const std::string& called = "")
     : io_service_(io_service),
     socket_(io_service, called) {
-        //rfc1006::endpoint endpoint = *endpoint_iterator;
-        boost::asio::async_connect(socket_, endpoint_iterator,
+        rfc1006::endpoint endpoint = *endpoint_iterator;
+                socket_.async_connect(endpoint,
                 boost::bind(&client::handle_connect, this,
                 boost::asio::placeholders::error, ++endpoint_iterator));
     }
@@ -151,9 +151,8 @@ public:
     }
 
     void write(const std::string& msg) {
-        //do_write(msg);
-        io_service_.post(boost::bind(&client::do_write, this, msg));
-        message = msg;
+         message = msg;
+        io_service_.post(boost::bind(&client::do_write, this));
     }
 
     void close() { //do_close();
@@ -196,11 +195,11 @@ private:
         }
     }
 
-    void do_write(const std::string& msg) {
-        std::cout << "Client write:" << msg <<  " size: " <<  msg.size() << std::endl;
+    void do_write() {
+        std::cout << "Client write:" << message <<  " size: " <<  message.size() << std::endl;
         boost::asio::async_write(socket_,
-                boost::asio::buffer(msg.data(),
-                msg.size()),
+                boost::asio::buffer(message.data(),
+                message.size()),
                 boost::bind(&client::handle_write, this,
                 boost::asio::placeholders::error));
 
@@ -208,10 +207,6 @@ private:
 
     void handle_write(const boost::system::error_code& error) {
         if (!error) {
-            /*boost::asio::async_read(socket_,
-              boost::asio::buffer(data_, max_length),
-              boost::bind(&client::handle_read, this,
-                boost::asio::placeholders::error));*/
             socket_.async_read_some(boost::asio::buffer(data_, max_length),
                     boost::bind(&client::handle_read, this,
                     boost::asio::placeholders::error,
