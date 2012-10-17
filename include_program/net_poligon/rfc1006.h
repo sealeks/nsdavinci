@@ -19,6 +19,7 @@
 #include <boost/asio/ip/basic_resolver.hpp>
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
+#include <boost/asio/streambuf.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/array.hpp>
@@ -489,6 +490,13 @@ namespace boost {
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //////////////////stream_socket                
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
+                
+                
+                
+                
+                
+                
+                
 
                 class stream_socket : public basic_stream_socket<tcp > {
                 public:
@@ -1251,8 +1259,10 @@ namespace boost {
                     }
 
 
-                    tpdu_size        pdusize_;
-                    protocol_options option_;
+                    tpdu_size                                         pdusize_;
+                    protocol_options                           option_;
+                    boost::asio::streambuf                  recieve_buff_;                    
+                   
                 } ;
 
 
