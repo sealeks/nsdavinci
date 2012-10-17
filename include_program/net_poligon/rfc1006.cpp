@@ -442,6 +442,7 @@ namespace boost {
 
                 void receive_seq::fill() {
                     if (sockstream_.size()) {
+                        std::cout << "DATA IN SOCKETSTREAM: " << (sockstream_.size()) <<std::endl;
                         buffer_copy(buff_,  sockstream_.data());
                         size(sockstream_.size());
                         sockstream_.consume(sockstream_.size());
@@ -451,7 +452,7 @@ namespace boost {
                 receive_seq::operation_state receive_seq::state(receive_seq::operation_state val) {
                     if ((val != state_) && (val == complete)) {
                         if (cursor_<size_){
-                            std::cout << "NOR FULLL READ BUFFER" << std::endl;
+                            std::cout << "NOR FULLL READ BUFFER: " << (size_-cursor_) <<std::endl;
                            sockstream_.prepare(size_-cursor_);
                            sockstream_.sputn(buffer_cast<const char*>(boost::asio::buffer(buff_  + cursor_, (size_-cursor_))), (size_-cursor_));
                            size_=cursor_;
