@@ -334,12 +334,14 @@ namespace boost {
                         continuous
                     } ;
 
-                    receive_seq(const mutable_buffer& buff) : sevice_buff_(),  buff_(buff), size_(0), cursor_(0),
+                    receive_seq(const mutable_buffer& buff, streambuf& sockstream) : sevice_buff_(), sockstream_(sockstream),  buff_(buff), size_(0), cursor_(0),
                     state_(nodef), type_(NL), class_option_(0), reject_reason_(0), errcode_() {
+                        fill();
                     }
 
-                    receive_seq() : sevice_buff_( new  databuff_type()), buff_(mutable_buffer(sevice_buff_->data(), sevice_buff_->size())), size_(0), cursor_(0),
+                    receive_seq( streambuf& sockstream) : sevice_buff_( new  databuff_type()), sockstream_(sockstream), buff_(mutable_buffer(sevice_buff_->data(), sevice_buff_->size())), size_(0), cursor_(0),
                     state_(nodef), type_(NL), class_option_(0), reject_reason_(0), errcode_() {
+                         fill();
                     }
 
                     mutable_buffer buffer() {
@@ -359,10 +361,6 @@ namespace boost {
 
                     tpdu_type type() const {
                         return type_;
-                    }
-
-                    operation_state state(operation_state val) {
-                        return state_ = val;
                     }
 
                     std::size_t  size(std::size_t  sz = 0) {
@@ -388,14 +386,19 @@ namespace boost {
 
 
                 private:
+                    
+                    operation_state state(operation_state val);                    
 
                     void  reject_reason(int8_t val);
 
                     void check();
+                    
+                     void fill();                                             
 
                     operation_state check_tpdu(std::size_t& beg);
 
                     databuff_type_ptr  sevice_buff_;
+                    streambuf& sockstream_;                    
                     mutable_buffer    buff_;
                     std::size_t       size_;
                     std::size_t       cursor_;
@@ -552,7 +555,7 @@ namespace boost {
                         options_(socket->prot_option()),
                         peer_endpoint_(peer_endpoint),
                         send_(send_seq_ptr( new send_seq(socket->prot_option()))),
-                        receive_(new receive_seq()) {
+                        receive_(new receive_seq(socket->recieve_buff_)) {
                         }
 
                         void run() {
@@ -755,7 +758,7 @@ namespace boost {
                         state_(wait),
                         options_(socket->prot_option()),
                         send_(),
-                        receive_(new receive_seq()) {
+                        receive_(new receive_seq(socket->recieve_buff_)) {
                         }
 
                         void run() {
@@ -1100,7 +1103,7 @@ namespace boost {
                         BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
                         this->get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
-                                receive_seq_ptr( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers))), buffers, 0)));
+                                receive_seq_ptr( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), recieve_buff_)), buffers, 0)));
 
                     }
 
@@ -1142,7 +1145,7 @@ namespace boost {
                             send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
                         if (ec)
                             return ec;
-                        receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
+                        receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq(recieve_buff_)));
                         while (!ec && !receive_->ready()) {
                             receive_->size(this->get_service().receive(this->get_implementation(), boost::asio::buffer(
                                     receive_->buffer() + receive_->size()) , 0, ec));
@@ -1183,7 +1186,7 @@ namespace boost {
                     boost::system::error_code  check_accept_imp(int16_t  src,  boost::system::error_code& ec) {
                         option_.src_tsap(src);
                         bool canseled = false;
-                        receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
+                        receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq(recieve_buff_)));
                         while (!ec && !receive_->ready()) {
                             receive_->size(this->get_service().receive(this->get_implementation(), boost::asio::buffer(
                                     receive_->buffer() + receive_->size()) , 0, ec));
@@ -1233,7 +1236,7 @@ namespace boost {
                     template <typename MutableBufferSequence>
                     std::size_t receive_impl(const MutableBufferSequence& buffers,
                             socket_base::message_flags flags, boost::system::error_code& ec) {
-                        receive_seq_ptr receive_( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers)));
+                        receive_seq_ptr receive_( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), recieve_buff_));
                         while (!ec && !receive_->ready()) {
                             receive_->size(this->get_service().receive(this->get_implementation(), boost::asio::buffer(
                                     receive_->buffer() + receive_->size()) , 0, ec));
