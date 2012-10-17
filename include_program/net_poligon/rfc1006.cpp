@@ -6,8 +6,11 @@
  */
 
 #include <iosfwd>
+#include <iostream>
+#include <sstream>
 
 #include "rfc1006.h"
+
 
 
 
@@ -311,36 +314,24 @@ namespace boost {
                     pdsz = be_le_convert16(pdsz);
                     if (pdsz < 0)
                         return state(error);
-                    if (size_ < (beg + static_cast<std::size_t> (pdsz))) {
+                    if (size_ < (oldbeg + static_cast<std::size_t> (pdsz))) {
                         return state(continuous);
                     }
-                    if (size_ < (beg + 6))
+                    if (size_ < (oldbeg + 6))
                         return state(error);
-                    std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + (beg + 4)));
+                    std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + (oldbeg + 4)));
                     if (size_ < (TKPT_LENGTH + li + 1))
                         return state(error);
-                    int8_t nativetp = *boost::asio::buffer_cast<int8_t*>(buff_ + (beg + 5));
+                    int8_t nativetp = *boost::asio::buffer_cast<int8_t*>(buff_ + (oldbeg + 5));
                     type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
                     /* запрос возможен и от др классов*/
+                    beg = beg + static_cast<std::size_t> (pdsz);
                     switch (type_) {
                         case DT:
                         {
-                            if (li != 2)
+                            int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + (oldbeg + 6));
+                            if (li != 2 || !((eof == TPDU_ENDED) || (eof == TPDU_ENDED)))
                                 return state(error); /* !!должен быть только класс 0 см. 13.7*/
-                            int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + (beg + 6));
-                            if (eof == TPDU_ENDED) {
-                                boost::array<mutable_buffer, 2 > bufsarr = {
-                                    mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
-                                    mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
-                                };
-                                buffer_copy(buff_, bufsarr);
-                                size_ -= (TKPT_LENGTH + li + 1);
-                                return state(complete);
-                            }
-                            if (eof != TPDU_CONTINIUE) {
-                                return state(error);
-                            }
-                            beg = beg + static_cast<std::size_t> (pdsz);
                             boost::array<mutable_buffer, 2 > bufsarr = {
                                 mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
                                 mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
@@ -348,7 +339,7 @@ namespace boost {
                             buffer_copy(buff_, bufsarr);
                             size_ -= (TKPT_LENGTH + li + 1);
                             beg -= (TKPT_LENGTH + li + 1);
-                            return state(beg >= size_ ? continuous : repeat);
+                            return state(eof == TPDU_ENDED ? complete  : (beg >= size_ ? continuous : repeat));
                         }
                         case CR:
                         {
@@ -356,25 +347,21 @@ namespace boost {
                                 return state(error); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 6)), 2), dst_tsap_);
                             dst_tsap_ = be_le_convert16(dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 2), src_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 8)), 2), src_tsap_);
                             src_tsap_ = be_le_convert16(src_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 10)), 1), class_option_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 10)), 1), class_option_);
                             headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 11)), li - 6), vars))
                                 return state(error);
-                            if (oldbeg) {
-                                boost::array<mutable_buffer, 2 > bufsarr = {
-                                    mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
-                                    mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
-                                };
-                                buffer_copy(buff_, bufsarr);
-                                size_ -= (TKPT_LENGTH + li + 1);
-                            }
-                            else {
-                                size_ = 0;
-                            }
+                            boost::array<mutable_buffer, 2 > bufsarr = {
+                                mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
+                                mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
+                            };
+                            buffer_copy(buff_, bufsarr);
+                            size_ -= (TKPT_LENGTH + li + 1);
+                            beg -= (TKPT_LENGTH + li + 1);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             return state(complete);
                         }
@@ -384,14 +371,21 @@ namespace boost {
                                 return state(error); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 6)), 2), dst_tsap_);
                             dst_tsap_ = be_le_convert16(dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 2), src_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 8)), 2), src_tsap_);
                             src_tsap_ = be_le_convert16(src_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 10)), 1), class_option_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 10)), 1), class_option_);
                             headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 11)), li - 6), vars))
                                 return state(error);
+                            boost::array<mutable_buffer, 2 > bufsarr = {
+                                mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
+                                mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
+                            };
+                            buffer_copy(buff_, bufsarr);
+                            size_ -= (TKPT_LENGTH + li + 1);
+                            beg -= (TKPT_LENGTH + li + 1);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             return state(complete);
                         }
@@ -401,27 +395,23 @@ namespace boost {
                                 return state(error); /* невозможно см. 13.3.2*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 6)), 2), dst_tsap_);
                             dst_tsap_ = be_le_convert16(dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 2), src_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 8)), 2), src_tsap_);
                             src_tsap_ = be_le_convert16(src_tsap_);
                             int8_t rsn;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 10)), 1), rsn);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 10)), 1), rsn);
                             reject_reason(rsn);
                             headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 6), vars))
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 11)), li - 6), vars))
                                 return state(error);
-                            if (oldbeg) {
-                                boost::array<mutable_buffer, 2 > bufsarr = {
-                                    mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
-                                    mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
-                                };
-                                buffer_copy(buff_, bufsarr);
-                                size_ -= (TKPT_LENGTH + li + 1);
-                            }
-                            else {
-                                size_ = 0;
-                            }
+                            boost::array<mutable_buffer, 2 > bufsarr = {
+                                mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
+                                mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
+                            };
+                            buffer_copy(buff_, bufsarr);
+                            size_ -= (TKPT_LENGTH + li + 1);
+                            beg -= (TKPT_LENGTH + li + 1);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             return state(complete);
                         }
@@ -431,28 +421,44 @@ namespace boost {
                                 return state(error); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 6)), 2), dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 8)), 1), reject_reason_);
+                            str_to_inttype(std::string(buffer_cast<const char*>(buff_ + (oldbeg + 6)), 2), dst_tsap_);
+                            str_to_inttype(std::string(buffer_cast<const char*>(buff_ + (oldbeg + 8)), 1), reject_reason_);
                             headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (beg + 11)), li - 3), vars))
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + (oldbeg + 11)), li - 3), vars))
                                 return state(error);
-                            if (oldbeg) {
-                                boost::array<mutable_buffer, 2 > bufsarr = {
-                                    mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
-                                    mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
-                                };
-                                buffer_copy(buff_, bufsarr);
-                                size_ -= (TKPT_LENGTH + li + 1);
-                            }
-                            else {
-                                size_ = 0;
-                            }
+                            boost::array<mutable_buffer, 2 > bufsarr = {
+                                mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
+                                mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
+                            };
+                            buffer_copy(buff_, bufsarr);
+                            size_ -= (TKPT_LENGTH + li + 1);
+                            beg -= (TKPT_LENGTH + li + 1);
                             return state(complete);
 
                         }
                     }
                     return state(error);
                 }
+
+                void receive_seq::fill() {
+                    if (sockstream_.size()) {
+                        buffer_copy(buff_,  sockstream_.data());
+                        size(sockstream_.size());
+                        sockstream_.consume(sockstream_.size());
+                    }
+                }
+
+                receive_seq::operation_state receive_seq::state(receive_seq::operation_state val) {
+                    if ((val != state_) && (val == complete)) {
+                        if (cursor_<size_){
+                            std::cout << "NOR FULLL READ BUFFER" << std::endl;
+                           sockstream_.prepare(size_-cursor_);
+                           sockstream_.sputn(buffer_cast<const char*>(boost::asio::buffer(buff_  + cursor_, (size_-cursor_))), (size_-cursor_));
+                           size_=cursor_;
+                        }}
+                    return state_ = val;
+                }
+
 
 
                 ///////////////////////////////////////////////////////////////////////////////////////
