@@ -223,12 +223,93 @@ namespace boost {
                     int16_t src_;
                     headarvarvalues vars_;
                 } ;
+                
+      
+                
+/*      class streambuf
+ 
+          _M_out_beg     pbase()
+          _M_out_cur      pptr()
+          _M_out_end     epptr()
+ 
+          _M_in_beg        eback()
+          _M_in_cur         gptr()
+          _M_in_end        egptr()
+ 
+           out     <<
+                                                                                                                          |(pbase())                                      |(pptr())                              |(epptr())
+           in       >>
+           |(eback())                                  |(gptr())                                              |(egptr())
+ 
+           info set input ptr
+           void setg( beg , cur, end)  inbeg=begin,  incur = cur,  inend = end
+ 
+          info set out ptr
+          void setp(beg, end)          outbeg=outcur =beg , outend = end;
+          void pbump(num)             outcur +=  num;
+         
+
+        
+ 
+ 
+ */
+
+class streambuf
+  : public boost::asio::basic_streambuf<std::allocator<char> >
+{
+public:
+
+  explicit streambuf(
+      std::size_t maximum_size = (std::numeric_limits<std::size_t>::max)()) :  boost::asio::basic_streambuf<std::allocator<char> >(maximum_size)
+  {
+  }  
+      
+   mutable_buffers_type ready_buff(std::size_t n)
+  {
+    reserve(n);
+    return boost::asio::buffer(boost::asio::mutable_buffer(gptr(),
+          ((epptr()-gptr())  * sizeof(char_type))) );
+
+  }    
+    
+   void decrease(std::size_t n)
+  {
+          //debug("decrease after");
+         // _M_out_cur-=n;
+          //_M_out_end-=n;
+          int diff = (pptr()- pbase());
+          setp(pbase() - n,  epptr());
+          pbump(diff);
+          
+          //_M_in_end-=n;
+          setg( eback() , gptr(), egptr()-n) ;
+
+          //debug("decrease before");         
+  }  
+   
+      void debug(const std::string& vl)
+  {   return;
+          std::cout << "-----------------------------------------------"   <<  std::endl;
+          std::cout <<  vl   <<  std::endl;         
+           std::cout << "out beg:"   << (_M_out_beg - _M_in_beg) << std::endl;
+           std::cout << "out cur:"   << (_M_out_cur - _M_in_beg) << std::endl;    
+           std::cout << "out end:"   << (_M_out_end - _M_in_beg) << std::endl;
+           std::cout << "in beg:"   << (_M_in_beg - _M_in_beg) << std::endl;
+           std::cout << "in cur:"   << (_M_in_cur - _M_in_beg) << std::endl;    
+           std::cout << "in end:"   << (_M_in_end - _M_in_beg) << std::endl;
+            std::cout << "in -out:"   << (_M_out_beg - _M_in_beg) << std::endl;  
+           std::cout << "-----------------------------------------------"   <<  std::endl;           
+  }   
+      
+      
+};      
+                
 
                 class  send_buffer_impl {
                 public:
-                    typedef boost::shared_ptr<const_buffer>      const_buffs_ptr;
-                    typedef std::vector<const_buffs_ptr>                    vector_buffer;
-                    typedef vector_buffer::iterator                                  vector_buffer_iterator;
+                    typedef boost::shared_ptr<const_buffer>                     const_buffs_ptr;
+                    typedef std::vector<const_buffs_ptr>                            vector_buffer;
+                    typedef vector_buffer::iterator                                          vector_buffer_iterator;
 
                     send_buffer_impl() : size_(0) {
                         iterator_ = buff_.begin();
@@ -334,12 +415,12 @@ namespace boost {
                         continuous
                     } ;
 
-                    receive_seq(const mutable_buffer& buff, streambuf& sockstream) : sevice_buff_(), sockstream_(sockstream),  buff_(buff), size_(0), cursor_(0),
+                    receive_seq(const mutable_buffer& buff, streambuf& sockstream) : sevice_buff_(), sockstream_(sockstream), buff_(), userbuff_(buff), size_(0), cursor_(0),
                     state_(nodef), type_(NL), class_option_(0), reject_reason_(0), errcode_() {
                         fill();
                     }
 
-                    receive_seq( streambuf& sockstream) : sevice_buff_( new  databuff_type()), sockstream_(sockstream), buff_(mutable_buffer(sevice_buff_->data(), sevice_buff_->size())), size_(0), cursor_(0),
+                    receive_seq( streambuf& sockstream) : sevice_buff_( new  databuff_type()), sockstream_(sockstream), buff_(), userbuff_(), size_(0), cursor_(0),
                     state_(nodef), type_(NL), class_option_(0), reject_reason_(0), errcode_() {
                          fill();
                     }
@@ -365,6 +446,7 @@ namespace boost {
 
                     std::size_t  size(std::size_t  sz = 0) {
                         if (!sz) return size_;
+                        sockstream_.commit(sz);
                         return size_ += sz;
                     }
 
@@ -400,6 +482,7 @@ namespace boost {
                     databuff_type_ptr  sevice_buff_;
                     streambuf& sockstream_;                    
                     mutable_buffer    buff_;
+                    mutable_buffer    userbuff_;                    
                     std::size_t       size_;
                     std::size_t       cursor_;
                     operation_state   state_;
@@ -1264,7 +1347,7 @@ namespace boost {
 
                     tpdu_size                                         pdusize_;
                     protocol_options                           option_;
-                    boost::asio::streambuf                  recieve_buff_;                    
+                    streambuf                                        recieve_buff_;                    
                    
                 } ;
 
