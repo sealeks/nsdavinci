@@ -336,7 +336,8 @@ namespace boost {
                                 mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
                                 mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
                             };
-                            buffer_copy(buff_, bufsarr);
+                            buffer_copy(buff_, bufsarr);     
+                            sockstream_.decrease(TKPT_LENGTH + li + 1);
                             size_ -= (TKPT_LENGTH + li + 1);
                             beg -= (TKPT_LENGTH + li + 1);
                             return state(eof == TPDU_ENDED ? complete  : (beg >= size_ ? continuous : repeat));
@@ -359,7 +360,8 @@ namespace boost {
                                 mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
                                 mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
                             };
-                            buffer_copy(buff_, bufsarr);
+                            buffer_copy(buff_, bufsarr);               
+                            sockstream_.decrease(TKPT_LENGTH + li + 1);
                             size_ -= (TKPT_LENGTH + li + 1);
                             beg -= (TKPT_LENGTH + li + 1);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
@@ -383,7 +385,8 @@ namespace boost {
                                 mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
                                 mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
                             };
-                            buffer_copy(buff_, bufsarr);
+                            buffer_copy(buff_, bufsarr);    
+                            sockstream_.decrease(TKPT_LENGTH + li + 1);
                             size_ -= (TKPT_LENGTH + li + 1);
                             beg -= (TKPT_LENGTH + li + 1);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
@@ -409,7 +412,8 @@ namespace boost {
                                 mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
                                 mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
                             };
-                            buffer_copy(buff_, bufsarr);
+                            buffer_copy(buff_, bufsarr);         
+                            sockstream_.decrease(TKPT_LENGTH + li + 1);
                             size_ -= (TKPT_LENGTH + li + 1);
                             beg -= (TKPT_LENGTH + li + 1);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
@@ -430,7 +434,8 @@ namespace boost {
                                 mutable_buffer(boost::asio::buffer(buff_, oldbeg)),
                                 mutable_buffer(buff_ + (oldbeg + TKPT_LENGTH + li + 1))
                             };
-                            buffer_copy(buff_, bufsarr);
+                            buffer_copy(buff_, bufsarr);  
+                            sockstream_.decrease(TKPT_LENGTH + li + 1);
                             size_ -= (TKPT_LENGTH + li + 1);
                             beg -= (TKPT_LENGTH + li + 1);
                             return state(complete);
@@ -441,22 +446,17 @@ namespace boost {
                 }
 
                 void receive_seq::fill() {
-                    if (sockstream_.size()) {
-                        std::cout << "DATA IN SOCKETSTREAM: " << (sockstream_.size()) <<std::endl;
-                        buffer_copy(buff_,  sockstream_.data());
-                        size(sockstream_.size());
-                        sockstream_.consume(sockstream_.size());
-                    }
+                        size_ = sockstream_.size();			
+                        buff_=sockstream_.ready_buff(2000);
                 }
 
                 receive_seq::operation_state receive_seq::state(receive_seq::operation_state val) {
                     if ((val != state_) && (val == complete)) {
-                        if (cursor_<size_){
-                            std::cout << "NOR FULLL READ BUFFER: " << (size_-cursor_) <<std::endl;
-                           sockstream_.prepare(size_-cursor_);
-                           sockstream_.sputn(buffer_cast<const char*>(boost::asio::buffer(buff_  + cursor_, (size_-cursor_))), (size_-cursor_));
-                           size_=cursor_;
-                        }}
+                            if (cursor_){
+                                 buffer_copy(userbuff_,buff_,cursor_);
+                                 sockstream_.consume(cursor_);
+                                 size_=cursor_;
+                            }}
                     return state_ = val;
                 }
 
