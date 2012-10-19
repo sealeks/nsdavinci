@@ -22,6 +22,7 @@
 #include <boost/asio/streambuf.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/buffer.hpp>
+#include <boost/asio/buffers_iterator.hpp>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 
@@ -223,91 +224,85 @@ namespace boost {
                     int16_t src_;
                     headarvarvalues vars_;
                 } ;
-                
-      
-                
-/*      class streambuf
+
+                /*      class streambuf
  
-          _M_out_beg     pbase()
-          _M_out_cur      pptr()
-          _M_out_end     epptr()
+                          _M_out_beg     pbase()
+                          _M_out_cur      pptr()
+                          _M_out_end     epptr()
  
-          _M_in_beg        eback()
-          _M_in_cur         gptr()
-          _M_in_end        egptr()
+                          _M_in_beg        eback()
+                          _M_in_cur         gptr()
+                          _M_in_end        egptr()
  
-           out     <<
-                                                                                                                          |(pbase())                                      |(pptr())                              |(epptr())
-           in       >>
-           |(eback())                                  |(gptr())                                              |(egptr())
+                           out     <<
+                                                                                                                                          |(pbase())                                      |(pptr())                              |(epptr())
+                           in       >>
+                           |(eback())                                  |(gptr())                                              |(egptr())
  
-           info set input ptr
-           void setg( beg , cur, end)  inbeg=begin,  incur = cur,  inend = end
+                           info set input ptr
+                           void setg( beg , cur, end)  inbeg=begin,  incur = cur,  inend = end
  
-          info set out ptr
-          void setp(beg, end)          outbeg=outcur =beg , outend = end;
-          void pbump(num)             outcur +=  num;
+                          info set out ptr
+                          void setp(beg, end)          outbeg=outcur =beg , outend = end;
+                          void pbump(num)             outcur +=  num;
          
 
         
  
  
- */
+                 */
 
-class streambuf
-  : public boost::asio::basic_streambuf<std::allocator<char> >
-{
-public:
+                class streambuf
+                : public boost::asio::basic_streambuf<std::allocator<char> > {
+                public:
 
-  explicit streambuf(
-      std::size_t maximum_size = (std::numeric_limits<std::size_t>::max)()) :  boost::asio::basic_streambuf<std::allocator<char> >(maximum_size)
-  {
-  }  
-      
-   mutable_buffers_type ready_buff(std::size_t n)
-  {
-    reserve(n);
-    return boost::asio::buffer(boost::asio::mutable_buffer(gptr(),
-          ((epptr()-gptr())  * sizeof(char_type))) );
+                    explicit streambuf(
+                            std::size_t maximum_size = (std::numeric_limits<std::size_t>::max)()) :  boost::asio::basic_streambuf<std::allocator<char> >(maximum_size) {
+                    }
 
-  }    
-    
-   void decrease(std::size_t n)
-  {
-          //debug("decrease after");
-         // _M_out_cur-=n;
-          //_M_out_end-=n;
-          int diff = (pptr()- pbase());
-          setp(pbase() - n,  epptr());
-          pbump(diff);
-          
-          //_M_in_end-=n;
-          setg( eback() , gptr(), egptr()-n) ;
+                    mutable_buffers_type ready_buff(std::size_t n) {
+                        reserve(n);
+                        return boost::asio::buffer(boost::asio::mutable_buffer(gptr(),
+                                ((epptr() - gptr())  * sizeof (char_type))) );
 
-          //debug("decrease before");         
-  }  
-   
-      void debug(const std::string& vl)
-  {   return;
-          std::cout << "-----------------------------------------------"   <<  std::endl;
-          std::cout <<  vl   <<  std::endl;         
-           std::cout << "out beg:"   << (_M_out_beg - _M_in_beg) << std::endl;
-           std::cout << "out cur:"   << (_M_out_cur - _M_in_beg) << std::endl;    
-           std::cout << "out end:"   << (_M_out_end - _M_in_beg) << std::endl;
-           std::cout << "in beg:"   << (_M_in_beg - _M_in_beg) << std::endl;
-           std::cout << "in cur:"   << (_M_in_cur - _M_in_beg) << std::endl;    
-           std::cout << "in end:"   << (_M_in_end - _M_in_beg) << std::endl;
-            std::cout << "in -out:"   << (_M_out_beg - _M_in_beg) << std::endl;  
-           std::cout << "-----------------------------------------------"   <<  std::endl;           
-  }   
-      
-      
-};      
-                
+                    }
+
+                    void decrease(std::size_t n) {
+                        //debug("decrease after");
+                        // _M_out_cur-=n;
+                        //_M_out_end-=n;
+                        int diff = (pptr() - pbase());
+                        setp(pbase() - n,  epptr());
+                        pbump(diff);
+
+                        //_M_in_end-=n;
+                        setg( eback() , gptr(), egptr() - n) ;
+
+                        //debug("decrease before");         
+                    }
+
+                    void debug(const std::string& vl) {
+                        return;
+                        std::cout << "-----------------------------------------------"   <<  std::endl;
+                        std::cout <<  vl   <<  std::endl;
+                        std::cout << "out beg:"   << (_M_out_beg - _M_in_beg) << std::endl;
+                        std::cout << "out cur:"   << (_M_out_cur - _M_in_beg) << std::endl;
+                        std::cout << "out end:"   << (_M_out_end - _M_in_beg) << std::endl;
+                        std::cout << "in beg:"   << (_M_in_beg - _M_in_beg) << std::endl;
+                        std::cout << "in cur:"   << (_M_in_cur - _M_in_beg) << std::endl;
+                        std::cout << "in end:"   << (_M_in_end - _M_in_beg) << std::endl;
+                        std::cout << "in -out:"   << (_M_out_beg - _M_in_beg) << std::endl;
+                        std::cout << "-----------------------------------------------"   <<  std::endl;
+                    }
+
+
+                } ;
 
                 class  send_buffer_impl {
                 public:
-                    typedef boost::shared_ptr<const_buffer>                     const_buffs_ptr;
+
+                    typedef boost::shared_ptr<const_buffers_1>              const_buffs_ptr;
                     typedef std::vector<const_buffs_ptr>                            vector_buffer;
                     typedef vector_buffer::iterator                                          vector_buffer_iterator;
 
@@ -318,14 +313,14 @@ public:
                     virtual ~send_buffer_impl() {
                     }
 
-                    const_buffer pop() {
-                        return iterator_ == buff_.end() ? const_buffer(boost::asio::const_buffer()) : (*(*iterator_));
+                    const_buffers_1 pop() {
+                        return iterator_ == buff_.end() ? boost::asio::const_buffers_1(const_buffer()) : (*(*iterator_));
                     }
 
                     std::size_t  size(std::size_t  sz = 0) {
                         if (sz == 0) return size_;
                         if (iterator_ == buff_.end()) return 0;
-                        *iterator_ = const_buffs_ptr( new const_buffer(*(*iterator_) + sz));
+                        *iterator_ = const_buffs_ptr( new const_buffers_1(*(*iterator_) + sz));
                         if (!buffer_size(*(*iterator_))) {
                             size_ = 0;
                             iterator_++;
@@ -357,27 +352,99 @@ public:
                 public:
 
                     sevice_send_buffer_impl(const std::string& send) : send_buffer_impl(), send_(send) {
-                        buff_.push_back(const_buffs_ptr( new const_buffer(const_buffer(send_.data(), send_.size()))));
+                        buff_.push_back(const_buffs_ptr( new const_buffers_1(const_buffer(send_.data(), send_.size()))));
                         iterator_ = buff_.begin();
                     }
+
                 private:
                     std::string send_;
                 } ;
 
+                template <typename ConstBufferSequence>
                 class  data_send_buffer_impl : public send_buffer_impl {
                 public:
 
-                    data_send_buffer_impl(const const_buffer& buff, tpdu_size pdusize) : send_buffer_impl() {
+                    data_send_buffer_impl(const ConstBufferSequence& buff, tpdu_size pdusize) : send_buffer_impl() {
                         construct(buff, pdusize);
                         iterator_ = buff_.begin();
                     }
 
-                    void construct(const const_buffer& buff, tpdu_size pdusize);
+                    void construct(const  ConstBufferSequence& buff, tpdu_size pdusize)  {
+                        std::size_t pdusz = tpdu_byte_size(pdusize);
+                        if (!pdusz) pdusz = 2048;
+                        pdusz -= 3;
+                        ConstBufferSequence tmpbuff = buff;
+
+                        std::size_t sz = boost::asio::buffer_size(tmpbuff);
+                        uint16_t normalsz = be_le_convert16(static_cast<uint16_t> (pdusz + 7));
+                        uint16_t eofsz = be_le_convert16(static_cast<uint16_t> (((sz % pdusz) ? (sz % pdusz) : pdusz ) + 7));
+                        size_ = TKPT_START + inttype_to_str(normalsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_CONTINIUE);
+                        sizeeof_ = TKPT_START + inttype_to_str(eofsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_ENDED);
+
+
+                        typename ConstBufferSequence::const_iterator it = tmpbuff.begin();
+                        typename ConstBufferSequence::const_iterator end = tmpbuff.end();
+                        typename ConstBufferSequence::value_type val;
+
+                        typedef  std::vector<typename ConstBufferSequence::value_type >    vcttype;
+
+                        vcttype tmp;
+                        std::size_t tmpsize = 0;
+
+                        bool ended = ((it + 1) == end);
+
+                        while (it != end) {
+                            val = *it;
+                            do {
+                                if ((boost::asio::buffer_size(val) + tmpsize) > pdusz) {
+                                    if (!tmpsize) {
+                                        buff_.push_back(const_buffs_ptr( new  const_buffers_1(const_buffer(size_.data(), size_.size()))));
+                                        buff_.push_back(const_buffs_ptr( new  const_buffers_1(val)));
+                                    }
+                                    else {
+                                        buff_.push_back(const_buffs_ptr( new  const_buffers_1(const_buffer(size_.data(), size_.size()))));
+                                        tmp.push_back(boost::asio::buffer(val, pdusz - tmpsize));
+                                        buff_.push_back(const_buffs_ptr( new  const_buffers_1(buffer(tmp))));
+                                        tmp.clear();
+                                        if (pdusz - tmpsize)
+                                            tmp.push_back(val + (tmpsize));
+                                        tmpsize = pdusz - tmpsize;
+                                    }
+                                }
+                                else {
+                                    if (ended) {
+                                        if (!tmpsize) {
+                                            buff_.push_back(const_buffs_ptr( new const_buffers_1(const_buffer(sizeeof_.data(), sizeeof_.size()))));
+                                            buff_.push_back(const_buffs_ptr(new  const_buffers_1(val)));
+                                        }
+                                        else {
+                                            buff_.push_back(const_buffs_ptr( new const_buffers_1(const_buffer(sizeeof_.data(), sizeeof_.size()))));
+                                            tmp.push_back(boost::asio::buffer(val));
+                                            buff_.push_back(const_buffs_ptr( new  const_buffers_1(buffer(tmp))));
+                                            tmp.clear();
+                                            tmpsize = 0;
+                                        }
+                                    }
+                                    else {
+                                        tmp.push_back(val);
+                                        tmpsize += boost::asio::buffer_size(val);
+                                    }
+                                }
+                                val = val + pdusz;
+                            }
+                            while (boost::asio::buffer_size(val));
+                            ++it;
+                            bool ended = ((it + 1) == end);
+                            //std::cout << "iterator iteration" << (i++)  << std::endl;
+                        }
+
+                    }
 
                 private:
                     std::string size_;
                     std::string sizeeof_;
                 } ;
+
 
 
                 bool parse_vars(const std::string& str, headarvarvalues& vars);
@@ -422,7 +489,7 @@ public:
 
                     receive_seq( streambuf& sockstream) : sevice_buff_( new  databuff_type()), sockstream_(sockstream), buff_(), userbuff_(), size_(0), cursor_(0),
                     state_(nodef), type_(NL), class_option_(0), reject_reason_(0), errcode_() {
-                         fill();
+                        fill();
                     }
 
                     mutable_buffer buffer() {
@@ -468,21 +535,21 @@ public:
 
 
                 private:
-                    
-                    operation_state state(operation_state val);                    
+
+                    operation_state state(operation_state val);
 
                     void  reject_reason(int8_t val);
 
                     void check();
-                    
-                     void fill();                                             
+
+                    void fill();
 
                     operation_state check_tpdu(std::size_t& beg);
 
                     databuff_type_ptr  sevice_buff_;
-                    streambuf& sockstream_;                    
+                    streambuf& sockstream_;
                     mutable_buffer    buff_;
-                    mutable_buffer    userbuff_;                    
+                    mutable_buffer    userbuff_;
                     std::size_t       size_;
                     std::size_t       cursor_;
                     operation_state   state_;
@@ -497,14 +564,10 @@ public:
                 typedef boost::shared_ptr<receive_seq>               receive_seq_ptr;
 
                 class send_seq {
-                    typedef std::vector<std::string>::iterator           lines_iterator;
-                    typedef std::vector<std::string>                          lines_type;
-
                 public:
 
-                    send_seq(const const_buffer& buff, tpdu_size pdusize) :
-                    type_(DT)  {
-                        constructDT(buff , pdusize);
+                    send_seq(tpdu_type type) :
+                    type_(type)   {
                     }
 
                     send_seq(const protocol_options& opt) :
@@ -527,12 +590,15 @@ public:
                         constructDR(dst, src, rsn );
                     }
 
+                    virtual ~send_seq() {
+                    }
+
                     bool ready() const {
                         return (!buf_) ||  (buf_->ready());
                     }
 
-                    const_buffer pop() {
-                        return ready()  ?  const_buffer() : buf_->pop();
+                    const_buffers_1 pop() {
+                        return ready()  ?  const_buffers_1(const_buffer()) : buf_->pop();
                     }
 
                     std::size_t  size(std::size_t  sz) {
@@ -550,9 +616,8 @@ public:
 
 
 
-                private:
+                protected:
 
-                    void constructDT(const const_buffer& buff , tpdu_size pdusize);
 
                     void constructCR(const protocol_options& opt);
 
@@ -568,32 +633,39 @@ public:
 
                 typedef boost::shared_ptr<send_seq>               send_seq_ptr;
 
+                template <typename ConstBufferSequence >
+                class send_seq_data  : public send_seq {
+                public:
+
+                    send_seq_data(const ConstBufferSequence& buff, tpdu_size pdusize) : send_seq(DT) {
+                        constructDT(buff , pdusize);
+                    }
 
 
+                protected:
+
+                    void constructDT(const ConstBufferSequence& buff , tpdu_size pdusize) {
+                        buf_ = send_buffer_ptr( new data_send_buffer_impl<ConstBufferSequence > (buff, pdusize));
+                    }
+
+                } ;
 
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //////////////////stream_socket                
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
-                
-                
-                
-                
-                
-                
-                
 
                 class stream_socket : public basic_stream_socket<tcp > {
                 public:
 
                     explicit stream_socket(boost::asio::io_service& io_service, const std::string& called = "")
-                    : basic_stream_socket<tcp>(io_service), pdusize_(SIZE2048), option_(0, 1, pdusize_, called) {
+                    : basic_stream_socket<tcp>(io_service), pdusize_(SIZE128), option_(0, 1, pdusize_, called) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const std::string& called = "")
-                    : basic_stream_socket<tcp >(io_service, endpoint), pdusize_(SIZE2048), option_(0, 1, pdusize_, called) {
+                    : basic_stream_socket<tcp >(io_service, endpoint), pdusize_(SIZE128), option_(0, 1, pdusize_, called) {
                     }
 
 
@@ -693,7 +765,7 @@ public:
                                 switch (receive_->type()) {
                                     case CC:
                                     {
-                                        socket_->correspond_prot_option(receive_->options());                                        
+                                        socket_->correspond_prot_option(receive_->options());
                                         handler_(ec);
                                         std::cout << "connect_op success" << std::endl;
                                         return;
@@ -989,15 +1061,15 @@ public:
                         return send_impl(buffers, flags, ec);
                     }
 
-                    template <typename SendHandler, typename Const_Buffers>
+                    template <typename SendHandler, typename ConstBufferSequence>
                     class send_op {
                     public:
 
                         send_op(stream_socket*   socket, SendHandler handler ,
-                                const Const_Buffers& buffers, boost::asio::socket_base::message_flags flags) :
+                                const ConstBufferSequence& buffers, boost::asio::socket_base::message_flags flags) :
                         socket_(socket),
                         handler_(handler),
-                        in_(send_seq_ptr( new send_seq(buffers, socket->pdusize()))),
+                        in_(send_seq_ptr( new send_seq_data<ConstBufferSequence>(buffers, socket->pdusize()))),
                         flags_(flags),
                         send_lower_(boost::asio::buffer_size(buffers)) {
                         }
@@ -1310,7 +1382,7 @@ public:
                     template <typename ConstBufferSequence>
                     std::size_t send_impl(const ConstBufferSequence& buffers,
                             socket_base::message_flags flags, boost::system::error_code& ec) {
-                        send_seq_ptr  send_( new send_seq(buffers, pdusize()));
+                        send_seq_ptr  send_( new send_seq_data<ConstBufferSequence > (buffers, pdusize()));
                         while (!ec && !send_->ready())
                             send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
                         return ec;
@@ -1347,8 +1419,8 @@ public:
 
                     tpdu_size                                         pdusize_;
                     protocol_options                           option_;
-                    streambuf                                        recieve_buff_;                    
-                   
+                    streambuf                                        recieve_buff_;
+
                 } ;
 
 
