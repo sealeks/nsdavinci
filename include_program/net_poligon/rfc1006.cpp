@@ -179,29 +179,7 @@ namespace boost {
                     vars_.push_back(headarvarvalue(headarvar(VAR_MAXTPDU_SIZE, 1), inttype_to_str(static_cast<int8_t> ('\x80'))));
                 }
 
-                void data_send_buffer_impl::construct(const const_buffer& buff, tpdu_size pdusize)  {
-                    std::size_t pdusz = tpdu_byte_size(pdusize);
-                    if (!pdusz) pdusz = 2048;
-                    pdusz -= 3;
-                    const_buffer tmpbuff = buff;
-                    std::size_t sz = boost::asio::buffer_size(tmpbuff);
-                    uint16_t normalsz = be_le_convert16(static_cast<uint16_t> (pdusz + 7));
-                    uint16_t eofsz = be_le_convert16(static_cast<uint16_t> (((sz % pdusz) ? (sz % pdusz) : pdusz ) + 7));
-                    size_ = TKPT_START + inttype_to_str(normalsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_CONTINIUE);
-                    sizeeof_ = TKPT_START + inttype_to_str(eofsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_ENDED);
-                    do {
-                        if (boost::asio::buffer_size(tmpbuff) > pdusz) {
-                            buff_.push_back(const_buffs_ptr( new const_buffer(size_.data(), size_.size())));
-                            buff_.push_back(const_buffs_ptr(new const_buffer(buffer(tmpbuff , pdusz ))));
-                        }
-                        else {
-                            buff_.push_back(const_buffs_ptr( new const_buffer(sizeeof_.data(), sizeeof_.size())));
-                            buff_.push_back(const_buffs_ptr(new const_buffer(buffer(tmpbuff , boost::asio::buffer_size(tmpbuff)))));
-                        }
-                        tmpbuff = tmpbuff + pdusz;
-                    }
-                    while (boost::asio::buffer_size(tmpbuff));
-                }
+
 
                 void generate_TKPTDU(std::string& val) {
                     val = TKPT_START + inttype_to_str(be_le_convert16(static_cast<int16_t> (val.size() + TKPT_LENGTH))) + val;
@@ -464,9 +442,7 @@ namespace boost {
 
                 ///////////////////////////////////////////////////////////////////////////////////////
 
-                void send_seq::constructDT(const const_buffer& buff , tpdu_size pdusize) {
-                    buf_ = send_buffer_ptr( new data_send_buffer_impl(buff, pdusize));
-                }
+
 
                 void send_seq::constructCR(const protocol_options& opt) {
                     buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_CR(opt)));
@@ -474,17 +450,17 @@ namespace boost {
 
                 void send_seq::constructCC(const protocol_options& opt) {
                     buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_CC(opt)));
-                }
+            }
 
                 void send_seq::constructER(int16_t dst, const std::string& errorreason, int8_t err) {
                     buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_ER(dst, errorreason, err)));
-                }
+        }
 
                 void send_seq::constructDR(int16_t dst, int16_t src, int8_t rsn) {
                     buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_DR(dst, src , rsn)));
-                }
+    }
 
-            }
+}
         }
     }
 }
