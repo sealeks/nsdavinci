@@ -422,11 +422,109 @@ namespace boost {
                 std::string generate_header_TKPT_ER(int16_t dst, const std::string& errorreason = "", int8_t err = 0);
 
 
+                ////  send_seq                
+
+                class send_seq {
+                public:
+
+                    send_seq(tpdu_type type) :
+                    type_(type)   {
+                    }
+
+                    send_seq(const protocol_options& opt) :
+                    type_(CR)   {
+
+                        constructCR(opt);
+                    }
+
+                    send_seq(int16_t dst, const protocol_options& opt) :
+                    type_(CC)   {
+
+                        constructCC(opt);
+                    }
+
+                    send_seq(int16_t dst, const std::string& errorreason, int8_t err) :
+                    type_(ER)   {
+
+                        constructER(dst, errorreason, err );
+                    }
+
+                    send_seq(int16_t dst, int16_t src, int8_t rsn) :
+                    type_(DR)  {
+
+                        constructDR(dst, src, rsn );
+                    }
+
+                    virtual ~send_seq() {
+                    }
+
+                    bool ready() const {
+
+                        return (!buf_) ||  (buf_->ready());
+                    }
+
+                    const_buffers_1 pop() {
+
+                        return ready()  ?  const_buffers_1(const_buffer()) : buf_->pop();
+                    }
+
+                    std::size_t  size(std::size_t  sz) {
+
+                        return ready() ? 0 : buf_->size(sz);
+                    }
+
+                    std::size_t  receivesize() const {
+
+                        return ready() ? 0 : buf_->receivesize();
+                    }
+
+                    tpdu_type type() const {
+
+                        return type_;
+                    }
 
 
 
 
-                ////  receive_seq
+                protected:
+
+
+                    void constructCR(const protocol_options& opt);
+
+                    void constructCC(const protocol_options& opt);
+
+                    void constructER(int16_t dst, const std::string& errorreason, int8_t err);
+
+                    void constructDR(int16_t dst, int16_t src, int8_t rsn);
+
+                    tpdu_type                      type_;
+                    send_buffer_ptr           buf_;
+                } ;
+
+                typedef boost::shared_ptr<send_seq>               send_seq_ptr;
+
+                template <typename ConstBufferSequence >
+                class send_seq_data  : public send_seq {
+                public:
+
+                    send_seq_data(const ConstBufferSequence& buff, tpdu_size pdusize) : send_seq(DT) {
+
+                        constructDT(buff , pdusize);
+                    }
+
+
+                protected:
+
+                    void constructDT(const ConstBufferSequence& buff , tpdu_size pdusize) {
+
+                        buf_ = send_buffer_ptr( new data_send_buffer_impl<ConstBufferSequence > (buff, pdusize));
+                    }
+
+                } ;
+                
+                
+                
+                 ////  receive_seq
 
                 const std::size_t TKPT_WITH_LI = 5;
                 const std::size_t MAX_SEVICE_TPDUSIZE =   256;
@@ -580,6 +678,7 @@ namespace boost {
                     int8_t                                        reject_reason_;
                     protocol_options                   options_;
                     boost::system::error_code    errcode_;
+                    
                     std::string                                 tkpt_data;
                     mutable_buffer                        tkpt_buff_;
                     std::string                                 header_data;
@@ -594,106 +693,11 @@ namespace boost {
 
 
 
-
-                ////  send_seq                
-
-                class send_seq {
-                public:
-
-                    send_seq(tpdu_type type) :
-                    type_(type)   {
-                    }
-
-                    send_seq(const protocol_options& opt) :
-                    type_(CR)   {
-
-                        constructCR(opt);
-                    }
-
-                    send_seq(int16_t dst, const protocol_options& opt) :
-                    type_(CC)   {
-
-                        constructCC(opt);
-                    }
-
-                    send_seq(int16_t dst, const std::string& errorreason, int8_t err) :
-                    type_(ER)   {
-
-                        constructER(dst, errorreason, err );
-                    }
-
-                    send_seq(int16_t dst, int16_t src, int8_t rsn) :
-                    type_(DR)  {
-
-                        constructDR(dst, src, rsn );
-                    }
-
-                    virtual ~send_seq() {
-                    }
-
-                    bool ready() const {
-
-                        return (!buf_) ||  (buf_->ready());
-                    }
-
-                    const_buffers_1 pop() {
-
-                        return ready()  ?  const_buffers_1(const_buffer()) : buf_->pop();
-                    }
-
-                    std::size_t  size(std::size_t  sz) {
-
-                        return ready() ? 0 : buf_->size(sz);
-                    }
-
-                    std::size_t  receivesize() const {
-
-                        return ready() ? 0 : buf_->receivesize();
-                    }
-
-                    tpdu_type type() const {
-
-                        return type_;
-                    }
-
-
-
-
-                protected:
-
-
-                    void constructCR(const protocol_options& opt);
-
-                    void constructCC(const protocol_options& opt);
-
-                    void constructER(int16_t dst, const std::string& errorreason, int8_t err);
-
-                    void constructDR(int16_t dst, int16_t src, int8_t rsn);
-
-                    tpdu_type                      type_;
-                    send_buffer_ptr           buf_;
-                } ;
-
-                typedef boost::shared_ptr<send_seq>               send_seq_ptr;
-
-                template <typename ConstBufferSequence >
-                class send_seq_data  : public send_seq {
-                public:
-
-                    send_seq_data(const ConstBufferSequence& buff, tpdu_size pdusize) : send_seq(DT) {
-
-                        constructDT(buff , pdusize);
-                    }
-
-
-                protected:
-
-                    void constructDT(const ConstBufferSequence& buff , tpdu_size pdusize) {
-
-                        buf_ = send_buffer_ptr( new data_send_buffer_impl<ConstBufferSequence > (buff, pdusize));
-                    }
-
-                } ;
+               
+                
+                
+                
+                
 
 
 
