@@ -269,6 +269,9 @@ namespace boost {
                     if (val != state_) {
                         size_ = 0;
                     }
+                    if (val==error){
+                             estimatesize_=0;        
+                    }
                     return state_ = val;
                 }
 
@@ -294,7 +297,7 @@ namespace boost {
                     size_ = 0;
                     if (li>128)
                         return state(error);                        
-                    expeditsize_ = li;
+                    estimatesize_ = li;
                     waitdatasize_ = pdsz - 5 - li;
                     return state(waitheader);
                 }
@@ -308,15 +311,16 @@ namespace boost {
                         case DT:
                         {
                             int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + 1);
-                            if (expeditsize_ != 2 || !((eof == TPDU_ENDED) || (eof == TPDU_ENDED)))
+                            if (estimatesize_ != 2 || !((eof == TPDU_ENDED) || (eof == TPDU_ENDED)))
                                 return state(error); /* !!должен быть только класс 0 см. 13.7*/
-                            expeditsize_ = boost::asio::buffer_size(userbuff_) < waitdatasize_ ? boost::asio::buffer_size(userbuff_) : waitdatasize_;
+                            estimatesize_ = (boost::asio::buffer_size(userbuff_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_) : estimatesize_;
+                            end_=(eof == TPDU_ENDED);
                             return state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
                         }
                         case CR:
                         {
                             waitdatasize_ = 0;
-                            if (expeditsize_ < 6)
+                            if (estimatesize_ < 6)
                                 return state(error); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
@@ -325,8 +329,8 @@ namespace boost {
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
                             src_tsap_ = be_le_convert16(src_tsap_);
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
-                            headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), expeditsize_ - 6), vars))
+                            headarvarvalues vars;;                            
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
                                 return state(error);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             return state(complete);
@@ -334,7 +338,7 @@ namespace boost {
                         case CC:
                         {
                             waitdatasize_ = 0;
-                            if (expeditsize_ < 6)
+                            if (estimatesize_ < 6)
                                 return state(error); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
@@ -343,8 +347,8 @@ namespace boost {
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
                             src_tsap_ = be_le_convert16(src_tsap_);
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
-                            headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), expeditsize_ - 6), vars))
+                            headarvarvalues vars;                           
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
                                 return state(error);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             return state(complete);
@@ -352,7 +356,7 @@ namespace boost {
                         case DR:
                         {
                             waitdatasize_ = 0;
-                            if (expeditsize_ < 6)
+                            if (estimatesize_ < 6)
                                 return state(error); /* невозможно см. 13.3.2*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
@@ -364,7 +368,7 @@ namespace boost {
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), rsn);
                             reject_reason(rsn);
                             headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), expeditsize_ - 6), vars))
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
                                 return state(error);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             return state(complete);
@@ -372,13 +376,13 @@ namespace boost {
                         case ER:
                         {
                             waitdatasize_ = 0;
-                            if (expeditsize_ < 4)
+                            if (estimatesize_ < 4)
                                 return state(error); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
                             str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 3), 1), reject_reason_);
-                            headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 4), expeditsize_ - 4), vars))
+                            headarvarvalues vars;                       
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 4), estimatesize_ - 4), vars))
                                 return state(error);
                             return state(complete);
 
