@@ -292,6 +292,8 @@ namespace boost {
                     header_data = std::string('/x0', li);
                     header_buff_ = mutable_buffer(const_cast<char*> (header_data.data()), li);
                     size_ = 0;
+                    if (li>128)
+                        return state(error);                        
                     expeditsize_ = li;
                     waitdatasize_ = pdsz - 5 - li;
                     return state(waitheader);
