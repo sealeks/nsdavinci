@@ -33,7 +33,7 @@ int port = 102;
 using boost::asio::ip::rfc1006;
 
 enum {
-    max_length = 5
+    max_length = 1000
 } ;
 
 class session {

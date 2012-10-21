@@ -543,17 +543,17 @@ namespace boost {
                         error
                     } ;
 
-                    receive_seq(const mutable_buffer& buff, std::size_t waitingsize) :
+                    receive_seq(const mutable_buffer& buff, std::size_t waitingsize, bool ef) :
                     state_(waitingsize ? waitdata : waittkpt),
                     size_(0),
-                    estimatesize_((boost::asio::buffer_size(buff) > waitingsize) ? waitingsize : boost::asio::buffer_size(buff) ),
+                    estimatesize_( waitingsize ? ( (boost::asio::buffer_size(buff) < waitingsize ) ? boost::asio::buffer_size(buff) : waitingsize )  : TKPT_WITH_LI   ),
                     datasize_(0),
                     waitdatasize_(waitingsize),
-                    type_(DT),
+                    type_(waitingsize ? DT : NL),
                     class_option_(0),
                     reject_reason_(0),
                     errcode_(),
-                    end_(false),
+                    eof_(ef),
                     tkpt_data("\x0\x0\x0\x0\x0"),
                     tkpt_buff_(const_cast<char*> (tkpt_data.data()), 5),
                     header_buff_(),
@@ -570,34 +570,32 @@ namespace boost {
                     class_option_(0),
                     reject_reason_(0),
                     errcode_(),
-                    end_(false),
+                    eof_(true),
                     tkpt_data("\x0\x0\x0\x0\x0"),
                     tkpt_buff_(const_cast<char*> (tkpt_data.data()), 5),
                     header_buff_(),
                     userbuff_()  {
+
                     }
 
-                    mutable_buffer buffer() {
-                        switch (state_) {
-                            case waittkpt: return tkpt_buff_ + size_;
-                            case waitheader: return header_buff_ + size_;
-                            case waitdata: return userbuff_ + size_;
-                        }
-                        return mutable_buffer();
-                    }
+                    mutable_buffer buffer();
+                    
+                    std::size_t  put(std::size_t  sz);                  
 
-                    bool ready() {
+                    bool ready() const {
                         return (state_ == error || state_ == complete);
                     }
 
                     operation_state state() const {
-
                         return state_;
                     }
 
                     tpdu_type type() const {
-
                         return type_;
+                    }
+
+                    bool eof() const {
+                        return eof_;
                     }
 
                     std::size_t  datasize() const {
@@ -605,67 +603,22 @@ namespace boost {
                     }
 
                     std::size_t  waitdatasize() const {
-
                         return waitdatasize_;
                     }
 
-                    std::size_t  put(std::size_t  sz) {
-                        if (!sz) return size_;
-                        size_ += sz;
-                        if ((size_ + sz) >= estimatesize_) {
-                            switch (state_) {
-                                case waittkpt:
-                                {
-                                    check_tkpt();
-                                    return 0;
-                                }
-                                case waitheader:
-                                {
-                                    check_header();
-                                    return 0;
-                                }
-                                case waitdata:
-                                {
-                                    waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
-                                    datasize_ += sz;
-                                    if (end_ || !boost::asio::buffer_size(userbuff_ + size_)) {
-                                        std::cout << "data size :" <<  datasize_ << std::endl;
-                                        state_ = complete;
-                                    }
-                                    else {
-                                        state(waittkpt);
-                                        estimatesize_ = TKPT_WITH_LI;
-                                    }
-                                    return 0;
-                                }
-                            }
-
-                        }
-                        if (state_ == waitdata) {
-                            waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
-                            datasize_ += sz;
-                            std::cout << " data size :" <<  datasize_ << std::endl;
-                        }
-                        return size_;
-                    }
-
                     int8_t  class_option() const {
-
                         return class_option_;
                     }
 
                     int8_t  reject_reason() const {
-
                         return reject_reason_;
                     }
 
                     const protocol_options& options() const {
-
                         return options_;
                     }
 
                     boost::system::error_code errcode() {
-
                         return errcode_;
                     }
 
@@ -693,7 +646,7 @@ namespace boost {
                     int8_t                                        reject_reason_;
                     protocol_options                     options_;
                     boost::system::error_code     errcode_;
-                    bool                                           end_;
+                    bool                                           eof_;
 
                     std::string                                tkpt_data;
                     mutable_buffer                        tkpt_buff_;
@@ -725,12 +678,12 @@ namespace boost {
                 public:
 
                     explicit stream_socket(boost::asio::io_service& io_service, const std::string& called = "")
-                    : basic_stream_socket<tcp>(io_service), pdusize_(SIZE128), option_(0, 1, pdusize_, called), waiting_data_size_(0) {
+                    : basic_stream_socket<tcp>(io_service), pdusize_(SIZE128), option_(0, 1, pdusize_, called), waiting_data_size_(0), eof_state_(true) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const std::string& called = "")
-                    : basic_stream_socket<tcp >(io_service, endpoint), pdusize_(SIZE128), option_(0, 1, pdusize_, called), waiting_data_size_(0) {
+                    : basic_stream_socket<tcp >(io_service, endpoint), pdusize_(SIZE128), option_(0, 1, pdusize_, called), waiting_data_size_(0), eof_state_(true) {
                     }
 
 
@@ -1293,7 +1246,7 @@ namespace boost {
 
                                 if (!success()) return;
                             }
-                            socket_->waiting_data_size_ = recieve_->waitdatasize();
+                            socket_->waiting_data_size(recieve_->waitdatasize(), recieve_->eof());
                             handler_(ec, static_cast<std::size_t> (recieve_->datasize()));
                         }
 
@@ -1360,7 +1313,7 @@ namespace boost {
                         BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
                         this->get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
-                                receive_seq_ptr( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size())), buffers, flags)));
+                                receive_seq_ptr( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state())), buffers, flags)));
 
                     }
 
@@ -1392,20 +1345,25 @@ namespace boost {
                         std::cout << "correspond_prot_option src id : " << option_.src_tsap() << std::endl;
                     }
 
-                protected:
 
-                    std::size_t  waiting_data_size() const {
 
-                        return waiting_data_size_;
-                    }
-
-                    void  waiting_data_size( std::size_t val) {
-
-                        waiting_data_size_ = val;
-                    }
 
 
                 private:
+
+                    std::size_t  waiting_data_size() const {
+                        return waiting_data_size_;
+                    }
+
+                    void  waiting_data_size( std::size_t val, bool st) {
+                        std::cout << "waitig data : " << val <<  " eof:" << st << std::endl;
+                        eof_state_ = st;
+                        waiting_data_size_ = val;
+                    }
+
+                    std::size_t  eof_state() const {
+                        return eof_state_;
+                    }
 
                     boost::system::error_code connect_impl(const endpoint_type& peer_endpoint,
                             boost::system::error_code& ec) {
@@ -1511,7 +1469,7 @@ namespace boost {
                     template <typename MutableBufferSequence>
                     std::size_t receive_impl(const MutableBufferSequence& buffers,
                             socket_base::message_flags flags, boost::system::error_code& ec) {
-                        receive_seq_ptr receive_( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size()));
+                        receive_seq_ptr receive_( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state()));
                         while (!ec && !receive_->ready()) {
                             receive_->put(this->get_service().receive(this->get_implementation(), boost::asio::buffer(
                                     receive_->buffer()) , 0, ec));
@@ -1522,7 +1480,7 @@ namespace boost {
                             case CR:
                             case DT:
                             {
-                                /*waiting_data_size_=recieve_->waitdatasize()*/;
+                                waiting_data_size(receive_->waitdatasize(), receive_->eof());
                                 return receive_->datasize();
                             }
                             case ER:
@@ -1544,7 +1502,7 @@ namespace boost {
                     tpdu_size                                         pdusize_;
                     protocol_options                           option_;
                     std::size_t                                      waiting_data_size_;
-
+                    bool                                                eof_state_;
                 } ;
 
 
