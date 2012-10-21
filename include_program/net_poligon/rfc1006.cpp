@@ -260,17 +260,61 @@ namespace boost {
 
                 /////////////////////////////////////////////////////////////////////////////////////////
 
-                void  receive_seq::reject_reason(int8_t val) {
-                    errcode_ = errorcode_by_reason(val);
-                    reject_reason_ = val;
+                mutable_buffer receive_seq::buffer() {
+                    switch (state_) {
+                        case waittkpt: return tkpt_buff_ + size_;
+                        case waitheader: return header_buff_ + size_;
+                        case waitdata: return boost::asio::buffer(userbuff_ + datasize_, estimatesize_);
+                    }
+                    return mutable_buffer();
+                }
+
+                std::size_t  receive_seq::put(std::size_t  sz) {
+                    if (!sz) return size_;
+                    size_ += sz;
+                    if ((size_ + sz) >= estimatesize_) {
+                        switch (state_) {
+                            case waittkpt:
+                            {
+                                check_tkpt();
+                                return 0;
+                            }
+                            case waitheader:
+                            {
+                                check_header();
+                                return 0;
+                            }
+                            case waitdata:
+                            {
+                                waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
+                                datasize_ += sz;
+                                if (eof_ || !boost::asio::buffer_size(userbuff_ + datasize_)) {
+                                    std::cout << "data size :" <<  datasize_ << std::endl;
+                                    //std::cout << "WAITdata size :" <<  waitdatasize_ << std::endl;
+                                    state_ = complete;
+                                }
+                                else {
+                                    state(waittkpt);
+                                    estimatesize_ = TKPT_WITH_LI;
+                                }
+                                return 0;
+                            }
+                        }
+
+                    }
+                    if (state_ == waitdata) {
+                        waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
+                        datasize_ += sz;
+                    }
+                    return size_;
                 }
 
                 receive_seq::operation_state  receive_seq::state(operation_state val) {
                     if (val != state_) {
                         size_ = 0;
                     }
-                    if (val==error){
-                             estimatesize_=0;        
+                    if (val == error) {
+                        estimatesize_ = 0;
                     }
                     return state_ = val;
                 }
@@ -295,8 +339,8 @@ namespace boost {
                     header_data = std::string('/x0', li);
                     header_buff_ = mutable_buffer(const_cast<char*> (header_data.data()), li);
                     size_ = 0;
-                    if (li>128)
-                        return state(error);                        
+                    if (li > 128)
+                        return state(error);
                     estimatesize_ = li;
                     waitdatasize_ = pdsz - 5 - li;
                     return state(waitheader);
@@ -311,10 +355,10 @@ namespace boost {
                         case DT:
                         {
                             int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + 1);
-                            if (estimatesize_ != 2 || !((eof == TPDU_ENDED) || (eof == TPDU_ENDED)))
+                            if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
                                 return state(error); /* !!должен быть только класс 0 см. 13.7*/
-                            estimatesize_ = (boost::asio::buffer_size(userbuff_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_) : estimatesize_;
-                            end_=(eof == TPDU_ENDED);
+                            estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
+                            eof_ = (eof == TPDU_ENDED);
                             return state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
                         }
                         case CR:
@@ -329,7 +373,8 @@ namespace boost {
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
                             src_tsap_ = be_le_convert16(src_tsap_);
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
-                            headarvarvalues vars;;                            
+                            headarvarvalues vars;
+                            ;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
                                 return state(error);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
@@ -347,7 +392,7 @@ namespace boost {
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
                             src_tsap_ = be_le_convert16(src_tsap_);
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
-                            headarvarvalues vars;                           
+                            headarvarvalues vars;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
                                 return state(error);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
@@ -381,7 +426,7 @@ namespace boost {
                             int16_t dst_tsap_ = 0;
                             str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
                             str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 3), 1), reject_reason_);
-                            headarvarvalues vars;                       
+                            headarvarvalues vars;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 4), estimatesize_ - 4), vars))
                                 return state(error);
                             return state(complete);
@@ -391,6 +436,10 @@ namespace boost {
                     return state(error);
                 }
 
+                void  receive_seq::reject_reason(int8_t val) {
+                    errcode_ = errorcode_by_reason(val);
+                    reject_reason_ = val;
+                }
 
 
 
