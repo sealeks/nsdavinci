@@ -50,7 +50,7 @@ namespace boost {
                         case TPDU_SIZE512: return 512;
                         case TPDU_SIZE256: return 256;
                         case TPDU_SIZE128: return 128;
-                        //case TPDU_SIZE4: return 8;
+                            //case TPDU_SIZE4: return 8;
                     }
                     return 0;
                 }
@@ -66,7 +66,7 @@ namespace boost {
                         case TPDU_SIZE512: return SIZE512;
                         case TPDU_SIZE256: return SIZE256;
                         case TPDU_SIZE128: return SIZE128;
-                        //case TPDU_SIZE4: return SIZE4;
+                            //case TPDU_SIZE4: return SIZE4;
                     }
                     return SIZENULL;
                 }
@@ -174,7 +174,7 @@ namespace boost {
                 }
 
                 void generate_TKPTDU(std::string& val) {
-                    val = TKPT_START + inttype_to_str(be_le_convert16(static_cast<int16_t> (val.size() + TKPT_LENGTH))) + val;
+                    val = TKPT_START + inttype_to_str(endiancnv_copy(static_cast<int16_t> (val.size() + TKPT_LENGTH))) + val;
                 }
 
                 std::string generate_header(int8_t type, int16_t dst, int16_t src, const headarvarvalues& vars) {
@@ -188,8 +188,8 @@ namespace boost {
 
                 std::string generate_header_TKPT_CR(const protocol_options& opt) {
                     std::string rslt = inttype_to_str(CR_TPDU_ID) +
-                            inttype_to_str(be_le_convert16(static_cast<int16_t> (0))) +
-                            inttype_to_str(be_le_convert16(opt.src_tsap())) + NULLCHAR;
+                            inttype_to_str(endiancnv_copy(static_cast<int16_t> (0))) +
+                            inttype_to_str(endiancnv_copy(opt.src_tsap())) + NULLCHAR;
                     if (opt.pdusize() != SIZENULL)
                         rslt += (inttype_to_str(VAR_TPDU_SIZE) + inttype_to_str(static_cast<int8_t> (1)) + inttype_to_str(tpdu_type_size(opt.pdusize())));
                     if (!opt.tsap_calling().empty())
@@ -204,8 +204,8 @@ namespace boost {
 
                 std::string generate_header_TKPT_CC(const protocol_options& opt) {
                     std::string rslt = inttype_to_str(CC_TPDU_ID) +
-                            inttype_to_str(be_le_convert16(opt.dst_tsap())) +
-                            inttype_to_str(be_le_convert16(opt.src_tsap())) + NULLCHAR;
+                            inttype_to_str(endiancnv_copy(opt.dst_tsap())) +
+                            inttype_to_str(endiancnv_copy(opt.src_tsap())) + NULLCHAR;
                     if (opt.pdusize() != SIZENULL)
                         rslt += (inttype_to_str(VAR_TPDU_SIZE) + inttype_to_str(static_cast<int8_t> (1)) + inttype_to_str(tpdu_type_size(opt.pdusize())));
                     if (!opt.tsap_calling().empty())
@@ -220,8 +220,8 @@ namespace boost {
 
                 std::string generate_header_TKPT_DR(int16_t dst, int16_t src, int8_t rsn) {
                     std::string rslt = inttype_to_str(DR_TPDU_ID) +
-                            inttype_to_str(be_le_convert16(dst)) +
-                            inttype_to_str(be_le_convert16(src));
+                            inttype_to_str(endiancnv_copy(dst)) +
+                            inttype_to_str(endiancnv_copy(src));
                     rslt += inttype_to_str(rsn);
                     std::size_t sz = rslt.size();
                     rslt = inttype_to_str(static_cast<int8_t> (sz)) + rslt;
@@ -231,8 +231,8 @@ namespace boost {
 
                 std::string generate_header_TKPT_DC(int16_t dst, int16_t src) {
                     std::string rslt = inttype_to_str(DR_TPDU_ID) +
-                            inttype_to_str(be_le_convert16(dst)) +
-                            inttype_to_str(be_le_convert16(src));
+                            inttype_to_str(endiancnv_copy(dst)) +
+                            inttype_to_str(endiancnv_copy(src));
                     std::size_t sz = rslt.size();
                     rslt = inttype_to_str(static_cast<int8_t> (sz)) + rslt;
                     generate_TKPTDU(rslt);
@@ -241,7 +241,7 @@ namespace boost {
 
                 std::string generate_header_TKPT_ER(int16_t dst, const std::string& errorreason, int8_t err) {
                     std::string rslt = inttype_to_str(ER_TPDU_ID) +
-                            inttype_to_str(be_le_convert16(dst)) + inttype_to_str(err) + inttype_to_str(WRONG_TPDU) +
+                            inttype_to_str(endiancnv_copy(dst)) + inttype_to_str(err) + inttype_to_str(WRONG_TPDU) +
                             inttype_to_str(static_cast<int8_t> (errorreason.size())) + errorreason;
                     std::size_t sz = rslt.size();
                     rslt = inttype_to_str(static_cast<int8_t> (sz)) + rslt;
@@ -254,6 +254,41 @@ namespace boost {
 
                 /////////////////////////////////////////////////////////////////////////////////////////
 
+                receive_seq::receive_seq(const mutable_buffer& buff, std::size_t waitingsize, bool ef) :
+                state_(waitingsize ? waitdata : waittkpt),
+                size_(0),
+                estimatesize_( waitingsize ? ( (boost::asio::buffer_size(buff) < waitingsize ) ? boost::asio::buffer_size(buff) : waitingsize )  : TKPT_WITH_LI   ),
+                datasize_(0),
+                waitdatasize_(waitingsize),
+                type_(waitingsize ? DT : NL),
+                class_option_(0),
+                reject_reason_(0),
+                errcode_(),
+                eof_(ef),
+                tkpt_data(new data_type(TKPT_WITH_LI)),
+                tkpt_buff_(boost::asio::buffer(*tkpt_data)),
+                header_buff_(),
+                userbuff_(buff)  {
+                }
+
+                receive_seq::receive_seq() :
+                state_(waittkpt),
+                size_(0),
+                estimatesize_(TKPT_WITH_LI),
+                datasize_(0),
+                waitdatasize_(0),
+                type_(NL),
+                class_option_(0),
+                reject_reason_(0),
+                errcode_(),
+                eof_(true),
+                tkpt_data(new data_type(TKPT_WITH_LI)),
+                tkpt_buff_(boost::asio::buffer(*tkpt_data)),
+                header_buff_(),
+                userbuff_()  {
+
+                }
+
                 mutable_buffer receive_seq::buffer() {
                     switch (state_) {
                         case waittkpt: return tkpt_buff_ + size_;
@@ -263,35 +298,33 @@ namespace boost {
                     return mutable_buffer();
                 }
 
-                std::size_t  receive_seq::put(std::size_t  sz) {
-                    if (!sz) return size_;
+                void  receive_seq::put(std::size_t  sz) {
+                    if (!sz) return;
                     size_ += sz;
                     if ((size_ + sz) >= estimatesize_) {
                         switch (state_) {
                             case waittkpt:
                             {
                                 check_tkpt();
-                                return 0;
+                                return;
                             }
                             case waitheader:
                             {
                                 check_header();
-                                return 0;
+                                return;
                             }
                             case waitdata:
                             {
                                 waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
                                 datasize_ += sz;
                                 if (eof_ || !boost::asio::buffer_size(userbuff_ + datasize_)) {
-                                    std::cout << "data size :" <<  datasize_ << std::endl;
-                                    //std::cout << "WAITdata size :" <<  waitdatasize_ << std::endl;
                                     state_ = complete;
                                 }
                                 else {
                                     state(waittkpt);
                                     estimatesize_ = TKPT_WITH_LI;
                                 }
-                                return 0;
+                                return;
                             }
                         }
 
@@ -300,7 +333,6 @@ namespace boost {
                         waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
                         datasize_ += sz;
                     }
-                    return size_;
                 }
 
                 receive_seq::operation_state  receive_seq::state(operation_state val) {
@@ -313,35 +345,32 @@ namespace boost {
                     return state_ = val;
                 }
 
-                receive_seq::operation_state receive_seq::check_tkpt() {
+                boost::system::error_code receive_seq::check_tkpt() {
                     mutable_buffer buff_ = tkpt_buff_;
                     std::string hdr = std::string(boost::asio::buffer_cast<const char*>(buff_), 2);
                     if (hdr != TKPT_START) {
-                        return state(error);
+                        return errcode(ERROR__SEQ);
                     }
-                    std::string strsz = std::string(boost::asio::buffer_cast<const char*>(buff_ + 2), 2);
-                    int16_t pdsz = 0;
-                    str_to_inttype(strsz, pdsz);
-                    pdsz = be_le_convert16(pdsz);
+                    int16_t pdsz = endiancnv_copy<int16_t>(std::string(boost::asio::buffer_cast<const char*>(buff_ + 2), 2));
                     if (pdsz < 0) {
-                        return state(error);
+                        return errcode(ERROR__EPROTO);
                     }
                     std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + 4));
                     if (!li)
-                        return state(error);
+                        return errcode(ERROR__EPROTO);
                     state_ = waitheader;
-                    header_data =data_type_ptr(new data_type(li));
+                    header_data = data_type_ptr(new data_type(li));
                     header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
                     //std::cout << "vector resrv : " << header_data->capacity() << std::endl;
                     size_ = 0;
                     if (li > 128)
-                        return state(error);
+                        return errcode(ERROR__EPROTO);
                     estimatesize_ = li;
                     waitdatasize_ = pdsz - 5 - li;
-                    return state(waitheader);
+                    return boost::system::error_code();
                 }
 
-                receive_seq::operation_state  receive_seq::check_header() {
+                boost::system::error_code  receive_seq::check_header() {
                     mutable_buffer buff_ = header_buff_;
                     int8_t nativetp = *boost::asio::buffer_cast<int8_t*>(buff_);
                     type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
@@ -351,89 +380,102 @@ namespace boost {
                         {
                             int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + 1);
                             if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
-                                return state(error); /* !!должен быть только класс 0 см. 13.7*/
+                                return errcode(ERROR__EPROTO); /* !!должен быть только класс 0 см. 13.7*/
                             estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
                             eof_ = (eof == TPDU_ENDED);
-                            return state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
+                            state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
+                            return boost::system::error_code();
                         }
                         case CR:
                         {
                             waitdatasize_ = 0;
                             if (estimatesize_ < 6)
-                                return state(error); /* невозможно см. 13.3.1*/
+                                 return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
-                            dst_tsap_ = be_le_convert16(dst_tsap_);
+                            dst_tsap_ = endiancnv_copy(dst_tsap_);
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
-                            src_tsap_ = be_le_convert16(src_tsap_);
+                            src_tsap_ = endiancnv_copy(src_tsap_);
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
                             headarvarvalues vars;
                             ;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
-                                return state(error);
+                                return errcode(ERROR__EPROTO);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
-                            return state(complete);
+                            state(complete);
+                            return boost::system::error_code();                            
                         }
                         case CC:
                         {
                             waitdatasize_ = 0;
                             if (estimatesize_ < 6)
-                                return state(error); /* невозможно см. 13.3.1*/
+                                return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
-                            dst_tsap_ = be_le_convert16(dst_tsap_);
+                            dst_tsap_ = endiancnv_copy(dst_tsap_);
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
-                            src_tsap_ = be_le_convert16(src_tsap_);
+                            src_tsap_ = endiancnv_copy(src_tsap_);
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
                             headarvarvalues vars;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
-                                return state(error);
+                                return errcode(ERROR__EPROTO);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
-                            return state(complete);
+                            state(complete);
+                            return boost::system::error_code();                           
                         }
                         case DR:
                         {
                             waitdatasize_ = 0;
                             if (estimatesize_ < 6)
-                                return state(error); /* невозможно см. 13.3.2*/
+                                return errcode(ERROR__EPROTO);; /* невозможно см. 13.3.2*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
-                            dst_tsap_ = be_le_convert16(dst_tsap_);
+                            dst_tsap_ = endiancnv_copy(dst_tsap_);
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
-                            src_tsap_ = be_le_convert16(src_tsap_);
+                            src_tsap_ = endiancnv_copy(src_tsap_);
                             int8_t rsn = 0;
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), rsn);
                             reject_reason(rsn);
                             headarvarvalues vars;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
-                                return state(error);
+                                return errcode(ERROR__EPROTO);;
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
-                            return state(complete);
+                            state(complete);
+                            return boost::system::error_code();                            
                         }
                         case ER:
                         {
                             waitdatasize_ = 0;
                             if (estimatesize_ < 4)
-                                return state(error); /* невозможно см. 13.3.1*/
+                                return errcode(ERROR__EPROTO);; /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
                             str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 3), 1), reject_reason_);
                             headarvarvalues vars;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 4), estimatesize_ - 4), vars))
-                                return state(error);
-                            return state(complete);
+                                return errcode(ERROR__EPROTO);;
+                            state(complete);
+                            return boost::system::error_code();                           
 
                         }
                     }
-                    return state(error);
+                    return errcode(ERROR__EPROTO);
                 }
 
                 void  receive_seq::reject_reason(int8_t val) {
                     errcode_ = errorcode_by_reason(val);
                     reject_reason_ = val;
+                }
+
+                boost::system::error_code receive_seq::errcode( const boost::system::error_code& err) {
+                    if (!errcode_  && err)
+                        errcode_ = err;
+                    if (err)
+                        state_ = error;
+                    return errcode_;
                 }
 
 
