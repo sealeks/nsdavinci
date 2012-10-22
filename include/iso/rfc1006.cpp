@@ -2,24 +2,22 @@
  * File:   rfc1006.cpp
  * Author: sealeks@mail.ru
  * 
- * Created on 28 РЎРµРЅС‚СЏР±СЂСЊ 2012 Рі., 22:51
+ * Created on 28 Р РЋР ВµР Р…РЎвЂљРЎРЏР В±РЎР‚РЎРЉ 2012 Р С–., 22:51
  */
 
 #include <iosfwd>
 #include <iostream>
 #include <sstream>
 
-#include "rfc1006.h"
+#include <iso/rfc1006.h>
 
 
 
 
 namespace boost {
     namespace asio {
-        namespace ip {
-
-
-            namespace iec8073 {
+        namespace iso {
+            namespace iec8073_tcp {
 
                 boost::system::error_code errorcode_by_reason(int8_t val) {
                     if (!val)
@@ -47,14 +45,12 @@ namespace boost {
 
                 std::size_t getPDUsize(int8_t sz) {
                     switch (sz) {
-                        case TPDU_SIZE8192: return 8192;
-                        case TPDU_SIZE4096: return 4096;
                         case TPDU_SIZE2048: return 2048;
                         case TPDU_SIZE1024: return 1024;
                         case TPDU_SIZE512: return 512;
                         case TPDU_SIZE256: return 256;
                         case TPDU_SIZE128: return 128;
-                        case TPDU_SIZE4: return 8;
+                        //case TPDU_SIZE4: return 8;
                     }
                     return 0;
                 }
@@ -65,14 +61,12 @@ namespace boost {
 
                 tpdu_size tpdu_size_frombyte(int8_t val) {
                     switch (val) {
-                        case TPDU_SIZE8192: return SIZE8192;
-                        case TPDU_SIZE4096: return SIZE4096;
                         case TPDU_SIZE2048: return SIZE2048;
                         case TPDU_SIZE1024: return SIZE1024;
                         case TPDU_SIZE512: return SIZE512;
                         case TPDU_SIZE256: return SIZE256;
                         case TPDU_SIZE128: return SIZE128;
-                        case TPDU_SIZE4: return SIZE4;
+                        //case TPDU_SIZE4: return SIZE4;
                     }
                     return SIZENULL;
                 }
@@ -336,8 +330,9 @@ namespace boost {
                     if (!li)
                         return state(error);
                     state_ = waitheader;
-                    header_data = std::string('/x0', li);
-                    header_buff_ = mutable_buffer(const_cast<char*> (header_data.data()), li);
+                    header_data =data_type_ptr(new data_type(li));
+                    header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
+                    //std::cout << "vector resrv : " << header_data->capacity() << std::endl;
                     size_ = 0;
                     if (li > 128)
                         return state(error);
