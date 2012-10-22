@@ -67,7 +67,7 @@ namespace boost {
                 const int8_t TPDU_SIZE128 = '\x7';
                 //const int8_t TPDU_SIZE4 = '\x5';   /// test
 
-                enum tpdu_size {
+                typedef enum {
                     SIZENULL = 0,
                     SIZE2048 = TPDU_SIZE2048,
                     SIZE1024 = TPDU_SIZE1024,
@@ -75,37 +75,58 @@ namespace boost {
                     SIZE256 = TPDU_SIZE256,
                     SIZE128 = TPDU_SIZE128,
                     //SIZE4 = TPDU_SIZE4
-                } ;
-                
-                
-                
-                class transport_selector{
+                }   tpdu_size;
+
+                class transport_selector {
                 public:
-                    transport_selector() :  pdusize_(SIZE2048){}
-                    transport_selector(const std::string& called) : called_(called), pdusize_(SIZE2048) {}
-                    transport_selector(const std::string& called, const std::string& calling) : called_(called), calling_(calling), pdusize_(SIZE2048){} 
-                    transport_selector(const std::string& called, tpdu_size  pdusize ) : called_(called), pdusize_(pdusize){}  
-                    transport_selector(const std::string& called, const std::string& calling, tpdu_size  pdusize ) : called_(called), calling_(calling), pdusize_(pdusize){}      
-                    transport_selector(tpdu_size  pdusize ) : pdusize_(pdusize){}        
-                    transport_selector(int16_t called) : called_(inttype_to_str(endiancnv_copy(called))), pdusize_(SIZE2048) {}
-                    transport_selector(int16_t called, int16_t calling) : called_(inttype_to_str(endiancnv_copy(called))), calling_(inttype_to_str(endiancnv_copy(calling))), pdusize_(SIZE2048){} 
-                    transport_selector(int16_t called, tpdu_size  pdusize ) : called_(inttype_to_str(endiancnv_copy(called))), pdusize_(pdusize){}  
-                    transport_selector(int16_t called, int16_t calling, tpdu_size  pdusize ) : called_(inttype_to_str(endiancnv_copy(called))), calling_(inttype_to_str(endiancnv_copy(calling))), pdusize_(pdusize){}                        
-                    
+
+                    transport_selector() :  pdusize_(SIZE2048) {
+                    }
+
+                    transport_selector(const std::string& called) : called_(called), pdusize_(SIZE2048) {
+                    }
+
+                    transport_selector(const std::string& called, const std::string& calling) : called_(called), calling_(calling), pdusize_(SIZE2048) {
+                    }
+
+                    transport_selector(const std::string& called, tpdu_size  pdusize ) : called_(called), pdusize_(pdusize) {
+                    }
+
+                    transport_selector(const std::string& called, const std::string& calling, tpdu_size  pdusize ) : called_(called), calling_(calling), pdusize_(pdusize) {
+                    }
+
+                    transport_selector(tpdu_size  pdusize ) : pdusize_(pdusize) {
+                    }
+
+                    transport_selector(int16_t called) : called_(inttype_to_str(endiancnv_copy(called))), pdusize_(SIZE2048) {
+                    }
+
+                    transport_selector(int16_t called, int16_t calling) : called_(inttype_to_str(endiancnv_copy(called))), calling_(inttype_to_str(endiancnv_copy(calling))), pdusize_(SIZE2048) {
+                    }
+
+                    transport_selector(int16_t called, tpdu_size  pdusize ) : called_(inttype_to_str(endiancnv_copy(called))), pdusize_(pdusize) {
+                    }
+
+                    transport_selector(int16_t called, int16_t calling, tpdu_size  pdusize ) : called_(inttype_to_str(endiancnv_copy(called))), calling_(inttype_to_str(endiancnv_copy(calling))), pdusize_(pdusize) {
+                    }
+
                     std::string called() const {
-                        return called_;}
-                    
-                     std::string calling() const {
-                        return calling_;}                   
-                    
-                     tpdu_size pdusize() const {
-                        return pdusize_;}                      
-                    
+                        return called_;
+                    }
+
+                    std::string calling() const {
+                        return calling_;
+                    }
+
+                    tpdu_size pdusize() const {
+                        return pdusize_;
+                    }
+
                 private:
                     std::string called_;
-                    std::string calling_; 
+                    std::string calling_;
                     tpdu_size  pdusize_;
-                };               
+                } ;
 
 
 
@@ -595,7 +616,7 @@ namespace boost {
                 class stream_socket : public basic_stream_socket<boost::asio::ip::tcp > {
                 public:
 
-                    explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel =transport_selector() )
+                    explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector() )
                     : basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(SIZE2048), option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling() ), waiting_data_size_(0), eof_state_(true) {
                     }
 
@@ -1296,11 +1317,6 @@ namespace boost {
                     std::size_t  eof_state() const {
                         return eof_state_;
                     }
-                    
-                    
-                    
-                    
-                    
 
                     boost::system::error_code connect_impl(const endpoint_type& peer_endpoint,
                             boost::system::error_code& ec) {
@@ -1334,12 +1350,14 @@ namespace boost {
 
                                     return ec = receive_->errcode() ? receive_->errcode() : ERROR_EIO;
                                 }
+                                default:
+                                {
+                                    ec = ERROR__EPROTO;
+                                }
                             }
                         }
                         return ec = ERROR__EPROTO;
                     }
-                    
-                    
 
                     boost::system::error_code releaseconnect_impl(int8_t rsn, boost::system::error_code& ec) {
                         if (is_open()) {
@@ -1351,8 +1369,6 @@ namespace boost {
                         }
                         return ec =  ERROR_ECONNREFUSED;
                     }
-                    
-                    
 
                     boost::system::error_code  check_accept_imp(int16_t  src,  boost::system::error_code& ec) {
                         option_.src_tsap(src);
@@ -1394,9 +1410,6 @@ namespace boost {
                         }
                         return ec = canseled ? ERROR_EDOM : ec;
                     }
-                    
-                    
-                    
 
                     template <typename ConstBufferSequence>
                     std::size_t send_impl(const ConstBufferSequence& buffers,
@@ -1406,9 +1419,6 @@ namespace boost {
                             send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
                         return ec ? 0 : boost::asio::buffer_size(buffers);
                     }
-                    
-                    
-                    
 
                     template <typename MutableBufferSequence>
                     std::size_t receive_impl(const MutableBufferSequence& buffers,
@@ -1575,7 +1585,7 @@ namespace boost {
                 /// The type of a TCP endpoint.
 
                 typedef boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>          endpoint;
-                
+
                 typedef iec8073_tcp::transport_selector                                              transportselector;
 
                 /// Construct to represent the IPv4 TCP protocol.

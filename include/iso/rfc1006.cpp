@@ -294,6 +294,7 @@ namespace boost {
                         case waittkpt: return tkpt_buff_ + size_;
                         case waitheader: return header_buff_ + size_;
                         case waitdata: return boost::asio::buffer(userbuff_ + datasize_, estimatesize_);
+                        default:  return mutable_buffer();
                     }
                     return mutable_buffer();
                 }
@@ -326,6 +327,11 @@ namespace boost {
                                 }
                                 return;
                             }
+                            default:
+                            {
+                                errcode(ERROR__SEQ);
+                                return;
+                            }
                         }
 
                     }
@@ -351,7 +357,7 @@ namespace boost {
                     if (hdr != TKPT_START) {
                         return errcode(ERROR__SEQ);
                     }
-                    int16_t pdsz = endiancnv_copy<int16_t>(std::string(boost::asio::buffer_cast<const char*>(buff_ + 2), 2));
+                    int16_t pdsz = endiancnv_copy<int16_t > (std::string(boost::asio::buffer_cast<const char*>(buff_ + 2), 2));
                     if (pdsz < 0) {
                         return errcode(ERROR__EPROTO);
                     }
@@ -390,7 +396,7 @@ namespace boost {
                         {
                             waitdatasize_ = 0;
                             if (estimatesize_ < 6)
-                                 return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
+                                return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
@@ -404,7 +410,7 @@ namespace boost {
                                 return errcode(ERROR__EPROTO);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             state(complete);
-                            return boost::system::error_code();                            
+                            return boost::system::error_code();
                         }
                         case CC:
                         {
@@ -423,13 +429,14 @@ namespace boost {
                                 return errcode(ERROR__EPROTO);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             state(complete);
-                            return boost::system::error_code();                           
+                            return boost::system::error_code();
                         }
                         case DR:
                         {
                             waitdatasize_ = 0;
                             if (estimatesize_ < 6)
-                                return errcode(ERROR__EPROTO);; /* невозможно см. 13.3.2*/
+                                return errcode(ERROR__EPROTO);
+                            ; /* невозможно см. 13.3.2*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
                             str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
@@ -441,25 +448,32 @@ namespace boost {
                             reject_reason(rsn);
                             headarvarvalues vars;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
-                                return errcode(ERROR__EPROTO);;
+                                return errcode(ERROR__EPROTO);
+                            ;
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             state(complete);
-                            return boost::system::error_code();                            
+                            return boost::system::error_code();
                         }
                         case ER:
                         {
                             waitdatasize_ = 0;
                             if (estimatesize_ < 4)
-                                return errcode(ERROR__EPROTO);; /* невозможно см. 13.3.1*/
+                                return errcode(ERROR__EPROTO);
+                            ; /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
                             str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 3), 1), reject_reason_);
                             headarvarvalues vars;
                             if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 4), estimatesize_ - 4), vars))
-                                return errcode(ERROR__EPROTO);;
+                                return errcode(ERROR__EPROTO);
+                            ;
                             state(complete);
-                            return boost::system::error_code();                           
+                            return boost::system::error_code();
 
+                        }
+                        default:
+                        {
+                            errcode(ERROR__EPROTO);
                         }
                     }
                     return errcode(ERROR__EPROTO);
