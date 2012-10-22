@@ -17,7 +17,7 @@
 #include <kernel/factory.h>
 #include <kernel/templ.h>
 
-#include "rfc1006.h"
+#include <iso/rfc1006.h>
 
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
@@ -27,20 +27,24 @@
 #include <cstdlib>
 #include <cstring>
 
-
 int port = 102;
 
-using boost::asio::ip::rfc1006;
+using boost::asio::iso::rfc1006;
+using boost::asio::ip::tcp;
 
 enum {
     max_length = 1000
 } ;
 
+//#define NET_BLOCKING
+
+#ifndef NET_BLOCKING
+
 class session {
 public:
 
     session(boost::asio::io_service& io_service)
-    : socket_(io_service, "SERVER-TSEL") {
+    : socket_(io_service, boost::asio::iso::rfc1006:: transportselector("SERVER-TSEL")) {
         std::cout << "New sesion\n";
     }
 
@@ -155,7 +159,7 @@ public:
         io_service_.post(boost::bind(&client::do_write, this));
     }
 
-    void close() { //do_close();
+    void close() { 
         io_service_.post(boost::bind(&client::do_close, this));
     }
 
@@ -166,10 +170,6 @@ private:
     void handle_connect(const boost::system::error_code& error,
             rfc1006::resolver::iterator endpoint_iterator) {
         if (!error) {
-            /*  socket_.async_read_some(boost::asio::buffer(data_, max_length),
-          boost::bind(&client::handle_read, this,
-            boost::asio::placeholders::error,
-            boost::asio::placeholders::bytes_transferred));*/
         }
         else if (endpoint_iterator != rfc1006::resolver::iterator()) {
             socket_.close();
@@ -228,10 +228,118 @@ private:
     char data_[max_length];
 } ;
 
+#else
+
+class session {
+public:
+
+    session(boost::asio::io_service& io_service)
+    : socket_(io_service, boost::asio::iso::rfc1006:: transportselector("SERVER-TSEL")) {
+        std::cout << "New sesion\n";
+    }
+
+    rfc1006::socket& socket() {
+        return socket_;
+    }
+
+    void run() {
+        boost::system::error_code ec;
+        while (!ec){
+            std::size_t bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
+            if (ec) break;
+            message = std::string(data_, bytes_transferred);
+			std::cout << "Server read: " <<  message <<  " size: " <<  message.size() << std::endl;
+            socket_.write_some(boost::asio::buffer(data_, bytes_transferred), ec);}}
+
+private:
+
+
+    rfc1006::socket socket_;
+    char data_[max_length];
+    std::string message;
+} ;
+
+
+class server {
+public:
+
+    server(boost::asio::io_service& io_service, short port)
+    : io_service_(io_service),
+    acceptor_(io_service, rfc1006::endpoint(boost::asio::ip::tcp::v4(), port)) {
+        start_accept();
+    }
+
+private:
+
+    void start_accept() {
+        while (true){
+        session* new_session = new session(io_service_);
+        boost::system::error_code ec;
+        acceptor_.accept(new_session->socket(),  ec);
+        if (ec)
+            delete new_session;
+		else
+			new_session->run();};             
+    }
+
+    boost::asio::io_service& io_service_;
+    rfc1006::acceptor acceptor_;
+} ;
+
+
+class client {
+public:
+
+    client(boost::asio::io_service& io_service,
+            rfc1006::resolver::iterator endpoint_iterator, const std::string& called = "")
+    : io_service_(io_service),
+    socket_(io_service, called) {
+         boost::system::error_code ec;
+        rfc1006::endpoint endpoint = *endpoint_iterator;
+                socket_.connect(endpoint,ec);
+        if (!ec){
+            
+        }        
+    }
+
+    ~client() {
+        if (socket_.is_open()) {
+            socket_.close();
+        }
+    }
+
+    void release() {
+              //io_service_.reset();
+              //boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+              //io_service_.poll();
+    }
+    
+
+
+    void write(const std::string& msg) {
+         message = msg;
+         boost::system::error_code ec;         
+         socket_.write_some(boost::asio::buffer(message.data(), message.size()), ec);
+         std::size_t bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
+         std::cout << "Client read:" << std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred << std::endl;
+              
+    }
+
+    void close() { 
+             socket_.close();
+    }
 
 
 
+private:
+    boost::asio::io_service& io_service_;
+    rfc1006::socket socket_;
+    std::string message;
+    char data_[max_length];
+} ;
 
+
+#endif
 
 
 using namespace std;
@@ -350,19 +458,6 @@ typedef callable_shared_ptr<IO >                         io_ptr;
 
 int main(int argc, char* argv[]) {
 
-    std::string uuu = "rtrtr";
-
-    /*dvnci::str_vect vectdata;
-  
-    boost::asio::ip::iec80f3::generate_header_TKPT_DT(uuu, boost::asio::ip::iec80f3::TPDU_SIZE8,vectdata);
-  
-    for (dvnci::str_vect::const_iterator it=vectdata.begin();it!=vectdata.end();++it){
-        std::cout << "test: " << dvnci::binary_block_to_hexsequence_debug(*it) << std::endl;
-    }*/
-
-
-    std::cout << "test: " <<
-            dvnci::binary_block_to_hexsequence_debug(boost::asio::ip::iec8073::generate_header_TKPT_ER(1, "ffff")) << std::endl;
 
     try {
         if (argc == 1) {
