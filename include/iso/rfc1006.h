@@ -56,78 +56,8 @@ namespace boost {
                 }
 
 
+
                 tpdu_type tpdu_type_from(int8_t val);
-
-                const int8_t TPDU_SIZE8192 = '\xD'; // denied in 0 class
-                const int8_t TPDU_SIZE4096 = '\xC'; // denied in 0 class
-                const int8_t TPDU_SIZE2048 = '\xB';
-                const int8_t TPDU_SIZE1024 = '\xA';
-                const int8_t TPDU_SIZE512  = '\x9';
-                const int8_t TPDU_SIZE256 = '\x8';
-                const int8_t TPDU_SIZE128 = '\x7';
-                //const int8_t TPDU_SIZE4 = '\x5';   /// test
-
-                typedef enum {
-                    SIZENULL = 0,
-                    SIZE2048 = TPDU_SIZE2048,
-                    SIZE1024 = TPDU_SIZE1024,
-                    SIZE512 = TPDU_SIZE512,
-                    SIZE256 = TPDU_SIZE256,
-                    SIZE128 = TPDU_SIZE128,
-                    //SIZE4 = TPDU_SIZE4
-                }   tpdu_size;
-
-                class transport_selector {
-                public:
-
-                    transport_selector() :  pdusize_(SIZE2048) {
-                    }
-
-                    transport_selector(const std::string& called) : called_(called), pdusize_(SIZE2048) {
-                    }
-
-                    transport_selector(const std::string& called, const std::string& calling) : called_(called), calling_(calling), pdusize_(SIZE2048) {
-                    }
-
-                    transport_selector(const std::string& called, tpdu_size  pdusize ) : called_(called), pdusize_(pdusize) {
-                    }
-
-                    transport_selector(const std::string& called, const std::string& calling, tpdu_size  pdusize ) : called_(called), calling_(calling), pdusize_(pdusize) {
-                    }
-
-                    transport_selector(tpdu_size  pdusize ) : pdusize_(pdusize) {
-                    }
-
-                    transport_selector(int16_t called) : called_(inttype_to_str(endiancnv_copy(called))), pdusize_(SIZE2048) {
-                    }
-
-                    transport_selector(int16_t called, int16_t calling) : called_(inttype_to_str(endiancnv_copy(called))), calling_(inttype_to_str(endiancnv_copy(calling))), pdusize_(SIZE2048) {
-                    }
-
-                    transport_selector(int16_t called, tpdu_size  pdusize ) : called_(inttype_to_str(endiancnv_copy(called))), pdusize_(pdusize) {
-                    }
-
-                    transport_selector(int16_t called, int16_t calling, tpdu_size  pdusize ) : called_(inttype_to_str(endiancnv_copy(called))), calling_(inttype_to_str(endiancnv_copy(calling))), pdusize_(pdusize) {
-                    }
-
-                    std::string called() const {
-                        return called_;
-                    }
-
-                    std::string calling() const {
-                        return calling_;
-                    }
-
-                    tpdu_size pdusize() const {
-                        return pdusize_;
-                    }
-
-                private:
-                    std::string called_;
-                    std::string calling_;
-                    tpdu_size  pdusize_;
-                } ;
-
 
 
                 const int8_t REJECT_REASON_NORM = '\x80'; // normal release
@@ -230,66 +160,8 @@ namespace boost {
                 } ;
 
 
-                //   class  send_buffer_impl 
 
-                class  send_buffer_impl {
-                public:
-
-                    typedef boost::shared_ptr<const_buffers_1>                     const_buffs_ptr;
-                    typedef std::vector<const_buffs_ptr>                              vector_buffer;
-                    typedef vector_buffer::iterator                                          vector_buffer_iterator;
-
-                    send_buffer_impl() : size_(0) {
-                        iterator_ = buff_.begin();
-                    }
-
-                    virtual ~send_buffer_impl() {
-                    }
-
-                    const_buffers_1 pop() {
-                        return iterator_ == buff_.end() ? boost::asio::const_buffers_1(const_buffer()) : (*(*iterator_));
-                    }
-
-                    std::size_t  size(std::size_t  sz = 0) {
-                        if (sz == 0) return size_;
-                        if (iterator_ == buff_.end()) return 0;
-                        *iterator_ = const_buffs_ptr( new const_buffers_1(*(*iterator_) + sz));
-                        if (!buffer_size(*(*iterator_))) {
-                            size_ = 0;
-                            iterator_++;
-                            return size_;
-                        }
-                        return size_ += sz;
-                    }
-
-                    std::size_t  receivesize() const {
-                        return  iterator_ == buff_.end() ? 0 : buffer_size(*(*iterator_));
-                    }
-
-                    bool ready() const {
-                        return iterator_ == buff_.end();
-                    }
-
-
-                protected:
-                    vector_buffer_iterator     iterator_;
-                    vector_buffer                    buff_;
-                    std::size_t                           size_;
-                } ;
-
-                typedef boost::shared_ptr<send_buffer_impl>      send_buffer_ptr;
-
-                class  sevice_send_buffer_impl : public send_buffer_impl {
-                public:
-
-                    sevice_send_buffer_impl(const std::string& send) : send_buffer_impl(), send_(send) {
-                        buff_.push_back(const_buffs_ptr( new const_buffers_1(const_buffer(send_.data(), send_.size()))));
-                        iterator_ = buff_.begin();
-                    }
-
-                private:
-                    std::string send_;
-                } ;
+                // data_send_buffer_impl
 
                 template <typename ConstBufferSequence>
                 class  data_send_buffer_impl : public send_buffer_impl {
@@ -426,7 +298,6 @@ namespace boost {
 
                     send_seq(int16_t dst, int16_t src, int8_t rsn) :
                     type_(DR)  {
-
                         constructDR(dst, src, rsn );
                     }
 
@@ -1586,7 +1457,7 @@ namespace boost {
 
                 typedef boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>          endpoint;
 
-                typedef iec8073_tcp::transport_selector                                              transportselector;
+                typedef transport_selector                                                                      transportselector;
 
                 /// Construct to represent the IPv4 TCP protocol.
 
