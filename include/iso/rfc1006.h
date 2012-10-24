@@ -511,6 +511,15 @@ namespace boost {
                         if (ec) return 0;
                         return waiting_data_size_ < s ? waiting_data_size_ : s;
                     }
+                    
+                    
+                    // Data indication true is end od block
+
+                    bool dataindication() const {
+                        return is_open() && !waiting_data_size();
+                    }
+
+                 
 
 
                     ///   Connect operation  ///
@@ -1147,9 +1156,18 @@ namespace boost {
 
                         async_receive<MutableBufferSequence, ReadHandler > (buffers, 0, handler);
                     }
+                    
+                    
 
-                    tpdu_size pdusize() const {
 
+
+
+
+
+                private:
+                    
+                    
+                     tpdu_size pdusize() const {
                         return pdusize_;
                     };
 
@@ -1168,12 +1186,7 @@ namespace boost {
                         std::cout << "correspond_prot_option dst id : " << option_.dst_tsap() << std::endl;
                         std::cout << "correspond_prot_option src id : " << option_.src_tsap() << std::endl;
                     }
-
-
-
-
-
-                private:
+                   
 
                     std::size_t  waiting_data_size() const {
                         return waiting_data_size_;
@@ -1545,6 +1558,10 @@ namespace boost {
         void asyn_releaseconnect( boost::asio::iso::iec8073_tcp::stream_socket& s, ReleaseConnectHandler  handler, int8_t rsn = boost::asio::iso::iec8073_tcp::REJECT_REASON_NORM) {
             s.asyn_releaseconnect<ReleaseConnectHandler > (handler, rsn);
         }
+        
+        bool dataindication( boost::asio::iso::iec8073_tcp::stream_socket& s) {
+            return s.dataindication();
+        }        
 
 
     } // namespace asio
