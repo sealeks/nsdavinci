@@ -361,68 +361,342 @@ namespace boost {
                     }
                     vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, val.size()), val));*/
                 }
-                
-         //
-                              //  const int8_t WORK_PROT_OPTION='\x0';
-               //const int8_t WORK_PROT_VERSION='\x2';    
-                
-         std::string generate_header_CN(const protocol_options& opt, const std::string& data){
+
+                //
+                //  const int8_t WORK_PROT_OPTION='\x0';
+                //const int8_t WORK_PROT_VERSION='\x2';    
+
+                std::string generate_header_CN(const protocol_options& opt, const std::string& data) {
                     spdudata tmp(CN_SPDU_ID);
                     tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
-                    tmp.setPGI(PGI_CN_AC, PI_VERS,WORK_PROT_VERSION);
-                    tmp.setPI(PI_SUREQ,FU_WORK);
-                    tmp.setPI(PI_CALLING,opt.ssap_calling());   
-                    tmp.setPI(PI_CALLED,opt.ssap_called());  
-                    tmp.setPI(PI_USERDATA,data); 
+                    tmp.setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
+                    tmp.setPI(PI_SUREQ, FU_WORK);
+                    tmp.setPI(PI_CALLING, opt.ssap_calling());
+                    tmp.setPI(PI_CALLED, opt.ssap_called());
+                    tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
                 }
-         
-          std::string generate_header_AC(const protocol_options& opt, const std::string& data){
+
+                std::string generate_header_AC(const protocol_options& opt, const std::string& data) {
                     spdudata tmp(AC_SPDU_ID);
-                    tmp.setPGI(PGI_CN_AC, PI_PROPT,WORK_PROT_OPTION);
-                    tmp.setPGI(PGI_CN_AC, PI_VERS,WORK_PROT_VERSION);
-                    tmp.setPI(PI_SUREQ,FU_WORK);
-                    tmp.setPI(PI_CALLING,opt.ssap_calling());   
-                    tmp.setPI(PI_CALLED,opt.ssap_called());  
-                    tmp.setPI(PI_USERDATA,data); 
+                    tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
+                    tmp.setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
+                    tmp.setPI(PI_SUREQ, FU_WORK);
+                    tmp.setPI(PI_CALLING, opt.ssap_calling());
+                    tmp.setPI(PI_CALLED, opt.ssap_called());
+                    tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
-                }       
-          
-          std::string generate_header_DN(const std::string& data){
+                }
+
+                std::string generate_header_DN(const std::string& data) {
                     spdudata tmp(DN_SPDU_ID);
-                    tmp.setPI(PI_USERDATA,data); 
+                    tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
-                }    
-          
-          std::string generate_header_RF(const std::string& data){
+                }
+
+                std::string generate_header_RF(const std::string& data) {
                     spdudata tmp(RF_SPDU_ID);
-                    tmp.setPI(PI_USERDATA,data); 
+                    tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
-                }           
-          
-          std::string generate_header_AB(const std::string& data){
+                }
+
+                std::string generate_header_AB(const std::string& data) {
                     spdudata tmp(AB_SPDU_ID);
-                    tmp.setPI(PI_USERDATA,data); 
+                    tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
-                }  
-          
-           std::string generate_header_AA(const std::string& data){
+                }
+
+                std::string generate_header_AA(const std::string& data) {
                     spdudata tmp(AA_SPDU_ID);
-                    tmp.setPI(PI_USERDATA,data); 
+                    tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
-                }       
-           
-           std::string generate_header_FN(const std::string& data){
+                }
+
+                std::string generate_header_FN(const std::string& data) {
                     spdudata tmp(FN_SPDU_ID);
-                    tmp.setPI(PI_USERDATA,data); 
+                    tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
-                }  
-          
-           std::string generate_header_NF(const std::string& data){
+                }
+
+                std::string generate_header_NF(const std::string& data) {
                     spdudata tmp(NF_SPDU_ID);
-                    tmp.setPI(PI_USERDATA,data); 
+                    tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
-                }           
+                }
+
+
+                //receive_seq
+
+                receive_seq::receive_seq(const mutable_buffer& buff, std::size_t waitingsize, bool ef) :
+                state_(waitingsize ? waitdata : waittype),
+                size_(0),
+                estimatesize_( waitingsize ? ( (boost::asio::buffer_size(buff) < waitingsize ) ? boost::asio::buffer_size(buff) : waitingsize )  : SI_WITH_LI   ),
+                datasize_(0),
+                waitdatasize_(waitingsize),
+                type_(waitingsize ? DT_SPDU_ID : 0),
+                next_(false), 
+                class_option_(0),
+                reject_reason_(0),
+                errcode_(),
+                eof_(ef),
+                type_data(new data_type(SI_WITH_LI)),
+                type_buff_(boost::asio::buffer(*type_data)),
+                header_buff_(),
+                userbuff_(buff)  {
+                }
+
+                receive_seq::receive_seq() :
+                state_(waittype),
+                size_(0),
+                estimatesize_(SI_WITH_LI),
+                datasize_(0),
+                waitdatasize_(0),
+                type_(0),
+                next_(false),        
+                class_option_(0),
+                reject_reason_(0),
+                errcode_(),
+                eof_(true),
+                type_data(new data_type(SI_WITH_LI)),
+                type_buff_(boost::asio::buffer(*type_data)),
+                header_buff_(),
+                userbuff_()  {
+
+                }
+
+                mutable_buffer receive_seq::buffer() {
+                    switch (state_) {
+                        case waittype: return type_buff_ + size_;
+                        case waitsize: return type_buff_ + size_;                       
+                        case waitheader: return header_buff_ + size_;
+                        case waitdata: return boost::asio::buffer(userbuff_ + datasize_, estimatesize_);
+                        default:  return mutable_buffer();
+                    }
+                    return mutable_buffer();
+                }
+
+                void  receive_seq::put(std::size_t  sz) {
+                    if (!sz) return;
+                    size_ += sz;
+                    if ((size_ + sz) >= estimatesize_) {
+                        switch (state_) {
+                            case waittype:
+                            {
+                                check_type();
+                                return;
+                            }
+                            case waitsize:
+                            {
+                                check_size();
+                                return;
+                            }                           
+                            case waitheader:
+                            {
+                                check_header();
+                                return;
+                            }
+                            case waitdata:
+                            {
+                                waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
+                                datasize_ += sz;
+                                if (eof_ || !boost::asio::buffer_size(userbuff_ + datasize_)) {
+                                    state_ = complete;
+                                }
+                                else {
+                                    state(waittype);
+                                    //estimatesize_ = SI_WITH_LI;
+                                }
+                                return;
+                            }
+                            default:
+                            {
+                                errcode(ERROR__SEQ);
+                                return;
+                            }
+                        }
+
+                    }
+                    if (state_ == waitdata) {
+                        waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
+                        datasize_ += sz;
+                    }
+                }
+
+                receive_seq::operation_state  receive_seq::state(operation_state val) {
+                    if (val != state_) {
+                        size_ = 0;
+                    }
+                    if (val == error) {
+                        estimatesize_ = 0;
+                    }
+                    return state_ = val;
+                }
+
+                boost::system::error_code receive_seq::check_type() {
+                    mutable_buffer buff_ = type_buff_;
+                    spdu_type tp = *boost::asio::buffer_cast<spdu_type*>(buff_ );
+                    if (!type_ && !next_){
+                        next_=true;}
+                    
+                    switch (tp){
+                        case GT_SPDU_ID:  {type_ = tp ;break;}
+                        case PT_SPDU_ID:  {type_ =  tp;break;}
+                        default:{
+                              type_ = *boost::asio::buffer_cast<spdu_type*>(buff_ );
+                              next_= false;
+                        }
+                    }               
+                    std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + 1));
+                    
+                    if (li=='\xFF'){
+                           estimatesize_=HDR_LI;
+                           state(waitsize);
+                           return boost::system::error_code();}
+                    
+                    if (!li){
+                         if (next_)  {
+                                return boost::system::error_code();}
+                         else{
+                               state(tp==DT_SPDU_ID ? waitdata : complete);
+                               return boost::system::error_code();
+                         }}
+                    else{
+                        state(waitheader);
+                        header_data = data_type_ptr(new data_type(li)); 
+                        estimatesize_=li;
+                        return boost::system::error_code();
+                    }
+                    return errcode(ERROR__EPROTO);
+                }
+
+                boost::system::error_code receive_seq::check_size() {
+                    mutable_buffer buff_ = type_buff_;
+                    uint16_t li = 0;
+                    str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_), 2), li);
+                    li = endiancnv_copy(li);
+                    state(waitheader);
+                    header_data = data_type_ptr(new data_type(li));
+                    estimatesize_ = li;
+                    return boost::system::error_code();
+                }
+                
+
+                
+                boost::system::error_code  receive_seq::check_header() {
+                    mutable_buffer buff_ = header_buff_;
+                    /*int8_t nativetp = *boost::asio::buffer_cast<int8_t*>(buff_);
+                    type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
+
+                    switch (type_) {
+                        case DT:
+                        {
+                            int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + 1);
+                            if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
+                                return errcode(ERROR__EPROTO); 
+                            estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
+                            eof_ = (eof == TPDU_ENDED);
+                            state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
+                            return boost::system::error_code();
+                        }
+                        case CR:
+                        {
+                            waitdatasize_ = 0;
+                            if (estimatesize_ < 6)
+                                return errcode(ERROR__EPROTO); 
+                            int16_t dst_tsap_ = 0;
+                            int16_t src_tsap_ = 0;
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
+                            dst_tsap_ = endiancnv_copy(dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
+                            src_tsap_ = endiancnv_copy(src_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
+                            headarvarvalues vars;
+                            ;
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
+                                return errcode(ERROR__EPROTO);
+                            options_ = protocol_options(dst_tsap_, src_tsap_, vars);
+                            state(complete);
+                            return boost::system::error_code();
+                        }
+                        case CC:
+                        {
+                            waitdatasize_ = 0;
+                            if (estimatesize_ < 6)
+                                return errcode(ERROR__EPROTO); 
+                            int16_t dst_tsap_ = 0;
+                            int16_t src_tsap_ = 0;
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
+                            dst_tsap_ = endiancnv_copy(dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
+                            src_tsap_ = endiancnv_copy(src_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
+                            headarvarvalues vars;
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
+                                return errcode(ERROR__EPROTO);
+                            options_ = protocol_options(dst_tsap_, src_tsap_, vars);
+                            state(complete);
+                            return boost::system::error_code();
+                        }
+                        case DR:
+                        {
+                            waitdatasize_ = 0;
+                            if (estimatesize_ < 6)
+                                return errcode(ERROR__EPROTO);
+
+                            int16_t dst_tsap_ = 0;
+                            int16_t src_tsap_ = 0;
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
+                            dst_tsap_ = endiancnv_copy(dst_tsap_);
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
+                            src_tsap_ = endiancnv_copy(src_tsap_);
+                            int8_t rsn = 0;
+                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), rsn);
+                            reject_reason(rsn);
+                            headarvarvalues vars;
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
+                                return errcode(ERROR__EPROTO);
+                            ;
+                            options_ = protocol_options(dst_tsap_, src_tsap_, vars);
+                            state(complete);
+                            return boost::system::error_code();
+                        }
+                        case ER:
+                        {
+                            waitdatasize_ = 0;
+                            if (estimatesize_ < 4)
+                                return errcode(ERROR__EPROTO);
+
+                            int16_t dst_tsap_ = 0;
+                            str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
+                            str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 3), 1), reject_reason_);
+                            headarvarvalues vars;
+                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 4), estimatesize_ - 4), vars))
+                                return errcode(ERROR__EPROTO);
+                            ;
+                            state(complete);
+                            return boost::system::error_code();
+
+                        }
+                        default:
+                        {
+                            errcode(ERROR__EPROTO);
+                        }
+                    }*/
+                    return errcode(ERROR__EPROTO);
+                }
+
+                void  receive_seq::reject_reason(int8_t val) {
+                    errcode_ = boost::system::error_code();
+                    reject_reason_ = val;
+                }
+
+                boost::system::error_code receive_seq::errcode( const boost::system::error_code& err) {
+                    if (!errcode_  && err)
+                        errcode_ = err;
+                    if (err)
+                        state_ = error;
+                    return errcode_;
+                }
 
 
             }
