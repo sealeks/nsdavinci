@@ -1559,7 +1559,7 @@ namespace boost {
             s.asyn_releaseconnect<ReleaseConnectHandler > (handler, rsn);
         }
         
-        bool dataindication( boost::asio::iso::iec8073_tcp::stream_socket& s) {
+        inline static bool dataindication( boost::asio::iso::iec8073_tcp::stream_socket& s) {
             return s.dataindication();
         }        
 
