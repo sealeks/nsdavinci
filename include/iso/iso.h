@@ -128,8 +128,8 @@ namespace boost {
             public:
 
                 typedef boost::shared_ptr<const_buffers_1>                            const_buffs_ptr;
-                typedef std::vector<const_buffs_ptr>                                     vector_buffer;
-                typedef vector_buffer::iterator                                                 vector_buffer_iterator;
+                typedef std::vector<const_buffs_ptr>                                          vector_buffer;
+                typedef vector_buffer::iterator                                                        vector_buffer_iterator;
 
                 send_buffer_impl() : size_(0) {
                     iterator_ = buff_.begin();
@@ -248,16 +248,16 @@ namespace boost {
                 session_selector() :  tselector_() {
                 }
 
-                session_selector(const std::string& called) : called_(called), tselector_() {
+                explicit session_selector(const std::string& called) : called_(called), tselector_() {
                 }
 
-                session_selector(const std::string& called, const std::string& calling) : called_(called), calling_(calling), tselector_() {
+                explicit session_selector(const std::string& called, const std::string& calling) : called_(called), calling_(calling), tselector_() {
                 }
 
-                session_selector(const std::string& called, const transport_selector&  tselector) : called_(called), tselector_(tselector) {
+                explicit session_selector(const std::string& called, const transport_selector&  tselector) : called_(called), tselector_(tselector) {
                 }
 
-                session_selector(const std::string& called, const std::string& calling,  const transport_selector&  tselector ) : called_(called), calling_(calling), tselector_(tselector) {
+                explicit session_selector(const std::string& called, const std::string& calling,  const transport_selector&  tselector ) : called_(called), calling_(calling), tselector_(tselector) {
                 }
 
                 session_selector(const transport_selector&  tselector) : tselector_(tselector) {

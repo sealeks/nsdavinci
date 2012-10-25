@@ -511,15 +511,15 @@ namespace boost {
                         if (ec) return 0;
                         return waiting_data_size_ < s ? waiting_data_size_ : s;
                     }
-                    
-                    
+
+
                     // Data indication true is end od block
 
                     bool dataindication() const {
                         return is_open() && !waiting_data_size();
                     }
 
-                 
+
 
 
                     ///   Connect operation  ///
@@ -544,6 +544,8 @@ namespace boost {
 
 
                     // connect handler
+
+                private:
 
                     template <typename ConnectHandler>
                     class connect_op {
@@ -657,6 +659,9 @@ namespace boost {
 
                     } ;
 
+
+                public:
+
                     template <typename ConnectHandler>
                     void async_connect(const endpoint_type& peer_endpoint,
                             BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
@@ -694,6 +699,9 @@ namespace boost {
                         return releaseconnect_impl(rsn, ec);
                     }
 
+
+                private:
+
                     template <typename ReleaseHandler>
                     class releaseconnect_op {
                     public:
@@ -730,6 +738,10 @@ namespace boost {
                         send_seq_ptr                                                  send_;
                     } ;
 
+
+
+                public:
+
                     template <typename ReleaseHandler>
                     void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
                             int8_t rsn = REJECT_REASON_NORM) {
@@ -760,6 +772,9 @@ namespace boost {
 
                         return check_accept_imp(src, ec);
                     }
+
+
+                private:
 
                     template <typename CheckAcceptHandler>
                     class accept_op {
@@ -882,6 +897,9 @@ namespace boost {
 
                     } ;
 
+
+                public:
+
                     template <typename CheckAcceptHandler>
                     void asyn_check_accept(CheckAcceptHandler handler, int16_t  src) {
 
@@ -936,6 +954,9 @@ namespace boost {
                         return send_impl(buffers, flags, ec);
                     }
 
+
+                private:
+
                     template <typename SendHandler, typename ConstBufferSequence>
                     class send_op {
                     public:
@@ -978,6 +999,8 @@ namespace boost {
 
 
                     } ;
+
+                public:
 
                     template <typename ConstBufferSequence, typename WriteHandler>
                     void async_send(const ConstBufferSequence& buffers,
@@ -1048,6 +1071,8 @@ namespace boost {
 
                         return receive_impl(buffers, flags, ec);
                     }
+
+                private:
 
                     template <typename ReceiveHandler, typename Mutable_Buffers>
                     class receive_op {
@@ -1131,6 +1156,8 @@ namespace boost {
                         boost::asio::socket_base::message_flags flags_;
                     } ;
 
+                public:
+
                     template <typename MutableBufferSequence, typename ReadHandler>
                     void async_receive(const MutableBufferSequence& buffers,
                             BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
@@ -1156,37 +1183,9 @@ namespace boost {
 
                         async_receive<MutableBufferSequence, ReadHandler > (buffers, 0, handler);
                     }
-                    
-                    
 
 
-
-
-
-
-                private:
-                    
-                    
-                     tpdu_size pdusize() const {
-                        return pdusize_;
-                    };
-
-                    const protocol_options& prot_option() const {
-
-                        return option_;
-                    }
-
-                    void correspond_prot_option(const protocol_options& val) {
-
-                        pdusize_ = val.pdusize();
-                        std::cout << "correspond_prot_option tpdu size: " << tpdu_byte_size(pdusize_) << std::endl;
-                        option_.dst_tsap(val.src_tsap());
-                        std::cout << "correspond_prot_option calling  : " << val.tsap_calling() << std::endl;
-                        std::cout << "correspond_prot_option called  : " << val.tsap_called() << std::endl;
-                        std::cout << "correspond_prot_option dst id : " << option_.dst_tsap() << std::endl;
-                        std::cout << "correspond_prot_option src id : " << option_.src_tsap() << std::endl;
-                    }
-                   
+                protected:
 
                     std::size_t  waiting_data_size() const {
                         return waiting_data_size_;
@@ -1200,6 +1199,27 @@ namespace boost {
 
                     std::size_t  eof_state() const {
                         return eof_state_;
+                    }
+
+                private:
+
+                    tpdu_size pdusize() const {
+                        return pdusize_;
+                    };
+
+                    const protocol_options& prot_option() const {
+                        return option_;
+                    }
+
+                    void correspond_prot_option(const protocol_options& val) {
+
+                        pdusize_ = val.pdusize();
+                        std::cout << "correspond_prot_option tpdu size: " << tpdu_byte_size(pdusize_) << std::endl;
+                        option_.dst_tsap(val.src_tsap());
+                        std::cout << "correspond_prot_option calling  : " << val.tsap_calling() << std::endl;
+                        std::cout << "correspond_prot_option called  : " << val.tsap_called() << std::endl;
+                        std::cout << "correspond_prot_option dst id : " << option_.dst_tsap() << std::endl;
+                        std::cout << "correspond_prot_option src id : " << option_.src_tsap() << std::endl;
                     }
 
                     boost::system::error_code connect_impl(const endpoint_type& peer_endpoint,
@@ -1337,9 +1357,9 @@ namespace boost {
                     }
 
 
-                    tpdu_size                                         pdusize_;
-                    protocol_options                           option_;
-                    std::size_t                                      waiting_data_size_;
+                    tpdu_size                                        pdusize_;
+                    protocol_options                          option_;
+                    std::size_t                                       waiting_data_size_;
                     bool                                                eof_state_;
                 } ;
 
@@ -1470,7 +1490,8 @@ namespace boost {
 
                 typedef boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>          endpoint;
 
-                typedef transport_selector                                                                      transportselector;
+                typedef transport_selector                                                                      selector;
+
 
                 /// Construct to represent the IPv4 TCP protocol.
 
@@ -1558,10 +1579,10 @@ namespace boost {
         void asyn_releaseconnect( boost::asio::iso::iec8073_tcp::stream_socket& s, ReleaseConnectHandler  handler, int8_t rsn = boost::asio::iso::iec8073_tcp::REJECT_REASON_NORM) {
             s.asyn_releaseconnect<ReleaseConnectHandler > (handler, rsn);
         }
-        
+
         inline static bool dataindication( boost::asio::iso::iec8073_tcp::stream_socket& s) {
             return s.dataindication();
-        }        
+        }
 
 
     } // namespace asio

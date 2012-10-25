@@ -324,42 +324,32 @@ namespace boost {
 
                 //  protocol_option
 
+                protocol_options::protocol_options(const std::string& called,  const std::string& calling) {
+                    spdudata  tmp;
+                    tmp.setPI(PI_CALLING, calling);
+                    tmp.setPI(PI_CALLED, called);
+                    tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
+                    tmp.setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
+                    tmp.setPI(PI_SUREQ, FU_WORK);
+                    vars_ = tmp;
+                }
+
                 std::string protocol_options::ssap_calling() const {
-                    /* for (headarvarvalues::const_reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
-                         if (it->first.first == VAR_TSAPCALLING_ID  && !it->second.empty()) {
-                             return it->second;
-                         }
-                     }*/
-                    return "";
+                    std::string tmp;
+                    return vars_.getPI(PI_CALLING, tmp) ? tmp : "";
                 }
 
                 void protocol_options::ssap_calling(const std::string& val) {
-                    /* for (headarvarvalues::reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
-                         if (it->first.first == VAR_TSAPCALLING_ID) {
-                             it->second = val;
-                             return;
-                         }
-                     }
-                     vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, val.size()), val));*/
+                       vars_.setPI(PI_CALLING, val);
                 }
 
                 std::string protocol_options::ssap_called() const {
-                    /* for (headarvarvalues::const_reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
-                         if (it->first.first == VAR_TSAPCALLED_ID  && !it->second.empty()) {
-                             return it->second;
-                         }
-                     }*/
-                    return "";
+                    std::string tmp;
+                    return vars_.getPI(PI_CALLED, tmp) ? tmp : "";
                 }
 
                 void protocol_options::ssap_called(const std::string& val) {
-                    /*for (headarvarvalues::reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
-                        if (it->first.first == VAR_TSAPCALLED_ID) {
-                            it->second = val;
-                            return;
-                        }
-                    }
-                    vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, val.size()), val));*/
+                       vars_.setPI(PI_CALLED, val);
                 }
 
                 //
@@ -434,7 +424,7 @@ namespace boost {
                 datasize_(0),
                 waitdatasize_(waitingsize),
                 type_(waitingsize ? DT_SPDU_ID : 0),
-                next_(false), 
+                next_(false),
                 class_option_(0),
                 reject_reason_(0),
                 errcode_(),
@@ -452,7 +442,7 @@ namespace boost {
                 datasize_(0),
                 waitdatasize_(0),
                 type_(0),
-                next_(false),        
+                next_(false),
                 class_option_(0),
                 reject_reason_(0),
                 errcode_(),
@@ -467,7 +457,7 @@ namespace boost {
                 mutable_buffer receive_seq::buffer() {
                     switch (state_) {
                         case waittype: return type_buff_ + size_;
-                        case waitsize: return type_buff_ + size_;                       
+                        case waitsize: return type_buff_ + size_;
                         case waitheader: return header_buff_ + size_;
                         case waitdata: return boost::asio::buffer(userbuff_ + datasize_, estimatesize_);
                         default:  return mutable_buffer();
@@ -489,7 +479,7 @@ namespace boost {
                             {
                                 check_size();
                                 return;
-                            }                           
+                            }
                             case waitheader:
                             {
                                 check_header();
@@ -535,35 +525,49 @@ namespace boost {
                 boost::system::error_code receive_seq::check_type() {
                     mutable_buffer buff_ = type_buff_;
                     spdu_type tp = *boost::asio::buffer_cast<spdu_type*>(buff_ );
-                    if (!type_ && !next_){
-                        next_=true;}
-                    
-                    switch (tp){
-                        case GT_SPDU_ID:  {type_ = tp ;break;}
-                        case PT_SPDU_ID:  {type_ =  tp;break;}
-                        default:{
-                              type_ = *boost::asio::buffer_cast<spdu_type*>(buff_ );
-                              next_= false;
+                    if (!type_ && !next_) {
+                        next_ = true;
+                    }
+
+                    switch (tp) {
+                        case GT_SPDU_ID:
+                        {
+                            type_ = tp ;
+                            break;
                         }
-                    }               
+                        case PT_SPDU_ID:
+                        {
+                            type_ =  tp;
+                            break;
+                        }
+                        default:
+                        {
+                            type_ = *boost::asio::buffer_cast<spdu_type*>(buff_ );
+                            next_ = false;
+                        }
+                    }
                     std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + 1));
-                    
-                    if (li=='\xFF'){
-                           estimatesize_=HDR_LI;
-                           state(waitsize);
-                           return boost::system::error_code();}
-                    
-                    if (!li){
-                         if (next_)  {
-                                return boost::system::error_code();}
-                         else{
-                               state(tp==DT_SPDU_ID ? waitdata : complete);
-                               return boost::system::error_code();
-                         }}
-                    else{
+
+                    if (li == '\xFF') {
+                        estimatesize_ = HDR_LI;
+                        state(waitsize);
+                        return boost::system::error_code();
+                    }
+
+                    if (!li) {
+                        if (next_)  {
+                            return boost::system::error_code();
+                        }
+                        else {
+                            state(tp == DT_SPDU_ID ? waitdata : complete);
+                            return boost::system::error_code();
+                        }
+                    }
+                    else {
                         state(waitheader);
-                        header_data = data_type_ptr(new data_type(li)); 
-                        estimatesize_=li;
+                        header_data = data_type_ptr(new data_type(li));
+                        header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
+                        estimatesize_ = li;
                         return boost::system::error_code();
                     }
                     return errcode(ERROR__EPROTO);
@@ -579,109 +583,10 @@ namespace boost {
                     estimatesize_ = li;
                     return boost::system::error_code();
                 }
-                
 
-                
                 boost::system::error_code  receive_seq::check_header() {
                     mutable_buffer buff_ = header_buff_;
-                    /*int8_t nativetp = *boost::asio::buffer_cast<int8_t*>(buff_);
-                    type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
-
-                    switch (type_) {
-                        case DT:
-                        {
-                            int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + 1);
-                            if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
-                                return errcode(ERROR__EPROTO); 
-                            estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
-                            eof_ = (eof == TPDU_ENDED);
-                            state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
-                            return boost::system::error_code();
-                        }
-                        case CR:
-                        {
-                            waitdatasize_ = 0;
-                            if (estimatesize_ < 6)
-                                return errcode(ERROR__EPROTO); 
-                            int16_t dst_tsap_ = 0;
-                            int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
-                            dst_tsap_ = endiancnv_copy(dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
-                            src_tsap_ = endiancnv_copy(src_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
-                            headarvarvalues vars;
-                            ;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
-                                return errcode(ERROR__EPROTO);
-                            options_ = protocol_options(dst_tsap_, src_tsap_, vars);
-                            state(complete);
-                            return boost::system::error_code();
-                        }
-                        case CC:
-                        {
-                            waitdatasize_ = 0;
-                            if (estimatesize_ < 6)
-                                return errcode(ERROR__EPROTO); 
-                            int16_t dst_tsap_ = 0;
-                            int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
-                            dst_tsap_ = endiancnv_copy(dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
-                            src_tsap_ = endiancnv_copy(src_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
-                            headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
-                                return errcode(ERROR__EPROTO);
-                            options_ = protocol_options(dst_tsap_, src_tsap_, vars);
-                            state(complete);
-                            return boost::system::error_code();
-                        }
-                        case DR:
-                        {
-                            waitdatasize_ = 0;
-                            if (estimatesize_ < 6)
-                                return errcode(ERROR__EPROTO);
-
-                            int16_t dst_tsap_ = 0;
-                            int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
-                            dst_tsap_ = endiancnv_copy(dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
-                            src_tsap_ = endiancnv_copy(src_tsap_);
-                            int8_t rsn = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), rsn);
-                            reject_reason(rsn);
-                            headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
-                                return errcode(ERROR__EPROTO);
-                            ;
-                            options_ = protocol_options(dst_tsap_, src_tsap_, vars);
-                            state(complete);
-                            return boost::system::error_code();
-                        }
-                        case ER:
-                        {
-                            waitdatasize_ = 0;
-                            if (estimatesize_ < 4)
-                                return errcode(ERROR__EPROTO);
-
-                            int16_t dst_tsap_ = 0;
-                            str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
-                            str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 3), 1), reject_reason_);
-                            headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 4), estimatesize_ - 4), vars))
-                                return errcode(ERROR__EPROTO);
-                            ;
-                            state(complete);
-                            return boost::system::error_code();
-
-                        }
-                        default:
-                        {
-                            errcode(ERROR__EPROTO);
-                        }
-                    }*/
+                    state(next_ ? waittype: complete); 
                     return errcode(ERROR__EPROTO);
                 }
 
