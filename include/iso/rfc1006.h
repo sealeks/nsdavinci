@@ -169,7 +169,7 @@ namespace boost {
 
                     data_send_buffer_impl(const ConstBufferSequence& buff, tpdu_size pdusize) : send_buffer_impl() {
                         construct(buff, pdusize);
-                        iterator_ = buff_.begin();
+
                     }
 
                     void construct(const  ConstBufferSequence& buff, tpdu_size pdusize)  {
@@ -201,13 +201,13 @@ namespace boost {
                             do {
                                 if ((boost::asio::buffer_size(val) + tmpsize) > pdusz) {
                                     if (!tmpsize) {
-                                        buff_.push_back(const_buffs_ptr( new  const_buffers_1(const_buffer(size_.data(), size_.size()))));
-                                        buff_.push_back(const_buffs_ptr( new  const_buffers_1(val)));
+                                        buff_.push_back(const_buffer(size_.data(), size_.size()));
+                                        buff_.push_back(const_buffer(val));
                                     }
                                     else {
-                                        buff_.push_back(const_buffs_ptr( new  const_buffers_1(const_buffer(size_.data(), size_.size()))));
+                                        buff_.push_back(const_buffer(size_.data(), size_.size()));
                                         tmp.push_back(boost::asio::buffer(val, pdusz - tmpsize));
-                                        buff_.push_back(const_buffs_ptr( new  const_buffers_1(buffer(tmp))));
+                                        buff_.push_back(const_buffer(buffer(tmp)));
                                         tmp.clear();
                                         if (pdusz - tmpsize)
                                             tmp.push_back(val + (tmpsize));
@@ -217,13 +217,13 @@ namespace boost {
                                 else {
                                     if (ended) {
                                         if (!tmpsize) {
-                                            buff_.push_back(const_buffs_ptr( new const_buffers_1(const_buffer(sizeeof_.data(), sizeeof_.size()))));
-                                            buff_.push_back(const_buffs_ptr(new  const_buffers_1(val)));
+                                            buff_.push_back(const_buffer(sizeeof_.data(), sizeeof_.size()));
+                                            buff_.push_back(const_buffer(val));
                                         }
                                         else {
-                                            buff_.push_back(const_buffs_ptr( new const_buffers_1(const_buffer(sizeeof_.data(), sizeeof_.size()))));
+                                            buff_.push_back(const_buffer(sizeeof_.data(), sizeeof_.size()));
                                             tmp.push_back(boost::asio::buffer(val));
-                                            buff_.push_back(const_buffs_ptr( new  const_buffers_1(buffer(tmp))));
+                                            buff_.push_back(const_buffer(buffer(tmp)));
                                             tmp.clear();
                                             tmpsize = 0;
                                         }
@@ -237,7 +237,7 @@ namespace boost {
                             }
                             while (boost::asio::buffer_size(val));
                             ++it;
-                            bool ended = ((it + 1) == end);
+							ended = it!=end ? ((it + 1) == end) : true;
                             //std::cout << "iterator iteration" << (i++)  << std::endl;
                         }
 
@@ -308,8 +308,8 @@ namespace boost {
                         return (!buf_) ||  (buf_->ready());
                     }
 
-                    const_buffers_1 pop() {
-                        return ready()  ?  const_buffers_1(const_buffer()) : buf_->pop();
+                   const_vector_buffer pop() {
+                        return buf_ ? buf_->pop(): NULL_VECTOR_BUFFER;
                     }
 
                     std::size_t  size(std::size_t  sz) {
@@ -588,7 +588,7 @@ namespace boost {
                                     {
                                         send_->size(bytes_transferred);
                                         if (!send_->ready()) {
-                                            socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()) , 0 , *this);
+                                            socket_->get_service().async_send(socket_->get_implementation(), send_->pop() , 0 , *this);
                                             return;
                                         }
                                         else {
@@ -723,7 +723,7 @@ namespace boost {
                             if (!ec) {
                                 send_->size(bytes_transferred);
                                 if (!send_->ready()) {
-                                    socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()) , 0 , *this);
+                                    socket_->get_service().async_send(socket_->get_implementation(), send_->pop() , 0 , *this);
 
                                     return;
                                 }
@@ -819,8 +819,7 @@ namespace boost {
                                     {
                                         send_->size(bytes_transferred);
                                         if (!send_->ready()) {
-                                            socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(),
-                                                    send_->receivesize()) , 0 , *this);
+                                            socket_->get_service().async_send(socket_->get_implementation(), send_->pop(), 0 , *this);
                                             return;
                                         }
                                         finish(ec);
@@ -830,8 +829,7 @@ namespace boost {
                                     {
                                         send_->size(bytes_transferred);
                                         if (!send_->ready()) {
-                                            socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(send_->pop(),
-                                                    send_->receivesize()) , 0 , *this);
+                                            socket_->get_service().async_send(socket_->get_implementation(), send_->pop() , 0 , *this);
                                             return;
                                         }
                                         boost::system::error_code ecc;
@@ -980,7 +978,7 @@ namespace boost {
                             if (!ec) {
                                 in_->size(bytes_transferred);
                                 if (!in_->ready()) {
-                                    socket_->get_service().async_send(socket_->get_implementation(), boost::asio::buffer(in_->pop(), in_->receivesize()) , flags_ , *this);
+                                    socket_->get_service().async_send(socket_->get_implementation(), in_->pop() , flags_ , *this);
 
                                     return;
                                 }
@@ -1230,7 +1228,7 @@ namespace boost {
 
                         send_seq_ptr  send_ (send_seq_ptr( new send_seq(prot_option())));
                         while (!ec && !send_->ready())
-                            send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
+                            send_->size( this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
                         if (ec)
                             return ec;
                         receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
@@ -1267,7 +1265,7 @@ namespace boost {
                         if (is_open()) {
                             send_seq_ptr  send_ (send_seq_ptr( new send_seq(prot_option().dst_tsap(), prot_option().src_tsap(), rsn)));
                             while (!ec && !send_->ready())
-                                send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
+                                send_->size( this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
 
                             return ec;
                         }
@@ -1299,7 +1297,7 @@ namespace boost {
                             send_ = send_seq_ptr( new send_seq(1, options_));
                         }
                         while (!ec && !send_->ready())
-                            send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
+                            send_->size( this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
                         if (ec)
                             return ec;
                         if (canseled ) {
@@ -1320,7 +1318,7 @@ namespace boost {
                             socket_base::message_flags flags, boost::system::error_code& ec) {
                         send_seq_ptr  send_( new send_seq_data<ConstBufferSequence > (buffers, pdusize()));
                         while (!ec && !send_->ready())
-                            send_->size( this->get_service().send(this->get_implementation(), boost::asio::buffer(send_->pop(), send_->receivesize()), 0, ec));
+                            send_->size( this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
                         return ec ? 0 : boost::asio::buffer_size(buffers);
                     }
 

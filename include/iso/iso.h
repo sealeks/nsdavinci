@@ -122,49 +122,55 @@ namespace boost {
 
 
 
+            typedef std::vector<const_buffer>                                              vector_buffer;
+            typedef const vector_buffer&                                                      const_vector_buffer;
+            typedef vector_buffer::iterator                                                      vector_buffer_iterator;
+
+            const vector_buffer NULL_VECTOR_BUFFER = vector_buffer();
+
             //   class  send_buffer_impl 
 
             class  send_buffer_impl {
             public:
 
-                typedef boost::shared_ptr<const_buffers_1>                            const_buffs_ptr;
-                typedef std::vector<const_buffs_ptr>                                          vector_buffer;
-                typedef vector_buffer::iterator                                                        vector_buffer_iterator;
-
                 send_buffer_impl() : size_(0) {
-                    iterator_ = buff_.begin();
                 }
 
                 virtual ~send_buffer_impl() {
                 }
 
-                const_buffers_1 pop() {
-                    return iterator_ == buff_.end() ? boost::asio::const_buffers_1(const_buffer()) : (*(*iterator_));
+                const_vector_buffer  pop() {
+                    return buff_ ;
                 }
 
                 std::size_t  size(std::size_t  sz = 0) {
+
                     if (sz == 0) return size_;
-                    if (iterator_ == buff_.end()) return 0;
-                    *iterator_ = const_buffs_ptr( new const_buffers_1(*(*iterator_) + sz));
-                    if (!buffer_size(*(*iterator_))) {
-                        size_ = 0;
-                        iterator_++;
-                        return size_;
+                    std::size_t tmpsize = sz;
+                    while ((!buff_.empty()) && tmpsize) {
+                        vector_buffer_iterator it = buff_.begin();
+                        if (tmpsize < buffer_size(*it)) {
+                            *it = const_buffer((*it) + sz);
+                            return size_ += sz;
+                        }
+                        else {
+                            tmpsize = buffer_size(*it) > tmpsize ? 0 : (tmpsize - buffer_size(*it));
+                            buff_.erase(it);
+                        }
                     }
                     return size_ += sz;
                 }
 
                 std::size_t  receivesize() const {
-                    return  iterator_ == buff_.end() ? 0 : buffer_size(*(*iterator_));
+                    return  buffer_size(buff_);
                 }
 
                 bool ready() const {
-                    return iterator_ == buff_.end();
+                    return  !buffer_size(buff_);
                 }
 
 
             protected:
-                vector_buffer_iterator     iterator_;
                 vector_buffer                    buff_;
                 std::size_t                           size_;
             } ;
@@ -176,8 +182,7 @@ namespace boost {
             public:
 
                 sevice_send_buffer_impl(const std::string& send) : send_buffer_impl(), send_(send) {
-                    buff_.push_back(const_buffs_ptr( new const_buffers_1(const_buffer(send_.data(), send_.size()))));
-                    iterator_ = buff_.begin();
+                    buff_.push_back(const_buffer(send_.data(), send_.size()));
                 }
 
             private:
