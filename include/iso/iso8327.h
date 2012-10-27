@@ -521,8 +521,8 @@ namespace boost {
                     std::size_t                                size_;
                     std::size_t                                estimatesize_;
                     std::size_t                                datasize_;
-                    spdu_type                                type_;
-                    bool                                            next_;
+                    spdu_type                               type_;
+                    bool                                           first_in_seq_;
                     int8_t                                        class_option_;
                     int8_t                                        reject_reason_;
                     protocol_options                     options_;
