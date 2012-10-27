@@ -26,6 +26,7 @@
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/asio.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 

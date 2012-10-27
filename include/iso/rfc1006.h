@@ -174,62 +174,48 @@ namespace boost {
 
                     void construct(const  ConstBufferSequence& buff, tpdu_size pdusize)  {
                         std::size_t pdusz = tpdu_byte_size(pdusize);
-                        if (!pdusz) pdusz = 2048;
-                        pdusz -= 3;
-                        ConstBufferSequence tmpbuff = buff;
-
-                        std::size_t sz = boost::asio::buffer_size(tmpbuff);
+                        if (!pdusz) pdusz = 2048;           
+                        pdusz-=3;                       
+                         
                         uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
-                        uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (((sz % pdusz) ? (sz % pdusz) : pdusz ) + 7));
-                        size_ = TKPT_START + inttype_to_str(normalsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_CONTINIUE);
-                        sizeeof_ = TKPT_START + inttype_to_str(eofsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_ENDED);
+                        sizenorm_ = TKPT_START + inttype_to_str(normalsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_CONTINIUE);
 
 
-                        typename ConstBufferSequence::const_iterator it = tmpbuff.begin();
-                        typename ConstBufferSequence::const_iterator end = tmpbuff.end();
+                        typename ConstBufferSequence::const_iterator it = buff.begin();
+                        typename ConstBufferSequence::const_iterator end = buff.end();
                         typename ConstBufferSequence::value_type val;
 
                         typedef  std::vector<typename ConstBufferSequence::value_type >    vcttype;
 
-                        vcttype tmp;
+                        vector_buffer   tmp;
                         std::size_t tmpsize = 0;
 
-                        bool ended = ((it + 1) == end);
+                        bool ended = (it != end) ? ((it + 1) == end) : true;
 
                         while (it != end) {
                             val = *it;
                             do {
                                 if ((boost::asio::buffer_size(val) + tmpsize) > pdusz) {
-                                    if (!tmpsize) {
-                                        buff_.push_back(const_buffer(size_.data(), size_.size()));
-                                        buff_.push_back(const_buffer(val));
-                                    }
-                                    else {
-                                        buff_.push_back(const_buffer(size_.data(), size_.size()));
-                                        tmp.push_back(boost::asio::buffer(val, pdusz - tmpsize));
-                                        buff_.push_back(const_buffer(buffer(tmp)));
-                                        tmp.clear();
-                                        if (pdusz - tmpsize)
-                                            tmp.push_back(val + (tmpsize));
-                                        tmpsize = pdusz - tmpsize;
-                                    }
+                                    buff_.push_back(const_buffer(sizenorm_.data(), sizenorm_.size()));
+                                    if (!tmp.empty())
+                                       std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));
+                                    tmp.clear();
+                                    buff_.push_back(boost::asio::buffer(val , pdusz - tmpsize));
+                                    tmpsize = 0;
                                 }
                                 else {
                                     if (ended) {
-                                        if (!tmpsize) {
-                                            buff_.push_back(const_buffer(sizeeof_.data(), sizeeof_.size()));
-                                            buff_.push_back(const_buffer(val));
-                                        }
-                                        else {
-                                            buff_.push_back(const_buffer(sizeeof_.data(), sizeeof_.size()));
-                                            tmp.push_back(boost::asio::buffer(val));
-                                            buff_.push_back(const_buffer(buffer(tmp)));
-                                            tmp.clear();
-                                            tmpsize = 0;
-                                        }
+                                         uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (boost::asio::buffer_size(val) +  boost::asio::buffer_size(tmp)+7));
+                                        sizeeof_ = TKPT_START + inttype_to_str(eofsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_ENDED);
+                                        buff_.push_back(const_buffer(sizeeof_.data(), sizeeof_.size()));
+                                        if  (!tmp.empty())
+                                             std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));                                          
+                                        tmp.clear();
+                                        buff_.push_back(const_buffer(val));
+                                        tmpsize = 0;
                                     }
                                     else {
-                                        tmp.push_back(val);
+                                        tmp.push_back(const_buffer(val));
                                         tmpsize += boost::asio::buffer_size(val);
                                     }
                                 }
@@ -237,14 +223,12 @@ namespace boost {
                             }
                             while (boost::asio::buffer_size(val));
                             ++it;
-							ended = it!=end ? ((it + 1) == end) : true;
-                            //std::cout << "iterator iteration" << (i++)  << std::endl;
+                            ended = (it != end) ? ((it + 1) == end) : true;
                         }
-
                     }
 
                 private:
-                    std::string size_;
+                    std::string sizenorm_;
                     std::string sizeeof_;
                 } ;
 
@@ -308,8 +292,8 @@ namespace boost {
                         return (!buf_) ||  (buf_->ready());
                     }
 
-                   const_vector_buffer pop() {
-                        return buf_ ? buf_->pop(): NULL_VECTOR_BUFFER;
+                    const_vector_buffer pop() {
+                        return buf_ ? buf_->pop() : NULL_VECTOR_BUFFER;
                     }
 
                     std::size_t  size(std::size_t  sz) {
@@ -515,8 +499,8 @@ namespace boost {
 
                     // Data indication true is end od block
 
-                    bool dataindication() const {
-                        return is_open() && !waiting_data_size();
+                    bool input_empty() const {
+                        return is_open() && eof_state_;
                     }
 
 
@@ -1578,8 +1562,8 @@ namespace boost {
             s.asyn_releaseconnect<ReleaseConnectHandler > (handler, rsn);
         }
 
-        inline static bool dataindication( boost::asio::iso::iec8073_tcp::stream_socket& s) {
-            return s.dataindication();
+        inline static bool input_empty( boost::asio::iso::iec8073_tcp::stream_socket& s) {
+            return s.input_empty();
         }
 
 
