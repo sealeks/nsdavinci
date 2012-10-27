@@ -12,8 +12,7 @@
 #include <iso/rfc1006.h>
 #include <boost/asio/detail/push_options.hpp>
 
-#include <kernel/constdef.h>
-#include <kernel/utils.h>
+
 
 
 
@@ -275,7 +274,7 @@ namespace boost {
 
                 //test
 
-                std::ostream& operator<<(std::ostream& strm, const spdudata& vrs);
+               // std::ostream& operator<<(std::ostream& strm, const spdudata& vrs);
 
                 struct protocol_options {
 
@@ -314,22 +313,13 @@ namespace boost {
                         typename ConstBufferSequence::const_iterator it = buff.begin();
                         typename ConstBufferSequence::const_iterator end = buff.end();
                         typename ConstBufferSequence::value_type val;
-
-                        std::vector<const_buffer> buffs;
-
-                        
-                        buffs.push_back(const_buffer(header_.data(), header_.size()));
-                        
-                        
+                      
+                        buff_.push_back(const_buffer(SEND_HEADER.data(), SEND_HEADER.size()));
+                                              
                         while (it != end) {
-                            val = *it;;  
-                            buffs.push_back(const_buffer(buffer_cast<const void*>(val), boost::asio::buffer_size(val)));
-                            it++;}
-                        
-                        
-                        //ConstBufferSequence tmp(buffs);
-
-                        buff_=buffs;
+                            buff_.push_back(const_buffer(*it));
+                            it++;
+                            ;}
 
                     }
 
@@ -426,7 +416,7 @@ namespace boost {
 
                    
                     spdu_type                          type_;
-                    send_buffer_ptr              buf_;
+                    send_buffer_ptr                buf_;
                 } ;
 
                 typedef boost::shared_ptr<send_seq>               send_seq_ptr;
@@ -599,7 +589,7 @@ namespace boost {
 
                           // Data indication true is end od block
 
-                          bool dataindication() const {
+                          bool input_empty() const {
                               return is_open() && !waiting_data_size();
                           }*/
 
@@ -672,7 +662,7 @@ namespace boost {
                                     {
                                         send_->size(bytes_transferred);
                                         if (!send_->ready()) {
-                                            static_cast<super_type*>(socket_)->async_send(send_->pop() , 0 , *this);
+                                            socket_->super_type::async_send(send_->pop() , 0 , *this);
                                             return;
                                         }
                                         else {
@@ -685,7 +675,7 @@ namespace boost {
                                     {
                                         receive_->put(bytes_transferred);
                                         if (!receive_->ready()) {
-                                            static_cast<super_type*>(socket_)->async_receive(boost::asio::buffer(receive_->buffer()), 0 , *this);
+                                            socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()), 0 , *this);
                                             return;
                                         }
                                         finish(ec);
@@ -706,7 +696,7 @@ namespace boost {
                                 switch (receive_->type()) {
                                     case AC_SPDU_ID:
                                     {
-                                        socket_->correspond_prot_option(receive_->options());
+                                        //socket_->correspond_prot_option(receive_->options());
                                         handler_(ec);
                                         std::cout << "connect_op success" << std::endl;
                                         return;
@@ -962,8 +952,8 @@ namespace boost {
                         CheckAcceptHandler                    handler_;
                         stateconnection                            state_;
                         protocol_options                          options_;
-                        send_seq_ptr                                 send_;
-                        receive_seq_ptr                             receive_;
+                        send_seq_ptr                             send_;
+                        receive_seq_ptr                        receive_;
 
                     } ;
 
@@ -1050,8 +1040,7 @@ namespace boost {
                             if (!ec) {
                                 in_->size(bytes_transferred);
                                 if (!in_->ready()) {
-                                    static_cast<super_type*>(socket_)->async_send(in_->pop(), flags_ , *this);
-
+                                    socket_->super_type::async_send(in_->pop(), flags_ , *this);
                                     return;
                                 }
                             }
@@ -1158,9 +1147,11 @@ namespace boost {
                         }
 
                         void run() {
-
                             boost::system::error_code ec;
-                            operator()(ec, 0);
+                            if (socket_->input_empty())
+                                   operator()(ec, 0);
+                            else
+                                  socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()) , flags_ , handler_);
                         }
 
                         void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
@@ -1168,7 +1159,7 @@ namespace boost {
                             if (!ec) {
                                 receive_->put(bytes_transferred);
                                 if (!receive_->ready()) {
-                                    socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(receive_->buffer()) , flags_ , *this);
+                                    socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()) , flags_ , *this);
                                     return;
                                 }
 
@@ -1187,23 +1178,8 @@ namespace boost {
                                 {
                                     return true;
                                 }
-                                    /*case ER:
-                                    {
-                                        boost::system::error_code ecc;
-                                        socket_->get_service().close(socket_->get_implementation(), ecc);
-                                        handler_( ERROR__SEQ,  static_cast<std::size_t> (receive_->datasize()));
-                                        break;
-                                    }
-                                    case DR:
-                                    {
-                                        boost::system::error_code ecc;
-                                        socket_->get_service().close(socket_->get_implementation(), ecc);
-                                        handler_( ERROR_ECONNREFUSED ,  static_cast<std::size_t> (receive_->datasize()));
-                                        break;
-                                    }*/
                                 default:
                                 {
-
                                     boost::system::error_code ecc;
                                     socket_->get_service().close(socket_->get_implementation(), ecc);
                                     handler_(ERROR__EPROTO ,  0);
@@ -1628,8 +1604,8 @@ namespace boost {
             s.asyn_releaseconnect<ReleaseConnectHandler > (handler, rsn);
         }
 
-        inline static bool dataindication( boost::asio::iso::prot8327::stream_socket& s) {
-            return s.dataindication();
+        inline static bool input_empty( boost::asio::iso::prot8327::stream_socket& s) {
+            return s.input_empty();
         }
 
     } // namespace asio

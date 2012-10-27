@@ -315,9 +315,9 @@ namespace boost {
                     return true;
                 }
 
-                std::ostream& operator<<(std::ostream& strm, const spdudata& vrs) {
-                    return strm << (dvnci::binary_block_to_hexsequence_debug(vrs.sequence()));
-                }
+             //   std::ostream& operator<<(std::ostream& strm, const spdudata& vrs) {
+          //          return strm << (dvnci::binary_block_to_hexsequence_debug(vrs.sequence()));
+         //       }
 
 
 
@@ -459,7 +459,7 @@ namespace boost {
                         case waittype: return type_buff_ + size_;
                         case waitsize: return type_buff_ + size_;
                         case waitheader: return header_buff_ + size_;
-                        case waitdata: return boost::asio::buffer(userbuff_ + datasize_, estimatesize_);
+                        case waitdata: return boost::asio::buffer(userbuff_ + datasize_);
                         default:  return mutable_buffer();
                     }
                     return mutable_buffer();
@@ -525,9 +525,8 @@ namespace boost {
                 boost::system::error_code receive_seq::check_type() {
                     mutable_buffer buff_ = type_buff_;
                     spdu_type tp = *boost::asio::buffer_cast<spdu_type*>(buff_ );
-                    if (!type_ && !next_) {
-                        next_ = true;
-                    }
+                    next_ = !type_ && !next_;
+
 
                     switch (tp) {
                         case GT_SPDU_ID:
@@ -556,6 +555,8 @@ namespace boost {
 
                     if (!li) {
                         if (next_)  {
+							estimatesize_ = HDR_LI;
+                            size_=0;
                             return boost::system::error_code();
                         }
                         else {
@@ -587,7 +588,7 @@ namespace boost {
                 boost::system::error_code  receive_seq::check_header() {
                     mutable_buffer buff_ = header_buff_;
                     state(next_ ? waittype: complete); 
-                    return errcode(ERROR__EPROTO);
+                    return boost::system::error_code();
                 }
 
                 void  receive_seq::reject_reason(int8_t val) {
