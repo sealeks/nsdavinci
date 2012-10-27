@@ -315,9 +315,9 @@ namespace boost {
                     return true;
                 }
 
-             //   std::ostream& operator<<(std::ostream& strm, const spdudata& vrs) {
-          //          return strm << (dvnci::binary_block_to_hexsequence_debug(vrs.sequence()));
-         //       }
+                //   std::ostream& operator<<(std::ostream& strm, const spdudata& vrs) {
+                //          return strm << (dvnci::binary_block_to_hexsequence_debug(vrs.sequence()));
+                //       }
 
 
 
@@ -340,7 +340,7 @@ namespace boost {
                 }
 
                 void protocol_options::ssap_calling(const std::string& val) {
-                       vars_.setPI(PI_CALLING, val);
+                    vars_.setPI(PI_CALLING, val);
                 }
 
                 std::string protocol_options::ssap_called() const {
@@ -349,7 +349,7 @@ namespace boost {
                 }
 
                 void protocol_options::ssap_called(const std::string& val) {
-                       vars_.setPI(PI_CALLED, val);
+                    vars_.setPI(PI_CALLED, val);
                 }
 
                 //
@@ -423,7 +423,7 @@ namespace boost {
                 estimatesize_(SI_WITH_LI ),
                 datasize_(0),
                 type_(0),
-                next_(false),
+                first_in_seq_(false),
                 class_option_(0),
                 reject_reason_(0),
                 errcode_(),
@@ -439,7 +439,7 @@ namespace boost {
                 estimatesize_(SI_WITH_LI),
                 datasize_(0),
                 type_(0),
-                next_(false),
+                first_in_seq_(false),
                 class_option_(0),
                 reject_reason_(0),
                 errcode_(),
@@ -495,7 +495,7 @@ namespace boost {
                     }
                     if (state_ == waitdata) {
                         datasize_ += sz;
-                        state_ = complete;
+                        state(complete);
                     }
                 }
 
@@ -512,8 +512,7 @@ namespace boost {
                 boost::system::error_code receive_seq::check_type() {
                     mutable_buffer buff_ = type_buff_;
                     spdu_type tp = *boost::asio::buffer_cast<spdu_type*>(buff_ );
-                    next_ = !type_ && !next_;
-
+                    first_in_seq_ = !type_ && !first_in_seq_;
 
                     switch (tp) {
                         case GT_SPDU_ID:
@@ -529,7 +528,7 @@ namespace boost {
                         default:
                         {
                             type_ = *boost::asio::buffer_cast<spdu_type*>(buff_ );
-                            next_ = false;
+                            first_in_seq_ = false;
                         }
                     }
                     std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + 1));
@@ -541,9 +540,9 @@ namespace boost {
                     }
 
                     if (!li) {
-                        if (next_)  {
-							estimatesize_ = HDR_LI;
-                            size_=0;
+                        if (first_in_seq_)  {
+                            estimatesize_ = HDR_LI;
+                            size_ = 0;
                             return boost::system::error_code();
                         }
                         else {
@@ -574,7 +573,7 @@ namespace boost {
 
                 boost::system::error_code  receive_seq::check_header() {
                     mutable_buffer buff_ = header_buff_;
-                    state(next_ ? waittype: complete); 
+                    state(first_in_seq_ ? waittype : complete);
                     return boost::system::error_code();
                 }
 
