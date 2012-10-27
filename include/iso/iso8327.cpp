@@ -417,18 +417,16 @@ namespace boost {
 
                 //receive_seq
 
-                receive_seq::receive_seq(const mutable_buffer& buff, std::size_t waitingsize, bool ef) :
-                state_(waitingsize ? waitdata : waittype),
+                receive_seq::receive_seq(const mutable_buffer& buff) :
+                state_(waittype),
                 size_(0),
-                estimatesize_( waitingsize ? ( (boost::asio::buffer_size(buff) < waitingsize ) ? boost::asio::buffer_size(buff) : waitingsize )  : SI_WITH_LI   ),
+                estimatesize_(SI_WITH_LI ),
                 datasize_(0),
-                waitdatasize_(waitingsize),
-                type_(waitingsize ? DT_SPDU_ID : 0),
+                type_(0),
                 next_(false),
                 class_option_(0),
                 reject_reason_(0),
                 errcode_(),
-                eof_(ef),
                 type_data(new data_type(SI_WITH_LI)),
                 type_buff_(boost::asio::buffer(*type_data)),
                 header_buff_(),
@@ -440,13 +438,11 @@ namespace boost {
                 size_(0),
                 estimatesize_(SI_WITH_LI),
                 datasize_(0),
-                waitdatasize_(0),
                 type_(0),
                 next_(false),
                 class_option_(0),
                 reject_reason_(0),
                 errcode_(),
-                eof_(true),
                 type_data(new data_type(SI_WITH_LI)),
                 type_buff_(boost::asio::buffer(*type_data)),
                 header_buff_(),
@@ -487,16 +483,7 @@ namespace boost {
                             }
                             case waitdata:
                             {
-                                waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
-                                datasize_ += sz;
-                                if (eof_ || !boost::asio::buffer_size(userbuff_ + datasize_)) {
-                                    state_ = complete;
-                                }
-                                else {
-                                    state(waittype);
-                                    //estimatesize_ = SI_WITH_LI;
-                                }
-                                return;
+                                break;
                             }
                             default:
                             {
@@ -507,8 +494,8 @@ namespace boost {
 
                     }
                     if (state_ == waitdata) {
-                        waitdatasize_ -= ((sz > waitdatasize_) ?  waitdatasize_ : sz);
                         datasize_ += sz;
+                        state_ = complete;
                     }
                 }
 

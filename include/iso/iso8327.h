@@ -459,7 +459,7 @@ namespace boost {
                         error
                     } ;
 
-                    receive_seq(const mutable_buffer& buff, std::size_t waitingsize, bool ef);
+                    receive_seq(const mutable_buffer& buff);
 
                     receive_seq();
 
@@ -479,17 +479,10 @@ namespace boost {
                         return type_;
                     }
 
-                    bool eof() const {
-                        return eof_;
-                    }
-
                     std::size_t  datasize() const {
                         return datasize_;
                     }
 
-                    std::size_t  waitdatasize() const {
-                        return waitdatasize_;
-                    }
 
                     int8_t  class_option() const {
                         return class_option_;
@@ -528,14 +521,13 @@ namespace boost {
                     std::size_t                                size_;
                     std::size_t                                estimatesize_;
                     std::size_t                                datasize_;
-                    std::size_t                                waitdatasize_;
                     spdu_type                                type_;
-                    bool                                         next_;
+                    bool                                            next_;
                     int8_t                                        class_option_;
                     int8_t                                        reject_reason_;
                     protocol_options                     options_;
                     boost::system::error_code     errcode_;
-                    bool                                           eof_;
+
 
                     data_type_ptr                         type_data;
                     mutable_buffer                      type_buff_;
@@ -570,28 +562,6 @@ namespace boost {
                     : boost::asio::iso::rfc1006::socket(io_service, ssel.tselector() ), option_ (ssel.called(), ssel.calling())  {
                     }
 
-
-                    // Available
-
-                    /*    std::size_t available() const {
-                              boost::system::error_code ec;
-                              std::size_t s = available(ec);
-                              boost::asio::detail::throw_error(ec, "available");
-                              return s;
-                          }
-
-                          std::size_t available(boost::system::error_code& ec) const {
-                              std::size_t s = this->get_service().available(this->get_implementation(), ec);
-                              if (ec) return 0;
-                              return waiting_data_size_ < s ? waiting_data_size_ : s;
-                          }
-
-
-                          // Data indication true is end od block
-
-                          bool input_empty() const {
-                              return is_open() && !waiting_data_size();
-                          }*/
 
 
 
@@ -1165,7 +1135,6 @@ namespace boost {
 
                                 if (!success()) return;
                             }
-                            socket_->waiting_data_size(receive_->waitdatasize(), receive_->eof());
                             handler_(ec, static_cast<std::size_t> (receive_->datasize()));
                         }
 
@@ -1213,7 +1182,7 @@ namespace boost {
                         BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
                         this->get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
-                                receive_seq_ptr( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state())), buffers, flags)));
+                                receive_seq_ptr( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers))), buffers, flags)));
 
                     }
 
@@ -1365,7 +1334,6 @@ namespace boost {
 
                             case DT_SPDU_ID:
                             {
-                                waiting_data_size(receive_->waitdatasize(), receive_->eof());
                                 return receive_->datasize();
                             }
                                 /* case DR:
