@@ -274,8 +274,6 @@ namespace boost {
                         std::size_t  sz = from_triple_size(vl.substr(it), it);
                         if (sz == triple_npos)
                             return error(true);
-                        if (sz == 0)
-                            return false;
                         if (sz + it > vl.size())
                             return false;
                         switch (vr) {
@@ -350,6 +348,26 @@ namespace boost {
 
                 void protocol_options::ssap_called(const std::string& val) {
                     vars_.setPI(PI_CALLED, val);
+                }
+
+                std::string protocol_options::data() const {
+                    std::string tmp;
+                    return vars_.getPI(PI_USERDATA, tmp) ? tmp : "";
+                }
+
+                void protocol_options::data(const std::string& val) {
+                    vars_.setPI(PI_USERDATA, val);
+                }
+
+                /////////////////////
+
+                bool correspond_protocol_option(protocol_options& self, const protocol_options& dist , std::string& error) {
+                    if   (!self.ssap_called().empty() && self.ssap_called() != dist.ssap_called()) {
+                        error = REJECT_REASON_ADDR;
+                        return false;
+                    }
+                    self = protocol_options( self.ssap_calling(), dist.ssap_calling());
+                    return true;
                 }
 
                 //
@@ -572,7 +590,7 @@ namespace boost {
                 }
 
                 boost::system::error_code  receive_seq::check_header() {
-                    mutable_buffer buff_ = header_buff_;
+                    options_ = protocol_options(header_buff_);
                     state(first_in_seq_ ? waittype : complete);
                     return boost::system::error_code();
                 }

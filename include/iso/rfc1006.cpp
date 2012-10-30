@@ -173,6 +173,24 @@ namespace boost {
                     vars_.push_back(headarvarvalue(headarvar(VAR_MAXTPDU_SIZE, 1), inttype_to_str(static_cast<int8_t> ('\x80'))));
                 }
 
+
+
+                /////////////////////
+
+                bool correspond_protocol_option(protocol_options& self, const protocol_options& dist , int8_t& error) {
+                    if   (!self.tsap_called().empty() && self.tsap_called() != dist.tsap_called()) {
+                        error = REJECT_REASON_ADDR;
+                        return false;
+                    }
+                    self = protocol_options(dist.src_tsap(), self.src_tsap(),
+                            less_tpdu(dist.pdusize(), self.pdusize()),
+                            self.tsap_calling(), dist.tsap_calling());
+                    return true;
+                }
+
+
+                ////////////////////
+
                 void generate_TKPTDU(std::string& val) {
                     val = TKPT_START + inttype_to_str(endiancnv_copy(static_cast<int16_t> (val.size() + TKPT_LENGTH))) + val;
                 }
