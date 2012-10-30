@@ -158,7 +158,12 @@ namespace boost {
                     int16_t src_;
                     headarvarvalues vars_;
                 } ;
-
+                
+                
+                // correspond option
+                // return accepted
+                bool correspond_protocol_option(protocol_options& self, const protocol_options& dist ,int8_t& error);
+               
 
 
                 // data_send_buffer_impl
@@ -264,19 +269,16 @@ namespace boost {
 
                     send_seq(const protocol_options& opt) :
                     type_(CR)   {
-
                         constructCR(opt);
                     }
 
                     send_seq(int16_t dst, const protocol_options& opt) :
                     type_(CC)   {
-
                         constructCC(opt);
                     }
 
                     send_seq(int16_t dst, const std::string& errorreason, int8_t err) :
                     type_(ER)   {
-
                         constructER(dst, errorreason, err );
                     }
 
@@ -333,7 +335,6 @@ namespace boost {
                 public:
 
                     send_seq_data(const ConstBufferSequence& buff, tpdu_size pdusize) : send_seq(DT) {
-
                         constructDT(buff , pdusize);
                     }
 
@@ -341,7 +342,6 @@ namespace boost {
                 protected:
 
                     void constructDT(const ConstBufferSequence& buff , tpdu_size pdusize) {
-
                         buf_ = send_buffer_ptr( new data_send_buffer_impl<ConstBufferSequence > (buff, pdusize));
                     }
 
@@ -553,7 +553,6 @@ namespace boost {
                         }
 
                         void run() {
-
                             socket_->get_service().async_connect(socket_->get_implementation(), peer_endpoint_, *this);
                         }
 
@@ -618,7 +617,6 @@ namespace boost {
                                         socket_->get_service().close(socket_->get_implementation() , ecc);
                                         handler_(receive_->errcode() ? receive_->errcode() : ERROR_EIO);
                                         std::cout << "connect_op refuse :" << receive_->errcode() << std::endl;
-
                                         return;
                                     }
                                 }
@@ -628,7 +626,6 @@ namespace boost {
 
                         void state(stateconnection st) {
                             if (state_ != st) {
-
                                 state_ = st;
                             }
                         }
@@ -672,7 +669,6 @@ namespace boost {
                     ///   Releease operation  ///    
 
                     void releaseconnect(int8_t rsn) {
-
                         boost::system::error_code ec;
                         releaseconnect(rsn, ec);
                         boost::asio::detail::throw_error(ec, "releaseconnect");
@@ -734,7 +730,6 @@ namespace boost {
                             this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
                                     releaseconnect_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, rsn)));
                         }
-
                         else
                             handler(ERROR_ECONNREFUSED);
                     }
@@ -747,13 +742,11 @@ namespace boost {
                     ///  Check Accept operation  ///
 
                     void  check_accept(int16_t  src = 1) {
-
                         boost::system::error_code ec;
                         boost::asio::detail::throw_error(ec, "connect");
                     }
 
                     boost::system::error_code  check_accept(int16_t  src,  boost::system::error_code& ec) {
-
                         return check_accept_imp(src, ec);
                     }
 
@@ -838,16 +831,16 @@ namespace boost {
                                 handler_(ERROR__EPROTO);
                                 return;
                             }
-                            if (!options_.tsap_called().empty() && options_.tsap_called() != receive_->options().tsap_called()) {
-                                send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), REJECT_REASON_ADDR));
+                            int8_t error_accept=0;
+                            if (correspond_protocol_option(options_,  receive_->options(),error_accept))  {
+                                send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
                                 state(refuse);
                                 operator()(ec, 0);
-
                                 return;
                             }
-                            options_ = protocol_options(receive_->options().src_tsap(), options_.src_tsap(),
-                                    less_tpdu(receive_->options().pdusize(), options_.pdusize()),
-                                    options_.tsap_calling(), receive_->options().tsap_calling());
+                            //options_ = protocol_options(receive_->options().src_tsap(), options_.src_tsap(),
+                            //        less_tpdu(receive_->options().pdusize(), options_.pdusize()),
+                            //        options_.tsap_calling(), receive_->options().tsap_calling());
                             send_ = send_seq_ptr( new send_seq(1, options_));
                             state(send);
                             operator()(ec, 0);
