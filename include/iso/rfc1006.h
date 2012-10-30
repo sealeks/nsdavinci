@@ -1172,7 +1172,7 @@ namespace boost {
                         waiting_data_size_ = val;
                     }
 
-                    std::size_t  eof_state() const {
+                    bool  eof_state() const {
                         return eof_state_;
                     }
 
