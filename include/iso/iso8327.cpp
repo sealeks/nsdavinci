@@ -359,6 +359,15 @@ namespace boost {
                     vars_.setPI(PI_USERDATA, val);
                 }
 
+                std::string protocol_options::reason() const {
+                    std::string tmp;
+                    return vars_.getPI(PI_REASON, tmp) ? tmp : "";
+                }
+
+                void protocol_options::reason(const std::string& val) {
+                    vars_.setPI(PI_REASON, val);
+                }
+
                 /////////////////////
 
                 bool correspond_protocol_option(protocol_options& self, const protocol_options& dist , std::string& error) {
@@ -388,7 +397,7 @@ namespace boost {
                 std::string generate_header_AC(const protocol_options& opt, const std::string& data) {
                     spdudata tmp(AC_SPDU_ID);
                     tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
-                    tmp.setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
+                    tmp.setPGI(PGI_CN_AC, WORK_PROT_VERSION, WORK_PROT_VERSION);
                     tmp.setPI(PI_SUREQ, FU_WORK);
                     tmp.setPI(PI_CALLING, opt.ssap_calling());
                     tmp.setPI(PI_CALLED, opt.ssap_called());
@@ -402,9 +411,12 @@ namespace boost {
                     return tmp.sequence();
                 }
 
-                std::string generate_header_RF(const std::string& data) {
+                std::string generate_header_RF(const protocol_options& opt) {
                     spdudata tmp(RF_SPDU_ID);
-                    tmp.setPI(PI_USERDATA, data);
+                    tmp.setPI(PI_TRANDISK, DISCONNECT_OPTION);
+                    tmp.setPI(PI_SUREQ, FU_WORK);
+                    tmp.setPI(WORK_PROT_VERSION , WORK_PROT_VERSION);
+                    tmp.setPI(PI_REASON , opt.reason().size() ? opt.reason() : std::string("\x0", 1));
                     return tmp.sequence();
                 }
 

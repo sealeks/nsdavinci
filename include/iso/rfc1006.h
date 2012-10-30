@@ -158,12 +158,12 @@ namespace boost {
                     int16_t src_;
                     headarvarvalues vars_;
                 } ;
-                
-                
+
+
                 // correspond option
                 // return accepted
-                bool correspond_protocol_option(protocol_options& self, const protocol_options& dist ,int8_t& error);
-               
+                bool correspond_protocol_option(protocol_options& self, const protocol_options& dist , int8_t& error);
+
 
 
                 // data_send_buffer_impl
@@ -179,9 +179,9 @@ namespace boost {
 
                     void construct(const  ConstBufferSequence& buff, tpdu_size pdusize)  {
                         std::size_t pdusz = tpdu_byte_size(pdusize);
-                        if (!pdusz) pdusz = 2048;           
-                        pdusz-=3;                       
-                         
+                        if (!pdusz) pdusz = 2048;
+                        pdusz -= 3;
+
                         uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
                         sizenorm_ = TKPT_START + inttype_to_str(normalsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_CONTINIUE);
 
@@ -203,18 +203,18 @@ namespace boost {
                                 if ((boost::asio::buffer_size(val) + tmpsize) > pdusz) {
                                     buff_.push_back(const_buffer(sizenorm_.data(), sizenorm_.size()));
                                     if (!tmp.empty())
-                                       std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));
+                                        std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));
                                     tmp.clear();
                                     buff_.push_back(boost::asio::buffer(val , pdusz - tmpsize));
                                     tmpsize = 0;
                                 }
                                 else {
                                     if (ended) {
-                                         uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (boost::asio::buffer_size(val) +  boost::asio::buffer_size(tmp)+7));
+                                        uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (boost::asio::buffer_size(val) +  boost::asio::buffer_size(tmp) + 7));
                                         sizeeof_ = TKPT_START + inttype_to_str(eofsz) + inttype_to_str('\x2') + inttype_to_str(DT_TPDU_ID) + inttype_to_str(TPDU_ENDED);
                                         buff_.push_back(const_buffer(sizeeof_.data(), sizeeof_.size()));
                                         if  (!tmp.empty())
-                                             std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));                                          
+                                            std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));
                                         tmp.clear();
                                         buff_.push_back(const_buffer(val));
                                         tmpsize = 0;
@@ -452,13 +452,6 @@ namespace boost {
                 } ;
 
                 typedef boost::shared_ptr<receive_seq>               receive_seq_ptr;
-
-
-
-
-
-
-
 
 
 
@@ -738,7 +731,6 @@ namespace boost {
 
 
 
-
                     ///  Check Accept operation  ///
 
                     void  check_accept(int16_t  src = 1) {
@@ -831,8 +823,8 @@ namespace boost {
                                 handler_(ERROR__EPROTO);
                                 return;
                             }
-                            int8_t error_accept=0;
-                            if (correspond_protocol_option(options_,  receive_->options(),error_accept))  {
+                            int8_t error_accept = 0;
+                            if (!correspond_protocol_option(options_,  receive_->options(), error_accept))  {
                                 send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
                                 state(refuse);
                                 operator()(ec, 0);
@@ -1382,6 +1374,8 @@ namespace boost {
                             return ec;
                         }
 
+                    private:
+
                         template <typename Handler, typename Socket>
                         class accept_handler {
                         public:
@@ -1397,7 +1391,6 @@ namespace boost {
                             void operator()(const boost::system::error_code& ec) {
                                 if (!ec) {
                                     static_cast<stream_socket*> (&socket_)->asyn_check_accept<Handler > (handler_, src_);
-                                    std::cout << "Asynchronous accept  succeeded first" << std::endl;
                                     return;
                                 }
                                 handler_(ec);
@@ -1411,6 +1404,8 @@ namespace boost {
                             endpoint_type*              endpoint_;
                             int16_t                             src_;
                         } ;
+
+                    public:
 
 
                         /// Start an asynchronous accept.
