@@ -166,10 +166,6 @@ private:
     void handle_accept(session* new_session,
             const boost::system::error_code& error) {
         if (!error) {
-
-
-
-
             new_session->start();
         }
         else {
@@ -215,6 +211,7 @@ public:
     }
 
     void release() {
+        std::cout << "Start release"  << std::endl;
 #if defined(PRES_PROT)
         io_service_.reset();
         boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
@@ -226,6 +223,7 @@ public:
         io_service_.poll();
 #else
         io_service_.reset();
+         trans_ = trans_data_type();
         boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
         io_service_.poll();
 #endif           
@@ -326,8 +324,8 @@ private:
 class session {
 public:
 
-    session(boost::asio::io_service& io_service)
-    : socket_(io_service, SELECTOR) {
+    session(boost::asio::io_service& io_service, trans_data_type trans)
+    : socket_(io_service, SELECTOR), trans_(trans) {
         std::cout << "New sesion\n";
     }
 
@@ -336,6 +334,8 @@ public:
     }
 
     void run() {
+        if (trans_) 
+            std::cout << "Client accept data : " << trans_->respond_str() << std::endl;
         boost::system::error_code ec;
         while (!ec) {
             std::size_t bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
@@ -352,6 +352,7 @@ private:
     socket_type socket_;
     char data_[max_length];
     std::string message;
+    trans_data_type trans_;
 } ;
 
 class server {
@@ -367,9 +368,19 @@ private:
 
     void start_accept() {
         while (true) {
-            session* new_session = new session(io_service_);
+            
+            trans_data_type trans_ = trans_data_type( new   trans_data("Hello client from test"));
+            
+            session* new_session = new session(io_service_, trans_);
             boost::system::error_code ec;
-            acceptor_.accept(new_session->socket(),  ec);
+            acceptor_.accept(new_session->socket(),
+#if defined(PRES_PROT)
+                trans_,
+#elif defined(SESSION_PROT)
+                trans_,
+#else
+#endif            
+            ec);
             if (ec)
                 delete new_session;
             else
@@ -387,12 +398,23 @@ public:
     client(boost::asio::io_service& io_service,
             resolver_type::iterator endpoint_iterator, const std::string& called = "")
     : io_service_(io_service),
-    socket_(io_service, called) {
+    socket_(io_service, SELECTOR) {
+        
+        trans_ = trans_data_type( new   trans_data("Hello server  from test"));        
+        
         boost::system::error_code ec;
         endpoint_type endpoint = *endpoint_iterator;
-        socket_.connect(endpoint, ec);
+        socket_.connect(endpoint, 
+#if defined(PRES_PROT)
+                trans_,
+#elif defined(SESSION_PROT)
+                trans_,
+#else
+#endif          
+        ec);
         if (!ec) {
-
+        if (trans_) 
+            std::cout << "Client accept data : " << trans_->respond_str() << std::endl; 
         }
     }
 
@@ -403,12 +425,24 @@ public:
     }
 
     void release() {
-        //io_service_.reset();
-        //boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
-        //io_service_.poll();
+#if defined(PRES_PROT)
+
+#elif defined(SESSION_PROT)
+                trans_ = trans_data_type( new   trans_data("Goodbuy server  from test"));
+                boost::system::error_code ecc;
+                socket_.releaseconnect(boost::asio::iso::SESSION_NORMAL_RELEASE, trans_,ecc);
+                if (trans_) 
+                       std::cout << "Server release data : " << trans_->respond_str() << std::endl;
+                
+#else
+                boost::system::error_code ecc;
+                socket_.releaseconnect(ecc); 
+#endif  
     }
 
     void write(const std::string& msg) {
+       
+        
         message = msg;
         boost::system::error_code ec;
         socket_.write_some(boost::asio::buffer(message.data(), message.size()), ec);
@@ -427,6 +461,7 @@ private:
     boost::asio::io_service& io_service_;
     socket_type socket_;
     std::string message;
+    trans_data_type trans_ ;
     char data_[max_length];
 } ;
 
