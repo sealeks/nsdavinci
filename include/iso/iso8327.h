@@ -1479,7 +1479,7 @@ namespace boost {
                         if (is_open()) {
                             send_seq_ptr  send_( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , prot_option(), data ? data->request_str() : "" ));
                             while (!ec && !send_->ready())
-                                send_->size( this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
+                                send_->size( super_type::send(send_->pop(), 0, ec));
                             if (ec)
                                 return ec;
                             receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
@@ -1573,7 +1573,7 @@ namespace boost {
                     std::size_t receive_impl(const MutableBufferSequence& buffers,
                             socket_base::message_flags flags, boost::system::error_code& ec) {
 
-                        if (input_empty())
+                        if (!input_empty())
                             return super_type::receive(boost::asio::buffer(buffers) , flags, ec );
 
                         receive_seq_ptr receive_( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers)));
@@ -1759,7 +1759,7 @@ namespace boost {
                         super_type::accept(peer, peer_endpoint, ec);
                         if (ec)
                             return ec;
-                        static_cast<stream_socket*> ( peer)->check_accept(transdata, ec);
+                        static_cast<stream_socket*> ( &peer)->check_accept(transdata, ec);
                         return ec;
                     }
 
@@ -1770,7 +1770,7 @@ namespace boost {
                         super_type::accept(peer,  ec);
                         if (ec)
                             return ec;
-                        static_cast<stream_socket*> ( peer)->check_accept(transdata, ec);
+                        static_cast<stream_socket*> ( &peer)->check_accept(transdata, ec);
                         return ec;
                     }
 
@@ -1871,6 +1871,11 @@ namespace boost {
         inline static bool input_empty( boost::asio::iso::prot8327::stream_socket& s) {
             return s.input_empty();
         }
+        
+        template<typename ReleaseConnectHandler>
+        void asyn_releaseconnect( boost::asio::iso::prot8327::stream_socket& s, ReleaseConnectHandler  handler, iso::release_type type,  iso::trans_data_type data) {
+            s.asyn_releaseconnect<ReleaseConnectHandler > (handler, type, data );
+        }        
 
     } // namespace asio
 } // namespace boost
