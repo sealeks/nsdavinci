@@ -52,9 +52,9 @@ typedef protocol_type::resolver                                         resolver
 #elif defined(SESSION_PROT)
 
 typedef protocol_type::lowselector                     lowselector_type;
-const selector_type  SELECTOR = selector_type("SERVER-SSEL", lowselector_type("SERVER-TSEL",boost::asio::iso::SIZE128));
+const selector_type  SELECTOR = selector_type("SERVER-SSEL", lowselector_type("SERVER-TSEL", boost::asio::iso::SIZE128));
 #else
-const selector_type  SELECTOR = selector_type("SERVER-TSEL",boost::asio::iso::SIZE128);
+const selector_type  SELECTOR = selector_type("SERVER-TSEL", boost::asio::iso::SIZE128);
 #endif
 
 typedef boost::asio::iso::trans_data_type  trans_data_type;
@@ -74,8 +74,8 @@ enum {
 class session {
 public:
 
-    session(boost::asio::io_service& io_service)
-    : socket_(io_service, SELECTOR) {
+    session(boost::asio::io_service& io_service, trans_data_type trans = trans_data_type())
+    : socket_(io_service, SELECTOR), trans_(trans) {
         std::cout << "New sesion\n";
     }
 
@@ -84,6 +84,10 @@ public:
     }
 
     void start() {
+        if (trans_) {
+            std::cout << "Client accept data : " << trans_->respond_str() << std::endl;
+        }
+
         socket_.async_read_some(boost::asio::buffer(data_, max_length),
                 boost::bind(&session::handle_read, this,
                 boost::asio::placeholders::error,
@@ -126,6 +130,7 @@ private:
     socket_type socket_;
     char data_[max_length];
     std::string message;
+    trans_data_type trans_;
 } ;
 
 class server {
@@ -140,16 +145,18 @@ public:
 private:
 
     void start_accept() {
-        session* new_session = new session(io_service_);
-        
-        trans_=trans_data_type( new   trans_data("Hellow client from 007"));
-        
+        trans_data_type trans_ = trans_data_type( new   trans_data("Hello client from test"));
+
+        session* new_session = new session(io_service_, trans_);
+
+
+
         acceptor_.async_accept(new_session->socket(),
-        
+
 #if defined(PRES_PROT)
- trans_,       
- #elif defined(SESSION_PROT)
-trans_,
+                trans_,
+#elif defined(SESSION_PROT)
+                trans_,
 #else
 #endif            
                 boost::bind(&server::handle_accept, this, new_session,
@@ -159,6 +166,10 @@ trans_,
     void handle_accept(session* new_session,
             const boost::system::error_code& error) {
         if (!error) {
+
+
+
+
             new_session->start();
         }
         else {
@@ -170,7 +181,7 @@ trans_,
 
     boost::asio::io_service& io_service_;
     acceptor_type acceptor_;
-    trans_data_type trans_;
+
 } ;
 
 class client {
@@ -181,18 +192,18 @@ public:
     : io_service_(io_service),
     socket_(io_service, SELECTOR) {
         endpoint_type endpoint = *endpoint_iterator;
-        
-        trans_=trans_data_type( new   trans_data("Hellow server from 007"));
-        
-        socket_.async_connect(endpoint, 
-        
+
+        trans_ = trans_data_type( new   trans_data("Hello server from test"));
+
+        socket_.async_connect(endpoint,
+
 #if defined(PRES_PROT)
- trans_,       
- #elif defined(SESSION_PROT)
-trans_,
+                trans_,
+#elif defined(SESSION_PROT)
+                trans_,
 #else
 #endif   
-        
+
                 boost::bind(&client::handle_connect, this,
                 boost::asio::placeholders::error, ++endpoint_iterator));
     }
@@ -204,9 +215,22 @@ trans_,
     }
 
     void release() {
+#if defined(PRES_PROT)
         io_service_.reset();
         boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
         io_service_.poll();
+#elif defined(SESSION_PROT)
+        io_service_.reset();
+        trans_ = trans_data_type( new   trans_data("Goodbuy client from test"));
+        socket_.asyn_releaseconnect(boost::bind(&client::handle_release, this, boost::asio::placeholders::error), boost::asio::iso::SESSION_NORMAL_RELEASE, trans_);
+        io_service_.poll();
+#else
+        io_service_.reset();
+        boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+        io_service_.poll();
+#endif           
+
+
     }
 
     void write(const std::string& msg) {
@@ -224,20 +248,21 @@ private:
             resolver_type::iterator endpoint_iterator) {
         if (!error) {
             if (trans_) {
-                        std::cout << "Server accept data : " << trans_->respond_str() << std::endl;}
+                std::cout << "Server accept data : " << trans_->respond_str() << std::endl;
+            }
         }
         else if (endpoint_iterator != resolver_type::iterator()) {
             socket_.close();
             endpoint_type endpoint = *endpoint_iterator;
-            
-            trans_=trans_data_type( new   trans_data("Hellow server from 007"));
-            
+
+            trans_ = trans_data_type( new   trans_data("Hello server from test"));
+
             socket_.async_connect(endpoint,
-          
+
 #if defined(PRES_PROT)
- trans_,       
- #elif defined(SESSION_PROT)
-trans_,
+                    trans_,
+#elif defined(SESSION_PROT)
+                    trans_,
 #else
 #endif               
                     boost::bind(&client::handle_connect,  this,
@@ -247,6 +272,9 @@ trans_,
 
     void handle_release(const boost::system::error_code& error) {
         std::cout << "Client release :" << (error ? "error " : "success") << std::endl;
+        if (trans_) {
+            std::cout << "Server release data : " << trans_->respond_str() << std::endl;
+        }
     }
 
     void handle_read(const boost::system::error_code& error,
@@ -522,16 +550,7 @@ typedef callable_shared_ptr<IO >                         io_ptr;
 
 int main(int argc, char* argv[]) {
 
-    boost::asio::iso::prot8327::spdudata hdrs(boost::asio::iso::prot8327::CN_SPDU_ID);
-    hdrs.setPGI(boost::asio::iso::prot8327::PGI_CN_AC, boost::asio::iso::prot8327::PI_PROPT, "\x2");
-    hdrs.setPGI(boost::asio::iso::prot8327::PGI_CN_AC, boost::asio::iso::prot8327::PI_VERS, "\x2");
-    hdrs.setPI(boost::asio::iso::prot8327::PI_CALLING, "ddddddddddddddddddddd");
-    hdrs.setPI(boost::asio::iso::prot8327::PI_CALLED, "ddddddddddddddddddddd");
-    hdrs.setPI(boost::asio::iso::prot8327::PI_USERDATA, "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiihhhhhhhhhhhhhhhhhhhhhhhhhh");
 
-    //std::cout << hdrs << std::endl;
-
-    boost::asio::iso::prot8327::spdudata hdrs_test(hdrs.sequence());
 
     try {
         if (argc < 2) {
