@@ -1206,10 +1206,18 @@ namespace boost {
                                 {
                                     return true;
                                 }
+                                case  DN_SPDU_ID:
+                                {
+                                    boost::system::error_code ecc;
+                                    socket_->close(ecc);
+                                    handler_(ERROR_ECONNREFUSED ,  0);                                    
+                                    return false;
+                                }                                
+                                
                                 default:
                                 {
                                     boost::system::error_code ecc;
-                                    socket_->get_service().close(socket_->get_implementation(), ecc);
+                                    socket_->close(ecc);
                                     handler_(ERROR__EPROTO ,  0);
                                 }
                             }
@@ -1517,7 +1525,7 @@ namespace boost {
                             if (!ec)
                                 static_cast<stream_socket*> (socket_)->asyn_check_accept(handler_, transdata_);
                             else
-                                return handler_(ec);
+                                handler_(ec);
                         }
 
                     private:
