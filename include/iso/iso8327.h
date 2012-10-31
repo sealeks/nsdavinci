@@ -857,7 +857,6 @@ namespace boost {
                         }
 
                         void run() {
-
                             boost::system::error_code ec;
                             operator()(ec, 0);
                         }
