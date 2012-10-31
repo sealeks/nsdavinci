@@ -64,7 +64,7 @@ typedef boost::asio::iso::trans_data            trans_data;
 int port = 102;
 
 enum {
-    max_length = 1000
+    max_length = 10000
 } ;
 
 //#define NET_BLOCKING
@@ -141,7 +141,17 @@ private:
 
     void start_accept() {
         session* new_session = new session(io_service_);
+        
+        trans_=trans_data_type( new   trans_data("Hellow client from 007"));
+        
         acceptor_.async_accept(new_session->socket(),
+        
+#if defined(PRES_PROT)
+ trans_,       
+ #elif defined(SESSION_PROT)
+trans_,
+#else
+#endif            
                 boost::bind(&server::handle_accept, this, new_session,
                 boost::asio::placeholders::error));
     }
@@ -160,6 +170,7 @@ private:
 
     boost::asio::io_service& io_service_;
     acceptor_type acceptor_;
+    trans_data_type trans_;
 } ;
 
 class client {
@@ -170,8 +181,18 @@ public:
     : io_service_(io_service),
     socket_(io_service, SELECTOR) {
         endpoint_type endpoint = *endpoint_iterator;
+        
         trans_=trans_data_type( new   trans_data("Hellow server from 007"));
-        socket_.async_connect(endpoint, trans_,
+        
+        socket_.async_connect(endpoint, 
+        
+#if defined(PRES_PROT)
+ trans_,       
+ #elif defined(SESSION_PROT)
+trans_,
+#else
+#endif   
+        
                 boost::bind(&client::handle_connect, this,
                 boost::asio::placeholders::error, ++endpoint_iterator));
     }
@@ -208,8 +229,17 @@ private:
         else if (endpoint_iterator != resolver_type::iterator()) {
             socket_.close();
             endpoint_type endpoint = *endpoint_iterator;
+            
             trans_=trans_data_type( new   trans_data("Hellow server from 007"));
-            socket_.async_connect(endpoint, trans_,
+            
+            socket_.async_connect(endpoint,
+          
+#if defined(PRES_PROT)
+ trans_,       
+ #elif defined(SESSION_PROT)
+trans_,
+#else
+#endif               
                     boost::bind(&client::handle_connect,  this,
                     boost::asio::placeholders::error, ++endpoint_iterator));
         }
