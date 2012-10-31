@@ -830,9 +830,6 @@ namespace boost {
                                 operator()(ec, 0);
                                 return;
                             }
-                            //options_ = protocol_options(receive_->options().src_tsap(), options_.src_tsap(),
-                            //        less_tpdu(receive_->options().pdusize(), options_.pdusize()),
-                            //        options_.tsap_calling(), receive_->options().tsap_calling());
                             send_ = send_seq_ptr( new send_seq(1, options_));
                             state(send);
                             operator()(ec, 0);
@@ -1253,16 +1250,16 @@ namespace boost {
                         send_seq_ptr  send_ ;
                         protocol_options options_ = this->prot_option();
                         if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
+                            boost::system::error_code ecc;
+                            this->get_service().close(this->get_implementation(), ecc);                            
                             return ERROR__EPROTO;
                         }
-                        if (!options_.tsap_called().empty() && options_.tsap_called() != receive_->options().tsap_called()) {
+                        int8_t error_accept = 0;
+                        if (!correspond_protocol_option(options_,  receive_->options(), error_accept))  {
                             canseled = true;
-                            send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), REJECT_REASON_ADDR));
+                            send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
                         }
                         else {
-                            options_ = protocol_options(receive_->options().src_tsap(), options_.src_tsap(),
-                                    less_tpdu(receive_->options().pdusize(), options_.pdusize()),
-                                    options_.tsap_calling(), receive_->options().tsap_calling());
                             send_ = send_seq_ptr( new send_seq(1, options_));
                         }
                         while (!ec && !send_->ready())

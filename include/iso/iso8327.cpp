@@ -405,7 +405,7 @@ namespace boost {
                     return tmp.sequence();
                 }
 
-                std::string generate_header_DN(const std::string& data) {
+                std::string generate_header_DN(const protocol_options& opt, const std::string& data) {
                     spdudata tmp(DN_SPDU_ID);
                     tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
@@ -420,25 +420,27 @@ namespace boost {
                     return tmp.sequence();
                 }
 
-                std::string generate_header_AB(const std::string& data) {
+                std::string generate_header_AB(const protocol_options& opt, const std::string& data) {
                     spdudata tmp(AB_SPDU_ID);
                     tmp.setPI(PI_USERDATA, data);
+                    tmp.setPI(PI_REASON, REJECT_REASON_NODEF);
                     return tmp.sequence();
                 }
 
-                std::string generate_header_AA(const std::string& data) {
+                std::string generate_header_AA(const protocol_options& opt, const std::string& data) {
                     spdudata tmp(AA_SPDU_ID);
                     tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
                 }
 
-                std::string generate_header_FN(const std::string& data) {
+                std::string generate_header_FN(const protocol_options& opt, const std::string& data) {
                     spdudata tmp(FN_SPDU_ID);
                     tmp.setPI(PI_USERDATA, data);
+                    tmp.setPI(PI_REASON, REJECT_REASON_NODEF);                    
                     return tmp.sequence();
                 }
 
-                std::string generate_header_NF(const std::string& data) {
+                std::string generate_header_NF(const protocol_options& opt, const std::string& data) {
                     spdudata tmp(NF_SPDU_ID);
                     tmp.setPI(PI_USERDATA, data);
                     return tmp.sequence();
