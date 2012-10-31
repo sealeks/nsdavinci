@@ -21,10 +21,7 @@ namespace boost {
         namespace iso {
             namespace prot8327 {
 
-                enum release_type {
-                    NORMAL_RELEASE,
-                    ABORT_RELEASE
-                } ;
+
 
                 //using  
                 // SPDU type
@@ -785,10 +782,10 @@ namespace boost {
                         ConnectHandler                          handler_;
                         stateconnection                          state_;
                         protocol_options                        options_;
-                        endpoint_type                         peer_endpoint_;
-                        send_seq_ptr                           send_;
-                        receive_seq_ptr                      receive_;
-                        trans_data_type                      transdata_;
+                        endpoint_type                              peer_endpoint_;
+                        send_seq_ptr                               send_;
+                        receive_seq_ptr                           receive_;
+                        trans_data_type                           transdata_;
 
                     } ;
 
@@ -852,7 +849,7 @@ namespace boost {
                         releaseconnect_op(stream_socket*  socket, ReleaseHandler handler, release_type type,  trans_data_type transdata) :
                         socket_(socket),
                         handler_(handler),
-                        send_(send_seq_ptr( new send_seq(type == NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , socket->prot_option(), transdata ? transdata->request_str() : "" ))),
+                        send_(send_seq_ptr( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , socket->prot_option(), transdata ? transdata->request_str() : "" ))),
                         receive_(new receive_seq()),
                         type_(type),
                         transdata_(transdata),
@@ -917,7 +914,6 @@ namespace boost {
                                         handler_(ec);
                                         boost::system::error_code ecc;
                                         socket_->close(ecc);
-                                        socket_->close();
                                         return;
                                     }
                                     default:
@@ -928,7 +924,6 @@ namespace boost {
                             }
                             boost::system::error_code ecc;
                             socket_->close(ecc);
-                            socket_->close();
                         }
 
                         void state(stateconnection st) {
@@ -1429,11 +1424,41 @@ namespace boost {
 
                     boost::system::error_code releaseconnect_impl(release_type type, trans_data_type data , boost::system::error_code& ec) {
                         if (is_open()) {
-                            send_seq_ptr  send_ (send_seq_ptr( new send_seq( DN_SPDU_ID)));
+                            send_seq_ptr  send_( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , prot_option(), data ? data->request_str() : "" ));
                             while (!ec && !send_->ready())
                                 send_->size( this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
-
-                            return ec;
+                            if (ec)
+                                return ec;
+                            receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
+                            while (!ec && !receive_->ready())
+                                receive_->put(super_type::receive(boost::asio::buffer(receive_->buffer()) , 0, ec));
+                            if (ec)
+                                return ec;
+                            if (receive_->state() == receive_seq::complete) {
+                                switch (receive_->type()) {
+                                    case DN_SPDU_ID:
+                                    {
+                                        if (data)
+                                            data->respond(receive_->options().data());
+                                        boost::system::error_code ecc;
+                                        close(ecc);
+                                        return ec;
+                                    }
+                                    case AA_SPDU_ID:
+                                    {
+                                        if (data)
+                                            data->respond(receive_->options().data());
+                                        boost::system::error_code ecc;
+                                        close(ecc);
+                                        return ec;
+                                    }
+                                    default:
+                                    {
+                                    }
+                                }
+                            }
+                            boost::system::error_code ecc;
+                            close(ecc);
                         }
                         return ec =  ERROR_ECONNREFUSED;
                     }

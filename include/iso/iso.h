@@ -121,6 +121,11 @@ namespace boost {
                 //SIZE4 = TPDU_SIZE4
             }   tpdu_size;
 
+            enum release_type {
+                SESSION_NORMAL_RELEASE,
+                SESSION_ABORT_RELEASE
+            } ;
+
 
 
             typedef std::vector<const_buffer>                                              vector_buffer;
@@ -189,48 +194,55 @@ namespace boost {
             private:
                 std::string send_;
             } ;
-            
-            /// Transient implementation
-            
-            typedef boost::shared_ptr<std::string>    trans_row_type;
-            
-            class trans_data{
-                
-            public:            
-                
-                   trans_data(const std::string& val="") : req_(trans_row_type( new std::string(val)))  {}
-                   
-                   trans_row_type request() const{
-                       return req_ ? req_ : trans_row_type( new std::string("")); };   
-                       
-                    const std::string& request_str() const{
-                       return req_ ? *req_ : null_; };    
-                       
-                     const_buffer request_buff() const{
-                         return req_ ? const_buffer(req_->data(),req_->size()) : const_buffer(); };  
-                         
-                    trans_row_type respond() const{
-                       return resp_ ? resp_ : trans_row_type( new std::string("")); };   
-                       
-                    const std::string& respond_str() const{
-                       return resp_ ? *resp_ : null_; };    
-                       
-                     const_buffer respond_buff() const{
-                         return resp_ ? const_buffer(resp_->data(),resp_->size()) : const_buffer(); };                          
-                         
-                     void respond(const std::string&  val){
-                          resp_=trans_row_type( new std::string(val));};                             
 
-                
+            /// Transient implementation
+
+            typedef boost::shared_ptr<std::string>    trans_row_type;
+
+            class trans_data {
+            public:
+
+                trans_data(const std::string& val = "") : req_(trans_row_type( new std::string(val)))  {
+                }
+
+                trans_row_type request() const {
+                    return req_ ? req_ : trans_row_type( new std::string(""));
+                };
+
+                const std::string& request_str() const {
+                    return req_ ? *req_ : null_;
+                };
+
+                const_buffer request_buff() const {
+                    return req_ ? const_buffer(req_->data(), req_->size()) : const_buffer();
+                };
+
+                trans_row_type respond() const {
+                    return resp_ ? resp_ : trans_row_type( new std::string(""));
+                };
+
+                const std::string& respond_str() const {
+                    return resp_ ? *resp_ : null_;
+                };
+
+                const_buffer respond_buff() const {
+                    return resp_ ? const_buffer(resp_->data(), resp_->size()) : const_buffer();
+                };
+
+                void respond(const std::string&  val) {
+                    resp_ = trans_row_type( new std::string(val));
+                };
+
+
             private:
                 trans_row_type req_;
                 mutable trans_row_type resp_;
                 std::string null_;
-            };
-            
-            
-            typedef boost::shared_ptr<trans_data>    trans_data_type;          
-            
+            } ;
+
+
+            typedef boost::shared_ptr<trans_data>    trans_data_type;
+
 
 
             ///   selectors
