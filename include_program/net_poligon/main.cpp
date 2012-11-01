@@ -206,7 +206,7 @@ public:
 
     ~client() {
         if (socket_.is_open()) {
-            socket_.close();
+     
         }
     }
 
@@ -564,7 +564,7 @@ struct IO {
             dvnci::addmillisec_to_now(xt_loop, 100);
             boost::thread::sleep(xt_loop);
         }
-        io_service.stop();
+       // io_service.stop();
         return true;
     }
 
@@ -608,13 +608,15 @@ int main(int argc, char* argv[]) {
 
             ss->terminate();
             serverth.join();
+            
+
 
         }
         else {
 
             boost::asio::io_service io_service;
 
-            client_ptr cc = client_ptr( new Client(io_service, argv[1]) );
+           client_ptr cc = client_ptr( new Client(io_service, argv[1]) );
             boost::thread clientth = boost::thread(cc);
 
             io_ptr io = io_ptr(new IO(io_service));
@@ -632,6 +634,10 @@ int main(int argc, char* argv[]) {
 
             cc->terminate();
             clientth.join();
+            
+
+            
+        
 
 
         }
