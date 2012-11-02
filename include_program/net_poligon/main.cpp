@@ -19,6 +19,7 @@
 
 #include <iso/rfc1006.h>
 #include <iso/iso8327.h>
+#include <iso/asn/asnbase.h>
 
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
@@ -29,7 +30,7 @@
 #include <cstring>
 
 
-using  namespace boost::asio::iso::asn;
+using  namespace boost::asio::asn;
 
 
 
@@ -48,9 +49,7 @@ int main(int argc, char* argv[]) {
             while (true) {
                 std::getline(std::cin, quit_in);
                 if (quit_in == "q") break;
-            }
-
-         
+            }     
     }
     catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << "\n";
