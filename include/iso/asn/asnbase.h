@@ -156,8 +156,8 @@ namespace boost {
                 void  bit(std::size_t num, bool val);
 
                 operator bool_vector_type() const;
-                
-                operator dynamic_bitset_type() const;                
+
+                operator dynamic_bitset_type() const;
 
                 operator uint8_t() const;
 
@@ -174,8 +174,10 @@ namespace boost {
                 operator int32_t() const;
 
                 operator int64_t() const;
-                
-                
+
+                //operator row_type() const;               
+
+
 
             private:
 
@@ -218,34 +220,33 @@ namespace boost {
 
 
             } ;
-                       
+
 
             std::ostream& operator<<(std::ostream& stream, const bitstring_type& vl);
-            
- 
+
+
             ///  OCTETSTRING TYPE           
 
-
-
-            class octetstring_type : public std::vector<int8_t> {  
+            class octetstring_type : public std::vector<int8_t> {
             public:
-                octetstring_type() : std::vector<int8_t>(){}
-                explicit  octetstring_type(const row_type& vl) : std::vector<int8_t>(vl.begin(), vl.end()) {}         
-                octetstring_type(const std::string& vl) : std::vector<int8_t>(vl.begin(), vl.end()) {}                  
-            };       
-            
-            
-           std::ostream& operator<<(std::ostream& stream, const octetstring_type& vl);
-           
-           
-           ////////
-           
- 
-            
-            
-           std::ostream& operator<<(std::ostream& stream, const octetstring_type& vl);          
 
-       
+                octetstring_type() : std::vector<int8_t>() {
+                }
+
+                explicit  octetstring_type(const row_type& vl) : std::vector<int8_t>(vl.begin(), vl.end()) {
+                }
+
+                octetstring_type(const std::string& vl) : std::vector<int8_t>(vl.begin(), vl.end()) {
+                }
+                //operator row_type() const{
+                //     return  *this;}   
+            } ;
+
+
+            std::ostream& operator<<(std::ostream& stream, const octetstring_type& vl);
+
+
+            ////////
 
             typedef enum {
                 BER_ENCODING,
@@ -266,32 +267,55 @@ namespace boost {
 
             class_type to_class_type( int8_t vl);
 
-            typedef enum {
-                PRIMITIVE_ENCODING = 0x0,
-                CONSTRUCTED_ENCODING = 0x20,
-            }   encoding_type;
 
-            inline static  int8_t from_cast(encoding_type vl) {
-                return static_cast<int8_t> (vl);
-            }
 
-            inline static encoding_type to_encoding_type( int8_t vl) {
-                return (vl & 0x20) ? CONSTRUCTED_ENCODING : PRIMITIVE_ENCODING ;
-            }
+
+
+
+
+            const int8_t PRIMITIVE_ENCODING = '\x0';
+            const int8_t CONSTRUCTED_ENCODING = '\x20';
+
+            const int8_t NEGATIVE_MARKER = NEGATIVE_MARKER;
+            const int8_t POSITIVE_START = '\xFF';
+
+            const int8_t CONTENT_CONIIUE = '\x80';
+            const int8_t UNDEF_BLOCK_SIZE = '\x80';
+            
+         
+
+            const int8_t NAN_REAL_ID = '\x42';
+            const int8_t INFINITY_REAL_ID = '\x40';
+            const int8_t  NEGATINFINITY_REAL_ID = '\x41';
+            const int8_t  NEGATNULL_REAL_ID = '\x42';
+            
+            
+             const std::size_t MAX_SIMPLELENGTH_SIZE = 0x80;  
+             
+             const id_type EXTENDED_TAGID = 31; 
+
+            const std::size_t FLOAT_MANTISSA_SIZE = 23;
+            const std::size_t FLOAT_EXPONENTA_DELT = 127;
+
+            const std::size_t DOUBLE_MANTISSA_SIZE = 52;
+            const std::size_t DOUBLE_EXPONENTA_DELT = 1023;
+
+            const std::size_t LONGDOUBLE_MANTISSA_SIZE = 112;
+            const std::size_t LONGDOUBLE_EXPONENTA_DELT = 16383;
 
             typedef enum {
                 PRIMITIVE_DEFINED_SIZE,
                 //PRIMITIVE_UNDEFINED_SIZE,
                 //CONSTRUCTED_DEFINED_SIZE,
-                CONSTRUCTED_UNDEFINED_SIZE,                       
+                CONSTRUCTED_UNDEFINED_SIZE,
             }   length_type;
-            
-          //  inline static length_type lenthtype_cast(int8_t tp, bool undefsz){
-          //      return undefsz ?  CONSTRUCTED_UNDEFINED_SIZE  : 
-         //           ( (tp & CONSTRUCTED_ENCODING) ? CONSTRUCTED_DEFINED_SIZE : PRIMITIVE_DEFINED_SIZE);
-         //   }
-            
-            
+
+            //  inline static length_type lenthtype_cast(int8_t tp, bool undefsz){
+            //      return undefsz ?  CONSTRUCTED_UNDEFINED_SIZE  : 
+            //           ( (tp & CONSTRUCTED_ENCODING) ? CONSTRUCTED_DEFINED_SIZE : PRIMITIVE_DEFINED_SIZE);
+            //   }
+
+
 
 
 
@@ -311,37 +335,38 @@ namespace boost {
             const id_type   TYPE_BOOLEAN = 0x1;
             const id_type   TYPE_INTEGER = 0x2;
             const id_type   TYPE_BITSTRING = 0x3;
-            const id_type   TYPE_OCTETSTRING = 0x4;            
+            const id_type   TYPE_OCTETSTRING = 0x4;
             const id_type   TYPE_NULL = 0x5;
             const id_type   TYPE_OBJECT_IDENTIFIER = 0x6;
-            const id_type   TYPE_OBJECT_DESCRIPTOR= 0x7;            
+            const id_type   TYPE_OBJECT_DESCRIPTOR = 0x7;
             const id_type   TYPE_EXTERNAL = 0x8;
             const id_type   TYPE_REAL = 0x9;
-            const id_type   TYPE_ENUMERATED = 0xA;       
-            const id_type   TYPE_EMBEDDED_PDV = 0xB;       
-            const id_type   TYPE_UTF8STRING = 0xC;  
-            const id_type   TYPE_RELATIVE_OID = 0xD;            
-            
-            const id_type   TYPE_SEQ = 0x10;            
+            const id_type   TYPE_ENUMERATED = 0xA;
+            const id_type   TYPE_EMBEDDED_PDV = 0xB;
+            const id_type   TYPE_UTF8STRING = 0xC;
+            const id_type   TYPE_RELATIVE_OID = 0xD;
+
+            const id_type   TYPE_SEQ = 0x10;
             const id_type   TYPE_SET = 0x11;
             const id_type   TYPE_NUMERICSTRING = 0x12;
-            const id_type   TYPE_PRINTABLESTRING = 0x13;    
+            const id_type   TYPE_PRINTABLESTRING = 0x13;
             const id_type   TYPE_T61STRING = 0x14;
-            const id_type   TYPE_VIDEOTEXSTRING = 0x15;     
+            const id_type   TYPE_VIDEOTEXSTRING = 0x15;
             const id_type   TYPE_IA5STRING = 0x16;
-            const id_type   TYPE_UTCTIME = 0x17;       
-            const id_type   TYPE_GENERALZEDTIME = 0x18;              
-            
-            
-            inline int8_t constructed_type(id_type id, encoding_rule rl){
-                if (rl==CER_ENCODING){
-                     return '\x20';
+            const id_type   TYPE_UTCTIME = 0x17;
+            const id_type   TYPE_GENERALZEDTIME = 0x18;
+
+
+            const std::size_t CER_STRING_MAX_SIZE = 1000;
+
+            inline int8_t constructed_type(id_type id, encoding_rule rl) {
+                if (rl == CER_ENCODING) {
+                    return CONSTRUCTED_ENCODING;
                 }
-                else{
-                    return  (id==TYPE_SEQ || id==TYPE_SET || id==TYPE_EMBEDDED_PDV ) ? '\x20' : '\x0';
+                else {
+                    return  (id == TYPE_SEQ || id == TYPE_SET || id == TYPE_EMBEDDED_PDV ) ? CONSTRUCTED_ENCODING : PRIMITIVE_ENCODING;
                 }
-            }            
-            
+            }
 
             template<typename T>
             struct tag_number {
@@ -349,11 +374,11 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_SEQ;
                 }
-                 
-                 static  bool primitive() {
+
+                static  bool primitive() {
                     return false;
                 }
-                 
+
             } ;
 
             template<>
@@ -362,12 +387,11 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_INTEGER;
                 }
-                
-                 static  bool primitive() {
+
+                static  bool primitive() {
                     return true;
-                }                
+                }
             } ;
-            
 
             template<>
             struct tag_number<uint8_t> {
@@ -375,10 +399,10 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_INTEGER;
                 }
-                
-                 static  bool primitive() {
+
+                static  bool primitive() {
                     return true;
-                }                      
+                }
             } ;
 
             template<>
@@ -387,10 +411,10 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_INTEGER;
                 }
-                
+
                 static  bool primitive() {
                     return true;
-                }                      
+                }
             } ;
 
             template<>
@@ -398,12 +422,12 @@ namespace boost {
 
                 static  id_type number() {
                     return TYPE_INTEGER;
-                }  
-                
-                 static  bool primitive() {
+                }
+
+                static  bool primitive() {
                     return true;
-                }                      
-                
+                }
+
             } ;
 
             template<>
@@ -412,11 +436,11 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_INTEGER;
                 }
-                 
-                 static  bool primitive() {
+
+                static  bool primitive() {
                     return true;
-                }                      
-                 
+                }
+
             } ;
 
             template<>
@@ -424,11 +448,11 @@ namespace boost {
 
                 static  id_type number() {
                     return TYPE_INTEGER;
-                } 
-                
-                 static  bool primitive() {
+                }
+
+                static  bool primitive() {
                     return true;
-                }                  
+                }
             } ;
 
             template<>
@@ -437,11 +461,10 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_INTEGER;
                 }
-   
-                        
+
                 static  bool primitive() {
                     return true;
-                }                  
+                }
             } ;
 
             template<>
@@ -450,10 +473,10 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_INTEGER;
                 }
-                 
-                 static  bool primitive() {
+
+                static  bool primitive() {
                     return true;
-                }                   
+                }
             } ;
 
             template<>
@@ -461,11 +484,11 @@ namespace boost {
 
                 static  id_type number() {
                     return TYPE_REAL;
-                } 
-                
+                }
+
                 static  bool primitive() {
                     return true;
-                }                  
+                }
             } ;
 
             template<>
@@ -474,11 +497,10 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_REAL;
                 }
-         
-                
-                 static  bool primitive() {
+
+                static  bool primitive() {
                     return true;
-                }                  
+                }
             } ;
 
             template<>
@@ -487,11 +509,11 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_REAL;
                 }
-                
-               static  bool primitive() {
+
+                static  bool primitive() {
                     return true;
-                }                  
-                
+                }
+
             } ;
 
             template<>
@@ -500,10 +522,10 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_BOOLEAN;
                 }
-                
-                 static  bool primitive() {
+
+                static  bool primitive() {
                     return true;
-                }                  
+                }
             } ;
 
             template<>
@@ -512,10 +534,10 @@ namespace boost {
                 static  id_type number() {
                     return TYPE_OBJECT_IDENTIFIER;
                 }
-                
-                 static  bool primitive() {
+
+                static  bool primitive() {
                     return true;
-                }                  
+                }
             } ;
 
             template<>
@@ -523,42 +545,38 @@ namespace boost {
 
                 static  id_type number() {
                     return TYPE_NULL;
-                }    
-                
-                 static  bool primitive() {
+                }
+
+                static  bool primitive() {
                     return true;
-                }                  
+                }
             } ;
-            
+
             template<>
             struct tag_number<bitstring_type> {
 
                 static  id_type number() {
                     return TYPE_BITSTRING;
                 }
-                
-                
-                 static  bool primitive() {
+
+                static  bool primitive() {
                     return true;
-                }                  
-                
-            } ;    
-            
+                }
+
+            } ;
+
             template<>
             struct tag_number<octetstring_type> {
 
                 static  id_type number() {
                     return TYPE_OCTETSTRING;
-                }               
-                
-                 static  bool primitive() {
+                }
+
+                static  bool primitive() {
                     return true;
-                }                  
-                
-            } ;      
-            
-            
-            
+                }
+
+            } ;
 
             class tag {
             public:
@@ -574,16 +592,12 @@ namespace boost {
                     return to_class_type(mask_);
                 }
 
-                encoding_type encoding() const {
-                    return to_encoding_type(mask_);
-                }
-
                 id_type id() const {
                     return id_;
                 }
 
                 id_type simpleid() const {
-                    return (id_ < 31 && id_) ? static_cast<int8_t> (mask_ | id_ ) : 0;
+                    return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_ ) : 0;
                 }
 
             private:
@@ -595,7 +609,10 @@ namespace boost {
             class size_class {
             public:
 
-                size_class(size_type  vl,  bool undefsize = false) : size_(vl), undefsize_(undefsize) {
+                size_class() : size_(0), undefsize_(true) {
+                }
+
+                size_class(size_type  vl) : size_(vl), undefsize_(false) {
                 }
 
                 bool undefsize() const {
@@ -612,53 +629,44 @@ namespace boost {
                 bool   undefsize_;
 
             } ;
-            
-   
-                
-                
+
             template<typename T>
             class explicit_value {
             public:
 
                 typedef  T   root_type;
-                
-                explicit_value() :  id_() , val_(), mask_(from_cast(CONTEXT_CLASS) | from_cast(CONSTRUCTED_ENCODING)) {
-                }               
 
-                explicit explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | from_cast(CONSTRUCTED_ENCODING)) {
+                explicit_value() :  id_() , val_(), mask_(from_cast(CONTEXT_CLASS) | CONSTRUCTED_ENCODING) {
                 }
-                
-                explicit  explicit_value(const T& vl, class_type type = CONTEXT_CLASS) :  id_() , val_(vl), mask_(from_cast(type) | from_cast(CONSTRUCTED_ENCODING)) {
-                }                
+
+                explicit explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                }
+        
 
                 const T& value() const {
                     return val_;
                 }
-                
+
                 T& value() {
                     return val_;
-                }                
+                }
 
                 id_type id()  const {
                     return id_;
-                }                
-
+                }
 
                 class_type type() const {
                     return to_class_type(mask_);
                 }
-                       
+
                 int8_t mask() const {
                     return mask_;
-                }    
-                
+                }
+
                 static  bool primitive() {
                     return false;
-                }                                                                 
-
-                encoding_type encoding() const {
-                    return to_encoding_type(mask_);
                 }
+
 
             private:
                 id_type id_;
@@ -671,88 +679,77 @@ namespace boost {
             public:
 
                 typedef  T   root_type;
-                
-                implicit_value() : id_() ,  val_(), mask_(from_cast(PRIVATE_CLASS))  {
+
+                implicit_value() : id_(0) ,  val_(), mask_(from_cast(PRIVATE_CLASS))  {
                 }
 
                 explicit implicit_value(const T& vl, id_type id,  class_type type = PRIVATE_CLASS) : id_(id) ,  val_(vl), mask_(from_cast(type))  {
                 }
-                
-                explicit  implicit_value(const T& vl,  class_type type = PRIVATE_CLASS) : id_(tag_number<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
-                }               
+
+                explicit  implicit_value(const T& vl,  class_type type = UNIVERSAL_CLASS) : id_(tag_number<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
+                }
 
                 const T& value() const {
                     return val_;
                 }
-                
+
                 T& value() {
                     return val_;
-                }                
+                }
 
                 id_type id()  const {
                     return id_;
-                }   
+                }
 
                 class_type type() const {
                     return to_class_type(mask_);
                 }
-                       
+
                 int8_t mask() const {
                     return mask_;
-                }               
-                
-
+                }
 
                 static  bool primitive() {
                     return  tag_number<T>::primitive() ?  true : false;
-                }                    
-
-                encoding_type encoding() const {
-                    return to_encoding_type(mask_);
                 }
 
+
             private:
-                id_type id_;                
+                id_type id_;
                 T val_;
                 int8_t   mask_;
             } ;
-            
-            
-            
-           template<typename T >
-            class set_of_type : public std::vector<T> {  
+
+            template<typename T >
+            class set_of_type : public std::vector<T> {
             public:
-                
-                 set_of_type(id_type id = TYPE_SET, class_type type = UNIVERSAL_CLASS) : std::vector<T>(),  id_(id) , mask_(from_cast(type) | from_cast(CONSTRUCTED_ENCODING)) {} 
-                
-                
+
+                set_of_type(id_type id = TYPE_SET, class_type type = UNIVERSAL_CLASS) : std::vector<T>(),  id_(id) , mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                }
+
                 id_type id()  const {
                     return id_;
-                }  
+                }
 
                 class_type type() const {
                     return to_class_type(mask_);
                 }
-                       
+
                 int8_t mask() const {
                     return mask_;
-                }    
-                
+                }
+
                 static  bool primitive() {
                     return false;
-                }                           
-                                       
-                encoding_type encoding() const {
-                    return to_encoding_type(mask_);
                 }
-                
-          
+
+
 
             private:
-                id_type id_; 
-                int8_t   mask_;               
-            
-            };                 
+                id_type id_;
+                int8_t   mask_;
+
+            } ;
 
 
 
@@ -762,7 +759,7 @@ namespace boost {
             // integer to X.690
 
             template<typename T>
-            std::size_t to_x690_cast(T val, row_type& src, length_type lentype = PRIMITIVE_DEFINED_SIZE) {
+            std::size_t to_x690_cast(T val, row_type& src) {
                 row_type tmp;
                 bool negat = (val < 0);
 
@@ -775,23 +772,23 @@ namespace boost {
                 if (negat)
                     if (val & (T(1) << (sizeof (T)*8 - 1))) {
                         val &= ~(T(1) << (sizeof (T)*8 - 1));
-                        tmp.push_back(static_cast<row_type::value_type> (0xFF & val));
+                        tmp.push_back(static_cast<row_type::value_type> (POSITIVE_START & val));
                         val >>= 8;
                         val |= (T(1) << ((sizeof (T) - 1)*8 - 1));
                     }
                 while (val) {
-                    tmp.push_back(static_cast<row_type::value_type> (0xFF & val));
+                    tmp.push_back(static_cast<row_type::value_type> (POSITIVE_START & val));
                     val >>= 8;
                 }
                 if (negat && !tmp.empty())
-                    while ((tmp.size() > 1) && (tmp.back() == static_cast<row_type::value_type> ('\xFF')))
+                    while ((tmp.size() > 1) && (tmp.back() == static_cast<row_type::value_type> (POSITIVE_START)))
                         tmp.pop_back();
 
-                if ((tmp.empty() || (!negat && (tmp.back() & '\x80'))))
-                    tmp.push_back(static_cast<row_type::value_type> ('\x0'));
+                if ((tmp.empty() || (!negat && (tmp.back() & NEGATIVE_MARKER))))
+                    tmp.push_back(static_cast<row_type::value_type> (0));
                 else {
-                    if (negat && !(tmp.back() & '\x80'))
-                        tmp.push_back(static_cast<row_type::value_type> ('\xFF'));
+                    if (negat && !(tmp.back() & NEGATIVE_MARKER))
+                        tmp.push_back(static_cast<row_type::value_type> (POSITIVE_START));
                 }
                 endian_push_pack(tmp, src);
 
@@ -800,22 +797,22 @@ namespace boost {
             }
 
             template<>
-            std::size_t to_x690_cast(int8_t val, row_type& src, length_type lentype);
+            std::size_t to_x690_cast(int8_t val, row_type& src);
 
             template<>
-            std::size_t to_x690_cast(uint8_t val, row_type& src, length_type lentype);
+            std::size_t to_x690_cast(uint8_t val, row_type& src);
 
 
             // integer from X.690            
 
             template<typename T>
-            T  from_x690_cast(row_type val, length_type lentype = PRIMITIVE_DEFINED_SIZE) {
+            T  from_x690_cast(row_type val) {
 #ifdef BIG_ENDIAN_ARCHITECTURE 
                 !!! not implement
 #else              
                 endian_conv(val);
                 if (sizeof (T) > val.size())
-                    val.resize(sizeof (T), row_type::value_type((val.empty() || (val.back() & '\x80' )) ? '\xFF' : 0));
+                    val.resize(sizeof (T), row_type::value_type((val.empty() || (val.back() & NEGATIVE_MARKER )) ? POSITIVE_START : 0));
                 return (*(T*) (&val[0]));
 #endif                  
             }
@@ -825,18 +822,18 @@ namespace boost {
             // tag to X.690
 
 
-            std::size_t to_x690_cast(const tag& val, row_type& src, length_type lentype = PRIMITIVE_DEFINED_SIZE);
+            std::size_t to_x690_cast(const tag& val, row_type& src);
 
-            row_type to_x690_cast(const tag& va, length_type lentype = PRIMITIVE_DEFINED_SIZE);
+            row_type to_x690_cast(const tag& val);
 
 
             ///////////////////////////////////////////////////////////////////////////////////
             // size_class to X.690
 
 
-            std::size_t to_x690_cast(const size_class& val, row_type& src, length_type lentype = PRIMITIVE_DEFINED_SIZE);
+            std::size_t to_x690_cast(const size_class& val, row_type& src);
 
-            row_type to_x690_cast(const size_class& val, length_type lentype = PRIMITIVE_DEFINED_SIZE);
+            row_type to_x690_cast(const size_class& val);
 
 
 
@@ -845,13 +842,13 @@ namespace boost {
 
 
             template<>
-            std::size_t to_x690_cast(double val, row_type& src, length_type lentype);
+            std::size_t to_x690_cast(double val, row_type& src);
 
             template<>
-            std::size_t to_x690_cast(float val, row_type& src, length_type lentype);
+            std::size_t to_x690_cast(float val, row_type& src);
 
             template<>
-            std::size_t to_x690_cast(long double val, row_type& src, length_type lentype);
+            std::size_t to_x690_cast(long double val, row_type& src);
 
 
 
@@ -859,34 +856,34 @@ namespace boost {
             // bool to X.690
 
             template<>
-            std::size_t to_x690_cast(bool val, row_type& src, length_type lentype);
+            std::size_t to_x690_cast(bool val, row_type& src);
 
             ///////////////////////////////////////////////////////////////////////////////////
             // null to X.690
 
-            std::size_t to_x690_cast(const null_type& val, row_type& src, length_type lentype = PRIMITIVE_DEFINED_SIZE);
+            std::size_t to_x690_cast(const null_type& val, row_type& src);
 
 
             ///////////////////////////////////////////////////////////////////////////////////
             // oid to X.690
 
 
-            std::size_t to_x690_cast(const oid_type& val, row_type& src, length_type lentype = PRIMITIVE_DEFINED_SIZE);
-            
-            
+            std::size_t to_x690_cast(const oid_type& val, row_type& src);
+
+
             ///////////////////////////////////////////////////////////////////////////////////
             // bitstring to X.690
 
 
-            std::size_t to_x690_cast(const bitstring_type& val, row_type& src, length_type lentype = PRIMITIVE_DEFINED_SIZE);    
-            
+            std::size_t to_x690_cast(const bitstring_type& val, row_type& src, length_type lentype);
+
+
             ///////////////////////////////////////////////////////////////////////////////////
             // bitstring to X.690
 
 
-            std::size_t to_x690_cast(const octetstring_type& val, row_type& src, length_type lentype = PRIMITIVE_DEFINED_SIZE);                 
+            std::size_t to_x690_cast(const octetstring_type& val, row_type& src, length_type lentype);
 
-            
 
 
             ////////////////////////////////////////////////////////////////////////////////////
@@ -901,9 +898,9 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////
 
             template<typename T>
-            row_type to_x690_cast(T val, length_type lentype = PRIMITIVE_DEFINED_SIZE ) {
+            row_type to_x690_cast(T val) {
                 row_type rslt;
-                to_x690_cast(val, rslt, lentype);
+                to_x690_cast(val, rslt);
                 return rslt;
             }
 
@@ -947,11 +944,10 @@ namespace boost {
                     rows_vect.push_back(row_type_ptr( new row_type(vl)));
                     return listbuffers_.insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
                 }
-                
+
                 //iterator_list_const_buffers  end()  {
                 //    return  listbuffers_.rbegin().base();
                 //}                
-                
 
                 std::size_t  size(iterator_list_const_buffers it)  {
                     std::size_t rslt = 0;
@@ -975,81 +971,146 @@ namespace boost {
                 encoding_rule rule_;
                 vect_row_type_ptr rows_vect;
             } ;
-            
-            
+
+
 
             std::ostream& operator<<(std::ostream& stream, const archive& vl);
 
             std::ofstream& operator<<(std::ofstream& stream, const archive& vl);
-            
-            
-            
+
             template<typename T>
-            inline archive& operator<<(archive& stream, const T& vl){
-                stream.add(to_x690_cast(vl));          
+            inline archive& operator<<(archive& stream, const T& vl) {
+                stream.add(to_x690_cast(vl));
                 return stream;
             }
-      
-            archive& operator<<(archive& stream, const bitstring_type& vl);
-                
-            archive& operator<<(archive& stream, const octetstring_type& vl);    
-            
-            template<typename  T>             
-            archive& operator<<(archive& stream, const set_of_type<T>& vl) {      
-                //iterator_list_const_buffers it =stream.add( to_x690_cast(tag( TYPE_SET , vl.mask() | '\x20')));
-                
+
+            //archive& operator<<(archive& stream, const bitstring_type& vl);
+
+            // archive& operator<<(archive& stream, const octetstring_type& vl);    
+
+            template<typename  T>
+            archive& operator<<(archive& stream, const set_of_type<T>& vl) {
+                //iterator_list_const_buffers it =stream.add( to_x690_cast(tag( TYPE_SET , vl.mask() | CONSTRUCTED_ENCODING)));
+
                 typedef typename set_of_type<T>::const_iterator   set_type_iterator;
-                for (set_type_iterator itr=vl.begin() ; itr!=vl.end() ; ++itr)
-                   operator<<(stream,*itr );
-                
-               /* std::size_t sz = stream.size( ++it);
-                if (stream.rule()==CER_ENCODING){
-                     stream.add( to_x690_cast(size_class(sz, true)), it);
-                     stream.add( row_type(2.0));
-                }
-                else    
-                     stream.add( to_x690_cast(size_class(sz)), it);    */            
-                
-                return stream;}             
-            
-            
+                for (set_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
+                    operator<<(stream, *itr );
+
+                /* std::size_t sz = stream.size( ++it);
+                 if (stream.rule()==CER_ENCODING){
+                      stream.add( to_x690_cast(size_class(sz, true)), it);
+                      stream.add( row_type(2.0));
+                 }
+                 else    
+                      stream.add( to_x690_cast(size_class(sz)), it);    */
+
+                return stream;
+            }
+
             template<typename T>
             archive& operator<<(archive& stream, const explicit_value<T>& vl) {
-                iterator_list_const_buffers it =stream.add( to_x690_cast(tag( vl.id() , vl.mask() | '\x20')));
-                stream << implicit_value<T>(vl.value(), vl.id());
+                iterator_list_const_buffers it = stream.add( to_x690_cast(tag( vl.id() , vl.mask() | CONSTRUCTED_ENCODING)));
+                stream << implicit_value<T > (vl.value());
                 std::size_t sz = stream.size( ++it);
-                if ((stream.rule()==CER_ENCODING)){
-                     stream.add( to_x690_cast(size_class(sz, true)), it);
-                     stream.add( row_type(2.0));
+                if ((stream.rule() == CER_ENCODING)) {
+                    stream.add( to_x690_cast(size_class()), it);
+                    stream.add( row_type(2.0));
                 }
-                else    
-                     stream.add( to_x690_cast(size_class(sz)), it);
+                else
+                    stream.add( to_x690_cast(size_class(sz)), it);
                 return stream;
             }
 
             template<typename T>
             archive& operator<<(archive& stream, const implicit_value<T>& vl) {
-                iterator_list_const_buffers it =stream.add( to_x690_cast(tag(tag_number<T>::number(), vl.mask() | (tag_number<T>::primitive() ? '\x0' : '\x20') )));
-              //  iterator_list_const_buffers it = stream.end();
-                stream << vl.value();   
+                iterator_list_const_buffers it = stream.add( to_x690_cast(tag(vl.id(), vl.mask() | (tag_number<T>::primitive() ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING) )));
+                //  iterator_list_const_buffers it = stream.end();
+                stream << vl.value();
                 std::size_t sz = stream.size( ++it);
-                if  ((!tag_number<T>::primitive()) && (stream.rule()==CER_ENCODING)){
-                     stream.add( to_x690_cast(size_class(sz, true)), it);
-                     stream.add( row_type(2.0));
+                if  ((!tag_number<T>::primitive()) && (stream.rule() == CER_ENCODING)) {
+                    stream.add( to_x690_cast(size_class()), it);
+                    stream.add( row_type(2.0));
                 }
-                else    
-                     stream.add( to_x690_cast(size_class(sz)), it);
+                else
+                    stream.add( to_x690_cast(size_class(sz)), it);
                 return stream;
             }
-            
-   
-            
 
-                         
-             
-             
- 
-            
+            ////////////////// STRING REALIZATION
+
+            template<typename T>
+            void x690_string_to_stream_cast(const T& val, archive& stream, length_type lentype) {
+                switch (lentype) {
+                    case PRIMITIVE_DEFINED_SIZE:
+                    {
+                        stream.add(val);
+                        return;
+                    }
+                    default:
+                    {
+
+                        typedef typename T::const_iterator     const_iterator_type;
+                        typedef typename T::difference_type   difference_type;
+
+                        const_iterator_type it = val.begin();
+                        while (it != val.end()) {
+                            stream.add(row_type(1, static_cast<row_type::value_type> ( tag_number<T>::number())));
+                            difference_type  diff = std::distance(it, val.end());
+                            if (diff > CER_STRING_MAX_SIZE) {
+                                diff = CER_STRING_MAX_SIZE;
+                                stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff))));
+                            }
+                            else {
+                                stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff))));
+                            }
+                            stream.add(row_type(val.begin(), val.begin() + diff));
+                            it = it + diff;
+                        }
+                    }
+                }
+            }
+
+
+            template<>
+            void x690_string_to_stream_cast(const bitstring_type& val, archive& stream, length_type lentype);
+
+            template<typename T>
+            archive& stringtype_writer(archive& stream, const T& vl, id_type  id , int8_t mask) {
+
+                int8_t construct = vl.size()<( tag_number<T>::number() == TYPE_BITSTRING ? (CER_STRING_MAX_SIZE - 1) : CER_STRING_MAX_SIZE )
+                        ?  PRIMITIVE_ENCODING  :  (stream.rule() == CER_ENCODING ?  CONSTRUCTED_ENCODING : PRIMITIVE_ENCODING) ;
+
+                iterator_list_const_buffers it = stream.add( to_x690_cast(tag(tag_number<T>::number() , mask | construct )));
+
+
+                x690_string_to_stream_cast(vl, stream, construct ?  CONSTRUCTED_UNDEFINED_SIZE : PRIMITIVE_DEFINED_SIZE);
+
+
+                std::size_t sz = stream.size( ++it);
+
+                if  (construct) {
+                    stream.add( to_x690_cast(size_class()), it);
+                    stream.add( row_type(2.0));
+                }
+                else
+                    stream.add( to_x690_cast(size_class(sz)), it);
+                return stream;
+            }
+
+            template<>
+            archive& operator<<(archive& stream, const implicit_value<bitstring_type>& vl);
+
+            template<>
+            archive& operator<<(archive& stream, const implicit_value<octetstring_type>& vl);
+
+
+
+
+
+
+
+
+
 
             /////
 

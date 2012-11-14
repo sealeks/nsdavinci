@@ -70,163 +70,160 @@ namespace boost {
 
 
             /// bitstring type
-            
-            
+
             bitstring_type::bitstring_type(uint8_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
-                    construct(vl, unuse);
-                };
+                construct(vl, unuse);
+            };
 
             bitstring_type::bitstring_type(uint16_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
-                    construct(vl, unuse);
-                };
+                construct(vl, unuse);
+            };
 
             bitstring_type::bitstring_type(uint32_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
-                    construct(vl, unuse);
-                };
+                construct(vl, unuse);
+            };
 
             bitstring_type::bitstring_type(uint64_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
-                    construct(vl, unuse);
-                };
-                
+                construct(vl, unuse);
+            };
+
             bitstring_type::bitstring_type(int8_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
-                    construct(*reinterpret_cast<uint8_t*>(&vl), unuse);
-                };
+                construct(*reinterpret_cast<uint8_t*> (&vl), unuse);
+            };
 
             bitstring_type::bitstring_type(int16_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
-                    construct(*reinterpret_cast<uint16_t*>(&vl), unuse);
-                };
+                construct(*reinterpret_cast<uint16_t*> (&vl), unuse);
+            };
 
             bitstring_type::bitstring_type(int32_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
-                    construct(*reinterpret_cast<uint32_t*>(&vl), unuse);
-                };
+                construct(*reinterpret_cast<uint32_t*> (&vl), unuse);
+            };
 
             bitstring_type::bitstring_type(int64_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
-                    construct(*reinterpret_cast<uint64_t*>(&vl), unuse);
-                };                
+                construct(*reinterpret_cast<uint64_t*> (&vl), unuse);
+            };
 
             bitstring_type::bitstring_type(const row_type& vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
-                    insert_bitstring(vl, unuse);
-                };
+                insert_bitstring(vl, unuse);
+            };
 
             bitstring_type::bitstring_type(const std::vector<bool>& vl) : std::vector<int8_t>() {
-                    construct(vl);
-                };
-                
-             void  bitstring_type::insert_bitstring(const row_type& val, std::size_t unuse) {
-                    unuse_ = unuse % 8;
-                    std::copy(val.begin(), val.end(), std::back_inserter(*this));
-                };     
-                
-                
-                bool bitstring_type::bit(std::size_t num) const {
-                    if  (sizebits() > num) {
-                        int8_t vl = ((num / 8) < size()) ?  (operator[](num / 8)) : 0;
-                        return static_cast<int8_t> (1 << (7 - (num % 8))) & vl;
-                    }
-                    return false;
-                }
+                construct(vl);
+            };
 
-                void  bitstring_type::bit(std::size_t num, bool val) {
-                    if  (sizebits() > num) {
-                        if ((num / 8) < size()) {
-                            if (val)
-                                operator[](num / 8) |= static_cast<int8_t> (1 << ( 7 - num % 8));
-                            else
-                                operator[](num / 8) &= ~static_cast<int8_t> (1 << (7 - num % 8));
-                        }
+            void  bitstring_type::insert_bitstring(const row_type& val, std::size_t unuse) {
+                unuse_ = unuse % 8;
+                std::copy(val.begin(), val.end(), std::back_inserter(*this));
+            };
+
+            bool bitstring_type::bit(std::size_t num) const {
+                if  (sizebits() > num) {
+                    int8_t vl = ((num / 8) < size()) ?  (operator[](num / 8)) : 0;
+                    return static_cast<int8_t> (1 << (7 - (num % 8))) & vl;
+                }
+                return false;
+            }
+
+            void  bitstring_type::bit(std::size_t num, bool val) {
+                if  (sizebits() > num) {
+                    if ((num / 8) < size()) {
+                        if (val)
+                            operator[](num / 8) |= static_cast<int8_t> (1 << ( 7 - num % 8));
+                        else
+                            operator[](num / 8) &= ~static_cast<int8_t> (1 << (7 - num % 8));
                     }
                 }
+            }
 
-                bitstring_type::operator bitstring_type::bool_vector_type() const {
-                    bitstring_type::bool_vector_type tmp;
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.push_back(bit(i));
-                    return tmp;
-                }
-                
-                bitstring_type::operator bitstring_type::dynamic_bitset_type() const {
-                    bitstring_type::dynamic_bitset_type  tmp(sizebits());
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.operator [](i)=bit(i);
-                    return tmp;
-                }                
-                
-               
-                
-                bitstring_type::operator uint8_t() const {
-                    bool_vector_type tmp;
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.push_back(bit(i));
-                    return return_int<uint8_t>();
-                }
-                
-                bitstring_type::operator uint16_t() const {
-                    bool_vector_type tmp;
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.push_back(bit(i));
-                    return return_int<uint16_t>();
-                }               
-                
-                bitstring_type::operator uint32_t() const {
-                    bool_vector_type tmp;
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.push_back(bit(i));
-                    return return_int<uint16_t>();
-                }   
-                
-                bitstring_type::operator uint64_t() const {
-                    bool_vector_type tmp;
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.push_back(bit(i));
-                    return return_int<uint16_t>();
-                }    
-                
-                bitstring_type::operator int8_t() const {
-                    bool_vector_type tmp;
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.push_back(bit(i));
-                    return return_int<int8_t>();
-                }
-                
-                bitstring_type::operator int16_t() const {
-                    bool_vector_type tmp;
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.push_back(bit(i));
-                    return return_int<int16_t>();
-                }               
-                
-                bitstring_type::operator int32_t() const {
-                    bool_vector_type tmp;
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.push_back(bit(i));
-                    return return_int<int16_t>();
-                }   
-                
-                bitstring_type::operator int64_t() const {
-                    bool_vector_type tmp;
-                    for (std::size_t i = 0; i < sizebits(); ++i)
-                        tmp.push_back(bit(i));
-                    return return_int<int16_t>();
-                }                    
-                
-                
-                void bitstring_type::construct(const std::vector<bool>& vl) {
-                    assign( (vl.size() % 8) ? (vl.size() / 8 + 1) : (vl.size() / 8), 0);
-                    unuse_ = 8 - (vl.size() % 8);
-                    std::size_t sz = 0;
-                    for (std::vector<bool>::const_iterator it = vl.begin(); it != vl.end(); ++it)
-                        bit(sz++, *it);
-                };    
-                
-                 void bitstring_type::construct(const dynamic_bitset_type& vl) {
-                    assign( (vl.size() % 8) ? (vl.size() / 8 + 1) : (vl.size() / 8), 0);
-                    unuse_ = 8 - (vl.size() % 8);
-                    std::size_t sz = 0;
-                    for (std::size_t it = 0; it < vl.size() ; ++it)
-                        bit(sz++, vl.operator [](it));
-                };               
-                
-                
+            bitstring_type::operator bitstring_type::bool_vector_type() const {
+                bitstring_type::bool_vector_type tmp;
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.push_back(bit(i));
+                return tmp;
+            }
+
+            bitstring_type::operator bitstring_type::dynamic_bitset_type() const {
+                bitstring_type::dynamic_bitset_type  tmp(sizebits());
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.operator [](i) = bit(i);
+                return tmp;
+            }
+
+            bitstring_type::operator uint8_t() const {
+                bool_vector_type tmp;
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.push_back(bit(i));
+                return return_int<uint8_t > ();
+            }
+
+            bitstring_type::operator uint16_t() const {
+                bool_vector_type tmp;
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.push_back(bit(i));
+                return return_int<uint16_t > ();
+            }
+
+            bitstring_type::operator uint32_t() const {
+                bool_vector_type tmp;
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.push_back(bit(i));
+                return return_int<uint16_t > ();
+            }
+
+            bitstring_type::operator uint64_t() const {
+                bool_vector_type tmp;
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.push_back(bit(i));
+                return return_int<uint16_t > ();
+            }
+
+            bitstring_type::operator int8_t() const {
+                bool_vector_type tmp;
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.push_back(bit(i));
+                return return_int<int8_t > ();
+            }
+
+            bitstring_type::operator int16_t() const {
+                bool_vector_type tmp;
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.push_back(bit(i));
+                return return_int<int16_t > ();
+            }
+
+            bitstring_type::operator int32_t() const {
+                bool_vector_type tmp;
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.push_back(bit(i));
+                return return_int<int16_t > ();
+            }
+
+            bitstring_type::operator int64_t() const {
+                bool_vector_type tmp;
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.push_back(bit(i));
+                return return_int<int16_t > ();
+            }
+
+            //bitstring_type::operator row_type() const{
+            //    return  *this;
+            //}               
+
+            void bitstring_type::construct(const std::vector<bool>& vl) {
+                assign( (vl.size() % 8) ? (vl.size() / 8 + 1) : (vl.size() / 8), 0);
+                unuse_ = 8 - (vl.size() % 8);
+                std::size_t sz = 0;
+                for (std::vector<bool>::const_iterator it = vl.begin(); it != vl.end(); ++it)
+                    bit(sz++, *it);
+            };
+
+            void bitstring_type::construct(const dynamic_bitset_type& vl) {
+                assign( (vl.size() % 8) ? (vl.size() / 8 + 1) : (vl.size() / 8), 0);
+                unuse_ = 8 - (vl.size() % 8);
+                std::size_t sz = 0;
+                for (std::size_t it = 0; it < vl.size() ; ++it)
+                    bit(sz++, vl.operator [](it));
+            };
 
             std::ostream& operator<<(std::ostream& stream, const bitstring_type& vl) {
                 std::vector<bool> val = vl.operator  bitstring_type::bool_vector_type();
@@ -235,14 +232,13 @@ namespace boost {
                 stream << std::endl;
                 return stream;
             }
-            
+
             // octetstring_type
-            
+
             std::ostream& operator<<(std::ostream& stream, const octetstring_type& vl) {
-                stream <<  std::string(vl.begin(),vl.end()) << std::endl;
+                stream <<  std::string(vl.begin(), vl.end()) << std::endl;
                 return stream;
             }
-
 
             void endian_conv(row_type& val) {
 #ifdef BIG_ENDIAN_ARCHITECTURE                               
@@ -273,20 +269,20 @@ namespace boost {
             /////////////////////////////
 
             template<>
-            std::size_t to_x690_cast(int8_t val, row_type& src, length_type lentype ) {
+            std::size_t to_x690_cast(int8_t val, row_type& src) {
                 src.push_back(static_cast<row_type::value_type> (0xFF & val));
                 return 1;
             }
 
             template<>
-            std::size_t to_x690_cast(uint8_t val, row_type& src, length_type lentype) {
+            std::size_t to_x690_cast(uint8_t val, row_type& src) {
                 return to_x690_cast(static_cast<int16_t> (val), src) ;
             }
 
 
             /// id class
 
-            std::size_t to_x690_cast(const tag& val, row_type& src, length_type lentype) {
+            std::size_t to_x690_cast(const tag& val, row_type& src) {
                 if (val.simpleid()) {
                     src.push_back(static_cast<row_type::value_type> (val.simpleid()));
                     return 1;
@@ -296,7 +292,7 @@ namespace boost {
                     row_type tmp;
                     src.push_back (static_cast<row_type::value_type> (0x1F | val.mask()));
                     while (id_) {
-                        tmp.push_back(static_cast<row_type::value_type> ((id_ & 0x7F) | 0x80));
+                        tmp.push_back(static_cast<row_type::value_type> ((id_ & 0x7F) | CONTENT_CONIIUE));
                         id_  >>= 7;
                     }
                     endian_push_pack(tmp, src);
@@ -306,7 +302,7 @@ namespace boost {
                 }
             }
 
-            row_type to_x690_cast(const tag& val, length_type lentype) {
+            row_type to_x690_cast(const tag& val) {
                 row_type tmp;
                 to_x690_cast(val, tmp);
                 return tmp;
@@ -316,9 +312,9 @@ namespace boost {
             ///////////////////////////////////////////////////////////////////////////////////
             // size_class to X.690
 
-            std::size_t to_x690_cast(const size_class& val, row_type& src, length_type lentype) {
+            std::size_t to_x690_cast(const size_class& val, row_type& src) {
                 if (!val.undefsize()) {
-                    if (val.size() < 0x80) {
+                    if (val.size() < MAX_SIMPLELENGTH_SIZE ) {
                         src.push_back (static_cast<row_type::value_type> ( static_cast<row_type::value_type> (val.size())));
                         return 1;
                     }
@@ -329,18 +325,18 @@ namespace boost {
                             tmp.push_back(static_cast<row_type::value_type> (0xFF & vl));
                             vl  >>= 8;
                         }
-                        src.push_back (static_cast<row_type::value_type> ( '\x80' | static_cast<row_type::value_type> (tmp.size())));
+                        src.push_back (static_cast<row_type::value_type> ( CONTENT_CONIIUE  | static_cast<row_type::value_type> (tmp.size())));
                         endian_push_pack(tmp, src);
                         return (src.size() + 1);
                     }
                 }
                 else {
-                    src.push_back (static_cast<row_type::value_type> ( static_cast<row_type::value_type> ('\x80')));
+                    src.push_back (static_cast<row_type::value_type> ( static_cast<row_type::value_type> (UNDEF_BLOCK_SIZE)));
                     return 1;
                 }
             }
 
-            row_type to_x690_cast(const size_class& val, length_type lentype) {
+            row_type to_x690_cast(const size_class& val) {
                 row_type tmp;
                 to_x690_cast(val, tmp);
                 return tmp;
@@ -355,19 +351,19 @@ namespace boost {
                 if (val == 0)
                     return 0;
                 if (val != val) {
-                    src.push_back(static_cast<row_type::value_type> (0x42));
+                    src.push_back(static_cast<row_type::value_type> (NAN_REAL_ID));
                     return 1;
                 }
                 if (std::numeric_limits<T>::infinity() == val) {
-                    src.push_back(static_cast<row_type::value_type> (0x40));
+                    src.push_back(static_cast<row_type::value_type> (INFINITY_REAL_ID));
                     return 1;
                 }
                 if (-std::numeric_limits<T>::infinity() == val) {
-                    src.push_back(static_cast<row_type::value_type> (0x41));
+                    src.push_back(static_cast<row_type::value_type> (NEGATINFINITY_REAL_ID));
                     return 1;
                 }
                 if (val == -0) {
-                    src.push_back(static_cast<row_type::value_type> (0x43));
+                    src.push_back(static_cast<row_type::value_type> (NEGATNULL_REAL_ID));
                     return 1;
                 }
                 row_type tmp;
@@ -439,24 +435,24 @@ namespace boost {
             }
 
             template<>
-            std::size_t to_x690_cast(double val, row_type& src, length_type lentype) {
-                return to_x690_cast_realimpl<double, int64_t, 52, 1023 > (val, src);
+            std::size_t to_x690_cast(double val, row_type& src) {
+                return to_x690_cast_realimpl<double, int64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (val, src);
             }
 
             template<>
-            std::size_t to_x690_cast(long double val, row_type& src, length_type lentype) {
-                return to_x690_cast_realimpl<double, int32_t, 23, 127 > (static_cast<double> (val), src);
+            std::size_t to_x690_cast(long double val, row_type& src) {
+                return to_x690_cast_realimpl<double, int64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (static_cast<double> (val), src);
             }
 
             template<>
-            std::size_t to_x690_cast(float val, row_type& src, length_type lentype) {
-                return to_x690_cast_realimpl<float, int32_t, 23, 127 > (val, src);
+            std::size_t to_x690_cast(float val, row_type& src) {
+                return to_x690_cast_realimpl<float, int32_t, FLOAT_MANTISSA_SIZE, FLOAT_EXPONENTA_DELT > (val, src);
             }
 
             //// bool cast
 
             template<>
-            std::size_t to_x690_cast(bool val, row_type& src, length_type lentype) {
+            std::size_t to_x690_cast(bool val, row_type& src) {
                 src.push_back(static_cast<row_type::value_type> (val ? 0xFF : 0));
                 return 1;
             }
@@ -464,7 +460,7 @@ namespace boost {
 
             //// null cast            
 
-            std::size_t to_x690_cast(const null_type& val, row_type& src, length_type lentype) {
+            std::size_t to_x690_cast(const null_type& val, row_type& src) {
                 return 0;
             }
 
@@ -476,7 +472,7 @@ namespace boost {
                 bool first = true;
                 while (vl || first) {
                     first = false;
-                    tmp.push_back(static_cast<row_type::value_type> ((static_cast<oidindx_type> (0x7F) & vl) | static_cast<oidindx_type> (0x80)));
+                    tmp.push_back(static_cast<row_type::value_type> ((static_cast<oidindx_type> (0x7F) & vl) | static_cast<oidindx_type> (CONTENT_CONIIUE)));
                     vl >>= 7;
                 }
                 endian_push_pack(tmp, src);
@@ -484,7 +480,7 @@ namespace boost {
                     src.back() = src.back() & static_cast<row_type::value_type> (0x7F);
             }
 
-            std::size_t to_x690_cast(const oid_type& val, row_type& src, length_type lentype) {
+            std::size_t to_x690_cast(const oid_type& val, row_type& src) {
                 if (val.size() < 2) return 0;
                 std::size_t strtsz = src.size();
                 oidindx_type tmpval = 40 * val[0];
@@ -495,67 +491,6 @@ namespace boost {
                     to_x690_castoid_impl(*it, src);
                 return (src.size() - strtsz);
             }
-            
-     
-            //// bitstring cast
-            
-            std::size_t to_x690_cast(const bitstring_type& val, row_type& src, length_type lentype){
-                switch(lentype){
-                        case PRIMITIVE_DEFINED_SIZE:{
-                       // case PRIMITIVE_UNDEFINED_SIZE
-                           src.push_back(static_cast<row_type::value_type>(val.unusebits() % 8));
-                           std::copy(val.begin(), val.end(), std::back_inserter(src));
-                           return (val.size()+1);}
-                        default :{
-                            bitstring_type::const_iterator it= val.begin();
-                            row_type tmp;
-                            while(it!=val.end()){
-                                tmp.push_back(static_cast<row_type::value_type>(TYPE_BITSTRING));
-                                bitstring_type::difference_type diff=std::distance(it,val.end());
-                                if (diff>999){
-                                    diff=999;
-                                    to_x690_cast(size_class(static_cast<std::size_t>(diff+1)),tmp);
-                                    tmp.push_back(static_cast<row_type::value_type>(0));}
-                                else{
-                                    to_x690_cast(size_class(static_cast<std::size_t>(diff+1)),tmp);
-                                    tmp.push_back(static_cast<row_type::value_type>(val.unusebits() % 8)); 
-                                }                              
-                                std::copy(val.begin(), val.begin()+diff, std::back_inserter(tmp));
-                                it=it+diff;}
-                                std::copy(tmp.begin(), tmp.end(), std::back_inserter(src));  
-                                return tmp.size();
-                        }}                                       
-            }
-            
-            //// octetstring cast
-            
-            std::size_t to_x690_cast(const octetstring_type& val, row_type& src, length_type lentype){
-                switch(lentype){
-                        case PRIMITIVE_DEFINED_SIZE:{
-                       // case PRIMITIVE_UNDEFINED_SIZE
-                           std::copy(val.begin(), val.end(), std::back_inserter(src));
-                           return (val.size());}
-                        default :{
-                            bitstring_type::const_iterator it= val.begin();
-                            row_type tmp;
-                            while(it!=val.end()){
-                                tmp.push_back(static_cast<row_type::value_type>(TYPE_OCTETSTRING));
-                                bitstring_type::difference_type diff=std::distance(it,val.end());
-                                if (diff>1000){
-                                    diff=1000;
-                                    to_x690_cast(size_class(static_cast<std::size_t>(diff)),tmp);}
-                                else{
-                                    to_x690_cast(size_class(static_cast<std::size_t>(diff)),tmp);
-                                }                              
-                                std::copy(val.begin(), val.begin()+diff, std::back_inserter(tmp));
-                                it=it+diff;}
-                                std::copy(tmp.begin(), tmp.end(), std::back_inserter(src));  
-                                return tmp.size();
-                        }}                                       
-            }            
-
-
-
 
 
 
@@ -586,20 +521,56 @@ namespace boost {
                 stream << vl.buffers();
                 return stream;
             }
-            
-            
-            
-            archive& operator<<(archive& stream, const bitstring_type& vl){
-                encoding_rule rl = vl.size()<999 ? BER_ENCODING : stream.rule();
-                stream.add(to_x690_cast(vl, rl!=CER_ENCODING ? PRIMITIVE_DEFINED_SIZE : CONSTRUCTED_UNDEFINED_SIZE ));       
+
+
+            // STRING REALISZATION
+
+            template<>
+            void x690_string_to_stream_cast(const bitstring_type& val, archive& stream, length_type lentype) {
+                switch (lentype) {
+                    case PRIMITIVE_DEFINED_SIZE:
+                    {
+                        stream.add(row_type(1, static_cast<row_type::value_type> (val.unusebits() % 8)));
+                        stream.add(val);
+                        return;
+                    }
+                    default:
+                    {
+
+                        typedef bitstring_type::const_iterator     const_iterator_type;
+                        typedef bitstring_type::difference_type   difference_type;
+
+                        const_iterator_type it = val.begin();
+                        while (it != val.end()) {
+                            stream.add(row_type(1, static_cast<row_type::value_type> (TYPE_BITSTRING)));
+                            difference_type  diff = std::distance(it, val.end());
+                            if (diff > (CER_STRING_MAX_SIZE - 1)) {
+                                diff = (CER_STRING_MAX_SIZE - 1);
+                                stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff + 1))));
+                                stream.add(row_type(1, static_cast<row_type::value_type> (0)));
+                            }
+                            else {
+                                stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff + 1))));
+                                stream.add(row_type(1, static_cast<row_type::value_type> (val.unusebits() % 8)));
+                            }
+                            stream.add(row_type(val.begin(), val.begin() + diff));
+                            it = it + diff;
+                        }
+                    }
+                }
+            }
+
+            template<>
+            archive& operator<<(archive& stream, const implicit_value<bitstring_type>& vl) {
+                stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                 return stream;
-            }  
-            
-            archive& operator<<(archive& stream, const octetstring_type& vl){
-                encoding_rule rl = vl.size()<999 ? BER_ENCODING : stream.rule();
-                stream.add(to_x690_cast(vl, rl!=CER_ENCODING ? PRIMITIVE_DEFINED_SIZE : CONSTRUCTED_UNDEFINED_SIZE));          
-                return stream;//  << implicit_value< octetstring_type, TYPE_OCTETSTRING>(vl);
-            }             
+            }
+
+            template<>
+            archive& operator<<(archive& stream, const implicit_value<octetstring_type>& vl) {
+                stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                return stream;
+            }
 
 
 
