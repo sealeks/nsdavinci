@@ -590,29 +590,15 @@ namespace boost {
             
             
             archive& operator<<(archive& stream, const bitstring_type& vl){
-                /*encoding_rule rl = vl.size()<999 ? BER_ENCODING : stream.rule();
-                stream.add( to_x690_cast(tag(tag_number<bitstring_type>::number(), from_cast(rl!=CER_ENCODING ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING))));
-                iterator_list_const_buffers it = stream.add(to_x690_cast(vl, rl!=CER_ENCODING ? PRIMITIVE_DEFINED_SIZE : CONSTRUCTED_UNDEFINED_SIZE ));       
-                if (rl!=CER_ENCODING){
-                         std::size_t sz = stream.size(it);
-                         stream.add( to_x690_cast(size_class(sz)), it);}
-                else{
-                        stream.add( to_x690_cast(size_class(0 , true)), it);
-                        stream.add(row_type(2,0));}    */
-                return stream << implicit_value< bitstring_type, TYPE_BITSTRING>(vl);
+                encoding_rule rl = vl.size()<999 ? BER_ENCODING : stream.rule();
+                stream.add(to_x690_cast(vl, rl!=CER_ENCODING ? PRIMITIVE_DEFINED_SIZE : CONSTRUCTED_UNDEFINED_SIZE ));       
+                return stream;
             }  
             
             archive& operator<<(archive& stream, const octetstring_type& vl){
-                /*encoding_rule rl = vl.size()<999 ? BER_ENCODING : stream.rule();
-                stream.add( to_x690_cast(tag(tag_number<octetstring_type>::number(), from_cast(rl!=CER_ENCODING ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING))));
-                iterator_list_const_buffers it = stream.add(to_x690_cast(vl, rl!=CER_ENCODING ? PRIMITIVE_DEFINED_SIZE : CONSTRUCTED_UNDEFINED_SIZE));          
-                if (rl!=CER_ENCODING){
-                         std::size_t sz = stream.size(it);
-                         stream.add( to_x690_cast(size_class(sz)), it);}
-                else{
-                        stream.add( to_x690_cast(size_class(0 , true)), it);
-                        stream.add(row_type(2,0));} */       
-                return stream  << implicit_value< octetstring_type, TYPE_OCTETSTRING>(vl);
+                encoding_rule rl = vl.size()<999 ? BER_ENCODING : stream.rule();
+                stream.add(to_x690_cast(vl, rl!=CER_ENCODING ? PRIMITIVE_DEFINED_SIZE : CONSTRUCTED_UNDEFINED_SIZE));          
+                return stream;//  << implicit_value< octetstring_type, TYPE_OCTETSTRING>(vl);
             }             
 
 
