@@ -281,18 +281,18 @@ namespace boost {
 
             const int8_t CONTENT_CONIIUE = '\x80';
             const int8_t UNDEF_BLOCK_SIZE = '\x80';
-            
-         
+
+
 
             const int8_t NAN_REAL_ID = '\x42';
             const int8_t INFINITY_REAL_ID = '\x40';
             const int8_t  NEGATINFINITY_REAL_ID = '\x41';
             const int8_t  NEGATNULL_REAL_ID = '\x42';
-            
-            
-             const std::size_t MAX_SIMPLELENGTH_SIZE = 0x80;  
-             
-             const id_type EXTENDED_TAGID = 31; 
+
+
+            const std::size_t MAX_SIMPLELENGTH_SIZE = 0x80;
+
+            const id_type EXTENDED_TAGID = 31;
 
             const std::size_t FLOAT_MANTISSA_SIZE = 23;
             const std::size_t FLOAT_EXPONENTA_DELT = 127;
@@ -641,7 +641,6 @@ namespace boost {
 
                 explicit explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
                 }
-        
 
                 const T& value() const {
                     return val_;
@@ -911,9 +910,7 @@ namespace boost {
 
 
             typedef  std::vector<const_buffer>                        const_buffers;
-            typedef  std::list<const_buffer>                              list_const_buffers;
-            typedef  list_const_buffers::iterator                        iterator_list_const_buffers;
-            typedef  boost::shared_ptr<const_buffers>         const_buffers_ptr;
+            typedef  boost::shared_ptr<const_buffers>      const_buffers_ptr;
 
 
 
@@ -924,7 +921,13 @@ namespace boost {
             class archive {
             public:
 
-                archive(encoding_rule rul = BER_ENCODING) : rule_(rul) {
+                typedef  std::list<const_buffer>                                                                                               list_const_buffers;
+                typedef  list_const_buffers::iterator                                                                                 iterator_list_const_buffers;
+                typedef std::pair<iterator_list_const_buffers, iterator_list_const_buffers>  list_iterator_pair;
+                typedef std::pair<id_type, list_iterator_pair>                                                                 tlv_iterators_pair;
+                typedef std::multimap<id_type, list_iterator_pair>                                                       list_iterators_map;
+
+                archive(encoding_rule rul = BER_ENCODING) : rule_(rul), size_(0) {
                 }
 
                 encoding_rule rule() const {
@@ -937,39 +940,79 @@ namespace boost {
 
                 iterator_list_const_buffers  add(const row_type& vl)  {
                     rows_vect.push_back(row_type_ptr( new row_type(vl)));
+                    size_+=vl.size();
                     return listbuffers_.insert(listbuffers_.end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
                 }
 
                 iterator_list_const_buffers  add(const row_type& vl, iterator_list_const_buffers it)  {
                     rows_vect.push_back(row_type_ptr( new row_type(vl)));
+                    size_+=vl.size();                    
                     return listbuffers_.insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
                 }
 
-                //iterator_list_const_buffers  end()  {
-                //    return  listbuffers_.rbegin().base();
-                //}                
+                iterator_list_const_buffers  last()  {
+                    return  listbuffers_.empty()  ? listbuffers_.end() :  (--listbuffers_.end());
+                }
 
-                std::size_t  size(iterator_list_const_buffers it)  {
-                    std::size_t rslt = 0;
-                    for (iterator_list_const_buffers i = it; i != listbuffers_.end(); ++i)
-                        rslt += boost::asio::buffer_size(*i);
-                    return rslt;
+                template<typename T>
+                void save_explicit(const T& vl, list_iterators_map& mps,  id_type ID,  class_type TYPE=CONTEXT_CLASS) {
+                    iterator_list_const_buffers itf = last();
+                    explicit_value<T> tmp(vl, ID, TYPE);
+                    *this  <<  tmp;
+                    splice_tlv(mps, ID, itf, last()); 
+                }
+
+                template<typename T>
+                void save_implicit(const T& vl, list_iterators_map& mps, id_type ID,  class_type TYPE = CONTEXT_CLASS) {
+                    iterator_list_const_buffers itf = last();
+                    implicit_value<T> tmp(vl, ID, TYPE);
+                    *this  << tmp;
+                    splice_tlv(mps, ID, itf, last()); 
+                }
+                
+                template<typename T>
+                void save_implicit(const T& vl, list_iterators_map& mps, class_type TYPE = UNIVERSAL_CLASS) {
+                    iterator_list_const_buffers itf = last();
+                    implicit_value<T> tmp(vl, TYPE);
+                    id_type ID=tmp.id();
+                    *this  << tmp;
+                    splice_tlv(mps, ID, itf, last());         
+                }
+                                        
+                std::size_t  size(std::size_t sz=0) const  {
+                    return (sz<size_) ? (size_-sz) : 0;
                 }
 
                 void clear()  {
                     listbuffers_.clear();
                     rows_vect.clear();
+                    size_=0;
                 }
 
-
+            protected:
+                               
+                
+                void splice_tlv(list_iterators_map& mps, id_type id, iterator_list_const_buffers itf,  iterator_list_const_buffers its) {
+                                
+                    if (mps.upper_bound(id)!=mps.end())
+                        listbuffers_.splice(mps.upper_bound(id)->second.first++ , listbuffers_ , ++itf , ++iterator_list_const_buffers(its));
+                    else
+                        ++itf;
+                          
+                    if (itf != its)
+                        mps.insert(tlv_iterators_pair(id, list_iterator_pair(itf, its)));
+                }
 
 
 
             private:
 
+
+
                 list_const_buffers listbuffers_;
-                encoding_rule rule_;
+                encoding_rule        rule_;
                 vect_row_type_ptr rows_vect;
+                std::size_t                size_;         
             } ;
 
 
@@ -1009,9 +1052,15 @@ namespace boost {
 
             template<typename T>
             archive& operator<<(archive& stream, const explicit_value<T>& vl) {
-                iterator_list_const_buffers it = stream.add( to_x690_cast(tag( vl.id() , vl.mask() | CONSTRUCTED_ENCODING)));
+
+                stream.add( to_x690_cast(tag( vl.id() , vl.mask() | CONSTRUCTED_ENCODING)));
+                archive::iterator_list_const_buffers it = stream.last();
+                
+                std::size_t sz = stream.size();                
                 stream << implicit_value<T > (vl.value());
-                std::size_t sz = stream.size( ++it);
+                sz = stream.size(sz);              
+                ++it;
+                
                 if ((stream.rule() == CER_ENCODING)) {
                     stream.add( to_x690_cast(size_class()), it);
                     stream.add( row_type(2.0));
@@ -1023,10 +1072,15 @@ namespace boost {
 
             template<typename T>
             archive& operator<<(archive& stream, const implicit_value<T>& vl) {
-                iterator_list_const_buffers it = stream.add( to_x690_cast(tag(vl.id(), vl.mask() | (tag_number<T>::primitive() ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING) )));
-                //  iterator_list_const_buffers it = stream.end();
+
+                stream.add( to_x690_cast(tag(vl.id(), vl.mask() | (tag_number<T>::primitive() ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING) )));
+                archive::iterator_list_const_buffers it = stream.last();
+                                
+                std::size_t sz = stream.size();     
                 stream << vl.value();
-                std::size_t sz = stream.size( ++it);
+                sz = stream.size(sz);
+                ++it;
+                
                 if  ((!tag_number<T>::primitive()) && (stream.rule() == CER_ENCODING)) {
                     stream.add( to_x690_cast(size_class()), it);
                     stream.add( row_type(2.0));
@@ -1076,17 +1130,19 @@ namespace boost {
 
             template<typename T>
             archive& stringtype_writer(archive& stream, const T& vl, id_type  id , int8_t mask) {
+                
+
 
                 int8_t construct = vl.size()<( tag_number<T>::number() == TYPE_BITSTRING ? (CER_STRING_MAX_SIZE - 1) : CER_STRING_MAX_SIZE )
                         ?  PRIMITIVE_ENCODING  :  (stream.rule() == CER_ENCODING ?  CONSTRUCTED_ENCODING : PRIMITIVE_ENCODING) ;
 
-                iterator_list_const_buffers it = stream.add( to_x690_cast(tag(tag_number<T>::number() , mask | construct )));
+                stream.add( to_x690_cast(tag(tag_number<T>::number() , mask | construct )));
+                archive::iterator_list_const_buffers it = stream.last();
 
-
+                 std::size_t sz = stream.size();           
                 x690_string_to_stream_cast(vl, stream, construct ?  CONSTRUCTED_UNDEFINED_SIZE : PRIMITIVE_DEFINED_SIZE);
-
-
-                std::size_t sz = stream.size( ++it);
+                sz = stream.size(sz);
+                ++it;
 
                 if  (construct) {
                     stream.add( to_x690_cast(size_class()), it);
@@ -1128,9 +1184,20 @@ namespace boost {
                 return stream;
             }
 
+            template<typename T>
+            explicit_value<T> build_explicit(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                return explicit_value<T > (vl, id, type);
+            }
 
+            template<typename T>
+            implicit_value<T> build_implicit(const T& vl, id_type id,  class_type type =  CONTEXT_CLASS) {
+                return implicit_value<T > (vl, id, type);
+            }
 
-
+            template<typename T>
+            implicit_value<T> build_implicit(const T& vl, class_type type =  UNIVERSAL_CLASS) {
+                return implicit_value<T > (vl, type);
+            }
 
 
 
