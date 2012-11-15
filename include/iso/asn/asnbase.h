@@ -303,17 +303,8 @@ namespace boost {
             const std::size_t LONGDOUBLE_MANTISSA_SIZE = 112;
             const std::size_t LONGDOUBLE_EXPONENTA_DELT = 16383;
 
-            typedef enum {
-                PRIMITIVE_DEFINED_SIZE,
-                //PRIMITIVE_UNDEFINED_SIZE,
-                //CONSTRUCTED_DEFINED_SIZE,
-                CONSTRUCTED_UNDEFINED_SIZE,
-            }   length_type;
 
-            //  inline static length_type lenthtype_cast(int8_t tp, bool undefsz){
-            //      return undefsz ?  CONSTRUCTED_UNDEFINED_SIZE  : 
-            //           ( (tp & CONSTRUCTED_ENCODING) ? CONSTRUCTED_DEFINED_SIZE : PRIMITIVE_DEFINED_SIZE);
-            //   }
+
 
 
 
@@ -870,18 +861,6 @@ namespace boost {
             std::size_t to_x690_cast(const oid_type& val, row_type& src);
 
 
-            ///////////////////////////////////////////////////////////////////////////////////
-            // bitstring to X.690
-
-
-            std::size_t to_x690_cast(const bitstring_type& val, row_type& src, length_type lentype);
-
-
-            ///////////////////////////////////////////////////////////////////////////////////
-            // bitstring to X.690
-
-
-            std::size_t to_x690_cast(const octetstring_type& val, row_type& src, length_type lentype);
 
 
 
@@ -940,13 +919,13 @@ namespace boost {
 
                 iterator_list_const_buffers  add(const row_type& vl)  {
                     rows_vect.push_back(row_type_ptr( new row_type(vl)));
-                    size_+=vl.size();
+                    size_ += vl.size();
                     return listbuffers_.insert(listbuffers_.end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
                 }
 
                 iterator_list_const_buffers  add(const row_type& vl, iterator_list_const_buffers it)  {
                     rows_vect.push_back(row_type_ptr( new row_type(vl)));
-                    size_+=vl.size();                    
+                    size_ += vl.size();
                     return listbuffers_.insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
                 }
 
@@ -955,11 +934,11 @@ namespace boost {
                 }
 
                 template<typename T>
-                void save_explicit(const T& vl, list_iterators_map& mps,  id_type ID,  class_type TYPE=CONTEXT_CLASS) {
+                void save_explicit(const T& vl, list_iterators_map& mps,  id_type ID,  class_type TYPE = CONTEXT_CLASS) {
                     iterator_list_const_buffers itf = last();
                     explicit_value<T> tmp(vl, ID, TYPE);
                     *this  <<  tmp;
-                    splice_tlv(mps, ID, itf, last()); 
+                    splice_tlv(mps, ID, itf, last());
                 }
 
                 template<typename T>
@@ -967,38 +946,37 @@ namespace boost {
                     iterator_list_const_buffers itf = last();
                     implicit_value<T> tmp(vl, ID, TYPE);
                     *this  << tmp;
-                    splice_tlv(mps, ID, itf, last()); 
+                    splice_tlv(mps, ID, itf, last());
                 }
-                
+
                 template<typename T>
                 void save_implicit(const T& vl, list_iterators_map& mps, class_type TYPE = UNIVERSAL_CLASS) {
                     iterator_list_const_buffers itf = last();
                     implicit_value<T> tmp(vl, TYPE);
-                    id_type ID=tmp.id();
+                    id_type ID = tmp.id();
                     *this  << tmp;
-                    splice_tlv(mps, ID, itf, last());         
+                    splice_tlv(mps, ID, itf, last());
                 }
-                                        
-                std::size_t  size(std::size_t sz=0) const  {
-                    return (sz<size_) ? (size_-sz) : 0;
+
+                std::size_t  size(std::size_t sz = 0) const  {
+                    return (sz < size_) ? (size_ - sz) : 0;
                 }
 
                 void clear()  {
                     listbuffers_.clear();
                     rows_vect.clear();
-                    size_=0;
+                    size_ = 0;
                 }
 
             protected:
-                               
-                
+
                 void splice_tlv(list_iterators_map& mps, id_type id, iterator_list_const_buffers itf,  iterator_list_const_buffers its) {
-                                
-                    if (mps.upper_bound(id)!=mps.end())
+
+                    if (mps.upper_bound(id) != mps.end())
                         listbuffers_.splice(mps.upper_bound(id)->second.first++ , listbuffers_ , ++itf , ++iterator_list_const_buffers(its));
                     else
                         ++itf;
-                          
+
                     if (itf != its)
                         mps.insert(tlv_iterators_pair(id, list_iterator_pair(itf, its)));
                 }
@@ -1012,7 +990,7 @@ namespace boost {
                 list_const_buffers listbuffers_;
                 encoding_rule        rule_;
                 vect_row_type_ptr rows_vect;
-                std::size_t                size_;         
+                std::size_t                size_;
             } ;
 
 
@@ -1027,25 +1005,15 @@ namespace boost {
                 return stream;
             }
 
-            //archive& operator<<(archive& stream, const bitstring_type& vl);
-
-            // archive& operator<<(archive& stream, const octetstring_type& vl);    
 
             template<typename  T>
             archive& operator<<(archive& stream, const set_of_type<T>& vl) {
-                //iterator_list_const_buffers it =stream.add( to_x690_cast(tag( TYPE_SET , vl.mask() | CONSTRUCTED_ENCODING)));
+
 
                 typedef typename set_of_type<T>::const_iterator   set_type_iterator;
                 for (set_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
                     operator<<(stream, *itr );
 
-                /* std::size_t sz = stream.size( ++it);
-                 if (stream.rule()==CER_ENCODING){
-                      stream.add( to_x690_cast(size_class(sz, true)), it);
-                      stream.add( row_type(2.0));
-                 }
-                 else    
-                      stream.add( to_x690_cast(size_class(sz)), it);    */
 
                 return stream;
             }
@@ -1055,12 +1023,12 @@ namespace boost {
 
                 stream.add( to_x690_cast(tag( vl.id() , vl.mask() | CONSTRUCTED_ENCODING)));
                 archive::iterator_list_const_buffers it = stream.last();
-                
-                std::size_t sz = stream.size();                
+
+                std::size_t sz = stream.size();
                 stream << implicit_value<T > (vl.value());
-                sz = stream.size(sz);              
+                sz = stream.size(sz);
                 ++it;
-                
+
                 if ((stream.rule() == CER_ENCODING)) {
                     stream.add( to_x690_cast(size_class()), it);
                     stream.add( row_type(2.0));
@@ -1075,12 +1043,12 @@ namespace boost {
 
                 stream.add( to_x690_cast(tag(vl.id(), vl.mask() | (tag_number<T>::primitive() ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING) )));
                 archive::iterator_list_const_buffers it = stream.last();
-                                
-                std::size_t sz = stream.size();     
+
+                std::size_t sz = stream.size();
                 stream << vl.value();
                 sz = stream.size(sz);
                 ++it;
-                
+
                 if  ((!tag_number<T>::primitive()) && (stream.rule() == CER_ENCODING)) {
                     stream.add( to_x690_cast(size_class()), it);
                     stream.add( row_type(2.0));
@@ -1093,44 +1061,41 @@ namespace boost {
             ////////////////// STRING REALIZATION
 
             template<typename T>
-            void x690_string_to_stream_cast(const T& val, archive& stream, length_type lentype) {
-                switch (lentype) {
-                    case PRIMITIVE_DEFINED_SIZE:
-                    {
-                        stream.add(val);
-                        return;
-                    }
-                    default:
-                    {
+            void x690_string_to_stream_cast(const T& val, archive& stream, int8_t lentype) {
+                if (!lentype) {
 
-                        typedef typename T::const_iterator     const_iterator_type;
-                        typedef typename T::difference_type   difference_type;
+                    stream.add(val);
+                    return;
+                }
+                else {
 
-                        const_iterator_type it = val.begin();
-                        while (it != val.end()) {
-                            stream.add(row_type(1, static_cast<row_type::value_type> ( tag_number<T>::number())));
-                            difference_type  diff = std::distance(it, val.end());
-                            if (diff > CER_STRING_MAX_SIZE) {
-                                diff = CER_STRING_MAX_SIZE;
-                                stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff))));
-                            }
-                            else {
-                                stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff))));
-                            }
-                            stream.add(row_type(val.begin(), val.begin() + diff));
-                            it = it + diff;
+                    typedef typename T::const_iterator     const_iterator_type;
+                    typedef typename T::difference_type   difference_type;
+
+                    const_iterator_type it = val.begin();
+                    while (it != val.end()) {
+                        stream.add(row_type(1, static_cast<row_type::value_type> ( tag_number<T>::number())));
+                        difference_type  diff = std::distance(it, val.end());
+                        if (diff > CER_STRING_MAX_SIZE) {
+                            diff = CER_STRING_MAX_SIZE;
+                            stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff))));
                         }
+                        else {
+                            stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff))));
+                        }
+                        stream.add(row_type(val.begin(), val.begin() + diff));
+                        it = it + diff;
                     }
                 }
             }
 
 
             template<>
-            void x690_string_to_stream_cast(const bitstring_type& val, archive& stream, length_type lentype);
+            void x690_string_to_stream_cast(const bitstring_type& val, archive& stream, int8_t lentype);
 
             template<typename T>
             archive& stringtype_writer(archive& stream, const T& vl, id_type  id , int8_t mask) {
-                
+
 
 
                 int8_t construct = vl.size()<( tag_number<T>::number() == TYPE_BITSTRING ? (CER_STRING_MAX_SIZE - 1) : CER_STRING_MAX_SIZE )
@@ -1139,8 +1104,8 @@ namespace boost {
                 stream.add( to_x690_cast(tag(tag_number<T>::number() , mask | construct )));
                 archive::iterator_list_const_buffers it = stream.last();
 
-                 std::size_t sz = stream.size();           
-                x690_string_to_stream_cast(vl, stream, construct ?  CONSTRUCTED_UNDEFINED_SIZE : PRIMITIVE_DEFINED_SIZE);
+                std::size_t sz = stream.size();
+                x690_string_to_stream_cast(vl, stream, construct);
                 sz = stream.size(sz);
                 ++it;
 

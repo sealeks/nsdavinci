@@ -526,15 +526,13 @@ namespace boost {
             // STRING REALISZATION
 
             template<>
-            void x690_string_to_stream_cast(const bitstring_type& val, archive& stream, length_type lentype) {
-                switch (lentype) {
-                    case PRIMITIVE_DEFINED_SIZE:
-                    {
+            void x690_string_to_stream_cast(const bitstring_type& val, archive& stream, int8_t lentype) {
+                if (!lentype) {
                         stream.add(row_type(1, static_cast<row_type::value_type> (val.unusebits() % 8)));
                         stream.add(val);
                         return;
                     }
-                    default:
+                else
                     {
 
                         typedef bitstring_type::const_iterator     const_iterator_type;
@@ -556,9 +554,7 @@ namespace boost {
                             stream.add(row_type(val.begin(), val.begin() + diff));
                             it = it + diff;
                         }
-                    }
-                }
-            }
+                }}
 
             template<>
             archive& operator<<(archive& stream, const implicit_value<bitstring_type>& vl) {
