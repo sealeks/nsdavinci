@@ -321,8 +321,7 @@ namespace boost {
 
             std::ostream& operator<<(std::ostream& stream, const octetstring_type& vl);
             
-            
-            
+                            
 
 
             ////////
@@ -567,6 +566,8 @@ namespace boost {
             
             
             
+            
+            
                 //  tag class
 
                 class tag {
@@ -598,7 +599,7 @@ namespace boost {
             
 
 
-            ////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
                 
 
                 template<typename T>
@@ -643,6 +644,10 @@ namespace boost {
                     T val_;
                     int8_t   mask_;
                 } ;
+                
+                
+                
+                /////////////////////////////////////////////////////////////////////////////
 
                 template<typename T>
                 class implicit_value {
@@ -689,6 +694,13 @@ namespace boost {
                     T val_;
                     int8_t   mask_;
                 } ;
+                
+                
+                
+                ///////////////////////////////////////////////////////////////////////////
+                
+
+                
 
                 template<typename T >
                 class set_of_type : public std::vector<T> {
