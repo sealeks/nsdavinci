@@ -381,14 +381,14 @@ namespace boost {
                 
                 
                 
-             class archive : public boost::asio::iso::archive  {
+             class archive : public boost::asio::iso::base_archive  {
             public:
 
 
                 typedef std::pair<id_type, list_iterator_pair>                                                                         tlv_iterators_pair;
                 typedef std::multimap<id_type, list_iterator_pair>                                                               list_iterators_map;
 
-                archive(encoding_rule rul = BER_ENCODING) : boost::asio::iso::archive() , rule_(rul) {
+                archive(encoding_rule rul = BER_ENCODING) : boost::asio::iso::base_archive() , rule_(rul) {
                 }
 
                 encoding_rule rule() const {
@@ -397,7 +397,7 @@ namespace boost {
 
 
                 template<typename T>
-                void save_explicit(const T& vl, list_iterators_map& mps,  id_type ID,  class_type TYPE = CONTEXT_CLASS) {
+                void save_map_explicit(const T& vl, list_iterators_map& mps,  id_type ID,  class_type TYPE = CONTEXT_CLASS) {
                     iterator_list_const_buffers itf = last();
                     explicit_value<T> tmp(vl, ID, TYPE);
                     *this  <<  tmp;
@@ -405,7 +405,7 @@ namespace boost {
                 }
 
                 template<typename T>
-                void save_implicit(const T& vl, list_iterators_map& mps, id_type ID,  class_type TYPE = CONTEXT_CLASS) {
+                void save_map_implicit(const T& vl, list_iterators_map& mps, id_type ID,  class_type TYPE = CONTEXT_CLASS) {
                     iterator_list_const_buffers itf = last();
                     implicit_value<T> tmp(vl, ID, TYPE);
                     *this  << tmp;
@@ -413,13 +413,28 @@ namespace boost {
                 }
 
                 template<typename T>
-                void save_implicit(const T& vl, list_iterators_map& mps, class_type TYPE = UNIVERSAL_CLASS) {
+                void save_map_implicit(const T& vl, list_iterators_map& mps, class_type TYPE = UNIVERSAL_CLASS) {
                     iterator_list_const_buffers itf = last();
                     implicit_value<T> tmp(vl, TYPE);
                     id_type ID = tmp.id();
                     *this  << tmp;
                     splice_tlv(mps, ID, itf, last());
                 }
+                
+                template<typename T>
+                void save_explicit(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                    *this  <<  explicit_value<T > (vl, id, type);
+                }
+
+                template<typename T>
+                void save_implicit(const T& vl, id_type id,  class_type type =  CONTEXT_CLASS) {
+                    *this  <<  implicit_value<T > (vl, id, type);
+                }
+
+                template<typename T>
+                void save_implicit(const T& vl, class_type type =  UNIVERSAL_CLASS) {
+                    *this  <<  implicit_value<T > (vl, type);
+                }                
 
 
 
@@ -617,20 +632,7 @@ namespace boost {
                     return stream;
                 }
 
-                template<typename T>
-                explicit_value<T> build_explicit(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                    return explicit_value<T > (vl, id, type);
-                }
 
-                template<typename T>
-                implicit_value<T> build_implicit(const T& vl, id_type id,  class_type type =  CONTEXT_CLASS) {
-                    return implicit_value<T > (vl, id, type);
-                }
-
-                template<typename T>
-                implicit_value<T> build_implicit(const T& vl, class_type type =  UNIVERSAL_CLASS) {
-                    return implicit_value<T > (vl, type);
-                }
 
             }
 

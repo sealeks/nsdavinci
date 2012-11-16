@@ -32,7 +32,9 @@ namespace boost {
             typedef  std::vector<const_buffer>                          const_buffers;
             typedef  boost::shared_ptr<const_buffers>           const_buffers_ptr;
 
-            class archive {
+            
+            
+            class base_archive {
             public:
 
                 typedef  std::list<const_buffer>                                                                                                         list_const_buffers;
@@ -40,7 +42,7 @@ namespace boost {
                 typedef std::pair<iterator_list_const_buffers, iterator_list_const_buffers>                              list_iterator_pair;
 
 
-                archive() : size_(0) {
+                base_archive() : size_(0) {
                 }
 
 
