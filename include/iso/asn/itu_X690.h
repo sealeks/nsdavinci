@@ -376,7 +376,7 @@ namespace boost {
 
                     typedef typename set_of_type<T>::const_iterator   set_type_iterator;
                     for (set_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
-                        operator<<(stream, *itr );
+                        stream.save_implicit<T >(*itr );
 
 
                     return stream;

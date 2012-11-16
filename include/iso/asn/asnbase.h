@@ -609,8 +609,11 @@ namespace boost {
                     typedef  T   root_type;
 
 
-                    explicit explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                    explicit explicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
                     }
+                    
+                    explicit explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(const_cast<T&>(vl)), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                    }                    
 
                     const T& value() const {
                         return val_;
@@ -639,7 +642,7 @@ namespace boost {
 
                 private:
                     id_type id_;
-                    T val_;
+                    T& val_;
                     int8_t   mask_;
                 } ;
                 
@@ -654,11 +657,17 @@ namespace boost {
                     typedef  T   root_type;
 
 
-                    explicit implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(vl), mask_(from_cast(type))  {
+                    explicit implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(vl), mask_(from_cast(type))  {
                     }
+                    
+                    explicit implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(const_cast<T&>(vl)), mask_(from_cast(type))  {
+                    }                    
 
-                    explicit  implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
+                    explicit  implicit_value(T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
                     }
+                    
+                    explicit  implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(const_cast<T&>(vl)) , mask_(from_cast(type))  {
+                    }                    
 
                     const T& value() const {
                         return val_;
@@ -687,7 +696,7 @@ namespace boost {
 
                 private:
                     id_type id_;
-                    T val_;
+                    T& val_;
                     int8_t   mask_;
                 } ;
                 
@@ -703,7 +712,8 @@ namespace boost {
                 public:
 
                     set_of_type(id_type id = TYPE_SET, class_type type = UNIVERSAL_CLASS) : std::vector<T>(),  id_(id) , mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
-                    }
+                    }                 
+                    
 
                     id_type id()  const {
                         return id_;
