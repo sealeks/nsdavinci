@@ -124,8 +124,8 @@ namespace boost {
 
                     typedef  T   root_type;
 
-                    explicit_value() :  id_() , val_(), mask_(from_cast(CONTEXT_CLASS) | CONSTRUCTED_ENCODING) {
-                    }
+                    //explicit_value() :  id_() , val_(), mask_(from_cast(CONTEXT_CLASS) | CONSTRUCTED_ENCODING) {
+                    //}
 
                     explicit explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
                     }
@@ -167,8 +167,8 @@ namespace boost {
 
                     typedef  T   root_type;
 
-                    implicit_value() : id_(0) ,  val_(), mask_(from_cast(CONTEXT_CLASS))  {
-                    }
+                    //implicit_value() : id_(0) ,  val_(), mask_(from_cast(CONTEXT_CLASS))  {
+                    //}
 
                     explicit implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(vl), mask_(from_cast(type))  {
                     }
