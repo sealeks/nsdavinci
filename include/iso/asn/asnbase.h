@@ -2,7 +2,7 @@
  * File:   asnbase.h
  * Author: sealeks
  *
- * Created on 2 РќРѕСЏР±СЂСЊ 2012 Рі., 0:39
+ * Created on 2 Р СњР С•РЎРЏР В±РЎР‚РЎРЉ 2012 Р С–., 0:39
  */
 
 #ifndef ASNBASE_H
@@ -62,6 +62,9 @@ namespace boost {
 
 
 
+             const int8_t PRIMITIVE_ENCODING = '\x0';
+             const int8_t CONSTRUCTED_ENCODING = '\x20';
+            
 
             ///////////////////
 
@@ -128,6 +131,42 @@ namespace boost {
 
 
             std::ostream& operator<<(std::ostream& stream, const oid_type& vl);
+            
+            
+            
+             //// ReLATIVE OID_TYPE
+
+            class reloid_type : public std::vector<oidindx_type> {
+            public:
+
+                reloid_type() : std::vector<oidindx_type>() {
+                }
+
+                reloid_type(const oidindx_type *  vl, std::size_t size);
+
+                reloid_type(const boost::array<oidindx_type, 2 > & vl);
+
+                reloid_type(const boost::array<oidindx_type, 3 > & vl);
+
+                reloid_type(const boost::array<oidindx_type, 4 > & vl);
+
+                reloid_type(const boost::array<oidindx_type, 5 > & vl);
+
+                reloid_type(const boost::array<oidindx_type, 6 > & vl);
+
+                reloid_type(const boost::array<oidindx_type, 7 > & vl);
+
+                reloid_type(const boost::array<oidindx_type, 8 > & vl);
+
+                reloid_type(const boost::array<oidindx_type, 9 > & vl);
+
+                reloid_type(const boost::array<oidindx_type, 10 > & vl);
+
+            } ;
+
+
+
+            std::ostream& operator<<(std::ostream& stream, const reloid_type& vl);           
 
 
             /// NULL TYPE
@@ -281,6 +320,9 @@ namespace boost {
 
 
             std::ostream& operator<<(std::ostream& stream, const octetstring_type& vl);
+            
+            
+            
 
 
             ////////
@@ -472,6 +514,18 @@ namespace boost {
                     return true;
                 }
             } ;
+            
+            template<>
+            struct tag_traits<reloid_type> {
+
+                static  id_type number() {
+                    return TYPE_RELATIVE_OID;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+            } ;            
 
             template<>
             struct tag_traits<null_type> {
@@ -510,9 +564,44 @@ namespace boost {
                 }
 
             } ;
+            
+            
+            
+                //  tag class
+
+                class tag {
+                public:
+
+                    tag(id_type  vl, int8_t type = 0) : id_(vl), mask_(type) {
+                    }
+
+                    int8_t mask() const {
+                        return mask_;
+                    }
+
+                    class_type type() const {
+                        return to_class_type(mask_);
+                    }
+
+                    id_type id() const {
+                        return id_;
+                    }
+
+                    id_type simpleid() const {
+                        return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_ ) : 0;
+                    }
+
+                private:
+                    id_type id_;
+                    int8_t   mask_;
+                } ;
+            
 
 
             ////////////////////////////////////////
+                
+                
+                
 
 
 
