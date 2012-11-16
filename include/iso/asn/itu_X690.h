@@ -248,7 +248,7 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////
 
                 template<typename T>
-                row_type to_x690_cast(T val) {
+                row_type to_x690_cast(const T& val) {
                     row_type rslt;
                     to_x690_cast(val, rslt);
                     return rslt;
