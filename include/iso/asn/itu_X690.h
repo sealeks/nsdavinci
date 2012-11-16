@@ -35,10 +35,8 @@ namespace boost {
 
 
 
-                const int8_t PRIMITIVE_ENCODING = '\x0';
-                const int8_t CONSTRUCTED_ENCODING = '\x20';
 
-                const int8_t NEGATIVE_MARKER = NEGATIVE_MARKER;
+                const int8_t NEGATIVE_MARKER = '\x80';
                 const int8_t POSITIVE_START = '\xFF';
 
                 const int8_t CONTENT_CONIIUE = '\x80';
@@ -84,38 +82,6 @@ namespace boost {
 
                 void endian_push_pack(const row_type& val,  row_type& dst);
 
-
-
-
-                //  tag class
-
-                class tag {
-                public:
-
-                    tag(id_type  vl, int8_t type = 0) : id_(vl), mask_(type) {
-                    }
-
-                    int8_t mask() const {
-                        return mask_;
-                    }
-
-                    class_type type() const {
-                        return to_class_type(mask_);
-                    }
-
-                    id_type id() const {
-                        return id_;
-                    }
-
-                    id_type simpleid() const {
-                        return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_ ) : 0;
-                    }
-
-                private:
-                    id_type id_;
-                    int8_t   mask_;
-
-                } ;
 
                 //  size_class
 
@@ -201,13 +167,13 @@ namespace boost {
 
                     typedef  T   root_type;
 
-                    implicit_value() : id_(0) ,  val_(), mask_(from_cast(PRIVATE_CLASS))  {
+                    implicit_value() : id_(0) ,  val_(), mask_(from_cast(CONTEXT_CLASS))  {
                     }
 
-                    explicit implicit_value(const T& vl, id_type id,  class_type type = PRIVATE_CLASS) : id_(id) ,  val_(vl), mask_(from_cast(type))  {
+                    explicit implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(vl), mask_(from_cast(type))  {
                     }
 
-                    explicit  implicit_value(const T& vl,  class_type type = UNIVERSAL_CLASS) : id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
+                    explicit  implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
                     }
 
                     const T& value() const {
@@ -390,6 +356,12 @@ namespace boost {
 
 
                 std::size_t to_x690_cast(const oid_type& val, row_type& src);
+                
+                ///////////////////////////////////////////////////////////////////////////////////
+                // relative oid to X.690
+
+
+                std::size_t to_x690_cast(const reloid_type& val, row_type& src);                
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////
@@ -456,7 +428,7 @@ namespace boost {
                 void splice_tlv(list_iterators_map& mps, id_type id, iterator_list_const_buffers itf,  iterator_list_const_buffers its) {
 
                     if (mps.upper_bound(id) != mps.end())
-                        listbuffers_.splice(mps.upper_bound(id)->second.first++ , listbuffers_ , ++itf , ++iterator_list_const_buffers(its));
+                        listbuffers_.splice(mps.upper_bound(id)->second.first , listbuffers_ , ++itf , ++iterator_list_const_buffers(its));
                     else
                         ++itf;
 

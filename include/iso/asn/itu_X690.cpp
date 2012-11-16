@@ -258,11 +258,19 @@ namespace boost {
                     oidindx_type tmpval = 40 * val[0];
                     tmpval += val[1];
                     to_x690_castoid_impl(tmpval, src);
-                    std::size_t it = 2;
                     for (oid_type::const_iterator it = (val.begin() + 2); it != val.end(); ++it)
                         to_x690_castoid_impl(*it, src);
                     return (src.size() - strtsz);
                 }
+                
+                std::size_t to_x690_cast(const reloid_type& val, row_type& src) {
+                    if (val.empty()) return 0;
+                    std::size_t strtsz = src.size();                    
+                    for (oid_type::const_iterator it = (val.begin()); it != val.end(); ++it)
+                        to_x690_castoid_impl(*it, src);
+                    return (src.size() - strtsz);
+                }
+                
 
 
 
