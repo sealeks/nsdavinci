@@ -34,7 +34,12 @@ namespace boost {
 
             
             
-            class base_archive {
+            
+            
+            
+            
+            
+            class base_oarchive {
             public:
 
                 typedef  std::list<const_buffer>                                                                                                         list_const_buffers;
@@ -42,7 +47,7 @@ namespace boost {
                 typedef std::pair<iterator_list_const_buffers, iterator_list_const_buffers>                              list_iterator_pair;
 
 
-                base_archive() : size_(0) {
+                base_oarchive() : size_(0) {
                 }
 
 
