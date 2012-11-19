@@ -292,12 +292,12 @@ namespace boost {
                     return rslt;
                 }*/  
 
-                std::ostream& operator<<(std::ostream& stream, const archive& vl) {
+                std::ostream& operator<<(std::ostream& stream, const oarchive& vl) {
                     stream << vl.buffers();
                     return stream;
                 }
 
-                std::ofstream& operator<<(std::ofstream& stream, const archive& vl) {
+                std::ofstream& operator<<(std::ofstream& stream, const oarchive& vl) {
                     stream << vl.buffers();
                     return stream;
                 }
@@ -306,7 +306,7 @@ namespace boost {
                 // STRING REALISZATION
 
                 template<>
-                void x690_string_to_stream_cast(const bitstring_type& val, archive& stream, int8_t lentype) {
+                void x690_string_to_stream_cast(const bitstring_type& val, oarchive& stream, int8_t lentype) {
                     if (!lentype) {
                         stream.add(row_type(1, static_cast<row_type::value_type> (val.unusebits() % 8)));
                         stream.add(val);
@@ -337,13 +337,13 @@ namespace boost {
                 }
 
                 template<>
-                archive& operator<<(archive& stream, const implicit_value<bitstring_type>& vl) {
+                oarchive& operator<<(oarchive& stream, const implicit_value<bitstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
 
                 template<>
-                archive& operator<<(archive& stream, const implicit_value<octetstring_type>& vl) {
+                oarchive& operator<<(oarchive& stream, const implicit_value<octetstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }

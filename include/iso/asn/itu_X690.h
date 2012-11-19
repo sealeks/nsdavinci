@@ -262,14 +262,14 @@ namespace boost {
                 
                 
                 
-             class archive : public boost::asio::iso::base_archive  {
+             class oarchive : public boost::asio::iso::base_oarchive  {
             public:
 
 
                 typedef std::pair<id_type, list_iterator_pair>                                                                         tlv_iterators_pair;
                 typedef std::multimap<id_type, list_iterator_pair>                                                               list_iterators_map;
 
-                archive(encoding_rule rul = BER_ENCODING) : boost::asio::iso::base_archive() , rule_(rul) {
+                oarchive(encoding_rule rul = BER_ENCODING) : boost::asio::iso::base_oarchive() , rule_(rul) {
                 }
 
                 encoding_rule rule() const {
@@ -284,6 +284,15 @@ namespace boost {
                     *this  <<  tmp;
                     splice_tlv(mps, ID, itf, last());
                 }
+                
+                template<typename T>
+                void save_optional_map_explicit(const boost::shared_ptr<T>& vl, list_iterators_map& mps,  id_type ID,  class_type TYPE = CONTEXT_CLASS) {
+
+                    iterator_list_const_buffers itf = last();
+                    explicit_value<T> tmp(vl, ID, TYPE);
+                    *this  <<  tmp;
+                    splice_tlv(mps, ID, itf, last());
+                }                
 
                 template<typename T>
                 void save_map_implicit(const T& vl, list_iterators_map& mps, id_type ID,  class_type TYPE = CONTEXT_CLASS) {
@@ -303,9 +312,35 @@ namespace boost {
                 }
                 
                 template<typename T>
+                void save_optional_map_implicit(const boost::shared_ptr<T>& vl, list_iterators_map& mps, id_type ID,  class_type TYPE = CONTEXT_CLASS) {
+                    if (!vl) return;                    
+                    iterator_list_const_buffers itf = last();
+                    implicit_value<T> tmp(vl, ID, TYPE);
+                    *this  << tmp;
+                    splice_tlv(mps, ID, itf, last());
+                }
+
+                template<typename T>
+                void save_optional_map_implicit(const boost::shared_ptr<T>& vl, list_iterators_map& mps, class_type TYPE = UNIVERSAL_CLASS) {
+                    if (!vl) return;                    
+                    iterator_list_const_buffers itf = last();
+                    implicit_value<T> tmp(vl, TYPE);
+                    id_type ID = tmp.id();
+                    *this  << tmp;
+                    splice_tlv(mps, ID, itf, last());
+                }                
+       
+                
+                template<typename T>
                 void save_explicit(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
                     *this  <<  explicit_value<T > (vl, id, type);
                 }
+                
+                template<typename T>
+                void save_optional_explicit(const boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                     if (!vl) return;                   
+                    *this  <<  optional_explicit_value<T > (vl, id, type);
+                }                
 
                 template<typename T>
                 void save_implicit(const T& vl, id_type id,  class_type type =  CONTEXT_CLASS) {
@@ -315,7 +350,19 @@ namespace boost {
                 template<typename T>
                 void save_implicit(const T& vl, class_type type =  UNIVERSAL_CLASS) {
                     *this  <<  implicit_value<T > (vl, type);
-                }                
+                }      
+                
+                template<typename T>
+                void save_optional_implicit(const boost::shared_ptr<T>& vl, id_type id,  class_type type =  CONTEXT_CLASS) {
+                    if (!vl) return;                    
+                    *this  <<  optional_implicit_value<T > (vl, id, type);
+                }
+
+                template<typename T>
+                void save_optional_implicit(const boost::shared_ptr<T>& vl, class_type type =  UNIVERSAL_CLASS) {
+                    if (!vl) return;                    
+                    *this  <<  optional_implicit_value<T > (vl, type);
+                }                  
 
 
 
@@ -360,18 +407,18 @@ namespace boost {
 
 
 
-                std::ostream& operator<<(std::ostream& stream, const archive& vl);
+                std::ostream& operator<<(std::ostream& stream, const oarchive& vl);
 
-                std::ofstream& operator<<(std::ofstream& stream, const archive& vl);
+                std::ofstream& operator<<(std::ofstream& stream, const oarchive& vl);
 
                 template<typename T>
-                inline archive& operator<<(archive& stream, const T& vl) {
+                inline oarchive& operator<<(oarchive& stream, const T& vl) {
                     stream.add(to_x690_cast(vl));
                     return stream;
                 }
 
                 template<typename  T>
-                archive& operator<<(archive& stream, const set_of_type<T>& vl) {
+                oarchive& operator<<(oarchive& stream, const set_of_type<T>& vl) {
 
 
                     typedef typename set_of_type<T>::const_iterator   set_type_iterator;
@@ -383,10 +430,10 @@ namespace boost {
                 }
 
                 template<typename T>
-                archive& operator<<(archive& stream, const explicit_value<T>& vl) {
+                oarchive& operator<<(oarchive& stream, const explicit_value<T>& vl) {
 
                     stream.add( to_x690_cast(tag( vl.id() , vl.mask() | CONSTRUCTED_ENCODING)));
-                    archive::iterator_list_const_buffers it = stream.last();
+                    oarchive::iterator_list_const_buffers it = stream.last();
 
                     std::size_t sz = stream.size();
                     stream << implicit_value<T > (vl.value());
@@ -403,10 +450,10 @@ namespace boost {
                 }
 
                 template<typename T>
-                archive& operator<<(archive& stream, const implicit_value<T>& vl) {
+                oarchive& operator<<(oarchive& stream, const implicit_value<T>& vl) {
 
                     stream.add( to_x690_cast(tag(vl.id(), vl.mask() | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING) )));
-                    archive::iterator_list_const_buffers it = stream.last();
+                    oarchive::iterator_list_const_buffers it = stream.last();
 
                     std::size_t sz = stream.size();
                     stream << vl.value();
@@ -421,11 +468,53 @@ namespace boost {
                         stream.add( to_x690_cast(size_class(sz)), it);
                     return stream;
                 }
+                
+                template<typename T>
+                oarchive& operator<<(oarchive& stream, const optional_explicit_value<T>& vl) {
+                    if (!vl.value()) return stream;
+                    stream.add( to_x690_cast(tag( vl.id() , vl.mask() | CONSTRUCTED_ENCODING)));
+                    oarchive::iterator_list_const_buffers it = stream.last();
+
+                    std::size_t sz = stream.size();
+                    stream << implicit_value<T > (*vl.value());
+                    sz = stream.size(sz);
+                    ++it;
+
+                    if ((stream.rule() == CER_ENCODING)) {
+                        stream.add( to_x690_cast(size_class()), it);
+                        stream.add( row_type(2.0));
+                    }
+                    else
+                        stream.add( to_x690_cast(size_class(sz)), it);
+                    return stream;
+                }                
+                
+                template<typename T>
+                oarchive& operator<<(oarchive& stream, const optional_implicit_value<T>& vl) {
+                    if (!vl.value()) return stream;
+                    stream.add( to_x690_cast(tag(vl.id(), vl.mask() | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING) )));
+                    oarchive::iterator_list_const_buffers it = stream.last();
+
+                    std::size_t sz = stream.size();
+                    stream << *vl.value();
+                    sz = stream.size(sz);
+                    ++it;
+
+                    if  ((!tag_traits<T>::primitive()) && (stream.rule() == CER_ENCODING)) {
+                        stream.add( to_x690_cast(size_class()), it);
+                        stream.add( row_type(2.0));
+                    }
+                    else
+                        stream.add( to_x690_cast(size_class(sz)), it);
+                    return stream;
+                }         
+                
+                
 
                 ////////////////// STRING REALIZATION
 
                 template<typename T>
-                void x690_string_to_stream_cast(const T& val, archive& stream, int8_t lentype) {
+                void x690_string_to_stream_cast(const T& val, oarchive& stream, int8_t lentype) {
                     if (!lentype) {
 
                         stream.add(val);
@@ -455,18 +544,18 @@ namespace boost {
 
 
                 template<>
-                void x690_string_to_stream_cast(const bitstring_type& val, archive& stream, int8_t lentype);
+                void x690_string_to_stream_cast(const bitstring_type& val, oarchive& stream, int8_t lentype);
 
                 template<typename T>
-                archive& stringtype_writer(archive& stream, const T& vl, id_type  id , int8_t mask) {
+                oarchive& stringtype_writer(oarchive& stream, const T& vl, id_type  id , int8_t mask) {
 
 
 
                     int8_t construct = vl.size()<( tag_traits<T>::number() == TYPE_BITSTRING ? (CER_STRING_MAX_SIZE - 1) : CER_STRING_MAX_SIZE )
                             ?  PRIMITIVE_ENCODING  :  (stream.rule() == CER_ENCODING ?  CONSTRUCTED_ENCODING : PRIMITIVE_ENCODING) ;
 
-                    stream.add( to_x690_cast(tag(tag_traits<T>::number() , mask | construct )));
-                    archive::iterator_list_const_buffers it = stream.last();
+                    stream.add( to_x690_cast(tag(id , mask | construct )));
+                    oarchive::iterator_list_const_buffers it = stream.last();
 
                     std::size_t sz = stream.size();
                     x690_string_to_stream_cast(vl, stream, construct);
@@ -483,10 +572,10 @@ namespace boost {
                 }
 
                 template<>
-                archive& operator<<(archive& stream, const implicit_value<bitstring_type>& vl);
+                oarchive& operator<<(oarchive& stream, const implicit_value<bitstring_type>& vl);
 
                 template<>
-                archive& operator<<(archive& stream, const implicit_value<octetstring_type>& vl);
+                oarchive& operator<<(oarchive& stream, const implicit_value<octetstring_type>& vl);
 
 
 

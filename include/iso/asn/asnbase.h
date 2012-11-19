@@ -601,7 +601,7 @@ namespace boost {
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
                 
-
+                
                 template<typename T>
                 class explicit_value {
                 public:
@@ -702,6 +702,117 @@ namespace boost {
                 
                 
                 
+
+                
+                /////////////////////////////////////////////////////////////////////////////
+                
+                
+                template<typename S>
+                class optional_explicit_value {
+                public:
+
+                    typedef  boost::shared_ptr<S>    T;        
+                    typedef  S   root_type;
+
+
+
+                    explicit optional_explicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                    }
+                    
+                    explicit optional_explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(const_cast<T&>(vl)), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                    }                    
+
+                    const T& value() const {
+                        return val_;
+                    }
+
+                    T& value() {
+                        return val_;
+                    }
+
+                    id_type id()  const {
+                        return id_;
+                    }
+
+                    class_type type() const {
+                        return to_class_type(mask_);
+                    }
+
+                    int8_t mask() const {
+                        return mask_;
+                    }
+
+                    static  bool primitive() {
+                        return false;
+                    }
+
+
+                private:
+                    id_type id_;
+                    T& val_;
+                    int8_t   mask_;
+                } ;
+                
+                
+                /////////////////////////////////////////////////////////////////////////////
+
+                template<typename S>
+                class optional_implicit_value {
+                public:
+
+                    typedef  boost::shared_ptr<S>    T;        
+                    typedef  S   root_type;
+
+
+                    explicit optional_implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(vl), mask_(from_cast(type))  {
+                    }
+                    
+                    explicit optional_implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(const_cast<T&>(vl)), mask_(from_cast(type))  {
+                    }                    
+
+                    explicit  optional_implicit_value(T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
+                    }
+                    
+                    explicit  optional_implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(const_cast<T&>(vl)) , mask_(from_cast(type))  {
+                    }                    
+
+                    const T& value() const {
+                        return val_;
+                    }
+
+                    T& value() {
+                        return val_;
+                    }
+                              
+
+                    id_type id()  const {
+                        return id_;
+                    }
+
+                    class_type type() const {
+                        return to_class_type(mask_);
+                    }
+
+                    int8_t mask() const {
+                        return mask_;
+                    }
+
+                    static  bool primitive() {
+                        return  tag_traits<S>::primitive() ?  true : false;
+                    }
+
+
+                private:
+                    id_type id_;
+                    T& val_;
+                    int8_t   mask_;
+                } ;
+                
+                
+                
+                ///////////////////////////////////////////////////////////////////////////
+                
+
                 ///////////////////////////////////////////////////////////////////////////
                 
 
@@ -737,7 +848,8 @@ namespace boost {
                     id_type id_;
                     int8_t   mask_;
 
-                } ;                
+                } ;                  
+      
                 
 
 
