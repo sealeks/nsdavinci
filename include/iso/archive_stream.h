@@ -26,15 +26,20 @@ namespace boost {
             
              typedef  std::vector<int8_t>                                      row_type;
              typedef  boost::shared_ptr<row_type>                   row_type_ptr;
-             typedef  std::vector<row_type_ptr>                         vect_row_type_ptr;            
+             typedef  std::vector<row_type_ptr>                       vect_row_type_ptr;            
 
 
             typedef  std::vector<const_buffer>                          const_buffers;
-            typedef  boost::shared_ptr<const_buffers>           const_buffers_ptr;
+            typedef  boost::shared_ptr<const_buffers>       const_buffers_ptr;
+            
+            
+            typedef  std::vector<mutable_buffer>                          mutable_buffers;
+            typedef  boost::shared_ptr<mutable_buffers>       mutable_buffers_ptr;            
 
             
             
-            
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
             
             
             
@@ -42,8 +47,8 @@ namespace boost {
             class base_oarchive {
             public:
 
-                typedef  std::list<const_buffer>                                                                                                         list_const_buffers;
-                typedef  list_const_buffers::iterator                                                                                                   iterator_list_const_buffers;
+                typedef  std::list<const_buffer>                                                                                                                           list_const_buffers;
+                typedef  list_const_buffers::iterator                                                                                                             iterator_list_const_buffers;
                 typedef std::pair<iterator_list_const_buffers, iterator_list_const_buffers>                              list_iterator_pair;
 
 
@@ -90,7 +95,66 @@ namespace boost {
                 std::size_t                size_;
             } ;
 
-        }
+
+        
+        
+             class base_iarchive {
+            public:
+
+                typedef  std::list<mutable_buffer>                                                                                                                     list_mutable_buffers;
+                typedef  list_mutable_buffers::iterator                                                                                                             iterator_list_mutable_buffers;
+                typedef std::pair<iterator_list_mutable_buffers, iterator_list_mutable_buffers>                              list_iterator_pair;
+
+
+                base_iarchive() : size_(0) {
+                }
+                
+                 void add(const row_type& vl) {
+                     rows_vect.push_back( row_type_ptr(new row_type(vl.begin(),vl.end())));
+                     listbuffers_.push_back(mutable_buffer(&rows_vect.back()->operator [](0),rows_vect.back()->size()));
+                     size_+=rows_vect.back()->size();
+                }
+                 
+                 void add(const std::string& vl) {
+                     rows_vect.push_back( row_type_ptr(new row_type(vl.begin(),vl.end())));
+                     listbuffers_.push_back(mutable_buffer(&rows_vect.back()->operator [](0),rows_vect.back()->size()));
+                     size_+=rows_vect.back()->size();
+                } 
+                 
+                
+
+
+                const list_mutable_buffers&  buffers() const {
+                    return listbuffers_;
+                }
+                
+                list_mutable_buffers&  buffers() {
+                    return listbuffers_;
+                }                
+
+                iterator_list_mutable_buffers  last()  {
+                    return  listbuffers_.empty()  ? listbuffers_.end() :  (--listbuffers_.end());
+                }
+
+
+
+                std::size_t  size(std::size_t sz = 0) const  {
+                    return (sz < size_) ? (size_ - sz) : 0;
+                }
+
+                void clear()  {
+                    listbuffers_.clear();
+                    size_ = 0;
+                }
+
+            protected:
+
+                list_mutable_buffers listbuffers_;
+                vect_row_type_ptr     rows_vect;                
+                std::size_t                size_;
+            } ;       
+            
+          }      
 
     } // namespace asio
 } // namespace boost
