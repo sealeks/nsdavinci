@@ -11,6 +11,37 @@ namespace boost {
     namespace asio {
         namespace asn {
             namespace x690 {
+                
+                
+            bool find_marked_sequece( const list_mutable_buffers& val, row_type& raw,  std::size_t start){
+                list_mutable_buffers::const_iterator it = val.begin();
+                std::size_t sz = 0;
+                std::size_t szc = 0 ;
+                std::size_t szb = 0;
+                std::size_t sze =0;    
+                bool find=false;
+                while ((it != val.end()) && (!find)) {
+                    szc = boost::asio::buffer_size(*it);
+                    if (!((sz + szc) < start)) {
+                        szb = sz > start ? 0 : start - sz;
+                        sze =szc-szb;
+                        mutable_buffer tmp= boost::asio::buffer(*it + szb, sze );
+                        std::size_t szf = boost::asio::buffer_size(tmp); 
+                        std::size_t szi = 0;                       
+                        while ((szi<szf) && (!find)){
+                            if (!((*(boost::asio::buffer_cast<row_type::value_type*>(tmp)+szi)) & '\x80'))
+                                find=true;
+                        raw.push_back((*(boost::asio::buffer_cast<row_type::value_type*>(tmp)+szi) & '\x7F'));
+                        szi++;
+                        }}
+                    else {
+                        sz += szc;
+                    }
+                    ++it;
+                } 
+                return find;                
+            }  
+            
 
                 void endian_conv(row_type& val) {
 #ifdef BIG_ENDIAN_ARCHITECTURE                               
@@ -79,6 +110,34 @@ namespace boost {
                     to_x690_cast(val, tmp);
                     return tmp;
                 }
+                
+                std::size_t tag_from_x690_cast(const tag& val, const row_type& src){
+                   row_type tmp = to_x690_cast(val);
+                   if ((src.size()>=tmp.size()) &&  (tmp==row_type(src.begin(),src.begin()+tmp.size())))
+                       return tmp.size();
+                   return 0;
+                }    
+                
+                std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src){
+                    row_type s1;
+                    if (boost::asio::iso::row_cast(src, s1, 0, 1)){
+                        if (s1[0] & '\x1F'){
+                            val = tag(s1[0] & '\x1F', s1[0] & '\xE0');
+                            return 1;
+                        }
+                        else {
+                            row_type s2;
+                            if (find_marked_sequece(src, s2, 1)){
+                                id_type tmp=0;
+                                for (row_type::const_iterator it=s2.begin();it!=s2.end(); ++it)
+                                    tmp = (tmp << 7) | (static_cast<row_type::value_type>(*it) & '\x1F');
+                                val = tag(tmp , s1[0] & '\xE0');
+                                return (1 + s2.size());
+                                }
+                            }
+                    }
+                return 0;                
+                }                
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -113,6 +172,31 @@ namespace boost {
                     to_x690_cast(val, tmp);
                     return tmp;
                 }
+                
+
+                    
+                std::size_t  size_x690_cast(size_class& val, const list_mutable_buffers& src){
+                    row_type s1;
+                    if (boost::asio::iso::row_cast(src, s1, 0, 1)){
+                        if (!(s1[0] & '\x80')) {
+                            val = size_class(s1[0] & '\x7F');
+                            return 1;
+                        }
+                        else {
+                            if  ((s1[0] != '\x80')){
+                                std::size_t szblk=static_cast<std::size_t >(s1[0] & '\x7F');
+                                row_type s2;
+                                if (boost::asio::iso::row_cast(src, s2, 1, szblk)){
+                                    val = size_class(from_x690_cast<std::size_t>(s2));
+                                    return 1+ s2.size();
+                                }
+                            }
+                            else{
+                                 val = size_class();
+                                 return 1;                                
+                            }}}
+                return 0;                    
+                }                      
 
 
                 //// real cast

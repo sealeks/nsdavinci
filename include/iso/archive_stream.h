@@ -26,15 +26,27 @@ namespace boost {
             
              typedef  std::vector<int8_t>                                      row_type;
              typedef  boost::shared_ptr<row_type>                   row_type_ptr;
-             typedef  std::vector<row_type_ptr>                       vect_row_type_ptr;            
+             typedef  std::vector<row_type_ptr>                        vect_row_type_ptr;            
 
 
             typedef  std::vector<const_buffer>                          const_buffers;
-            typedef  boost::shared_ptr<const_buffers>       const_buffers_ptr;
+            typedef  boost::shared_ptr<const_buffers>           const_buffers_ptr;
             
             
-            typedef  std::vector<mutable_buffer>                          mutable_buffers;
-            typedef  boost::shared_ptr<mutable_buffers>       mutable_buffers_ptr;            
+            typedef  std::vector<mutable_buffer>                      mutable_buffers;
+            typedef  boost::shared_ptr<mutable_buffers>       mutable_buffers_ptr; 
+            
+            typedef  std::list<mutable_buffer>                                                                                                                                 list_mutable_buffers;
+            typedef  list_mutable_buffers::iterator                                                                                                                  iterator_list_mutable_buffers;
+            typedef std::pair<iterator_list_mutable_buffers, iterator_list_mutable_buffers>                              list_mutable_iterator_pair;
+            
+            
+            list_mutable_buffers intersect( const list_mutable_buffers& val, std::size_t start =0 , std::size_t size = 0 );
+            bool row_cast( const list_mutable_buffers& val, row_type& raw,  std::size_t start , std::size_t size);            
+            
+            
+            
+            
 
             
             
@@ -97,13 +109,22 @@ namespace boost {
 
 
         
+
         
              class base_iarchive {
             public:
-
-                typedef  std::list<mutable_buffer>                                                                                                                     list_mutable_buffers;
-                typedef  list_mutable_buffers::iterator                                                                                                             iterator_list_mutable_buffers;
-                typedef std::pair<iterator_list_mutable_buffers, iterator_list_mutable_buffers>                              list_iterator_pair;
+                
+            class data_iterator {
+            public:
+                  data_iterator(){}
+                  virtual ~data_iterator(){}  
+                  
+                  list_mutable_buffers data() const{
+                      return data_;
+                  }
+            protected:
+                 list_mutable_buffers data_;
+            };                
 
 
                 base_iarchive() : size_(0) {

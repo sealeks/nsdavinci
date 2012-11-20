@@ -26,6 +26,16 @@ namespace boost {
     namespace asio {
         namespace asn {
             namespace x690 {
+                
+                
+            typedef  boost::asio::iso::list_mutable_buffers                                                                                           list_mutable_buffers;
+            typedef  boost::asio::iso::iterator_list_mutable_buffers                                                                         iterator_list_mutable_buffers;
+            
+            
+            bool find_marked_sequece( const list_mutable_buffers& val, row_type& raw,  std::size_t start = 0);
+            
+            
+          
 
                 typedef enum {
                     BER_ENCODING,
@@ -193,6 +203,10 @@ namespace boost {
                 std::size_t to_x690_cast(const tag& val, row_type& src);
 
                 row_type to_x690_cast(const tag& val);
+                
+                std::size_t tag_from_x690_cast(const tag& val, const row_type& src); 
+                
+                std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src);                 
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -202,11 +216,17 @@ namespace boost {
                 std::size_t to_x690_cast(const size_class& val, row_type& src);
 
                 row_type to_x690_cast(const size_class& val);
-
+                
+                //bool size_from_x690_cast(std::size_t& sz, const row_type& val);
+                
+                std::size_t size_x690_cast(size_class& val, const list_mutable_buffers& src);                 
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // real to X.690
+                
+                
+
 
 
                 template<>
@@ -396,6 +416,15 @@ namespace boost {
             
              class iarchive : public boost::asio::iso::base_iarchive  {
             public:
+                
+             class  data_iterator : public boost::asio::iso::base_iarchive::data_iterator {
+            public:
+                  data_iterator(){}
+                  data_iterator(const iarchive& arch){
+                      
+                  }
+                  
+            };                  
 
 
                 //typedef std::pair<id_type, list_iterator_pair>                                                                         tlv_iterators_pair;
@@ -407,6 +436,16 @@ namespace boost {
                 encoding_rule rule() const {
                    return rule_;
                 }
+                
+                template<typename T>
+                void load_explicit(T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                    explicit_value<T > (vl, id, type) >> *this;
+                }
+                
+                template<typename T>
+                void load_optional_explicit(const boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {                   
+                    optional_explicit_value<T > (vl, id, type)  >> *this;
+                }                        
                         
 
             private:
@@ -604,7 +643,14 @@ namespace boost {
 
 
 
-
+              ///////////////////////////////////////////////////////////////////////////////
+                
+                
+            //   template<typename T>
+        //        inline oarchive& operator>>(iarchive& stream, const T& vl) {
+         //           from_x690_cast(vl);
+         //           return stream;
+         //       }
 
 
 
