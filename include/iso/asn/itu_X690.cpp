@@ -6,13 +6,13 @@
  */
 
 #include "itu_X690.h"
+#include <boost/lexical_cast.hpp>
+#include <iosfwd>
 
 namespace boost {
     namespace asio {
         namespace asn {
             namespace x690 {
-
-
 
                 void endian_conv(row_type& val) {
 #ifdef BIG_ENDIAN_ARCHITECTURE                               
@@ -38,10 +38,10 @@ namespace boost {
                     std::copy(val.rbegin(), val.rend(), std::back_inserter(dst));
 #endif    
                 }
-                
-                
-                
-                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+
+
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
                 /*OUTPUT STREAM                                                                                                                                                                                               */
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////               
 
@@ -314,77 +314,77 @@ namespace boost {
                         }
                     }
                 }
-                
+
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<int8_t>& vl){
-                    return primitive_sirialize(stream,vl);
+                oarchive& operator<<(oarchive& stream, const implicit_value<int8_t>& vl) {
+                    return primitive_sirialize(stream, vl);
                 }
 
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<uint8_t>& vl){ 
-                    return primitive_sirialize(stream,vl);
-                }      
-                
-                template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<int16_t>& vl){
-                    return primitive_sirialize(stream,vl);
+                oarchive& operator<<(oarchive& stream, const implicit_value<uint8_t>& vl) {
+                    return primitive_sirialize(stream, vl);
                 }
 
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<uint16_t>& vl){ 
-                    return primitive_sirialize(stream,vl);
-                }      
-                
-                template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<int32_t>& vl){
-                    return primitive_sirialize(stream,vl);
+                oarchive& operator<<(oarchive& stream, const implicit_value<int16_t>& vl) {
+                    return primitive_sirialize(stream, vl);
                 }
 
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<uint32_t>& vl){ 
-                    return primitive_sirialize(stream,vl);
-                }   
-                
-                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<int64_t>& vl){
-                    return primitive_sirialize(stream,vl);
+                oarchive& operator<<(oarchive& stream, const implicit_value<uint16_t>& vl) {
+                    return primitive_sirialize(stream, vl);
                 }
 
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<uint64_t>& vl){ 
-                    return primitive_sirialize(stream,vl);
-                }     
-                
-                template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<float>& vl){ 
-                    return primitive_sirialize(stream,vl);
-                }  
-                
-                template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<double>& vl){ 
-                    return primitive_sirialize(stream,vl);
-                }    
-                
-                template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<long double>& vl){ 
-                    return primitive_sirialize(stream,vl);
-                }   
-                
-                template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<bool>& vl){ 
-                    return primitive_sirialize(stream,vl);
+                oarchive& operator<<(oarchive& stream, const implicit_value<int32_t>& vl) {
+                    return primitive_sirialize(stream, vl);
                 }
-                
+
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<oid_type>& vl){ 
-                    return primitive_sirialize(stream,vl);
-                }  
-                
-                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<reloid_type>& vl){ 
-                    return primitive_sirialize(stream,vl);
-                }                      
-                
+                oarchive& operator<<(oarchive& stream, const implicit_value<uint32_t>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<int64_t>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<uint64_t>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<float>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<double>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<long double>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<bool>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<oid_type>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<reloid_type>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<bitstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
@@ -396,16 +396,13 @@ namespace boost {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-                
-                
+
+
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
                 /*INPUT STREAM                                                                                                                                                                                               */
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                
-                
-                
-                
-                 bool find_marked_sequece( const list_mutable_buffers& val, row_type& raw,  std::size_t start) {
+
+                bool find_marked_sequece( const list_mutable_buffers& val, row_type& raw,  std::size_t start) {
                     list_mutable_buffers::const_iterator it = val.begin();
                     std::size_t sz = 0;
                     std::size_t szc = 0 ;
@@ -432,13 +429,12 @@ namespace boost {
                         ++it;
                     }
                     return find;
-                }     
-                 
-                 
+                }
+
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // tag from X.690                 
-                 
-                 
+
                 std::size_t tag_from_x690_cast(const tag& val, const row_type& src) {
                     row_type tmp = to_x690_cast(val);
                     if ((src.size() >= tmp.size()) &&  (tmp == row_type(src.begin(), src.begin() + tmp.size())))
@@ -465,12 +461,12 @@ namespace boost {
                         }
                     }
                     return 0;
-                }     
-             
-                              
+                }
+
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // size_class from X.690                
-                
+
                 std::size_t  size_x690_cast(size_class& val, const list_mutable_buffers& src, std::size_t  beg) {
                     row_type s1;
                     if (boost::asio::iso::row_cast(src, s1, beg, 1) && (!s1.empty())) {
@@ -485,14 +481,14 @@ namespace boost {
                                 if (boost::asio::iso::row_cast(src, s2, beg + 1, szblk) && (!s2.empty()) && (s2.size() <= sizeof (std::size_t))) {
                                     if (s2.front() & '\x80') {
                                         s2.insert(s2.begin(), '\x0');
-                                        std::size_t bodysize=0;
+                                        std::size_t bodysize = 0;
                                         if (!from_x690_cast<std::size_t > (bodysize, s2))
                                             return 0;
                                         val = size_class(bodysize);
                                         return s2.size();
                                     }
                                     else {
-                                        std::size_t bodysize=0;
+                                        std::size_t bodysize = 0;
                                         if (!from_x690_cast<std::size_t > (bodysize, s2))
                                             return 0;
                                         val = size_class(bodysize);
@@ -507,189 +503,295 @@ namespace boost {
                         }
                     }
                     return 0;
-                }    
-                
-                ///////////////////////////////////////////////////////////////////////////////////
-                // bool from X.690
-                
-                template<>
-                bool from_x690_cast(bool& vl, const row_type& val){
-                    if (val.empty())
-                        vl=false;
-                    else
-                        vl=val[0];
-                    return true;
-                }    
+                }
+
+
                 
                 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // real from X.690
-                
-                template<typename T>
-                static bool from_x690_double_cast_special(T& vl, const row_type& val){
-                    if (!val.empty()){
-                        switch(val[0]){
-                            case NAN_REAL_ID: { vl =std::numeric_limits<T>::quiet_NaN(); return true;}
-                            case INFINITY_REAL_ID: { vl =std::numeric_limits<T>::infinity() ; return true;}
-                            case NEGATINFINITY_REAL_ID: { vl = -std::numeric_limits<T>::infinity(); return true;}
-                            case NEGATNULL_REAL_ID: { vl =-0.0 ; return true;}
-                            default: { vl =std::numeric_limits<T>::quiet_NaN(); return true;}
-                        }}
-                    vl=0;
-                    return true;
-                } 
-                
-                template<typename T>
-                static bool from_x690_double_cast_decimal(T& vl, const row_type& val){
-                    return false;
-                }    
-                
-                template<typename T>
-                static bool from_x690_double_cast_bin(T& vl, const row_type& val){
-                    return false;
-                }                     
-                
 
-                
-                     
-                
-                
+                template<typename T>
+                static bool from_x690_double_cast_special(T& vl, const row_type& val) {
+                    if (!val.empty()) {
+                        switch (val[0]) {
+                            case NAN_REAL_ID:
+                            {
+                                vl = std::numeric_limits<T>::quiet_NaN();
+                                return true;
+                            }
+                            case INFINITY_REAL_ID:
+                            {
+                                vl = std::numeric_limits<T>::infinity() ;
+                                return true;
+                            }
+                            case NEGATINFINITY_REAL_ID:
+                            {
+                                vl = -std::numeric_limits<T>::infinity();
+                                return true;
+                            }
+                            case NEGATNULL_REAL_ID:
+                            {
+                                vl = -0.0 ;
+                                return true;
+                            }
+                            default:
+                            {
+                                vl = std::numeric_limits<T>::quiet_NaN();
+                                return true;
+                            }
+                        }
+                    }
+                    vl = 0;
+                    return true;
+                }
+
+                template<typename T>
+                static bool from_x690_double_cast_decimal(T& vl, const row_type& val) {
+                    try {
+                        vl = boost::lexical_cast<T > (std::string(val.begin(), val.end()));
+                    }
+                    catch (boost::bad_lexical_cast &) {
+                        vl = std::numeric_limits<T>::quiet_NaN();
+                    }
+                    return true;
+                }
+
+                template<typename T, typename B, std::size_t MANT, std::size_t EXPB>
+                static bool from_x690_double_cast_bin(T& vl, const row_type& val) {
+                    if (!val.empty()) {
+                        bool negat = val[0] & '\x40';
+                        B base = 2;
+                        switch (val[0] & '\x30') {
+                            case '\x10':  base = 8;
+                                break;
+                            case '\x20':  base = 16;
+                                break;
+                        }
+                        B factor = static_cast<B> ((val[0] & '\xC') >> 2);
+                        std::size_t exp_sz = 1;
+                        switch (val[0] & '\x3') {
+                            case '\x1':  exp_sz = 2;
+                                break;
+                            case '\x2':  exp_sz = 3;
+                                break;
+                            case '\x3':
+                            {
+                                if (val.size() > 1) {
+                                    exp_sz = static_cast<std::size_t> (*reinterpret_cast<uint8_t*> (val[1]));
+                                }
+                                else
+                                    return false;
+                                break;
+                            }
+                        }
+
+                        if (val.size() <= exp_sz)
+                            return false;
+                        row_type::const_iterator itrexen = val.begin() + exp_sz + 1;
+                        B exp = 0;
+                        for (row_type::const_iterator it = val.begin() + 1; it != itrexen; ++it)
+                            exp = (exp << 8) | static_cast<B> (*reinterpret_cast< const uint8_t*> (&(*it)));
+                        exp += (EXPB+MANT);
+                        exp <<= MANT;
+                        B mant = 0;
+                        for (row_type::const_iterator it = itrexen; it != val.end(); ++it)
+                            mant = (mant << 8) | static_cast<B> (*reinterpret_cast< const uint8_t*> (&(*it)));
+                        B rslt = mant | exp;
+                        vl = *reinterpret_cast<T*>(&rslt);
+                    }
+
+                    return true;
+                }
+
                 template<>
-                bool from_x690_cast(float& vl, const row_type& val){
-                    if (val.empty()){ 
-                        vl=0;
-                        return true;}
-                    else{
-                        switch(val[0] & '\xC0'){
-                            case 0: return from_x690_double_cast_decimal(vl,val);
-                            case '\x40' : return from_x690_double_cast_decimal(vl,val);
-                            default: return from_x690_double_cast_bin(vl, val);
+                bool from_x690_cast(float& vl, const row_type& val) {
+                    if (val.empty()) {
+                        vl = 0;
+                        return true;
+                    }
+                    else {
+                        switch (val[0] & '\xC0') {
+                            case 0: return from_x690_double_cast_decimal(vl, val);
+                            case '\x40': return from_x690_double_cast_decimal(vl, val);
+                            default: return from_x690_double_cast_bin<float, int32_t, FLOAT_MANTISSA_SIZE, FLOAT_EXPONENTA_DELT > (vl, val);
                         }
                     }
                     return false;
-                }        
-                
+                }
+
                 template<>
                 bool from_x690_cast(double& vl, const row_type& val) {
-                    if (val.empty()){ 
-                        vl=0;
-                        return true;}
-                    else{
-                        switch(val[0] & '\xC0'){
-                            case 0: return from_x690_double_cast_decimal(vl,val);
-                            case '\x40' : return from_x690_double_cast_decimal(vl,val);
-                            default: return from_x690_double_cast_bin(vl, val);
+                    if (val.empty()) {
+                        vl = 0;
+                        return true;
+                    }
+                    else {
+                        switch (val[0] & '\xC0') {
+                            case 0: return from_x690_double_cast_decimal(vl, val);
+                            case '\x40': return from_x690_double_cast_decimal(vl, val);
+                            default: return from_x690_double_cast_bin<double, int64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (vl, val);
                         }
                     }
                     return false;
-                }        
+                }
+
+                template<>
+                bool from_x690_cast(long double& vl, const row_type& val) {
+                    if (val.empty()) {
+                        vl = 0;
+                        return true;
+                    }
+                    else {
+                        switch (val[0] & '\xC0') {
+                            case 0: return from_x690_double_cast_decimal(vl, val);
+                            case '\x40': return from_x690_double_cast_decimal(vl, val);
+                            default: return false;
+                        }
+                    }
+                    return false;
+                }
+
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // bool from X.690
+
+                template<>
+                bool from_x690_cast(bool& vl, const row_type& val) {
+                    if (val.empty())
+                        vl = false;
+                    else
+                        vl = val[0];
+                    return true;
+                }
                 
+                ///////////////////////////////////////////////////////////////////////////////////
+                // null from X.690               
+
                  template<>
-                bool from_x690_cast(long double& vl, const row_type& val){
-                    if (val.empty()){ 
-                        vl=0;
-                        return true;}
-                    else{
-                        switch(val[0] & '\xC0'){
-                            case 0: return from_x690_double_cast_decimal(vl,val);
-                            case '\x40' : return from_x690_double_cast_decimal(vl,val);
-                            default: return from_x690_double_cast_bin(vl, val);
-                        }
-                    }
-                    return false;
-                }        
-                
-                
-                 
-                 
-                 
-                 ////////////////////////////////////////////
-                
+                bool from_x690_cast(null_type& val, const row_type& vl){
+                     return false;
+                 }
+
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // oid from X.690
+
+                template<>
+                bool from_x690_cast(oid_type& val, const row_type& vl){
+                     return false;
+                 }
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // relative from to X.690
+
+                template<>
+                bool from_x690_cast(reloid_type& val, const row_type& vl){
+                     return false;
+                 }
+
+
+                ////////////////////////////////////////////
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<int8_t>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }                
-                
-                 template<>
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<uint8_t>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }      
-                 
-                 template<>
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<int16_t>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }                
-                
-                 template<>
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<uint16_t>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }                    
-                
-                 template<>
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<int32_t>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }                
-                
-                 template<>
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<uint32_t>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }       
-                 
-                 template<>
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
                 iarchive& operator>>(iarchive& stream,  const implicit_value<int64_t>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }                
-                
-                 template<>
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                } 
-                 
+                    return  primitive_desirialize(stream, vl);
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<float>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }    
-                
+                    return  primitive_desirialize(stream, vl);
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<double>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }     
-                
+                    return  primitive_desirialize(stream, vl);
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<long double>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }                 
-                 
+                    return  primitive_desirialize(stream, vl);
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl) {
-                     return  primitive_desirialize(stream,vl);
-                }                            
+                    return  primitive_desirialize(stream, vl);
+                }
                 
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<null_type>& vl) {
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<oid_type>& vl) {
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl) {
+                    return  primitive_desirialize(stream, vl);
+                }                
+
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
                 /*TESTS                                                                                                                                                                                                              */
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
-
-               test_decoder::test_decoder(const list_mutable_buffers & src) : tag_(0), blk(0) {
+                test_decoder::test_decoder(const list_mutable_buffers & src) : tag_(0), blk(0) {
                     std::size_t sztag = tag_x690_cast(tag_, src);
                     if (sztag) {
                         std::size_t szsize = size_x690_cast(size_,  src, sztag);
                         if (szsize) {
                             blk = sztag + szsize + size_.size();
                             buff_ = boost::asio::iso::intersect(src, sztag + szsize, size_.size());
-                            list_mutable_buffers buff = buff_;//boost::asio::iso::intersect(src, blk);
+                            list_mutable_buffers buff = buff_; //boost::asio::iso::intersect(src, blk);
                             std::cout << *this;
                             if (tag_.mask() & CONSTRUCTED_ENCODING) {
-                            bool fl = false;
-                            if (buff.size()) {
-                                do {
-                                    test_decoder nest(buff);
-                                    fl = nest.blk;
-                                    if (nest.blk)
-                                        buff = boost::asio::iso::intersect(buff, nest.blk );
+                                bool fl = false;
+                                if (buff.size()) {
+                                    do {
+                                        test_decoder nest(buff);
+                                        fl = nest.blk;
+                                        if (nest.blk)
+                                            buff = boost::asio::iso::intersect(buff, nest.blk );
+                                    }
+                                    while (fl &&  buff.size());
                                 }
-                                while (fl &&  buff.size());
-                            }                                
                             }
                         }
                     }
