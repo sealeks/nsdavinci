@@ -674,6 +674,26 @@ namespace boost {
                 bool from_x690_cast(bool& vl, const row_type& val);
 
 
+                ///////////////////////////////////////////////////////////////////////////////////
+                // null from X.690
+
+                 template<>
+                bool from_x690_cast(null_type& val, const row_type& src);
+
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // oid from X.690
+
+                template<>
+                bool from_x690_cast(oid_type& val, const row_type& src);
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // relative from to X.690
+
+                template<>
+                bool from_x690_cast(reloid_type& val, const row_type& src);                
+
+
 
                 //////////////////////////////////////////////////////////
                 //   archiver
@@ -840,7 +860,16 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<long double>& vl);                   
                  
                  template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl);                    
+                iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl); 
+                 
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<null_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<oid_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl);                       
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
