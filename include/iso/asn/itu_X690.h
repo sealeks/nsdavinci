@@ -33,6 +33,7 @@ namespace boost {
 
 
                 bool find_marked_sequece( const list_mutable_buffers& val, row_type& raw,  std::size_t start = 0);
+                
 
                 typedef enum {
                     BER_ENCODING,
@@ -290,6 +291,35 @@ namespace boost {
                     encoding_rule rule() const {
                         return rule_;
                     }
+                    
+                    
+
+ 
+                    template<typename T>
+                    void operator&( const explicit_value<T >& vl) {
+                        *this  <<  vl;
+                    }  
+                    
+                    template<typename T>
+                    void operator&( const optional_explicit_value<T >& vl) {
+                        *this  <<  vl;
+                    }                         
+                             
+                    template<typename T>
+                    void operator&( const implicit_value<T >& vl) {
+                        *this  <<  vl;
+                    }   
+                    
+                    template<typename T>
+                    void operator&( const optional_implicit_value<T >& vl) {
+                        *this  <<  vl;
+                    }                      
+                    
+                    
+                    
+                    /// ------------------------------///////////
+                    
+                    
 
                     template<typename T>
                     void save_explicit(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
