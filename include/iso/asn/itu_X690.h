@@ -626,16 +626,20 @@ namespace boost {
                 // integer from X.690          
 
                 template<typename T>
-                T  from_x690_cast(row_type val) {
+                bool from_x690_cast(T& vl, const row_type& dt) {
+                    row_type  val=dt;
 #ifdef BIG_ENDIAN_ARCHITECTURE 
                     !!! not implement
 #else              
                     endian_conv(val);
                     if (sizeof (T) > val.size())
                         val.resize(sizeof (T), row_type::value_type((val.empty() || (val.back() & NEGATIVE_MARKER )) ? POSITIVE_START : 0));
-                    return (*(T*) (&val[0]));
+                    vl = (*(T*) (&val[0]));
 #endif                  
+                    return true;
                 }
+                
+                           
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -651,7 +655,11 @@ namespace boost {
                 std::size_t size_x690_cast(size_class& val, const list_mutable_buffers& src,  std::size_t beg = 0);
 
 
-                /////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////
+                // bool from X.690
+                
+                template<>
+                bool from_x690_cast(bool& vl, const row_type& val);
 
 
 
@@ -675,13 +683,23 @@ namespace boost {
                     }
 
                     template<typename T>
-                    void load_explicit(T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                        explicit_value<T > (vl, id, type) >> *this;
+                    void operator&(const explicit_value<T >& vl) {
+                        *this  >> vl;
                     }
 
                     template<typename T>
-                    void load_optional_explicit(const boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                        optional_explicit_value<T > (vl, id, type)  >> *this;
+                    void operator&(const optional_explicit_value<T >& vl) {
+                        *this  >>  vl;
+                    }
+
+                    template<typename T>
+                    void operator&(const implicit_value<T >& vl) {
+                        *this  >>  vl;
+                    }
+
+                    template<typename T>
+                    void operator&(const optional_implicit_value<T >& vl) {
+                        *this  >>  vl;
                     }
 
 
@@ -690,6 +708,118 @@ namespace boost {
                     encoding_rule        rule_;
 
                 } ;
+                
+                
+                
+               // template<typename T>
+              //  inline void operator>>(const row_type& data, T& vl) {
+               //     vl = from_x690_cast<T>(data);
+             //   }                
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const explicit_value<T>& vl) {
+                  tag tmptag;  
+                  std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                  if (sztag && (vl==tmptag)){
+                      size_class tmpsize;
+                      std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                      if (szsize){
+                          stream.ready(szsize+sztag);
+                          implicit_value<T > (vl.value()) >> stream;
+                      }
+                  }
+                  return stream;
+                }     
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const optional_explicit_value<T>& vl) {
+                  tag tmptag;  
+                  std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                  if (sztag && (vl==tmptag)){
+                      size_class tmpsize;
+                      std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                      if (szsize){
+                          stream.ready(szsize+sztag);
+                          optional_implicit_value<T > (vl.value()) >> stream;
+                      }
+                  }
+                  return stream;
+                }  
+                
+                 template<typename T>
+                iarchive& operator>>(iarchive& stream, const implicit_value<T>& vl) {
+                  tag tmptag;  
+                  std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                  if (sztag && (vl==tmptag)){
+                      size_class tmpsize;
+                      std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                      if (szsize){
+                          stream.ready(szsize+sztag);
+                          const_cast<T*>(&(vl.value()))->serialize(stream);
+                      }
+                  }
+                  return stream;
+                }     
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const optional_implicit_value<T>& vl) {
+               /*   tag tmptag;  
+                  std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                  if (sztag && tmptag.id()==vl.id() && tmptag.mask()==vl.mask()){
+                      size_class tmpsize;
+                      std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                      if (szsize){
+                          stream.ready(szsize+sztag);
+                          optional_implicit_value<T > (vl.value()) >> stream;
+                      }
+                  }*/
+                  return stream;
+                }      
+                
+                  template<typename T>
+                iarchive&  primitive_desirialize(iarchive& stream, const implicit_value<T>& vl) {
+                  tag tmptag;  
+                  std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                  if (sztag && (vl==tmptag)){
+                      size_class tmpsize;
+                      std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                      if (szsize){                         
+                          row_type data;
+                          if (boost::asio::iso::row_cast(stream.buffers(), data , szsize+sztag, tmpsize.size())){
+                              if (from_x690_cast(*const_cast<T*>(&vl.value()), data)) {
+                              stream.ready(szsize+sztag + tmpsize.size());}
+                          }
+                      }
+                  }
+                  return stream;
+                }                
+                
+                template<>
+                iarchive& operator>>(iarchive& stream,  const implicit_value<int8_t>& vl);
+                
+                  template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint8_t>& vl);    
+                 
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<int16_t>& vl); 
+                
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint16_t>& vl);
+                
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<int32_t>& vl);   
+                
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint32_t>& vl);     
+                 
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<int64_t>& vl);      
+                
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl);    
+                 
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl);                    
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
