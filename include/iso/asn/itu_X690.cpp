@@ -144,7 +144,7 @@ namespace boost {
                         src.push_back(static_cast<row_type::value_type> (NEGATINFINITY_REAL_ID));
                         return 1;
                     }
-                    if (val == -0) {
+                    if (val == -0.0) {
                         src.push_back(static_cast<row_type::value_type> (NEGATNULL_REAL_ID));
                         return 1;
                     }
@@ -519,9 +519,91 @@ namespace boost {
                     else
                         vl=val[0];
                     return true;
-                }                
+                }    
                 
                 
+                ///////////////////////////////////////////////////////////////////////////////////
+                // real from X.690
+                
+                template<typename T>
+                static bool from_x690_double_cast_special(T& vl, const row_type& val){
+                    if (!val.empty()){
+                        switch(val[0]){
+                            case NAN_REAL_ID: { vl =std::numeric_limits<T>::quiet_NaN(); return true;}
+                            case INFINITY_REAL_ID: { vl =std::numeric_limits<T>::infinity() ; return true;}
+                            case NEGATINFINITY_REAL_ID: { vl = -std::numeric_limits<T>::infinity(); return true;}
+                            case NEGATNULL_REAL_ID: { vl =-0.0 ; return true;}
+                            default: { vl =std::numeric_limits<T>::quiet_NaN(); return true;}
+                        }}
+                    vl=0;
+                    return true;
+                } 
+                
+                template<typename T>
+                static bool from_x690_double_cast_decimal(T& vl, const row_type& val){
+                    return false;
+                }    
+                
+                template<typename T>
+                static bool from_x690_double_cast_bin(T& vl, const row_type& val){
+                    return false;
+                }                     
+                
+
+                
+                     
+                
+                
+                template<>
+                bool from_x690_cast(float& vl, const row_type& val){
+                    if (val.empty()){ 
+                        vl=0;
+                        return true;}
+                    else{
+                        switch(val[0] & '\xC0'){
+                            case 0: return from_x690_double_cast_decimal(vl,val);
+                            case '\x40' : return from_x690_double_cast_decimal(vl,val);
+                            default: return from_x690_double_cast_bin(vl, val);
+                        }
+                    }
+                    return false;
+                }        
+                
+                template<>
+                bool from_x690_cast(double& vl, const row_type& val) {
+                    if (val.empty()){ 
+                        vl=0;
+                        return true;}
+                    else{
+                        switch(val[0] & '\xC0'){
+                            case 0: return from_x690_double_cast_decimal(vl,val);
+                            case '\x40' : return from_x690_double_cast_decimal(vl,val);
+                            default: return from_x690_double_cast_bin(vl, val);
+                        }
+                    }
+                    return false;
+                }        
+                
+                 template<>
+                bool from_x690_cast(long double& vl, const row_type& val){
+                    if (val.empty()){ 
+                        vl=0;
+                        return true;}
+                    else{
+                        switch(val[0] & '\xC0'){
+                            case 0: return from_x690_double_cast_decimal(vl,val);
+                            case '\x40' : return from_x690_double_cast_decimal(vl,val);
+                            default: return from_x690_double_cast_bin(vl, val);
+                        }
+                    }
+                    return false;
+                }        
+                
+                
+                 
+                 
+                 
+                 ////////////////////////////////////////////
                 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<int8_t>& vl) {
@@ -562,6 +644,21 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl) {
                      return  primitive_desirialize(stream,vl);
                 } 
+                 
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<float>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }    
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<double>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }     
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<long double>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }                 
                  
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl) {
