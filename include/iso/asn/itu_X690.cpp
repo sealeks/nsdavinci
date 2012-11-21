@@ -11,37 +11,35 @@ namespace boost {
     namespace asio {
         namespace asn {
             namespace x690 {
-                
-                
-            bool find_marked_sequece( const list_mutable_buffers& val, row_type& raw,  std::size_t start){
-                list_mutable_buffers::const_iterator it = val.begin();
-                std::size_t sz = 0;
-                std::size_t szc = 0 ;
-                std::size_t szb = 0;
-                std::size_t sze =0;    
-                bool find=false;
-                while ((it != val.end()) && (!find)) {
-                    szc = boost::asio::buffer_size(*it);
-                    if (!((sz + szc) < start)) {
-                        szb = sz > start ? 0 : start - sz;
-                        sze =szc-szb;
-                        mutable_buffer tmp= boost::asio::buffer(*it + szb, sze );
-                        std::size_t szf = boost::asio::buffer_size(tmp); 
-                        std::size_t szi = 0;                       
-                        while ((szi<szf) && (!find)){
-                            if (!((*(boost::asio::buffer_cast<row_type::value_type*>(tmp)+szi)) & '\x80'))
-                                find=true;
-                        raw.push_back((*(boost::asio::buffer_cast<row_type::value_type*>(tmp)+szi) & '\x7F'));
-                        szi++;
-                        }}
-                    else {
+
+                bool find_marked_sequece( const list_mutable_buffers& val, row_type& raw,  std::size_t start) {
+                    list_mutable_buffers::const_iterator it = val.begin();
+                    std::size_t sz = 0;
+                    std::size_t szc = 0 ;
+                    std::size_t szb = 0;
+                    std::size_t sze = 0;
+                    bool find = false;
+                    while ((it != val.end()) && (!find)) {
+                        szc = boost::asio::buffer_size(*it);
+                        if ((sz + szc) > start) {
+                            szb = sz > start ? 0 : start - sz;
+                            sze = szc - szb;
+                            mutable_buffer tmp = boost::asio::buffer(*it + szb, sze );
+                            std::size_t szf = boost::asio::buffer_size(tmp);
+                            std::size_t szi = 0;
+                            while ((szi < szf) && (!find)) {
+                                if (!((*(boost::asio::buffer_cast<row_type::value_type*>(tmp) + szi)) & '\x80'))
+                                    find = true;
+                                raw.push_back((*(boost::asio::buffer_cast<row_type::value_type*>(tmp) + szi) & '\x7F'));
+                                szi++;
+                            }
+
+                        }
                         sz += szc;
+                        ++it;
                     }
-                    ++it;
-                } 
-                return find;                
-            }  
-            
+                    return find;
+                }
 
                 void endian_conv(row_type& val) {
 #ifdef BIG_ENDIAN_ARCHITECTURE                               
@@ -110,34 +108,34 @@ namespace boost {
                     to_x690_cast(val, tmp);
                     return tmp;
                 }
-                
-                std::size_t tag_from_x690_cast(const tag& val, const row_type& src){
-                   row_type tmp = to_x690_cast(val);
-                   if ((src.size()>=tmp.size()) &&  (tmp==row_type(src.begin(),src.begin()+tmp.size())))
-                       return tmp.size();
-                   return 0;
-                }    
-                
-                std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src){
+
+                std::size_t tag_from_x690_cast(const tag& val, const row_type& src) {
+                    row_type tmp = to_x690_cast(val);
+                    if ((src.size() >= tmp.size()) &&  (tmp == row_type(src.begin(), src.begin() + tmp.size())))
+                        return tmp.size();
+                    return 0;
+                }
+
+                std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src, std::size_t  beg) {
                     row_type s1;
-                    if (boost::asio::iso::row_cast(src, s1, 0, 1)){
-                        if (s1[0] & '\x1F'){
+                    if (boost::asio::iso::row_cast(src, s1, beg , 1) && (!s1.empty()))  {
+                        if ((s1[0] & '\x1F') != '\x1F') {
                             val = tag(s1[0] & '\x1F', s1[0] & '\xE0');
                             return 1;
                         }
                         else {
                             row_type s2;
-                            if (find_marked_sequece(src, s2, 1)){
-                                id_type tmp=0;
-                                for (row_type::const_iterator it=s2.begin();it!=s2.end(); ++it)
-                                    tmp = (tmp << 7) | (static_cast<row_type::value_type>(*it) & '\x1F');
+                            if (find_marked_sequece(src, s2, beg + 1) && (!s2.empty()) && (s2.size() <= (sizeof (id_type)))) {
+                                id_type tmp = 0;
+                                for (row_type::const_iterator it = s2.begin(); it != s2.end(); ++it)
+                                    tmp = (tmp << 7) | (static_cast<row_type::value_type> (*it) & '\x7F');
                                 val = tag(tmp , s1[0] & '\xE0');
                                 return (1 + s2.size());
-                                }
                             }
+                        }
                     }
-                return 0;                
-                }                
+                    return 0;
+                }
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -172,31 +170,38 @@ namespace boost {
                     to_x690_cast(val, tmp);
                     return tmp;
                 }
-                
 
-                    
-                std::size_t  size_x690_cast(size_class& val, const list_mutable_buffers& src){
+                std::size_t  size_x690_cast(size_class& val, const list_mutable_buffers& src, std::size_t  beg) {
                     row_type s1;
-                    if (boost::asio::iso::row_cast(src, s1, 0, 1)){
+                    if (boost::asio::iso::row_cast(src, s1, beg, 1) && (!s1.empty())) {
                         if (!(s1[0] & '\x80')) {
                             val = size_class(s1[0] & '\x7F');
                             return 1;
                         }
                         else {
-                            if  ((s1[0] != '\x80')){
-                                std::size_t szblk=static_cast<std::size_t >(s1[0] & '\x7F');
+                            if  ((s1[0] != '\x80')) {
+                                std::size_t szblk = static_cast<std::size_t > (s1[0] & '\x7F');
                                 row_type s2;
-                                if (boost::asio::iso::row_cast(src, s2, 1, szblk)){
-                                    val = size_class(from_x690_cast<std::size_t>(s2));
-                                    return 1+ s2.size();
+                                if (boost::asio::iso::row_cast(src, s2, beg + 1, szblk) && (!s2.empty()) && (s2.size() <= sizeof (std::size_t))) {
+                                    if (s2.front() & '\x80') {
+                                        s2.insert(s2.begin(), '\x0');
+                                        val = size_class(from_x690_cast<std::size_t > (s2));
+                                        return s2.size();
+                                    }
+                                    else {
+                                        val = size_class(from_x690_cast<std::size_t > (s2));
+                                        return 1 + s2.size();
+                                    }
                                 }
                             }
-                            else{
-                                 val = size_class();
-                                 return 1;                                
-                            }}}
-                return 0;                    
-                }                      
+                            else {
+                                val = size_class();
+                                return 1;
+                            }
+                        }
+                    }
+                    return 0;
+                }
 
 
                 //// real cast
@@ -346,45 +351,37 @@ namespace boost {
                         to_x690_castoid_impl(*it, src);
                     return (src.size() - strtsz);
                 }
-                
+
                 std::size_t to_x690_cast(const reloid_type& val, row_type& src) {
                     if (val.empty()) return 0;
-                    std::size_t strtsz = src.size();                    
+                    std::size_t strtsz = src.size();
                     for (oid_type::const_iterator it = (val.begin()); it != val.end(); ++it)
                         to_x690_castoid_impl(*it, src);
                     return (src.size() - strtsz);
                 }
-                
+
 
 
 
 
                 /////////////////////////////
 
-          /*    std::size_t size_of(const const_buffers& val) {
-                    std::size_t rslt = 0;
-                    for (const_buffers::const_iterator it = val.begin(); it != val.end(); ++it)
-                        rslt += boost::asio::buffer_size(*it);
-                    return rslt;
-                }
+                /*    std::size_t size_of(const const_buffers& val) {
+                          std::size_t rslt = 0;
+                          for (const_buffers::const_iterator it = val.begin(); it != val.end(); ++it)
+                              rslt += boost::asio::buffer_size(*it);
+                          return rslt;
+                      }
 
-                std::size_t size_of(const const_buffers_ptr& val) {
-                    if (val) return 0;
-                    std::size_t rslt = 0;
-                    for (const_buffers::const_iterator it = val->begin(); it != val->end(); ++it)
-                        rslt += boost::asio::buffer_size(*it);
-                    return rslt;
-                }*/  
+                      std::size_t size_of(const const_buffers_ptr& val) {
+                          if (val) return 0;
+                          std::size_t rslt = 0;
+                          for (const_buffers::const_iterator it = val->begin(); it != val->end(); ++it)
+                              rslt += boost::asio::buffer_size(*it);
+                          return rslt;
+                      }*/
 
-                std::ostream& operator<<(std::ostream& stream, const oarchive& vl) {
-                    stream << vl.buffers();
-                    return stream;
-                }
 
-                std::ofstream& operator<<(std::ofstream& stream, const oarchive& vl) {
-                    stream << vl.buffers();
-                    return stream;
-                }
 
 
                 // STRING REALISZATION
@@ -431,6 +428,34 @@ namespace boost {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
+
+                test_decoder::test_decoder(const list_mutable_buffers & src) : tag_(0), blk(0) {
+                    std::size_t sztag = tag_x690_cast(tag_, src);
+                    if (sztag) {
+                        std::size_t szsize = size_x690_cast(size_,  src, sztag);
+                        if (szsize) {
+                            blk = sztag + szsize + size_.size();
+                            buff_ = boost::asio::iso::intersect(src, sztag + szsize, size_.size());
+                            list_mutable_buffers buff = boost::asio::iso::intersect(src, blk);
+                            std::cout << *this;
+                            if (tag_.mask() & CONSTRUCTED_ENCODING) {
+                                test_decoder nest(buff_);
+                            }
+                            bool fl = false;
+                            if (buff.size()) {
+                                do {
+                                    test_decoder nest(buff, 0);
+                                    fl = nest.blk;
+                                    if (nest.blk)
+                                        buff = boost::asio::iso::intersect(buff, nest.blk );
+                                }
+                                while (fl &&  buff.size());
+                            }
+
+                        }
+                    }
+                }
+
 
             }
 

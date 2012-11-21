@@ -2,7 +2,7 @@
  * File:   asnbase.h
  * Author: sealeks
  *
- * Created on 2 Р СњР С•РЎРЏР В±РЎР‚РЎРЉ 2012 Р С–., 0:39
+ * Created on 2 Р В РЎСљР В РЎвЂўР РЋР РЏР В Р’В±Р РЋР вЂљР РЋР Р‰ 2012 Р В РЎвЂ“., 0:39
  */
 
 #ifndef ASNBASE_H
@@ -36,12 +36,7 @@
 
 #include <iso/archive_stream.h>
 
-#include <kernel/constdef.h>
-#include <kernel/memfile.h>
-#include <kernel/systemutil.h>
-#include <kernel/serviceapp.h>
-#include <kernel/factory.h>
-#include <kernel/templ.h>
+
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -597,6 +592,10 @@ namespace boost {
                     int8_t   mask_;
                 } ;
             
+                
+            inline std::ostream& operator<<(std::ostream& stream, const tag& vl){
+                return stream << "TAG: " << vl.id() << " mask:"  << vl.mask() << '\n';
+            }
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
