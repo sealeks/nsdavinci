@@ -114,18 +114,7 @@ namespace boost {
              class base_iarchive {
             public:
                 
-            class data_iterator {
-            public:
-                  data_iterator(){}
-                  virtual ~data_iterator(){}  
-                  
-                  list_mutable_buffers data() const{
-                      return data_;
-                  }
-            protected:
-                 list_mutable_buffers data_;
-            };                
-
+         
 
                 base_iarchive() : size_(0) {
                 }
@@ -173,7 +162,29 @@ namespace boost {
                 list_mutable_buffers listbuffers_;
                 vect_row_type_ptr     rows_vect;                
                 std::size_t                size_;
-            } ;       
+            } ;      
+            
+            
+   
+            
+            
+                std::ostream& operator<<(std::ostream& stream, const const_buffers& self);
+
+                std::ofstream& operator<<(std::ofstream& stream, const const_buffers& self);
+                        
+                std::ostream& operator<<(std::ostream& stream, const mutable_buffers& self);
+
+                std::ofstream& operator<<(std::ofstream& stream, const mutable_buffers& self);
+                
+                
+                std::ostream& operator<<(std::ostream& stream, const base_oarchive& vl);
+
+                std::ofstream& operator<<(std::ofstream& stream, const base_oarchive& vl);       
+                
+                std::ostream& operator<<(std::ostream& stream, const  list_mutable_buffers& vl);
+
+                std::ofstream& operator<<(std::ofstream& stream, const  list_mutable_buffers& vl);                
+            
             
           }      
 
