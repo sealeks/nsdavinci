@@ -436,20 +436,20 @@ namespace boost {
                         if (szsize) {
                             blk = sztag + szsize + size_.size();
                             buff_ = boost::asio::iso::intersect(src, sztag + szsize, size_.size());
-                            list_mutable_buffers buff = boost::asio::iso::intersect(src, blk);
+                            list_mutable_buffers buff = buff_;//boost::asio::iso::intersect(src, blk);
                             std::cout << *this;
                             if (tag_.mask() & CONSTRUCTED_ENCODING) {
-                                test_decoder nest(buff_);
-                            }
                             bool fl = false;
                             if (buff.size()) {
                                 do {
-                                    test_decoder nest(buff, 0);
+                                    test_decoder nest(buff);
                                     fl = nest.blk;
                                     if (nest.blk)
                                         buff = boost::asio::iso::intersect(buff, nest.blk );
                                 }
                                 while (fl &&  buff.size());
+                            }
+                                
                             }
 
                         }
