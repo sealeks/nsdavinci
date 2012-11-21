@@ -42,6 +42,7 @@ namespace boost {
             
             
             list_mutable_buffers intersect( const list_mutable_buffers& val, std::size_t start =0 , std::size_t size = 0 );
+            void popfront_list(list_mutable_buffers& val, std::size_t start);            
             bool row_cast( const list_mutable_buffers& val, row_type& raw,  std::size_t start , std::size_t size);            
             
             
@@ -137,7 +138,10 @@ namespace boost {
                      for (const_buffers::const_iterator it=buffers.begin();it!=buffers.end();++it){
                          listbuffers_.push_back(mutable_buffer(const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
                      }
-                }                  
+                }  
+                 
+                 void ready(std::size_t sz){
+                     popfront_list(listbuffers_,sz);}
                  
                 
 

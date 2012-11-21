@@ -57,9 +57,9 @@ namespace boost {
 
 
 
-             const int8_t PRIMITIVE_ENCODING = '\x0';
-             const int8_t CONSTRUCTED_ENCODING = '\x20';
-            
+            const int8_t PRIMITIVE_ENCODING = '\x0';
+            const int8_t CONSTRUCTED_ENCODING = '\x20';
+
 
             ///////////////////
 
@@ -126,10 +126,10 @@ namespace boost {
 
 
             std::ostream& operator<<(std::ostream& stream, const oid_type& vl);
-            
-            
-            
-             //// ReLATIVE OID_TYPE
+
+
+
+            //// ReLATIVE OID_TYPE
 
             class reloid_type : public std::vector<oidindx_type> {
             public:
@@ -161,7 +161,7 @@ namespace boost {
 
 
 
-            std::ostream& operator<<(std::ostream& stream, const reloid_type& vl);           
+            std::ostream& operator<<(std::ostream& stream, const reloid_type& vl);
 
 
             /// NULL TYPE
@@ -315,8 +315,8 @@ namespace boost {
 
 
             std::ostream& operator<<(std::ostream& stream, const octetstring_type& vl);
-            
-                            
+
+
 
 
             ////////
@@ -508,7 +508,7 @@ namespace boost {
                     return true;
                 }
             } ;
-            
+
             template<>
             struct tag_traits<reloid_type> {
 
@@ -519,7 +519,7 @@ namespace boost {
                 static  bool primitive() {
                     return true;
                 }
-            } ;            
+            } ;
 
             template<>
             struct tag_traits<null_type> {
@@ -558,298 +558,316 @@ namespace boost {
                 }
 
             } ;
-            
-            
-            
-            
-            
-                //  tag class
 
-                class tag {
-                public:
 
-                    tag(id_type  vl, int8_t type = 0) : id_(vl), mask_(type) {
-                    }
 
-                    int8_t mask() const {
-                        return mask_;
-                    }
 
-                    class_type type() const {
-                        return to_class_type(mask_);
-                    }
 
-                    id_type id() const {
-                        return id_;
-                    }
+            //  tag class
 
-                    id_type simpleid() const {
-                        return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_ ) : 0;
-                    }
+            class tag {
+            public:
 
-                private:
-                    id_type id_;
-                    int8_t   mask_;
-                } ;
-            
-                
-            inline std::ostream& operator<<(std::ostream& stream, const tag& vl){
+                tag(id_type  vl = 0, int8_t type = 0) : id_(vl), mask_(type) {
+                }
+
+                int8_t mask() const {
+                    return mask_;
+                }
+
+                class_type type() const {
+                    return to_class_type(mask_);
+                }
+
+                id_type id() const {
+                    return id_;
+                }
+
+                id_type simpleid() const {
+                    return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_ ) : 0;
+                }
+
+            private:
+                id_type id_;
+                int8_t   mask_;
+            } ;
+
+            inline std::ostream& operator<<(std::ostream& stream, const tag& vl) {
                 return stream << "TAG: " << vl.id() << " mask:"  << vl.mask() << '\n';
             }
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            template<typename T>
+            class explicit_value {
+            public:
+
+                typedef  T   root_type;
+
+                explicit explicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                }
+
+                explicit explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(const_cast<T&> (vl)), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                }
+
+                const T& value() const {
+                    return val_;
+                }
+
+                T& value() {
+                    return val_;
+                }
+
+                id_type id()  const {
+                    return id_;
+                }
+
+                class_type type() const {
+                    return to_class_type(mask_);
+                }
+
+                int8_t mask() const {
+                    return mask_;
+                }
+
+                static  bool primitive() {
+                    return false;
+                }
                 
+              bool operator==(const tag& rs) const {
+                return (id() == rs.id() && mask() == rs.mask());
+              }                     
+
+
+            private:
+                id_type id_;
+                T& val_;
+                int8_t   mask_;
+            } ;
+
+
+
+
+            /////////////////////////////////////////////////////////////////////////////
+
+            template<typename T>
+            class implicit_value {
+            public:
+
+                typedef  T   root_type;
+
+                explicit implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
+                id_(id) ,  val_(vl), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                }
+
+                explicit implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
+                id_(id) ,  val_(const_cast<T&> (vl)), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                }
+
+                explicit  implicit_value(T& vl,  class_type type = CONTEXT_CLASS) :
+                id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                }
+
+                explicit  implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) : 
+                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                }
+
+                const T& value() const {
+                    return val_;
+                }
+
+                T& value() {
+                    return val_;
+                }
+
+                id_type id()  const {
+                    return id_;
+                }
+
+                class_type type() const {
+                    return to_class_type(mask_);
+                }
+
+                int8_t mask() const {
+                    return mask_;
+                }
+
+                static  bool primitive() {
+                    return  tag_traits<T>::primitive() ?  true : false;
+                }
                 
-                template<typename T>
-                class explicit_value {
-                public:
-
-                    typedef  T   root_type;
+              bool operator==(const tag& rs) const {
+                return (id() == rs.id() && mask() == rs.mask());
+              }               
 
 
-                    explicit explicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
-                    }
-                    
-                    explicit explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(const_cast<T&>(vl)), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
-                    }                    
-
-                    const T& value() const {
-                        return val_;
-                    }
-
-                    T& value() {
-                        return val_;
-                    }
-
-                    id_type id()  const {
-                        return id_;
-                    }
-
-                    class_type type() const {
-                        return to_class_type(mask_);
-                    }
-
-                    int8_t mask() const {
-                        return mask_;
-                    }
-
-                    static  bool primitive() {
-                        return false;
-                    }
+            private:
+                id_type id_;
+                T& val_;
+                int8_t   mask_;
+            } ;
 
 
-                private:
-                    id_type id_;
-                    T& val_;
-                    int8_t   mask_;
-                } ;
+
+
+
+
+
+            /////////////////////////////////////////////////////////////////////////////
+
+            template<typename S>
+            class optional_explicit_value {
+            public:
+
+                typedef  boost::shared_ptr<S>    T;
+                typedef  S   root_type;
+
+                explicit optional_explicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                }
+
+                explicit optional_explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(const_cast<T&> (vl)), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                }
+
+                const T& value() const {
+                    return val_;
+                }
+
+                T& value() {
+                    return val_;
+                }
+
+                id_type id()  const {
+                    return id_;
+                }
+
+                class_type type() const {
+                    return to_class_type(mask_);
+                }
+
+                int8_t mask() const {
+                    return mask_;
+                }
+
+                static  bool primitive() {
+                    return false;
+                }
                 
+              bool operator==(const tag& rs) const {
+                return (id() == rs.id() && mask() == rs.mask());
+              }                      
+
+
+            private:
+                id_type id_;
+                T& val_;
+                int8_t   mask_;
+            } ;
+
+
+
+
+            /////////////////////////////////////////////////////////////////////////////
+
+            template<typename S>
+            class optional_implicit_value {
+            public:
+
+                typedef  boost::shared_ptr<S>    T;
+                typedef  S   root_type;
+
+                explicit optional_implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
+                id_(id) ,  val_(vl), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                }
+
+                explicit optional_implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) : 
+                id_(id) ,  val_(const_cast<T&> (vl)), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                }
+
+                explicit  optional_implicit_value(T& vl,  class_type type = CONTEXT_CLASS) :
+                id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                }
+
+                explicit  optional_implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) :
+                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                }
+
+                const T& value() const {
+                    return val_;
+                }
+
+                T& value() {
+                    return val_;
+                }
+
+                id_type id()  const {
+                    return id_;
+                }
+
+                class_type type() const {
+                    return to_class_type(mask_);
+                }
+
+                int8_t mask() const {
+                    return mask_;
+                }
+
+                static  bool primitive() {
+                    return  tag_traits<S>::primitive() ?  true : false;
+                }
                 
-                
-                /////////////////////////////////////////////////////////////////////////////
-
-                template<typename T>
-                class implicit_value {
-                public:
-
-                    typedef  T   root_type;
+              bool operator==(const tag& rs) const {
+                return (id() == rs.id() && mask() == rs.mask());
+              }                     
 
 
-                    explicit implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(vl), mask_(from_cast(type))  {
-                    }
-                    
-                    explicit implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(const_cast<T&>(vl)), mask_(from_cast(type))  {
-                    }                    
-
-                    explicit  implicit_value(T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
-                    }
-                    
-                    explicit  implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(const_cast<T&>(vl)) , mask_(from_cast(type))  {
-                    }                    
-
-                    const T& value() const {
-                        return val_;
-                    }
-
-                    T& value() {
-                        return val_;
-                    }
-
-                    id_type id()  const {
-                        return id_;
-                    }
-
-                    class_type type() const {
-                        return to_class_type(mask_);
-                    }
-
-                    int8_t mask() const {
-                        return mask_;
-                    }
-
-                    static  bool primitive() {
-                        return  tag_traits<T>::primitive() ?  true : false;
-                    }
-
-
-                private:
-                    id_type id_;
-                    T& val_;
-                    int8_t   mask_;
-                } ;
-                
-                
-                
-
-                
-                /////////////////////////////////////////////////////////////////////////////
-                
-                
-                template<typename S>
-                class optional_explicit_value {
-                public:
-
-                    typedef  boost::shared_ptr<S>    T;        
-                    typedef  S   root_type;
+            private:
+                id_type id_;
+                T& val_;
+                int8_t   mask_;
+            } ;
 
 
 
-                    explicit optional_explicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
-                    }
-                    
-                    explicit optional_explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(const_cast<T&>(vl)), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
-                    }                    
-
-                    const T& value() const {
-                        return val_;
-                    }
-
-                    T& value() {
-                        return val_;
-                    }
-
-                    id_type id()  const {
-                        return id_;
-                    }
-
-                    class_type type() const {
-                        return to_class_type(mask_);
-                    }
-
-                    int8_t mask() const {
-                        return mask_;
-                    }
-
-                    static  bool primitive() {
-                        return false;
-                    }
 
 
-                private:
-                    id_type id_;
-                    T& val_;
-                    int8_t   mask_;
-                } ;
-                
-                
-                /////////////////////////////////////////////////////////////////////////////
-
-                template<typename S>
-                class optional_implicit_value {
-                public:
-
-                    typedef  boost::shared_ptr<S>    T;        
-                    typedef  S   root_type;
+            ///////////////////////////////////////////////////////////////////////////
 
 
-                    explicit optional_implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(vl), mask_(from_cast(type))  {
-                    }
-                    
-                    explicit optional_implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) : id_(id) ,  val_(const_cast<T&>(vl)), mask_(from_cast(type))  {
-                    }                    
+            ///////////////////////////////////////////////////////////////////////////
 
-                    explicit  optional_implicit_value(T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
-                    }
-                    
-                    explicit  optional_implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) : id_(tag_traits<T>::number()) ,  val_(const_cast<T&>(vl)) , mask_(from_cast(type))  {
-                    }                    
+            template<typename T >
+            class set_of_type : public std::vector<T> {
+            public:
 
-                    const T& value() const {
-                        return val_;
-                    }
+                set_of_type(id_type id = TYPE_SET, class_type type = UNIVERSAL_CLASS) : std::vector<T>(),  id_(id) , mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
+                }
 
-                    T& value() {
-                        return val_;
-                    }
-                              
+                id_type id()  const {
+                    return id_;
+                }
 
-                    id_type id()  const {
-                        return id_;
-                    }
+                class_type type() const {
+                    return to_class_type(mask_);
+                }
 
-                    class_type type() const {
-                        return to_class_type(mask_);
-                    }
+                int8_t mask() const {
+                    return mask_;
+                }
 
-                    int8_t mask() const {
-                        return mask_;
-                    }
-
-                    static  bool primitive() {
-                        return  tag_traits<S>::primitive() ?  true : false;
-                    }
-
-
-                private:
-                    id_type id_;
-                    T& val_;
-                    int8_t   mask_;
-                } ;
-                
-                
-                
-                ///////////////////////////////////////////////////////////////////////////
-                
-
-                ///////////////////////////////////////////////////////////////////////////
-                
-
-                
-
-                template<typename T >
-                class set_of_type : public std::vector<T> {
-                public:
-
-                    set_of_type(id_type id = TYPE_SET, class_type type = UNIVERSAL_CLASS) : std::vector<T>(),  id_(id) , mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
-                    }                 
-                    
-
-                    id_type id()  const {
-                        return id_;
-                    }
-
-                    class_type type() const {
-                        return to_class_type(mask_);
-                    }
-
-                    int8_t mask() const {
-                        return mask_;
-                    }
-
-                    static  bool primitive() {
-                        return false;
-                    }
+                static  bool primitive() {
+                    return false;
+                }
 
 
 
-                private:
-                    id_type id_;
-                    int8_t   mask_;
+            private:
+                id_type id_;
+                int8_t   mask_;
 
-                } ;                  
-      
-                
+            } ;
+
+
 
 
 

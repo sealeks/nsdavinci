@@ -485,11 +485,17 @@ namespace boost {
                                 if (boost::asio::iso::row_cast(src, s2, beg + 1, szblk) && (!s2.empty()) && (s2.size() <= sizeof (std::size_t))) {
                                     if (s2.front() & '\x80') {
                                         s2.insert(s2.begin(), '\x0');
-                                        val = size_class(from_x690_cast<std::size_t > (s2));
+                                        std::size_t bodysize=0;
+                                        if (!from_x690_cast<std::size_t > (bodysize, s2))
+                                            return 0;
+                                        val = size_class(bodysize);
                                         return s2.size();
                                     }
                                     else {
-                                        val = size_class(from_x690_cast<std::size_t > (s2));
+                                        std::size_t bodysize=0;
+                                        if (!from_x690_cast<std::size_t > (bodysize, s2))
+                                            return 0;
+                                        val = size_class(bodysize);
                                         return 1 + s2.size();
                                     }
                                 }
@@ -501,11 +507,66 @@ namespace boost {
                         }
                     }
                     return 0;
+                }    
+                
+                ///////////////////////////////////////////////////////////////////////////////////
+                // bool from X.690
+                
+                template<>
+                bool from_x690_cast(bool& vl, const row_type& val){
+                    if (val.empty())
+                        vl=false;
+                    else
+                        vl=val[0];
+                    return true;
                 }                
                 
                 
                 
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<int8_t>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }                
                 
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint8_t>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }      
+                 
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<int16_t>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }                
+                
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint16_t>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }                    
+                
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<int32_t>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }                
+                
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint32_t>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }       
+                 
+                 template<>
+                iarchive& operator>>(iarchive& stream,  const implicit_value<int64_t>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }                
+                
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                } 
+                 
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl) {
+                     return  primitive_desirialize(stream,vl);
+                }                            
                 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
                 /*TESTS                                                                                                                                                                                                              */

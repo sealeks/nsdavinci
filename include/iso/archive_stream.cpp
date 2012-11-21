@@ -42,6 +42,19 @@ namespace boost {
                 }
                 return tmp;
             }
+            
+            void popfront_list(list_mutable_buffers& val, std::size_t start){
+                while (start && (!val.empty())) {
+                    if(boost::asio::buffer_size(val.front()) < start){
+                        start-=boost::asio::buffer_size(val.front());
+                        val.erase(val.begin());
+                    }
+                    else{
+                         val.front()=val.front()+start;
+                         return;
+                    }
+                }
+            }            
 
             bool row_cast( const list_mutable_buffers& val, row_type& raw,  std::size_t start, std::size_t size) {
                 if (!(size || start)) return false;
