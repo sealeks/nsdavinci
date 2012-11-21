@@ -131,6 +131,14 @@ namespace boost {
                      size_+=rows_vect.back()->size();
                 } 
                  
+                 void add(const base_oarchive& vl) {
+                      listbuffers_.clear();
+                     const_buffers buffers=vl.buffers();
+                     for (const_buffers::const_iterator it=buffers.begin();it!=buffers.end();++it){
+                         listbuffers_.push_back(mutable_buffer(const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
+                     }
+                }                  
+                 
                 
 
 
