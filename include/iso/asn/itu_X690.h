@@ -653,6 +653,18 @@ namespace boost {
                 // size_class from X.690
 
                 std::size_t size_x690_cast(size_class& val, const list_mutable_buffers& src,  std::size_t beg = 0);
+                
+                ///////////////////////////////////////////////////////////////////////////////////
+                // real from X.690
+                
+                template<>
+                bool from_x690_cast(float& vl, const row_type& val);  
+                
+                template<>
+                bool from_x690_cast(double& vl, const row_type& val);  
+                
+                 template<>
+                bool from_x690_cast(long double& vl, const row_type& val);                    
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -816,7 +828,16 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<int64_t>& vl);      
                 
                  template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl);    
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl); 
+                 
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<float>& vl);
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<double>& vl);    
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<long double>& vl);                   
                  
                  template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl);                    
