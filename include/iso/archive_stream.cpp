@@ -57,7 +57,8 @@ namespace boost {
             }            
 
             bool row_cast( const list_mutable_buffers& val, row_type& raw,  std::size_t start, std::size_t size) {
-                if (!(size || start)) return false;
+                if (!size)
+                    return true;
                 list_mutable_buffers::const_iterator it = val.begin();
                 std::size_t sz = 0;
                 std::size_t szc = 0 ;
