@@ -241,7 +241,6 @@ namespace boost {
 
 
                 //// null cast            
-
                 std::size_t to_x690_cast(const null_type& val, row_type& src) {
                     return 0;
                 }
@@ -512,7 +511,7 @@ namespace boost {
                 // real from X.690
 
                 template<typename T>
-                static bool from_x690_double_cast_special(T& vl, const row_type& val) {
+                static bool from_x690_real_cast_special(T& vl, const row_type& val) {
                     if (!val.empty()) {
                         switch (val[0]) {
                             case NAN_REAL_ID:
@@ -547,7 +546,7 @@ namespace boost {
                 }
 
                 template<typename T>
-                static bool from_x690_double_cast_decimal(T& vl, const row_type& val) {
+                static bool from_x690_real_cast_decimal(T& vl, const row_type& val) {
                     try {
                         vl = boost::lexical_cast<T > (std::string(val.begin(), val.end()));
                     }
@@ -558,7 +557,7 @@ namespace boost {
                 }
 
                 template<typename T, typename B, std::size_t MANT, std::size_t EXPB>
-                static bool from_x690_double_cast_bin(T& vl, const row_type& val) {
+                static bool from_x690_real_cast_bin(T& vl, const row_type& val) {
                     if (!val.empty()) {
                         bool negat = val[0] & '\x40';
                         B base = 2;
@@ -612,9 +611,9 @@ namespace boost {
                     }
                     else {
                         switch (val[0] & '\xC0') {
-                            case 0: return from_x690_double_cast_decimal(vl, val);
-                            case '\x40': return from_x690_double_cast_decimal(vl, val);
-                            default: return from_x690_double_cast_bin<float, int32_t, FLOAT_MANTISSA_SIZE, FLOAT_EXPONENTA_DELT > (vl, val);
+                            case 0: return from_x690_real_cast_decimal(vl, val);
+                            case '\x40': return from_x690_real_cast_decimal(vl, val);
+                            default: return from_x690_real_cast_bin<float, int32_t, FLOAT_MANTISSA_SIZE, FLOAT_EXPONENTA_DELT > (vl, val);
                         }
                     }
                     return false;
@@ -628,9 +627,9 @@ namespace boost {
                     }
                     else {
                         switch (val[0] & '\xC0') {
-                            case 0: return from_x690_double_cast_decimal(vl, val);
-                            case '\x40': return from_x690_double_cast_decimal(vl, val);
-                            default: return from_x690_double_cast_bin<double, int64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (vl, val);
+                            case 0: return from_x690_real_cast_decimal(vl, val);
+                            case '\x40': return from_x690_real_cast_decimal(vl, val);
+                            default: return from_x690_real_cast_bin<double, int64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (vl, val);
                         }
                     }
                     return false;
@@ -644,8 +643,8 @@ namespace boost {
                     }
                     else {
                         switch (val[0] & '\xC0') {
-                            case 0: return from_x690_double_cast_decimal(vl, val);
-                            case '\x40': return from_x690_double_cast_decimal(vl, val);
+                            case 0: return from_x690_real_cast_decimal(vl, val);
+                            case '\x40': return from_x690_real_cast_decimal(vl, val);
                             default: return false;
                         }
                     }
@@ -670,24 +669,86 @@ namespace boost {
 
                  template<>
                 bool from_x690_cast(null_type& val, const row_type& vl){
+                     if (vl.empty()){
+                        val=null_type();
+                        return true;}
                      return false;
                  }
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // oid from X.690
+                 
 
-                template<>
-                bool from_x690_cast(oid_type& val, const row_type& vl){
-                     return false;
+                bool from_x690_impl_cast(oidindx_type& val, const row_type& vl, row_type::const_iterator& its){
+                    val=0;
+                    while(its!=vl.end()){
+                        val= (val << 7) | (static_cast<oidindx_type> (*reinterpret_cast< const uint8_t*> (&(*its))) & '\x7F');
+                        if (((*its) & '\x80')) {
+                            ++its;
+                        }
+                        else
+                        {
+                           ++its;
+                           return true;                     
+                        }                                            
+                    }
+                    return false;
                  }
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // relative from to X.690
 
                 template<>
+                bool from_x690_cast(oid_type& val, const row_type& vl) {
+                    row_type::const_iterator  its = vl.begin();
+                    if (its == vl.end())
+                        return false;
+                    val.clear();
+                    bool fst = true;
+                    oidindx_type  tmp = 0;
+                    while (its != vl.end()) {
+                        if (!from_x690_impl_cast(tmp, vl, its))
+                            return false;
+                        if (!fst)
+                            val.push_back(tmp);
+                        else {
+                            fst = false;
+                            if (tmp < 40) {
+                                val.push_back(0);
+                                val.push_back(tmp);
+                            }
+                            else {
+                                if (tmp < 80) {
+                                    val.push_back(1);
+                                    val.push_back(tmp-40);
+                                }
+                                else {
+                                    val.push_back(2);
+                                    val.push_back(tmp-80);
+                                }
+                            }
+                        }
+                    }
+                    return true;
+                }
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // relative from to X.690
+
+                template<>
                 bool from_x690_cast(reloid_type& val, const row_type& vl){
-                     return false;
+                     row_type::const_iterator  its=vl.begin();
+                     if (its==vl.end())
+                         return false;
+                     val.clear();                    
+                     oidindx_type  tmp=0;
+                    while(its!=vl.end()){
+                        if (!from_x690_impl_cast(tmp,vl,its))
+                            return false;
+                    val.push_back(tmp);                
+                    }   
+                    return true;                     
                  }
 
 
