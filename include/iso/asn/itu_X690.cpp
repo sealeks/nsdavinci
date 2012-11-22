@@ -8,6 +8,7 @@
 #include "itu_X690.h"
 #include <boost/lexical_cast.hpp>
 #include <iosfwd>
+#include <vector>
 
 namespace boost {
     namespace asio {
@@ -129,7 +130,7 @@ namespace boost {
 
                 template<typename T, typename B, std::size_t MANT, std::size_t EXPB>
                 static std::size_t to_x690_cast_realimpl(T val, row_type& src) {
-                    
+
                     std::size_t strtsz = src.size();
                     if (val == 0)
                         return 0;
@@ -149,7 +150,7 @@ namespace boost {
                         src.push_back(static_cast<row_type::value_type> (NEGATNULL_REAL_ID));
                         return 1;
                     }
-                    
+
                     row_type tmp;
                     bool negat = false;
                     B  base0 = *reinterpret_cast<B*> (&val);
@@ -243,6 +244,7 @@ namespace boost {
 
 
                 //// null cast            
+
                 std::size_t to_x690_cast(const null_type& val, row_type& src) {
                     return 0;
                 }
@@ -507,8 +509,8 @@ namespace boost {
                 }
 
 
-                
-                
+
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // real from X.690
 
@@ -590,16 +592,44 @@ namespace boost {
                         if (val.size() <= exp_sz)
                             return false;
                         row_type::const_iterator itrexen = val.begin() + exp_sz + 1;
-                        B exp = 0;
-                        for (row_type::const_iterator it = val.begin() + 1; it != itrexen; ++it)
-                            exp = (exp << 8) | static_cast<B> (*reinterpret_cast< const uint8_t*> (&(*it)));
-                        exp += (EXPB+MANT);
-                        exp <<= MANT;
+                        int32_t exp_b = 0;
+                        if (!from_x690_cast(exp_b, row_type(val.begin() + 1, itrexen)))
+                            return false;
+                        exp_b += (EXPB + MANT+factor);
                         B mant = 0;
-                        for (row_type::const_iterator it = itrexen; it != val.end(); ++it)
-                            mant = (mant << 8) | static_cast<B> (*reinterpret_cast< const uint8_t*> (&(*it)));
-                        B rslt = mant | exp | negat;
-                        vl = *reinterpret_cast<T*>(&rslt);
+                        //B marker0 = ((~B(0)) << MANT);
+                        for (row_type::const_iterator it = itrexen; it != val.end(); ++it){
+                            if ((mant = (mant << 8) | static_cast<B> (*reinterpret_cast< const uint8_t*> (&(*it)))) & ((~B(0)) << MANT)) {
+                                exp_b += (std::distance(it, val.end()) - 1)*8;
+                                while (mant & ((~B(0)) << MANT)) {
+                                    mant >>= 1;
+                                    exp_b++;
+                                }
+                                break;
+                            }}
+                        
+                        if (!mant){
+                            vl=0;
+                            return true;
+                        }
+                        
+                        //B marker1 = (B(1) << (MANT));
+                        while (!((B(1) << (MANT)) & mant)) {
+                            exp_b--;
+                            mant <<= 1;
+                        }
+                        if (exp_b < 0){
+                            vl=negat ? -0.0 : 0;
+                            return true;}
+                        B exp = static_cast<B>(exp_b);
+                        //B marker2 = (~((~B(0)) << (sizeof(B)*8-MANT-1)));                         
+                        if (exp >= (~((~B(0)) << (sizeof (B)*8 - MANT - 1)))) {
+                            vl= negat ? (-std::numeric_limits<T>::infinity()) :  (std::numeric_limits<T>::infinity());
+                            return true;
+                        }
+                        exp <<= MANT;
+                        B rslt = (mant &  (~(B(1) << (MANT)))) | exp | negat;
+                        vl = *reinterpret_cast<T*> (&rslt);
                     }
 
                     return true;
@@ -615,7 +645,7 @@ namespace boost {
                         switch (val[0] & '\xC0') {
                             case 0: return from_x690_real_cast_decimal(vl, val);
                             case '\x40': return from_x690_real_cast_decimal(vl, val);
-                            default: return from_x690_real_cast_bin<float, int32_t, FLOAT_MANTISSA_SIZE, FLOAT_EXPONENTA_DELT > (vl, val);
+                            default: return from_x690_real_cast_bin<float, uint32_t, FLOAT_MANTISSA_SIZE, FLOAT_EXPONENTA_DELT > (vl, val);
                         }
                     }
                     return false;
@@ -631,7 +661,7 @@ namespace boost {
                         switch (val[0] & '\xC0') {
                             case 0: return from_x690_real_cast_decimal(vl, val);
                             case '\x40': return from_x690_real_cast_decimal(vl, val);
-                            default: return from_x690_real_cast_bin<double, int64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (vl, val);
+                            default: return from_x690_real_cast_bin<double, uint64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (vl, val);
                         }
                     }
                     return false;
@@ -647,7 +677,14 @@ namespace boost {
                         switch (val[0] & '\xC0') {
                             case 0: return from_x690_real_cast_decimal(vl, val);
                             case '\x40': return from_x690_real_cast_decimal(vl, val);
-                            default: return false;
+                            default:
+                            {
+                                double tmp = 0;
+                                if ( from_x690_real_cast_bin<double, uint64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (tmp, val)) {
+                                    vl = tmp;
+                                    return true;
+                                }
+                            }
                         }
                     }
                     return false;
@@ -665,38 +702,37 @@ namespace boost {
                         vl = val[0];
                     return true;
                 }
-                
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // null from X.690               
 
-                 template<>
-                bool from_x690_cast(null_type& val, const row_type& vl){
-                     if (vl.empty()){
-                        val=null_type();
-                        return true;}
-                     return false;
-                 }
+                template<>
+                bool from_x690_cast(null_type& val, const row_type& vl) {
+                    if (vl.empty()) {
+                        val = null_type();
+                        return true;
+                    }
+                    return false;
+                }
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // oid from X.690
-                 
 
-                bool from_x690_impl_cast(oidindx_type& val, const row_type& vl, row_type::const_iterator& its){
-                    val=0;
-                    while(its!=vl.end()){
-                        val= (val << 7) | (static_cast<oidindx_type> (*reinterpret_cast< const uint8_t*> (&(*its))) & '\x7F');
+                bool from_x690_impl_cast(oidindx_type& val, const row_type& vl, row_type::const_iterator& its) {
+                    val = 0;
+                    while (its != vl.end()) {
+                        val = (val << 7) | (static_cast<oidindx_type> (*reinterpret_cast< const uint8_t*> (&(*its))) & '\x7F');
                         if (((*its) & '\x80')) {
                             ++its;
                         }
-                        else
-                        {
-                           ++its;
-                           return true;                     
-                        }                                            
+                        else {
+                            ++its;
+                            return true;
+                        }
                     }
                     return false;
-                 }
+                }
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // relative from to X.690
@@ -723,11 +759,11 @@ namespace boost {
                             else {
                                 if (tmp < 80) {
                                     val.push_back(1);
-                                    val.push_back(tmp-40);
+                                    val.push_back(tmp - 40);
                                 }
                                 else {
                                     val.push_back(2);
-                                    val.push_back(tmp-80);
+                                    val.push_back(tmp - 80);
                                 }
                             }
                         }
@@ -739,19 +775,19 @@ namespace boost {
                 // relative from to X.690
 
                 template<>
-                bool from_x690_cast(reloid_type& val, const row_type& vl){
-                     row_type::const_iterator  its=vl.begin();
-                     if (its==vl.end())
-                         return false;
-                     val.clear();                    
-                     oidindx_type  tmp=0;
-                    while(its!=vl.end()){
-                        if (!from_x690_impl_cast(tmp,vl,its))
+                bool from_x690_cast(reloid_type& val, const row_type& vl) {
+                    row_type::const_iterator  its = vl.begin();
+                    if (its == vl.end())
+                        return false;
+                    val.clear();
+                    oidindx_type  tmp = 0;
+                    while (its != vl.end()) {
+                        if (!from_x690_impl_cast(tmp, vl, its))
                             return false;
-                    val.push_back(tmp);                
-                    }   
-                    return true;                     
-                 }
+                        val.push_back(tmp);
+                    }
+                    return true;
+                }
 
 
                 ////////////////////////////////////////////
@@ -815,7 +851,7 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl) {
                     return  primitive_desirialize(stream, vl);
                 }
-                
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<null_type>& vl) {
                     return  primitive_desirialize(stream, vl);
@@ -829,7 +865,7 @@ namespace boost {
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl) {
                     return  primitive_desirialize(stream, vl);
-                }                
+                }
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
                 /*TESTS                                                                                                                                                                                                              */
