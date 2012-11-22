@@ -68,7 +68,7 @@ namespace boost {
 
 
                 const std::size_t CER_STRING_MAX_SIZE = 1000;
-
+                //const std::size_t CER_STRING_MAX_SIZE = 5;
 
 
 
@@ -752,10 +752,11 @@ namespace boost {
                         std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
                         if (szsize) {
                             stream.ready(szsize + sztag);
-                            implicit_value<T > (vl.value()) >> stream;
+                            stream >> implicit_value<T > (vl.value());
                             if (tmpsize.undefsize()) {
-                                if (stream.check_endofcontet()){}
-                            }                        
+                                if (stream.check_endofcontet()) {
+                                }
+                            }
                         }
                     }
                     return stream;
@@ -781,14 +782,15 @@ namespace boost {
                     tag tmptag;
                     std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
                     if (sztag && (vl == tmptag)) {
-                        size_class tmpsize;                        
+                        size_class tmpsize;
                         std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
                         if (szsize) {
                             stream.ready(szsize + sztag);
                             const_cast<T*> (&(vl.value()))->serialize(stream);
                             if (tmpsize.undefsize()) {
-                                if (stream.check_endofcontet()){}
-                            }   
+                                if (stream.check_endofcontet()) {
+                                }
+                            }
                         }
                     }
                     return stream;
@@ -829,7 +831,7 @@ namespace boost {
                 }
 
                 template<typename T>
-                iarchive& stringtype_reader(iarchive& stream, T& vl, id_type id , int8_t mask) {
+                bool stringtype_reader(iarchive& stream, T& vl, id_type id , int8_t mask) {
                     tag tmptag;
                     std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
                     if (sztag && (id == tmptag.id())) {
@@ -837,29 +839,49 @@ namespace boost {
                         std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
                         if (szsize) {
                             if (tmpsize.undefsize()) {
+                                stream.ready(szsize + sztag + tmpsize.size());
                                 if (tmptag.mask() & CONSTRUCTED_ENCODING) {
-
+                                    while (!stream.check_endofcontet() && !stream.buffers().empty()) {
+                                        if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask))
+                                            return false;
+                                    }
+                                    return true;
                                 }
                                 else {
-
+                                    std::size_t itfnd=0;
+                                    stream.ready(szsize + sztag);
+                                    if (boost::asio::iso::find_eof_content(stream.buffers() ,itfnd)){
+                                        row_type data;
+                                        if (boost::asio::iso::row_cast(stream.buffers(), data , 0 , itfnd )) {
+                                            vl.insert(vl.end(), data.begin(), data.end());
+                                            return true;
+                                         }
+                                    }
+                                    return false;
                                 }
                             }
                             else {
                                 if (tmptag.mask() & CONSTRUCTED_ENCODING) {
-                                     
-                                    
+                                    while (!stream.buffers().empty()) {
+                                        if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask)){
+                                            stream.ready(szsize + sztag + tmpsize.size());
+                                            return true;
+                                        }
+                                    }                                   
+                                    return false;
                                 }
                                 else {
                                     row_type data;
                                     if (boost::asio::iso::row_cast(stream.buffers(), data , szsize + sztag, tmpsize.size())) {
-                                            vl.insert(vl.end(), data.begin(),data.end());
-                                            stream.ready(szsize + sztag + tmpsize.size());
-                                        }
+                                        vl.insert(vl.end(), data.begin(), data.end());
+                                        stream.ready(szsize + sztag + tmpsize.size());
+                                        return true;
                                     }
                                 }
                             }
                         }
-                return stream;
+                    }
+                    return false;
                 }
 
                 template<>

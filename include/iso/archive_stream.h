@@ -43,6 +43,7 @@ namespace boost {
 
             list_mutable_buffers intersect( const list_mutable_buffers& val, std::size_t start = 0 , std::size_t size = 0 );
             void popfront_list(list_mutable_buffers& val, std::size_t start);
+            bool find_eof_content(const list_mutable_buffers& val, std::size_t& rslt);            
             bool row_cast( const list_mutable_buffers& val, row_type& raw,  std::size_t start , std::size_t size);
 
 

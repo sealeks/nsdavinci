@@ -54,6 +54,28 @@ namespace boost {
                          return;
                     }
                 }
+            }   
+            
+            bool find_eof_content(const list_mutable_buffers& val, std::size_t& rslt){
+                rslt=0;
+                bool findend =false;            
+                for (list_mutable_buffers::const_iterator it=val.begin();it!=val.end();++it){
+                    mutable_buffer tmp=*it;
+                    std::size_t size=boost::asio::buffer_size(*it);
+                    for (std::size_t i=0;i<size;++i){
+                        if (findend){
+                            if (!(*boost::asio::buffer_cast<row_type::value_type*>(boost::asio::buffer(tmp+i,1)))){
+                                rslt--;
+                                return true;}
+                            findend=false;
+                        }
+                        else{
+                            findend=!(*boost::asio::buffer_cast<row_type::value_type*>(boost::asio::buffer(tmp+i,1)));
+                        }
+                        rslt++;
+                    }
+                }
+                return false;
             }            
 
             bool row_cast( const list_mutable_buffers& val, row_type& raw,  std::size_t start, std::size_t size) {
