@@ -644,7 +644,7 @@ namespace boost {
                     else {
                         switch (val[0] & '\xC0') {
                             case 0: return from_x690_real_cast_decimal(vl, val);
-                            case '\x40': return from_x690_real_cast_decimal(vl, val);
+                            case '\x40': return from_x690_real_cast_special(vl, val);
                             default: return from_x690_real_cast_bin<float, uint32_t, FLOAT_MANTISSA_SIZE, FLOAT_EXPONENTA_DELT > (vl, val);
                         }
                     }
@@ -660,7 +660,7 @@ namespace boost {
                     else {
                         switch (val[0] & '\xC0') {
                             case 0: return from_x690_real_cast_decimal(vl, val);
-                            case '\x40': return from_x690_real_cast_decimal(vl, val);
+                            case '\x40': return from_x690_real_cast_special(vl, val);
                             default: return from_x690_real_cast_bin<double, uint64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (vl, val);
                         }
                     }
@@ -676,7 +676,7 @@ namespace boost {
                     else {
                         switch (val[0] & '\xC0') {
                             case 0: return from_x690_real_cast_decimal(vl, val);
-                            case '\x40': return from_x690_real_cast_decimal(vl, val);
+                            case '\x40': return from_x690_real_cast_special(vl, val);
                             default:
                             {
                                 double tmp = 0;
