@@ -167,10 +167,9 @@ namespace boost {
             /// NULL TYPE
 
             class null_type {
-
-                null_type() {
-                }
-            } ;
+            public:
+                null_type() {}
+            };
 
             inline  std::ostream& operator<<(std::ostream& stream, const null_type& vl) {
                 return stream << "NULL TYPE" << std::endl;

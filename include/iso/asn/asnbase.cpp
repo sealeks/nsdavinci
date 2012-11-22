@@ -62,7 +62,7 @@ namespace boost {
                         stream << *it;
                     else
                         stream <<  "." << *it;
-                stream << std::endl;
+                //stream << std::endl;
                 return stream;
             }
             
@@ -104,7 +104,7 @@ namespace boost {
                         stream << *it;
                     else
                         stream <<  "." << *it;
-                stream << std::endl;
+                //stream << std::endl;
                 return stream;
             }            
 
