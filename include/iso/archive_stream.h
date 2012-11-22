@@ -134,6 +134,17 @@ namespace boost {
                 void ready(std::size_t sz) {
                     popfront_list(listbuffers_, sz);
                 }
+                
+                bool check_endofcontet() {
+                    row_type  data;
+                    if (row_cast(listbuffers_, data,  0 , 2)){
+                        if ((data.size()==2) && (data[0]==0) && (data[1]==0)){
+                            popfront_list(listbuffers_, 2);
+                            return true;
+                        } 
+                    }
+                    return false;
+                }                
 
                 const list_mutable_buffers&  buffers() const {
                     return listbuffers_;

@@ -866,6 +866,21 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl) {
                     return  primitive_desirialize(stream, vl);
                 }
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<bitstring_type>& vl) {
+                    const_cast<bitstring_type*> (&(vl.value()))->clear();                    
+                    stringtype_reader(stream, *const_cast<bitstring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }     
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<octetstring_type>& vl) {
+                    const_cast<octetstring_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<octetstring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }                
+                
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
                 /*TESTS                                                                                                                                                                                                              */

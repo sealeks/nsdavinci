@@ -441,7 +441,7 @@ namespace boost {
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const implicit_value<T>& vl) {
 
-                    stream.add( to_x690_cast(tag(vl.id(), vl.mask() | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING) )));
+                    stream.add( to_x690_cast(tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING )));
                     oarchive::iterator_list_const_buffers it = stream.last();
 
                     std::size_t sz = stream.size();
@@ -462,7 +462,7 @@ namespace boost {
                 template<typename T>
                 oarchive& primitive_sirialize(oarchive& stream, const implicit_value<T>& vl) {
 
-                    stream.add( to_x690_cast(tag(vl.id(), vl.mask() | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING : CONSTRUCTED_ENCODING) )));
+                    stream.add( to_x690_cast(tag(vl.id(), vl.mask())));
                     oarchive::iterator_list_const_buffers it = stream.last();
 
                     std::size_t sz = stream.size();
@@ -500,7 +500,6 @@ namespace boost {
                 template<typename T>
                 void x690_string_to_stream_cast(const T& val, oarchive& stream, int8_t lentype) {
                     if (!lentype) {
-
                         stream.add(val);
                         return;
                     }
@@ -754,6 +753,9 @@ namespace boost {
                         if (szsize) {
                             stream.ready(szsize + sztag);
                             implicit_value<T > (vl.value()) >> stream;
+                            if (tmpsize.undefsize()) {
+                                if (stream.check_endofcontet()){}
+                            }                        
                         }
                     }
                     return stream;
@@ -779,11 +781,14 @@ namespace boost {
                     tag tmptag;
                     std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
                     if (sztag && (vl == tmptag)) {
-                        size_class tmpsize;
+                        size_class tmpsize;                        
                         std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
                         if (szsize) {
                             stream.ready(szsize + sztag);
                             const_cast<T*> (&(vl.value()))->serialize(stream);
+                            if (tmpsize.undefsize()) {
+                                if (stream.check_endofcontet()){}
+                            }   
                         }
                     }
                     return stream;
@@ -821,6 +826,40 @@ namespace boost {
                         }
                     }
                     return stream;
+                }
+
+                template<typename T>
+                iarchive& stringtype_reader(iarchive& stream, T& vl, id_type id , int8_t mask) {
+                    tag tmptag;
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    if (sztag && (id == tmptag.id())) {
+                        size_class tmpsize;
+                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                        if (szsize) {
+                            if (tmpsize.undefsize()) {
+                                if (tmptag.mask() & CONSTRUCTED_ENCODING) {
+
+                                }
+                                else {
+
+                                }
+                            }
+                            else {
+                                if (tmptag.mask() & CONSTRUCTED_ENCODING) {
+                                     
+                                    
+                                }
+                                else {
+                                    row_type data;
+                                    if (boost::asio::iso::row_cast(stream.buffers(), data , szsize + sztag, tmpsize.size())) {
+                                            vl.insert(vl.end(), data.begin(),data.end());
+                                            stream.ready(szsize + sztag + tmpsize.size());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                return stream;
                 }
 
                 template<>
@@ -867,6 +906,12 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<bitstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<octetstring_type>& vl);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
