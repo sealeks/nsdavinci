@@ -278,7 +278,7 @@ namespace boost {
             // octetstring_type
 
             std::ostream& operator<<(std::ostream& stream, const octetstring_type& vl) {
-                stream <<  std::string(vl.begin(), vl.end()) << std::endl;
+                stream <<  std::string(vl.begin(), vl.end());
                 return stream;
             }
 
