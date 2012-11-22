@@ -129,6 +129,7 @@ namespace boost {
 
                 template<typename T, typename B, std::size_t MANT, std::size_t EXPB>
                 static std::size_t to_x690_cast_realimpl(T val, row_type& src) {
+                    
                     std::size_t strtsz = src.size();
                     if (val == 0)
                         return 0;
@@ -148,6 +149,7 @@ namespace boost {
                         src.push_back(static_cast<row_type::value_type> (NEGATNULL_REAL_ID));
                         return 1;
                     }
+                    
                     row_type tmp;
                     bool negat = false;
                     B  base0 = *reinterpret_cast<B*> (&val);
@@ -559,15 +561,15 @@ namespace boost {
                 template<typename T, typename B, std::size_t MANT, std::size_t EXPB>
                 static bool from_x690_real_cast_bin(T& vl, const row_type& val) {
                     if (!val.empty()) {
-                        bool negat = val[0] & '\x40';
-                        B base = 2;
+                        B negat = (val[0] & '\x40') ?  (B(1) << (sizeof (B)*8 - 1)) : 0;
+                        int32_t base = 2;
                         switch (val[0] & '\x30') {
                             case '\x10':  base = 8;
                                 break;
                             case '\x20':  base = 16;
                                 break;
                         }
-                        B factor = static_cast<B> ((val[0] & '\xC') >> 2);
+                        std::size_t factor = static_cast<std::size_t> ((val[0] & '\xC') >> 2);
                         std::size_t exp_sz = 1;
                         switch (val[0] & '\x3') {
                             case '\x1':  exp_sz = 2;
@@ -596,7 +598,7 @@ namespace boost {
                         B mant = 0;
                         for (row_type::const_iterator it = itrexen; it != val.end(); ++it)
                             mant = (mant << 8) | static_cast<B> (*reinterpret_cast< const uint8_t*> (&(*it)));
-                        B rslt = mant | exp;
+                        B rslt = mant | exp | negat;
                         vl = *reinterpret_cast<T*>(&rslt);
                     }
 
