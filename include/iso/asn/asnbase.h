@@ -657,19 +657,19 @@ namespace boost {
                 typedef  T   root_type;
 
                 explicit implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
-                id_(id) ,  val_(vl), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                id_(id) ,  val_(vl), mask_(from_cast(type))  {
                 }
 
                 explicit implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
-                id_(id) ,  val_(const_cast<T&> (vl)), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                id_(id) ,  val_(const_cast<T&> (vl)), mask_(from_cast(type))  {
                 }
 
                 explicit  implicit_value(T& vl,  class_type type = CONTEXT_CLASS) :
-                id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
                 }
 
                 explicit  implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) : 
-                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type))  {
                 }
 
                 const T& value() const {
@@ -697,7 +697,7 @@ namespace boost {
                 }
                 
               bool operator==(const tag& rs) const {
-                return (id() == rs.id() && mask() == rs.mask());
+                return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) ==( rs.mask() | CONSTRUCTED_ENCODING));
               }               
 
 
@@ -776,19 +776,19 @@ namespace boost {
                 typedef  S   root_type;
 
                 explicit optional_implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
-                id_(id) ,  val_(vl), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                id_(id) ,  val_(vl), mask_(from_cast(type))  {
                 }
 
                 explicit optional_implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) : 
-                id_(id) ,  val_(const_cast<T&> (vl)), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                id_(id) ,  val_(const_cast<T&> (vl)), mask_(from_cast(type))  {
                 }
 
                 explicit  optional_implicit_value(T& vl,  class_type type = CONTEXT_CLASS) :
-                id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
                 }
 
                 explicit  optional_implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) :
-                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type) | (tag_traits<T>::primitive() ? PRIMITIVE_ENCODING: CONSTRUCTED_ENCODING))  {
+                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type))  {
                 }
 
                 const T& value() const {
@@ -816,7 +816,7 @@ namespace boost {
                 }
                 
               bool operator==(const tag& rs) const {
-                return (id() == rs.id() && mask() == rs.mask());
+                return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) ==( rs.mask() | CONSTRUCTED_ENCODING));
               }                     
 
 
