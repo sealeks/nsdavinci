@@ -2,7 +2,7 @@
  * File:   asnbase.h
  * Author: sealeks
  *
- * Created on 2 Р В РЎСљР В РЎвЂўР РЋР РЏР В Р’В±Р РЋР вЂљР РЋР Р‰ 2012 Р В РЎвЂ“., 0:39
+ * Created on 2 Р В Р’В Р РЋРЎС™Р В Р’В Р РЋРІР‚СћР В Р Р‹Р В Р РЏР В Р’В Р вЂ™Р’В±Р В Р Р‹Р В РІР‚С™Р В Р Р‹Р В Р вЂ° 2012 Р В Р’В Р РЋРІР‚вЂњ., 0:39
  */
 
 #ifndef ASNBASE_H
@@ -825,12 +825,38 @@ namespace boost {
                 T& val_;
                 int8_t   mask_;
             } ;
+            
+            
 
 
 
 
 
             ///////////////////////////////////////////////////////////////////////////
+            
+            
+            template<typename T >            
+            class choice_value {
+            public: 
+                
+                typedef  T   root_type;
+                
+                choice_value(const T& vl): val_(vl) {}
+                
+                choice_value(T& vl): val_(const_cast<T&> (vl)) {}                
+                
+                const T& value() const {
+                    return val_;
+                }
+
+                T& value() {
+                    return val_;
+                }     
+                
+            private:
+                
+                 T& val_;               
+             };
 
 
             ///////////////////////////////////////////////////////////////////////////
