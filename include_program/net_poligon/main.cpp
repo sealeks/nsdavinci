@@ -177,23 +177,30 @@ public:
 struct TestStruct1  {
     int i;
     int  j;
-   //TestStruct2 x;
+
+    TestStruct1() : i(0), j(0) {
+    }
+
+    TestStruct1(int i_, int j_) : i(i_), j(j_) {
+    }
+    //TestStruct2 x;
+
     template<typename Archive>
-    void serialize(Archive& arch) {
+            void serialize(Archive & arch) {
         arch & implicit_value<int>(i, 0);
         arch & implicit_value<int>(j, 1);
-       // arch & implicit_value<TestStruct2>(x, 2);        
+        // arch & implicit_value<TestStruct2>(x, 2);        
     }
-};
+} ;
 
 struct TestStruct2  {
     bool b;
     octetstring_type  o;
 
     template<typename Archive>
-    void serialize(Archive& arch) {
+            void serialize(Archive & arch) {
         arch & implicit_value<bool>(b, 0);
-        arch & implicit_value<octetstring_type>(o, 1);
+        arch & implicit_value<octetstring_type > (o, 1);
     }
 
 
@@ -201,59 +208,99 @@ struct TestStruct2  {
 
 } ;
 
-
 struct TestStruct3  {
+
+    struct choice {
+        boost::shared_ptr<int> ch1;
+        boost::shared_ptr<TestStruct1> ch2;
+
+        template<typename Archive>
+                void serialize(Archive & arch) {
+            arch & optional_explicit_value<int>(ch1 , 500);
+            arch & optional_explicit_value<TestStruct1 > (ch2 , 501);
+        }
+    } ;
+
     int i;
     int  j;
     double d;
     TestStruct1 y;
     oid_type o;
-    reloid_type r;    
-    octetstring_type s;  
-   //TestStruct2 x;
+    reloid_type r;
+    octetstring_type s;
+    boost::shared_ptr<int> io;
+    boost::shared_ptr<TestStruct1> yo;
+    choice ch;    
+
+
+    //TestStruct2 x;
+
     template<typename Archive>
-    void serialize(Archive& arch) {
+            void serialize(Archive & arch) {
+
+        arch & choice_value<choice>(ch);    
+        arch & optional_explicit_value<TestStruct1 > (yo, 356);        
         arch & implicit_value<int>(i, 0);
         arch & implicit_value<int>(j, 1);
-        arch & explicit_value<TestStruct1>(y, 3);              
-        arch & implicit_value<double>(d, UNIVERSAL_CLASS);   
-        arch & implicit_value<oid_type>(o, UNIVERSAL_CLASS); 
-        arch & implicit_value<reloid_type>(r, UNIVERSAL_CLASS); 
-        arch & implicit_value<octetstring_type>(s, UNIVERSAL_CLASS);            
-  
+        arch & explicit_value<TestStruct1 > (y, 3);
+        arch & implicit_value<double>(d, UNIVERSAL_CLASS);
+        arch & implicit_value<oid_type > (o, UNIVERSAL_CLASS);
+        arch & implicit_value<reloid_type > (r, UNIVERSAL_CLASS);
+        arch & implicit_value<octetstring_type > (s, UNIVERSAL_CLASS);
+        arch & optional_implicit_value<int>(io);
+
     }
 
 } ;
 
 struct TestStruct3u  {
+    
+     struct choice {
+         
+        boost::shared_ptr<int> ch1;
+        boost::shared_ptr<TestStruct1> ch2;
+
+        template<typename Archive>
+                void serialize(Archive & arch) {
+            arch & optional_explicit_value<int>(ch1 , 500);
+            arch & optional_explicit_value<TestStruct1 > (ch2 , 501);
+        }
+    };   
+    
+    
     int i;
     int  j;
     float d;
     TestStruct1 y;
     oid_type o;
-    reloid_type r;    
-    octetstring_type s;     
-   //TestStruct2 x;
+    reloid_type r;
+    octetstring_type s;
+    boost::shared_ptr<int> io;
+    boost::shared_ptr<TestStruct1> yo;
+    choice ch;
+    //TestStruct2 x;
+    
+
     template<typename Archive>
-    void serialize(Archive& arch) {
+            void serialize(Archive & arch) {
+        arch & choice_value<choice>(ch);         
+        arch & optional_explicit_value<TestStruct1 > (yo, 356);
         arch & implicit_value<int>(i, 0);
         arch & implicit_value<int>(j, 1);
-        arch & explicit_value<TestStruct1>(y, 3);         
-        arch & implicit_value<float>(d, UNIVERSAL_CLASS);   
-        arch & implicit_value<oid_type>(o, UNIVERSAL_CLASS); 
-        arch & implicit_value<reloid_type>(r, UNIVERSAL_CLASS);  
-        arch & implicit_value<octetstring_type>(s, UNIVERSAL_CLASS);        
-       
+        arch & explicit_value<TestStruct1 > (y, 3);
+        arch & implicit_value<float>(d, UNIVERSAL_CLASS);
+        arch & implicit_value<oid_type > (o, UNIVERSAL_CLASS);
+        arch & implicit_value<reloid_type > (r, UNIVERSAL_CLASS);
+        arch & implicit_value<octetstring_type > (s, UNIVERSAL_CLASS);
+        arch & optional_implicit_value<int>(io);
+
     }
 
 } ;
 
-
-
-
-
-
-
+inline std::ostream& operator<<(std::ostream& stream, const TestStruct1& vl) {
+    return stream << "TestStruct1 : i: " << vl.i  << " j: " << vl.j  << " : "  <<  "\n";
+}
 
 int main(int argc, char* argv[]) {
 
@@ -337,9 +384,9 @@ int main(int argc, char* argv[]) {
         std::cout << "reoidtest: " << RELOIDTEST << "\n";
 
 
-       // oarchive OARCV(CER_ENCODING);
-        oarchive OARCV;        
-        iarchive  IARCV;        
+        // oarchive OARCV(CER_ENCODING);
+        oarchive OARCV;
+        iarchive  IARCV;
 
         // ARCVO << OIDTEST2;
         //std::string intstryu="01";
@@ -351,71 +398,73 @@ int main(int argc, char* argv[]) {
         //octetstring_type  bs(std::string("Hellow World!"));
 
 
-       /* CP cptest;
+        /* CP cptest;
 
-        cptest.modeselector = 0;
-        cptest.normal_mode_parameters.called_presentation_selector = octetstring_type("called_________________________________________________________________________________________________________________________________");
-        cptest.normal_mode_parameters.calling_presentation_selector = octetstring_type("calling________________________________________________________________________________________________________________________________");
-        cptest.normal_mode_parameters.default_context_name.abstract_syntax_name = OIDTEST2;
-        cptest.normal_mode_parameters.default_context_name.transfer_syntax_name = OIDTEST;
-        cptest.normal_mode_parameters.presentation_requirements = boost::dynamic_bitset<>(std::string("01"));
-        cptest.normal_mode_parameters.protocol_version = boost::dynamic_bitset<>(std::string("1"));
-        cptest.normal_mode_parameters.user_session_requirements = boost::dynamic_bitset<>(std::string("01000000"));
-        cptest.normal_mode_parameters.presentation_context_definition_list.abstract_syntax_name = OIDTEST;
-        cptest.normal_mode_parameters.presentation_context_definition_list.presentation_context_identifier = 2;
-        cptest.normal_mode_parameters.presentation_context_definition_list.transfer_syntax_name.push_back(OIDTEST);
-        cptest.normal_mode_parameters.presentation_context_definition_list.transfer_syntax_name.push_back(OIDTEST2);
-        cptest.normal_mode_parameters.optional = boost::shared_ptr<int>( new int(9));
-        std::string strtest_ = "qwer";
+         cptest.modeselector = 0;
+         cptest.normal_mode_parameters.called_presentation_selector = octetstring_type("called_________________________________________________________________________________________________________________________________");
+         cptest.normal_mode_parameters.calling_presentation_selector = octetstring_type("calling________________________________________________________________________________________________________________________________");
+         cptest.normal_mode_parameters.default_context_name.abstract_syntax_name = OIDTEST2;
+         cptest.normal_mode_parameters.default_context_name.transfer_syntax_name = OIDTEST;
+         cptest.normal_mode_parameters.presentation_requirements = boost::dynamic_bitset<>(std::string("01"));
+         cptest.normal_mode_parameters.protocol_version = boost::dynamic_bitset<>(std::string("1"));
+         cptest.normal_mode_parameters.user_session_requirements = boost::dynamic_bitset<>(std::string("01000000"));
+         cptest.normal_mode_parameters.presentation_context_definition_list.abstract_syntax_name = OIDTEST;
+         cptest.normal_mode_parameters.presentation_context_definition_list.presentation_context_identifier = 2;
+         cptest.normal_mode_parameters.presentation_context_definition_list.transfer_syntax_name.push_back(OIDTEST);
+         cptest.normal_mode_parameters.presentation_context_definition_list.transfer_syntax_name.push_back(OIDTEST2);
+         cptest.normal_mode_parameters.optional = boost::shared_ptr<int>( new int(9));
+         std::string strtest_ = "qwer";
 
-        // for (int ii=0;ii<1000;++ii)
-        //    strtest_+="fft";
+         // for (int ii=0;ii<1000;++ii)
+         //    strtest_+="fft";
 
-        typedef set_of_type< explicit_value<TestStruct> >            test_set_type;
+         typedef set_of_type< explicit_value<TestStruct> >            test_set_type;
 
-        typedef set_of_type< TestStruct >                                          teststruct_set_type;
+         typedef set_of_type< TestStruct >                                          teststruct_set_type;
 
-        typedef set_of_type< explicit_value<test_set_type> >       super_test_set_type;
+         typedef set_of_type< explicit_value<test_set_type> >       super_test_set_type;
 
-        // typedef implicit_value< test_set_type ,  20 >                               test_set_type_imp;
+         // typedef implicit_value< test_set_type ,  20 >                               test_set_type_imp;
 
-        test_set_type bs1;
+         test_set_type bs1;
 
-        //bs1.push_back( explicit_value<TestStruct>(TestStruct(12, OIDTEST, std::string("111"), RELOIDTEST), 3, CONTEXT_CLASS) );
-        //bs1.push_back( explicit_value<TestStruct>(TestStruct(124, OIDTEST, std::string("112"), RELOIDTEST), 57, CONTEXT_CLASS));
+         //bs1.push_back( explicit_value<TestStruct>(TestStruct(12, OIDTEST, std::string("111"), RELOIDTEST), 3, CONTEXT_CLASS) );
+         //bs1.push_back( explicit_value<TestStruct>(TestStruct(124, OIDTEST, std::string("112"), RELOIDTEST), 57, CONTEXT_CLASS));
 
-        test_set_type bs2;
+         test_set_type bs2;
 
 
-        //bs2.push_back( explicit_value<TestStruct>(TestStruct(125, OIDTEST2, std::string("113"), RELOIDTEST), 57, CONTEXT_CLASS));
-        //bs2.push_back( explicit_value<TestStruct>(TestStruct(126, OIDTEST2, std::string(strtest_), RELOIDTEST), 58, CONTEXT_CLASS));
+         //bs2.push_back( explicit_value<TestStruct>(TestStruct(125, OIDTEST2, std::string("113"), RELOIDTEST), 57, CONTEXT_CLASS));
+         //bs2.push_back( explicit_value<TestStruct>(TestStruct(126, OIDTEST2, std::string(strtest_), RELOIDTEST), 58, CONTEXT_CLASS));
 
-        super_test_set_type bs;
+         super_test_set_type bs;
 
-        teststruct_set_type st;
-        for (int ii = 0; ii < 1000; ++ii)
-            st.push_back(TestStruct(123, OIDTEST, std::string("111"), RELOIDTEST));*/
+         teststruct_set_type st;
+         for (int ii = 0; ii < 1000; ++ii)
+             st.push_back(TestStruct(123, OIDTEST, std::string("111"), RELOIDTEST));*/
 
-      std::string strtest_="";
-        
-        for (int ii=0;ii<5;++ii)
-            strtest_+="fftt";
-        
-        
+        std::string strtest_ = "";
+
+        for (int ii = 0; ii < 5; ++ii)
+            strtest_ += "fftt";
+
+
         TestStruct3 ts3;
-         ts3.i=20;
-         ts3.j=40;
-         ts3.d=0.011;//-1.22456846;  
-         ts3.o=OIDTEST2;
-         ts3.r=RELOIDTEST;    
-         ts3.s=octetstring_type(strtest_);                 
-         ts3.y.i=120;
-         ts3.y.j=240;        
-         
-         TestStruct3u ts33;        
+        ts3.ch.ch2= boost::shared_ptr<TestStruct1 > (new TestStruct1(-50, 60));
+        ts3.i = 20;
+        ts3.j = 40;
+        ts3.d = 0.011; //-1.22456846;  
+        ts3.o = OIDTEST2;
+        ts3.r = RELOIDTEST;
+        ts3.s = octetstring_type(strtest_);
+        ts3.io = boost::shared_ptr<int>(new int(1234567));
+        ts3.y = TestStruct1(120, 240);
+        ts3.yo = boost::shared_ptr<TestStruct1 > (new TestStruct1(120000, -240000));
+
+        TestStruct3u ts33;
         // ts3.x.b=false;
-       //  ts3.x.o=octetstring_type("rrrrrrrrrrrr");         
-                 
+        //  ts3.x.o=octetstring_type("rrrrrrrrrrrr");         
+
 
         //octetstring_type strtest(strtest_);
 
@@ -423,19 +472,26 @@ int main(int argc, char* argv[]) {
 
 
         //OARCV << explicit_value<super_test_set_type>(bs, 10);//explicit_value<TestStruct>(TestStruct(123, OIDTEST, std::string("111")), 56, CONTEXT_CLASS);//explicit_value< super_test_set_type ,  20 >(bs);
-       // TestStruct2 tst(-12212, OIDTEST, std::string("111"),  RELOIDTEST) ;
+        // TestStruct2 tst(-12212, OIDTEST, std::string("111"),  RELOIDTEST) ;
         //OARCV << implicit_value<TestStruct2>(tst, 3, CONTEXT_CLASS) ;
 
         OARCV & implicit_value<TestStruct3 > (ts3, 345, CONTEXT_CLASS) ;
-        
+
         IARCV.add(OARCV);
-      //  implicit_value<TestStruct3 > impls (ts33, 345, CONTEXT_CLASS);
-        
+        //  implicit_value<TestStruct3 > impls (ts33, 345, CONTEXT_CLASS);
+
         IARCV & implicit_value<TestStruct3u > (ts33, 345, CONTEXT_CLASS) ;
 
         std::cout << OARCV;
-        
-        std::cout << "ts33 i: " << ts33.i  << " j: " << ts33.j  << " d: " << ts33.d << " o: " << ts33.o << " r: " << ts33.r <<  " s: " << ts33.s << " yi: " << ts33.y.i  << " yj: " << ts33.y.j  <<  std::endl;
+
+        std::cout << "ts33 i: " << ts33.i  << " j: " << ts33.j  << " d: " << ts33.d << " o: " << ts33.o << " r: " << ts33.r <<  " s: " << ts33.s <<  " io: " << (ts33.io ?  (*ts33.io) : 0) << " y: " << ts33.y;
+
+        if (ts33.yo) {
+            std::cout  << " yo: " << *ts33.yo   <<  std::endl;
+        }
+        else {
+            std::cout  <<  std::endl;
+        }
 
         //test_decoder(test_decode(OARCV));
 
