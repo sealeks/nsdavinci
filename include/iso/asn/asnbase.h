@@ -1,8 +1,8 @@
 /* 
- * File:   asnbase.h
- * Author: sealeks
- *
- * Created on 2 Р В Р’В Р РЋРЎС™Р В Р’В Р РЋРІР‚СћР В Р Р‹Р В Р РЏР В Р’В Р вЂ™Р’В±Р В Р Р‹Р В РІР‚С™Р В Р Р‹Р В Р вЂ° 2012 Р В Р’В Р РЋРІР‚вЂњ., 0:39
+ * File:   iso.cpp
+ * Author: sealeks@mail.ru
+ * 
+ * 
  */
 
 #ifndef ASNBASE_H

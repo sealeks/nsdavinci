@@ -1,8 +1,8 @@
 /* 
- * File:   asnbase.cpp
- * Author: sealeks
+ * File:   iso.cpp
+ * Author: sealeks@mail.ru
  * 
- * Created on 2 Ноябрь 2012 г., 0:39
+ * 
  */
 
 #include "itu_X690.h"

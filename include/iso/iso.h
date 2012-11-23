@@ -1,4 +1,9 @@
-
+/* 
+ * File:   iso.cpp
+ * Author: sealeks@mail.ru
+ * 
+ * 
+ */
 
 #ifndef         ISOSTACK_H_H
 #define	ISOSTACK_H_H

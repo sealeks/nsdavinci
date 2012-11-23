@@ -1,4 +1,9 @@
-
+/* 
+ * File:   iso.cpp
+ * Author: sealeks@mail.ru
+ * 
+ * 
+ */
 
 #ifndef         ISOARCHIVESTREAM_H_H
 #define         ISOARCHIVESTREAM_H_H

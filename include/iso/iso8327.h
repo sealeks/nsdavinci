@@ -1,4 +1,9 @@
-
+/* 
+ * File:   iso.cpp
+ * Author: sealeks@mail.ru
+ * 
+ * 
+ */
 
 #ifndef         ISOPROT8327_H_H
 #define	ISOPROT8327_H_H

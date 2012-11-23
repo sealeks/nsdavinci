@@ -1,8 +1,8 @@
 /* 
- * File:   rfc1006.cpp
+ * File:   iso.cpp
  * Author: sealeks@mail.ru
  * 
- * Created on 28 Р РЋР ВµР Р…РЎвЂљРЎРЏР В±РЎР‚РЎРЉ 2012 Р С–., 22:51
+ * 
  */
 
 #include <iosfwd>

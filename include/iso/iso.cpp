@@ -2,6 +2,7 @@
  * File:   iso.cpp
  * Author: sealeks@mail.ru
  * 
+ * 
  */
 
 #include <iosfwd>
