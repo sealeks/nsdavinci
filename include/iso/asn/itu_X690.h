@@ -280,6 +280,11 @@ namespace boost {
                     void operator&( const optional_implicit_value<T >& vl) {
                         *this  <<  vl;
                     }
+                    
+                    template<typename T>
+                    void operator&(const choice_value<T >& vl) {
+                        *this  <<  vl;
+                    }                      
 
 
 
@@ -482,16 +487,22 @@ namespace boost {
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const optional_explicit_value<T>& vl) {
                     if (vl.value())
-                        stream << explicit_value<T > (vl.value(), vl.id(), vl.mask());
+                        stream << explicit_value<T > (*vl.value(), vl.id(), vl.type());
                     return stream;
                 }
 
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const optional_implicit_value<T>& vl) {
                     if (vl.value())
-                        stream << implicit_value<T > (vl.value(), vl.id(), vl.mask());
+                        stream << implicit_value<T > (*vl.value(), vl.id(), vl.type());
                     return stream;
                 }
+                
+                template<typename T>
+                oarchive& operator<<(oarchive& stream, const choice_value<T>& vl) {
+                    const_cast<T*> (&(vl.value()))->serialize(stream);
+                    return stream;
+                }                
 
 
 
@@ -728,6 +739,11 @@ namespace boost {
                     void operator&(const optional_implicit_value<T >& vl) {
                         *this  >>  vl;
                     }
+                    
+                    template<typename T>
+                    void operator&(const choice_value<T >& vl) {
+                        *this  >>  vl;
+                    }                    
 
 
                 private:
@@ -764,16 +780,13 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const optional_explicit_value<T>& vl) {
-                    tag tmptag;
-                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
-                    if (sztag && (vl == tmptag)) {
-                        size_class tmpsize;
-                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
-                        if (szsize) {
-                            stream.ready(szsize + sztag);
-                            optional_implicit_value<T > (vl.value()) >> stream;
-                        }
-                    }
+                       tag tmptag;  
+                       typedef boost::shared_ptr<T> shared_type;
+                       std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                       if (sztag && (vl==tmptag)){
+                              *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T>(new T());
+                              stream >> explicit_value<T>(*vl.value(), vl.id(),vl.type());
+                           }
                     return stream;
                 }
 
@@ -798,18 +811,25 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const optional_implicit_value<T>& vl) {
-                    /*   tag tmptag;  
+                       tag tmptag;  
+                       typedef boost::shared_ptr<T> shared_type;
                        std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
-                       if (sztag && tmptag.id()==vl.id() && tmptag.mask()==vl.mask()){
-                           size_class tmpsize;
-                           std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
-                           if (szsize){
-                               stream.ready(szsize+sztag);
-                               optional_implicit_value<T > (vl.value()) >> stream;
+                       if (sztag && (vl==tmptag)){
+                              *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T>(new T());
+                              stream >> implicit_value<T>(*vl.value(), vl.id(),vl.type());
                            }
-                       }*/
                     return stream;
                 }
+                
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
+                     const_cast<T*> (&(vl.value()))->serialize(stream);
+                    return stream;
+                }                
+                
+                
+                //////////////////////////////////////////////////////////////////////////////////
 
                 template<typename T>
                 iarchive&  primitive_desirialize(iarchive& stream, const implicit_value<T>& vl) {
