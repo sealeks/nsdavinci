@@ -1,4 +1,9 @@
-
+/* 
+ * File:   iso.cpp
+ * Author: sealeks@mail.ru
+ * 
+ * 
+ */
 
 #ifndef RFC1006_H
 #define	RFC1006_H

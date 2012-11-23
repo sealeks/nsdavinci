@@ -1,8 +1,8 @@
 /* 
- * File:   asnbase.h
- * Author: sealeks
- *
- * Created on 2 РќРѕСЏР±СЂСЊ 2012 Рі., 0:39
+ * File:   iso.cpp
+ * Author: sealeks@mail.ru
+ * 
+ * 
  */
 
 #ifndef ITU_X690BOOST__H
