@@ -892,6 +892,93 @@ namespace boost {
 
             } ;
             
+
+            
+            
+            
+     //////////////////////////////////////////////////////////////////////////////////////////////////////       
+            
+
+     
+     
+     class choice_val{
+         
+         
+     class base_choice_holder{
+     public:
+         base_choice_holder(){}
+         virtual ~base_choice_holder(){}
+         virtual bool empty() const { return true; } 
+         virtual const std::type_info & type() const{
+             return typeid(void);
+         }  
+      
+//         virtual tag Tag() const{
+//             return tag();}
+     };     
+     
+ 
+     template<typename T>
+     class choice_holder : public base_choice_holder{
+     public:
+         choice_holder(T* vl) : base_choice_holder() , val_(boost::shared_ptr<T>(vl)), type_(typeid(T)) {}
+         
+         boost::shared_ptr<T> value(){
+             return val_;
+         }
+         
+         boost::shared_ptr<T> value() const{
+             return val_;
+         }
+         
+         virtual const std::type_info & type() const {
+             return type_;
+         }         
+         
+         virtual bool empty() const { return false; } 
+         
+     private:
+         boost::shared_ptr<T> val_;
+         std::type_info             type_;
+     };            
+         
+     public:
+         
+     
+         typedef boost::shared_ptr<base_choice_holder> type_ptr;
+         
+         choice_val(): val_( new base_choice_holder()){
+         }
+         
+         template<typename T>
+         choice_val(T* vl): val_( new choice_holder<T>(vl)){
+         }
+         
+         bool empty() const{
+             return ((!val_) || (val_->empty()));
+         }
+         
+         template<typename T>        
+         boost::shared_ptr<T> value() const {
+             typedef  choice_holder<T> choice_holder_type;
+             typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
+             return (val_->type()==typeid(T)) ? 
+                 static_cast< choice_holder_ptr  >(val_)->value() : 
+                 boost::shared_ptr<T>();
+         }
+      
+               
+         
+     protected:
+     
+         type_ptr val_;
+         
+     };
+     
+     
+     ////////////////////////////////////////////////////////////////////////////////////////////////////
+     
+            
      template<typename Archive, typename T>
             inline void bind_explicit(Archive & arch, T& vl, id_type id,  class_type type = CONTEXT_CLASS){ 
                     arch & explicit_value<T>(vl, id, type);}
