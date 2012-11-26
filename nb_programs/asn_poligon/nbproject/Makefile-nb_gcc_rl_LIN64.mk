@@ -34,7 +34,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1689547802/main.o
+	${OBJECTDIR}/_ext/300413499/main.o
 
 
 # C Compiler Flags
@@ -55,15 +55,15 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/net_poligon
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/asn_poligon
 
-../../bin/${CND_CONF}/net_poligon: ${OBJECTFILES}
+../../bin/${CND_CONF}/asn_poligon: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/net_poligon ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -o ../../bin/${CND_CONF}/asn_poligon ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/1689547802/main.o: ../../include_program/net_poligon/main.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1689547802
-	$(COMPILE.cc) -O2 -I../../include -o ${OBJECTDIR}/_ext/1689547802/main.o ../../include_program/net_poligon/main.cpp
+${OBJECTDIR}/_ext/300413499/main.o: ../../include_program/asn_poligon/main.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/300413499
+	$(COMPILE.cc) -O2 -I../../include -o ${OBJECTDIR}/_ext/300413499/main.o ../../include_program/asn_poligon/main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -71,7 +71,7 @@ ${OBJECTDIR}/_ext/1689547802/main.o: ../../include_program/net_poligon/main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/net_poligon
+	${RM} ../../bin/${CND_CONF}/asn_poligon
 
 # Subprojects
 .clean-subprojects:
