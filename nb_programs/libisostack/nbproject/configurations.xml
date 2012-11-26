@@ -12,8 +12,16 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>../../include/iso/archive_stream.cpp</itemPath>
+    <itemPath>../../include/iso/archive_stream.h</itemPath>
+    <itemPath>../../include/iso/asn/asnbase.cpp</itemPath>
+    <itemPath>../../include/iso/asn/asnbase.h</itemPath>
     <itemPath>../../include/iso/iso.cpp</itemPath>
     <itemPath>../../include/iso/iso.h</itemPath>
+    <itemPath>../../include/iso/iso8327.cpp</itemPath>
+    <itemPath>../../include/iso/iso8327.h</itemPath>
+    <itemPath>../../include/iso/asn/itu_X690.cpp</itemPath>
+    <itemPath>../../include/iso/asn/itu_X690.h</itemPath>
     <itemPath>../../include/iso/rfc1006.cpp</itemPath>
     <itemPath>../../include/iso/rfc1006.h</itemPath>
   </logicalFolder>
