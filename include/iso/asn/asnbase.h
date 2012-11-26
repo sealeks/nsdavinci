@@ -891,11 +891,74 @@ namespace boost {
                 int8_t   mask_;
 
             } ;
+            
+     template<typename Archive, typename T>
+            inline void bind_explicit(Archive & arch, T& vl, id_type id,  class_type type = CONTEXT_CLASS){ 
+                    arch & explicit_value<T>(vl, id, type);}
+    
+    template<typename Archive, typename T>
+            inline void bind_explicit(Archive & arch, const T& vl,id_type id,  class_type type = CONTEXT_CLASS){ 
+                    arch & explicit_value<T>(vl, id, type);}      
+    
+    template<typename Archive, typename T>
+            inline void bind_explicit(Archive & arch, boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS){ 
+                    arch & optional_explicit_value<T>(vl, id, type);}
+    
+    template<typename Archive, typename T>
+            inline void bind_explicit(Archive & arch, const boost::shared_ptr<T>& vl,id_type id,  class_type type = CONTEXT_CLASS){ 
+                    arch & optional_explicit_value<T>(vl, id, type);}  
+    
+    
+    
 
+    template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, T& vl, id_type id,  class_type type = CONTEXT_CLASS){ 
+                    arch & implicit_value<T>(vl, id, type);}
+    
+    template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, const T& vl,id_type id,  class_type type = CONTEXT_CLASS){ 
+                    arch & implicit_value<T>(vl, id, type);}    
 
+    template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, boost::shared_ptr<T>& vl,id_type id,  class_type type = CONTEXT_CLASS){ 
+                    arch & optional_implicit_value<T>(vl, id, type);}
+    
+    template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, const boost::shared_ptr<T>& vl,id_type id,  class_type type = CONTEXT_CLASS){ 
+                    arch & optional_implicit_value<T>(vl, id, type);}    
+    
 
+    template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, T& vl,  class_type type = CONTEXT_CLASS){ 
+                    arch & implicit_value<T>(vl,  type);}
+    
+    template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, const T& vl, class_type type = CONTEXT_CLASS){ 
+                    arch & implicit_value<T>(vl,  type);}    
 
-
+    template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, boost::shared_ptr<T>& vl,class_type type = CONTEXT_CLASS){ 
+                    arch & optional_implicit_value<T>(vl,  type);}
+    
+    template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, const boost::shared_ptr<T>& vl, class_type type = CONTEXT_CLASS){ 
+                    arch & optional_implicit_value<T>(vl, type);}   
+    
+    
+    
+    
+    template<typename Archive, typename T>
+            inline void bind_choice(Archive & arch, T& vl){ 
+                    arch & choice_value<T>(vl);}      
+    
+    template<typename Archive, typename T>
+            inline void bind_choice(Archive & arch, const T& vl){ 
+                    arch & choice_value<T>(vl);}      
+    
+    
+     
+    
+    
 
         }
     }
