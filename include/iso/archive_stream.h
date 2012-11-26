@@ -29,20 +29,20 @@ namespace boost {
         namespace iso {
 
 
-            typedef  std::vector<int8_t>                                      row_type;
-            typedef  boost::shared_ptr<row_type>                   row_type_ptr;
-            typedef  std::vector<row_type_ptr>                        vect_row_type_ptr;
+            typedef  std::vector<int8_t>                                     row_type;
+            typedef  boost::shared_ptr<row_type>                      row_type_ptr;
+            typedef  std::vector<row_type_ptr>                          vect_row_type_ptr;
 
 
             typedef  std::vector<const_buffer>                          const_buffers;
-            typedef  boost::shared_ptr<const_buffers>           const_buffers_ptr;
+            typedef  boost::shared_ptr<const_buffers>               const_buffers_ptr;
 
 
             typedef  std::vector<mutable_buffer>                      mutable_buffers;
-            typedef  boost::shared_ptr<mutable_buffers>       mutable_buffers_ptr;
+            typedef  boost::shared_ptr<mutable_buffers>           mutable_buffers_ptr;
 
-            typedef  std::list<mutable_buffer>                                                                                                                                 list_mutable_buffers;
-            typedef  list_mutable_buffers::iterator                                                                                                                  iterator_list_mutable_buffers;
+            typedef  std::list<mutable_buffer>                                                                                             list_mutable_buffers;
+            typedef  list_mutable_buffers::iterator                                                                                        iterator_list_mutable_buffers;
             typedef std::pair<iterator_list_mutable_buffers, iterator_list_mutable_buffers>                              list_mutable_iterator_pair;
 
 
@@ -63,8 +63,8 @@ namespace boost {
             class base_oarchive {
             public:
 
-                typedef  std::list<const_buffer>                                                                                                                           list_const_buffers;
-                typedef  list_const_buffers::iterator                                                                                                             iterator_list_const_buffers;
+                typedef  std::list<const_buffer>                                                                                         list_const_buffers;
+                typedef  list_const_buffers::iterator                                                                                    iterator_list_const_buffers;
                 typedef std::pair<iterator_list_const_buffers, iterator_list_const_buffers>                              list_iterator_pair;
 
                 base_oarchive() : size_(0) {
