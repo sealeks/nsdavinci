@@ -4,7 +4,6 @@
     <logicalFolder name="SourceFiles"
                    displayName="Исходные файлы "
                    projectFiles="true">
-      <itemPath>F:/Project/davinci/include_program/asn_poligon/main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Файлы тестов"
@@ -17,6 +16,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>../../include_program/asn_poligon/main.cpp</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -40,6 +40,7 @@
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>isostack</linkerLibLibItem>
+            <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_iostreams</linkerLibLibItem>
@@ -158,6 +159,7 @@
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>isostack</linkerLibLibItem>
+            <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
