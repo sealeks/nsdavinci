@@ -186,8 +186,8 @@ struct TestStruct1  {
 
     template<typename Archive>
             void serialize(Archive & arch) {
-        arch & implicit_value<int>(i, 0);
-        arch & implicit_value<int>(j, 1);
+        bind_implicit(arch, i, 0);
+        bind_implicit(arch, j, 1);
         // arch & implicit_value<TestStruct2>(x, 2);        
     }
 } ;
@@ -198,8 +198,8 @@ struct TestStruct2  {
 
     template<typename Archive>
             void serialize(Archive & arch) {
-        arch & implicit_value<bool>(b, 0);
-        arch & implicit_value<octetstring_type > (o, 1);
+        bind_implicit(arch, b, 0);
+        bind_implicit(arch, o, 1);
     }
 
 
@@ -215,8 +215,8 @@ struct TestStruct3  {
 
         template<typename Archive>
                 void serialize(Archive & arch) {
-            arch & optional_explicit_value<int>(ch1 , 500);
-            arch & optional_explicit_value<TestStruct1 > (ch2 , 501);
+            bind_explicit(arch, ch1 , 500);
+            bind_explicit(arch, ch2 , 501);
         }
     } ;
 
@@ -237,16 +237,16 @@ struct TestStruct3  {
     template<typename Archive>
             void serialize(Archive & arch) {
 
-        arch & choice_value<choice>(ch);    
-        arch & optional_explicit_value<TestStruct1 > (yo, 356);        
-        arch & implicit_value<int>(i, 0);
-        arch & implicit_value<int>(j, 1);
-        arch & explicit_value<TestStruct1 > (y, 3);
-        arch & implicit_value<double>(d, UNIVERSAL_CLASS);
-        arch & implicit_value<oid_type > (o, UNIVERSAL_CLASS);
-        arch & implicit_value<reloid_type > (r, UNIVERSAL_CLASS);
-        arch & implicit_value<octetstring_type > (s, UNIVERSAL_CLASS);
-        arch & optional_implicit_value<int>(io);
+        bind_choice(arch, ch);    
+        bind_explicit( arch, yo, 356);        
+        bind_implicit(arch, i, 0);
+        bind_implicit(arch, j, 1);
+        bind_explicit(arch, y, 3);
+        bind_implicit(arch, d, UNIVERSAL_CLASS);
+        bind_implicit(arch, o, UNIVERSAL_CLASS);
+        bind_implicit(arch, r, UNIVERSAL_CLASS);
+        bind_implicit(arch, s, UNIVERSAL_CLASS);
+        bind_implicit(arch, io);
 
     }
 
@@ -261,8 +261,8 @@ struct TestStruct3u  {
 
         template<typename Archive>
                 void serialize(Archive & arch) {
-            arch & optional_explicit_value<int>(ch1 , 500);
-            arch & optional_explicit_value<TestStruct1 > (ch2 , 501);
+            bind_explicit(arch, ch1 , 500);
+            bind_explicit(arch, ch2 , 501);
         }
     };   
     
@@ -282,16 +282,16 @@ struct TestStruct3u  {
 
     template<typename Archive>
             void serialize(Archive & arch) {
-        arch & choice_value<choice>(ch);         
-        arch & optional_explicit_value<TestStruct1 > (yo, 356);
-        arch & implicit_value<int>(i, 0);
-        arch & implicit_value<int>(j, 1);
-        arch & explicit_value<TestStruct1 > (y, 3);
-        arch & implicit_value<float>(d, UNIVERSAL_CLASS);
-        arch & implicit_value<oid_type > (o, UNIVERSAL_CLASS);
-        arch & implicit_value<reloid_type > (r, UNIVERSAL_CLASS);
-        arch & implicit_value<octetstring_type > (s, UNIVERSAL_CLASS);
-        arch & optional_implicit_value<int>(io);
+        bind_choice(arch, ch);           
+        bind_explicit( arch, yo, 356);
+        bind_implicit(arch, i, 0);
+        bind_implicit(arch, j, 1);
+        bind_explicit( arch, y, 3);
+        bind_implicit(arch, d, UNIVERSAL_CLASS);
+        bind_implicit(arch, o, UNIVERSAL_CLASS);
+        bind_implicit(arch, r, UNIVERSAL_CLASS);
+        bind_implicit(arch, s, UNIVERSAL_CLASS);
+        bind_implicit(arch, io);
 
     }
 
