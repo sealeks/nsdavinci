@@ -23,7 +23,7 @@ namespace boost {
     namespace asio {
         namespace iso {
 
-            list_mutable_buffers intersect( const list_mutable_buffers& val, std::size_t start, std::size_t size ) {
+            list_mutable_buffers sublist( const list_mutable_buffers& val, std::size_t start, std::size_t size ) {
                 if (!(size || start)) return val;
                 list_mutable_buffers::const_iterator it = val.begin();
                 std::size_t sz = 0;
@@ -44,20 +44,24 @@ namespace boost {
                 return tmp;
             }
             
-            void popfront_list(list_mutable_buffers& val, std::size_t start){
+            std::size_t popfront_list(list_mutable_buffers& val, std::size_t start){
+                std::size_t rslt=0;
                 while (start && (!val.empty())) {
                     if(boost::asio::buffer_size(val.front()) < start){
                         start-=boost::asio::buffer_size(val.front());
-                        val.erase(val.begin());
+                        rslt+=boost::asio::buffer_size(val.front());
+                        val.erase(val.begin());                      
                     }
                     else{
+                        rslt+=start;
                          val.front()=val.front()+start;
-                         return;
+                         return rslt;
                     }
                 }
+                return rslt;
             }   
             
-            bool find_eof_content(const list_mutable_buffers& val, std::size_t& rslt){
+            bool find_eof(const list_mutable_buffers& val, std::size_t& rslt){
                 rslt=0;
                 bool findend =false;            
                 for (list_mutable_buffers::const_iterator it=val.begin();it!=val.end();++it){
