@@ -112,8 +112,8 @@ namespace WebCore {
 
     v8::Handle<v8::Value> dvnciEntety(const v8::Arguments& args);
     
-    v8::Handle<v8::Value> dvnciSCDBConnection(const v8::Arguments& args);
-
+    v8::Handle<v8::Value> dvnciSCDBConnection(const v8::Arguments& args, bool trenddef);
+    
 
 }
 

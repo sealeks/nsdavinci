@@ -16,6 +16,8 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/Threading.h>
 
+#undef pow
+
 #include <winsock2.h>
 #include <custom/gui_executor.h>
 #include <kernel/utils.h>
@@ -37,7 +39,7 @@ namespace WebCore {
                 val.value<double>() : static_cast<double> (val.value<float>()));
         if (val.type() < dvnci::TYPE_DISCRET) return v8::Integer::New(static_cast<int32_t> (val.value<dvnci::num64 > ()));
         if (val.type() == dvnci::TYPE_DISCRET) return v8::Boolean::New(val.value<bool>());
-        if (val.type() == dvnci::TYPE_TM) return v8::Date::New(dvnci::datetime_to_epoch_msc_utc(val.value<dvnci::datetime > ()));
+        if (val.type() == dvnci::TYPE_TM) return v8::Date::New(dvnci::datetime_to_epoch_msc(val.value<dvnci::datetime > ()));
         if (val.type() == dvnci::TYPE_TEXT) return v8::String::New(val.value<std::string > ().c_str());
         return v8::Number::New(val.value<double>());
     }
@@ -50,7 +52,7 @@ namespace WebCore {
         int i = 0;
         for (dvnci::short_value_vect::const_iterator it = vect.begin(); it != vect.end(); ++it) {
             v8::Handle<v8::Array> point = v8::Array::New(2);
-            point->Set(0, v8::Date::New(dvnci::datetime_to_epoch_msc_utc(it->time())));
+            point->Set(0, v8::Date::New(dvnci::datetime_to_epoch_msc(it->time())));
             point->Set(1, dvnci_shortvalue_conv(*it));
             array->Set(i++, point);
         }
@@ -136,7 +138,7 @@ namespace WebCore {
         evnt->Set(v8::String::New("expression"), v8::String::New(impl->expression().utf8().data(),impl->expression().length()));        
         evnt->Set(v8::String::New("value"), dvnci_shortvalue_conv(impl->value()));
         evnt->Set(v8::String::New("valid"), v8::Integer::New(impl->value().valid()));
-        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc_utc(impl->value().time())));
+        evnt->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(impl->value().time())));
         evnt->Set(v8::String::New("error"), v8::Integer::New(impl->value().error()));
 
 
