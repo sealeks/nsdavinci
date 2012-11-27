@@ -1819,7 +1819,7 @@ namespace dvnci {
             return static_cast<altype> (level_ & 3);}
 
         double value() const {
-            return static_cast<double> (value_);}
+            return from_num64_cast<double>(value_);}
 
         bool isvalue() const {
             return (value() == value());}

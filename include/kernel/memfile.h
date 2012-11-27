@@ -73,6 +73,18 @@ namespace dvnci {
         altype level_retrosp(size_type id) const {
             return operator()(id)->level();};
 
+        double value(size_type id) const {
+            return (operator[](id)->value());};
+
+        double value_retrosp(size_type id) const {
+            return (operator()(id)->value());};
+            
+        indx userid(size_type id) const {
+            return (operator[](id)->userid());};
+
+        indx userid_retrosp(size_type id) const {
+            return (operator()(id)->userid());};            
+
         size_type tagid(size_type id) const {
             return operator[](id)->tagid();};
 
@@ -126,11 +138,7 @@ namespace dvnci {
                     vect.push_back(rowline<T, B > (i, tmpgid));}}};
 
         template<typename T, typename B>
-        T rowline(size_type i, guidtype gid) const {
-            datetime tm = time(i);
-            T tmp  = {static_cast<B> (i), gid, tm, tag (i) , text(i), agroupname(i),
-                static_cast<B> (type(i)), static_cast<B> (level(i)), std::string(""), std::string("")};
-            return tmp;}
+        T rowline(size_type i, guidtype gid) const;
 
         ptagsbase tgbs_ptr;} ;
 
@@ -2828,15 +2836,23 @@ namespace dvnci {
                     insert_to_journal(time(id), id, msTimeEvent, altNone , val );}}
 
         template<typename T>
-        void insert_cmd_to_alarms(size_type id, const T& preval, const T& val) {
+        void insert_cmd_to_journal(size_type id, const T& preval, const T& val) {
             if (exists(id))
-                insert_to_journal(now(), id, msCmd);}
+                insert_to_journal(now(), id, msCmd, altNone, static_cast<double>(val), clientid_);}
 
         void clone(size_type idsrc, size_type iddst);} ;
 
 
 
-
+    
+    template<typename T, typename B>
+    T journalbase::rowline(size_type i, guidtype gid) const {
+        datetime tm = time(i);
+        T tmp  = {static_cast<B> (i), gid, tm, tag (i) , text(i), agroupname(i),
+            static_cast<B> (type(i)), static_cast<B> (level(i)),
+            value(i) == value(i) ? ("-> " + to_str(value(i))) : std::string("") ,
+            userid(i) != npos ? (userid(i) ? (tgbs_ptr->users()->name(userid(i) - 1)) : std::string("SYSTEM")) : std::string("")};
+        return tmp;}
 
 
 
@@ -2987,10 +3003,15 @@ namespace dvnci {
     template<typename T>
     void tagsbase::send_command(size_type id, T val, addcmdtype queue , bool setval ,size_type clid) {
         if (IN_TEXTSET(type(id))) return;
+        bool systemtag = false;
         if (exists(id)) {
             if ((groups()->exists(group(id)))) {
                 switch (groups()->appid(group(id))) {
-                    case NS_GROUP_SYSTEM:
+                    case NS_GROUP_SYSTEM:{
+                        //valid(id, FULL_VALID);
+                        write_val<T > (id, val);
+                        systemtag = setval;
+                        break;}                        
                     case NS_GROUP_SYSTEMVAR:{
                         //valid(id, FULL_VALID);
                         write_val<T > (id, val);
@@ -3008,7 +3029,12 @@ namespace dvnci {
                         if (queue==acNullCommand)
                             return;
                         commands()->add(id, operator[](id)->value<num64 > (), num64_cast<T > (val), operator[](id)->type(), queue, clid);}}
-                insert_cmd_to_alarms<T > (id, val, val);}}}}
+                if (!systemtag)
+                        insert_cmd_to_journal<T > (id, val, val);}}}
+
+    
+    
+}
 
 #endif	/* _MEMFILE_H */
 

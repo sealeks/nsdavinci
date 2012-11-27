@@ -157,7 +157,7 @@ namespace dvnci {
     // нет файла описания
     const ns_error ERROR_DB_NOTRENDDEF = 0x809; 
     // не  найденн индекс для тега
-    const ns_error ERROR_DB_NOTRENDDEF = 0x80A;     
+    const ns_error ERROR_DB_NOINDEX = 0x80A;     
     
     
     
@@ -176,23 +176,26 @@ namespace dvnci {
     class dvncierror {
     public:
 
-        dvncierror(ns_error cod , std::string _str_ = "", indx  _key_ = 0 ) {
+        dvncierror(ns_error cod = 0 , std::string _str_ = "", indx  _key_ = 0 ) {
             str_ = _str_;
             key_ = _key_;
             code_ = cod;}
 
-        virtual ~dvncierror() {}
+        ~dvncierror() {}
 
-        virtual std::string str() const {
+        std::string str() const {
             return str_;}
 
-        virtual void str(const std::string& val) {
+        void str(const std::string& val) {
             str_ = val;}
 
-        virtual ns_error code() const {
+        ns_error code() const {
             return code_;}
 
-        virtual indx key() const {
+        indx key() const {
+            return key_;}
+        
+        operator bool() const {
             return code_;}
 
         std::ostream & operator<< (std::ostream& os) {

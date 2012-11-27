@@ -452,8 +452,8 @@ namespace dvnci {
         tagid_ = static_cast<num64> (tgid);
         type_ = static_cast<num64> (tp & 7);
         level_ = static_cast<num32> (lev & 3);
-        user_ = static_cast<num64> (userid);
-        value_ = static_cast<num64> (val);}
+        user_ = num64_cast<num64> (userid);
+        value_ = num64_cast<double> (val);}
 
 
 
