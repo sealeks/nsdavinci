@@ -76,7 +76,7 @@ namespace dvnci {
         size_type adrp = tgbs_ptr->agroup(tgid);
         INP_EXCLUSIVE_LOCK(memlock());
         size_type newindx = inc();
-        new (operator[](newindx)) journalstruct(gloubnum(), tm, tgid, tp, lev, adrp, val, userid);
+        new (operator[](newindx)) journalstruct(gloubnum(), tm, tgid, tp, lev, adrp, val, userid!=npos ? (userid+1) : npos);
         tgbs_ptr->notify_journal(newindx);}
 
     std::string  journalbase::agroupname(size_type id) const {
@@ -2565,12 +2565,18 @@ namespace dvnci {
 
     void tagsbase::send_command_str(size_type id, const std::string& val, addcmdtype queue, bool setval , size_type clid) {
         if (IN_TEXTSET(type(id))) {
+            bool systemtag = false;            
             if ((groups()->exists(group(id)))) {
                 switch (groups()->appid(group(id))) {
-                    case NS_GROUP_SYSTEM:
+                    case NS_GROUP_SYSTEM:{
+                        valid(id, FULL_VALID);
+                        write_val (id, val);
+                        systemtag = setval;
+                        break;}
                     case NS_GROUP_SYSTEMVAR:{
                         valid(id, FULL_VALID);
                         write_val (id, val);
+                        writetofile(id);
                         break;}
                     case NS_GROUP_SYSTEMREPORT:
                     case NS_GROUP_SYSTEMREPORTCOUNT:
@@ -2584,7 +2590,8 @@ namespace dvnci {
                         if (queue==acNullCommand)
                             return;
                         commands()->add(id, val, queue, clid);}}
-                journal()->add(now(), id, msCmd, 0);}}}
+                if (!systemtag)
+                        journal()->add(now(), id, msCmd, altNone, NULL_DOUBLE, clientid_);}}}
 
     bool tagsbase::checkname(const string& val, size_type parnt)  {
         std::string fullnamed = groups()->name(parnt) + NEMESPACEDELIMIT + val;

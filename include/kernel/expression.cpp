@@ -813,7 +813,7 @@ namespace dvnci {
                 case func_cos: return cos(value<double>());
                 case func_sqrt:{
                     return sqrt(value<double>());}
-                case func_sqr: return pow(value<double>(), 2);
+                case func_sqr: return ::pow(value<double>(), 2);
                 case func_exp: return exp(value<double>());
                 case func_ln:{
                     return log(value<double>());}
@@ -883,7 +883,7 @@ namespace dvnci {
         calc_token math_pow(const calc_token& lside, const calc_token& rside) {
             if (lside.operation() != constant) return NULL_DOUBLE;
             if (rside.operation() != constant) return NULL_DOUBLE;
-            return (pow(lside.value<double>(), rside.value<double>()));}
+            return (::pow(lside.value<double>(), rside.value<double>()));}
 
         calc_token minim (const calc_token& lside, const calc_token& rside) {
             switch (type_cast(lside, rside)) {

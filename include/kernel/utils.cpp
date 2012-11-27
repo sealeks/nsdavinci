@@ -898,12 +898,12 @@ namespace dvnci {
 
     boost::xtime utc_now() {
         boost::xtime xt;
-        boost::xtime_get(&xt, boost::TIME_UTC);
+        boost::xtime_get(&xt, boost::TIME_UTC_);
         return xt;}
 
     boost::xtime utc_now_plus_millsec(timeouttype tmout) {
         boost::xtime xt;
-        boost::xtime_get(&xt, boost::TIME_UTC);
+        boost::xtime_get(&xt, boost::TIME_UTC_);
         xt.sec += tmout / 1000;
         if ((xt.nsec + (tmout % 1000) * 1000000) < 1000000000) {
             xt.nsec += (tmout % 1000) * 1000000;} else {
@@ -913,13 +913,13 @@ namespace dvnci {
 
     boost::xtime utc_now_plus_sec(timeouttype tmout) {
         boost::xtime xt;
-        boost::xtime_get(&xt, boost::TIME_UTC);
+        boost::xtime_get(&xt, boost::TIME_UTC_);
         xt.sec += tmout;
         return xt;}
 
     bool expire_from_utc_millsec(const boost::xtime& vl, timeouttype tmout) {
         boost::xtime xt;
-        boost::xtime_get(&xt, boost::TIME_UTC);
+        boost::xtime_get(&xt, boost::TIME_UTC_);
         xt.sec -= tmout / 1000;
         if (static_cast<timeouttype> (xt.nsec) > ((tmout % 1000) * 1000000)) {
             xt.nsec -= ((tmout % 1000) * 1000000);} else {
@@ -929,12 +929,12 @@ namespace dvnci {
 
     bool expire_from_utc_sec(const boost::xtime& vl, timeouttype tmout) {
         boost::xtime xt;
-        boost::xtime_get(&xt, boost::TIME_UTC);
+        boost::xtime_get(&xt, boost::TIME_UTC_);
         xt.sec -= tmout;
         return ((vl.sec < xt.sec) || ((vl.sec == xt.sec) && (vl.nsec < xt.nsec)));}
 
     void addmillisec_to_now(boost::xtime& xt, num64 milsec) {
-        boost::xtime_get(&xt, boost::TIME_UTC);
+        boost::xtime_get(&xt, boost::TIME_UTC_);
         xt.sec += milsec / 1000;
         if ((xt.nsec + (milsec % 1000) * 1000000) < 1000000000) {
             xt.nsec += (milsec % 1000) * 1000000;} else {
@@ -942,7 +942,7 @@ namespace dvnci {
             xt.nsec += ((milsec % 1000) * 1000000 + xt.nsec - 1000000000);}}
 
     void addmicrosec_to_now(boost::xtime& xt, num64 microsec) {
-        boost::xtime_get(&xt, boost::TIME_UTC);
+        boost::xtime_get(&xt, boost::TIME_UTC_);
         xt.sec += microsec / 1000000;
         if ((xt.nsec + (microsec % 1000000) * 1000) < 1000000000) {
             xt.nsec += (microsec % 1000000) * 1000;} else {

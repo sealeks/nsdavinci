@@ -5,9 +5,11 @@
  * Created on     тест  30 ноября 2009 года., 22:11
  */
 
+
 #ifndef _DVNCI_KRNL_CONSTDEF_H
 #define	_DVNCI_KRNL_CONSTDEF_H
 
+#define BOOST_THREAD_USE_LIB
 
 #if defined(__MINGW32__) && defined(_amd64_)
         #define _DVN_WIN64_MGW_
@@ -251,7 +253,6 @@ namespace dvnci {
     typedef boost::posix_time::ptime datetime;
 
     typedef union type_punned{
-        
          type_punned(const bool& vl) : n64(vl ? 1 : 0) {}
          type_punned(const unum8& vl) : u8(vl) {}
          type_punned(const num8& vl) : n8(vl) {}
@@ -275,7 +276,7 @@ namespace dvnci {
          float    fl;
          double   dbl;} * ptype_punned;
 
-    const indx npos              = static_cast<indx>(-1);
+    const indx npos = static_cast<indx>(-1);
 
     const  num64 DVNCI_VERSION   = 0x4;
 
