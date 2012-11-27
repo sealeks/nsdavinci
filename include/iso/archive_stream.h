@@ -46,9 +46,9 @@ namespace boost {
             typedef std::pair<iterator_list_mutable_buffers, iterator_list_mutable_buffers>                              list_mutable_iterator_pair;
 
 
-            list_mutable_buffers intersect( const list_mutable_buffers& val, std::size_t start = 0 , std::size_t size = 0 );
-            void popfront_list(list_mutable_buffers& val, std::size_t start);
-            bool find_eof_content(const list_mutable_buffers& val, std::size_t& rslt);            
+            list_mutable_buffers sublist( const list_mutable_buffers& val, std::size_t start = 0 , std::size_t size = 0 );
+            std::size_t pop_frontlist(list_mutable_buffers& val, std::size_t start);
+            bool find_eof(const list_mutable_buffers& val, std::size_t& rslt);            
             bool row_cast( const list_mutable_buffers& val, row_type& raw,  std::size_t start , std::size_t size);
 
 
@@ -110,6 +110,9 @@ namespace boost {
                 vect_row_type_ptr rows_vect;
                 std::size_t                size_;
             } ;
+            
+            
+            //////////////////////////////////////////////////////////////////////////////
 
             class base_iarchive {
             public:
@@ -119,6 +122,7 @@ namespace boost {
 
                 void add(const row_type& vl) {
                     rows_vect.push_back( row_type_ptr(new row_type(vl.begin(), vl.end())));
+                    size_+=vl.size();
                     listbuffers_.push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
                     size_ += rows_vect.back()->size();
                 }
@@ -134,18 +138,20 @@ namespace boost {
                     const_buffers buffers = vl.buffers();
                     for (const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
                         listbuffers_.push_back(mutable_buffer(const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
+                        size_ += boost::asio::buffer_size(*it);
                     }
                 }
 
-                void ready(std::size_t sz) {
-                    popfront_list(listbuffers_, sz);
+
+                void pop_front(std::size_t sz) {
+                    decsize(pop_frontlist(listbuffers_, sz));
                 }
                 
-                bool check_endofcontet() {
+                bool is_endof() {
                     row_type  data;
                     if (row_cast(listbuffers_, data,  0 , 2)){
                         if ((data.size()==2) && (data[0]==0) && (data[1]==0)){
-                            popfront_list(listbuffers_, 2);
+                            decsize(pop_frontlist(listbuffers_, 2));
                             return true;
                         } 
                     }
@@ -172,8 +178,16 @@ namespace boost {
                     listbuffers_.clear();
                     size_ = 0;
                 }
+                
+                std::size_t size() const {
+                    return size_;
+                }
 
             protected:
+                
+                void decsize(std::size_t sz)  {
+                    size_ =  size_<sz ? 0 : (size_-sz);
+                }                
 
                 list_mutable_buffers listbuffers_;
                 vect_row_type_ptr     rows_vect;

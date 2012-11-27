@@ -900,46 +900,43 @@ namespace boost {
             
 
      
-     
+/*      template<typename E>
      class choice_val{
          
          
      class base_choice_holder{
      public:
-         base_choice_holder(){}
+         base_choice_holder(int type = 0) : type_(type) {}
          virtual ~base_choice_holder(){}
          virtual bool empty() const { return true; } 
-         virtual const std::type_info & type() const{
-             return typeid(void);
-         }  
+         virtual int type() const{
+             return type_;
+         }          
+     protected:
+         int type_;
       
 //         virtual tag Tag() const{
 //             return tag();}
      };     
      
  
-     template<typename T>
+    template<typename T>
      class choice_holder : public base_choice_holder{
      public:
-         choice_holder(T* vl) : base_choice_holder() , val_(boost::shared_ptr<T>(vl)), type_(typeid(T)) {}
+         choice_holder(T* vl, int ID) : base_choice_holder(static_cast<int>(ID)) , val_(boost::shared_ptr<T>(vl)) {}
          
-         boost::shared_ptr<T> value(){
+         boost::shared_ptr<T>& value(){
              return val_;
          }
          
-         boost::shared_ptr<T> value() const{
+         const boost::shared_ptr<T>& value() const{
              return val_;
-         }
-         
-         virtual const std::type_info & type() const {
-             return type_;
-         }         
+         }            
          
          virtual bool empty() const { return false; } 
          
      private:
          boost::shared_ptr<T> val_;
-         std::type_info             type_;
      };            
          
      public:
@@ -949,23 +946,37 @@ namespace boost {
          
          choice_val(): val_( new base_choice_holder()){
          }
+                 
          
          template<typename T>
-         choice_val(T* vl): val_( new choice_holder<T>(vl)){
+         choice_val(T* vl, int id): val_( new choice_holder<T>(vl, id)){
          }
+         
+         virtual  ~choice_val() {}         
          
          bool empty() const{
              return ((!val_) || (val_->empty()));
+         }     
+         
+         E type() const{
+             return static_cast<E>(val_ ? val_->type() : 0);
          }
+          
          
          template<typename T>        
-         boost::shared_ptr<T> value() const {
+         const boost::shared_ptr<T>& value() const {
              typedef  choice_holder<T> choice_holder_type;
              typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
-             return (val_->type()==typeid(T)) ? 
-                 static_cast< choice_holder_ptr  >(val_)->value() : 
-                 boost::shared_ptr<T>();
-         }
+             return boost::static_pointer_cast< choice_holder_type >(val_)->value();// : 
+                 //boost::shared_ptr<T>();
+         } 
+         
+         template<typename T>        
+         void set(T* vl, E ID) {
+             typedef  choice_holder<T> choice_holder_type;
+             typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;   
+             val_= type_ptr( new choice_holder<T>(vl, static_cast<int>(ID)));
+         }         
       
                
          
@@ -973,7 +984,7 @@ namespace boost {
      
          type_ptr val_;
          
-     };
+     };*/
      
      
      ////////////////////////////////////////////////////////////////////////////////////////////////////

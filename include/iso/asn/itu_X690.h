@@ -743,7 +743,14 @@ namespace boost {
                     template<typename T>
                     void operator&(const choice_value<T >& vl) {
                         *this  >>  vl;
-                    }                    
+                    }       
+                    
+                              
+                    tag next_tag() const {
+                       tag tmptag;
+                       std::size_t sztag = tag_x690_cast(tmptag, buffers()); 
+                       return tmptag;
+                    }                   
 
 
                 private:
@@ -767,10 +774,10 @@ namespace boost {
                         size_class tmpsize;
                         std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
                         if (szsize) {
-                            stream.ready(szsize + sztag);
+                            stream.pop_front(szsize + sztag);
                             stream >> implicit_value<T > (vl.value());
                             if (tmpsize.undefsize()) {
-                                if (stream.check_endofcontet()) {
+                                if (stream.is_endof()) {
                                 }
                             }
                         }
@@ -798,10 +805,10 @@ namespace boost {
                         size_class tmpsize;
                         std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
                         if (szsize) {
-                            stream.ready(szsize + sztag);
+                            stream.pop_front(szsize + sztag);
                             const_cast<T*> (&(vl.value()))->serialize(stream);
                             if (tmpsize.undefsize()) {
-                                if (stream.check_endofcontet()) {
+                                if (stream.is_endof()) {
                                 }
                             }
                         }
@@ -842,7 +849,7 @@ namespace boost {
                             row_type data;
                             if (boost::asio::iso::row_cast(stream.buffers(), data , szsize + sztag, tmpsize.size())) {
                                 if (from_x690_cast(*const_cast<T*> (&vl.value()), data)) {
-                                    stream.ready(szsize + sztag + tmpsize.size());
+                                    stream.pop_front(szsize + sztag + tmpsize.size());
                                 }
                             }
                         }
@@ -859,9 +866,9 @@ namespace boost {
                         std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
                         if (szsize) {
                             if (tmpsize.undefsize()) {
-                                stream.ready(szsize + sztag + tmpsize.size());
+                                stream.pop_front(szsize + sztag + tmpsize.size());
                                 if (tmptag.mask() & CONSTRUCTED_ENCODING) {
-                                    while (!stream.check_endofcontet() && !stream.buffers().empty()) {
+                                    while (!stream.is_endof() && !stream.buffers().empty()) {
                                         if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask))
                                             return false;
                                     }
@@ -869,8 +876,8 @@ namespace boost {
                                 }
                                 else {
                                     std::size_t itfnd=0;
-                                    stream.ready(szsize + sztag);
-                                    if (boost::asio::iso::find_eof_content(stream.buffers() ,itfnd)){
+                                    stream.pop_front(szsize + sztag);
+                                    if (boost::asio::iso::find_eof(stream.buffers() ,itfnd)){
                                         row_type data;
                                         if (boost::asio::iso::row_cast(stream.buffers(), data , 0 , itfnd )) {
                                             vl.insert(vl.end(), data.begin(), data.end());
@@ -884,7 +891,7 @@ namespace boost {
                                 if (tmptag.mask() & CONSTRUCTED_ENCODING) {
                                     while (!stream.buffers().empty()) {
                                         if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask)){
-                                            stream.ready(szsize + sztag + tmpsize.size());
+                                            stream.pop_front(szsize + sztag + tmpsize.size());
                                             return true;
                                         }
                                     }                                   
@@ -894,7 +901,7 @@ namespace boost {
                                     row_type data;
                                     if (boost::asio::iso::row_cast(stream.buffers(), data , szsize + sztag, tmpsize.size())) {
                                         vl.insert(vl.end(), data.begin(), data.end());
-                                        stream.ready(szsize + sztag + tmpsize.size());
+                                        stream.pop_front(szsize + sztag + tmpsize.size());
                                         return true;
                                     }
                                 }

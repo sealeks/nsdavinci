@@ -892,8 +892,8 @@ namespace boost {
                         std::size_t szsize = size_x690_cast(size_,  src, sztag);
                         if (szsize) {
                             blk = sztag + szsize + size_.size();
-                            buff_ = boost::asio::iso::intersect(src, sztag + szsize, size_.size());
-                            list_mutable_buffers buff = buff_; //boost::asio::iso::intersect(src, blk);
+                            buff_ = boost::asio::iso::sublist(src, sztag + szsize, size_.size());
+                            list_mutable_buffers buff = buff_; //boost::asio::iso::sublist(src, blk);
                             std::cout << *this;
                             if (tag_.mask() & CONSTRUCTED_ENCODING) {
                                 bool fl = false;
@@ -902,7 +902,7 @@ namespace boost {
                                         test_decoder nest(buff);
                                         fl = nest.blk;
                                         if (nest.blk)
-                                            buff = boost::asio::iso::intersect(buff, nest.blk );
+                                            buff = boost::asio::iso::sublist(buff, nest.blk );
                                     }
                                     while (fl &&  buff.size());
                                 }
