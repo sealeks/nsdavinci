@@ -24,7 +24,7 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/Threading.h>
 
-
+#undef pow
 
 #include <winsock2.h>
 #include <dbaccess/db_task_executor.h>
@@ -76,8 +76,9 @@ namespace WebCore {
 
     void dvnciDBThreadRemove(dvnci::database::db_task_executor* val) {
 
-        for (db_guichrome_terminated_thread_set::iterator it = DVNCI_DB_THREAD.begin(); it != DVNCI_DB_THREAD.begin(); ++it) {
+        for (db_guichrome_terminated_thread_set::iterator it = DVNCI_DB_THREAD.begin(); it != DVNCI_DB_THREAD.end(); ++it) {
             if ((*it)->intf() == val) {
+				(*it)->intf()->terminate();
                 DVNCI_DB_THREAD.erase(*it);
                 return;
             }
@@ -165,7 +166,7 @@ namespace WebCore {
                 m_function.Dispose();
             }
 
-            virtual void event(const dvnci::database::str_trenddef_map& val, dvnci::ns_error error) {
+            virtual void event(const dvnci::database::str_trenddef_map& val, const dvnci::dvncierror& error) {
 
                 if (m_scriptcontext && !m_function.IsEmpty() && m_function->IsFunction()) {
                     V8Proxy* proxy = V8Proxy::retrieve(m_scriptcontext);
@@ -193,7 +194,7 @@ namespace WebCore {
 
         protected:
 
-            v8::Handle<v8::Value> conv(const dvnci::database::str_trenddef_map& val, dvnci::ns_error error) {
+            v8::Handle<v8::Value> conv(const dvnci::database::str_trenddef_map& val, const dvnci::dvncierror& error) {
 
 
                 v8::HandleScope handle_scope;
@@ -201,7 +202,9 @@ namespace WebCore {
                 v8::Handle<v8::Object> evnt = v8::Object::New();
 
                 if (error) {
-                    evnt->Set(v8::String::New("error"), v8::Integer::New(error));
+                    evnt->Set(v8::String::New("error"), v8::Integer::New(error.code()));
+                    evnt->Set(v8::String::New("what"), v8::String::New(error.str().c_str(), error.str().size()));
+                    dvnciDBThreadRemove(executor());
                     return handle_scope.Close(evnt);
                 }
 
@@ -279,7 +282,7 @@ namespace WebCore {
                 m_function.Dispose();
             }
 
-            virtual void event(const dvnci::database::result_trend_pair_map& val, dvnci::ns_error error) {
+            virtual void event(const dvnci::database::result_trend_pair_map& val, const dvnci::dvncierror& error) {
 
                 if (m_scriptcontext && !m_function.IsEmpty() && m_function->IsFunction()) {
                     V8Proxy* proxy = V8Proxy::retrieve(m_scriptcontext);
@@ -306,17 +309,20 @@ namespace WebCore {
 
         protected:
 
-            v8::Handle<v8::Value> conv(const dvnci::database::result_trend_pair_map& val, dvnci::ns_error error) {
+            v8::Handle<v8::Value> conv(const dvnci::database::result_trend_pair_map& val, const dvnci::dvncierror& error) {
 
 
                 v8::HandleScope handle_scope;
 
-                v8::Handle<v8::Object> evnt = v8::Object::New();
+                v8::Handle<v8::Object> evnto = v8::Object::New();
 
                 if (error) {
-                    evnt->Set(v8::String::New("error"), v8::Integer::New(error));
-                    return handle_scope.Close(evnt);
+                    evnto->Set(v8::String::New("error"), v8::Integer::New(error.code()));
+                    evnto->Set(v8::String::New("what"), v8::String::New(error.str().c_str(), error.str().size()));
+                    return handle_scope.Close(evnto);
                 }
+                
+                //v8::Handle<v8::Object> evnt = v8::Object::New();
 
                 //evnt->Set(v8::String::New("error"), v8::Integer::New(error));
 
@@ -342,7 +348,7 @@ namespace WebCore {
 
                     for (dvnci::dt_val_map::const_iterator itval = it->second->begin(); itval != it->second->end(); ++itval) {
                         v8::Handle<v8::Array> point = v8::Array::New(2);
-                        point->Set(0, v8::Date::New(dvnci::datetime_to_epoch_msc_utc(itval->first)));
+                        point->Set(0, v8::Date::New(dvnci::datetime_to_epoch_msc(itval->first)));
                         point->Set(1, itval->second != itval->second ? v8::Undefined() : v8::Number::New(itval->second));
                         arraytag->Set(j++, point);
                     }
@@ -351,10 +357,10 @@ namespace WebCore {
                     array->Set(i++, tmp);
                 }
 
-                evnt->Set(v8::String::New("tags"), array);
+                //evnt->Set(v8::String::New("tags"), array);
 
 
-                return handle_scope.Close(evnt);
+                return handle_scope.Close(array);
             }
 
 
@@ -380,7 +386,7 @@ namespace WebCore {
                 m_function.Dispose();
             }
 
-            virtual void event(const dvnci::database::result_trend_pair_map& val, dvnci::ns_error error) {
+            virtual void event(const dvnci::database::result_trend_pair_map& val, const dvnci::dvncierror& error) {
 
                 if (m_scriptcontext && !m_function.IsEmpty() && m_function->IsFunction()) {
                     V8Proxy* proxy = V8Proxy::retrieve(m_scriptcontext);
@@ -407,7 +413,7 @@ namespace WebCore {
 
         protected:
 
-            v8::Handle<v8::Value> conv(const dvnci::database::result_trend_pair_map& val, dvnci::ns_error error) {
+            v8::Handle<v8::Value> conv(const dvnci::database::result_trend_pair_map& val, const dvnci::dvncierror& error) {
 
 
 
@@ -416,7 +422,8 @@ namespace WebCore {
                 v8::Handle<v8::Object> evnt = v8::Object::New();
 
                 if (error) {
-                    evnt->Set(v8::String::New("error"), v8::Integer::New(error));
+                    evnt->Set(v8::String::New("error"), v8::Integer::New(error.code()));
+                    evnt->Set(v8::String::New("what"), v8::String::New(error.str().c_str(), error.str().size()));
                     return handle_scope.Close(evnt);
                 }
 
@@ -444,7 +451,7 @@ namespace WebCore {
 
                     for (dvnci::dt_val_map::const_iterator itval = it->second->begin(); itval != it->second->end(); ++itval) {
                         v8::Handle<v8::Array> point = v8::Array::New(2);
-                        point->Set(0, v8::Date::New(dvnci::datetime_to_epoch_msc_utc(itval->first)));
+                        point->Set(0, v8::Date::New(dvnci::datetime_to_epoch_msc(itval->first)));
                         point->Set(1, itval->second != itval->second ? v8::Undefined() : v8::Number::New(itval->second));
                         arraytag->Set(j++, point);
                     }
@@ -484,7 +491,7 @@ namespace WebCore {
                 m_function.Dispose();
             }
 
-            virtual void event(const dvnci::vect_journal_row_ptr& val, dvnci::ns_error error) {
+            virtual void event(const dvnci::vect_journal_row_ptr& val, const dvnci::dvncierror& error) {
 
                 if (m_scriptcontext && !m_function.IsEmpty() && m_function->IsFunction()) {
                     V8Proxy* proxy = V8Proxy::retrieve(m_scriptcontext);
@@ -511,7 +518,7 @@ namespace WebCore {
 
         protected:
 
-            v8::Handle<v8::Value> conv(const dvnci::vect_journal_row_ptr& val, dvnci::ns_error error) {
+            v8::Handle<v8::Value> conv(const dvnci::vect_journal_row_ptr& val, const dvnci::dvncierror& error) {
 
 
                 v8::HandleScope handle_scope;
@@ -519,7 +526,8 @@ namespace WebCore {
                 v8::Handle<v8::Object> evnt = v8::Object::New();
 
                 if (error) {
-                    evnt->Set(v8::String::New("error"), v8::Integer::New(error));
+                    evnt->Set(v8::String::New("error"), v8::Integer::New(error.code()));
+                    evnt->Set(v8::String::New("what"), v8::String::New(error.str().c_str(), error.str().size()));
                     return handle_scope.Close(evnt);
                 }
 
@@ -535,7 +543,7 @@ namespace WebCore {
 
                     v8::Handle<v8::Object> tmp = v8::Object::New();
 
-                    tmp->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc_utc(it->time)));
+                    tmp->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(it->time)));
                     tmp->Set(v8::String::New("type"), v8::Integer::New(it->type));
                     tmp->Set(v8::String::New("level"), v8::Integer::New(it->level));
                     tmp->Set(v8::String::New("tag"), v8::String::New(it->tag.c_str(), it->tag.size()));
@@ -575,7 +583,7 @@ namespace WebCore {
                 m_function.Dispose();
             }
 
-            virtual void event(const dvnci::vect_debug_row_ptr& val, dvnci::ns_error error) {
+            virtual void event(const dvnci::vect_debug_row_ptr& val, const dvnci::dvncierror& error) {
 
                 if (m_scriptcontext && !m_function.IsEmpty() && m_function->IsFunction()) {
                     V8Proxy* proxy = V8Proxy::retrieve(m_scriptcontext);
@@ -602,7 +610,7 @@ namespace WebCore {
 
         protected:
 
-            v8::Handle<v8::Value> conv(const dvnci::vect_debug_row_ptr& val, dvnci::ns_error error) {
+            v8::Handle<v8::Value> conv(const dvnci::vect_debug_row_ptr& val, const dvnci::dvncierror& error) {
 
 
                 v8::HandleScope handle_scope;
@@ -610,7 +618,8 @@ namespace WebCore {
                 v8::Handle<v8::Object> evnt = v8::Object::New();
 
                 if (error) {
-                    evnt->Set(v8::String::New("error"), v8::Integer::New(error));
+                    evnt->Set(v8::String::New("error"), v8::Integer::New(error.code()));
+                    evnt->Set(v8::String::New("what"), v8::String::New(error.str().c_str(), error.str().size()));
                     return handle_scope.Close(evnt);
                 }
 
@@ -626,7 +635,7 @@ namespace WebCore {
 
                     v8::Handle<v8::Object> tmp = v8::Object::New();
 
-                    tmp->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc_utc(it->time)));
+                    tmp->Set(v8::String::New("time"), v8::Date::New(dvnci::datetime_to_epoch_msc(it->time)));
                     tmp->Set(v8::String::New("message"), v8::String::New(it->message.c_str(), it->message.size()));
                     tmp->Set(v8::String::New("appid"), v8::Integer::New(it->appid));
                     tmp->Set(v8::String::New("level"), v8::Integer::New(it->level));
@@ -662,7 +671,7 @@ namespace WebCore {
                 m_function.Dispose();
             }
 
-            virtual void event(const dvnci::database::sql_result_ptr& val, dvnci::ns_error error) {
+            virtual void event(const dvnci::database::sql_result_ptr& val, const dvnci::dvncierror& error) {
 
                 if (m_scriptcontext && !m_function.IsEmpty() && m_function->IsFunction()) {
                     V8Proxy* proxy = V8Proxy::retrieve(m_scriptcontext);
@@ -689,7 +698,7 @@ namespace WebCore {
 
         protected:
 
-            v8::Handle<v8::Value> conv(const dvnci::database::sql_result_ptr& val, dvnci::ns_error error) {
+            v8::Handle<v8::Value> conv(const dvnci::database::sql_result_ptr& val, const dvnci::dvncierror& error) {
 
 
                 v8::HandleScope handle_scope;
@@ -697,7 +706,8 @@ namespace WebCore {
                 v8::Handle<v8::Object> evnt = v8::Object::New();
 
                 if (error) {
-                    evnt->Set(v8::String::New("error"), v8::Integer::New(error));
+                    evnt->Set(v8::String::New("error"), v8::Integer::New(error.code()));
+                    evnt->Set(v8::String::New("what"), v8::String::New(error.str().c_str(), error.str().size()));
                     return handle_scope.Close(evnt);
                 }
 
@@ -723,7 +733,7 @@ namespace WebCore {
                     header->Set(i++, arrayh);
                 }
 
-                evnt->Set(v8::String::New("headers"), header);
+                evnt->Set(v8::String::New("header"), header);
 
 
                 v8::Handle<v8::Array> data = v8::Array::New(val->second.size());
@@ -792,9 +802,9 @@ namespace WebCore {
 
     }
 
-    dvnci::database::db_task_executor* unwrap_db_task_executor(v8::Handle<v8::Object> obj) {
+    dvnci::database::db_task_executor* unwrap_db_task_executor(const v8::Arguments& args) {
 
-        v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
+        v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(args.Holder()->GetInternalField(0));
         return static_cast<dvnci::database::db_task_executor*> (field->Value());
 
     }
@@ -830,7 +840,7 @@ namespace WebCore {
 
         if (argumentCount < 4) return v8::Undefined();
 
-        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args.This());
+        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args);
 
         dvnci::str_set tags;
 
@@ -885,7 +895,7 @@ namespace WebCore {
 
         if (argumentCount < 4) return v8::Undefined();
 
-        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args.This());
+        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args);
 
         dvnci::str_set tags;
 
@@ -940,7 +950,7 @@ namespace WebCore {
 
         if (argumentCount < 3) return v8::Undefined();
 
-        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args.This());
+        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args);
 
         if (!args[1]->IsDate() || !args[2]->IsDate())
             return v8::Undefined();
@@ -978,7 +988,7 @@ namespace WebCore {
 
         if (argumentCount < 3) return v8::Undefined();
 
-        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args.This());
+        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args);
 
         if (!args[1]->IsDate() || !args[2]->IsDate())
             return v8::Undefined();
@@ -1016,7 +1026,7 @@ namespace WebCore {
 
         if (argumentCount < 2) return v8::Undefined();
 
-        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args.This());
+        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args);
 
         std::string req = "";
 
@@ -1045,11 +1055,14 @@ namespace WebCore {
 
     static v8::Handle<v8::Value> db_close_method(const v8::Arguments& args) {
 
-        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args.This());
+        dvnci::database::db_task_executor* db = unwrap_db_task_executor(args);
+	//dvnciDBThreadRemove(db);
         return v8::Boolean::New(db->disconnect());
     }
 
-    v8::Handle<v8::Value> dvnciSCDBConnection(const v8::Arguments& args) {
+    
+    
+    v8::Handle<v8::Value> dvnciSCDBConnection(const v8::Arguments& args, bool trenddef =true) {
 
         int argumentCount = args.Length();
 
@@ -1061,8 +1074,6 @@ namespace WebCore {
 
         dvnci::num32 timeout = 15;
 
-        bool trenddef = false;
-
 
         bool hascallback = false;
 
@@ -1072,9 +1083,6 @@ namespace WebCore {
 
             String connectionstr = toWebCoreString(args[2]);
             connectionstring  = std::string(connectionstr.utf8().data());
-
-            if (argumentCount > 4)
-                trenddef = static_cast<bool> (args[4]->BooleanValue());
 
             if (argumentCount > 3)
                 timeout = static_cast<dvnci::indx> (toInt64(args[3]));
@@ -1115,5 +1123,8 @@ namespace WebCore {
         return v8::Boolean::New(false);
 
     }
+    
+            
+    
 
 }

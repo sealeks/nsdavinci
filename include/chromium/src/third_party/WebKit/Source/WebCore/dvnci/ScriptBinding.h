@@ -48,8 +48,11 @@
  * 
  * 
  //  DATABASE connection
+ * 
+ // без привязки к trendef
+ $$connestDB( handler, provider, connectstring, timeout)
  
- connectSCDB( handler, provider, connectstring, timeout., returntrenddef)
+ $$connectSCDB( handler, provider, connectstring, timeout)
  
  in this handler error or DBObject
  
@@ -396,10 +399,18 @@ namespace WebCore {
     static v8::Handle<v8::Value> dvnci_connectSCDB(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_connectDB");
         if (args.Length() > 2) {             
-            return dvnciSCDBConnection(args);
+            return dvnciSCDBConnection(args, true);
         }
         return v8::Undefined();
     }    
+    
+    static v8::Handle<v8::Value> dvnci_connectSCDBC(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_connectDBC");
+        if (args.Length() > 2) {             
+            return dvnciSCDBConnection(args, false);
+        }
+        return v8::Undefined();
+    }     
 
 
 
@@ -428,7 +439,8 @@ namespace WebCore {
         {"addDebugListener", addDebugEventListenerCallback},
         {"removeDebugListener", removeDebugEventListenerCallback},        
         {"$$global", dvnci_GlobalObject},
-        {"connectSCDB", dvnci_connectSCDB},        
+        {"$$connectSCDB", dvnci_connectSCDB}, 
+        {"$$connectDB", dvnci_connectSCDBC},        
     };
 
 
