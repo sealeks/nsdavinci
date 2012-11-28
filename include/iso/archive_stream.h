@@ -27,6 +27,9 @@
 namespace boost {
     namespace asio {
         namespace iso {
+            
+            
+            std::string binary_to_hexsequence_debug(const std::string& vl);
 
 
             typedef  std::vector<int8_t>                                     row_type;

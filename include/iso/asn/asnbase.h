@@ -35,6 +35,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 #include <iso/archive_stream.h>
+#include <iso/asn/utf8.h>
 
 
 
@@ -347,6 +348,41 @@ namespace boost {
 
 
             std::ostream& operator<<(std::ostream& stream, const octetstring_type& vl);
+            
+            
+            ///  UTF8STRING TYPE           
+
+            class utf8string_type : public std::string {
+            public:
+
+                utf8string_type() : std::string() {
+                }
+
+                explicit  utf8string_type(const row_type& vl) : std::string(vl.begin(), vl.end()) {
+                }
+
+                explicit utf8string_type(const std::string& vl) : std::string(vl.begin(), vl.end()) {
+                }
+                
+                utf8string_type(const std::wstring& vl) : std::string(wstr_to_utf8(vl)) {
+                } 
+                
+                operator std::wstring() const{
+                    return  (valid()) ? utf8_to_wstr(*this) : std::wstring();
+                }
+                
+                std::wstring to_wstring() const{
+                    return  (valid()) ? utf8_to_wstr(*this) : std::wstring();
+                }                
+                
+                bool valid() const {
+                    return check_utf8(*this);
+                }
+ 
+            };
+
+
+            std::ostream& operator<<(std::ostream& stream, const utf8string_type& vl);            
 
 
 

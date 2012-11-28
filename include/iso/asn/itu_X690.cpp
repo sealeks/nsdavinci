@@ -722,6 +722,19 @@ namespace boost {
                     }
                     return false;
                 }
+                
+                ///////////////////////////////////////////////////////////////////////////////////
+                // enumerated_type from X.690
+
+                template<>
+                bool from_x690_cast(enumerated_type& val, const row_type& src){
+                    enumerated_base_type tmp;
+                    if (from_x690_cast(tmp,src)){
+                        val=tmp;
+                        return true;
+                    }
+                    return false;
+                }                
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -839,6 +852,11 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl) {
                     return  primitive_desirialize(stream, vl);
                 }
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<enumerated_type>& vl){
+                    return  primitive_desirialize(stream, vl);                    
+                }                
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<float>& vl) {

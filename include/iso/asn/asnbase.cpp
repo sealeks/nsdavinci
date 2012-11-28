@@ -281,6 +281,13 @@ namespace boost {
                 stream <<  std::string(vl.begin(), vl.end());
                 return stream;
             }
+            
+            // utf8string_type
+
+            std::ostream& operator<<(std::ostream& stream, const utf8string_type& vl) {
+                stream <<  std::string(vl.begin(), vl.end());
+                return stream;
+            }            
 
 
 
