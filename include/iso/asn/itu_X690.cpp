@@ -407,6 +407,12 @@ namespace boost {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<utf8string_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }                
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -906,7 +912,13 @@ namespace boost {
                     stringtype_reader(stream, *const_cast<octetstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
                 }                
-                
+ 
+                 template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl) {
+                    const_cast<utf8string_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<utf8string_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }                     
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
                 /*TESTS                                                                                                                                                                                                              */

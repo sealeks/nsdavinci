@@ -622,6 +622,9 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<octetstring_type>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<utf8string_type>& vl);                
 
 
 
@@ -978,6 +981,9 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<octetstring_type>& vl);
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl);                
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     

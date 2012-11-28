@@ -371,6 +371,10 @@ namespace boost {
                     return  (valid()) ? utf8_to_wstr(*this) : std::wstring();
                 }
                 
+                operator row_type() const{
+                    return (valid()) ? row_type(begin(),end()) : row_type();
+                }
+                
                 std::wstring to_wstring() const{
                     return  (valid()) ? utf8_to_wstr(*this) : std::wstring();
                 }                
@@ -654,6 +658,19 @@ namespace boost {
                 }
 
             } ;
+            
+            template<>
+            struct tag_traits<utf8string_type> {
+
+                static  id_type number() {
+                    return TYPE_UTF8STRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;            
 
 
             //  tag class
