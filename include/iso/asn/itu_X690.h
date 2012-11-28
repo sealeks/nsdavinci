@@ -693,6 +693,12 @@ namespace boost {
 
                 template<>
                 bool from_x690_cast(null_type& val, const row_type& src);
+                
+                ///////////////////////////////////////////////////////////////////////////////////
+                // enumerated_type from X.690
+
+                template<>
+                bool from_x690_cast(enumerated_type& val, const row_type& src);                
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -942,6 +948,9 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl);
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<enumerated_type>& vl);                 
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<float>& vl);
