@@ -248,7 +248,15 @@ namespace boost {
                 std::size_t to_x690_cast(const null_type& val, row_type& src) {
                     return 0;
                 }
+                
 
+                //// enumerated_type cast                          
+                
+                std::size_t to_x690_cast(const enumerated_type& val, row_type& src) {
+                    return to_x690_cast(val.value(),  src);
+                }                
+
+               
 
                 //// oid cast
 
