@@ -63,6 +63,7 @@ namespace boost {
 
             ///////////////////
 
+            const id_type   TYPE_EOC = 0x0;            
             const id_type   TYPE_BOOLEAN = 0x1;
             const id_type   TYPE_INTEGER = 0x2;
             const id_type   TYPE_BITSTRING = 0x3;
@@ -91,7 +92,39 @@ namespace boost {
             const id_type EXTENDED_TAGID = 31;
 
 
+            //// EOF_TYPE
 
+            struct eoc_type  {
+            } ;
+            
+            
+            
+            //// ENUMERATED_TYPE
+            
+            typedef int32_t enumerated_base_type;
+            
+            class enumerated_type  {
+            public:
+                
+                enumerated_type(enumerated_base_type vl = 0) : value_(vl){}
+                
+                void  value(enumerated_base_type vl){
+                    value_=vl;
+                }
+                
+                enumerated_base_type value() const {
+                    return value_;
+                }  
+                
+                operator enumerated_base_type() const{
+                    return value_;
+                }
+                
+            private:               
+                enumerated_base_type value_;
+            };   
+            
+            
 
             //// OID_TYPE
 
@@ -348,6 +381,20 @@ namespace boost {
                 }
 
             } ;
+            
+            
+            template<>
+            struct tag_traits<eoc_type> {
+
+                static  id_type number() {
+                    return TYPE_EOC;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;            
 
             template<>
             struct tag_traits<int8_t> {
@@ -559,7 +606,18 @@ namespace boost {
             } ;
 
 
+            template<>
+            struct tag_traits<enumerated_type> {
 
+                static  id_type number() {
+                    return TYPE_ENUMERATED;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;
 
 
             //  tag class

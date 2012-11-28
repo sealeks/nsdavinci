@@ -140,6 +140,7 @@ namespace boost {
                         listbuffers_.push_back(mutable_buffer(const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
                         size_ += boost::asio::buffer_size(*it);
                     }
+                    std::cout << "IARCHVE size:"  << size_  << std::endl;
                 }
 
 
@@ -187,6 +188,7 @@ namespace boost {
                 
                 void decsize(std::size_t sz)  {
                     size_ =  size_<sz ? 0 : (size_-sz);
+                    std::cout << "IARCHVE size:"  << size_  << std::endl;
                 }                
 
                 list_mutable_buffers listbuffers_;

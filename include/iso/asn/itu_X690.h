@@ -222,6 +222,11 @@ namespace boost {
                 // null to X.690
 
                 std::size_t to_x690_cast(const null_type& val, row_type& src);
+                
+                ///////////////////////////////////////////////////////////////////////////////////
+                // enumerated_type to X.690
+
+                std::size_t to_x690_cast(const enumerated_type& val, row_type& src);                
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -590,6 +595,9 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<uint64_t>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<enumerated_type>& vl);                
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<float>& vl);
