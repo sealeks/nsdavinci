@@ -6,10 +6,22 @@
  */
 
 #include "asnbase.h"
+#include "boost/date_time/gregorian/gregorian.hpp"
 
 namespace boost {
     namespace asio {
         namespace asn {
+
+            /*  template <typename T> inline static T string_to(std::string val) {
+                       if (val.find_first_of('0')!=0){
+                           if (val.find_first_of('0')==std::string::npos){
+                               return 0;}
+                           else
+                               val = val.substr(val.find_first_of('0'));
+                       }
+                       return  boost::lexical_cast<T > (val);
+               } */
+
 
             class_type to_class_type( int8_t vl) {
                 switch (vl & 0xC0) {
@@ -65,7 +77,7 @@ namespace boost {
                 //stream << std::endl;
                 return stream;
             }
-            
+
             // relative oid type
 
             reloid_type::reloid_type(const oidindx_type *  vl, std::size_t size) : std::vector<oidindx_type>(vl, vl + size) {
@@ -106,7 +118,7 @@ namespace boost {
                         stream <<  "." << *it;
                 //stream << std::endl;
                 return stream;
-            }            
+            }
 
 
 
@@ -281,13 +293,75 @@ namespace boost {
                 stream <<  std::string(vl.begin(), vl.end());
                 return stream;
             }
-            
+
             // utf8string_type
 
             std::ostream& operator<<(std::ostream& stream, const utf8string_type& vl) {
                 stream <<  std::string(vl.begin(), vl.end());
                 return stream;
-            }            
+            }
+
+
+            // time types            
+
+            row_type from_gentime(const utctime_type& val) {
+                row_type rslt;
+                if (!val.is_special()) {
+                    std::string tmp = boost::posix_time::to_iso_string(val);
+                    if (tmp.find('T') != std::string::npos)
+                        tmp.erase(tmp.find('T'), 1);
+                    if (tmp.size() > 2)
+                        std::copy(tmp.begin() + 2, tmp.end(), std::back_inserter(rslt));
+                }
+                return rslt;
+            }
+
+            utctime_type to_gentime(const row_type& val) {
+                if (val.size() < 8) {
+
+                    try {
+                        std::string zdelt = "";
+                        std::string tmp(val.begin(), val.end());
+                        std::string::size_type  it = tmp.find('z');
+                        if (it == std::string::npos)
+                            it = tmp.find('Z');
+                        if (it == std::string::npos) {
+                            it = tmp.find('-');
+                            if (it != std::string::npos) {
+                                zdelt = tmp.substr(it + 0);
+                                zdelt = (zdelt.find_first_not_of('0') != std::string::npos) ? ("-" + zdelt.substr(zdelt.find_first_not_of('0'))) : "";
+                                tmp = tmp.substr(0, it);
+                            }
+                            else {
+                                it = tmp.find('+');
+                                if (it != std::string::npos) {
+                                    zdelt = tmp.substr(it + 1);
+                                    zdelt = (zdelt.find_first_not_of('0') != std::string::npos) ? ("+" + zdelt.substr(zdelt.find_first_not_of('0'))) : "";
+                                    tmp = tmp.substr(0, it);
+                                }
+                            }
+                        }
+                        else
+                            tmp = tmp.substr(0, it);
+                        
+                        if (tmp.size() < 1)
+                            return utctime_type();
+                        
+                        tmp = ((tmp[0]=='9') || (tmp[0]=='8')) ? ("19" + tmp) : ("20"+tmp);  
+                        
+                        if (tmp.size() < 8)
+                            return utctime_type();
+                        
+                        std::string rslt = tmp.substr(0, 8) + "T" + tmp.substr(8);
+                        
+                        return  boost::posix_time::from_iso_string(rslt);
+                        
+                    }
+                    catch (...) {
+                    }
+                }
+                return utctime_type();
+            }
 
 
 

@@ -248,15 +248,15 @@ namespace boost {
                 std::size_t to_x690_cast(const null_type& val, row_type& src) {
                     return 0;
                 }
-                
+
 
                 //// enumerated_type cast                          
-                
+
                 std::size_t to_x690_cast(const enumerated_type& val, row_type& src) {
                     return to_x690_cast(val.value(),  src);
-                }                
+                }
 
-               
+
 
                 //// oid cast
 
@@ -290,6 +290,16 @@ namespace boost {
                     for (oid_type::const_iterator it = (val.begin()); it != val.end(); ++it)
                         to_x690_castoid_impl(*it, src);
                     return (src.size() - strtsz);
+                }
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // gentime to X.690
+
+                std::size_t to_x690_cast(const utctime_type& val, row_type& src) {
+                   std::size_t strtsz = src.size();
+                   row_type tmp =from_gentime(val);
+                   src.insert(src.end(), tmp.begin(), tmp.end());
+                   return (src.size() - strtsz);
                 }
 
 
@@ -407,12 +417,17 @@ namespace boost {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-                
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<utf8string_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
-                }                
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<utctime_type>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -609,10 +624,10 @@ namespace boost {
                         int32_t exp_b = 0;
                         if (!from_x690_cast(exp_b, row_type(val.begin() + 1, itrexen)))
                             return false;
-                        exp_b += (EXPB + MANT+factor);
+                        exp_b += (EXPB + MANT + factor);
                         B mant = 0;
                         //B marker0 = ((~B(0)) << MANT);
-                        for (row_type::const_iterator it = itrexen; it != val.end(); ++it){
+                        for (row_type::const_iterator it = itrexen; it != val.end(); ++it) {
                             if ((mant = (mant << 8) | static_cast<B> (*reinterpret_cast< const uint8_t*> (&(*it)))) & ((~B(0)) << MANT)) {
                                 exp_b += (std::distance(it, val.end()) - 1)*8;
                                 while (mant & ((~B(0)) << MANT)) {
@@ -620,25 +635,27 @@ namespace boost {
                                     exp_b++;
                                 }
                                 break;
-                            }}
-                        
-                        if (!mant){
-                            vl=0;
+                            }
+                        }
+
+                        if (!mant) {
+                            vl = 0;
                             return true;
                         }
-                        
+
                         //B marker1 = (B(1) << (MANT));
                         while (!((B(1) << (MANT)) & mant)) {
                             exp_b--;
                             mant <<= 1;
                         }
-                        if (exp_b < 0){
-                            vl=negat ? -0.0 : 0;
-                            return true;}
-                        B exp = static_cast<B>(exp_b);
+                        if (exp_b < 0) {
+                            vl = negat ? -0.0 : 0;
+                            return true;
+                        }
+                        B exp = static_cast<B> (exp_b);
                         //B marker2 = (~((~B(0)) << (sizeof(B)*8-MANT-1)));                         
                         if (exp >= (~((~B(0)) << (sizeof (B)*8 - MANT - 1)))) {
-                            vl= negat ? (-std::numeric_limits<T>::infinity()) :  (std::numeric_limits<T>::infinity());
+                            vl = negat ? (-std::numeric_limits<T>::infinity()) :  (std::numeric_limits<T>::infinity());
                             return true;
                         }
                         exp <<= MANT;
@@ -728,19 +745,19 @@ namespace boost {
                     }
                     return false;
                 }
-                
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // enumerated_type from X.690
 
                 template<>
-                bool from_x690_cast(enumerated_type& val, const row_type& src){
+                bool from_x690_cast(enumerated_type& val, const row_type& src) {
                     enumerated_base_type tmp;
-                    if (from_x690_cast(tmp,src)){
-                        val=tmp;
+                    if (from_x690_cast(tmp, src)) {
+                        val = tmp;
                         return true;
                     }
                     return false;
-                }                
+                }
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -817,6 +834,15 @@ namespace boost {
                 }
 
 
+                ///////////////////////////////////////////////////////////////////////////////////
+                // utctime_type from to X.690
+
+                template<>
+                bool from_x690_cast(utctime_type& val, const row_type& src) {
+                     val = to_gentime(src);
+                    return !val.is_special();
+                }
+
                 ////////////////////////////////////////////
 
                 template<>
@@ -858,11 +884,11 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl) {
                     return  primitive_desirialize(stream, vl);
                 }
-                
+
                 template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<enumerated_type>& vl){
-                    return  primitive_desirialize(stream, vl);                    
-                }                
+                iarchive& operator>>(iarchive& stream, const implicit_value<enumerated_type>& vl) {
+                    return  primitive_desirialize(stream, vl);
+                }
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<float>& vl) {
@@ -898,27 +924,32 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl) {
                     return  primitive_desirialize(stream, vl);
                 }
-                
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<bitstring_type>& vl) {
-                    const_cast<bitstring_type*> (&(vl.value()))->clear();                    
+                    const_cast<bitstring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<bitstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }     
-                
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<octetstring_type>& vl) {
                     const_cast<octetstring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<octetstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }                
- 
-                 template<>
+                }
+
+                template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl) {
                     const_cast<utf8string_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<utf8string_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }                     
+                }
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl) {
+                    return  primitive_desirialize(stream, vl);
+                }
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
                 /*TESTS                                                                                                                                                                                                              */
