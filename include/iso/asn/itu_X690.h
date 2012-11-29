@@ -80,6 +80,10 @@ namespace boost {
                 row_type endian_conv_conv(const row_type& val);
 
                 void endian_push_pack(const row_type& val,  row_type& dst);
+                
+                
+                /////// timeconv
+
 
 
                 //  size_class
@@ -240,6 +244,13 @@ namespace boost {
 
 
                 std::size_t to_x690_cast(const reloid_type& val, row_type& src);
+                
+                ///////////////////////////////////////////////////////////////////////////////////
+                // utctime to X.690
+
+
+                std::size_t to_x690_cast(const utctime_type& val, row_type& src);                
+                
 
                 template<typename T>
                 row_type to_x690_cast(const T& val) {
@@ -624,7 +635,10 @@ namespace boost {
                 oarchive& operator<<(oarchive& stream, const implicit_value<octetstring_type>& vl);
                 
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<utf8string_type>& vl);                
+                oarchive& operator<<(oarchive& stream, const implicit_value<utf8string_type>& vl);     
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<utctime_type>& vl);                  
 
 
 
@@ -715,6 +729,12 @@ namespace boost {
 
                 template<>
                 bool from_x690_cast(reloid_type& val, const row_type& src);
+                
+                ///////////////////////////////////////////////////////////////////////////////////
+                // utctime_type from to X.690
+
+                template<>
+                bool from_x690_cast(utctime_type& val, const row_type& src);                
 
 
 
@@ -983,7 +1003,10 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<octetstring_type>& vl);
                 
                 template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl);                
+                iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl);     
+                             
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl);                    
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
