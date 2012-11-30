@@ -1,6 +1,7 @@
 #include <iso/asn/utf8.h>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 
 #if defined(__MINGW32__) && defined(_amd64_)
@@ -235,10 +236,10 @@ namespace boost {
                 return false;
             }
 
-            bool bmpstr_to_wstr(const std::string& val, std::wstring rslt) {
+            bool bmpstr_to_wstr(const std::string& val, std::wstring& rslt) {
                 if (val.empty())
                     return true;
-                if (!(val.size() % 2))
+                if ((val.size() % 2))
                     return false;
                 try {
 
