@@ -24,6 +24,8 @@
     <itemPath>../../include/iso/asn/itu_X690.h</itemPath>
     <itemPath>../../include/iso/rfc1006.cpp</itemPath>
     <itemPath>../../include/iso/rfc1006.h</itemPath>
+    <itemPath>../../include/iso/asn/utf8.cpp</itemPath>
+    <itemPath>../../include/iso/asn/utf8.h</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
