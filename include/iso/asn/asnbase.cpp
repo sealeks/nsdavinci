@@ -12,16 +12,13 @@ namespace boost {
     namespace asio {
         namespace asn {
 
-            /*  template <typename T> inline static T string_to(std::string val) {
-                       if (val.find_first_of('0')!=0){
-                           if (val.find_first_of('0')==std::string::npos){
-                               return 0;}
-                           else
-                               val = val.substr(val.find_first_of('0'));
-                       }
-                       return  boost::lexical_cast<T > (val);
-               } */
-
+            template <typename T> inline static T string_to(std::string val) {
+                std::string::size_type it = val.find_first_not_of('0');
+                if (it == std::string::npos)
+                    return 0;
+                val = val.substr(it);
+                return  boost::lexical_cast<T > (val);
+            }
 
             class_type to_class_type( int8_t vl) {
                 switch (vl & 0xC0) {
@@ -302,60 +299,138 @@ namespace boost {
             }
 
 
-            // time types            
+            // time types      
 
-            row_type from_gentime(const utctime_type& val) {
+            static utctime_type to_z_impltime(const std::string& val, const utctime_type& tm) {
+                if (val.empty())
+                    return tm;
+                if (val.size() != 5)
+                    return utctime_type();
+                switch (val[0]) {
+                    case '+':
+                    {
+                        return (tm + (boost::posix_time::hours(string_to<int>(val.substr(1, 2))) + boost::posix_time::minutes(string_to<int>(val.substr(3, 2)))));
+                    }
+                    case '-':
+                    {
+                        return (tm - (boost::posix_time::hours(string_to<int>(val.substr(1, 2))) + boost::posix_time::minutes(string_to<int>(val.substr(3, 2)))));
+                    }
+                }
+                return utctime_type();
+            }
+
+            static row_type from_impltime(const utctime_type& val, bool full) {
                 row_type rslt;
                 if (!val.is_special()) {
-                    std::string tmp = boost::posix_time::to_iso_string(val);
+                    std::string tmp = boost::posix_time::to_iso_string(val) + "Z";
+                    //std::string tmp = boost::posix_time::to_iso_string(val) + "+0400";
+                    //std::string tmp = "201211301232.51+0400";
                     if (tmp.find('T') != std::string::npos)
                         tmp.erase(tmp.find('T'), 1);
-                    if (tmp.size() > 2)
-                        std::copy(tmp.begin() + 2, tmp.end(), std::back_inserter(rslt));
+                    if (!full) {
+                        if (tmp.size() > 2)
+                            std::copy(tmp.begin() + 2, tmp.end(), std::back_inserter(rslt));
+                    }
+                    else
+                        std::copy(tmp.begin(), tmp.end(), std::back_inserter(rslt));
                 }
                 return rslt;
             }
 
-            utctime_type to_gentime(const row_type& val) {
-                if (val.size() < 8) {
-
+            static utctime_type to_impl_time(const row_type& val, bool full) {
+                if (val.size() > 8) {
                     try {
-                        std::string zdelt = "";
                         std::string tmp(val.begin(), val.end());
                         std::string::size_type  it = tmp.find('z');
+                        std::string zdelt = "";
                         if (it == std::string::npos)
                             it = tmp.find('Z');
                         if (it == std::string::npos) {
                             it = tmp.find('-');
                             if (it != std::string::npos) {
-                                zdelt = tmp.substr(it + 0);
-                                zdelt = (zdelt.find_first_not_of('0') != std::string::npos) ? ("-" + zdelt.substr(zdelt.find_first_not_of('0'))) : "";
+                                zdelt = tmp.substr(it);
                                 tmp = tmp.substr(0, it);
                             }
                             else {
                                 it = tmp.find('+');
                                 if (it != std::string::npos) {
-                                    zdelt = tmp.substr(it + 1);
-                                    zdelt = (zdelt.find_first_not_of('0') != std::string::npos) ? ("+" + zdelt.substr(zdelt.find_first_not_of('0'))) : "";
+                                    zdelt = tmp.substr(it);
                                     tmp = tmp.substr(0, it);
                                 }
                             }
                         }
                         else
                             tmp = tmp.substr(0, it);
-                        
-                        if (tmp.size() < 1)
+
+                        if (tmp.empty())
                             return utctime_type();
-                        
-                        tmp = ((tmp[0]=='9') || (tmp[0]=='8')) ? ("19" + tmp) : ("20"+tmp);  
-                        
+
+                        if (!full)
+                            tmp = ((tmp[0] == '9') || (tmp[0] == '8')) ? ("19" + tmp) : ("20" + tmp);
+
                         if (tmp.size() < 8)
                             return utctime_type();
-                        
-                        std::string rslt = tmp.substr(0, 8) + "T" + tmp.substr(8);
-                        
-                        return  boost::posix_time::from_iso_string(rslt);
-                        
+
+                        utctime_type rslt(boost::gregorian::date(string_to<int>(tmp.substr(0, 4)), string_to<int>(tmp.substr(4, 2)), string_to<int>(tmp.substr(6, 2))));
+
+                        if (tmp.size() == 8)
+                            return zdelt.empty() ? rslt : to_z_impltime(zdelt, rslt);
+                        else
+                            tmp = tmp.substr(8);
+
+                        if (tmp.size() < 2)
+                            return utctime_type();
+
+                        rslt += boost::posix_time::hours(string_to<int>(tmp.substr(0, 2)));
+
+                        if (tmp.size() == 2)
+                            return zdelt.empty() ? rslt : to_z_impltime(zdelt, rslt);
+                        else
+                            tmp = tmp.substr(2);
+
+                        if (tmp[0] == '.') {
+                            return zdelt.empty() ? (rslt + boost::posix_time::millisec(static_cast<int> (3600000 * string_to<double>("0" + tmp)))) :
+                                    to_z_impltime(zdelt, (rslt + boost::posix_time::millisec(static_cast<int> (3600000 * string_to<double>("0" + tmp)))));
+                        }
+                        else {
+                            if (tmp.size() < 2)
+                                return utctime_type();
+                        }
+
+                        rslt += boost::posix_time::minutes(string_to<int>(tmp.substr(0, 2)));
+
+                        if (tmp.size() == 2)
+                            return zdelt.empty() ? rslt : to_z_impltime(zdelt, rslt);
+                        else
+                            tmp = tmp.substr(2);
+
+                        if (tmp[0] == '.') {
+                            return zdelt.empty() ? (rslt + boost::posix_time::microsec(static_cast<int> (60000000 * string_to<double>("0" + tmp)))) :
+                                    to_z_impltime(zdelt, (rslt + boost::posix_time::microsec(static_cast<int> (60000000 * string_to<double>("0" + tmp))))) ;
+                        }
+                        else {
+                            if (tmp.size() < 2)
+                                return utctime_type();
+                        }
+
+                        rslt += boost::posix_time::seconds(string_to<int>(tmp.substr(0, 2)));
+
+                        if (tmp.size() == 2)
+                            return zdelt.empty() ? rslt : to_z_impltime(zdelt, rslt);
+                        else
+                            tmp = tmp.substr(2);
+
+                        if (tmp[0] != '.')
+                            return utctime_type();
+
+
+                        if (tmp.size() == 1)
+                            return zdelt.empty() ? rslt : to_z_impltime(zdelt, rslt);
+
+                        rslt += boost::posix_time::microsec(static_cast<int> (string_to<double>("0" + tmp)*1000000));
+
+                        return  zdelt.empty() ? rslt : to_z_impltime(zdelt, rslt);
+
                     }
                     catch (...) {
                     }
@@ -363,7 +438,25 @@ namespace boost {
                 return utctime_type();
             }
 
+            row_type from_utctime(const utctime_type& val) {
+                return from_impltime(val, false);
+            }
 
+            utctime_type to_utctime(const row_type& val) {
+                return to_impl_time(val, false);
+            }
+
+            row_type from_gentime(const gentime_type& val) {
+                return from_impltime(val.value(), true);
+            }
+
+            gentime_type to_gentime(const row_type& val) {
+                return gentime_type(to_impl_time(val, true));
+            }
+
+            std::ostream& operator<<(std::ostream& stream, const gentime_type& vl) {
+                return stream << vl.value();
+            }
 
 
         }
