@@ -851,6 +851,32 @@ namespace boost {
             bool utf8_to_wstr(const std::string& val, std::wstring& rslt);
             std::string wstr_to_utf8(const std::wstring& val);
             bool wstr_to_utf8(const std::wstring& val, std::string& rslt);
+            
+            bool wstr_to_universalstr(const std::wstring& val, std::string& rslt);            
+            bool wstr_to_bmpstr(const std::wstring& val, std::string& rslt);   
+            bool universalstr_to_wstr(const std::string& val, std::wstring& rslt);            
+            bool bmpstr_to_wstr(const std::string& val, std::wstring& rslt);    
+            
+            inline std::string wstr_to_universalstr(const std::wstring& val){
+                std::string tmp;
+                return wstr_to_universalstr(val,tmp) ? tmp : "";
+            }         
+            
+            inline std::string wstr_to_bmpstr(const std::wstring& val){
+                std::string tmp;
+                return wstr_to_bmpstr(val,tmp) ? tmp : "";                
+            }
+            
+            inline std::wstring universalstr_to_wstr(const std::string& val){
+                std::wstring tmp;
+                return universalstr_to_wstr(val,tmp) ? tmp : L"";                
+            }   
+            
+            inline std::wstring bmpstr_to_wstr(const std::string& val){
+                std::wstring tmp;
+                return bmpstr_to_wstr(val,tmp) ? tmp : L"";                   
+            }               
+            
         }
     }
 }

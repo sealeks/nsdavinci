@@ -433,6 +433,67 @@ namespace boost {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<numericstring_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }
+                                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<printablestring_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<t61string_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }  
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<videotexstring_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<ia5string_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }  
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<graphicstring_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }  
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<visiblestring_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<generalstring_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }      
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<universalstring_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<bmpstring_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }                        
+               
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<utctime_type>& vl) {
@@ -969,6 +1030,78 @@ namespace boost {
                     stringtype_reader(stream, *const_cast<utf8string_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
                 }
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<numericstring_type>& vl) {
+                    const_cast<numericstring_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<numericstring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }                
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<printablestring_type>& vl) {
+                    const_cast<printablestring_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<printablestring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }   
+                                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<t61string_type>& vl) {
+                    const_cast<t61string_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<t61string_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }  
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<videotexstring_type>& vl) {
+                    const_cast<videotexstring_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<videotexstring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }                
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<ia5string_type>& vl) {
+                    const_cast<ia5string_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<ia5string_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }               
+                
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<graphicstring_type>& vl) {
+                    const_cast<graphicstring_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<graphicstring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }  
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<visiblestring_type>& vl) {
+                    const_cast<visiblestring_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<visiblestring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }                
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<generalstring_type>& vl) {
+                    const_cast<generalstring_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<generalstring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                } 
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<universalstring_type>& vl) {
+                    const_cast<universalstring_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<universalstring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }                
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<bmpstring_type>& vl) {
+                    const_cast<bmpstring_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<bmpstring_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }                    
+                
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl) {
