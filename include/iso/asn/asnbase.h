@@ -109,8 +109,13 @@ namespace boost {
             const id_type   TYPE_IA5STRING = 0x16;
             const id_type   TYPE_UTCTIME = 0x17;
             const id_type   TYPE_GENERALZEDTIME = 0x18;
-
-
+            const id_type   TYPE_GRAPHICSTRING = 0x19;
+            const id_type   TYPE_VISIBLESTRING = 0x1A;            
+            const id_type   TYPE_GENERALSTRING = 0x1B; 
+            const id_type   TYPE_UNIVERSALSTRING = 0x1C;  
+            const id_type   TYPE_CHARACTERSTRING = 0x1D;       
+            const id_type   TYPE_BMPSTRING = 0x1E;                
+            
             const id_type EXTENDED_TAGID = 31;
 
 
@@ -387,7 +392,7 @@ namespace boost {
                 explicit  utf8string_type(const row_type& vl) : std::string(vl.begin(), vl.end()) {
                 }
 
-                explicit utf8string_type(const std::string& vl) : std::string(vl.begin(), vl.end()) {
+                explicit utf8string_type(const std::string& vl) : std::string(vl) {
                 }
 
                 utf8string_type(const std::wstring& vl) : std::string(wstr_to_utf8(vl)) {
@@ -413,7 +418,152 @@ namespace boost {
 
 
             std::ostream& operator<<(std::ostream& stream, const utf8string_type& vl);
+            
+            
 
+            //  SIMLE STRING TYPE
+            
+            template<id_type TAGID>
+            class simplestring_type : public std::string {
+            public:
+
+                simplestring_type() : std::string() {
+                }
+
+                explicit  simplestring_type(const row_type& vl) : std::string(vl.begin(), vl.end()) {
+                }
+
+                simplestring_type(const std::string& vl) : std::string(vl) {
+                }
+
+                operator row_type() const {
+                    return row_type(begin(), end());
+                }
+
+                operator std::string() const {
+                    return *this;
+                }
+                
+                static id_type tagid(){
+                    return TAGID;
+                }
+                
+            };
+            
+           
+            typedef simplestring_type<TYPE_NUMERICSTRING>   numericstring_type;
+            typedef simplestring_type<TYPE_PRINTABLESTRING> printablestring_type;            
+            typedef simplestring_type<TYPE_T61STRING>            t61string_type;              
+            typedef simplestring_type<TYPE_VIDEOTEXSTRING>  videotexstring_type;
+            typedef simplestring_type<TYPE_IA5STRING>            ia5string_type;              
+            typedef simplestring_type<TYPE_GRAPHICSTRING>   graphicstring_type;   
+            typedef simplestring_type<TYPE_VISIBLESTRING>    visiblestring_type;  
+            typedef simplestring_type<TYPE_GENERALSTRING>    generalstring_type;            
+            
+
+            inline std::ostream& operator<<(std::ostream& stream, const numericstring_type& vl){
+                return stream << vl.operator  std::string();}
+            
+            inline std::ostream& operator<<(std::ostream& stream, const printablestring_type& vl){
+                return stream << vl.operator  std::string();}     
+            
+            inline std::ostream& operator<<(std::ostream& stream, const t61string_type& vl){
+                return stream << vl.operator  std::string();}
+            
+            inline std::ostream& operator<<(std::ostream& stream, const videotexstring_type& vl){
+                return stream << vl.operator  std::string();}        
+            
+            inline std::ostream& operator<<(std::ostream& stream, const ia5string_type& vl){
+                return stream << vl.operator  std::string();}     
+            
+            inline std::ostream& operator<<(std::ostream& stream, const graphicstring_type& vl){
+                return stream << vl.operator  std::string();}
+            
+            inline std::ostream& operator<<(std::ostream& stream, const visiblestring_type& vl){
+                return stream << vl.operator  std::string();}        
+            
+            inline std::ostream& operator<<(std::ostream& stream, const generalstring_type& vl){
+                return stream << vl.operator  std::string();}    
+            
+            
+          //UNICOD STRING  
+         //  32bit
+            
+            ///universalstring_type
+            
+            class universalstring_type : public std::string {
+            public:
+
+                universalstring_type() : std::string() {
+                }
+
+                universalstring_type(const std::wstring& vl) : std::string(wstr_to_universalstr(vl)) {
+                }
+                
+                explicit universalstring_type(const std::string& vl) : std::string(wstr_to_universalstr( utf8_to_wstr(vl))) {
+                }                
+
+                operator std::wstring() const {
+                    return  universalstr_to_wstr(*this);
+                }             
+
+                operator row_type() const {
+                    return row_type(begin(), end());
+                }
+
+                std::wstring to_wstring() const {
+                    return  universalstr_to_wstr(*this);
+                }
+                
+                operator std::string() const {
+                    return *this;
+                }           
+
+
+            } ; 
+            
+            inline std::ostream& operator<<(std::ostream& stream, const universalstring_type& vl){
+                return stream << vl.operator  std::string();}              
+            
+          //UNICOD STRING  
+         //  16bit
+            
+            ///bmpstring_type
+            
+            class bmpstring_type : public std::string {
+            public:
+
+                bmpstring_type() : std::string() {
+                }
+
+                bmpstring_type(const std::wstring& vl) : std::string(wstr_to_bmpstr(vl)) {
+                }
+                
+                explicit bmpstring_type(const std::string& vl) : std::string(wstr_to_bmpstr( utf8_to_wstr(vl))) {
+                }                
+
+                operator std::wstring() const {
+                    return  bmpstr_to_wstr(*this);
+                }
+
+                operator row_type() const {
+                    return row_type(begin(), end());
+                }
+
+                std::wstring to_wstring() const {
+                    return  bmpstr_to_wstr(*this);
+                }
+                
+                operator std::string() const {
+                    return *this;
+                }                 
+
+
+
+            } ;              
+
+            inline std::ostream& operator<<(std::ostream& stream, const bmpstring_type& vl){
+                return stream << vl.operator  std::string();}                 
 
             //  time types
 
@@ -749,6 +899,137 @@ namespace boost {
                 }
 
             } ;
+            
+            template<>
+            struct tag_traits<numericstring_type> {
+
+                static  id_type number() {
+                    return TYPE_NUMERICSTRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+            } ;
+            
+            template<>
+            struct tag_traits<printablestring_type> {
+
+                static  id_type number() {
+                    return TYPE_PRINTABLESTRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ; 
+            
+           template<>
+            struct tag_traits<t61string_type> {
+
+                static  id_type number() {
+                    return TYPE_T61STRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;         
+            
+           template<>
+            struct tag_traits<videotexstring_type> {
+
+                static  id_type number() {
+                    return TYPE_VIDEOTEXSTRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;        
+            
+           template<>
+            struct tag_traits<ia5string_type> {
+
+                static  id_type number() {
+                    return TYPE_IA5STRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;   
+            
+            
+           template<>
+            struct tag_traits<graphicstring_type> {
+
+                static  id_type number() {
+                    return TYPE_GRAPHICSTRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;         
+            
+           template<>
+            struct tag_traits<visiblestring_type> {
+
+                static  id_type number() {
+                    return TYPE_VISIBLESTRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;        
+            
+           template<>
+            struct tag_traits<generalstring_type> {
+
+                static  id_type number() {
+                    return TYPE_GENERALSTRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;  
+            
+            template<>
+            struct tag_traits<universalstring_type> {
+
+                static  id_type number() {
+                    return TYPE_UNIVERSALSTRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;        
+            
+           template<>
+            struct tag_traits<bmpstring_type> {
+
+                static  id_type number() {
+                    return TYPE_BMPSTRING;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+
+            } ;                    
+            
 
             template<>
             struct tag_traits<utctime_type> {

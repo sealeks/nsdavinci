@@ -641,6 +641,37 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<utf8string_type>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<numericstring_type>& vl);
+                                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<printablestring_type>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<t61string_type>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<videotexstring_type>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<ia5string_type>& vl);    
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<graphicstring_type>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<visiblestring_type>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<generalstring_type>& vl);     
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<universalstring_type>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<bmpstring_type>& vl);                      
+                
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<utctime_type>& vl);
@@ -1014,6 +1045,36 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl);
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<numericstring_type>& vl);            
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<printablestring_type>& vl);
+                                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<t61string_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<videotexstring_type>& vl);             
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<ia5string_type>& vl);    
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<graphicstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<visiblestring_type>& vl);             
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<generalstring_type>& vl); 
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<universalstring_type>& vl);             
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<bmpstring_type>& vl);                   
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl);
