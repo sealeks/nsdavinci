@@ -500,7 +500,7 @@ namespace boost {
                 universalstring_type(const std::wstring& vl) : std::string(wstr_to_universalstr(vl)) {
                 }
                 
-                explicit universalstring_type(const std::string& vl) : std::string(wstr_to_universalstr( utf8_to_wstr(vl))) {
+               explicit universalstring_type(const std::string& vl) : std::string(wstr_to_universalstr( utf8_to_wstr(vl))) {
                 }                
 
                 operator std::wstring() const {
@@ -514,6 +514,10 @@ namespace boost {
                 std::wstring to_wstring() const {
                     return  universalstr_to_wstr(*this);
                 }
+                
+                std::string to_utf8() const {
+                    return  wstr_to_utf8(universalstr_to_wstr(*this));
+                }                    
                 
                 operator std::string() const {
                     return *this;
@@ -553,6 +557,10 @@ namespace boost {
                 std::wstring to_wstring() const {
                     return  bmpstr_to_wstr(*this);
                 }
+                
+                std::string to_utf8() const {
+                    return  wstr_to_utf8(bmpstr_to_wstr(*this));
+                }                
                 
                 operator std::string() const {
                     return *this;
