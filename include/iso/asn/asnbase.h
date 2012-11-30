@@ -517,7 +517,7 @@ namespace boost {
                 
                 std::string to_utf8() const {
                     return  wstr_to_utf8(universalstr_to_wstr(*this));
-                }                    
+               }                    
                 
                 operator std::string() const {
                     return *this;
