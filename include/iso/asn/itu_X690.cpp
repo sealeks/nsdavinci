@@ -293,13 +293,23 @@ namespace boost {
                 }
 
                 ///////////////////////////////////////////////////////////////////////////////////
-                // gentime to X.690
+                // utctime to X.690
 
                 std::size_t to_x690_cast(const utctime_type& val, row_type& src) {
-                   std::size_t strtsz = src.size();
-                   row_type tmp =from_gentime(val);
-                   src.insert(src.end(), tmp.begin(), tmp.end());
-                   return (src.size() - strtsz);
+                    std::size_t strtsz = src.size();
+                    row_type tmp = from_utctime(val);
+                    src.insert(src.end(), tmp.begin(), tmp.end());
+                    return (src.size() - strtsz);
+                }
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // gentime to X.690
+
+                std::size_t to_x690_cast(const gentime_type& val, row_type& src) {
+                    std::size_t strtsz = src.size();
+                    row_type tmp = from_gentime(val);
+                    src.insert(src.end(), tmp.begin(), tmp.end());
+                    return (src.size() - strtsz);
                 }
 
 
@@ -426,6 +436,11 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<utctime_type>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<gentime_type>& vl) {
                     return primitive_sirialize(stream, vl);
                 }
 
@@ -839,8 +854,17 @@ namespace boost {
 
                 template<>
                 bool from_x690_cast(utctime_type& val, const row_type& src) {
-                     val = to_gentime(src);
-                    return !val.is_special();
+                    val = to_utctime(src);
+                    return true; //!val.is_special();
+                }
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // gentime_type from to X.690
+
+                template<>
+                bool from_x690_cast(gentime_type& val, const row_type& src) {
+                    val = to_gentime(src);
+                    return true; //!val.value().is_special();
                 }
 
                 ////////////////////////////////////////////
@@ -948,6 +972,11 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl) {
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<gentime_type>& vl) {
                     return  primitive_desirialize(stream, vl);
                 }
 

@@ -80,8 +80,8 @@ namespace boost {
                 row_type endian_conv_conv(const row_type& val);
 
                 void endian_push_pack(const row_type& val,  row_type& dst);
-                
-                
+
+
                 /////// timeconv
 
 
@@ -226,11 +226,11 @@ namespace boost {
                 // null to X.690
 
                 std::size_t to_x690_cast(const null_type& val, row_type& src);
-                
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // enumerated_type to X.690
 
-                std::size_t to_x690_cast(const enumerated_type& val, row_type& src);                
+                std::size_t to_x690_cast(const enumerated_type& val, row_type& src);
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -244,13 +244,18 @@ namespace boost {
 
 
                 std::size_t to_x690_cast(const reloid_type& val, row_type& src);
-                
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // utctime to X.690
 
 
-                std::size_t to_x690_cast(const utctime_type& val, row_type& src);                
-                
+                std::size_t to_x690_cast(const utctime_type& val, row_type& src);
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // gentime to X.690
+
+
+                std::size_t to_x690_cast(const gentime_type& val, row_type& src);
 
                 template<typename T>
                 row_type to_x690_cast(const T& val) {
@@ -296,11 +301,11 @@ namespace boost {
                     void operator&( const optional_implicit_value<T >& vl) {
                         *this  <<  vl;
                     }
-                    
+
                     template<typename T>
                     void operator&(const choice_value<T >& vl) {
                         *this  <<  vl;
-                    }                      
+                    }
 
 
 
@@ -513,12 +518,12 @@ namespace boost {
                         stream << implicit_value<T > (*vl.value(), vl.id(), vl.type());
                     return stream;
                 }
-                
+
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const choice_value<T>& vl) {
                     const_cast<T*> (&(vl.value()))->serialize(stream);
                     return stream;
-                }                
+                }
 
 
 
@@ -606,9 +611,9 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<uint64_t>& vl);
-                
+
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<enumerated_type>& vl);                
+                oarchive& operator<<(oarchive& stream, const implicit_value<enumerated_type>& vl);
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<float>& vl);
@@ -633,14 +638,15 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<octetstring_type>& vl);
-                
-                template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<utf8string_type>& vl);     
-                
-                template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<utctime_type>& vl);                  
 
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<utf8string_type>& vl);
 
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<utctime_type>& vl);
+
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<gentime_type>& vl);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -710,12 +716,12 @@ namespace boost {
 
                 template<>
                 bool from_x690_cast(null_type& val, const row_type& src);
-                
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // enumerated_type from X.690
 
                 template<>
-                bool from_x690_cast(enumerated_type& val, const row_type& src);                
+                bool from_x690_cast(enumerated_type& val, const row_type& src);
 
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -729,12 +735,18 @@ namespace boost {
 
                 template<>
                 bool from_x690_cast(reloid_type& val, const row_type& src);
-                
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // utctime_type from to X.690
 
                 template<>
-                bool from_x690_cast(utctime_type& val, const row_type& src);                
+                bool from_x690_cast(utctime_type& val, const row_type& src);
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                // gentime_type from to X.690
+
+                template<>
+                bool from_x690_cast(gentime_type& val, const row_type& src);
 
 
 
@@ -776,18 +788,17 @@ namespace boost {
                     void operator&(const optional_implicit_value<T >& vl) {
                         *this  >>  vl;
                     }
-                    
+
                     template<typename T>
                     void operator&(const choice_value<T >& vl) {
                         *this  >>  vl;
-                    }       
-                    
-                              
+                    }
+
                     tag next_tag() const {
-                       tag tmptag;
-                       std::size_t sztag = tag_x690_cast(tmptag, buffers()); 
-                       return tmptag;
-                    }                   
+                        tag tmptag;
+                        std::size_t sztag = tag_x690_cast(tmptag, buffers());
+                        return tmptag;
+                    }
 
 
                 private:
@@ -824,13 +835,13 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const optional_explicit_value<T>& vl) {
-                       tag tmptag;  
-                       typedef boost::shared_ptr<T> shared_type;
-                       std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
-                       if (sztag && (vl==tmptag)){
-                              *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T>(new T());
-                              stream >> explicit_value<T>(*vl.value(), vl.id(),vl.type());
-                           }
+                    tag tmptag;
+                    typedef boost::shared_ptr<T> shared_type;
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    if (sztag && (vl == tmptag)) {
+                        *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
+                        stream >> explicit_value<T > (*vl.value(), vl.id(), vl.type());
+                    }
                     return stream;
                 }
 
@@ -855,24 +866,23 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const optional_implicit_value<T>& vl) {
-                       tag tmptag;  
-                       typedef boost::shared_ptr<T> shared_type;
-                       std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
-                       if (sztag && (vl==tmptag)){
-                              *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T>(new T());
-                              stream >> implicit_value<T>(*vl.value(), vl.id(),vl.type());
-                           }
+                    tag tmptag;
+                    typedef boost::shared_ptr<T> shared_type;
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    if (sztag && (vl == tmptag)) {
+                        *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
+                        stream >> implicit_value<T > (*vl.value(), vl.id(), vl.type());
+                    }
                     return stream;
                 }
-                
-                
+
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
-                     const_cast<T*> (&(vl.value()))->serialize(stream);
+                    const_cast<T*> (&(vl.value()))->serialize(stream);
                     return stream;
-                }                
-                
-                
+                }
+
+
                 //////////////////////////////////////////////////////////////////////////////////
 
                 template<typename T>
@@ -912,14 +922,14 @@ namespace boost {
                                     return true;
                                 }
                                 else {
-                                    std::size_t itfnd=0;
+                                    std::size_t itfnd = 0;
                                     stream.pop_front(szsize + sztag);
-                                    if (boost::asio::iso::find_eof(stream.buffers() ,itfnd)){
+                                    if (boost::asio::iso::find_eof(stream.buffers() , itfnd)) {
                                         row_type data;
                                         if (boost::asio::iso::row_cast(stream.buffers(), data , 0 , itfnd )) {
                                             vl.insert(vl.end(), data.begin(), data.end());
                                             return true;
-                                         }
+                                        }
                                     }
                                     return false;
                                 }
@@ -927,11 +937,11 @@ namespace boost {
                             else {
                                 if (tmptag.mask() & CONSTRUCTED_ENCODING) {
                                     while (!stream.buffers().empty()) {
-                                        if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask)){
+                                        if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask)) {
                                             stream.pop_front(szsize + sztag + tmpsize.size());
                                             return true;
                                         }
-                                    }                                   
+                                    }
                                     return false;
                                 }
                                 else {
@@ -971,9 +981,9 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl);
-                
+
                 template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<enumerated_type>& vl);                 
+                iarchive& operator>>(iarchive& stream, const implicit_value<enumerated_type>& vl);
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<float>& vl);
@@ -1001,12 +1011,15 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<octetstring_type>& vl);
-                
+
                 template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl);     
-                             
+                iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl);
+
                 template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl);                    
+                iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<gentime_type>& vl);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     

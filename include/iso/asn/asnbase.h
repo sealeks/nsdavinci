@@ -416,26 +416,58 @@ namespace boost {
 
 
             //  time types
-            
-            ///  GENERALSED_TIME TYPE               
 
+
+            ///  UTCTIME_TIME TYPE 
 
             typedef boost::posix_time::ptime utctime_type;
 
+            row_type from_utctime(const utctime_type& val);
 
-            row_type from_gentime(const utctime_type& val);
-
-            utctime_type to_gentime(const row_type& val);
+            utctime_type to_utctime(const row_type& val);
 
             inline utctime_type now_generator() {
                 return boost::posix_time::microsec_clock::universal_time();
             }
 
-            ///  UTCTIME_TIME TYPE 
-            
-            
-            
+            // inline utctime_type nowtest_generator() {
+            //      return boost::posix_time::ptime(boost::gregorian::date(2012,11,29));
+            //}            
 
+
+            ///  GENERALSED_TIME TYPE  
+
+            class gentime_type {
+            public:
+
+                gentime_type() : val_() {
+                }
+
+                gentime_type(const boost::posix_time::ptime& vl) : val_(vl) {
+                }
+
+                boost::posix_time::ptime value() const {
+                    return val_;
+                }
+
+                void value(const boost::posix_time::ptime vl)  {
+                    val_ = vl;
+                }
+
+                operator boost::posix_time::ptime() const {
+                    return val_;
+                }
+
+            private:
+                boost::posix_time::ptime val_;
+            } ;
+
+
+            row_type from_gentime(const gentime_type& val);
+
+            gentime_type to_gentime(const row_type& val);
+
+            std::ostream& operator<<(std::ostream& stream, const gentime_type& vl);
 
 
 
@@ -722,7 +754,7 @@ namespace boost {
             struct tag_traits<utctime_type> {
 
                 static  id_type number() {
-                    return TYPE_GENERALZEDTIME;
+                    return TYPE_UTCTIME;
                 }
 
                 static  bool primitive() {
@@ -730,6 +762,20 @@ namespace boost {
                 }
 
             } ;
+
+            template<>
+            struct tag_traits<gentime_type> {
+
+                static  id_type number() {
+                    return TYPE_GENERALZEDTIME;
+                }
+
+                static  bool primitive() {
+                    return true;
+                }
+            } ;
+
+
 
 
             //  tag class
