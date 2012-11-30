@@ -19,6 +19,7 @@
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
+#include <list>
 
 #include <boost/asio/detail/push_options.hpp>
 
