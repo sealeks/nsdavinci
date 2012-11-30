@@ -486,7 +486,7 @@ namespace boost {
                 return stream << vl.operator  std::string();}    
             
             
-          //UNICOD STRING  
+          //UNICOD UNI STRING  
          //  32bit
             
             ///universalstring_type
@@ -529,7 +529,7 @@ namespace boost {
             inline std::ostream& operator<<(std::ostream& stream, const universalstring_type& vl){
                 return stream << vl.operator  std::string();}              
             
-          //UNICOD STRING  
+          //UNICOD BMP STRING  
          //  16bit
             
             ///bmpstring_type
