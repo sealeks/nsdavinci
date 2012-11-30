@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/894376469/asnbase.o \
 	${OBJECTDIR}/_ext/894376469/itu_X690.o \
 	${OBJECTDIR}/_ext/1901903102/iso8327.o \
+	${OBJECTDIR}/_ext/894376469/utf8.o \
 	${OBJECTDIR}/_ext/1901903102/archive_stream.o \
 	${OBJECTDIR}/_ext/1901903102/rfc1006.o
 
@@ -83,6 +84,10 @@ ${OBJECTDIR}/_ext/894376469/itu_X690.o: ../../include/iso/asn/itu_X690.cpp
 ${OBJECTDIR}/_ext/1901903102/iso8327.o: ../../include/iso/iso8327.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
 	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -o ${OBJECTDIR}/_ext/1901903102/iso8327.o ../../include/iso/iso8327.cpp
+
+${OBJECTDIR}/_ext/894376469/utf8.o: ../../include/iso/asn/utf8.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/894376469
+	$(COMPILE.cc) -g -DDVNCI_DEDUG -I../../include -o ${OBJECTDIR}/_ext/894376469/utf8.o ../../include/iso/asn/utf8.cpp
 
 ${OBJECTDIR}/_ext/1901903102/archive_stream.o: ../../include/iso/archive_stream.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
