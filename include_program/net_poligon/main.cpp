@@ -28,6 +28,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <boost/any.hpp>
+
 
 using  namespace boost::asio::asn::x690;
 using  namespace boost::asio::asn;
@@ -173,6 +175,7 @@ public:
     
 } ;*/
 
+
 struct TestStruct1  {
     int i;
     int  j;
@@ -182,7 +185,6 @@ struct TestStruct1  {
 
     TestStruct1(int i_, int j_) : i(i_), j(j_) {
     }
-    //TestStruct2 x;
 
     template<typename Archive>
             void serialize(Archive & arch) {
@@ -190,7 +192,12 @@ struct TestStruct1  {
         bind_implicit(arch, j, 1);
         // arch & implicit_value<TestStruct2>(x, 2);        
     }
+
+
 } ;
+
+BOOST_ASN_SET_REGESTRATE(TestStruct1)
+
 
 struct TestStruct2  {
     bool b;
@@ -210,6 +217,7 @@ struct TestStruct2  {
 struct TestStruct3  {
 
     struct choice {
+        //boost::any value;
         boost::shared_ptr<int> ch1;
         boost::shared_ptr<TestStruct1> ch2;
 
@@ -220,6 +228,37 @@ struct TestStruct3  {
         }
     } ;
 
+    /*enum choice2_type {
+            null = 0,
+            inttype,
+            structtype
+    } ;
+
+    class choice2 : public choice_val<choice2_type> {
+    public:
+
+
+        choice2() : choice_val<choice2_type>() {
+        }
+
+        void set(int * vl) {
+            setter<int>(vl, inttype);
+        }
+
+        void set(TestStruct1 * vl) {
+            setter<TestStruct1 > (vl, structtype);
+        }
+        
+        template<typename Archive>
+                void serialize(Archive & arch) {
+                
+                bind_explicit(arch, value<int>()) , 500);
+                bind_explicit(arch, value<TestStruct1>() , 501);
+        }   
+
+
+    } ;*/
+
     int i;
     int  j;
     double d;
@@ -229,7 +268,11 @@ struct TestStruct3  {
     octetstring_type s;
     boost::shared_ptr<int> io;
     boost::shared_ptr<TestStruct1> yo;
-    choice ch;    
+    choice ch;
+    universalstring_type u8;
+    utctime_type t;
+    gentime_type gt;
+    // choice2 ch2;
 
 
     //TestStruct2 x;
@@ -237,8 +280,8 @@ struct TestStruct3  {
     template<typename Archive>
             void serialize(Archive & arch) {
 
-        bind_choice(arch, ch);    
-        bind_explicit( arch, yo, 356);        
+        bind_choice(arch, ch);
+        bind_explicit( arch, yo, 356);
         bind_implicit(arch, i, 0);
         bind_implicit(arch, j, 1);
         bind_explicit(arch, y, 3);
@@ -247,15 +290,17 @@ struct TestStruct3  {
         bind_implicit(arch, r, UNIVERSAL_CLASS);
         bind_implicit(arch, s, UNIVERSAL_CLASS);
         bind_implicit(arch, io);
+        bind_implicit(arch, u8, UNIVERSAL_CLASS);
+        bind_implicit(arch, t, UNIVERSAL_CLASS);
+        bind_implicit(arch, gt, UNIVERSAL_CLASS);
 
     }
 
 } ;
 
 struct TestStruct3u  {
-    
-     struct choice {
-         
+
+    struct choice {
         boost::shared_ptr<int> ch1;
         boost::shared_ptr<TestStruct1> ch2;
 
@@ -264,9 +309,9 @@ struct TestStruct3u  {
             bind_explicit(arch, ch1 , 500);
             bind_explicit(arch, ch2 , 501);
         }
-    };   
-    
-    
+    } ;
+
+
     int i;
     int  j;
     float d;
@@ -277,12 +322,14 @@ struct TestStruct3u  {
     boost::shared_ptr<int> io;
     boost::shared_ptr<TestStruct1> yo;
     choice ch;
+    universalstring_type u8;
+    utctime_type t;
+    gentime_type gt;
     //TestStruct2 x;
-    
 
     template<typename Archive>
             void serialize(Archive & arch) {
-        bind_choice(arch, ch);           
+        bind_choice(arch, ch);
         bind_explicit( arch, yo, 356);
         bind_implicit(arch, i, 0);
         bind_implicit(arch, j, 1);
@@ -292,6 +339,9 @@ struct TestStruct3u  {
         bind_implicit(arch, r, UNIVERSAL_CLASS);
         bind_implicit(arch, s, UNIVERSAL_CLASS);
         bind_implicit(arch, io);
+        bind_implicit(arch, u8, UNIVERSAL_CLASS);
+        bind_implicit(arch, t, UNIVERSAL_CLASS);
+        bind_implicit(arch, gt, UNIVERSAL_CLASS);
 
     }
 
@@ -449,7 +499,7 @@ int main(int argc, char* argv[]) {
 
 
         TestStruct3 ts3;
-        ts3.ch.ch2= boost::shared_ptr<TestStruct1 > (new TestStruct1(-50, 60));
+        ts3.ch.ch2 = boost::shared_ptr<TestStruct1 > (new TestStruct1(-50, 60));
         ts3.i = 20;
         ts3.j = 40;
         ts3.d = 0.011; //-1.22456846;  
@@ -459,6 +509,27 @@ int main(int argc, char* argv[]) {
         ts3.io = boost::shared_ptr<int>(new int(1234567));
         ts3.y = TestStruct1(120, 240);
         ts3.yo = boost::shared_ptr<TestStruct1 > (new TestStruct1(120000, -240000));
+        ts3.u8 = universalstring_type(L"WWW");
+        ts3.t = now_generator();
+        ts3.gt = now_generator();
+        /* ts3.ch2.set(new int(123)); 
+        
+
+         std::cout << "ts3.ch2 type : " <<  static_cast<int>(ts3.ch2.type())  
+                 <<  "  ts3.ch2 value : "  
+                 <<  (*(ts3.ch2.value<int>())) 
+                 << std::endl;
+        
+         ts3.ch2.set(new TestStruct1(121 , 212)); 
+
+
+         std::cout << "ts3.ch2 type : " <<  static_cast<int>(ts3.ch2.type())  
+                 <<  "  ts3.ch2 value : "  
+                 <<  (*(ts3.ch2.value<TestStruct1>())) 
+                 << std::endl;*/
+
+
+
 
         TestStruct3u ts33;
         // ts3.x.b=false;
@@ -483,7 +554,8 @@ int main(int argc, char* argv[]) {
 
         std::cout << OARCV;
 
-        std::cout << "ts33 i: " << ts33.i  << " j: " << ts33.j  << " d: " << ts33.d << " o: " << ts33.o << " r: " << ts33.r <<  " s: " << ts33.s <<  " io: " << (ts33.io ?  (*ts33.io) : 0) << " y: " << ts33.y;
+        std::cout << "ts33 i: " << ts33.i  << " j: " << ts33.j  << " d: " << ts33.d << " o: " << ts33.o << " r: " << ts33.r <<  " s: "
+                << ts33.s <<  " io: " << (ts33.io ?  (*ts33.io) : 0) << " y: " << ts33.y << " u8 : " <<  ts33.u8 << " t : " <<  ts33.t  << " gt : " <<  ts33.gt;
 
         if (ts33.yo) {
             std::cout  << " yo: " << *ts33.yo   <<  std::endl;
