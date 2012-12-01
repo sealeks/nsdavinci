@@ -266,9 +266,6 @@ namespace boost {
 #else
                             rslt[rslt.size() - 1] = (rslt[rslt.size() - 1] << 8) | (static_cast<std::wstring::value_type> (static_cast<boost::asio::asn::utf8::uint8_t> (*it)));
 #endif                         
-                        std::string utf8line;
-                        boost::asio::asn::utf8::utf16to8(utf32line.begin(), utf32line.end(), back_inserter(utf8line));
-                        boost::asio::asn::utf8::utf8to32(utf32line.begin(), utf32line.end(), back_inserter(rslt));
                     }
 #elif defined(ASNUTF8_DEF_WCHAR32)
                     std::size_t cnt = 0;

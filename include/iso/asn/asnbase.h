@@ -54,13 +54,44 @@ namespace boost {\
                 static  id_type number() {\
                     return TYPE_SET;\
                 }\
-                static  bool primitive() {\
-                    return true;\
+                static  int8_t class_type() {\
+                    return 0;\
                 }\
             } ;\
         }\
     }\
 }\
+
+#define BOOST_ASN_TYPE_REGESTRATE(regtype, id, cl) \
+namespace boost {\
+    namespace asio {\
+        namespace asn {\
+            template<>\
+            struct tag_traits< regtype > {\
+                static  id_type number() {\
+                    return id;\
+                }\
+                static  int8_t class_type() {\
+                    return static_cast<int8_t>(cl);\
+                }\
+            } ;\
+        }\
+    }\
+}\
+
+
+
+#define BOOST_ASN_INTERNAL_REGESTRATE(regtype, id) \
+            template<>\
+            struct tag_traits< regtype > {\
+                static  id_type number() {\
+                    return id;\
+                }\
+                static  int8_t class_type() {\
+                    return 0;\
+                }\
+            } ;\
+
 
 
 namespace boost {
@@ -654,416 +685,45 @@ namespace boost {
                     return TYPE_SEQ;
                 }
 
-                static  bool primitive() {
-                    return false;
-                }
-
-            } ;
-
-            template<>
-            struct tag_traits<eoc_type> {
-
-                static  id_type number() {
-                    return TYPE_EOC;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;
-
-            template<>
-            struct tag_traits<int8_t> {
-
-                static  id_type number() {
-                    return TYPE_INTEGER;
-                }
-
-                static  bool primitive() {
-                    return true;
+                static  int8_t class_type() {
+                    return 0;
                 }
             } ;
 
-            template<>
-            struct tag_traits<uint8_t> {
-
-                static  id_type number() {
-                    return TYPE_INTEGER;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<int16_t> {
-
-                static  id_type number() {
-                    return TYPE_INTEGER;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<uint16_t> {
-
-                static  id_type number() {
-                    return TYPE_INTEGER;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;
-
-            template<>
-            struct tag_traits<int32_t> {
-
-                static  id_type number() {
-                    return TYPE_INTEGER;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;
-
-            template<>
-            struct tag_traits<uint32_t> {
-
-                static  id_type number() {
-                    return TYPE_INTEGER;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<int64_t> {
-
-                static  id_type number() {
-                    return TYPE_INTEGER;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<uint64_t> {
-
-                static  id_type number() {
-                    return TYPE_INTEGER;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<long double> {
-
-                static  id_type number() {
-                    return TYPE_REAL;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<double> {
-
-                static  id_type number() {
-                    return TYPE_REAL;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<float> {
-
-                static  id_type number() {
-                    return TYPE_REAL;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;
-
-            template<>
-            struct tag_traits<bool> {
-
-                static  id_type number() {
-                    return TYPE_BOOLEAN;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<oid_type> {
-
-                static  id_type number() {
-                    return TYPE_OBJECT_IDENTIFIER;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<reloid_type> {
-
-                static  id_type number() {
-                    return TYPE_RELATIVE_OID;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<null_type> {
-
-                static  id_type number() {
-                    return TYPE_NULL;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
-            template<>
-            struct tag_traits<bitstring_type> {
-
-                static  id_type number() {
-                    return TYPE_BITSTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;
-
-            template<>
-            struct tag_traits<octetstring_type> {
-
-                static  id_type number() {
-                    return TYPE_OCTETSTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;
-
-            template<>
-            struct tag_traits<enumerated_type> {
-
-                static  id_type number() {
-                    return TYPE_ENUMERATED;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;
-
-            template<>
-            struct tag_traits<utf8string_type> {
-
-                static  id_type number() {
-                    return TYPE_UTF8STRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;
             
-            template<>
-            struct tag_traits<numericstring_type> {
-
-                static  id_type number() {
-                    return TYPE_NUMERICSTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
+            BOOST_ASN_INTERNAL_REGESTRATE(eoc_type, TYPE_EOC)
+            BOOST_ASN_INTERNAL_REGESTRATE(int8_t, TYPE_INTEGER)
+            BOOST_ASN_INTERNAL_REGESTRATE(uint8_t, TYPE_INTEGER)            
+            BOOST_ASN_INTERNAL_REGESTRATE(int16_t, TYPE_INTEGER)
+            BOOST_ASN_INTERNAL_REGESTRATE(uint16_t, TYPE_INTEGER) 
+            BOOST_ASN_INTERNAL_REGESTRATE(int32_t, TYPE_INTEGER)
+            BOOST_ASN_INTERNAL_REGESTRATE(uint32_t, TYPE_INTEGER)            
+            BOOST_ASN_INTERNAL_REGESTRATE(int64_t, TYPE_INTEGER)
+            BOOST_ASN_INTERNAL_REGESTRATE(uint64_t, TYPE_INTEGER)    
+            BOOST_ASN_INTERNAL_REGESTRATE(long double, TYPE_REAL)            
+            BOOST_ASN_INTERNAL_REGESTRATE(double, TYPE_REAL)
+            BOOST_ASN_INTERNAL_REGESTRATE(float, TYPE_REAL)                
+            BOOST_ASN_INTERNAL_REGESTRATE(bool, TYPE_BOOLEAN)  
+            BOOST_ASN_INTERNAL_REGESTRATE(oid_type, TYPE_OBJECT_IDENTIFIER) 
+            BOOST_ASN_INTERNAL_REGESTRATE(reloid_type, TYPE_RELATIVE_OID) 
+            BOOST_ASN_INTERNAL_REGESTRATE(null_type,  TYPE_NULL) 
+            BOOST_ASN_INTERNAL_REGESTRATE(bitstring_type, TYPE_BITSTRING) 
+            BOOST_ASN_INTERNAL_REGESTRATE( octetstring_type,  TYPE_OCTETSTRING) 
+            BOOST_ASN_INTERNAL_REGESTRATE( enumerated_type,  TYPE_ENUMERATED) 
+            BOOST_ASN_INTERNAL_REGESTRATE( utf8string_type,  TYPE_UTF8STRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( numericstring_type,  TYPE_NUMERICSTRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( printablestring_type,  TYPE_PRINTABLESTRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( t61string_type,  TYPE_T61STRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( videotexstring_type,  TYPE_VIDEOTEXSTRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( ia5string_type,  TYPE_IA5STRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( graphicstring_type,  TYPE_GRAPHICSTRING)            
+            BOOST_ASN_INTERNAL_REGESTRATE( visiblestring_type,  TYPE_VISIBLESTRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( generalstring_type,  TYPE_GENERALSTRING)        
+            BOOST_ASN_INTERNAL_REGESTRATE( universalstring_type,  TYPE_UNIVERSALSTRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( bmpstring_type,  TYPE_BMPSTRING)               
+            BOOST_ASN_INTERNAL_REGESTRATE( utctime_type,  TYPE_UTCTIME)       
+            BOOST_ASN_INTERNAL_REGESTRATE( gentime_type,  TYPE_GENERALZEDTIME)         
             
-            template<>
-            struct tag_traits<printablestring_type> {
-
-                static  id_type number() {
-                    return TYPE_PRINTABLESTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ; 
-            
-           template<>
-            struct tag_traits<t61string_type> {
-
-                static  id_type number() {
-                    return TYPE_T61STRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;         
-            
-           template<>
-            struct tag_traits<videotexstring_type> {
-
-                static  id_type number() {
-                    return TYPE_VIDEOTEXSTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;        
-            
-           template<>
-            struct tag_traits<ia5string_type> {
-
-                static  id_type number() {
-                    return TYPE_IA5STRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;   
-            
-            
-           template<>
-            struct tag_traits<graphicstring_type> {
-
-                static  id_type number() {
-                    return TYPE_GRAPHICSTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;         
-            
-           template<>
-            struct tag_traits<visiblestring_type> {
-
-                static  id_type number() {
-                    return TYPE_VISIBLESTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;        
-            
-           template<>
-            struct tag_traits<generalstring_type> {
-
-                static  id_type number() {
-                    return TYPE_GENERALSTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;  
-            
-            template<>
-            struct tag_traits<universalstring_type> {
-
-                static  id_type number() {
-                    return TYPE_UNIVERSALSTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;        
-            
-           template<>
-            struct tag_traits<bmpstring_type> {
-
-                static  id_type number() {
-                    return TYPE_BMPSTRING;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;                    
-            
-
-            template<>
-            struct tag_traits<utctime_type> {
-
-                static  id_type number() {
-                    return TYPE_UTCTIME;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-
-            } ;
-
-            template<>
-            struct tag_traits<gentime_type> {
-
-                static  id_type number() {
-                    return TYPE_GENERALZEDTIME;
-                }
-
-                static  bool primitive() {
-                    return true;
-                }
-            } ;
-
 
 
 
@@ -1197,9 +857,6 @@ namespace boost {
                     return mask_;
                 }
 
-                static  bool primitive() {
-                    return  tag_traits<T>::primitive() ?  true : false;
-                }
 
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) == ( rs.mask() | CONSTRUCTED_ENCODING));
@@ -1316,9 +973,6 @@ namespace boost {
                     return mask_;
                 }
 
-                static  bool primitive() {
-                    return  tag_traits<S>::primitive() ?  true : false;
-                }
 
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) == ( rs.mask() | CONSTRUCTED_ENCODING));
