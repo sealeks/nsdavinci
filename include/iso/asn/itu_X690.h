@@ -476,7 +476,7 @@ namespace boost {
                     sz = stream.size(sz);
                     ++it;
 
-                    if  ((!tag_traits<T>::primitive()) && (stream.rule() == CER_ENCODING)) {
+                    if   (stream.rule() == CER_ENCODING) {
                         stream.add( to_x690_cast(size_class()), it);
                         stream.add( row_type(2.0));
                     }
@@ -496,7 +496,7 @@ namespace boost {
                     sz = stream.size(sz);
                     ++it;
 
-                    if  ((!tag_traits<T>::primitive()) && (stream.rule() == CER_ENCODING)) {
+                    if  ((stream.rule() == CER_ENCODING)) {
                         stream.add( to_x690_cast(size_class()), it);
                         stream.add( row_type(2.0));
                     }
