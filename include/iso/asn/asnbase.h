@@ -79,6 +79,23 @@ namespace boost {\
     }\
 }\
 
+#define BOOST_ASN_UNIVERSALTYPE_REGESTRATE(regtype, id) \
+namespace boost {\
+    namespace asio {\
+        namespace asn {\
+            template<>\
+            struct tag_traits< regtype > {\
+                static  id_type number() {\
+                    return id;\
+                }\
+                static  int8_t class_type() {\
+                    return 0;\
+                }\
+            } ;\
+        }\
+    }\
+}\
+
 
 
 #define BOOST_ASN_INTERNAL_REGESTRATE(regtype, id) \
@@ -93,6 +110,20 @@ namespace boost {\
             } ;\
 
 
+
+
+
+
+
+#define BOOST_ASN_BIND_TAG(var)    boost::asio::asn::bind_basic(arch, var); 
+#define BOOST_ASN_IMPLICIT_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, CONTEXT_CLASS);
+#define BOOST_ASN_IMPLICIT_APPLICATION_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, APPLICATION_CLASS);  
+#define BOOST_ASN_IMPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, PRIVATE_CLASS);
+#define BOOST_ASN_IMPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, UNIVERSAL_CLASS); 
+#define BOOST_ASN_EXPLICIT_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, CONTEXT_CLASS);
+#define BOOST_ASN_EXPLICIT_APPLICATION_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, APPLICATION_CLASS);  
+#define BOOST_ASN_EXPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, PRIVATE_CLASS);
+#define BOOST_ASN_EXPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, UNIVERSAL_CLASS); 
 
 namespace boost {
     namespace asio {
@@ -141,12 +172,12 @@ namespace boost {
             const id_type   TYPE_UTCTIME = 0x17;
             const id_type   TYPE_GENERALZEDTIME = 0x18;
             const id_type   TYPE_GRAPHICSTRING = 0x19;
-            const id_type   TYPE_VISIBLESTRING = 0x1A;            
-            const id_type   TYPE_GENERALSTRING = 0x1B; 
-            const id_type   TYPE_UNIVERSALSTRING = 0x1C;  
-            const id_type   TYPE_CHARACTERSTRING = 0x1D;       
-            const id_type   TYPE_BMPSTRING = 0x1E;                
-            
+            const id_type   TYPE_VISIBLESTRING = 0x1A;
+            const id_type   TYPE_GENERALSTRING = 0x1B;
+            const id_type   TYPE_UNIVERSALSTRING = 0x1C;
+            const id_type   TYPE_CHARACTERSTRING = 0x1D;
+            const id_type   TYPE_BMPSTRING = 0x1E;
+
             const id_type EXTENDED_TAGID = 31;
 
 
@@ -449,11 +480,11 @@ namespace boost {
 
 
             std::ostream& operator<<(std::ostream& stream, const utf8string_type& vl);
-            
-            
+
+
 
             //  SIMLE STRING TYPE
-            
+
             template<id_type TAGID>
             class simplestring_type : public std::string {
             public:
@@ -467,6 +498,9 @@ namespace boost {
                 simplestring_type(const std::string& vl) : std::string(vl) {
                 }
 
+                simplestring_type(const std::string::value_type* vl) : std::string(vl) {
+                }
+
                 operator row_type() const {
                     return row_type(begin(), end());
                 }
@@ -474,54 +508,61 @@ namespace boost {
                 operator std::string() const {
                     return *this;
                 }
-                
-                static id_type tagid(){
+
+                static id_type tagid() {
                     return TAGID;
                 }
-                
-            };
-            
-           
-            typedef simplestring_type<TYPE_NUMERICSTRING>   numericstring_type;
-            typedef simplestring_type<TYPE_PRINTABLESTRING> printablestring_type;            
-            typedef simplestring_type<TYPE_T61STRING>            t61string_type;              
-            typedef simplestring_type<TYPE_VIDEOTEXSTRING>  videotexstring_type;
-            typedef simplestring_type<TYPE_IA5STRING>            ia5string_type;              
-            typedef simplestring_type<TYPE_GRAPHICSTRING>   graphicstring_type;   
-            typedef simplestring_type<TYPE_VISIBLESTRING>    visiblestring_type;  
-            typedef simplestring_type<TYPE_GENERALSTRING>    generalstring_type;            
-            
 
-            inline std::ostream& operator<<(std::ostream& stream, const numericstring_type& vl){
-                return stream << vl.operator  std::string();}
-            
-            inline std::ostream& operator<<(std::ostream& stream, const printablestring_type& vl){
-                return stream << vl.operator  std::string();}     
-            
-            inline std::ostream& operator<<(std::ostream& stream, const t61string_type& vl){
-                return stream << vl.operator  std::string();}
-            
-            inline std::ostream& operator<<(std::ostream& stream, const videotexstring_type& vl){
-                return stream << vl.operator  std::string();}        
-            
-            inline std::ostream& operator<<(std::ostream& stream, const ia5string_type& vl){
-                return stream << vl.operator  std::string();}     
-            
-            inline std::ostream& operator<<(std::ostream& stream, const graphicstring_type& vl){
-                return stream << vl.operator  std::string();}
-            
-            inline std::ostream& operator<<(std::ostream& stream, const visiblestring_type& vl){
-                return stream << vl.operator  std::string();}        
-            
-            inline std::ostream& operator<<(std::ostream& stream, const generalstring_type& vl){
-                return stream << vl.operator  std::string();}    
-            
-            
-          //UNICOD UNI STRING  
-         //  32bit
-            
+            } ;
+
+
+            typedef simplestring_type<TYPE_NUMERICSTRING>   numericstring_type;
+            typedef simplestring_type<TYPE_PRINTABLESTRING> printablestring_type;
+            typedef simplestring_type<TYPE_T61STRING>            t61string_type;
+            typedef simplestring_type<TYPE_VIDEOTEXSTRING>  videotexstring_type;
+            typedef simplestring_type<TYPE_IA5STRING>            ia5string_type;
+            typedef simplestring_type<TYPE_GRAPHICSTRING>   graphicstring_type;
+            typedef simplestring_type<TYPE_VISIBLESTRING>    visiblestring_type;
+            typedef simplestring_type<TYPE_GENERALSTRING>    generalstring_type;
+
+            inline std::ostream& operator<<(std::ostream& stream, const numericstring_type& vl) {
+                return stream << vl.operator  std::string();
+            }
+
+            inline std::ostream& operator<<(std::ostream& stream, const printablestring_type& vl) {
+                return stream << vl.operator  std::string();
+            }
+
+            inline std::ostream& operator<<(std::ostream& stream, const t61string_type& vl) {
+                return stream << vl.operator  std::string();
+            }
+
+            inline std::ostream& operator<<(std::ostream& stream, const videotexstring_type& vl) {
+                return stream << vl.operator  std::string();
+            }
+
+            inline std::ostream& operator<<(std::ostream& stream, const ia5string_type& vl) {
+                return stream << vl.operator  std::string();
+            }
+
+            inline std::ostream& operator<<(std::ostream& stream, const graphicstring_type& vl) {
+                return stream << vl.operator  std::string();
+            }
+
+            inline std::ostream& operator<<(std::ostream& stream, const visiblestring_type& vl) {
+                return stream << vl.operator  std::string();
+            }
+
+            inline std::ostream& operator<<(std::ostream& stream, const generalstring_type& vl) {
+                return stream << vl.operator  std::string();
+            }
+
+
+            //UNICOD UNI STRING  
+            //  32bit
+
             ///universalstring_type
-            
+
             class universalstring_type : public std::string {
             public:
 
@@ -530,13 +571,13 @@ namespace boost {
 
                 universalstring_type(const std::wstring& vl) : std::string(wstr_to_universalstr(vl)) {
                 }
-                
-               explicit universalstring_type(const std::string& vl) : std::string(wstr_to_universalstr( utf8_to_wstr(vl))) {
-                }                
+
+                explicit universalstring_type(const std::string& vl) : std::string(wstr_to_universalstr( utf8_to_wstr(vl))) {
+                }
 
                 operator std::wstring() const {
                     return  universalstr_to_wstr(*this);
-                }             
+                }
 
                 operator row_type() const {
                     return row_type(begin(), end());
@@ -545,26 +586,27 @@ namespace boost {
                 std::wstring to_wstring() const {
                     return  universalstr_to_wstr(*this);
                 }
-                
+
                 std::string to_utf8() const {
                     return  wstr_to_utf8(universalstr_to_wstr(*this));
-               }                    
-                
+                }
+
                 operator std::string() const {
                     return *this;
-                }           
+                }
 
 
-            } ; 
-            
-            inline std::ostream& operator<<(std::ostream& stream, const universalstring_type& vl){
-                return stream << vl.operator  std::string();}              
-            
-          //UNICOD BMP STRING  
-         //  16bit
-            
+            } ;
+
+            inline std::ostream& operator<<(std::ostream& stream, const universalstring_type& vl) {
+                return stream << vl.operator  std::string();
+            }
+
+            //UNICOD BMP STRING  
+            //  16bit
+
             ///bmpstring_type
-            
+
             class bmpstring_type : public std::string {
             public:
 
@@ -573,9 +615,9 @@ namespace boost {
 
                 bmpstring_type(const std::wstring& vl) : std::string(wstr_to_bmpstr(vl)) {
                 }
-                
+
                 explicit bmpstring_type(const std::string& vl) : std::string(wstr_to_bmpstr( utf8_to_wstr(vl))) {
-                }                
+                }
 
                 operator std::wstring() const {
                     return  bmpstr_to_wstr(*this);
@@ -588,21 +630,22 @@ namespace boost {
                 std::wstring to_wstring() const {
                     return  bmpstr_to_wstr(*this);
                 }
-                
+
                 std::string to_utf8() const {
                     return  wstr_to_utf8(bmpstr_to_wstr(*this));
-                }                
-                
+                }
+
                 operator std::string() const {
                     return *this;
-                }                 
+                }
 
 
 
-            } ;              
+            } ;
 
-            inline std::ostream& operator<<(std::ostream& stream, const bmpstring_type& vl){
-                return stream << vl.operator  std::string();}                 
+            inline std::ostream& operator<<(std::ostream& stream, const bmpstring_type& vl) {
+                return stream << vl.operator  std::string();
+            }
 
             //  time types
 
@@ -690,40 +733,39 @@ namespace boost {
                 }
             } ;
 
-            
             BOOST_ASN_INTERNAL_REGESTRATE(eoc_type, TYPE_EOC)
             BOOST_ASN_INTERNAL_REGESTRATE(int8_t, TYPE_INTEGER)
-            BOOST_ASN_INTERNAL_REGESTRATE(uint8_t, TYPE_INTEGER)            
+            BOOST_ASN_INTERNAL_REGESTRATE(uint8_t, TYPE_INTEGER)
             BOOST_ASN_INTERNAL_REGESTRATE(int16_t, TYPE_INTEGER)
-            BOOST_ASN_INTERNAL_REGESTRATE(uint16_t, TYPE_INTEGER) 
+            BOOST_ASN_INTERNAL_REGESTRATE(uint16_t, TYPE_INTEGER)
             BOOST_ASN_INTERNAL_REGESTRATE(int32_t, TYPE_INTEGER)
-            BOOST_ASN_INTERNAL_REGESTRATE(uint32_t, TYPE_INTEGER)            
+            BOOST_ASN_INTERNAL_REGESTRATE(uint32_t, TYPE_INTEGER)
             BOOST_ASN_INTERNAL_REGESTRATE(int64_t, TYPE_INTEGER)
-            BOOST_ASN_INTERNAL_REGESTRATE(uint64_t, TYPE_INTEGER)    
-            BOOST_ASN_INTERNAL_REGESTRATE(long double, TYPE_REAL)            
+            BOOST_ASN_INTERNAL_REGESTRATE(uint64_t, TYPE_INTEGER)
+            BOOST_ASN_INTERNAL_REGESTRATE(long double, TYPE_REAL)
             BOOST_ASN_INTERNAL_REGESTRATE(double, TYPE_REAL)
-            BOOST_ASN_INTERNAL_REGESTRATE(float, TYPE_REAL)                
-            BOOST_ASN_INTERNAL_REGESTRATE(bool, TYPE_BOOLEAN)  
-            BOOST_ASN_INTERNAL_REGESTRATE(oid_type, TYPE_OBJECT_IDENTIFIER) 
-            BOOST_ASN_INTERNAL_REGESTRATE(reloid_type, TYPE_RELATIVE_OID) 
-            BOOST_ASN_INTERNAL_REGESTRATE(null_type,  TYPE_NULL) 
-            BOOST_ASN_INTERNAL_REGESTRATE(bitstring_type, TYPE_BITSTRING) 
-            BOOST_ASN_INTERNAL_REGESTRATE( octetstring_type,  TYPE_OCTETSTRING) 
-            BOOST_ASN_INTERNAL_REGESTRATE( enumerated_type,  TYPE_ENUMERATED) 
+            BOOST_ASN_INTERNAL_REGESTRATE(float, TYPE_REAL)
+            BOOST_ASN_INTERNAL_REGESTRATE(bool, TYPE_BOOLEAN)
+            BOOST_ASN_INTERNAL_REGESTRATE(oid_type, TYPE_OBJECT_IDENTIFIER)
+            BOOST_ASN_INTERNAL_REGESTRATE(reloid_type, TYPE_RELATIVE_OID)
+            BOOST_ASN_INTERNAL_REGESTRATE(null_type,  TYPE_NULL)
+            BOOST_ASN_INTERNAL_REGESTRATE(bitstring_type, TYPE_BITSTRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( octetstring_type,  TYPE_OCTETSTRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( enumerated_type,  TYPE_ENUMERATED)
             BOOST_ASN_INTERNAL_REGESTRATE( utf8string_type,  TYPE_UTF8STRING)
             BOOST_ASN_INTERNAL_REGESTRATE( numericstring_type,  TYPE_NUMERICSTRING)
             BOOST_ASN_INTERNAL_REGESTRATE( printablestring_type,  TYPE_PRINTABLESTRING)
             BOOST_ASN_INTERNAL_REGESTRATE( t61string_type,  TYPE_T61STRING)
             BOOST_ASN_INTERNAL_REGESTRATE( videotexstring_type,  TYPE_VIDEOTEXSTRING)
             BOOST_ASN_INTERNAL_REGESTRATE( ia5string_type,  TYPE_IA5STRING)
-            BOOST_ASN_INTERNAL_REGESTRATE( graphicstring_type,  TYPE_GRAPHICSTRING)            
+            BOOST_ASN_INTERNAL_REGESTRATE( graphicstring_type,  TYPE_GRAPHICSTRING)
             BOOST_ASN_INTERNAL_REGESTRATE( visiblestring_type,  TYPE_VISIBLESTRING)
-            BOOST_ASN_INTERNAL_REGESTRATE( generalstring_type,  TYPE_GENERALSTRING)        
+            BOOST_ASN_INTERNAL_REGESTRATE( generalstring_type,  TYPE_GENERALSTRING)
             BOOST_ASN_INTERNAL_REGESTRATE( universalstring_type,  TYPE_UNIVERSALSTRING)
-            BOOST_ASN_INTERNAL_REGESTRATE( bmpstring_type,  TYPE_BMPSTRING)               
-            BOOST_ASN_INTERNAL_REGESTRATE( utctime_type,  TYPE_UTCTIME)       
-            BOOST_ASN_INTERNAL_REGESTRATE( gentime_type,  TYPE_GENERALZEDTIME)         
-            
+            BOOST_ASN_INTERNAL_REGESTRATE( bmpstring_type,  TYPE_BMPSTRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( utctime_type,  TYPE_UTCTIME)
+            BOOST_ASN_INTERNAL_REGESTRATE( gentime_type,  TYPE_GENERALZEDTIME)
+
 
 
 
@@ -821,20 +863,28 @@ namespace boost {
 
                 typedef  T   root_type;
 
-                explicit implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
+                explicit implicit_value(T& vl, id_type id,  class_type type) :
                 id_(id) ,  val_(vl), mask_(from_cast(type))  {
                 }
 
-                explicit implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
+                explicit implicit_value(const T& vl, id_type id,  class_type type) :
                 id_(id) ,  val_(const_cast<T&> (vl)), mask_(from_cast(type))  {
                 }
 
-                explicit  implicit_value(T& vl,  class_type type = CONTEXT_CLASS) :
+                explicit  implicit_value(T& vl,  class_type type) :
                 id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
                 }
 
-                explicit  implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) :
+                explicit  implicit_value(const T& vl,  class_type type) :
                 id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type))  {
+                }
+
+                explicit  implicit_value(T& vl) :
+                id_(tag_traits<T>::number()) ,  val_(vl), mask_(tag_traits<T>::class_type())  {
+                }
+
+                explicit  implicit_value(const T& vl) :
+                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(tag_traits<T>::class_type())  {
                 }
 
                 const T& value() const {
@@ -856,7 +906,6 @@ namespace boost {
                 int8_t mask() const {
                     return mask_;
                 }
-
 
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) == ( rs.mask() | CONSTRUCTED_ENCODING));
@@ -937,20 +986,28 @@ namespace boost {
                 typedef  boost::shared_ptr<S>    T;
                 typedef  S   root_type;
 
-                explicit optional_implicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
+                explicit optional_implicit_value(T& vl, id_type id,  class_type type) :
                 id_(id) ,  val_(vl), mask_(from_cast(type))  {
                 }
 
-                explicit optional_implicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :
+                explicit optional_implicit_value(const T& vl, id_type id,  class_type type) :
                 id_(id) ,  val_(const_cast<T&> (vl)), mask_(from_cast(type))  {
                 }
 
-                explicit  optional_implicit_value(T& vl,  class_type type = CONTEXT_CLASS) :
+                explicit  optional_implicit_value(T& vl,  class_type type) :
                 id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
                 }
 
-                explicit  optional_implicit_value(const T& vl,  class_type type = CONTEXT_CLASS) :
+                explicit  optional_implicit_value(const T& vl,  class_type type) :
                 id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type))  {
+                }
+
+                explicit  optional_implicit_value(T& vl) :
+                id_(tag_traits<T>::number()) ,  val_(vl), mask_(tag_traits<T>::class_type())  {
+                }
+
+                explicit  optional_implicit_value(const T& vl) :
+                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_( tag_traits<T>::class_type())  {
                 }
 
                 const T& value() const {
@@ -973,7 +1030,6 @@ namespace boost {
                     return mask_;
                 }
 
-
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) == ( rs.mask() | CONSTRUCTED_ENCODING));
                 }
@@ -985,6 +1041,73 @@ namespace boost {
                 int8_t   mask_;
             } ;
 
+
+            ////////////////////////////////////////////////////////////////////////////
+
+            template<typename T, id_type id,  class_type type = CONTEXT_CLASS >
+                    class implicit_typedef {
+            public:
+
+                implicit_typedef() : value_() {
+                }
+
+                implicit_typedef (const T& val) : value_(val) {
+                }
+
+                operator T() const {
+                    return value_;
+                }
+
+                const T& value() const {
+                    return value_;
+                }
+
+                T& value() {
+                    return value_;
+                }
+
+                template<typename Archive>
+                void serialize(Archive & arch) {
+                    arch & implicit_value<T > (value_, id, type);
+                }
+
+            private:
+                T value_;
+            } ;
+            
+            
+            ////////////////////////////////////////////////////////////////////////////
+
+            template<typename T, id_type id,  class_type type = CONTEXT_CLASS >
+                    class explicit_typedef {
+            public:
+
+                explicit_typedef() : value_() {
+                }
+
+                explicit_typedef (const T& val) : value_(val) {
+                }
+
+                operator T() const {
+                    return value_;
+                }
+
+                const T& value() const {
+                    return value_;
+                }
+
+                T& value() {
+                    return value_;
+                }
+
+                template<typename Archive>
+                void serialize(Archive & arch) {
+                     arch & explicit_value<T > (value_, id, type);
+                }
+
+            private:
+                T value_;
+            } ;
 
 
 
@@ -1148,6 +1271,36 @@ namespace boost {
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            template<typename Archive, typename T>
+            inline void bind_basic(Archive & arch, T& vl) {
+                arch & implicit_value<T > (vl);
+            }
+
+            template<typename Archive, typename T>
+            inline void bind_basic(Archive & arch, boost::shared_ptr<T>& vl) {
+                arch & optional_implicit_value<T > (vl);
+            }
+
+            template<typename Archive, typename T>
+            inline void bind_basic(Archive & arch, implicit_value<T >& vl) {
+                arch & vl;
+            }
+
+            template<typename Archive, typename T>
+            inline void bind_basic(Archive & arch, explicit_value<T >& vl) {
+                arch & vl;
+            }
+
+            template<typename Archive, typename T>
+            inline void bind_basic(Archive & arch, optional_implicit_value<T >& vl) {
+                arch & vl;
+            }
+
+            template<typename Archive, typename T>
+            inline void bind_basic(Archive & arch, optional_explicit_value<T >& vl) {
+                arch & vl;
+            }
 
             template<typename Archive, typename T>
             inline void bind_explicit(Archive & arch, T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
