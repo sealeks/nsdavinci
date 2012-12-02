@@ -467,7 +467,7 @@ namespace boost {
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const implicit_value<T>& vl) {
 
-                    stream.add( to_x690_cast(tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING )));
+                    stream.add( to_x690_cast(tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING)));
                     oarchive::iterator_list_const_buffers it = stream.last();
 
                     std::size_t sz = stream.size();
