@@ -904,7 +904,7 @@ namespace boost {
                 explicit  implicit_value(const T& vl) :
                 id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(tag_traits<T>::class_type())  {
                 }
-
+                
                 const T& value() const {
                     return val_;
                 }
@@ -1062,15 +1062,19 @@ namespace boost {
 
             ////////////////////////////////////////////////////////////////////////////
 
-            template<typename T, class Tag,  id_type id,  class_type type = CONTEXT_CLASS >
+            template<typename T, class Tag,  id_type ID,  class_type TYPE = CONTEXT_CLASS >
                     class implicit_typedef  : public implicit_value<T> {
             public:
 
 
-                implicit_typedef() : value_(), implicit_value<T>(value_, id,  type) {
+                implicit_typedef() : value_(), implicit_value<T>(value_, ID,  TYPE) {
                 }
 
-                implicit_typedef (const T& val) : value_(val), implicit_value<T>(value_, id,  type) {
+                implicit_typedef (const T& val) : value_(val), implicit_value<T>(value_, ID,  TYPE) {
+                }
+              
+                void operator()(const T& val){
+                    value_=val;
                 }
 
                 operator T() const {
@@ -1080,11 +1084,7 @@ namespace boost {
                 T operator=(const T& val) {
                     return value_=val;
                 }
-                
-     template<typename Archive>                
-                            void serialize(Archive & arch) {
-                                
-                            }                
+                           
                 
             private:
                 T value_;
@@ -1093,31 +1093,30 @@ namespace boost {
             
             ////////////////////////////////////////////////////////////////////////////
 
-            template<typename T, class Tag, id_type id,  class_type type = CONTEXT_CLASS >
+            template<typename T, class Tag, id_type ID,  class_type TYPE = CONTEXT_CLASS >
                     class explicit_typedef : public explicit_value<T> {
             public:
 
 
-                explicit_typedef() : value_(), explicit_value<T>(value_, id,  type) {
+                explicit_typedef() : value_(), explicit_value<T>(value_, ID,  TYPE) {
                 }
 
-                explicit_typedef (const T& val) : value_(val), explicit_value<T>(value_, id,  type) {
+                explicit_typedef (const T& val) : value_(val), explicit_value<T>(value_, ID,  TYPE) {
                 }
+                
+                void operator()(const T& val){
+                    value_=val;
+                }                
                 
 
                 operator T() const {
                     return value_;
                 }
                 
-                T operator=(const T& val) {
-                    return value_=val;
-                }
+                class_type type() const {
+                    return TYPE;
+                }                      
                 
-     template<typename Archive>                
-                            void serialize(Archive & arch) {
-                                
-                            }
-
 
             private:
                 T value_;
@@ -1154,6 +1153,9 @@ namespace boost {
 
                 T& val_;
             } ;
+            
+            
+          
 
 
             ///////////////////////////////////////////////////////////////////////////
@@ -1316,15 +1318,20 @@ namespace boost {
                 arch & vl;
             }
                      
-            template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
-            inline void bind_basic(Archive & arch, implicit_typedef<T,Tag,id,type>& vl) {
-                arch & implicit_value<T>(vl.value(), id, type);
+            template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
+            inline void bind_basic(Archive & arch, implicit_typedef<T,Tag,ID,TYPE>& vl) {
+                arch & implicit_value<T>(vl.value(), ID, TYPE);
             } 
             
-            template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
-            inline void bind_basic(Archive & arch, explicit_typedef<T,Tag,id,type>& vl) {
-                arch & explicit_value<T>(vl.value(), id, type);
-            }              
+            template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
+            inline void bind_basic(Archive & arch, explicit_typedef<T,Tag,ID,TYPE>& vl) {
+                arch & explicit_value<T>(vl.value(), ID, TYPE);
+            } 
+            
+         //   template<typename Archive, typename T>
+         //   inline void bind_basic(Archive & arch, std::vector<T>& vl) {
+         //       arch & implicit_value<std::vector<T> > (vl, TYPE_SEQ);
+        //    }              
             
             
             
@@ -1349,10 +1356,7 @@ namespace boost {
                 arch & optional_explicit_value<T > (vl, id, type);
                 
             }
-            
-            
-                
-            
+                       
             template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
             inline void bind_explicit(Archive & arch, implicit_typedef<T,Tag,id,type>& vl) {
                 arch & explicit_value<T>(vl.value(), id, type);
@@ -1361,7 +1365,14 @@ namespace boost {
             template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
             inline void bind_explicit(Archive & arch, explicit_typedef<T,Tag,id,type>& vl) {
                 arch & explicit_value<T>(vl.value(), id, type);
-            }              
+            }        
+            
+            template<typename Archive, typename T>
+            inline void bind_basic(Archive & arch, std::vector<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                arch & explicit_value<T > (vl, id, type);
+            }                
+            
+            
             
             
 
@@ -1404,6 +1415,32 @@ namespace boost {
             inline void bind_implicit(Archive & arch, const boost::shared_ptr<T>& vl, class_type type = CONTEXT_CLASS) {
                 arch & optional_implicit_value<T > (vl, type);
             }
+            
+            template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
+            inline void bind_implicit(Archive & arch, implicit_typedef<T,Tag,id,type>& vl) {
+                arch & implicit_value<T>(vl.value(), id, type);
+            } 
+            
+            template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
+            inline void bind_implicit(Archive & arch, explicit_typedef<T,Tag,id,type>& vl) {
+                arch & implicit_value<T>(vl.value(), id, type);
+            }    
+            
+            template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, std::vector<T>& vl, class_type type = CONTEXT_CLASS) {
+                arch & implicit_value<T > (vl, TYPE_SEQ , type);
+            }                   
+            
+            template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, std::vector<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                arch & implicit_value<T > (vl, id, type);
+            }               
+            
+            
+            
+            
+            
+            
 
             template<typename Archive, typename T>
             inline void bind_choice(Archive & arch, T& vl) {
