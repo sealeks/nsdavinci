@@ -484,6 +484,7 @@ namespace boost {
                         stream.add( to_x690_cast(size_class(sz)), it);
                     return stream;
                 }
+              
 
                 template<typename T>
                 oarchive& primitive_sirialize(oarchive& stream, const implicit_value<T>& vl) {
