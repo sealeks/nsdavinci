@@ -281,11 +281,21 @@ namespace boost {
                     encoding_rule rule() const {
                         return rule_;
                     }
+                    
+                    template<typename T>
+                    void operator&( const T& vl) {
+                        *this  <<  implicit_value<T >(vl);
+                    }                    
 
                     template<typename T>
                     void operator&( const explicit_value<T >& vl) {
                         *this  <<  vl;
                     }
+                    
+                    template<typename T, class Tag, id_type ID,  class_type TYPE >
+                    void operator&( const explicit_typedef <T, Tag,ID, TYPE>& vl) {               
+                        *this  <<  explicit_value<T >(vl.value(), ID, TYPE);
+                    }                    
 
                     template<typename T>
                     void operator&( const optional_explicit_value<T >& vl) {
@@ -296,11 +306,23 @@ namespace boost {
                     void operator&( const implicit_value<T >& vl) {
                         *this  <<  vl;
                     }
+                    
+                    template<typename T, class Tag, id_type ID,  class_type TYPE >
+                    void operator&( const implicit_typedef <T, Tag,ID, TYPE>& vl) {
+                        *this  <<  implicit_value<T >(vl.value(), ID, TYPE);
+                    }                         
 
                     template<typename T>
                     void operator&( const optional_implicit_value<T >& vl) {
                         *this  <<  vl;
                     }
+                    
+                    template<typename T>
+                    void operator&( const std::vector<T >& vl) {
+                        *this  <<  vl;
+                    }                    
+                    
+                    
 
                     template<typename T>
                     void operator&(const choice_value<T >& vl) {
@@ -443,15 +465,24 @@ namespace boost {
 
                     return stream;
                 }
+                
+                template<typename  T>
+                oarchive& operator<<(oarchive& stream, const std::vector<T>& vl) {
+                    typedef typename std::vector<T>::const_iterator   vect_type_iterator;
+                    for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
+                        stream & (*itr );
+                    return stream;
+                }                
 
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const explicit_value<T>& vl) {
 
                     stream.add( to_x690_cast(tag( vl.id() , vl.mask() | CONSTRUCTED_ENCODING)));
                     oarchive::iterator_list_const_buffers it = stream.last();
-
+ 
                     std::size_t sz = stream.size();
-                    stream << implicit_value<T > (vl.value());
+                    stream & vl.value(); 
+
                     sz = stream.size(sz);
                     ++it;
 
@@ -484,6 +515,27 @@ namespace boost {
                         stream.add( to_x690_cast(size_class(sz)), it);
                     return stream;
                 }
+                
+               template<typename T>
+                oarchive& operator<<(oarchive& stream, const implicit_value<std::vector<T> >& vl){
+                   
+                   stream.add( to_x690_cast(tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING)));
+                    oarchive::iterator_list_const_buffers it = stream.last();
+
+                   std::size_t sz = stream.size();
+                   stream << vl.value();
+                   /*  const_cast<T*> (&(vl.value()))->serialize(stream);*/
+                    sz = stream.size(sz);
+                    ++it;
+
+                    if   (stream.rule() == CER_ENCODING) {
+                        stream.add( to_x690_cast(size_class()), it);
+                        stream.add( row_type(2.0));
+                    }
+                    else
+                        stream.add( to_x690_cast(size_class(sz)), it);
+                    return stream;                   
+               }                        
               
 
                 template<typename T>
@@ -679,6 +731,8 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<gentime_type>& vl);
+                
+      
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -800,11 +854,21 @@ namespace boost {
                     encoding_rule rule() const {
                         return rule_;
                     }
+                    
+                    template<typename T>
+                    void operator&(const T& vl) {
+                        *this  >>  implicit_value<T >(vl);
+                    }                    
 
                     template<typename T>
                     void operator&(const explicit_value<T >& vl) {
                         *this  >> vl;
                     }
+                    
+                    template<typename T, class Tag, id_type ID,  class_type TYPE >
+                    void operator&( const explicit_typedef <T, Tag,ID, TYPE>& vl) {               
+                        *this  >> explicit_value<T >(vl.value(), ID, TYPE);
+                    }                      
 
                     template<typename T>
                     void operator&(const optional_explicit_value<T >& vl) {
@@ -815,11 +879,21 @@ namespace boost {
                     void operator&(const implicit_value<T >& vl) {
                         *this  >>  vl;
                     }
+                    
+                    template<typename T, class Tag, id_type ID,  class_type TYPE >
+                    void operator&( const implicit_typedef <T, Tag,ID, TYPE>& vl) {               
+                        *this  >> implicit_value<T >(vl.value(), ID, TYPE);
+                    }                     
 
                     template<typename T>
                     void operator&(const optional_implicit_value<T >& vl) {
                         *this  >>  vl;
                     }
+                    
+                    template<typename T>
+                    void operator&( const std::vector<T >& vl) {
+                        *this  <<  vl;
+                    }                    
 
                     template<typename T>
                     void operator&(const choice_value<T >& vl) {
@@ -855,7 +929,7 @@ namespace boost {
                         std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
                         if (szsize) {
                             stream.pop_front(szsize + sztag);
-                            stream >> implicit_value<T > (vl.value());
+                            stream & vl.value();
                             if (tmpsize.undefsize()) {
                                 if (stream.is_endof()) {
                                 }
