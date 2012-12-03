@@ -1063,14 +1063,14 @@ namespace boost {
             ////////////////////////////////////////////////////////////////////////////
 
             template<typename T, class Tag,  id_type ID,  class_type TYPE = CONTEXT_CLASS >
-                    class implicit_typedef  : public implicit_value<T> {
+                    class implicit_typedef   {
             public:
 
 
-                implicit_typedef() : value_(), implicit_value<T>(value_, ID,  TYPE) {
+                implicit_typedef() : value_(){
                 }
 
-                implicit_typedef (const T& val) : value_(val), implicit_value<T>(value_, ID,  TYPE) {
+                implicit_typedef (const T& val) : value_(val) {
                 }
               
                 void operator()(const T& val){
@@ -1084,6 +1084,22 @@ namespace boost {
                 T operator=(const T& val) {
                     return value_=val;
                 }
+                
+                const T& value() const {
+                    return value_;
+                }
+
+                T& value() {
+                    return value_;
+                }
+
+                id_type id()  const {
+                    return ID;
+                }
+
+                class_type type() const {
+                    return TYPE;
+                }                
                            
                 
             private:
@@ -1094,28 +1110,45 @@ namespace boost {
             ////////////////////////////////////////////////////////////////////////////
 
             template<typename T, class Tag, id_type ID,  class_type TYPE = CONTEXT_CLASS >
-                    class explicit_typedef : public explicit_value<T> {
+                    class explicit_typedef  {
             public:
 
 
-                explicit_typedef() : value_(), explicit_value<T>(value_, ID,  TYPE) {
+                explicit_typedef() : value_() {
                 }
 
-                explicit_typedef (const T& val) : value_(val), explicit_value<T>(value_, ID,  TYPE) {
+                explicit_typedef (const T& val) : value_(val) {
                 }
                 
                 void operator()(const T& val){
                     value_=val;
-                }                
-                
+                }
 
                 operator T() const {
                     return value_;
                 }
+
+                T operator=(const T& val) {
+                    return value_=val;
+                }
                 
+                
+                const T& value() const {
+                    return value_;
+                }
+
+                T& value() {
+                    return value_;
+                }
+
+                id_type id()  const {
+                    return ID;
+                }
+
                 class_type type() const {
                     return TYPE;
-                }                      
+                }
+     
                 
 
             private:
