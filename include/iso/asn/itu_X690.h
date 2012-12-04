@@ -320,7 +320,12 @@ namespace boost {
                     template<typename T>
                     void operator&( const std::vector<T >& vl) {
                         *this  <<  vl;
-                    }                    
+                    }         
+                    
+                    template<typename T>
+                    void operator&( const vector_set_of<T >& vl) {
+                        *this  <<  vl;
+                    }                       
                     
                     
 
@@ -454,17 +459,7 @@ namespace boost {
                     return stream;
                 }
 
-                template<typename  T>
-                oarchive& operator<<(oarchive& stream, const set_of_type<T>& vl) {
 
-
-                    typedef typename set_of_type<T>::const_iterator   set_type_iterator;
-                    for (set_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
-                        stream << implicit_value<T > (*itr );
-
-
-                    return stream;
-                }
                 
                 template<typename  T>
                 oarchive& operator<<(oarchive& stream, const std::vector<T>& vl) {
@@ -472,7 +467,15 @@ namespace boost {
                     for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
                         stream & (*itr );
                     return stream;
-                }                
+                }        
+                
+                template<typename  T>
+                oarchive& operator<<(oarchive& stream, const vector_set_of<T>& vl) {
+                    typedef typename vector_set_of<T>::const_iterator   vect_type_iterator;
+                    for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
+                        stream & (*itr );
+                    return stream;
+                }                    
 
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const explicit_value<T>& vl) {
@@ -535,7 +538,28 @@ namespace boost {
                     else
                         stream.add( to_x690_cast(size_class(sz)), it);
                     return stream;                   
-               }                        
+               }         
+               
+               template<typename T>
+                oarchive& operator<<(oarchive& stream, const implicit_value<vector_set_of<T> >& vl){
+                   
+                   stream.add( to_x690_cast(tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING)));
+                    oarchive::iterator_list_const_buffers it = stream.last();
+
+                   std::size_t sz = stream.size();
+                   stream << vl.value();
+                   /*  const_cast<T*> (&(vl.value()))->serialize(stream);*/
+                    sz = stream.size(sz);
+                    ++it;
+
+                    if   (stream.rule() == CER_ENCODING) {
+                        stream.add( to_x690_cast(size_class()), it);
+                        stream.add( row_type(2.0));
+                    }
+                    else
+                        stream.add( to_x690_cast(size_class(sz)), it);
+                    return stream;                   
+               }                       
               
 
                 template<typename T>
@@ -844,10 +868,6 @@ namespace boost {
 
 
 
-
-                    //typedef std::pair<id_type, list_iterator_pair>                                                                         tlv_iterators_pair;
-                    //typedef std::multimap<id_type, list_iterator_pair>                                                               list_iterators_map;
-
                     iarchive(encoding_rule rul = BER_ENCODING) : boost::asio::iso::base_iarchive() , rule_(rul) {
                     }
 
@@ -914,11 +934,7 @@ namespace boost {
                 } ;
 
 
-
-                // template<typename T>
-                //  inline void operator>>(const row_type& data, T& vl) {
-                //     vl = from_x690_cast<T>(data);
-                //   }                
+             
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const explicit_value<T>& vl) {
@@ -926,12 +942,21 @@ namespace boost {
                     std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
                     if (sztag && (vl == tmptag)) {
                         size_class tmpsize;
-                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);                      
                         if (szsize) {
                             stream.pop_front(szsize + sztag);
+                            std::size_t beg = stream.size();
                             stream & vl.value();
                             if (tmpsize.undefsize()) {
                                 if (stream.is_endof()) {
+                                }
+                            }
+                            else{
+                                if ((beg-stream.size())==tmpsize.size()) {
+                                    std::cout << "check explicit success beg:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() << std::endl;
+                                }  
+                                else{
+                                    std::cout << "check explicit not Success:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() <<  std::endl;
                                 }
                             }
                         }
@@ -960,15 +985,53 @@ namespace boost {
                         std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
                         if (szsize) {
                             stream.pop_front(szsize + sztag);
+                            std::size_t beg = stream.size();
                             const_cast<T*> (&(vl.value()))->serialize(stream);
                             if (tmpsize.undefsize()) {
                                 if (stream.is_endof()) {
+                                }
+                            }
+                            else{
+                                 if ((beg-stream.size())==tmpsize.size()) {
+                                    std::cout << "check implicit success beg:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() << std::endl;
+                                }  
+                                else{
+                                    std::cout << "check implicit not Success:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() <<  std::endl;
                                 }
                             }
                         }
                     }
                     return stream;
                 }
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const std::vector<T>& vl) {
+                    tag tmptag;
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    if (sztag && (vl == tmptag)) {
+                        size_class tmpsize;
+                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                        if (szsize) {
+                            stream.pop_front(szsize + sztag);
+                            std::size_t beg = stream.size();
+                            /*const_cast<T*> (&(vl.value()))->serialize(stream);*/
+                            if (tmpsize.undefsize()) {
+                                if (stream.is_endof()) {
+                                    
+                                }
+                            }
+                            else{
+                                 if ((beg-stream.size())==tmpsize.size()) {
+                                    std::cout << "check implicit success beg:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() << std::endl;
+                                }  
+                                else{
+                                    std::cout << "check implicit not Success:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() <<  std::endl;
+                                }
+                            }
+                        }
+                    }
+                    return stream;
+                }                
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const optional_implicit_value<T>& vl) {
@@ -981,6 +1044,8 @@ namespace boost {
                     }
                     return stream;
                 }
+                
+                
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
@@ -1158,34 +1223,7 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<gentime_type>& vl);
 
 
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
-                /*TESTS                                                                                                                                                                                                              */
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
-                inline list_mutable_buffers  test_decode(const oarchive & arch) {
-                    list_mutable_buffers tmp;
-                    const_buffers buff = arch.buffers();
-                    for (const_buffers::const_iterator it = buff.begin(); it != buff.end(); ++it)
-                        tmp.push_back(mutable_buffer(const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
-                    return tmp;
-                }
-
-                struct test_decoder {
-                    explicit test_decoder(const list_mutable_buffers & src);
-                    tag tag_;
-                    size_class size_;
-                    list_mutable_buffers buff_;
-                    std::size_t blk;
-                } ;
-
-                inline std::ostream& operator<<(std::ostream& stream, const test_decoder & vl) {
-                    stream << "BEGIN------------------------------------------------------------------------" << std::endl;
-                    stream << vl.tag_  << vl.size_;
-                    stream << "DATA";
-                    boost::asio::iso::operator <<(stream, vl.buff_);
-                    stream << "END------------------------------------------------------------------------" << std::endl;
-                    return stream << '\n';
-                }
 
 
 

@@ -1113,34 +1113,7 @@ namespace boost {
                     return  primitive_desirialize(stream, vl);
                 }
 
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
-                /*TESTS                                                                                                                                                                                                              */
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
-                test_decoder::test_decoder(const list_mutable_buffers & src) : tag_(0), blk(0) {
-                    std::size_t sztag = tag_x690_cast(tag_, src);
-                    if (sztag) {
-                        std::size_t szsize = size_x690_cast(size_,  src, sztag);
-                        if (szsize) {
-                            blk = sztag + szsize + size_.size();
-                            buff_ = boost::asio::iso::sublist(src, sztag + szsize, size_.size());
-                            list_mutable_buffers buff = buff_; //boost::asio::iso::sublist(src, blk);
-                            std::cout << *this;
-                            if (tag_.mask() & CONSTRUCTED_ENCODING) {
-                                bool fl = false;
-                                if (buff.size()) {
-                                    do {
-                                        test_decoder nest(buff);
-                                        fl = nest.blk;
-                                        if (nest.blk)
-                                            buff = boost::asio::iso::sublist(buff, nest.blk );
-                                    }
-                                    while (fl &&  buff.size());
-                                }
-                            }
-                        }
-                    }
-                }
 
             }
 
