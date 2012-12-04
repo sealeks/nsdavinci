@@ -126,6 +126,10 @@ namespace boost {\
 #define BOOST_ASN_EXPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::PRIVATE_CLASS);
 #define BOOST_ASN_EXPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::UNIVERSAL_CLASS); 
 
+
+
+
+
 namespace boost {
     namespace asio {
         namespace asn {
@@ -701,10 +705,25 @@ namespace boost {
             gentime_type to_gentime(const row_type& val);
 
             std::ostream& operator<<(std::ostream& stream, const gentime_type& vl);
+            
+            
+            ///  SET_OF TYPE              
+            
+            
+             template<typename T>           
+            class vector_set_of : public std::vector<T>{
+            public:
+                vector_set_of() : std::vector<T>(){}    
+                //explicit vector_set_of(const A& a) :  std::vector<T>(a){} 
+              //  explicit vector_set_of(size_type n, const std::vector::value_type& value = std::vector::value_type(),
+	//     const allocator_type& a = allocator_type()) : std::vector<T,A>(n, value, a ){}        
+                template<typename InputIterator>
+                vector_set_of(InputIterator first, InputIterator last) : std::vector<T>(first, last ){}
+             }; 
 
 
 
-            ////////
+            //////
 
             typedef enum {
                 UNIVERSAL_CLASS = 0x0,
@@ -722,6 +741,8 @@ namespace boost {
 
             // tag traits
 
+;
+            
             template<typename T>
             struct tag_traits {
 
@@ -732,7 +753,20 @@ namespace boost {
                 static  int8_t class_type() {
                     return 0;
                 }
-            } ;
+            } ;           
+            
+            template<typename T >
+            struct tag_traits< vector_set_of<T> > {
+
+                static  id_type number() {
+                    return TYPE_SET;
+                }
+
+                static  int8_t class_type() {
+                    return 0;
+                }
+            };            
+            
 
             BOOST_ASN_INTERNAL_REGESTRATE(eoc_type, TYPE_EOC)
             BOOST_ASN_INTERNAL_REGESTRATE(int8_t, TYPE_INTEGER)
@@ -1187,45 +1221,6 @@ namespace boost {
                 T& val_;
             } ;
             
-            
-          
-
-
-            ///////////////////////////////////////////////////////////////////////////
-
-            template<typename T >
-            class set_of_type : public std::vector<T> {
-            public:
-
-                set_of_type(id_type id = TYPE_SET, class_type type = UNIVERSAL_CLASS) : std::vector<T>(),  id_(id) , mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
-                }
-
-                id_type id()  const {
-                    return id_;
-                }
-
-                class_type type() const {
-                    return to_class_type(mask_);
-                }
-
-                int8_t mask() const {
-                    return mask_;
-                }
-
-                static  bool primitive() {
-                    return false;
-                }
-
-
-
-            private:
-                id_type id_;
-                int8_t   mask_;
-
-            } ;
-
-
-
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////       
@@ -1403,7 +1398,12 @@ namespace boost {
             template<typename Archive, typename T>
             inline void bind_basic(Archive & arch, std::vector<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
                 arch & explicit_value<T > (vl, id, type);
-            }                
+            }         
+            
+            template<typename Archive, typename T>
+            inline void bind_basic(Archive & arch, vector_set_of<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                arch & explicit_value<T > (vl, id, type);
+            }                 
             
             
             
@@ -1469,7 +1469,10 @@ namespace boost {
                 arch & implicit_value<T > (vl, id, type);
             }               
             
-            
+            template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, vector_set_of<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                arch & implicit_value<T > (vl, id, type);
+            }                    
             
             
             

@@ -175,7 +175,7 @@ namespace boost {
                     return  listbuffers_.empty()  ? listbuffers_.end() :  (--listbuffers_.end());
                 }
 
-                std::size_t  size(std::size_t sz = 0) const  {
+                std::size_t  size(std::size_t sz) {
                     return (sz < size_) ? (size_ - sz) : 0;
                 }
 
