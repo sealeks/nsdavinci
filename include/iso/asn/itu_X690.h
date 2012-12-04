@@ -272,7 +272,7 @@ namespace boost {
                 public:
 
 
-                    typedef std::pair<id_type, list_iterator_pair>                                                                         tlv_iterators_pair;
+                    typedef std::pair<id_type, list_iterator_pair>                                                                       tlv_iterators_pair;
                     typedef std::multimap<id_type, list_iterator_pair>                                                               list_iterators_map;
 
                     oarchive(encoding_rule rul = BER_ENCODING) : boost::asio::iso::base_oarchive() , rule_(rul) {
@@ -328,7 +328,6 @@ namespace boost {
                     }                       
                     
                     
-
                     template<typename T>
                     void operator&(const choice_value<T >& vl) {
                         *this  <<  vl;
@@ -461,7 +460,7 @@ namespace boost {
 
 
                 
-                template<typename  T>
+             /*   template<typename  T>
                 oarchive& operator<<(oarchive& stream, const std::vector<T>& vl) {
                     typedef typename std::vector<T>::const_iterator   vect_type_iterator;
                     for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
@@ -475,7 +474,7 @@ namespace boost {
                     for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
                         stream & (*itr );
                     return stream;
-                }                    
+                }     */               
 
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const explicit_value<T>& vl) {
@@ -526,7 +525,9 @@ namespace boost {
                     oarchive::iterator_list_const_buffers it = stream.last();
 
                    std::size_t sz = stream.size();
-                   stream << vl.value();
+                    typedef typename std::vector<T>::const_iterator   vect_type_iterator;
+                    for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
+                        stream & (*itr );
                    /*  const_cast<T*> (&(vl.value()))->serialize(stream);*/
                     sz = stream.size(sz);
                     ++it;
@@ -547,7 +548,9 @@ namespace boost {
                     oarchive::iterator_list_const_buffers it = stream.last();
 
                    std::size_t sz = stream.size();
-                   stream << vl.value();
+                   typedef typename vector_set_of<T>::const_iterator   vect_type_iterator;
+                   for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
+                        stream & (*itr );
                    /*  const_cast<T*> (&(vl.value()))->serialize(stream);*/
                     sz = stream.size(sz);
                     ++it;
@@ -932,6 +935,10 @@ namespace boost {
                     encoding_rule        rule_;
 
                 } ;
+                
+                
+                
+            
 
 
              
@@ -1005,7 +1012,7 @@ namespace boost {
                 }
                 
                 template<typename T>
-                iarchive& operator>>(iarchive& stream, const std::vector<T>& vl) {
+                iarchive& operator>>(iarchive& stream, const implicit_value< std::vector<T> >& vl) {
                     tag tmptag;
                     std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
                     if (sztag && (vl == tmptag)) {
@@ -1016,16 +1023,17 @@ namespace boost {
                             std::size_t beg = stream.size();
                             /*const_cast<T*> (&(vl.value()))->serialize(stream);*/
                             if (tmpsize.undefsize()) {
-                                if (stream.is_endof()) {
-                                    
+                                while(!stream.is_endof() && stream.size()) {
+                                    T tmp;
+                                    stream & tmp;
+                                    const_cast<std::vector<T>* > (&(vl.value()))->push_back(tmp);
                                 }
                             }
                             else{
-                                 if ((beg-stream.size())==tmpsize.size()) {
-                                    std::cout << "check implicit success beg:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() << std::endl;
-                                }  
-                                else{
-                                    std::cout << "check implicit not Success:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() <<  std::endl;
+                                 while((beg-stream.size())<tmpsize.size()) {
+                                    T tmp;
+                                    stream & tmp;
+                                    const_cast<std::vector<T>* > (&(vl.value()))->push_back(tmp);                                   
                                 }
                             }
                         }
