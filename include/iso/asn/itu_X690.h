@@ -458,23 +458,7 @@ namespace boost {
                     return stream;
                 }
 
-
-                
-             /*   template<typename  T>
-                oarchive& operator<<(oarchive& stream, const std::vector<T>& vl) {
-                    typedef typename std::vector<T>::const_iterator   vect_type_iterator;
-                    for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
-                        stream & (*itr );
-                    return stream;
-                }        
-                
-                template<typename  T>
-                oarchive& operator<<(oarchive& stream, const vector_set_of<T>& vl) {
-                    typedef typename vector_set_of<T>::const_iterator   vect_type_iterator;
-                    for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
-                        stream & (*itr );
-                    return stream;
-                }     */               
+             
 
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const explicit_value<T>& vl) {
@@ -526,7 +510,7 @@ namespace boost {
 
                    std::size_t sz = stream.size();
                     typedef typename std::vector<T>::const_iterator   vect_type_iterator;
-                    for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
+                    for (vect_type_iterator itr = vl.value().begin() ; itr != vl.value().end() ; ++itr)
                         stream & (*itr );
                    /*  const_cast<T*> (&(vl.value()))->serialize(stream);*/
                     sz = stream.size(sz);
@@ -548,8 +532,8 @@ namespace boost {
                     oarchive::iterator_list_const_buffers it = stream.last();
 
                    std::size_t sz = stream.size();
-                   typedef typename vector_set_of<T>::const_iterator   vect_type_iterator;
-                   for (vect_type_iterator itr = vl.begin() ; itr != vl.end() ; ++itr)
+                    typedef typename vector_set_of<T>::const_iterator   vect_type_iterator;
+                    for (vect_type_iterator itr = vl.value().begin() ; itr != vl.value().end() ; ++itr)
                         stream & (*itr );
                    /*  const_cast<T*> (&(vl.value()))->serialize(stream);*/
                     sz = stream.size(sz);
