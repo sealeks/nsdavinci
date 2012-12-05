@@ -39,20 +39,10 @@ namespace boost {
             typedef  std::vector<row_type_ptr>                          vect_row_type_ptr;
 
 
-            typedef  std::vector<const_buffer>                          const_buffers;
-
-            typedef  std::vector<mutable_buffer>                      mutable_buffers;
 
             typedef  std::list<mutable_buffer>                                                                                             list_mutable_buffers;
-            typedef  list_mutable_buffers::iterator                                                                                        iterator_list_mutable_buffers;
-            typedef std::pair<iterator_list_mutable_buffers, iterator_list_mutable_buffers>                              list_mutable_iterator_pair;
+            typedef  std::list<const_buffer>                                                                                                 list_const_buffers;
 
-
-            typedef  std::list<const_buffer>                                                                                               list_const_buffers;
-
-
-            typedef  std::pair<iterator_list_mutable_buffers, std::size_t>                                                       tlv_stack_item;
-            typedef  std::stack<tlv_stack_item>                                                                                          tlv_stack_type;
 
 
             list_mutable_buffers sublist( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t start = 0 , std::size_t size = 0 );
@@ -149,8 +139,8 @@ namespace boost {
                 base_oarchive() : size_(0) {
                 }
 
-                const_buffers  buffers() const {
-                    return const_buffers(listbuffers_.begin(), listbuffers_.end());
+               list_buffers  buffers() const {
+                   return listbuffers_;
                 }
 
                 list_buffers::iterator  add(const row_type& vl)  {
@@ -217,8 +207,8 @@ namespace boost {
 
                 void add(const base_oarchive& vl) {
                     listbuffers_.clear();
-                    const_buffers buffers = vl.buffers();
-                    for (const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
+                    list_const_buffers buffers = vl.buffers();
+                    for (list_const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
                         listbuffers_.push_back(mutable_buffer(const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
                         size_ += boost::asio::buffer_size(*it);
                     }
@@ -248,7 +238,7 @@ namespace boost {
                     return listbuffers_;
                 }
 
-                iterator_list_mutable_buffers  last()  {
+                list_mutable_buffers::iterator  last()  {
                     return  listbuffers_.empty()  ? listbuffers_.end() :  (--listbuffers_.end());
                 }
 
@@ -265,25 +255,7 @@ namespace boost {
                     return size_;
                 }
 
-                void pop_tlvstack() {
-                    if (!tlvstak_.empty()) {
-                        tlvstak_.pop();
-                        std::cout << "POP INPUT TLVSTACK SIZE:"  << tlvstak_.size() << std::endl;
-                    }
-                }
 
-                void push_tlvstack(iterator_list_mutable_buffers it, std::size_t sz) {
-                    tlvstak_.push(tlv_stack_item(it, sz));
-                    std::cout << "PUSH INPUT TLVSTACK SIZE:"  << tlvstak_.size() << " block size:" <<  sz << std::endl;
-                }
-
-                tlv_stack_item top_tlvstack() const {
-                    return tlvstak_.top();
-                }
-
-                bool empty_tlvstack() const {
-                    return tlvstak_.empty();
-                }
 
             protected:
 
@@ -295,21 +267,15 @@ namespace boost {
                 list_mutable_buffers listbuffers_;
                 vect_row_type_ptr     rows_vect;
                 std::size_t                size_;
-                tlv_stack_type          tlvstak_;
             } ;
 
 
 
 
 
-            std::ostream& operator<<(std::ostream& stream, const const_buffers& self);
+            std::ostream& operator<<(std::ostream& stream, const list_const_buffers& self);
 
-            std::ofstream& operator<<(std::ofstream& stream, const const_buffers& self);
-
-            std::ostream& operator<<(std::ostream& stream, const mutable_buffers& self);
-
-            std::ofstream& operator<<(std::ofstream& stream, const mutable_buffers& self);
-
+            std::ofstream& operator<<(std::ofstream& stream, const list_const_buffers& self);
 
             std::ostream& operator<<(std::ostream& stream, const base_oarchive& vl);
 
