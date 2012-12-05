@@ -836,6 +836,13 @@ namespace boost {
                     else
                         return static_cast<uint8_t>(type()) < static_cast<uint8_t>(other.type());
                 }
+                
+                friend bool operator<(const tag& ls, const tag& rs){
+                    if (static_cast<uint8_t>(ls.type()) == static_cast<uint8_t>(rs.type()))
+                        return ls.id()<rs.id();
+                    else
+                        return static_cast<uint8_t>(ls.type()) < static_cast<uint8_t>(rs.type());
+                }
 
             private:
                 id_type id_;

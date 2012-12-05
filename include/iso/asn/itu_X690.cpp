@@ -433,67 +433,66 @@ namespace boost {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-                
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<numericstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-                                
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<printablestring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-                
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<t61string_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
-                }  
-                
+                }
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<videotexstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-                
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<ia5string_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
-                }  
-                
+                }
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<graphicstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
-                }  
-                
+                }
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<visiblestring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-                
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<generalstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
-                }      
-                
+                }
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<universalstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-                
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<bmpstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
-                }                        
-               
+                }
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<utctime_type>& vl) {
@@ -504,36 +503,64 @@ namespace boost {
                 oarchive& operator<<(oarchive& stream, const implicit_value<gentime_type>& vl) {
                     return primitive_sirialize(stream, vl);
                 }
-                
-                
-                
+
+
+
                 /// oarchive
-                oarchive::iterator_list_const_buffers oarchive::next(oarchive::iterator_list_const_buffers beg) const{
-                    tag tmptag;
-                    /*if (sztag) {
-                        size_class tmpsize;
-                        std::size_t szsize = size_x690_cast(tmpsize,  listbuffers_ , sztag);                      
-                        if (szsize) {
-                            listbuffers_.pop_front(szsize + sztag);
-                            std::size_t beg = stream.size();
-                            stream & vl.value();
-                            if (tmpsize.undefsize()) {
 
-                            }
-                            else{
-
-                            }                   
-                        }}*/
-                     return beg;
+                oarchive::list_buffers::iterator  oarchive::addtag(const  tag& tg,  bool settype)  {
+                    list_buffers::iterator it = add(to_x690_cast(tg));
+                    if (!stack_.empty() &&  stack_.top().first) {
+                        std::cout  << "Add tag in set state tag: " << tg.id() << " settype:"  <<  settype << std::endl;
+                        stack_.top().second.push_back(tlv_iterators_pair(tg, list_iterator_pair(it, it)));
+                    }
+                    stack_.push(stack_item(settype, tlv_vector()));
+                    return it;
                 }
+
+                void  oarchive::pop_stack()  {
+                    if (!stack_.empty()) {
+                        if (stack_.top().first) {
+                            std::cout  << "Close stack set: " << stack_.top().second.size() << std::endl;
+                            sort_tlv(stack_.top().second);
+                        }
+                        stack_.pop();
+                        if ((!stack_.empty()) && (stack_.top().first) && (!stack_.top().second.empty())) {
+                            stack_.top().second.back().second.second = last();
+                        }
+                    }
+                }
+
+                void oarchive::sort_tlv(tlv_vector& vct) {
+
+                    typedef std::map<tag, list_iterator_pair>   tlv_map;
+
+                    tlv_map mps;
+                    for (tlv_vector::iterator it = vct.begin(); it != vct.end(); ++it) {
+                        if (mps.upper_bound(it->first) != mps.end()) {
+                            std::cout  << "    Close stack set item  splice: " << std::endl;
+                            listbuffers_.splice(mps.upper_bound(it->first)->second.first , listbuffers_ , it->second.first , ++list_buffers::iterator(it->second.second));
+                        }
+                        mps.insert(tlv_iterators_pair(it->first, list_iterator_pair(it->second.first, it->second.second)));
+                    }
+                }
+
+
+                /*   void oarchive::splice_tlv(tlv_map& mps, const tag& id, iterator_list_const_buffers& itf,  iterator_list_const_buffers& its) {
+
+                      if (mps.upper_bound(id) != mps.end()){
+                          std::cout  << "    Close stack set item  splice: " << std::endl;
+                          listbuffers_.splice(mps.upper_bound(id)->second.first , listbuffers_ , itf , ++iterator_list_const_buffers(its));}
+                           mps.insert(tlv_iterators_pair(id, list_iterator_pair(itf, its)));
+                   }*/
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
                 /*INPUT STREAM                                                                                                                                                                                               */
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                bool find_marked_sequece( const list_mutable_buffers& val, row_type& raw,  std::size_t start) {
-                    list_mutable_buffers::const_iterator it = val.begin();
+                bool find_marked_sequece( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit,  row_type& raw,  std::size_t start) {
+                    list_mutable_buffers::const_iterator it = bit;
                     std::size_t sz = 0;
                     std::size_t szc = 0 ;
                     std::size_t szb = 0;
@@ -574,14 +601,14 @@ namespace boost {
 
                 std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit, std::size_t  beg) {
                     row_type s1;
-                    if (boost::asio::iso::row_cast(src, bit  ,s1, beg , 1) && (!s1.empty()))  {
+                    if (boost::asio::iso::row_cast(src, bit  , s1, beg , 1) && (!s1.empty()))  {
                         if ((s1[0] & '\x1F') != '\x1F') {
                             val = tag(s1[0] & '\x1F', s1[0] & '\xE0');
                             return 1;
                         }
                         else {
                             row_type s2;
-                            if (find_marked_sequece(src, s2, beg + 1) && (!s2.empty()) && (s2.size() <= (sizeof (id_type)))) {
+                            if (find_marked_sequece(src, bit,  s2, beg + 1) && (!s2.empty()) && (s2.size() <= (sizeof (id_type)))) {
                                 id_type tmp = 0;
                                 for (row_type::const_iterator it = s2.begin(); it != s2.end(); ++it)
                                     tmp = (tmp << 7) | (static_cast<row_type::value_type> (*it) & '\x7F');
@@ -599,7 +626,7 @@ namespace boost {
 
                 std::size_t  size_x690_cast(size_class& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit, std::size_t  beg) {
                     row_type s1;
-                    if (boost::asio::iso::row_cast(src, bit  ,s1, beg, 1) && (!s1.empty())) {
+                    if (boost::asio::iso::row_cast(src, bit  , s1, beg, 1) && (!s1.empty())) {
                         if (!(s1[0] & '\x80')) {
                             val = size_class(s1[0] & '\x7F');
                             return 1;
@@ -1052,78 +1079,76 @@ namespace boost {
                     stringtype_reader(stream, *const_cast<utf8string_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
                 }
-                
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<numericstring_type>& vl) {
                     const_cast<numericstring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<numericstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }                
-                
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<printablestring_type>& vl) {
                     const_cast<printablestring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<printablestring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }   
-                                
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<t61string_type>& vl) {
                     const_cast<t61string_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<t61string_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }  
+                }
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<videotexstring_type>& vl) {
                     const_cast<videotexstring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<videotexstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }                
+                }
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<ia5string_type>& vl) {
                     const_cast<ia5string_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<ia5string_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }               
-                
-                
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<graphicstring_type>& vl) {
                     const_cast<graphicstring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<graphicstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }  
+                }
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<visiblestring_type>& vl) {
                     const_cast<visiblestring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<visiblestring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }                
+                }
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<generalstring_type>& vl) {
                     const_cast<generalstring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<generalstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                } 
-                
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<universalstring_type>& vl) {
                     const_cast<universalstring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<universalstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }                
+                }
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<bmpstring_type>& vl) {
                     const_cast<bmpstring_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<bmpstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }                    
-                
+                }
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl) {
