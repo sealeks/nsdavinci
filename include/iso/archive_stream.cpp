@@ -35,9 +35,9 @@ namespace boost {
                 return rslt;
             }
 
-            list_mutable_buffers sublist( const list_mutable_buffers& val, std::size_t start, std::size_t size ) {
+            list_mutable_buffers sublist( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t start, std::size_t size ) {
                 if (!(size || start)) return val;
-                list_mutable_buffers::const_iterator it = val.begin();
+                list_mutable_buffers::const_iterator it = bit;
                 std::size_t sz = 0;
                 list_mutable_buffers tmp;
                 std::size_t szc = 0 ;
@@ -73,10 +73,10 @@ namespace boost {
                 return rslt;
             }
 
-            bool find_eof(const list_mutable_buffers& val, std::size_t& rslt) {
+            bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t& rslt) {
                 rslt = 0;
                 bool findend = false;
-                for (list_mutable_buffers::const_iterator it = val.begin(); it != val.end(); ++it) {
+                for (list_mutable_buffers::const_iterator it = bit; it != val.end(); ++it) {
                     mutable_buffer tmp = *it;
                     std::size_t size = boost::asio::buffer_size(*it);
                     for (std::size_t i = 0; i < size; ++i) {
@@ -96,10 +96,10 @@ namespace boost {
                 return false;
             }
 
-            bool row_cast( const list_mutable_buffers& val, row_type& raw,  std::size_t start, std::size_t size) {
+            bool row_cast( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, row_type& raw,  std::size_t start, std::size_t size) {
                 if (!size)
                     return true;
-                list_mutable_buffers::const_iterator it = val.begin();
+                list_mutable_buffers::const_iterator it = bit;
                 std::size_t sz = 0;
                 std::size_t szc = 0 ;
                 std::size_t szb = 0;

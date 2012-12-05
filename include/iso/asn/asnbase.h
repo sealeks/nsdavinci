@@ -43,6 +43,8 @@
 #include <iso/archive_stream.h>
 #include <iso/asn/utf8.h>
 
+#include <set>
+
 #include <boost/asio/detail/push_options.hpp>
 
 #define BOOST_ASN_SET_REGESTRATE(regtype) \
@@ -827,6 +829,13 @@ namespace boost {
                 id_type simpleid() const {
                     return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_ ) : 0;
                 }
+                
+                bool operator<(const tag& other){
+                    if (static_cast<uint8_t>(type()) == static_cast<uint8_t>(other.type()))
+                        return id()<other.id();
+                    else
+                        return static_cast<uint8_t>(type()) < static_cast<uint8_t>(other.type());
+                }
 
             private:
                 id_type id_;
@@ -836,6 +845,8 @@ namespace boost {
             inline std::ostream& operator<<(std::ostream& stream, const tag& vl) {
                 return stream << "TAG: " << vl.id() << " mask:"  << vl.mask() << '\n';
             }
+            
+            
             
             
             
@@ -854,13 +865,6 @@ namespace boost {
 
                 typedef T    base_type;     
                 
-                static id_type tag_number() {
-                    return id;
-                }
-                
-                static class_type class_t() {
-                    return type;
-                } 
 
                 explicit explicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
                 }
@@ -889,9 +893,6 @@ namespace boost {
                     return mask_;
                 }
 
-                static  bool primitive() {
-                    return false;
-                }
 
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && mask() == rs.mask());
@@ -1319,7 +1320,7 @@ namespace boost {
             template<typename Archive, typename T>
             inline void bind_basic(Archive & arch, T& vl) {
                 arch & implicit_value<T > (vl);
-            }
+            }                       
 
             template<typename Archive, typename T>
             inline void bind_basic(Archive & arch, boost::shared_ptr<T>& vl) {
@@ -1356,10 +1357,7 @@ namespace boost {
                 arch & explicit_value<T>(vl.value(), ID, TYPE);
             } 
             
-         //   template<typename Archive, typename T>
-         //   inline void bind_basic(Archive & arch, std::vector<T>& vl) {
-         //       arch & implicit_value<std::vector<T> > (vl, TYPE_SEQ);
-        //    }              
+          
             
             
             
@@ -1396,13 +1394,13 @@ namespace boost {
             }        
             
             template<typename Archive, typename T>
-            inline void bind_basic(Archive & arch, std::vector<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                arch & explicit_value<T > (vl, id, type);
+            inline void bind_explicit(Archive & arch, std::vector<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                arch & explicit_value<std::vector<T> > (vl, id, type);
             }         
             
             template<typename Archive, typename T>
-            inline void bind_basic(Archive & arch, vector_set_of<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                arch & explicit_value<T > (vl, id, type);
+            inline void bind_explicit(Archive & arch, vector_set_of<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+                arch & explicit_value<vector_set_of<T> > (vl, id, type);
             }                 
             
             
@@ -1459,23 +1457,27 @@ namespace boost {
                 arch & implicit_value<T>(vl.value(), id, type);
             }    
             
-            template<typename Archive, typename T>
-            inline void bind_implicit(Archive & arch, std::vector<T>& vl, class_type type = CONTEXT_CLASS) {
-                arch & implicit_value<T > (vl, TYPE_SEQ , type);
-            }                   
+           template<typename Archive, typename T>
+           inline void bind_implicit(Archive & arch, std::vector<T>& vl, class_type type = CONTEXT_CLASS) {
+                arch & implicit_value<std::vector<T> > (vl, TYPE_SEQ , type);
+           }                   
             
             template<typename Archive, typename T>
             inline void bind_implicit(Archive & arch, std::vector<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                arch & implicit_value<T > (vl, id, type);
+                arch & implicit_value<std::vector<T> > (vl, id, type);
             }               
             
             template<typename Archive, typename T>
             inline void bind_implicit(Archive & arch, vector_set_of<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                arch & implicit_value<T > (vl, id, type);
+                arch & implicit_value<vector_set_of<T> > (vl, id, type);
             }                    
             
+                    
             
             
+            
+            
+               
             
 
             template<typename Archive, typename T>
