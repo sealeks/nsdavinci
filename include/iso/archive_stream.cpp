@@ -21,7 +21,6 @@ namespace boost {
             const char hex_char_array_const[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
             const char bad_hex_char = '\xFF';
 
-
             static inline std::string num8t_to_hexstr(char vl) {
                 return std::string(static_cast<const char*> (&hex_char_array_const[((vl >> 4) & 0xF)]), 1) +
                         std::string(static_cast<const char*> (&hex_char_array_const[((vl) & 0xF)]), 1);
