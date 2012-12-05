@@ -332,6 +332,14 @@ namespace boost {
                     void operator&(const choice_value<T >& vl) {
                         *this  <<  vl;
                     }
+                    
+                    void alligntype(iterator_list_const_buffers bg , iterator_list_const_buffers ed){
+                        std::cout  << "NEAD ALIGHN TYPE"  << std::endl;
+                         
+
+                    }
+                    
+                    iterator_list_const_buffers next(iterator_list_const_buffers beg) const;
 
 
 
@@ -480,6 +488,17 @@ namespace boost {
                         stream.add( to_x690_cast(size_class(sz)), it);
                     return stream;
                 }
+                
+                template<typename T>
+                oarchive& operator<<(oarchive& stream, const explicit_value< std::vector<T> >& vl) {
+                     return stream << implicit_value<std::vector<T> >(vl.value(), vl.id(), vl.type() );
+                }   
+                
+                template<typename T>
+                oarchive& operator<<(oarchive& stream, const explicit_value< vector_set_of<T> >& vl) {
+                     return stream << implicit_value<vector_set_of<T> >(vl.value(), vl.id(), vl.type() );
+                }           
+                
 
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const implicit_value<T>& vl) {
@@ -488,10 +507,13 @@ namespace boost {
                     oarchive::iterator_list_const_buffers it = stream.last();
 
                     std::size_t sz = stream.size();
-                    //stream << vl.value();
-                    const_cast<T*> (&(vl.value()))->serialize(stream);
+                    const_cast<T*> (&(vl.value()))->serialize(stream);          
                     sz = stream.size(sz);
                     ++it;
+                    
+                    if ((tag_traits<T>::number()==TYPE_SET)/* && (stream.rule() == CER_ENCODING)*/) {
+                        stream.alligntype(it, stream.last());
+                    }
 
                     if   (stream.rule() == CER_ENCODING) {
                         stream.add( to_x690_cast(size_class()), it);
@@ -512,7 +534,6 @@ namespace boost {
                     typedef typename std::vector<T>::const_iterator   vect_type_iterator;
                     for (vect_type_iterator itr = vl.value().begin() ; itr != vl.value().end() ; ++itr)
                         stream & (*itr );
-                   /*  const_cast<T*> (&(vl.value()))->serialize(stream);*/
                     sz = stream.size(sz);
                     ++it;
 
@@ -535,7 +556,6 @@ namespace boost {
                     typedef typename vector_set_of<T>::const_iterator   vect_type_iterator;
                     for (vect_type_iterator itr = vl.value().begin() ; itr != vl.value().end() ; ++itr)
                         stream & (*itr );
-                   /*  const_cast<T*> (&(vl.value()))->serialize(stream);*/
                     sz = stream.size(sz);
                     ++it;
 
@@ -585,7 +605,6 @@ namespace boost {
 
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const choice_value<T>& vl) {
-                    const_cast<T*> (&(vl.value()))->serialize(stream);
                     return stream;
                 }
 
@@ -781,12 +800,12 @@ namespace boost {
 
                 std::size_t tag_from_x690_cast(const tag& val, const row_type& src);
 
-                std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src, std::size_t beg = 0);
+                std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit,  std::size_t beg = 0);
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // size_class from X.690
 
-                std::size_t size_x690_cast(size_class& val, const list_mutable_buffers& src,  std::size_t beg = 0);
+                std::size_t size_x690_cast(size_class& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit,  std::size_t beg = 0);
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // real from X.690
@@ -909,7 +928,7 @@ namespace boost {
 
                     tag next_tag() const {
                         tag tmptag;
-                        std::size_t sztag = tag_x690_cast(tmptag, buffers());
+                        std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
                         return tmptag;
                     }
 
@@ -930,10 +949,10 @@ namespace boost {
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const explicit_value<T>& vl) {
                     tag tmptag;
-                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
                     if (sztag && (vl == tmptag)) {
                         size_class tmpsize;
-                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);                      
+                        std::size_t szsize = size_x690_cast(tmpsize, stream.buffers(),  stream.buffers().begin() , sztag);                      
                         if (szsize) {
                             stream.pop_front(szsize + sztag);
                             std::size_t beg = stream.size();
@@ -944,22 +963,33 @@ namespace boost {
                             }
                             else{
                                 if ((beg-stream.size())==tmpsize.size()) {
-                                    std::cout << "check explicit success beg:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() << std::endl;
+                                 //   std::cout << "check explicit success beg:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() << std::endl;
                                 }  
                                 else{
-                                    std::cout << "check explicit not Success:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() <<  std::endl;
+                                 //   std::cout << "check explicit not Success:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() <<  std::endl;
                                 }
                             }
                         }
                     }
                     return stream;
                 }
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const explicit_value< std::vector<T> >& vl) {
+                    return stream >> implicit_value<std::vector<T> >(vl.value(), vl.id(), vl.type());
+                }     
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const explicit_value< vector_set_of<T> >& vl) {
+                    return stream >> implicit_value< vector_set_of<T> >(vl.value(), vl.id(), vl.type());
+                }
+                
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const optional_explicit_value<T>& vl) {
                     tag tmptag;
                     typedef boost::shared_ptr<T> shared_type;
-                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
                     if (sztag && (vl == tmptag)) {
                         *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
                         stream >> explicit_value<T > (*vl.value(), vl.id(), vl.type());
@@ -970,24 +1000,26 @@ namespace boost {
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const implicit_value<T>& vl) {
                     tag tmptag;
-                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
                     if (sztag && (vl == tmptag)) {
                         size_class tmpsize;
-                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), stream.buffers().begin(), sztag);
                         if (szsize) {
                             stream.pop_front(szsize + sztag);
                             std::size_t beg = stream.size();
+                         //   stream.push_tlvstack(stream.last(), stream.size());
                             const_cast<T*> (&(vl.value()))->serialize(stream);
+                          //  stream.pop_tlvstack();                            
                             if (tmpsize.undefsize()) {
                                 if (stream.is_endof()) {
                                 }
                             }
                             else{
                                  if ((beg-stream.size())==tmpsize.size()) {
-                                    std::cout << "check implicit success beg:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() << std::endl;
+                                 //   std::cout << "check implicit success beg:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() << std::endl;
                                 }  
                                 else{
-                                    std::cout << "check implicit not Success:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() <<  std::endl;
+                                  //  std::cout << "check implicit not Success:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() <<  std::endl;
                                 }
                             }
                         }
@@ -998,14 +1030,13 @@ namespace boost {
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const implicit_value< std::vector<T> >& vl) {
                     tag tmptag;
-                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
                     if (sztag && (vl == tmptag)) {
                         size_class tmpsize;
-                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), stream.buffers().begin(), sztag);
                         if (szsize) {
                             stream.pop_front(szsize + sztag);
                             std::size_t beg = stream.size();
-                            /*const_cast<T*> (&(vl.value()))->serialize(stream);*/
                             if (tmpsize.undefsize()) {
                                 while(!stream.is_endof() && stream.size()) {
                                     T tmp;
@@ -1029,7 +1060,7 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const optional_implicit_value<T>& vl) {
                     tag tmptag;
                     typedef boost::shared_ptr<T> shared_type;
-                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
                     if (sztag && (vl == tmptag)) {
                         *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
                         stream >> implicit_value<T > (*vl.value(), vl.id(), vl.type());
@@ -1041,7 +1072,6 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
-                    const_cast<T*> (&(vl.value()))->serialize(stream);
                     return stream;
                 }
 
@@ -1051,13 +1081,13 @@ namespace boost {
                 template<typename T>
                 iarchive&  primitive_desirialize(iarchive& stream, const implicit_value<T>& vl) {
                     tag tmptag;
-                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
                     if (sztag && (vl == tmptag)) {
                         size_class tmpsize;
-                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), stream.buffers().begin(), sztag);
                         if (szsize) {
                             row_type data;
-                            if (boost::asio::iso::row_cast(stream.buffers(), data , szsize + sztag, tmpsize.size())) {
+                            if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin() ,data , szsize + sztag, tmpsize.size())) {
                                 if (from_x690_cast(*const_cast<T*> (&vl.value()), data)) {
                                     stream.pop_front(szsize + sztag + tmpsize.size());
                                 }
@@ -1070,10 +1100,10 @@ namespace boost {
                 template<typename T>
                 bool stringtype_reader(iarchive& stream, T& vl, id_type id , int8_t mask) {
                     tag tmptag;
-                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers());
+                    std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(),stream.buffers().begin());
                     if (sztag && (id == tmptag.id())) {
                         size_class tmpsize;
-                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), sztag);
+                        std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), stream.buffers().begin(), sztag);
                         if (szsize) {
                             if (tmpsize.undefsize()) {
                                 stream.pop_front(szsize + sztag + tmpsize.size());
@@ -1087,9 +1117,9 @@ namespace boost {
                                 else {
                                     std::size_t itfnd = 0;
                                     stream.pop_front(szsize + sztag);
-                                    if (boost::asio::iso::find_eof(stream.buffers() , itfnd)) {
+                                    if (boost::asio::iso::find_eof(stream.buffers(), stream.buffers().begin() , itfnd)) {
                                         row_type data;
-                                        if (boost::asio::iso::row_cast(stream.buffers(), data , 0 , itfnd )) {
+                                        if (boost::asio::iso::row_cast(stream.buffers(),stream.buffers().begin(), data , 0 , itfnd )) {
                                             vl.insert(vl.end(), data.begin(), data.end());
                                             return true;
                                         }
@@ -1109,7 +1139,7 @@ namespace boost {
                                 }
                                 else {
                                     row_type data;
-                                    if (boost::asio::iso::row_cast(stream.buffers(), data , szsize + sztag, tmpsize.size())) {
+                                    if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin(), data , szsize + sztag, tmpsize.size())) {
                                         vl.insert(vl.end(), data.begin(), data.end());
                                         stream.pop_front(szsize + sztag + tmpsize.size());
                                         return true;

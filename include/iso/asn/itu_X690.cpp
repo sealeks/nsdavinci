@@ -504,6 +504,28 @@ namespace boost {
                 oarchive& operator<<(oarchive& stream, const implicit_value<gentime_type>& vl) {
                     return primitive_sirialize(stream, vl);
                 }
+                
+                
+                
+                /// oarchive
+                oarchive::iterator_list_const_buffers oarchive::next(oarchive::iterator_list_const_buffers beg) const{
+                    tag tmptag;
+                    /*if (sztag) {
+                        size_class tmpsize;
+                        std::size_t szsize = size_x690_cast(tmpsize,  listbuffers_ , sztag);                      
+                        if (szsize) {
+                            listbuffers_.pop_front(szsize + sztag);
+                            std::size_t beg = stream.size();
+                            stream & vl.value();
+                            if (tmpsize.undefsize()) {
+
+                            }
+                            else{
+
+                            }                   
+                        }}*/
+                     return beg;
+                }
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -550,9 +572,9 @@ namespace boost {
                     return 0;
                 }
 
-                std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src, std::size_t  beg) {
+                std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit, std::size_t  beg) {
                     row_type s1;
-                    if (boost::asio::iso::row_cast(src, s1, beg , 1) && (!s1.empty()))  {
+                    if (boost::asio::iso::row_cast(src, bit  ,s1, beg , 1) && (!s1.empty()))  {
                         if ((s1[0] & '\x1F') != '\x1F') {
                             val = tag(s1[0] & '\x1F', s1[0] & '\xE0');
                             return 1;
@@ -575,9 +597,9 @@ namespace boost {
                 ///////////////////////////////////////////////////////////////////////////////////
                 // size_class from X.690                
 
-                std::size_t  size_x690_cast(size_class& val, const list_mutable_buffers& src, std::size_t  beg) {
+                std::size_t  size_x690_cast(size_class& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit, std::size_t  beg) {
                     row_type s1;
-                    if (boost::asio::iso::row_cast(src, s1, beg, 1) && (!s1.empty())) {
+                    if (boost::asio::iso::row_cast(src, bit  ,s1, beg, 1) && (!s1.empty())) {
                         if (!(s1[0] & '\x80')) {
                             val = size_class(s1[0] & '\x7F');
                             return 1;
@@ -586,7 +608,7 @@ namespace boost {
                             if  ((s1[0] != '\x80')) {
                                 std::size_t szblk = static_cast<std::size_t > (s1[0] & '\x7F');
                                 row_type s2;
-                                if (boost::asio::iso::row_cast(src, s2, beg + 1, szblk) && (!s2.empty()) && (s2.size() <= sizeof (std::size_t))) {
+                                if (boost::asio::iso::row_cast(src, bit , s2, beg + 1, szblk) && (!s2.empty()) && (s2.size() <= sizeof (std::size_t))) {
                                     if (s2.front() & '\x80') {
                                         s2.insert(s2.begin(), '\x0');
                                         std::size_t bodysize = 0;
