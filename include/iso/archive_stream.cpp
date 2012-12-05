@@ -117,33 +117,20 @@ namespace boost {
                 return (raw.size() == size);
             }
 
-            std::ostream& operator<<(std::ostream& stream, const const_buffers& self) {
-                for (const_buffers::const_iterator it = self.begin(); it != self.end(); ++it)
+            std::ostream& operator<<(std::ostream& stream, const list_const_buffers& self) {
+                for (list_const_buffers::const_iterator it = self.begin(); it != self.end(); ++it)
                     stream << binary_to_hexsequence_debug(std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it) ));
                 stream << std::endl;
                 return stream;
             }
 
-            std::ofstream& operator<<(std::ofstream& stream, const const_buffers& self) {
-                for (const_buffers::const_iterator it = self.begin(); it != self.end(); ++it)
+            std::ofstream& operator<<(std::ofstream& stream, const list_const_buffers& self) {
+                for (list_const_buffers::const_iterator it = self.begin(); it != self.end(); ++it)
                     stream << std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it) );
                 stream << std::endl;
                 return stream;
             }
 
-            std::ostream& operator<<(std::ostream& stream, const mutable_buffers& self) {
-                for (mutable_buffers::const_iterator it = self.begin(); it != self.end(); ++it)
-                    stream << binary_to_hexsequence_debug(std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it) ));
-                stream << std::endl;
-                return stream;
-            }
-
-            std::ofstream& operator<<(std::ofstream& stream, const mutable_buffers& self) {
-                for (mutable_buffers::const_iterator it = self.begin(); it != self.end(); ++it)
-                    stream << std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it) );
-                stream << std::endl;
-                return stream;
-            }
 
             std::ostream& operator<<(std::ostream& stream, const base_oarchive& vl) {
                 stream << vl.buffers();

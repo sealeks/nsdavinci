@@ -29,7 +29,6 @@ namespace boost {
 
 
                 typedef  boost::asio::iso::list_mutable_buffers                                                                                           list_mutable_buffers;
-                typedef  boost::asio::iso::iterator_list_mutable_buffers                                                                         iterator_list_mutable_buffers;
 
                 typedef enum {
                     BER_ENCODING,
@@ -272,7 +271,7 @@ namespace boost {
                     typedef std::pair<list_buffers::iterator , list_buffers::iterator>                                              list_iterator_pair;
                     typedef std::pair<tag , list_iterator_pair>                                                                            tlv_iterators_pair;
                     typedef std::vector<tlv_iterators_pair>                                                                               tlv_vector;
-                    typedef std::pair<bool, tlv_vector>                                                                                    stack_item;
+                    typedef std::pair<bool, tlv_vector>                                                                                    stack_item;   //  bool   = true  is set
                     typedef std::stack<stack_item >                                                                                         stack_type;
 
                 public:
@@ -761,6 +760,12 @@ namespace boost {
                 //   archiver
 
                 class iarchive : public boost::asio::iso::base_iarchive  {
+                    
+                    typedef  std::pair<bool, std::size_t>  tlv_size;   //  bool = true is valid size, else undef size
+                    typedef  std::pair<bool, tlv_size >     tlv_item;   //  bool = true is set type                    
+                    typedef  std::stack<tlv_item>             tlv_stack;
+
+
                 public:
 
                     iarchive(encoding_rule rul = BER_ENCODING) : boost::asio::iso::base_iarchive() , rule_(rul) {
@@ -821,9 +826,44 @@ namespace boost {
                         return tmptag;
                     }
 
+                    bool parse_tl(tag& tg, list_mutable_buffers::const_iterator bit, bool settype) {
+                        std::size_t sztag = tag_x690_cast(tg , listbuffers_, bit );
+                        if (!stack_.empty() && (stack_.top().first))
+                            std::cout << "come in set stak: size: "  << stack_.top().second.second << std::endl;
+                        else
+                            std::cout << "come in no set stak: size: "  << stack_.top().second.second  << std::endl;
+                        size_class sz;
+                        if (sztag) {
+                            std::size_t szsize = size_x690_cast(sz, listbuffers_,  bit  , sztag);
+                            if (szsize) {
+                                if (sz.undefsize()) {
+                                    stack_.push(tlv_item(settype, tlv_size(false, 0)));
+                                }
+                                else {
+                                    stack_.push(tlv_item(settype, tlv_size(true, sz.size())));
+                                }
+                            }
+                        }
+                    }
+
+                    bool pop_stack() {
+                        if (!stack_.empty()) {
+                            if (stack_.top().first) {
+                                std::cout  << "Close stack set: " << stack_.top().second.second << std::endl;
+                            }
+                            else{
+                                std::cout  << "Close stack noset: " << stack_.top().second.second << std::endl;
+                            }
+                            stack_.pop();
+                        }
+                    }
+
+
 
                 private:
 
+
+                    tlv_stack               stack_;
                     encoding_rule        rule_;
 
                 } ;

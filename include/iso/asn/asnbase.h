@@ -139,7 +139,6 @@ namespace boost {
 
 
             typedef  boost::asio::iso::row_type                          row_type;
-            typedef  boost::asio::iso::const_buffers                const_buffers;
 
 
             typedef  std::size_t                                                     id_type;
