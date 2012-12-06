@@ -903,6 +903,10 @@ namespace boost {
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && mask() == rs.mask());
                 }
+                
+                operator tag() const {
+                    return tag(id_, mask_);
+                }
 
 
             private:
@@ -969,6 +973,10 @@ namespace boost {
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) == ( rs.mask() | CONSTRUCTED_ENCODING));
                 }
+                
+                operator tag() const {
+                    return tag(id_, mask_);
+                }                
 
 
             private:
@@ -1025,6 +1033,10 @@ namespace boost {
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && mask() == rs.mask());
                 }
+                
+                operator tag() const {
+                    return tag(id_, mask_);
+                }                
 
 
             private:
@@ -1092,6 +1104,10 @@ namespace boost {
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) == ( rs.mask() | CONSTRUCTED_ENCODING));
                 }
+                
+                operator tag() const {
+                    return tag(id_, mask_);
+                }                
 
 
             private:
