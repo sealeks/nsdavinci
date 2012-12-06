@@ -378,7 +378,7 @@ namespace boost {
 
                     if ((stream.canonical())) {
                         stream.add( to_x690_cast(size_class()), it);
-                        stream.add( row_type(2.0));
+                        stream.add( row_type(2, 0));
                     }
                     else
                         stream.add( to_x690_cast(size_class(sz)), it);
@@ -410,7 +410,7 @@ namespace boost {
 
                     if   (stream.canonical()) {
                         stream.add( to_x690_cast(size_class()), it);
-                        stream.add( row_type(2.0));
+                        stream.add( row_type(2, 0));
                     }
                     else
                         stream.add( to_x690_cast(size_class(sz)), it);
@@ -433,7 +433,7 @@ namespace boost {
 
                     if   (stream.canonical()) {
                         stream.add( to_x690_cast(size_class()), it);
-                        stream.add( row_type(2.0));
+                        stream.add( row_type(2,0));
                     }
                     else
                         stream.add( to_x690_cast(size_class(sz)), it);
@@ -456,7 +456,7 @@ namespace boost {
 
                     if   (stream.canonical()) {
                         stream.add( to_x690_cast(size_class()), it);
-                        stream.add( row_type(2.0));
+                        stream.add( row_type(2, 0));
                     }
                     else
                         stream.add( to_x690_cast(size_class(sz)), it);
@@ -475,11 +475,11 @@ namespace boost {
                     sz = stream.size(sz);
                     ++it;
 
-                    if  (stream.canonical()) {
+                   /* if  (stream.canonical()) {
                         stream.add( to_x690_cast(size_class()), it);
-                        stream.add( row_type(2.0));
+                        stream.add( row_type(2, 0));
                     }
-                    else
+                    else*/
                         stream.add( to_x690_cast(size_class(sz)), it);
                     stream.pop_stack();
                     return stream;
@@ -560,7 +560,7 @@ namespace boost {
 
                     if  (construct) {
                         stream.add( to_x690_cast(size_class()), it);
-                        stream.add( row_type(2.0));
+                        stream.add( row_type(2, 0));
                     }
                     else
                         stream.add( to_x690_cast(size_class(sz)), it);
