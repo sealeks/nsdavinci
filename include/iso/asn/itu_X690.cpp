@@ -329,7 +329,8 @@ namespace boost {
 
                         const_iterator_type it = val.begin();
                         while (it != val.end()) {
-                            stream.add(row_type(1, static_cast<row_type::value_type> (TYPE_BITSTRING)));
+                            //stream.add(row_type(1, static_cast<row_type::value_type> (TYPE_BITSTRING)));
+                            stream.addtag(tag(TYPE_BITSTRING), false);
                             difference_type  diff = std::distance(it, val.end());
                             if (diff > (CER_STRING_MAX_SIZE - 1)) {
                                 diff = (CER_STRING_MAX_SIZE - 1);
@@ -342,6 +343,7 @@ namespace boost {
                             }
                             stream.add(row_type(val.begin(), val.begin() + diff));
                             it = it + diff;
+                            stream.pop_stack();
                         }
                     }
                 }
@@ -508,20 +510,22 @@ namespace boost {
 
                 /// oarchive
 
-                oarchive::list_buffers::iterator  oarchive::addtag(const  tag& tg,  bool settype)  {
-                    list_buffers::iterator it = add(to_x690_cast(tg));
+                oarchive::iterator  oarchive::addtag(const  tag& tg,  bool settype)  {
+                    if (false/*rule_ != CER_ENCODING*/) return add(to_x690_cast(tg));
+                    iterator it = add(to_x690_cast(tg));
                     if (!stack_.empty() &&  stack_.top().first) {
-                        std::cout  << "Add tag in set state tag: " << tg.id() << " settype:"  <<  settype << std::endl;
-                        stack_.top().second.push_back(tlv_iterators_pair(tg, list_iterator_pair(it, it)));
+                        //std::cout  << "Add tag in set state tag: " << tg.id() << " settype:"  <<  settype << std::endl;
+                        stack_.top().second.push_back(tlv_iterators_pair(tg, iterator_pair(it, it)));
                     }
                     stack_.push(stack_item(settype, tlv_vector()));
                     return it;
                 }
 
                 void  oarchive::pop_stack()  {
+                    if (false/*rule_ != CER_ENCODING*/) return;
                     if (!stack_.empty()) {
                         if (stack_.top().first) {
-                            std::cout  << "Close stack set: " << stack_.top().second.size() << std::endl;
+                            //std::cout  << "Close stack set: " << stack_.top().second.size() << std::endl;
                             sort_tlv(stack_.top().second);
                         }
                         stack_.pop();
@@ -533,26 +537,25 @@ namespace boost {
 
                 void oarchive::sort_tlv(tlv_vector& vct) {
 
-                    typedef std::map<tag, list_iterator_pair>   tlv_map;
+                    typedef std::map<tag, iterator_pair>   tlv_map;
 
                     tlv_map mps;
                     for (tlv_vector::iterator it = vct.begin(); it != vct.end(); ++it) {
                         if (mps.upper_bound(it->first) != mps.end()) {
-                            std::cout  << "    Close stack set item  splice: " << std::endl;
-                            listbuffers_.splice(mps.upper_bound(it->first)->second.first , listbuffers_ , it->second.first , ++list_buffers::iterator(it->second.second));
+                            //std::cout  << "    Close stack set item  splice: " << std::endl;
+                            listbuffers_.splice(mps.upper_bound(it->first)->second.first , listbuffers_ , it->second.first , ++iterator(it->second.second));
                         }
-                        mps.insert(tlv_iterators_pair(it->first, list_iterator_pair(it->second.first, it->second.second)));
+                        mps.insert(tlv_iterators_pair(it->first, iterator_pair(it->second.first, it->second.second)));
                     }
                 }
 
+                void oarchive::clear()  {
+                    while (stack_.empty())
+                        stack_.pop();
+                    boost::asio::iso::base_oarchive::clear();
 
-                /*   void oarchive::splice_tlv(tlv_map& mps, const tag& id, iterator_list_const_buffers& itf,  iterator_list_const_buffers& its) {
+                }
 
-                      if (mps.upper_bound(id) != mps.end()){
-                          std::cout  << "    Close stack set item  splice: " << std::endl;
-                          listbuffers_.splice(mps.upper_bound(id)->second.first , listbuffers_ , itf , ++iterator_list_const_buffers(its));}
-                           mps.insert(tlv_iterators_pair(id, list_iterator_pair(itf, its)));
-                   }*/
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////     

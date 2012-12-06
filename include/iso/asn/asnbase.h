@@ -138,7 +138,7 @@ namespace boost {
 
 
 
-            typedef  boost::asio::iso::row_type                          row_type;
+            typedef  boost::asio::iso::row_type                             row_type;
 
 
             typedef  std::size_t                                                     id_type;
@@ -829,19 +829,19 @@ namespace boost {
                     return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_ ) : 0;
                 }
                 
-                bool operator<(const tag& other){
-                    if (static_cast<uint8_t>(type()) == static_cast<uint8_t>(other.type()))
-                        return id()<other.id();
-                    else
-                        return static_cast<uint8_t>(type()) < static_cast<uint8_t>(other.type());
-                }
-                
+
                 friend bool operator<(const tag& ls, const tag& rs){
-                    if (static_cast<uint8_t>(ls.type()) == static_cast<uint8_t>(rs.type()))
+                    if (static_cast<uint8_t>(ls.type() | CONSTRUCTED_ENCODING) == static_cast<uint8_t>(rs.type() | CONSTRUCTED_ENCODING))
                         return ls.id()<rs.id();
                     else
-                        return static_cast<uint8_t>(ls.type()) < static_cast<uint8_t>(rs.type());
+                        return static_cast<uint8_t>(ls.type() | CONSTRUCTED_ENCODING) < static_cast<uint8_t>(rs.type() | CONSTRUCTED_ENCODING);
                 }
+                
+                friend bool operator==(const tag& ls, const tag& rs){
+                    if (static_cast<uint8_t>(ls.type() | CONSTRUCTED_ENCODING) == static_cast<uint8_t>(rs.type() | CONSTRUCTED_ENCODING))
+                        return ls.id()==rs.id();
+                    return false;
+                }                
 
             private:
                 id_type id_;

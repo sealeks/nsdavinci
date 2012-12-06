@@ -29,6 +29,7 @@ namespace boost {
 
 
                 typedef  boost::asio::iso::list_mutable_buffers                                                                                           list_mutable_buffers;
+                typedef  boost::asio::iso::list_const_buffers                                                                                               list_const_buffers;
 
                 typedef enum {
                     BER_ENCODING,
@@ -268,8 +269,8 @@ namespace boost {
                 ///  archiver                
 
                 class oarchive : public boost::asio::iso::base_oarchive  {
-                    typedef std::pair<list_buffers::iterator , list_buffers::iterator>                                              list_iterator_pair;
-                    typedef std::pair<tag , list_iterator_pair>                                                                            tlv_iterators_pair;
+                    typedef std::pair<iterator , iterator>                                                                                   iterator_pair;
+                    typedef std::pair<tag , iterator_pair>                                                                                  tlv_iterators_pair;
                     typedef std::vector<tlv_iterators_pair>                                                                               tlv_vector;
                     typedef std::pair<bool, tlv_vector>                                                                                    stack_item;   //  bool   = true  is set
                     typedef std::stack<stack_item >                                                                                         stack_type;
@@ -333,10 +334,16 @@ namespace boost {
                         *this  <<  vl;
                     }
 
-                    list_buffers::iterator  addtag(const  tag& tg,  bool settype);
+                    iterator  addtag(const  tag& tg,  bool settype);
 
                     void  pop_stack();
 
+                    virtual void clear();
+                    
+                    bool canonical() const {
+                        return rule_ == CER_ENCODING;
+                    }                    
+                    
                 private:
 
                     void sort_tlv(tlv_vector& vct);
@@ -369,7 +376,7 @@ namespace boost {
                     sz = stream.size(sz);
                     ++it;
 
-                    if ((stream.rule() == CER_ENCODING)) {
+                    if ((stream.canonical())) {
                         stream.add( to_x690_cast(size_class()), it);
                         stream.add( row_type(2.0));
                     }
@@ -401,7 +408,7 @@ namespace boost {
                     ++it;
 
 
-                    if   (stream.rule() == CER_ENCODING) {
+                    if   (stream.canonical()) {
                         stream.add( to_x690_cast(size_class()), it);
                         stream.add( row_type(2.0));
                     }
@@ -424,7 +431,7 @@ namespace boost {
                     sz = stream.size(sz);
                     ++it;
 
-                    if   (stream.rule() == CER_ENCODING) {
+                    if   (stream.canonical()) {
                         stream.add( to_x690_cast(size_class()), it);
                         stream.add( row_type(2.0));
                     }
@@ -447,7 +454,7 @@ namespace boost {
                     sz = stream.size(sz);
                     ++it;
 
-                    if   (stream.rule() == CER_ENCODING) {
+                    if   (stream.canonical()) {
                         stream.add( to_x690_cast(size_class()), it);
                         stream.add( row_type(2.0));
                     }
@@ -468,7 +475,7 @@ namespace boost {
                     sz = stream.size(sz);
                     ++it;
 
-                    if  ((stream.rule() == CER_ENCODING)) {
+                    if  (stream.canonical()) {
                         stream.add( to_x690_cast(size_class()), it);
                         stream.add( row_type(2.0));
                     }
@@ -514,7 +521,8 @@ namespace boost {
 
                         const_iterator_type it = val.begin();
                         while (it != val.end()) {
-                            stream.add(row_type(1, static_cast<row_type::value_type> ( tag_traits<T>::number())));
+                            //stream.add(row_type(1, static_cast<row_type::value_type> ( tag_traits<T>::number())));
+                            stream.addtag(tag(tag_traits<T>::number()),false);
                             difference_type  diff = std::distance(it, val.end());
                             if (diff > CER_STRING_MAX_SIZE) {
                                 diff = CER_STRING_MAX_SIZE;
@@ -525,6 +533,7 @@ namespace boost {
                             }
                             stream.add(row_type(val.begin(), val.begin() + diff));
                             it = it + diff;
+                            stream.pop_stack();
                         }
                     }
                 }
@@ -539,7 +548,7 @@ namespace boost {
 
 
                     int8_t construct = vl.size()<( tag_traits<T>::number() == TYPE_BITSTRING ? (CER_STRING_MAX_SIZE - 1) : CER_STRING_MAX_SIZE )
-                            ?  PRIMITIVE_ENCODING  :  (stream.rule() == CER_ENCODING ?  CONSTRUCTED_ENCODING : PRIMITIVE_ENCODING) ;
+                            ?  PRIMITIVE_ENCODING  :  (stream.canonical() ?  CONSTRUCTED_ENCODING : PRIMITIVE_ENCODING) ;
 
                     stream.addtag( tag(id , mask | construct ), false );
                     oarchive::list_buffers::iterator it = stream.last();
@@ -760,7 +769,6 @@ namespace boost {
                 //   archiver
 
                 class iarchive : public boost::asio::iso::base_iarchive  {
-                    
                     typedef  std::pair<bool, std::size_t>  tlv_size;   //  bool = true is valid size, else undef size
                     typedef  std::pair<bool, tlv_size >     tlv_item;   //  bool = true is set type                    
                     typedef  std::stack<tlv_item>             tlv_stack;
@@ -851,7 +859,7 @@ namespace boost {
                             if (stack_.top().first) {
                                 std::cout  << "Close stack set: " << stack_.top().second.second << std::endl;
                             }
-                            else{
+                            else {
                                 std::cout  << "Close stack noset: " << stack_.top().second.second << std::endl;
                             }
                             stack_.pop();
