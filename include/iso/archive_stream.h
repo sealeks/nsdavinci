@@ -130,7 +130,8 @@ namespace boost {
             class base_oarchive {
             public:
 
-                typedef  list_const_buffers    list_buffers;
+                typedef  list_const_buffers                 list_buffers;
+                typedef  list_const_buffers::iterator    iterator;                
 
                 static bool __input__() {
                     return false;
@@ -143,7 +144,7 @@ namespace boost {
                    return listbuffers_;
                 }
 
-                list_buffers::iterator  add(const row_type& vl)  {
+                iterator  add(const row_type& vl)  {
                     if (vl.empty()) return
                         listbuffers_.end();
                     rows_vect.push_back(row_type_ptr( new row_type(vl)));
@@ -151,7 +152,7 @@ namespace boost {
                     return listbuffers_.insert(listbuffers_.end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
                 }
 
-                list_buffers::iterator  add(const row_type& vl, list_const_buffers::iterator it)  {
+                iterator  add(const row_type& vl, iterator it)  {
                     if (vl.empty()) return
                         listbuffers_.end();
                     rows_vect.push_back(row_type_ptr( new row_type(vl)));
@@ -159,7 +160,7 @@ namespace boost {
                     return listbuffers_.insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
                 }
 
-                list_buffers::iterator  last()  {
+                iterator  last()  {
                     return  listbuffers_.empty()  ? listbuffers_.end() :  (--listbuffers_.end());
                 }
 
@@ -167,14 +168,13 @@ namespace boost {
                     return (sz < size_) ? (size_ - sz) : 0;
                 }
 
-                void clear()  {
+                virtual void clear()  {
                     listbuffers_.clear();
                     rows_vect.clear();
                     size_ = 0;
                 }
-
-
-
+                
+   
 
 
             protected:
@@ -190,6 +190,9 @@ namespace boost {
 
             class base_iarchive {
             public:
+                
+                typedef  list_mutable_buffers                 list_buffers;
+                typedef  list_mutable_buffers::iterator    iterator;                 
 
                 static bool __input__() {
                     return true;
@@ -230,15 +233,15 @@ namespace boost {
                     return false;
                 }
 
-                const list_mutable_buffers&  buffers() const {
+                const list_buffers&  buffers() const {
                     return listbuffers_;
                 }
 
-                list_mutable_buffers&  buffers() {
+                list_buffers&  buffers() {
                     return listbuffers_;
                 }
 
-                list_mutable_buffers::iterator  last()  {
+                iterator  last()  {
                     return  listbuffers_.empty()  ? listbuffers_.end() :  (--listbuffers_.end());
                 }
 
@@ -264,9 +267,10 @@ namespace boost {
                     //std::cout << "IARCHVE size:"  << size_  << std::endl;
                 }
 
-                list_mutable_buffers listbuffers_;
+                list_buffers                listbuffers_;
                 vect_row_type_ptr     rows_vect;
-                std::size_t                size_;
+                std::size_t                 size_;
+                
             } ;
 
 
