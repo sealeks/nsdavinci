@@ -809,8 +809,13 @@ namespace boost {
 
             class tag {
             public:
+                
+                static const id_type null_tag = (!id_type(0));
+                
+                tag() : id_(null_tag), mask_(0) {
+                }
 
-                tag(id_type  vl = 0, int8_t type = 0) : id_(vl), mask_(type) {
+                tag(id_type  vl , int8_t type = 0) : id_(vl), mask_(type) {
                 }
 
                 int8_t mask() const {
@@ -828,6 +833,14 @@ namespace boost {
                 id_type simpleid() const {
                     return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_ ) : 0;
                 }
+                
+                operator bool() const {
+                    return (id_!=null_tag);
+                }
+                
+                bool constructed() const {
+                    return (mask_ & CONSTRUCTED_ENCODING);
+                }                
                 
 
                 friend bool operator<(const tag& ls, const tag& rs){
