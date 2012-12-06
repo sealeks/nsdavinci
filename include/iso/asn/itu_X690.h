@@ -475,11 +475,6 @@ namespace boost {
                     sz = stream.size(sz);
                     ++it;
 
-                    /* if  (stream.canonical()) {
-                         stream.add( to_x690_cast(size_class()), it);
-                         stream.add( row_type(2, 0));
-                     }
-                     else*/
                     stream.add( to_x690_cast(size_class(sz)), it);
                     stream.pop_stack();
                     return stream;
@@ -834,372 +829,370 @@ namespace boost {
                         return tmptag;
                     }
 
-                    bool parse_tl(const tag& tg, list_mutable_buffers::const_iterator bit, bool settype) {
-                        
+                    tag test_tl(size_class& sz) {
+
+                        tag tmptag;
+                        std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
+                        if (sztag) {
+                            size_class tmpsize;
+                            std::size_t szsize = size_x690_cast(sz, buffers(),  buffers().begin() , sztag);
+                            if (szsize) {
+                                return tmptag;
+                            }
+                        }
+                        return tag();
+                    }
+                    
+                    tag test_tl() {
+                        size_class sz;
+                        return test_tl(sz);
+                    }                    
+
+                    bool parse_tl(const tag& tg, size_class& rsltsz , bool settype) {
+
 
                         std::size_t size_tlv = size();
-                        bool is_set_child = false;                        
-                        
-                        if (!stack_.empty()){
+                        bool is_set_child = false;
+
+                        if (!stack_.empty()) {
                             size_tlv = stack_.top().second.second;
-                            if (stack_.top().first){
-                                  is_set_child = true;
-                                  std::cout << "come in set stak: size: "  << stack_.top().second.second << std::endl;}                  
-                            else{
-                                  std::cout << "come in no set stak: size: "  << stack_.top().second.second  << std::endl;}}
-                        
+                            if (stack_.top().first) {
+                                is_set_child = true;
+                                std::cout << "come in set stak: size: "  << stack_.top().second.second << std::endl;
+                            }
+                            else {
+                            }
+                        }
+
                         tag tmptag;
-                        
+
                         std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
                         if (sztag && (tg == tmptag)) {
-                            size_class tmpsize;
-                            std::size_t szsize = size_x690_cast(tmpsize, buffers(),  buffers().begin() , sztag);
-                            if (szsize) {                               
+                            std::size_t szsize = size_x690_cast(rsltsz, buffers(),  buffers().begin() , sztag);
+                            if (szsize) {
                                 pop_front(szsize + sztag);
-                                stack_.push(tlv_item(settype, tlv_size(!tmpsize.undefsize(), tmpsize.size())));
-                                if (tmpsize.undefsize()) {
-                                   // if (stream.is_endof()) {
-                                   // }
+                                if (!stack_.empty()) {
+                                    if (stack_.top().second.first)
+                                    stack_.top().second.second -= (szsize + sztag + rsltsz.size());
+                                    std::cout << "dec tlv: size: "  << stack_.top().second.second << std::endl;
                                 }
-                                else {
-                                    //if ((beg - size()) == tmpsize.size()) {
-                                    //}
-                                    //else {
-                                    //}
-                                }
+                                stack_.push(tlv_item(settype, tlv_size(!rsltsz.undefsize(), rsltsz.size())));
+                                return  true;
                             }
                         }
                         return false;
-                }
-
-                bool pop_stack() {
-                    if (!stack_.empty()) {
-                        if (stack_.top().first) {
-                            std::cout  << "Close stack set: " << stack_.top().second.second << std::endl;
-                        }
-                        else {
-                            std::cout  << "Close stack noset: " << stack_.top().second.second << std::endl;
-                        }
-                        if (!stack_.top().second.first){
-                            std::cout  << "Close undef tlv: " << stack_.top().second.second << std::endl;
-                            is_endof();}
-                        stack_.pop();
                     }
-                }
+                    
+                   bool parse_tl(const tag& tg , bool settype) {
+                       size_class rsltsz;
+                       return parse_tl(tg,rsltsz , settype);
+                   }
+
+                    void pop_stack() {
+                        if (!stack_.empty()) {
+                            if (stack_.top().first) {
+                                std::cout  << "Close stack set: " << stack_.top().second.second << std::endl;
+                            }
+                            if (!stack_.top().second.first) {
+                                std::cout  << "Close undef tlv: " << stack_.top().second.second << std::endl;
+                                is_endof();
+                            }
+                            else {
+                                std::cout  << "Close stack size: " << stack_.top().second.second << std::endl;
+                                pop_front(stack_.top().second.second);
+                            }
+                            stack_.pop();
+                        }
+                    }
 
 
 
                 private:
 
 
-                tlv_stack               stack_;
-                encoding_rule        rule_;
+                    tlv_stack               stack_;
+                    encoding_rule        rule_;
 
-            } ;
+                } ;
 
-            template<typename T>
-            iarchive& operator>>(iarchive& stream, const explicit_value<T>& vl) {
-                tag tmptag;
-                std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
-                if (sztag && (vl == tmptag)) {
-                    size_class tmpsize;
-                    std::size_t szsize = size_x690_cast(tmpsize, stream.buffers(),  stream.buffers().begin() , sztag);
-                    if (szsize) {
-                        stream.pop_front(szsize + sztag);
-                        std::size_t beg = stream.size();
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const explicit_value<T>& vl) {
+                    if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         stream & vl.value();
-                        if (tmpsize.undefsize()) {
-                            if (stream.is_endof()) {
-                            }
-                        }
-                        else {
-                            if ((beg - stream.size()) == tmpsize.size()) {
-                            }
-                            else {
-                            }
-                        }
+                        stream.pop_stack();
                     }
+                    return stream;
                 }
-                return stream;
-            }
 
-            template<typename T>
-            iarchive& operator>>(iarchive& stream, const explicit_value< std::vector<T> >& vl) {
-                return stream >> implicit_value<std::vector<T> >(vl.value(), vl.id(), vl.type());
-            }
-
-            template<typename T>
-            iarchive& operator>>(iarchive& stream, const explicit_value< vector_set_of<T> >& vl) {
-                return stream >> implicit_value< vector_set_of<T> >(vl.value(), vl.id(), vl.type());
-            }
-
-            template<typename T>
-            iarchive& operator>>(iarchive& stream, const optional_explicit_value<T>& vl) {
-                tag tmptag;
-                typedef boost::shared_ptr<T> shared_type;
-                std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
-                if (sztag && (vl == tmptag)) {
-                    *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
-                    stream >> explicit_value<T > (*vl.value(), vl.id(), vl.type());
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const optional_explicit_value<T>& vl) {                    
+                    typedef boost::shared_ptr<T> shared_type;
+                    if (stream.test_tl(vl)==vl.operator  tag()) {
+                            *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
+                            stream >> explicit_value<T > (*vl.value(), vl.id(), vl.type());
+                    }
+                    return stream;
                 }
-                return stream;
-            }
 
-            template<typename T>
-            iarchive& operator>>(iarchive& stream, const implicit_value<T>& vl) {
-                tag tmptag;
-                std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
-                if (sztag && (vl == tmptag)) {
-                    size_class tmpsize;
-                    std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), stream.buffers().begin(), sztag);
-                    if (szsize) {
-                        stream.pop_front(szsize + sztag);
-                        std::size_t beg = stream.size();
-                        //   stream.push_tlvstack(stream.last(), stream.size());
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const implicit_value<T>& vl) {
+                    if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         const_cast<T*> (&(vl.value()))->serialize(stream);
-                        //  stream.pop_tlvstack();                            
-                        if (tmpsize.undefsize()) {
-                            if (stream.is_endof()) {
-                            }
-                        }
-                        else {
-                            if ((beg - stream.size()) == tmpsize.size()) {
-                                //   std::cout << "check implicit success beg:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() << std::endl;
+                        stream.pop_stack();
+                    }
+                    return stream;
+                }
+
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const optional_implicit_value<T>& vl) {
+                    typedef boost::shared_ptr<T> shared_type;
+                    if (stream.test_tl(vl)==vl.operator  tag()) {
+                        *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
+                        stream >> implicit_value<T > (*vl.value(), vl.id(), vl.type());
+                    }
+                    return stream;
+                }
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const explicit_value< std::vector<T> >& vl) {
+                    return stream >> implicit_value<std::vector<T> >(vl.value(), vl.id(), vl.type());
+                }
+
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const explicit_value< vector_set_of<T> >& vl) {
+                    return stream >> implicit_value< vector_set_of<T> >(vl.value(), vl.id(), vl.type());
+                }                
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const implicit_value< std::vector<T> >& vl) {
+                    size_class tmpsize; 
+                    if (stream.parse_tl(vl, tmpsize, false )) {
+                            std::size_t beg = stream.size();
+                            if  (tmpsize.undefsize()) {
+                                while (!stream.is_endof() && stream.size()) {
+                                    T tmp;
+                                    stream & tmp;
+                                    const_cast<std::vector<T>* > (&(vl.value()))->push_back(tmp);
+                                }
                             }
                             else {
-                                //  std::cout << "check implicit not Success:"  << beg  << " end:"  << stream.size()  <<   " size: " <<  tmpsize.size() <<  std::endl;
+                                std::size_t sz=tmpsize.size();                                
+                                while ((beg - stream.size()) < sz ) {
+                                    T tmp;
+                                    stream & tmp;
+                                    const_cast<std::vector<T>* > (&(vl.value()))->push_back(tmp);
+                                }
                             }
-                        }
                     }
-                }
-                return stream;
-            }
-
-            template<typename T>
-            iarchive& operator>>(iarchive& stream, const implicit_value< std::vector<T> >& vl) {
-                tag tmptag;
-                std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
-                if (sztag && (vl == tmptag)) {
-                    size_class tmpsize;
-                    std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), stream.buffers().begin(), sztag);
-                    if (szsize) {
-                        stream.pop_front(szsize + sztag);
-                        std::size_t beg = stream.size();
-                        if (tmpsize.undefsize()) {
-                            while (!stream.is_endof() && stream.size()) {
-                                T tmp;
-                                stream & tmp;
-                                const_cast<std::vector<T>* > (&(vl.value()))->push_back(tmp);
+                    return stream;
+                }    
+                
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const implicit_value< vector_set_of<T> >& vl) {
+                    
+                    size_class tmpsize; 
+                    if (stream.parse_tl(vl, tmpsize, false )) {
+                            std::size_t beg = stream.size();
+                            if  (tmpsize.undefsize()) {
+                                while (!stream.is_endof() && stream.size()) {
+                                    T tmp;
+                                    stream & tmp;
+                                    const_cast<vector_set_of<T>* > (&(vl.value()))->push_back(tmp);
+                                }
                             }
-                        }
-                        else {
-                            while ((beg - stream.size()) < tmpsize.size()) {
-                                T tmp;
-                                stream & tmp;
-                                const_cast<std::vector<T>* > (&(vl.value()))->push_back(tmp);
+                            else {
+                                std::size_t sz=tmpsize.size();
+                                while ((beg - stream.size()) < sz ) {
+                                    T tmp;
+                                    stream & tmp;
+                                    const_cast<vector_set_of<T>* > (&(vl.value()))->push_back(tmp);
+                                }
                             }
-                        }
                     }
+                    return stream;
+                }                 
+                
+            
+
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
+                    return stream;
                 }
-                return stream;
-            }
-
-            template<typename T>
-            iarchive& operator>>(iarchive& stream, const optional_implicit_value<T>& vl) {
-                tag tmptag;
-                typedef boost::shared_ptr<T> shared_type;
-                std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
-                if (sztag && (vl == tmptag)) {
-                    *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
-                    stream >> implicit_value<T > (*vl.value(), vl.id(), vl.type());
-                }
-                return stream;
-            }
-
-            template<typename T>
-            iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
-                return stream;
-            }
 
 
-            //////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////
 
-            template<typename T>
-            iarchive&  primitive_desirialize(iarchive& stream, const implicit_value<T>& vl) {
-                tag tmptag;
-                std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
-                if (sztag && (vl == tmptag)) {
-                    size_class tmpsize;
-                    std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), stream.buffers().begin(), sztag);
-                    if (szsize) {
+                template<typename T>
+                iarchive&  primitive_desirialize(iarchive& stream, const implicit_value<T>& vl) {
+                    size_class tmpsize; 
+                    if (stream.parse_tl(vl,tmpsize,  tag_traits<T>::number() == TYPE_SET )) {
                         row_type data;
-                        if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin() , data , szsize + sztag, tmpsize.size())) {
+                        std::size_t sz=tmpsize.size();
+                        if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin() , data , 0 , sz )) {
                             if (from_x690_cast(*const_cast<T*> (&vl.value()), data)) {
-                                stream.pop_front(szsize + sztag + tmpsize.size());
+                                stream.pop_stack();
                             }
                         }
                     }
+                    return stream;
                 }
-                return stream;
-            }
 
-            template<typename T>
-            bool stringtype_reader(iarchive& stream, T& vl, id_type id , int8_t mask) {
-                tag tmptag;
-                std::size_t sztag = tag_x690_cast(tmptag, stream.buffers(), stream.buffers().begin());
-                if (sztag && (id == tmptag.id())) {
-                    size_class tmpsize;
-                    std::size_t szsize = size_x690_cast(tmpsize,  stream.buffers(), stream.buffers().begin(), sztag);
-                    if (szsize) {
-                        if (tmpsize.undefsize()) {
-                            stream.pop_front(szsize + sztag + tmpsize.size());
-                            if (tmptag.mask() & CONSTRUCTED_ENCODING) {
-                                while (!stream.is_endof() && !stream.buffers().empty()) {
-                                    if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask))
-                                        return false;
-                                }
-                                return true;
-                            }
-                            else {
-                                std::size_t itfnd = 0;
-                                stream.pop_front(szsize + sztag);
-                                if (boost::asio::iso::find_eof(stream.buffers(), stream.buffers().begin() , itfnd)) {
-                                    row_type data;
-                                    if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin(), data , 0 , itfnd )) {
-                                        vl.insert(vl.end(), data.begin(), data.end());
-                                        return true;
+                template<typename T>
+                bool stringtype_reader(iarchive& stream, T& vl, id_type id , int8_t mask) {
+
+                    size_class tmpsize;     
+                    tag tmptag=  stream.test_tl() ;
+                    if (stream.parse_tl(tag(id,  mask), tmpsize,  false )) {    
+                           
+                            if (tmpsize.undefsize()) {
+                              /* stream.pop_front(szsize + sztag + tmpsize.size());
+                                if (tmptag.constructed()) {
+                                    while (!stream.is_endof() && !stream.buffers().empty()) {
+                                        if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask))
+                                            return false;
                                     }
-                                }
-                                return false;
-                            }
-                        }
-                        else {
-                            if (tmptag.mask() & CONSTRUCTED_ENCODING) {
-                                while (!stream.buffers().empty()) {
-                                    if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask)) {
-                                        stream.pop_front(szsize + sztag + tmpsize.size());
-                                        return true;
-                                    }
-                                }
-                                return false;
-                            }
-                            else {
-                                row_type data;
-                                if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin(), data , szsize + sztag, tmpsize.size())) {
-                                    vl.insert(vl.end(), data.begin(), data.end());
-                                    stream.pop_front(szsize + sztag + tmpsize.size());
                                     return true;
                                 }
+                                else {
+                                    std::size_t itfnd = 0;
+                                    stream.pop_front(szsize + sztag);
+                                    if (boost::asio::iso::find_eof(stream.buffers(), stream.buffers().begin() , itfnd)) {
+                                        row_type data;
+                                        if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin(), data , 0 , itfnd )) {
+                                            vl.insert(vl.end(), data.begin(), data.end());
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }*/ 
+                            }
+                            else {
+                                std::size_t sz=tmpsize.size();
+                                if (tmptag.constructed()) {
+                                    while (!stream.buffers().empty()) {
+                                        if (!stringtype_reader(stream, vl, tag_traits<T>::number()  , mask)) {
+                                            //stream.pop_front(szsize + sztag + tmpsize.size());
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }
+                                else {
+                                    row_type data;
+                                    if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin(), data , 0 , tmpsize.size())) {
+                                        vl.insert(vl.end(), data.begin(), data.end());
+                                        stream.pop_stack();
+                                        return true;
+                                    }
+                                }
                             }
                         }
-                    }
+                    return false;
                 }
-                return false;
+
+                template<>
+                iarchive& operator>>(iarchive& stream,  const implicit_value<int8_t>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint8_t>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<int16_t>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint16_t>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<int32_t>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint32_t>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<int64_t>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<enumerated_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<float>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<double>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<long double>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<null_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<oid_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<bitstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<octetstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<numericstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<printablestring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<t61string_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<videotexstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<ia5string_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<graphicstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<visiblestring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<generalstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<universalstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<bmpstring_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<gentime_type>& vl);
+
+
+
+
+
+
+
             }
 
-            template<>
-            iarchive& operator>>(iarchive& stream,  const implicit_value<int8_t>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<uint8_t>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<int16_t>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<uint16_t>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<int32_t>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<uint32_t>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<int64_t>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<uint64_t>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<enumerated_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<float>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<double>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<long double>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<bool>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<null_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<oid_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<bitstring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<octetstring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<utf8string_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<numericstring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<printablestring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<t61string_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<videotexstring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<ia5string_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<graphicstring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<visiblestring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<generalstring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<universalstring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<bmpstring_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<utctime_type>& vl);
-
-            template<>
-            iarchive& operator>>(iarchive& stream, const implicit_value<gentime_type>& vl);
-
-
-
-
-
-
-
         }
-
     }
-}
 }
 
 

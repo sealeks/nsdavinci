@@ -264,7 +264,7 @@ namespace boost {
 
                 void decsize(std::size_t sz)  {
                     size_ =  size_ < sz ? 0 : (size_ - sz);
-                    //std::cout << "IARCHVE size:"  << size_  << std::endl;
+                    std::cout << "IARCHVE size:"  << size_  << std::endl;
                 }
 
                 list_buffers                listbuffers_;
