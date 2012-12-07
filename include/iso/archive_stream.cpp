@@ -72,25 +72,34 @@ namespace boost {
                 return rslt;
             }
 
-            bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t& rslt) {
+            bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t& rslt, std::size_t start) {
                 rslt = 0;
                 bool findend = false;
                 for (list_mutable_buffers::const_iterator it = bit; it != val.end(); ++it) {
                     mutable_buffer tmp = *it;
                     std::size_t size = boost::asio::buffer_size(*it);
-                    for (std::size_t i = 0; i < size; ++i) {
-                        if (findend) {
-                            if (!(*boost::asio::buffer_cast<row_type::value_type*>(boost::asio::buffer(tmp + i, 1)))) {
-                                rslt--;
-                                return true;
+                    if (size > start) {
+                        for (std::size_t i = 0; i < size; ++i) {
+                            if (i >= start) {
+                                if (findend) {
+                                    if (!(*boost::asio::buffer_cast<row_type::value_type*>(boost::asio::buffer(tmp + i, 1)))) {
+                                        rslt--;
+                                        return true;
+                                    }
+                                    findend = false;
+                                }
+                                else {
+                                    findend = !(*boost::asio::buffer_cast<row_type::value_type*>(boost::asio::buffer(tmp + i, 1)));
+                                }
                             }
-                            findend = false;
+                            rslt++;
                         }
-                        else {
-                            findend = !(*boost::asio::buffer_cast<row_type::value_type*>(boost::asio::buffer(tmp + i, 1)));
-                        }
-                        rslt++;
                     }
+                    else {
+                        rslt += size;
+                    }
+                    if (start)
+                        start = (start < size) ? 0 : (start - size);
                 }
                 return false;
             }
@@ -106,6 +115,7 @@ namespace boost {
                 while ((( sz < (start + size)) || (!size)) && (it != val.end())) {
                     szc = boost::asio::buffer_size(*it);
                     if ((sz + szc) > start) {
+
                         szb = sz > start ? 0 : start - sz;
                         sze = ( !size || ((szb + size) > szc)) ? szc - szb  : size;
                         mutable_buffer tmp = boost::asio::buffer(*it + szb, sze );
@@ -121,6 +131,7 @@ namespace boost {
                 for (list_const_buffers::const_iterator it = self.begin(); it != self.end(); ++it)
                     stream << binary_to_hexsequence_debug(std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it) ));
                 stream << std::endl;
+
                 return stream;
             }
 
@@ -128,17 +139,19 @@ namespace boost {
                 for (list_const_buffers::const_iterator it = self.begin(); it != self.end(); ++it)
                     stream << std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it) );
                 stream << std::endl;
+
                 return stream;
             }
 
-
             std::ostream& operator<<(std::ostream& stream, const base_oarchive& vl) {
                 stream << vl.buffers();
+
                 return stream;
             }
 
             std::ofstream& operator<<(std::ofstream& stream, const base_oarchive& vl) {
                 stream << vl.buffers();
+
                 return stream;
             }
 
@@ -146,6 +159,7 @@ namespace boost {
                 for (list_mutable_buffers::const_iterator it = self.begin(); it != self.end(); ++it)
                     stream << binary_to_hexsequence_debug(std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it) ));
                 stream << std::endl;
+
                 return stream;
 
             }
