@@ -222,16 +222,17 @@ namespace boost {
                     decsize(pop_frontlist(listbuffers_, sz));
                 }
 
-                bool is_endof() {
+                bool is_endof(std::size_t beg = 0) const {
                     row_type  data;
-                    if (row_cast(listbuffers_, listbuffers_.begin(), data,  0 , 2)) {
+                    if (row_cast(listbuffers_, listbuffers_.begin(), data,  beg , 2)) {
                         if ((data.size() == 2) && (data[0] == 0) && (data[1] == 0)) {
-                            decsize(pop_frontlist(listbuffers_, 2));
                             return true;
                         }
                     }
                     return false;
                 }
+                
+                
 
                 const list_buffers&  buffers() const {
                     return listbuffers_;
@@ -264,7 +265,7 @@ namespace boost {
 
                 void decsize(std::size_t sz)  {
                     size_ =  size_ < sz ? 0 : (size_ - sz);
-                    std::cout << "IARCHVE size:"  << size_  << std::endl;
+                    //std::cout << "IARCHVE size:"  << size_  << std::endl;
                 }
 
                 list_buffers                listbuffers_;

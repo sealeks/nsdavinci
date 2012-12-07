@@ -341,7 +341,7 @@ namespace boost {
                                 stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff + 1))));
                                 stream.add(row_type(1, static_cast<row_type::value_type> (val.unusebits() % 8)));
                             }
-                            stream.add(row_type(val.begin(), val.begin() + diff));
+                            stream.add(row_type(it, it + diff));
                             it = it + diff;
                             stream.pop_stack();
                         }
