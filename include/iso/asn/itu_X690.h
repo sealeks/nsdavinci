@@ -847,29 +847,54 @@ namespace boost {
 
                         std::size_t size_tlv = size();
                         bool is_set_child = false;
+                        std::size_t size_test = 0;
+                        tag tmptag;
 
                         if (!stack_.empty()) {
                             size_tlv = stack_.top().second.second;
-                            if (stack_.top().first) {
-                                is_set_child = true;
-                            }
-                            else {
-                            }
+                            is_set_child = stack_.top().first;
                         }
 
-                        tag tmptag;
 
-                        std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
-                        if (sztag && (tg == tmptag)) {
-                            std::size_t szsize = size_x690_cast(rsltsz, buffers(),  buffers().begin() , sztag);
-                            if (szsize) {
-                                pop_front(szsize + sztag);
-                                if (!stack_.empty()) {
-                                    if (stack_.top().second.first)
-                                        stack_.top().second.second -= (szsize + sztag + rsltsz.size());
+
+                        while (size_test < size_tlv) {
+                            std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
+                            if (sztag && (tg == tmptag)) {
+                                std::size_t szsize = size_x690_cast(rsltsz, buffers(),  buffers().begin() , sztag);
+                                if (szsize) {
+                                    std::size_t next_test = rsltsz.size();
+
+                                    if (rsltsz.undefsize()) {
+                                        if (!next(next_test))
+                                            return false;
+                                        next_test -= (szsize + sztag);
+                                    }
+
+                                    pop_front(szsize + sztag);
+
+                                    if (!stack_.empty())
+                                        stack_.top().second.second = (stack_.top().second.second >= next_test) ?
+                                        (stack_.top().second.second - next_test) : 0;
+                                    stack_.push(tlv_item(settype, tlv_size(!rsltsz.undefsize(), next_test)));
+                                    return  true;
                                 }
-                                stack_.push(tlv_item(settype, tlv_size(!rsltsz.undefsize(), rsltsz.size())));
-                                return  true;
+                                return  false;
+                            }
+                            else {
+                                if (!sztag)
+                                    return false;
+                                std::size_t next_test = 0;
+                                if (!next(next_test))
+                                    return false;
+                                // if (is_set_child) {
+                                if (!stack_.empty())
+                                    stack_.top().second.second = (stack_.top().second.second >= next_test) ?
+                                    (stack_.top().second.second - next_test) : 0;
+                                size_test += next_test;
+                                pop_front(next_test);
+                                // else{
+                                //!!!!!!!!!!!!!!!!!!!!need set realisation
+                                ///}
                             }
                         }
                         return false;
@@ -895,7 +920,7 @@ namespace boost {
                         }
                     }
 
-                    bool next(std::size_t& sz) const {
+                    bool next(std::size_t & sz) const {
                         tag tmptag;
                         std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin(), sz);
                         if (sztag) {
@@ -904,7 +929,7 @@ namespace boost {
                             if (szsize) {
                                 if (tmpsize.undefsize()) {
                                     if (tmptag.constructed()) {
-										sz+=(szsize + sztag);
+                                        sz += (szsize + sztag);
                                         while ((!is_endof(sz)) && (sz < size())) {
                                             if (!next(sz))
                                                 return false;
@@ -915,12 +940,12 @@ namespace boost {
                                         return true;
                                     }
                                     else {
-                                        std::size_t rsltsz=0;
-                                        if (boost::asio::iso::find_eof(buffers(), buffers().begin() , rsltsz,  sz)){
+                                        std::size_t rsltsz = 0;
+                                        if (boost::asio::iso::find_eof(buffers(), buffers().begin() , rsltsz,  sz)) {
                                             sz += (szsize + sztag + rsltsz);
                                             return true;
                                         }
-                                         return false;
+                                        return false;
                                     }
                                 }
                                 else {
@@ -1091,7 +1116,7 @@ namespace boost {
                             }
                             else {
                                 std::size_t sz = 0;
-                               if (boost::asio::iso::find_eof(stream.buffers(), stream.buffers().begin() , sz)) {
+                                if (boost::asio::iso::find_eof(stream.buffers(), stream.buffers().begin() , sz)) {
                                     row_type data;
                                     if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin(), data , 0 , sz )) {
                                         vl.insert(vl.end(), data.begin(), data.end());
