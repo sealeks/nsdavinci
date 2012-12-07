@@ -823,7 +823,6 @@ namespace boost {
                         *this  >>  vl;
                     }
 
-
                     tag test_tl(size_class& sz) {
 
                         tag tmptag;
@@ -880,16 +879,14 @@ namespace boost {
                         size_class rsltsz;
                         return parse_tl(tg, rsltsz , settype);
                     }
-                    
-                    
 
                     void pop_stack() {
                         if (!stack_.empty()) {
                             if (!stack_.top().second.first) {
                                 if (is_endof())
-                                   pop_front(2);
+                                    pop_front(2);
                                 else
-                                  std::cout  << "NEED FIND EOF, EOF NOT FOUND: "  << std::endl;  
+                                    std::cout  << "NEED FIND EOF, EOF NOT FOUND: "  << std::endl;
                             }
                             else {
                                 pop_front(stack_.top().second.second);
@@ -897,31 +894,52 @@ namespace boost {
                             stack_.pop();
                         }
                     }
-                    
-                    bool next(std::size_t& sz) const{
+
+                    bool next(std::size_t& sz) const {
                         tag tmptag;
                         std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin(), sz);
                         if (sztag) {
                             size_class tmpsize;
                             std::size_t szsize = size_x690_cast(tmpsize, buffers(),  buffers().begin() , sztag + sz);
                             if (szsize) {
-                                if (tmpsize.undefsize()){
-                                    while ((!is_endof(sz)) && (sz<size())) {
-                                        if (!next(sz))
+                                if (tmpsize.undefsize()) {
+                                    if (tmptag.constructed()) {
+										sz+=(szsize + sztag);
+                                        while ((!is_endof(sz)) && (sz < size())) {
+                                            if (!next(sz))
+                                                return false;
+                                        }
+                                        if (!is_endof(sz))
                                             return false;
+                                        sz += 2;
+                                        return true;
                                     }
-                                    if (!is_endof(sz))
-                                        return false;
-                                    sz += 2;
-                                    return true;
+                                    else {
+                                        std::size_t rsltsz=0;
+                                        if (boost::asio::iso::find_eof(buffers(), buffers().begin() , rsltsz,  sz)){
+                                            sz += (szsize + sztag + rsltsz);
+                                            return true;
+                                        }
+                                         return false;
+                                    }
                                 }
-                                else
-                                {
+                                else {
                                     sz += (szsize + sztag + tmpsize.size());
                                     return true;
-                                }               
-                                }}
-                        return false;   
+                                }
+                            }
+                        }
+                        return false;
+                    }
+
+                    void sizetest() {
+                        std::size_t sztest = 0;
+                        if (next(sztest)) {
+                            std::cout  << "FIND SIZETEST size: "  << sztest << std::endl;
+                        }
+                        else {
+                            std::cout  << "NOT FIND SIZETEST size: "  << std::endl;
+                        }
                     }
 
 
@@ -936,6 +954,7 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const explicit_value<T>& vl) {
+                    stream.sizetest();
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         stream & vl.value();
                         stream.pop_stack();
@@ -955,6 +974,7 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const implicit_value<T>& vl) {
+                    stream.sizetest();
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         const_cast<T*> (&(vl.value()))->serialize(stream);
                         stream.pop_stack();

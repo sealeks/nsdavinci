@@ -47,7 +47,7 @@ namespace boost {
 
             list_mutable_buffers sublist( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t start = 0 , std::size_t size = 0 );
             std::size_t pop_frontlist(list_mutable_buffers& val,  std::size_t start);
-            bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t& rslt);
+            bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit,  std::size_t& rslt, std::size_t start = 0);
             bool row_cast( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, row_type& raw,  std::size_t start , std::size_t size);
 
             class buffer_sequence : protected  std::list<row_type_ptr> {
