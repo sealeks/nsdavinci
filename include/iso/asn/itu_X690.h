@@ -67,8 +67,8 @@ namespace boost {
                 const std::size_t LONGDOUBLE_EXPONENTA_DELT = 16383;
 
 
-                //const std::size_t CER_STRING_MAX_SIZE = 1000;
-                const std::size_t CER_STRING_MAX_SIZE = 2;
+                const std::size_t CER_STRING_MAX_SIZE = 1000;
+                // const std::size_t CER_STRING_MAX_SIZE = 2;
 
 
 
@@ -851,8 +851,10 @@ namespace boost {
                         tag tmptag;
 
                         if (!stack_.empty()) {
-                            size_tlv = stack_.top().second.second;
                             is_set_child = stack_.top().first;
+                            size_tlv = stack_.top().second.first ?
+                                    stack_.top().second.second : ((stack_.top().second.second > 2) ?
+                                    (stack_.top().second.second - 2) : 0  );
                         }
 
 
@@ -867,15 +869,17 @@ namespace boost {
                                     if (rsltsz.undefsize()) {
                                         if (!next(next_test))
                                             return false;
-                                        next_test -= (szsize + sztag);
+                                        ;
                                     }
-
+                                    else {
+                                        next_test += (szsize + sztag);
+                                    }
                                     pop_front(szsize + sztag);
 
                                     if (!stack_.empty())
                                         stack_.top().second.second = (stack_.top().second.second >= next_test) ?
-                                        (stack_.top().second.second - next_test) : 0;
-                                    stack_.push(tlv_item(settype, tlv_size(!rsltsz.undefsize(), next_test)));
+                                        (stack_.top().second.second - next_test ) : 0;
+                                    stack_.push(tlv_item(settype, tlv_size(!rsltsz.undefsize(), (next_test - ( szsize + sztag)))));
                                     return  true;
                                 }
                                 return  false;
@@ -886,15 +890,21 @@ namespace boost {
                                 std::size_t next_test = 0;
                                 if (!next(next_test))
                                     return false;
-                                // if (is_set_child) {
-                                if (!stack_.empty())
-                                    stack_.top().second.second = (stack_.top().second.second >= next_test) ?
-                                    (stack_.top().second.second - next_test) : 0;
-                                size_test += next_test;
-                                pop_front(next_test);
-                                // else{
-                                //!!!!!!!!!!!!!!!!!!!!need set realisation
-                                ///}
+                                if (!is_set_child) {
+
+                                    if (!stack_.empty())
+                                        stack_.top().second.second = (stack_.top().second.second >= next_test) ?
+                                        (stack_.top().second.second - next_test) : 0;
+                                    size_test += next_test;
+                                    pop_front(next_test);
+                                }
+                                else {
+
+                                    size_test += next_test;
+                                    if (!boost::asio::iso::splice_frontlist( buffers(),  next_test , size_tlv ))
+                                        return false;
+
+                                }
                             }
                         }
                         return false;

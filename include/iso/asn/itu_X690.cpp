@@ -511,7 +511,7 @@ namespace boost {
                 /// oarchive
 
                 oarchive::iterator  oarchive::addtag(const  tag& tg,  bool settype)  {
-                    if (true/*rule_ != CER_ENCODING*/) return add(to_x690_cast(tg));
+                    if (false/*rule_ != CER_ENCODING*/) return add(to_x690_cast(tg));
                     iterator it = add(to_x690_cast(tg));
                     if (!stack_.empty() &&  stack_.top().first) {
                         //std::cout  << "Add tag in set state tag: " << tg.id() << " settype:"  <<  settype << std::endl;
@@ -522,7 +522,7 @@ namespace boost {
                 }
 
                 void  oarchive::pop_stack()  {
-                    if (true/*rule_ != CER_ENCODING*/) return;
+                    if (false/*rule_ != CER_ENCODING*/) return;
                     if (!stack_.empty()) {
                         if (stack_.top().first) {
                             //std::cout  << "Close stack set: " << stack_.top().second.size() << std::endl;
