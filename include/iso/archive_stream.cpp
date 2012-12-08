@@ -72,6 +72,73 @@ namespace boost {
                 return rslt;
             }
 
+            bool splice_frontlist(list_mutable_buffers& val,  std::size_t firstend, std::size_t secondend) {
+                if ((!firstend) || (firstend > secondend))
+                    return false;
+                if (firstend == secondend)
+                    return true;
+
+                list_mutable_buffers::iterator fit = val.end();
+                list_mutable_buffers::iterator sit = val.end();
+                bool fset = false;
+                bool sset = false;
+
+                for (list_mutable_buffers::iterator it = val.begin() ; it != val.end(); ++it) {
+                    mutable_buffer tmp = *it;
+                    std::size_t size = boost::asio::buffer_size(*it);
+                    if (!fset) {
+                        if (size >= firstend) {
+                            if (size == firstend) {
+                                fit = it++;
+                                fset = true;
+                            }
+                            else {
+                                mutable_buffer ftmp = boost::asio::buffer(tmp,  firstend);
+                                size = boost::asio::buffer_size(ftmp);
+                                mutable_buffer stmp = tmp + firstend;
+                                list_mutable_buffers::iterator rit = val.erase(it);
+                                fit = val.insert(++rit, stmp);
+                                fset = true;
+                                it = fit;
+                            }
+                        }
+                    }
+                    if (!sset) {
+                        if (size >= secondend) {
+                            if (size == secondend) {
+                                sit = it;
+                                sset = true;
+                                break;
+                            }
+                            else {
+                                mutable_buffer ftmp = boost::asio::buffer(tmp,  firstend);
+                                mutable_buffer stmp = tmp + firstend;
+                                list_mutable_buffers::iterator rit = val.erase(it);
+                                sit = val.insert(rit, stmp);
+                                sset = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (firstend)
+                        firstend = (firstend < size) ? 0 : (firstend - size);
+                    if (secondend)
+                        secondend = (secondend < size) ? 0 : (secondend - size);
+
+                }
+
+                if (fset && sset) {
+                    std::cout << " This Need splice " << std::endl;
+                    std::cout << "before " << val << std::endl;
+                    val.splice(sit , val , val.begin() , ++fit );
+                    std::cout << "after " << val << std::endl;
+                    return true;
+                }
+
+                return false;
+            }
+
             bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t& rslt, std::size_t start) {
                 rslt = 0;
                 bool findend = false;
