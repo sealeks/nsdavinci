@@ -30,326 +30,142 @@
 
 #include <boost/any.hpp>
 
-
 using  namespace boost::asio::asn::x690;
 using  namespace boost::asio::asn;
 
-/*typedef int                                                                              Presentation_context_identifier;
-typedef oid_type                                                                    Abstract_syntax_name;
-typedef oid_type                                                                   Transfer_syntax_name;
+namespace test {
 
-struct Context_list {
-    Presentation_context_identifier           presentation_context_identifier;
-    Abstract_syntax_name                              abstract_syntax_name;
-    set_of_type< Transfer_syntax_name > transfer_syntax_name;
+    BOOST_ASN_IMPLICIT_TYPEDEF(Date, visiblestring_type , 3, APPLICATION_CLASS)
+    BOOST_ASN_IMPLICIT_TYPEDEF(EmployeeNumber, int , 2, APPLICATION_CLASS)
 
-    friend oarchive& operator<<(oarchive& stream,  const Context_list & vl)  {
-        stream.save_implicit( vl.presentation_context_identifier );
-        stream.save_implicit( vl.abstract_syntax_name);
-        stream.save_implicit( vl.transfer_syntax_name);
-        return stream;
-    }
-
-} ;
-
-struct Default_context_name {
-    Abstract_syntax_name abstract_syntax_name;
-    Transfer_syntax_name transfer_syntax_name;
-
-    friend oarchive& operator<<(oarchive& stream,  const Default_context_name & vl)  {
-        stream.save_implicit( vl.abstract_syntax_name  , 0);
-        stream.save_implicit( vl.transfer_syntax_name , 1);
-        return stream;
-    }
-
-} ;
-
-
-typedef int                                              Mode_selector;
-typedef bitstring_type                          Protocol_version;
-typedef octetstring_type                     Presentation_selector;
-typedef Presentation_selector   Calling_presentation_selector;
-typedef Presentation_selector   Called_presentation_selector;
-typedef Context_list                            Presentation_context_definition_list;
-typedef bitstring_type                         Presentation_requirements;
-typedef bitstring_type                         User_session_requirements;
-
-struct CP {
-    Mode_selector modeselector;
-
-    struct Normal_mode_parameters {
-        Protocol_version                                           protocol_version;
-        Calling_presentation_selector               calling_presentation_selector;
-        Called_presentation_selector                 called_presentation_selector;
-        Presentation_context_definition_list presentation_context_definition_list;
-        Default_context_name                                      default_context_name;
-        Presentation_requirements                      presentation_requirements;
-        User_session_requirements                    user_session_requirements;
-        boost::shared_ptr<int>                                   optional;
-
-        friend oarchive& operator<<(oarchive& stream,  const Normal_mode_parameters & vl)  {
-            stream.save_implicit( vl.protocol_version  , 0);
-            stream.save_implicit( vl.calling_presentation_selector , 1);
-            stream.save_implicit( vl.called_presentation_selector , 2);
-            stream.save_implicit( vl.presentation_context_definition_list , 3);
-            stream.save_implicit( vl.default_context_name , 4);
-            stream.save_implicit( vl.presentation_requirements , 5);
-            stream.save_implicit( vl.user_session_requirements , 6);
-            stream.save_optional_implicit( vl.optional, 7);
-            return stream;
-        }
-    } ;
-
-
-    Normal_mode_parameters normal_mode_parameters;
-
-    friend oarchive& operator<<(oarchive& stream,  const CP & vl)  {
-        stream.save_implicit( vl.modeselector , 0);
-        stream.save_implicit( vl.normal_mode_parameters , 2);
-        return stream;
-    }
-
-} ;
-
-class TestStruct  {
-public:
-
-    TestStruct(int i_,  oid_type o_, octetstring_type s_, reloid_type r_) : i(i_), o(o_), s(s_), r(r_) {
-    }
-
-    TestStruct() : i(), o(), s(), r() {
-    }
-
-    int i;
-    oid_type o;
-    reloid_type r;
-    octetstring_type s;
-
-    friend oarchive& operator<<(oarchive& stream,  const TestStruct& vl)  {
-        oarchive::list_iterators_map __map_;
-        stream.save_map_explicit(vl.i , __map_, 2000);
-        stream.save_map_implicit(vl.i , __map_, 190);
-        stream.save_map_implicit(vl.i, __map_, 180);
-        stream.save_map_explicit(vl.i , __map_, 110);
-        stream.save_map_implicit(vl.i , __map_, 100);
-        stream.save_map_implicit(vl.i, __map_, 90);
-        stream.save_map_implicit(vl.o, __map_);
-        stream.save_map_implicit(vl.s, __map_);
-        stream.save_map_implicit(vl.i , __map_);
-        stream.save_map_implicit(vl.r , __map_);
-        return stream;
-    }
-} ;
-
-
-class TestStruct2  {
-public:
-
-    TestStruct2(int i_,  oid_type o_, octetstring_type s_,   reloid_type r_) : i(i_), o(o_), r(r_) , s(s_), t(i_ + 1, o_, s_, r_) {
-    }
-
-    TestStruct2() : i(), o(), s(), t(), r() {
-    }
-
-    int i;
-    oid_type o;
-    reloid_type r;
-    octetstring_type s;
-    TestStruct t;
-    boost::shared_ptr<TestStruct> ot;
-
-    friend oarchive& operator<<(oarchive& stream,  const TestStruct2& vl)  {
-        oarchive::list_iterators_map __map_;
-        stream.save_map_implicit(vl.o, __map_);
-        stream.save_map_implicit(vl.s, __map_);
-        stream.save_map_implicit(vl.i , __map_);
-        stream.save_map_implicit(vl.r , __map_);
-        stream.save_map_explicit(vl.t  , __map_, 1008);
-        return stream;
-    }
-    
-     template<typename Archive>
-    void serialize(Archive& arch) {
-         
-     }   
-    
-} ;*/
-
-
-struct TestStruct1  {
-    int i;
-    int  j;
-
-    TestStruct1() : i(0), j(0) {
-    }
-
-    TestStruct1(int i_, int j_) : i(i_), j(j_) {
-    }
-
-    template<typename Archive>
-            void serialize(Archive & arch) {
-        bind_implicit(arch, i, 0);
-        bind_implicit(arch, j, 1);
-        // arch & implicit_value<TestStruct2>(x, 2);        
-    }
-
-
-} ;
-
-BOOST_ASN_SET_REGESTRATE(TestStruct1)
-
-
-struct TestStruct2  {
-    bool b;
-    octetstring_type  o;
-
-    template<typename Archive>
-            void serialize(Archive & arch) {
-        bind_implicit(arch, b, 0);
-        bind_implicit(arch, o, 1);
-    }
-
-
-
-
-} ;
-
-struct TestStruct3  {
-
-    struct choice {
-        //boost::any value;
-        boost::shared_ptr<int> ch1;
-        boost::shared_ptr<TestStruct1> ch2;
+    struct Name_base {
+        visiblestring_type givenName;
+        visiblestring_type initial;
+        visiblestring_type famelyName;
 
         template<typename Archive>
                 void serialize(Archive & arch) {
-            bind_explicit(arch, ch1 , 500);
-            bind_explicit(arch, ch2 , 501);
+            BOOST_ASN_BIND_TAG( givenName);
+            BOOST_ASN_BIND_TAG( initial);
+            BOOST_ASN_BIND_TAG( famelyName);
         }
     } ;
 
-    /*enum choice2_type {
-            null = 0,
-            inttype,
-            structtype
-    } ;
-
-    class choice2 : public choice_val<choice2_type> {
-    public:
+    BOOST_ASN_IMPLICIT_TYPEDEF(Name, Name_base  , 1, APPLICATION_CLASS)
 
 
-        choice2() : choice_val<choice2_type>() {
+    struct TestSet {
+
+        TestSet() : i1(1), i2(2), i3(3), i4(4) {
         }
-
-        void set(int * vl) {
-            setter<int>(vl, inttype);
-        }
-
-        void set(TestStruct1 * vl) {
-            setter<TestStruct1 > (vl, structtype);
-        }
-        
-        template<typename Archive>
-                void serialize(Archive & arch) {
-                
-                bind_explicit(arch, value<int>()) , 500);
-                bind_explicit(arch, value<TestStruct1>() , 501);
-        }   
-
-
-    } ;*/
-
-    int i;
-    int  j;
-    double d;
-    TestStruct1 y;
-    oid_type o;
-    reloid_type r;
-    octetstring_type s;
-    boost::shared_ptr<int> io;
-    boost::shared_ptr<TestStruct1> yo;
-    choice ch;
-    universalstring_type u8;
-    utctime_type t;
-    gentime_type gt;
-    // choice2 ch2;
-
-
-    //TestStruct2 x;
-
-    template<typename Archive>
-            void serialize(Archive & arch) {
-
-        bind_choice(arch, ch);
-        bind_explicit( arch, yo, 356);
-        bind_implicit(arch, i, 0);
-        bind_implicit(arch, j, 1);
-        bind_explicit(arch, y, 3);
-        bind_implicit(arch, d, UNIVERSAL_CLASS);
-        bind_implicit(arch, o, UNIVERSAL_CLASS);
-        bind_implicit(arch, r, UNIVERSAL_CLASS);
-        bind_implicit(arch, s, UNIVERSAL_CLASS);
-        bind_implicit(arch, io);
-        bind_implicit(arch, u8, UNIVERSAL_CLASS);
-        bind_implicit(arch, t, UNIVERSAL_CLASS);
-        bind_implicit(arch, gt, UNIVERSAL_CLASS);
-
-    }
-
-} ;
-
-struct TestStruct3u  {
-
-    struct choice {
-        boost::shared_ptr<int> ch1;
-        boost::shared_ptr<TestStruct1> ch2;
+        int i1;
+        int  i2;
+        int  i3;
+        int  i4;
 
         template<typename Archive>
                 void serialize(Archive & arch) {
-            bind_explicit(arch, ch1 , 500);
-            bind_explicit(arch, ch2 , 501);
+
+            BOOST_ASN_EXPLICIT_TAG( i1 , 4);
+            BOOST_ASN_EXPLICIT_TAG( i2 , 3);
+            BOOST_ASN_EXPLICIT_TAG( i3 , 0);
+            BOOST_ASN_EXPLICIT_TAG( i4 , 1);
+
+
         }
+
     } ;
 
+    struct ChildInfo {
+        Name name;
+        Date  dateofBirth;
+        Date  dateofBirth3;
+        Date  dateofBirth4;
+        boost::shared_ptr<TestSet> tset;
+        boost::shared_ptr<TestSet> tset2;
 
-    int i;
-    int  j;
-    float d;
-    TestStruct1 y;
-    oid_type o;
-    reloid_type r;
-    octetstring_type s;
-    boost::shared_ptr<int> io;
-    boost::shared_ptr<TestStruct1> yo;
-    choice ch;
-    universalstring_type u8;
-    utctime_type t;
-    gentime_type gt;
-    //TestStruct2 x;
+        template<typename Archive>
+                void serialize(Archive & arch) {
 
-    template<typename Archive>
-            void serialize(Archive & arch) {
-        bind_choice(arch, ch);
-        bind_explicit( arch, yo, 356);
-        bind_implicit(arch, i, 0);
-        bind_implicit(arch, j, 1);
-        bind_explicit( arch, y, 3);
-        bind_implicit(arch, d, UNIVERSAL_CLASS);
-        bind_implicit(arch, o, UNIVERSAL_CLASS);
-        bind_implicit(arch, r, UNIVERSAL_CLASS);
-        bind_implicit(arch, s, UNIVERSAL_CLASS);
-        bind_implicit(arch, io);
-        bind_implicit(arch, u8, UNIVERSAL_CLASS);
-        bind_implicit(arch, t, UNIVERSAL_CLASS);
-        bind_implicit(arch, gt, UNIVERSAL_CLASS);
+            BOOST_ASN_IMPLICIT_TAG( tset , 5);
+            BOOST_ASN_EXPLICIT_TAG( dateofBirth4 , 4);
+            BOOST_ASN_EXPLICIT_TAG( dateofBirth3 , 3);
+            BOOST_ASN_IMPLICIT_TAG( tset2 , 8);
+            BOOST_ASN_EXPLICIT_TAG( dateofBirth , 0);
+            BOOST_ASN_BIND_TAG(name);
 
-    }
+        }
 
-} ;
+    } ;
 
-inline std::ostream& operator<<(std::ostream& stream, const TestStruct1& vl) {
-    return stream << "TestStruct1 : i: " << vl.i  << " j: " << vl.j  << " : "  <<  "\n";
+    struct PR {
+        visiblestring_type title1;
+        Name name;
+        visiblestring_type title;
+        EmployeeNumber number;
+        Date dateofHire;
+        // boost::shared_ptr<Date> dateend;
+        Name nameOfSpouse;
+        std::vector<ChildInfo> childs;
+        //std::vector<EmployeeNumber> testseq;
+        //vector_set_of<visiblestring_type> testset;   
+
+        template<typename Archive>
+                void serialize(Archive & arch) {
+            BOOST_ASN_EXPLICIT_TAG( title1, 100);
+            BOOST_ASN_BIND_TAG( name);
+            BOOST_ASN_EXPLICIT_TAG( title, 0);
+            BOOST_ASN_BIND_TAG( number);
+            BOOST_ASN_EXPLICIT_TAG(dateofHire, 1);
+            BOOST_ASN_EXPLICIT_TAG(nameOfSpouse, 2);
+            // BOOST_ASN_EXPLICIT_TAG(dateend, 3); 
+            BOOST_ASN_EXPLICIT_TAG(childs, 3);
+
+            //BOOST_ASN_BIND_TAG( testseq);  
+            //  BOOST_ASN_BIND_TAG( testset);        
+        }
+
+    } ;
+
+    struct PR2 {
+        Name name;
+        visiblestring_type title;
+        EmployeeNumber number;
+        //Date dateofHire;   
+        // boost::shared_ptr<Date> dateend;
+        //Name nameOfSpouse;   
+        std::vector<ChildInfo> childs;
+        //std::vector<EmployeeNumber> testseq;
+        //vector_set_of<visiblestring_type> testset;   
+
+        template<typename Archive>
+                void serialize(Archive & arch) {
+
+            BOOST_ASN_BIND_TAG( name);
+            BOOST_ASN_EXPLICIT_TAG( title, 0);
+            BOOST_ASN_BIND_TAG( number);
+            // BOOST_ASN_EXPLICIT_TAG(dateofHire, 1);
+            // BOOST_ASN_EXPLICIT_TAG(nameOfSpouse, 2);   
+            // BOOST_ASN_EXPLICIT_TAG(dateend, 3); 
+            BOOST_ASN_EXPLICIT_TAG(childs, 3);
+
+            //BOOST_ASN_BIND_TAG( testseq);  
+            //  BOOST_ASN_BIND_TAG( testset);        
+        }
+
+    } ;
+
 }
+
+//BOOST_ASN_TYPE_REGESTRATE(test::Name, 1, APPLICATION_CLASS)
+//BOOST_ASN_TYPE_REGESTRATE(test::EmployeeNumber, 2, APPLICATION_CLASS)
+
+BOOST_ASN_SET_REGESTRATE(test::ChildInfo)
+//BOOST_ASN_SET_REGESTRATE(test::TestSet)
+
+//inline std::ostream& operator<<(std::ostream& stream, const TestStruct1& vl) {
+//  return stream << "TestStruct1 : i: " << vl.i  << " j: " << vl.j  << " : "  <<  "\n";
+//}
 
 int main(int argc, char* argv[]) {
 
@@ -364,60 +180,8 @@ int main(int argc, char* argv[]) {
 
         int len = 0x1111;
 
-        const_buffers  buff;
+        //  const_buffers  buff;
 
-        //boost::asio::asn::length tst(len,false);
-        // boost::asio::const_buffer buff = tst.get();
-
-        //  const oidindx_type idetifire[] = {1, 0, 9506, 2, 3};
-
-
-
-        //build_implicit(9);
-
-        /*boost::asio::asn::OBJECT_ID tst( idetifire , 5);
-
-        buff << tst;
-
-        std::cout << buff;
-        {
-            std::ofstream ofs( OUT_FILE.c_str() , std::ios::binary | std::ios::trunc );
-            if (ofs)
-                ofs << buff;
-        }
-
-        buff.clear();
-
-
-        
-        typedef boost::uint64_t    test_type;
-        
-        test_type tstvl=0xfffffffffffffffflu;
-        
-        boost::asio::asn::INTEGER tstint(tstvl);
-
-        buff << tstint;
-
-        std::cout << buff;
-
-        std::cerr << "Integer: " << tstint.value<test_type>() << "\n";
-
-          buff.clear();
-
-           boost::asio::asn::REAL tstreal(1.11f); 
-
-          buff << tstreal;
-
-          std::cout << buff;  
-
-        {
-            std::ofstream ofs( OUT_FILE.c_str() , std::ios::binary | std::ios::trunc );
-            if (ofs)
-                ofs << buff;
-        }*/
-
-
-        // SET_OBJECT_ID_CONSTANT(TDSOID,uuu)
         const boost::array<oidindx_type, 5 > OIDTEST_ARR = {1, 2, 3, 4, 5};
         const oid_type OIDTEST = oid_type(OIDTEST_ARR);
         std::cout << "oidtest: " << OIDTEST << "\n";
@@ -433,144 +197,91 @@ int main(int argc, char* argv[]) {
         std::cout << "reoidtest: " << RELOIDTEST << "\n";
 
 
-        // oarchive OARCV(CER_ENCODING);
-        oarchive OARCV;
-        iarchive  IARCV;
-
-        // ARCVO << OIDTEST2;
-        //std::string intstryu="01";
-        //for (int i=0; i< 15000; i++)
-        //  intstryu+=(i    % 2) ? "0" : "1";
-
-        // bitstring_type  bs(/*static_cast<boost::uint16_t> (0x8001u)*/ boost::dynamic_bitset<>(std::string(intstryu.c_str())));
-
-        //octetstring_type  bs(std::string("Hellow World!"));
-
-
-        /* CP cptest;
-
-         cptest.modeselector = 0;
-         cptest.normal_mode_parameters.called_presentation_selector = octetstring_type("called_________________________________________________________________________________________________________________________________");
-         cptest.normal_mode_parameters.calling_presentation_selector = octetstring_type("calling________________________________________________________________________________________________________________________________");
-         cptest.normal_mode_parameters.default_context_name.abstract_syntax_name = OIDTEST2;
-         cptest.normal_mode_parameters.default_context_name.transfer_syntax_name = OIDTEST;
-         cptest.normal_mode_parameters.presentation_requirements = boost::dynamic_bitset<>(std::string("01"));
-         cptest.normal_mode_parameters.protocol_version = boost::dynamic_bitset<>(std::string("1"));
-         cptest.normal_mode_parameters.user_session_requirements = boost::dynamic_bitset<>(std::string("01000000"));
-         cptest.normal_mode_parameters.presentation_context_definition_list.abstract_syntax_name = OIDTEST;
-         cptest.normal_mode_parameters.presentation_context_definition_list.presentation_context_identifier = 2;
-         cptest.normal_mode_parameters.presentation_context_definition_list.transfer_syntax_name.push_back(OIDTEST);
-         cptest.normal_mode_parameters.presentation_context_definition_list.transfer_syntax_name.push_back(OIDTEST2);
-         cptest.normal_mode_parameters.optional = boost::shared_ptr<int>( new int(9));
-         std::string strtest_ = "qwer";
-
-         // for (int ii=0;ii<1000;++ii)
-         //    strtest_+="fft";
-
-         typedef set_of_type< explicit_value<TestStruct> >            test_set_type;
-
-         typedef set_of_type< TestStruct >                                          teststruct_set_type;
-
-         typedef set_of_type< explicit_value<test_set_type> >       super_test_set_type;
-
-         // typedef implicit_value< test_set_type ,  20 >                               test_set_type_imp;
-
-         test_set_type bs1;
-
-         //bs1.push_back( explicit_value<TestStruct>(TestStruct(12, OIDTEST, std::string("111"), RELOIDTEST), 3, CONTEXT_CLASS) );
-         //bs1.push_back( explicit_value<TestStruct>(TestStruct(124, OIDTEST, std::string("112"), RELOIDTEST), 57, CONTEXT_CLASS));
-
-         test_set_type bs2;
-
-
-         //bs2.push_back( explicit_value<TestStruct>(TestStruct(125, OIDTEST2, std::string("113"), RELOIDTEST), 57, CONTEXT_CLASS));
-         //bs2.push_back( explicit_value<TestStruct>(TestStruct(126, OIDTEST2, std::string(strtest_), RELOIDTEST), 58, CONTEXT_CLASS));
-
-         super_test_set_type bs;
-
-         teststruct_set_type st;
-         for (int ii = 0; ii < 1000; ++ii)
-             st.push_back(TestStruct(123, OIDTEST, std::string("111"), RELOIDTEST));*/
-
-        std::string strtest_ = "";
-
-        for (int ii = 0; ii < 5; ++ii)
-            strtest_ += "fftt";
-
-
-        TestStruct3 ts3;
-        ts3.ch.ch2 = boost::shared_ptr<TestStruct1 > (new TestStruct1(-50, 60));
-        ts3.i = 20;
-        ts3.j = 40;
-        ts3.d = 0.011; //-1.22456846;  
-        ts3.o = OIDTEST2;
-        ts3.r = RELOIDTEST;
-        ts3.s = octetstring_type(strtest_);
-        ts3.io = boost::shared_ptr<int>(new int(1234567));
-        ts3.y = TestStruct1(120, 240);
-        ts3.yo = boost::shared_ptr<TestStruct1 > (new TestStruct1(120000, -240000));
-        ts3.u8 = universalstring_type(L"WWW");
-        ts3.t = now_generator();
-        ts3.gt = now_generator();
-        /* ts3.ch2.set(new int(123)); 
-        
-
-         std::cout << "ts3.ch2 type : " <<  static_cast<int>(ts3.ch2.type())  
-                 <<  "  ts3.ch2 value : "  
-                 <<  (*(ts3.ch2.value<int>())) 
-                 << std::endl;
-        
-         ts3.ch2.set(new TestStruct1(121 , 212)); 
-
-
-         std::cout << "ts3.ch2 type : " <<  static_cast<int>(ts3.ch2.type())  
-                 <<  "  ts3.ch2 value : "  
-                 <<  (*(ts3.ch2.value<TestStruct1>())) 
-                 << std::endl;*/
+        boost::asio::asn::x690::oarchive OARCV(CER_ENCODING);
+        boost::asio::asn::x690::iarchive  IARCV;
 
 
 
+        test::PR pr;
+        pr.name.value().famelyName = "Alexeev";
+        pr.name.value().givenName = "Serg";
+        pr.name.value().initial = "Valerievich";
 
-        TestStruct3u ts33;
-        // ts3.x.b=false;
-        //  ts3.x.o=octetstring_type("rrrrrrrrrrrr");         
+        pr.title = "Programmer";
+
+        pr.number = 34;
+
+        pr.dateofHire = visiblestring_type("19780625");
+        //pr.dateend = boost::shared_ptr<test::Date> ( new test::Date(visiblestring_type("20121221")));
+
+        pr.nameOfSpouse.value().famelyName = "Alexeeva";
+        pr.nameOfSpouse.value().givenName = "M";
+        pr.nameOfSpouse.value().initial = "N";
 
 
-        //octetstring_type strtest(strtest_);
+        for (int i = 0; i < 20; ++i) {
+            pr.childs.push_back(test::ChildInfo());
+            pr.childs.back().dateofBirth = visiblestring_type("19780625");
+            pr.childs.back().dateofBirth3 = visiblestring_type("3333333333");
+            pr.childs.back().dateofBirth4 = visiblestring_type("4444444444");
+            pr.childs.back().name.value().famelyName = "Alexeev";
+            pr.childs.back().name.value().givenName = "Serg";
+            pr.childs.back().name.value().initial = "Valerievich";
+            if ( i % 2)
+                pr.childs.back().tset = boost::shared_ptr<test::TestSet > ( new test::TestSet());
+            if (!(i % 2))
+                pr.childs.back().tset2 = boost::shared_ptr<test::TestSet > ( new test::TestSet());
+        }
 
-        // OARCV << implicit_value<octetstring_type>(strtest);
+
+        //for (int i=0;i<20;++i)
+        //     pr.testseq.push_back(i);
 
 
-        //OARCV << explicit_value<super_test_set_type>(bs, 10);//explicit_value<TestStruct>(TestStruct(123, OIDTEST, std::string("111")), 56, CONTEXT_CLASS);//explicit_value< super_test_set_type ,  20 >(bs);
-        // TestStruct2 tst(-12212, OIDTEST, std::string("111"),  RELOIDTEST) ;
-        //OARCV << implicit_value<TestStruct2>(tst, 3, CONTEXT_CLASS) ;
+        /* for (int i=0;i<20;++i)
+             pr.testset.push_back(visiblestring_type("20121221"));      */
 
-        OARCV & implicit_value<TestStruct3 > (ts3, 345, CONTEXT_CLASS) ;
+        OARCV & implicit_value<test::PR > (pr, 345, CONTEXT_CLASS) ;
 
         IARCV.add(OARCV);
         //  implicit_value<TestStruct3 > impls (ts33, 345, CONTEXT_CLASS);
-
-        IARCV & implicit_value<TestStruct3u > (ts33, 345, CONTEXT_CLASS) ;
-
-        std::cout << OARCV;
-
-        std::cout << "ts33 i: " << ts33.i  << " j: " << ts33.j  << " d: " << ts33.d << " o: " << ts33.o << " r: " << ts33.r <<  " s: "
-                << ts33.s <<  " io: " << (ts33.io ?  (*ts33.io) : 0) << " y: " << ts33.y << " u8 : " <<  ts33.u8 << " t : " <<  ts33.t  << " gt : " <<  ts33.gt;
-
-        if (ts33.yo) {
-            std::cout  << " yo: " << *ts33.yo   <<  std::endl;
-        }
-        else {
-            std::cout  <<  std::endl;
-        }
-
-        //test_decoder(test_decode(OARCV));
 
         {
             std::ofstream ofs( OUT_FILE.c_str() , std::ios::binary | std::ios::trunc );
             if (ofs)
                 ofs << OARCV;
         }
+
+        test::PR2 pr2;
+
+        IARCV & implicit_value<test::PR2 > (pr2 , 345, CONTEXT_CLASS) ;
+
+
+
+        //std::cout << OARCV;
+
+
+        std::cout << pr2.name.value().famelyName;
+        // if (pr2.dateend)
+        //            std::cout << (*pr2.dateend);
+
+        //   std::wstring testw = ts33.u8.to_wstring();
+
+        //   std::wcout <<testw  << std::endl;
+
+        // std::cout << "ts33 i: " << ts33.i  << " j: " << ts33.j  << " d: " << ts33.d << " o: " << ts33.o << " r: " << ts33.r <<  " s: "
+        //         << ts33.s <<  " io: " << (ts33.io ?  (*ts33.io) : 0) << " y: " << ts33.y << " u8 : " <<  ts33.u8 << " t : " <<  ts33.t  << " gt : " <<  ts33.gt;
+
+        //    if (ts33.yo) {
+        //        std::cout  << " yo: " << *ts33.yo   <<  std::endl;
+        //     }
+        //     else {
+        //         std::cout  <<  std::endl;
+        //    }
+
+        //test_decoder(test_decode(OARCV));
+
+
 
 
 
