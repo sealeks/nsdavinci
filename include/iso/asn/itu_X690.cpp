@@ -513,25 +513,20 @@ namespace boost {
                 oarchive::iterator  oarchive::addtag(const  tag& tg,  bool settype)  {
                     if (false/*rule_ != CER_ENCODING*/) return add(to_x690_cast(tg));
                     iterator it = add(to_x690_cast(tg));
-                    if (!stack_.empty() &&  stack_.top().first) {
-                        //std::cout  << "Add tag in set state tag: " << tg.id() << " settype:"  <<  settype << std::endl;
-                        stack_.top().second.push_back(tlv_iterators_pair(tg, iterator_pair(it, it)));
-                    }
-                    stack_.push(stack_item(settype, tlv_vector()));
+                    if (!stack_.empty() &&  stack_.top().is_set)
+                        stack_.top().tlv_iterators.push_back( tlv_info(tg, iterator_pair(it, it)));
+                    stack_.push(stack_item(settype));
                     return it;
                 }
 
                 void  oarchive::pop_stack()  {
                     if (false/*rule_ != CER_ENCODING*/) return;
                     if (!stack_.empty()) {
-                        if (stack_.top().first) {
-                            //std::cout  << "Close stack set: " << stack_.top().second.size() << std::endl;
-                            sort_tlv(stack_.top().second);
-                        }
+                        if (stack_.top().is_set)
+                            sort_tlv(stack_.top().tlv_iterators);
                         stack_.pop();
-                        if ((!stack_.empty()) && (stack_.top().first) && (!stack_.top().second.empty())) {
-                            stack_.top().second.back().second.second = last();
-                        }
+                        if ((!stack_.empty()) && (stack_.top().is_set) && (!stack_.top().tlv_iterators.empty()))
+                            stack_.top().tlv_iterators.back().iterators.second = last();
                     }
                 }
 
@@ -540,13 +535,11 @@ namespace boost {
                     typedef std::map<tag, iterator_pair>   tlv_map;
 
                     tlv_map mps;
-                    for (tlv_vector::iterator it = vct.begin(); it != vct.end(); ++it) {
-                        if (mps.upper_bound(it->first) != mps.end()) {
-                            //std::cout  << "    Close stack set item  splice: " << std::endl;
-                            listbuffers_.splice(mps.upper_bound(it->first)->second.first , listbuffers_ , it->second.first , ++iterator(it->second.second));
+					for (tlv_vector::iterator it = vct.begin(); it != vct.end(); ++it){
+                        if (mps.upper_bound(it->tg) != mps.end()) 
+                            listbuffers_.splice(mps.upper_bound(it->tg)->second.first , listbuffers_ , it->iterators.first , ++iterator(it->iterators.second));
+                            mps.insert(std::make_pair(it->tg, iterator_pair(it->iterators.first, it->iterators.second)));
                         }
-                        mps.insert(tlv_iterators_pair(it->first, iterator_pair(it->second.first, it->second.second)));
-                    }
                 }
 
                 void oarchive::clear()  {
@@ -1163,6 +1156,137 @@ namespace boost {
                     return  primitive_desirialize(stream, vl);
                 }
 
+                ////////  Archiver
+
+                tag iarchive::test_tl(size_class& sz) {
+
+                    tag tmptag;
+                    std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
+                    if (sztag) {
+                        std::size_t szsize = size_x690_cast(sz, buffers(),  buffers().begin() , sztag);
+                        if (szsize)
+                            return tmptag;
+                    }
+                    return tag();
+                }
+
+                bool iarchive::parse_tl(const tag& tg, size_class& rsltsz , bool settype) {
+
+
+                    std::size_t size_tlv = size();
+                    bool is_set_child = false;
+                    std::size_t size_test = 0;
+                    tag tmptag;
+
+                    if (!stack_.empty()) {
+                        is_set_child = stack_.top().is_set;
+                        size_tlv = stack_.top().sizeinfo.defined ?
+                                stack_.top().sizeinfo.size : ((stack_.top().sizeinfo.size > 2) ?
+                                (stack_.top().sizeinfo.size - 2) : 0  );
+                    }
+
+
+
+                    while (size_test < size_tlv) {
+                        std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
+                        if (sztag && (tg == tmptag)) {
+                            std::size_t szsize = size_x690_cast(rsltsz, buffers(),  buffers().begin() , sztag);
+                            if (szsize) {
+                                std::size_t next_test = rsltsz.size();
+
+                                if (rsltsz.undefsize()) {
+                                    if (!next(next_test))
+                                        return false;
+                                }
+                                else
+                                    next_test += (szsize + sztag);
+
+                                pop_front(szsize + sztag);
+
+                                if (!stack_.empty())
+                                    stack_.top().sizeinfo.size = (stack_.top().sizeinfo.size >= next_test) ?
+                                    (stack_.top().sizeinfo.size - next_test ) : 0;
+                                stack_.push(tlv_item(settype, tlv_size(!rsltsz.undefsize(), (next_test - ( szsize + sztag)))));
+                                return  true;
+                            }
+                            return  false;
+                        }
+                        else {
+                            if (!sztag)
+                                return false;
+                            std::size_t next_test = 0;
+                            if (!next(next_test))
+                                return false;
+                            if (!is_set_child) {
+
+                                if (!stack_.empty())
+                                    stack_.top().sizeinfo.size = (stack_.top().sizeinfo.size >= next_test) ?
+                                    (stack_.top().sizeinfo.size - next_test) : 0;
+                                size_test += next_test;
+                                pop_front(next_test);
+                            }
+                            else {
+
+                                size_test += next_test;
+                                if (!boost::asio::iso::splice_frontlist( buffers(),  next_test , size_tlv ))
+                                    return false;
+
+                            }
+                        }
+                    }
+                    return false;
+                }
+
+                void iarchive::pop_stack() {
+                    if (!stack_.empty()) {
+                        if (!stack_.top().sizeinfo.defined) {
+                            if (is_endof())
+                                pop_front(2);
+                            else
+                                std::cout  << "NEED FIND EOF, EOF NOT FOUND: "  << std::endl;
+                        }
+                        else {
+                            pop_front(stack_.top().sizeinfo.size);
+                        }
+                        stack_.pop();
+                    }
+                }
+
+                bool iarchive::next(std::size_t & sz) const {
+                    tag tmptag;
+                    std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin(), sz);
+                    if (sztag) {
+                        size_class tmpsize;
+                        std::size_t szsize = size_x690_cast(tmpsize, buffers(),  buffers().begin() , sztag + sz);
+                        if (szsize) {
+                            if (tmpsize.undefsize()) {
+                                if (tmptag.constructed()) {
+                                    sz += (szsize + sztag);
+                                    while ((!is_endof(sz)) && (sz < size()))
+                                        if (!next(sz))
+                                            return false;
+
+                                    if (!is_endof(sz))
+                                        return false;
+                                    sz += 2;
+                                    return true;
+                                }
+                                else {
+                                    std::size_t rsltsz = 0;
+                                    if (boost::asio::iso::find_eof(buffers(), buffers().begin() , rsltsz,  sz)) {
+                                        sz += (szsize + sztag + rsltsz);
+                                        return true;
+                                    }
+                                }
+                            }
+                            else {
+                                sz += (szsize + sztag + tmpsize.size());
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
 
 
             }

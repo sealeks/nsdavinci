@@ -34,27 +34,6 @@ namespace boost {
                 return rslt;
             }
 
-            list_mutable_buffers sublist( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t start, std::size_t size ) {
-                if (!(size || start)) return val;
-                list_mutable_buffers::const_iterator it = bit;
-                std::size_t sz = 0;
-                list_mutable_buffers tmp;
-                std::size_t szc = 0 ;
-                std::size_t szb = 0;
-                std::size_t sze = 0;
-                while (((sz < (size + start) || (!size))) && (it != val.end())) {
-                    szc = boost::asio::buffer_size(*it);
-                    if ((sz + szc) > start) {
-                        szb = sz > start ? 0 : start - sz;
-                        sze = ( !size || ((szb + size) > szc)) ? szc - szb  : size;
-                        tmp.push_back(boost::asio::buffer(*it + szb, sze ));
-                    }
-                    sz += szc;
-                    ++it;
-                }
-                return tmp;
-            }
-
             std::size_t pop_frontlist(list_mutable_buffers& val, std::size_t start) {
                 std::size_t rslt = 0;
                 while (start && (!val.empty())) {
@@ -89,17 +68,15 @@ namespace boost {
                     if (!fset) {
                         if (size >= firstend) {
                             if (size == firstend) {
-                                fit = it++;
+                                fit = it;
                                 fset = true;
                             }
                             else {
-                                mutable_buffer ftmp = boost::asio::buffer(tmp,  firstend);
-                                size = boost::asio::buffer_size(ftmp);
-                                mutable_buffer stmp = tmp + firstend;
-                                list_mutable_buffers::iterator rit = val.erase(it);
-                                fit = val.insert(++rit, stmp);
+                                size = firstend;
+                                it = val.insert(val.erase(it) , tmp + firstend);
+                                fit = it = val.insert(it, boost::asio::buffer(tmp,  firstend));
+                                tmp = *it;
                                 fset = true;
-                                it = fit;
                             }
                         }
                     }
@@ -111,10 +88,9 @@ namespace boost {
                                 break;
                             }
                             else {
-                                mutable_buffer ftmp = boost::asio::buffer(tmp,  firstend);
-                                mutable_buffer stmp = tmp + firstend;
-                                list_mutable_buffers::iterator rit = val.erase(it);
-                                sit = val.insert(rit, stmp);
+                                size = secondend;
+                                it = val.insert(val.erase(it) , tmp + secondend);
+                                sit = it = val.insert(it, boost::asio::buffer(tmp,  secondend));
                                 sset = true;
                                 break;
                             }
@@ -129,10 +105,10 @@ namespace boost {
                 }
 
                 if (fset && sset) {
-                    std::cout << " This Need splice " << std::endl;
-                    std::cout << "before " << val << std::endl;
-                    val.splice(sit , val , val.begin() , ++fit );
-                    std::cout << "after " << val << std::endl;
+                   // std::cout << " This Need splice " << std::endl;
+                  //  std::cout << "before " << val << std::endl;
+                    val.splice(++sit , val , val.begin() , ++fit );
+                  //  std::cout << "after " << val << std::endl;
                     return true;
                 }
 
@@ -155,16 +131,15 @@ namespace boost {
                                     }
                                     findend = false;
                                 }
-                                else {
+                                else
                                     findend = !(*boost::asio::buffer_cast<row_type::value_type*>(boost::asio::buffer(tmp + i, 1)));
-                                }
                             }
                             rslt++;
                         }
                     }
-                    else {
+                    else
                         rslt += size;
-                    }
+
                     if (start)
                         start = (start < size) ? 0 : (start - size);
                 }
