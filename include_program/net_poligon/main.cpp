@@ -262,34 +262,6 @@ int main(int argc, char* argv[]) {
 
 
         std::cout << pr2.name.value().famelyName;
-        // if (pr2.dateend)
-        //            std::cout << (*pr2.dateend);
-
-        //   std::wstring testw = ts33.u8.to_wstring();
-
-        //   std::wcout <<testw  << std::endl;
-
-        // std::cout << "ts33 i: " << ts33.i  << " j: " << ts33.j  << " d: " << ts33.d << " o: " << ts33.o << " r: " << ts33.r <<  " s: "
-        //         << ts33.s <<  " io: " << (ts33.io ?  (*ts33.io) : 0) << " y: " << ts33.y << " u8 : " <<  ts33.u8 << " t : " <<  ts33.t  << " gt : " <<  ts33.gt;
-
-        //    if (ts33.yo) {
-        //        std::cout  << " yo: " << *ts33.yo   <<  std::endl;
-        //     }
-        //     else {
-        //         std::cout  <<  std::endl;
-        //    }
-
-        //test_decoder(test_decode(OARCV));
-
-
-
-
-
-
-        // std::cout << "Bit string: " << bs << std::endl;
-
-        //std::cerr << "real: " << tstint.value<int>() << "\n";         
-
 
         std::string quit_in;
         while (true) {
