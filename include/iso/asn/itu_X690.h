@@ -269,28 +269,32 @@ namespace boost {
                 ///  archiver                
 
                 class oarchive : public boost::asio::iso::base_oarchive  {
-                    
-
-                    
                     typedef std::pair<iterator , iterator>                                                                                iterator_pair;
-                    struct tlv_info{
-                        
-                        tlv_info( const tag& t, const iterator_pair& itrs) : tg(t) ,  iterators(itrs) {}                     
+
+                    struct tlv_info {
+
+                        tlv_info( const tag& t, const iterator_pair & itrs) : tg(t) ,  iterators(itrs) {
+                        }
                         tag tg;
                         iterator_pair iterators;
-                    };                           
-                    
+                    } ;
+
                     typedef std::vector<tlv_info>                                                                                              tlv_vector;
-                    
-                    struct stack_item{
-                        
-                        stack_item( bool isst, const tlv_vector& itrs) : is_set(isst) ,  tlv_iterators(itrs) {}
-                        stack_item( bool isst) : is_set(isst) {}                        
-                        stack_item() : is_set(false){}                       
+
+                    struct stack_item {
+
+                        stack_item( bool isst, const tlv_vector & itrs) : is_set(isst) ,  tlv_iterators(itrs) {
+                        }
+
+                        stack_item( bool isst) : is_set(isst) {
+                        }
+
+                        stack_item() : is_set(false) {
+                        }
                         bool is_set;
                         tlv_vector tlv_iterators;
-                    };                    
-                    
+                    } ;
+
 
                     typedef std::stack<stack_item >                                                                                         stack_type;
 
@@ -784,22 +788,23 @@ namespace boost {
 
                 class iarchive : public boost::asio::iso::base_iarchive  {
 
-                    
-                    struct tlv_size{
-                        
-                        tlv_size( bool def, std::size_t sz) : defined(def) ,  size(sz) {}                     
+                    struct tlv_size {
+
+                        tlv_size( bool def, std::size_t sz) : defined(def) ,  size(sz) {
+                        }
                         bool defined;
                         std::size_t size;
-                    };    
-                    
-                     struct tlv_item{
-                        
-                        tlv_item( bool st, const tlv_size& sz) : is_set(st) ,  sizeinfo(sz) {}                     
+                    } ;
+
+                    struct tlv_item {
+
+                        tlv_item( bool st, const tlv_size & sz) : is_set(st) ,  sizeinfo(sz) {
+                        }
                         bool is_set;
                         tlv_size sizeinfo;
-                    };                       
-                    
-                
+                    } ;
+
+
                     typedef  std::stack<tlv_item>             tlv_stack;
 
 
@@ -859,11 +864,11 @@ namespace boost {
 
                     tag test_tl(size_class& sz);
 
-                    bool parse_tl(const tag& tg, size_class& rsltsz , bool settype);
+                    bool parse_tl(const tag& tg, size_class& rsltsz , bool settype, bool optional = false);
 
-                    bool parse_tl(const tag& tg , bool settype) {
+                    bool parse_tl(const tag& tg , bool settype,  bool optional = false) {
                         size_class rsltsz;
-                        return parse_tl(tg, rsltsz , settype);
+                        return parse_tl(tg, rsltsz , settype, optional);
                     }
 
                     void pop_stack();
@@ -883,7 +888,7 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const explicit_value<T>& vl) {
-                    
+
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         stream & vl.value();
                         stream.pop_stack();
@@ -894,16 +899,17 @@ namespace boost {
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const optional_explicit_value<T>& vl) {
                     typedef boost::shared_ptr<T> shared_type;
-                    if (stream.test_tl(vl) == vl.operator  tag()) {
+                    if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET , true)) {
                         *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
-                        stream >> explicit_value<T > (*vl.value(), vl.id(), vl.type());
+                        stream &  (*vl.value());
+                        stream.pop_stack();
                     }
                     return stream;
                 }
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const implicit_value<T>& vl) {
-                    
+
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         const_cast<T*> (&(vl.value()))->serialize(stream);
                         stream.pop_stack();
@@ -914,9 +920,10 @@ namespace boost {
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const optional_implicit_value<T>& vl) {
                     typedef boost::shared_ptr<T> shared_type;
-                    if (stream.test_tl(vl) == vl.operator  tag()) {
+                    if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET , true)) {
                         *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
-                        stream >> implicit_value<T > (*vl.value(), vl.id(), vl.type());
+                        stream &  (*vl.value());
+                        stream.pop_stack();
                     }
                     return stream;
                 }

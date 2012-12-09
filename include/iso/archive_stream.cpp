@@ -105,10 +105,10 @@ namespace boost {
                 }
 
                 if (fset && sset) {
-                   // std::cout << " This Need splice " << std::endl;
-                  //  std::cout << "before " << val << std::endl;
+                    //std::cout << " This Need splice " << std::endl;
+                    //std::cout << "before " << val << std::endl;
                     val.splice(++sit , val , val.begin() , ++fit );
-                  //  std::cout << "after " << val << std::endl;
+                   //std::cout << "after " << val << std::endl;
                     return true;
                 }
 
