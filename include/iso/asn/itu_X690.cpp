@@ -535,11 +535,11 @@ namespace boost {
                     typedef std::map<tag, iterator_pair>   tlv_map;
 
                     tlv_map mps;
-					for (tlv_vector::iterator it = vct.begin(); it != vct.end(); ++it){
-                        if (mps.upper_bound(it->tg) != mps.end()) 
+                    for (tlv_vector::iterator it = vct.begin(); it != vct.end(); ++it) {
+                        if (mps.upper_bound(it->tg) != mps.end())
                             listbuffers_.splice(mps.upper_bound(it->tg)->second.first , listbuffers_ , it->iterators.first , ++iterator(it->iterators.second));
-                            mps.insert(std::make_pair(it->tg, iterator_pair(it->iterators.first, it->iterators.second)));
-                        }
+                        mps.insert(std::make_pair(it->tg, iterator_pair(it->iterators.first, it->iterators.second)));
+                    }
                 }
 
                 void oarchive::clear()  {
@@ -1170,7 +1170,7 @@ namespace boost {
                     return tag();
                 }
 
-                bool iarchive::parse_tl(const tag& tg, size_class& rsltsz , bool settype) {
+                bool iarchive::parse_tl(const tag& tg, size_class& rsltsz , bool settype, bool optional) {
 
 
                     std::size_t size_tlv = size();
@@ -1218,7 +1218,8 @@ namespace boost {
                             if (!next(next_test))
                                 return false;
                             if (!is_set_child) {
-
+                                if (optional)
+                                    return false;
                                 if (!stack_.empty())
                                     stack_.top().sizeinfo.size = (stack_.top().sizeinfo.size >= next_test) ?
                                     (stack_.top().sizeinfo.size - next_test) : 0;
