@@ -45,7 +45,6 @@ namespace boost {
 
 
 
-            list_mutable_buffers sublist( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t start = 0 , std::size_t size = 0 );
             std::size_t pop_frontlist(list_mutable_buffers& val,  std::size_t start);
             bool splice_frontlist(list_mutable_buffers& val,  std::size_t firstend, std::size_t secondend);            
             bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit,  std::size_t& rslt, std::size_t start = 0);
@@ -206,16 +205,25 @@ namespace boost {
                     rows_vect.push_back( row_type_ptr(new row_type(vl.begin(), vl.end())));
                     size_ += vl.size();
                     listbuffers_.push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
-                    size_ += rows_vect.back()->size();
                 }
 
                 void add(const base_oarchive& vl) {
                     listbuffers_.clear();
                     list_const_buffers buffers = vl.buffers();
-                    for (list_const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
+                   /* for (list_const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
                         listbuffers_.push_back(mutable_buffer(const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
                         size_ += boost::asio::buffer_size(*it);
+                    }*/
+                    
+                    row_type newdata;
+                    for (list_const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
+                        newdata.insert(newdata.end(),
+                                const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)),
+                                const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)) + boost::asio::buffer_size(*it)
+                                );
                     }
+                    add(newdata);                     
+                     
                     std::cout << "IARCHVE size:"  << size_  << std::endl;
                 }
 
@@ -266,7 +274,7 @@ namespace boost {
 
                 void decsize(std::size_t sz)  {
                     size_ =  size_ < sz ? 0 : (size_ - sz);
-                    std::cout << "IARCHVE size:"  << size_  << std::endl;
+                    std::cout << "decsize IARCHVE size:"  << size_  << std::endl;
                 }
 
                 list_buffers                listbuffers_;

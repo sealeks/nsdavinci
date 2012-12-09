@@ -269,10 +269,29 @@ namespace boost {
                 ///  archiver                
 
                 class oarchive : public boost::asio::iso::base_oarchive  {
-                    typedef std::pair<iterator , iterator>                                                                                   iterator_pair;
-                    typedef std::pair<tag , iterator_pair>                                                                                  tlv_iterators_pair;
-                    typedef std::vector<tlv_iterators_pair>                                                                               tlv_vector;
-                    typedef std::pair<bool, tlv_vector>                                                                                    stack_item;   //  bool   = true  is set
+                    
+
+                    
+                    typedef std::pair<iterator , iterator>                                                                                iterator_pair;
+                    struct tlv_info{
+                        
+                        tlv_info( const tag& t, const iterator_pair& itrs) : tg(t) ,  iterators(itrs) {}                     
+                        tag tg;
+                        iterator_pair iterators;
+                    };                           
+                    
+                    typedef std::vector<tlv_info>                                                                                              tlv_vector;
+                    
+                    struct stack_item{
+                        
+                        stack_item( bool isst, const tlv_vector& itrs) : is_set(isst) ,  tlv_iterators(itrs) {}
+                        stack_item( bool isst) : is_set(isst) {}                        
+                        stack_item() : is_set(false){}                       
+                        bool is_set;
+                        tlv_vector tlv_iterators;
+                    };                    
+                    
+
                     typedef std::stack<stack_item >                                                                                         stack_type;
 
                 public:
@@ -764,8 +783,23 @@ namespace boost {
                 //   archiver
 
                 class iarchive : public boost::asio::iso::base_iarchive  {
-                    typedef  std::pair<bool, std::size_t>  tlv_size;   //  bool = true is valid size, else undef size
-                    typedef  std::pair<bool, tlv_size >     tlv_item;   //  bool = true is set type                    
+
+                    
+                    struct tlv_size{
+                        
+                        tlv_size( bool def, std::size_t sz) : defined(def) ,  size(sz) {}                     
+                        bool defined;
+                        std::size_t size;
+                    };    
+                    
+                     struct tlv_item{
+                        
+                        tlv_item( bool st, const tlv_size& sz) : is_set(st) ,  sizeinfo(sz) {}                     
+                        bool is_set;
+                        tlv_size sizeinfo;
+                    };                       
+                    
+                
                     typedef  std::stack<tlv_item>             tlv_stack;
 
 
@@ -823,159 +857,19 @@ namespace boost {
                         *this  >>  vl;
                     }
 
-                    tag test_tl(size_class& sz) {
+                    tag test_tl(size_class& sz);
 
-                        tag tmptag;
-                        std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
-                        if (sztag) {
-                            size_class tmpsize;
-                            std::size_t szsize = size_x690_cast(sz, buffers(),  buffers().begin() , sztag);
-                            if (szsize) {
-                                return tmptag;
-                            }
-                        }
-                        return tag();
-                    }
-
-                    tag test_tl() {
-                        size_class sz;
-                        return test_tl(sz);
-                    }
-
-                    bool parse_tl(const tag& tg, size_class& rsltsz , bool settype) {
-
-
-                        std::size_t size_tlv = size();
-                        bool is_set_child = false;
-                        std::size_t size_test = 0;
-                        tag tmptag;
-
-                        if (!stack_.empty()) {
-                            is_set_child = stack_.top().first;
-                            size_tlv = stack_.top().second.first ?
-                                    stack_.top().second.second : ((stack_.top().second.second > 2) ?
-                                    (stack_.top().second.second - 2) : 0  );
-                        }
-
-
-
-                        while (size_test < size_tlv) {
-                            std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
-                            if (sztag && (tg == tmptag)) {
-                                std::size_t szsize = size_x690_cast(rsltsz, buffers(),  buffers().begin() , sztag);
-                                if (szsize) {
-                                    std::size_t next_test = rsltsz.size();
-
-                                    if (rsltsz.undefsize()) {
-                                        if (!next(next_test))
-                                            return false;
-                                        ;
-                                    }
-                                    else {
-                                        next_test += (szsize + sztag);
-                                    }
-                                    pop_front(szsize + sztag);
-
-                                    if (!stack_.empty())
-                                        stack_.top().second.second = (stack_.top().second.second >= next_test) ?
-                                        (stack_.top().second.second - next_test ) : 0;
-                                    stack_.push(tlv_item(settype, tlv_size(!rsltsz.undefsize(), (next_test - ( szsize + sztag)))));
-                                    return  true;
-                                }
-                                return  false;
-                            }
-                            else {
-                                if (!sztag)
-                                    return false;
-                                std::size_t next_test = 0;
-                                if (!next(next_test))
-                                    return false;
-                                if (!is_set_child) {
-
-                                    if (!stack_.empty())
-                                        stack_.top().second.second = (stack_.top().second.second >= next_test) ?
-                                        (stack_.top().second.second - next_test) : 0;
-                                    size_test += next_test;
-                                    pop_front(next_test);
-                                }
-                                else {
-
-                                    size_test += next_test;
-                                    if (!boost::asio::iso::splice_frontlist( buffers(),  next_test , size_tlv ))
-                                        return false;
-
-                                }
-                            }
-                        }
-                        return false;
-                    }
+                    bool parse_tl(const tag& tg, size_class& rsltsz , bool settype);
 
                     bool parse_tl(const tag& tg , bool settype) {
                         size_class rsltsz;
                         return parse_tl(tg, rsltsz , settype);
                     }
 
-                    void pop_stack() {
-                        if (!stack_.empty()) {
-                            if (!stack_.top().second.first) {
-                                if (is_endof())
-                                    pop_front(2);
-                                else
-                                    std::cout  << "NEED FIND EOF, EOF NOT FOUND: "  << std::endl;
-                            }
-                            else {
-                                pop_front(stack_.top().second.second);
-                            }
-                            stack_.pop();
-                        }
-                    }
+                    void pop_stack();
 
-                    bool next(std::size_t & sz) const {
-                        tag tmptag;
-                        std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin(), sz);
-                        if (sztag) {
-                            size_class tmpsize;
-                            std::size_t szsize = size_x690_cast(tmpsize, buffers(),  buffers().begin() , sztag + sz);
-                            if (szsize) {
-                                if (tmpsize.undefsize()) {
-                                    if (tmptag.constructed()) {
-                                        sz += (szsize + sztag);
-                                        while ((!is_endof(sz)) && (sz < size())) {
-                                            if (!next(sz))
-                                                return false;
-                                        }
-                                        if (!is_endof(sz))
-                                            return false;
-                                        sz += 2;
-                                        return true;
-                                    }
-                                    else {
-                                        std::size_t rsltsz = 0;
-                                        if (boost::asio::iso::find_eof(buffers(), buffers().begin() , rsltsz,  sz)) {
-                                            sz += (szsize + sztag + rsltsz);
-                                            return true;
-                                        }
-                                        return false;
-                                    }
-                                }
-                                else {
-                                    sz += (szsize + sztag + tmpsize.size());
-                                    return true;
-                                }
-                            }
-                        }
-                        return false;
-                    }
+                    bool next(std::size_t & sz) const ;
 
-                    void sizetest() {
-                        std::size_t sztest = 0;
-                        if (next(sztest)) {
-                            std::cout  << "FIND SIZETEST size: "  << sztest << std::endl;
-                        }
-                        else {
-                            std::cout  << "NOT FIND SIZETEST size: "  << std::endl;
-                        }
-                    }
 
 
 
@@ -989,7 +883,7 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const explicit_value<T>& vl) {
-                    stream.sizetest();
+                    
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         stream & vl.value();
                         stream.pop_stack();
@@ -1009,7 +903,7 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const implicit_value<T>& vl) {
-                    stream.sizetest();
+                    
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         const_cast<T*> (&(vl.value()))->serialize(stream);
                         stream.pop_stack();
@@ -1113,7 +1007,7 @@ namespace boost {
                 bool stringtype_reader(iarchive& stream, T& vl, id_type id , int8_t mask) {
 
                     size_class tmpsize;
-                    tag tmptag =  stream.test_tl() ;
+                    tag tmptag =  stream.test_tl(tmpsize) ;
                     if (stream.parse_tl(tag(id,  mask), tmpsize,  false )) {
                         if (tmpsize.undefsize()) {
                             if (tmptag.constructed()) {
