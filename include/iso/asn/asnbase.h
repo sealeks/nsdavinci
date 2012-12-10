@@ -127,6 +127,7 @@ namespace boost {\
 #define BOOST_ASN_EXPLICIT_APPLICATION_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::APPLICATION_CLASS);  
 #define BOOST_ASN_EXPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::PRIVATE_CLASS);
 #define BOOST_ASN_EXPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::UNIVERSAL_CLASS); 
+#define BOOST_ASN_CHOICE_TAG(var)    boost::asio::asn::bind_choice(arch, var); 
 
 
 
@@ -1509,26 +1510,11 @@ namespace boost {
             
                     
             
-            
-            
-            
-               
-            
 
             template<typename Archive, typename T>
             inline void bind_choice(Archive & arch, T& vl) {
                 arch & choice_value<T > (vl);
             }
-
-            template<typename Archive, typename T>
-            inline void bind_choice(Archive & arch, const T& vl) {
-                arch & choice_value<T > (vl);
-            }
-
-
-
-
-
 
         }
     }

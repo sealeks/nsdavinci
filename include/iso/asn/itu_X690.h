@@ -519,6 +519,7 @@ namespace boost {
 
                 template<typename T>
                 oarchive& operator<<(oarchive& stream, const choice_value<T>& vl) {
+                    const_cast<T*> (&(vl.value()))->serialize(stream);
                     return stream;
                 }
 
@@ -958,6 +959,7 @@ namespace boost {
                                 const_cast<std::vector<T>* > (&(vl.value()))->push_back(tmp);
                             }
                         }
+                        stream.pop_stack();
                     }
                     return stream;
                 }
@@ -983,12 +985,14 @@ namespace boost {
                                 const_cast<vector_set_of<T>* > (&(vl.value()))->push_back(tmp);
                             }
                         }
+                        stream.pop_stack();
                     }
                     return stream;
                 }
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
+                    const_cast<T*> (&(vl.value()))->serialize(stream);
                     return stream;
                 }
 
