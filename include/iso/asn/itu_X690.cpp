@@ -1183,9 +1183,12 @@ namespace boost {
                         size_tlv = stack_.top().sizeinfo.defined ?
                                 stack_.top().sizeinfo.size : ((stack_.top().sizeinfo.size > 2) ?
                                 (stack_.top().sizeinfo.size - 2) : 0  );
-                    }
+		std::cout << " size_tlv : " << size_tlv  << std::endl;
+		}
 
-
+                     std::cout << " buffer: ";
+                     boost::asio::iso::operator <<(std::cout, buffers());
+                     std::cout << std::endl;
 
                     while (size_test < size_tlv) {
                         std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
