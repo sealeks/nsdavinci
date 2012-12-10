@@ -1264,7 +1264,7 @@ namespace boost {
 
 
 
-            /*      template<typename E>
+                 template<typename E>
                  class choice_val{
          
          
@@ -1278,15 +1278,13 @@ namespace boost {
                      }          
                  protected:
                      int type_;
-      
-            //         virtual tag Tag() const{
-            //             return tag();}
                  };     
      
  
                 template<typename T>
                  class choice_holder : public base_choice_holder{
                  public:
+                     
                      choice_holder(T* vl, int ID) : base_choice_holder(static_cast<int>(ID)) , val_(boost::shared_ptr<T>(vl)) {}
          
                      boost::shared_ptr<T>& value(){
@@ -1348,7 +1346,7 @@ namespace boost {
      
                      type_ptr val_;
          
-                 };*/
+                 };
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
