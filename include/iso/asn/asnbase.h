@@ -127,7 +127,15 @@ namespace boost {\
 #define BOOST_ASN_EXPLICIT_APPLICATION_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::APPLICATION_CLASS);  
 #define BOOST_ASN_EXPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::PRIVATE_CLASS);
 #define BOOST_ASN_EXPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::UNIVERSAL_CLASS); 
-#define BOOST_ASN_CHOICE_TAG(var)    boost::asio::asn::bind_choice(arch, var); 
+#define BOOST_ASN_CHOICE(var)    boost::asio::asn::bind_choice(arch, var); 
+
+
+#define BOOST_ASN_START_CHOICE(type, enm)  \
+       struct  type : public  boost::asio::asn::___asn__choice__base__< enm> {\
+        type () : boost::asio::asn::___asn__choice__base__<choice_enum>() {} 
+
+#define BOOST_ASN_VALUE_CHOICE(nm ,tp ,enm) boost::shared_ptr< tp > nm () const {return get< tp >(enm);} void nm ( tp * vl) { set( vl, enm );}
+#define BOOST_ASN_END_CHOICE()  };
 
 
 
@@ -707,21 +715,24 @@ namespace boost {
             gentime_type to_gentime(const row_type& val);
 
             std::ostream& operator<<(std::ostream& stream, const gentime_type& vl);
-            
-            
+
+
             ///  SET_OF TYPE              
-            
-            
-             template<typename T>           
-            class vector_set_of : public std::vector<T>{
+
+            template<typename T>
+            class vector_set_of : public std::vector<T> {
             public:
-                vector_set_of() : std::vector<T>(){}    
+
+                vector_set_of() : std::vector<T>() {
+                }
                 //explicit vector_set_of(const A& a) :  std::vector<T>(a){} 
-              //  explicit vector_set_of(size_type n, const std::vector::value_type& value = std::vector::value_type(),
-	//     const allocator_type& a = allocator_type()) : std::vector<T,A>(n, value, a ){}        
+                //  explicit vector_set_of(size_type n, const std::vector::value_type& value = std::vector::value_type(),
+                //     const allocator_type& a = allocator_type()) : std::vector<T,A>(n, value, a ){}        
+
                 template<typename InputIterator>
-                vector_set_of(InputIterator first, InputIterator last) : std::vector<T>(first, last ){}
-             }; 
+                vector_set_of(InputIterator first, InputIterator last) : std::vector<T>(first, last ) {
+                }
+            } ;
 
 
 
@@ -743,8 +754,8 @@ namespace boost {
 
             // tag traits
 
-;
-            
+            ;
+
             template<typename T>
             struct tag_traits {
 
@@ -755,8 +766,8 @@ namespace boost {
                 static  int8_t class_type() {
                     return 0;
                 }
-            } ;           
-            
+            } ;
+
             template<typename T >
             struct tag_traits< vector_set_of<T> > {
 
@@ -767,8 +778,7 @@ namespace boost {
                 static  int8_t class_type() {
                     return 0;
                 }
-            };            
-            
+            } ;
 
             BOOST_ASN_INTERNAL_REGESTRATE(eoc_type, TYPE_EOC)
             BOOST_ASN_INTERNAL_REGESTRATE(int8_t, TYPE_INTEGER)
@@ -810,9 +820,9 @@ namespace boost {
 
             class tag {
             public:
-                
+
                 static const id_type null_tag = (!id_type(0));
-                
+
                 tag() : id_(null_tag), mask_(0) {
                 }
 
@@ -834,28 +844,27 @@ namespace boost {
                 id_type simpleid() const {
                     return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_ ) : 0;
                 }
-                
+
                 operator bool() const {
-                    return (id_!=null_tag);
+                    return (id_ != null_tag);
                 }
-                
+
                 bool constructed() const {
                     return (mask_ & CONSTRUCTED_ENCODING);
-                }                
-                
-
-                friend bool operator<(const tag& ls, const tag& rs){
-                    if (static_cast<uint8_t>(ls.type() | CONSTRUCTED_ENCODING) == static_cast<uint8_t>(rs.type() | CONSTRUCTED_ENCODING))
-                        return ls.id()<rs.id();
-                    else
-                        return static_cast<uint8_t>(ls.type() | CONSTRUCTED_ENCODING) < static_cast<uint8_t>(rs.type() | CONSTRUCTED_ENCODING);
                 }
-                
-                friend bool operator==(const tag& ls, const tag& rs){
-                    if (static_cast<uint8_t>(ls.type() | CONSTRUCTED_ENCODING) == static_cast<uint8_t>(rs.type() | CONSTRUCTED_ENCODING))
-                        return ls.id()==rs.id();
+
+                friend bool operator<(const tag& ls, const tag& rs) {
+                    if (static_cast<uint8_t> (ls.type() | CONSTRUCTED_ENCODING) == static_cast<uint8_t> (rs.type() | CONSTRUCTED_ENCODING))
+                        return ls.id() < rs.id();
+                    else
+                        return static_cast<uint8_t> (ls.type() | CONSTRUCTED_ENCODING) < static_cast<uint8_t> (rs.type() | CONSTRUCTED_ENCODING);
+                }
+
+                friend bool operator==(const tag& ls, const tag& rs) {
+                    if (static_cast<uint8_t> (ls.type() | CONSTRUCTED_ENCODING) == static_cast<uint8_t> (rs.type() | CONSTRUCTED_ENCODING))
+                        return ls.id() == rs.id();
                     return false;
-                }                
+                }
 
             private:
                 id_type id_;
@@ -865,16 +874,16 @@ namespace boost {
             inline std::ostream& operator<<(std::ostream& stream, const tag& vl) {
                 return stream << "TAG: " << vl.id() << " mask:"  << vl.mask() << '\n';
             }
-            
-            
-            
-            
-            
-            
-            
-            
-   
-            
+
+
+
+
+
+
+
+
+
+
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -883,15 +892,13 @@ namespace boost {
             class explicit_value {
             public:
 
-                typedef T    base_type;     
-                
+                typedef T    base_type;
 
                 explicit explicit_value(T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(vl), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
                 }
 
                 explicit explicit_value(const T& vl, id_type id,  class_type type = CONTEXT_CLASS) :  id_(id) , val_(const_cast<T&> (vl)), mask_(from_cast(type) | CONSTRUCTED_ENCODING) {
                 }
-                                            
 
                 const T& value() const {
                     return val_;
@@ -913,11 +920,10 @@ namespace boost {
                     return mask_;
                 }
 
-
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && mask() == rs.mask());
                 }
-                
+
                 operator tag() const {
                     return tag(id_, mask_);
                 }
@@ -963,7 +969,7 @@ namespace boost {
                 explicit  implicit_value(const T& vl) :
                 id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(tag_traits<T>::class_type())  {
                 }
-                
+
                 const T& value() const {
                     return val_;
                 }
@@ -987,10 +993,10 @@ namespace boost {
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) == ( rs.mask() | CONSTRUCTED_ENCODING));
                 }
-                
+
                 operator tag() const {
                     return tag(id_, mask_);
-                }                
+                }
 
 
             private:
@@ -1047,10 +1053,10 @@ namespace boost {
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && mask() == rs.mask());
                 }
-                
+
                 operator tag() const {
                     return tag(id_, mask_);
-                }                
+                }
 
 
             private:
@@ -1118,10 +1124,10 @@ namespace boost {
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) == ( rs.mask() | CONSTRUCTED_ENCODING));
                 }
-                
+
                 operator tag() const {
                     return tag(id_, mask_);
-                }                
+                }
 
 
             private:
@@ -1134,18 +1140,17 @@ namespace boost {
             ////////////////////////////////////////////////////////////////////////////
 
             template<typename T, class Tag,  id_type ID,  class_type TYPE = CONTEXT_CLASS >
-                    class implicit_typedef   {
+            class implicit_typedef   {
             public:
 
-
-                implicit_typedef() : value_(){
+                implicit_typedef() : value_() {
                 }
 
                 implicit_typedef (const T& val) : value_(val) {
                 }
-              
-                void operator()(const T& val){
-                    value_=val;
+
+                void operator()(const T& val) {
+                    value_ = val;
                 }
 
                 operator T() const {
@@ -1153,9 +1158,9 @@ namespace boost {
                 }
 
                 T operator=(const T& val) {
-                    return value_=val;
+                    return value_ = val;
                 }
-                
+
                 const T& value() const {
                     return value_;
                 }
@@ -1170,29 +1175,28 @@ namespace boost {
 
                 class_type type() const {
                     return TYPE;
-                }                
-                           
-                
+                }
+
+
             private:
                 T value_;
             } ;
-            
-            
+
+
             ////////////////////////////////////////////////////////////////////////////
 
             template<typename T, class Tag, id_type ID,  class_type TYPE = CONTEXT_CLASS >
-                    class explicit_typedef  {
+            class explicit_typedef  {
             public:
-
 
                 explicit_typedef() : value_() {
                 }
 
                 explicit_typedef (const T& val) : value_(val) {
                 }
-                
-                void operator()(const T& val){
-                    value_=val;
+
+                void operator()(const T& val) {
+                    value_ = val;
                 }
 
                 operator T() const {
@@ -1200,10 +1204,9 @@ namespace boost {
                 }
 
                 T operator=(const T& val) {
-                    return value_=val;
+                    return value_ = val;
                 }
-                
-                
+
                 const T& value() const {
                     return value_;
                 }
@@ -1219,8 +1222,8 @@ namespace boost {
                 class_type type() const {
                     return TYPE;
                 }
-     
-                
+
+
 
             private:
                 T value_;
@@ -1257,318 +1260,340 @@ namespace boost {
 
                 T& val_;
             } ;
-            
+
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////       
 
+            template<typename E>
+            class ___asn__choice__base__ {
 
+                class base_choice_holder {
+                public:
 
-                 template<typename E>
-                 class choice_val{
-         
-         
-                 class base_choice_holder{
-                 public:
-                     base_choice_holder(int type = 0) : type_(type) {}
-                     virtual ~base_choice_holder(){}
-                     virtual bool empty() const { return true; } 
-                     int type() const{
-                         return type_;
-                     }     
-                     void type( int val){
-                         type_=val;
-                     }                          
-                 protected:
-                     int type_;
-                 };     
-     
- 
+                    base_choice_holder(int type = 0) : type_(type) {
+                    }
+
+                    virtual ~base_choice_holder() {
+                    }
+
+                    virtual bool empty() const {
+                        return true;
+                    }
+
+                    int type() const {
+                        return type_;
+                    }
+
+                    void type( int val) {
+                        type_ = val;
+                    }
+                protected:
+                    int type_;
+                } ;
+
                 template<typename T>
-                 class choice_holder : public base_choice_holder{
-                 public:
-                     
-                     choice_holder() : base_choice_holder(static_cast<int>(0)) , val_(boost::shared_ptr<T>()) {}
-                     
-                     
-                     choice_holder(T* vl, int ID = 0) : base_choice_holder(static_cast<int>(ID)) , val_(boost::shared_ptr<T>(vl)) {}                     
-         
-                     boost::shared_ptr<T>& value(){
-                         return val_;
-                     }
-         
-                     const boost::shared_ptr<T>& value() const{
-                         return val_;
-                     }            
-         
-                     virtual bool empty() const { return false; } 
-         
-                 private:
-                     boost::shared_ptr<T> val_;
-                 };            
-         
-                 public:
-         
-     
-                     typedef boost::shared_ptr<base_choice_holder> type_ptr;
-         
-                     choice_val(): val_( new base_choice_holder()){
-                     }
-                 
-         
-                     template<typename T>
-                     choice_val(T* vl, int id): val_( new choice_holder<T>(vl, id)){
-                     }
-         
-                     virtual  ~choice_val() {}         
-         
-                     bool empty() const{
-                         return ((!val_) || (val_->empty()));
-                     }     
-         
-                     E type() const{
-                         return static_cast<E>(val_ ? val_->type() : 0);
-                     }
-                     
-                     void type(E val) {
-                         return val_->type(static_cast<E>(val));
-                     }                     
-          
-         
-                    /* template<typename T>        
-                     const boost::shared_ptr<T>& value() const {
-                         typedef  choice_holder<T> choice_holder_type;
-                         typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
-                         return  boost::static_pointer_cast< choice_holder_type >(val_)->value();
-                     } */
-                     
-                     template<typename T>        
-                     boost::shared_ptr<T>& value()  {
-                         typedef  choice_holder<T> choice_holder_type;
-                         typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
-                         val_= type_ptr( new choice_holder<T>());
-                         return  boost::static_pointer_cast< choice_holder_type >(val_)->value();
-                     }                     
-                     
-                     template<typename T>        
-                     const boost::shared_ptr<T> get(E ID) const {
-                         typedef  choice_holder<T> choice_holder_type;
-                         typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
-                         return (type()==ID) ?
-                             boost::static_pointer_cast< choice_holder_type >(val_)->value() :
-                             boost::shared_ptr<T>();
-                     }                      
-         
-                     template<typename T>        
-                     void set(T* vl, E ID) {
-                         typedef  choice_holder<T> choice_holder_type;
-                         typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;   
-                         val_= type_ptr( new choice_holder<T>(vl, static_cast<int>(ID)));
-                     }         
-      
-               
-         
-                 protected:
-     
-                     type_ptr val_;
-         
-                 };
+                class choice_holder : public base_choice_holder {
+                public:
+
+                    choice_holder() : base_choice_holder(static_cast<int> (0)) , val_(boost::shared_ptr<T>()) {
+                    }
+
+                    choice_holder(T* vl, int ID = 0) : base_choice_holder(static_cast<int> (ID)) , val_(boost::shared_ptr<T>(vl)) {
+                    }
+
+                    boost::shared_ptr<T>& value() {
+                        return val_;
+                    }
+
+                    const boost::shared_ptr<T>& value() const {
+                        return val_;
+                    }
+
+                    virtual bool empty() const {
+                        return false;
+                    }
+
+                private:
+                    boost::shared_ptr<T> val_;
+                } ;
+
+
+                typedef boost::shared_ptr<base_choice_holder> type_ptr;
+
+            public:
+
+                ___asn__choice__base__() : val_( new base_choice_holder()) {
+                }
+
+                template<typename T>
+                ___asn__choice__base__(T* vl, int id) : val_( new choice_holder<T>(vl, id)) {
+                }
+
+                virtual  ~___asn__choice__base__() {
+                }
+
+                bool empty() const {
+                    return ((!val_) || (val_->empty()));
+                }
+
+                E type() const {
+                    return static_cast<E> (val_ ? val_->type() : 0);
+                }
+
+                void type(E val) {
+                    return val_->type(static_cast<E> (val));
+                }
+
+                /* template<typename T>        
+                 const boost::shared_ptr<T>& value() const {
+                     typedef  choice_holder<T> choice_holder_type;
+                     typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
+                     return  boost::static_pointer_cast< choice_holder_type >(val_)->value();
+                 } */
+
+                template<typename T>
+                boost::shared_ptr<T>& value()  {
+                    typedef  choice_holder<T> choice_holder_type;
+                    typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
+                    val_ = type_ptr( new choice_holder<T > ());
+                    return  boost::static_pointer_cast< choice_holder_type > (val_)->value();
+                }
+
+                template<typename T>
+                const boost::shared_ptr<T> get(E ID) const {
+                    typedef  choice_holder<T> choice_holder_type;
+                    typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
+                    return (type() == ID) ?
+                            boost::static_pointer_cast< choice_holder_type > (val_)->value() :
+                            boost::shared_ptr<T > ();
+                }
+
+                template<typename T>
+                void set(T* vl, E ID) {
+                    typedef  choice_holder<T> choice_holder_type;
+                    typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
+                    val_ = type_ptr( new choice_holder<T > (vl, static_cast<int> (ID)));
+                }
+
+            protected:
+
+                type_ptr val_;
+
+            } ;
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
             template<typename Archive, typename T>
             inline bool bind_basic(Archive & arch, T& vl) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & implicit_value<T > (vl);
-                return (arch.size()!=tst);             }                         
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_basic(Archive & arch, boost::shared_ptr<T>& vl) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_basic(Archive & arch, implicit_value<T >& vl) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & vl;
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_basic(Archive & arch, explicit_value<T >& vl) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & vl;
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_basic(Archive & arch, optional_implicit_value<T >& vl) {
-                 std::size_t tst = arch.size();               
+                std::size_t tst = arch.size();
                 arch & vl;
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_basic(Archive & arch, optional_explicit_value<T >& vl) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & vl;
-                return (arch.size()!=tst);             }  
-                     
+                return (arch.size() != tst);
+            }
+
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
-            inline bool bind_basic(Archive & arch, implicit_typedef<T,Tag,ID,TYPE>& vl) {
-                std::size_t tst = arch.size();                
-                arch & implicit_value<T>(vl.value(), ID, TYPE);
-                return (arch.size()!=tst);             }   
-            
+            inline bool bind_basic(Archive & arch, implicit_typedef<T, Tag, ID, TYPE>& vl) {
+                std::size_t tst = arch.size();
+                arch & implicit_value<T > (vl.value(), ID, TYPE);
+                return (arch.size() != tst);
+            }
+
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
-            inline bool bind_basic(Archive & arch, explicit_typedef<T,Tag,ID,TYPE>& vl) {
-                std::size_t tst = arch.size();                
-                arch & explicit_value<T>(vl.value(), ID, TYPE);
-                return (arch.size()!=tst);             }   
-            
-          
-            
-            
-            
+            inline bool bind_basic(Archive & arch, explicit_typedef<T, Tag, ID, TYPE>& vl) {
+                std::size_t tst = arch.size();
+                arch & explicit_value<T > (vl.value(), ID, TYPE);
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_explicit(Archive & arch, T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & explicit_value<T > (vl, id, type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_explicit(Archive & arch, const T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & explicit_value<T > (vl, id, type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_explicit(Archive & arch, boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & optional_explicit_value<T > (vl, id, type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_explicit(Archive & arch, const boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & optional_explicit_value<T > (vl, id, type);
-                
-                return (arch.size()!=tst);             }  
-                       
+
+                return (arch.size() != tst);
+            }
+
             template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
-            inline bool bind_explicit(Archive & arch, implicit_typedef<T,Tag,id,type>& vl) {
-                std::size_t tst = arch.size();                
-                arch & explicit_value<T>(vl.value(), id, type);
-                return (arch.size()!=tst);             }   
-            
+            inline bool bind_explicit(Archive & arch, implicit_typedef<T, Tag, id, type>& vl) {
+                std::size_t tst = arch.size();
+                arch & explicit_value<T > (vl.value(), id, type);
+                return (arch.size() != tst);
+            }
+
             template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
-            inline bool bind_explicit(Archive & arch, explicit_typedef<T,Tag,id,type>& vl) {
-                std::size_t tst = arch.size();                
-                arch & explicit_value<T>(vl.value(), id, type);
-                return (arch.size()!=tst);             }          
-            
+            inline bool bind_explicit(Archive & arch, explicit_typedef<T, Tag, id, type>& vl) {
+                std::size_t tst = arch.size();
+                arch & explicit_value<T > (vl.value(), id, type);
+                return (arch.size() != tst);
+            }
+
             template<typename Archive, typename T>
             inline bool bind_explicit(Archive & arch, std::vector<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & explicit_value<std::vector<T> > (vl, id, type);
-                return (arch.size()!=tst);             }           
-            
+                return (arch.size() != tst);
+            }
+
             template<typename Archive, typename T>
             inline bool bind_explicit(Archive & arch, vector_set_of<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & explicit_value<vector_set_of<T> > (vl, id, type);
-                return (arch.size()!=tst);             }                   
-            
-            
-            
-            
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & implicit_value<T > (vl, id, type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, const T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & implicit_value<T > (vl, id, type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl, id, type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, const boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl, id, type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, T& vl,  class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & implicit_value<T > (vl,  type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, const T& vl, class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & implicit_value<T > (vl,  type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, boost::shared_ptr<T>& vl, class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl,  type);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, const boost::shared_ptr<T>& vl, class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl, type);
-                return (arch.size()!=tst);             }  
-            
+                return (arch.size() != tst);
+            }
+
             template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
-            inline bool bind_implicit(Archive & arch, implicit_typedef<T,Tag,id,type>& vl) {
-                std::size_t tst = arch.size();                
-                arch & implicit_value<T>(vl.value(), id, type);
-                return (arch.size()!=tst);             }   
-            
+            inline bool bind_implicit(Archive & arch, implicit_typedef<T, Tag, id, type>& vl) {
+                std::size_t tst = arch.size();
+                arch & implicit_value<T > (vl.value(), id, type);
+                return (arch.size() != tst);
+            }
+
             template<typename Archive, typename T,  class Tag, id_type id,  class_type type>
-            inline bool bind_implicit(Archive & arch, explicit_typedef<T,Tag,id,type>& vl) {
-                std::size_t tst = arch.size();                
-                arch & implicit_value<T>(vl.value(), id, type);
-                return (arch.size()!=tst);             }      
-            
-           template<typename Archive, typename T>
-           inline void bind_implicit(Archive & arch, std::vector<T>& vl, class_type type = CONTEXT_CLASS) {
-                std::size_t tst = arch.size();               
+            inline bool bind_implicit(Archive & arch, explicit_typedef<T, Tag, id, type>& vl) {
+                std::size_t tst = arch.size();
+                arch & implicit_value<T > (vl.value(), id, type);
+                return (arch.size() != tst);
+            }
+
+            template<typename Archive, typename T>
+            inline void bind_implicit(Archive & arch, std::vector<T>& vl, class_type type = CONTEXT_CLASS) {
+                std::size_t tst = arch.size();
                 arch & implicit_value<std::vector<T> > (vl, TYPE_SEQ , type);
-           }                   
-            
+            }
+
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, std::vector<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
                 std::size_t tst = arch.size();
                 arch & implicit_value<std::vector<T> > (vl, id, type);
-                return (arch.size()!=tst);             }                 
-            
+                return (arch.size() != tst);
+            }
+
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, vector_set_of<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
                 std::size_t tst = arch.size();
                 arch & implicit_value<vector_set_of<T> > (vl, id, type);
-                return (arch.size()!=tst);
-            }                    
-            
-                                
+                return (arch.size() != tst);
+            }
 
             template<typename Archive, typename T>
             inline bool bind_choice(Archive & arch, T& vl) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & choice_value<T > (vl);
-                return (arch.size()!=tst);             }  
+                return (arch.size() != tst);
+            }
 
         }
     }
