@@ -118,24 +118,23 @@ namespace boost {\
 
 
 
-#define BOOST_ASN_BIND_TAG(var)    boost::asio::asn::bind_basic(arch, var); 
-#define BOOST_ASN_IMPLICIT_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::CONTEXT_CLASS);
-#define BOOST_ASN_IMPLICIT_APPLICATION_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::APPLICATION_CLASS);  
-#define BOOST_ASN_IMPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::PRIVATE_CLASS);
-#define BOOST_ASN_IMPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::UNIVERSAL_CLASS); 
-#define BOOST_ASN_EXPLICIT_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::CONTEXT_CLASS);
-#define BOOST_ASN_EXPLICIT_APPLICATION_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::APPLICATION_CLASS);  
-#define BOOST_ASN_EXPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::PRIVATE_CLASS);
-#define BOOST_ASN_EXPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::UNIVERSAL_CLASS); 
-#define BOOST_ASN_CHOICE(var)    boost::asio::asn::bind_choice(arch, var); 
+#define BOOST_ASN_BIND_TAG(var)    boost::asio::asn::bind_basic(arch, var)
+#define BOOST_ASN_IMPLICIT_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::CONTEXT_CLASS)
+#define BOOST_ASN_IMPLICIT_APPLICATION_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::APPLICATION_CLASS)
+#define BOOST_ASN_IMPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::PRIVATE_CLASS)
+#define BOOST_ASN_IMPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::UNIVERSAL_CLASS) 
+#define BOOST_ASN_EXPLICIT_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::CONTEXT_CLASS)
+#define BOOST_ASN_EXPLICIT_APPLICATION_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::APPLICATION_CLASS)  
+#define BOOST_ASN_EXPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::PRIVATE_CLASS)
+#define BOOST_ASN_EXPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::UNIVERSAL_CLASS)
+#define BOOST_ASN_CHOICE(var)    boost::asio::asn::bind_choice(arch, var)
 
 
-#define BOOST_ASN_START_CHOICE(type, enm)  \
-       struct  type : public  boost::asio::asn::___asn__choice__base__< enm> {\
-        type () : boost::asio::asn::___asn__choice__base__<choice_enum>() {} 
+#define BOOST_ASN_CHOICE_STRUCT(enm)  boost::asio::asn::___asn__choice__base__< enm> 
+#define BOOST_ASN_CHOICE_CHECK(enm) ( arch.__input__()) || (check( enm ))
 
-#define BOOST_ASN_VALUE_CHOICE(nm ,tp ,enm) boost::shared_ptr< tp > nm () const {return get< tp >(enm);} void nm ( tp * vl) { set( vl, enm );}
-#define BOOST_ASN_END_CHOICE()  };
+#define BOOST_ASN_VALUE_CHOICE(nm ,tp ,enm) boost::shared_ptr< tp > nm () const {return get< tp >(enm);}; void nm ( tp * vl) { set( vl, enm );}
+
 
 
 
@@ -260,6 +259,18 @@ namespace boost {
                 oid_type(const boost::array<oidindx_type, 9 > & vl);
 
                 oid_type(const boost::array<oidindx_type, 10 > & vl);
+                
+                oid_type(const boost::array<oidindx_type, 11 > & vl);
+
+                oid_type(const boost::array<oidindx_type, 12> & vl);    
+                
+                oid_type(const boost::array<oidindx_type, 13 > & vl);
+
+                oid_type(const boost::array<oidindx_type, 14 > & vl);
+                
+                oid_type(const boost::array<oidindx_type, 15 > & vl);
+
+                oid_type(const boost::array<oidindx_type, 16> & vl);                     
 
             } ;
 
@@ -348,6 +359,8 @@ namespace boost {
                 explicit bitstring_type(const row_type& vl, std::size_t unuse = 0);
 
                 explicit bitstring_type(const std::vector<bool>& vl);
+                
+                explicit bitstring_type(bool vl, std::size_t n);
 
                 bitstring_type(const dynamic_bitset_type& vl) : std::vector<int8_t>() {
                     construct(vl);
@@ -717,23 +730,6 @@ namespace boost {
             std::ostream& operator<<(std::ostream& stream, const gentime_type& vl);
 
 
-            ///  SET_OF TYPE              
-
-            template<typename T>
-            class vector_set_of : public std::vector<T> {
-            public:
-
-                vector_set_of() : std::vector<T>() {
-                }
-                //explicit vector_set_of(const A& a) :  std::vector<T>(a){} 
-                //  explicit vector_set_of(size_type n, const std::vector::value_type& value = std::vector::value_type(),
-                //     const allocator_type& a = allocator_type()) : std::vector<T,A>(n, value, a ){}        
-
-                template<typename InputIterator>
-                vector_set_of(InputIterator first, InputIterator last) : std::vector<T>(first, last ) {
-                }
-            } ;
-
 
 
             //////
@@ -769,7 +765,7 @@ namespace boost {
             } ;
 
             template<typename T >
-            struct tag_traits< vector_set_of<T> > {
+            struct tag_traits< std::deque<T> > {
 
                 static  id_type number() {
                     return TYPE_SET;
@@ -1323,7 +1319,7 @@ namespace boost {
 
             public:
 
-                ___asn__choice__base__() : val_( new base_choice_holder()) {
+                ___asn__choice__base__() : val_() {
                 }
 
                 template<typename T>
@@ -1342,21 +1338,22 @@ namespace boost {
                 }
 
                 void type(E val) {
-                    return val_->type(static_cast<E> (val));
+                    if (val_)
+                        val_->type(static_cast<E> (val));
                 }
 
-                /* template<typename T>        
-                 const boost::shared_ptr<T>& value() const {
-                     typedef  choice_holder<T> choice_holder_type;
-                     typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
-                     return  boost::static_pointer_cast< choice_holder_type >(val_)->value();
-                 } */
+                bool check(E val) {
+                    return type() == val;
+                }
 
                 template<typename T>
-                boost::shared_ptr<T>& value()  {
+                boost::shared_ptr<T>& value(bool isinput, E tp)  {
                     typedef  choice_holder<T> choice_holder_type;
                     typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
-                    val_ = type_ptr( new choice_holder<T > ());
+                    if (!val_ || isinput)
+                        val_ = type_ptr( new choice_holder<T > ());
+                    if (isinput)
+                        type(tp);
                     return  boost::static_pointer_cast< choice_holder_type > (val_)->value();
                 }
 
@@ -1492,9 +1489,9 @@ namespace boost {
             }
 
             template<typename Archive, typename T>
-            inline bool bind_explicit(Archive & arch, vector_set_of<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+            inline bool bind_explicit(Archive & arch, std::deque<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
                 std::size_t tst = arch.size();
-                arch & explicit_value<vector_set_of<T> > (vl, id, type);
+                arch & explicit_value<std::deque<T> > (vl, id, type);
                 return (arch.size() != tst);
             }
 
@@ -1582,9 +1579,9 @@ namespace boost {
             }
 
             template<typename Archive, typename T>
-            inline bool bind_implicit(Archive & arch, vector_set_of<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
+            inline bool bind_implicit(Archive & arch, std::deque<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
                 std::size_t tst = arch.size();
-                arch & implicit_value<vector_set_of<T> > (vl, id, type);
+                arch & implicit_value<std::deque<T> > (vl, id, type);
                 return (arch.size() != tst);
             }
 
