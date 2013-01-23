@@ -64,6 +64,24 @@ namespace boost {
 
             oid_type::oid_type(const boost::array<oidindx_type, 10 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
             }
+            
+            oid_type::oid_type(const boost::array<oidindx_type, 11 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
+            }
+
+            oid_type::oid_type(const boost::array<oidindx_type, 12 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
+            }    
+            
+            oid_type::oid_type(const boost::array<oidindx_type, 13 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
+            }
+
+            oid_type::oid_type(const boost::array<oidindx_type, 14 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
+            }
+            
+            oid_type::oid_type(const boost::array<oidindx_type, 15 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
+            }
+
+            oid_type::oid_type(const boost::array<oidindx_type, 16 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
+            }               
 
             std::ostream& operator<<(std::ostream& stream, const oid_type& vl) {
                 for (oid_type::const_iterator it = vl.begin(); it != vl.end(); ++it)
@@ -161,6 +179,13 @@ namespace boost {
             bitstring_type::bitstring_type(const std::vector<bool>& vl) : std::vector<int8_t>() {
                 construct(vl);
             };
+
+            bitstring_type::bitstring_type(bool vl, std::size_t n) : std::vector<int8_t>(), unuse_(n % 8) {
+                if ((vl) &&  (n < 256)) {
+                    insert(begin(), (n / 8 + 1), 0);
+                    back() = (0x1 << ( 7 - (n % 8)));
+                }
+            }
 
             void  bitstring_type::insert_bitstring(const row_type& val, std::size_t unuse) {
                 unuse_ = unuse % 8;

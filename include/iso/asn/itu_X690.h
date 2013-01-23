@@ -348,7 +348,7 @@ namespace boost {
                     }
 
                     template<typename T>
-                    void operator&( const vector_set_of<T >& vl) {
+                    void operator&( const std::deque<T >& vl) {
                         *this  <<  vl;
                     }
 
@@ -415,8 +415,8 @@ namespace boost {
                 }
 
                 template<typename T>
-                oarchive& operator<<(oarchive& stream, const explicit_value< vector_set_of<T> >& vl) {
-                    return stream << implicit_value<vector_set_of<T> >(vl.value(), vl.id(), vl.type() );
+                oarchive& operator<<(oarchive& stream, const explicit_value< std::deque<T> >& vl) {
+                    return stream << implicit_value<std::deque<T> >(vl.value(), vl.id(), vl.type() );
                 }
 
                 template<typename T>
@@ -465,13 +465,13 @@ namespace boost {
                 }
 
                 template<typename T>
-                oarchive& operator<<(oarchive& stream, const implicit_value<vector_set_of<T> >& vl) {
+                oarchive& operator<<(oarchive& stream, const implicit_value<std::deque<T> >& vl) {
 
                     stream.addtag( tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING) , false );
                     oarchive::list_buffers::iterator it = stream.last();
 
                     std::size_t sz = stream.size();
-                    typedef typename vector_set_of<T>::const_iterator   vect_type_iterator;
+                    typedef typename std::deque<T>::const_iterator   vect_type_iterator;
                     for (vect_type_iterator itr = vl.value().begin() ; itr != vl.value().end() ; ++itr)
                         stream & (*itr );
                     sz = stream.size(sz);
@@ -935,8 +935,8 @@ namespace boost {
                 }
 
                 template<typename T>
-                iarchive& operator>>(iarchive& stream, const explicit_value< vector_set_of<T> >& vl) {
-                    return stream >> implicit_value< vector_set_of<T> >(vl.value(), vl.id(), vl.type());
+                iarchive& operator>>(iarchive& stream, const explicit_value< std::deque<T> >& vl) {
+                    return stream >> implicit_value< std::deque<T> >(vl.value(), vl.id(), vl.type());
                 }
 
                 template<typename T>
@@ -965,7 +965,7 @@ namespace boost {
                 }
 
                 template<typename T>
-                iarchive& operator>>(iarchive& stream, const implicit_value< vector_set_of<T> >& vl) {
+                iarchive& operator>>(iarchive& stream, const implicit_value< std::deque<T> >& vl) {
 
                     size_class tmpsize;
                     if (stream.parse_tl(vl, tmpsize, false )) {
@@ -974,7 +974,7 @@ namespace boost {
                             while (!stream.is_endof() && stream.size()) {
                                 T tmp;
                                 stream & tmp;
-                                const_cast<vector_set_of<T>* > (&(vl.value()))->push_back(tmp);
+                                const_cast<std::deque<T>* > (&(vl.value()))->push_back(tmp);
                             }
                         }
                         else {
@@ -982,7 +982,7 @@ namespace boost {
                             while ((beg - stream.size()) < sz ) {
                                 T tmp;
                                 stream & tmp;
-                                const_cast<vector_set_of<T>* > (&(vl.value()))->push_back(tmp);
+                                const_cast<std::deque<T>* > (&(vl.value()))->push_back(tmp);
                             }
                         }
                         stream.pop_stack();
