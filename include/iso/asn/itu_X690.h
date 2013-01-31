@@ -257,6 +257,12 @@ namespace boost {
 
                 std::size_t to_x690_cast(const gentime_type& val, row_type& src);
 
+                ///////////////////////////////////////////////////////////////////////////////////
+                // ABSTRACT_SYNTAX to X.690
+
+
+                std::size_t to_x690_cast(const ABSTRACT_SYNTAX& val, row_type& src);
+
                 template<typename T>
                 row_type to_x690_cast(const T& val) {
                     row_type rslt;
@@ -635,6 +641,9 @@ namespace boost {
                 oarchive& operator<<(oarchive& stream, const implicit_value<reloid_type>& vl);
 
                 template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<ABSTRACT_SYNTAX>& vl);
+
+                template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<bitstring_type>& vl);
 
                 template<>
@@ -782,6 +791,12 @@ namespace boost {
                 template<>
                 bool from_x690_cast(gentime_type& val, const row_type& src);
 
+                ///////////////////////////////////////////////////////////////////////////////////
+                // ABSTRACT_SYNTAX from to X.690
+
+                template<>
+                bool from_x690_cast(ABSTRACT_SYNTAX& val, const row_type& src);
+
 
 
                 //////////////////////////////////////////////////////////
@@ -855,7 +870,7 @@ namespace boost {
 
                     template<typename T>
                     void operator&( const std::vector<T >& vl) {
-                        *this  <<  vl;
+                        *this  >>  vl;
                     }
 
                     template<typename T>
@@ -866,6 +881,22 @@ namespace boost {
                     tag test_tl(size_class& sz);
 
                     bool parse_tl(const tag& tg, size_class& rsltsz , bool settype, bool optional = false);
+
+                    virtual int test_id() {
+                        tag tmptag;
+                        if (tag_x690_cast(tmptag, buffers(), buffers().begin()))
+                            return tmptag.id();
+                        else
+                            return tag::null_tag;
+                    }
+
+                    virtual int test_class() {
+                        tag tmptag;
+                        if (tag_x690_cast(tmptag, buffers(), buffers().begin()))
+                            return tmptag.mask() & 0xE0;
+                        else
+                            return tag::null_tag;
+                    }
 
                     bool parse_tl(const tag& tg , bool settype,  bool optional = false) {
                         size_class rsltsz;
@@ -902,8 +933,30 @@ namespace boost {
                     typedef boost::shared_ptr<T> shared_type;
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET , true)) {
                         *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
-                        stream &  (*vl.value());
-                        stream.pop_stack();
+                        stream &  explicit_value<T > (*vl.value(), vl.id(), vl.type());
+                        //stream.pop_stack();
+                    }
+                    return stream;
+                }
+
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const optional_explicit_value< std::vector<T> >& vl) {
+                    typedef boost::shared_ptr< std::vector<T> > shared_type;
+                    if (stream.parse_tl(vl, false , true)) {
+                        *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr< std::vector<T> > (new std::vector<T > ());
+                        stream >> explicit_value<std::vector<T> >(*vl.value(), vl.id(), vl.type());
+                        //stream.pop_stack();
+                    }
+                    return stream;
+                }
+
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const optional_explicit_value< std::deque<T> >& vl) {
+                    typedef boost::shared_ptr< std::deque<T> > shared_type;
+                    if (stream.parse_tl(vl, false , true)) {
+                        *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr< std::deque<T> > (new std::deque<T > ());
+                        stream >> explicit_value<std::deque<T> >(*vl.value(), vl.id(), vl.type());
+                        //stream.pop_stack();
                     }
                     return stream;
                 }
@@ -923,8 +976,30 @@ namespace boost {
                     typedef boost::shared_ptr<T> shared_type;
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET , true)) {
                         *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr<T > (new T());
-                        stream &  (*vl.value());
-                        stream.pop_stack();
+                        stream &  implicit_value<T > (*vl.value(), vl.id(), vl.type());
+                        //stream.pop_stack();
+                    }
+                    return stream;
+                }
+
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const optional_implicit_value< std::vector<T> >& vl) {
+                    typedef boost::shared_ptr< std::vector<T> > shared_type;
+                    if (stream.parse_tl(vl, false , true)) {
+                        *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr< std::vector<T> > (new std::vector<T > ());
+                        stream >> implicit_value<std::vector<T> >(*vl.value(), vl.id(), vl.type());
+                        //stream.pop_stack();
+                    }
+                    return stream;
+                }
+
+                template<typename T>
+                iarchive& operator>>(iarchive& stream, const optional_implicit_value< std::deque<T> >& vl) {
+                    typedef boost::shared_ptr< std::deque<T> > shared_type;
+                    if (stream.parse_tl(vl, false , true)) {
+                        *const_cast<shared_type*> (&(vl.value())) = boost::shared_ptr< std::deque<T> > (new std::deque<T > ());
+                        stream >> implicit_value<std::deque<T> >(*vl.value(), vl.id(), vl.type());
+                        //stream.pop_stack();
                     }
                     return stream;
                 }
@@ -1112,6 +1187,9 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl);
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<ABSTRACT_SYNTAX>& vl);
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<bitstring_type>& vl);

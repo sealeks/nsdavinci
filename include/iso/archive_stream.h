@@ -174,6 +174,24 @@ namespace boost {
                     size_ = 0;
                 }
                 
+                bool  bind(row_type& vl){
+                    vl.clear();
+                    for(iterator it=listbuffers_.begin();it!=listbuffers_.end();++it)
+                        vl.insert(vl.end(),
+                                const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)),
+                                const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)) + boost::asio::buffer_size(*it));
+                      clear();
+                      return true;
+                }
+                
+                virtual int test_id() {
+                    return 0;
+                }
+                
+                virtual int test_class() {
+                    return 0;
+                }                
+                
    
 
 
@@ -268,7 +286,15 @@ namespace boost {
                     return size_;
                 }
 
-
+                bool  bind(const row_type& vl){
+                      clear();
+                      add(vl);
+                      return true;
+                }
+                
+                virtual int test_id() = 0;
+                
+                virtual int test_class() = 0;                
 
             protected:
 

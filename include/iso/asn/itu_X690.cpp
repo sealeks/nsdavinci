@@ -312,6 +312,15 @@ namespace boost {
                     return (src.size() - strtsz);
                 }
 
+                ///////////////////////////////////////////////////////////////////////////////////
+                // ABSTRACT_SYNTAX to X.690
+
+                std::size_t to_x690_cast(const ABSTRACT_SYNTAX& val, row_type& src) {
+                    std::size_t strtsz = src.size();
+                    val.get(src);
+                    return (src.size() - strtsz);
+                }
+
 
                 // STRING REALISZATION
 
@@ -419,6 +428,12 @@ namespace boost {
                 }
 
                 template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<ABSTRACT_SYNTAX>& vl) {
+                    vl.setcontructed();
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<bitstring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
@@ -511,7 +526,7 @@ namespace boost {
                 /// oarchive
 
                 oarchive::iterator  oarchive::addtag(const  tag& tg,  bool settype)  {
-                    if (false/*rule_ != CER_ENCODING*/) return add(to_x690_cast(tg));
+                    if (/*false*/rule_ != CER_ENCODING) return add(to_x690_cast(tg));
                     iterator it = add(to_x690_cast(tg));
                     if (!stack_.empty() &&  stack_.top().is_set)
                         stack_.top().tlv_iterators.push_back( tlv_info(tg, iterator_pair(it, it)));
@@ -520,7 +535,7 @@ namespace boost {
                 }
 
                 void  oarchive::pop_stack()  {
-                    if (false/*rule_ != CER_ENCODING*/) return;
+                    if (/*false*/rule_ != CER_ENCODING) return;
                     if (!stack_.empty()) {
                         if (stack_.top().is_set)
                             sort_tlv(stack_.top().tlv_iterators);
@@ -543,7 +558,7 @@ namespace boost {
                 }
 
                 void oarchive::clear()  {
-                    while (stack_.empty())
+                    while (!stack_.empty())
                         stack_.pop();
                     boost::asio::iso::base_oarchive::clear();
 
@@ -973,6 +988,16 @@ namespace boost {
                     return true; //!val.value().is_special();
                 }
 
+                ///////////////////////////////////////////////////////////////////////////////////
+                // ABSTRACT_SYNTAX from to X.690
+
+                template<>
+                bool from_x690_cast(ABSTRACT_SYNTAX& val, const row_type& src) {
+                    val.set(src);
+                    return true;
+                }
+
+
                 ////////////////////////////////////////////
 
                 template<>
@@ -1052,6 +1077,11 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl) {
+                    return  primitive_desirialize(stream, vl);
+                }
+
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<ABSTRACT_SYNTAX>& vl) {
                     return  primitive_desirialize(stream, vl);
                 }
 
@@ -1192,7 +1222,9 @@ namespace boost {
 
                     while (size_test < size_tlv) {
                         std::size_t sztag = tag_x690_cast(tmptag, buffers(), buffers().begin());
-                        if (sztag && (tg == tmptag)) {
+                        if (sztag && (tg == tmptag )) {
+                            if (optional)
+                                return true;
                             std::size_t szsize = size_x690_cast(rsltsz, buffers(),  buffers().begin() , sztag);
                             if (szsize) {
                                 std::size_t next_test = rsltsz.size();
