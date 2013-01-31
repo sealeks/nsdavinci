@@ -112,8 +112,8 @@ namespace boost {\
             } ;\
 
 #define BOOST_ASN_TYPEDEF(regtype, type , id, cl)  typedef type  regtype;
-#define BOOST_ASN_IMPLICIT_TYPEDEF(regtype, type , id, cl)  typedef boost::asio::asn::implicit_typedef< type, class _____TAGTYPE___##regtype ,  id , cl>  regtype;
-#define BOOST_ASN_EXPLICIT_TYPEDEF(regtype, type , id, cl)  typedef boost::asio::asn::explicit_typedef< type,  class _____TAGTYPE___##regtype , id , cl>   regtype;      
+#define BOOST_ASN_IMPLICIT_TYPEDEF(regtype, type , id, cl)  typedef boost::asio::asn::implicit_typedef< type, class _____TAGTYPE___##regtype ,  id , boost::asio::asn:: cl>  regtype;
+#define BOOST_ASN_EXPLICIT_TYPEDEF(regtype, type , id, cl)  typedef boost::asio::asn::explicit_typedef< type,  class _____TAGTYPE___##regtype , id , boost::asio::asn:: cl>   regtype;      
 
 
 
@@ -259,18 +259,18 @@ namespace boost {
                 oid_type(const boost::array<oidindx_type, 9 > & vl);
 
                 oid_type(const boost::array<oidindx_type, 10 > & vl);
-                
+
                 oid_type(const boost::array<oidindx_type, 11 > & vl);
 
-                oid_type(const boost::array<oidindx_type, 12> & vl);    
-                
+                oid_type(const boost::array<oidindx_type, 12 > & vl);
+
                 oid_type(const boost::array<oidindx_type, 13 > & vl);
 
                 oid_type(const boost::array<oidindx_type, 14 > & vl);
-                
+
                 oid_type(const boost::array<oidindx_type, 15 > & vl);
 
-                oid_type(const boost::array<oidindx_type, 16> & vl);                     
+                oid_type(const boost::array<oidindx_type, 16 > & vl);
 
             } ;
 
@@ -359,7 +359,7 @@ namespace boost {
                 explicit bitstring_type(const row_type& vl, std::size_t unuse = 0);
 
                 explicit bitstring_type(const std::vector<bool>& vl);
-                
+
                 explicit bitstring_type(bool vl, std::size_t n);
 
                 bitstring_type(const dynamic_bitset_type& vl) : std::vector<int8_t>() {
@@ -400,7 +400,13 @@ namespace boost {
 
                 operator int64_t() const;
 
-                //operator row_type() const;               
+                //operator row_type() const; 
+                
+                friend bitstring_type operator|(const bitstring_type& ls, const bitstring_type& rs);
+                
+                friend bitstring_type operator&(const bitstring_type& ls, const bitstring_type& rs);  
+                
+                friend bitstring_type operator^(const bitstring_type& ls, const bitstring_type& rs);        
 
 
 
@@ -722,6 +728,32 @@ namespace boost {
                 boost::posix_time::ptime val_;
             } ;
 
+            class ABSTRACT_SYNTAX  {
+            public:
+
+                ABSTRACT_SYNTAX() {
+                }
+                
+ 
+                template<typename Archive> 
+                void bind(Archive& arch){
+                    arch.bind(data);
+                }                
+                 
+                void set(const row_type& dt){
+                    data=dt;
+                }                
+ 
+                std::size_t get(row_type& dt) const {
+                    dt.insert(dt.end(),data.begin(),data.end());
+                    return data.size();
+                }   
+                    
+            private:
+                row_type data;
+                
+            };
+
 
             row_type from_gentime(const gentime_type& val);
 
@@ -985,6 +1017,10 @@ namespace boost {
                 int8_t mask() const {
                     return mask_;
                 }
+                
+                 void setcontructed() const {
+                    mask_|=CONSTRUCTED_ENCODING;
+                }
 
                 bool operator==(const tag& rs) const {
                     return (id() == rs.id() && (mask() | CONSTRUCTED_ENCODING) == ( rs.mask() | CONSTRUCTED_ENCODING));
@@ -998,7 +1034,7 @@ namespace boost {
             private:
                 id_type id_;
                 T& val_;
-                int8_t   mask_;
+                mutable int8_t   mask_;
             } ;
 
 

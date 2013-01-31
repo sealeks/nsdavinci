@@ -64,24 +64,24 @@ namespace boost {
 
             oid_type::oid_type(const boost::array<oidindx_type, 10 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
             }
-            
+
             oid_type::oid_type(const boost::array<oidindx_type, 11 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
             }
 
             oid_type::oid_type(const boost::array<oidindx_type, 12 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }    
-            
+            }
+
             oid_type::oid_type(const boost::array<oidindx_type, 13 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
             }
 
             oid_type::oid_type(const boost::array<oidindx_type, 14 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
             }
-            
+
             oid_type::oid_type(const boost::array<oidindx_type, 15 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
             }
 
             oid_type::oid_type(const boost::array<oidindx_type, 16 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }               
+            }
 
             std::ostream& operator<<(std::ostream& stream, const oid_type& vl) {
                 for (oid_type::const_iterator it = vl.begin(); it != vl.end(); ++it)
@@ -283,7 +283,19 @@ namespace boost {
 
             //bitstring_type::operator row_type() const{
             //    return  *this;
-            //}               
+            //}    
+
+            bitstring_type operator|(const bitstring_type& ls, const bitstring_type& rs) {
+                return bitstring_type();//ls.operator  dynamic_bitset_type() | rs.operator  dynamic_bitset_type();
+            }
+
+            bitstring_type operator&(const bitstring_type& ls, const bitstring_type& rs) {
+                return bitstring_type();//ls.operator  dynamic_bitset_type() & rs.operator  dynamic_bitset_type();
+            }
+
+            bitstring_type operator^(const bitstring_type& ls, const bitstring_type& rs) {
+                return bitstring_type();//ls.operator  dynamic_bitset_type() ^ rs.operator  dynamic_bitset_type();
+            }
 
             void bitstring_type::construct(const std::vector<bool>& vl) {
                 assign( (vl.size() % 8) ? (vl.size() / 8 + 1) : (vl.size() / 8), 0);
