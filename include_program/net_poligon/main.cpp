@@ -247,7 +247,13 @@ private:
             resolver_type::iterator endpoint_iterator) {
         if (!error) {
             if (trans_) {
+                
+#if defined(SESSION_PROT)                
+                std::cout << "Server accept data : " << start_response(trans_->respond_str()) << std::endl;
+#else
                 std::cout << "Server accept data : " << trans_->respond_str() << std::endl;
+#endif                
+                
             }
         }
         else if (endpoint_iterator != resolver_type::iterator()) {
