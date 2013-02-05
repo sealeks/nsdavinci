@@ -16,6 +16,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>../../include_program/asn_poligon/MyTest.h</itemPath>
     <itemPath>../../include_program/asn_poligon/main.cpp</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>

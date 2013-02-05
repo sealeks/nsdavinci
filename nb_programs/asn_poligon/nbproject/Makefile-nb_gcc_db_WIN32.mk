@@ -34,7 +34,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1914278327/main.o
+	${OBJECTDIR}/_ext/300413499/main.o
 
 
 # C Compiler Flags
@@ -61,10 +61,10 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/asn_poligon ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/1914278327/main.o: /F/Project/davinci/include_program/asn_poligon/main.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1914278327
+${OBJECTDIR}/_ext/300413499/main.o: ../../include_program/asn_poligon/main.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/300413499
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1914278327/main.o /F/Project/davinci/include_program/asn_poligon/main.cpp
+	$(COMPILE.cc) -g -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/300413499/main.o ../../include_program/asn_poligon/main.cpp
 
 # Subprojects
 .build-subprojects:
