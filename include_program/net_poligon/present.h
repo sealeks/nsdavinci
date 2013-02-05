@@ -5,8 +5,8 @@
  * Created on 31 Январь 2013 г., 13:28
  */
 
-#ifndef PRESENT_H
-#define	PRESENT_H
+#ifndef ___PRESENT_H
+#define	___PRESENT_H
 
 #include <cstdlib>
 #include <deque>
