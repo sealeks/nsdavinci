@@ -32,13 +32,19 @@ namespace boost {
 
 
             std::string binary_to_hexsequence_debug(const std::string& vl);
+            
+            
+            
+            typedef std::vector<const_buffer>                                                vector_buffer;
+            typedef const vector_buffer&                                                       const_vector_buffer;
+            typedef vector_buffer::iterator                                                      vector_buffer_iterator;
+
+            const vector_buffer NULL_VECTOR_BUFFER = vector_buffer();
 
 
             typedef  std::vector<int8_t>                                     raw_type;
             typedef  boost::shared_ptr<raw_type>                      raw_type_ptr;
             typedef  std::vector<raw_type_ptr>                          vect_raw_type_ptr;
-
-
 
             typedef  std::list<mutable_buffer>                                                                                             list_mutable_buffers;
             typedef  std::list<const_buffer>                                                                                                 list_const_buffers;
@@ -50,79 +56,9 @@ namespace boost {
             bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit,  std::size_t& rslt, std::size_t start = 0);
             bool row_cast( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, raw_type& raw,  std::size_t start , std::size_t size);
 
-            class buffer_sequence : protected  std::list<raw_type_ptr> {
-                typedef std::list<raw_type_ptr> super_rype;
-
-            public:
-
-                typedef super_rype::iterator                              iterator;
-                typedef super_rype::const_iterator                     const_iterator;
-                typedef super_rype::reverse_iterator                  reverse_iterator;
-                typedef super_rype::const_reverse_iterator         const_reverse_iterator;
-
-                buffer_sequence() : std::list<raw_type_ptr>(), octet_size_(0) {
-                }
-
-                void  push_back(const raw_type& vl)  {
-                    if (vl.empty()) return;
-                    octet_size_ += vl.size();
-                    super_rype::push_back(raw_type_ptr( new raw_type(vl)));
-                }
-
-                void  push_front(const raw_type& vl)  {
-                    if (vl.empty()) return;
-                    octet_size_ += vl.size();
-                    super_rype::push_front(raw_type_ptr( new raw_type(vl)));
-                }
-
-                iterator  insert(const raw_type& vl, iterator it)  {
-                    if (vl.empty()) return it;
-                    octet_size_ += vl.size();
-                    return super_rype::insert(it, raw_type_ptr(new raw_type(vl)));
-                }
-
-                iterator insert(const raw_type& vl, std::size_t sz, iterator bg)  {
-                    std::size_t tmsz = 0;
-                    for (iterator it = bg; it != end(); ++it) {
-                        if (((*it)->size() + tmsz) < sz)
-                            tmsz += (*it)->size();
-                        else {
-                            if (((*it)->size() + tmsz) == sz)
-                                return insert(vl, ++it);
-                            else {
-                                std::size_t szdelim = (*it)->size() + tmsz - sz;
-                                raw_type_ptr tmp = *it;
-                                raw_type_ptr first = raw_type_ptr( new raw_type(tmp->begin(), tmp->begin() + szdelim));
-                                raw_type_ptr thr = raw_type_ptr( new raw_type(tmp->begin() + szdelim, tmp->end()));
-                                it = super_rype::erase(it);
-                                it = super_rype::insert(it, first);
-                                octet_size_ += vl.size();
-                                iterator itr = it = super_rype::insert(it, raw_type_ptr( new raw_type(vl)));
-                                it = super_rype::insert(it, thr);
-                                return itr;
-                            }
-                        }
-                    }
-                    push_back(vl);
-                    return end();
-                }
-
-                std::size_t octet_size() const {
-                    return octet_size_;
-                }
-
-
-            private:
-
-                std::size_t octet_size_;
-
-            } ;
-
-
-
-
-
-
+            
+            
+                       
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -324,6 +260,60 @@ namespace boost {
             std::ostream& operator<<(std::ostream& stream, const  list_mutable_buffers& vl);
 
             std::ofstream& operator<<(std::ofstream& stream, const  list_mutable_buffers& vl);
+            
+            
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////            
+           //   class  send_buffer_impl 
+
+            class  send_buffer_impl {
+            public:
+
+                send_buffer_impl() : size_(0) {
+                }
+
+                virtual ~send_buffer_impl() {
+                }
+
+                const_vector_buffer  pop() {
+                    return buff_ ;
+                }
+
+                std::size_t  size(std::size_t  sz = 0) {
+
+                    if (sz == 0) return size_;
+                    std::size_t tmpsize = sz;
+                    while ((!buff_.empty()) && tmpsize) {
+                        vector_buffer_iterator it = buff_.begin();
+                        if (tmpsize < buffer_size(*it)) {
+                            *it = const_buffer((*it) + sz);
+                            return size_ += sz;
+                        }
+                        else {
+                            tmpsize = buffer_size(*it) > tmpsize ? 0 : (tmpsize - buffer_size(*it));
+                            buff_.erase(it);
+                        }
+                    }
+                    return size_ += sz;
+                }
+
+                std::size_t  receivesize() const {
+                    return  buffer_size(buff_);
+                }
+
+                bool ready() const {
+                    return  !buffer_size(buff_);
+                }
+
+
+            protected:
+                vector_buffer                  buff_;
+                std::size_t                        size_;
+            } ;
+
+
+            typedef boost::shared_ptr<send_buffer_impl>      send_buffer_ptr; 
 
 
         }

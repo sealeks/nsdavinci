@@ -35,6 +35,8 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
+#include <iso/archive_stream.h>
+
 
 
 namespace boost {
@@ -133,61 +135,7 @@ namespace boost {
 
 
 
-            typedef std::vector<const_buffer>                                                vector_buffer;
-            typedef const vector_buffer&                                                       const_vector_buffer;
-            typedef vector_buffer::iterator                                                      vector_buffer_iterator;
-
-            const vector_buffer NULL_VECTOR_BUFFER = vector_buffer();
-
-            //   class  send_buffer_impl 
-
-            class  send_buffer_impl {
-            public:
-
-                send_buffer_impl() : size_(0) {
-                }
-
-                virtual ~send_buffer_impl() {
-                }
-
-                const_vector_buffer  pop() {
-                    return buff_ ;
-                }
-
-                std::size_t  size(std::size_t  sz = 0) {
-
-                    if (sz == 0) return size_;
-                    std::size_t tmpsize = sz;
-                    while ((!buff_.empty()) && tmpsize) {
-                        vector_buffer_iterator it = buff_.begin();
-                        if (tmpsize < buffer_size(*it)) {
-                            *it = const_buffer((*it) + sz);
-                            return size_ += sz;
-                        }
-                        else {
-                            tmpsize = buffer_size(*it) > tmpsize ? 0 : (tmpsize - buffer_size(*it));
-                            buff_.erase(it);
-                        }
-                    }
-                    return size_ += sz;
-                }
-
-                std::size_t  receivesize() const {
-                    return  buffer_size(buff_);
-                }
-
-                bool ready() const {
-                    return  !buffer_size(buff_);
-                }
-
-
-            protected:
-                vector_buffer                    buff_;
-                std::size_t                           size_;
-            } ;
-
-
-            typedef boost::shared_ptr<send_buffer_impl>      send_buffer_ptr;
+          
 
             class  sevice_send_buffer_impl : public send_buffer_impl {
             public:
