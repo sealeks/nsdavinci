@@ -98,7 +98,21 @@ namespace boost {\
     }\
 }\
 
-
+#define BOOST_ASN_CHOISE_REGESTRATE(regtype)\
+namespace boost {\
+    namespace asio {\
+        namespace asn {\
+            template<typename Archive>\
+                void bind_element(Archive& arch, const regtype & vl){\
+                    arch & boost::asio::asn::bind_choice(arch, vl);\
+                }  \
+            template<typename Archive>\
+                void bind_element(Archive& arch, regtype & vl){\
+                    arch & boost::asio::asn::bind_choice(arch, vl);\
+                }  \
+        }\
+    }\
+}\
 
 #define BOOST_ASN_INTERNAL_REGESTRATE(regtype, id) \
             template<>\
@@ -135,6 +149,12 @@ namespace boost {\
 
 #define BOOST_ASN_VALUE_CHOICE(nm ,tp ,enm) boost::shared_ptr< tp > nm () const {return get< tp >(enm);}; void nm ( tp * vl) { set( vl, enm );}
 
+#define BOOST_ASN_VALUE_FUNC_DECLARATE( type, var)     boost::shared_ptr< type > var  ## __new () { return var = boost::shared_ptr< type >( new type ());} \
+	void  var ##  __free() { var = boost::shared_ptr< type >() ;} \
+                boost::shared_ptr< type > var  ## __get_or_create () { return var  ? var  : (var = boost::shared_ptr< type >( new type ()) );} \
+                void var  ## __assign ( boost::shared_ptr< type > vl ) { var  =  vl ;} \
+                void var  ## __assign ( type * vl ) { var  =  boost::shared_ptr< type >(vl)  ;} \
+                void var  ## __assign ( const type & vl ) { var  =  boost::shared_ptr< type >( new type (vl)) ;}
 
 
 
@@ -401,12 +421,12 @@ namespace boost {
                 operator int64_t() const;
 
                 //operator row_type() const; 
-                
+
                 friend bitstring_type operator|(const bitstring_type& ls, const bitstring_type& rs);
-                
-                friend bitstring_type operator&(const bitstring_type& ls, const bitstring_type& rs);  
-                
-                friend bitstring_type operator^(const bitstring_type& ls, const bitstring_type& rs);        
+
+                friend bitstring_type operator&(const bitstring_type& ls, const bitstring_type& rs);
+
+                friend bitstring_type operator^(const bitstring_type& ls, const bitstring_type& rs);
 
 
 
@@ -728,31 +748,30 @@ namespace boost {
                 boost::posix_time::ptime val_;
             } ;
 
-            class ABSTRACT_SYNTAX  {
+            class any_type  {
             public:
 
-                ABSTRACT_SYNTAX() {
+                any_type() {
                 }
-                
- 
-                template<typename Archive> 
-                void bind(Archive& arch){
+
+                template<typename Archive>
+                void bind(Archive& arch) {
                     arch.bind(data);
-                }                
-                 
-                void set(const row_type& dt){
-                    data=dt;
-                }                
- 
+                }
+
+                void set(const row_type& dt) {
+                    data = dt;
+                }
+
                 std::size_t get(row_type& dt) const {
-                    dt.insert(dt.end(),data.begin(),data.end());
+                    dt.insert(dt.end(), data.begin(), data.end());
                     return data.size();
-                }   
-                    
+                }
+
             private:
                 row_type data;
-                
-            };
+
+            } ;
 
 
             row_type from_gentime(const gentime_type& val);
@@ -1017,9 +1036,9 @@ namespace boost {
                 int8_t mask() const {
                     return mask_;
                 }
-                
-                 void setcontructed() const {
-                    mask_|=CONSTRUCTED_ENCODING;
+
+                void setcontructed() const {
+                    mask_ |= CONSTRUCTED_ENCODING;
                 }
 
                 bool operator==(const tag& rs) const {
@@ -1386,10 +1405,11 @@ namespace boost {
                 boost::shared_ptr<T>& value(bool isinput, E tp)  {
                     typedef  choice_holder<T> choice_holder_type;
                     typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
-                    if (!val_ || isinput)
-                        val_ = type_ptr( new choice_holder<T > ());
-                    if (isinput)
-                        type(tp);
+                    if (/*!val_ ||*/ isinput)
+                        set ( new T(), tp);
+                    // val_ = type_ptr( new choice_holder<T > ());
+                    //if (isinput)
+                    //type(tp);
                     return  boost::static_pointer_cast< choice_holder_type > (val_)->value();
                 }
 
@@ -1408,12 +1428,16 @@ namespace boost {
                     typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
                     val_ = type_ptr( new choice_holder<T > (vl, static_cast<int> (ID)));
                 }
+                
+                void free() {
+                    val_ = type_ptr();
+                }                
 
             protected:
 
                 type_ptr val_;
 
-            } ;
+            };
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1471,6 +1495,22 @@ namespace boost {
             inline bool bind_basic(Archive & arch, explicit_typedef<T, Tag, ID, TYPE>& vl) {
                 std::size_t tst = arch.size();
                 arch & explicit_value<T > (vl.value(), ID, TYPE);
+                return (arch.size() != tst);
+            }
+
+            template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
+            inline bool bind_basic(Archive & arch, boost::shared_ptr< implicit_typedef<T, Tag, ID, TYPE> >& vl) {
+                if (!vl) return false;
+                std::size_t tst = arch.size();
+                arch & implicit_value<T > (vl->value(), ID, TYPE);
+                return (arch.size() != tst);
+            }
+
+            template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
+            inline bool bind_basic(Archive & arch, boost::shared_ptr< explicit_typedef<T, Tag, ID, TYPE> >& vl) {
+                if (!vl) return false;
+                std::size_t tst = arch.size();
+                arch & explicit_value<T > (vl->value(), ID, TYPE);
                 return (arch.size() != tst);
             }
 
@@ -1625,6 +1665,27 @@ namespace boost {
             inline bool bind_choice(Archive & arch, T& vl) {
                 std::size_t tst = arch.size();
                 arch & choice_value<T > (vl);
+                return (arch.size() != tst);
+            }
+
+            template<typename Archive, typename T>
+            inline bool bind_choice(Archive & arch,  boost::shared_ptr<T>& vl) {
+                std::size_t tst = arch.size();
+                arch & choice_value<T > (vl);
+                return (arch.size() != tst);
+            }
+
+            template<typename Archive, typename T>
+            inline bool bind_element(Archive& arch, const T& vl) {
+                std::size_t tst = arch.size();
+                arch & vl;
+                return (arch.size() != tst);                
+            }
+
+            template<typename Archive, typename T>
+            inline bool bind_element(Archive& arch, T& vl) {
+                std::size_t tst = arch.size();                
+                arch & vl;
                 return (arch.size() != tst);
             }
 

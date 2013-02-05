@@ -313,9 +313,9 @@ namespace boost {
                 }
 
                 ///////////////////////////////////////////////////////////////////////////////////
-                // ABSTRACT_SYNTAX to X.690
+                // any_type to X.690
 
-                std::size_t to_x690_cast(const ABSTRACT_SYNTAX& val, row_type& src) {
+                std::size_t to_x690_cast(const any_type& val, row_type& src) {
                     std::size_t strtsz = src.size();
                     val.get(src);
                     return (src.size() - strtsz);
@@ -428,9 +428,10 @@ namespace boost {
                 }
 
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<ABSTRACT_SYNTAX>& vl) {
-                    vl.setcontructed();
-                    return primitive_sirialize(stream, vl);
+                oarchive& operator<<(oarchive& stream, const implicit_value<any_type>& vl) {
+                    //vl.setcontructed();
+                    return stream << vl.value();
+                    //return primitive_sirialize(stream, vl);
                 }
 
                 template<>
@@ -989,10 +990,10 @@ namespace boost {
                 }
 
                 ///////////////////////////////////////////////////////////////////////////////////
-                // ABSTRACT_SYNTAX from to X.690
+                // any_type from to X.690
 
                 template<>
-                bool from_x690_cast(ABSTRACT_SYNTAX& val, const row_type& src) {
+                bool from_x690_cast(any_type& val, const row_type& src) {
                     val.set(src);
                     return true;
                 }
@@ -1081,9 +1082,17 @@ namespace boost {
                 }
 
                 template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<ABSTRACT_SYNTAX>& vl) {
-                    return  primitive_desirialize(stream, vl);
-                }
+                iarchive& operator>>(iarchive& stream, const implicit_value<any_type>& vl) {
+                    std::size_t sz = stream.stack_size();
+                    row_type data;
+                    if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin() , data , 0 , sz )) {
+                            if (from_x690_cast(*const_cast<any_type*> (&vl.value()), data)) {
+                               // stream.pop_stack();
+                            }
+                        }
+                    return  stream;
+                    //return  primitive_desirialize(stream, vl);
+                }   
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<bitstring_type>& vl) {
@@ -1199,6 +1208,16 @@ namespace boost {
                     }
                     return tag();
                 }
+                
+                std::size_t iarchive::stack_size() {
+
+                    if (!stack_.empty()) {
+                        return  stack_.top().sizeinfo.defined ?
+                                stack_.top().sizeinfo.size : ((stack_.top().sizeinfo.size > 2) ?
+                                (stack_.top().sizeinfo.size - 2) : 0  );
+                    }          
+                    return 0;
+                }                
 
                 bool iarchive::parse_tl(const tag& tg, size_class& rsltsz , bool settype, bool optional) {
 

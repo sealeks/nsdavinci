@@ -258,10 +258,10 @@ namespace boost {
                 std::size_t to_x690_cast(const gentime_type& val, row_type& src);
 
                 ///////////////////////////////////////////////////////////////////////////////////
-                // ABSTRACT_SYNTAX to X.690
+                // any_type to X.690
 
 
-                std::size_t to_x690_cast(const ABSTRACT_SYNTAX& val, row_type& src);
+                std::size_t to_x690_cast(const any_type& val, row_type& src);
 
                 template<typename T>
                 row_type to_x690_cast(const T& val) {
@@ -456,7 +456,7 @@ namespace boost {
                     std::size_t sz = stream.size();
                     typedef typename std::vector<T>::const_iterator   vect_type_iterator;
                     for (vect_type_iterator itr = vl.value().begin() ; itr != vl.value().end() ; ++itr)
-                        stream & (*itr );
+                            boost::asio::asn::bind_element(stream , (*itr ));
                     sz = stream.size(sz);
                     ++it;
 
@@ -479,7 +479,7 @@ namespace boost {
                     std::size_t sz = stream.size();
                     typedef typename std::deque<T>::const_iterator   vect_type_iterator;
                     for (vect_type_iterator itr = vl.value().begin() ; itr != vl.value().end() ; ++itr)
-                        stream & (*itr );
+                            boost::asio::asn::bind_element(stream , (*itr ));
                     sz = stream.size(sz);
                     ++it;
 
@@ -492,6 +492,8 @@ namespace boost {
                     stream.pop_stack();
                     return stream;
                 }
+                
+               
 
                 template<typename T>
                 oarchive& primitive_sirialize(oarchive& stream, const implicit_value<T>& vl) {
@@ -641,7 +643,7 @@ namespace boost {
                 oarchive& operator<<(oarchive& stream, const implicit_value<reloid_type>& vl);
 
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<ABSTRACT_SYNTAX>& vl);
+                oarchive& operator<<(oarchive& stream, const implicit_value<any_type>& vl);
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<bitstring_type>& vl);
@@ -792,10 +794,10 @@ namespace boost {
                 bool from_x690_cast(gentime_type& val, const row_type& src);
 
                 ///////////////////////////////////////////////////////////////////////////////////
-                // ABSTRACT_SYNTAX from to X.690
+                // any_type from to X.690
 
                 template<>
-                bool from_x690_cast(ABSTRACT_SYNTAX& val, const row_type& src);
+                bool from_x690_cast(any_type& val, const row_type& src);
 
 
 
@@ -881,6 +883,8 @@ namespace boost {
                     tag test_tl(size_class& sz);
 
                     bool parse_tl(const tag& tg, size_class& rsltsz , bool settype, bool optional = false);
+                    
+                    std::size_t stack_size();
 
                     virtual int test_id() {
                         tag tmptag;
@@ -893,7 +897,7 @@ namespace boost {
                     virtual int test_class() {
                         tag tmptag;
                         if (tag_x690_cast(tmptag, buffers(), buffers().begin()))
-                            return tmptag.mask() & 0xE0;
+                            return tmptag.mask() & 0xC0;
                         else
                             return tag::null_tag;
                     }
@@ -1022,7 +1026,7 @@ namespace boost {
                         if  (tmpsize.undefsize()) {
                             while (!stream.is_endof() && stream.size()) {
                                 T tmp;
-                                stream & tmp;
+                                boost::asio::asn::bind_element(stream , tmp);
                                 const_cast<std::vector<T>* > (&(vl.value()))->push_back(tmp);
                             }
                         }
@@ -1030,7 +1034,7 @@ namespace boost {
                             std::size_t sz = tmpsize.size();
                             while ((beg - stream.size()) < sz ) {
                                 T tmp;
-                                stream & tmp;
+                                boost::asio::asn::bind_element(stream , tmp);
                                 const_cast<std::vector<T>* > (&(vl.value()))->push_back(tmp);
                             }
                         }
@@ -1048,7 +1052,7 @@ namespace boost {
                         if  (tmpsize.undefsize()) {
                             while (!stream.is_endof() && stream.size()) {
                                 T tmp;
-                                stream & tmp;
+                                boost::asio::asn::bind_element(stream , tmp);
                                 const_cast<std::deque<T>* > (&(vl.value()))->push_back(tmp);
                             }
                         }
@@ -1056,7 +1060,7 @@ namespace boost {
                             std::size_t sz = tmpsize.size();
                             while ((beg - stream.size()) < sz ) {
                                 T tmp;
-                                stream & tmp;
+                                boost::asio::asn::bind_element(stream , tmp);
                                 const_cast<std::deque<T>* > (&(vl.value()))->push_back(tmp);
                             }
                         }
@@ -1189,7 +1193,7 @@ namespace boost {
                 iarchive& operator>>(iarchive& stream, const implicit_value<reloid_type>& vl);
 
                 template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<ABSTRACT_SYNTAX>& vl);
+                iarchive& operator>>(iarchive& stream, const implicit_value<any_type>& vl);
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<bitstring_type>& vl);
