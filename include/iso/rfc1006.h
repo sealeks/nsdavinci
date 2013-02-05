@@ -195,8 +195,6 @@ namespace boost {
                         typename ConstBufferSequence::const_iterator end = buff.end();
                         typename ConstBufferSequence::value_type val;
 
-                        typedef  std::vector<typename ConstBufferSequence::value_type >    vcttype;
-
                         vector_buffer   tmp;
                         std::size_t tmpsize = 0;
 
