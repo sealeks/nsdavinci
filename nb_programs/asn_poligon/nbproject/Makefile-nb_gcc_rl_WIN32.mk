@@ -17,11 +17,11 @@ RANLIB=ranlib
 CC=gcc.exe
 CCC=g++.exe
 CXX=g++.exe
-FC=gfortran
+FC=g77.exe
 AS=as.exe
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=Cygwin_4.x-Windows
 CND_CONF=nb_gcc_rl_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -34,7 +34,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1914278327/main.o
+	${OBJECTDIR}/_ext/300413499/main.o
 
 
 # C Compiler Flags
@@ -61,10 +61,10 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/asn_poligon ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/1914278327/main.o: /F/Project/davinci/include_program/asn_poligon/main.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1914278327
+${OBJECTDIR}/_ext/300413499/main.o: ../../include_program/asn_poligon/main.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/300413499
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1914278327/main.o /F/Project/davinci/include_program/asn_poligon/main.cpp
+	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/300413499/main.o ../../include_program/asn_poligon/main.cpp
 
 # Subprojects
 .build-subprojects:
