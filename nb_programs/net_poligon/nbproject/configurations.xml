@@ -5,8 +5,6 @@
                    displayName="Исходные файлы "
                    projectFiles="true">
       <itemPath>../../include_program/net_poligon/main.cpp</itemPath>
-      <itemPath>../../include_program/net_poligon/rfc1006.cpp</itemPath>
-      <itemPath>../../include_program/net_poligon/rfc1006.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Файлы тестов"
@@ -41,6 +39,7 @@
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>isostack</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_iostreams</linkerLibLibItem>
@@ -81,6 +80,7 @@
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>isostack</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_iostreams</linkerLibLibItem>
@@ -121,6 +121,7 @@
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>isostack</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
@@ -156,6 +157,7 @@
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>isostack</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
