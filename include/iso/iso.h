@@ -133,8 +133,8 @@ namespace boost {
 
 
 
-            typedef std::vector<const_buffer>                                              vector_buffer;
-            typedef const vector_buffer&                                                      const_vector_buffer;
+            typedef std::vector<const_buffer>                                                vector_buffer;
+            typedef const vector_buffer&                                                       const_vector_buffer;
             typedef vector_buffer::iterator                                                      vector_buffer_iterator;
 
             const vector_buffer NULL_VECTOR_BUFFER = vector_buffer();
@@ -202,16 +202,16 @@ namespace boost {
 
             /// Transient implementation
 
-            typedef boost::shared_ptr<std::string>    trans_row_type;
+            typedef boost::shared_ptr<std::string>    trans_raw_type;
 
             class trans_data {
             public:
 
-                trans_data(const std::string& val = "") : req_(trans_row_type( new std::string(val)))  {
+                trans_data(const std::string& val = "") : req_(trans_raw_type( new std::string(val)))  {
                 }
 
-                trans_row_type request() const {
-                    return req_ ? req_ : trans_row_type( new std::string(""));
+                trans_raw_type request() const {
+                    return req_ ? req_ : trans_raw_type( new std::string(""));
                 };
 
                 const std::string& request_str() const {
@@ -222,8 +222,8 @@ namespace boost {
                     return req_ ? const_buffer(req_->data(), req_->size()) : const_buffer();
                 };
 
-                trans_row_type respond() const {
-                    return resp_ ? resp_ : trans_row_type( new std::string(""));
+                trans_raw_type respond() const {
+                    return resp_ ? resp_ : trans_raw_type( new std::string(""));
                 };
 
                 const std::string& respond_str() const {
@@ -235,13 +235,13 @@ namespace boost {
                 };
 
                 void respond(const std::string&  val) {
-                    resp_ = trans_row_type( new std::string(val));
+                    resp_ = trans_raw_type( new std::string(val));
                 };
 
 
             private:
-                trans_row_type req_;
-                mutable trans_row_type resp_;
+                trans_raw_type req_;
+                mutable trans_raw_type resp_;
                 std::string null_;
             } ;
 

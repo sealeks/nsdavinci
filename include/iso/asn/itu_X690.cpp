@@ -15,24 +15,24 @@ namespace boost {
         namespace asn {
             namespace x690 {
 
-                void endian_conv(row_type& val) {
+                void endian_conv(raw_type& val) {
 #ifdef BIG_ENDIAN_ARCHITECTURE                               
 #else
                     std::reverse(val.begin(), val.end());
 #endif               
                 }
 
-                row_type endian_conv_conv(const row_type& val) {
+                raw_type endian_conv_conv(const raw_type& val) {
 #ifdef BIG_ENDIAN_ARCHITECTURE
                     return val;
 #else
-                    row_type tmp(val.size());
+                    raw_type tmp(val.size());
                     std::copy(val.rbegin(), val.rend(), std::back_inserter(tmp));
                     return tmp;
 #endif                                
                 }
 
-                void endian_push_pack(const row_type& val,  row_type& dst) {
+                void endian_push_pack(const raw_type& val,  raw_type& dst) {
 #ifdef BIG_ENDIAN_ARCHITECTURE
                     std::copy(val.begin(), val.end(), std::back_inserter(dst))
 #else
@@ -50,41 +50,41 @@ namespace boost {
                 /////////////////////////////
 
                 template<>
-                std::size_t to_x690_cast(int8_t val, row_type& src) {
-                    src.push_back(static_cast<row_type::value_type> (0xFF & val));
+                std::size_t to_x690_cast(int8_t val, raw_type& src) {
+                    src.push_back(static_cast<raw_type::value_type> (0xFF & val));
                     return 1;
                 }
 
                 template<>
-                std::size_t to_x690_cast(uint8_t val, row_type& src) {
+                std::size_t to_x690_cast(uint8_t val, raw_type& src) {
                     return to_x690_cast(static_cast<int16_t> (val), src) ;
                 }
 
 
                 /// id class
 
-                std::size_t to_x690_cast(const tag& val, row_type& src) {
+                std::size_t to_x690_cast(const tag& val, raw_type& src) {
                     if (val.simpleid()) {
-                        src.push_back(static_cast<row_type::value_type> (val.simpleid()));
+                        src.push_back(static_cast<raw_type::value_type> (val.simpleid()));
                         return 1;
                     }
                     else {
                         id_type id_ = val.id();
-                        row_type tmp;
-                        src.push_back (static_cast<row_type::value_type> (0x1F | val.mask()));
+                        raw_type tmp;
+                        src.push_back (static_cast<raw_type::value_type> (0x1F | val.mask()));
                         while (id_) {
-                            tmp.push_back(static_cast<row_type::value_type> ((id_ & 0x7F) | CONTENT_CONIIUE));
+                            tmp.push_back(static_cast<raw_type::value_type> ((id_ & 0x7F) | CONTENT_CONIIUE));
                             id_  >>= 7;
                         }
                         endian_push_pack(tmp, src);
                         if (tmp.size())
-                            src.back() &= static_cast<row_type::value_type> (0x7F);
+                            src.back() &= static_cast<raw_type::value_type> (0x7F);
                         return (src.size() + 1);
                     }
                 }
 
-                row_type to_x690_cast(const tag& val) {
-                    row_type tmp;
+                raw_type to_x690_cast(const tag& val) {
+                    raw_type tmp;
                     to_x690_cast(val, tmp);
                     return tmp;
                 }
@@ -95,32 +95,32 @@ namespace boost {
                 ///////////////////////////////////////////////////////////////////////////////////
                 // size_class to X.690
 
-                std::size_t to_x690_cast(const size_class& val, row_type& src) {
+                std::size_t to_x690_cast(const size_class& val, raw_type& src) {
                     if (!val.undefsize()) {
                         if (val.size() < MAX_SIMPLELENGTH_SIZE ) {
-                            src.push_back (static_cast<row_type::value_type> ( static_cast<row_type::value_type> (val.size())));
+                            src.push_back (static_cast<raw_type::value_type> ( static_cast<raw_type::value_type> (val.size())));
                             return 1;
                         }
                         else {
-                            row_type tmp;
+                            raw_type tmp;
                             size_type vl = val.size();
                             while (vl) {
-                                tmp.push_back(static_cast<row_type::value_type> (0xFF & vl));
+                                tmp.push_back(static_cast<raw_type::value_type> (0xFF & vl));
                                 vl  >>= 8;
                             }
-                            src.push_back (static_cast<row_type::value_type> ( CONTENT_CONIIUE  | static_cast<row_type::value_type> (tmp.size())));
+                            src.push_back (static_cast<raw_type::value_type> ( CONTENT_CONIIUE  | static_cast<raw_type::value_type> (tmp.size())));
                             endian_push_pack(tmp, src);
                             return (src.size() + 1);
                         }
                     }
                     else {
-                        src.push_back (static_cast<row_type::value_type> ( static_cast<row_type::value_type> (UNDEF_BLOCK_SIZE)));
+                        src.push_back (static_cast<raw_type::value_type> ( static_cast<raw_type::value_type> (UNDEF_BLOCK_SIZE)));
                         return 1;
                     }
                 }
 
-                row_type to_x690_cast(const size_class& val) {
-                    row_type tmp;
+                raw_type to_x690_cast(const size_class& val) {
+                    raw_type tmp;
                     to_x690_cast(val, tmp);
                     return tmp;
                 }
@@ -129,29 +129,29 @@ namespace boost {
                 //// real cast
 
                 template<typename T, typename B, std::size_t MANT, std::size_t EXPB>
-                static std::size_t to_x690_cast_realimpl(T val, row_type& src) {
+                static std::size_t to_x690_cast_realimpl(T val, raw_type& src) {
 
                     std::size_t strtsz = src.size();
                     if (val == 0)
                         return 0;
                     if (val != val) {
-                        src.push_back(static_cast<row_type::value_type> (NAN_REAL_ID));
+                        src.push_back(static_cast<raw_type::value_type> (NAN_REAL_ID));
                         return 1;
                     }
                     if (std::numeric_limits<T>::infinity() == val) {
-                        src.push_back(static_cast<row_type::value_type> (INFINITY_REAL_ID));
+                        src.push_back(static_cast<raw_type::value_type> (INFINITY_REAL_ID));
                         return 1;
                     }
                     if (-std::numeric_limits<T>::infinity() == val) {
-                        src.push_back(static_cast<row_type::value_type> (NEGATINFINITY_REAL_ID));
+                        src.push_back(static_cast<raw_type::value_type> (NEGATINFINITY_REAL_ID));
                         return 1;
                     }
                     if (val == -0.0) {
-                        src.push_back(static_cast<row_type::value_type> (NEGATNULL_REAL_ID));
+                        src.push_back(static_cast<raw_type::value_type> (NEGATNULL_REAL_ID));
                         return 1;
                     }
 
-                    row_type tmp;
+                    raw_type tmp;
                     bool negat = false;
                     B  base0 = *reinterpret_cast<B*> (&val);
                     if (base0 < 0) {
@@ -166,14 +166,14 @@ namespace boost {
 
                     int32_t  exp = static_cast<int32_t> (base0 >> MANT) - MANT - EXPB;
 
-                    row_type::value_type sign = static_cast<row_type::value_type> (0x80  | ((negat) ? 0x40 : 0x0));
+                    raw_type::value_type sign = static_cast<raw_type::value_type> (0x80  | ((negat) ? 0x40 : 0x0));
 
-                    while (!static_cast<row_type::value_type> (base & '\xFF')) {
+                    while (!static_cast<raw_type::value_type> (base & '\xFF')) {
                         exp += 8;
                         base = base >> 8;
                     }
 
-                    while (!static_cast<row_type::value_type> (base & '\x1')) {
+                    while (!static_cast<raw_type::value_type> (base & '\x1')) {
                         exp += 1;
                         base = base >> 1;
                     }
@@ -186,24 +186,24 @@ namespace boost {
                     switch (expsz) {
                         case 1:
                         {
-                            src.push_back(static_cast<row_type::value_type> (sign));
+                            src.push_back(static_cast<raw_type::value_type> (sign));
                             break;
                         }
                         case 2:
                         {
                             sign |= 0x1;
-                            src.push_back(static_cast<row_type::value_type> (sign));
+                            src.push_back(static_cast<raw_type::value_type> (sign));
                             break;
                         }
                         case 3:
                         {
                             sign |= 0x2;
-                            src.push_back(static_cast<row_type::value_type> (sign));
+                            src.push_back(static_cast<raw_type::value_type> (sign));
                             break;
                         }
                         default:
                         {
-                            src.push_back(static_cast<row_type::value_type> (expsz));
+                            src.push_back(static_cast<raw_type::value_type> (expsz));
                         }
                     }
 
@@ -212,7 +212,7 @@ namespace boost {
 
                     tmp.clear();
                     while (base) {
-                        tmp.push_back(static_cast<row_type::value_type> (base) & '\xFF');
+                        tmp.push_back(static_cast<raw_type::value_type> (base) & '\xFF');
                         base = base >> 8;
                     }
                     endian_push_pack(tmp, src);
@@ -220,39 +220,39 @@ namespace boost {
                 }
 
                 template<>
-                std::size_t to_x690_cast(double val, row_type& src) {
+                std::size_t to_x690_cast(double val, raw_type& src) {
                     return to_x690_cast_realimpl<double, int64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (val, src);
                 }
 
                 template<>
-                std::size_t to_x690_cast(long double val, row_type& src) {
+                std::size_t to_x690_cast(long double val, raw_type& src) {
                     return to_x690_cast_realimpl<double, int64_t, DOUBLE_MANTISSA_SIZE, DOUBLE_EXPONENTA_DELT > (static_cast<double> (val), src);
                 }
 
                 template<>
-                std::size_t to_x690_cast(float val, row_type& src) {
+                std::size_t to_x690_cast(float val, raw_type& src) {
                     return to_x690_cast_realimpl<float, int32_t, FLOAT_MANTISSA_SIZE, FLOAT_EXPONENTA_DELT > (val, src);
                 }
 
                 //// bool cast
 
                 template<>
-                std::size_t to_x690_cast(bool val, row_type& src) {
-                    src.push_back(static_cast<row_type::value_type> (val ? 0xFF : 0));
+                std::size_t to_x690_cast(bool val, raw_type& src) {
+                    src.push_back(static_cast<raw_type::value_type> (val ? 0xFF : 0));
                     return 1;
                 }
 
 
                 //// null cast            
 
-                std::size_t to_x690_cast(const null_type& val, row_type& src) {
+                std::size_t to_x690_cast(const null_type& val, raw_type& src) {
                     return 0;
                 }
 
 
                 //// enumerated_type cast                          
 
-                std::size_t to_x690_cast(const enumerated_type& val, row_type& src) {
+                std::size_t to_x690_cast(const enumerated_type& val, raw_type& src) {
                     return to_x690_cast(val.value(),  src);
                 }
 
@@ -260,20 +260,20 @@ namespace boost {
 
                 //// oid cast
 
-                static void to_x690_castoid_impl(oidindx_type vl, row_type& src) {
-                    row_type tmp;
+                static void to_x690_castoid_impl(oidindx_type vl, raw_type& src) {
+                    raw_type tmp;
                     bool first = true;
                     while (vl || first) {
                         first = false;
-                        tmp.push_back(static_cast<row_type::value_type> ((static_cast<oidindx_type> (0x7F) & vl) | static_cast<oidindx_type> (CONTENT_CONIIUE)));
+                        tmp.push_back(static_cast<raw_type::value_type> ((static_cast<oidindx_type> (0x7F) & vl) | static_cast<oidindx_type> (CONTENT_CONIIUE)));
                         vl >>= 7;
                     }
                     endian_push_pack(tmp, src);
                     if (!src.empty())
-                        src.back() = src.back() & static_cast<row_type::value_type> (0x7F);
+                        src.back() = src.back() & static_cast<raw_type::value_type> (0x7F);
                 }
 
-                std::size_t to_x690_cast(const oid_type& val, row_type& src) {
+                std::size_t to_x690_cast(const oid_type& val, raw_type& src) {
                     if (val.size() < 2) return 0;
                     std::size_t strtsz = src.size();
                     oidindx_type tmpval = 40 * val[0];
@@ -284,7 +284,7 @@ namespace boost {
                     return (src.size() - strtsz);
                 }
 
-                std::size_t to_x690_cast(const reloid_type& val, row_type& src) {
+                std::size_t to_x690_cast(const reloid_type& val, raw_type& src) {
                     if (val.empty()) return 0;
                     std::size_t strtsz = src.size();
                     for (oid_type::const_iterator it = (val.begin()); it != val.end(); ++it)
@@ -295,9 +295,9 @@ namespace boost {
                 ///////////////////////////////////////////////////////////////////////////////////
                 // utctime to X.690
 
-                std::size_t to_x690_cast(const utctime_type& val, row_type& src) {
+                std::size_t to_x690_cast(const utctime_type& val, raw_type& src) {
                     std::size_t strtsz = src.size();
-                    row_type tmp = from_utctime(val);
+                    raw_type tmp = from_utctime(val);
                     src.insert(src.end(), tmp.begin(), tmp.end());
                     return (src.size() - strtsz);
                 }
@@ -305,9 +305,9 @@ namespace boost {
                 ///////////////////////////////////////////////////////////////////////////////////
                 // gentime to X.690
 
-                std::size_t to_x690_cast(const gentime_type& val, row_type& src) {
+                std::size_t to_x690_cast(const gentime_type& val, raw_type& src) {
                     std::size_t strtsz = src.size();
-                    row_type tmp = from_gentime(val);
+                    raw_type tmp = from_gentime(val);
                     src.insert(src.end(), tmp.begin(), tmp.end());
                     return (src.size() - strtsz);
                 }
@@ -315,7 +315,7 @@ namespace boost {
                 ///////////////////////////////////////////////////////////////////////////////////
                 // any_type to X.690
 
-                std::size_t to_x690_cast(const any_type& val, row_type& src) {
+                std::size_t to_x690_cast(const any_type& val, raw_type& src) {
                     std::size_t strtsz = src.size();
                     val.get(src);
                     return (src.size() - strtsz);
@@ -327,7 +327,7 @@ namespace boost {
                 template<>
                 void x690_string_to_stream_cast(const bitstring_type& val, oarchive& stream, int8_t lentype) {
                     if (!lentype) {
-                        stream.add(row_type(1, static_cast<row_type::value_type> (val.unusebits() % 8)));
+                        stream.add(raw_type(1, static_cast<raw_type::value_type> (val.unusebits() % 8)));
                         stream.add(val);
                         return;
                     }
@@ -338,19 +338,19 @@ namespace boost {
 
                         const_iterator_type it = val.begin();
                         while (it != val.end()) {
-                            //stream.add(row_type(1, static_cast<row_type::value_type> (TYPE_BITSTRING)));
+                            //stream.add(raw_type(1, static_cast<raw_type::value_type> (TYPE_BITSTRING)));
                             stream.addtag(tag(TYPE_BITSTRING), false);
                             difference_type  diff = std::distance(it, val.end());
                             if (diff > (CER_STRING_MAX_SIZE - 1)) {
                                 diff = (CER_STRING_MAX_SIZE - 1);
                                 stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff + 1))));
-                                stream.add(row_type(1, static_cast<row_type::value_type> (0)));
+                                stream.add(raw_type(1, static_cast<raw_type::value_type> (0)));
                             }
                             else {
                                 stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff + 1))));
-                                stream.add(row_type(1, static_cast<row_type::value_type> (val.unusebits() % 8)));
+                                stream.add(raw_type(1, static_cast<raw_type::value_type> (val.unusebits() % 8)));
                             }
-                            stream.add(row_type(it, it + diff));
+                            stream.add(raw_type(it, it + diff));
                             it = it + diff;
                             stream.pop_stack();
                         }
@@ -571,7 +571,7 @@ namespace boost {
                 /*INPUT STREAM                                                                                                                                                                                               */
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                bool find_marked_sequece( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit,  row_type& raw,  std::size_t start) {
+                bool find_marked_sequece( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit,  raw_type& raw,  std::size_t start) {
                     list_mutable_buffers::const_iterator it = bit;
                     std::size_t sz = 0;
                     std::size_t szc = 0 ;
@@ -587,9 +587,9 @@ namespace boost {
                             std::size_t szf = boost::asio::buffer_size(tmp);
                             std::size_t szi = 0;
                             while ((szi < szf) && (!find)) {
-                                if (!((*(boost::asio::buffer_cast<row_type::value_type*>(tmp) + szi)) & '\x80'))
+                                if (!((*(boost::asio::buffer_cast<raw_type::value_type*>(tmp) + szi)) & '\x80'))
                                     find = true;
-                                raw.push_back((*(boost::asio::buffer_cast<row_type::value_type*>(tmp) + szi) & '\x7F'));
+                                raw.push_back((*(boost::asio::buffer_cast<raw_type::value_type*>(tmp) + szi) & '\x7F'));
                                 szi++;
                             }
 
@@ -604,26 +604,26 @@ namespace boost {
                 ///////////////////////////////////////////////////////////////////////////////////
                 // tag from X.690                 
 
-                std::size_t tag_from_x690_cast(const tag& val, const row_type& src) {
-                    row_type tmp = to_x690_cast(val);
-                    if ((src.size() >= tmp.size()) &&  (tmp == row_type(src.begin(), src.begin() + tmp.size())))
+                std::size_t tag_from_x690_cast(const tag& val, const raw_type& src) {
+                    raw_type tmp = to_x690_cast(val);
+                    if ((src.size() >= tmp.size()) &&  (tmp == raw_type(src.begin(), src.begin() + tmp.size())))
                         return tmp.size();
                     return 0;
                 }
 
                 std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit, std::size_t  beg) {
-                    row_type s1;
+                    raw_type s1;
                     if (boost::asio::iso::row_cast(src, bit  , s1, beg , 1) && (!s1.empty()))  {
                         if ((s1[0] & '\x1F') != '\x1F') {
                             val = tag(s1[0] & '\x1F', s1[0] & '\xE0');
                             return 1;
                         }
                         else {
-                            row_type s2;
+                            raw_type s2;
                             if (find_marked_sequece(src, bit,  s2, beg + 1) && (!s2.empty()) && (s2.size() <= (sizeof (id_type)))) {
                                 id_type tmp = 0;
-                                for (row_type::const_iterator it = s2.begin(); it != s2.end(); ++it)
-                                    tmp = (tmp << 7) | (static_cast<row_type::value_type> (*it) & '\x7F');
+                                for (raw_type::const_iterator it = s2.begin(); it != s2.end(); ++it)
+                                    tmp = (tmp << 7) | (static_cast<raw_type::value_type> (*it) & '\x7F');
                                 val = tag(tmp , s1[0] & '\xE0');
                                 return (1 + s2.size());
                             }
@@ -637,7 +637,7 @@ namespace boost {
                 // size_class from X.690                
 
                 std::size_t  size_x690_cast(size_class& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit, std::size_t  beg) {
-                    row_type s1;
+                    raw_type s1;
                     if (boost::asio::iso::row_cast(src, bit  , s1, beg, 1) && (!s1.empty())) {
                         if (!(s1[0] & '\x80')) {
                             val = size_class(s1[0] & '\x7F');
@@ -646,7 +646,7 @@ namespace boost {
                         else {
                             if  ((s1[0] != '\x80')) {
                                 std::size_t szblk = static_cast<std::size_t > (s1[0] & '\x7F');
-                                row_type s2;
+                                raw_type s2;
                                 if (boost::asio::iso::row_cast(src, bit , s2, beg + 1, szblk) && (!s2.empty()) && (s2.size() <= sizeof (std::size_t))) {
                                     if (s2.front() & '\x80') {
                                         s2.insert(s2.begin(), '\x0');
@@ -681,7 +681,7 @@ namespace boost {
                 // real from X.690
 
                 template<typename T>
-                static bool from_x690_real_cast_special(T& vl, const row_type& val) {
+                static bool from_x690_real_cast_special(T& vl, const raw_type& val) {
                     if (!val.empty()) {
                         switch (val[0]) {
                             case NAN_REAL_ID:
@@ -716,7 +716,7 @@ namespace boost {
                 }
 
                 template<typename T>
-                static bool from_x690_real_cast_decimal(T& vl, const row_type& val) {
+                static bool from_x690_real_cast_decimal(T& vl, const raw_type& val) {
                     try {
                         vl = boost::lexical_cast<T > (std::string(val.begin(), val.end()));
                     }
@@ -727,7 +727,7 @@ namespace boost {
                 }
 
                 template<typename T, typename B, std::size_t MANT, std::size_t EXPB>
-                static bool from_x690_real_cast_bin(T& vl, const row_type& val) {
+                static bool from_x690_real_cast_bin(T& vl, const raw_type& val) {
                     if (!val.empty()) {
                         B negat = (val[0] & '\x40') ?  (B(1) << (sizeof (B)*8 - 1)) : 0;
                         int32_t base = 2;
@@ -757,14 +757,14 @@ namespace boost {
 
                         if (val.size() <= exp_sz)
                             return false;
-                        row_type::const_iterator itrexen = val.begin() + exp_sz + 1;
+                        raw_type::const_iterator itrexen = val.begin() + exp_sz + 1;
                         int32_t exp_b = 0;
-                        if (!from_x690_cast(exp_b, row_type(val.begin() + 1, itrexen)))
+                        if (!from_x690_cast(exp_b, raw_type(val.begin() + 1, itrexen)))
                             return false;
                         exp_b += (EXPB + MANT + factor);
                         B mant = 0;
                         //B marker0 = ((~B(0)) << MANT);
-                        for (row_type::const_iterator it = itrexen; it != val.end(); ++it) {
+                        for (raw_type::const_iterator it = itrexen; it != val.end(); ++it) {
                             if ((mant = (mant << 8) | static_cast<B> (*reinterpret_cast< const uint8_t*> (&(*it)))) & ((~B(0)) << MANT)) {
                                 exp_b += (std::distance(it, val.end()) - 1)*8;
                                 while (mant & ((~B(0)) << MANT)) {
@@ -804,7 +804,7 @@ namespace boost {
                 }
 
                 template<>
-                bool from_x690_cast(float& vl, const row_type& val) {
+                bool from_x690_cast(float& vl, const raw_type& val) {
                     if (val.empty()) {
                         vl = 0;
                         return true;
@@ -820,7 +820,7 @@ namespace boost {
                 }
 
                 template<>
-                bool from_x690_cast(double& vl, const row_type& val) {
+                bool from_x690_cast(double& vl, const raw_type& val) {
                     if (val.empty()) {
                         vl = 0;
                         return true;
@@ -836,7 +836,7 @@ namespace boost {
                 }
 
                 template<>
-                bool from_x690_cast(long double& vl, const row_type& val) {
+                bool from_x690_cast(long double& vl, const raw_type& val) {
                     if (val.empty()) {
                         vl = 0;
                         return true;
@@ -863,7 +863,7 @@ namespace boost {
                 // bool from X.690
 
                 template<>
-                bool from_x690_cast(bool& vl, const row_type& val) {
+                bool from_x690_cast(bool& vl, const raw_type& val) {
                     if (val.empty())
                         vl = false;
                     else
@@ -875,7 +875,7 @@ namespace boost {
                 // null from X.690               
 
                 template<>
-                bool from_x690_cast(null_type& val, const row_type& vl) {
+                bool from_x690_cast(null_type& val, const raw_type& vl) {
                     if (vl.empty()) {
                         val = null_type();
                         return true;
@@ -887,7 +887,7 @@ namespace boost {
                 // enumerated_type from X.690
 
                 template<>
-                bool from_x690_cast(enumerated_type& val, const row_type& src) {
+                bool from_x690_cast(enumerated_type& val, const raw_type& src) {
                     enumerated_base_type tmp;
                     if (from_x690_cast(tmp, src)) {
                         val = tmp;
@@ -900,7 +900,7 @@ namespace boost {
                 ///////////////////////////////////////////////////////////////////////////////////
                 // oid from X.690
 
-                bool from_x690_impl_cast(oidindx_type& val, const row_type& vl, row_type::const_iterator& its) {
+                bool from_x690_impl_cast(oidindx_type& val, const raw_type& vl, raw_type::const_iterator& its) {
                     val = 0;
                     while (its != vl.end()) {
                         val = (val << 7) | (static_cast<oidindx_type> (*reinterpret_cast< const uint8_t*> (&(*its))) & '\x7F');
@@ -919,8 +919,8 @@ namespace boost {
                 // relative from to X.690
 
                 template<>
-                bool from_x690_cast(oid_type& val, const row_type& vl) {
-                    row_type::const_iterator  its = vl.begin();
+                bool from_x690_cast(oid_type& val, const raw_type& vl) {
+                    raw_type::const_iterator  its = vl.begin();
                     if (its == vl.end())
                         return false;
                     val.clear();
@@ -956,8 +956,8 @@ namespace boost {
                 // relative from to X.690
 
                 template<>
-                bool from_x690_cast(reloid_type& val, const row_type& vl) {
-                    row_type::const_iterator  its = vl.begin();
+                bool from_x690_cast(reloid_type& val, const raw_type& vl) {
+                    raw_type::const_iterator  its = vl.begin();
                     if (its == vl.end())
                         return false;
                     val.clear();
@@ -975,7 +975,7 @@ namespace boost {
                 // utctime_type from to X.690
 
                 template<>
-                bool from_x690_cast(utctime_type& val, const row_type& src) {
+                bool from_x690_cast(utctime_type& val, const raw_type& src) {
                     val = to_utctime(src);
                     return true; //!val.is_special();
                 }
@@ -984,7 +984,7 @@ namespace boost {
                 // gentime_type from to X.690
 
                 template<>
-                bool from_x690_cast(gentime_type& val, const row_type& src) {
+                bool from_x690_cast(gentime_type& val, const raw_type& src) {
                     val = to_gentime(src);
                     return true; //!val.value().is_special();
                 }
@@ -993,7 +993,7 @@ namespace boost {
                 // any_type from to X.690
 
                 template<>
-                bool from_x690_cast(any_type& val, const row_type& src) {
+                bool from_x690_cast(any_type& val, const raw_type& src) {
                     val.set(src);
                     return true;
                 }
@@ -1084,7 +1084,7 @@ namespace boost {
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<any_type>& vl) {
                     std::size_t sz = stream.stack_size();
-                    row_type data;
+                    raw_type data;
                     if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin() , data , 0 , sz )) {
                             if (from_x690_cast(*const_cast<any_type*> (&vl.value()), data)) {
                                // stream.pop_stack();

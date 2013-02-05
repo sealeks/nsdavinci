@@ -172,7 +172,7 @@ namespace boost {
                 construct(*reinterpret_cast<uint64_t*> (&vl), unuse);
             };
 
-            bitstring_type::bitstring_type(const row_type& vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+            bitstring_type::bitstring_type(const raw_type& vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
                 insert_bitstring(vl, unuse);
             };
 
@@ -187,7 +187,7 @@ namespace boost {
                 }
             }
 
-            void  bitstring_type::insert_bitstring(const row_type& val, std::size_t unuse) {
+            void  bitstring_type::insert_bitstring(const raw_type& val, std::size_t unuse) {
                 unuse_ = unuse % 8;
                 std::copy(val.begin(), val.end(), std::back_inserter(*this));
             };
@@ -281,7 +281,7 @@ namespace boost {
                 return return_int<int16_t > ();
             }
 
-            //bitstring_type::operator row_type() const{
+            //bitstring_type::operator raw_type() const{
             //    return  *this;
             //}    
 
@@ -356,8 +356,8 @@ namespace boost {
                 return utctime_type();
             }
 
-            static row_type from_impltime(const utctime_type& val, bool full) {
-                row_type rslt;
+            static raw_type from_impltime(const utctime_type& val, bool full) {
+                raw_type rslt;
                 if (!val.is_special()) {
                     std::string tmp = boost::posix_time::to_iso_string(val) + "Z";
                     //std::string tmp = boost::posix_time::to_iso_string(val) + "+0400";
@@ -374,7 +374,7 @@ namespace boost {
                 return rslt;
             }
 
-            static utctime_type to_impl_time(const row_type& val, bool full) {
+            static utctime_type to_impl_time(const raw_type& val, bool full) {
                 if (val.size() > 8) {
                     try {
                         std::string tmp(val.begin(), val.end());
@@ -475,19 +475,19 @@ namespace boost {
                 return utctime_type();
             }
 
-            row_type from_utctime(const utctime_type& val) {
+            raw_type from_utctime(const utctime_type& val) {
                 return from_impltime(val, false);
             }
 
-            utctime_type to_utctime(const row_type& val) {
+            utctime_type to_utctime(const raw_type& val) {
                 return to_impl_time(val, false);
             }
 
-            row_type from_gentime(const gentime_type& val) {
+            raw_type from_gentime(const gentime_type& val) {
                 return from_impltime(val.value(), true);
             }
 
-            gentime_type to_gentime(const row_type& val) {
+            gentime_type to_gentime(const raw_type& val) {
                 return gentime_type(to_impl_time(val, true));
             }
 
