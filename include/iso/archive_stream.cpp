@@ -125,14 +125,14 @@ namespace boost {
                         for (std::size_t i = 0; i < size; ++i) {
                             if (i >= start) {
                                 if (findend) {
-                                    if (!(*boost::asio::buffer_cast<row_type::value_type*>(boost::asio::buffer(tmp + i, 1)))) {
+                                    if (!(*boost::asio::buffer_cast<raw_type::value_type*>(boost::asio::buffer(tmp + i, 1)))) {
                                         rslt--;
                                         return true;
                                     }
                                     findend = false;
                                 }
                                 else
-                                    findend = !(*boost::asio::buffer_cast<row_type::value_type*>(boost::asio::buffer(tmp + i, 1)));
+                                    findend = !(*boost::asio::buffer_cast<raw_type::value_type*>(boost::asio::buffer(tmp + i, 1)));
                             }
                             rslt++;
                         }
@@ -146,7 +146,7 @@ namespace boost {
                 return false;
             }
 
-            bool row_cast( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, row_type& raw,  std::size_t start, std::size_t size) {
+            bool row_cast( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, raw_type& raw,  std::size_t start, std::size_t size) {
                 if (!size)
                     return true;
                 list_mutable_buffers::const_iterator it = bit;
@@ -161,7 +161,7 @@ namespace boost {
                         szb = sz > start ? 0 : start - sz;
                         sze = ( !size || ((szb + size) > szc)) ? szc - szb  : size;
                         mutable_buffer tmp = boost::asio::buffer(*it + szb, sze );
-                        raw.insert(raw.end(), boost::asio::buffer_cast<row_type::value_type*>(tmp), boost::asio::buffer_cast<row_type::value_type*>(tmp) + boost::asio::buffer_size(tmp));
+                        raw.insert(raw.end(), boost::asio::buffer_cast<raw_type::value_type*>(tmp), boost::asio::buffer_cast<raw_type::value_type*>(tmp) + boost::asio::buffer_size(tmp));
                     }
                     sz += szc;
                     ++it;

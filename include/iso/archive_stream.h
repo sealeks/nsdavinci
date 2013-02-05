@@ -34,9 +34,9 @@ namespace boost {
             std::string binary_to_hexsequence_debug(const std::string& vl);
 
 
-            typedef  std::vector<int8_t>                                     row_type;
-            typedef  boost::shared_ptr<row_type>                      row_type_ptr;
-            typedef  std::vector<row_type_ptr>                          vect_row_type_ptr;
+            typedef  std::vector<int8_t>                                     raw_type;
+            typedef  boost::shared_ptr<raw_type>                      raw_type_ptr;
+            typedef  std::vector<raw_type_ptr>                          vect_raw_type_ptr;
 
 
 
@@ -48,10 +48,10 @@ namespace boost {
             std::size_t pop_frontlist(list_mutable_buffers& val,  std::size_t start);
             bool splice_frontlist(list_mutable_buffers& val,  std::size_t firstend, std::size_t secondend);            
             bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit,  std::size_t& rslt, std::size_t start = 0);
-            bool row_cast( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, row_type& raw,  std::size_t start , std::size_t size);
+            bool row_cast( const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, raw_type& raw,  std::size_t start , std::size_t size);
 
-            class buffer_sequence : protected  std::list<row_type_ptr> {
-                typedef std::list<row_type_ptr> super_rype;
+            class buffer_sequence : protected  std::list<raw_type_ptr> {
+                typedef std::list<raw_type_ptr> super_rype;
 
             public:
 
@@ -60,28 +60,28 @@ namespace boost {
                 typedef super_rype::reverse_iterator                  reverse_iterator;
                 typedef super_rype::const_reverse_iterator         const_reverse_iterator;
 
-                buffer_sequence() : std::list<row_type_ptr>(), octet_size_(0) {
+                buffer_sequence() : std::list<raw_type_ptr>(), octet_size_(0) {
                 }
 
-                void  push_back(const row_type& vl)  {
+                void  push_back(const raw_type& vl)  {
                     if (vl.empty()) return;
                     octet_size_ += vl.size();
-                    super_rype::push_back(row_type_ptr( new row_type(vl)));
+                    super_rype::push_back(raw_type_ptr( new raw_type(vl)));
                 }
 
-                void  push_front(const row_type& vl)  {
+                void  push_front(const raw_type& vl)  {
                     if (vl.empty()) return;
                     octet_size_ += vl.size();
-                    super_rype::push_front(row_type_ptr( new row_type(vl)));
+                    super_rype::push_front(raw_type_ptr( new raw_type(vl)));
                 }
 
-                iterator  insert(const row_type& vl, iterator it)  {
+                iterator  insert(const raw_type& vl, iterator it)  {
                     if (vl.empty()) return it;
                     octet_size_ += vl.size();
-                    return super_rype::insert(it, row_type_ptr(new row_type(vl)));
+                    return super_rype::insert(it, raw_type_ptr(new raw_type(vl)));
                 }
 
-                iterator insert(const row_type& vl, std::size_t sz, iterator bg)  {
+                iterator insert(const raw_type& vl, std::size_t sz, iterator bg)  {
                     std::size_t tmsz = 0;
                     for (iterator it = bg; it != end(); ++it) {
                         if (((*it)->size() + tmsz) < sz)
@@ -91,13 +91,13 @@ namespace boost {
                                 return insert(vl, ++it);
                             else {
                                 std::size_t szdelim = (*it)->size() + tmsz - sz;
-                                row_type_ptr tmp = *it;
-                                row_type_ptr first = row_type_ptr( new row_type(tmp->begin(), tmp->begin() + szdelim));
-                                row_type_ptr thr = row_type_ptr( new row_type(tmp->begin() + szdelim, tmp->end()));
+                                raw_type_ptr tmp = *it;
+                                raw_type_ptr first = raw_type_ptr( new raw_type(tmp->begin(), tmp->begin() + szdelim));
+                                raw_type_ptr thr = raw_type_ptr( new raw_type(tmp->begin() + szdelim, tmp->end()));
                                 it = super_rype::erase(it);
                                 it = super_rype::insert(it, first);
                                 octet_size_ += vl.size();
-                                iterator itr = it = super_rype::insert(it, row_type_ptr( new row_type(vl)));
+                                iterator itr = it = super_rype::insert(it, raw_type_ptr( new raw_type(vl)));
                                 it = super_rype::insert(it, thr);
                                 return itr;
                             }
@@ -144,18 +144,18 @@ namespace boost {
                    return listbuffers_;
                 }
 
-                iterator  add(const row_type& vl)  {
+                iterator  add(const raw_type& vl)  {
                     if (vl.empty()) return
                         listbuffers_.end();
-                    rows_vect.push_back(row_type_ptr( new row_type(vl)));
+                    rows_vect.push_back(raw_type_ptr( new raw_type(vl)));
                     size_ += vl.size();
                     return listbuffers_.insert(listbuffers_.end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
                 }
 
-                iterator  add(const row_type& vl, iterator it)  {
+                iterator  add(const raw_type& vl, iterator it)  {
                     if (vl.empty()) return
                         listbuffers_.end();
-                    rows_vect.push_back(row_type_ptr( new row_type(vl)));
+                    rows_vect.push_back(raw_type_ptr( new raw_type(vl)));
                     size_ += vl.size();
                     return listbuffers_.insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
                 }
@@ -174,12 +174,12 @@ namespace boost {
                     size_ = 0;
                 }
                 
-                bool  bind(row_type& vl){
+                bool  bind(raw_type& vl){
                     vl.clear();
                     for(iterator it=listbuffers_.begin();it!=listbuffers_.end();++it)
                         vl.insert(vl.end(),
-                                const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)),
-                                const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)) + boost::asio::buffer_size(*it));
+                                const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)),
+                                const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)) + boost::asio::buffer_size(*it));
                       clear();
                       return true;
                 }
@@ -198,7 +198,7 @@ namespace boost {
             protected:
 
                 list_buffers               listbuffers_;
-                vect_row_type_ptr    rows_vect;
+                vect_raw_type_ptr    rows_vect;
                 std::size_t                size_;
 
             } ;
@@ -219,8 +219,8 @@ namespace boost {
                 base_iarchive() : size_(0) {
                 }
 
-                void add(const row_type& vl) {
-                    rows_vect.push_back( row_type_ptr(new row_type(vl.begin(), vl.end())));
+                void add(const raw_type& vl) {
+                    rows_vect.push_back( raw_type_ptr(new raw_type(vl.begin(), vl.end())));
                     size_ += vl.size();
                     listbuffers_.push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
                 }
@@ -229,15 +229,15 @@ namespace boost {
                     listbuffers_.clear();
                     list_const_buffers buffers = vl.buffers();
                    /* for (list_const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
-                        listbuffers_.push_back(mutable_buffer(const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
+                        listbuffers_.push_back(mutable_buffer(const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
                         size_ += boost::asio::buffer_size(*it);
                     }*/
                     
-                    row_type newdata;
+                    raw_type newdata;
                     for (list_const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
                         newdata.insert(newdata.end(),
-                                const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)),
-                                const_cast<row_type::value_type*> (boost::asio::buffer_cast<const row_type::value_type*>(*it)) + boost::asio::buffer_size(*it)
+                                const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)),
+                                const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)) + boost::asio::buffer_size(*it)
                                 );
                     }
                     add(newdata);                     
@@ -250,7 +250,7 @@ namespace boost {
                 }
 
                 bool is_endof(std::size_t beg = 0) const {
-                    row_type  data;
+                    raw_type  data;
                     if (row_cast(listbuffers_, listbuffers_.begin(), data,  beg , 2)) {
                         if ((data.size() == 2) && (data[0] == 0) && (data[1] == 0)) {
                             return true;
@@ -286,7 +286,7 @@ namespace boost {
                     return size_;
                 }
 
-                bool  bind(const row_type& vl){
+                bool  bind(const raw_type& vl){
                       clear();
                       add(vl);
                       return true;
@@ -304,7 +304,7 @@ namespace boost {
                 }
 
                 list_buffers                listbuffers_;
-                vect_row_type_ptr     rows_vect;
+                vect_raw_type_ptr     rows_vect;
                 std::size_t                 size_;
                 
             } ;

@@ -166,7 +166,7 @@ namespace boost {
 
 
 
-            typedef  boost::asio::iso::row_type                             row_type;
+            typedef  boost::asio::iso::raw_type                             raw_type;
 
 
             typedef  std::size_t                                                     id_type;
@@ -376,7 +376,7 @@ namespace boost {
 
                 explicit bitstring_type(int64_t vl, std::size_t unuse = 0);
 
-                explicit bitstring_type(const row_type& vl, std::size_t unuse = 0);
+                explicit bitstring_type(const raw_type& vl, std::size_t unuse = 0);
 
                 explicit bitstring_type(const std::vector<bool>& vl);
 
@@ -386,7 +386,7 @@ namespace boost {
                     construct(vl);
                 };
 
-                void  insert_bitstring(const row_type& val, std::size_t unuse = 0);
+                void  insert_bitstring(const raw_type& val, std::size_t unuse = 0);
 
                 std::size_t unusebits() const {
                     return size() ? (unuse_ % 8) : 0;
@@ -420,7 +420,7 @@ namespace boost {
 
                 operator int64_t() const;
 
-                //operator row_type() const; 
+                //operator raw_type() const; 
 
                 friend bitstring_type operator|(const bitstring_type& ls, const bitstring_type& rs);
 
@@ -484,12 +484,12 @@ namespace boost {
                 octetstring_type() : std::vector<int8_t>() {
                 }
 
-                explicit  octetstring_type(const row_type& vl) : std::vector<int8_t>(vl.begin(), vl.end()) {
+                explicit  octetstring_type(const raw_type& vl) : std::vector<int8_t>(vl.begin(), vl.end()) {
                 }
 
                 octetstring_type(const std::string& vl) : std::vector<int8_t>(vl.begin(), vl.end()) {
                 }
-                //operator row_type() const{
+                //operator raw_type() const{
                 //     return  *this;}   
             } ;
 
@@ -505,7 +505,7 @@ namespace boost {
                 utf8string_type() : std::string() {
                 }
 
-                explicit  utf8string_type(const row_type& vl) : std::string(vl.begin(), vl.end()) {
+                explicit  utf8string_type(const raw_type& vl) : std::string(vl.begin(), vl.end()) {
                 }
 
                 explicit utf8string_type(const std::string& vl) : std::string(vl) {
@@ -518,8 +518,8 @@ namespace boost {
                     return  (valid()) ? utf8_to_wstr(*this) : std::wstring();
                 }
 
-                operator row_type() const {
-                    return (valid()) ? row_type(begin(), end()) : row_type();
+                operator raw_type() const {
+                    return (valid()) ? raw_type(begin(), end()) : raw_type();
                 }
 
                 std::wstring to_wstring() const {
@@ -546,7 +546,7 @@ namespace boost {
                 simplestring_type() : std::string() {
                 }
 
-                explicit  simplestring_type(const row_type& vl) : std::string(vl.begin(), vl.end()) {
+                explicit  simplestring_type(const raw_type& vl) : std::string(vl.begin(), vl.end()) {
                 }
 
                 simplestring_type(const std::string& vl) : std::string(vl) {
@@ -555,8 +555,8 @@ namespace boost {
                 simplestring_type(const std::string::value_type* vl) : std::string(vl) {
                 }
 
-                operator row_type() const {
-                    return row_type(begin(), end());
+                operator raw_type() const {
+                    return raw_type(begin(), end());
                 }
 
                 operator std::string() const {
@@ -633,8 +633,8 @@ namespace boost {
                     return  universalstr_to_wstr(*this);
                 }
 
-                operator row_type() const {
-                    return row_type(begin(), end());
+                operator raw_type() const {
+                    return raw_type(begin(), end());
                 }
 
                 std::wstring to_wstring() const {
@@ -677,8 +677,8 @@ namespace boost {
                     return  bmpstr_to_wstr(*this);
                 }
 
-                operator row_type() const {
-                    return row_type(begin(), end());
+                operator raw_type() const {
+                    return raw_type(begin(), end());
                 }
 
                 std::wstring to_wstring() const {
@@ -708,9 +708,9 @@ namespace boost {
 
             typedef boost::posix_time::ptime utctime_type;
 
-            row_type from_utctime(const utctime_type& val);
+            raw_type from_utctime(const utctime_type& val);
 
-            utctime_type to_utctime(const row_type& val);
+            utctime_type to_utctime(const raw_type& val);
 
             inline utctime_type now_generator() {
                 return boost::posix_time::microsec_clock::universal_time();
@@ -759,24 +759,24 @@ namespace boost {
                     arch.bind(data);
                 }
 
-                void set(const row_type& dt) {
+                void set(const raw_type& dt) {
                     data = dt;
                 }
 
-                std::size_t get(row_type& dt) const {
+                std::size_t get(raw_type& dt) const {
                     dt.insert(dt.end(), data.begin(), data.end());
                     return data.size();
                 }
 
             private:
-                row_type data;
+                raw_type data;
 
             } ;
 
 
-            row_type from_gentime(const gentime_type& val);
+            raw_type from_gentime(const gentime_type& val);
 
-            gentime_type to_gentime(const row_type& val);
+            gentime_type to_gentime(const raw_type& val);
 
             std::ostream& operator<<(std::ostream& stream, const gentime_type& vl);
 
