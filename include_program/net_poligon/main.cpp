@@ -219,7 +219,7 @@ public:
         io_service_.poll();
 #elif defined(SESSION_PROT)
         io_service_.reset();
-        trans_ = trans_data_type( new   trans_data("Goodbuy client from test"));
+        trans_ = trans_data_type( new   trans_data(start_request()/*"Hello server from test"*/));
         socket_.asyn_releaseconnect(boost::bind(&client::handle_release, this, boost::asio::placeholders::error), boost::asio::iso::SESSION_NORMAL_RELEASE, trans_);
         io_service_.poll();
 #else
