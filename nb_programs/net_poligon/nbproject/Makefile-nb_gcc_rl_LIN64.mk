@@ -34,8 +34,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1689547802/main.o \
-	${OBJECTDIR}/_ext/1689547802/rfc1006.o
+	${OBJECTDIR}/_ext/1689547802/main.o
 
 
 # C Compiler Flags
@@ -52,7 +51,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lrt
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lisostack -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -65,10 +64,6 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 ${OBJECTDIR}/_ext/1689547802/main.o: ../../include_program/net_poligon/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1689547802
 	$(COMPILE.cc) -O2 -I../../include -o ${OBJECTDIR}/_ext/1689547802/main.o ../../include_program/net_poligon/main.cpp
-
-${OBJECTDIR}/_ext/1689547802/rfc1006.o: ../../include_program/net_poligon/rfc1006.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1689547802
-	$(COMPILE.cc) -O2 -I../../include -o ${OBJECTDIR}/_ext/1689547802/rfc1006.o ../../include_program/net_poligon/rfc1006.cpp
 
 # Subprojects
 .build-subprojects:
