@@ -138,8 +138,6 @@ namespace test {
             if ( BOOST_ASN_CHOICE_CHECK(testchoice_ch1) ) {
                 if (BOOST_ASN_EXPLICIT_TAG( value<TestSet > (arch.__input__(), testchoice_ch1) , 7))
                     return;
-#endif                
-                
             }
             if ( BOOST_ASN_CHOICE_CHECK(testchoice_ch2) ) {
                 if (BOOST_ASN_EXPLICIT_TAG( value<TestSet2 > (arch.__input__(), testchoice_ch2) , 8))
