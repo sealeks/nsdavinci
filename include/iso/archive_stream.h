@@ -35,8 +35,8 @@ namespace boost {
             
             
             
-            typedef std::vector<const_buffer>                                                vector_buffer;
-            typedef const vector_buffer&                                                       const_vector_buffer;
+            typedef std::vector<const_buffer>                                                      vector_buffer;
+            typedef const vector_buffer&                                                         const_vector_buffer;
             typedef vector_buffer::iterator                                                      vector_buffer_iterator;
 
             const vector_buffer NULL_VECTOR_BUFFER = vector_buffer();
@@ -79,6 +79,10 @@ namespace boost {
                list_buffers  buffers() const {
                    return listbuffers_;
                 }
+               
+               vector_buffer  const_buffers() const {
+                   return vector_buffer(listbuffers_.begin(),listbuffers_.end());
+                }               
 
                 iterator  add(const raw_type& vl)  {
                     if (vl.empty()) return
@@ -138,6 +142,8 @@ namespace boost {
                 std::size_t                size_;
 
             } ;
+            
+
 
 
             //////////////////////////////////////////////////////////////////////////////
@@ -244,10 +250,92 @@ namespace boost {
                 std::size_t                 size_;
                 
             } ;
+            
+  
+             
 
+            //////////////////////////////////////////////////////////////////////////////
+             
+             
+             
+            class base_archive {
 
+               
+            public:
+                        
+                typedef  boost::shared_ptr<base_iarchive>                       iarchive_ptr;                
+                typedef  boost::shared_ptr<base_oarchive>                      oarchive_ptr;                
+              
+                base_archive(iarchive_ptr in, oarchive_ptr out) : input_(in), output_(out) {}
+                virtual ~base_archive(){}
+                
+                vector_buffer request() const {
+                    return output_->const_buffers();}
+                
+                void insert_to_input(const raw_type& vl){
+                    input_->add(vl);}
+                
+                 std::string request_str() const {
+                        const vector_buffer& tmp = request();
+                        std::string rslt;
+                        for (vector_buffer::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
+                        rslt.insert(rslt.end(),
+                                const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)),
+                                const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)) + boost::asio::buffer_size(*it)
+                                );
+                        }
+                        return rslt;
+                };
 
+                void respond_str(const std::string&  val) {
+                    insert_to_input(raw_type(val.begin(), val.end()));
+                };                  
+                
+            protected:
+                             
+                
+                iarchive_ptr input_;
+                oarchive_ptr output_;
+            };
+            
+            
 
+             typedef  boost::shared_ptr<base_archive>                      archive_ptr; 
+             
+             
+             
+             template<typename INPUT_TYPE,  typename OUTPUT_TYPE>
+              class archive_temp : public base_archive{
+                 
+              public:                   
+                 
+                 typedef INPUT_TYPE in_archive_type;
+                 typedef OUTPUT_TYPE out_archive_type;                 
+                 
+                archive_temp() : base_archive(iarchive_ptr(in_archive_type()), oarchive_ptr(out_archive_type())) {}
+                
+                in_archive_type& input() {
+                    return *boost::static_pointer_cast<in_archive_type, base_iarchive>(input_);
+                }
+                
+                const in_archive_type& input() const {
+                    return *boost::static_pointer_cast<in_archive_type, base_iarchive>(input_);
+                }         
+                
+                out_archive_type& output() {
+                    return *boost::static_pointer_cast<out_archive_type, base_oarchive>(output_);
+                }
+                
+                const out_archive_type& output() const {
+                    return *boost::static_pointer_cast<out_archive_type, base_oarchive>(output_);
+                }                  
+                          
+                  
+             };
+             
+            //////////////////////////////////////////////////////////////////////////////             
+             
+             
 
             std::ostream& operator<<(std::ostream& stream, const list_const_buffers& self);
 
