@@ -158,29 +158,29 @@ namespace boost {
                 trans_data(const std::string& val = "") : req_(trans_raw_type( new std::string(val)))  {
                 }
 
-                trans_raw_type request() const {
+                /*trans_raw_type request() const {
                     return req_ ? req_ : trans_raw_type( new std::string(""));
-                };
+                };*/
 
                 const std::string& request_str() const {
                     return req_ ? *req_ : null_;
                 };
 
-                const_buffer request_buff() const {
+                /*/const_buffer request_buff() const {
                     return req_ ? const_buffer(req_->data(), req_->size()) : const_buffer();
-                };
+                };*/
 
-                trans_raw_type respond() const {
+                /*trans_raw_type respond() const {
                     return resp_ ? resp_ : trans_raw_type( new std::string(""));
-                };
+                };*/
 
                 const std::string& respond_str() const {
                     return resp_ ? *resp_ : null_;
                 };
 
-                const_buffer respond_buff() const {
+                /*const_buffer respond_buff() const {
                     return resp_ ? const_buffer(resp_->data(), resp_->size()) : const_buffer();
-                };
+                };*/
 
                 void respond(const std::string&  val) {
                     resp_ = trans_raw_type( new std::string(val));
