@@ -108,7 +108,7 @@ namespace boost {
                     //std::cout << " This Need splice " << std::endl;
                     //std::cout << "before " << val << std::endl;
                     val.splice(++sit , val , val.begin() , ++fit );
-                   //std::cout << "after " << val << std::endl;
+                    //std::cout << "after " << val << std::endl;
                     return true;
                 }
 
@@ -214,6 +214,128 @@ namespace boost {
             }
 
 
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            base_oarchive::iterator  base_oarchive::add(const raw_type& vl)  {
+                if (vl.empty()) return
+                    listbuffers_.end();
+                rows_vect.push_back(raw_type_ptr( new raw_type(vl)));
+                size_ += vl.size();
+                return listbuffers_.insert(listbuffers_.end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
+            }
+
+            base_oarchive::iterator  base_oarchive::add(const raw_type& vl, iterator it)  {
+                if (vl.empty()) return
+                    listbuffers_.end();
+                rows_vect.push_back(raw_type_ptr( new raw_type(vl)));
+                size_ += vl.size();
+                return listbuffers_.insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
+            }
+
+            bool  base_oarchive::bind(raw_type& vl) {
+                vl.clear();
+                for (iterator it = listbuffers_.begin(); it != listbuffers_.end(); ++it)
+                    vl.insert(vl.end(),
+                        const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)),
+                        const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)) + boost::asio::buffer_size(*it));
+                clear();
+                return true;
+            }
+
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////      
+
+            void base_iarchive::add(const raw_type& vl) {
+                rows_vect.push_back( raw_type_ptr(new raw_type(vl.begin(), vl.end())));
+                size_ += vl.size();
+                listbuffers_.push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
+            }
+
+            bool base_iarchive::is_endof(std::size_t beg) const {
+                raw_type  data;
+                if (row_cast(listbuffers_, listbuffers_.begin(), data,  beg , 2)) {
+                    if ((data.size() == 2) && (data[0] == 0) && (data[1] == 0)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            void base_iarchive::clear()  {
+                listbuffers_.clear();
+                size_ = 0;
+            }
+
+            bool  base_iarchive::bind(const raw_type& vl) {
+                clear();
+                add(vl);
+                return true;
+            }
+
+
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////  
+
+            std::string base_archive::request_str() const {
+                const vector_buffer& tmp = request();
+                std::string rslt;
+                for (vector_buffer::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
+                    rslt.insert(rslt.end(),
+                            const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)),
+                            const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)) + boost::asio::buffer_size(*it)
+                            );
+                }
+                return rslt;
+            };
+
+            void base_archive::request_str(const std::string&  val) {
+                output_->add(raw_type(val.begin(), val.end()));
+            };
+
+            std::string base_archive::respond_str() const {
+                const list_mutable_buffers& tmp = input_->buffers();
+                std::string rslt;
+                for (list_mutable_buffers::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
+                    rslt.insert(rslt.end(),
+                            const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)),
+                            const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)) + boost::asio::buffer_size(*it)
+                            );
+                }
+                return rslt;
+            };
+
+            void base_archive::respond_str(const std::string&  val) {
+                insert_to_input(raw_type(val.begin(), val.end()));
+            };
+
+
+
+
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////  
+
+            std::size_t  send_buffer_impl::size(std::size_t  sz) {
+
+                if (sz == 0) return size_;
+                std::size_t tmpsize = sz;
+                while ((!buff_.empty()) && tmpsize) {
+                    vector_buffer_iterator it = buff_.begin();
+                    if (tmpsize < buffer_size(*it)) {
+                        *it = const_buffer((*it) + sz);
+                        return size_ += sz;
+                    }
+                    else {
+                        tmpsize = buffer_size(*it) > tmpsize ? 0 : (tmpsize - buffer_size(*it));
+                        buff_.erase(it);
+                    }
+                }
+                return size_ += sz;
+            }
 
         }
     }
