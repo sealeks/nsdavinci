@@ -1688,8 +1688,19 @@ namespace boost {
                 arch & vl;
                 return (arch.size() != tst);
             }
-
+            
         }
+
+       const boost::array<boost::asio::asn::oidindx_type, 3 > BASIC_ENCODING_ARR = {2, 1, 1};
+       const boost::asio::asn::oid_type BASIC_ENCODING_OID = boost::asio::asn::oid_type(BASIC_ENCODING_ARR);       
+       
+       const boost::array<boost::asio::asn::oidindx_type, 4 > CANONICAL_ENCODING_ARR = {2, 1, 2, 0};
+       const boost::asio::asn::oid_type CANONICAL_ENCODING_OID = boost::asio::asn::oid_type(CANONICAL_ENCODING_ARR);      
+       
+       const boost::array<boost::asio::asn::oidindx_type, 4 > DISTINGUISH_ENCODING_ARR = {2, 1, 2, 1};
+       const boost::asio::asn::oid_type DISTINGUISH_ENCODING_OID = boost::asio::asn::oid_type(DISTINGUISH_ENCODING_ARR);     
+
+        
     }
 }
 
