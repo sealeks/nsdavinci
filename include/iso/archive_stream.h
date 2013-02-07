@@ -284,7 +284,7 @@ namespace boost {
              
             typedef  archive_temp<>  simple_trans_data;     
             
-            archive_ptr create_simple_data(const std::string& val){
+            static inline archive_ptr create_simple_data(const std::string& val){
                    archive_ptr tmp = archive_ptr( new   simple_trans_data());
                    tmp->request_str(val);
                    return tmp;}
