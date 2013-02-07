@@ -5,8 +5,8 @@
  * 
  */
 
-#ifndef         ISOPROT8327_H_H
-#define	ISOPROT8327_H_H
+#ifndef         ISOPROT8823_H_H
+#define	ISOPROT8823_H_H
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 #pragma once
@@ -14,7 +14,7 @@
 
 
 #include <iso/iso.h>
-#include <iso/rfc1006.h>
+#include <iso/iso8327.h>
 #include <boost/asio/detail/push_options.hpp>
 
 
@@ -24,7 +24,7 @@
 namespace boost {
     namespace asio {
         namespace iso {
-            namespace prot8327 {
+            namespace prot8823 {
 
 
 
@@ -1788,7 +1788,7 @@ namespace boost {
 
             }
 
-            class iso8327 {
+            class iso8823 {
             public:
                 /// The type of a TCP endpoint.
 
@@ -1800,16 +1800,16 @@ namespace boost {
 
                 /// Construct to represent the IPv4 TCP protocol.
 
-                static iso8327 v4() {
+                static iso8823 v4() {
 
-                    return iso8327(PF_INET);
+                    return iso8823(PF_INET);
                 }
 
                 /// Construct to represent the IPv6 TCP protocol.
 
-                static iso8327 v6() {
+                static iso8823 v6() {
 
-                    return iso8327(PF_INET6);
+                    return iso8823(PF_INET6);
                 }
 
                 /// Obtain an identifier for the type of the protocol.
@@ -1834,10 +1834,10 @@ namespace boost {
                 }
 
                 /// The TCP socket type.
-                typedef prot8327::stream_socket socket;
+                typedef prot8823::stream_socket socket;
 
                 /// The TCP acceptor type.
-                typedef prot8327::socket_acceptor acceptor;
+                typedef prot8823::socket_acceptor acceptor;
 
                 /// The TCP resolver type.
                 typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
@@ -1853,14 +1853,14 @@ namespace boost {
 
                 /// Compare two protocols for equality.
 
-                friend bool operator==(const iso8327& p1, const iso8327& p2) {
+                friend bool operator==(const iso8823& p1, const iso8823& p2) {
 
                     return p1.family_ == p2.family_;
                 }
 
                 /// Compare two protocols for inequality.
 
-                friend bool operator!=(const iso8327& p1, const iso8327& p2) {
+                friend bool operator!=(const iso8823& p1, const iso8823& p2) {
 
                     return p1.family_ != p2.family_;
                 }
@@ -1868,7 +1868,7 @@ namespace boost {
             private:
                 // Construct with a specific family.
 
-                explicit iso8327(int family)
+                explicit iso8823(int family)
                 : family_(family) {
                 }
 
@@ -1877,12 +1877,12 @@ namespace boost {
 
         }
 
-        inline static bool input_empty( boost::asio::iso::prot8327::stream_socket& s) {
+        inline static bool input_empty( boost::asio::iso::prot8823::stream_socket& s) {
             return s.input_empty();
         }
         
         template<typename ReleaseConnectHandler>
-        void asyn_releaseconnect( boost::asio::iso::prot8327::stream_socket& s, ReleaseConnectHandler  handler, iso::release_type type,  iso::archive_ptr data) {
+        void asyn_releaseconnect( boost::asio::iso::prot8823::stream_socket& s, ReleaseConnectHandler  handler, iso::release_type type,  iso::archive_ptr data) {
             s.asyn_releaseconnect<ReleaseConnectHandler > (handler, type, data );
         }        
 
