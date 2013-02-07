@@ -36,18 +36,18 @@ namespace boost {
             
             
             typedef std::vector<const_buffer>                                                      vector_buffer;
-            typedef const vector_buffer&                                                         const_vector_buffer;
-            typedef vector_buffer::iterator                                                      vector_buffer_iterator;
+            typedef const vector_buffer&                                                             const_vector_buffer;
+            typedef vector_buffer::iterator                                                            vector_buffer_iterator;
 
             const vector_buffer NULL_VECTOR_BUFFER = vector_buffer();
 
 
-            typedef  std::vector<int8_t>                                     raw_type;
-            typedef  boost::shared_ptr<raw_type>                      raw_type_ptr;
-            typedef  std::vector<raw_type_ptr>                          vect_raw_type_ptr;
+            typedef  std::vector<int8_t>                                                               raw_type;
+            typedef  boost::shared_ptr<raw_type>                                                raw_type_ptr;
+            typedef  std::vector<raw_type_ptr>                                                    vect_raw_type_ptr;
 
-            typedef  std::list<mutable_buffer>                                                                                             list_mutable_buffers;
-            typedef  std::list<const_buffer>                                                                                                 list_const_buffers;
+            typedef  std::list<mutable_buffer>                                                       list_mutable_buffers;
+            typedef  std::list<const_buffer>                                                           list_const_buffers;
 
 
 
@@ -167,25 +167,6 @@ namespace boost {
                     listbuffers_.push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
                 }
 
-                void add(const base_oarchive& vl) {
-                    listbuffers_.clear();
-                    list_const_buffers buffers = vl.buffers();
-                   /* for (list_const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
-                        listbuffers_.push_back(mutable_buffer(const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)), boost::asio::buffer_size(*it)));
-                        size_ += boost::asio::buffer_size(*it);
-                    }*/
-                    
-                    raw_type newdata;
-                    for (list_const_buffers::const_iterator it = buffers.begin(); it != buffers.end(); ++it) {
-                        newdata.insert(newdata.end(),
-                                const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)),
-                                const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)) + boost::asio::buffer_size(*it)
-                                );
-                    }
-                    add(newdata);                     
-                     
-                    std::cout << "IARCHVE size:"  << size_  << std::endl;
-                }
 
                 void pop_front(std::size_t sz) {
                     decsize(pop_frontlist(listbuffers_, sz));
@@ -234,15 +215,15 @@ namespace boost {
                       return true;
                 }
                 
-                virtual int test_id() = 0;
+                virtual int test_id() { return 0; };
                 
-                virtual int test_class() = 0;                
+                virtual int test_class() { return 0; };              
 
             protected:
 
                 void decsize(std::size_t sz)  {
                     size_ =  size_ < sz ? 0 : (size_ - sz);
-                    std::cout << "decsize IARCHVE size:"  << size_  << std::endl;
+                    //std::cout << "decsize IARCHVE size:"  << size_  << std::endl;
                 }
 
                 list_buffers                listbuffers_;
@@ -266,6 +247,7 @@ namespace boost {
                 typedef  boost::shared_ptr<base_iarchive>                       iarchive_ptr;                
                 typedef  boost::shared_ptr<base_oarchive>                      oarchive_ptr;                
               
+                base_archive() {}
                 base_archive(iarchive_ptr in, oarchive_ptr out) : input_(in), output_(out) {}
                 virtual ~base_archive(){}
                 
@@ -286,10 +268,27 @@ namespace boost {
                         }
                         return rslt;
                 };
+                
+                void request_str(const std::string&  val) {
+                    output_->add(raw_type(val.begin(), val.end()));
+                };     
+                
 
                 void respond_str(const std::string&  val) {
                     insert_to_input(raw_type(val.begin(), val.end()));
-                };                  
+                };      
+                
+                const std::string respond_str() const {
+                        const list_mutable_buffers& tmp = input_->buffers();
+                        std::string rslt;
+                        for (list_mutable_buffers::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
+                        rslt.insert(rslt.end(),
+                                const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)),
+                                const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)) + boost::asio::buffer_size(*it)
+                                );
+                        }
+                        return rslt;
+                };                
                 
             protected:
                              
@@ -304,7 +303,7 @@ namespace boost {
              
              
              
-             template<typename INPUT_TYPE,  typename OUTPUT_TYPE>
+             template<typename INPUT_TYPE = base_iarchive,  typename OUTPUT_TYPE = base_oarchive>
               class archive_temp : public base_archive{
                  
               public:                   
@@ -312,7 +311,7 @@ namespace boost {
                  typedef INPUT_TYPE in_archive_type;
                  typedef OUTPUT_TYPE out_archive_type;                 
                  
-                archive_temp() : base_archive(iarchive_ptr(in_archive_type()), oarchive_ptr(out_archive_type())) {}
+                archive_temp() : base_archive(iarchive_ptr(new in_archive_type()), oarchive_ptr(new out_archive_type())) {}
                 
                 in_archive_type& input() {
                     return *boost::static_pointer_cast<in_archive_type, base_iarchive>(input_);

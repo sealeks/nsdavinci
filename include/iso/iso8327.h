@@ -762,7 +762,7 @@ namespace boost {
                                     {
                                         socket_->correspond_prot_option(receive_->options());
                                         if (transdata_)
-                                            transdata_->respond(receive_->options().data());
+                                            transdata_->respond_str(receive_->options().data());
                                         handler_(ec);
                                         std::cout << "sessio connect_op success" << std::endl;
                                         return;
@@ -906,7 +906,7 @@ namespace boost {
                                     case DN_SPDU_ID:
                                     {
                                         if (transdata_)
-                                            transdata_->respond(receive_->options().data());
+                                            transdata_->respond_str(receive_->options().data());
                                         handler_(ec);
                                         boost::system::error_code ecc;
                                         socket_->close(ecc);
@@ -915,7 +915,7 @@ namespace boost {
                                     case AA_SPDU_ID:
                                     {
                                         if (transdata_)
-                                            transdata_->respond(receive_->options().data());
+                                            transdata_->respond_str(receive_->options().data());
                                         handler_(ec);
                                         boost::system::error_code ecc;
                                         socket_->close(ecc);
@@ -1067,7 +1067,7 @@ namespace boost {
                                 return;
                             }
                             if (transdata_)
-                                transdata_->respond(receive_->options().data());
+                                transdata_->respond_str(receive_->options().data());
                             send_ = send_seq_ptr( new send_seq(AC_SPDU_ID, options_, transdata_ ? transdata_->request_str() : ""));
                             state(send);
                             operator()(ec, 0);
@@ -1415,7 +1415,7 @@ namespace boost {
                     virtual  send_seq_ptr session_release_reaction(receive_seq_ptr receive) {
                         if (!receive)
                             return send_seq_ptr();
-                        session_releasedata_ = trans_data_type( new   trans_data(receive->options().data()));
+                        session_releasedata_ = trans_data_type( new   trans_data(/*receive->options().data()*/));
                         switch (receive->type()) {
                             case FN_SPDU_ID: return send_seq_ptr( new send_seq(DN_SPDU_ID, prot_option()));
                             case AB_SPDU_ID: return send_seq_ptr( new send_seq(AC_SPDU_ID, prot_option()));
@@ -1467,7 +1467,7 @@ namespace boost {
                                 {
                                     correspond_prot_option(receive_->options());
                                     if (data)
-                                        data->respond(receive_->options().data());
+                                        data->respond_str(receive_->options().data());
                                     return ec;
                                 }
                                 default:
@@ -1496,7 +1496,7 @@ namespace boost {
                                     case DN_SPDU_ID:
                                     {
                                         if (data)
-                                            data->respond(receive_->options().data());
+                                            data->respond_str(receive_->options().data());
                                         boost::system::error_code ecc;
                                         close(ecc);
                                         return ec;
@@ -1504,7 +1504,7 @@ namespace boost {
                                     case AA_SPDU_ID:
                                     {
                                         if (data)
-                                            data->respond(receive_->options().data());
+                                            data->respond_str(receive_->options().data());
                                         boost::system::error_code ecc;
                                         close(ecc);
                                         return ec;
@@ -1545,7 +1545,7 @@ namespace boost {
                         }
                         else {
                             if (transdata)
-                                transdata->respond(receive_->options().data());
+                                transdata->respond_str(receive_->options().data());
                             send_ = send_seq_ptr( new send_seq(AC_SPDU_ID, options_, transdata ? transdata->request_str() : ""));
                         }
 

@@ -150,7 +150,7 @@ namespace boost {
 
             /// Transient implementation
 
-            typedef boost::shared_ptr<std::string>    trans_raw_type;
+           /*typedef boost::shared_ptr<std::string>    trans_raw_type;
 
             class trans_data {
             public:
@@ -158,29 +158,17 @@ namespace boost {
                 trans_data(const std::string& val = "") : req_(trans_raw_type( new std::string(val)))  {
                 }
 
-                /*trans_raw_type request() const {
-                    return req_ ? req_ : trans_raw_type( new std::string(""));
-                };*/
+
 
                 const std::string& request_str() const {
                     return req_ ? *req_ : null_;
                 };
 
-                /*/const_buffer request_buff() const {
-                    return req_ ? const_buffer(req_->data(), req_->size()) : const_buffer();
-                };*/
-
-                /*trans_raw_type respond() const {
-                    return resp_ ? resp_ : trans_raw_type( new std::string(""));
-                };*/
 
                 const std::string& respond_str() const {
                     return resp_ ? *resp_ : null_;
                 };
 
-                /*const_buffer respond_buff() const {
-                    return resp_ ? const_buffer(resp_->data(), resp_->size()) : const_buffer();
-                };*/
 
                 void respond(const std::string&  val) {
                     resp_ = trans_raw_type( new std::string(val));
@@ -191,10 +179,10 @@ namespace boost {
                 trans_raw_type req_;
                 mutable trans_raw_type resp_;
                 std::string null_;
-            } ;
+            } ;*/
 
-
-            typedef boost::shared_ptr<trans_data>    trans_data_type;
+            typedef /*boost::shared_ptr<trans_data>*/archive_temp<>          trans_data;
+            typedef /*boost::shared_ptr<trans_data>*/archive_ptr                  trans_data_type;
 
 
 
