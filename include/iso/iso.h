@@ -148,41 +148,7 @@ namespace boost {
                 std::string send_;
             } ;
 
-            /// Transient implementation
 
-           /*typedef boost::shared_ptr<std::string>    trans_raw_type;
-
-            class trans_data {
-            public:
-
-                trans_data(const std::string& val = "") : req_(trans_raw_type( new std::string(val)))  {
-                }
-
-
-
-                const std::string& request_str() const {
-                    return req_ ? *req_ : null_;
-                };
-
-
-                const std::string& respond_str() const {
-                    return resp_ ? *resp_ : null_;
-                };
-
-
-                void respond(const std::string&  val) {
-                    resp_ = trans_raw_type( new std::string(val));
-                };
-
-
-            private:
-                trans_raw_type req_;
-                mutable trans_raw_type resp_;
-                std::string null_;
-            } ;*/
-
-            typedef /*boost::shared_ptr<trans_data>*/archive_temp<>          trans_data;
-            typedef /*boost::shared_ptr<trans_data>*/archive_ptr                  trans_data_type;
 
 
 
