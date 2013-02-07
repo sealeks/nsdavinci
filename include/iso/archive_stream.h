@@ -227,6 +227,19 @@ namespace boost {
                 
                 void respond_str(const std::string&  val);  
                 
+                virtual void clear(){
+                    output_->clear();
+                    input_->clear();                    
+                }
+                
+                virtual void clear_input(){
+                    input_->clear();                    
+                }   
+                
+                virtual void clear_output(){
+                    output_->clear();                    
+                }                 
+                
                 
             protected:
                              
@@ -265,10 +278,16 @@ namespace boost {
                 
                 const out_archive_type& output() const {
                     return *boost::static_pointer_cast<out_archive_type, base_oarchive>(output_);
-                }                  
-                          
+                }                                    
                   
              };
+             
+            typedef  archive_temp<>  simple_trans_data;     
+            
+            archive_ptr create_simple_data(const std::string& val){
+                   archive_ptr tmp = archive_ptr( new   simple_trans_data());
+                   tmp->request_str(val);
+                   return tmp;}
              
             //////////////////////////////////////////////////////////////////////////////             
              
