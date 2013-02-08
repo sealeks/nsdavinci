@@ -5,7 +5,7 @@
  * 
  */
 
-#include "itu_X690.h"
+#include <iso/asn/itu_X690.h>
 #include <boost/lexical_cast.hpp>
 #include <iosfwd>
 #include <vector>
