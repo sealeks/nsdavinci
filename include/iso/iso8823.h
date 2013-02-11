@@ -15,6 +15,7 @@
 
 #include <iso/iso.h>
 #include <iso/iso8327.h>
+#include <iso/asn/itu_X690.h>
 #include <boost/asio/detail/push_options.hpp>
 
 
@@ -25,24 +26,32 @@ namespace boost {
     namespace asio {
         namespace iso {
             namespace prot8823 {
+                
+                  
+                typedef boost::asio::asn::x690::iarchive                                                                 input_archive_type; 
+                typedef boost::asio::asn::x690::oarchive                                                                output_archive_type;    
+                typedef boost::asio::iso::archive_temp<input_archive_type, output_archive_type>    presentation_archive;
+                typedef boost::shared_ptr<presentation_archive>                                                    presentation_archive_ptr;                
+                
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //////////////////stream_socket                
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                class stream_socket : public boost::asio::iso::rfc1006::socket  {
-                    typedef boost::asio::iso::rfc1006::socket           super_type;
+                class stream_socket : protected boost::asio::iso::iso8327::socket  {
+                    
+                    typedef boost::asio::iso::iso8327::socket           super_type;
 
                 public:
-/*
-                    explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector() )
-                    : boost::asio::iso::rfc1006::socket(io_service, ssel.tselector()), option_ (ssel.called(), ssel.calling())  {
+
+                    explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel)
+                    : boost::asio::iso::iso8327::socket(io_service,  psel.sselector()), option_ (psel) , archiver( new presentation_archive() ) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
-                            const endpoint_type& endpoint, const session_selector& ssel = session_selector())
-                    : boost::asio::iso::rfc1006::socket(io_service, ssel.tselector() ), option_ (ssel.called(), ssel.calling())  {
+                            const endpoint_type& endpoint, const presentation_selector& psel)
+                    : boost::asio::iso::iso8327::socket(io_service, psel.sselector()), option_ (psel) , archiver( new presentation_archive() ) {
                     }
 
 
@@ -51,14 +60,15 @@ namespace boost {
 
                     ///   Connect operation  ///
 
-                    void connect(const endpoint_type& peer_endpoint) {
+
+                   void connect(const endpoint_type& peer_endpoint, archiver_map& archs) {
 
                         boost::system::error_code ec;
-                        connect(peer_endpoint, ec);
+                        connect(peer_endpoint, archs, ec);
                         boost::asio::detail::throw_error(ec, "connect");
                     }
 
-                    boost::system::error_code connect(const endpoint_type& peer_endpoint,
+                    boost::system::error_code connect(const endpoint_type& peer_endpoint, archiver_map& archs,
                             boost::system::error_code& ec) {
                         if (!is_open()) {
                             if (this->get_service().open(this->get_implementation(),
@@ -66,25 +76,7 @@ namespace boost {
                                 return ec;
                             }
                         }
-                        return connect(peer_endpoint,  archive_ptr(), ec);
-                    }
-
-                    void connect(const endpoint_type& peer_endpoint, archive_ptr data) {
-
-                        boost::system::error_code ec;
-                        connect(peer_endpoint, data, ec);
-                        boost::asio::detail::throw_error(ec, "connect");
-                    }
-
-                    boost::system::error_code connect(const endpoint_type& peer_endpoint, archive_ptr data,
-                            boost::system::error_code& ec) {
-                        if (!is_open()) {
-                            if (this->get_service().open(this->get_implementation(),
-                                    peer_endpoint.protocol(), ec)) {
-                                return ec;
-                            }
-                        }
-                        return connect_impl(peer_endpoint, data, ec);
+                        return connect_impl(peer_endpoint, archs, ec);
                     }
 
 
@@ -96,23 +88,17 @@ namespace boost {
                     template <typename ConnectHandler>
                     class connect_op {
 
-                        enum stateconnection {
-                            request,
-                            response
-                        } ;
 
                     public:
 
                         connect_op(stream_socket* socket , ConnectHandler handler ,
-                                const endpoint_type& peer_endpoint, archive_ptr transdata = archive_ptr()) :
+                                const endpoint_type& peer_endpoint, archiver_map archs) :
                         socket_(socket),
                         handler_(handler),
-                        state_(request),
-                        options_(socket->prot_option()),
                         peer_endpoint_(peer_endpoint),
-                        send_(send_seq_ptr( new send_seq(CN_SPDU_ID, socket->prot_option(), transdata ? transdata->request_str() : ""))),
-                        receive_(new receive_seq()),
-                        transdata_(transdata) {
+                        archs_(archs)        
+                        {
+                            
                         }
 
                         void run(const boost::system::error_code& ec) {
@@ -122,39 +108,13 @@ namespace boost {
                         void operator()(const boost::system::error_code& ec) {
                             if (!ec)
                                 operator()(ec, 0);
-
                             else
                                 handler_( ec);
                         }
 
                         void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
                             if (!ec) {
-                                switch (state_) {
-                                    case request:
-                                    {
-                                        send_->size(bytes_transferred);
-                                        if (!send_->ready()) {
-                                            socket_->super_type::async_send(send_->pop() , 0 , *this);
-                                            return;
-                                        }
-                                        else {
-                                            state(response);
-                                            operator()(ec, 0);
-                                            return;
-                                        }
-                                    }
-                                    case response:
-                                    {
-                                        receive_->put(bytes_transferred);
-                                        if (!receive_->ready()) {
-                                            socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()), 0 , *this);
-                                            return;
-                                        }
-                                        finish(ec);
-
-                                        return;
-                                    }
-                                }
+                                
                             }
                             handler_(ec);
                         }
@@ -163,56 +123,20 @@ namespace boost {
 
                     private:
 
-                        void finish(const boost::system::error_code& ec) {
-                            if (receive_->state() == receive_seq::complete) {
-                                switch (receive_->type()) {
-                                    case AC_SPDU_ID:
-                                    {
-                                        socket_->correspond_prot_option(receive_->options());
-                                        if (transdata_)
-                                            transdata_->respond_str(receive_->options().data());
-                                        handler_(ec);
-                                        std::cout << "sessio connect_op success" << std::endl;
-                                        return;
-                                    }
-                                    default:
-                                    {
-                                        boost::system::error_code ecc;
-                                        socket_->close(ecc);
-                                    }
-                                }
-                            }
-                            handler_(ERROR__EPROTO);
-                        }
 
-                        void state(stateconnection st) {
-                            if (state_ != st) {
-                                state_ = st;
-                            }
-                        }
-
-                        stream_socket*                        socket_;
-                        ConnectHandler                        handler_;
-                        stateconnection                         state_;
-                        protocol_options                        options_;
-                        endpoint_type                        peer_endpoint_;
-                        send_seq_ptr                         send_;
-                        receive_seq_ptr                     receive_;
-                        archive_ptr                             transdata_;
+                        stream_socket*                       socket_;
+                        ConnectHandler                       handler_;
+                        endpoint_type                          peer_endpoint_;
+                        archiver_map                          archs_;
 
                     } ;
 
 
                 public:
 
-                    template <typename ConnectHandler>
-                    void async_connect(const endpoint_type& peer_endpoint,
-                            BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
-                        async_connect(peer_endpoint,  archive_ptr(), handler);
-                    }
 
                     template <typename ConnectHandler>
-                    void async_connect(const endpoint_type& peer_endpoint, archive_ptr data,
+                    void async_connect(const endpoint_type& peer_endpoint, archiver_map archs,
                             BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
                         BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
@@ -227,7 +151,8 @@ namespace boost {
                                 return;
                             }
                         }
-                        super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint, data), boost::asio::placeholders::error));
+                        build_CP(archs);
+                        super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint), boost::asio::placeholders::error));
                     }
 
 
@@ -236,7 +161,7 @@ namespace boost {
 
                     ///   Releease operation  ///    
 
-                    void releaseconnect(release_type type, archive_ptr data) {
+         /*          void releaseconnect(release_type type, archive_ptr data) {
 
                         boost::system::error_code ec;
                         releaseconnect(type, data, ec);
@@ -837,12 +762,12 @@ namespace boost {
 
                     //void session_releasedata(archive_ptr data ) {
                     //    session_data_ = data;
-                    //}
+                    //}*/
 
 
                 private:
 
-                    const protocol_options& prot_option() const {
+                    /*const protocol_options& prot_option() const {
                         return option_;
                     }
 
@@ -850,12 +775,16 @@ namespace boost {
 
                         std::cout << "correspond_prot_option calling  : " << val.ssap_calling() << std::endl;
                         std::cout << "correspond_prot_option called  : " << val.ssap_called() << std::endl;
-                    }
+                    }*/
+                    
+                    void build_CP(archiver_map archs);
+                    
+                    void build_CR(archiver_map archs);                    
 
-                    boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, archive_ptr data,
+                    boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, archiver_map archs,
                             boost::system::error_code& ec) {
                         
-                        session_data_=data;
+                        /*session_data_=data;
                         
                         if (super_type::connect(peer_endpoint, ec))
                             return ec;
@@ -885,11 +814,11 @@ namespace boost {
                                     ec = ERROR__EPROTO;
                                 }
                             }
-                        }
+                        }*/
                         return ec = ERROR__EPROTO;
                     }
 
-                    boost::system::error_code releaseconnect_impl(release_type type, archive_ptr data , boost::system::error_code& ec) {
+                 /*   boost::system::error_code releaseconnect_impl(release_type type, archive_ptr data , boost::system::error_code& ec) {
                         if (is_open()) {
                             send_seq_ptr  send_( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , prot_option(), data ? data->request_str() : "" ));
                             while (!ec && !send_->ready())
@@ -1019,10 +948,10 @@ namespace boost {
                         close(ecc);
                         ec = ERROR__EPROTO;
                         return 0;
-                    }
+                    }*/
 
-                    protocol_options                           option_;
-                    archive_ptr                             session_data_;*/
+                    presentation_selector                          option_;
+                    presentation_archive_ptr               archiver;
                 } ;
 
                 class socket_acceptor : public boost::asio::iso::iec8073_tcp::socket_acceptor  {
@@ -1282,14 +1211,9 @@ namespace boost {
 
         }
 
-        inline static bool input_empty( boost::asio::iso::prot8823::stream_socket& s) {
-            return s.input_empty();
-        }
+
         
-        template<typename ReleaseConnectHandler>
-        void asyn_releaseconnect( boost::asio::iso::prot8823::stream_socket& s, ReleaseConnectHandler  handler, iso::release_type type,  iso::archive_ptr data) {
-            s.asyn_releaseconnect<ReleaseConnectHandler > (handler, type, data );
-        }        
+      
 
     } // namespace asio
 } // namespace boost

@@ -36,6 +36,8 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #include <iso/archive_stream.h>
+#include <iso/asn/asnbase.h>
+#include <iso/presentation/ISO8823-PRESENTATION.h>
 
 
 
@@ -70,13 +72,13 @@ namespace boost {
              */
 
             const boost::system::error_code ERROR__SEQ = boost::system::error_code(boost::system::errc::illegal_byte_sequence, boost::system::system_category());
-            const boost::system::error_code ERROR__ENOBUFS  = boost::system::error_code(boost::system::errc::no_buffer_space, boost::system::system_category());
-            const boost::system::error_code ERROR__EPROTO  = boost::system::error_code(boost::system::errc::protocol_error, boost::system::system_category());
-            const boost::system::error_code ERROR_EFAULT  =  boost::system::error_code(boost::system::errc::bad_address, boost::system::system_category());
-            const boost::system::error_code ERROR_EADDRNOTAVAIL  =  boost::system::error_code(boost::system::errc::address_not_available, boost::system::system_category());
-            const boost::system::error_code ERROR_EDOM  =  boost::system::error_code(boost::system::errc::argument_out_of_domain, boost::system::system_category());
-            const boost::system::error_code ERROR_EIO  =  boost::system::error_code(boost::system::errc::io_error, boost::system::system_category());
-            const boost::system::error_code ERROR_ECONNREFUSED  =  boost::system::error_code(boost::system::errc::connection_refused, boost::system::system_category());
+            const boost::system::error_code ERROR__ENOBUFS = boost::system::error_code(boost::system::errc::no_buffer_space, boost::system::system_category());
+            const boost::system::error_code ERROR__EPROTO = boost::system::error_code(boost::system::errc::protocol_error, boost::system::system_category());
+            const boost::system::error_code ERROR_EFAULT = boost::system::error_code(boost::system::errc::bad_address, boost::system::system_category());
+            const boost::system::error_code ERROR_EADDRNOTAVAIL = boost::system::error_code(boost::system::errc::address_not_available, boost::system::system_category());
+            const boost::system::error_code ERROR_EDOM = boost::system::error_code(boost::system::errc::argument_out_of_domain, boost::system::system_category());
+            const boost::system::error_code ERROR_EIO = boost::system::error_code(boost::system::errc::io_error, boost::system::system_category());
+            const boost::system::error_code ERROR_ECONNREFUSED = boost::system::error_code(boost::system::errc::connection_refused, boost::system::system_category());
 
             template <typename T> std::string
             inline static inttype_to_str(T vl) {
@@ -113,7 +115,7 @@ namespace boost {
             const int8_t TPDU_SIZE4096 = '\xC'; // denied in 0 class
             const int8_t TPDU_SIZE2048 = '\xB';
             const int8_t TPDU_SIZE1024 = '\xA';
-            const int8_t TPDU_SIZE512  = '\x9';
+            const int8_t TPDU_SIZE512 = '\x9';
             const int8_t TPDU_SIZE256 = '\x8';
             const int8_t TPDU_SIZE128 = '\x7';
             //const int8_t TPDU_SIZE4 = '\x5';   /// test
@@ -126,18 +128,14 @@ namespace boost {
                 SIZE256 = TPDU_SIZE256,
                 SIZE128 = TPDU_SIZE128,
                 //SIZE4 = TPDU_SIZE4
-            }   tpdu_size;
+            } tpdu_size;
 
             enum release_type {
                 SESSION_NORMAL_RELEASE,
                 SESSION_ABORT_RELEASE
-            } ;
+            };
 
-
-
-          
-
-            class  sevice_send_buffer_impl : public send_buffer_impl {
+            class sevice_send_buffer_impl : public send_buffer_impl {
             public:
 
                 sevice_send_buffer_impl(const std::string& send) : send_buffer_impl(), send_(send) {
@@ -146,7 +144,7 @@ namespace boost {
 
             private:
                 std::string send_;
-            } ;
+            };
 
 
 
@@ -157,7 +155,7 @@ namespace boost {
             class transport_selector {
             public:
 
-                transport_selector() :  pdusize_(SIZE2048) {
+                transport_selector() : pdusize_(SIZE2048) {
                 }
 
                 transport_selector(const std::string& called) : called_(called), pdusize_(SIZE2048) {
@@ -166,13 +164,13 @@ namespace boost {
                 transport_selector(const std::string& called, const std::string& calling) : called_(called), calling_(calling), pdusize_(SIZE2048) {
                 }
 
-                transport_selector(const std::string& called, tpdu_size  pdusize ) : called_(called), pdusize_(pdusize) {
+                transport_selector(const std::string& called, tpdu_size pdusize) : called_(called), pdusize_(pdusize) {
                 }
 
-                transport_selector(const std::string& called, const std::string& calling, tpdu_size  pdusize ) : called_(called), calling_(calling), pdusize_(pdusize) {
+                transport_selector(const std::string& called, const std::string& calling, tpdu_size pdusize) : called_(called), calling_(calling), pdusize_(pdusize) {
                 }
 
-                transport_selector(tpdu_size  pdusize ) : pdusize_(pdusize) {
+                transport_selector(tpdu_size pdusize) : pdusize_(pdusize) {
                 }
 
                 transport_selector(int16_t called) : called_(inttype_to_str(endiancnv_copy(called))), pdusize_(SIZE2048) {
@@ -181,10 +179,10 @@ namespace boost {
                 transport_selector(int16_t called, int16_t calling) : called_(inttype_to_str(endiancnv_copy(called))), calling_(inttype_to_str(endiancnv_copy(calling))), pdusize_(SIZE2048) {
                 }
 
-                transport_selector(int16_t called, tpdu_size  pdusize ) : called_(inttype_to_str(endiancnv_copy(called))), pdusize_(pdusize) {
+                transport_selector(int16_t called, tpdu_size pdusize) : called_(inttype_to_str(endiancnv_copy(called))), pdusize_(pdusize) {
                 }
 
-                transport_selector(int16_t called, int16_t calling, tpdu_size  pdusize ) : called_(inttype_to_str(endiancnv_copy(called))), calling_(inttype_to_str(endiancnv_copy(calling))), pdusize_(pdusize) {
+                transport_selector(int16_t called, int16_t calling, tpdu_size pdusize) : called_(inttype_to_str(endiancnv_copy(called))), calling_(inttype_to_str(endiancnv_copy(calling))), pdusize_(pdusize) {
                 }
 
                 std::string called() const {
@@ -202,8 +200,8 @@ namespace boost {
             private:
                 std::string called_;
                 std::string calling_;
-                tpdu_size  pdusize_;
-            } ;
+                tpdu_size pdusize_;
+            };
 
 
 
@@ -212,7 +210,7 @@ namespace boost {
             class session_selector {
             public:
 
-                session_selector() :  tselector_() {
+                session_selector() : tselector_() {
                 }
 
                 explicit session_selector(const std::string& called) : called_(called), tselector_() {
@@ -221,13 +219,13 @@ namespace boost {
                 explicit session_selector(const std::string& called, const std::string& calling) : called_(called), calling_(calling), tselector_() {
                 }
 
-                explicit session_selector(const std::string& called, const transport_selector&  tselector) : called_(called), tselector_(tselector) {
+                explicit session_selector(const std::string& called, const transport_selector& tselector) : called_(called), tselector_(tselector) {
                 }
 
-                explicit session_selector(const std::string& called, const std::string& calling,  const transport_selector&  tselector ) : called_(called), calling_(calling), tselector_(tselector) {
+                explicit session_selector(const std::string& called, const std::string& calling, const transport_selector& tselector) : called_(called), calling_(calling), tselector_(tselector) {
                 }
 
-                session_selector(const transport_selector&  tselector) : tselector_(tselector) {
+                session_selector(const transport_selector& tselector) : tselector_(tselector) {
                 }
 
                 std::string called() const {
@@ -243,10 +241,205 @@ namespace boost {
                 }
 
             private:
-                transport_selector   tselector_;
-                std::string                called_;
-                std::string                calling_;
-            } ;
+                transport_selector tselector_;
+                std::string called_;
+                std::string calling_;
+            };
+
+
+            // presentation 
+
+            typedef boost::shared_ptr<ISO8823_PRESENTATION::Protocol_version> presentation_version_type;
+            typedef ISO8823_PRESENTATION::Transfer_syntax_name transfer_syntax_type;
+            typedef ISO8823_PRESENTATION::Abstract_syntax_name abstract_syntax_type;
+            typedef std::vector<transfer_syntax_type > transfer_syntaxs_list;
+            typedef ISO8823_PRESENTATION::Presentation_context_identifier context_id_type;
+
+            typedef ISO8823_PRESENTATION::Context_list_sequence_of conext_type;
+            typedef std::vector<conext_type> presentation_conexts_list;
+
+            typedef ISO8823_PRESENTATION::Default_context_name default_context_type;
+            typedef ISO8823_PRESENTATION::Presentation_requirements presentation_requirements;
+            typedef ISO8823_PRESENTATION::User_session_requirements user_session_requirements;
+
+            typedef ISO8823_PRESENTATION::Default_context_name short_context_type;
+            typedef std::vector<short_context_type> short_contexts_type;
+
+
+            const transfer_syntax_type X690_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID, CANONICAL_ENCODING_OID, DISTINGUISH_ENCODING_OID};
+            const transfer_syntaxs_list X690_TRANSFER_SINTAXS = transfer_syntaxs_list(X690_TRANSFER_SINTAXS_ARR, X690_TRANSFER_SINTAXS_ARR + 3);
+
+            const transfer_syntax_type BASE_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID};
+            const transfer_syntaxs_list BASE_TRANSFER_SINTAXS = transfer_syntaxs_list(BASE_TRANSFER_SINTAXS_ARR, BASE_TRANSFER_SINTAXS_ARR + 1);
+
+            class presentation_option {
+            public:
+
+                presentation_option() :
+                pcl_() {
+                }               
+                
+                presentation_option(const presentation_conexts_list& pcl, const default_context_type& dcl, const presentation_requirements& prq, const user_session_requirements& urq) :
+                pcl_(pcl), dcl_(new default_context_type(dcl)), prq_(new presentation_requirements(prq)), urq_(new user_session_requirements(urq)) {
+                }
+
+                presentation_option(const presentation_conexts_list& pcl, const default_context_type& dcl) :
+                pcl_(pcl), dcl_(new default_context_type(dcl)) {
+                }
+
+                presentation_option(const presentation_conexts_list& pcl) :
+                pcl_(pcl) {
+                }
+
+                presentation_option(const short_contexts_type& pcl, const default_context_type& dcl, const presentation_requirements& prq, const user_session_requirements& urq) :
+                pcl_(), dcl_(new default_context_type(dcl)), prq_(new presentation_requirements(prq)), urq_(new user_session_requirements(urq)) {
+                    construct(pcl);
+                }
+
+                presentation_option(const short_contexts_type& pcl, const default_context_type& dcl) :
+                pcl_(), dcl_(new default_context_type(dcl)) {
+                    construct(pcl);
+                }
+
+                presentation_option(const short_contexts_type& pcl) :
+                pcl_() {
+                    construct(pcl);
+                }
+
+                presentation_option(const short_context_type& pcl, const default_context_type& dcl, const presentation_requirements& prq, const user_session_requirements& urq) :
+                pcl_(), dcl_(new default_context_type(dcl)), prq_(new presentation_requirements(prq)), urq_(new user_session_requirements(urq)) {
+                    construct(pcl);
+                }
+
+                presentation_option(const short_context_type& pcl, const default_context_type& dcl) :
+                pcl_(), dcl_(new default_context_type(dcl)) {
+                    construct(pcl);
+                }
+
+                presentation_option(const short_context_type& pcl) :
+                pcl_() {
+                    construct(pcl);
+                }
+
+                presentation_conexts_list& conexts() {
+                    return pcl_;
+                }
+
+                void conexts(const presentation_conexts_list& val) {
+                    pcl_ = val;
+                }
+
+                boost::shared_ptr<default_context_type> default_conext() {
+                    return dcl_;
+                }
+
+                void default_conext(const default_context_type& val) {
+                    dcl_ = boost::shared_ptr<default_context_type > (new default_context_type(val));
+                }
+
+                void default_conext(boost::shared_ptr<default_context_type> val) {
+                    dcl_ = val;
+                }
+
+                boost::shared_ptr<presentation_requirements> p_requirements() {
+                    return prq_;
+                }
+
+                void p_requirements(const presentation_requirements& val) {
+                    prq_ = boost::shared_ptr<presentation_requirements > (new presentation_requirements(val));
+                }
+
+                void p_requirements(boost::shared_ptr<presentation_requirements> val) {
+                    prq_ = val;
+                }
+
+                boost::shared_ptr<user_session_requirements> u_requirements() {
+                    return urq_;
+                }
+
+                void u_requirements(const user_session_requirements& val) {
+                    urq_ = boost::shared_ptr<user_session_requirements > (new user_session_requirements(val));
+                }
+
+                void u_requirements(boost::shared_ptr<user_session_requirements> val) {
+                    urq_ = val;
+                }
+
+            private:
+
+                void construct(const short_contexts_type& pcl) {
+                    context_id_type id = 1;
+                    for (short_contexts_type::const_iterator it = pcl.begin(); it != pcl.end(); ++it) {
+                        conext_type ctx;
+                        ctx.abstract_syntax_name = it->abstract_syntax_name;
+                        ctx.presentation_context_identifier = id++;
+                        ctx.transfer_syntax_name_list.push_back(it->transfer_syntax_name);
+                        pcl_.push_back(ctx);
+                    }
+                }
+
+                void construct(const short_context_type& pcl) {
+                    conext_type ctx;
+                    ctx.abstract_syntax_name = pcl.abstract_syntax_name;
+                    ctx.presentation_context_identifier = 1;
+                    ctx.transfer_syntax_name_list.push_back(pcl.transfer_syntax_name);
+                    pcl_.push_back(ctx);
+                }
+
+                presentation_conexts_list pcl_;
+                boost::shared_ptr<default_context_type> dcl_;
+                boost::shared_ptr<presentation_requirements> prq_;
+                boost::shared_ptr<user_session_requirements> urq_;
+            };
+
+            class presentation_selector {
+            public:
+
+                presentation_selector() :option_(),  sselector_() {
+                }
+
+                explicit presentation_selector(const presentation_option& opt, const std::string& called) : option_(opt),  called_(called), sselector_() {
+                }
+
+                explicit presentation_selector(const presentation_option& opt, const std::string& called, const std::string& calling) : option_(opt),  called_(called), calling_(calling), sselector_() {
+                }
+
+                explicit presentation_selector(const presentation_option& opt, const std::string& called, const session_selector& sselector) : option_(opt), called_(called), sselector_(sselector) {
+                }
+
+                explicit presentation_selector(const presentation_option& opt, const std::string& called, const std::string& calling, const session_selector& sselector) : option_(opt), called_(called), calling_(calling), sselector_(sselector) {
+                }
+
+                presentation_selector(const presentation_option& opt, const session_selector& sselector) : option_(opt),  sselector_(sselector) {
+                }
+
+                std::string called() const {
+                    return called_;
+                }
+
+                std::string calling() const {
+                    return calling_;
+                }
+
+                const session_selector& sselector() const {
+                    return sselector_;
+                }
+                
+                presentation_option& option() {
+                    return option_;
+                }
+                
+                const presentation_option& option() const {
+                    return option_;
+                }                
+
+            private:
+                
+                presentation_option option_;
+                session_selector sselector_;
+                std::string called_;
+                std::string calling_;
+            };
 
 
 
