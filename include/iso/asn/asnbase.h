@@ -171,7 +171,7 @@ namespace boost {
 
             typedef  std::size_t                                                     id_type;
             typedef  std::size_t                                                     size_type;
-            typedef  std::size_t                                                     oidindx_type;
+
 
 
 
@@ -252,51 +252,7 @@ namespace boost {
 
 
 
-            //// OID_TYPE
 
-            class oid_type : public std::vector<oidindx_type> {
-            public:
-
-                oid_type() : std::vector<oidindx_type>() {
-                }
-
-                oid_type(const oidindx_type *  vl, std::size_t size);
-
-                oid_type(const boost::array<oidindx_type, 2 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 3 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 4 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 5 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 6 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 7 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 8 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 9 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 10 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 11 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 12 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 13 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 14 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 15 > & vl);
-
-                oid_type(const boost::array<oidindx_type, 16 > & vl);
-
-            } ;
-
-
-
-            std::ostream& operator<<(std::ostream& stream, const oid_type& vl);
 
 
 
