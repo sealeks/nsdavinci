@@ -36,7 +36,8 @@
 #include "ASN1-Object-Identifier-Module.h"
 #include "ACSE-1.h"
 
-#include "MyTest.h"
+typedef boost::asio::iso::archive_temp<>    trans_data;
+typedef boost::asio::iso::archive_ptr            trans_data_type;
 
 using  namespace boost::asio::asn::x690;
 using  namespace boost::asio::asn;
@@ -82,8 +83,8 @@ namespace test {
         int  i3;
         int  i4;
 
-        template<typename Archive>
-                void serialize(Archive & arch) {
+    void start_accept() {
+        trans_data_type trans_ = trans_data_type( new   trans_data());
 
             BOOST_ASN_EXPLICIT_TAG( i1 , 4);
             BOOST_ASN_EXPLICIT_TAG( i2 , 3);
@@ -97,12 +98,19 @@ namespace test {
 
     struct TestSet2 {
 
-        TestSet2() : s1("s1"), s2("s2"), s3("s3"), s4("s4") {
-        }
-        visiblestring_type  s1;
-        visiblestring_type  s2;
-        visiblestring_type  s3;
-        visiblestring_type  s4;
+} ;
+
+class client {
+public:
+
+    client(boost::asio::io_service& io_service,
+            resolver_type::iterator endpoint_iterator, const std::string& called = "")
+    : io_service_(io_service),
+    socket_(io_service, SELECTOR) {
+        endpoint_type endpoint = *endpoint_iterator;
+
+        trans_ = trans_data_type( new   trans_data(/*"Hello server from test"*/));
+        trans_->request_str(start_request());
 
         template<typename Archive>
                 void serialize(Archive & arch) {
@@ -114,6 +122,25 @@ namespace test {
 
 
         }
+    }
+
+    void release() {
+        std::cout << "Start release"  << std::endl;
+#if defined(PRES_PROT)
+        io_service_.reset();
+        boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+        io_service_.poll();
+#elif defined(SESSION_PROT)
+        io_service_.reset();
+        trans_ = trans_data_type( new   trans_data());
+        socket_.asyn_releaseconnect(boost::bind(&client::handle_release, this, boost::asio::placeholders::error), boost::asio::iso::SESSION_NORMAL_RELEASE, trans_);
+        io_service_.poll();
+#else
+        io_service_.reset();
+         trans_ = trans_data_type();
+        boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+        io_service_.poll();
+#endif           
 
     } ;
 
@@ -168,7 +195,8 @@ namespace test {
             
         }
 
-    };
+            trans_ = trans_data_type( new   trans_data());
+            trans_->request_str("Hello server from test");
 
     struct ChildInfo {
         Name name;
