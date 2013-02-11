@@ -23,7 +23,8 @@
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
-#include "P-EXAMPLE-1.h"
+
+#include "present.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -55,15 +56,15 @@ typedef boost::asio::iso::archive_ptr           archive_ptr;
 typedef boost::asio::iso::archiver_map      archive_map;
 typedef boost::asio::iso::archiver_pair      archiver_pair;
 
-const boost::array<boost::asio::asn::oidindx_type, 6 > PCNTXT_ARR = {1, 2, 3, 4, 5,  1};
+/*const boost::array<boost::asio::asn::oidindx_type, 6 > PCNTXT_ARR = {1, 2, 3, 4, 5,  1};
 const boost::asio::asn::oid_type PCNTXT_OID = boost::asio::asn::oid_type(PCNTXT_ARR);
 
 const boost::array<boost::asio::asn::oidindx_type, 6 > CMCNTXT_ARR = {1, 2, 3, 4, 5,  2};
-const boost::asio::asn::oid_type CMCNTXT_OID = boost::asio::asn::oid_type(CMCNTXT_ARR);
+const boost::asio::asn::oid_type CMCNTXT_OID = boost::asio::asn::oid_type(CMCNTXT_ARR);*/
 
 //typedef boost::asio::iso::archive_ptr            trans_data;
 
-archive_map get_map() {
+/*archive_map get_map() {
 
     typedef boost::asio::asn::x690::iarchive                                                                 input_archive_type;
     typedef boost::asio::asn::x690::oarchive                                                                output_archive_type;
@@ -75,7 +76,7 @@ archive_map get_map() {
     tmp.insert(archiver_pair(3, archive_ptr( new presentation_archive(CMCNTXT_OID))));
     return tmp;
 
-}
+}*/
 
 
 int port = 102;
