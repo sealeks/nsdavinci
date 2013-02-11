@@ -106,8 +106,10 @@ namespace boost {
                         }
 
                         void operator()(const boost::system::error_code& ec) {
-                            if (!ec)
-                                operator()(ec, 0);
+                            if (!ec){
+                                parse_CR(archs_);
+                                operator()(ec, 0);}
+                            
                             else
                                 handler_( ec);
                         }
@@ -152,7 +154,7 @@ namespace boost {
                             }
                         }
                         build_CP(archs);
-                        super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint), boost::asio::placeholders::error));
+                        super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint, archs), boost::asio::placeholders::error));
                     }
 
 
@@ -779,7 +781,7 @@ namespace boost {
                     
                     void build_CP(archiver_map archs);
                     
-                    void build_CR(archiver_map archs);                    
+                    bool parse_CR(archiver_map archs);                    
 
                     boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, archiver_map archs,
                             boost::system::error_code& ec) {
@@ -1128,9 +1130,11 @@ namespace boost {
 
                 typedef boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>          endpoint;
 
-                typedef session_selector                                                                         selector;
+                typedef presentation_selector                                                         selector;            
 
-                typedef transport_selector                                                                      lowselector;
+                typedef session_selector                                                               lowselector;                
+
+                typedef transport_selector                                                             lowerselector;
 
                 /// Construct to represent the IPv4 TCP protocol.
 
