@@ -278,6 +278,23 @@ namespace boost {
 
                 virtual ~base_archive() {
                 }
+                
+                
+                iarchive_ptr in() {
+                    return input_;
+                }
+
+                iarchive_ptr in() const {
+                    return input_;
+                }
+
+                oarchive_ptr out() {
+                    return output_;
+                }
+
+                oarchive_ptr out() const {
+                    return output_;
+                }                
 
                 vector_buffer request() const {
                     return output_->const_buffers();
