@@ -33,66 +33,6 @@ namespace boost {
             }
 
 
-            // oid type
-
-            oid_type::oid_type(const oidindx_type *  vl, std::size_t size) : std::vector<oidindx_type>(vl, vl + size) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 2 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 3 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 4 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 5 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 6 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 7 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 8 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 9 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 10 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 11 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 12 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 13 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 14 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 15 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            oid_type::oid_type(const boost::array<oidindx_type, 16 > & vl) : std::vector<oidindx_type>(vl.begin(), vl.end()) {
-            }
-
-            std::ostream& operator<<(std::ostream& stream, const oid_type& vl) {
-                for (oid_type::const_iterator it = vl.begin(); it != vl.end(); ++it)
-                    if (it == vl.begin())
-                        stream << *it;
-                    else
-                        stream <<  "." << *it;
-                //stream << std::endl;
-                return stream;
-            }
-
             // relative oid type
 
             reloid_type::reloid_type(const oidindx_type *  vl, std::size_t size) : std::vector<oidindx_type>(vl, vl + size) {
