@@ -10,8 +10,8 @@
 #include <iso/presentation/Reliable-Transfer-APDUs.h>
 #include "P-EXAMPLE-1.h"
 
-//using namespace ISO8823_PRESENTATION;
-//using namespace P_EXAMPLE_1;
+using namespace ISO8823_PRESENTATION;
+using namespace P_EXAMPLE_1;
 
 
 const boost::array<boost::asio::asn::oidindx_type, 4 > BASIC_ENCODING_ARRT = {2, 1, 2, 1};
