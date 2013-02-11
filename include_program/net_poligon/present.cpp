@@ -6,17 +6,16 @@
  */
 
 #include "present.h"
-#include "ISO8823-PRESENTATION.h"
-#include "ASN1-Object-Identifier-Module.h"
-#include "Reliable-Transfer-APDUs.h"
+#include <iso/presentation/ISO8823-PRESENTATION.h>
+#include <iso/presentation/Reliable-Transfer-APDUs.h>
 #include "P-EXAMPLE-1.h"
 
 //using namespace ISO8823_PRESENTATION;
 //using namespace P_EXAMPLE_1;
 
 
-const boost::array<boost::asio::asn::oidindx_type, 3 > BASIC_ENCODING_ARR = {2, 1, 1};
-const boost::asio::asn::oid_type BASIC_ENCODING_OID = boost::asio::asn::oid_type(BASIC_ENCODING_ARR);
+const boost::array<boost::asio::asn::oidindx_type, 4 > BASIC_ENCODING_ARRT = {2, 1, 2, 1};
+const boost::asio::asn::oid_type BASIC_ENCODINGT_OID = boost::asio::asn::oid_type(BASIC_ENCODING_ARRT);
 
 const boost::array<boost::asio::asn::oidindx_type, 6 > PCNTXT_ARR = {1, 2, 3, 4, 5,  1};
 const boost::asio::asn::oid_type PCNTXT_OID = boost::asio::asn::oid_type(PCNTXT_ARR);
@@ -53,18 +52,28 @@ std::string start_request() {
     cl1.abstract_syntax_name = PCNTXT_OID;
     cl1.presentation_context_identifier = 1;
     //ISO8823_PRESENTATION::Context_list_sequence_of::transfer_syntax_name_list_type tr1 = OIDTEST;
-    cl1.transfer_syntax_name_list.push_back(BASIC_ENCODING_OID);
-
+    cl1.transfer_syntax_name_list.push_back(boost::asio::BASIC_ENCODING_OID);
+    cl1.transfer_syntax_name_list.push_back(boost::asio::CANONICAL_ENCODING_OID);
+    cl1.transfer_syntax_name_list.push_back(boost::asio::DISTINGUISH_ENCODING_OID);    
+    //cl1.transfer_syntax_name_list.push_back(boost::asio::BASIC_ENCODING_OID);
 
     p_context_type cl2;
     cl2.abstract_syntax_name = CMCNTXT_OID;
     cl2.presentation_context_identifier = 3;
-    cl2.transfer_syntax_name_list.push_back(BASIC_ENCODING_OID);
+    cl2.transfer_syntax_name_list.push_back(boost::asio::BASIC_ENCODING_OID);
 
     cp.normal_mode_parameters->presentation_context_definition_list__new();
 
     cp.normal_mode_parameters->presentation_context_definition_list->push_back(cl1);
     cp.normal_mode_parameters->presentation_context_definition_list->push_back(cl2);
+    
+    cp.normal_mode_parameters->user_session_requirements__assign(ISO8823_PRESENTATION::User_session_requirements_half_duplex); 
+    cp.normal_mode_parameters->presentation_requirements__assign(ISO8823_PRESENTATION::Presentation_requirements_context_management); 
+    
+    
+cp.normal_mode_parameters->default_context_name__new();
+cp.normal_mode_parameters->default_context_name->abstract_syntax_name = PCNTXT_OID;
+cp.normal_mode_parameters->default_context_name->transfer_syntax_name = boost::asio::BASIC_ENCODING_OID;
 
     {
         boost::asio::asn::x690::oarchive OARCV1;
