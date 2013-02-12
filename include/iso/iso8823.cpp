@@ -90,11 +90,11 @@ namespace boost {
                 typedef ISO8823_PRESENTATION::PDV_list pdv_list_type;
 
                 void stream_socket::build_CP(archiver_map archs) {
-                    archiver->clear();
+                    basiccoder->clear();
                     CP_type cp;
                     cp.mode_selector.mode_value = p_mode_type::mode_value_normal_mode;
                     cp.normal_mode_parameters__new();
-                    if (!option_.called().empty())
+                   /*if (!option_.called().empty())
                         cp.normal_mode_parameters->called_presentation_selector__assign(p_cd_selector(option_.called()));
                     if (!option_.calling().empty())
                         cp.normal_mode_parameters->calling_presentation_selector__assign(p_cng_selector(option_.calling()));
@@ -103,8 +103,8 @@ namespace boost {
                     if (option_.option().p_requirements())
                         cp.normal_mode_parameters->presentation_requirements = option_.option().p_requirements();
                     if (option_.option().u_requirements())
-                        cp.normal_mode_parameters->user_session_requirements = option_.option().u_requirements();
-                    if (!option_.option().conexts().empty()) {
+                        cp.normal_mode_parameters->user_session_requirements = option_.option().u_requirements();*/ 
+                    //if (!option_.option().conexts().empty()) {
                         cp.normal_mode_parameters->presentation_context_definition_list__new();
                         for (archiver_map::iterator it = archs.begin(); it != archs.end(); ++it) {
                             p_context_type ctx;
@@ -124,14 +124,14 @@ namespace boost {
                                 cp.normal_mode_parameters->user_data.fully_encoded_data()->push_back(pdv_lst);
                             }
                         }
-                    }
-                    (archiver->output()) & cp;
+                    //}
+                   // (archiver->output()) & cp;
                 }
 
                 bool stream_socket::parse_CR(archiver_map archs) {
-                    switch (archiver->input().test_class()) {
+                   // switch (archiver->input().test_class()) {
 
-                    }
+                   // }
                     return false;
                 }
 
