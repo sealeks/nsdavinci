@@ -8,6 +8,11 @@
 #ifndef ASNBASE_H
 #define	ASNBASE_H
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4800)
+ #endif
+
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
@@ -359,6 +364,8 @@ namespace boost {
                 operator bool_vector_type() const;
 
                 operator dynamic_bitset_type() const;
+                
+                dynamic_bitset_type dynamic_bitset() const;                
 
                 operator uint8_t() const;
 
@@ -1649,6 +1656,9 @@ namespace boost {
     }
 }
 
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif	/* ASNBASE_H */
 

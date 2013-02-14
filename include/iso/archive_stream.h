@@ -295,11 +295,7 @@ namespace boost {
                 typedef boost::shared_ptr<base_iarchive> iarchive_ptr;
                 typedef boost::shared_ptr<base_oarchive> oarchive_ptr;
 
-                base_archive() {
-                }
 
-                //base_archive(iarchive_ptr in, oarchive_ptr out) : input_(in), output_(out) {
-                //}
 
                 base_archive(base_iarchive* in, base_oarchive* out) : input_(in), output_(out) {
                 }
