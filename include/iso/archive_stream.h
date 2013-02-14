@@ -33,6 +33,8 @@ namespace boost {
 
         namespace asn {
 
+
+
             typedef  std::size_t                                                     oidindx_type;
 
 
@@ -87,11 +89,25 @@ namespace boost {
         namespace iso {
 
 
-            std::string binary_to_hexsequence_debug(const std::string& vl);
 
 
             typedef boost::asio::asn::oid_type   oid_type;
             typedef int                                     contex_id_type;
+
+            typedef enum {
+                NULL_ENCODING = 0,
+                BER_ENCODING,
+                CER_ENCODING,
+                DER_ENCODING
+            }   encoding_rule;
+
+            oid_type encoding_to_oid(encoding_rule rule);
+
+            encoding_rule oid_to_encoding(const oid_type& val);
+
+            std::string binary_to_hexsequence_debug(const std::string& vl);
+
+
 
 
 
@@ -133,7 +149,7 @@ namespace boost {
                     return false;
                 }
 
-                base_oarchive() : size_(0) {
+                base_oarchive(encoding_rule rl = NULL_ENCODING ) : size_(0) {
                 }
 
                 virtual ~base_oarchive() {
@@ -175,12 +191,21 @@ namespace boost {
                     return 0;
                 }
 
+                virtual encoding_rule rule() const {
+                    return NULL_ENCODING;
+                }
+
+                oid_type transfer_syntax() const {
+                    return encoding_to_oid(rule());
+                }
+
 
             protected:
 
                 list_buffers listbuffers_;
                 vect_raw_type_ptr rows_vect;
                 std::size_t size_;
+
 
             } ;
 
@@ -273,13 +298,15 @@ namespace boost {
                 base_archive() {
                 }
 
-                base_archive(iarchive_ptr in, oarchive_ptr out) : input_(in), output_(out) {
+                //base_archive(iarchive_ptr in, oarchive_ptr out) : input_(in), output_(out) {
+                //}
+
+                base_archive(base_iarchive* in, base_oarchive* out) : input_(in), output_(out) {
                 }
 
                 virtual ~base_archive() {
                 }
-                
-                
+
                 iarchive_ptr in() {
                     return input_;
                 }
@@ -294,7 +321,7 @@ namespace boost {
 
                 oarchive_ptr out() const {
                     return output_;
-                }                
+                }
 
                 vector_buffer request() const {
                     return output_->const_buffers();
@@ -333,6 +360,14 @@ namespace boost {
                     return ls<rs;
                 }
 
+                encoding_rule rule() const {
+                    return output_->rule();
+                }
+
+                oid_type transfer_syntax() const {
+                    return output_->transfer_syntax();
+                }
+
 
             protected:
 
@@ -350,9 +385,9 @@ namespace boost {
                 return false;
             }
 
-            typedef std::set<archive_ptr>                             archiver_set;         
-            typedef std::pair<contex_id_type , archive_ptr>   archiver_pair;          
-            typedef std::map<contex_id_type , archive_ptr>   archiver_map;            
+            typedef std::set<archive_ptr>                             archiver_set;
+            typedef std::pair<contex_id_type , archive_ptr>   archiver_pair;
+            typedef std::map<contex_id_type , archive_ptr>   archiver_map;
 
             template<typename INPUT_TYPE = base_iarchive, typename OUTPUT_TYPE = base_oarchive>
                     class archive_temp : public base_archive {
@@ -361,10 +396,7 @@ namespace boost {
                 typedef INPUT_TYPE in_archive_type;
                 typedef OUTPUT_TYPE out_archive_type;
 
-                archive_temp() : base_archive(iarchive_ptr(new in_archive_type()), oarchive_ptr(new out_archive_type())), abstract_syntax_() {
-                }
-
-                archive_temp(const oid_type& asx) : base_archive(iarchive_ptr(new in_archive_type()), oarchive_ptr(new out_archive_type())), abstract_syntax_(asx) {
+                archive_temp(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING ) : base_archive(new in_archive_type() , new out_archive_type(rul)) , abstract_syntax_(asx) {
                 }
 
                 in_archive_type& input() {
@@ -386,6 +418,7 @@ namespace boost {
                 virtual oid_type abstract_syntax() const {
                     return abstract_syntax_;
                 }
+
 
             private:
 
@@ -456,7 +489,20 @@ namespace boost {
             typedef boost::shared_ptr<send_buffer_impl> send_buffer_ptr;
 
 
+
+
+
         }
+
+        const boost::array<boost::asio::asn::oidindx_type, 3 > BASIC_ENCODING_ARR = {2, 1, 1};
+        const boost::asio::asn::oid_type BASIC_ENCODING_OID = boost::asio::asn::oid_type(BASIC_ENCODING_ARR);
+
+        const boost::array<boost::asio::asn::oidindx_type, 4 > CANONICAL_ENCODING_ARR = {2, 1, 2, 0};
+        const boost::asio::asn::oid_type CANONICAL_ENCODING_OID = boost::asio::asn::oid_type(CANONICAL_ENCODING_ARR);
+
+        const boost::array<boost::asio::asn::oidindx_type, 4 > DISTINGUISH_ENCODING_ARR = {2, 1, 2, 1};
+        const boost::asio::asn::oid_type DISTINGUISH_ENCODING_OID = boost::asio::asn::oid_type(DISTINGUISH_ENCODING_ARR);
+
 
     } // namespace asio
 } // namespace boost

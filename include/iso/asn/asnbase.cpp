@@ -226,15 +226,15 @@ namespace boost {
             //}    
 
             bitstring_type operator|(const bitstring_type& ls, const bitstring_type& rs) {
-                return bitstring_type();//ls.operator  dynamic_bitset_type() | rs.operator  dynamic_bitset_type();
+                return bitstring_type(); //ls.operator  dynamic_bitset_type() | rs.operator  dynamic_bitset_type();
             }
 
             bitstring_type operator&(const bitstring_type& ls, const bitstring_type& rs) {
-                return bitstring_type();//ls.operator  dynamic_bitset_type() & rs.operator  dynamic_bitset_type();
+                return bitstring_type(); //ls.operator  dynamic_bitset_type() & rs.operator  dynamic_bitset_type();
             }
 
             bitstring_type operator^(const bitstring_type& ls, const bitstring_type& rs) {
-                return bitstring_type();//ls.operator  dynamic_bitset_type() ^ rs.operator  dynamic_bitset_type();
+                return bitstring_type(); //ls.operator  dynamic_bitset_type() ^ rs.operator  dynamic_bitset_type();
             }
 
             void bitstring_type::construct(const std::vector<bool>& vl) {

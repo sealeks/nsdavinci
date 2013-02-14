@@ -19,20 +19,89 @@
 #include <boost/asio/detail/push_options.hpp>
 
 
-
+#include <iso/archive_stream.h>
+#include <iso/presentation/ISO8823-PRESENTATION.h>
 
 
 namespace boost {
     namespace asio {
         namespace iso {
+
+            typedef ISO8823_PRESENTATION::Transfer_syntax_name transfer_syntax_type;
+            typedef ISO8823_PRESENTATION::Abstract_syntax_name abstract_syntax_type;
+            typedef std::vector<transfer_syntax_type > transfer_syntaxs_list;
+
+
+
+            typedef std::set<oid_type>   transfer_synaxes_type;
+
+            class presentation_context {
+            public:
+
+                presentation_context(int id_, const oid_type& asyntax, const encoding_rule& tsyntax, const transfer_synaxes_type&  tsxs);
+
+                presentation_context(int id_, const oid_type& asyntax, const transfer_synaxes_type&  tsxs);
+
+                oid_type abstract_syntax() const {
+                    return archiver_ ? archiver_->abstract_syntax() : oid_type();
+                }
+
+                const transfer_synaxes_type&  transfer_syntaxs() const {
+                    return transfer_syntaxes_;
+                }
+
+                encoding_rule encoding() const {
+                    return archiver_ ? archiver_->rule() : NULL_ENCODING;
+                }
+
+                bool encoding(encoding_rule val);
+
+                oid_type transfer_syntax() const {
+                    return archiver_ ? archiver_->transfer_syntax() : oid_type();
+                }
+
+                bool transfer_syntax(const oid_type& val);
+
+
+            private:
+                oid_type abstract_syntax_;
+                transfer_synaxes_type transfer_syntaxes_;
+                archive_ptr archiver_;
+            } ;
+
+            ///
+
+            class presentation_pm {
+            public:
+
+                presentation_pm(const default_context_type& dctx ) :  default_context_( new default_context_type(dctx)) {
+                }
+
+                default_context_ptr  default_context() const {
+                    return default_context_;
+                }
+
+                void  default_context(default_context_ptr val)  {
+                    default_context_ = val;
+                }
+
+            private:
+
+                default_context_ptr  default_context_;
+            } ;
+
+
             namespace prot8823 {
 
 
-                typedef boost::asio::asn::x690::iarchive                                                                          input_archive_type;
-                typedef boost::asio::asn::x690::oarchive                                                                         output_archive_type;
-                typedef boost::asio::iso::archive_temp<input_archive_type, output_archive_type>    presentation_archive;
-                typedef archive_ptr                                                       presentation_archive_ptr;
 
+                typedef ISO8823_PRESENTATION::CP_type CP_type;
+                typedef ISO8823_PRESENTATION::Mode_selector p_mode_type;
+                typedef ISO8823_PRESENTATION::Called_presentation_selector p_cd_selector;
+                typedef ISO8823_PRESENTATION::Calling_presentation_selector p_cng_selector;
+                typedef ISO8823_PRESENTATION::Context_list_sequence_of p_context_type;
+                typedef ISO8823_PRESENTATION::Fully_encoded_data p_full_data_type;
+                typedef ISO8823_PRESENTATION::PDV_list pdv_list_type;
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,60 +109,29 @@ namespace boost {
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 class stream_socket : protected boost::asio::iso::iso8327::socket  {
-                    
-                    typedef boost::asio::iso::iso8327::socket           super_type;
+                    typedef boost::asio::asn::x690::iarchive                                                                          input_archive_type;
+                    typedef boost::asio::asn::x690::oarchive                                                                         output_archive_type;
+                    typedef boost::asio::iso::archive_temp<input_archive_type, output_archive_type>              presentation_archive;
+                    typedef boost::asio::iso::iso8327::socket    super_type;
 
                 public:
 
                     explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel)
                     : boost::asio::iso::iso8327::socket(io_service,  psel.sselector()),
-                    selector_ (psel) , basiccoder( presentation_archive_ptr(new presentation_archive(BASIC_ENCODING_OID))) {   
-                            presentation_archive* fff =  new presentation_archive(BASIC_ENCODING_OID);
-							presentation_archive_ptr  ggg = presentation_archive_ptr(fff);
-							basiccoder = ggg;
-							if (!basiccoder->out())
-                                    presentation_archive fff2(BASIC_ENCODING_OID);
+                    selector_ (psel), basiccoder(new presentation_archive()) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const presentation_selector& psel)
                     : boost::asio::iso::iso8327::socket(io_service, psel.sselector()),
-                    selector_ (psel) , basiccoder( presentation_archive_ptr(new presentation_archive(BASIC_ENCODING_OID))) {
-                    
+                    selector_ (psel), basiccoder(new presentation_archive())  {
                     }
-
-
-                    ///   Connect operation  ///
-
-                    void connect(const endpoint_type& peer_endpoint, archiver_map& archs) {
-
-                        boost::system::error_code ec;
-                        connect(peer_endpoint, archs, ec);
-                        boost::asio::detail::throw_error(ec, "connect");
-                    }
-
-                    boost::system::error_code connect(const endpoint_type& peer_endpoint, archiver_map& archs,
-                            boost::system::error_code& ec) {
-                        if (!is_open()) {
-                            if (this->get_service().open(this->get_implementation(),
-                                    peer_endpoint.protocol(), ec)) {
-                                return ec;
-                            }
-                        }
-                        return connect_impl(peer_endpoint, archs, ec);
-                    }
-
-
-                    // connect handler
-
-
-                private:
 
                     template <typename ConnectHandler>
-                    class connect_op {
+                    class connect_opp {
                     public:
 
-                        connect_op(stream_socket* socket , ConnectHandler handler ,
+                        connect_opp(stream_socket* socket , ConnectHandler handler ,
                                 const endpoint_type& peer_endpoint, archiver_map archs) :
                         socket_(socket),
                         handler_(handler),
@@ -103,24 +141,15 @@ namespace boost {
                         }
 
                         void run(const boost::system::error_code& ec) {
-                            operator()(ec, 0);
+                            operator()(ec);
                         }
 
                         void operator()(const boost::system::error_code& ec) {
                             if (!ec) {
-                                parse_CR(archs_);
-                                operator()(ec, 0);
+                                socket_->parse_CR(archs_);
                             }
 
-                            else
-                                handler_( ec);
-                        }
-
-                        void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
-                            if (!ec) {
-
-                            }
-                            handler_(ec);
+                            handler_( ec);
                         }
 
 
@@ -155,806 +184,70 @@ namespace boost {
                             }
                         }
                         build_CP(archs);
-                        super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint, archs), boost::asio::placeholders::error));
+                        super_type::async_connect(peer_endpoint, basiccoder, boost::bind(&connect_opp<ConnectHandler>::run, connect_opp<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint, archs), boost::asio::placeholders::error));
                     }
 
-
-
-
-
-                    ///   Releease operation  ///    
-
-                    /*          void releaseconnect(release_type type, archive_ptr data) {
-
-                                   boost::system::error_code ec;
-                                   releaseconnect(type, data, ec);
-                                   boost::asio::detail::throw_error(ec, "releaseconnect");
-                               }
-
-                               boost::system::error_code releaseconnect(release_type type, archive_ptr data , boost::system::error_code& ec) {
-                                   return releaseconnect_impl(type, data , ec);
-                               }
-
-                           private:
-
-                               template <typename ReleaseHandler>
-                               class releaseconnect_op {
-
-                                   enum stateconnection {
-                                       request,
-                                       response
-                                   } ;
-
-                               public:
-
-                                   releaseconnect_op(stream_socket*  socket, ReleaseHandler handler, release_type type,  archive_ptr transdata) :
-                                   socket_(socket),
-                                   handler_(handler),
-                                   send_(send_seq_ptr( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , socket->prot_option(), transdata ? transdata->request_str() : "" ))),
-                                   receive_(new receive_seq()),
-                                   type_(type),
-                                   transdata_(transdata),
-                                   state_(request) {
-                                   }
-
-                                   void run() {
-                                       boost::system::error_code ec;
-                                       operator()(ec, 0);
-                                   }
-
-                                   void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
-                                       if (!ec) {
-                                           switch (state_) {
-                                               case request:
-                                               {
-                                                   send_->size(bytes_transferred);
-                                                   if (!send_->ready()) {
-                                                       socket_->super_type::async_send(send_->pop() , 0 , *this);
-                                                       return;
-                                                   }
-                                                   state(response);
-                                                   operator()(ec, 0);
-                                                   return;
-                                               }
-                                               case response:
-                                               {
-                                                   receive_->put(bytes_transferred);
-                                                   if (!receive_->ready()) {
-                                                       socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()), 0 , *this);
-                                                       return;
-                                                   }
-                                                   finish(ec);
-                                                   return;
-                                               }
-                                           }
-                                       }
-                                       handler_(ec);
-                                       boost::system::error_code ecc;
-                                       socket_->close(ecc);
-                                   }
-
-
-                               private:
-
-                                   void finish(const boost::system::error_code& ec) {
-                                       if (receive_->state() == receive_seq::complete) {
-                                           switch (receive_->type()) {
-                                               case DN_SPDU_ID:
-                                               {
-                                                   if (transdata_)
-                                                       transdata_->respond_str(receive_->options().data());
-                                                   handler_(ec);
-                                                   boost::system::error_code ecc;
-                                                   socket_->close(ecc);
-                                                   return;
-                                               }
-                                               case AA_SPDU_ID:
-                                               {
-                                                   if (transdata_)
-                                                       transdata_->respond_str(receive_->options().data());
-                                                   handler_(ec);
-                                                   boost::system::error_code ecc;
-                                                   socket_->close(ecc);
-                                                   return;
-                                               }
-                                               default:
-                                               {
-                                                   handler_(ERROR__EPROTO);
-                                               }
-                                           }
-                                       }
-                                       boost::system::error_code ecc;
-                                       socket_->close(ecc);
-                                   }
-
-                                   void state(stateconnection st) {
-                                       if (state_ != st) {
-                                           state_ = st;
-                                       }
-                                   }
-
-                                   stream_socket*                                              socket_;
-                                   ReleaseHandler                                              handler_;
-                                   send_seq_ptr                                                  send_;
-                                   receive_seq_ptr                                              receive_;
-                                   release_type                                                   type_;
-                                   archive_ptr                                              transdata_;
-                                   stateconnection                                               state_;
-
-                               } ;
-
-
-                           public:
-
-                               template <typename ReleaseHandler>
-                               void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
-                                       release_type type,  archive_ptr trans) {
-                                   BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
-                                   if (is_open()) {
-                                       this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
-                                               releaseconnect_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, type, trans)));
-                                   }
-                                   else
-                                       handler(ERROR_ECONNREFUSED);
-                               }
-
-
-
-                               ///  Check Accept operation  ///
-
-                               void  check_accept(archive_ptr  transdata) {
-
-                                   boost::system::error_code ec;
-                                   check_accept(transdata, ec);
-                                   boost::asio::detail::throw_error(ec, "connect");
-                               }
-
-                               boost::system::error_code  check_accept(archive_ptr  transdata, boost::system::error_code& ec) {
-                                   return check_accept_imp(transdata, ec);
-                               }
-
-
-                           private:
-
-                               template <typename CheckAcceptHandler>
-                               class accept_op {
-
-                                   enum stateconnection {
-                                       wait,
-                                       send,
-                                       refuse
-                                   } ;
-
-                               public:
-
-                                   accept_op(stream_socket* socket,  CheckAcceptHandler handler,  archive_ptr  transdata) :
-                                   socket_(socket),
-                                   handler_(handler),
-                                   state_(wait),
-                                   options_(socket->prot_option()),
-                                   send_(),
-                                   receive_(new receive_seq()),
-                                   transdata_(transdata) {
-                                   }
-
-                                   void run() {
-
-                                       boost::system::error_code ec;
-                                       operator()(ec, 0);
-                                   }
-
-                                   void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
-                                       if (!ec) {
-                                           switch (state_) {
-                                               case wait:
-                                               {
-                                                   receive_->put(bytes_transferred);
-                                                   if (!receive_->ready()) {
-                                                       socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()) , 0 , *this);
-                                                       return;
-                                                   }
-                                                   parse_response(ec);
-                                                   return;
-                                               }
-                                               case send:
-                                               {
-                                                   send_->size(bytes_transferred);
-                                                   if (!send_->ready()) {
-                                                       socket_->super_type::async_send(send_->pop() , 0 , *this);
-                                                       return;
-                                                   }
-                                                   finish(ec);
-                                                   return;
-                                               }
-                                               case refuse:
-                                               {
-                                                   send_->size(bytes_transferred);
-                                                   if (!send_->ready()) {
-                                                       socket_->super_type::async_send(send_->pop() , 0 , *this);
-                                                       return;
-                                                   }
-                                                   boost::system::error_code ecc;
-                                                   socket_->close(ecc);
-                                                   handler_(ERROR_EDOM);
-                                                   return;
-                                               }
-                                           }
-                                       }
-                                       handler_(ec);
-                                   }
-
-
-
-                               private:
-
-                                   void parse_response(const boost::system::error_code& ec) {
-                                       if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
-                                           boost::system::error_code ecc;
-                                           socket_->close(ecc);
-                                           handler_(ERROR__EPROTO);
-                                           return;
-                                       }
-                                       std::string error_accept = "";
-                                       if (!correspond_protocol_option(options_,  receive_->options(), error_accept))  {
-                                           options_.reason(error_accept);
-                                           send_ = send_seq_ptr( new send_seq(RF_SPDU_ID, options_));
-                                           state(refuse);
-                                           operator()(ec, 0);
-                                           return;
-                                       }
-                                       if (transdata_)
-                                           transdata_->respond_str(receive_->options().data());
-                                       send_ = send_seq_ptr( new send_seq(AC_SPDU_ID, options_, transdata_ ? transdata_->request_str() : ""));
-                                       state(send);
-                                       operator()(ec, 0);
-                                   }
-
-                                   void finish(const boost::system::error_code& ec) {
-
-                                       protocol_options  opt = receive_->options();
-                                       //opt.pdusize(options_.pdusize());
-                                       socket_->correspond_prot_option(opt);
-                                       handler_(ec);
-                                       std::cout << "accept_op success" << std::endl;
-                                   }
-
-                                   void state(stateconnection st) {
-
-                                       if (state_ != st)
-                                           state_ = st;
-                                   }
-
-
-
-                                   stream_socket*                              socket_;
-                                   CheckAcceptHandler                    handler_;
-                                   stateconnection                            state_;
-                                   protocol_options                          options_;
-                                   send_seq_ptr                                 send_;
-                                   receive_seq_ptr                             receive_;
-                                   archive_ptr                             transdata_;
-
-                               } ;
-
-
-                           public:
-
-                               template <typename CheckAcceptHandler>
-                               void asyn_check_accept(CheckAcceptHandler handler, archive_ptr  transdata) {
-
-                                   //option_.src_tsap(src);
-                                   this->get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
-                                           accept_op<CheckAcceptHandler > (const_cast<stream_socket*> (this), handler, transdata)));
-                               }
-
-
-
-
-
-
-                               ///   Send operation  ///                          
-
-                               template <typename ConstBufferSequence>
-                               std::size_t send(const ConstBufferSequence& buffers) {
-
-                                   return send(buffers, 0);
-                               }
-
-                               template <typename ConstBufferSequence>
-                               std::size_t send(const ConstBufferSequence& buffers,
-                                       socket_base::message_flags flags) {
-                                   boost::system::error_code ec;
-                                   std::size_t s = send(buffers, flags,  ec);
-                                   boost::asio::detail::throw_error(ec, "send");
-
-                                   return s;
-                               }
-
-                               template <typename ConstBufferSequence>
-                               std::size_t write_some(const ConstBufferSequence& buffers) {
-                                   boost::system::error_code ec;
-                                   std::size_t s = send(buffers, 0,  ec);
-                                   boost::asio::detail::throw_error(ec, "write_some");
-
-                                   return s;
-                               }
-
-                               template <typename ConstBufferSequence>
-                               std::size_t write_some(const ConstBufferSequence& buffers,
-                                       boost::system::error_code& ec) {
-
-                                   return send(buffers, 0, ec);
-                               }
-
-                               template <typename ConstBufferSequence>
-                               std::size_t send(const ConstBufferSequence& buffers,
-                                       socket_base::message_flags flags, boost::system::error_code& ec) {
-
-                                   return send_impl(buffers, flags, ec);
-                               }
-
-
-                           private:
-
-                               template <typename SendHandler, typename ConstBufferSequence>
-                               class send_op {
-                               public:
-
-                                   send_op(stream_socket*   socket, SendHandler handler ,
-                                           const ConstBufferSequence& buffers, boost::asio::socket_base::message_flags flags) :
-                                   socket_(socket),
-                                   handler_(handler),
-                                   in_(send_seq_ptr( new send_seq_data<ConstBufferSequence>(buffers))),
-                                   flags_(flags),
-                                   send_lower_(boost::asio::buffer_size(buffers)) {
-                                   }
-
-                                   void run() {
-
-                                       boost::system::error_code ec;
-                                       operator()(ec, 0);
-                                   }
-
-                                   void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
-                                       if (!ec) {
-                                           in_->size(bytes_transferred);
-                                           if (!in_->ready()) {
-                                               socket_->super_type::async_send(in_->pop(), flags_ , *this);
-                                               return;
-                                           }
-                                       }
-                                       handler_(ec, static_cast<std::size_t> (send_lower_));
-                                   }
-
-
-                               private:
-
-                                   stream_socket*                                             socket_;
-                                   SendHandler                                                  handler_;
-                                   send_seq_ptr                                                 in_;
-                                   boost::asio::socket_base::message_flags flags_;
-                                   std::size_t                                                       send_lower_;
-
-
-                               } ;
-
-                           public:
-
-                               template <typename ConstBufferSequence, typename WriteHandler>
-                               void async_send(const ConstBufferSequence& buffers,
-                                       BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
-
-                                   async_send(buffers, 0, handler);
-                               }
-
-                               template <typename ConstBufferSequence, typename WriteHandler>
-                               void async_send(const ConstBufferSequence& buffers,
-                                       socket_base::message_flags flags,
-                                       BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
-
-                                   BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-                                   this->get_io_service().post(boost::bind(&send_op<WriteHandler, ConstBufferSequence>::run, send_op<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
-                               }
-
-                               template <typename ConstBufferSequence, typename WriteHandler>
-                               void async_write_some(const ConstBufferSequence& buffers,
-                                       BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
-
-                                   async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler);
-                               }
-
-
-
-
-
-
-
-                               ///   receive operation  ///     
-
-                               template <typename MutableBufferSequence>
-                               std::size_t receive(const MutableBufferSequence& buffers) {
-
-                                   return receive<MutableBufferSequence > (buffer, 0);
-                               }
-
-                               template <typename MutableBufferSequence>
-                               std::size_t receive(const MutableBufferSequence& buffers,
-                                       socket_base::message_flags flags) {
-                                   boost::system::error_code ec;
-                                   std::size_t s = receive( buffers, flags, ec);
-                                   boost::asio::detail::throw_error(ec, "receive");
-                                   return s;
-                               }
-
-                               template <typename MutableBufferSequence>
-                               std::size_t read_some(const MutableBufferSequence& buffers,
-                                       boost::system::error_code& ec) {
-
-                                   return receive(buffers, 0, ec);
-                               }
-
-                               template <typename MutableBufferSequence>
-                               std::size_t read_some(const MutableBufferSequence& buffers) {
-                                   boost::system::error_code ec;
-                                   std::size_t s =  receive(buffers, 0, ec);
-                                   boost::asio::detail::throw_error(ec, "read_some");
-
-                                   return s;
-                               }
-
-                               template <typename MutableBufferSequence>
-                               std::size_t receive(const MutableBufferSequence& buffers,
-                                       socket_base::message_flags flags, boost::system::error_code& ec) {
-
-                                   return receive_impl(buffers, flags, ec);
-                               }
-
-                           private:
-
-                               template <typename ReceiveHandler, typename Mutable_Buffers>
-                               class receive_op {
-
-                                   enum stateconnection {
-                                       request,
-                                       response
-                                   } ;
-
-                               public:
-
-                                   receive_op(stream_socket*   socket, ReceiveHandler handler ,
-                                           receive_seq_ptr receive, const Mutable_Buffers& buff , boost::asio::socket_base::message_flags flags) :
-                                   socket_(socket),
-                                   handler_(handler),
-                                   receive_(receive),
-                                   buff_(buff),
-                                   send_(),
-                                   state_(request),
-                                   flags_(flags) {
-                                   }
-
-                                   void run() {
-                                       boost::system::error_code ec;
-                                       if (socket_->input_empty())
-                                           operator()(ec, 0);
-                                       else
-                                           socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()) , flags_ , handler_);
-                                   }
-
-                                   void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
-                                       if (!ec) {
-                                           switch (state_) {
-                                               case request:
-                                               {
-                                                   receive_->put(bytes_transferred);
-                                                   if (!receive_->ready()) {
-                                                       socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()) , flags_ , *this);
-                                                       return;
-                                                   }
-                                                   if (!success()) return;
-                                                   break;
-                                               }
-                                               case response:
-                                               {
-                                                   send_->size(bytes_transferred);
-                                                   if (!send_->ready()) {
-                                                       socket_->super_type::async_send(send_->pop() , 0 , *this);
-                                                       return;
-                                                   }
-                                                   handler_(ERROR_ECONNREFUSED, static_cast<std::size_t> (receive_->datasize()));
-                                                   return;
-                                               }
-                                           }
-                                       }
-                                       handler_(ec, static_cast<std::size_t> (receive_->datasize()));
-                                   }
-
-
-
-
-                               private:
-
-                                   bool success() {
-                                       switch (receive_->type()) {
-                                           case  DT_SPDU_ID:
-                                           {
-                                               return true;
-                                           }
-                                           default:
-                                           {
-                                               send_ = socket_->session_release_reaction(receive_);
-                                               if (send_) {
-                                                   boost::system::error_code ecc;
-                                                   state(response);
-                                                   operator()(ecc, 0);
-                                                   return false;
-                                               }
-                                               boost::system::error_code ecc;
-                                               socket_->close(ecc);
-                                               handler_(ERROR_ECONNREFUSED ,  0);
-                                               return false;
-                                           }
-                                       }
-
-                                       return false;
-                                   }
-
-                                   void state(stateconnection st) {
-                                       if (state_ != st) {
-                                           state_ = st;
-                                       }
-                                   }
-
-                                   stream_socket*                                              socket_;
-                                   ReceiveHandler                                              handler_;
-                                   const Mutable_Buffers&                               buff_;
-                                   receive_seq_ptr                                             receive_;
-                                   send_seq_ptr                                                 send_;
-                                   stateconnection                                             state_;
-                                   boost::asio::socket_base::message_flags flags_;
-                               } ;
-
-                           public:
-
-                               template <typename MutableBufferSequence, typename ReadHandler>
-                               void async_receive(const MutableBufferSequence& buffers,
-                                       BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
-
-                                   async_receive<MutableBufferSequence, ReadHandler > (buffers, handler, 0 );
-                               }
-
-                               template <typename MutableBufferSequence, typename ReadHandler>
-                               void async_receive(const MutableBufferSequence& buffers,
-                                       socket_base::message_flags flags,
-                                       BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
-
-                                   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-                                   this->get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
-                                           receive_seq_ptr( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers))), buffers, flags)));
-
-                               }
-
-                               template <typename MutableBufferSequence, typename ReadHandler>
-                               void async_read_some(const MutableBufferSequence& buffers,
-                                       BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
-
-                                   async_receive<MutableBufferSequence, ReadHandler > (buffers, 0, handler);
-                               }
-
-                               //archive_ptr    session_releasedata() const {
-                               //    return session_data_;
-                               //}
-
-
-                           protected:
-
-                               virtual  send_seq_ptr session_release_reaction(receive_seq_ptr receive) {
-
-                                   if (session_data_){
-                                       session_data_->clear();
-                                       session_data_->request_str(receive->options().data());}
-                                   switch (receive->type()) {
-                                       case FN_SPDU_ID: return send_seq_ptr( new send_seq(DN_SPDU_ID, prot_option()));
-                                       case AB_SPDU_ID: return send_seq_ptr( new send_seq(AC_SPDU_ID, prot_option()));
-                                       default:
-                                       {
-                                       }
-                                   }
-                                   return send_seq_ptr();
-                               }
-
-                               //void session_releasedata(archive_ptr data ) {
-                               //    session_data_ = data;
-                               //}*/
 
 
                 private:
 
-                    /*const protocol_options& prot_option() const {
-                        return option_;
+                    void build_CP(archiver_map archs) {
+                        this->basiccoder->clear();
+                        CP_type cp;
+                        cp.mode_selector.mode_value = p_mode_type::mode_value_normal_mode;
+                        cp.normal_mode_parameters__new();
+                        if (!selector_.called().empty())
+                            cp.normal_mode_parameters->called_presentation_selector__assign(p_cd_selector(selector_.called()));
+                        if (!selector_.calling().empty())
+                            cp.normal_mode_parameters->calling_presentation_selector__assign(p_cng_selector(selector_.calling()));
+                        /* if (option_.option().default_conext())
+                             cp.normal_mode_parameters->default_context_name = option_.option().default_conext();
+                         if (option_.option().p_requirements())
+                             cp.normal_mode_parameters->presentation_requirements = option_.option().p_requirements();
+                         if (option_.option().u_requirements())
+                             cp.normal_mode_parameters->user_session_requirements = option_.option().u_requirements();*/
+                        //if (!option_.option().conexts().empty()) {
+                        cp.normal_mode_parameters->presentation_context_definition_list__new();
+                        for (archiver_map::iterator it = archs.begin(); it != archs.end(); ++it) {
+                            p_context_type ctx;
+                            ctx.abstract_syntax_name = it->second->abstract_syntax();
+                            ctx.presentation_context_identifier = it->first;
+                            ctx.transfer_syntax_name_list = ISO8823_PRESENTATION::Context_list_sequence_of::transfer_syntax_name_list_type(1, BASIC_ENCODING_OID);
+                            cp.normal_mode_parameters->presentation_context_definition_list->push_back(ctx);
+                        }
+                        cp.normal_mode_parameters->user_data.fully_encoded_data(new p_full_data_type());
+                        for (archiver_map::iterator it = archs.begin(); it != archs.end(); ++it) {
+                            if (it->second->out() && it->second->out()->size()) {
+                                pdv_list_type pdv_lst;
+                                pdv_lst.presentation_context_identifier = it->first;
+                                //pdv_lst.transfer_syntax_name__new();
+                                pdv_lst.presentation_data_values.single_ASN1_type( new boost::asio::asn::any_type());
+                                pdv_lst.presentation_data_values.single_ASN1_type()->bind(*(it->second->out()));
+                                cp.normal_mode_parameters->user_data.fully_encoded_data()->push_back(pdv_lst);
+                            }
+                        }
+                        //}
+                        (basiccoder->output()) & cp;
                     }
 
-                    void correspond_prot_option(const protocol_options& val) {
+                    bool parse_CR(archiver_map archs) {
+                        int cl = this->basiccoder->input().test_class();
+                        int id = this->basiccoder->input().test_id();
+                        switch (this->basiccoder->input().test_class()) {
 
-                        std::cout << "correspond_prot_option calling  : " << val.ssap_calling() << std::endl;
-                        std::cout << "correspond_prot_option called  : " << val.ssap_called() << std::endl;
-                    }*/
-
-                    void build_CP(archiver_map archs);
-
-                    bool parse_CR(archiver_map archs);
+                        }
+                        return false;
+                    }
 
                     boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, archiver_map archs,
                             boost::system::error_code& ec) {
-
-                        /*session_data_=data;
-                        
-                        if (super_type::connect(peer_endpoint, ec))
-                            return ec;
-
-                        send_seq_ptr  send_ (send_seq_ptr( new send_seq( CN_SPDU_ID, prot_option(), data ? data->request_str() : "")));
-                        while (!ec && !send_->ready())
-                            send_->size( super_type::send(send_->pop() , 0, ec));
-                        if (ec)
-                            return ec;
-                        receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
-                        while (!ec && !receive_->ready()) {
-                            receive_->put(super_type::receive(boost::asio::buffer(receive_->buffer()) , 0, ec));
-                        }
-                        if (ec)
-                            return ec;
-                        if (receive_->state() == receive_seq::complete) {
-                            switch (receive_->type()) {
-                                case AC_SPDU_ID:
-                                {
-                                    correspond_prot_option(receive_->options());
-                                    if (data)
-                                        data->respond_str(receive_->options().data());
-                                    return ec;
-                                }
-                                default:
-                                {
-                                    ec = ERROR__EPROTO;
-                                }
-                            }
-                        }*/
                         return ec = ERROR__EPROTO;
                     }
 
-                    /*   boost::system::error_code releaseconnect_impl(release_type type, archive_ptr data , boost::system::error_code& ec) {
-                           if (is_open()) {
-                               send_seq_ptr  send_( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , prot_option(), data ? data->request_str() : "" ));
-                               while (!ec && !send_->ready())
-                                   send_->size( super_type::send(send_->pop(), 0, ec));
-                               if (ec)
-                                   return ec;
-                               receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
-                               while (!ec && !receive_->ready())
-                                   receive_->put(super_type::receive(boost::asio::buffer(receive_->buffer()) , 0, ec));
-                               if (ec)
-                                   return ec;
-                               if (receive_->state() == receive_seq::complete) {
-                                   switch (receive_->type()) {
-                                       case DN_SPDU_ID:
-                                       {
-                                           if (data)
-                                               data->respond_str(receive_->options().data());
-                                           boost::system::error_code ecc;
-                                           close(ecc);
-                                           return ec;
-                                       }
-                                       case AA_SPDU_ID:
-                                       {
-                                           if (data)
-                                               data->respond_str(receive_->options().data());
-                                           boost::system::error_code ecc;
-                                           close(ecc);
-                                           return ec;
-                                       }
-                                       default:
-                                       {
-                                       }
-                                   }
-                               }
-                               boost::system::error_code ecc;
-                               close(ecc);
-                           }
-                           return ec =  ERROR_ECONNREFUSED;
-                       }
 
-                       boost::system::error_code  check_accept_imp(archive_ptr  transdata, boost::system::error_code& ec) {
-                           bool canseled = false;
+                    presentation_selector                                           selector_;
+                    boost::shared_ptr<presentation_archive>               basiccoder;
 
-                           receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
-                           while (!ec && !receive_->ready()) {
-                               receive_->put(super_type::receive( boost::asio::buffer(receive_->buffer()) , 0, ec));
-                           }
-                           if (ec)
-                               return ec;
-                           send_seq_ptr  send_ ;
-
-                           protocol_options options_ = this->prot_option();
-                           if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
-                               boost::system::error_code ecc;
-                               close(ecc);
-                               return ERROR__EPROTO;
-                           }
-                           std::string error_accept = "";
-                           if (!correspond_protocol_option(options_,  receive_->options(), error_accept))  {
-                               canseled = true;
-                               options_.reason(error_accept);
-                               send_ = send_seq_ptr( new send_seq(RF_SPDU_ID, options_));
-                           }
-                           else {
-                               if (transdata)
-                                   transdata->respond_str(receive_->options().data());
-                               send_ = send_seq_ptr( new send_seq(AC_SPDU_ID, options_, transdata ? transdata->request_str() : ""));
-                           }
-
-                           while (!ec && !send_->ready())
-                               send_->size(super_type::send(send_->pop(), 0, ec));
-                           if (ec)
-                               return ec;
-                           if (canseled ) {
-                               boost::system::error_code ecc;
-                               close(ecc);
-                           }
-                           else {
-                               protocol_options  opt = receive_->options();
-                               correspond_prot_option(receive_->options());
-                           }
-                           return ec = canseled ? ERROR_EDOM : ec;
-                       }
-
-                       template <typename ConstBufferSequence>
-                       std::size_t send_impl(const ConstBufferSequence& buffers,
-                               socket_base::message_flags flags, boost::system::error_code& ec) {
-                           send_seq_ptr  send_( new send_seq_data<ConstBufferSequence > (buffers));
-                           while (!ec && !send_->ready())
-                               send_->size( super_type::send(send_->pop(), 0, ec));
-                           return ec ? 0 : boost::asio::buffer_size(buffers);
-                       }
-
-                       template <typename MutableBufferSequence>
-                       std::size_t receive_impl(const MutableBufferSequence& buffers,
-                               socket_base::message_flags flags, boost::system::error_code& ec) {
-
-                           if (!input_empty())
-                               return super_type::receive(boost::asio::buffer(buffers) , flags, ec );
-
-                           receive_seq_ptr receive_( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers)));
-                           while (!ec && !receive_->ready()) {
-                               receive_->put(super_type::receive(boost::asio::buffer(receive_->buffer()) , 0, ec));
-                           }
-                           if (ec)
-                               return 0;
-                           switch (receive_->type()) {
-                               case DT_SPDU_ID:
-                               {
-                                   return receive_->datasize();
-                               }
-                               default:
-                               {
-                                   send_seq_ptr  send_  = session_release_reaction(receive_);
-                                   if (send_) {
-                                       while (!ec && !send_->ready())
-                                           send_->size( super_type::send(send_->pop(), 0, ec));
-                                       ec = ERROR_ECONNREFUSED;
-                                       boost::system::error_code ecc;
-                                       close(ecc);                                    
-                                       return receive_->datasize();
-                                    
-                                   }
-                               }
-                           }
-                           boost::system::error_code ecc;
-                           close(ecc);
-                           ec = ERROR__EPROTO;
-                           return 0;
-                       }*/
-
-                    presentation_selector                          selector_;
-                    presentation_archive_ptr               basiccoder;
                 } ;
 
                 class socket_acceptor : public boost::asio::iso::iec8073_tcp::socket_acceptor  {

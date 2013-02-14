@@ -1,3 +1,4 @@
+
 /* 
  * File:   iso.cpp
  * Author: sealeks@mail.ru
@@ -1416,9 +1417,10 @@ namespace boost {
                         if (!receive)
                             return send_seq_ptr();
                         //session_releasedata_ = archive_ptr( new   trans_data(/*receive->options().data()*/));
-                        if (session_data_){
+                        if (session_data_) {
                             session_data_->clear();
-                            session_data_->request_str(receive->options().data());}
+                            session_data_->request_str(receive->options().data());
+                        }
                         switch (receive->type()) {
                             case FN_SPDU_ID: return send_seq_ptr( new send_seq(DN_SPDU_ID, prot_option()));
                             case AB_SPDU_ID: return send_seq_ptr( new send_seq(AC_SPDU_ID, prot_option()));
@@ -1449,9 +1451,9 @@ namespace boost {
 
                     boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, archive_ptr data,
                             boost::system::error_code& ec) {
-                        
-                        session_data_=data;
-                        
+
+                        session_data_ = data;
+
                         if (super_type::connect(peer_endpoint, ec))
                             return ec;
 
@@ -1604,9 +1606,9 @@ namespace boost {
                                         send_->size( super_type::send(send_->pop(), 0, ec));
                                     ec = ERROR_ECONNREFUSED;
                                     boost::system::error_code ecc;
-                                    close(ecc);                                    
+                                    close(ecc);
                                     return receive_->datasize();
-                                    
+
                                 }
                             }
                         }
@@ -1880,11 +1882,11 @@ namespace boost {
         inline static bool input_empty( boost::asio::iso::prot8327::stream_socket& s) {
             return s.input_empty();
         }
-        
+
         template<typename ReleaseConnectHandler>
         void asyn_releaseconnect( boost::asio::iso::prot8327::stream_socket& s, ReleaseConnectHandler  handler, iso::release_type type,  iso::archive_ptr data) {
             s.asyn_releaseconnect<ReleaseConnectHandler > (handler, type, data );
-        }        
+        }
 
     } // namespace asio
 } // namespace boost
