@@ -1384,16 +1384,16 @@ namespace boost {
                     typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
                     val_ = type_ptr( new choice_holder<T > (vl, static_cast<int> (ID)));
                 }
-                
+
                 void free() {
                     val_ = type_ptr();
-                }                
+                }
 
             protected:
 
                 type_ptr val_;
 
-            };
+            } ;
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1635,28 +1635,17 @@ namespace boost {
             inline bool bind_element(Archive& arch, const T& vl) {
                 std::size_t tst = arch.size();
                 arch & vl;
-                return (arch.size() != tst);                
+                return (arch.size() != tst);
             }
 
             template<typename Archive, typename T>
             inline bool bind_element(Archive& arch, T& vl) {
-                std::size_t tst = arch.size();                
+                std::size_t tst = arch.size();
                 arch & vl;
                 return (arch.size() != tst);
             }
-            
+
         }
-
-       const boost::array<boost::asio::asn::oidindx_type, 3 > BASIC_ENCODING_ARR = {2, 1, 1};
-       const boost::asio::asn::oid_type BASIC_ENCODING_OID = boost::asio::asn::oid_type(BASIC_ENCODING_ARR);       
-       
-       const boost::array<boost::asio::asn::oidindx_type, 4 > CANONICAL_ENCODING_ARR = {2, 1, 2, 0};
-       const boost::asio::asn::oid_type CANONICAL_ENCODING_OID = boost::asio::asn::oid_type(CANONICAL_ENCODING_ARR);      
-       
-       const boost::array<boost::asio::asn::oidindx_type, 4 > DISTINGUISH_ENCODING_ARR = {2, 1, 2, 1};
-       const boost::asio::asn::oid_type DISTINGUISH_ENCODING_OID = boost::asio::asn::oid_type(DISTINGUISH_ENCODING_ARR);     
-
-        
     }
 }
 

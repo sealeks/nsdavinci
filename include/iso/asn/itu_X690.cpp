@@ -527,7 +527,7 @@ namespace boost {
                 /// oarchive
 
                 oarchive::iterator  oarchive::addtag(const  tag& tg,  bool settype)  {
-                    if (/*false*/rule_ != CER_ENCODING) return add(to_x690_cast(tg));
+                    if (/*false*/rule_ != boost::asio::iso::CER_ENCODING) return add(to_x690_cast(tg));
                     iterator it = add(to_x690_cast(tg));
                     if (!stack_.empty() &&  stack_.top().is_set)
                         stack_.top().tlv_iterators.push_back( tlv_info(tg, iterator_pair(it, it)));
@@ -536,7 +536,7 @@ namespace boost {
                 }
 
                 void  oarchive::pop_stack()  {
-                    if (/*false*/rule_ != CER_ENCODING) return;
+                    if (/*false*/rule_ != boost::asio::iso::CER_ENCODING) return;
                     if (!stack_.empty()) {
                         if (stack_.top().is_set)
                             sort_tlv(stack_.top().tlv_iterators);
@@ -1086,13 +1086,13 @@ namespace boost {
                     std::size_t sz = stream.stack_size();
                     raw_type data;
                     if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin() , data , 0 , sz )) {
-                            if (from_x690_cast(*const_cast<any_type*> (&vl.value()), data)) {
-                               // stream.pop_stack();
-                            }
+                        if (from_x690_cast(*const_cast<any_type*> (&vl.value()), data)) {
+                            // stream.pop_stack();
                         }
+                    }
                     return  stream;
                     //return  primitive_desirialize(stream, vl);
-                }   
+                }
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<bitstring_type>& vl) {
@@ -1208,16 +1208,16 @@ namespace boost {
                     }
                     return tag();
                 }
-                
+
                 std::size_t iarchive::stack_size() {
 
                     if (!stack_.empty()) {
                         return  stack_.top().sizeinfo.defined ?
                                 stack_.top().sizeinfo.size : ((stack_.top().sizeinfo.size > 2) ?
                                 (stack_.top().sizeinfo.size - 2) : 0  );
-                    }          
+                    }
                     return 0;
-                }                
+                }
 
                 bool iarchive::parse_tl(const tag& tg, size_class& rsltsz , bool settype, bool optional) {
 

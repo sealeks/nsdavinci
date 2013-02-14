@@ -33,11 +33,14 @@
 #include <boost/thread/thread.hpp>
 #include <boost/asio.hpp>
 
-#include <boost/asio/detail/push_options.hpp>
 
 #include <iso/archive_stream.h>
 #include <iso/asn/asnbase.h>
-#include <iso/presentation/ISO8823-PRESENTATION.h>
+
+#include <boost/asio/detail/push_options.hpp>
+
+
+
 
 
 
@@ -133,7 +136,7 @@ namespace boost {
             enum release_type {
                 SESSION_NORMAL_RELEASE,
                 SESSION_ABORT_RELEASE
-            };
+            } ;
 
             class sevice_send_buffer_impl : public send_buffer_impl {
             public:
@@ -144,7 +147,7 @@ namespace boost {
 
             private:
                 std::string send_;
-            };
+            } ;
 
 
 
@@ -201,7 +204,7 @@ namespace boost {
                 std::string called_;
                 std::string calling_;
                 tpdu_size pdusize_;
-            };
+            } ;
 
 
 
@@ -244,173 +247,70 @@ namespace boost {
                 transport_selector tselector_;
                 std::string called_;
                 std::string calling_;
-            };
+            } ;
 
+            struct default_context_type {
 
-            // presentation 
-
-            typedef boost::shared_ptr<ISO8823_PRESENTATION::Protocol_version> presentation_version_type;
-            typedef ISO8823_PRESENTATION::Transfer_syntax_name transfer_syntax_type;
-            typedef ISO8823_PRESENTATION::Abstract_syntax_name abstract_syntax_type;
-            typedef std::vector<transfer_syntax_type > transfer_syntaxs_list;
-            typedef ISO8823_PRESENTATION::Presentation_context_identifier context_id_type;
-
-            typedef ISO8823_PRESENTATION::Context_list_sequence_of conext_type;
-            typedef std::vector<conext_type> presentation_conexts_list;
-
-            typedef ISO8823_PRESENTATION::Default_context_name default_context_type;
-            typedef ISO8823_PRESENTATION::Presentation_requirements presentation_requirements;
-            typedef ISO8823_PRESENTATION::User_session_requirements user_session_requirements;
-
-            typedef ISO8823_PRESENTATION::Default_context_name short_context_type;
-            typedef std::vector<short_context_type> short_contexts_type;
-
-
-            const transfer_syntax_type X690_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID, CANONICAL_ENCODING_OID, DISTINGUISH_ENCODING_OID};
-            const transfer_syntaxs_list X690_TRANSFER_SINTAXS = transfer_syntaxs_list(X690_TRANSFER_SINTAXS_ARR, X690_TRANSFER_SINTAXS_ARR + 3);
-
-            const transfer_syntax_type BASE_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID};
-            const transfer_syntaxs_list BASE_TRANSFER_SINTAXS = transfer_syntaxs_list(BASE_TRANSFER_SINTAXS_ARR, BASE_TRANSFER_SINTAXS_ARR + 1);
-
-            class presentation_option {
-            public:
-
-                presentation_option() :
-                pcl_() {
-                }               
-                
-                presentation_option(const presentation_conexts_list& pcl, const default_context_type& dcl, const presentation_requirements& prq, const user_session_requirements& urq) :
-                pcl_(pcl), dcl_(new default_context_type(dcl)), prq_(new presentation_requirements(prq)), urq_(new user_session_requirements(urq)) {
+                default_context_type(const oid_type& asyntax, const oid_type & tsyntax) : abstract_syntax_(asyntax), transfer_syntax_(tsyntax) {
                 }
 
-                presentation_option(const presentation_conexts_list& pcl, const default_context_type& dcl) :
-                pcl_(pcl), dcl_(new default_context_type(dcl)) {
+                default_context_type(const oid_type & asyntax) : abstract_syntax_(asyntax), transfer_syntax_(BASIC_ENCODING_OID) {
                 }
 
-                presentation_option(const presentation_conexts_list& pcl) :
-                pcl_(pcl) {
+                const oid_type & abstract_syntax() const {
+                    return abstract_syntax_;
                 }
 
-                presentation_option(const short_contexts_type& pcl, const default_context_type& dcl, const presentation_requirements& prq, const user_session_requirements& urq) :
-                pcl_(), dcl_(new default_context_type(dcl)), prq_(new presentation_requirements(prq)), urq_(new user_session_requirements(urq)) {
-                    construct(pcl);
-                }
-
-                presentation_option(const short_contexts_type& pcl, const default_context_type& dcl) :
-                pcl_(), dcl_(new default_context_type(dcl)) {
-                    construct(pcl);
-                }
-
-                presentation_option(const short_contexts_type& pcl) :
-                pcl_() {
-                    construct(pcl);
-                }
-
-                presentation_option(const short_context_type& pcl, const default_context_type& dcl, const presentation_requirements& prq, const user_session_requirements& urq) :
-                pcl_(), dcl_(new default_context_type(dcl)), prq_(new presentation_requirements(prq)), urq_(new user_session_requirements(urq)) {
-                    construct(pcl);
-                }
-
-                presentation_option(const short_context_type& pcl, const default_context_type& dcl) :
-                pcl_(), dcl_(new default_context_type(dcl)) {
-                    construct(pcl);
-                }
-
-                presentation_option(const short_context_type& pcl) :
-                pcl_() {
-                    construct(pcl);
-                }
-
-                presentation_conexts_list& conexts() {
-                    return pcl_;
-                }
-
-                void conexts(const presentation_conexts_list& val) {
-                    pcl_ = val;
-                }
-
-                boost::shared_ptr<default_context_type> default_conext() {
-                    return dcl_;
-                }
-
-                void default_conext(const default_context_type& val) {
-                    dcl_ = boost::shared_ptr<default_context_type > (new default_context_type(val));
-                }
-
-                void default_conext(boost::shared_ptr<default_context_type> val) {
-                    dcl_ = val;
-                }
-
-                boost::shared_ptr<presentation_requirements> p_requirements() {
-                    return prq_;
-                }
-
-                void p_requirements(const presentation_requirements& val) {
-                    prq_ = boost::shared_ptr<presentation_requirements > (new presentation_requirements(val));
-                }
-
-                void p_requirements(boost::shared_ptr<presentation_requirements> val) {
-                    prq_ = val;
-                }
-
-                boost::shared_ptr<user_session_requirements> u_requirements() {
-                    return urq_;
-                }
-
-                void u_requirements(const user_session_requirements& val) {
-                    urq_ = boost::shared_ptr<user_session_requirements > (new user_session_requirements(val));
-                }
-
-                void u_requirements(boost::shared_ptr<user_session_requirements> val) {
-                    urq_ = val;
+                const oid_type & transfer_syntax() const {
+                    return transfer_syntax_;
                 }
 
             private:
+                oid_type abstract_syntax_;
+                oid_type transfer_syntax_;
+            } ;
 
-                void construct(const short_contexts_type& pcl) {
-                    context_id_type id = 1;
-                    for (short_contexts_type::const_iterator it = pcl.begin(); it != pcl.end(); ++it) {
-                        conext_type ctx;
-                        ctx.abstract_syntax_name = it->abstract_syntax_name;
-                        ctx.presentation_context_identifier = id++;
-                        ctx.transfer_syntax_name_list.push_back(it->transfer_syntax_name);
-                        pcl_.push_back(ctx);
-                    }
-                }
 
-                void construct(const short_context_type& pcl) {
-                    conext_type ctx;
-                    ctx.abstract_syntax_name = pcl.abstract_syntax_name;
-                    ctx.presentation_context_identifier = 1;
-                    ctx.transfer_syntax_name_list.push_back(pcl.transfer_syntax_name);
-                    pcl_.push_back(ctx);
-                }
+            typedef boost::shared_ptr<default_context_type>   default_context_ptr;
 
-                presentation_conexts_list pcl_;
-                boost::shared_ptr<default_context_type> dcl_;
-                boost::shared_ptr<presentation_requirements> prq_;
-                boost::shared_ptr<user_session_requirements> urq_;
-            };
+
+
+            ///
 
             class presentation_selector {
             public:
 
-                presentation_selector() :option_(),  sselector_() {
+                presentation_selector() : default_context_(), sselector_() {
                 }
 
-                explicit presentation_selector(const presentation_option& opt, const std::string& called) : option_(opt),  called_(called), sselector_() {
+                explicit presentation_selector(const std::string& called) : default_context_(),  called_(called), sselector_() {
                 }
 
-                explicit presentation_selector(const presentation_option& opt, const std::string& called, const std::string& calling) : option_(opt),  called_(called), calling_(calling), sselector_() {
+                explicit presentation_selector(const std::string& called, const std::string& calling) : default_context_(),  called_(called), calling_(calling), sselector_() {
                 }
 
-                explicit presentation_selector(const presentation_option& opt, const std::string& called, const session_selector& sselector) : option_(opt), called_(called), sselector_(sselector) {
+                explicit presentation_selector(const std::string& called, const session_selector& sselector) : default_context_(), called_(called), sselector_(sselector) {
                 }
 
-                explicit presentation_selector(const presentation_option& opt, const std::string& called, const std::string& calling, const session_selector& sselector) : option_(opt), called_(called), calling_(calling), sselector_(sselector) {
+                explicit presentation_selector(const std::string& called, const std::string& calling, const session_selector& sselector) : default_context_(),  called_(called), calling_(calling), sselector_(sselector) {
                 }
 
-                presentation_selector(const presentation_option& opt, const session_selector& sselector) : option_(opt),  sselector_(sselector) {
+                presentation_selector(const session_selector& sselector) :  default_context_(), sselector_(sselector) {
+                }
+
+                explicit presentation_selector(const default_context_type& dctx , const std::string& called) : default_context_( new default_context_type(dctx)),  called_(called), sselector_() {
+                }
+
+                explicit presentation_selector(const default_context_type& dctx , const std::string& called, const std::string& calling) : default_context_( new default_context_type(dctx)),  called_(called), calling_(calling), sselector_() {
+                }
+
+                explicit presentation_selector(const default_context_type& dctx , const std::string& called, const session_selector& sselector) : default_context_( new default_context_type(dctx)), called_(called), sselector_(sselector) {
+                }
+
+                explicit presentation_selector(const default_context_type& dctx , const std::string& called, const std::string& calling, const session_selector& sselector) : default_context_( new default_context_type(dctx)),   called_(called), calling_(calling), sselector_(sselector) {
+                }
+
+                presentation_selector(const default_context_type& dctx , const session_selector& sselector) :  default_context_( new default_context_type(dctx)) , sselector_(sselector) {
                 }
 
                 std::string called() const {
@@ -424,22 +324,22 @@ namespace boost {
                 const session_selector& sselector() const {
                     return sselector_;
                 }
-                
-                presentation_option& option() {
-                    return option_;
+
+                default_context_ptr  default_context() const {
+                    return default_context_;
                 }
-                
-                const presentation_option& option() const {
-                    return option_;
-                }                
+
+                void  default_context(default_context_ptr val)  {
+                    default_context_ = val;
+                }
 
             private:
-                
-                presentation_option option_;
+                default_context_ptr  default_context_;
                 session_selector sselector_;
                 std::string called_;
                 std::string calling_;
-            };
+
+            } ;
 
 
 

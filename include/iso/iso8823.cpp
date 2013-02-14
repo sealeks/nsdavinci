@@ -10,9 +10,8 @@
 #include <sstream>
 
 #include <iso/iso8823.h>
-
-
-
+#include <iso/archive_stream.h>
+#include <iso/presentation/ISO8823-PRESENTATION.h>
 
 /*
 
@@ -79,6 +78,63 @@ cp.normal_mode_parameters->default_context_name->transfer_syntax_name = boost::a
 namespace boost {
     namespace asio {
         namespace iso {
+
+            static archive_ptr build_by_syntaxes(const oid_type& asyntax, const encoding_rule& tsyntax) {
+
+                typedef boost::asio::asn::x690::iarchive                                                                           x690_iarchive_type;
+                typedef boost::asio::asn::x690::oarchive                                                                          x690_oarchive_type;
+                typedef boost::asio::iso::archive_temp<x690_iarchive_type, x690_oarchive_type>              x690_archive;
+
+                switch (tsyntax) {
+                    case BER_ENCODING:
+                    case DER_ENCODING:
+                    case CER_ENCODING:   return archive_ptr( new x690_archive(asyntax, tsyntax ));
+                    default:
+                    {
+                    }
+                }
+                return archive_ptr();
+            }
+
+
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            const oid_type X690_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID, CANONICAL_ENCODING_OID, DISTINGUISH_ENCODING_OID};
+            const transfer_synaxes_type X690_TRANSFER_SINTAXS = transfer_synaxes_type (X690_TRANSFER_SINTAXS_ARR, X690_TRANSFER_SINTAXS_ARR + 3);
+
+            const oid_type BASE_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID};
+            const transfer_synaxes_type BASE_TRANSFER_SINTAXS = transfer_synaxes_type(BASE_TRANSFER_SINTAXS_ARR, BASE_TRANSFER_SINTAXS_ARR + 1);
+
+            presentation_context::presentation_context(int id, const oid_type& asyntax, const encoding_rule& tsyntax, const transfer_synaxes_type&  tsxs = BASE_TRANSFER_SINTAXS ) :
+            abstract_syntax_(asyntax), transfer_syntaxes_(tsxs) {
+                archiver_ = build_by_syntaxes(asyntax , tsyntax);
+
+            }
+
+            presentation_context::presentation_context(int id , const oid_type& asyntax, const transfer_synaxes_type&  tsxs = BASE_TRANSFER_SINTAXS ) :
+            abstract_syntax_(asyntax), transfer_syntaxes_(tsxs) {
+            }
+
+            bool presentation_context::encoding(encoding_rule val )  {
+                if (encoding() != val) {
+                    archiver_ = build_by_syntaxes(abstract_syntax_ , val);
+                }
+                return archiver_;
+            }
+
+            bool presentation_context::transfer_syntax(const oid_type& val)  {
+                if (transfer_syntax() != val)   {
+                   archiver_ = build_by_syntaxes(abstract_syntax_, oid_to_encoding(val));
+                }
+                return archiver_;
+            }
+
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
             namespace prot8823 {
 
                 typedef ISO8823_PRESENTATION::CP_type CP_type;
@@ -89,51 +145,10 @@ namespace boost {
                 typedef ISO8823_PRESENTATION::Fully_encoded_data p_full_data_type;
                 typedef ISO8823_PRESENTATION::PDV_list pdv_list_type;
 
-                void stream_socket::build_CP(archiver_map archs) {
-                    basiccoder->clear();
-                    CP_type cp;
-                    cp.mode_selector.mode_value = p_mode_type::mode_value_normal_mode;
-                    cp.normal_mode_parameters__new();
-                   /*if (!option_.called().empty())
-                        cp.normal_mode_parameters->called_presentation_selector__assign(p_cd_selector(option_.called()));
-                    if (!option_.calling().empty())
-                        cp.normal_mode_parameters->calling_presentation_selector__assign(p_cng_selector(option_.calling()));
-                    if (option_.option().default_conext())
-                        cp.normal_mode_parameters->default_context_name = option_.option().default_conext();
-                    if (option_.option().p_requirements())
-                        cp.normal_mode_parameters->presentation_requirements = option_.option().p_requirements();
-                    if (option_.option().u_requirements())
-                        cp.normal_mode_parameters->user_session_requirements = option_.option().u_requirements();*/ 
-                    //if (!option_.option().conexts().empty()) {
-                        cp.normal_mode_parameters->presentation_context_definition_list__new();
-                        for (archiver_map::iterator it = archs.begin(); it != archs.end(); ++it) {
-                            p_context_type ctx;
-                            ctx.abstract_syntax_name = it->second->abstract_syntax();
-                            ctx.presentation_context_identifier = it->first;
-                            ctx.transfer_syntax_name_list = BASE_TRANSFER_SINTAXS;
-                            cp.normal_mode_parameters->presentation_context_definition_list->push_back(ctx);
-                        }
-                        cp.normal_mode_parameters->user_data.fully_encoded_data(new p_full_data_type());
-                        for (archiver_map::iterator it = archs.begin(); it != archs.end(); ++it) {
-                            if (it->second->out() && it->second->out()->size()) {
-                                pdv_list_type pdv_lst;
-                                pdv_lst.presentation_context_identifier = it->first;
-                                pdv_lst.transfer_syntax_name__new();
-                                pdv_lst.presentation_data_values.single_ASN1_type( new boost::asio::asn::any_type());
-                                pdv_lst.presentation_data_values.single_ASN1_type()->bind(*(it->second->out()));
-                                cp.normal_mode_parameters->user_data.fully_encoded_data()->push_back(pdv_lst);
-                            }
-                        }
-                    //}
-                   // (archiver->output()) & cp;
-                }
 
-                bool stream_socket::parse_CR(archiver_map archs) {
-                   // switch (archiver->input().test_class()) {
 
-                   // }
-                    return false;
-                }
+
+
 
             }
         }

@@ -31,11 +31,7 @@ namespace boost {
                 typedef  boost::asio::iso::list_mutable_buffers                                                                                           list_mutable_buffers;
                 typedef  boost::asio::iso::list_const_buffers                                                                                               list_const_buffers;
 
-                typedef enum {
-                    BER_ENCODING,
-                    CER_ENCODING,
-                    DER_ENCODING
-                }   encoding_rule;
+                using boost::asio::iso::encoding_rule;
 
 
 
@@ -69,6 +65,8 @@ namespace boost {
 
                 const std::size_t CER_STRING_MAX_SIZE = 1000;
                 // const std::size_t CER_STRING_MAX_SIZE = 2;
+
+
 
 
 
@@ -306,10 +304,10 @@ namespace boost {
 
                 public:
 
-                    oarchive(encoding_rule rul = BER_ENCODING) : boost::asio::iso::base_oarchive() , rule_(rul) {
+                    oarchive(encoding_rule rul = boost::asio::iso::BER_ENCODING) : boost::asio::iso::base_oarchive(), rule_(rul) {
                     }
 
-                    encoding_rule rule() const {
+                    virtual encoding_rule rule() const {
                         return rule_;
                     }
 
@@ -370,8 +368,10 @@ namespace boost {
                     virtual void clear();
 
                     bool canonical() const {
-                        return rule_ == CER_ENCODING;
+                        return rule_ == boost::asio::iso::CER_ENCODING;
                     }
+
+
 
                 private:
 
@@ -456,7 +456,7 @@ namespace boost {
                     std::size_t sz = stream.size();
                     typedef typename std::vector<T>::const_iterator   vect_type_iterator;
                     for (vect_type_iterator itr = vl.value().begin() ; itr != vl.value().end() ; ++itr)
-                            boost::asio::asn::bind_element(stream , (*itr ));
+                        boost::asio::asn::bind_element(stream , (*itr ));
                     sz = stream.size(sz);
                     ++it;
 
@@ -479,7 +479,7 @@ namespace boost {
                     std::size_t sz = stream.size();
                     typedef typename std::deque<T>::const_iterator   vect_type_iterator;
                     for (vect_type_iterator itr = vl.value().begin() ; itr != vl.value().end() ; ++itr)
-                            boost::asio::asn::bind_element(stream , (*itr ));
+                        boost::asio::asn::bind_element(stream , (*itr ));
                     sz = stream.size(sz);
                     ++it;
 
@@ -492,8 +492,6 @@ namespace boost {
                     stream.pop_stack();
                     return stream;
                 }
-                
-               
 
                 template<typename T>
                 oarchive& primitive_sirialize(oarchive& stream, const implicit_value<T>& vl) {
@@ -828,11 +826,7 @@ namespace boost {
 
                 public:
 
-                    iarchive(encoding_rule rul = BER_ENCODING) : boost::asio::iso::base_iarchive() , rule_(rul) {
-                    }
-
-                    encoding_rule rule() const {
-                        return rule_;
+                    iarchive() : boost::asio::iso::base_iarchive()  {
                     }
 
                     template<typename T>
@@ -883,7 +877,7 @@ namespace boost {
                     tag test_tl(size_class& sz);
 
                     bool parse_tl(const tag& tg, size_class& rsltsz , bool settype, bool optional = false);
-                    
+
                     std::size_t stack_size();
 
                     virtual int test_id() {
@@ -918,7 +912,6 @@ namespace boost {
 
 
                     tlv_stack               stack_;
-                    encoding_rule        rule_;
 
                 } ;
 
