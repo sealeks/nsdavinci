@@ -5,7 +5,7 @@
  * 
  */
 
-#ifndef         ISOPROT8823_H_H
+#ifndef     ISOPROT8823_H_H
 #define	ISOPROT8823_H_H
 
 
@@ -27,42 +27,21 @@ namespace boost {
     namespace asio {
         namespace iso {
 
-            typedef ISO8823_PRESENTATION::Transfer_syntax_name transfer_syntax_type;
-            typedef ISO8823_PRESENTATION::Abstract_syntax_name abstract_syntax_type;
-            typedef std::vector<transfer_syntax_type > transfer_syntaxs_list;
             
-            
+            //typedef std::vector<oid_type> transfer_syntaxs_list;
+
+
             typedef ISO8823_PRESENTATION::Presentation_context_identifier   context_id_type;
+            typedef ISO8823_PRESENTATION::Presentation_requirements          presentation_req_type;   
+            typedef ISO8823_PRESENTATION::User_session_requirements         userses_req_type;  
             
-            typedef boost::asio::asn::x690::iarchive                                                                           x690_iarchive_type;
-            typedef boost::asio::asn::x690::oarchive                                                                          x690_oarchive_type;
-            typedef boost::asio::iso::archive_temp<x690_iarchive_type, x690_oarchive_type>              x690_archive;
-            
-            
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
-            /*struct single_context_type {
+            const presentation_req_type PRSNT_CONTEXT_MREQ = ISO8823_PRESENTATION::Presentation_requirements_context_management;
+            const presentation_req_type PRSNT_REST_MREQ = ISO8823_PRESENTATION::Presentation_requirements_restoration;         
+            const presentation_req_type PRSNT_NULL_MREQ = presentation_req_type((int8_t)0,6);            
 
-                single_context_type(const oid_type& asyntax, const encoding_rule& tsyntax) : abstract_syntax_(asyntax), transfer_syntax_(tsyntax) {
-                }
-
-
-
-                const oid_type & abstract_syntax() const {
-                    return abstract_syntax_;
-                }
-
-                const oid_type & transfer_syntax() const {
-                    return transfer_syntax_;
-                }
-
-            private:
-                oid_type abstract_syntax_;
-                encoding_rule transfer_syntax_;
-            } ;
-
-
-            typedef boost::shared_ptr<single_context_type>   default_context_ptr;   */         
+            typedef boost::asio::asn::x690::iarchive                                                                                    x690_iarchive_type;
+            typedef boost::asio::asn::x690::oarchive                                                                                   x690_oarchive_type;
+            typedef boost::asio::iso::archive_temp<x690_iarchive_type, x690_oarchive_type>                       x690_archive;
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,26 +74,32 @@ namespace boost {
                 }
 
                 bool transfer_syntax(const oid_type& val);
-                
-                bool valid(){
-                    return archiver_;
-                }     
-                
-                archive_ptr archiver(){
+
+                bool valid() {
                     return archiver_;
                 }
-                
-	template<typename T> bool set(T& data){
-                     if (archiver_){
-                         switch(encoding()){
+
+                archive_ptr archiver() {
+                    return archiver_;
+                }
+
+                template<typename T> bool set(T& data) {
+                    if (archiver_) {
+                        switch (encoding()) {
                             case BER_ENCODING:
                             case DER_ENCODING:
-                            case CER_ENCODING:   { data.serialize(boost::static_pointer_cast<x690_archive , base_archive > (archiver_)->output()); return true;};
-                             default:{}
-                         }
-                     } 
-                     return false;
-                }                
+                            case CER_ENCODING:
+                            {
+                                data.serialize(boost::static_pointer_cast<x690_archive , base_archive > (archiver_)->output());
+                                return true;
+                            };
+                            default:
+                            {
+                            }
+                        }
+                    }
+                    return false;
+                }
 
 
             private:
@@ -122,26 +107,28 @@ namespace boost {
                 transfer_synaxes_type transfer_syntaxes_;
                 archive_ptr archiver_;
             } ;
-            
-            typedef boost::shared_ptr<presentation_context_unit>   presentation_context_unit_ptr;             
-            
-            typedef std::pair<context_id_type, presentation_context_unit_ptr>   presentation_context_type;            
-            typedef std::map<context_id_type, presentation_context_unit_ptr>  presentation_context_map;             
-         
+
+            typedef boost::shared_ptr<presentation_context_unit>   presentation_context_unit_ptr;
+
+            typedef std::pair<context_id_type, presentation_context_unit_ptr>   presentation_context_type;
+            typedef std::map<context_id_type, presentation_context_unit_ptr>  presentation_context_map;
+
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
+
             typedef presentation_context_unit  default_context_type;
-            typedef boost::shared_ptr<default_context_type>   default_context_ptr;             
+            typedef boost::shared_ptr<default_context_type>   default_context_ptr;
 
             class presentation_pm {
             public:
 
-                presentation_pm(const default_context_type& dctx , context_id_type  id = 1 ) : nextid_(id) ,  default_context_( new default_context_type(dctx)) {
+                presentation_pm(const default_context_type& dctx , const presentation_req_type& preq = PRSNT_NULL_MREQ , context_id_type  id = 1 ) : 
+                nextid_(id) , preq_(preq),   default_context_( new default_context_type(dctx)) {
                 }
-                
-                presentation_pm(context_id_type  id = 1 ) : nextid_(id) ,  default_context_() {
-                }                
+
+                presentation_pm(const presentation_req_type& preq = PRSNT_NULL_MREQ , context_id_type  id = 1 ) : 
+                nextid_(id) , preq_(preq),  default_context_() {
+                }
 
                 default_context_ptr  default_context() const {
                     return default_context_;
@@ -150,47 +137,62 @@ namespace boost {
                 void  default_context(default_context_ptr val)  {
                     default_context_ = val;
                 }
-                
+
                 context_id_type insert_context(context_id_type id, const oid_type& asyntax, const encoding_rule& tsyntax  = BER_ENCODING, const transfer_synaxes_type&  tsxs  = transfer_synaxes_type());
-                
-                context_id_type insert_context(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING, const transfer_synaxes_type&  tsxs =transfer_synaxes_type()){
+
+                context_id_type insert_context(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING, const transfer_synaxes_type&  tsxs = transfer_synaxes_type()) {
                     context_id_type tmp = insert_context(nextid_, asyntax, tsyntax, tsxs);
-                    if (tmp) nextid_+=2;
+                    if (tmp) nextid_ += 2;
                     return tmp;
                 }
-                
+
                 archive_ptr find(context_id_type id) {
-                    presentation_context_map::iterator it= contexts_.find(id);
-                    return it!=contexts_.end() ? it->second->archiver() : archive_ptr();
+                    presentation_context_map::iterator it = contexts_.find(id);
+                    return it != contexts_.end() ? it->second->archiver() : archive_ptr();
                 }
-                
+
                 template<typename T> bool set(context_id_type id, T& data) {
-                    presentation_context_map::iterator it= contexts_.find(id);
-                    if (it!=contexts_.end())
+                    presentation_context_map::iterator it = contexts_.find(id);
+                    if (it != contexts_.end())
                         return it->second->set(data);
                     return false;
                 }
-                
-                presentation_context_map&  contexts(){
+
+                presentation_context_map&  contexts() {
                     return contexts_;
-                } 
-                
+                }
+
                 const presentation_context_map&  contexts() const {
                     return contexts_;
-                }                   
+                }
+
+                const presentation_req_type&  p_requirements() const {
+                    return preq_;
+                }
                 
+                void p_requirements(const presentation_req_type& val) {
+                    preq_=val;
+                }   
                 
+                bool is_context_menagment() const {
+                    return ((!preq_.empty()) && (preq_.bit(0)));
+                }  
                 
+                bool is_restoration() const {
+                    return ((preq_.size()>1) && (preq_.bit(1)));
+                }                  
 
 
             private:
                 context_id_type       nextid_;
+                presentation_req_type  preq_;              
                 default_context_ptr  default_context_;
                 presentation_context_map  contexts_;
                 
+
             } ;
-            
-            typedef boost::shared_ptr<presentation_pm>   presentation_pm_ptr;              
+
+            typedef boost::shared_ptr<presentation_pm>   presentation_pm_ptr;
 
 
             namespace prot8823 {
@@ -212,25 +214,25 @@ namespace boost {
 
                 class stream_socket : protected boost::asio::iso::prot8327::stream_socket  {
                     
-                    typedef boost::asio::asn::x690::iarchive                                                                          input_archive_type;
-                    typedef boost::asio::asn::x690::oarchive                                                                         output_archive_type;
-                    typedef boost::asio::iso::archive_temp<input_archive_type, output_archive_type>              presentation_archive;
-                    typedef boost::asio::iso::iso8327::socket    super_type;
+                    typedef x690_iarchive_type                                                                                              input_archive_type;
+                    typedef x690_oarchive_type                                                                                             output_archive_type;
+                    typedef x690_archive                                                                                                        presentation_archive;
+                    typedef boost::shared_ptr<presentation_archive>                                                             presentation_archive_ptr;                    
+                    typedef boost::asio::iso::prot8327::stream_socket                                                                 super_type;
 
                 public:
 
                     explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel)
-                    : boost::asio::iso::iso8327::socket(io_service,  psel.sselector()),
+                    : super_type(io_service,  psel.sselector()),
                     selector_ (psel), basiccoder(new presentation_archive()) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const presentation_selector& psel)
-                    : boost::asio::iso::iso8327::socket(io_service, psel.sselector()),
+                    : super_type(io_service, psel.sselector()),
                     selector_ (psel), basiccoder(new presentation_archive())  {
                     }
 
-                    
                     template <typename ConnectHandler>
                     class connect_op {
                     public:
@@ -240,7 +242,8 @@ namespace boost {
                         socket_(socket),
                         handler_(handler),
                         peer_endpoint_(peer_endpoint),
-                        ppm_(ppm) {}
+                        ppm_(ppm) {
+                        }
 
                         void run(const boost::system::error_code& ec) {
                             operator()(ec);
@@ -285,15 +288,70 @@ namespace boost {
                                 return;
                             }
                         }
-                        build_CP(this, ppm);
+                        coder();
+                        build_CP_type( ppm);
                         super_type::async_connect(peer_endpoint, basiccoder, boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint, ppm), boost::asio::placeholders::error));
                     }
 
 
 
+
+                protected:
+
+                    presentation_archive_ptr coder() {
+                        return basiccoder;
+                    }
+
+                    presentation_archive_ptr coder() const {
+                        return basiccoder;
+                    }
+
+                    presentation_selector& selector() {
+                        return selector_;
+                    }
+
+                    const presentation_selector& selector() const {
+                        return selector_;
+                    }
+
                 private:
 
-	    friend void build_CP(stream_socket* sock, presentation_pm_ptr ppm);
+                    void build_CP_type(presentation_pm_ptr ppm) {
+                        coder()->clear();
+                        CP_type cp;
+                        cp.mode_selector.mode_value = p_mode_type::mode_value_normal_mode;
+                        cp.normal_mode_parameters__new();
+                        if (!selector().called().empty())
+                            cp.normal_mode_parameters->called_presentation_selector__assign(p_cd_selector(selector().called()));
+                        if (!selector().calling().empty())
+                            cp.normal_mode_parameters->calling_presentation_selector__assign(p_cng_selector(selector().calling()));
+                         if (ppm->is_context_menagment())
+                             cp.normal_mode_parameters->presentation_requirements__assign(ppm->p_requirements());
+                        cp.normal_mode_parameters->presentation_context_definition_list__new();
+                        for (presentation_context_map::const_iterator it = ppm->contexts().begin(); it != ppm->contexts().end(); ++it) {
+                            if (it->second->valid()) {
+                                p_context_type ctx;
+                                ctx.abstract_syntax_name = it->second->abstract_syntax();
+                                ctx.presentation_context_identifier = it->first;
+                                ctx.transfer_syntax_name_list.insert(ctx.transfer_syntax_name_list.begin(),
+                                        it->second->transfer_syntaxs().begin(), it->second->transfer_syntaxs().end());
+                                cp.normal_mode_parameters->presentation_context_definition_list->push_back(ctx);
+                            }
+                        }
+                        cp.normal_mode_parameters->user_data.fully_encoded_data(new p_full_data_type());
+                        for (presentation_context_map::const_iterator it = ppm->contexts().begin(); it != ppm->contexts().end(); ++it) {
+                            if (it->second->valid() && it->second->archiver()->out()->size()) {
+                                pdv_list_type pdv_lst;
+                                pdv_lst.presentation_context_identifier = it->first;
+                                //pdv_lst.transfer_syntax_name__new();
+                                pdv_lst.presentation_data_values.single_ASN1_type( new boost::asio::asn::any_type());
+                                pdv_lst.presentation_data_values.single_ASN1_type()->bind(*(it->second->archiver()->out()));
+                                cp.normal_mode_parameters->user_data.fully_encoded_data()->push_back(pdv_lst);
+                            }
+                        }
+                        //}
+                        (coder()->output()) & cp;
+                    }
 
                     bool parse_CR(presentation_pm_ptr archs) {
                         int cl = this->basiccoder->input().test_class();
@@ -311,7 +369,7 @@ namespace boost {
 
 
                     presentation_selector                                                  selector_;
-                    boost::shared_ptr<presentation_archive>               basiccoder;
+                    presentation_archive_ptr                      basiccoder;
 
                 } ;
 

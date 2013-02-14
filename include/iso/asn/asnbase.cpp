@@ -164,6 +164,13 @@ namespace boost {
                     tmp.operator [](i) = bit(i);
                 return tmp;
             }
+            
+            bitstring_type::dynamic_bitset_type bitstring_type::dynamic_bitset() const {
+                bitstring_type::dynamic_bitset_type  tmp(sizebits());
+                for (std::size_t i = 0; i < sizebits(); ++i)
+                    tmp.operator [](i) = bit(i);
+                return tmp;
+            }
 
             bitstring_type::operator uint8_t() const {
                 bool_vector_type tmp;
@@ -226,15 +233,15 @@ namespace boost {
             //}    
 
             bitstring_type operator|(const bitstring_type& ls, const bitstring_type& rs) {
-                return bitstring_type(); //ls.operator  dynamic_bitset_type() | rs.operator  dynamic_bitset_type();
+                return (ls.dynamic_bitset()) | (rs.dynamic_bitset());
             }
 
             bitstring_type operator&(const bitstring_type& ls, const bitstring_type& rs) {
-                return bitstring_type(); //ls.operator  dynamic_bitset_type() & rs.operator  dynamic_bitset_type();
+                return (ls.dynamic_bitset()) & (rs.dynamic_bitset());
             }
 
             bitstring_type operator^(const bitstring_type& ls, const bitstring_type& rs) {
-                return bitstring_type(); //ls.operator  dynamic_bitset_type() ^ rs.operator  dynamic_bitset_type();
+                return (ls.dynamic_bitset()) ^ (rs.dynamic_bitset());
             }
 
             void bitstring_type::construct(const std::vector<bool>& vl) {
