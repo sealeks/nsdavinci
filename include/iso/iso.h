@@ -249,69 +249,29 @@ namespace boost {
                 std::string calling_;
             } ;
 
-            struct default_context_type {
-
-                default_context_type(const oid_type& asyntax, const oid_type & tsyntax) : abstract_syntax_(asyntax), transfer_syntax_(tsyntax) {
-                }
-
-                default_context_type(const oid_type & asyntax) : abstract_syntax_(asyntax), transfer_syntax_(BASIC_ENCODING_OID) {
-                }
-
-                const oid_type & abstract_syntax() const {
-                    return abstract_syntax_;
-                }
-
-                const oid_type & transfer_syntax() const {
-                    return transfer_syntax_;
-                }
-
-            private:
-                oid_type abstract_syntax_;
-                oid_type transfer_syntax_;
-            } ;
-
-
-            typedef boost::shared_ptr<default_context_type>   default_context_ptr;
-
-
 
             ///
 
             class presentation_selector {
             public:
 
-                presentation_selector() : default_context_(), sselector_() {
+                presentation_selector() :  sselector_() {
                 }
 
-                explicit presentation_selector(const std::string& called) : default_context_(),  called_(called), sselector_() {
+                explicit presentation_selector(const std::string& called) :   called_(called), sselector_() {
                 }
 
-                explicit presentation_selector(const std::string& called, const std::string& calling) : default_context_(),  called_(called), calling_(calling), sselector_() {
+                explicit presentation_selector(const std::string& called, const std::string& calling) :   called_(called), calling_(calling), sselector_() {
                 }
 
-                explicit presentation_selector(const std::string& called, const session_selector& sselector) : default_context_(), called_(called), sselector_(sselector) {
+                explicit presentation_selector(const std::string& called, const session_selector& sselector) :  called_(called), sselector_(sselector) {
                 }
 
-                explicit presentation_selector(const std::string& called, const std::string& calling, const session_selector& sselector) : default_context_(),  called_(called), calling_(calling), sselector_(sselector) {
+                explicit presentation_selector(const std::string& called, const std::string& calling, const session_selector& sselector) :   called_(called), calling_(calling), sselector_(sselector) {
                 }
 
-                presentation_selector(const session_selector& sselector) :  default_context_(), sselector_(sselector) {
-                }
-
-                explicit presentation_selector(const default_context_type& dctx , const std::string& called) : default_context_( new default_context_type(dctx)),  called_(called), sselector_() {
-                }
-
-                explicit presentation_selector(const default_context_type& dctx , const std::string& called, const std::string& calling) : default_context_( new default_context_type(dctx)),  called_(called), calling_(calling), sselector_() {
-                }
-
-                explicit presentation_selector(const default_context_type& dctx , const std::string& called, const session_selector& sselector) : default_context_( new default_context_type(dctx)), called_(called), sselector_(sselector) {
-                }
-
-                explicit presentation_selector(const default_context_type& dctx , const std::string& called, const std::string& calling, const session_selector& sselector) : default_context_( new default_context_type(dctx)),   called_(called), calling_(calling), sselector_(sselector) {
-                }
-
-                presentation_selector(const default_context_type& dctx , const session_selector& sselector) :  default_context_( new default_context_type(dctx)) , sselector_(sselector) {
-                }
+                presentation_selector(const session_selector& sselector) :   sselector_(sselector) {
+                }                
 
                 std::string called() const {
                     return called_;
@@ -325,16 +285,8 @@ namespace boost {
                     return sselector_;
                 }
 
-                default_context_ptr  default_context() const {
-                    return default_context_;
-                }
-
-                void  default_context(default_context_ptr val)  {
-                    default_context_ = val;
-                }
-
             private:
-                default_context_ptr  default_context_;
+
                 session_selector sselector_;
                 std::string called_;
                 std::string calling_;

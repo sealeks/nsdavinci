@@ -380,14 +380,6 @@ namespace boost {
 
             typedef boost::shared_ptr<base_archive> archive_ptr;
 
-            inline bool operator<(archive_ptr ls, archive_ptr rs) {
-                if (ls && rs) return (*ls)<(*rs);
-                return false;
-            }
-
-            typedef std::set<archive_ptr>                             archiver_set;
-            typedef std::pair<contex_id_type , archive_ptr>   archiver_pair;
-            typedef std::map<contex_id_type , archive_ptr>   archiver_map;
 
             template<typename INPUT_TYPE = base_iarchive, typename OUTPUT_TYPE = base_oarchive>
                     class archive_temp : public base_archive {
