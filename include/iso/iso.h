@@ -281,6 +281,14 @@ namespace boost {
                     return calling_;
                 }
 
+                void called(const std::string& val) {
+                    called_=val;
+                }
+
+                void calling(const std::string& val) {
+                    calling_=val;
+                }
+                
                 const session_selector& sselector() const {
                     return sselector_;
                 }
