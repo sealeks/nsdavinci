@@ -870,6 +870,11 @@ namespace boost {
                     }
 
                     template<typename T>
+                    void operator&( const std::deque<T >& vl) {
+                        *this  >>  vl;
+                    }
+
+                    template<typename T>
                     void operator&(const choice_value<T >& vl) {
                         *this  >>  vl;
                     }
@@ -1038,7 +1043,6 @@ namespace boost {
 
                 template<typename T>
                 iarchive& operator>>(iarchive& stream, const implicit_value< std::deque<T> >& vl) {
-
                     size_class tmpsize;
                     if (stream.parse_tl(vl, tmpsize, false )) {
                         std::size_t beg = stream.size();
@@ -1079,9 +1083,9 @@ namespace boost {
                         std::size_t sz = tmpsize.size();
                         if (boost::asio::iso::row_cast(stream.buffers(), stream.buffers().begin() , data , 0 , sz )) {
                             if (from_x690_cast(*const_cast<T*> (&vl.value()), data)) {
-                                stream.pop_stack();
                             }
                         }
+                        stream.pop_stack();
                     }
                     return stream;
                 }

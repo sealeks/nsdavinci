@@ -305,6 +305,9 @@ namespace boost {
 
 
             namespace prot8823 {
+                
+                
+                const std::size_t BUFFER_SIZE = 128;
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -491,7 +494,7 @@ namespace boost {
                                 socket_->coder()->input().add(raw_type(socket_->databuff, socket_->databuff + bytes_transferred));
                                 if (!socket_->input_empty()) {
                                     socket_->super_type::async_read_some(
-                                            boost::asio::buffer(socket_->databuff),
+                                            boost::asio::buffer(socket_->databuff, BUFFER_SIZE),
                                             boost::bind(&respond_op<RespondHandler >::run,
                                             this  , boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                                     return;
@@ -523,7 +526,7 @@ namespace boost {
                         ppm()->clear_input();
                         coder()->clear_input();
 
-                        super_type::async_read_some( boost::asio::buffer(databuff),
+                        super_type::async_read_some( boost::asio::buffer(databuff,  BUFFER_SIZE),
                                 boost::bind(&respond_op<RespondHandler >::run,
                                 respond_op<RespondHandler > (const_cast<stream_socket*> (this), handler) , boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                     }
@@ -595,10 +598,10 @@ namespace boost {
 
 
 
-                    int8_t                                                                  databuff[512];
-                    presentation_selector                                            selector_;
-                    presentation_archive_ptr                                       basiccoder;
-                    presentation_pm_ptr                                              ppm_;
+                    int8_t                                                                  databuff[BUFFER_SIZE];
+                    presentation_selector                                           selector_;
+                    presentation_archive_ptr                                      basiccoder;
+                    presentation_pm_ptr                                            ppm_;
 
                 } ;
 

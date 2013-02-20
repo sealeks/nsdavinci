@@ -1302,7 +1302,7 @@ namespace boost {
                             if (socket_->input_empty())
                                 operator()(ec, 0);
                             else
-                                socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()) , flags_ , handler_);
+                                socket_->super_type::async_receive(/*boost::asio::buffer(receive_->buffer()) */buff_, flags_ , handler_);
                         }
 
                         void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {

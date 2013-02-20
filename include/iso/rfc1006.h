@@ -209,6 +209,7 @@ namespace boost {
                                         std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));
                                     tmp.clear();
                                     buff_.push_back(boost::asio::buffer(val , pdusz - tmpsize));
+                                    val = val + (pdusz - tmpsize);
                                     tmpsize = 0;
                                 }
                                 else {
@@ -220,14 +221,15 @@ namespace boost {
                                             std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));
                                         tmp.clear();
                                         buff_.push_back(const_buffer(val));
+                                        val = val +  pdusz;
                                         tmpsize = 0;
                                     }
                                     else {
                                         tmp.push_back(const_buffer(val));
                                         tmpsize += boost::asio::buffer_size(val);
+                                        val = val + pdusz;
                                     }
                                 }
-                                val = val + pdusz;
                             }
                             while (boost::asio::buffer_size(val));
                             ++it;
@@ -496,7 +498,7 @@ namespace boost {
                     // Data indication true is end od block
 
                     bool input_empty() const {
-                        return is_open() && eof_state_;
+                        return (!waiting_data_size_) && (eof_state_);
                     }
 
 
@@ -1254,7 +1256,7 @@ namespace boost {
                         protocol_options options_ = this->prot_option();
                         if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
                             boost::system::error_code ecc;
-                            this->get_service().close(this->get_implementation(), ecc);                            
+                            this->get_service().close(this->get_implementation(), ecc);
                             return ERROR__EPROTO;
                         }
                         int8_t error_accept = 0;
