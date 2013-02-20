@@ -1,13 +1,14 @@
 /*  * File:   main.cpp
  * Author: sealeks@mail.ru
  *
- * Created on 27 Р РЋР ВµР Р…РЎвЂљРЎРЏР В±РЎР‚РЎРЉ 2012 Р С–., 15:58
+ * Created on 27 Р  Р Р‹Р  Р’ВµР  Р вЂ¦Р РЋРІР‚С™Р РЋР РЏР  Р’В±Р РЋР вЂљР РЋР Р‰ 2012 Р  РЎвЂ“., 15:58
  */
 
 #include <cstdlib>
 #include <deque>
 #include <iostream>
 
+#define SESSION_PROT
 
 #include <kernel/constdef.h>
 #include <kernel/memfile.h>
@@ -16,8 +17,11 @@
 #include <kernel/factory.h>
 #include <kernel/templ.h>
 
-#include <iso/rfc1006.h>
+#if defined(SESSION_PROT)
 #include <iso/iso8327.h>
+#else
+#include <iso/rfc1006.h>
+#endif
 
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
@@ -27,9 +31,8 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "present.h"
 
-#define SESSION_PROT
+
 
 #if defined(PRES_PROT)
 
@@ -65,7 +68,7 @@ typedef boost::asio::iso::archive_ptr            trans_data_type;
 int port = 102;
 
 enum {
-    max_length = 10000
+    max_length = 100
 } ;
 
 //#define NET_BLOCKING
@@ -105,7 +108,7 @@ private:
                     boost::asio::buffer(data_, bytes_transferred),
                     boost::bind(&session::handle_write, this,
                     boost::asio::placeholders::error));
-            std::cout << "Server read: " <<  std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred << std::endl;
+            std::cout << "Server reade: " <<  std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred << std::endl;
             message = std::string(data_, bytes_transferred);
         }
         else {
@@ -191,7 +194,7 @@ public:
         endpoint_type endpoint = *endpoint_iterator;
 
         trans_ = trans_data_type( new   trans_data(/*"Hello server from test"*/));
-        trans_->request_str(start_request());
+        trans_->request_str("Hello server from test");
 
         socket_.async_connect(endpoint,
 
@@ -250,7 +253,7 @@ private:
             if (trans_) {
                 
 #if defined(SESSION_PROT)                
-                std::cout << "Server accept data : " << start_response(trans_->respond_str()) << std::endl;
+                std::cout << "Server accept data : " << trans_->respond_str() << std::endl;
 #else
                 std::cout << "Server accept data : " << trans_->respond_str() << std::endl;
 #endif                
@@ -287,7 +290,15 @@ private:
     void handle_read(const boost::system::error_code& error,
             size_t bytes_transferred) {
         if (!error) {
-            std::cout << "Client read:" << std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred << std::endl;
+            std::cout << "Client read:" << std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred <<  " is complete: "  <<  socket_.input_empty() << std::endl;
+            if (!socket_.input_empty()){
+                    std::cout << "Client read continiu" <<  std::endl;                
+                    socket_.async_read_some(boost::asio::buffer(data_, max_length),
+                    boost::bind(&client::handle_read, this,
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));   
+                    
+            }
         }
         else {
             do_close();
