@@ -8,9 +8,6 @@
 #ifndef         ISOARCHIVESTREAM_H_H
 #define         ISOARCHIVESTREAM_H_H
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-#pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 
 #include <boost/asio/detail/config.hpp>
@@ -24,7 +21,6 @@
 #include <set>
 #include <map>
 
-#include <boost/asio/detail/push_options.hpp>
 
 
 
@@ -495,7 +491,7 @@ namespace boost {
     } // namespace asio
 } // namespace boost
 
-#include <boost/asio/detail/pop_options.hpp>
+
 
 #endif	/* RFC1006_H */
 

@@ -13,24 +13,10 @@
 #pragma warning(disable: 4800)
  #endif
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-#pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 
-#include <boost/asio/detail/config.hpp>
-#include <boost/asio/basic_socket_acceptor.hpp>
-#include <boost/asio/basic_socket_iostream.hpp>
-#include <boost/asio/basic_stream_socket.hpp>
-#include <boost/asio/detail/socket_option.hpp>
-#include <boost/asio/detail/socket_types.hpp>
-#include <boost/asio/detail/buffer_sequence_adapter.hpp>
-#include <boost/asio/ip/basic_endpoint.hpp>
-#include <boost/asio/ip/basic_resolver.hpp>
-#include <boost/asio/ip/basic_resolver_iterator.hpp>
-#include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/streambuf.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/detail/buffer_sequence_adapter.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/buffers_iterator.hpp>
 #include <boost/array.hpp>
@@ -47,10 +33,8 @@
 
 #include <iso/archive_stream.h>
 #include <iso/asn/utf8.h>
-
 #include <set>
 
-#include <boost/asio/detail/push_options.hpp>
 
 #define BOOST_ASN_SET_REGESTRATE(regtype) \
 namespace boost {\

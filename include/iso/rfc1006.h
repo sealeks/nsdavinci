@@ -12,7 +12,16 @@
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-
+#include <boost/asio/basic_socket_acceptor.hpp>
+#include <boost/asio/basic_socket_iostream.hpp>
+#include <boost/asio/basic_stream_socket.hpp>
+#include <boost/asio/detail/socket_option.hpp>
+#include <boost/asio/detail/socket_types.hpp>
+#include <boost/asio/ip/basic_endpoint.hpp>
+#include <boost/asio/ip/basic_resolver.hpp>
+#include <boost/asio/ip/basic_resolver_iterator.hpp>
+#include <boost/asio/ip/basic_resolver_query.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <iso/iso.h>
 #include <boost/asio/detail/push_options.hpp>
 

@@ -9,18 +9,7 @@
 #ifndef         ISOPROT8327_H_H
 #define	ISOPROT8327_H_H
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-//#pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
-
-#include <iso/iso.h>
 #include <iso/rfc1006.h>
-#include <boost/asio/detail/push_options.hpp>
-
-
-
-
 
 namespace boost {
     namespace asio {
@@ -1299,10 +1288,7 @@ namespace boost {
 
                         void run() {
                             boost::system::error_code ec;
-                            if (socket_->input_empty())
-                                operator()(ec, 0);
-                            else
-                                socket_->super_type::async_receive(/*boost::asio::buffer(receive_->buffer()) */buff_, flags_ , handler_);
+                            operator()(ec, 0);
                         }
 
                         void operator()(const boost::system::error_code& ec,  std::size_t bytes_transferred) {
@@ -1393,9 +1379,11 @@ namespace boost {
                             BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
 
                         BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-                        this->get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
+                        if (input_empty())
+                            this->get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
                                 receive_seq_ptr( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers))), buffers, flags)));
+                        else
+                            this->super_type::async_receive(buffers, flags, handler);
 
                     }
 
@@ -1891,7 +1879,7 @@ namespace boost {
     } // namespace asio
 } // namespace boost
 
-#include <boost/asio/detail/pop_options.hpp>
+
 
 #endif	
 

@@ -9,18 +9,9 @@
 #define	ISOPROT8823_H_H
 
 
-
-
-#include <iso/iso.h>
 #include <iso/iso8327.h>
 #include <iso/asn/itu_X690.h>
-#include <iso/archive_stream.h>
 #include <iso/presentation/ISO8823-PRESENTATION.h>
-
-#include <boost/asio/detail/push_options.hpp>
-
-
-
 
 
 namespace boost {
@@ -305,8 +296,8 @@ namespace boost {
 
 
             namespace prot8823 {
-                
-                
+
+
                 const std::size_t BUFFER_SIZE = 128;
 
 
@@ -341,13 +332,13 @@ namespace boost {
 
                     explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel)
                     : super_type(io_service,  psel.sselector()),
-                    selector_ (psel), basiccoder(new presentation_archive()) {
+                    basiccoder(new presentation_archive()),  selector_ (psel) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const presentation_selector& psel)
                     : super_type(io_service, psel.sselector()),
-                    selector_ (psel), basiccoder(new presentation_archive())  {
+                    basiccoder(new presentation_archive()), selector_ (psel)  {
                     }
 
                     void connect(const endpoint_type& peer_endpoint, presentation_pm_ptr ppm) {
@@ -420,7 +411,6 @@ namespace boost {
                         ppm_ = ppm;
 
                         clear_input();
-
                         build_CP_type();
                         super_type::async_connect(peer_endpoint, coder() , boost::bind(&connect_op<ConnectHandler>::run,
                                 connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
@@ -496,7 +486,7 @@ namespace boost {
                                     socket_->super_type::async_read_some(
                                             boost::asio::buffer(socket_->databuff, BUFFER_SIZE),
                                             boost::bind(&respond_op<RespondHandler >::run,
-                                            this  , boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                                            respond_op<RespondHandler > (socket_, handler_)   , boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                                     return;
                                 }
                                 else {
@@ -598,10 +588,12 @@ namespace boost {
 
 
 
-                    int8_t                                                                  databuff[BUFFER_SIZE];
-                    presentation_selector                                           selector_;
+
                     presentation_archive_ptr                                      basiccoder;
+                    presentation_selector                                           selector_;                       
                     presentation_pm_ptr                                            ppm_;
+                    int8_t                                                                  databuff[BUFFER_SIZE];
+                 
 
                 } ;
 
@@ -871,7 +863,7 @@ namespace boost {
     } // namespace asio
 } // namespace boost
 
-#include <boost/asio/detail/pop_options.hpp>
+
 
 #endif	
 
