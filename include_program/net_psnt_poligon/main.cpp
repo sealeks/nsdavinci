@@ -16,8 +16,7 @@
 #include <kernel/factory.h>
 #include <kernel/templ.h>
 
-#include <iso/rfc1006.h>
-#include <iso/iso8327.h>
+
 #include <iso/iso8823.h>
 
 #include <boost/bind.hpp>
@@ -43,40 +42,27 @@ typedef protocol_type::endpoint                                       endpoint_t
 typedef protocol_type::resolver                                         resolver_type;
 
 
-boost::asio::iso::presentation_option presentation_opt;
 
+
+/*const boost::array<boost::asio::asn::oidindx_type, 6 > PCNTXT_ARR_ = {1, 2, 3, 4, 5,  1};
+const boost::asio::asn::oid_type PCNTXT_OID_ = boost::asio::asn::oid_type(PCNTXT_ARR_);
+
+const boost::array<boost::asio::asn::oidindx_type, 6 > CMCNTXT_ARR_ = {1, 2, 3, 4, 5,  2};
+const boost::asio::asn::oid_type CMCNTXT_OID_ = boost::asio::asn::oid_type(CMCNTXT_ARR_);
+
+typedef boost::asio::iso::short_context_type short_context_type;
+short_context_type shctx;
+//shctx.abstract_syntax_name=  PCNTXT_OID_;
+//shctx.transfer_syntax_name= CMCNTXT_OID_;*/
+
+//boost::asio::iso:: presentation_opt(shctx);
 
 typedef protocol_type::lowselector                         lowselector_type;
 typedef boost::asio::iso::iso8327::lowselector        lowerselector_type;
 const lowselector_type  LSELECTOR = lowselector_type("SERVER-SSEL", lowerselector_type("SERVER-TSEL", boost::asio::iso::SIZE128));
-const selector_type  SELECTOR = selector_type(presentation_opt, "SERVER-SSEL", LSELECTOR);
+const selector_type  SELECTOR = selector_type("P-EXAMPLE-SERVER", LSELECTOR);
 
 
-typedef boost::asio::iso::archive_ptr           archive_ptr;
-typedef boost::asio::iso::archiver_map      archive_map;
-typedef boost::asio::iso::archiver_pair      archiver_pair;
-
-/*const boost::array<boost::asio::asn::oidindx_type, 6 > PCNTXT_ARR = {1, 2, 3, 4, 5,  1};
-const boost::asio::asn::oid_type PCNTXT_OID = boost::asio::asn::oid_type(PCNTXT_ARR);
-
-const boost::array<boost::asio::asn::oidindx_type, 6 > CMCNTXT_ARR = {1, 2, 3, 4, 5,  2};
-const boost::asio::asn::oid_type CMCNTXT_OID = boost::asio::asn::oid_type(CMCNTXT_ARR);*/
-
-//typedef boost::asio::iso::archive_ptr            trans_data;
-
-/*archive_map get_map() {
-
-    typedef boost::asio::asn::x690::iarchive                                                                 input_archive_type;
-    typedef boost::asio::asn::x690::oarchive                                                                output_archive_type;
-    typedef boost::asio::iso::archive_temp<input_archive_type, output_archive_type>    presentation_archive;
-    typedef boost::shared_ptr<presentation_archive>                                                    presentation_archive_ptr;
-
-    archive_map tmp;
-    tmp.insert(archiver_pair(1, archive_ptr( new presentation_archive(PCNTXT_OID))));
-    tmp.insert(archiver_pair(3, archive_ptr( new presentation_archive(CMCNTXT_OID))));
-    return tmp;
-
-}*/
 
 
 int port = 102;
@@ -197,38 +183,27 @@ public:
     client(boost::asio::io_service& io_service,
             resolver_type::iterator endpoint_iterator, const std::string& called = "")
     : io_service_(io_service),
-    socket_(io_service, SELECTOR) {
+    socket_(io_service, SELECTOR, getpresentotion()) {
         endpoint_type endpoint = *endpoint_iterator;
-         archives = get_map();
-        //trans_ = boost::asio::iso::create_simple_data(start_request());
-        socket_.async_connect(endpoint, archives,
-
-
+        prepare_connect(socket_.ppm());
+        socket_.async_connect(endpoint, 
                 boost::bind(&client::handle_connect, this,
                 boost::asio::placeholders::error, ++endpoint_iterator));
     }
 
     ~client() {
-        // if (socket_.is_open()) {
-
-        //}
+        std::cout << "Socket destuctor"  << std::endl;
     }
 
     void release() {
         std::cout << "Start release"  << std::endl;
-
         io_service_.reset();
-        // trans_ = archive_ptr();
-        //boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
-        io_service_.poll();
-
-
 
     }
 
     void write(const std::string& msg) {
-        //  message = msg;
-        // io_service_.post(boost::bind(&client::do_write, this));
+          message = msg;
+          io_service_.post(boost::bind(&client::do_write, this));
     }
 
     void close() {
@@ -240,20 +215,39 @@ private:
     void handle_connect(const boost::system::error_code& error,
             resolver_type::iterator endpoint_iterator) {
         if (!error) {
-
+                    std::cout << "Server accept message: " << complete_connect(socket_.ppm()) << std::endl; 
 
         }
         else if (endpoint_iterator != resolver_type::iterator()) {
             //socket_.close();
             endpoint_type endpoint = *endpoint_iterator;
-
-            //  trans_ = boost::asio::iso::create_simple_data("Hello server from test");
-            socket_.async_connect(endpoint, archives,
-
+            prepare_connect(socket_.ppm());
+            socket_.async_connect(endpoint, 
                     boost::bind(&client::handle_connect,  this,
                     boost::asio::placeholders::error, ++endpoint_iterator));
         }
     }
+    
+    void handle_request(const boost::system::error_code& error) {
+          if (!error) {
+              std::cout << "Message sent to Server: " <<  std::endl; 
+              socket_.async_respond( boost::bind(&client::handle_respond,  this,
+                    boost::asio::placeholders::error));              
+          }
+          else {
+              std::cout << "Message ERROR sent to Server: " <<  std::endl; 
+          }
+    }    
+    
+    
+    void handle_respond(const boost::system::error_code& error) {
+          if (!error) {
+              std::cout << "Message recieve from Server: " << prs_read_request(socket_.ppm()) <<  std::endl; 
+          }
+          else {
+              std::cout << "Message ERROR recieve to Server: " <<  std::endl; 
+          }
+    }        
 
     void handle_release(const boost::system::error_code& error) {
         // std::cout << "Client release :" << (error ? "error " : "success") << std::endl;
@@ -273,12 +267,10 @@ private:
     }
 
     void do_write() {
-        /*  std::cout << "Client write:" << message <<  " size: " <<  message.size() << std::endl;
-          boost::asio::async_write(socket_,
-                  boost::asio::buffer(message.data(),
-                  message.size()),
-                  boost::bind(&client::handle_write, this,
-                  boost::asio::placeholders::error));*/
+          std::cout << "Client write:" << message <<  " size: " <<  message.size() << std::endl;
+                    bld_write_request(socket_.ppm(), message);
+                    socket_.async_request( boost::bind(&client::handle_request,  this,
+                    boost::asio::placeholders::error));
 
     }
 
@@ -303,7 +295,6 @@ private:
     socket_type socket_;
     std::string message;
     //archive_ptr trans_;
-    archive_map  archives;
     //char data_[max_length];
 } ;
 
