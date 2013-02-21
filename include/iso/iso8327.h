@@ -171,8 +171,8 @@ namespace boost {
 
 
                 typedef std::pair<std::size_t, std::string>                           parameter_ln_type;
-                typedef std::pair<varid_type, parameter_ln_type>           pi_type;
-                typedef std::map<varid_type, parameter_ln_type>          pgi_type;
+                typedef std::pair<varid_type, parameter_ln_type>              pi_type;
+                typedef std::map<varid_type, parameter_ln_type>             pgi_type;
                 typedef std::pair<varid_type,  pgi_type>                            pgis_type;
                 typedef std::map<varid_type,  pgi_type>                           spdudata_type;  // (it->first==0 contain pi_type in vector
 
@@ -584,22 +584,22 @@ namespace boost {
 
 
                     operation_state                        state_;
-                    std::size_t                                size_;
-                    std::size_t                                estimatesize_;
-                    std::size_t                                datasize_;
+                    std::size_t                               size_;
+                    std::size_t                               estimatesize_;
+                    std::size_t                               datasize_;
                     spdu_type                               type_;
-                    bool                                           first_in_seq_;
-                    int8_t                                        class_option_;
-                    int8_t                                        reject_reason_;
-                    protocol_options                     options_;
-                    boost::system::error_code     errcode_;
+                    bool                                       first_in_seq_;
+                    int8_t                                      class_option_;
+                    int8_t                                      reject_reason_;
+                    protocol_options                       options_;
+                    boost::system::error_code        errcode_;
 
 
-                    data_type_ptr                         type_data;
-                    mutable_buffer                      type_buff_;
-                    data_type_ptr                         header_data;
-                    mutable_buffer                      header_buff_;
-                    mutable_buffer                       userbuff_;
+                    data_type_ptr                           type_data;
+                    mutable_buffer                         type_buff_;
+                    data_type_ptr                           header_data;
+                    mutable_buffer                         header_buff_;
+                    mutable_buffer                          userbuff_;
 
 
 
@@ -777,10 +777,10 @@ namespace boost {
                         ConnectHandler                        handler_;
                         stateconnection                         state_;
                         protocol_options                        options_;
-                        endpoint_type                        peer_endpoint_;
-                        send_seq_ptr                         send_;
-                        receive_seq_ptr                     receive_;
-                        archive_ptr                             transdata_;
+                        endpoint_type                           peer_endpoint_;
+                        send_seq_ptr                            send_;
+                        receive_seq_ptr                        receive_;
+                        archive_ptr                               transdata_;
 
                     } ;
 
@@ -932,7 +932,7 @@ namespace boost {
                         send_seq_ptr                                                  send_;
                         receive_seq_ptr                                              receive_;
                         release_type                                                   type_;
-                        archive_ptr                                              transdata_;
+                        archive_ptr                                                     transdata_;
                         stateconnection                                               state_;
 
                     } ;
@@ -1081,12 +1081,12 @@ namespace boost {
 
 
                         stream_socket*                              socket_;
-                        CheckAcceptHandler                    handler_;
-                        stateconnection                            state_;
-                        protocol_options                          options_;
-                        send_seq_ptr                                 send_;
-                        receive_seq_ptr                             receive_;
-                        archive_ptr                             transdata_;
+                        CheckAcceptHandler                       handler_;
+                        stateconnection                               state_;
+                        protocol_options                              options_;
+                        send_seq_ptr                                  send_;
+                        receive_seq_ptr                              receive_;
+                        archive_ptr                                     transdata_;
 
                     } ;
 
@@ -1183,11 +1183,11 @@ namespace boost {
 
                     private:
 
-                        stream_socket*                                             socket_;
+                        stream_socket*                                              socket_;
                         SendHandler                                                  handler_;
                         send_seq_ptr                                                 in_;
-                        boost::asio::socket_base::message_flags flags_;
-                        std::size_t                                                       send_lower_;
+                        boost::asio::socket_base::message_flags        flags_;
+                        std::size_t                                                     send_lower_;
 
 
                     } ;
