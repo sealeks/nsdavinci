@@ -11,7 +11,6 @@
 
 #include <iso/iso8327.h>
 #include <iso/asn/itu_X690.h>
-#include <iso/presentation/ISO8823-PRESENTATION.h>
 
 
 namespace boost {
@@ -19,286 +18,309 @@ namespace boost {
         namespace iso {
 
 
-            //typedef std::vector<oid_type> transfer_syntaxs_list;
-
-
-            typedef ISO8823_PRESENTATION::Presentation_context_identifier       context_id_type;
-            typedef ISO8823_PRESENTATION::Presentation_requirements            presentation_req_type;
-            typedef ISO8823_PRESENTATION::User_session_requirements           userses_req_type;
-            typedef ISO8823_PRESENTATION::Protocol_version                           presentation_ver_type;
-
-            const presentation_ver_type PRSNT_VERSION = ISO8823_PRESENTATION::Protocol_version_version_1;
-
-            const presentation_req_type PRSNT_CONTEXT_MREQ = ISO8823_PRESENTATION::Presentation_requirements_context_management;
-            const presentation_req_type PRSNT_REST_MREQ = ISO8823_PRESENTATION::Presentation_requirements_restoration;
-            const presentation_req_type PRSNT_NULL_MREQ = presentation_req_type((int8_t) 0, 6);
-
-            typedef boost::asio::asn::x690::iarchive                                                                                    x690_iarchive_type;
-            typedef boost::asio::asn::x690::oarchive                                                                                   x690_oarchive_type;
-            typedef boost::asio::iso::archive_temp<x690_iarchive_type, x690_oarchive_type>                       x690_archive;
-
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            typedef std::set<oid_type>   transfer_synaxes_type;
-
-            class presentation_context_unit {
-            public:
-
-                presentation_context_unit(const oid_type& asyntax, const encoding_rule& tsyntax, const transfer_synaxes_type&  tsxs);
-
-                //presentation_context_unit(const oid_type& asyntax, const transfer_synaxes_type&  tsxs);
-
-                oid_type abstract_syntax() const {
-                    return archiver_ ? archiver_->abstract_syntax() : oid_type();
-                }
-
-                const transfer_synaxes_type&  transfer_syntaxs() const {
-                    return transfer_syntaxes_;
-                }
-
-                encoding_rule encoding() const {
-                    return archiver_ ? archiver_->rule() : NULL_ENCODING;
-                }
-
-                bool encoding(encoding_rule val);
-
-                oid_type transfer_syntax() const {
-                    return archiver_ ? archiver_->transfer_syntax() : oid_type();
-                }
-
-                bool transfer_syntax(const oid_type& val);
-
-                bool valid() {
-                    return archiver_;
-                }
-
-                archive_ptr archiver() {
-                    return archiver_;
-                }
-
-                template<typename T> bool set(T& data) {
-                    if (archiver_) {
-                        switch (encoding()) {
-                            case BER_ENCODING:
-                            case DER_ENCODING:
-                            case CER_ENCODING:
-                            {
-                                data.serialize(boost::static_pointer_cast<x690_archive , base_archive > (archiver_)->output());
-                                return true;
-                            };
-                            default:
-                            {
-                            }
-                        }
-                    }
-                    return false;
-                }
-
-                template<typename T> bool get(T& data) {
-                    if (archiver_) {
-                        switch (encoding()) {
-                            case BER_ENCODING:
-                            case DER_ENCODING:
-                            case CER_ENCODING:
-                            {
-                                data.serialize(boost::static_pointer_cast<x690_archive , base_archive > (archiver_)->input());
-                                return true;
-                            };
-                            default:
-                            {
-                            }
-                        }
-                    }
-                    return false;
-                }
-
-
-            private:
-                oid_type abstract_syntax_;
-                transfer_synaxes_type transfer_syntaxes_;
-                archive_ptr archiver_;
-            } ;
-
-            typedef boost::shared_ptr<presentation_context_unit>   presentation_context_unit_ptr;
-
-            typedef std::pair<context_id_type, presentation_context_unit_ptr>   presentation_context_type;
-            typedef std::map<context_id_type, presentation_context_unit_ptr>  presentation_context_map;
-
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            typedef presentation_context_unit  default_context_type;
-            typedef boost::shared_ptr<default_context_type>   default_context_ptr;
-
-            class presentation_pm {
-            public:
-
-                presentation_pm(const default_context_type& dctx , const presentation_req_type& preq = PRSNT_NULL_MREQ , context_id_type  id = 1 ) :
-                nextid_(id) , preq_(preq),   default_context_( new default_context_type(dctx)) {
-                }
-
-                presentation_pm(const presentation_req_type& preq = PRSNT_NULL_MREQ , context_id_type  id = 1 ) :
-                nextid_(id) , preq_(preq),  default_context_() {
-                }
-
-                default_context_ptr  default_context() const {
-                    return default_context_;
-                }
-
-                void  default_context(default_context_ptr val)  {
-                    default_context_ = val;
-                }
-
-                context_id_type insert_context(context_id_type id, const oid_type& asyntax, const encoding_rule& tsyntax  = BER_ENCODING, const transfer_synaxes_type&  tsxs  = transfer_synaxes_type());
-
-                context_id_type insert_context(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING, const transfer_synaxes_type&  tsxs = transfer_synaxes_type()) {
-                    context_id_type tmp = insert_context(nextid_, asyntax, tsyntax, tsxs);
-                    if (tmp) nextid_ += 2;
-                    return tmp;
-                }
-
-                context_id_type remove_contex(context_id_type id) {
-                    presentation_context_map::iterator it = contexts_.find(id);
-                    if (it != contexts_.end()) {
-                        contexts_.erase(it);
-                        return id;
-                    }
-                    return 0;
-                }
-
-                archive_ptr find(context_id_type id) {
-                    presentation_context_map::iterator it = contexts_.find(id);
-                    return it != contexts_.end() ? it->second->archiver() : archive_ptr();
-                }
-
-                presentation_context_map::iterator find(const oid_type& oid) {
-                    for (presentation_context_map::iterator it = contexts_.begin(); it != contexts_.end(); ++it) {
-                        if (it->second->abstract_syntax() == oid && it->second->archiver())
-                            return it;
-                    }
-                    return contexts_.end();
-                }
-
-                archive_ptr exists(context_id_type id) {
-                    presentation_context_map::iterator it = contexts_.find(id);
-                    return it != contexts_.end() ? it->second->archiver() : archive_ptr();
-                }
-
-                void clear() {
-                    for (presentation_context_map::iterator it = contexts_.begin(); it != contexts_.end(); ++it) {
-                        if (it->second->archiver())
-                            it->second->archiver()->clear();
-                    }
-                }
-
-                void clear_output() {
-                    for (presentation_context_map::iterator it = contexts_.begin(); it != contexts_.end(); ++it) {
-                        if (it->second->archiver())
-                            it->second->archiver()->clear_output();
-                    }
-                }
-
-                void clear_input() {
-                    for (presentation_context_map::iterator it = contexts_.begin(); it != contexts_.end(); ++it) {
-                        if (it->second->archiver())
-                            it->second->archiver()->clear_input();
-                    }
-                }
-
-                bool has_input() const {
-                    for (presentation_context_map::const_iterator it = contexts_.begin(); it != contexts_.end(); ++it) {
-                        if (it->second->archiver() && (it->second->archiver()->in()->size())) return true;
-                    }
-                    return false;
-                }
-
-                bool transfer_syntax(context_id_type id, const oid_type& val) {
-                    presentation_context_map::iterator it = contexts_.find(id);
-                    if (it != contexts_.end()) {
-                        it->second->transfer_syntax(val);
-                        return true;
-                    }
-                    return false;
-                }
-
-                template<typename T> bool set(context_id_type id, T& data) {
-                    presentation_context_map::iterator it = contexts_.find(id);
-                    if (it != contexts_.end())
-                        return it->second->set(data);
-                    return false;
-                }
-
-                template<typename T> bool get(context_id_type id, T& data) {
-                    presentation_context_map::iterator it = contexts_.find(id);
-                    if (it != contexts_.end())
-                        return it->second->get(data);
-                    return false;
-                }
-
-                template<typename T> bool set(const oid_type& oid, T& data) {
-                    presentation_context_map::iterator it = find(oid);
-                    if (it != contexts_.end())
-                        return it->second->set(data);
-                    return false;
-                }
-
-                template<typename T> bool get(const oid_type& oid , T& data) {
-                    presentation_context_map::iterator it = find(oid);
-                    if (it != contexts_.end())
-                        return it->second->get(data);
-                    return false;
-                }
-
-                presentation_context_map&  contexts() {
-                    return contexts_;
-                }
-
-                const presentation_context_map&  contexts() const {
-                    return contexts_;
-                }
-
-                const presentation_req_type&  p_requirements() const {
-                    return preq_;
-                }
-
-                void p_requirements(const presentation_req_type& val) {
-                    preq_ = val;
-                }
-
-                bool is_context_menagment() const {
-                    return ((!preq_.empty()) && (preq_.bit(0)));
-                }
-
-                bool is_restoration() const {
-                    return ((preq_.size() > 1) && (preq_.bit(1)));
-                }
-
-                bool is_simple_encoding() const {
-                    return  ((contexts_.size() == 1) && (!is_context_menagment()));
-                }
-
-
-
-
-            private:
-
-
-                context_id_type       nextid_;
-                presentation_req_type  preq_;
-                default_context_ptr  default_context_;
-                presentation_context_map  contexts_;
-
-
-            } ;
-
-            typedef boost::shared_ptr<presentation_pm>   presentation_pm_ptr;
-
-
             namespace prot8823 {
 
 
-                const std::size_t BUFFER_SIZE = 128;
+
+                typedef int                                                     context_id_type;
+                typedef boost::asio::asn::bitstring_type            presentation_req_type;
+                typedef boost::asio::asn::bitstring_type            userses_req_type;
+                typedef boost::asio::asn::bitstring_type            presentation_ver_type;
+
+                const presentation_ver_type PRSNT_VERSION = boost::asio::asn::bitstring_type(true, 0);
+
+                const presentation_req_type PRSNT_CONTEXT_MREQ = boost::asio::asn::bitstring_type(true, 0);
+                const presentation_req_type PRSNT_REST_MREQ = boost::asio::asn::bitstring_type(true, 1);
+                const presentation_req_type PRSNT_NULL_MREQ = boost::asio::asn::bitstring_type((int8_t) 0, 6);
+
+                typedef boost::asio::asn::x690::iarchive                                                                                    x690_iarchive_type;
+                typedef boost::asio::asn::x690::oarchive                                                                                   x690_oarchive_type;
+                typedef boost::asio::iso::archive_temp<x690_iarchive_type, x690_oarchive_type>              x690_archive;
+
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                typedef std::set<oid_type>   transfer_synaxes_type;
+
+                class presentation_context_unit {
+                public:
+
+                    presentation_context_unit(const oid_type& asyntax, const encoding_rule& tsyntax, const transfer_synaxes_type&  tsxs);
+
+                    //presentation_context_unit(const oid_type& asyntax, const transfer_synaxes_type&  tsxs);
+
+                    oid_type abstract_syntax() const {
+                        return abstract_syntax_;
+                    }
+
+                    const transfer_synaxes_type&  transfer_syntaxs() const {
+                        return transfer_syntaxes_;
+                    }
+
+                    encoding_rule encoding() const {
+                        return archiver_ ? archiver_->rule() : NULL_ENCODING;
+                    }
+
+                    bool encoding(encoding_rule val);
+
+                    oid_type transfer_syntax() const {
+                        return archiver_ ? archiver_->transfer_syntax() : oid_type();
+                    }
+
+                    bool transfer_syntax(const oid_type& val);
+
+                    bool valid() {
+                        return archiver_;
+                    }
+
+                    archive_ptr archiver() {
+                        return archiver_;
+                    }
+
+                    template<typename T> bool set(T& data) {
+                        if (archiver_) {
+                            switch (encoding()) {
+                                case BER_ENCODING:
+                                case DER_ENCODING:
+                                case CER_ENCODING:
+                                {
+                                    data.serialize(boost::static_pointer_cast<x690_archive , base_archive > (archiver_)->output());
+                                    return true;
+                                };
+                                default:
+                                {
+                                }
+                            }
+                        }
+                        return false;
+                    }
+
+                    template<typename T> bool get(T& data) {
+                        if (archiver_) {
+                            switch (encoding()) {
+                                case BER_ENCODING:
+                                case DER_ENCODING:
+                                case CER_ENCODING:
+                                {
+                                    data.serialize(boost::static_pointer_cast<x690_archive , base_archive > (archiver_)->input());
+                                    return true;
+                                };
+                                default:
+                                {
+                                }
+                            }
+                        }
+                        return false;
+                    }
+
+
+
+                private:
+                    oid_type abstract_syntax_;
+                    transfer_synaxes_type transfer_syntaxes_;
+                    archive_ptr archiver_;
+                } ;
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+                typedef boost::shared_ptr<presentation_context_unit>   presentation_context_unit_ptr;
+
+                bool operator<(presentation_context_unit_ptr ls, presentation_context_unit_ptr rs);
+
+                typedef std::set<presentation_context_unit_ptr>  presentation_context_unit_set;
+
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////           
+
+                class presentation_connection_option {
+                public:
+
+                    presentation_connection_option(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING, const presentation_req_type& req = presentation_req_type());
+
+                    presentation_connection_option(const oid_type& asyntax1, const oid_type& asyntax2, const encoding_rule& tsyntax = BER_ENCODING , const presentation_req_type& req = presentation_req_type());
+
+                    const presentation_req_type&  p_requirements() const {
+                        return preq_;
+                    }
+
+                    const presentation_context_unit_set& abstract_syntaxes() const {
+                        return connection_syntax_;
+                    }
+
+                    presentation_context_unit_set abstract_syntaxes() {
+                        connection_syntax_;
+                    }
+
+                    void insert_abstract_syntax(presentation_context_unit_ptr val) {
+                        connection_syntax_.insert(val);
+                    }
+
+                    void insert_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING );
+
+                    bool has_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING );
+
+                private:
+
+                    presentation_context_unit_set  connection_syntax_;
+                    presentation_req_type  preq_;
+
+                } ;
+
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+                typedef std::pair<context_id_type, presentation_context_unit_ptr>   presentation_context_type;
+                typedef std::map<context_id_type, presentation_context_unit_ptr>  presentation_context_map;
+
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////                
+
+                class presentation_pm {
+                public:
+
+                    presentation_pm(const presentation_connection_option& opt , context_id_type  id = 1 );
+
+                    presentation_pm(const presentation_req_type& preq = PRSNT_NULL_MREQ , context_id_type  id = 1 );
+
+                    presentation_context_unit_ptr  default_context() const {
+                        return (is_default_context() && (!contexts_.empty())) ? contexts_.begin()->second : presentation_context_unit_ptr();
+                    }
+
+                    context_id_type insert_context(context_id_type id, const oid_type& asyntax, const encoding_rule& tsyntax  = BER_ENCODING, const transfer_synaxes_type&  tsxs  = transfer_synaxes_type());
+
+                    context_id_type insert_context(context_id_type id, presentation_context_unit_ptr ctx);
+
+                    context_id_type remove_contex(context_id_type id);
+
+                    archive_ptr find(context_id_type id) {
+                        presentation_context_map::iterator it = contexts_.find(id);
+                        return it != contexts_.end() ? it->second->archiver() : archive_ptr();
+                    }
+
+                    archive_ptr exists(context_id_type id) {
+                        presentation_context_map::iterator it = contexts_.find(id);
+                        return it != contexts_.end() ? it->second->archiver() : archive_ptr();
+                    }
+
+                    void clear() {
+                        for (presentation_context_map::iterator it = contexts_.begin(); it != contexts_.end(); ++it) {
+                            if (it->second->archiver())
+                                it->second->archiver()->clear();
+                        }
+                    }
+
+                    void clear_output() {
+                        for (presentation_context_map::iterator it = contexts_.begin(); it != contexts_.end(); ++it) {
+                            if (it->second->archiver())
+                                it->second->archiver()->clear_output();
+                        }
+                    }
+
+                    void clear_input() {
+                        for (presentation_context_map::iterator it = contexts_.begin(); it != contexts_.end(); ++it) {
+                            if (it->second->archiver())
+                                it->second->archiver()->clear_input();
+                        }
+                    }
+
+                    bool has_input() const {
+                        for (presentation_context_map::const_iterator it = contexts_.begin(); it != contexts_.end(); ++it) {
+                            if (it->second->archiver() && (it->second->archiver()->in()->size())) return true;
+                        }
+                        return false;
+                    }
+
+                    bool transfer_syntax(context_id_type id, const oid_type& val) {
+                        presentation_context_map::iterator it = contexts_.find(id);
+                        if (it != contexts_.end()) {
+                            it->second->transfer_syntax(val);
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    template<typename T> bool set(context_id_type id, T& data) {
+                        presentation_context_map::iterator it = contexts_.find(id);
+                        if (it != contexts_.end())
+                            return it->second->set(data);
+                        return false;
+                    }
+
+                    template<typename T> bool get(context_id_type id, T& data) {
+                        presentation_context_map::iterator it = contexts_.find(id);
+                        if (it != contexts_.end())
+                            return it->second->get(data);
+                        return false;
+                    }
+
+                    template<typename T> bool set(const oid_type& oid, T& data) {
+                        presentation_context_map::iterator it = find(oid);
+                        if (it != contexts_.end())
+                            return it->second->set(data);
+                        return false;
+                    }
+
+                    template<typename T> bool get(const oid_type& oid , T& data) {
+                        presentation_context_map::iterator it = find(oid);
+                        if (it != contexts_.end())
+                            return it->second->get(data);
+                        return false;
+                    }
+
+                    presentation_context_map&  contexts() {
+                        return contexts_;
+                    }
+
+                    const presentation_context_map&  contexts() const {
+                        return contexts_;
+                    }
+
+                    const presentation_req_type&  p_requirements() const {
+                        return preq_;
+                    }
+
+                    void p_requirements(const presentation_req_type& val) {
+                        preq_ = val;
+                    }
+
+                    bool is_context_menagment() const {
+                        return ((!preq_.empty()) && (preq_.bit(0)));
+                    }
+
+                    bool is_restoration() const {
+                        return ((preq_.size() > 1) && (preq_.bit(1)));
+                    }
+
+                    bool is_simple_encoding() const {
+                        return  ((contexts_.size() == 1) && (!is_context_menagment()));
+                    }
+
+                    bool is_default_context() const {
+                        return  ((contexts_.size() == 1) && (!is_context_menagment()));
+                    }
+
+
+                private:
+
+                    context_id_type insert_context(presentation_context_unit_ptr ctx);
+
+                    context_id_type insert_context(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING, const transfer_synaxes_type&  tsxs = transfer_synaxes_type());
+
+                    presentation_context_map::iterator find(const oid_type& oid);
+
+
+                    context_id_type                    nextid_;
+                    presentation_req_type           preq_;
+                    presentation_context_map     contexts_;
+
+                } ;
+
+                typedef boost::shared_ptr<presentation_pm>   presentation_pm_ptr;
+
+
+                const std::size_t BUFFER_SIZE = 512;
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,56 +328,44 @@ namespace boost {
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 class stream_socket : protected boost::asio::iso::prot8327::stream_socket  {
-                    typedef ISO8823_PRESENTATION::CP_type                                                      CP_type;
-                    typedef ISO8823_PRESENTATION::CPA_PPDU                                                   CPA_type;
-                    typedef ISO8823_PRESENTATION::User_data                                                    User_data;
-                    typedef ISO8823_PRESENTATION::Mode_selector                                              mode_type;
-                    typedef ISO8823_PRESENTATION::Called_presentation_selector                         cd_selector_type;
-                    typedef ISO8823_PRESENTATION::Calling_presentation_selector                        cng_selector_type;
-                    typedef ISO8823_PRESENTATION::Simply_encoded_data                                   simpledata_type;
-                    typedef ISO8823_PRESENTATION::Fully_encoded_data                                      fulldata_type;
-                    typedef ISO8823_PRESENTATION::Context_list_sequence_of                             p_context_type;
-                    typedef ISO8823_PRESENTATION::PDV_list                                                      pdv_list_type;
-                    typedef ISO8823_PRESENTATION::PDV_list::presentation_data_values_type       data_values_type;
-                    typedef ISO8823_PRESENTATION::Result_list                                                    result_list_type;
-
-
-
-
-                    typedef x690_iarchive_type                                                                                             input_archive_type;
-                    typedef x690_oarchive_type                                                                                            output_archive_type;
-                    typedef x690_archive                                                                                                      presentation_archive;
-                    typedef boost::shared_ptr<presentation_archive>                                                             presentation_archive_ptr;
-                    typedef boost::asio::iso::prot8327::stream_socket                                                            super_type;
+                    typedef x690_iarchive_type                                                                                              input_archive_type;
+                    typedef x690_oarchive_type                                                                                             output_archive_type;
+                    typedef x690_archive                                                                                                        presentation_archive;
+                    typedef boost::shared_ptr<presentation_archive>                                                              presentation_archive_ptr;
+                    typedef boost::asio::iso::prot8327::stream_socket                                                                 super_type;
 
                 public:
 
-                    explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel)
+                    explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel, const presentation_connection_option& connectoption)
                     : super_type(io_service,  psel.sselector()),
-                    basiccoder(new presentation_archive()),  selector_ (psel) {
+                    basiccoder(new presentation_archive()),  selector_ (psel),  ppm_( new presentation_pm(connectoption)) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const presentation_selector& psel)
                     : super_type(io_service, psel.sselector()),
-                    basiccoder(new presentation_archive()), selector_ (psel)  {
+                    basiccoder(new presentation_archive()), selector_ (psel),  ppm_( new presentation_pm())  {
                     }
 
-                    void connect(const endpoint_type& peer_endpoint, presentation_pm_ptr ppm) {
+                    void connect(const endpoint_type& peer_endpoint) {
                         boost::system::error_code ec;
-                        connect(peer_endpoint, ppm , ec);
+                        connect(peer_endpoint,  ec);
                         boost::asio::detail::throw_error(ec, "connect");
                     }
 
-                    boost::system::error_code connect(const endpoint_type& peer_endpoint, presentation_pm_ptr ppm,
+                    boost::system::error_code connect(const endpoint_type& peer_endpoint,
                             boost::system::error_code& ec) {
+                        if (!ppm()) {
+                            ec = ERROR_EDOM;
+                            return ec;
+                        }
                         if (!is_open()) {
                             if (this->get_service().open(this->get_implementation(),
                                     peer_endpoint.protocol(), ec)) {
                                 return ec;
                             }
                         }
-                        return connect_impl(peer_endpoint, ppm, ec);
+                        return connect_impl(peer_endpoint, ec);
                     }
 
 
@@ -386,6 +396,7 @@ namespace boost {
                         }
 
                     private:
+
                         stream_socket*                           socket_;
                         ConnectHandler                           handler_;
                     } ;
@@ -394,10 +405,14 @@ namespace boost {
                 public:
 
                     template <typename ConnectHandler>
-                    void async_connect(const endpoint_type& peer_endpoint, presentation_pm_ptr ppm,
+                    void async_connect(const endpoint_type& peer_endpoint,
                             BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
-                        BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
+                        BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
+                        if (!ppm()) {
+                            handler(ERROR_EDOM);
+                            return;
+                        }
                         if (!is_open()) {
                             boost::system::error_code ec;
                             const protocol_type protocol = peer_endpoint.protocol();
@@ -408,8 +423,6 @@ namespace boost {
                                 return;
                             }
                         }
-                        ppm_ = ppm;
-
                         clear_input();
                         build_CP_type();
                         super_type::async_connect(peer_endpoint, coder() , boost::bind(&connect_op<ConnectHandler>::run,
@@ -563,9 +576,8 @@ namespace boost {
 
                 private:
 
-                    boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, presentation_pm_ptr ppm,
+                    boost::system::error_code connect_impl(const endpoint_type& peer_endpoint,
                             boost::system::error_code& ec) {
-                        ppm_ = ppm;
                         build_CP_type();
                         if (!super_type::connect(peer_endpoint,  coder() , ec)) {
                             parse_CR();
@@ -582,18 +594,11 @@ namespace boost {
 
                     bool parse_RESPONSE();
 
-                    void build_USERDATA(User_data& data);
-
-                    bool parse_USERDATA(const User_data& data);
-
-
-
-
                     presentation_archive_ptr                                      basiccoder;
-                    presentation_selector                                           selector_;                       
+                    presentation_selector                                           selector_;
                     presentation_pm_ptr                                            ppm_;
                     int8_t                                                                  databuff[BUFFER_SIZE];
-                 
+
 
                 } ;
 
@@ -854,12 +859,10 @@ namespace boost {
                 int family_;
             } ;
 
+            typedef boost::asio::iso::prot8823::presentation_pm_ptr                  presentation_pm_ptr;
+            typedef boost::asio::iso::prot8823::presentation_connection_option   presentation_option;
+
         }
-
-
-
-
-
     } // namespace asio
 } // namespace boost
 
