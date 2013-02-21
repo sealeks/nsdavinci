@@ -8,42 +8,19 @@
 #ifndef ___PRESENT_H
 #define	___PRESENT_H
 
-#include <cstdlib>
-#include <deque>
-#include <iostream>
 
-
-#include <iso/rfc1006.h>
-#include <iso/iso8327.h>
 #include <iso/asn/itu_X690.h>
-
-#include <boost/bind.hpp>
-#include <boost/asio.hpp>
-#include <boost/thread/thread.hpp>
-
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-
-#include <iso/rfc1006.h>
-#include <iso/iso8327.h>
 #include <iso/iso8823.h>
 
-#include <boost/bind.hpp>
-#include <boost/asio.hpp>
-#include <boost/thread/thread.hpp>
 
+typedef boost::asio::iso::presentation_pm_ptr                  presentation_pm_ptr;
+typedef boost::asio::iso::presentation_option                    presentation_option;
 
-
-typedef boost::asio::iso::archive_ptr           archive_ptr;
-typedef boost::asio::iso::archiver_map      archive_map;
-typedef boost::asio::iso::archiver_pair      archiver_pair;
-
-
-archive_map get_map();
-
-
-
+presentation_option getpresentotion();
+void prepare_connect(presentation_pm_ptr vl);
+std::string complete_connect(presentation_pm_ptr vl);
+void bld_write_request(presentation_pm_ptr ppm, const std::string& val);
+std::string prs_read_request(presentation_pm_ptr ppm);
 
 
 #endif	/* PRESENT_H */
