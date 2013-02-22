@@ -45,9 +45,7 @@ namespace boost {
                 class presentation_context_unit {
                 public:
 
-                    presentation_context_unit(const oid_type& asyntax, const encoding_rule& tsyntax, const transfer_synaxes_type&  tsxs);
-
-                    //presentation_context_unit(const oid_type& asyntax, const transfer_synaxes_type&  tsxs);
+                    presentation_context_unit(const oid_type& asyntax, const encoding_rule& tsyntax );
 
                     oid_type abstract_syntax() const {
                         return abstract_syntax_;
@@ -188,7 +186,7 @@ namespace boost {
                         return (is_default_context() && (!contexts_.empty())) ? contexts_.begin()->second : presentation_context_unit_ptr();
                     }
 
-                    context_id_type insert_context(context_id_type id, const oid_type& asyntax, const encoding_rule& tsyntax  = BER_ENCODING, const transfer_synaxes_type&  tsxs  = transfer_synaxes_type());
+                    context_id_type insert_context(context_id_type id, const oid_type& asyntax, const encoding_rule& tsyntax  = BER_ENCODING);
 
                     context_id_type insert_context(context_id_type id, presentation_context_unit_ptr ctx);
 
@@ -306,7 +304,7 @@ namespace boost {
 
                     context_id_type insert_context(presentation_context_unit_ptr ctx);
 
-                    context_id_type insert_context(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING, const transfer_synaxes_type&  tsxs = transfer_synaxes_type());
+                    context_id_type insert_context(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING);
 
                     presentation_context_map::iterator find(const oid_type& oid);
 
@@ -322,6 +320,20 @@ namespace boost {
 
                 const std::size_t BUFFER_SIZE = 512;
 
+                enum ppdu_enum {
+                    null_ppdu,
+                    error_ppdu,
+                    cp_ppdu,
+                    cpa_ppdu,
+                    cpr_ppdu,
+                    dt_ppdu,
+                    ac_ppdu,
+                    aca_ppdu,
+                    aru_ppdu,
+                    arp_ppdu
+                } ;
+
+
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //////////////////stream_socket                
@@ -330,9 +342,9 @@ namespace boost {
                 class stream_socket : protected boost::asio::iso::prot8327::stream_socket  {
                     typedef x690_iarchive_type                                                                                              input_archive_type;
                     typedef x690_oarchive_type                                                                                             output_archive_type;
-                    typedef x690_archive                                                                                                        presentation_archive;
+                    typedef x690_archive                                                                                                       presentation_archive;
                     typedef boost::shared_ptr<presentation_archive>                                                              presentation_archive_ptr;
-                    typedef boost::asio::iso::prot8327::stream_socket                                                                 super_type;
+                    typedef boost::asio::iso::prot8327::stream_socket                                                             super_type;
 
                 public:
 
@@ -586,13 +598,15 @@ namespace boost {
                         return ec;
                     }
 
+                    ppdu_enum check_response();
+
                     void build_CP_type();
 
                     void build_DT_type();
 
-                    bool parse_CR();
+                    ppdu_enum parse_CR();
 
-                    bool parse_RESPONSE();
+                    ppdu_enum parse_RESPONSE();
 
                     presentation_archive_ptr                                      basiccoder;
                     presentation_selector                                           selector_;
