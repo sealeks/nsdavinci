@@ -52,8 +52,11 @@ namespace boost {
                 const oid_type BASE_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID};
                 const transfer_synaxes_type BASE_TRANSFER_SINTAXS = transfer_synaxes_type(BASE_TRANSFER_SINTAXS_ARR, BASE_TRANSFER_SINTAXS_ARR + 1);
 
-                presentation_context_unit::presentation_context_unit(const oid_type& asyntax, const encoding_rule& tsyntax, const transfer_synaxes_type&  tsxs = BASE_TRANSFER_SINTAXS ) :
-                abstract_syntax_(asyntax), transfer_syntaxes_(tsxs) {
+                const oid_type ALL_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID, CANONICAL_ENCODING_OID, DISTINGUISH_ENCODING_OID};
+                const transfer_synaxes_type ALL_TRANSFER_SINTAXS = transfer_synaxes_type (ALL_TRANSFER_SINTAXS_ARR, ALL_TRANSFER_SINTAXS_ARR + 3);
+
+                presentation_context_unit::presentation_context_unit(const oid_type& asyntax, const encoding_rule& tsyntax) :
+                abstract_syntax_(asyntax), transfer_syntaxes_(ALL_TRANSFER_SINTAXS) {
                     archiver_ = build_by_syntaxes(asyntax , tsyntax);
                 }
 
@@ -110,12 +113,9 @@ namespace boost {
                 nextid_(id) , preq_(preq) {
                 }
 
-                context_id_type presentation_pm::insert_context(context_id_type id, const oid_type& asyntax, const encoding_rule& tsyntax, const transfer_synaxes_type&  tsxs) {
-                    transfer_synaxes_type  tsxs_ = tsxs;
-                    if ( tsxs_.empty())
-                        tsxs_.insert(encoding_to_oid(tsyntax));
+                context_id_type presentation_pm::insert_context(context_id_type id, const oid_type& asyntax, const encoding_rule& tsyntax) {
                     nextid_ += 2;
-                    presentation_context_unit_ptr tmp = presentation_context_unit_ptr( new presentation_context_unit(asyntax, tsyntax, tsxs_));
+                    presentation_context_unit_ptr tmp = presentation_context_unit_ptr( new presentation_context_unit(asyntax, tsyntax));
                     if (!tmp->valid())
                         return 0;
                     contexts_.insert(presentation_context_type(id, tmp));
@@ -144,8 +144,8 @@ namespace boost {
                     return tmp;
                 }
 
-                context_id_type presentation_pm::insert_context(const oid_type& asyntax, const encoding_rule& tsyntax, const transfer_synaxes_type&  tsxs) {
-                    context_id_type tmp = insert_context(nextid_, asyntax, tsyntax, tsxs);
+                context_id_type presentation_pm::insert_context(const oid_type& asyntax, const encoding_rule& tsyntax) {
+                    context_id_type tmp = insert_context(nextid_, asyntax, tsyntax);
                     if (tmp) nextid_ += 2;
                     return tmp;
                 }
@@ -178,7 +178,7 @@ namespace boost {
                     }
                 }
 
-                static bool parse_USERDATA(presentation_pm_ptr ppm, const User_data& data) {
+                static bool parse_userdata(presentation_pm_ptr ppm, const User_data& data) {
                     switch (data.type()) {
                         case ISO8823_PRESENTATION::User_data_Simply_encoded_data:
                         {
@@ -233,6 +233,40 @@ namespace boost {
                     return false;
                 }
 
+                ppdu_enum stream_socket::check_response() {
+                    if (!coder()->input().size())
+                        return null_ppdu;
+                    switch (coder()->input().test_class()) {
+                        case boost::asio::asn::UNIVERSAL_CLASS:
+                        {
+                            switch (coder()->input().test_id()) {
+                                case boost::asio::asn::TYPE_SET: return cp_ppdu;
+                                default:
+                                {
+                                }
+                            };
+                            break;
+                        }
+                        case boost::asio::asn::APPLICATION_CLASS:
+                        {
+                            switch (coder()->input().test_id()) {
+                                case 0: return dt_ppdu;
+                                case 1: return dt_ppdu;                                
+                                default:
+                                {
+                                }
+                            };
+                            break;
+                        }
+
+                        default:
+                        {
+
+                        }
+                    }
+                    return error_ppdu;
+                }
+
                 void stream_socket::build_CP_type() {
                     CP_type cp;
                     cp.mode_selector.mode_value = mode_type::mode_value_normal_mode;
@@ -244,7 +278,7 @@ namespace boost {
                     if (ppm()->is_context_menagment())
                         cp.normal_mode_parameters->presentation_requirements__assign(ppm()->p_requirements());
                     cp.normal_mode_parameters->presentation_context_definition_list__new();
-                    cp.normal_mode_parameters->protocol_version__assign(PRSNT_VERSION);
+                    cp.normal_mode_parameters->protocol_version__assign(PRSNT_VERSION);                  
                     for (presentation_context_map::const_iterator it = ppm()->contexts().begin(); it != ppm()->contexts().end(); ++it) {
                         if (it->second->valid()) {
                             p_context_type ctx;
@@ -266,9 +300,10 @@ namespace boost {
                     udt.serialize(coder()->output());
                 }
 
-                bool stream_socket::parse_CR() {
-                    switch (coder()->input().test_id()) {
-                        case boost::asio::asn::TYPE_SET:
+                ppdu_enum  stream_socket::parse_CR() {
+                    ppdu_enum  tst = check_response();
+                    switch (check_response()) {
+                        case cp_ppdu:
                         {
                             CPA_type cpa;
                             (coder()->input()) & cpa;
@@ -307,35 +342,37 @@ namespace boost {
                                         std::cout << "Negotiated client presentation_requirements: " << ppm()->p_requirements()  << std::endl;
                                     }
 
-                                    parse_USERDATA(ppm(), cpa.normal_mode_parameters->user_data);
+                                    parse_userdata(ppm(), cpa.normal_mode_parameters->user_data);
+
+                                    return cp_ppdu;
                                 }
                             }
-
                         }
-                    }
-                    return false;
-                }
-
-                bool stream_socket::parse_RESPONSE() {
-                    int recl = coder()->input().test_class();
-                    switch (coder()->input().test_id()) {
-                        case 1:
+                        default:
                         {
-                            switch (coder()->input().test_class()) {
-                                case 64:
-                                {
-                                    User_data data;
-                                    data.serialize(coder()->input());
-                                    parse_USERDATA(ppm(), data);
-                                    return true;
-                                }
-
-                            }
                         }
-
                     }
-                    return false;
+
+                    return error_ppdu;
                 }
+
+                ppdu_enum stream_socket::parse_RESPONSE() {
+                    switch (check_response()) {
+                        case dt_ppdu:
+                        {
+                            User_data data;
+                            data.serialize(coder()->input());
+                            parse_userdata(ppm(), data);
+                            return dt_ppdu;
+                        }
+                        default:
+                        {
+                        }
+                    }
+                    return error_ppdu;
+                }
+
+
             }
         }
     }
