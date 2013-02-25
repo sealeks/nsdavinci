@@ -23,21 +23,21 @@ CND_PACKAGE_DIR_nb_gcc_rl_WIN32=dist/nb_gcc_rl_WIN32/MinGW-Windows/package
 CND_PACKAGE_NAME_nb_gcc_rl_WIN32=libisostack.tar
 CND_PACKAGE_PATH_nb_gcc_rl_WIN32=dist/nb_gcc_rl_WIN32/MinGW-Windows/package/libisostack.tar
 # nb_gcc_db_LIN64 configuration
-CND_PLATFORM_nb_gcc_db_LIN64=GNU-Linux-x86
+CND_PLATFORM_nb_gcc_db_LIN64=
 CND_ARTIFACT_DIR_nb_gcc_db_LIN64=../../lib/nb_gcc_db_LIN64
 CND_ARTIFACT_NAME_nb_gcc_db_LIN64=libisostack.a
 CND_ARTIFACT_PATH_nb_gcc_db_LIN64=../../lib/nb_gcc_db_LIN64/libisostack.a
-CND_PACKAGE_DIR_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64/GNU-Linux-x86/package
+CND_PACKAGE_DIR_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64//package
 CND_PACKAGE_NAME_nb_gcc_db_LIN64=libisostack.tar
-CND_PACKAGE_PATH_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64/GNU-Linux-x86/package/libisostack.tar
+CND_PACKAGE_PATH_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64//package/libisostack.tar
 # nb_gcc_rl_LIN64 configuration
-CND_PLATFORM_nb_gcc_rl_LIN64=GNU-Linux-x86
+CND_PLATFORM_nb_gcc_rl_LIN64=
 CND_ARTIFACT_DIR_nb_gcc_rl_LIN64=../../lib/nb_gcc_rl_LIN64
 CND_ARTIFACT_NAME_nb_gcc_rl_LIN64=libisostack.a
 CND_ARTIFACT_PATH_nb_gcc_rl_LIN64=../../lib/nb_gcc_rl_LIN64/libisostack.a
-CND_PACKAGE_DIR_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64/GNU-Linux-x86/package
+CND_PACKAGE_DIR_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64//package
 CND_PACKAGE_NAME_nb_gcc_rl_LIN64=libisostack.tar
-CND_PACKAGE_PATH_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64/GNU-Linux-x86/package/libisostack.tar
+CND_PACKAGE_PATH_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64//package/libisostack.tar
 #
 # include compiler specific variables
 #

@@ -12,6 +12,8 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>../../include/iso/presentation/ISO8823-PRESENTATION.h</itemPath>
+    <itemPath>../../include/iso/presentation/Reliable-Transfer-APDUs.h</itemPath>
     <itemPath>../../include/iso/archive_stream.cpp</itemPath>
     <itemPath>../../include/iso/archive_stream.h</itemPath>
     <itemPath>../../include/iso/asn/asnbase.cpp</itemPath>
@@ -20,6 +22,8 @@
     <itemPath>../../include/iso/iso.h</itemPath>
     <itemPath>../../include/iso/iso8327.cpp</itemPath>
     <itemPath>../../include/iso/iso8327.h</itemPath>
+    <itemPath>../../include/iso/iso8823.cpp</itemPath>
+    <itemPath>../../include/iso/iso8823.h</itemPath>
     <itemPath>../../include/iso/asn/itu_X690.cpp</itemPath>
     <itemPath>../../include/iso/asn/itu_X690.h</itemPath>
     <itemPath>../../include/iso/rfc1006.cpp</itemPath>
