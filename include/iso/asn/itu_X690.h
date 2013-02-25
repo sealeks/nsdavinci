@@ -15,6 +15,7 @@
 
 #include <iso/asn/asnbase.h>
 #include <iso/archive_stream.h>
+#include <iso/iso.h>
 
 
 
@@ -926,8 +927,9 @@ namespace boost {
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         stream & vl.value();
                         stream.pop_stack();
+                        return stream;                        
                     }
-                    return stream;
+                    throw boost::system::system_error(boost::asio::iso::ERROR__SEQ);
                 }
 
                 template<typename T>
@@ -969,8 +971,9 @@ namespace boost {
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         const_cast<T*> (&(vl.value()))->serialize(stream);
                         stream.pop_stack();
+                        return stream;
                     }
-                    return stream;
+                    throw boost::system::system_error(boost::asio::iso::ERROR__SEQ);
                 }
 
                 template<typename T>
@@ -1086,8 +1089,9 @@ namespace boost {
                             }
                         }
                         stream.pop_stack();
+                        return stream;
                     }
-                    return stream;
+                    throw boost::system::system_error(boost::asio::iso::ERROR__SEQ);
                 }
 
                 template<typename T>
