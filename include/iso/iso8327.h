@@ -1611,6 +1611,7 @@ namespace boost {
                 } ;
 
                 class socket_acceptor : public boost::asio::iso::iec8073_tcp::socket_acceptor  {
+                    
                     typedef boost::asio::iso::iec8073_tcp::socket_acceptor       super_type;
 
                 public:
