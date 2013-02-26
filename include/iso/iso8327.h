@@ -1048,8 +1048,9 @@ namespace boost {
                                 handler_(ERROR__EPROTO);
                                 return;
                             }
-                            std::string error_accept = "";
-                            if (!correspond_protocol_option(options_,  receive_->options(), error_accept))  {
+                            std::string error_accept;
+                            std::string response_data;                            
+                            if (!correspond_protocol_option(options_,  receive_->options(), error_accept) || !socket_->negotiate_accept(receive_->options().data(), response_data))  {
                                 options_.reason(error_accept);
                                 send_ = send_seq_ptr( new send_seq(RF_SPDU_ID, options_));
                                 state(refuse);
@@ -1058,7 +1059,7 @@ namespace boost {
                             }
                             if (transdata_)
                                 transdata_->respond_str(receive_->options().data());
-                            send_ = send_seq_ptr( new send_seq(AC_SPDU_ID, options_, transdata_ ? transdata_->request_str() : ""));
+                            send_ = send_seq_ptr( new send_seq(AC_SPDU_ID, options_, response_data));
                             state(send);
                             operator()(ec, 0);
                         }
@@ -1418,6 +1419,11 @@ namespace boost {
                         }
                         return send_seq_ptr();
                     }
+                    
+                    virtual bool negotiate_accept(const std::string& req, std::string& resp){
+                        resp=req;
+                        return true;
+                    }
 
                     /*void session_releasedata(archive_ptr data ) {
                         session_data_ = data;
@@ -1532,8 +1538,9 @@ namespace boost {
                             close(ecc);
                             return ERROR__EPROTO;
                         }
-                        std::string error_accept = "";
-                        if (!correspond_protocol_option(options_,  receive_->options(), error_accept))  {
+                        std::string error_accept;
+                        std::string  response_data;                        
+                        if (!correspond_protocol_option(options_,  receive_->options(), error_accept)  || !negotiate_accept(receive_->options().data(), response_data))  {
                             canseled = true;
                             options_.reason(error_accept);
                             send_ = send_seq_ptr( new send_seq(RF_SPDU_ID, options_));
@@ -1541,7 +1548,7 @@ namespace boost {
                         else {
                             if (transdata)
                                 transdata->respond_str(receive_->options().data());
-                            send_ = send_seq_ptr( new send_seq(AC_SPDU_ID, options_, transdata ? transdata->request_str() : ""));
+                            send_ = send_seq_ptr( new send_seq(AC_SPDU_ID, options_, response_data));
                         }
 
                         while (!ec && !send_->ready())

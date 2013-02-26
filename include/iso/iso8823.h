@@ -134,6 +134,9 @@ namespace boost {
                 class presentation_connection_option {
                 public:
 
+                    presentation_connection_option() {
+                    }
+
                     presentation_connection_option(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING, const presentation_req_type& req = presentation_req_type());
 
                     presentation_connection_option(const oid_type& asyntax1, const oid_type& asyntax2, const encoding_rule& tsyntax = BER_ENCODING , const presentation_req_type& req = presentation_req_type());
@@ -156,7 +159,8 @@ namespace boost {
 
                     void insert_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING );
 
-                    bool has_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING );
+                    bool has_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING ) const;
+                  
 
                 private:
 
@@ -333,8 +337,7 @@ namespace boost {
                     arp_ppdu
                 } ;
 
-                typedef x690_iarchive_type                                                                                              input_archive_type;
-                typedef x690_oarchive_type                                                                                             output_archive_type;
+
                 typedef x690_archive                                                                                                       presentation_archive;
                 typedef boost::shared_ptr<presentation_archive>                                                              presentation_archive_ptr;
 
@@ -347,6 +350,8 @@ namespace boost {
                 boost::system::error_code build_CP_type(presentation_archive_ptr coder, presentation_pm_ptr ppm, const presentation_selector & selector);
 
                 boost::system::error_code parse_CR(presentation_archive_ptr coder, presentation_pm_ptr ppm, presentation_selector& selector);
+                
+                boost::system::error_code parse_CP(presentation_archive_ptr coder, presentation_pm_ptr ppm, presentation_selector& selector, const presentation_connection_option& option);               
 
                 boost::system::error_code parse_RESPONSE(presentation_archive_ptr coder, presentation_pm_ptr ppm, ppdu_enum& ppdutype);
 
@@ -355,18 +360,19 @@ namespace boost {
                 //////////////////stream_socket                
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                class stream_socket : protected boost::asio::iso::prot8327::stream_socket  {
-                    typedef boost::asio::iso::prot8327::stream_socket                                                             super_type;
+                class stream_socket : public boost::asio::iso::prot8327::stream_socket  {
+                    typedef boost::asio::iso::prot8327::stream_socket           super_type;
 
                 public:
 
-                    explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel, const presentation_connection_option& connectoption)
+                    explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel = presentation_selector(),
+                            const presentation_connection_option& connectoption = presentation_connection_option())
                     : super_type(io_service,  psel.sselector()),
                     basiccoder(new presentation_archive()),  selector_ (psel),  ppm_( new presentation_pm(connectoption)) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
-                            const endpoint_type& endpoint, const presentation_selector& psel)
+                            const endpoint_type& endpoint, const presentation_selector& psel = presentation_selector())
                     : super_type(io_service, psel.sselector()),
                     basiccoder(new presentation_archive()), selector_ (psel),  ppm_( new presentation_pm())  {
                     }
@@ -463,67 +469,6 @@ namespace boost {
                         super_type::async_connect(peer_endpoint, coder() , boost::bind(&connect_op<ConnectHandler>::run,
                                 connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
                     }
-
-
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                    boost::system::error_code  check_accept( boost::system::error_code& ec) {
-                        return check_accept_imp(ec);
-                    }
-
-
-                private:
-
-                    template <typename CheckAcceptHandler>
-                    class accept_op {
-
-                        enum stateconnection {
-                            wait,
-                            send,
-                            refuse
-                        } ;
-
-                    public:
-
-                        accept_op(stream_socket* socket,  CheckAcceptHandler handler,  archive_ptr  transdata) :
-                        socket_(socket),
-                        handler_(handler) {
-                        }
-
-                        void run() {
-
-                            boost::system::error_code ec;
-                            operator()(ec, 0);
-                        }
-
-                        void operator()(const boost::system::error_code& ec) {
-                            if (!ec) {
-
-                            }
-                            handler_(ec);
-                        }
-
-
-
-                    private:
-
-                        stream_socket*                              socket_;
-                        CheckAcceptHandler                       handler_;
-
-                    } ;
-
-
-                public:
-
-                    template <typename CheckAcceptHandler>
-                    void asyn_check_accept(CheckAcceptHandler handler) {
-
-                        //option_.src_tsap(src);
-                        this->get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
-                                accept_op<CheckAcceptHandler > (const_cast<stream_socket*> (this), handler)));
-                    }
-
-
 
 
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
@@ -661,16 +606,20 @@ namespace boost {
                             ppm()->clear_output();
                         coder()->clear_output();
                     }
-
-                protected:
-
+                    
                     presentation_archive_ptr coder() {
                         return basiccoder;
                     }
 
                     presentation_archive_ptr coder() const {
                         return basiccoder;
-                    }
+                    }    
+                    
+                     void  option(const presentation_connection_option& opt) {
+                        option_=opt;
+                    }                 
+
+                protected:
 
                     presentation_selector& selector() {
                         return selector_;
@@ -680,11 +629,18 @@ namespace boost {
                         return selector_;
                     }
 
-
+                    virtual bool negotiate_accept(const std::string& req, std::string& resp){
+                          basiccoder->clear_input();
+                          basiccoder->input().add(raw_type(req.begin(), req.end()));
+                          if (boost::system::error_code errest = parse_CP(coder(), ppm() , selector(), option_)) {
+                              return false;
+                          }
+                          return true;        
+                    }
 
                 private:
 
-                    //////  hide base
+                    //////  hide base 
 
                     void send() {
                     };
@@ -722,17 +678,13 @@ namespace boost {
                         return ec;
                     }
 
-                    boost::system::error_code  check_accept_imp(boost::system::error_code& ec) {
-                        return boost::system::error_code();
-                    }
 
 
-                    presentation_archive_ptr                                      basiccoder;
-                    presentation_selector                                           selector_;
-                    presentation_pm_ptr                                            ppm_;
-                    int8_t                                                                  databuff[BUFFER_SIZE];
-
-
+                    presentation_archive_ptr                                basiccoder;
+                    presentation_selector                                     selector_;
+                    presentation_pm_ptr                                      ppm_;
+                    presentation_connection_option                       option_;                    
+                    int8_t                                                            databuff[BUFFER_SIZE];
                 } ;
 
                 class socket_acceptor : public boost::asio::iso::prot8327::socket_acceptor  {
@@ -749,6 +701,9 @@ namespace boost {
                     : boost::asio::iso::prot8327::socket_acceptor(io_service, endpoint, reuse_addr),  option_(opt) {
                     }
 
+                    
+                    
+                    
                     template <typename SocketService>
                     boost::system::error_code accept(
                             basic_socket<protocol_type, SocketService>& peer,
@@ -781,49 +736,29 @@ namespace boost {
 
                 private:
 
-                    template <typename Handler>
-                    class accept_op {
-                    public:
-
-                        accept_op(Handler h,  stream_socket* socket, archive_ptr transdata)
-                        :  handler_(h), socket_(socket),  transdata_( transdata) {
-                        }
-
-                        void operator()(const boost::system::error_code& ec) {
-                            if (!ec)
-                                static_cast<stream_socket*> (socket_)->asyn_check_accept(handler_);
-                            else
-                                handler_(ec);
-                        }
-
-                    private:
-                        Handler                              handler_;
-                        stream_socket*                  socket_;
-                        archive_ptr                      transdata_;
-                    } ;
 
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept_impl(basic_socket<protocol_type, SocketService>& peer,
                             endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                         BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-                        super_type::async_accept(peer,  peer_endpoint, accept_op<AcceptHandler > (handler, static_cast<stream_socket*> (&peer)));
+                        static_cast<stream_socket*> ( &peer)->option(option_);                        
+                        super_type::async_accept(peer,  peer_endpoint, static_cast<stream_socket*> (&peer)->coder(), handler);
                     }
 
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept_impl(basic_socket<protocol_type, SocketService>& peer,
                             BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                         BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-                        super_type::async_accept(peer,   accept_op<AcceptHandler > (handler , static_cast<stream_socket*> (&peer)));
+                        static_cast<stream_socket*> ( &peer)->option(option_);
+                        super_type::async_accept(peer,   static_cast<stream_socket*> (&peer)->coder(), handler);
                     }
 
                     template <typename SocketService>
                     boost::system::error_code accept_impl(
                             basic_socket<protocol_type, SocketService>& peer,
                             endpoint_type& peer_endpoint, boost::system::error_code& ec) {
-                        super_type::accept(peer, peer_endpoint, ec);
-                        if (ec)
-                            return ec;
-                        static_cast<stream_socket*> ( &peer)->check_accept( ec);
+                        static_cast<stream_socket*> ( &peer)->option(option_);                        
+                        super_type::accept(peer, peer_endpoint, static_cast<stream_socket*> ( &peer)->coder(),  ec);
                         return ec;
                     }
 
@@ -831,10 +766,8 @@ namespace boost {
                     boost::system::error_code accept_impl(
                             basic_socket<protocol_type, SocketService>& peer,
                             boost::system::error_code& ec) {
-                        super_type::accept(peer,  ec);
-                        if (ec)
-                            return ec;
-                        static_cast<stream_socket*> ( &peer)->check_accept( ec);
+                        static_cast<stream_socket*> ( &peer)->option(option_);
+                        super_type::accept(peer, static_cast<stream_socket*> ( &peer)->coder(),  ec);
                         return ec;
                     }
 
