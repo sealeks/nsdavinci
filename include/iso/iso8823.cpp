@@ -27,6 +27,7 @@ namespace boost {
                 typedef ISO8823_PRESENTATION::PDV_list                                                      pdv_list_type;
                 typedef ISO8823_PRESENTATION::PDV_list::presentation_data_values_type       data_values_type;
                 typedef ISO8823_PRESENTATION::Result_list                                                    result_list_type;
+                typedef ISO8823_PRESENTATION::Presentation_context_definition_list                definition_list_type;
 
                 static archive_ptr build_by_syntaxes(const oid_type& asyntax, const encoding_rule& tsyntax) {
 
@@ -96,7 +97,7 @@ namespace boost {
                     insert_abstract_syntax(presentation_context_unit_ptr( new presentation_context_unit(asyntax, tsyntax))) ;
                 }
 
-                bool presentation_connection_option::has_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax ) {
+                bool presentation_connection_option::has_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax ) const {
                     return connection_syntax_.find(presentation_context_unit_ptr( new presentation_context_unit(asyntax, tsyntax))) != connection_syntax_.end();
                 }
 
@@ -385,6 +386,40 @@ namespace boost {
                             default:
                             {
                             }
+                        }
+                    }
+                    catch (const boost::system::system_error& cerr) {
+                        return cerr.code();
+                    }
+                    catch (...) {
+                    }
+                    return ERROR__EPROTO;
+                }
+
+                boost::system::error_code parse_CP(presentation_archive_ptr coder, presentation_pm_ptr ppm, presentation_selector& selector, const presentation_connection_option& option) {
+                    try {
+                        CP_type cp;
+                        (coder->input()) & cp;
+                        if (cp.mode_selector.mode_value == mode_type::mode_value_normal_mode && cp.normal_mode_parameters) {
+                            std::cout << "Negotiate CP " << cp.mode_selector.mode_value << std::endl;
+                            selector.called(cp.normal_mode_parameters->called_presentation_selector ?
+                                    std::string(cp.normal_mode_parameters->called_presentation_selector->begin(), cp.normal_mode_parameters->called_presentation_selector->end())  : "");
+                            selector.calling(cp.normal_mode_parameters->calling_presentation_selector ?
+                                    std::string(cp.normal_mode_parameters->calling_presentation_selector->begin(), cp.normal_mode_parameters->calling_presentation_selector->end())  : "");
+                            if (!cp.normal_mode_parameters->presentation_context_definition_list)
+                                return ERROR__EPROTO;
+                            for (definition_list_type::const_iterator it = cp.normal_mode_parameters->presentation_context_definition_list->begin();
+                                    it != cp.normal_mode_parameters->presentation_context_definition_list->end(); ++it) {
+                                if (option.has_abstract_syntax(it->abstract_syntax_name, BER_ENCODING)){
+                                    ppm->insert_context(it->presentation_context_identifier, it->abstract_syntax_name);                             
+                                }
+                                else{
+                                    
+                                }                                 
+                        }
+                        }
+                        else {
+                            return ERROR__EPROTO;
                         }
                     }
                     catch (const boost::system::system_error& cerr) {
