@@ -160,6 +160,8 @@ namespace boost {
                     void insert_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING );
 
                     bool has_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING ) const;
+                    
+                    oid_type has_abstract_syntax(const oid_type& asyntax, const std::vector<oid_type>& tsyntax) const;                    
                   
 
                 private:
@@ -336,6 +338,12 @@ namespace boost {
                     aru_ppdu,
                     arp_ppdu
                 } ;
+                
+                enum negotiate_rslt_enum {
+                    error_negotiate,
+                    accept_negotiate,
+                    reject_negotiate
+                } ;                
 
 
                 typedef x690_archive                                                                                                       presentation_archive;
@@ -349,9 +357,7 @@ namespace boost {
 
                 boost::system::error_code build_CP_type(presentation_archive_ptr coder, presentation_pm_ptr ppm, const presentation_selector & selector);
 
-                boost::system::error_code parse_CR(presentation_archive_ptr coder, presentation_pm_ptr ppm, presentation_selector& selector);
-                
-                boost::system::error_code parse_CP(presentation_archive_ptr coder, presentation_pm_ptr ppm, presentation_selector& selector, const presentation_connection_option& option);               
+                boost::system::error_code parse_CR(presentation_archive_ptr coder, presentation_pm_ptr ppm, presentation_selector& selector);        
 
                 boost::system::error_code parse_RESPONSE(presentation_archive_ptr coder, presentation_pm_ptr ppm, ppdu_enum& ppdutype);
 
@@ -361,6 +367,7 @@ namespace boost {
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 class stream_socket : public boost::asio::iso::prot8327::stream_socket  {
+                    
                     typedef boost::asio::iso::prot8327::stream_socket           super_type;
 
                 public:
@@ -373,7 +380,7 @@ namespace boost {
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const presentation_selector& psel = presentation_selector())
-                    : super_type(io_service, psel.sselector()),
+                    : super_type(io_service, endpoint, psel.sselector()),
                     basiccoder(new presentation_archive()), selector_ (psel),  ppm_( new presentation_pm())  {
                     }
 
@@ -559,9 +566,7 @@ namespace boost {
                                     }
                                 }
                             }
-
                             socket_->clear_output();
-
                             handler_(error);
                         }
 
@@ -629,14 +634,19 @@ namespace boost {
                         return selector_;
                     }
 
-                    virtual bool negotiate_accept(const std::string& req, std::string& resp){
+                    virtual bool negotiate_session_accept(const std::string& req, std::string& resp){
                           basiccoder->clear_input();
                           basiccoder->input().add(raw_type(req.begin(), req.end()));
-                          if (boost::system::error_code errest = parse_CP(coder(), ppm() , selector(), option_)) {
-                              return false;
-                          }
+                          switch (parse_CP()) {
+                              case error_negotiate: return false;
+                              default:{}}
+                          resp = coder()->request_str();
                           return true;        
                     }
+                    
+                    virtual bool negotiate_presentation_accept() {
+                          return true;        
+                    }                    
 
                 private:
 
@@ -677,6 +687,8 @@ namespace boost {
                         }
                         return ec;
                     }
+                    
+                negotiate_rslt_enum parse_CP();                           
 
 
 

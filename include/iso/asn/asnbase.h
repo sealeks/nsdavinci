@@ -11,7 +11,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4800)
- #endif
+#endif
 
 
 
@@ -348,8 +348,8 @@ namespace boost {
                 operator bool_vector_type() const;
 
                 operator dynamic_bitset_type() const;
-                
-                dynamic_bitset_type dynamic_bitset() const;                
+
+                dynamic_bitset_type dynamic_bitset() const;
 
                 operator uint8_t() const;
 
@@ -517,14 +517,15 @@ namespace boost {
             } ;
 
 
-            typedef simplestring_type<TYPE_NUMERICSTRING>   numericstring_type;
-            typedef simplestring_type<TYPE_PRINTABLESTRING> printablestring_type;
-            typedef simplestring_type<TYPE_T61STRING>            t61string_type;
-            typedef simplestring_type<TYPE_VIDEOTEXSTRING>  videotexstring_type;
-            typedef simplestring_type<TYPE_IA5STRING>            ia5string_type;
-            typedef simplestring_type<TYPE_GRAPHICSTRING>   graphicstring_type;
-            typedef simplestring_type<TYPE_VISIBLESTRING>    visiblestring_type;
-            typedef simplestring_type<TYPE_GENERALSTRING>    generalstring_type;
+            typedef simplestring_type<TYPE_NUMERICSTRING>         numericstring_type;
+            typedef simplestring_type<TYPE_PRINTABLESTRING>      printablestring_type;
+            typedef simplestring_type<TYPE_T61STRING>                 t61string_type;
+            typedef simplestring_type<TYPE_VIDEOTEXSTRING>       videotexstring_type;
+            typedef simplestring_type<TYPE_IA5STRING>                 ia5string_type;
+            typedef simplestring_type<TYPE_GRAPHICSTRING>         graphicstring_type;
+            typedef simplestring_type<TYPE_OBJECT_DESCRIPTOR> objectdescriptor_type;
+            typedef simplestring_type<TYPE_VISIBLESTRING>          visiblestring_type;
+            typedef simplestring_type<TYPE_GENERALSTRING>         generalstring_type;
 
             inline std::ostream& operator<<(std::ostream& stream, const numericstring_type& vl) {
                 return stream << vl.operator  std::string();
@@ -800,6 +801,7 @@ namespace boost {
             BOOST_ASN_INTERNAL_REGESTRATE( videotexstring_type,  TYPE_VIDEOTEXSTRING)
             BOOST_ASN_INTERNAL_REGESTRATE( ia5string_type,  TYPE_IA5STRING)
             BOOST_ASN_INTERNAL_REGESTRATE( graphicstring_type,  TYPE_GRAPHICSTRING)
+            BOOST_ASN_INTERNAL_REGESTRATE( objectdescriptor_type,  TYPE_OBJECT_DESCRIPTOR)
             BOOST_ASN_INTERNAL_REGESTRATE( visiblestring_type,  TYPE_VISIBLESTRING)
             BOOST_ASN_INTERNAL_REGESTRATE( generalstring_type,  TYPE_GENERALSTRING)
             BOOST_ASN_INTERNAL_REGESTRATE( universalstring_type,  TYPE_UNIVERSALSTRING)
@@ -1166,14 +1168,14 @@ namespace boost {
                 T& value() {
                     return *value_;
                 }
-                
+
                 const boost::shared_ptr<T>& shared_value() const {
                     return value_;
                 }
 
                 boost::shared_ptr<T>& shared_value() {
                     return value_;
-                }                
+                }
 
                 id_type id()  const {
                     return ID;
@@ -1220,14 +1222,14 @@ namespace boost {
                 T& value() {
                     return *value_;
                 }
-                
+
                 const boost::shared_ptr<T>& shared_value() const {
                     return value_;
                 }
 
                 boost::shared_ptr<T>& shared_value() {
                     return value_;
-                }                  
+                }
 
                 id_type id()  const {
                     return ID;
@@ -1448,10 +1450,7 @@ namespace boost {
                 arch & optional_explicit_value<T > (vl->shared_value(), ID, TYPE);
                 return (arch.size() != tst);
             }
-            
-            
-            
-            
+
             template<typename Archive, typename T>
             inline bool bind_explicit(Archive & arch, T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
                 std::size_t tst = arch.size();
@@ -1465,10 +1464,6 @@ namespace boost {
                 arch & optional_explicit_value<T > (vl, id, type);
                 return (arch.size() != tst);
             }
-
-
-            
-            
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, T& vl, id_type id,  class_type type = CONTEXT_CLASS) {
@@ -1484,9 +1479,6 @@ namespace boost {
                 return (arch.size() != tst);
             }
 
-
-            
-            
             template<typename Archive, typename T>
             inline bool bind_choice(Archive & arch, T& vl) {
                 std::size_t tst = arch.size();
@@ -1501,13 +1493,550 @@ namespace boost {
                 return (arch.size() != tst);
             }
 
-
             template<typename Archive, typename T>
             inline bool bind_element(Archive& arch, T& vl) {
                 std::size_t tst = arch.size();
                 arch & vl;
                 return (arch.size() != tst);
             }
+
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////
+
+            struct  external_type {
+
+                enum encoding_type_enum {
+                    encoding_type_null = 0  ,
+                    encoding_type_ABSTRACT_SYNTAX ,
+                    encoding_type_octet_aligned_type ,
+                    encoding_type_arbitrary_type ,
+                } ;
+
+                struct  encoding_type : public BOOST_ASN_CHOICE_STRUCT(encoding_type_enum) {
+
+                    encoding_type() : BOOST_ASN_CHOICE_STRUCT(encoding_type_enum) ()  {
+                    }
+
+                    BOOST_ASN_VALUE_CHOICE(single_ASN1_type, any_type,  encoding_type_ABSTRACT_SYNTAX)
+                    BOOST_ASN_VALUE_CHOICE(octet_aligned, octetstring_type,  encoding_type_octet_aligned_type)
+                    BOOST_ASN_VALUE_CHOICE(arbitrary, bitstring_type,  encoding_type_arbitrary_type)
+
+                            template<typename Archive> void serialize(Archive & arch) {
+
+                        if (arch.__input__()) {
+                            int __tag_id__ = arch.test_id();
+                            switch (arch.test_class()) {
+                                case 0x0:
+                                {
+                                    switch (__tag_id__) {
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                case 0x40:
+                                {
+                                    switch (__tag_id__) {
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                case 0xC0:
+                                {
+                                    switch (__tag_id__) {
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                case 0x80:
+                                {
+                                    switch (__tag_id__) {
+                                        case 0:
+                                        {
+                                            if (BOOST_ASN_EXPLICIT_TAG(value<any_type > (true , encoding_type_ABSTRACT_SYNTAX) , 0)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 1:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (true , encoding_type_octet_aligned_type) , 1)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 2:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (true , encoding_type_arbitrary_type) , 2)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                default:
+                                {
+                                    ;
+                                }
+                            }
+                        }
+                        else {
+                            switch (type()) {
+                                case encoding_type_ABSTRACT_SYNTAX:
+                                {
+                                    BOOST_ASN_EXPLICIT_TAG(value<any_type > (false , encoding_type_ABSTRACT_SYNTAX) , 0);
+                                    break;
+                                }
+                                case encoding_type_octet_aligned_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (false , encoding_type_octet_aligned_type) , 1);
+                                    break;
+                                }
+                                case encoding_type_arbitrary_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (false , encoding_type_arbitrary_type) , 2);
+                                    break;
+                                }
+                                default:
+                                {
+                                }
+                            }
+                        }
+                    }
+                };
+
+
+                boost::shared_ptr<oid_type > direct_reference;   //  OPTIONAL
+                BOOST_ASN_VALUE_FUNC_DECLARATE(oid_type ,  direct_reference)
+
+                boost::shared_ptr<int > indirect_reference;   //  OPTIONAL
+                BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  indirect_reference)
+
+                boost::shared_ptr<objectdescriptor_type > data_value_descriptor;   //  OPTIONAL
+                BOOST_ASN_VALUE_FUNC_DECLARATE(objectdescriptor_type ,  data_value_descriptor)
+
+                encoding_type  encoding;
+
+                external_type()  : encoding()  {
+                }
+
+                template<typename Archive> void serialize(Archive & arch) {
+
+                    BOOST_ASN_IMPLICIT_TAG(direct_reference , 0);
+                    BOOST_ASN_IMPLICIT_TAG(indirect_reference , 1);
+                    BOOST_ASN_IMPLICIT_TAG(data_value_descriptor , 2);
+                    BOOST_ASN_CHOICE(encoding);
+                }
+            } ;
+
+            BOOST_ASN_INTERNAL_REGESTRATE( external_type,  TYPE_EXTERNAL)
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////   
+
+            struct  embeded_type {
+
+                enum identification_type_enum {
+                    identification_type_null = 0  ,
+                    identification_type_syntaxes_type ,
+                    identification_type_syntax_type ,
+                    identification_type_presentation_context_id_type ,
+                    identification_type_context_negotiation_type ,
+                    identification_type_transfer_syntax_type ,
+                    identification_type_fixed_type ,
+                } ;
+
+                struct  identification_type : public BOOST_ASN_CHOICE_STRUCT(identification_type_enum) {
+
+                    struct  syntaxes_type {
+                        oid_type  abstract;
+                        oid_type  transfer;
+
+                        syntaxes_type()  : abstract() , transfer()  {
+                        }
+
+                        template<typename Archive> void serialize(Archive & arch) {
+
+                            BOOST_ASN_IMPLICIT_TAG(abstract , 0);
+                            BOOST_ASN_IMPLICIT_TAG(transfer , 1);
+                        }
+                    } ;
+
+                    struct  context_negotiation_type {
+                        int  presentation_context_id;
+                        oid_type  transfer_syntax;
+
+                        context_negotiation_type()  : presentation_context_id() , transfer_syntax()  {
+                        }
+
+                        template<typename Archive> void serialize(Archive & arch) {
+
+                            BOOST_ASN_IMPLICIT_TAG(presentation_context_id , 0);
+                            BOOST_ASN_IMPLICIT_TAG(transfer_syntax , 1);
+                        }
+                    } ;
+
+                    identification_type() : BOOST_ASN_CHOICE_STRUCT(identification_type_enum) ()  {
+                    }
+
+                    BOOST_ASN_VALUE_CHOICE(syntaxes, syntaxes_type,  identification_type_syntaxes_type)
+                    BOOST_ASN_VALUE_CHOICE(syntax, oid_type,  identification_type_syntax_type)
+                    BOOST_ASN_VALUE_CHOICE(presentation_context_id, int,  identification_type_presentation_context_id_type)
+                    BOOST_ASN_VALUE_CHOICE(context_negotiation, context_negotiation_type,  identification_type_context_negotiation_type)
+                    BOOST_ASN_VALUE_CHOICE(transfer_syntax, oid_type,  identification_type_transfer_syntax_type)
+                    BOOST_ASN_VALUE_CHOICE(fixed, null_type,  identification_type_fixed_type)
+
+                            template<typename Archive> void serialize(Archive & arch) {
+
+                        if (arch.__input__()) {
+                            int __tag_id__ = arch.test_id();
+                            switch (arch.test_class()) {
+                                case 0x0:
+                                {
+                                    switch (__tag_id__) {
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                case 0x40:
+                                {
+                                    switch (__tag_id__) {
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                case 0xC0:
+                                {
+                                    switch (__tag_id__) {
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                case 0x80:
+                                {
+                                    switch (__tag_id__) {
+                                        case 0:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<syntaxes_type > (true , identification_type_syntaxes_type) , 0)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 1:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<oid_type > (true , identification_type_syntax_type) , 1)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 2:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<int > (true , identification_type_presentation_context_id_type) , 2)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 3:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<context_negotiation_type > (true , identification_type_context_negotiation_type) , 3)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 4:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<oid_type > (true , identification_type_transfer_syntax_type) , 4)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 5:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<null_type > (true , identification_type_fixed_type) , 5)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                default:
+                                {
+                                    ;
+                                }
+                            }
+                        }
+                        else {
+                            switch (type()) {
+                                case identification_type_syntaxes_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<syntaxes_type > (false , identification_type_syntaxes_type) , 0);
+                                    break;
+                                }
+                                case identification_type_syntax_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<oid_type > (false , identification_type_syntax_type) , 1);
+                                    break;
+                                }
+                                case identification_type_presentation_context_id_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<int > (false , identification_type_presentation_context_id_type) , 2);
+                                    break;
+                                }
+                                case identification_type_context_negotiation_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<context_negotiation_type > (false , identification_type_context_negotiation_type) , 3);
+                                    break;
+                                }
+                                case identification_type_transfer_syntax_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<oid_type > (false , identification_type_transfer_syntax_type) , 4);
+                                    break;
+                                }
+                                case identification_type_fixed_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<null_type > (false , identification_type_fixed_type) , 5);
+                                    break;
+                                }
+                                default:
+                                {
+                                }
+                            }
+                        }
+                    }
+                };
+
+
+
+
+                identification_type  identification;
+                boost::shared_ptr< objectdescriptor_type> data_value_descriptor;   //  OPTIONAL
+                BOOST_ASN_VALUE_FUNC_DECLARATE( objectdescriptor_type ,  data_value_descriptor)
+
+                octetstring_type  data_value;
+
+                embeded_type()  : identification() , data_value()  {
+                }
+
+                template<typename Archive> void serialize(Archive & arch) {
+
+                    BOOST_ASN_CHOICE(identification);
+                    BOOST_ASN_IMPLICIT_TAG(data_value , 1);   //  ????
+                }
+            } ;
+
+            BOOST_ASN_INTERNAL_REGESTRATE( embeded_type ,  TYPE_EMBEDDED_PDV)
+
+
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            struct  characterstring_type {
+
+                enum identification_type_enum {
+                    identification_type_null = 0  ,
+                    identification_type_syntaxes_type ,
+                    identification_type_syntax_type ,
+                    identification_type_presentation_context_id_type ,
+                    identification_type_context_negotiation_type ,
+                    identification_type_transfer_syntax_type ,
+                    identification_type_fixed_type ,
+                } ;
+
+                struct  identification_type : public BOOST_ASN_CHOICE_STRUCT(identification_type_enum) {
+
+                    struct  syntaxes_type {
+                        oid_type  abstract;
+                        oid_type  transfer;
+
+                        syntaxes_type()  : abstract() , transfer()  {
+                        }
+
+                        template<typename Archive> void serialize(Archive & arch) {
+
+                            BOOST_ASN_IMPLICIT_TAG(abstract , 0);
+                            BOOST_ASN_IMPLICIT_TAG(transfer , 1);
+                        }
+                    } ;
+
+                    struct  context_negotiation_type {
+                        int  presentation_context_id;
+                        oid_type  transfer_syntax;
+
+                        context_negotiation_type()  : presentation_context_id() , transfer_syntax()  {
+                        }
+
+                        template<typename Archive> void serialize(Archive & arch) {
+
+                            BOOST_ASN_IMPLICIT_TAG(presentation_context_id , 0);
+                            BOOST_ASN_IMPLICIT_TAG(transfer_syntax , 1);
+                        }
+                    } ;
+
+                    identification_type() : BOOST_ASN_CHOICE_STRUCT(identification_type_enum) ()  {
+                    }
+
+                    BOOST_ASN_VALUE_CHOICE(syntaxes, syntaxes_type,  identification_type_syntaxes_type)
+                    BOOST_ASN_VALUE_CHOICE(syntax, oid_type,  identification_type_syntax_type)
+                    BOOST_ASN_VALUE_CHOICE(presentation_context_id, int,  identification_type_presentation_context_id_type)
+                    BOOST_ASN_VALUE_CHOICE(context_negotiation, context_negotiation_type,  identification_type_context_negotiation_type)
+                    BOOST_ASN_VALUE_CHOICE(transfer_syntax, oid_type,  identification_type_transfer_syntax_type)
+                    BOOST_ASN_VALUE_CHOICE(fixed, null_type,  identification_type_fixed_type)
+
+                            template<typename Archive> void serialize(Archive & arch) {
+
+                        if (arch.__input__()) {
+                            int __tag_id__ = arch.test_id();
+                            switch (arch.test_class()) {
+                                case 0x0:
+                                {
+                                    switch (__tag_id__) {
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                case 0x40:
+                                {
+                                    switch (__tag_id__) {
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                case 0xC0:
+                                {
+                                    switch (__tag_id__) {
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                case 0x80:
+                                {
+                                    switch (__tag_id__) {
+                                        case 0:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<syntaxes_type > (true , identification_type_syntaxes_type) , 0)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 1:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<oid_type > (true , identification_type_syntax_type) , 1)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 2:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<int > (true , identification_type_presentation_context_id_type) , 2)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 3:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<context_negotiation_type > (true , identification_type_context_negotiation_type) , 3)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 4:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<oid_type > (true , identification_type_transfer_syntax_type) , 4)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        case 5:
+                                        {
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<null_type > (true , identification_type_fixed_type) , 5)) return;
+                                            else free();
+                                            break;
+                                        }
+                                        default:
+                                        {
+                                        }
+                                    }
+                                    ;
+                                }
+                                default:
+                                {
+                                    ;
+                                }
+                            }
+                        }
+                        else {
+                            switch (type()) {
+                                case identification_type_syntaxes_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<syntaxes_type > (false , identification_type_syntaxes_type) , 0);
+                                    break;
+                                }
+                                case identification_type_syntax_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<oid_type > (false , identification_type_syntax_type) , 1);
+                                    break;
+                                }
+                                case identification_type_presentation_context_id_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<int > (false , identification_type_presentation_context_id_type) , 2);
+                                    break;
+                                }
+                                case identification_type_context_negotiation_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<context_negotiation_type > (false , identification_type_context_negotiation_type) , 3);
+                                    break;
+                                }
+                                case identification_type_transfer_syntax_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<oid_type > (false , identification_type_transfer_syntax_type) , 4);
+                                    break;
+                                }
+                                case identification_type_fixed_type:
+                                {
+                                    BOOST_ASN_IMPLICIT_TAG(value<null_type > (false , identification_type_fixed_type) , 5);
+                                    break;
+                                }
+                                default:
+                                {
+                                }
+                            }
+                        }
+                    }
+                };
+
+
+
+
+                identification_type  identification;
+                boost::shared_ptr<objectdescriptor_type > data_value_descriptor;   //  OPTIONAL
+                BOOST_ASN_VALUE_FUNC_DECLARATE(objectdescriptor_type ,  data_value_descriptor)
+
+                octetstring_type  string_value;
+
+                characterstring_type()  : identification() , string_value()  {
+                }
+
+                template<typename Archive> void serialize(Archive & arch) {
+
+                    BOOST_ASN_CHOICE(identification);
+                    BOOST_ASN_IMPLICIT_TAG(data_value_descriptor , 1);
+                    BOOST_ASN_IMPLICIT_TAG(string_value , 2);
+                }
+            } ;
+
+            BOOST_ASN_INTERNAL_REGESTRATE( characterstring_type ,  TYPE_CHARACTERSTRING)
+
 
         }
     }
