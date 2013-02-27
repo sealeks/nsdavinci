@@ -487,7 +487,13 @@ namespace boost {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value< objectdescriptor_type>& vl) {
+                    stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
+                    return stream;
+                }                               
+                
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<visiblestring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
@@ -1156,7 +1162,14 @@ namespace boost {
                     stringtype_reader(stream, *const_cast<graphicstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
                 }
-
+                
+                template<>
+                iarchive& operator>>(iarchive& stream, const implicit_value<objectdescriptor_type>& vl) {
+                    const_cast<objectdescriptor_type*> (&(vl.value()))->clear();
+                    stringtype_reader(stream, *const_cast<objectdescriptor_type*> (&(vl.value())), vl.id(), vl.mask());
+                    return stream;
+                }                           
+                
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<visiblestring_type>& vl) {
                     const_cast<visiblestring_type*> (&(vl.value()))->clear();

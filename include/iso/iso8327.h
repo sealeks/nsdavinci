@@ -1050,7 +1050,7 @@ namespace boost {
                             }
                             std::string error_accept;
                             std::string response_data;                            
-                            if (!correspond_protocol_option(options_,  receive_->options(), error_accept) || !socket_->negotiate_accept(receive_->options().data(), response_data))  {
+                            if (!correspond_protocol_option(options_,  receive_->options(), error_accept) || !socket_->negotiate_session_accept(receive_->options().data(), response_data))  {
                                 options_.reason(error_accept);
                                 send_ = send_seq_ptr( new send_seq(RF_SPDU_ID, options_));
                                 state(refuse);
@@ -1420,7 +1420,7 @@ namespace boost {
                         return send_seq_ptr();
                     }
                     
-                    virtual bool negotiate_accept(const std::string& req, std::string& resp){
+                    virtual bool negotiate_session_accept(const std::string& req, std::string& resp){
                         resp=req;
                         return true;
                     }
@@ -1540,7 +1540,7 @@ namespace boost {
                         }
                         std::string error_accept;
                         std::string  response_data;                        
-                        if (!correspond_protocol_option(options_,  receive_->options(), error_accept)  || !negotiate_accept(receive_->options().data(), response_data))  {
+                        if (!correspond_protocol_option(options_,  receive_->options(), error_accept)  || !negotiate_session_accept(receive_->options().data(), response_data))  {
                             canseled = true;
                             options_.reason(error_accept);
                             send_ = send_seq_ptr( new send_seq(RF_SPDU_ID, options_));
@@ -1741,8 +1741,8 @@ namespace boost {
 
                     private:
                         Handler                              handler_;
-                        stream_socket*                socket_;
-                        archive_ptr                transdata_;
+                        stream_socket*                   socket_;
+                        archive_ptr                         transdata_;
                     } ;
 
                     template <typename SocketService, typename AcceptHandler>
