@@ -2,14 +2,12 @@
 #define	_ISO8823_PRESENTATION_H_
 
 #include <iso/asn/asnbase.h>
-#include "Reliable-Transfer-APDUs.h"
- 
-
 
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4065)
  #endif
+
 
 
 namespace ISO8823_PRESENTATION  {
@@ -36,15 +34,12 @@ namespace ISO8823_PRESENTATION  {
  	using  boost::asio::asn::t61string_type;
  	using  boost::asio::asn::t61string_type;
  	using  boost::asio::asn::videotexstring_type;
+ 	using  boost::asio::asn::objectdescriptor_type;
+ 	using  boost::asio::asn::external_type;
+ 	using  boost::asio::asn::embeded_type;
+ 	using  boost::asio::asn::characterstring_type;
  	using  boost::asio::asn::any_type;
 
- 
-	//import type
-	using Reliable_Transfer_APDUs::RTORQapdu;
-	using Reliable_Transfer_APDUs::RTOACapdu;
-	using Reliable_Transfer_APDUs::RTORJapdu;
-	using Reliable_Transfer_APDUs::RTABapdu;
- 
 	//  type is  SET
 	struct  CP_type;
 
@@ -127,6 +122,41 @@ namespace ISO8823_PRESENTATION  {
 	typedef  bitstring_type   User_session_requirements;
 
  	//   SEQUENCE_OF is Context-list 
+	struct Context_list_sequence_of;
+	typedef std::vector<Context_list_sequence_of >   Context_list;
+
+	//   SEQUENCE_OF is Presentation-context-deletion-list 
+	typedef std::vector<Presentation_context_identifier >   Presentation_context_deletion_list;
+
+	//   SEQUENCE_OF is Presentation-context-deletion-result-list 
+	typedef std::vector<int >   Presentation_context_deletion_result_list;
+
+	//   SEQUENCE_OF is Presentation-context-identifier-list 
+	struct Presentation_context_identifier_list_sequence_of;
+	typedef std::vector<Presentation_context_identifier_list_sequence_of >   Presentation_context_identifier_list;
+
+	//   SEQUENCE_OF is Result-list 
+	struct Result_list_sequence_of;
+	typedef std::vector<Result_list_sequence_of >   Result_list;
+
+	//   SEQUENCE_OF is Fully-encoded-data 
+	typedef std::vector<PDV_list >   Fully_encoded_data;
+
+}
+#include <iso/presentation/Reliable-Transfer-APDUs.h>
+ 
+
+
+namespace ISO8823_PRESENTATION  {
+
+ 
+	//import type
+	using Reliable_Transfer_APDUs::RTORQapdu;
+	using Reliable_Transfer_APDUs::RTOACapdu;
+	using Reliable_Transfer_APDUs::RTORJapdu;
+	using Reliable_Transfer_APDUs::RTABapdu;
+ 
+	//   SEQUENCE_OF is Context-list 
 	//start==============================================================
 	//It is  INTERNAL SEQUENCE  
 
@@ -135,9 +165,9 @@ namespace ISO8823_PRESENTATION  {
 			typedef std::vector<Transfer_syntax_name >   transfer_syntax_name_list_type;
 
 
-			Presentation_context_identifier  presentation_context_identifier;
-			Abstract_syntax_name  abstract_syntax_name;
-			transfer_syntax_name_list_type  transfer_syntax_name_list;
+			Presentation_context_identifier   presentation_context_identifier;
+			Abstract_syntax_name   abstract_syntax_name;
+			transfer_syntax_name_list_type   transfer_syntax_name_list;
 
 			Context_list_sequence_of()  : presentation_context_identifier() , abstract_syntax_name() , transfer_syntax_name_list()  {}
 
@@ -168,8 +198,8 @@ namespace ISO8823_PRESENTATION  {
 
 		struct  Presentation_context_identifier_list_sequence_of{
 
-			Presentation_context_identifier  presentation_context_identifier;
-			Transfer_syntax_name  transfer_syntax_name;
+			Presentation_context_identifier   presentation_context_identifier;
+			Transfer_syntax_name   transfer_syntax_name;
 
 			Presentation_context_identifier_list_sequence_of()  : presentation_context_identifier() , transfer_syntax_name()  {}
 
@@ -196,7 +226,7 @@ namespace ISO8823_PRESENTATION  {
 			static const int provider_reason_local_limit_on_DCS_exceeded = 3;
 
 
-			Result  result;
+			Result   result;
 			boost::shared_ptr<Transfer_syntax_name > transfer_syntax_name;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(Transfer_syntax_name ,  transfer_syntax_name)
 
@@ -272,9 +302,9 @@ namespace ISO8823_PRESENTATION  {
 
 			enum presentation_data_values_type_enum {
 			presentation_data_values_type_null = 0  , 
-			presentation_data_values_type_ABSTRACT_SYNTAX , 
-			presentation_data_values_type_octet_aligned_type , 
-			presentation_data_values_type_arbitrary_type , 
+			presentation_data_values_type_single_ASN1_type , 
+			presentation_data_values_type_octet_aligned , 
+			presentation_data_values_type_arbitrary , 
 		};
 
 	struct  presentation_data_values_type : public BOOST_ASN_CHOICE_STRUCT(presentation_data_values_type_enum) {
@@ -285,9 +315,9 @@ namespace ISO8823_PRESENTATION  {
 			presentation_data_values_type() : BOOST_ASN_CHOICE_STRUCT(presentation_data_values_type_enum) ()  {}
 
 
-			BOOST_ASN_VALUE_CHOICE(single_ASN1_type, any_type,  presentation_data_values_type_ABSTRACT_SYNTAX)
-			BOOST_ASN_VALUE_CHOICE(octet_aligned, octetstring_type,  presentation_data_values_type_octet_aligned_type)
-			BOOST_ASN_VALUE_CHOICE(arbitrary, bitstring_type,  presentation_data_values_type_arbitrary_type)
+			BOOST_ASN_VALUE_CHOICE(single_ASN1_type, any_type,  presentation_data_values_type_single_ASN1_type)
+			BOOST_ASN_VALUE_CHOICE(octet_aligned, octetstring_type,  presentation_data_values_type_octet_aligned)
+			BOOST_ASN_VALUE_CHOICE(arbitrary, bitstring_type,  presentation_data_values_type_arbitrary)
 
 			 template<typename Archive> void serialize(Archive& arch){
 
@@ -308,18 +338,18 @@ namespace ISO8823_PRESENTATION  {
 							;}
 						case 0x80: {
 							switch(__tag_id__){
-								case 0: { if(BOOST_ASN_EXPLICIT_TAG(value<any_type > (true , presentation_data_values_type_ABSTRACT_SYNTAX) ,0)) return; else free(); break;}
-								case 1: { if(BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (true , presentation_data_values_type_octet_aligned_type) ,1)) return; else free(); break;}
-								case 2: { if(BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (true , presentation_data_values_type_arbitrary_type) ,2)) return; else free(); break;}
+								case 0: { if(BOOST_ASN_EXPLICIT_TAG(value<any_type > (true , presentation_data_values_type_single_ASN1_type) ,0)) return; else free(); break;}
+								case 1: { if(BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (true , presentation_data_values_type_octet_aligned) ,1)) return; else free(); break;}
+								case 2: { if(BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (true , presentation_data_values_type_arbitrary) ,2)) return; else free(); break;}
 							default:{}}
 							;}
 						default:{
 								;}}}
 				else {
 					 switch(type()){
-						case presentation_data_values_type_ABSTRACT_SYNTAX: {BOOST_ASN_EXPLICIT_TAG(value<any_type > (false , presentation_data_values_type_ABSTRACT_SYNTAX) ,0); break;}
-						case presentation_data_values_type_octet_aligned_type: {BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (false , presentation_data_values_type_octet_aligned_type) ,1); break;}
-						case presentation_data_values_type_arbitrary_type: {BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (false , presentation_data_values_type_arbitrary_type) ,2); break;}
+						case presentation_data_values_type_single_ASN1_type: {BOOST_ASN_EXPLICIT_TAG(value<any_type > (false , presentation_data_values_type_single_ASN1_type) ,0); break;}
+						case presentation_data_values_type_octet_aligned: {BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (false , presentation_data_values_type_octet_aligned) ,1); break;}
+						case presentation_data_values_type_arbitrary: {BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (false , presentation_data_values_type_arbitrary) ,2); break;}
 						default:{}}}
 			}
 		};
@@ -328,8 +358,8 @@ namespace ISO8823_PRESENTATION  {
 		boost::shared_ptr<Transfer_syntax_name > transfer_syntax_name;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Transfer_syntax_name ,  transfer_syntax_name)
 
- 		Presentation_context_identifier  presentation_context_identifier;
-		presentation_data_values_type  presentation_data_values;
+ 		Presentation_context_identifier   presentation_context_identifier;
+		presentation_data_values_type   presentation_data_values;
 
 		PDV_list()  : presentation_context_identifier() , presentation_data_values()  {}
 
@@ -347,8 +377,8 @@ namespace ISO8823_PRESENTATION  {
 
 	enum User_data_enum {
 		User_data_null = 0  , 
-		User_data_Simply_encoded_data , 
-		User_data_Fully_encoded_data , 
+		User_data_simply_encoded_data , 
+		User_data_fully_encoded_data , 
 	};
 
 	struct  User_data : public BOOST_ASN_CHOICE_STRUCT(User_data_enum) {
@@ -357,8 +387,8 @@ namespace ISO8823_PRESENTATION  {
 		User_data() : BOOST_ASN_CHOICE_STRUCT(User_data_enum) ()  {}
 
 
-		BOOST_ASN_VALUE_CHOICE(simply_encoded_data, Simply_encoded_data,  User_data_Simply_encoded_data)
-		BOOST_ASN_VALUE_CHOICE(fully_encoded_data, Fully_encoded_data,  User_data_Fully_encoded_data)
+		BOOST_ASN_VALUE_CHOICE(simply_encoded_data, Simply_encoded_data,  User_data_simply_encoded_data)
+		BOOST_ASN_VALUE_CHOICE(fully_encoded_data, Fully_encoded_data,  User_data_fully_encoded_data)
 
 		 template<typename Archive> void serialize(Archive& arch){
 
@@ -371,8 +401,8 @@ namespace ISO8823_PRESENTATION  {
 						;}
 					case 0x40: {
 						switch(__tag_id__){
-							case 0: { if(BOOST_ASN_IMPLICIT_APPLICATION_TAG(value<Simply_encoded_data > (true , User_data_Simply_encoded_data) ,0)) return; else free(); break;}
-							case 1: { if(BOOST_ASN_IMPLICIT_APPLICATION_TAG(value<Fully_encoded_data > (true , User_data_Fully_encoded_data) ,1)) return; else free(); break;}
+							case 0: { if(BOOST_ASN_IMPLICIT_APPLICATION_TAG(value<Simply_encoded_data > (true , User_data_simply_encoded_data) ,0)) return; else free(); break;}
+							case 1: { if(BOOST_ASN_IMPLICIT_APPLICATION_TAG(value<Fully_encoded_data > (true , User_data_fully_encoded_data) ,1)) return; else free(); break;}
 						default:{}}
 						;}
 					case 0xC0: {
@@ -387,8 +417,8 @@ namespace ISO8823_PRESENTATION  {
 						;}}}
 			else {
 				 switch(type()){
-					case User_data_Simply_encoded_data: {BOOST_ASN_IMPLICIT_APPLICATION_TAG(value<Simply_encoded_data > (false , User_data_Simply_encoded_data) ,0); break;}
-					case User_data_Fully_encoded_data: {BOOST_ASN_IMPLICIT_APPLICATION_TAG(value<Fully_encoded_data > (false , User_data_Fully_encoded_data) ,1); break;}
+					case User_data_simply_encoded_data: {BOOST_ASN_IMPLICIT_APPLICATION_TAG(value<Simply_encoded_data > (false , User_data_simply_encoded_data) ,0); break;}
+					case User_data_fully_encoded_data: {BOOST_ASN_IMPLICIT_APPLICATION_TAG(value<Fully_encoded_data > (false , User_data_fully_encoded_data) ,1); break;}
 					default:{}}}
 		}
 	};
@@ -425,7 +455,7 @@ namespace ISO8823_PRESENTATION  {
 		static const int mode_value_normal_mode = 1;
 
 
-		int  mode_value;
+		int   mode_value;
 
 		Mode_selector()  : mode_value()  {}
 
@@ -476,8 +506,8 @@ namespace ISO8823_PRESENTATION  {
 
 	struct  Default_context_name{
 
-		Abstract_syntax_name  abstract_syntax_name;
-		Transfer_syntax_name  transfer_syntax_name;
+		Abstract_syntax_name   abstract_syntax_name;
+		Transfer_syntax_name   transfer_syntax_name;
 
 		Default_context_name()  : abstract_syntax_name() , transfer_syntax_name()  {}
 
@@ -506,7 +536,7 @@ namespace ISO8823_PRESENTATION  {
 		boost::shared_ptr<Presentation_context_identifier_list > presentation_context_identifier_list;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Presentation_context_identifier_list ,  presentation_context_identifier_list)
 
- 		User_data  user_data;
+ 		User_data   user_data;
 
 		RSA_PPDU()  : presentation_context_identifier_list() , user_data()  {}
 
@@ -526,7 +556,7 @@ namespace ISO8823_PRESENTATION  {
 		boost::shared_ptr<Presentation_context_identifier_list > presentation_context_identifier_list;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Presentation_context_identifier_list ,  presentation_context_identifier_list)
 
- 		User_data  user_data;
+ 		User_data   user_data;
 
 		RS_PPDU()  : presentation_context_identifier_list() , user_data()  {}
 
@@ -549,7 +579,7 @@ namespace ISO8823_PRESENTATION  {
  		boost::shared_ptr<Presentation_context_deletion_result_list > presentation_context_deletion_result_list;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Presentation_context_deletion_result_list ,  presentation_context_deletion_result_list)
 
- 		User_data  user_data;
+ 		User_data   user_data;
 
 		ACA_PPDU()  : presentation_context_addition_result_list() , presentation_context_deletion_result_list() , user_data()  {}
 
@@ -573,7 +603,7 @@ namespace ISO8823_PRESENTATION  {
  		boost::shared_ptr<Presentation_context_deletion_list > presentation_context_deletion_list;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Presentation_context_deletion_list ,  presentation_context_deletion_list)
 
- 		User_data  user_data;
+ 		User_data   user_data;
 
 		AC_PPDU()  : presentation_context_addition_list() , presentation_context_deletion_list() , user_data()  {}
 
@@ -591,9 +621,9 @@ namespace ISO8823_PRESENTATION  {
 
 	enum Typed_data_type_enum {
 		Typed_data_type_null = 0  , 
-		Typed_data_type_AC_PPDU , 
-		Typed_data_type_ACA_PPDU , 
-		Typed_data_type_User_data , 
+		Typed_data_type_acPPDU , 
+		Typed_data_type_acaPPDU , 
+		Typed_data_type_ttdPPDU , 
 	};
 
 	struct  Typed_data_type : public BOOST_ASN_CHOICE_STRUCT(Typed_data_type_enum) {
@@ -602,9 +632,9 @@ namespace ISO8823_PRESENTATION  {
 		Typed_data_type() : BOOST_ASN_CHOICE_STRUCT(Typed_data_type_enum) ()  {}
 
 
-		BOOST_ASN_VALUE_CHOICE(acPPDU, AC_PPDU,  Typed_data_type_AC_PPDU)
-		BOOST_ASN_VALUE_CHOICE(acaPPDU, ACA_PPDU,  Typed_data_type_ACA_PPDU)
-		BOOST_ASN_VALUE_CHOICE(ttdPPDU, User_data,  Typed_data_type_User_data)
+		BOOST_ASN_VALUE_CHOICE(acPPDU, AC_PPDU,  Typed_data_type_acPPDU)
+		BOOST_ASN_VALUE_CHOICE(acaPPDU, ACA_PPDU,  Typed_data_type_acaPPDU)
+		BOOST_ASN_VALUE_CHOICE(ttdPPDU, User_data,  Typed_data_type_ttdPPDU)
 
 		 template<typename Archive> void serialize(Archive& arch){
 
@@ -625,18 +655,18 @@ namespace ISO8823_PRESENTATION  {
 						;}
 					case 0x80: {
 						switch(__tag_id__){
-							case 0: { if(BOOST_ASN_IMPLICIT_TAG(value<AC_PPDU > (true , Typed_data_type_AC_PPDU) ,0)) return; else free(); break;}
-							case 1: { if(BOOST_ASN_IMPLICIT_TAG(value<ACA_PPDU > (true , Typed_data_type_ACA_PPDU) ,1)) return; else free(); break;}
+							case 0: { if(BOOST_ASN_IMPLICIT_TAG(value<AC_PPDU > (true , Typed_data_type_acPPDU) ,0)) return; else free(); break;}
+							case 1: { if(BOOST_ASN_IMPLICIT_TAG(value<ACA_PPDU > (true , Typed_data_type_acaPPDU) ,1)) return; else free(); break;}
 						default:{}}
 						;}
 					default:{
-						 if(BOOST_ASN_CHOICE(value<User_data > (true , Typed_data_type_User_data))) return; else free();
+						 if(BOOST_ASN_CHOICE(value<User_data > (true , Typed_data_type_ttdPPDU))) return; else free();
 					;}}}
 			else {
 				 switch(type()){
-					case Typed_data_type_AC_PPDU: {BOOST_ASN_IMPLICIT_TAG(value<AC_PPDU > (false , Typed_data_type_AC_PPDU) ,0); break;}
-					case Typed_data_type_ACA_PPDU: {BOOST_ASN_IMPLICIT_TAG(value<ACA_PPDU > (false , Typed_data_type_ACA_PPDU) ,1); break;}
-					case Typed_data_type_User_data: {BOOST_ASN_CHOICE(value<User_data > (false , Typed_data_type_User_data)); break;}
+					case Typed_data_type_acPPDU: {BOOST_ASN_IMPLICIT_TAG(value<AC_PPDU > (false , Typed_data_type_acPPDU) ,0); break;}
+					case Typed_data_type_acaPPDU: {BOOST_ASN_IMPLICIT_TAG(value<ACA_PPDU > (false , Typed_data_type_acaPPDU) ,1); break;}
+					case Typed_data_type_ttdPPDU: {BOOST_ASN_CHOICE(value<User_data > (false , Typed_data_type_ttdPPDU)); break;}
 					default:{}}}
 		}
 	};
@@ -668,8 +698,8 @@ namespace ISO8823_PRESENTATION  {
 
 	enum ARU_PPDU_enum {
 		ARU_PPDU_null = 0  , 
-		ARU_PPDU_x400_mode_parameters_type , 
-		ARU_PPDU_normal_mode_parameters_type , 
+		ARU_PPDU_x400_mode_parameters , 
+		ARU_PPDU_normal_mode_parameters , 
 	};
 
 	struct  ARU_PPDU : public BOOST_ASN_CHOICE_STRUCT(ARU_PPDU_enum) {
@@ -711,7 +741,7 @@ namespace ISO8823_PRESENTATION  {
 			boost::shared_ptr<Presentation_context_identifier_list > presentation_context_identifier_list;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(Presentation_context_identifier_list ,  presentation_context_identifier_list)
 
- 			User_data  user_data;
+ 			User_data   user_data;
 
 			normal_mode_parameters_type()  : presentation_context_identifier_list() , user_data()  {}
 
@@ -727,8 +757,8 @@ namespace ISO8823_PRESENTATION  {
 		ARU_PPDU() : BOOST_ASN_CHOICE_STRUCT(ARU_PPDU_enum) ()  {}
 
 
-		BOOST_ASN_VALUE_CHOICE(x400_mode_parameters, x400_mode_parameters_type,  ARU_PPDU_x400_mode_parameters_type)
-		BOOST_ASN_VALUE_CHOICE(normal_mode_parameters, normal_mode_parameters_type,  ARU_PPDU_normal_mode_parameters_type)
+		BOOST_ASN_VALUE_CHOICE(x400_mode_parameters, x400_mode_parameters_type,  ARU_PPDU_x400_mode_parameters)
+		BOOST_ASN_VALUE_CHOICE(normal_mode_parameters, normal_mode_parameters_type,  ARU_PPDU_normal_mode_parameters)
 
 		 template<typename Archive> void serialize(Archive& arch){
 
@@ -749,16 +779,16 @@ namespace ISO8823_PRESENTATION  {
 						;}
 					case 0x80: {
 						switch(__tag_id__){
-							case 0: { if(BOOST_ASN_IMPLICIT_TAG(value<normal_mode_parameters_type > (true , ARU_PPDU_normal_mode_parameters_type) ,0)) return; else free(); break;}
+							case 0: { if(BOOST_ASN_IMPLICIT_TAG(value<normal_mode_parameters_type > (true , ARU_PPDU_normal_mode_parameters) ,0)) return; else free(); break;}
 						default:{}}
 						;}
 					default:{
-						 if(BOOST_ASN_BIND_TAG(value<x400_mode_parameters_type > (true , ARU_PPDU_x400_mode_parameters_type))) return; else free();
+						 if(BOOST_ASN_BIND_TAG(value<x400_mode_parameters_type > (true , ARU_PPDU_x400_mode_parameters))) return; else free();
 					;}}}
 			else {
 				 switch(type()){
-					case ARU_PPDU_x400_mode_parameters_type: {BOOST_ASN_BIND_TAG(value<x400_mode_parameters_type > (false , ARU_PPDU_x400_mode_parameters_type)); break;}
-					case ARU_PPDU_normal_mode_parameters_type: {BOOST_ASN_IMPLICIT_TAG(value<normal_mode_parameters_type > (false , ARU_PPDU_normal_mode_parameters_type) ,0); break;}
+					case ARU_PPDU_x400_mode_parameters: {BOOST_ASN_BIND_TAG(value<x400_mode_parameters_type > (false , ARU_PPDU_x400_mode_parameters)); break;}
+					case ARU_PPDU_normal_mode_parameters: {BOOST_ASN_IMPLICIT_TAG(value<normal_mode_parameters_type > (false , ARU_PPDU_normal_mode_parameters) ,0); break;}
 					default:{}}}
 		}
 	};
@@ -768,8 +798,8 @@ namespace ISO8823_PRESENTATION  {
 
 	enum Abort_type_enum {
 		Abort_type_null = 0  , 
-		Abort_type_ARU_PPDU , 
-		Abort_type_ARP_PPDU , 
+		Abort_type_aru_ppdu , 
+		Abort_type_arp_ppdu , 
 	};
 
 	struct  Abort_type : public BOOST_ASN_CHOICE_STRUCT(Abort_type_enum) {
@@ -778,8 +808,8 @@ namespace ISO8823_PRESENTATION  {
 		Abort_type() : BOOST_ASN_CHOICE_STRUCT(Abort_type_enum) ()  {}
 
 
-		BOOST_ASN_VALUE_CHOICE(aru_ppdu, ARU_PPDU,  Abort_type_ARU_PPDU)
-		BOOST_ASN_VALUE_CHOICE(arp_ppdu, ARP_PPDU,  Abort_type_ARP_PPDU)
+		BOOST_ASN_VALUE_CHOICE(aru_ppdu, ARU_PPDU,  Abort_type_aru_ppdu)
+		BOOST_ASN_VALUE_CHOICE(arp_ppdu, ARP_PPDU,  Abort_type_arp_ppdu)
 
 		 template<typename Archive> void serialize(Archive& arch){
 
@@ -803,13 +833,13 @@ namespace ISO8823_PRESENTATION  {
 						default:{}}
 						;}
 					default:{
-						 if(BOOST_ASN_CHOICE(value<ARU_PPDU > (true , Abort_type_ARU_PPDU))) return; else free();
-					 if(BOOST_ASN_BIND_TAG(value<ARP_PPDU > (true , Abort_type_ARP_PPDU))) return; else free();
+						 if(BOOST_ASN_CHOICE(value<ARU_PPDU > (true , Abort_type_aru_ppdu))) return; else free();
+					 if(BOOST_ASN_BIND_TAG(value<ARP_PPDU > (true , Abort_type_arp_ppdu))) return; else free();
 					;}}}
 			else {
 				 switch(type()){
-					case Abort_type_ARU_PPDU: {BOOST_ASN_CHOICE(value<ARU_PPDU > (false , Abort_type_ARU_PPDU)); break;}
-					case Abort_type_ARP_PPDU: {BOOST_ASN_BIND_TAG(value<ARP_PPDU > (false , Abort_type_ARP_PPDU)); break;}
+					case Abort_type_aru_ppdu: {BOOST_ASN_CHOICE(value<ARU_PPDU > (false , Abort_type_aru_ppdu)); break;}
+					case Abort_type_arp_ppdu: {BOOST_ASN_BIND_TAG(value<ARP_PPDU > (false , Abort_type_arp_ppdu)); break;}
 					default:{}}}
 		}
 	};
@@ -819,8 +849,8 @@ namespace ISO8823_PRESENTATION  {
 
 	enum CPR_PPDU_enum {
 		CPR_PPDU_null = 0  , 
-		CPR_PPDU_x400_mode_parameters_type , 
-		CPR_PPDU_normal_mode_parameters_type , 
+		CPR_PPDU_x400_mode_parameters , 
+		CPR_PPDU_normal_mode_parameters , 
 	};
 
 	struct  CPR_PPDU : public BOOST_ASN_CHOICE_STRUCT(CPR_PPDU_enum) {
@@ -869,7 +899,7 @@ namespace ISO8823_PRESENTATION  {
  			boost::shared_ptr<Provider_reason > provider_reason;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(Provider_reason ,  provider_reason)
 
- 			User_data  user_data;
+ 			User_data   user_data;
 
 			normal_mode_parameters_type()  : presentation_context_definition_result_list() , user_data()  {}
 
@@ -889,8 +919,8 @@ namespace ISO8823_PRESENTATION  {
 		CPR_PPDU() : BOOST_ASN_CHOICE_STRUCT(CPR_PPDU_enum) ()  {}
 
 
-		BOOST_ASN_VALUE_CHOICE(x400_mode_parameters, x400_mode_parameters_type,  CPR_PPDU_x400_mode_parameters_type)
-		BOOST_ASN_VALUE_CHOICE(normal_mode_parameters, normal_mode_parameters_type,  CPR_PPDU_normal_mode_parameters_type)
+		BOOST_ASN_VALUE_CHOICE(x400_mode_parameters, x400_mode_parameters_type,  CPR_PPDU_x400_mode_parameters)
+		BOOST_ASN_VALUE_CHOICE(normal_mode_parameters, normal_mode_parameters_type,  CPR_PPDU_normal_mode_parameters)
 
 		 template<typename Archive> void serialize(Archive& arch){
 
@@ -914,13 +944,13 @@ namespace ISO8823_PRESENTATION  {
 						default:{}}
 						;}
 					default:{
-						 if(BOOST_ASN_BIND_TAG(value<x400_mode_parameters_type > (true , CPR_PPDU_x400_mode_parameters_type))) return; else free();
-					 if(BOOST_ASN_BIND_TAG(value<normal_mode_parameters_type > (true , CPR_PPDU_normal_mode_parameters_type))) return; else free();
+						 if(BOOST_ASN_BIND_TAG(value<x400_mode_parameters_type > (true , CPR_PPDU_x400_mode_parameters))) return; else free();
+					 if(BOOST_ASN_BIND_TAG(value<normal_mode_parameters_type > (true , CPR_PPDU_normal_mode_parameters))) return; else free();
 					;}}}
 			else {
 				 switch(type()){
-					case CPR_PPDU_x400_mode_parameters_type: {BOOST_ASN_BIND_TAG(value<x400_mode_parameters_type > (false , CPR_PPDU_x400_mode_parameters_type)); break;}
-					case CPR_PPDU_normal_mode_parameters_type: {BOOST_ASN_BIND_TAG(value<normal_mode_parameters_type > (false , CPR_PPDU_normal_mode_parameters_type)); break;}
+					case CPR_PPDU_x400_mode_parameters: {BOOST_ASN_BIND_TAG(value<x400_mode_parameters_type > (false , CPR_PPDU_x400_mode_parameters)); break;}
+					case CPR_PPDU_normal_mode_parameters: {BOOST_ASN_BIND_TAG(value<normal_mode_parameters_type > (false , CPR_PPDU_normal_mode_parameters)); break;}
 					default:{}}}
 		}
 	};
@@ -943,7 +973,7 @@ namespace ISO8823_PRESENTATION  {
  			boost::shared_ptr<int > windowSize;   //  DEFAULT  int  3  
  			BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  windowSize)
 
- 			Reliable_Transfer_APDUs::ConnectionData  connectionDataAC;
+ 			Reliable_Transfer_APDUs::ConnectionData   connectionDataAC;
 
 			x410_mode_parameters_type()  : connectionDataAC()  {}
 
@@ -977,7 +1007,7 @@ namespace ISO8823_PRESENTATION  {
  			boost::shared_ptr<User_session_requirements > user_session_requirements;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(User_session_requirements ,  user_session_requirements)
 
- 			User_data  user_data;
+ 			User_data   user_data;
 
 			normal_mode_parameters_type()  : presentation_context_definition_result_list() , user_data()  {}
 
@@ -994,7 +1024,7 @@ namespace ISO8823_PRESENTATION  {
 
 	//end==============================================================
 
-		Mode_selector  mode_selector;
+		Mode_selector   mode_selector;
 		boost::shared_ptr<x410_mode_parameters_type > x410_mode_parameters;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(x410_mode_parameters_type ,  x410_mode_parameters)
 
@@ -1040,7 +1070,7 @@ namespace ISO8823_PRESENTATION  {
  			boost::shared_ptr<int > dialogueMode;   //  DEFAULT  int  0  
  			BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  dialogueMode)
 
- 			Reliable_Transfer_APDUs::ConnectionData  connectionDataRQ;
+ 			Reliable_Transfer_APDUs::ConnectionData   connectionDataRQ;
 			boost::shared_ptr<int > applicationProtocol;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  applicationProtocol)
 
@@ -1085,7 +1115,7 @@ namespace ISO8823_PRESENTATION  {
  			boost::shared_ptr<User_session_requirements > user_session_requirements;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(User_session_requirements ,  user_session_requirements)
 
- 			User_data  user_data;
+ 			User_data   user_data;
 
 			normal_mode_parameters_type()  : presentation_context_definition_list() , default_context_name() , user_data()  {}
 
@@ -1104,7 +1134,7 @@ namespace ISO8823_PRESENTATION  {
 
 	//end==============================================================
 
-		Mode_selector  mode_selector;
+		Mode_selector   mode_selector;
 		boost::shared_ptr<x410_mode_parameters_type > x410_mode_parameters;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(x410_mode_parameters_type ,  x410_mode_parameters)
 
