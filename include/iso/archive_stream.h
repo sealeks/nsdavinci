@@ -186,6 +186,9 @@ namespace boost {
                 virtual int test_class() {
                     return 0;
                 }
+                
+                void resetextention() {
+                }                
 
                 virtual encoding_rule rule() const {
                     return NULL_ENCODING;
@@ -265,6 +268,9 @@ namespace boost {
                 virtual int test_class() {
                     return 0;
                 };
+                
+                void resetextention() {
+                }                             
 
             protected:
 

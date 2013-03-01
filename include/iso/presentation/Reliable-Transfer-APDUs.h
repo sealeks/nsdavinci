@@ -3,7 +3,6 @@
 
 #include <iso/asn/asnbase.h>
 
-
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4065)
@@ -12,6 +11,7 @@
 
 const boost::array<boost::asio::asn::oidindx_type, 3 >  Reliable_Transfer_APDUs_OID_ARR = { 2  ,  3  ,  0 };
 const boost::asio::asn::oid_type Reliable_Transfer_APDUs_OID = boost::asio::asn::oid_type(Reliable_Transfer_APDUs_OID_ARR);
+
 
 namespace Reliable_Transfer_APDUs  {
 
@@ -37,6 +37,10 @@ namespace Reliable_Transfer_APDUs  {
  	using  boost::asio::asn::t61string_type;
  	using  boost::asio::asn::t61string_type;
  	using  boost::asio::asn::videotexstring_type;
+ 	using  boost::asio::asn::objectdescriptor_type;
+ 	using  boost::asio::asn::external_type;
+ 	using  boost::asio::asn::embeded_type;
+ 	using  boost::asio::asn::characterstring_type;
  	using  boost::asio::asn::any_type;
 
 	//  type is  CHOICE
@@ -81,7 +85,12 @@ namespace Reliable_Transfer_APDUs  {
  	//  type is  INTEGER
 	typedef  int   AbortReason;
 
- 
+ }
+
+
+namespace Reliable_Transfer_APDUs  {
+
+
 	const int AbortReason_localSystemProblem = 0;
 	const int AbortReason_invalidParameter = 1;
 	const int AbortReason_unrecognizedActivity = 2;
@@ -96,8 +105,8 @@ namespace Reliable_Transfer_APDUs  {
 
 	enum CallingSSuserReference_enum {
 		CallingSSuserReference_null = 0  , 
-		CallingSSuserReference_t61String_type , 
-		CallingSSuserReference_octetString_type , 
+		CallingSSuserReference_t61String , 
+		CallingSSuserReference_octetString , 
 	};
 
 	struct  CallingSSuserReference : public BOOST_ASN_CHOICE_STRUCT(CallingSSuserReference_enum) {
@@ -108,8 +117,8 @@ namespace Reliable_Transfer_APDUs  {
 		CallingSSuserReference() : BOOST_ASN_CHOICE_STRUCT(CallingSSuserReference_enum) ()  {}
 
 
-		BOOST_ASN_VALUE_CHOICE(t61String, t61string_type,  CallingSSuserReference_t61String_type)
-		BOOST_ASN_VALUE_CHOICE(octetString, octetstring_type,  CallingSSuserReference_octetString_type)
+		BOOST_ASN_VALUE_CHOICE(t61String, t61string_type,  CallingSSuserReference_t61String)
+		BOOST_ASN_VALUE_CHOICE(octetString, octetstring_type,  CallingSSuserReference_octetString)
 
 		 template<typename Archive> void serialize(Archive& arch){
 
@@ -133,13 +142,13 @@ namespace Reliable_Transfer_APDUs  {
 						default:{}}
 						;}
 					default:{
-						 if(BOOST_ASN_BIND_TAG(value<t61string_type > (true , CallingSSuserReference_t61String_type))) return; else free();
-					 if(BOOST_ASN_BIND_TAG(value<octetstring_type > (true , CallingSSuserReference_octetString_type))) return; else free();
+						 if(BOOST_ASN_BIND_TAG(value<t61string_type > (true , CallingSSuserReference_t61String))) return; else free();
+					 if(BOOST_ASN_BIND_TAG(value<octetstring_type > (true , CallingSSuserReference_octetString))) return; else free();
 					;}}}
 			else {
 				 switch(type()){
-					case CallingSSuserReference_t61String_type: {BOOST_ASN_BIND_TAG(value<t61string_type > (false , CallingSSuserReference_t61String_type)); break;}
-					case CallingSSuserReference_octetString_type: {BOOST_ASN_BIND_TAG(value<octetstring_type > (false , CallingSSuserReference_octetString_type)); break;}
+					case CallingSSuserReference_t61String: {BOOST_ASN_BIND_TAG(value<t61string_type > (false , CallingSSuserReference_t61String)); break;}
+					case CallingSSuserReference_octetString: {BOOST_ASN_BIND_TAG(value<octetstring_type > (false , CallingSSuserReference_octetString)); break;}
 					default:{}}}
 		}
 	};
@@ -155,8 +164,8 @@ namespace Reliable_Transfer_APDUs  {
 
 	struct  SessionConnectionIdentifier{
 
-		CallingSSuserReference  callingSSuserReference;
-		CommonReference  commonReference;
+		CallingSSuserReference   callingSSuserReference;
+		CommonReference   commonReference;
 		boost::shared_ptr<AdditionalReferenceInformation > additionalReferenceInformation;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(AdditionalReferenceInformation ,  additionalReferenceInformation)
 
@@ -177,8 +186,8 @@ namespace Reliable_Transfer_APDUs  {
 
 	enum ConnectionData_enum {
 		ConnectionData_null = 0  , 
-		ConnectionData_OPEN , 
-		ConnectionData_SessionConnectionIdentifier , 
+		ConnectionData_open , 
+		ConnectionData_recover , 
 	};
 
 	struct  ConnectionData : public BOOST_ASN_CHOICE_STRUCT(ConnectionData_enum) {
@@ -187,8 +196,8 @@ namespace Reliable_Transfer_APDUs  {
 		ConnectionData() : BOOST_ASN_CHOICE_STRUCT(ConnectionData_enum) ()  {}
 
 
-		BOOST_ASN_VALUE_CHOICE(open, any_type,  ConnectionData_OPEN)
-		BOOST_ASN_VALUE_CHOICE(recover, SessionConnectionIdentifier,  ConnectionData_SessionConnectionIdentifier)
+		BOOST_ASN_VALUE_CHOICE(open, any_type,  ConnectionData_open)
+		BOOST_ASN_VALUE_CHOICE(recover, SessionConnectionIdentifier,  ConnectionData_recover)
 
 		 template<typename Archive> void serialize(Archive& arch){
 
@@ -209,16 +218,16 @@ namespace Reliable_Transfer_APDUs  {
 						;}
 					case 0x80: {
 						switch(__tag_id__){
-							case 0: { if(BOOST_ASN_EXPLICIT_TAG(value<any_type > (true , ConnectionData_OPEN) ,0)) return; else free(); break;}
-							case 1: { if(BOOST_ASN_IMPLICIT_TAG(value<SessionConnectionIdentifier > (true , ConnectionData_SessionConnectionIdentifier) ,1)) return; else free(); break;}
+							case 0: { if(BOOST_ASN_EXPLICIT_TAG(value<any_type > (true , ConnectionData_open) ,0)) return; else free(); break;}
+							case 1: { if(BOOST_ASN_IMPLICIT_TAG(value<SessionConnectionIdentifier > (true , ConnectionData_recover) ,1)) return; else free(); break;}
 						default:{}}
 						;}
 					default:{
 						;}}}
 			else {
 				 switch(type()){
-					case ConnectionData_OPEN: {BOOST_ASN_EXPLICIT_TAG(value<any_type > (false , ConnectionData_OPEN) ,0); break;}
-					case ConnectionData_SessionConnectionIdentifier: {BOOST_ASN_IMPLICIT_TAG(value<SessionConnectionIdentifier > (false , ConnectionData_SessionConnectionIdentifier) ,1); break;}
+					case ConnectionData_open: {BOOST_ASN_EXPLICIT_TAG(value<any_type > (false , ConnectionData_open) ,0); break;}
+					case ConnectionData_recover: {BOOST_ASN_IMPLICIT_TAG(value<SessionConnectionIdentifier > (false , ConnectionData_recover) ,1); break;}
 					default:{}}}
 		}
 	};
@@ -285,7 +294,7 @@ namespace Reliable_Transfer_APDUs  {
  		boost::shared_ptr<int > windowSize;   //  DEFAULT  int  3  
  		BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  windowSize)
 
- 		ConnectionData  connectionDataAC;
+ 		ConnectionData   connectionDataAC;
 
 		RTOACapdu()  : connectionDataAC()  {}
 
@@ -320,7 +329,7 @@ namespace Reliable_Transfer_APDUs  {
  		boost::shared_ptr<int > dialogueMode;   //  DEFAULT  int  0  
  		BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  dialogueMode)
 
- 		ConnectionData  connectionDataRQ;
+ 		ConnectionData   connectionDataRQ;
 		boost::shared_ptr<int > applicationProtocol;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  applicationProtocol)
 
@@ -343,12 +352,12 @@ namespace Reliable_Transfer_APDUs  {
 
 	enum RTSE_apdus_enum {
 		RTSE_apdus_null = 0  , 
-		RTSE_apdus_RTORQapdu , 
-		RTSE_apdus_RTOACapdu , 
-		RTSE_apdus_RTORJapdu , 
-		RTSE_apdus_RTTPapdu , 
-		RTSE_apdus_RTTRapdu , 
-		RTSE_apdus_RTABapdu , 
+		RTSE_apdus_rtorq_apdu , 
+		RTSE_apdus_rtoac_apdu , 
+		RTSE_apdus_rtorj_apdu , 
+		RTSE_apdus_rttp_apdu , 
+		RTSE_apdus_rttr_apdu , 
+		RTSE_apdus_rtab_apdu , 
 	};
 
 	struct  RTSE_apdus : public BOOST_ASN_CHOICE_STRUCT(RTSE_apdus_enum) {
@@ -357,12 +366,12 @@ namespace Reliable_Transfer_APDUs  {
 		RTSE_apdus() : BOOST_ASN_CHOICE_STRUCT(RTSE_apdus_enum) ()  {}
 
 
-		BOOST_ASN_VALUE_CHOICE(rtorq_apdu, RTORQapdu,  RTSE_apdus_RTORQapdu)
-		BOOST_ASN_VALUE_CHOICE(rtoac_apdu, RTOACapdu,  RTSE_apdus_RTOACapdu)
-		BOOST_ASN_VALUE_CHOICE(rtorj_apdu, RTORJapdu,  RTSE_apdus_RTORJapdu)
-		BOOST_ASN_VALUE_CHOICE(rttp_apdu, RTTPapdu,  RTSE_apdus_RTTPapdu)
-		BOOST_ASN_VALUE_CHOICE(rttr_apdu, RTTRapdu,  RTSE_apdus_RTTRapdu)
-		BOOST_ASN_VALUE_CHOICE(rtab_apdu, RTABapdu,  RTSE_apdus_RTABapdu)
+		BOOST_ASN_VALUE_CHOICE(rtorq_apdu, RTORQapdu,  RTSE_apdus_rtorq_apdu)
+		BOOST_ASN_VALUE_CHOICE(rtoac_apdu, RTOACapdu,  RTSE_apdus_rtoac_apdu)
+		BOOST_ASN_VALUE_CHOICE(rtorj_apdu, RTORJapdu,  RTSE_apdus_rtorj_apdu)
+		BOOST_ASN_VALUE_CHOICE(rttp_apdu, RTTPapdu,  RTSE_apdus_rttp_apdu)
+		BOOST_ASN_VALUE_CHOICE(rttr_apdu, RTTRapdu,  RTSE_apdus_rttr_apdu)
+		BOOST_ASN_VALUE_CHOICE(rtab_apdu, RTABapdu,  RTSE_apdus_rtab_apdu)
 
 		 template<typename Archive> void serialize(Archive& arch){
 
@@ -383,24 +392,24 @@ namespace Reliable_Transfer_APDUs  {
 						;}
 					case 0x80: {
 						switch(__tag_id__){
-							case 16: { if(BOOST_ASN_IMPLICIT_TAG(value<RTORQapdu > (true , RTSE_apdus_RTORQapdu) ,16)) return; else free(); break;}
-							case 17: { if(BOOST_ASN_IMPLICIT_TAG(value<RTOACapdu > (true , RTSE_apdus_RTOACapdu) ,17)) return; else free(); break;}
-							case 18: { if(BOOST_ASN_IMPLICIT_TAG(value<RTORJapdu > (true , RTSE_apdus_RTORJapdu) ,18)) return; else free(); break;}
-							case 22: { if(BOOST_ASN_IMPLICIT_TAG(value<RTABapdu > (true , RTSE_apdus_RTABapdu) ,22)) return; else free(); break;}
+							case 16: { if(BOOST_ASN_IMPLICIT_TAG(value<RTORQapdu > (true , RTSE_apdus_rtorq_apdu) ,16)) return; else free(); break;}
+							case 17: { if(BOOST_ASN_IMPLICIT_TAG(value<RTOACapdu > (true , RTSE_apdus_rtoac_apdu) ,17)) return; else free(); break;}
+							case 18: { if(BOOST_ASN_IMPLICIT_TAG(value<RTORJapdu > (true , RTSE_apdus_rtorj_apdu) ,18)) return; else free(); break;}
+							case 22: { if(BOOST_ASN_IMPLICIT_TAG(value<RTABapdu > (true , RTSE_apdus_rtab_apdu) ,22)) return; else free(); break;}
 						default:{}}
 						;}
 					default:{
-						 if(BOOST_ASN_BIND_TAG(value<RTTPapdu > (true , RTSE_apdus_RTTPapdu))) return; else free();
-					 if(BOOST_ASN_BIND_TAG(value<RTTRapdu > (true , RTSE_apdus_RTTRapdu))) return; else free();
+						 if(BOOST_ASN_BIND_TAG(value<RTTPapdu > (true , RTSE_apdus_rttp_apdu))) return; else free();
+					 if(BOOST_ASN_BIND_TAG(value<RTTRapdu > (true , RTSE_apdus_rttr_apdu))) return; else free();
 					;}}}
 			else {
 				 switch(type()){
-					case RTSE_apdus_RTORQapdu: {BOOST_ASN_IMPLICIT_TAG(value<RTORQapdu > (false , RTSE_apdus_RTORQapdu) ,16); break;}
-					case RTSE_apdus_RTOACapdu: {BOOST_ASN_IMPLICIT_TAG(value<RTOACapdu > (false , RTSE_apdus_RTOACapdu) ,17); break;}
-					case RTSE_apdus_RTORJapdu: {BOOST_ASN_IMPLICIT_TAG(value<RTORJapdu > (false , RTSE_apdus_RTORJapdu) ,18); break;}
-					case RTSE_apdus_RTTPapdu: {BOOST_ASN_BIND_TAG(value<RTTPapdu > (false , RTSE_apdus_RTTPapdu)); break;}
-					case RTSE_apdus_RTTRapdu: {BOOST_ASN_BIND_TAG(value<RTTRapdu > (false , RTSE_apdus_RTTRapdu)); break;}
-					case RTSE_apdus_RTABapdu: {BOOST_ASN_IMPLICIT_TAG(value<RTABapdu > (false , RTSE_apdus_RTABapdu) ,22); break;}
+					case RTSE_apdus_rtorq_apdu: {BOOST_ASN_IMPLICIT_TAG(value<RTORQapdu > (false , RTSE_apdus_rtorq_apdu) ,16); break;}
+					case RTSE_apdus_rtoac_apdu: {BOOST_ASN_IMPLICIT_TAG(value<RTOACapdu > (false , RTSE_apdus_rtoac_apdu) ,17); break;}
+					case RTSE_apdus_rtorj_apdu: {BOOST_ASN_IMPLICIT_TAG(value<RTORJapdu > (false , RTSE_apdus_rtorj_apdu) ,18); break;}
+					case RTSE_apdus_rttp_apdu: {BOOST_ASN_BIND_TAG(value<RTTPapdu > (false , RTSE_apdus_rttp_apdu)); break;}
+					case RTSE_apdus_rttr_apdu: {BOOST_ASN_BIND_TAG(value<RTTRapdu > (false , RTSE_apdus_rttr_apdu)); break;}
+					case RTSE_apdus_rtab_apdu: {BOOST_ASN_IMPLICIT_TAG(value<RTABapdu > (false , RTSE_apdus_rtab_apdu) ,22); break;}
 					default:{}}}
 		}
 	};
