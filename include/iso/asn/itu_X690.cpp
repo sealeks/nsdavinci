@@ -398,6 +398,11 @@ namespace boost {
                 }
 
                 template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<enumerated_type>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }
+
+                template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<float>& vl) {
                     return primitive_sirialize(stream, vl);
                 }
@@ -416,6 +421,11 @@ namespace boost {
                 oarchive& operator<<(oarchive& stream, const implicit_value<bool>& vl) {
                     return primitive_sirialize(stream, vl);
                 }
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<null_type>& vl) {
+                    return primitive_sirialize(stream, vl);
+                }                
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<oid_type>& vl) {
@@ -487,13 +497,13 @@ namespace boost {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
                 }
-                
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value< objectdescriptor_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
                     return stream;
-                }                               
-                
+                }
+
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<visiblestring_type>& vl) {
                     stringtype_writer(stream, vl.value(), vl.id(), vl.mask());
@@ -1162,14 +1172,14 @@ namespace boost {
                     stringtype_reader(stream, *const_cast<graphicstring_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
                 }
-                
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<objectdescriptor_type>& vl) {
                     const_cast<objectdescriptor_type*> (&(vl.value()))->clear();
                     stringtype_reader(stream, *const_cast<objectdescriptor_type*> (&(vl.value())), vl.id(), vl.mask());
                     return stream;
-                }                           
-                
+                }
+
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<visiblestring_type>& vl) {
                     const_cast<visiblestring_type*> (&(vl.value()))->clear();

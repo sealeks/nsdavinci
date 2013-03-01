@@ -1482,10 +1482,10 @@ namespace boost {
             template<typename Archive, typename T>
             inline bool bind_basic(Archive & arch, value_holder<T>& vl) {
                 return bind_basic(arch, *vl);
-            }  
-  
-                
+            }         
 
+            
+                
             template<typename Archive, typename T>
             inline bool bind_basic(Archive & arch, boost::shared_ptr<T>& vl) {
                 std::size_t tst = arch.size();
@@ -1509,7 +1509,7 @@ namespace boost {
 
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
             inline bool bind_basic(Archive & arch, boost::shared_ptr< implicit_typedef<T, Tag, ID, TYPE> >& vl) {
-                if (!vl) return false;
+                //if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl->shared_value(), ID, TYPE);
                 return (arch.size() != tst);
@@ -1517,7 +1517,7 @@ namespace boost {
 
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
             inline bool bind_basic(Archive & arch, boost::shared_ptr< explicit_typedef<T, Tag, ID, TYPE> >& vl) {
-                if (!vl) return false;
+                //if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_explicit_value<T > (vl->shared_value(), ID, TYPE);
                 return (arch.size() != tst);
@@ -1532,8 +1532,8 @@ namespace boost {
             
             template<typename Archive, typename T>
             inline bool bind_explicit(Archive & arch, value_holder<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                return bind_explicit(*vl, id, type);
-            }            
+                return bind_explicit(arch, *vl, id, type);               
+            }                            
                           
 
             template<typename Archive, typename T>
@@ -1552,8 +1552,8 @@ namespace boost {
             
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, value_holder<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                return implicit_value<T > (*vl, id, type);
-            }            
+                return bind_implicit(arch, *vl, id, type);           
+            }               
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
@@ -1568,6 +1568,11 @@ namespace boost {
                 arch & choice_value<T > (vl);
                 return (arch.size() != tst);
             }
+            
+            template<typename Archive, typename T>
+            inline bool bind_choice(Archive & arch, value_holder<T>& vl) {
+                return bind_choice(arch,  (*vl));
+            }               
 
             template<typename Archive, typename T>
             inline bool bind_choice(Archive & arch,  boost::shared_ptr<T>& vl) {
@@ -1582,6 +1587,11 @@ namespace boost {
                 arch & vl;
                 return (arch.size() != tst);
             }
+            
+            template<typename Archive, typename T>
+            inline bool bind_element(Archive& arch, value_holder<T>& vl) {
+                return bind_element(arch, (*vl));
+            }            
 
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
