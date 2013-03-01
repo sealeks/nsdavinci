@@ -361,7 +361,12 @@ namespace boost {
                     void operator&(const choice_value<T >& vl) {
                         *this  <<  vl;
                     }
-
+                    
+                    //template<typename T>
+                    //void operator&(const value_holder<T >& vl) {
+                    //    *this  &  (*vl);
+                    //}                    
+                    
                     iterator  addtag(const  tag& tg,  bool settype);
 
                     void  pop_stack();
@@ -634,6 +639,9 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<bool>& vl);
+                
+                template<>
+                oarchive& operator<<(oarchive& stream, const implicit_value<null_type>& vl);                
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<oid_type>& vl);
@@ -882,6 +890,11 @@ namespace boost {
                     void operator&(const choice_value<T >& vl) {
                         *this  >>  vl;
                     }
+                    
+                    //template<typename T>
+                    //void operator&(const value_holder<T >& vl) {
+                     //   *this  &  (*vl);
+                   // }                                  
 
                     tag test_tl(size_class& sz);
 
