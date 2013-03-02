@@ -136,6 +136,10 @@ namespace boost {\
 #define BOOST_ASN_EXPLICIT_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::PRIVATE_CLASS)
 #define BOOST_ASN_EXPLICIT_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_explicit(arch, var, tag, boost::asio::asn::UNIVERSAL_CLASS)
 #define BOOST_ASN_CHOICE(var)    boost::asio::asn::bind_choice(arch, var)
+#define BOOST_ASN_CHOICE_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::CONTEXT_CLASS)
+#define BOOST_ASN_CHOICE_APPLICATION_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::APPLICATION_CLASS)
+#define BOOST_ASN_CHOICE_PRIVATE_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::PRIVATE_CLASS)
+#define BOOST_ASN_CHOICE_UNIVERSAL_TAG(var, tag)    boost::asio::asn::bind_implicit(arch, var, tag, boost::asio::asn::APPLICATION_CLASS)
 
 #define BOOST_ASN_EXTENTION   arch.resetextention();
 
@@ -1097,19 +1101,19 @@ namespace boost {
                 }
 
                 explicit  optional_implicit_value(T& vl,  class_type type) :
-                id_(tag_traits<T>::number()) ,  val_(vl), mask_(from_cast(type))  {
+                id_(tag_traits<S>::number()) ,  val_(vl), mask_(from_cast(type))  {
                 }
 
                 explicit  optional_implicit_value(const T& vl,  class_type type) :
-                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type))  {
+                id_(tag_traits<S>::number()) ,  val_(const_cast<T&> (vl)) , mask_(from_cast(type))  {
                 }
 
                 explicit  optional_implicit_value(T& vl) :
-                id_(tag_traits<T>::number()) ,  val_(vl), mask_(tag_traits<T>::class_type())  {
+                id_(tag_traits<S>::number()) ,  val_(vl), mask_(tag_traits<S>::class_type())  {
                 }
 
                 explicit  optional_implicit_value(const T& vl) :
-                id_(tag_traits<T>::number()) ,  val_(const_cast<T&> (vl)) , mask_( tag_traits<T>::class_type())  {
+                id_(tag_traits<S>::number()) ,  val_(const_cast<T&> (vl)) , mask_( tag_traits<S>::class_type())  {
                 }
 
                 const T& value() const {
@@ -1620,26 +1624,26 @@ namespace boost {
             }
 
             template<typename Archive, typename T>
-            bool bind_choice(Archive & arch, T& vl) {
+            inline bool bind_choice(Archive & arch, T& vl) {
                 std::size_t tst = arch.size();
                 vl.serialize(arch);
                 return (arch.size() != tst);
             }
 
             template<typename Archive, typename T>
-            bool bind_choice(Archive & arch, const T& vl) {
+            inline bool bind_choice(Archive & arch, const T& vl) {
                 std::size_t tst = arch.size();
                 const_cast<T*> (&(vl))->serialize(arch);
                 return (arch.size() != tst);
             }
 
             template<typename Archive, typename T>
-            bool bind_choice(Archive & arch, value_holder<T>& vl) {
+            inline bool bind_choice(Archive & arch, value_holder<T>& vl) {
                 return bind_choice(arch, *vl);
             }
 
             template<typename Archive, typename T>
-            bool bind_choice(Archive & arch,  boost::shared_ptr< T  >& vl) {
+            inline bool bind_choice(Archive & arch,  boost::shared_ptr< T  >& vl) {
                 if (!vl) return false;
                 return bind_choice(arch, *vl);
             }
@@ -1669,11 +1673,12 @@ namespace boost {
 
             struct  external_type {
 
+
                 enum encoding_type_enum {
                     encoding_type_null = 0  ,
-                    encoding_type_ABSTRACT_SYNTAX ,
-                    encoding_type_octet_aligned_type ,
-                    encoding_type_arbitrary_type ,
+                    encoding_type_single_ASN1_type ,
+                    encoding_type_octet_aligned ,
+                    encoding_type_arbitrary ,
                 } ;
 
                 struct  encoding_type : public BOOST_ASN_CHOICE_STRUCT(encoding_type_enum) {
@@ -1681,9 +1686,9 @@ namespace boost {
                     encoding_type() : BOOST_ASN_CHOICE_STRUCT(encoding_type_enum) ()  {
                     }
 
-                    BOOST_ASN_VALUE_CHOICE(single_ASN1_type, any_type,  encoding_type_ABSTRACT_SYNTAX)
-                    BOOST_ASN_VALUE_CHOICE(octet_aligned, octetstring_type,  encoding_type_octet_aligned_type)
-                    BOOST_ASN_VALUE_CHOICE(arbitrary, bitstring_type,  encoding_type_arbitrary_type)
+                    BOOST_ASN_VALUE_CHOICE(single_ASN1_type, any_type,  encoding_type_single_ASN1_type)
+                    BOOST_ASN_VALUE_CHOICE(octet_aligned, octetstring_type,  encoding_type_octet_aligned)
+                    BOOST_ASN_VALUE_CHOICE(arbitrary, bitstring_type,  encoding_type_arbitrary)
 
                             template<typename Archive> void serialize(Archive & arch) {
 
@@ -1722,19 +1727,19 @@ namespace boost {
                                     switch (__tag_id__) {
                                         case 0:
                                         {
-                                            if (BOOST_ASN_EXPLICIT_TAG(value<any_type > (true , encoding_type_ABSTRACT_SYNTAX) , 0)) return;
+                                            if (BOOST_ASN_EXPLICIT_TAG(value<any_type > (true , encoding_type_single_ASN1_type) , 0)) return;
                                             else free();
                                             break;
                                         }
                                         case 1:
                                         {
-                                            if (BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (true , encoding_type_octet_aligned_type) , 1)) return;
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (true , encoding_type_octet_aligned) , 1)) return;
                                             else free();
                                             break;
                                         }
                                         case 2:
                                         {
-                                            if (BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (true , encoding_type_arbitrary_type) , 2)) return;
+                                            if (BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (true , encoding_type_arbitrary) , 2)) return;
                                             else free();
                                             break;
                                         }
@@ -1752,19 +1757,19 @@ namespace boost {
                         }
                         else {
                             switch (type()) {
-                                case encoding_type_ABSTRACT_SYNTAX:
+                                case encoding_type_single_ASN1_type:
                                 {
-                                    BOOST_ASN_EXPLICIT_TAG(value<any_type > (false , encoding_type_ABSTRACT_SYNTAX) , 0);
+                                    BOOST_ASN_EXPLICIT_TAG(value<any_type > (false , encoding_type_single_ASN1_type) , 0);
                                     break;
                                 }
-                                case encoding_type_octet_aligned_type:
+                                case encoding_type_octet_aligned:
                                 {
-                                    BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (false , encoding_type_octet_aligned_type) , 1);
+                                    BOOST_ASN_IMPLICIT_TAG(value<octetstring_type > (false , encoding_type_octet_aligned) , 1);
                                     break;
                                 }
-                                case encoding_type_arbitrary_type:
+                                case encoding_type_arbitrary:
                                 {
-                                    BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (false , encoding_type_arbitrary_type) , 2);
+                                    BOOST_ASN_IMPLICIT_TAG(value<bitstring_type > (false , encoding_type_arbitrary) , 2);
                                     break;
                                 }
                                 default:
@@ -1785,7 +1790,7 @@ namespace boost {
                 boost::shared_ptr<objectdescriptor_type > data_value_descriptor;   //  OPTIONAL
                 BOOST_ASN_VALUE_FUNC_DECLARATE(objectdescriptor_type ,  data_value_descriptor)
 
-                encoding_type  encoding;
+                boost::asio::asn::value_holder<encoding_type >  encoding;
 
                 external_type()  : encoding()  {
                 }
@@ -1795,7 +1800,7 @@ namespace boost {
                     BOOST_ASN_IMPLICIT_TAG(direct_reference , 0);
                     BOOST_ASN_IMPLICIT_TAG(indirect_reference , 1);
                     BOOST_ASN_IMPLICIT_TAG(data_value_descriptor , 2);
-                    BOOST_ASN_CHOICE(encoding);
+                    BOOST_ASN_CHOICE_TAG(encoding , 3);
                 }
             } ;
 

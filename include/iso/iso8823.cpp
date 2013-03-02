@@ -319,9 +319,9 @@ namespace boost {
                             cp.normal_mode_parameters->called_presentation_selector__assign( new cd_selector_type(selector.called()));
                         if (!selector.calling().empty())
                             cp.normal_mode_parameters->calling_presentation_selector__assign( new cng_selector_type(selector.calling()));
-                        if (ppm->is_context_menagment())
+                       // if (ppm->is_context_menagment())
                             // cp.normal_mode_parameters->presentation_requirements__assign(ppm->p_requirements());
-                            // cp.normal_mode_parameters->presentation_context_definition_list__new();
+                            cp.normal_mode_parameters->presentation_context_definition_list__new();
                             // cp.normal_mode_parameters->protocol_version__assign(PRSNT_VERSION);
                             for (presentation_context_map::const_iterator it = ppm->contexts().begin(); it != ppm->contexts().end(); ++it) {
                                 if (it->second->valid()) {
