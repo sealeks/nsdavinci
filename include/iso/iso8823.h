@@ -126,7 +126,7 @@ namespace boost {
 
                 bool operator<(presentation_context_unit_ptr ls, presentation_context_unit_ptr rs);
 
-                typedef std::set<presentation_context_unit_ptr>  presentation_context_unit_set;
+                typedef std::vector<presentation_context_unit_ptr>  presentation_context_unit_vct;
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////           
@@ -145,16 +145,16 @@ namespace boost {
                         return preq_;
                     }
 
-                    const presentation_context_unit_set& abstract_syntaxes() const {
+                    const presentation_context_unit_vct& abstract_syntaxes() const {
                         return connection_syntax_;
                     }
 
-                    presentation_context_unit_set abstract_syntaxes() {
+                    presentation_context_unit_vct abstract_syntaxes() {
                         connection_syntax_;
                     }
 
                     void insert_abstract_syntax(presentation_context_unit_ptr val) {
-                        connection_syntax_.insert(val);
+                        connection_syntax_.push_back(val);
                     }
 
                     void insert_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING );
@@ -166,7 +166,7 @@ namespace boost {
 
                 private:
 
-                    presentation_context_unit_set  connection_syntax_;
+                    presentation_context_unit_vct  connection_syntax_;
                     presentation_req_type  preq_;
 
                 } ;

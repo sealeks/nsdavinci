@@ -357,16 +357,16 @@ namespace boost {
                         *this  <<  vl;
                     }
 
-                    template<typename T>
-                    void operator&(const choice_value<T >& vl) {
-                        *this  <<  vl;
-                    }
-                    
+                    // template<typename T>
+                    //void operator&(const choice_value<T >& vl) {
+                    //       *this  <<  vl;
+                    //  }
+
                     //template<typename T>
                     //void operator&(const value_holder<T >& vl) {
                     //    *this  &  (*vl);
                     //}                    
-                    
+
                     iterator  addtag(const  tag& tg,  bool settype);
 
                     void  pop_stack();
@@ -529,11 +529,11 @@ namespace boost {
                     return stream;
                 }
 
-                template<typename T>
-                oarchive& operator<<(oarchive& stream, const choice_value<T>& vl) {
-                    const_cast<T*> (&(vl.value()))->serialize(stream);
-                    return stream;
-                }
+                /*  template<typename T>
+                   oarchive& operator<<(oarchive& stream, const choice_value<T>& vl) {
+                       const_cast<T*> (&(vl.value()))->serialize(stream);
+                       return stream;
+                   }         */
 
 
 
@@ -639,9 +639,9 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<bool>& vl);
-                
+
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<null_type>& vl);                
+                oarchive& operator<<(oarchive& stream, const implicit_value<null_type>& vl);
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<oid_type>& vl);
@@ -678,9 +678,9 @@ namespace boost {
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<graphicstring_type>& vl);
-                
+
                 template<>
-                oarchive& operator<<(oarchive& stream, const implicit_value<objectdescriptor_type>& vl);                
+                oarchive& operator<<(oarchive& stream, const implicit_value<objectdescriptor_type>& vl);
 
                 template<>
                 oarchive& operator<<(oarchive& stream, const implicit_value<visiblestring_type>& vl);
@@ -886,15 +886,15 @@ namespace boost {
                         *this  >>  vl;
                     }
 
-                    template<typename T>
-                    void operator&(const choice_value<T >& vl) {
-                        *this  >>  vl;
-                    }
-                    
+                    // template<typename T>
+                    //void operator&(const choice_value<T >& vl) {
+                    //     *this  >>  vl;
+                    // }
+
                     //template<typename T>
                     //void operator&(const value_holder<T >& vl) {
-                     //   *this  &  (*vl);
-                   // }                                  
+                    //   *this  &  (*vl);
+                    // }                                  
 
                     tag test_tl(size_class& sz);
 
@@ -943,7 +943,7 @@ namespace boost {
                     if (stream.parse_tl(vl, tag_traits<T>::number() == TYPE_SET )) {
                         stream & vl.value();
                         stream.pop_stack();
-                        return stream;                        
+                        return stream;
                     }
                     throw boost::system::system_error(boost::asio::iso::ERROR__SEQ);
                 }
@@ -1085,11 +1085,11 @@ namespace boost {
                     return stream;
                 }
 
-                template<typename T>
-                iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
-                    const_cast<T*> (&(vl.value()))->serialize(stream);
-                    return stream;
-                }
+                /*  template<typename T>
+                  iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
+                      const_cast<T*> (&(vl.value()))->serialize(stream);
+                      return stream;
+                  }*/
 
 
                 //////////////////////////////////////////////////////////////////////////////////
@@ -1238,9 +1238,9 @@ namespace boost {
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<graphicstring_type>& vl);
- 
+
                 template<>
-                iarchive& operator>>(iarchive& stream, const implicit_value<objectdescriptor_type>& vl);               
+                iarchive& operator>>(iarchive& stream, const implicit_value<objectdescriptor_type>& vl);
 
                 template<>
                 iarchive& operator>>(iarchive& stream, const implicit_value<visiblestring_type>& vl);
