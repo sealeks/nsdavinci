@@ -233,15 +233,30 @@ namespace boost {
             //}    
 
             bitstring_type operator|(const bitstring_type& ls, const bitstring_type& rs) {
-                return (ls.dynamic_bitset()) | (rs.dynamic_bitset());
+                std::size_t mxsize = ls.sizebits() < rs.sizebits() ? rs.sizebits()  : ls.sizebits() ;
+               bitstring_type::dynamic_bitset_type lsb=ls.dynamic_bitset();
+               bitstring_type::dynamic_bitset_type rsb=rs.dynamic_bitset();  
+               lsb.resize(mxsize, false);
+               rsb.resize(mxsize, false);               
+                return lsb | rsb;
             }
 
             bitstring_type operator&(const bitstring_type& ls, const bitstring_type& rs) {
-                return (ls.dynamic_bitset()) & (rs.dynamic_bitset());
+                std::size_t mxsize = ls.sizebits() < rs.sizebits() ? rs.sizebits()  : ls.sizebits() ;
+               bitstring_type::dynamic_bitset_type lsb=ls.dynamic_bitset();
+               bitstring_type::dynamic_bitset_type rsb=rs.dynamic_bitset();  
+               lsb.resize(mxsize, false);
+               rsb.resize(mxsize, false);               
+                return lsb & rsb;
             }
 
             bitstring_type operator^(const bitstring_type& ls, const bitstring_type& rs) {
-                return (ls.dynamic_bitset()) ^ (rs.dynamic_bitset());
+                std::size_t mxsize = ls.sizebits() < rs.sizebits() ? rs.sizebits()  : ls.sizebits() ;
+                bitstring_type::dynamic_bitset_type lsb=ls.dynamic_bitset();
+                bitstring_type::dynamic_bitset_type rsb=rs.dynamic_bitset();  
+                lsb.resize(mxsize, false);
+                rsb.resize(mxsize, false);               
+                return lsb ^ rsb;
             }
 
             void bitstring_type::construct(const std::vector<bool>& vl) {
