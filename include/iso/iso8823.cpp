@@ -17,7 +17,7 @@ namespace boost {
 
                 typedef ISO8823_PRESENTATION::CP_type                                                      CP_type;
                 typedef ISO8823_PRESENTATION::CPA_PPDU                                                   CPA_type;
-                typedef ISO8823_PRESENTATION::CPR_PPDU                                                   CPR_type;                
+                typedef ISO8823_PRESENTATION::CPR_PPDU                                                   CPR_type;
                 typedef ISO8823_PRESENTATION::User_data                                                    User_data;
                 typedef ISO8823_PRESENTATION::Mode_selector                                              mode_type;
                 typedef ISO8823_PRESENTATION::Called_presentation_selector                         cd_selector_type;
@@ -25,12 +25,11 @@ namespace boost {
                 typedef ISO8823_PRESENTATION::Simply_encoded_data                                   simpledata_type;
                 typedef ISO8823_PRESENTATION::Fully_encoded_data                                      fulldata_type;
                 typedef ISO8823_PRESENTATION::Context_list_sequence_of                             p_context_type;
-                typedef ISO8823_PRESENTATION::Result_list_sequence_of                                p_result_type;               
+                typedef ISO8823_PRESENTATION::Result_list_sequence_of                                p_result_type;
                 typedef ISO8823_PRESENTATION::PDV_list                                                      pdv_list_type;
                 typedef ISO8823_PRESENTATION::PDV_list::presentation_data_values_type       data_values_type;
                 typedef ISO8823_PRESENTATION::Result_list                                                    result_list_type;
                 typedef ISO8823_PRESENTATION::Presentation_context_definition_list                definition_list_type;
-
 
                 static archive_ptr build_by_syntaxes(const oid_type& asyntax, const encoding_rule& tsyntax) {
 
@@ -88,12 +87,12 @@ namespace boost {
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 presentation_connection_option::presentation_connection_option(const oid_type& asyntax, const encoding_rule& tsyntax , const presentation_req_type& req) : preq_(req) {
-                    connection_syntax_.insert(presentation_context_unit_ptr( new presentation_context_unit(asyntax, tsyntax)));
+                    connection_syntax_.push_back(presentation_context_unit_ptr( new presentation_context_unit(asyntax, tsyntax)));
                 }
 
                 presentation_connection_option::presentation_connection_option(const oid_type& asyntax1, const oid_type& asyntax2, const encoding_rule& tsyntax , const presentation_req_type& req) : preq_(req) {
-                    connection_syntax_.insert(presentation_context_unit_ptr( new presentation_context_unit(asyntax1, tsyntax)));
-                    connection_syntax_.insert(presentation_context_unit_ptr( new presentation_context_unit(asyntax2, tsyntax)));
+                    connection_syntax_.push_back(presentation_context_unit_ptr( new presentation_context_unit(asyntax1, tsyntax)));
+                    connection_syntax_.push_back(presentation_context_unit_ptr( new presentation_context_unit(asyntax2, tsyntax)));
                 }
 
                 void presentation_connection_option::insert_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax ) {
@@ -101,20 +100,25 @@ namespace boost {
                 }
 
                 bool presentation_connection_option::has_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax ) const {
-                    return connection_syntax_.find(presentation_context_unit_ptr( new presentation_context_unit(asyntax, tsyntax))) != connection_syntax_.end();
+                    // return connection_syntax_.find(presentation_context_unit_ptr( new presentation_context_unit(asyntax, tsyntax))) != connection_syntax_.end();
+                    for (presentation_context_unit_vct::const_iterator it = connection_syntax_.begin(); it != connection_syntax_.end(); ++it) {
+                        if ((*it)->abstract_syntax() == asyntax)
+                            return true;
+                    }
+                    return false;
                 }
-                
+
                 oid_type presentation_connection_option::has_abstract_syntax(const oid_type& asyntax, const std::vector<oid_type>& tsyntax) const {
                     if (has_abstract_syntax(asyntax, BER_ENCODING))
                         return BASIC_ENCODING_OID;
-                    return oid_type();    
+                    return oid_type();
                 }
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 presentation_pm::presentation_pm(const presentation_connection_option& opt , context_id_type  id) :
                 nextid_(id) , preq_(opt.p_requirements()) {
-                    for (presentation_context_unit_set::const_iterator it = opt.abstract_syntaxes().begin(); it != opt.abstract_syntaxes().end(); ++it) {
+                    for (presentation_context_unit_vct::const_iterator it = opt.abstract_syntaxes().begin(); it != opt.abstract_syntaxes().end(); ++it) {
                         insert_context(*it);
                     }
                 }
@@ -214,7 +218,7 @@ namespace boost {
                                         }
                                         const data_values_type& values = it->presentation_data_values;
                                         switch (values.type()) {
-                                            case ISO8823_PRESENTATION::PDV_list::presentation_data_values_type_single_ASN1_type :
+                                            case ISO8823_PRESENTATION::PDV_list::presentation_data_values_type_single_ASN1_type:
                                             {
                                                 if (values.single_ASN1_type())
                                                     values.single_ASN1_type()->bind(*(ppm->find(it->presentation_context_identifier)->in()));
@@ -316,19 +320,19 @@ namespace boost {
                         if (!selector.calling().empty())
                             cp.normal_mode_parameters->calling_presentation_selector__assign( new cng_selector_type(selector.calling()));
                         if (ppm->is_context_menagment())
-                           // cp.normal_mode_parameters->presentation_requirements__assign(ppm->p_requirements());
-                       // cp.normal_mode_parameters->presentation_context_definition_list__new();
-                       // cp.normal_mode_parameters->protocol_version__assign(PRSNT_VERSION);
-                        for (presentation_context_map::const_iterator it = ppm->contexts().begin(); it != ppm->contexts().end(); ++it) {
-                            if (it->second->valid()) {
-                                p_context_type ctx;
-                                ctx.abstract_syntax_name = it->second->abstract_syntax();
-                                ctx.presentation_context_identifier = it->first;
-                                ctx.transfer_syntax_name_list.insert(ctx.transfer_syntax_name_list.begin(),
-                                        it->second->transfer_syntaxs().begin(), it->second->transfer_syntaxs().end());
-                                cp.normal_mode_parameters->presentation_context_definition_list->push_back(ctx);
+                            // cp.normal_mode_parameters->presentation_requirements__assign(ppm->p_requirements());
+                            // cp.normal_mode_parameters->presentation_context_definition_list__new();
+                            // cp.normal_mode_parameters->protocol_version__assign(PRSNT_VERSION);
+                            for (presentation_context_map::const_iterator it = ppm->contexts().begin(); it != ppm->contexts().end(); ++it) {
+                                if (it->second->valid()) {
+                                    p_context_type ctx;
+                                    ctx.abstract_syntax_name = it->second->abstract_syntax();
+                                    ctx.presentation_context_identifier = it->first;
+                                    ctx.transfer_syntax_name_list.insert(ctx.transfer_syntax_name_list.begin(),
+                                            it->second->transfer_syntaxs().begin(), it->second->transfer_syntaxs().end());
+                                    cp.normal_mode_parameters->presentation_context_definition_list->push_back(ctx);
+                                }
                             }
-                        }
                         boost::system::error_code errstt = build_userdata(ppm, cp.normal_mode_parameters->user_data);
                         if (!errstt)
                             (coder->output()) & cp;
@@ -409,36 +413,37 @@ namespace boost {
                         CP_type cp;
 
                         (coder()->input()) & cp;
-                        
-                        CPA_type cpa;         
-                        CPR_type cpr;                       
 
-                        
-                        cpa.mode_selector.mode_value=cp.mode_selector.mode_value;
-                        cpa.normal_mode_parameters__new();  
-                        cpr.normal_mode_parameters__new();                        
-                        
+                        CPA_type cpa;
+                        CPR_type cpr;
+
+
+                        cpa.mode_selector.mode_value = cp.mode_selector.mode_value;
+                        cpa.normal_mode_parameters__new();
+                        cpr.normal_mode_parameters__new();
+
                         if (cp.mode_selector.mode_value == mode_type::mode_value_normal_mode && cp.normal_mode_parameters) {
-                            
+
                             selector().called(cp.normal_mode_parameters->called_presentation_selector ?
-                                    std::string(cp.normal_mode_parameters->called_presentation_selector->begin(), cp.normal_mode_parameters->called_presentation_selector->end())  : "");                            
-                            if (cp.normal_mode_parameters->called_presentation_selector){
-                                cpa.normal_mode_parameters->responding_presentation_selector__assign((cp.normal_mode_parameters->called_presentation_selector));   
-                                cpr.normal_mode_parameters()->responding_presentation_selector__assign((cp.normal_mode_parameters->called_presentation_selector)); }
-                            
+                                    std::string(cp.normal_mode_parameters->called_presentation_selector->begin(), cp.normal_mode_parameters->called_presentation_selector->end())  : "");
+                            if (cp.normal_mode_parameters->called_presentation_selector) {
+                                cpa.normal_mode_parameters->responding_presentation_selector__assign((cp.normal_mode_parameters->called_presentation_selector));
+                                cpr.normal_mode_parameters()->responding_presentation_selector__assign((cp.normal_mode_parameters->called_presentation_selector));
+                            }
+
                             selector().calling(cp.normal_mode_parameters->calling_presentation_selector ?
                                     std::string(cp.normal_mode_parameters->calling_presentation_selector->begin(), cp.normal_mode_parameters->calling_presentation_selector->end())  : "");
-                            
+
                             if (!cp.normal_mode_parameters->presentation_context_definition_list)
                                 return error_negotiate;
-                            
+
                             cpa.normal_mode_parameters->presentation_context_definition_result_list__new();
                             cpr.normal_mode_parameters()->presentation_context_definition_result_list__new();
-                            
+
                             for (definition_list_type::const_iterator it = cp.normal_mode_parameters->presentation_context_definition_list->begin();
                                     it != cp.normal_mode_parameters->presentation_context_definition_list->end(); ++it) {
-                                 oid_type trasfrslt = option_.has_abstract_syntax(it->abstract_syntax_name, it->transfer_syntax_name_list);
-                                 if (!trasfrslt.empty()) {
+                                oid_type trasfrslt = option_.has_abstract_syntax(it->abstract_syntax_name, it->transfer_syntax_name_list);
+                                if (!trasfrslt.empty()) {
                                     ppm()->insert_context(it->presentation_context_identifier, it->abstract_syntax_name);
                                     p_result_type tmp;
                                     tmp.result = 0;
@@ -446,25 +451,25 @@ namespace boost {
                                     cpa.normal_mode_parameters->presentation_context_definition_result_list->push_back(tmp);
                                     cpr.normal_mode_parameters()->presentation_context_definition_result_list->push_back(tmp);
                                 }
-                                else{
+                                else {
                                     p_result_type tmp;
-                                    tmp.result=1;
-                                    tmp.provider_reason__assign(0); 
-                                    cpa.normal_mode_parameters->presentation_context_definition_result_list->push_back(tmp);    
+                                    tmp.result = 1;
+                                    tmp.provider_reason__assign(0);
+                                    cpa.normal_mode_parameters->presentation_context_definition_result_list->push_back(tmp);
                                     cpr.normal_mode_parameters()->presentation_context_definition_result_list->push_back(tmp);
-                                }                                 
-                        }
-                            
-                        if (parse_userdata(ppm(), cp.normal_mode_parameters->user_data))
-                            return error_negotiate;    
-                        if (negotiate_presentation_accept()){
-                            if (build_userdata(ppm(), cpa.normal_mode_parameters->user_data))
+                                }
+                            }
+
+                            if (parse_userdata(ppm(), cp.normal_mode_parameters->user_data))
                                 return error_negotiate;
+                            if (negotiate_presentation_accept()) {
+                                if (build_userdata(ppm(), cpa.normal_mode_parameters->user_data))
+                                    return error_negotiate;
+                                (coder()->output()) & cpr;
+                                return accept_negotiate;
+                            }
                             (coder()->output()) & cpr;
-                            return accept_negotiate;
-                        }
-                        (coder()->output()) & cpr;                         
-                        return reject_negotiate;    
+                            return reject_negotiate;
                         }
                         else {
                             return error_negotiate;
