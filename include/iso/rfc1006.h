@@ -31,8 +31,6 @@ namespace boost {
             namespace iec8073_tcp {
 
 
-
-
                 const std::string TKPT_START = std::string("\x3\x0", 2);
                 const std::string NULLCHAR = std::string("\x0", 1);
 
@@ -108,8 +106,6 @@ namespace boost {
 
                 void generate_TKPTDU(std::string& val);
 
-                size_t getPDUsize(int8_t sz);
-
                 typedef std::pair<int8_t , std::size_t>           headarvar;
 
                 typedef std::pair<headarvar , std::string> headarvarvalue;
@@ -166,8 +162,8 @@ namespace boost {
                     void maxpdusize(std::size_t val);
 
                 private:
-                    int16_t dst_;
-                    int16_t src_;
+                    int16_t                    dst_;
+                    int16_t                    src_;
                     headarvarvalues vars_;
                 } ;
 
@@ -245,8 +241,10 @@ namespace boost {
                     }
 
                 private:
+                    
                     std::string sizenorm_;
                     std::string sizeeof_;
+                    
                 } ;
 
 
@@ -368,7 +366,7 @@ namespace boost {
                 class receive_seq {
                 public:
 
-                    typedef std::vector<int8_t>                                                                                data_type;
+                    typedef std::vector<int8_t>                                                                                 data_type;
                     typedef boost::shared_ptr< data_type >                                                          data_type_ptr;
 
                     enum operation_state {
@@ -440,33 +438,27 @@ namespace boost {
 
                     boost::system::error_code check_header();
 
-
-
                     operation_state                        state_;
-                    std::size_t                                size_;
-                    std::size_t                                estimatesize_;
-                    std::size_t                                datasize_;
-                    std::size_t                                waitdatasize_;
-                    tpdu_type                                  type_;
-                    int8_t                                        class_option_;
-                    int8_t                                        reject_reason_;
-                    protocol_options                     options_;
+                    std::size_t                                   size_;
+                    std::size_t                                   estimatesize_;
+                    std::size_t                                   datasize_;
+                    std::size_t                                   waitdatasize_;
+                    tpdu_type                                   type_;
+                    int8_t                                           class_option_;
+                    int8_t                                           reject_reason_;
+                    protocol_options                      options_;
                     boost::system::error_code     errcode_;
-                    bool                                           eof_;
+                    bool                                            eof_;
 
-                    data_type_ptr                         tkpt_data;
-                    mutable_buffer                      tkpt_buff_;
-                    data_type_ptr                         header_data;
-                    mutable_buffer                      header_buff_;
-                    mutable_buffer                       userbuff_;
-
-
+                    data_type_ptr                           tkpt_data;
+                    mutable_buffer                        tkpt_buff_;
+                    data_type_ptr                           header_data;
+                    mutable_buffer                        header_buff_;
+                    mutable_buffer                        userbuff_;
                 } ;
 
+                
                 typedef boost::shared_ptr<receive_seq>               receive_seq_ptr;
-
-
-
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -635,12 +627,12 @@ namespace boost {
                             }
                         }
 
-                        stream_socket*                           socket_;
-                        ConnectHandler                          handler_;
-                        stateconnection                          state_;
-                        protocol_options                        options_;
-                        endpoint_type                             peer_endpoint_;
-                        send_seq_ptr                               send_;
+                        stream_socket*                            socket_;
+                        ConnectHandler                           handler_;
+                        stateconnection                           state_;
+                        protocol_options                          options_;
+                        endpoint_type                               peer_endpoint_;
+                        send_seq_ptr                                send_;
                         receive_seq_ptr                           receive_;
 
                     } ;
@@ -718,9 +710,9 @@ namespace boost {
 
 
                     private:
-                        stream_socket*                                              socket_;
-                        ReleaseHandler                                              handler_;
-                        send_seq_ptr                                                  send_;
+                        stream_socket*                       socket_;
+                        ReleaseHandler                      handler_;
+                        send_seq_ptr                           send_;
                     } ;
 
 
@@ -864,11 +856,11 @@ namespace boost {
 
 
 
-                        stream_socket*                              socket_;
+                        stream_socket*                               socket_;
                         CheckAcceptHandler                    handler_;
-                        stateconnection                            state_;
-                        protocol_options                          options_;
-                        send_seq_ptr                                 send_;
+                        stateconnection                             state_;
+                        protocol_options                            options_;
+                        send_seq_ptr                                  send_;
                         receive_seq_ptr                             receive_;
 
                     } ;
@@ -967,11 +959,11 @@ namespace boost {
 
                     private:
 
-                        stream_socket*                                             socket_;
-                        SendHandler                                                  handler_;
-                        send_seq_ptr                                                 in_;
+                        stream_socket*                                               socket_;
+                        SendHandler                                                    handler_;
+                        send_seq_ptr                                                   in_;
                         boost::asio::socket_base::message_flags flags_;
-                        std::size_t                                                       send_lower_;
+                        std::size_t                                                          send_lower_;
 
 
                     } ;
@@ -1125,11 +1117,11 @@ namespace boost {
                             return false;
                         }
 
-                        stream_socket*                                              socket_;
-                        ReceiveHandler                                              handler_;
+                        stream_socket*                                                socket_;
+                        ReceiveHandler                                               handler_;
                         const Mutable_Buffers&                               buff_;
-                        receive_seq_ptr                                             receive_;
-                        boost::asio::socket_base::message_flags flags_;
+                        receive_seq_ptr                                               receive_;
+                        boost::asio::socket_base::message_flags  flags_;
                     } ;
 
                 public:
@@ -1406,12 +1398,12 @@ namespace boost {
                             }
 
                         private:
-                            service_impl_type&       service_impl_;
-                            implementation_type& impl_;
-                            Handler                           handler_;
-                            Socket&                           socket_;
-                            endpoint_type*              endpoint_;
-                            int16_t                             src_;
+                            service_impl_type&            service_impl_;
+                            implementation_type&       impl_;
+                            Handler                                  handler_;
+                            Socket&                                 socket_;
+                            endpoint_type*                    endpoint_;
+                            int16_t                                   src_;
                         } ;
 
                     public:
@@ -1437,8 +1429,8 @@ namespace boost {
                         }
 
                         service_impl_type&            service_impl_;
-                        mutable int16_t                src_;
-                        boost::mutex                       mtx;
+                        mutable int16_t                 src_;
+                        boost::mutex                        mtx;
 
                     } ;
 
