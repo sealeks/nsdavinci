@@ -166,7 +166,6 @@ namespace boost {
                 void protocol_options::maxpdusize(std::size_t val) {
                     for (headarvarvalues::reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
                         if (it->first.first == VAR_MAXTPDU_SIZE) {
-                            //it->second=inttype_to_str(static_cast<int8_t>(tpdu_type_size(val)));
                             return;
                         }
                     }
@@ -385,8 +384,6 @@ namespace boost {
                     state_ = waitheader;
                     header_data = data_type_ptr(new data_type(li));
                     header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
-                    //std::cout << "vector resrv : " << header_data->capacity() << std::endl;
-                    size_ = 0;
                     if (li > 128)
                         return errcode(ERROR__EPROTO);
                     estimatesize_ = li;
