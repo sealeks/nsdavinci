@@ -6,7 +6,7 @@
  */
 
 #ifndef RFC1006_H
-#define	RFC1006_H
+#define RFC1006_H
 
 
 
@@ -1545,5 +1545,4 @@ namespace boost {
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif	/* RFC1006_H */
-
+#endif  /* RFC1006_H */

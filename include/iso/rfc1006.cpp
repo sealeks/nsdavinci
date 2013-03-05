@@ -378,6 +378,7 @@ namespace boost {
                     state_ = waitheader;
                     header_data = data_type_ptr(new data_type(li));
                     header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
+                    size_ = 0;
                     if (li > 128)
                         return errcode(ERROR__EPROTO);
                     estimatesize_ = li;
