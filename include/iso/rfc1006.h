@@ -65,10 +65,7 @@ namespace boost {
                     return static_cast<int8_t> (val);
                 }
 
-
-
                 tpdu_type tpdu_type_from(int8_t val);
-
 
                 const int8_t REJECT_REASON_NORM = '\x80'; // normal release
                 const int8_t REJECT_REASON_SESS = '\x02'; // session   error  
@@ -77,7 +74,7 @@ namespace boost {
 
                 boost::system::error_code errorcode_by_reason(int8_t val);
 
-                inline int8_t tpdu_type_size(tpdu_size val) {
+                inline int8_t  tpdu_type_size(tpdu_size val) {
                     return static_cast<int8_t> (val);
                 }
 
@@ -469,12 +466,12 @@ namespace boost {
                 public:
 
                     explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector() )
-                    : basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(SIZE2048), option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling() ), waiting_data_size_(0), eof_state_(true) {
+                    : basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(SIZE2048), transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling() ), waiting_data_size_(0), eof_state_(true) {
                     }
 
                     stream_socket(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, const transport_selector& tsel = transport_selector())
-                    : basic_stream_socket<boost::asio::ip::tcp >(io_service, endpoint), pdusize_(tsel.pdusize()), option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
+                    : basic_stream_socket<boost::asio::ip::tcp >(io_service, endpoint), pdusize_(tsel.pdusize()), transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
                     }
 
 
@@ -499,7 +496,6 @@ namespace boost {
                     bool input_empty() const {
                         return (!waiting_data_size_) && (eof_state_);
                     }
-
 
 
 
@@ -543,9 +539,9 @@ namespace boost {
                         socket_(socket),
                         handler_(handler),
                         state_(request),
-                        options_(socket->prot_option()),
+                        options_(socket->transport_option()),
                         peer_endpoint_(peer_endpoint),
-                        send_(send_seq_ptr( new send_seq(socket->prot_option()))),
+                        send_(send_seq_ptr( new send_seq(socket->transport_option()))),
                         receive_(new receive_seq()) {
                         }
 
@@ -602,9 +598,8 @@ namespace boost {
                                 switch (receive_->type()) {
                                     case CC:
                                     {
-                                        socket_->correspond_prot_option(receive_->options());
+                                        socket_->negotiate_transport_option(receive_->options());
                                         handler_(ec);
-                                        std::cout << "connect_op success" << std::endl;
                                         return;
                                     }
                                     case ER:
@@ -613,7 +608,6 @@ namespace boost {
                                         boost::system::error_code ecc;
                                         socket_->get_service().close(socket_->get_implementation() , ecc);
                                         handler_(receive_->errcode() ? receive_->errcode() : ERROR_EIO);
-                                        std::cout << "connect_op refuse :" << receive_->errcode() << std::endl;
                                         return;
                                     }
                                 }
@@ -686,7 +680,7 @@ namespace boost {
                         releaseconnect_op(stream_socket*  socket, ReleaseHandler handler, int8_t rsn) :
                         socket_(socket),
                         handler_(handler),
-                        send_(send_seq_ptr( new send_seq(socket->prot_option().dst_tsap(),  socket->prot_option().src_tsap(), rsn))) {
+                        send_(send_seq_ptr( new send_seq(socket->transport_option().dst_tsap(),  socket->transport_option().src_tsap(), rsn))) {
                         }
 
                         void run() {
@@ -764,7 +758,7 @@ namespace boost {
                         socket_(socket),
                         handler_(handler),
                         state_(wait),
-                        options_(socket->prot_option()),
+                        options_(socket->transport_option()),
                         send_(),
                         receive_(new receive_seq()) {
                         }
@@ -843,9 +837,8 @@ namespace boost {
 
                             protocol_options  opt = receive_->options();
                             opt.pdusize(options_.pdusize());
-                            socket_->correspond_prot_option(opt);
+                            socket_->negotiate_transport_option(opt);
                             handler_(ec);
-                            std::cout << "accept_op success" << std::endl;
                         }
 
                         void state(stateconnection st) {
@@ -871,13 +864,10 @@ namespace boost {
                     template <typename CheckAcceptHandler>
                     void asyn_check_accept(CheckAcceptHandler handler, int16_t  src) {
 
-                        option_.src_tsap(src);
+                        transport_option_.src_tsap(src);
                         this->get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
                                 accept_op<CheckAcceptHandler > (const_cast<stream_socket*> (this), handler)));
                     }
-
-
-
 
 
 
@@ -1160,7 +1150,6 @@ namespace boost {
                     }
 
                     void  waiting_data_size( std::size_t val, bool st) {
-                        //std::cout << "waitig data : " << val <<  " eof:" << st << std::endl;
                         eof_state_ = st;
                         waiting_data_size_ = val;
                     }
@@ -1175,19 +1164,14 @@ namespace boost {
                         return pdusize_;
                     };
 
-                    const protocol_options& prot_option() const {
-                        return option_;
+                    const protocol_options& transport_option() const {
+                        return transport_option_;
                     }
 
-                    void correspond_prot_option(const protocol_options& val) {
+                    void negotiate_transport_option(const protocol_options& val) {
 
                         pdusize_ = val.pdusize();
-                        std::cout << "correspond_prot_option tpdu size: " << tpdu_byte_size(pdusize_) << std::endl;
-                        option_.dst_tsap(val.src_tsap());
-                        std::cout << "correspond_prot_option calling  : " << val.tsap_calling() << std::endl;
-                        std::cout << "correspond_prot_option called  : " << val.tsap_called() << std::endl;
-                        std::cout << "correspond_prot_option dst id : " << option_.dst_tsap() << std::endl;
-                        std::cout << "correspond_prot_option src id : " << option_.src_tsap() << std::endl;
+                        transport_option_.dst_tsap(val.src_tsap());
                     }
 
                     boost::system::error_code connect_impl(const endpoint_type& peer_endpoint,
@@ -1196,7 +1180,7 @@ namespace boost {
                         if (this->get_service().connect(this->get_implementation(), peer_endpoint, ec))
                             return ec;
 
-                        send_seq_ptr  send_ (send_seq_ptr( new send_seq(prot_option())));
+                        send_seq_ptr  send_ (send_seq_ptr( new send_seq(transport_option())));
                         while (!ec && !send_->ready())
                             send_->size( this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
                         if (ec)
@@ -1211,7 +1195,7 @@ namespace boost {
                             switch (receive_->type()) {
                                 case CC:
                                 {
-                                    correspond_prot_option(receive_->options());
+                                    negotiate_transport_option(receive_->options());
                                     return ec;
                                 }
                                 case ER:
@@ -1233,7 +1217,7 @@ namespace boost {
 
                     boost::system::error_code releaseconnect_impl(int8_t rsn, boost::system::error_code& ec) {
                         if (is_open()) {
-                            send_seq_ptr  send_ (send_seq_ptr( new send_seq(prot_option().dst_tsap(), prot_option().src_tsap(), rsn)));
+                            send_seq_ptr  send_ (send_seq_ptr( new send_seq(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                             while (!ec && !send_->ready())
                                 send_->size( this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
 
@@ -1243,7 +1227,7 @@ namespace boost {
                     }
 
                     boost::system::error_code  check_accept_imp(int16_t  src,  boost::system::error_code& ec) {
-                        option_.src_tsap(src);
+                        transport_option_.src_tsap(src);
                         bool canseled = false;
                         receive_seq_ptr   receive_(receive_seq_ptr(new receive_seq()));
                         while (!ec && !receive_->ready()) {
@@ -1252,7 +1236,7 @@ namespace boost {
                         if (ec)
                             return ec;
                         send_seq_ptr  send_ ;
-                        protocol_options options_ = this->prot_option();
+                        protocol_options options_ = transport_option();
                         if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
                             boost::system::error_code ecc;
                             this->get_service().close(this->get_implementation(), ecc);
@@ -1278,7 +1262,7 @@ namespace boost {
 
                             protocol_options  opt = receive_->options();
                             opt.pdusize(options_.pdusize());
-                            correspond_prot_option(receive_->options());
+                            negotiate_transport_option(receive_->options());
                         }
                         return ec = canseled ? ERROR_EDOM : ec;
                     }
@@ -1326,7 +1310,7 @@ namespace boost {
 
 
                     tpdu_size                                        pdusize_;
-                    protocol_options                             option_;
+                    protocol_options                             transport_option_;
                     std::size_t                                        waiting_data_size_;
                     bool                                                   eof_state_;
                 } ;
