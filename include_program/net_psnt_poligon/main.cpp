@@ -1,7 +1,7 @@
 /*  * File:   main.cpp
  * Author: sealeks@mail.ru
  *
- * Created on 27 Р РЋР ВµР Р…РЎвЂљРЎРЏР В±РЎР‚РЎРЉ 2012 Р С–., 15:58
+ * Created on 27 Р  Р Р‹Р  Р’ВµР  Р вЂ¦Р РЋРІР‚С™Р РЋР РЏР  Р’В±Р РЋР вЂљР РЋР Р‰ 2012 Р  РЎвЂ“., 15:58
  */
 
 #include <cstdlib>
@@ -23,57 +23,39 @@
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
 
-#include "present.h"
+//#include "present.h"
+#include "mmssocket.h"
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
 
-using boost::asio::iso::iso8823;
-typedef boost::asio::iso::iso8823                                         protocol_type;
+typedef iso9506                                                                            protocol_type;
 
 
 
-typedef protocol_type::selector                                         selector_type;
-typedef protocol_type::socket                                            socket_type;
-typedef protocol_type::acceptor                                        acceptor_type;
-typedef protocol_type::endpoint                                       endpoint_type;
+typedef protocol_type::socket                                           socket_type;
+typedef protocol_type::acceptor                                      acceptor_type;
+typedef protocol_type::endpoint                                        endpoint_type;
 typedef protocol_type::resolver                                         resolver_type;
 
-
-
-
-/*const boost::array<boost::asio::asn::oidindx_type, 6 > PCNTXT_ARR_ = {1, 2, 3, 4, 5,  1};
-const boost::asio::asn::oid_type PCNTXT_OID_ = boost::asio::asn::oid_type(PCNTXT_ARR_);
-
-const boost::array<boost::asio::asn::oidindx_type, 6 > CMCNTXT_ARR_ = {1, 2, 3, 4, 5,  2};
-const boost::asio::asn::oid_type CMCNTXT_OID_ = boost::asio::asn::oid_type(CMCNTXT_ARR_);
-
-typedef boost::asio::iso::short_context_type short_context_type;
-short_context_type shctx;
-//shctx.abstract_syntax_name=  PCNTXT_OID_;
-//shctx.transfer_syntax_name= CMCNTXT_OID_;*/
-
-//boost::asio::iso:: presentation_opt(shctx);
-
-typedef protocol_type::lowselector                         lowselector_type;
-typedef boost::asio::iso::iso8327::lowselector        lowerselector_type;
-const lowselector_type  LSELECTOR = lowselector_type("SERVER-SSEL", lowerselector_type("SERVER-TSEL", boost::asio::iso::SIZE128));
-const selector_type  SELECTOR = selector_type("P-EXAMPLE-SERVER", LSELECTOR);
-
-
+typedef protocol_type::presentation_selector                      presentation_selector ;
+typedef protocol_type::session_selector                      session_selector;
+typedef protocol_type::transport_selector                  transport_selector;
+const session_selector   LSELECTOR = session_selector ("SERVER-SSEL", std::string("\x0\x1",2) ,  transport_selector("SERVER-TSEL",std::string("\x0\x0",2), boost::asio::iso::SIZE128));
+const presentation_selector   PSELECTOR = presentation_selector ("P-EXAMPLE-SERVER",std::string("\x0\x0\x0\x1", 4), LSELECTOR);
 
 
 int port = 102;
 
 #ifndef NET_BLOCKING
 
-/*class session {
+class session {
 public:
 
     session(boost::asio::io_service& io_service)
-    : socket_(io_service, SELECTOR){
+    : socket_(io_service, PSELECTOR){
         std::cout << "New sesion\n";
     }
 
@@ -82,14 +64,14 @@ public:
     }
 
     void start() {
-        if (trans_) {
+     /*   if (trans_) {
             std::cout << "Client accept data : " << trans_->respond_str() << std::endl;
         }
 
         socket_.async_read_some(boost::asio::buffer(data_, max_length),
                 boost::bind(&session::handle_read, this,
                 boost::asio::placeholders::error,
-                boost::asio::placeholders::bytes_transferred));
+                boost::asio::placeholders::bytes_transferred));*/
 
     }
 
@@ -97,7 +79,7 @@ private:
 
     void handle_read(const boost::system::error_code& error,
             size_t bytes_transferred) {
-        if (!error) {
+     /* if (!error) {
            boost::asio::async_write(socket_,
                     boost::asio::buffer(data_, bytes_transferred),
                     boost::bind(&session::handle_write, this,
@@ -107,11 +89,11 @@ private:
         }
         else {
             delete this;
-        }
+        }*/  
     }
 
     void handle_write(const boost::system::error_code& error) {
-        if (!error) {
+      /*  if (!error) {
             std::cout << "Server write: " <<  message <<  " size: " <<  message.size() << std::endl;
             socket_.async_read_some(boost::asio::buffer(data_, max_length),
                     boost::bind(&session::handle_read, this,
@@ -122,12 +104,11 @@ private:
         }
         else {
             delete this;
-        }
+        }*/
     }
 
     socket_type socket_;
     std::string message;
-    archive_ptr trans_;
 } ;
 
 class server {
@@ -135,27 +116,21 @@ public:
 
     server(boost::asio::io_service& io_service, short port)
     : io_service_(io_service),
-    acceptor_(io_service, endpoint_type(boost::asio::ip::tcp::v4(), port)) {
+    acceptor_(io_service, endpoint_type(boost::asio::ip::tcp::v4(), port))  {
         start_accept();
     }
 
 private:
 
     void start_accept() {
-        archive_ptr trans_ = boost::asio::iso::create_simple_data("Hello client from test");
+        //archive_ptr trans_ = boost::asio::iso::create_simple_data("Hello client from test");
 
-        session* new_session = new session(io_service_, trans_);
+        session* new_session = new session(io_service_);
 
 
 
         acceptor_.async_accept(new_session->socket(),
-
-#if defined(PRES_PROT)
-                trans_,
-#elif defined(SESSION_PROT)
-                trans_,
-#else
-#endif            
+       
                 boost::bind(&server::handle_accept, this, new_session,
                 boost::asio::placeholders::error));
     }
@@ -175,7 +150,7 @@ private:
     boost::asio::io_service& io_service_;
     acceptor_type acceptor_;
 
-} ;*/
+} ;
 
 class client {
 public:
@@ -183,9 +158,8 @@ public:
     client(boost::asio::io_service& io_service,
             resolver_type::iterator endpoint_iterator, const std::string& called = "")
     : io_service_(io_service),
-    socket_(io_service, SELECTOR, getpresentotion()) {
+    socket_(io_service, PSELECTOR ) {
         endpoint_type endpoint = *endpoint_iterator;
-        prepare_connect(socket_.ppm());
         socket_.async_connect(endpoint, 
                 boost::bind(&client::handle_connect, this,
                 boost::asio::placeholders::error, ++endpoint_iterator));
@@ -193,6 +167,7 @@ public:
 
     ~client() {
         std::cout << "Socket destuctor"  << std::endl;
+        socket_.close();
     }
 
     void release() {
@@ -215,34 +190,33 @@ private:
     void handle_connect(const boost::system::error_code& error,
             resolver_type::iterator endpoint_iterator) {
         if (!error) {
-                    std::cout << "Server accept message: " << complete_connect(socket_.ppm()) << std::endl; 
+              // std::cout << "Server accept message: " << complete_connect(socket_.ppm()) << std::endl; 
 
         }
-        else if (endpoint_iterator != resolver_type::iterator()) {
-            //socket_.close();
-            endpoint_type endpoint = *endpoint_iterator;
-            prepare_connect(socket_.ppm());
-            socket_.async_connect(endpoint, 
-                    boost::bind(&client::handle_connect,  this,
-                    boost::asio::placeholders::error, ++endpoint_iterator));
-        }
+     //   else if (endpoint_iterator != resolver_type::iterator()) {
+
+       //     endpoint_type endpoint = *endpoint_iterator;
+       //     socket_.async_connect(endpoint, 
+        //            boost::bind(&client::handle_connect,  this,
+        //            boost::asio::placeholders::error, ++endpoint_iterator));
+       // }
     }
     
     void handle_request(const boost::system::error_code& error) {
-          if (!error) {
+       /*  if (!error) {
               std::cout << "Message sent to Server: " <<  std::endl; 
               socket_.async_respond( boost::bind(&client::handle_respond,  this,
                     boost::asio::placeholders::error));              
           }
           else {
               std::cout << "Message ERROR sent to Server: " <<  std::endl; 
-          }
+          }*/ 
     }    
     
     
     void handle_respond(const boost::system::error_code& error) {
           if (!error) {
-              std::cout << "Message recieve from Server: " << prs_read_request(socket_.ppm()) <<  std::endl; 
+              //std::cout << "Message recieve from Server: " << prs_read_request(socket_.ppm()) <<  std::endl; 
           }
           else {
               std::cout << "Message ERROR recieve to Server: " <<  std::endl; 
@@ -267,10 +241,10 @@ private:
     }
 
     void do_write() {
-          std::cout << "Client write:" << message <<  " size: " <<  message.size() << std::endl;
+    /*   std::cout << "Client write:" << message <<  " size: " <<  message.size() << std::endl;
                     bld_write_request(socket_.ppm(), message);
                     socket_.async_request( boost::bind(&client::handle_request,  this,
-                    boost::asio::placeholders::error));
+                    boost::asio::placeholders::error));*/   
 
     }
 
@@ -287,7 +261,7 @@ private:
     }
 
     void do_close() {
-        //socket_.close();
+     //   socket_.close();
     }
 
 private:
@@ -450,7 +424,7 @@ private:
 
 using namespace std;
 
-/*struct Server {
+struct Server {
 
     Server(boost::asio::io_service & serv) : terminated_(false), io_service(serv), server_(io_service, port) {
     }
@@ -476,7 +450,7 @@ private:
     server server_;
 } ;
 
-typedef callable_shared_ptr< Server >                         server_ptr;*/
+typedef callable_shared_ptr< Server >                         server_ptr;
 
 struct Client {
 
@@ -567,9 +541,9 @@ int main(int argc, char* argv[]) {
 
 
     try {
-        //  if (argc < 2) {
+          if (argc < 2) {
 
-        /*    boost::asio::io_service io_service;
+          boost::asio::io_service io_service;
 
              server_ptr ss = server_ptr( new Server(io_service));
              boost::thread serverth = boost::thread(ss);
@@ -591,7 +565,7 @@ int main(int argc, char* argv[]) {
 
 
          }
-         else {*/
+         else {
 
         boost::asio::io_service io_service;
 
@@ -619,7 +593,7 @@ int main(int argc, char* argv[]) {
 
 
 
-        //  }
+          }
 
     }
     catch (std::exception& e) {
