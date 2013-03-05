@@ -12,7 +12,6 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <itemPath>../../include/iso/acse/ACSE-1.h</itemPath>
     <itemPath>../../include/iso/presentation/ISO8823-PRESENTATION.h</itemPath>
     <itemPath>../../include/iso/presentation/Reliable-Transfer-APDUs.h</itemPath>
     <itemPath>../../include/iso/archive_stream.cpp</itemPath>
