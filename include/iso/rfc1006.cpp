@@ -12,8 +12,6 @@
 #include <iso/rfc1006.h>
 
 
-
-
 namespace boost {
     namespace asio {
         namespace iso {
