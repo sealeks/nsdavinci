@@ -2,7 +2,7 @@
  * File:   mmssocket.h
  * Author: sealeks@mail.ru
  *
- * Created on 27 Февраль 2013 г., 22:26
+ * Created on 27 Р¤РµРІСЂР°Р»СЊ 2013 Рі., 22:26
  */
 
 #ifndef MMSSOCKET_H
@@ -12,22 +12,47 @@
 #include <iso/mms/MMS-SCI-Module-1.h>
 
 
+#define  BOOST_MMS_REGESTRATE_ENUM_CONFIRM_REQ(regtype, regenum)      template<> \
+    struct cofirm_request_trait<  regtype > {\
+            static  MMS::ConfirmedServiceRequest_enum type() {\
+                    return regenum ;\
+            }\
+    };\
 
-#define BOOST_MMS_REGESTRATE_ENUM_TYPE_(regtype)  inline get_enum_by_mms_type
+#define  BOOST_MMS_REGESTRATE_ENUM_CONFIRM_RSP(regtype, regenum)      template<> \
+    struct cofirm_response_trait<  regtype > {\
+            static  MMS::ConfirmedServiceResponse_enum type() {\
+                    return regenum ;\
+            }\
+    };\
 
 namespace prot9506 {
-    
-    
+
+
     namespace ACSE = ACSE_1;
     namespace MMS = ISO_9506_MMS_1;
     namespace MMSO = MMS_Object_Module_1;
+
+
+    template< typename T>
+    struct cofirm_request_trait{
+            static  MMS::ConfirmedServiceRequest_enum type() {
+                    return MMS::ConfirmedServiceRequest_null;
+            }
+    };
     
-  
+    template< typename T>
+    struct cofirm_response_trait{
+            static  MMS::ConfirmedServiceResponse_enum type() {
+                    return MMS::ConfirmedServiceResponse_null;
+            }
+    };   
     
-
-
-
-
+    
+    BOOST_MMS_REGESTRATE_ENUM_CONFIRM_REQ(MMS::Identify_Request, MMS::ConfirmedServiceRequest_identify)
+    BOOST_MMS_REGESTRATE_ENUM_CONFIRM_RSP(MMS::Identify_Response , MMS::ConfirmedServiceResponse_identify)  
+            
+    
     typedef boost::asio::iso::presentation_pm_ptr                  presentation_pm_ptr;
     typedef boost::asio::iso::presentation_option                    presentation_option;
 
@@ -39,76 +64,82 @@ namespace prot9506 {
 
     const boost::array<boost::asio::asn::oidindx_type, 5 > MMSA_ARR = {1, 0, 9506 , 2,  3};
     const boost::asio::asn::oid_type MMSA_OID = boost::asio::asn::oid_type(MMSA_ARR);
-    
-    
-     typedef MMSO::Unsigned32  invoke_id_type;    
+
+
+    typedef MMSO::Unsigned32  invoke_id_type;
 
 
     presentation_option init_synaxes();
-    
-    
+
     template< typename REQ, typename RSP, MMS::ConfirmedServiceRequest_enum REQID, MMS::ConfirmedServiceResponse_enum RSPID >
-    class confermed_operation{     
+    class confirmed_operation {
     public:
-        
+
         typedef REQ                             request_type;
         typedef RSP                              response_type;
         typedef MMS::RejectPDU       reject_type;
-        
+
         typedef boost::shared_ptr<request_type>      request_type_ptr;
-        typedef boost::shared_ptr<response_type>   response_type_ptr;   
-        typedef boost::shared_ptr<reject_type>         reject_type_ptr;          
-        
-        enum state{
+        typedef boost::shared_ptr<response_type>   response_type_ptr;
+        typedef boost::shared_ptr<reject_type>         reject_type_ptr;
+
+        enum state {
             noproccess_state,
             ok_state,
             rejected_state,
             error_state
-        };
-        
-        confermed_operation() : error_() {}
-        
+        } ;
+
+        confirmed_operation(invoke_id_type inv) : invokeid_(inv), error_() {
+        }
+
         request_type&  request() {
-            if (!request_)  request_=request_type_ptr( new request_type());
+            if (!request_)  request_ = request_type_ptr( new request_type());
             return *request_;
-        } 
-        
-        response_type&  request() {
-            if (!response_)  response_=response_type_ptr( new response_type());
+        }
+
+        response_type&  response() {
+            if (!response_)  response_ = response_type_ptr( new response_type());
             return *response_;
-        }       
-        
+        }
+
         reject_type&  reject() {
-            if (!reject_)  reject_=reject_type_ptr( new reject_type());
+            if (!reject_)  reject_ = reject_type_ptr( new reject_type());
             return *reject_;
-        }             
-        
+        }
+
+        invoke_id_type  invokeid() {
+            return invokeid_;
+        }
+
         MMS::ConfirmedServiceRequest_enum reqid() const {
-            return REQID; }
-        
+            return REQID;
+        }
+
         MMS::ConfirmedServiceResponse_enum rspid() const {
-            return RSPID; }            
-        
-        
+            return RSPID;
+        }
+
+
     private:
-        request_type_ptr  request_;
-        response_type_ptr  response_;   
-        reject_type_ptr          reject_;
+        invoke_id_type                       invokeid_;
+        request_type_ptr                   request_;
+        response_type_ptr                response_;
+        reject_type_ptr                      reject_;
         boost::system::error_code  error_;
-    };
+    } ;
 
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void identify_request( presentation_pm_ptr ppm);
-    boost::system::error_code identify_response(presentation_pm_ptr ppm);
+
 
     using boost::asio::iso::presentation_selector;
 
     class stream_socket : public boost::asio::iso::prot8823::stream_socket  {
-        
-        typedef boost::asio::iso::prot8823::stream_socket                                          super_type;       
+        typedef boost::asio::iso::prot8823::stream_socket                                          super_type;
         typedef boost::asio::iso::prot8823::presentation_context_unit_ptr    application_context_ptr;
-        
+
 
     public:
 
@@ -137,14 +168,14 @@ namespace prot9506 {
             }
 
             void operator()(const boost::system::error_code& ec) {
-               if (!ec) {
-                      socket_->init_response();
-                      handler_(ec);
-                      return;
-                 }
+                if (!ec) {
+                    socket_->init_response();
+                    handler_(ec);
+                    return;
+                }
 
 
-               handler_( ec);
+                handler_( ec);
             }
 
         private:
@@ -165,47 +196,59 @@ namespace prot9506 {
 
 
             boost::system::error_code error = init_request();
-            if (error){
+            if (error) {
                 handler(error);
             }
-                
+
 
             super_type::async_connect(peer_endpoint , boost::bind(&connect_op<ConnectHandler>::run,
-                                connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
+                    connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
+        }
+
+        template< typename REQ, typename RSP, MMS::ConfirmedServiceRequest_enum REQID, MMS::ConfirmedServiceResponse_enum RSPID >
+        void async_confirm_reguest(boost::shared_ptr<confirmed_operation<REQ, RSP, REQID, RSPID > > operation) {
+
+        }
+
+        template< typename REQ, typename RSP, MMS::ConfirmedServiceRequest_enum REQID, MMS::ConfirmedServiceResponse_enum RSPID >
+        void async_confirm_response(boost::shared_ptr<confirmed_operation<REQ, RSP, REQID, RSPID > > operation) {
+
         }
         
+        
+        boost::system::error_code identify_request();
+        boost::system::error_code identify_response();        
+
     protected:
-        
-        
-            application_context_ptr   acseppm(){
-                return acseppm_;   
-            }     
-            
-            application_context_ptr   acseppm() const {
-                return acseppm_;   
-            }       
-            
-            application_context_ptr   mmsppm(){
-                return mmsppm_;   
-            }     
-            
-            application_context_ptr   mmsppm() const {
-                return mmsppm_;   
-            }                  
-                    
-        
-        
-        
+
+        application_context_ptr   acseppm() {
+            return acseppm_;
+        }
+
+        application_context_ptr   acseppm() const {
+            return acseppm_;
+        }
+
+        application_context_ptr   mmsppm() {
+            return mmsppm_;
+        }
+
+        application_context_ptr   mmsppm() const {
+            return mmsppm_;
+        }
+
+
+
+
     private:
-        
-            boost::system::error_code  init_request();
-            boost::system::error_code init_response();
-            
-            boost::system::error_code identify_request();
-            boost::system::error_code identify_response();
-             
-             application_context_ptr   acseppm_;
-             application_context_ptr   mmsppm_;
+
+        boost::system::error_code  init_request();
+        boost::system::error_code init_response();
+
+
+
+        application_context_ptr   acseppm_;
+        application_context_ptr   mmsppm_;
 
     } ;
 

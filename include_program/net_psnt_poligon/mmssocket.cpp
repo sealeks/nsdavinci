@@ -69,13 +69,13 @@ namespace prot9506 {
         userdata.encoding->single_ASN1_type__new();
         userdata.encoding->single_ASN1_type()->bind(*(mmsppm()->archiver()->out()));
 
-        ppm()->find(3)->clear();
+        mmsppm()->archiver()->clear();
 
         areq->user_information__new();
         areq->user_information->push_back(userdata);
         apdu.aarq( new ACSE::AARQ_apdu(areq));
 
-        ppm()->set(ACSE_1_OID, apdu);
+        acseppm()->set(apdu);
 
         return boost::system::error_code();
 
@@ -143,15 +143,38 @@ namespace prot9506 {
     boost::system::error_code stream_socket::identify_request() {
         MMS::MMSpdu mms;
         mms.confirmed_RequestPDU__new();
-        //MMS::ConfirmedServiceRequest& confermedpdu = *mms.confirmed_RequestPDU();    
-       // confermedpdu.identify__new();
-       // MMS::Identify_Request identifyreq = *confermedpdu.identify();
-      //  identifyreq.
+        MMS::Confirmed_RequestPDU& confermedpdu = *mms.confirmed_RequestPDU();
+        confermedpdu.invokeID = 100;
+        confermedpdu.service->identify__new();
+        mmsppm()->set(mms);
         return boost::system::error_code();
-
     }
 
     boost::system::error_code stream_socket::identify_response() {
+        MMS::MMSpdu mms;
+        mmsppm()->get(mms);
+        switch (mms.type()) {
+            case MMS::MMSpdu_confirmed_ResponsePDU:
+            {
+                const MMS::Confirmed_ResponsePDU& mmsresp = *mms.confirmed_ResponsePDU();
+                const MMS::ConfirmedServiceResponse& confirmresp = *mmsresp.service;
+                switch (confirmresp.type()) {
+                    case MMS::ConfirmedServiceResponse_identify:{
+                        const MMS::Identify_Response&  idetfy=*confirmresp.identify();
+                        std::cout << "Vendor: " << (*idetfy.vendorName) << " Model: " << (*idetfy.modelName)  << " Revision: " << (*idetfy.revision)  << std::endl;
+                    }
+                    default:{
+                        
+                    }
+                }
+                return boost::system::error_code();
+            }
+            default:
+            {
+                return  boost::asio::iso::ERROR_ECONNREFUSED;
+            }
+        }
+
         return boost::asio::iso::ERROR_EADDRNOTAVAIL;
     }
 

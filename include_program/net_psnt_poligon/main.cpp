@@ -190,6 +190,10 @@ private:
     void handle_connect(const boost::system::error_code& error,
             resolver_type::iterator endpoint_iterator) {
         if (!error) {
+            socket_.identify_request();
+            socket_.async_request(boost::bind(&client::handle_request,  this,
+                    boost::asio::placeholders::error));
+            
               // std::cout << "Server accept message: " << complete_connect(socket_.ppm()) << std::endl; 
 
         }
@@ -203,20 +207,20 @@ private:
     }
     
     void handle_request(const boost::system::error_code& error) {
-       /*  if (!error) {
-              std::cout << "Message sent to Server: " <<  std::endl; 
-              socket_.async_respond( boost::bind(&client::handle_respond,  this,
-                    boost::asio::placeholders::error));              
+          if (!error) {
+            socket_.async_respond(boost::bind(&client::handle_respond,  this,
+                    boost::asio::placeholders::error));
           }
           else {
-              std::cout << "Message ERROR sent to Server: " <<  std::endl; 
-          }*/ 
+              std::cout << "Message ERROR recieve to Server: " <<  std::endl; 
+          }
     }    
     
     
     void handle_respond(const boost::system::error_code& error) {
           if (!error) {
-              //std::cout << "Message recieve from Server: " << prs_read_request(socket_.ppm()) <<  std::endl; 
+              socket_.identify_response();
+              std::cout << "Message recieve from Server: " <<   std::endl; 
           }
           else {
               std::cout << "Message ERROR recieve to Server: " <<  std::endl; 
