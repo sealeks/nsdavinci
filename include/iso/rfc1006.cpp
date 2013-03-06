@@ -11,7 +11,7 @@
 namespace boost {
     namespace asio {
         namespace iso {
-            namespace iec8073_tcp {
+            namespace prot8073 {
 
                 boost::system::error_code errorcode_by_reason(int8_t val) {
                     if (!val)
@@ -170,7 +170,7 @@ namespace boost {
 
                 /////////////////////
 
-                bool negotiate_rfc1006_option(protocol_options& self, const protocol_options& dist , int8_t& error) {
+                bool negotiate_prot8073_option(protocol_options& self, const protocol_options& dist , int8_t& error) {
                     if   (!self.tsap_called().empty() && self.tsap_called() != dist.tsap_called()) {
                         error = REJECT_REASON_ADDR;
                         return false;
