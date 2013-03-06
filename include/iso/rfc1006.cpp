@@ -170,7 +170,7 @@ namespace boost {
 
                 /////////////////////
 
-                bool correspond_protocol_option(protocol_options& self, const protocol_options& dist , int8_t& error) {
+                bool negotiate_rfc1006_option(protocol_options& self, const protocol_options& dist , int8_t& error) {
                     if   (!self.tsap_called().empty() && self.tsap_called() != dist.tsap_called()) {
                         error = REJECT_REASON_ADDR;
                         return false;

@@ -1345,6 +1345,9 @@ namespace boost {
 
                     choice_holder(T* vl, int ID = 0) : base_choice_holder(static_cast<int> (ID)) , val_(boost::shared_ptr<T>(vl)) {
                     }
+                    
+                    choice_holder(boost::shared_ptr<T> vl, int ID = 0) : base_choice_holder(static_cast<int> (ID)) , val_(vl) {
+                    }                    
 
                     boost::shared_ptr<T>& value() {
                         return val_;
@@ -1353,7 +1356,7 @@ namespace boost {
                     const boost::shared_ptr<T>& value() const {
                         return val_;
                     }
-
+                    
                     virtual bool empty() const {
                         return false;
                     }
@@ -1421,6 +1424,13 @@ namespace boost {
                     typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
                     val_ = type_ptr( new choice_holder<T > (vl, static_cast<int> (ID)));
                 }
+                
+                template<typename T>
+                void set(boost::shared_ptr<T> vl, E ID) {
+                    typedef  choice_holder<T> choice_holder_type;
+                    typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
+                    val_ = type_ptr( new choice_holder<T > (vl, static_cast<int> (ID)));
+                }                
 
                 template<typename T>
                 void set(E ID) {
@@ -1487,7 +1497,6 @@ namespace boost {
 
             template<typename Archive, typename T>
             inline bool bind_basic(Archive & arch, boost::shared_ptr<T>& vl) {
-                if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl);
                 return (arch.size() != tst);
@@ -1509,7 +1518,6 @@ namespace boost {
 
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
             inline bool bind_basic(Archive & arch, boost::shared_ptr< implicit_typedef<T, Tag, ID, TYPE> >& vl) {
-                if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl->shared_value(), ID, TYPE);
                 return (arch.size() != tst);
@@ -1517,7 +1525,6 @@ namespace boost {
 
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
             inline bool bind_basic(Archive & arch, boost::shared_ptr< explicit_typedef<T, Tag, ID, TYPE> >& vl) {
-                if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_explicit_value<T > (vl->shared_value(), ID, TYPE);
                 return (arch.size() != tst);
@@ -1537,7 +1544,6 @@ namespace boost {
 
             template<typename Archive, typename T>
             inline bool bind_explicit(Archive & arch, boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_explicit_value<T > (vl, id, type);
                 return (arch.size() != tst);
@@ -1552,7 +1558,6 @@ namespace boost {
 
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
             inline bool bind_explicit(Archive & arch, boost::shared_ptr< explicit_typedef<T, Tag, ID, TYPE> >& vl,  id_type id,  class_type type = CONTEXT_CLASS) {
-                if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_explicit_value<T > (vl->shared_value(), ID, TYPE);
                 return (arch.size() != tst);
@@ -1567,7 +1572,6 @@ namespace boost {
 
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
             inline bool bind_explicit(Archive & arch, boost::shared_ptr< implicit_typedef<T, Tag, ID, TYPE> >& vl,  id_type id,  class_type type = CONTEXT_CLASS) {
-                if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_explicit_value<T > (vl->shared_value(), ID, TYPE);
                 return (arch.size() != tst);
@@ -1587,7 +1591,6 @@ namespace boost {
 
             template<typename Archive, typename T>
             inline bool bind_implicit(Archive & arch, boost::shared_ptr<T>& vl, id_type id,  class_type type = CONTEXT_CLASS) {
-                if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl, id, type);
                 return (arch.size() != tst);
@@ -1602,7 +1605,6 @@ namespace boost {
 
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
             inline bool bind_implicit(Archive & arch, boost::shared_ptr< explicit_typedef<T, Tag, ID, TYPE> >& vl,  id_type id,  class_type type = CONTEXT_CLASS) {
-                if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_explicit_value<T > (vl->shared_value(), ID, TYPE);
                 return (arch.size() != tst);
@@ -1617,7 +1619,6 @@ namespace boost {
 
             template<typename Archive, typename T,  class Tag, id_type ID,  class_type TYPE>
             inline bool bind_implicit(Archive & arch, boost::shared_ptr< implicit_typedef<T, Tag, ID, TYPE> >& vl,  id_type id,  class_type type = CONTEXT_CLASS) {
-                if (!vl) return false;
                 std::size_t tst = arch.size();
                 arch & optional_implicit_value<T > (vl->shared_value(), ID, TYPE);
                 return (arch.size() != tst);
@@ -1644,7 +1645,6 @@ namespace boost {
 
             template<typename Archive, typename T>
             inline bool bind_choice(Archive & arch,  boost::shared_ptr< T  >& vl) {
-                if (!vl) return false;
                 return bind_choice(arch, *vl);
             }
 
@@ -1672,7 +1672,8 @@ namespace boost {
             /////////////////////////////////////////////////////////////////////////////////////////////////
 
             struct  external_type {
-
+                //start==============================================================
+                //It is  INTERNAL CHOICE
 
                 enum encoding_type_enum {
                     encoding_type_null = 0  ,
@@ -1797,10 +1798,10 @@ namespace boost {
 
                 template<typename Archive> void serialize(Archive & arch) {
 
-                    BOOST_ASN_IMPLICIT_TAG(direct_reference , 0);
-                    BOOST_ASN_IMPLICIT_TAG(indirect_reference , 1);
-                    BOOST_ASN_IMPLICIT_TAG(data_value_descriptor , 2);
-                    BOOST_ASN_CHOICE_TAG(encoding , 3);
+                    BOOST_ASN_BIND_TAG(direct_reference);
+                    BOOST_ASN_BIND_TAG(indirect_reference);
+                    BOOST_ASN_BIND_TAG(data_value_descriptor);
+                    BOOST_ASN_CHOICE(encoding);
                 }
             } ;
 

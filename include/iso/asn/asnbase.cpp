@@ -120,7 +120,7 @@ namespace boost {
                 construct(vl);
             };
 
-            bitstring_type::bitstring_type(bool vl, std::size_t n) : std::vector<int8_t>(), unuse_(n % 8) {
+            bitstring_type::bitstring_type(bool vl, std::size_t n) : std::vector<int8_t>(), unuse_(7 - n % 8) {
                 if ((vl) &&  (n < 256)) {
                     insert(begin(), (n / 8 + 1), 0);
                     back() = (0x1 << ( 7 - (n % 8)));

@@ -167,7 +167,7 @@ namespace boost {
 
                 // correspond option
                 // return accepted
-                bool correspond_protocol_option(protocol_options& self, const protocol_options& dist , int8_t& error);
+                bool negotiate_rfc1006_option(protocol_options& self, const protocol_options& dist , int8_t& error);
 
 
 
@@ -642,15 +642,15 @@ namespace boost {
                         if (!is_open()) {
                             boost::system::error_code ec;
                             const protocol_type protocol = peer_endpoint.protocol();
-                            if (this->get_service().open(this->get_implementation(), protocol, ec)) {
-                                this->get_io_service().post(
+                            if (get_service().open(get_implementation(), protocol, ec)) {
+                                get_io_service().post(
                                         boost::asio::detail::bind_handler(
                                         BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler), ec));
 
                                 return;
                             }
                         }
-                        this->get_io_service().post(boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint)));
+                        get_io_service().post(boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint)));
                     }
 
 
@@ -822,7 +822,7 @@ namespace boost {
                                 return;
                             }
                             int8_t error_accept = 0;
-                            if (!correspond_protocol_option(options_,  receive_->options(), error_accept))  {
+                            if (!negotiate_rfc1006_option(options_,  receive_->options(), error_accept))  {
                                 send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
                                 state(refuse);
                                 operator()(ec, 0);
@@ -1243,7 +1243,7 @@ namespace boost {
                             return ERROR__EPROTO;
                         }
                         int8_t error_accept = 0;
-                        if (!correspond_protocol_option(options_,  receive_->options(), error_accept))  {
+                        if (!negotiate_rfc1006_option(options_,  receive_->options(), error_accept))  {
                             canseled = true;
                             send_ = send_seq_ptr( new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
                         }

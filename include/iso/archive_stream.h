@@ -88,7 +88,7 @@ namespace boost {
 
 
             typedef boost::asio::asn::oid_type   oid_type;
-            typedef int                                     contex_id_type;
+            typedef int                                            contex_id_type;
 
             typedef enum {
                 NULL_ENCODING = 0,
