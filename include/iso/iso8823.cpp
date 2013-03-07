@@ -174,9 +174,7 @@ namespace boost {
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                static boost::system::error_code  build_userdata(presentation_pm_ptr ppm,  User_data& data) {
-                    if (!ppm)
-                        return ERROR__EPROTO;
+                static void  build_userdata(presentation_pm_ptr ppm,  User_data& data) {
                     if (ppm->is_simple_encoding()) {
                         data.simply_encoded_data__new();
                     }
@@ -192,23 +190,22 @@ namespace boost {
                             }
                         }
                     }
-                    return boost::system::error_code();
                 }
 
-                static boost::system::error_code parse_userdata(presentation_pm_ptr ppm, const User_data& data) {
+                static void parse_userdata(presentation_pm_ptr ppm, const User_data& data) {
                     try {
                         switch (data.type()) {
                             case ISO8823_PRESENTATION::User_data_simply_encoded_data:
                             {
                                 if (!data.simply_encoded_data())
-                                    return ERROR__SEQ;
+                                    throw boost::system::error_code(ERROR__SEQ);
                                 const simpledata_type& value = *data.simply_encoded_data();
-                                return boost::system::error_code();
+                                return ;
                             }
                             case ISO8823_PRESENTATION::User_data_fully_encoded_data:
                             {
                                 if (!data.fully_encoded_data())
-                                    return ERROR__SEQ;
+                                    throw boost::system::error_code(ERROR__SEQ);
                                 const fulldata_type& values = *data.fully_encoded_data();
                                 for (fulldata_type::const_iterator it = values.begin(); it != values.end() ; ++it ) {
                                     if (ppm->exists(it->presentation_context_identifier)) {
@@ -226,26 +223,26 @@ namespace boost {
                                             }
                                             case ISO8823_PRESENTATION::PDV_list::presentation_data_values_type_octet_aligned:
                                             {
-                                                return ERROR__SEQ;
+                                                boost::system::error_code(ERROR__SEQ);
                                                 break;
                                             }
                                             case ISO8823_PRESENTATION::PDV_list::presentation_data_values_type_arbitrary:
                                             {
-                                                return ERROR__SEQ;
+                                                boost::system::error_code(ERROR__SEQ);
                                                 break;
                                             }
                                             default:
                                             {
-                                                return ERROR__SEQ;
+                                                boost::system::error_code(ERROR__SEQ);
                                             }
                                         }
 
                                     }
                                     else {
-                                        return ERROR__EPROTO;
+                                        throw boost::system::error_code(ERROR__EPROTO);
                                     }
                                 }
-                                return boost::system::error_code();
+                                return;
                             }
                             default:
                             {
@@ -253,20 +250,20 @@ namespace boost {
                         }
                     }
                     catch (const boost::system::system_error& cerr) {
-                        return cerr.code();
+                        throw cerr;
                     }
                     catch (...) {
                     }
-                    return ERROR__EPROTO;
+                    throw boost::system::error_code(ERROR__EPROTO);
                 }
 
-                ppdu_enum check_response(presentation_archive_ptr coder) {
-                    if (!coder->input().size())
+                ppdu_enum stream_socket::check_response() {
+                    if (!coder()->input().size())
                         return null_ppdu;
-                    switch (coder->input().test_class()) {
+                    switch (coder()->input().test_class()) {
                         case boost::asio::asn::UNIVERSAL_CLASS:
                         {
-                            switch (coder->input().test_id()) {
+                            switch (coder()->input().test_id()) {
                                 case boost::asio::asn::TYPE_SET: return cp_ppdu;
                                 default:
                                 {
@@ -276,7 +273,7 @@ namespace boost {
                         }
                         case boost::asio::asn::APPLICATION_CLASS:
                         {
-                            switch (coder->input().test_id()) {
+                            switch (coder()->input().test_id()) {
                                 case 0: return dt_ppdu;
                                 case 1: return dt_ppdu;
                                 default:
@@ -294,13 +291,12 @@ namespace boost {
                     return error_ppdu;
                 }
 
-                boost::system::error_code build_DT_type(presentation_archive_ptr coder, presentation_pm_ptr ppm) {
+                boost::system::error_code stream_socket::build_DT_type() {
                     try {
                         User_data udt;
-                        boost::system::error_code errstt = build_userdata(ppm, udt);
-                        if (!errstt)
-                            udt.serialize(coder->output());
-                        return errstt;
+                        build_userdata(ppm(), udt);
+                        udt.serialize(coder()->output());
+                        return boost::system::error_code();
                     }
                     catch (const boost::system::system_error& cerr) {
                         return cerr.code();
@@ -310,33 +306,32 @@ namespace boost {
                     return ERROR__EPROTO;
                 }
 
-                boost::system::error_code build_CP_type(presentation_archive_ptr coder, presentation_pm_ptr ppm, const presentation_selector & selector) {
+                boost::system::error_code stream_socket::build_CP_type() {
                     try {
                         CP_type cp;
                         cp.mode_selector.mode_value = mode_type::mode_value_normal_mode;
                         cp.normal_mode_parameters__new();
-                        if (!selector.called().empty())
-                            cp.normal_mode_parameters->called_presentation_selector__assign( new cd_selector_type(selector.called()));
-                        if (!selector.calling().empty())
-                            cp.normal_mode_parameters->calling_presentation_selector__assign( new cng_selector_type(selector.calling()));
-                       // if (ppm->is_context_menagment())
-                            // cp.normal_mode_parameters->presentation_requirements__assign(ppm->p_requirements());
-                            cp.normal_mode_parameters->presentation_context_definition_list__new();
-                            // cp.normal_mode_parameters->protocol_version__assign(PRSNT_VERSION);
-                            for (presentation_context_map::const_iterator it = ppm->contexts().begin(); it != ppm->contexts().end(); ++it) {
-                                if (it->second->valid()) {
-                                    p_context_type ctx;
-                                    ctx.abstract_syntax_name = it->second->abstract_syntax();
-                                    ctx.presentation_context_identifier = it->first;
-                                    ctx.transfer_syntax_name_list.insert(ctx.transfer_syntax_name_list.begin(),
-                                            it->second->transfer_syntaxs().begin(), it->second->transfer_syntaxs().end());
-                                    cp.normal_mode_parameters->presentation_context_definition_list->push_back(ctx);
-                                }
+                        if (!selector_.called().empty())
+                            cp.normal_mode_parameters->called_presentation_selector__assign( new cd_selector_type(selector_.called()));
+                        if (!selector_.calling().empty())
+                            cp.normal_mode_parameters->calling_presentation_selector__assign( new cng_selector_type(selector_.calling()));
+                        // if (ppm->is_context_menagment())
+                        // cp.normal_mode_parameters->presentation_requirements__assign(ppm->p_requirements());
+                        cp.normal_mode_parameters->presentation_context_definition_list__new();
+                        // cp.normal_mode_parameters->protocol_version__assign(PRSNT_VERSION);
+                        for (presentation_context_map::const_iterator it = ppm()->contexts().begin(); it != ppm()->contexts().end(); ++it) {
+                            if (it->second->valid()) {
+                                p_context_type ctx;
+                                ctx.abstract_syntax_name = it->second->abstract_syntax();
+                                ctx.presentation_context_identifier = it->first;
+                                ctx.transfer_syntax_name_list.insert(ctx.transfer_syntax_name_list.begin(),
+                                        it->second->transfer_syntaxs().begin(), it->second->transfer_syntaxs().end());
+                                cp.normal_mode_parameters->presentation_context_definition_list->push_back(ctx);
                             }
-                        boost::system::error_code errstt = build_userdata(ppm, cp.normal_mode_parameters->user_data);
-                        if (!errstt)
-                            (coder->output()) & cp;
-                        return errstt;
+                        }
+                        build_userdata(ppm(), cp.normal_mode_parameters->user_data);
+                        (coder()->output()) & cp;
+                        return boost::system::error_code();
                     }
                     catch (const boost::system::system_error& cerr) {
                         return cerr.code();
@@ -346,51 +341,45 @@ namespace boost {
                     return ERROR__EPROTO;
                 }
 
-                boost::system::error_code parse_CR(presentation_archive_ptr coder, presentation_pm_ptr ppm, presentation_selector& selector) {
+                boost::system::error_code stream_socket::parse_CR() {
                     try {
-                        switch (check_response(coder)) {
+                        switch (check_response()) {
                             case cp_ppdu:
                             {
                                 CPA_type cpa;
-                                (coder->input()) & cpa;
+                                (coder()->input()) & cpa;
                                 if (cpa.mode_selector.mode_value == mode_type::mode_value_normal_mode) {
                                     if (cpa.normal_mode_parameters) {
 
                                         if ((cpa.normal_mode_parameters->presentation_context_definition_result_list) &&
                                                 (!cpa.normal_mode_parameters->presentation_context_definition_result_list->empty())) {
-                                            presentation_context_map::iterator ctxit = ppm->contexts().begin();
+                                            presentation_context_map::iterator ctxit = ppm()->contexts().begin();
                                             for (result_list_type::const_iterator it = cpa.normal_mode_parameters->presentation_context_definition_result_list->begin();
                                                     it != cpa.normal_mode_parameters->presentation_context_definition_result_list->end(); ++it) {
                                                 if (it->result != ISO8823_PRESENTATION::Result_acceptance) {
-                                                    if (ctxit != ppm->contexts().end()) {
-                                                        //std::cout << "Remove context id: " << ctxit->first  << " AS: " << ctxit->second->abstract_syntax()
-                                                        //        << " rsn: " << ( it->provider_reason ? (*it->provider_reason) :  -1 ) << std::endl;
-                                                        ppm->remove_contex(ctxit->first);
+                                                    if (ctxit != ppm()->contexts().end()) {
+                                                        ppm()->remove_contex(ctxit->first);
                                                     }
                                                 }
                                                 else {
-                                                    if ((it->transfer_syntax_name) && (ctxit != ppm->contexts().end())) {
-                                                        //std::cout << "Accept context id: " << ctxit->first  << " AS: " << ctxit->second->abstract_syntax()
-                                                        //        << " TS: " << ( it->transfer_syntax_name ? (*it->transfer_syntax_name) :  oid_type() ) << std::endl;
-                                                        ppm->transfer_syntax(ctxit->first, (*(it->transfer_syntax_name)));
+                                                    if ((it->transfer_syntax_name) && (ctxit != ppm()->contexts().end())) {
+                                                        ppm()->transfer_syntax(ctxit->first, (*(it->transfer_syntax_name)));
                                                     }
                                                     ctxit++;
                                                 }
                                             }
                                         }
                                         if (cpa.normal_mode_parameters->responding_presentation_selector) {
-                                            selector.called(std::string(cpa.normal_mode_parameters->responding_presentation_selector->begin(),
+                                            selector_.called(std::string(cpa.normal_mode_parameters->responding_presentation_selector->begin(),
                                                     cpa.normal_mode_parameters->responding_presentation_selector->end()));
                                         }
                                         if (cpa.normal_mode_parameters->presentation_requirements) {
-                                            ppm->p_requirements(ppm->p_requirements() &
+                                            ppm()->p_requirements(ppm()->p_requirements() &
                                                     (*(cpa.normal_mode_parameters->presentation_requirements)));
                                         }
 
-                                        if (boost::system::error_code errstt = parse_userdata(ppm, cpa.normal_mode_parameters->user_data))
-                                            return errstt;
-                                        else
-                                            return boost::system::error_code();
+                                        parse_userdata(ppm(), cpa.normal_mode_parameters->user_data);
+                                        return boost::system::error_code();
 
                                     }
                                 }
@@ -460,11 +449,9 @@ namespace boost {
                                 }
                             }
 
-                            if (parse_userdata(ppm(), cp.normal_mode_parameters->user_data))
-                                return error_negotiate;
+                            parse_userdata(ppm(), cp.normal_mode_parameters->user_data);
                             if (negotiate_presentation_accept()) {
-                                if (build_userdata(ppm(), cpa.normal_mode_parameters->user_data))
-                                    return error_negotiate;
+                                build_userdata(ppm(), cpa.normal_mode_parameters->user_data);
                                 (coder()->output()) & cpr;
                                 return accept_negotiate;
                             }
@@ -475,23 +462,19 @@ namespace boost {
                             return error_negotiate;
                         }
                     }
-                    catch (const boost::system::system_error& cerr) {
-                        return error_negotiate;
-                    }
                     catch (...) {
                     }
                     return error_negotiate;
                 }
 
-                boost::system::error_code parse_RESPONSE(presentation_archive_ptr coder, presentation_pm_ptr ppm, ppdu_enum& ppdutype) {
+                boost::system::error_code stream_socket::parse_RESPONSE(ppdu_enum& ppdutype) {
                     try {
-                        switch (check_response(coder)) {
+                        switch (check_response()) {
                             case dt_ppdu:
                             {
                                 User_data data;
-                                data.serialize(coder->input());
-                                if (boost::system::error_code errstt = parse_userdata(ppm, data))
-                                    return errstt;
+                                data.serialize(coder()->input());
+                                parse_userdata(ppm(), data);
                                 return boost::system::error_code();
 
                             }

@@ -16,11 +16,12 @@
 namespace boost {
     namespace asio {
         namespace iso {
-
-
             namespace prot8823 {
 
-
+                
+         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //   iso8073 utill   //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 typedef int                                                     context_id_type;
                 typedef boost::asio::asn::bitstring_type            presentation_req_type;
@@ -37,10 +38,16 @@ namespace boost {
                 typedef boost::asio::asn::x690::oarchive                                                                                   x690_oarchive_type;
                 typedef boost::asio::iso::archive_temp<x690_iarchive_type, x690_oarchive_type>              x690_archive;
 
-
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
                 typedef std::set<oid_type>   transfer_synaxes_type;
+                
+         
+                
+                
+                
+                
+         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //   presentation_context_unit   //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                   
 
                 class presentation_context_unit {
                 public:
@@ -119,8 +126,6 @@ namespace boost {
                     archive_ptr archiver_;
                 } ;
 
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
                 typedef boost::shared_ptr<presentation_context_unit>   presentation_context_unit_ptr;
 
@@ -128,8 +133,13 @@ namespace boost {
 
                 typedef std::vector<presentation_context_unit_ptr>  presentation_context_unit_vct;
 
-
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////           
+                
+                
+                
+         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //   presentation_connection_option   //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+                
 
                 class presentation_connection_option {
                 public:
@@ -160,9 +170,9 @@ namespace boost {
                     void insert_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING );
 
                     bool has_abstract_syntax(const oid_type& asyntax, const encoding_rule& tsyntax = BER_ENCODING ) const;
-                    
-                    oid_type has_abstract_syntax(const oid_type& asyntax, const std::vector<oid_type>& tsyntax) const;                    
-                  
+
+                    oid_type has_abstract_syntax(const oid_type& asyntax, const std::vector<oid_type>& tsyntax) const;
+
 
                 private:
 
@@ -171,15 +181,17 @@ namespace boost {
 
                 } ;
 
-
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
                 typedef std::pair<context_id_type, presentation_context_unit_ptr>   presentation_context_type;
                 typedef std::map<context_id_type, presentation_context_unit_ptr>  presentation_context_map;
-
-
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////                
+                
+                
+                
+                
+                
+                
+         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //   presentation PM   //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////               
 
                 class presentation_pm {
                 public:
@@ -201,6 +213,11 @@ namespace boost {
                     archive_ptr find(context_id_type id) {
                         presentation_context_map::iterator it = contexts_.find(id);
                         return it != contexts_.end() ? it->second->archiver() : archive_ptr();
+                    }
+
+                    presentation_context_unit_ptr  get_context(const oid_type& oid) {
+                        presentation_context_map::iterator it = find(oid);
+                        return it != contexts_.end() ? it->second : presentation_context_unit_ptr();
                     }
 
                     archive_ptr exists(context_id_type id) {
@@ -338,39 +355,42 @@ namespace boost {
                     aru_ppdu,
                     arp_ppdu
                 } ;
-                
+
                 enum negotiate_rslt_enum {
                     error_negotiate,
                     accept_negotiate,
                     reject_negotiate
-                } ;                
+                } ;
 
 
-                typedef x690_archive                                                                                                       presentation_archive;
+                typedef x690_archive                                                                                                                 presentation_archive;
                 typedef boost::shared_ptr<presentation_archive>                                                              presentation_archive_ptr;
 
 
+                
+                
+                
 
-                ppdu_enum check_response(presentation_archive_ptr coder);
-
-                boost::system::error_code build_DT_type(presentation_archive_ptr coder, presentation_pm_ptr ppm);
-
-                boost::system::error_code build_CP_type(presentation_archive_ptr coder, presentation_pm_ptr ppm, const presentation_selector & selector);
-
-                boost::system::error_code parse_CR(presentation_archive_ptr coder, presentation_pm_ptr ppm, presentation_selector& selector);        
-
-                boost::system::error_code parse_RESPONSE(presentation_archive_ptr coder, presentation_pm_ptr ppm, ppdu_enum& ppdutype);
-
-
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //////////////////stream_socket                
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  rf1006 stream_socket  //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
                 class stream_socket : public boost::asio::iso::prot8327::stream_socket  {
+                    
+                    friend class socket_acceptor;
                     
                     typedef boost::asio::iso::prot8327::stream_socket           super_type;
 
                 public:
+                    
+                    
+                    
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Constructors  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                         
 
                     explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel = presentation_selector(),
                             const presentation_connection_option& connectoption = presentation_connection_option())
@@ -384,8 +404,11 @@ namespace boost {
                     basiccoder(new presentation_archive()), selector_ (psel),  ppm_( new presentation_pm())  {
                     }
 
+                    
 
-                    ////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Connnect operations  //
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
                     void connect(const endpoint_type& peer_endpoint) {
                         boost::system::error_code ec;
@@ -409,8 +432,7 @@ namespace boost {
                     }
 
 
-
-                    ///
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 private:
 
@@ -427,7 +449,7 @@ namespace boost {
 
                         void operator()(const boost::system::error_code& ec) {
                             if (!ec) {
-                                if (boost::system::error_code erreslt = parse_CR(socket_->coder(), socket_->ppm(), socket_->selector_)) {
+                                if (boost::system::error_code erreslt = socket_->parse_CR()) {
                                     handler_(erreslt);
                                     return;
                                 }
@@ -441,21 +463,26 @@ namespace boost {
                     private:
 
                         stream_socket*                           socket_;
-                        ConnectHandler                           handler_;
+                        ConnectHandler                          handler_;
                     } ;
 
 
+
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                    
+                    
                 public:
 
                     template <typename ConnectHandler>
                     void async_connect(const endpoint_type& peer_endpoint,
-                            BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
+                            ConnectHandler handler) {
 
                         BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
+
                         if (!ppm()) {
-                            handler(ERROR_EDOM);
+                                  handler(ERROR_EDOM);
                             return;
                         }
+
                         if (!is_open()) {
                             boost::system::error_code ec;
                             const protocol_type protocol = peer_endpoint.protocol();
@@ -466,11 +493,12 @@ namespace boost {
                                 return;
                             }
                         }
+
                         clear_input();
 
-                        if (boost::system::error_code erreslt = build_CP_type(coder(), ppm(), selector_)) {
-                            handler(erreslt);
-                            return;
+                        if (boost::system::error_code erreslt = build_CP_type()) {
+                                  handler(ERROR__EPROTO);
+                                  return;
                         }
 
                         super_type::async_connect(peer_endpoint, coder() , boost::bind(&connect_op<ConnectHandler>::run,
@@ -478,10 +506,17 @@ namespace boost {
                     }
 
 
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
 
 
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  request operation  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+                    
+
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+                    
                 private:
 
                     template <typename RequestHandler>
@@ -499,12 +534,7 @@ namespace boost {
                         }
 
                         void operator()(const boost::system::error_code& ec) {
-                            if (!ec) {
-                                //socket_->parse_CR();
-                            }
-
                             socket_->clear_output();
-
                             handler_( ec);
                         }
 
@@ -513,25 +543,37 @@ namespace boost {
                         RequestHandler                           handler_;
                     } ;
 
+                    
+
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                         
 
                 public:
 
                     template <typename RequestHandler>
                     void async_request(
-                            BOOST_ASIO_MOVE_ARG(RequestHandler) handler) {
+                            RequestHandler handler) {
+                        
                         BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
                         clear_input();
 
-                        if (boost::system::error_code erreslt = build_DT_type(coder(), ppm())) {
+                        if (boost::system::error_code erreslt = build_DT_type()) {
                             handler(erreslt);
                             return;
                         }
 
 
                         super_type::async_write_some( coder()->output().const_buffers() , boost::bind(&request_op<RequestHandler>::run,
-                                request_op<RequestHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
+                                request_op<RequestHandler > (const_cast<stream_socket*> (this),  handler ) , boost::asio::placeholders::error));
                     }
+                    
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  respond operation  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+                    
+
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                        
+                    
 
                 private:
 
@@ -560,7 +602,7 @@ namespace boost {
                                 }
                                 else {
                                     ppdu_enum ppdutype;
-                                    if (boost::system::error_code erreslt = parse_RESPONSE(socket_->coder(), socket_->ppm(), ppdutype)) {
+                                    if (boost::system::error_code erreslt = socket_->parse_RESPONSE(ppdutype)) {
                                         handler_(erreslt);
                                         return;
                                     }
@@ -581,7 +623,8 @@ namespace boost {
 
                     template <typename RespondHandler>
                     void async_respond(
-                            BOOST_ASIO_MOVE_ARG(RespondHandler) handler) {
+                            RespondHandler  handler) {
+                        
                         BOOST_ASIO_CONNECT_HANDLER_CHECK(RespondHandler, handler) type_check;
 
                         ppm()->clear_input();
@@ -589,8 +632,21 @@ namespace boost {
 
                         super_type::async_read_some( boost::asio::buffer(databuff,  BUFFER_SIZE),
                                 boost::bind(&respond_op<RespondHandler >::run,
-                                respond_op<RespondHandler > (const_cast<stream_socket*> (this), handler) , boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                                respond_op<RespondHandler > (const_cast<stream_socket*> (this), handler )  , boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                     }
+
+                    void  option(const presentation_connection_option& opt) {
+                        option_ = opt;
+                    }
+                    
+                    
+                    
+                    
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  protected member  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                    
+
+                protected:
 
                     presentation_pm_ptr ppm() {
                         return ppm_;
@@ -611,20 +667,14 @@ namespace boost {
                             ppm()->clear_output();
                         coder()->clear_output();
                     }
-                    
+
                     presentation_archive_ptr coder() {
                         return basiccoder;
                     }
 
                     presentation_archive_ptr coder() const {
                         return basiccoder;
-                    }    
-                    
-                     void  option(const presentation_connection_option& opt) {
-                        option_=opt;
-                    }                 
-
-                protected:
+                    }
 
                     presentation_selector& selector() {
                         return selector_;
@@ -634,23 +684,29 @@ namespace boost {
                         return selector_;
                     }
 
-                    virtual bool negotiate_session_accept(const std::string& req, std::string& resp){
-                          basiccoder->clear_input();
-                          basiccoder->input().add(raw_type(req.begin(), req.end()));
-                          switch (parse_CP()) {
-                              case error_negotiate: return false;
-                              default:{}}
-                          resp = coder()->request_str();
-                          return true;        
+                    virtual bool negotiate_session_accept(const std::string& req, std::string& resp) {
+                        basiccoder->clear_input();
+                        basiccoder->input().add(raw_type(req.begin(), req.end()));
+                        switch (parse_CP()) {
+                            case error_negotiate: return false;
+                            default:
+                            {
+                            }
+                        }
+                        resp = coder()->request_str();
+                        return true;
                     }
-                    
+
                     virtual bool negotiate_presentation_accept() {
-                          return true;        
-                    }                    
+                        return true;
+                    }
 
                 private:
-
-                    //////  hide base 
+                    
+                    
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  private member  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
                     void send() {
                     };
@@ -676,33 +732,67 @@ namespace boost {
                     void async_read_some() {
                     };
 
-                    /////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  private implementator  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
                     boost::system::error_code connect_impl(const endpoint_type& peer_endpoint,
                             boost::system::error_code& ec) {
-                        if (ec = build_CP_type(coder(), ppm(), selector_))
-                            return ec;
+                        if (presentation_error_ = build_CP_type())
+                            return presentation_error_;
                         if (!super_type::connect(peer_endpoint,  coder() , ec)) {
-                            return ec = parse_CR(coder(), ppm(), selector_);
+                            return presentation_error_ = parse_CR();
                         }
-                        return ec;
+                        return presentation_error_;
                     }
-                    
-                negotiate_rslt_enum parse_CP();                           
+
+
+                    ppdu_enum check_response();
+
+                    boost::system::error_code build_DT_type();
+
+                    boost::system::error_code build_CP_type();
+
+                    boost::system::error_code parse_CR();
+
+                    boost::system::error_code parse_RESPONSE(ppdu_enum& ppdutype);
+
+                    negotiate_rslt_enum parse_CP();
 
 
 
-                    presentation_archive_ptr                                basiccoder;
-                    presentation_selector                                     selector_;
-                    presentation_pm_ptr                                      ppm_;
-                    presentation_connection_option                       option_;                    
-                    int8_t                                                            databuff[BUFFER_SIZE];
+                    presentation_archive_ptr                                    basiccoder;
+                    presentation_selector                                          selector_;
+                    presentation_pm_ptr                                             ppm_;
+                    presentation_connection_option                       option_;
+                    boost::system::error_code                                   presentation_error_;
+                    int8_t                                                                         databuff[BUFFER_SIZE];
                 } ;
+
+
+
+                
+                
+                
+                
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  iso8823 socket_acceptor //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 class socket_acceptor : public boost::asio::iso::prot8327::socket_acceptor  {
                     typedef boost::asio::iso::prot8327::socket_acceptor      super_type;
 
                 public:
+                    
+                    
+                        
+                        
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Constructors  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                          
 
                     explicit socket_acceptor(boost::asio::io_service& io_service, const presentation_connection_option& opt)
                     : boost::asio::iso::prot8327::socket_acceptor(io_service),  option_(opt) {
@@ -712,10 +802,15 @@ namespace boost {
                             const endpoint_type& endpoint, const presentation_connection_option& opt, bool reuse_addr = true)
                     : boost::asio::iso::prot8327::socket_acceptor(io_service, endpoint, reuse_addr),  option_(opt) {
                     }
+                    
+                    
+                        
+                        
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Accept operation  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                          
+                    
 
-                    
-                    
-                    
                     template <typename SocketService>
                     boost::system::error_code accept(
                             basic_socket<protocol_type, SocketService>& peer,
@@ -747,13 +842,20 @@ namespace boost {
 
 
                 private:
-
+                    
+                    
+                    
+                        
+                        
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Private implementator  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
 
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept_impl(basic_socket<protocol_type, SocketService>& peer,
                             endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                         BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-                        static_cast<stream_socket*> ( &peer)->option(option_);                        
+                        static_cast<stream_socket*> ( &peer)->option(option_);
                         super_type::async_accept(peer,  peer_endpoint, static_cast<stream_socket*> (&peer)->coder(), handler);
                     }
 
@@ -769,7 +871,7 @@ namespace boost {
                     boost::system::error_code accept_impl(
                             basic_socket<protocol_type, SocketService>& peer,
                             endpoint_type& peer_endpoint, boost::system::error_code& ec) {
-                        static_cast<stream_socket*> ( &peer)->option(option_);                        
+                        static_cast<stream_socket*> ( &peer)->option(option_);
                         super_type::accept(peer, peer_endpoint, static_cast<stream_socket*> ( &peer)->coder(),  ec);
                         return ec;
                     }
@@ -783,16 +885,21 @@ namespace boost {
                         return ec;
                     }
 
-
                     presentation_connection_option option_;
 
                 } ;
 
             }
+            
+            
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  iso8823 declaration  //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
 
             class iso8823 {
             public:
-                /// The type of a TCP endpoint.
 
                 typedef boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>          endpoint;
 
@@ -802,54 +909,41 @@ namespace boost {
 
                 typedef transport_selector                                                             lowerselector;
 
-                /// Construct to represent the IPv4 TCP protocol.
-
                 static iso8823 v4() {
 
                     return iso8823(PF_INET);
                 }
-
-                /// Construct to represent the IPv6 TCP protocol.
 
                 static iso8823 v6() {
 
                     return iso8823(PF_INET6);
                 }
 
-                /// Obtain an identifier for the type of the protocol.
-
                 int type() const {
 
                     return SOCK_STREAM;
                 }
-
-                /// Obtain an identifier for the protocol.
 
                 int protocol() const {
 
                     return IPPROTO_TCP;
                 }
 
-                /// Obtain an identifier for the protocol family.
 
                 int family() const {
 
                     return family_;
                 }
 
-                /// The TCP socket type.
                 typedef prot8823::stream_socket socket;
 
-                /// The TCP acceptor type.
                 typedef prot8823::socket_acceptor acceptor;
 
-                /// The TCP resolver type.
                 typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
 
 #if !defined(BOOST_NO_IOSTREAM)
-                /// The TCP iostream type.
                 typedef basic_socket_iostream<boost::asio::ip::tcp> iostream;
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif 
 
 
                 typedef boost::asio::detail::socket_option::boolean<
@@ -862,7 +956,6 @@ namespace boost {
                     return p1.family_ == p2.family_;
                 }
 
-                /// Compare two protocols for inequality.
 
                 friend bool operator!=(const iso8823& p1, const iso8823& p2) {
 
@@ -870,7 +963,6 @@ namespace boost {
                 }
 
             private:
-                // Construct with a specific family.
 
                 explicit iso8823(int family)
                 : family_(family) {

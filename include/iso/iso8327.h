@@ -15,14 +15,12 @@ namespace boost {
     namespace asio {
         namespace iso {
             namespace prot8327 {
+                
+                
+         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //   iso8327 utill   //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                   
 
-
-
-                //using  
-                // SPDU type
-
-
-                //  Kernel
 
                 const std::string SEND_HEADER = std::string("\x1\x0\x1\x0", 4);
 
@@ -278,9 +276,8 @@ namespace boost {
 
                 } ;
 
-                //test
 
-                // std::ostream& operator<<(std::ostream& strm, const spdudata& vrs);
+                
 
                 struct protocol_options {
 
@@ -368,8 +365,14 @@ namespace boost {
 
                 std::string generate_header_NF(const protocol_options& opt, const std::string& data = "");  //NOT FINISH  SPDU                      
 
+                
+                
+                
+                
 
-                ////  send_seq                
+         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //   iso8327 send_seq  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////              
 
                 class send_seq {
                 public:
@@ -487,6 +490,17 @@ namespace boost {
                 } ;
 
                 typedef boost::shared_ptr<send_seq>               send_seq_ptr;
+                
+                
+                
+                
+                
+                
+                
+                
+         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //   iso8327 send_seq_data  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
                 template <typename ConstBufferSequence >
                 class send_seq_data  : public send_seq {
@@ -606,18 +620,36 @@ namespace boost {
                 } ;
 
                 typedef boost::shared_ptr<receive_seq>               receive_seq_ptr;
+                
+                
+                
+                
+                
+                
+                
+                
 
 
 
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //////////////////stream_socket                
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  rf1006 stream_socket  //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
                 class stream_socket : public boost::asio::iso::rfc1006::socket  {
+                    
                     typedef boost::asio::iso::rfc1006::socket           super_type;
 
                 public:
+                    
+                    
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Constructors  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
+                    
+                    
                     explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector() )
                     : boost::asio::iso::rfc1006::socket(io_service, ssel.tselector()), option_ (ssel.called(), ssel.calling())  {
                     }
@@ -630,8 +662,9 @@ namespace boost {
 
 
 
-
-                    ///   Connect operation  ///
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Connnect operation  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                     void connect(const endpoint_type& peer_endpoint) {
 
@@ -670,8 +703,8 @@ namespace boost {
                     }
 
 
-                    // connect handler
 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 private:
 
@@ -690,9 +723,9 @@ namespace boost {
                         socket_(socket),
                         handler_(handler),
                         state_(request),
-                        options_(socket->prot_option()),
+                        options_(socket->session_option()),
                         peer_endpoint_(peer_endpoint),
-                        send_(send_seq_ptr( new send_seq(CN_SPDU_ID, socket->prot_option(), transdata ? transdata->request_str() : ""))),
+                        send_(send_seq_ptr( new send_seq(CN_SPDU_ID, socket->session_option(), transdata ? transdata->request_str() : ""))),
                         receive_(new receive_seq()),
                         transdata_(transdata) {
                         }
@@ -750,11 +783,10 @@ namespace boost {
                                 switch (receive_->type()) {
                                     case AC_SPDU_ID:
                                     {
-                                        socket_->correspond_prot_option(receive_->options());
+                                        socket_->negotiate_session_option(receive_->options());
                                         if (transdata_)
                                             transdata_->respond_str(receive_->options().data());
                                         handler_(ec);
-                                        std::cout << "sessio connect_op success" << std::endl;
                                         return;
                                     }
                                     default:
@@ -785,6 +817,8 @@ namespace boost {
                     } ;
 
 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    
                 public:
 
                     template <typename ConnectHandler>
@@ -801,11 +835,9 @@ namespace boost {
                         if (!is_open()) {
                             boost::system::error_code ec;
                             const protocol_type protocol = peer_endpoint.protocol();
-                            if (this->get_service().open(this->get_implementation(), protocol, ec)) {
+                            if (this->get_service().open(get_implementation(), protocol, ec)) {
                                 this->get_io_service().post(
-                                        boost::asio::detail::bind_handler(
-                                        BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler), ec));
-
+                                        boost::asio::detail::bind_handler( handler , ec));
                                 return;
                             }
                         }
@@ -816,7 +848,14 @@ namespace boost {
 
 
 
-                    ///   Releease operation  ///    
+
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Release operation  //
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+                    
+                    
 
                     void releaseconnect(release_type type, archive_ptr data) {
 
@@ -828,6 +867,9 @@ namespace boost {
                     boost::system::error_code releaseconnect(release_type type, archive_ptr data , boost::system::error_code& ec) {
                         return releaseconnect_impl(type, data , ec);
                     }
+                    
+
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                    
 
                 private:
 
@@ -844,7 +886,7 @@ namespace boost {
                         releaseconnect_op(stream_socket*  socket, ReleaseHandler handler, release_type type,  archive_ptr transdata) :
                         socket_(socket),
                         handler_(handler),
-                        send_(send_seq_ptr( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , socket->prot_option(), transdata ? transdata->request_str() : "" ))),
+                        send_(send_seq_ptr( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , socket->session_option(), transdata ? transdata->request_str() : "" ))),
                         receive_(new receive_seq()),
                         type_(type),
                         transdata_(transdata),
@@ -936,6 +978,9 @@ namespace boost {
                         stateconnection                                               state_;
 
                     } ;
+                    
+ 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                   
 
 
                 public:
@@ -943,7 +988,7 @@ namespace boost {
                     template <typename ReleaseHandler>
                     void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
                             release_type type,  archive_ptr trans) {
-                        BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
+                        BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                         if (is_open()) {
                             this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
                                     releaseconnect_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, type, trans)));
@@ -954,7 +999,12 @@ namespace boost {
 
 
 
-                    ///  Check Accept operation  ///
+
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Check accept operation  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                     void  check_accept(archive_ptr  transdata) {
 
@@ -985,7 +1035,7 @@ namespace boost {
                         socket_(socket),
                         handler_(handler),
                         state_(wait),
-                        options_(socket->prot_option()),
+                        options_(socket->session_option()),
                         send_(),
                         receive_(new receive_seq()),
                         transdata_(transdata) {
@@ -1038,7 +1088,11 @@ namespace boost {
                         }
 
 
-
+                    
+ 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
+                        
+                        
                     private:
 
                         void parse_response(const boost::system::error_code& ec) {
@@ -1067,10 +1121,8 @@ namespace boost {
                         void finish(const boost::system::error_code& ec) {
 
                             protocol_options  opt = receive_->options();
-                            //opt.pdusize(options_.pdusize());
-                            socket_->correspond_prot_option(opt);
+                            socket_->negotiate_session_option(opt);
                             handler_(ec);
-                            std::cout << "accept_op success" << std::endl;
                         }
 
                         void state(stateconnection st) {
@@ -1090,24 +1142,30 @@ namespace boost {
                         archive_ptr                                     transdata_;
 
                     } ;
-
+                                 
+ 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 public:
 
                     template <typename CheckAcceptHandler>
-                    void asyn_check_accept(CheckAcceptHandler handler, archive_ptr  transdata) {
-
-                        //option_.src_tsap(src);
+                    void asyn_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler, archive_ptr  transdata) {
+                        BOOST_ASIO_CONNECT_HANDLER_CHECK(CheckAcceptHandler, handler) type_check;
+                        
                         this->get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
                                 accept_op<CheckAcceptHandler > (const_cast<stream_socket*> (this), handler, transdata)));
                     }
 
 
 
+                    
+                    
+                    
+                    
 
-
-
-                    ///   Send operation  ///                          
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Send operation  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                        
 
                     template <typename ConstBufferSequence>
                     std::size_t send(const ConstBufferSequence& buffers) {
@@ -1149,6 +1207,10 @@ namespace boost {
                     }
 
 
+                                 
+ 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
+                    
                 private:
 
                     template <typename SendHandler, typename ConstBufferSequence>
@@ -1192,6 +1254,12 @@ namespace boost {
 
 
                     } ;
+                    
+                    
+                                 
+ 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
+                    
 
                 public:
 
@@ -1214,7 +1282,8 @@ namespace boost {
                     template <typename ConstBufferSequence, typename WriteHandler>
                     void async_write_some(const ConstBufferSequence& buffers,
                             BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
-
+                        BOOST_ASIO_CONNECT_HANDLER_CHECK(WriteHandler,  handler) type_check;
+                        
                         async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler);
                     }
 
@@ -1222,9 +1291,11 @@ namespace boost {
 
 
 
-
-
-                    ///   receive operation  ///     
+                    
+                    
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Receive  operation  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
                     template <typename MutableBufferSequence>
                     std::size_t receive(const MutableBufferSequence& buffers) {
@@ -1263,6 +1334,12 @@ namespace boost {
 
                         return receive_impl(buffers, flags, ec);
                     }
+                    
+                    
+                     
+                                 
+ 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                    
 
                 private:
 
@@ -1364,6 +1441,12 @@ namespace boost {
                         stateconnection                                             state_;
                         boost::asio::socket_base::message_flags flags_;
                     } ;
+                    
+                    
+                    
+                                 
+ 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
 
                 public:
 
@@ -1378,8 +1461,8 @@ namespace boost {
                     void async_receive(const MutableBufferSequence& buffers,
                             socket_base::message_flags flags,
                             BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
-
                         BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+                        
                         if (input_empty())
                             this->get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
                                 receive_seq_ptr( new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers))), buffers, flags)));
@@ -1395,24 +1478,26 @@ namespace boost {
                         async_receive<MutableBufferSequence, ReadHandler > (buffers, 0, handler);
                     }
 
-                    /*archive_ptr    session_releasedata() const {
-                        return session_data_;
-                    }*/
-
-
+                    
+                    
+                    
+                    
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  protected member  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
+                    
                 protected:
 
                     virtual  send_seq_ptr session_release_reaction(receive_seq_ptr receive) {
                         if (!receive)
                             return send_seq_ptr();
-                        //session_releasedata_ = archive_ptr( new   trans_data(/*receive->options().data()*/));
                         if (session_data_) {
                             session_data_->clear();
                             session_data_->request_str(receive->options().data());
                         }
                         switch (receive->type()) {
-                            case FN_SPDU_ID: return send_seq_ptr( new send_seq(DN_SPDU_ID, prot_option()));
-                            case AB_SPDU_ID: return send_seq_ptr( new send_seq(AC_SPDU_ID, prot_option()));
+                            case FN_SPDU_ID: return send_seq_ptr( new send_seq(DN_SPDU_ID, session_option()));
+                            case AB_SPDU_ID: return send_seq_ptr( new send_seq(AC_SPDU_ID, session_option()));
                             default:
                             {
                             }
@@ -1425,23 +1510,27 @@ namespace boost {
                         return true;
                     }
 
-                    /*void session_releasedata(archive_ptr data ) {
-                        session_data_ = data;
-                    }*/
 
-
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  private member  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
+                           
                 private:
 
-                    const protocol_options& prot_option() const {
+                    const protocol_options& session_option() const {
                         return option_;
                     }
 
-                    void correspond_prot_option(const protocol_options& val) {
+                    void negotiate_session_option(const protocol_options& val) {
 
-                        std::cout << "correspond_prot_option calling  : " << val.ssap_calling() << std::endl;
-                        std::cout << "correspond_prot_option called  : " << val.ssap_called() << std::endl;
                     }
+                    
+                    
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  private implementator  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+                    
+                    
 
                     boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, archive_ptr data,
                             boost::system::error_code& ec) {
@@ -1451,7 +1540,7 @@ namespace boost {
                         if (super_type::connect(peer_endpoint, ec))
                             return ec;
 
-                        send_seq_ptr  send_ (send_seq_ptr( new send_seq( CN_SPDU_ID, prot_option(), data ? data->request_str() : "")));
+                        send_seq_ptr  send_ (send_seq_ptr( new send_seq( CN_SPDU_ID, session_option(), data ? data->request_str() : "")));
                         while (!ec && !send_->ready())
                             send_->size( super_type::send(send_->pop() , 0, ec));
                         if (ec)
@@ -1466,7 +1555,7 @@ namespace boost {
                             switch (receive_->type()) {
                                 case AC_SPDU_ID:
                                 {
-                                    correspond_prot_option(receive_->options());
+                                    negotiate_session_option(receive_->options());
                                     if (data)
                                         data->respond_str(receive_->options().data());
                                     return ec;
@@ -1482,7 +1571,7 @@ namespace boost {
 
                     boost::system::error_code releaseconnect_impl(release_type type, archive_ptr data , boost::system::error_code& ec) {
                         if (is_open()) {
-                            send_seq_ptr  send_( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , prot_option(), data ? data->request_str() : "" ));
+                            send_seq_ptr  send_( new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID , session_option(), data ? data->request_str() : "" ));
                             while (!ec && !send_->ready())
                                 send_->size( super_type::send(send_->pop(), 0, ec));
                             if (ec)
@@ -1532,7 +1621,7 @@ namespace boost {
                             return ec;
                         send_seq_ptr  send_ ;
 
-                        protocol_options options_ = this->prot_option();
+                        protocol_options options_ = session_option();
                         if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
                             boost::system::error_code ecc;
                             close(ecc);
@@ -1561,7 +1650,7 @@ namespace boost {
                         }
                         else {
                             protocol_options  opt = receive_->options();
-                            correspond_prot_option(receive_->options());
+                            negotiate_session_option(receive_->options());
                         }
                         return ec = canseled ? ERROR_EDOM : ec;
                     }
@@ -1613,28 +1702,52 @@ namespace boost {
                         return 0;
                     }
 
-                    protocol_options                           option_;
+                    protocol_options                       option_;
                     archive_ptr                             session_data_;
                 } ;
 
-                class socket_acceptor : public boost::asio::iso::iec8073_tcp::socket_acceptor  {
+
+
+
+
+                
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  iso8327 socket_acceptor_service //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                
+
+                class socket_acceptor : public boost::asio::iso::prot8073::socket_acceptor  {
                     
-                    typedef boost::asio::iso::iec8073_tcp::socket_acceptor       super_type;
+                    typedef boost::asio::iso::prot8073::socket_acceptor       super_type;
 
                 public:
+                    
+                    
+                        
+                        
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Constructors  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                                
 
                     explicit socket_acceptor(boost::asio::io_service& io_service)
-                    : boost::asio::iso::iec8073_tcp::socket_acceptor(io_service) {
+                    : boost::asio::iso::prot8073::socket_acceptor(io_service) {
                     }
 
                     socket_acceptor(boost::asio::io_service& io_service,
                             const endpoint_type& endpoint, bool reuse_addr = true)
-                    : boost::asio::iso::iec8073_tcp::socket_acceptor(io_service, endpoint, reuse_addr) {
+                    : boost::asio::iso::prot8073::socket_acceptor(io_service, endpoint, reuse_addr) {
                     }
 
 
-
-                public:
+                        
+                        
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Accept operation  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////            
+                    
+                    
 
                     template <typename SocketService>
                     void accept(basic_socket<protocol_type, SocketService>& peer) {
@@ -1721,6 +1834,10 @@ namespace boost {
                         BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                         async_accept_impl(peer, peer_endpoint ,  transdata, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
                     }
+                    
+                                 
+ 
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
 
                 private:
 
@@ -1741,9 +1858,15 @@ namespace boost {
 
                     private:
                         Handler                              handler_;
-                        stream_socket*                   socket_;
-                        archive_ptr                         transdata_;
+                        stream_socket*                socket_;
+                        archive_ptr                        transdata_;
                     } ;
+                    
+                                 
+ 
+          ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+                    
+                    
 
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept_impl(basic_socket<protocol_type, SocketService>& peer,
@@ -1783,67 +1906,63 @@ namespace boost {
 
 
                 } ;
-
             }
+
+            
+            
+                
+                
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  iso8327 declaration  //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////            
 
             class iso8327 {
             public:
-                /// The type of a TCP endpoint.
 
                 typedef boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>          endpoint;
 
                 typedef session_selector                                                                         selector;
 
-                typedef transport_selector                                                                      lowselector;
+                typedef transport_selector                                                                      lowselector;        
 
-                /// Construct to represent the IPv4 TCP protocol.
 
                 static iso8327 v4() {
 
                     return iso8327(PF_INET);
                 }
 
-                /// Construct to represent the IPv6 TCP protocol.
-
                 static iso8327 v6() {
 
                     return iso8327(PF_INET6);
                 }
-
-                /// Obtain an identifier for the type of the protocol.
 
                 int type() const {
 
                     return SOCK_STREAM;
                 }
 
-                /// Obtain an identifier for the protocol.
-
                 int protocol() const {
 
                     return IPPROTO_TCP;
                 }
 
-                /// Obtain an identifier for the protocol family.
 
                 int family() const {
 
                     return family_;
                 }
 
-                /// The TCP socket type.
                 typedef prot8327::stream_socket socket;
 
-                /// The TCP acceptor type.
                 typedef prot8327::socket_acceptor acceptor;
 
-                /// The TCP resolver type.
                 typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
 
 #if !defined(BOOST_NO_IOSTREAM)
-                /// The TCP iostream type.
                 typedef basic_socket_iostream<boost::asio::ip::tcp> iostream;
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif 
 
 
                 typedef boost::asio::detail::socket_option::boolean<
@@ -1856,7 +1975,6 @@ namespace boost {
                     return p1.family_ == p2.family_;
                 }
 
-                /// Compare two protocols for inequality.
 
                 friend bool operator!=(const iso8327& p1, const iso8327& p2) {
 
@@ -1864,7 +1982,6 @@ namespace boost {
                 }
 
             private:
-                // Construct with a specific family.
 
                 explicit iso8327(int family)
                 : family_(family) {
