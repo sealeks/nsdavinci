@@ -152,7 +152,7 @@ namespace boost {
 
             ///   selectors
 
-            class transport_selector {
+            class transport_selector  {
             public:
 
                 transport_selector() : pdusize_(SIZE2048) {

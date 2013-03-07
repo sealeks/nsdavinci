@@ -1410,7 +1410,7 @@ namespace boost {
                 }
 
                 template<typename T>
-                const boost::shared_ptr<T> get(E ID) const {
+                boost::shared_ptr<T> get(E ID) const {
                     typedef  choice_holder<T> choice_holder_type;
                     typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
                     return (type() == ID) ?
@@ -1645,7 +1645,16 @@ namespace boost {
 
             template<typename Archive, typename T>
             inline bool bind_choice(Archive & arch,  boost::shared_ptr< T  >& vl) {
-                return bind_choice(arch, *vl);
+                if (!vl){
+                    if( arch.__input__())
+                       vl =  boost::shared_ptr< T  >( new T());
+                    else    
+                        return false;
+                }     
+                if (bind_choice(arch, *vl))
+                    return true;
+                vl.reset();
+                return false;               
             }
 
             template<typename Archive, typename T>

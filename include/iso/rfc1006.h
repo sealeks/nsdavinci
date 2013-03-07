@@ -468,6 +468,7 @@ namespace boost {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
                 class stream_socket : public basic_stream_socket<boost::asio::ip::tcp > {
+                    
                 public:
                     
                     
@@ -519,7 +520,7 @@ namespace boost {
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  Connnect operation  //
+        //  Connnect operations  //
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                     void connect(const endpoint_type& peer_endpoint) {
@@ -907,6 +908,8 @@ namespace boost {
 
                     
                     
+                    
+                    
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  Send operation  //
@@ -1214,14 +1217,14 @@ namespace boost {
                     bool  eof_state() const {
                         return eof_state_;
                     }
-
-                private:
                     
                     
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  private member  //
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
+                private:
+                                                         
                     tpdu_size pdusize() const {
                         return pdusize_;
                     };
@@ -1235,6 +1238,8 @@ namespace boost {
                         pdusize_ = val.pdusize();
                         transport_option_.dst_tsap(val.src_tsap());
                     }
+  
+                    
                     
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  private implementator  //
@@ -1488,7 +1493,7 @@ namespace boost {
                         template <typename SocketService, typename AcceptHandler>
                         void async_accept(implementation_type& impl,
                                 basic_socket<protocol_type, SocketService>& peer,
-                                endpoint_type* peer_endpoint, AcceptHandler handler) {
+                                endpoint_type* peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler)  handler) {
 
                             service_impl_.get_io_service().post(boost::bind(&accept_handler<AcceptHandler, basic_socket<protocol_type, SocketService> >::run ,
                                     accept_handler<AcceptHandler , basic_socket<protocol_type, SocketService> >(service_impl_, impl, handler, peer, peer_endpoint, src())));
@@ -1549,74 +1554,56 @@ namespace boost {
 
             class rfc1006 {
             public:
-                /// The type of a TCP endpoint.
 
                 typedef boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>          endpoint;
 
-                typedef transport_selector                                                                      selector;
-
-
-                /// Construct to represent the IPv4 TCP protocol.
+                typedef transport_selector                                                                      selector;            
 
                 static rfc1006 v4() {
 
                     return rfc1006(PF_INET);
                 }
 
-                /// Construct to represent the IPv6 TCP protocol.
-
                 static rfc1006 v6() {
 
                     return rfc1006(PF_INET6);
                 }
-
-                /// Obtain an identifier for the type of the protocol.
 
                 int type() const {
 
                     return SOCK_STREAM;
                 }
 
-                /// Obtain an identifier for the protocol.
-
                 int protocol() const {
 
                     return IPPROTO_TCP;
                 }
-
-                /// Obtain an identifier for the protocol family.
 
                 int family() const {
 
                     return family_;
                 }
 
-                /// The TCP socket type.
                 typedef prot8073::stream_socket socket;
 
-                /// The TCP acceptor type.
                 typedef prot8073::socket_acceptor acceptor;
 
-                /// The TCP resolver type.
                 typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
 
 #if !defined(BOOST_NO_IOSTREAM)
-                /// The TCP iostream type.
                 typedef basic_socket_iostream<boost::asio::ip::tcp> iostream;
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif 
 
 
                 typedef boost::asio::detail::socket_option::boolean<
                 IPPROTO_TCP, TCP_NODELAY> no_delay;
 
-                /// Compare two protocols for equality.
 
                 friend bool operator==(const rfc1006& p1, const rfc1006& p2) {
 
                     return p1.family_ == p2.family_;
                 }
 
-                /// Compare two protocols for inequality.
 
                 friend bool operator!=(const rfc1006& p1, const rfc1006& p2) {
 
@@ -1624,7 +1611,6 @@ namespace boost {
                 }
 
             private:
-                // Construct with a specific family.
 
                 explicit rfc1006(int family)
                 : family_(family) {
