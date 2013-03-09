@@ -26,7 +26,6 @@
 
 namespace boost {
     namespace asio {
-
         namespace asn {
 
 
