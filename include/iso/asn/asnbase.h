@@ -98,11 +98,11 @@ namespace boost {\
         namespace asn {\
             template<typename Archive>\
                 void bind_element(Archive& arch, const regtype & vl){\
-                    arch & boost::asio::asn::bind_choice(arch, vl);\
+                    boost::asio::asn::bind_choice(arch, vl);\
                 }  \
             template<typename Archive>\
                 void bind_element(Archive& arch, regtype & vl){\
-                    arch & boost::asio::asn::bind_choice(arch, vl);\
+                    boost::asio::asn::bind_choice(arch, vl);\
                 }  \
         }\
     }\
@@ -381,8 +381,6 @@ namespace boost {
                 operator int32_t() const;
 
                 operator int64_t() const;
-
-                //operator raw_type() const; 
 
                 friend bitstring_type operator|(const bitstring_type& ls, const bitstring_type& rs);
 
@@ -1282,31 +1280,6 @@ namespace boost {
 
 
 
-
-
-
-            ///////////////////////////////////////////////////////////////////////////
-            /*
-                        template<typename T >
-                        class choice_value {
-                        public:
-
-                            typedef  T   root_type;
-
-                            choice_value(T& vl) : val_(vl) {
-                            }
-
-                            T& value() {
-                                return val_;
-                            }
-
-                        private:
-
-                            T& val_;
-                        } ;
-
-             */
-
             //////////////////////////////////////////////////////////////////////////////////////////////////////       
 
             template<typename E>
@@ -1401,11 +1374,8 @@ namespace boost {
                 boost::shared_ptr<T>& value(bool isinput, E tp)  {
                     typedef  choice_holder<T> choice_holder_type;
                     typedef  boost::shared_ptr<choice_holder_type> choice_holder_ptr;
-                    if (/*!val_ ||*/ isinput)
+                    if (isinput)
                         set ( new T(), tp);
-                    // val_ = type_ptr( new choice_holder<T > ());
-                    //if (isinput)
-                    //type(tp);
                     return  boost::static_pointer_cast< choice_holder_type > (val_)->value();
                 }
 
@@ -1458,18 +1428,18 @@ namespace boost {
                 explicit value_holder(const T & vl) : internal_( new T(vl)) {
                 }
 
-                T& operator* () const // never throws
+                T& operator* () const 
                 {
                     return *internal_;
                 }
 
-                T& operator=(const T & vl)  // never throws
+                T& operator=(const T & vl) 
                 {
                     internal_ = boost::shared_ptr<T > (new T(vl));
                     return *internal_;
                 }
 
-                T * operator-> () const // never throws
+                T * operator-> () const 
                 {
                     return internal_.get();
                 }
