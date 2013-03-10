@@ -825,7 +825,7 @@ namespace boost {
                     template <typename ConnectHandler>
                     void async_connect(const endpoint_type& peer_endpoint, archive_ptr data,
                             BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
-                        BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
+                        //BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
                         if (!is_open()) {
                             boost::system::error_code ec;
@@ -981,7 +981,7 @@ namespace boost {
                     template <typename ReleaseHandler>
                     void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
                             release_type type, archive_ptr trans) {
-                        BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
+                        //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                         if (is_open()) {
                             this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
                                     releaseconnect_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, type, trans)));
@@ -1143,7 +1143,7 @@ namespace boost {
 
                     template <typename CheckAcceptHandler>
                     void asyn_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler, archive_ptr transdata) {
-                        BOOST_ASIO_CONNECT_HANDLER_CHECK(CheckAcceptHandler, handler) type_check;
+                       // BOOST_ASIO_CONNECT_HANDLER_CHECK(CheckAcceptHandler, handler) type_check;
 
                         this->get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
                                 accept_op<CheckAcceptHandler > (const_cast<stream_socket*> (this), handler, transdata)));
@@ -1268,14 +1268,14 @@ namespace boost {
                             socket_base::message_flags flags,
                             BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
 
-                        BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+                        //BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
                         this->get_io_service().post(boost::bind(&send_op<WriteHandler, ConstBufferSequence>::run, send_op<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
                     }
 
                     template <typename ConstBufferSequence, typename WriteHandler>
                     void async_write_some(const ConstBufferSequence& buffers,
                             BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
-                        BOOST_ASIO_CONNECT_HANDLER_CHECK(WriteHandler, handler) type_check;
+                        //BOOST_ASIO_CONNECT_HANDLER_CHECK(WriteHandler, handler) type_check;
 
                         async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler);
                     }
@@ -1454,7 +1454,7 @@ namespace boost {
                     void async_receive(const MutableBufferSequence& buffers,
                             socket_base::message_flags flags,
                             BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
-                        BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+                        //BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
                         if (input_empty())
                             this->get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
@@ -1797,28 +1797,28 @@ namespace boost {
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept(basic_socket<protocol_type, SocketService>& peer,
                             BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                        BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                        //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                         async_accept_impl(peer, archive_ptr(), BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
                     }
 
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept(basic_socket<protocol_type, SocketService>& peer,
                             endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                        BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                        //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                         async_accept_impl(peer, peer_endpoint, archive_ptr(), BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
                     }
 
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept(basic_socket<protocol_type, SocketService>& peer, archive_ptr transdata,
                             BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                        BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                        //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                         async_accept_impl(peer, transdata, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
                     }
 
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept(basic_socket<protocol_type, SocketService>& peer,
                             endpoint_type& peer_endpoint, archive_ptr transdata, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                        BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                        //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                         async_accept_impl(peer, peer_endpoint, transdata, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
                     }
 
@@ -1856,14 +1856,14 @@ namespace boost {
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept_impl(basic_socket<protocol_type, SocketService>& peer,
                             endpoint_type& peer_endpoint, archive_ptr transdata, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                        BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                        //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                         super_type::async_accept(peer, peer_endpoint, accept_op<AcceptHandler > (handler, static_cast<stream_socket*> (&peer), transdata));
                     }
 
                     template <typename SocketService, typename AcceptHandler>
                     void async_accept_impl(basic_socket<protocol_type, SocketService>& peer, archive_ptr transdata,
                             BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                        BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                        //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                         super_type::async_accept(peer, accept_op<AcceptHandler > (handler, static_cast<stream_socket*> (&peer), transdata));
                     }
 
