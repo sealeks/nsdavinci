@@ -13,7 +13,7 @@ namespace boost {
         namespace iso {
             namespace prot8073 {
 
-                boost::system::error_code errorcode_by_reason(int8_t val) {
+                boost::system::error_code errorcode_by_reason(octet_type val) {
                     if (!val)
                         return ERROR_EIO;
                     if (val & '\x1')
@@ -21,7 +21,7 @@ namespace boost {
                     return ERROR_EIO;
                 }
 
-                tpdu_type tpdu_type_from(int8_t val) {
+                tpdu_type tpdu_type_from(octet_type val) {
                     switch (val) {
                         case CR_TPDU_ID: return CR;
                         case CC_TPDU_ID: return CC;
@@ -37,7 +37,7 @@ namespace boost {
                     return NL;
                 }
 
-                std::size_t getPDUsize(int8_t sz) {
+                std::size_t getPDUsize(octet_type sz) {
                     switch (sz) {
                         case TPDU_SIZE2048: return 2048;
                         case TPDU_SIZE1024: return 1024;
@@ -53,7 +53,7 @@ namespace boost {
                     return getPDUsize(tpdu_type_size(val));
                 }
 
-                tpdu_size tpdu_size_frombyte(int8_t val) {
+                tpdu_size tpdu_size_frombyte(octet_type val) {
                     switch (val) {
                         case TPDU_SIZE2048: return SIZE2048;
                         case TPDU_SIZE1024: return SIZE1024;
@@ -65,36 +65,48 @@ namespace boost {
                     return SIZENULL;
                 }
 
-                bool parse_vars(const std::string& str, headarvarvalues& vars) {
+                bool parse_vars(const raw_type& data, headarvarvalues& vars) {
                     vars.clear();
-                    std::string::size_type it = 0;
-                    while (it + 2 < str.size()) {
-                        int8_t par = static_cast<int8_t> (str[it]);
-                        std::size_t len = static_cast<std::size_t> (static_cast<uint8_t> (str[it + 1]));
-                        if ((it + 2 + len) > str.size()) {
+                    std::size_t it = 0;
+                    while (it + 2 < data.size()) {
+                        octet_type par = static_cast<octet_type> (data[it]);
+                        std::size_t len = static_cast<std::size_t> (static_cast<uint8_t> (data[it + 1]));
+                        if ((it + 2 + len) > data.size()) {
                             vars.clear();
                             return false;
                         }
-                        vars.push_back(headarvarvalue(headarvar(par, len), str.substr(it + 2, len)));
+                        vars.push_back(headarvarvalue(headarvar(par, len), raw_type(data.begin() +( it + 2) , data.begin() +( it+2 +len))));
                         it += (2 + len);
                     }
-                    return it == str.size();
+                    return it == data.size();
                 }
 
 
                 ///   protocol_options
 
+                protocol_options::protocol_options(int16_t dst, int16_t src, tpdu_size pdusize) :
+                dst_(dst), src_(src) {
+                    if (SIZENULL != pdusize) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1) , inttype_to_raw(static_cast<int8_t> (tpdu_type_size(pdusize)))));
+                }     
+                
                 protocol_options::protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, const std::string& called,  const std::string& calling) :
                 dst_(dst), src_(src) {
-                    if (SIZENULL != pdusize) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1) , inttype_to_str(static_cast<int8_t> (tpdu_type_size(pdusize)))));
+                    if (SIZENULL != pdusize) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1) , inttype_to_raw(static_cast<int8_t> (tpdu_type_size(pdusize)))));
+                    if (!calling.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, calling.size()), raw_type(calling.begin(), calling.end())));
+                    if (!called.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, called.size()), raw_type(called.begin(), called.end())));
+                }          
+                
+                protocol_options::protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, const raw_type& called,  const raw_type& calling) :
+                dst_(dst), src_(src) {
+                    if (SIZENULL != pdusize) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1) , inttype_to_raw(static_cast<int8_t> (tpdu_type_size(pdusize)))));
                     if (!calling.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, calling.size()), calling));
                     if (!called.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, called.size()), called));
-                }
+                }                          
 
                 tpdu_size protocol_options::pdusize() const {
                     for (headarvarvalues::const_reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
                         if (it->first.first == VAR_TPDU_SIZE && !it->second.empty()) {
-                            return tpdu_size_frombyte(static_cast<int8_t> (it->second[0]));
+                            return tpdu_size_frombyte(static_cast<octet_type> (it->second[0]));
                         }
                     }
                     return SIZENULL;
@@ -103,49 +115,49 @@ namespace boost {
                 void protocol_options::pdusize(tpdu_size val) {
                     for (headarvarvalues::reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
                         if (it->first.first == VAR_TPDU_SIZE) {
-                            it->second = inttype_to_str(static_cast<int8_t> (tpdu_type_size(val)));
+                            it->second = inttype_to_raw(static_cast<octet_type> (tpdu_type_size(val)));
                             return;
                         }
                     }
-                    vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_str(static_cast<int8_t> (tpdu_type_size(val)))));
+                    vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw(static_cast<octet_type> (tpdu_type_size(val)))));
                 }
 
-                std::string protocol_options::tsap_calling() const {
+                const raw_type& protocol_options::tsap_calling() const {
                     for (headarvarvalues::const_reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
                         if (it->first.first == VAR_TSAPCALLING_ID  && !it->second.empty()) {
                             return it->second;
                         }
                     }
-                    return "";
+                    return null_;
                 }
 
-                void protocol_options::tsap_calling(const std::string& val) {
+                void protocol_options::tsap_calling(const raw_type& val) {
                     for (headarvarvalues::reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
                         if (it->first.first == VAR_TSAPCALLING_ID) {
                             it->second = val;
                             return;
                         }
                     }
-                    vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, val.size()), val));
+                    vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, val.size()),  raw_type(val.begin(), val.end())));
                 }
 
-                std::string protocol_options::tsap_called() const {
+                const raw_type& protocol_options::tsap_called() const {
                     for (headarvarvalues::const_reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
                         if (it->first.first == VAR_TSAPCALLED_ID  && !it->second.empty()) {
                             return it->second;
                         }
                     }
-                    return "";
+                    return null_;
                 }
 
-                void protocol_options::tsap_called(const std::string& val) {
+                void protocol_options::tsap_called(const raw_type& val) {
                     for (headarvarvalues::reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
                         if (it->first.first == VAR_TSAPCALLED_ID) {
                             it->second = val;
                             return;
                         }
                     }
-                    vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, val.size()), val));
+                    vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, val.size()),  raw_type(val.begin(), val.end())));
                 }
 
                 std::size_t protocol_options::maxpdusize() const {
@@ -163,14 +175,14 @@ namespace boost {
                             return;
                         }
                     }
-                    vars_.push_back(headarvarvalue(headarvar(VAR_MAXTPDU_SIZE, 1), inttype_to_str(static_cast<int8_t> ('\x80'))));
+                    vars_.push_back(headarvarvalue(headarvar(VAR_MAXTPDU_SIZE, 1), inttype_to_raw(static_cast<octet_type> ('\x80'))));
                 }
 
 
 
                 /////////////////////
 
-                bool negotiate_prot8073_option(protocol_options& self, const protocol_options& dist , int8_t& error) {
+                bool negotiate_prot8073_option(protocol_options& self, const protocol_options& dist , octet_type& error) {
                     if   (!self.tsap_called().empty() && self.tsap_called() != dist.tsap_called()) {
                         error = REJECT_REASON_ADDR;
                         return false;
@@ -184,78 +196,114 @@ namespace boost {
 
                 ////////////////////
 
-                void generate_TKPTDU(std::string& val) {
-                    val = TKPT_START + inttype_to_str(endiancnv_copy(static_cast<int16_t> (val.size() + TKPT_LENGTH))) + val;
+                void generate_TKPTDU(raw_type& val) {
+                    raw_type hdr =TKPT_START;
+                    raw_back_insert(hdr , inttype_to_raw(endiancnv_copy(static_cast<int16_t> (val.size() + TKPT_LENGTH))));
+                    raw_front_insert(val, hdr);
                 }
 
-                std::string generate_header(int8_t type, int16_t dst, int16_t src, const headarvarvalues& vars) {
-                    std::string rslt = inttype_to_str(type) + inttype_to_str(dst) + inttype_to_str(src) + NULLCHAR;
-                    for (headarvarvalues::const_iterator it = vars.begin(); it != vars.end(); ++it)
-                        rslt += (inttype_to_str(it->first.first) + inttype_to_str(static_cast<int8_t> (it->first.second)) + it->second);
+                 raw_type generate_header(octet_type type, int16_t dst, int16_t src, const headarvarvalues& vars) {
+                     raw_type rslt;
+                     rslt.insert(rslt.end(), type); 
+                     raw_back_insert( rslt, inttype_to_raw(dst)); 
+                     raw_back_insert( rslt, inttype_to_raw(src));
+                     rslt.insert(rslt.end(), '\x0');
+                    for (headarvarvalues::const_iterator it = vars.begin(); it != vars.end(); ++it){
+                        raw_back_insert( rslt , inttype_to_raw(it->first.first));
+                        raw_back_insert( rslt , inttype_to_raw(static_cast<octet_type> (it->first.second)));
+                        raw_back_insert( rslt ,it->second);}
                     std::size_t sz = rslt.size();
-                    rslt = inttype_to_str(static_cast<int8_t> (sz)) + rslt;
+                    raw_front_insert( rslt , inttype_to_raw(static_cast<octet_type> (sz)));
                     return rslt;
                 }
 
-                std::string generate_header_TKPT_CR(const protocol_options& opt) {
-                    std::string rslt = inttype_to_str(CR_TPDU_ID) +
-                            inttype_to_str(endiancnv_copy(static_cast<int16_t> (0))) +
-                            inttype_to_str(endiancnv_copy(opt.src_tsap())) + NULLCHAR;
-                    if (opt.pdusize() != SIZENULL)
-                        rslt += (inttype_to_str(VAR_TPDU_SIZE) + inttype_to_str(static_cast<int8_t> (1)) + inttype_to_str(tpdu_type_size(opt.pdusize())));
-                    if (!opt.tsap_calling().empty())
-                        rslt += (inttype_to_str(VAR_TSAPCALLING_ID) + inttype_to_str(static_cast<int8_t> (opt.tsap_calling().size())) + opt.tsap_calling());
-                    if (!opt.tsap_called().empty())
-                        rslt += (inttype_to_str(VAR_TSAPCALLED_ID) + inttype_to_str(static_cast<int8_t> (opt.tsap_called().size())) + opt.tsap_called());
+                raw_type generate_header_TKPT_CR(const protocol_options& opt) {
+                    raw_type rslt;                   
+                     rslt.insert(rslt.end(), CR_TPDU_ID);
+                     raw_back_insert( rslt,inttype_to_raw(endiancnv_copy(static_cast<int16_t> (0))));
+                     raw_back_insert( rslt, inttype_to_raw(endiancnv_copy(opt.src_tsap())));
+                     rslt.insert(rslt.end(), '\x0');
+                    if (opt.pdusize() != SIZENULL){
+                     rslt.insert(rslt.end(), VAR_TPDU_SIZE );
+                     rslt.insert(rslt.end(), static_cast<octet_type> (1));
+                     raw_back_insert( rslt, inttype_to_raw(tpdu_type_size(opt.pdusize())));         
+                    }
+                    if (!opt.tsap_calling().empty()){
+                     rslt.insert(rslt.end(), VAR_TSAPCALLING_ID );
+                     rslt.insert(rslt.end(), static_cast<octet_type> (opt.tsap_calling().size()));
+                     raw_back_insert( rslt, opt.tsap_calling()); 
+                    }
+                    if (!opt.tsap_called().empty()){
+                     rslt.insert(rslt.end(), VAR_TSAPCALLED_ID);
+                     rslt.insert(rslt.end(), static_cast<octet_type> (opt.tsap_called().size()));
+                     raw_back_insert( rslt, opt.tsap_called()); 
+                    }
                     std::size_t sz = rslt.size();
-                    rslt = inttype_to_str(static_cast<int8_t> (sz)) + rslt;
+                    raw_front_insert( rslt, inttype_to_raw(static_cast<octet_type> (sz)));
                     generate_TKPTDU(rslt);
                     return rslt;
                 }
 
-                std::string generate_header_TKPT_CC(const protocol_options& opt) {
-                    std::string rslt = inttype_to_str(CC_TPDU_ID) +
-                            inttype_to_str(endiancnv_copy(opt.dst_tsap())) +
-                            inttype_to_str(endiancnv_copy(opt.src_tsap())) + NULLCHAR;
-                    if (opt.pdusize() != SIZENULL)
-                        rslt += (inttype_to_str(VAR_TPDU_SIZE) + inttype_to_str(static_cast<int8_t> (1)) + inttype_to_str(tpdu_type_size(opt.pdusize())));
-                    if (!opt.tsap_calling().empty())
-                        rslt += (inttype_to_str(VAR_TSAPCALLING_ID) + inttype_to_str(static_cast<int8_t> (opt.tsap_calling().size())) + opt.tsap_calling());
-                    if (!opt.tsap_called().empty())
-                        rslt += (inttype_to_str(VAR_TSAPCALLED_ID) + inttype_to_str(static_cast<int8_t> (opt.tsap_called().size())) + opt.tsap_called());
+                raw_type generate_header_TKPT_CC(const protocol_options& opt) {
+                    raw_type rslt;                                      
+                     rslt.insert(rslt.end(), CC_TPDU_ID);
+                     raw_back_insert( rslt,inttype_to_raw(endiancnv_copy(opt.dst_tsap())));
+                     raw_back_insert( rslt,inttype_to_raw(endiancnv_copy(opt.src_tsap())));
+                     rslt.insert(rslt.end(), '\x0');
+                    if (opt.pdusize() != SIZENULL){
+                     rslt.insert(rslt.end(), VAR_TPDU_SIZE);
+                     rslt.insert(rslt.end(), static_cast<octet_type> (1)); 
+                     raw_back_insert( rslt,inttype_to_raw(tpdu_type_size(opt.pdusize())));
+                    }
+                    if (!opt.tsap_calling().empty()){
+                     rslt.insert(rslt.end(),VAR_TSAPCALLING_ID);
+                     rslt.insert(rslt.end(),static_cast<octet_type> (opt.tsap_calling().size()));
+                     raw_back_insert( rslt, opt.tsap_calling()); 
+                    }
+                    if (!opt.tsap_called().empty()){
+                     rslt.insert(rslt.end(),VAR_TSAPCALLED_ID);
+                     rslt.insert(rslt.end(), static_cast<octet_type> (opt.tsap_called().size()));
+                     raw_back_insert( rslt, opt.tsap_called()); 
+                    }
                     std::size_t sz = rslt.size();
-                    rslt = inttype_to_str(static_cast<int8_t> (sz)) + rslt;
+                    raw_front_insert( rslt, inttype_to_raw(static_cast<octet_type> (sz)));
                     generate_TKPTDU(rslt);
                     return rslt;
                 }
 
-                std::string generate_header_TKPT_DR(int16_t dst, int16_t src, int8_t rsn) {
-                    std::string rslt = inttype_to_str(DR_TPDU_ID) +
-                            inttype_to_str(endiancnv_copy(dst)) +
-                            inttype_to_str(endiancnv_copy(src));
-                    rslt += inttype_to_str(rsn);
+                raw_type generate_header_TKPT_DR(int16_t dst, int16_t src, octet_type rsn) {
+                    raw_type rslt;                         
+                     rslt.insert(rslt.end(),DR_TPDU_ID);
+                     raw_back_insert( rslt, inttype_to_raw(endiancnv_copy(dst)));
+                     raw_back_insert( rslt, inttype_to_raw(endiancnv_copy(src)));
+                     rslt.insert(rslt.end(),rsn);
                     std::size_t sz = rslt.size();
-                    rslt = inttype_to_str(static_cast<int8_t> (sz)) + rslt;
+                    raw_front_insert( rslt, inttype_to_raw(static_cast<octet_type> (sz)));
                     generate_TKPTDU(rslt);
                     return rslt;
                 }
 
-                std::string generate_header_TKPT_DC(int16_t dst, int16_t src) {
-                    std::string rslt = inttype_to_str(DR_TPDU_ID) +
-                            inttype_to_str(endiancnv_copy(dst)) +
-                            inttype_to_str(endiancnv_copy(src));
+                raw_type generate_header_TKPT_DC(int16_t dst, int16_t src) {
+                    raw_type rslt;                         
+                     rslt.insert(rslt.end(),DR_TPDU_ID);
+                     raw_back_insert( rslt, inttype_to_raw(endiancnv_copy(dst)));
+                     raw_back_insert( rslt, inttype_to_raw(endiancnv_copy(src)));
                     std::size_t sz = rslt.size();
-                    rslt = inttype_to_str(static_cast<int8_t> (sz)) + rslt;
+                    raw_front_insert( rslt, inttype_to_raw(static_cast<octet_type> (sz)));
                     generate_TKPTDU(rslt);
                     return rslt;
                 }
 
-                std::string generate_header_TKPT_ER(int16_t dst, const std::string& errorreason, int8_t err) {
-                    std::string rslt = inttype_to_str(ER_TPDU_ID) +
-                            inttype_to_str(endiancnv_copy(dst)) + inttype_to_str(err) + inttype_to_str(WRONG_TPDU) +
-                            inttype_to_str(static_cast<int8_t> (errorreason.size())) + errorreason;
+                raw_type generate_header_TKPT_ER(int16_t dst, const raw_type& errorreason, octet_type err) {
+                    raw_type rslt;                         
+                     rslt.insert(rslt.end(), ER_TPDU_ID); 
+                     raw_back_insert( rslt, inttype_to_raw(endiancnv_copy(dst)));
+                     rslt.insert(rslt.end(),err);
+                     rslt.insert(rslt.end(),WRONG_TPDU);
+                     rslt.insert(rslt.end(), static_cast<octet_type> (errorreason.size()));
+                     raw_back_insert( rslt, raw_type(errorreason.begin(), errorreason.end())); 
                     std::size_t sz = rslt.size();
-                    rslt = inttype_to_str(static_cast<int8_t> (sz)) + rslt;
+                    raw_front_insert( rslt, inttype_to_raw(static_cast<octet_type> (sz)));
                     generate_TKPTDU(rslt);
                     return rslt;
                 }
@@ -364,11 +412,11 @@ namespace boost {
 
                 boost::system::error_code receive_seq::check_tkpt() {
                     mutable_buffer buff_ = tkpt_buff_;
-                    std::string hdr = std::string(boost::asio::buffer_cast<const char*>(buff_), 2);
+                    raw_type hdr = raw_type(boost::asio::buffer_cast<const raw_type::value_type*>(buff_), boost::asio::buffer_cast<const raw_type::value_type*>(buff_) +2);
                     if (hdr != TKPT_START) {
                         return errcode(ERROR__SEQ);
                     }
-                    int16_t pdsz = endiancnv_copy<int16_t > (std::string(boost::asio::buffer_cast<const char*>(buff_ + 2), 2));
+                    int16_t pdsz = endiancnv_copy<int16_t > (raw_type(boost::asio::buffer_cast<const char*>(buff_ + 2), boost::asio::buffer_cast<const char*>(buff_ + 2) +2));
                     if (pdsz < 0) {
                         return errcode(ERROR__EPROTO);
                     }
@@ -388,13 +436,13 @@ namespace boost {
 
                 boost::system::error_code  receive_seq::check_header() {
                     mutable_buffer buff_ = header_buff_;
-                    int8_t nativetp = *boost::asio::buffer_cast<int8_t*>(buff_);
+                    octet_type nativetp = *boost::asio::buffer_cast<octet_type*>(buff_);
                     type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
                     /* запрос возможен и от др классов*/
                     switch (type_) {
                         case DT:
                         {
-                            int8_t eof = *boost::asio::buffer_cast<int8_t*>(buff_ + 1);
+                            octet_type eof = *boost::asio::buffer_cast<octet_type*>(buff_ + 1);
                             if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
                                 return errcode(ERROR__EPROTO); /* !!должен быть только класс 0 см. 13.7*/
                             estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
@@ -409,14 +457,14 @@ namespace boost {
                                 return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
+                            raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 1),boost::asio::buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
                             dst_tsap_ = endiancnv_copy(dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
+                            raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 3),boost::asio::buffer_cast<const char*>(buff_ + 3)+  2), src_tsap_);
                             src_tsap_ = endiancnv_copy(src_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
+                            raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 5), boost::asio::buffer_cast<const char*>(buff_ + 5) + 1), class_option_);
                             headarvarvalues vars;
                             ;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
+                            if (!parse_vars(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 6), boost::asio::buffer_cast<const char*>(buff_ + 6)+ ( estimatesize_ - 6)), vars))
                                 return errcode(ERROR__EPROTO);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             state(complete);
@@ -429,13 +477,13 @@ namespace boost {
                                 return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
+                           raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 1),  boost::asio::buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
                             dst_tsap_ = endiancnv_copy(dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
+                            raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 3), boost::asio::buffer_cast<const char*>(buff_ + 3) + 2), src_tsap_);
                             src_tsap_ = endiancnv_copy(src_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), class_option_);
+                            raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 5), boost::asio::buffer_cast<const char*>(buff_ + 5) +1), class_option_);
                             headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
+                            if (!parse_vars(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 6), boost::asio::buffer_cast<const char*>(buff_ + 6) + (estimatesize_ - 6)) , vars))
                                 return errcode(ERROR__EPROTO);
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                             state(complete);
@@ -449,15 +497,15 @@ namespace boost {
                             ; /* невозможно см. 13.3.2*/
                             int16_t dst_tsap_ = 0;
                             int16_t src_tsap_ = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
+                            raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 1), boost::asio::buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
                             dst_tsap_ = endiancnv_copy(dst_tsap_);
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 3), 2), src_tsap_);
+                            raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 3), boost::asio::buffer_cast<const char*>(buff_ + 3) + 2), src_tsap_);
                             src_tsap_ = endiancnv_copy(src_tsap_);
-                            int8_t rsn = 0;
-                            str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_ + 5), 1), rsn);
+                            octet_type rsn = 0;
+                            raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 5),  boost::asio::buffer_cast<const char*>(buff_ + 5) +1), rsn);
                             reject_reason(rsn);
                             headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 6), estimatesize_ - 6), vars))
+                            if (!parse_vars(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 6), boost::asio::buffer_cast<const char*>(buff_ + 6) + (estimatesize_ - 6) ), vars))
                                 return errcode(ERROR__EPROTO);
                             ;
                             options_ = protocol_options(dst_tsap_, src_tsap_, vars);
@@ -471,10 +519,10 @@ namespace boost {
                                 return errcode(ERROR__EPROTO);
                             ; /* невозможно см. 13.3.1*/
                             int16_t dst_tsap_ = 0;
-                            str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 1), 2), dst_tsap_);
-                            str_to_inttype(std::string(buffer_cast<const char*>(buff_ + 3), 1), reject_reason_);
+                            raw_to_inttype(raw_type(buffer_cast<const char*>(buff_ + 1), buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
+                            raw_to_inttype(raw_type(buffer_cast<const char*>(buff_ + 3),  buffer_cast<const char*>(buff_ + 3) + 1), reject_reason_);
                             headarvarvalues vars;
-                            if (!parse_vars(std::string(boost::asio::buffer_cast<const char*>(buff_ + 4), estimatesize_ - 4), vars))
+                            if (!parse_vars(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 4), boost::asio::buffer_cast<const char*>(buff_ + 4) + (estimatesize_ - 4)) , vars))
                                 return errcode(ERROR__EPROTO);
                             ;
                             state(complete);
@@ -489,7 +537,7 @@ namespace boost {
                     return errcode(ERROR__EPROTO);
                 }
 
-                void  receive_seq::reject_reason(int8_t val) {
+                void  receive_seq::reject_reason(octet_type val) {
                     errcode_ = errorcode_by_reason(val);
                     reject_reason_ = val;
                 }
@@ -511,19 +559,19 @@ namespace boost {
                 ///////////////////////////////////////////////////////////////////////////////////////
 
                 void send_seq::constructCR(const protocol_options& opt) {
-                    buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_CR(opt)));
+                    buf_ = send_buffer_ptr( new sevice_send_buffer_implb(generate_header_TKPT_CR(opt)));
                 }
 
                 void send_seq::constructCC(const protocol_options& opt) {
-                    buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_CC(opt)));
+                    buf_ = send_buffer_ptr( new sevice_send_buffer_implb(generate_header_TKPT_CC(opt)));
                 }
 
-                void send_seq::constructER(int16_t dst, const std::string& errorreason, int8_t err) {
-                    buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_ER(dst, errorreason, err)));
+                void send_seq::constructER(int16_t dst, const raw_type& errorreason, octet_type err) {
+                    buf_ = send_buffer_ptr( new sevice_send_buffer_implb(generate_header_TKPT_ER(dst, errorreason, err)));
                 }
 
-                void send_seq::constructDR(int16_t dst, int16_t src, int8_t rsn) {
-                    buf_ = send_buffer_ptr( new sevice_send_buffer_impl(generate_header_TKPT_DR(dst, src , rsn)));
+                void send_seq::constructDR(int16_t dst, int16_t src, octet_type rsn) {
+                    buf_ = send_buffer_ptr( new sevice_send_buffer_implb(generate_header_TKPT_DR(dst, src , rsn)));
                 }
 
             }
