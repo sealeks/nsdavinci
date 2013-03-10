@@ -112,8 +112,8 @@ namespace boost {
 
             const vector_buffer NULL_VECTOR_BUFFER = vector_buffer();
 
-
-            typedef std::vector<int8_t> raw_type;
+            typedef int8_t  octet_type;
+            typedef std::vector<octet_type> raw_type;
             typedef boost::shared_ptr<raw_type> raw_type_ptr;
             typedef std::vector<raw_type_ptr> vect_raw_type_ptr;
 
