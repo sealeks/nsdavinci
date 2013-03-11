@@ -479,9 +479,6 @@ namespace boost {
                     buf_ = send_buffer_ptr(new sevice_send_buffer_impl(generate_header_AA(opt, data)));
                 }
 
-
-
-
                 spdu_type type_;
                 send_buffer_ptr buf_;
             };
@@ -611,9 +608,6 @@ namespace boost {
                 data_type_ptr header_data;
                 mutable_buffer header_buff_;
                 mutable_buffer userbuff_;
-
-
-
             };
 
             typedef boost::shared_ptr<receive_seq> receive_seq_ptr;
@@ -732,7 +726,6 @@ namespace boost {
                     void operator()(const boost::system::error_code& ec) {
                         if (!ec)
                             operator()(ec, 0);
-
                         else
                             handler_(ec);
                     }
@@ -795,9 +788,8 @@ namespace boost {
                     }
 
                     void state(stateconnection st) {
-                        if (state_ != st) {
+                        if (state_ != st) 
                             state_ = st;
-                        }
                     }
 
                     stream_socket* socket_;

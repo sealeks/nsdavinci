@@ -97,6 +97,14 @@ namespace boost {
         inline static void raw_front_insert(raw_type& dst, const raw_type& src) {
             dst.insert(dst.begin(), src.begin(), src.end());
         }
+        
+        inline static raw_type buffer_to_raw( const  mutable_buffer& buff, std::size_t beg, std::size_t len){
+            return raw_type(boost::asio::buffer_cast<const octet_type*>(buff) +beg , boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len));
+        }
+        
+        inline static raw_type buffer_to_raw( const  const_buffer& buff, std::size_t beg, std::size_t len){
+            return raw_type(boost::asio::buffer_cast<const octet_type*>(buff) +beg , boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len));
+        }        
 
 
         //   transport
