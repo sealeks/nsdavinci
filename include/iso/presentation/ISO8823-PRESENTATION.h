@@ -13,32 +13,32 @@
 namespace ISO8823_PRESENTATION  {
 
 
-	using  boost::asio::asn::null_type;
- 	using  boost::asio::asn::enumerated_type;
- 	using  boost::asio::asn::bitstring_type;
- 	using  boost::asio::asn::octetstring_type;
- 	using  boost::asio::asn::oid_type;
- 	using  boost::asio::asn::reloid_type;
- 	using  boost::asio::asn::utctime_type;
- 	using  boost::asio::asn::gentime_type;
- 	using  boost::asio::asn::ia5string_type;
- 	using  boost::asio::asn::printablestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::numericstring_type;
- 	using  boost::asio::asn::universalstring_type;
- 	using  boost::asio::asn::bmpstring_type;
- 	using  boost::asio::asn::utf8string_type;
- 	using  boost::asio::asn::generalstring_type;
- 	using  boost::asio::asn::graphicstring_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::videotexstring_type;
- 	using  boost::asio::asn::objectdescriptor_type;
- 	using  boost::asio::asn::external_type;
- 	using  boost::asio::asn::embeded_type;
- 	using  boost::asio::asn::characterstring_type;
- 	using  boost::asio::asn::any_type;
+	using  boost::asn1::null_type;
+ 	using  boost::asn1::enumerated_type;
+ 	using  boost::asn1::bitstring_type;
+ 	using  boost::asn1::octetstring_type;
+ 	using  boost::asn1::oid_type;
+ 	using  boost::asn1::reloid_type;
+ 	using  boost::asn1::utctime_type;
+ 	using  boost::asn1::gentime_type;
+ 	using  boost::asn1::ia5string_type;
+ 	using  boost::asn1::printablestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::numericstring_type;
+ 	using  boost::asn1::universalstring_type;
+ 	using  boost::asn1::bmpstring_type;
+ 	using  boost::asn1::utf8string_type;
+ 	using  boost::asn1::generalstring_type;
+ 	using  boost::asn1::graphicstring_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::videotexstring_type;
+ 	using  boost::asn1::objectdescriptor_type;
+ 	using  boost::asn1::external_type;
+ 	using  boost::asn1::embeded_type;
+ 	using  boost::asn1::characterstring_type;
+ 	using  boost::asn1::any_type;
 
 	//  type is  SET
 	struct  CP_type;
