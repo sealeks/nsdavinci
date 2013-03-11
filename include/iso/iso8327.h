@@ -14,8 +14,8 @@
 namespace boost {
     namespace iso {
         namespace prot8327 {
-            
-             using boost::asio::basic_socket;
+
+            using boost::asio::basic_socket;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8327 utill   //
@@ -342,6 +342,17 @@ namespace boost {
                 std::string header_;
             };
 
+            class sevice_send_buffer_impl : public send_buffer_impl {
+            public:
+
+                sevice_send_buffer_impl(const std::string& send) : send_buffer_impl(), send_(send) {
+                    buff_.push_back(const_buffer(send_.data(), send_.size()));
+                }
+
+            private:
+                std::string send_;
+            };
+
 
 
 
@@ -431,7 +442,7 @@ namespace boost {
                 }
 
                 const const_sequence& pop() {
-                    return buf_ ? buf_->pop() : NULL_const_sequence;
+                    return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
                 }
 
                 std::size_t size(std::size_t sz) {
@@ -788,7 +799,7 @@ namespace boost {
                     }
 
                     void state(stateconnection st) {
-                        if (state_ != st) 
+                        if (state_ != st)
                             state_ = st;
                     }
 
