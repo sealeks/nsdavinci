@@ -303,7 +303,7 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        base_oarchive::iterator base_oarchive::add(const raw_type& vl) {
+        base_oarchive::iterator_type base_oarchive::add(const raw_type& vl) {
             if (vl.empty()) return
                 listbuffers_.end();
             rows_vect.push_back(raw_type_ptr(new raw_type(vl)));
@@ -311,7 +311,7 @@ namespace boost {
             return listbuffers_.insert(listbuffers_.end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
         }
 
-        base_oarchive::iterator base_oarchive::add(const raw_type& vl, iterator it) {
+        base_oarchive::iterator_type base_oarchive::add(const raw_type& vl, iterator_type it) {
             if (vl.empty()) return
                 listbuffers_.end();
             rows_vect.push_back(raw_type_ptr(new raw_type(vl)));
@@ -321,7 +321,7 @@ namespace boost {
 
         bool base_oarchive::bind(raw_type& vl) {
             vl.clear();
-            for (iterator it = listbuffers_.begin(); it != listbuffers_.end(); ++it)
+            for (iterator_type it = listbuffers_.begin(); it != listbuffers_.end(); ++it)
                 vl.insert(vl.end(),
                     const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)),
                     const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)) + boost::asio::buffer_size(*it));

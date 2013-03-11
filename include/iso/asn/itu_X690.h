@@ -257,7 +257,7 @@ namespace boost {
             ///  archiver                
 
             class oarchive : public boost::iso::base_oarchive {
-                typedef std::pair<iterator, iterator> iterator_pair;
+                typedef std::pair<iterator_type, iterator_type> iterator_pair;
 
                 struct tlv_info {
 
@@ -340,7 +340,7 @@ namespace boost {
                     *this << vl;
                 }                  
 
-                iterator addtag(const tag& tg, bool settype);
+                iterator_type addtag(const tag& tg, bool settype);
 
                 void pop_stack();
 

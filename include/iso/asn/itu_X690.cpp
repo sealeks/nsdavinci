@@ -541,9 +541,9 @@ namespace boost {
 
             /// oarchive
 
-            oarchive::iterator oarchive::addtag(const tag& tg, bool settype) {
+            oarchive::iterator_type oarchive::addtag(const tag& tg, bool settype) {
                 if (/*false*/rule_ != boost::iso::CER_ENCODING) return add(to_x690_cast(tg));
-                iterator it = add(to_x690_cast(tg));
+                iterator_type it = add(to_x690_cast(tg));
                 if (!stack_.empty() && stack_.top().is_set)
                     stack_.top().tlv_iterators.push_back(tlv_info(tg, iterator_pair(it, it)));
                 stack_.push(stack_item(settype));
@@ -568,7 +568,7 @@ namespace boost {
                 tlv_map mps;
                 for (tlv_vector::iterator it = vct.begin(); it != vct.end(); ++it) {
                     if (mps.upper_bound(it->tg) != mps.end())
-                        listbuffers_.splice(mps.upper_bound(it->tg)->second.first, listbuffers_, it->iterators.first, ++iterator(it->iterators.second));
+                        listbuffers_.splice(mps.upper_bound(it->tg)->second.first, listbuffers_, it->iterators.first, ++ iterator_type(it->iterators.second));
                     mps.insert(std::make_pair(it->tg, iterator_pair(it->iterators.first, it->iterators.second)));
                 }
             }
