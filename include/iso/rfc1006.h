@@ -126,11 +126,7 @@ namespace boost {
                     dst_(dst), src_(src), vars_(vars) {
                     }
 
-                    protocol_options(int16_t dst, int16_t src, tpdu_size pdusize);
-                    
-                    protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, const std::string& called , const std::string& calling = "");                    
-                    
-                    protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, const raw_type& called , const raw_type& calling = raw_type());                     
+                    protocol_options(int16_t dst, int16_t src, tpdu_size pdusize,  const raw_type& called = raw_type(), const raw_type& calling = raw_type());                               
 
                     int16_t dst_tsap() const {
                         return dst_;
