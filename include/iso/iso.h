@@ -261,13 +261,13 @@ namespace boost {
             explicit session_selector(const selectorvalue_type& called) : called_(called), tselector_() {
             }
 
-            explicit session_selector(const selectorvalue_type& called, selectorvalue_type& calling) : called_(called), calling_(calling), tselector_() {
+            explicit session_selector(const selectorvalue_type& called, const selectorvalue_type& calling) : called_(called), calling_(calling), tselector_() {
             }
 
             explicit session_selector(const selectorvalue_type& called, const transport_selector& tselector) : called_(called), tselector_(tselector) {
             }
 
-            explicit session_selector(const selectorvalue_type& called, selectorvalue_type& calling, const transport_selector& tselector) : called_(called), calling_(calling), tselector_(tselector) {
+            explicit session_selector(const selectorvalue_type& called, const selectorvalue_type& calling, const transport_selector& tselector) : called_(called), calling_(calling), tselector_(tselector) {
             }
 
             session_selector(const transport_selector& tselector) : tselector_(tselector) {
