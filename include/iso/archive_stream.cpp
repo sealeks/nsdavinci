@@ -270,13 +270,13 @@ namespace boost {
             return stream;
         }
 
-        std::ostream& operator<<(std::ostream& stream, const base_oarchive& vl) {
+        std::ostream& operator<<(std::ostream& stream, const base_output_coder& vl) {
             stream << vl.buffers();
 
             return stream;
         }
 
-        std::ofstream& operator<<(std::ofstream& stream, const base_oarchive& vl) {
+        std::ofstream& operator<<(std::ofstream& stream, const base_output_coder& vl) {
             stream << vl.buffers();
 
             return stream;
@@ -303,7 +303,7 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        base_oarchive::iterator_type base_oarchive::add(const raw_type& vl) {
+        base_output_coder::iterator_type base_output_coder::add(const raw_type& vl) {
             if (vl.empty()) return
                 listbuffers_.end();
             rows_vect.push_back(raw_type_ptr(new raw_type(vl)));
@@ -311,7 +311,7 @@ namespace boost {
             return listbuffers_.insert(listbuffers_.end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
         }
 
-        base_oarchive::iterator_type base_oarchive::add(const raw_type& vl, iterator_type it) {
+        base_output_coder::iterator_type base_output_coder::add(const raw_type& vl, iterator_type it) {
             if (vl.empty()) return
                 listbuffers_.end();
             rows_vect.push_back(raw_type_ptr(new raw_type(vl)));
@@ -319,7 +319,7 @@ namespace boost {
             return listbuffers_.insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
         }
 
-        bool base_oarchive::bind(raw_type& vl) {
+        bool base_output_coder::bind(raw_type& vl) {
             vl.clear();
             for (iterator_type it = listbuffers_.begin(); it != listbuffers_.end(); ++it)
                 vl.insert(vl.end(),
@@ -333,13 +333,13 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////      
 
-        void base_iarchive::add(const raw_type& vl) {
+        void base_input_coder::add(const raw_type& vl) {
             rows_vect.push_back(raw_type_ptr(new raw_type(vl.begin(), vl.end())));
             size_ += vl.size();
             listbuffers_.push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
         }
 
-        bool base_iarchive::is_endof(std::size_t beg) const {
+        bool base_input_coder::is_endof(std::size_t beg) const {
             raw_type data;
             if (row_cast(listbuffers_, listbuffers_.begin(), data, beg, 2)) {
                 if ((data.size() == 2) && (data[0] == 0) && (data[1] == 0)) {
@@ -349,12 +349,12 @@ namespace boost {
             return false;
         }
 
-        void base_iarchive::clear() {
+        void base_input_coder::clear() {
             listbuffers_.clear();
             size_ = 0;
         }
 
-        bool base_iarchive::bind(const raw_type& vl) {
+        bool base_input_coder::bind(const raw_type& vl) {
             clear();
             add(vl);
             return true;
@@ -365,7 +365,7 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////  
 
-        std::string base_archive::request_str() const {
+        std::string base_coder::request_str() const {
             const const_sequence& tmp = request();
             std::string rslt;
             for (const_sequence::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
@@ -377,11 +377,11 @@ namespace boost {
             return rslt;
         };
 
-        void base_archive::request_str(const std::string& val) {
+        void base_coder::request_str(const std::string& val) {
             output_->add(raw_type(val.begin(), val.end()));
         };
 
-        std::string base_archive::respond_str() const {
+        std::string base_coder::respond_str() const {
             const mutable_sequence& tmp = input_->buffers();
             std::string rslt;
             for (mutable_sequence::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
@@ -393,7 +393,7 @@ namespace boost {
             return rslt;
         };
 
-        void base_archive::respond_str(const std::string& val) {
+        void base_coder::respond_str(const std::string& val) {
             insert_to_input(raw_type(val.begin(), val.end()));
         };
 

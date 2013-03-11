@@ -30,17 +30,17 @@ namespace boost {
             typedef ISO8823_PRESENTATION::Result_list result_list_type;
             typedef ISO8823_PRESENTATION::Presentation_context_definition_list definition_list_type;
 
-            static archive_ptr build_by_syntaxes(const oid_type& asyntax, const encoding_rule& tsyntax) {
+            static isocoder_ptr build_by_syntaxes(const oid_type& asyntax, const encoding_rule& tsyntax) {
 
                 switch (tsyntax) {
                     case BER_ENCODING:
                     case DER_ENCODING:
-                    case CER_ENCODING: return archive_ptr(new x690_archive(asyntax, tsyntax));
+                    case CER_ENCODING: return isocoder_ptr(new x690_archive(asyntax, tsyntax));
                     default:
                     {
                     }
                 }
-                return archive_ptr();
+                return isocoder_ptr();
             }
 
 
