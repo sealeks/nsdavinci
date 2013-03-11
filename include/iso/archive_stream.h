@@ -128,7 +128,7 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class base_oarchive {
+        class base_output_coder {
         public:
 
             typedef const_sequence::iterator iterator_type;
@@ -137,10 +137,10 @@ namespace boost {
                 return false;
             }
 
-            base_oarchive(encoding_rule rl = NULL_ENCODING) : size_(0) {
+            base_output_coder(encoding_rule rl = NULL_ENCODING) : size_(0) {
             }
 
-            virtual ~base_oarchive() {
+            virtual ~base_output_coder() {
             }
 
             const const_sequence& buffers() const {
@@ -203,7 +203,7 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class base_iarchive {
+        class base_input_coder {
         public:
 
             typedef mutable_sequence::iterator iterator_type;
@@ -212,10 +212,10 @@ namespace boost {
                 return true;
             }
 
-            base_iarchive() : size_(0) {
+            base_input_coder() : size_(0) {
             }
 
-            virtual ~base_iarchive() {
+            virtual ~base_input_coder() {
             }
 
             const mutable_sequence& buffers() const {
@@ -280,31 +280,31 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class base_archive {
+        class base_coder {
         public:
 
-            typedef boost::shared_ptr<base_iarchive> iarchive_ptr;
-            typedef boost::shared_ptr<base_oarchive> oarchive_ptr;
+            typedef boost::shared_ptr<base_input_coder> input_coder_ptr;
+            typedef boost::shared_ptr<base_output_coder> output_coder_ptr;
 
-            base_archive(base_iarchive* in, base_oarchive* out) : input_(in), output_(out) {
+            base_coder(base_input_coder* in, base_output_coder* out) : input_(in), output_(out) {
             }
 
-            virtual ~base_archive() {
+            virtual ~base_coder() {
             }
 
-            iarchive_ptr in() {
+            input_coder_ptr in() {
                 return input_;
             }
 
-            iarchive_ptr in() const {
+            input_coder_ptr in() const {
                 return input_;
             }
 
-            oarchive_ptr out() {
+            output_coder_ptr out() {
                 return output_;
             }
 
-            oarchive_ptr out() const {
+            output_coder_ptr out() const {
                 return output_;
             }
 
@@ -341,7 +341,7 @@ namespace boost {
                 return oid_type();
             }
 
-            friend bool operator<(const base_archive& ls, const base_archive& rs) {
+            friend bool operator<(const base_coder& ls, const base_coder& rs) {
                 return ls<rs;
             }
 
@@ -355,40 +355,39 @@ namespace boost {
 
 
         protected:
-
-
-            iarchive_ptr input_;
-            oarchive_ptr output_;
+            
+            input_coder_ptr input_;
+            output_coder_ptr output_;
         };
 
 
 
-        typedef boost::shared_ptr<base_archive> archive_ptr;
+        typedef boost::shared_ptr<base_coder> isocoder_ptr;
 
-        template<typename INPUT_TYPE = base_iarchive, typename OUTPUT_TYPE = base_oarchive>
-                class archive_temp : public base_archive {
+        template<typename INPUT_TYPE = base_input_coder, typename OUTPUT_TYPE = base_output_coder>
+                class isocoder_templ : public base_coder {
         public:
 
             typedef INPUT_TYPE in_archive_type;
             typedef OUTPUT_TYPE out_archive_type;
 
-            archive_temp(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING) : base_archive(new in_archive_type(), new out_archive_type(rul)), abstract_syntax_(asx) {
+            isocoder_templ(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING) : base_coder(new in_archive_type(), new out_archive_type(rul)), abstract_syntax_(asx) {
             }
 
             in_archive_type& input() {
-                return *boost::static_pointer_cast<in_archive_type, base_iarchive > (input_);
+                return *boost::static_pointer_cast<in_archive_type, base_input_coder > (input_);
             }
 
             const in_archive_type& input() const {
-                return *boost::static_pointer_cast<in_archive_type, base_iarchive > (input_);
+                return *boost::static_pointer_cast<in_archive_type, base_input_coder > (input_);
             }
 
             out_archive_type& output() {
-                return *boost::static_pointer_cast<out_archive_type, base_oarchive > (output_);
+                return *boost::static_pointer_cast<out_archive_type, base_output_coder > (output_);
             }
 
             const out_archive_type& output() const {
-                return *boost::static_pointer_cast<out_archive_type, base_oarchive > (output_);
+                return *boost::static_pointer_cast<out_archive_type, base_output_coder > (output_);
             }
 
             virtual oid_type abstract_syntax() const {
@@ -402,10 +401,10 @@ namespace boost {
 
         };
 
-        typedef archive_temp<> simple_trans_data;
+        typedef isocoder_templ<> simple_trans_data;
 
-        static inline archive_ptr create_simple_data(const std::string& val) {
-            archive_ptr tmp = archive_ptr(new simple_trans_data());
+        static inline isocoder_ptr create_simple_data(const std::string& val) {
+            isocoder_ptr tmp = isocoder_ptr(new simple_trans_data());
             tmp->request_str(val);
             return tmp;
         }
@@ -418,9 +417,9 @@ namespace boost {
 
         std::ofstream& operator<<(std::ofstream& stream, const const_sequence& self);
 
-        std::ostream& operator<<(std::ostream& stream, const base_oarchive& vl);
+        std::ostream& operator<<(std::ostream& stream, const base_output_coder& vl);
 
-        std::ofstream& operator<<(std::ofstream& stream, const base_oarchive& vl);
+        std::ofstream& operator<<(std::ofstream& stream, const base_output_coder& vl);
 
         std::ostream& operator<<(std::ostream& stream, const mutable_sequence& vl);
 

@@ -36,9 +36,9 @@ namespace boost {
             const presentation_req_type PRSNT_REST_MREQ = boost::asn1::bitstring_type(true, 1);
             const presentation_req_type PRSNT_NULL_MREQ = boost::asn1::bitstring_type((int8_t) 0, 6);
 
-            typedef boost::asn1::x690::iarchive x690_iarchive_type;
-            typedef boost::asn1::x690::oarchive x690_oarchive_type;
-            typedef boost::iso::archive_temp<x690_iarchive_type, x690_oarchive_type> x690_archive;
+            typedef boost::asn1::x690::input_coder x690_input_coder_type;
+            typedef boost::asn1::x690::output_coder x690_output_coder_type;
+            typedef boost::iso::isocoder_templ<x690_input_coder_type, x690_output_coder_type> x690_archive;
 
             typedef std::set<oid_type> transfer_synaxes_type;
 
@@ -80,7 +80,7 @@ namespace boost {
                     return archiver_;
                 }
 
-                archive_ptr archiver() {
+                isocoder_ptr archiver() {
                     return archiver_;
                 }
 
@@ -91,7 +91,7 @@ namespace boost {
                             case DER_ENCODING:
                             case CER_ENCODING:
                             {
-                                data.serialize(boost::static_pointer_cast<x690_archive, base_archive > (archiver_)->output());
+                                data.serialize(boost::static_pointer_cast<x690_archive, base_coder > (archiver_)->output());
                                 return true;
                             };
                             default:
@@ -109,7 +109,7 @@ namespace boost {
                             case DER_ENCODING:
                             case CER_ENCODING:
                             {
-                                data.serialize(boost::static_pointer_cast<x690_archive, base_archive > (archiver_)->input());
+                                data.serialize(boost::static_pointer_cast<x690_archive, base_coder > (archiver_)->input());
                                 return true;
                             };
                             default:
@@ -125,7 +125,7 @@ namespace boost {
             private:
                 oid_type abstract_syntax_;
                 transfer_synaxes_type transfer_syntaxes_;
-                archive_ptr archiver_;
+                isocoder_ptr archiver_;
             };
 
 
@@ -211,9 +211,9 @@ namespace boost {
 
                 context_id_type remove_contex(context_id_type id);
 
-                archive_ptr find(context_id_type id) {
+                isocoder_ptr find(context_id_type id) {
                     presentation_context_map::iterator it = contexts_.find(id);
-                    return it != contexts_.end() ? it->second->archiver() : archive_ptr();
+                    return it != contexts_.end() ? it->second->archiver() : isocoder_ptr();
                 }
 
                 presentation_context_unit_ptr get_context(const oid_type& oid) {
@@ -221,9 +221,9 @@ namespace boost {
                     return it != contexts_.end() ? it->second : presentation_context_unit_ptr();
                 }
 
-                archive_ptr exists(context_id_type id) {
+                isocoder_ptr exists(context_id_type id) {
                     presentation_context_map::iterator it = contexts_.find(id);
-                    return it != contexts_.end() ? it->second->archiver() : archive_ptr();
+                    return it != contexts_.end() ? it->second->archiver() : isocoder_ptr();
                 }
 
                 void clear() {
@@ -365,7 +365,7 @@ namespace boost {
 
 
             typedef x690_archive presentation_archive;
-            typedef boost::shared_ptr<presentation_archive> presentation_archive_ptr;
+            typedef boost::shared_ptr<presentation_archive> presentation_isocoder_ptr;
 
 
 
@@ -668,11 +668,11 @@ namespace boost {
                     coder()->clear_output();
                 }
 
-                presentation_archive_ptr coder() {
+                presentation_isocoder_ptr coder() {
                     return basiccoder;
                 }
 
-                presentation_archive_ptr coder() const {
+                presentation_isocoder_ptr coder() const {
                     return basiccoder;
                 }
 
@@ -761,7 +761,7 @@ namespace boost {
 
 
 
-                presentation_archive_ptr basiccoder;
+                presentation_isocoder_ptr basiccoder;
                 presentation_selector selector_;
                 presentation_pm_ptr ppm_;
                 presentation_connection_option option_;

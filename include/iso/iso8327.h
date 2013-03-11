@@ -670,17 +670,17 @@ namespace boost {
                             return ec;
                         }
                     }
-                    return connect(peer_endpoint, archive_ptr(), ec);
+                    return connect(peer_endpoint, isocoder_ptr(), ec);
                 }
 
-                void connect(const endpoint_type& peer_endpoint, archive_ptr data) {
+                void connect(const endpoint_type& peer_endpoint, isocoder_ptr data) {
 
                     boost::system::error_code ec;
                     connect(peer_endpoint, data, ec);
                     boost::asio::detail::throw_error(ec, "connect");
                 }
 
-                boost::system::error_code connect(const endpoint_type& peer_endpoint, archive_ptr data,
+                boost::system::error_code connect(const endpoint_type& peer_endpoint, isocoder_ptr data,
                         boost::system::error_code& ec) {
                     if (!is_open()) {
                         if (this->get_service().open(this->get_implementation(),
@@ -708,7 +708,7 @@ namespace boost {
                 public:
 
                     connect_op(stream_socket* socket, ConnectHandler handler,
-                            const endpoint_type& peer_endpoint, archive_ptr transdata = archive_ptr()) :
+                            const endpoint_type& peer_endpoint, isocoder_ptr transdata = isocoder_ptr()) :
                     socket_(socket),
                     handler_(handler),
                     state_(request),
@@ -799,7 +799,7 @@ namespace boost {
                     endpoint_type peer_endpoint_;
                     send_seq_ptr send_;
                     receive_seq_ptr receive_;
-                    archive_ptr transdata_;
+                    isocoder_ptr transdata_;
 
                 };
 
@@ -811,11 +811,11 @@ namespace boost {
                 template <typename ConnectHandler>
                 void async_connect(const endpoint_type& peer_endpoint,
                         BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
-                    async_connect(peer_endpoint, archive_ptr(), handler);
+                    async_connect(peer_endpoint, isocoder_ptr(), handler);
                 }
 
                 template <typename ConnectHandler>
-                void async_connect(const endpoint_type& peer_endpoint, archive_ptr data,
+                void async_connect(const endpoint_type& peer_endpoint, isocoder_ptr data,
                         BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
                     //BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
@@ -842,14 +842,14 @@ namespace boost {
                 //  Release operation  //
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
-                void releaseconnect(release_type type, archive_ptr data) {
+                void releaseconnect(release_type type, isocoder_ptr data) {
 
                     boost::system::error_code ec;
                     releaseconnect(type, data, ec);
                     boost::asio::detail::throw_error(ec, "releaseconnect");
                 }
 
-                boost::system::error_code releaseconnect(release_type type, archive_ptr data, boost::system::error_code& ec) {
+                boost::system::error_code releaseconnect(release_type type, isocoder_ptr data, boost::system::error_code& ec) {
                     return releaseconnect_impl(type, data, ec);
                 }
 
@@ -868,7 +868,7 @@ namespace boost {
 
                 public:
 
-                    releaseconnect_op(stream_socket* socket, ReleaseHandler handler, release_type type, archive_ptr transdata) :
+                    releaseconnect_op(stream_socket* socket, ReleaseHandler handler, release_type type, isocoder_ptr transdata) :
                     socket_(socket),
                     handler_(handler),
                     send_(send_seq_ptr(new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID, socket->session_option(), transdata ? transdata->request_str() : ""))),
@@ -959,7 +959,7 @@ namespace boost {
                     send_seq_ptr send_;
                     receive_seq_ptr receive_;
                     release_type type_;
-                    archive_ptr transdata_;
+                    isocoder_ptr transdata_;
                     stateconnection state_;
 
                 };
@@ -972,7 +972,7 @@ namespace boost {
 
                 template <typename ReleaseHandler>
                 void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
-                        release_type type, archive_ptr trans) {
+                        release_type type, isocoder_ptr trans) {
                     //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                     if (is_open()) {
                         this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
@@ -991,14 +991,14 @@ namespace boost {
                 //  Check accept operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                void check_accept(archive_ptr transdata) {
+                void check_accept(isocoder_ptr transdata) {
 
                     boost::system::error_code ec;
                     check_accept(transdata, ec);
                     boost::asio::detail::throw_error(ec, "connect");
                 }
 
-                boost::system::error_code check_accept(archive_ptr transdata, boost::system::error_code& ec) {
+                boost::system::error_code check_accept(isocoder_ptr transdata, boost::system::error_code& ec) {
                     return check_accept_imp(transdata, ec);
                 }
 
@@ -1016,7 +1016,7 @@ namespace boost {
 
                 public:
 
-                    accept_op(stream_socket* socket, CheckAcceptHandler handler, archive_ptr transdata) :
+                    accept_op(stream_socket* socket, CheckAcceptHandler handler, isocoder_ptr transdata) :
                     socket_(socket),
                     handler_(handler),
                     state_(wait),
@@ -1124,7 +1124,7 @@ namespace boost {
                     protocol_options options_;
                     send_seq_ptr send_;
                     receive_seq_ptr receive_;
-                    archive_ptr transdata_;
+                    isocoder_ptr transdata_;
 
                 };
 
@@ -1134,7 +1134,7 @@ namespace boost {
             public:
 
                 template <typename CheckAcceptHandler>
-                void asyn_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler, archive_ptr transdata) {
+                void asyn_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler, isocoder_ptr transdata) {
                     // BOOST_ASIO_CONNECT_HANDLER_CHECK(CheckAcceptHandler, handler) type_check;
 
                     this->get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
@@ -1514,7 +1514,7 @@ namespace boost {
                 //  private implementator  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 
-                boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, archive_ptr data,
+                boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, isocoder_ptr data,
                         boost::system::error_code& ec) {
 
                     session_data_ = data;
@@ -1551,7 +1551,7 @@ namespace boost {
                     return ec = ERROR__EPROTO;
                 }
 
-                boost::system::error_code releaseconnect_impl(release_type type, archive_ptr data, boost::system::error_code& ec) {
+                boost::system::error_code releaseconnect_impl(release_type type, isocoder_ptr data, boost::system::error_code& ec) {
                     if (is_open()) {
                         send_seq_ptr send_(new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID, session_option(), data ? data->request_str() : ""));
                         while (!ec && !send_->ready())
@@ -1592,7 +1592,7 @@ namespace boost {
                     return ec = ERROR_ECONNREFUSED;
                 }
 
-                boost::system::error_code check_accept_imp(archive_ptr transdata, boost::system::error_code& ec) {
+                boost::system::error_code check_accept_imp(isocoder_ptr transdata, boost::system::error_code& ec) {
                     bool canseled = false;
 
                     receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
@@ -1685,7 +1685,7 @@ namespace boost {
                 }
 
                 protocol_options option_;
-                archive_ptr session_data_;
+                isocoder_ptr session_data_;
             };
 
 
@@ -1730,7 +1730,7 @@ namespace boost {
                 template <typename SocketService>
                 void accept(basic_socket<protocol_type, SocketService>& peer) {
                     boost::system::error_code ec;
-                    accept_impl(peer, archive_ptr(), ec);
+                    accept_impl(peer, isocoder_ptr(), ec);
                     boost::asio::detail::throw_error(ec, "accept");
                 }
 
@@ -1738,14 +1738,14 @@ namespace boost {
                 boost::system::error_code accept(
                         basic_socket<protocol_type, SocketService>& peer,
                         boost::system::error_code& ec) {
-                    return accept_impl(peer, archive_ptr(), ec);
+                    return accept_impl(peer, isocoder_ptr(), ec);
                 }
 
                 template <typename SocketService>
                 void accept(basic_socket<protocol_type, SocketService>& peer,
                         endpoint_type& peer_endpoint) {
                     boost::system::error_code ec;
-                    accept_impl(peer, peer_endpoint, archive_ptr(), ec);
+                    accept_impl(peer, peer_endpoint, isocoder_ptr(), ec);
                     boost::asio::detail::throw_error(ec, "accept");
                 }
 
@@ -1753,11 +1753,11 @@ namespace boost {
                 boost::system::error_code accept(
                         basic_socket<protocol_type, SocketService>& peer,
                         endpoint_type& peer_endpoint, boost::system::error_code& ec) {
-                    return accept_impl(peer, peer_endpoint, archive_ptr(), ec);
+                    return accept_impl(peer, peer_endpoint, isocoder_ptr(), ec);
                 }
 
                 template <typename SocketService>
-                void accept(basic_socket<protocol_type, SocketService>& peer, archive_ptr transdata) {
+                void accept(basic_socket<protocol_type, SocketService>& peer, isocoder_ptr transdata) {
                     boost::system::error_code ec;
                     accept_impl(peer, transdata, ec);
                     boost::asio::detail::throw_error(ec, "accept");
@@ -1765,14 +1765,14 @@ namespace boost {
 
                 template <typename SocketService>
                 boost::system::error_code accept(
-                        basic_socket<protocol_type, SocketService>& peer, archive_ptr transdata,
+                        basic_socket<protocol_type, SocketService>& peer, isocoder_ptr transdata,
                         boost::system::error_code& ec) {
                     return accept_impl(peer, transdata, ec);
                 }
 
                 template <typename SocketService>
                 void accept(basic_socket<protocol_type, SocketService>& peer,
-                        endpoint_type& peer_endpoint, archive_ptr transdata) {
+                        endpoint_type& peer_endpoint, isocoder_ptr transdata) {
                     boost::system::error_code ec;
                     accept_impl(peer, peer_endpoint, transdata, ec);
                     boost::asio::detail::throw_error(ec, "accept");
@@ -1780,7 +1780,7 @@ namespace boost {
 
                 template <typename SocketService>
                 boost::system::error_code accept(
-                        basic_socket<protocol_type, SocketService>& peer, archive_ptr transdata,
+                        basic_socket<protocol_type, SocketService>& peer, isocoder_ptr transdata,
                         endpoint_type& peer_endpoint, boost::system::error_code& ec) {
                     return accept_impl(peer, peer_endpoint, transdata, ec);
                 }
@@ -1789,18 +1789,18 @@ namespace boost {
                 void async_accept(basic_socket<protocol_type, SocketService>& peer,
                         BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-                    async_accept_impl(peer, archive_ptr(), BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
+                    async_accept_impl(peer, isocoder_ptr(), BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
                 }
 
                 template <typename SocketService, typename AcceptHandler>
                 void async_accept(basic_socket<protocol_type, SocketService>& peer,
                         endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-                    async_accept_impl(peer, peer_endpoint, archive_ptr(), BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
+                    async_accept_impl(peer, peer_endpoint, isocoder_ptr(), BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
                 }
 
                 template <typename SocketService, typename AcceptHandler>
-                void async_accept(basic_socket<protocol_type, SocketService>& peer, archive_ptr transdata,
+                void async_accept(basic_socket<protocol_type, SocketService>& peer, isocoder_ptr transdata,
                         BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     async_accept_impl(peer, transdata, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
@@ -1808,7 +1808,7 @@ namespace boost {
 
                 template <typename SocketService, typename AcceptHandler>
                 void async_accept(basic_socket<protocol_type, SocketService>& peer,
-                        endpoint_type& peer_endpoint, archive_ptr transdata, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
+                        endpoint_type& peer_endpoint, isocoder_ptr transdata, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     async_accept_impl(peer, peer_endpoint, transdata, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
                 }
@@ -1823,7 +1823,7 @@ namespace boost {
                 class accept_op {
                 public:
 
-                    accept_op(Handler h, stream_socket* socket, archive_ptr transdata)
+                    accept_op(Handler h, stream_socket* socket, isocoder_ptr transdata)
                     : handler_(h), socket_(socket), transdata_(transdata) {
                     }
 
@@ -1837,7 +1837,7 @@ namespace boost {
                 private:
                     Handler handler_;
                     stream_socket* socket_;
-                    archive_ptr transdata_;
+                    isocoder_ptr transdata_;
                 };
 
 
@@ -1846,13 +1846,13 @@ namespace boost {
 
                 template <typename SocketService, typename AcceptHandler>
                 void async_accept_impl(basic_socket<protocol_type, SocketService>& peer,
-                        endpoint_type& peer_endpoint, archive_ptr transdata, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
+                        endpoint_type& peer_endpoint, isocoder_ptr transdata, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     super_type::async_accept(peer, peer_endpoint, accept_op<AcceptHandler > (handler, static_cast<stream_socket*> (&peer), transdata));
                 }
 
                 template <typename SocketService, typename AcceptHandler>
-                void async_accept_impl(basic_socket<protocol_type, SocketService>& peer, archive_ptr transdata,
+                void async_accept_impl(basic_socket<protocol_type, SocketService>& peer, isocoder_ptr transdata,
                         BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     super_type::async_accept(peer, accept_op<AcceptHandler > (handler, static_cast<stream_socket*> (&peer), transdata));
@@ -1861,7 +1861,7 @@ namespace boost {
                 template <typename SocketService>
                 boost::system::error_code accept_impl(
                         basic_socket<protocol_type, SocketService>& peer,
-                        endpoint_type& peer_endpoint, archive_ptr transdata, boost::system::error_code& ec) {
+                        endpoint_type& peer_endpoint, isocoder_ptr transdata, boost::system::error_code& ec) {
                     super_type::accept(peer, peer_endpoint, ec);
                     if (ec)
                         return ec;
@@ -1871,7 +1871,7 @@ namespace boost {
 
                 template <typename SocketService>
                 boost::system::error_code accept_impl(
-                        basic_socket<protocol_type, SocketService>& peer, archive_ptr transdata,
+                        basic_socket<protocol_type, SocketService>& peer, isocoder_ptr transdata,
                         boost::system::error_code& ec) {
                     super_type::accept(peer, ec);
                     if (ec)
@@ -1970,7 +1970,7 @@ namespace boost {
     }
 
     template<typename ReleaseConnectHandler>
-    void asyn_releaseconnect(boost::iso::prot8327::stream_socket& s, ReleaseConnectHandler handler, iso::release_type type, iso::archive_ptr data) {
+    void asyn_releaseconnect(boost::iso::prot8327::stream_socket& s, ReleaseConnectHandler handler, iso::release_type type, iso::isocoder_ptr data) {
         s.asyn_releaseconnect<ReleaseConnectHandler > (handler, type, data);
     }
 
