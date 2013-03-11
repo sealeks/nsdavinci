@@ -563,7 +563,7 @@ namespace boost {
                     }
 
 
-                    super_type::async_write_some(coder()->output().const_buffers(), boost::bind(&request_op<RequestHandler>::run,
+                    super_type::async_write_some(coder()->output().buffers(), boost::bind(&request_op<RequestHandler>::run,
                             request_op<RequestHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
                 }
 

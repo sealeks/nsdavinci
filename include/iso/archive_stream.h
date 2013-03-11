@@ -131,7 +131,7 @@ namespace boost {
         class base_oarchive {
         public:
 
-            typedef const_sequence::iterator iterator;
+            typedef const_sequence::iterator iterator_type;
 
             static bool __input__() {
                 return false;
@@ -143,19 +143,19 @@ namespace boost {
             virtual ~base_oarchive() {
             }
 
-            const_sequence buffers() const {
+            const const_sequence& buffers() const {
                 return listbuffers_;
             }
+            
+            const_sequence& buffers()  {
+                return listbuffers_;
+            }           
+            
+            iterator_type add(const raw_type& vl);
 
-            const_sequence const_buffers() const {
-                return const_sequence(listbuffers_.begin(), listbuffers_.end());
-            }
+            iterator_type add(const raw_type& vl, iterator_type it);
 
-            iterator add(const raw_type& vl);
-
-            iterator add(const raw_type& vl, iterator it);
-
-            iterator last() {
+            iterator_type last() {
                 return listbuffers_.empty() ? listbuffers_.end() : (--listbuffers_.end());
             }
 
@@ -196,8 +196,6 @@ namespace boost {
             const_sequence listbuffers_;
             vect_raw_type_ptr rows_vect;
             std::size_t size_;
-
-
         };
 
 
@@ -208,7 +206,7 @@ namespace boost {
         class base_iarchive {
         public:
 
-            typedef mutable_sequence::iterator iterator;
+            typedef mutable_sequence::iterator iterator_type;
 
             static bool __input__() {
                 return true;
@@ -236,7 +234,7 @@ namespace boost {
 
             bool is_endof(std::size_t beg = 0) const;
 
-            iterator last() {
+            iterator_type last() {
                 return listbuffers_.empty() ? listbuffers_.end() : (--listbuffers_.end());
             }
 
@@ -310,8 +308,8 @@ namespace boost {
                 return output_;
             }
 
-            const_sequence request() const {
-                return output_->const_buffers();
+            const const_sequence& request() const {
+                return output_->buffers();
             }
 
             void insert_to_input(const raw_type& vl) {
