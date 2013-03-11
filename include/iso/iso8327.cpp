@@ -309,10 +309,6 @@ namespace boost {
                     return true;
                 }
 
-                //   std::ostream& operator<<(std::ostream& strm, const spdudata& vrs) {
-                //          return strm << (dvnci::binary_block_to_hexsequence_debug(vrs.sequence()));
-                //       }
-
 
 
 

@@ -44,7 +44,6 @@ namespace boost {
                         case TPDU_SIZE512: return 512;
                         case TPDU_SIZE256: return 256;
                         case TPDU_SIZE128: return 128;
-                            //case TPDU_SIZE4: return 8;
                     }
                     return 0;
                 }
@@ -60,7 +59,6 @@ namespace boost {
                         case TPDU_SIZE512: return SIZE512;
                         case TPDU_SIZE256: return SIZE256;
                         case TPDU_SIZE128: return SIZE128;
-                            //case TPDU_SIZE4: return SIZE4;
                     }
                     return SIZENULL;
                 }
@@ -83,18 +81,6 @@ namespace boost {
 
 
                 ///   protocol_options
-
-                protocol_options::protocol_options(int16_t dst, int16_t src, tpdu_size pdusize) :
-                dst_(dst), src_(src) {
-                    if (SIZENULL != pdusize) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw(static_cast<int8_t> (tpdu_type_size(pdusize)))));
-                }
-
-                protocol_options::protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, const std::string& called, const std::string& calling) :
-                dst_(dst), src_(src) {
-                    if (SIZENULL != pdusize) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw(static_cast<int8_t> (tpdu_type_size(pdusize)))));
-                    if (!calling.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, calling.size()), raw_type(calling.begin(), calling.end())));
-                    if (!called.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, called.size()), raw_type(called.begin(), called.end())));
-                }
 
                 protocol_options::protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, const raw_type& called, const raw_type& calling) :
                 dst_(dst), src_(src) {

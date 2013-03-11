@@ -213,12 +213,12 @@ namespace boost {
                 }
 
 
-                std::string called() const {
-                    return called_.to_string();
+                raw_type called() const {
+                    return called_.to_raw();
                 }
 
-                std::string calling() const {
-                    return calling_.to_string();
+                raw_type calling() const {
+                    return calling_.to_raw();
                 }
 
                 tpdu_size pdusize() const {
@@ -241,27 +241,27 @@ namespace boost {
                 session_selector() : tselector_() {
                 }
 
-                explicit session_selector(const std::string& called) : called_(called), tselector_() {
+                explicit session_selector(const selectorvalue_type& called) : called_(called), tselector_() {
                 }
 
-                explicit session_selector(const std::string& called, const std::string& calling) : called_(called), calling_(calling), tselector_() {
+                explicit session_selector(const selectorvalue_type& called, selectorvalue_type& calling) : called_(called), calling_(calling), tselector_() {
                 }
 
-                explicit session_selector(const std::string& called, const transport_selector& tselector) : called_(called), tselector_(tselector) {
+                explicit session_selector(const selectorvalue_type& called, const transport_selector& tselector) : called_(called), tselector_(tselector) {
                 }
 
-                explicit session_selector(const std::string& called, const std::string& calling, const transport_selector& tselector) : called_(called), calling_(calling), tselector_(tselector) {
+                explicit session_selector(const selectorvalue_type& called, selectorvalue_type& calling, const transport_selector& tselector) : called_(called), calling_(calling), tselector_(tselector) {
                 }
 
                 session_selector(const transport_selector& tselector) : tselector_(tselector) {
                 }
 
                 std::string called() const {
-                    return called_;
+                    return called_.to_string();
                 }
 
                 std::string calling() const {
-                    return calling_;
+                    return calling_.to_string();
                 }
 
                 const transport_selector& tselector() const {
@@ -270,8 +270,8 @@ namespace boost {
 
             private:
                 transport_selector tselector_;
-                std::string called_;
-                std::string calling_;
+                selectorvalue_type called_;
+                selectorvalue_type calling_;
             };
 
 
@@ -283,35 +283,35 @@ namespace boost {
                 presentation_selector() : sselector_() {
                 }
 
-                explicit presentation_selector(const std::string& called) : called_(called), sselector_() {
+                explicit presentation_selector(const selectorvalue_type& called) : called_(called), sselector_() {
                 }
 
-                explicit presentation_selector(const std::string& called, const std::string& calling) : called_(called), calling_(calling), sselector_() {
+                explicit presentation_selector(const selectorvalue_type& called, const selectorvalue_type& calling) : called_(called), calling_(calling), sselector_() {
                 }
 
-                explicit presentation_selector(const std::string& called, const session_selector& sselector) : called_(called), sselector_(sselector) {
+                explicit presentation_selector(const selectorvalue_type& called, const session_selector& sselector) : called_(called), sselector_(sselector) {
                 }
 
-                explicit presentation_selector(const std::string& called, const std::string& calling, const session_selector& sselector) : called_(called), calling_(calling), sselector_(sselector) {
+                explicit presentation_selector(const selectorvalue_type& called, const selectorvalue_type& calling, const session_selector& sselector) : called_(called), calling_(calling), sselector_(sselector) {
                 }
 
                 presentation_selector(const session_selector& sselector) : sselector_(sselector) {
                 }
 
                 std::string called() const {
-                    return called_;
+                    return called_.to_string();
                 }
 
                 std::string calling() const {
-                    return calling_;
+                    return calling_.to_string();
                 }
 
                 void called(const std::string& val) {
-                    called_ = val;
+                    called_ = selectorvalue_type(val);
                 }
 
                 void calling(const std::string& val) {
-                    calling_ = val;
+                    calling_ = selectorvalue_type(val);
                 }
 
                 const session_selector& sselector() const {
@@ -321,8 +321,8 @@ namespace boost {
             private:
 
                 session_selector sselector_;
-                std::string called_;
-                std::string calling_;
+                selectorvalue_type called_;
+                selectorvalue_type calling_;
 
             };
 
@@ -336,5 +336,5 @@ namespace boost {
     } // namespace asio
 } // namespace boost
 
-#endif	/* RFC1006_H */
+#endif	
 
