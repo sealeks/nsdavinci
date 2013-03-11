@@ -112,7 +112,7 @@ namespace boost {
         typedef std::list<mutable_buffer> mutable_sequence;
         typedef std::list<const_buffer> const_sequence;
 
-        const const_sequence NULL_const_sequence = const_sequence();        
+        const const_sequence NULL_CONST_SEQUENCE = const_sequence();        
 
 
 

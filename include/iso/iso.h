@@ -133,28 +133,6 @@ namespace boost {
             SESSION_ABORT_RELEASE
         };
 
-        class sevice_send_buffer_impl : public send_buffer_impl {
-        public:
-
-            sevice_send_buffer_impl(const std::string& send) : send_buffer_impl(), send_(send) {
-                buff_.push_back(const_buffer(send_.data(), send_.size()));
-            }
-
-        private:
-            std::string send_;
-        };
-
-        class sevice_send_buffer_implb : public send_buffer_impl {
-        public:
-
-            sevice_send_buffer_implb(const raw_type& send) : send_buffer_impl(), send_(send) {
-                buff_.push_back(const_buffer(&send_.front(), send_.size()));
-            }
-
-        private:
-            raw_type send_;
-        };
-
 
         ///   selectors type            
 
