@@ -7,7 +7,7 @@
  */
 
 #ifndef         ISOPROT8327_H_H
-#define	ISOPROT8327_H_H
+#define ISOPROT8327_H_H
 
 #include <iso/rfc1006.h>
 
@@ -21,17 +21,13 @@ namespace boost {
             //   iso8327 utill   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                   
 
-            const octet_type SEND_HEADERarr[] = { '\x1' ,'\x0', '\x1', '\x0'};
-            const raw_type SEND_HEADER = raw_type(SEND_HEADERarr, SEND_HEADERarr + 4);
-            
-            const octet_type REJECT_REASON_ADDRarr[] = { '\x0' , '\x81' };
-            const raw_type REJECT_REASON_ADDR = raw_type(REJECT_REASON_ADDRarr, REJECT_REASON_ADDRarr + 2);
-             
-            const  raw_type REJECT_REASON_NODEF = raw_type(1, '\x0');           
-            
-            const octet_type WORK_PROT_OPTION = '\x0';
-            const octet_type WORK_PROT_VERSION = '\x2';
-            const octet_type DISCONNECT_OPTION = '\x1';
+
+            const std::string SEND_HEADER = std::string("\x1\x0\x1\x0", 4);
+
+            const int8_t WORK_PROT_OPTION = '\x0';
+            const int8_t WORK_PROT_VERSION = '\x2';
+
+            const int8_t DISCONNECT_OPTION = '\x1';
 
             typedef uint8_t spdu_type;
 
@@ -155,39 +151,21 @@ namespace boost {
             const varid_type PI_TRANDISK = 17; //Transport Disconnect                
 
 
+            const std::string REJECT_REASON_ADDR = std::string("\x0\x81", 2);
+            const std::string REJECT_REASON_NODEF = std::string("\x0", 1);
+
             const std::size_t triple_npos = static_cast<std::size_t> (0xFFFF + 1);
 
-            inline static raw_type to_triple_size(std::size_t val) {
-                if  (val < 0xFF)
-                    return inttype_to_raw(static_cast<uint8_t> (val));
-                if (val < triple_npos){ 
-                        raw_type rslt(1,'\xFF');
-                        raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(static_cast<uint16_t> (val))));
-                        return rslt;}
-                return raw_type();
+            inline static std::string to_triple_size(std::size_t val) {
+                return (val < 0xFF) ? inttype_to_str(static_cast<uint8_t> (val)) : ((val < triple_npos) ? ("\xFF" + inttype_to_str(endiancnv_copy(static_cast<uint16_t> (val)))) : "");
             }
-            
 
-            inline static bool valid_triple_size(const raw_type& val) {
-                return !((val.empty()) || (val[0] == '\xFF' && val.size() < 3));
+            inline static bool valid_triple_size(const std::string& val) {
+                return !((!val.size()) || (val[0] == '\xFF' && val.size() < 3));
             }
 
             // return triple_npos if no success
-            std::size_t from_triple_size(const raw_type& val, std::size_t& it);
-            
-            
-            class raw_data_atom{
-            public:
-                raw_data_atom(const std::string& vl){                  
-                }
-                 raw_data_atom(const raw_data& vl){                  
-                }               
-  
-            private:
-                boost::iso::list_buffers listbuffers_;
-                boost::iso::vect_raw_type_ptr rows_vect;    
-            };            
-            
+            std::size_t from_triple_size(const std::string& val, std::size_t& it);
 
 
             typedef std::pair<std::size_t, std::string> parameter_ln_type;
@@ -580,11 +558,11 @@ namespace boost {
                     return datasize_;
                 }
 
-                octet_type class_option() const {
+                int8_t class_option() const {
                     return class_option_;
                 }
 
-                octet_type reject_reason() const {
+                int8_t reject_reason() const {
                     return reject_reason_;
                 }
 
@@ -603,7 +581,7 @@ namespace boost {
 
                 boost::system::error_code errcode(const boost::system::error_code& err);
 
-                void reject_reason(octet_type val);
+                void reject_reason(int8_t val);
 
                 boost::system::error_code check_type();
 
@@ -619,8 +597,8 @@ namespace boost {
                 std::size_t datasize_;
                 spdu_type type_;
                 bool first_in_seq_;
-                octet_type class_option_;
-                octet_type reject_reason_;
+                int8_t class_option_;
+                int8_t reject_reason_;
                 protocol_options options_;
                 boost::system::error_code errcode_;
 
@@ -2000,5 +1978,4 @@ namespace boost {
 
 
 
-#endif	
-
+#endif  
