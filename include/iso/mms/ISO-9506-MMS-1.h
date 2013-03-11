@@ -548,31 +548,31 @@ namespace ISO_9506_MMS_1  {
 	typedef  octetstring_type   TimeOfDay;
 
  	//  type is  UTF8String
-	typedef  utf8string_type   Identifier;
+	typedef  visiblestring_type   Identifier;
 
  	//  type is  INTEGER
-	typedef  int8_t   Integer8;
+	typedef  boost::int8_t   Integer8;
 
  	//  type is  INTEGER
-	typedef  int16_t   Integer16;
+	typedef  boost::int16_t   Integer16;
 
  	//  type is  INTEGER
-	typedef  int32_t   Integer32;
+	typedef  boost::int32_t   Integer32;
 
  	//  type is  INTEGER
-	typedef  uint8_t   Unsigned8;
+	typedef  boost::uint8_t   Unsigned8;
 
  	//  type is  INTEGER
-	typedef  uint16_t   Unsigned16;
+	typedef  boost::uint16_t   Unsigned16;
 
  	//  type is  INTEGER
-	typedef  uint32_t   Unsigned32;
+	typedef  boost::uint32_t   Unsigned32;
 
  	//  type is  UTF8String
-	typedef  utf8string_type   MMSString;
+	typedef  visiblestring_type   MMSString;
 
  	//  type is  UTF8String
-	typedef  utf8string_type   MMS255String;
+	typedef  visiblestring_type   MMS255String;
 
  	//  type is  NULL
 	typedef  null_type   Conclude_RequestPDU;
@@ -4611,7 +4611,7 @@ namespace ISO_9506_MMS_1  {
 
 
 		boost::asio::asn::value_holder<bool >  mmsDeletable;
-		boost::asio::asn::value_holder<Address >  address;
+		boost::shared_ptr<Address >  address;
 		boost::asio::asn::value_holder<TypeDescription >  typeDescription;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
@@ -4734,7 +4734,7 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<AccessResult >   listOfAccessResult_type;
 
 
-		boost::asio::asn::value_holder<VariableAccessSpecification >  variableAccessSpecification;
+		boost::shared_ptr<VariableAccessSpecification >  variableAccessSpecification;
 		boost::asio::asn::value_holder<listOfAccessResult_type >  listOfAccessResult;
 
 		Read_Response()  : variableAccessSpecification() , listOfAccessResult()  {}
@@ -9568,7 +9568,7 @@ namespace ISO_9506_MMS_1  {
 
 		boost::asio::asn::value_holder<Unsigned32 >  invokeID;
 		boost::asio::asn::value_holder<ConfirmedServiceResponse >  service;
-		boost::asio::asn::value_holder<Response_Detail >  service_ext;
+		boost::shared_ptr<Response_Detail >  service_ext;
 
 		Confirmed_ResponsePDU()  : invokeID() , service() , service_ext()  {}
 
@@ -10322,7 +10322,7 @@ namespace ISO_9506_MMS_1  {
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfModifiers_type ,  listOfModifiers)
 
  		boost::asio::asn::value_holder<ConfirmedServiceRequest >  service;
-		boost::asio::asn::value_holder<Request_Detail >  service_ext;
+		boost::shared_ptr<Request_Detail >  service_ext;
 
 		Confirmed_RequestPDU()  : invokeID() , service() , service_ext()  {}
 
