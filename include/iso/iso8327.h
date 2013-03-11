@@ -14,7 +14,8 @@
 namespace boost {
     namespace iso {
         namespace prot8327 {
-
+            
+             using boost::asio::basic_socket;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8327 utill   //
@@ -1291,8 +1292,7 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t receive(const MutableBufferSequence& buffers) {
-
-                    return receive<MutableBufferSequence > (buffer, 0);
+                    return receive<MutableBufferSequence > (buffers, 0);
                 }
 
                 template <typename MutableBufferSequence>
@@ -1943,7 +1943,7 @@ namespace boost {
             typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
 
 #if !defined(BOOST_NO_IOSTREAM)
-            typedef basic_socket_iostream<boost::asio::ip::tcp> iostream;
+            typedef boost::asio::basic_socket_iostream<boost::asio::ip::tcp> iostream;
 #endif 
 
 

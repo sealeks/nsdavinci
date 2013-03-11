@@ -8,8 +8,6 @@
 #ifndef RFC1006_H
 #define RFC1006_H
 
-
-
 #include <boost/asio/basic_socket_acceptor.hpp>
 #include <boost/asio/basic_socket_iostream.hpp>
 #include <boost/asio/basic_stream_socket.hpp>
@@ -26,10 +24,10 @@
 
 namespace boost {
     namespace iso {
-
-        using namespace boost::asio;
-
         namespace prot8073 {
+            
+        using boost::asio::basic_socket;
+        using boost::asio::basic_socket_acceptor;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8073 utill   //
@@ -200,7 +198,8 @@ namespace boost {
             class data_send_buffer_impl : public send_buffer_impl {
             public:
 
-                data_send_buffer_impl(const ConstBufferSequence& buff, tpdu_size pdusize) : send_buffer_impl(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
+                data_send_buffer_impl(const ConstBufferSequence& buff, tpdu_size pdusize) :
+                send_buffer_impl(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
                     construct(buff, pdusize);
 
                 }
@@ -1054,7 +1053,7 @@ namespace boost {
                 template <typename MutableBufferSequence>
                 std::size_t receive(const MutableBufferSequence& buffers) {
 
-                    return receive<MutableBufferSequence > (buffer, 0);
+                    return receive<MutableBufferSequence > (buffers, 0);
                 }
 
                 template <typename MutableBufferSequence>
@@ -1598,7 +1597,7 @@ namespace boost {
             typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
 
 #if !defined(BOOST_NO_IOSTREAM)
-            typedef basic_socket_iostream<boost::asio::ip::tcp> iostream;
+            typedef boost::asio::basic_socket_iostream<boost::asio::ip::tcp> iostream;
 #endif 
 
 

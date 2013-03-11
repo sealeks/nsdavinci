@@ -11,6 +11,8 @@
 namespace boost {
     namespace iso {
         namespace prot8073 {
+            
+            
 
             boost::system::error_code errorcode_by_reason(octet_type val) {
                 if (!val)
@@ -505,8 +507,8 @@ namespace boost {
                             return errcode(ERROR__EPROTO);
                         ; /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
-                        raw_to_inttype(raw_type(buffer_cast<const char*>(buff_ + 1), buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
-                        raw_to_inttype(raw_type(buffer_cast<const char*>(buff_ + 3), buffer_cast<const char*>(buff_ + 3) + 1), reject_reason_);
+                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 1), boost::asio::buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
+                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 3), boost::asio::buffer_cast<const char*>(buff_ + 3) + 1), reject_reason_);
                         headarvarvalues vars;
                         if (!parse_vars(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 4), boost::asio::buffer_cast<const char*>(buff_ + 4) + (estimatesize_ - 4)), vars))
                             return errcode(ERROR__EPROTO);

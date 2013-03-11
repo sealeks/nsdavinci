@@ -50,7 +50,7 @@ namespace boost {
 
             template<>
             std::size_t to_x690_cast(int8_t val, raw_type& src) {
-                src.push_back(static_cast<raw_type::value_type> (0xFF & val));
+                src.push_back(static_cast<octet_type> (0xFF & val));
                 return 1;
             }
 
@@ -64,20 +64,20 @@ namespace boost {
 
             std::size_t to_x690_cast(const tag& val, raw_type& src) {
                 if (val.simpleid()) {
-                    src.push_back(static_cast<raw_type::value_type> (val.simpleid()));
+                    src.push_back(static_cast<octet_type> (val.simpleid()));
                     return 1;
                 }
                 else {
                     id_type id_ = val.id();
                     raw_type tmp;
-                    src.push_back(static_cast<raw_type::value_type> (0x1F | val.mask()));
+                    src.push_back(static_cast<octet_type> (0x1F | val.mask()));
                     while (id_) {
-                        tmp.push_back(static_cast<raw_type::value_type> ((id_ & 0x7F) | CONTENT_CONIIUE));
+                        tmp.push_back(static_cast<octet_type> ((id_ & 0x7F) | CONTENT_CONIIUE));
                         id_ >>= 7;
                     }
                     endian_push_pack(tmp, src);
                     if (tmp.size())
-                        src.back() &= static_cast<raw_type::value_type> (0x7F);
+                        src.back() &= static_cast<octet_type> (0x7F);
                     return (src.size() + 1);
                 }
             }
@@ -97,23 +97,23 @@ namespace boost {
             std::size_t to_x690_cast(const size_class& val, raw_type& src) {
                 if (!val.undefsize()) {
                     if (val.size() < MAX_SIMPLELENGTH_SIZE) {
-                        src.push_back(static_cast<raw_type::value_type> (static_cast<raw_type::value_type> (val.size())));
+                        src.push_back(static_cast<octet_type> (static_cast<octet_type> (val.size())));
                         return 1;
                     }
                     else {
                         raw_type tmp;
                         size_type vl = val.size();
                         while (vl) {
-                            tmp.push_back(static_cast<raw_type::value_type> (0xFF & vl));
+                            tmp.push_back(static_cast<octet_type> (0xFF & vl));
                             vl >>= 8;
                         }
-                        src.push_back(static_cast<raw_type::value_type> (CONTENT_CONIIUE | static_cast<raw_type::value_type> (tmp.size())));
+                        src.push_back(static_cast<octet_type> (CONTENT_CONIIUE | static_cast<octet_type> (tmp.size())));
                         endian_push_pack(tmp, src);
                         return (src.size() + 1);
                     }
                 }
                 else {
-                    src.push_back(static_cast<raw_type::value_type> (static_cast<raw_type::value_type> (UNDEF_BLOCK_SIZE)));
+                    src.push_back(static_cast<octet_type> (static_cast<octet_type> (UNDEF_BLOCK_SIZE)));
                     return 1;
                 }
             }
@@ -134,19 +134,19 @@ namespace boost {
                 if (val == 0)
                     return 0;
                 if (val != val) {
-                    src.push_back(static_cast<raw_type::value_type> (NAN_REAL_ID));
+                    src.push_back(static_cast<octet_type> (NAN_REAL_ID));
                     return 1;
                 }
                 if (std::numeric_limits<T>::infinity() == val) {
-                    src.push_back(static_cast<raw_type::value_type> (INFINITY_REAL_ID));
+                    src.push_back(static_cast<octet_type> (INFINITY_REAL_ID));
                     return 1;
                 }
                 if (-std::numeric_limits<T>::infinity() == val) {
-                    src.push_back(static_cast<raw_type::value_type> (NEGATINFINITY_REAL_ID));
+                    src.push_back(static_cast<octet_type> (NEGATINFINITY_REAL_ID));
                     return 1;
                 }
                 if (val == -0.0) {
-                    src.push_back(static_cast<raw_type::value_type> (NEGATNULL_REAL_ID));
+                    src.push_back(static_cast<octet_type> (NEGATNULL_REAL_ID));
                     return 1;
                 }
 
@@ -165,14 +165,14 @@ namespace boost {
 
                 int32_t exp = static_cast<int32_t> (base0 >> MANT) - MANT - EXPB;
 
-                raw_type::value_type sign = static_cast<raw_type::value_type> (0x80 | ((negat) ? 0x40 : 0x0));
+                octet_type sign = static_cast<octet_type> (0x80 | ((negat) ? 0x40 : 0x0));
 
-                while (!static_cast<raw_type::value_type> (base & '\xFF')) {
+                while (!static_cast<octet_type> (base & '\xFF')) {
                     exp += 8;
                     base = base >> 8;
                 }
 
-                while (!static_cast<raw_type::value_type> (base & '\x1')) {
+                while (!static_cast<octet_type> (base & '\x1')) {
                     exp += 1;
                     base = base >> 1;
                 }
@@ -185,24 +185,24 @@ namespace boost {
                 switch (expsz) {
                     case 1:
                     {
-                        src.push_back(static_cast<raw_type::value_type> (sign));
+                        src.push_back(static_cast<octet_type> (sign));
                         break;
                     }
                     case 2:
                     {
                         sign |= 0x1;
-                        src.push_back(static_cast<raw_type::value_type> (sign));
+                        src.push_back(static_cast<octet_type> (sign));
                         break;
                     }
                     case 3:
                     {
                         sign |= 0x2;
-                        src.push_back(static_cast<raw_type::value_type> (sign));
+                        src.push_back(static_cast<octet_type> (sign));
                         break;
                     }
                     default:
                     {
-                        src.push_back(static_cast<raw_type::value_type> (expsz));
+                        src.push_back(static_cast<octet_type> (expsz));
                     }
                 }
 
@@ -211,7 +211,7 @@ namespace boost {
 
                 tmp.clear();
                 while (base) {
-                    tmp.push_back(static_cast<raw_type::value_type> (base) & '\xFF');
+                    tmp.push_back(static_cast<octet_type> (base) & '\xFF');
                     base = base >> 8;
                 }
                 endian_push_pack(tmp, src);
@@ -237,7 +237,7 @@ namespace boost {
 
             template<>
             std::size_t to_x690_cast(bool val, raw_type& src) {
-                src.push_back(static_cast<raw_type::value_type> (val ? 0xFF : 0));
+                src.push_back(static_cast<octet_type> (val ? 0xFF : 0));
                 return 1;
             }
 
@@ -264,12 +264,12 @@ namespace boost {
                 bool first = true;
                 while (vl || first) {
                     first = false;
-                    tmp.push_back(static_cast<raw_type::value_type> ((static_cast<oidindx_type> (0x7F) & vl) | static_cast<oidindx_type> (CONTENT_CONIIUE)));
+                    tmp.push_back(static_cast<octet_type> ((static_cast<oidindx_type> (0x7F) & vl) | static_cast<oidindx_type> (CONTENT_CONIIUE)));
                     vl >>= 7;
                 }
                 endian_push_pack(tmp, src);
                 if (!src.empty())
-                    src.back() = src.back() & static_cast<raw_type::value_type> (0x7F);
+                    src.back() = src.back() & static_cast<octet_type> (0x7F);
             }
 
             std::size_t to_x690_cast(const oid_type& val, raw_type& src) {
@@ -324,9 +324,9 @@ namespace boost {
             // STRING REALISZATION
 
             template<>
-            void x690_string_to_stream_cast(const bitstring_type& val, oarchive& stream, int8_t lentype) {
+            void x690_string_to_stream_cast(const bitstring_type& val, oarchive& stream, octet_type lentype) {
                 if (!lentype) {
-                    stream.add(raw_type(1, static_cast<raw_type::value_type> (val.unusebits() % 8)));
+                    stream.add(raw_type(1, static_cast<octet_type> (val.unusebits() % 8)));
                     stream.add(val);
                     return;
                 }
@@ -337,17 +337,17 @@ namespace boost {
 
                     const_iterator_type it = val.begin();
                     while (it != val.end()) {
-                        //stream.add(raw_type(1, static_cast<raw_type::value_type> (TYPE_BITSTRING)));
+                        //stream.add(raw_type(1, static_cast<octet_type> (TYPE_BITSTRING)));
                         stream.addtag(tag(TYPE_BITSTRING), false);
                         difference_type diff = std::distance(it, val.end());
                         if (diff > (CER_STRING_MAX_SIZE - 1)) {
                             diff = (CER_STRING_MAX_SIZE - 1);
                             stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff + 1))));
-                            stream.add(raw_type(1, static_cast<raw_type::value_type> (0)));
+                            stream.add(raw_type(1, static_cast<octet_type> (0)));
                         }
                         else {
                             stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff + 1))));
-                            stream.add(raw_type(1, static_cast<raw_type::value_type> (val.unusebits() % 8)));
+                            stream.add(raw_type(1, static_cast<octet_type> (val.unusebits() % 8)));
                         }
                         stream.add(raw_type(it, it + diff));
                         it = it + diff;
@@ -602,9 +602,9 @@ namespace boost {
                         std::size_t szf = boost::asio::buffer_size(tmp);
                         std::size_t szi = 0;
                         while ((szi < szf) && (!find)) {
-                            if (!((*(boost::asio::buffer_cast<raw_type::value_type*>(tmp) + szi)) & '\x80'))
+                            if (!((*(boost::asio::buffer_cast<octet_type*>(tmp) + szi)) & '\x80'))
                                 find = true;
-                            raw.push_back((*(boost::asio::buffer_cast<raw_type::value_type*>(tmp) + szi) & '\x7F'));
+                            raw.push_back((*(boost::asio::buffer_cast<octet_type*>(tmp) + szi) & '\x7F'));
                             szi++;
                         }
 
@@ -638,7 +638,7 @@ namespace boost {
                         if (find_marked_sequece(src, bit, s2, beg + 1) && (!s2.empty()) && (s2.size() <= (sizeof (id_type)))) {
                             id_type tmp = 0;
                             for (raw_type::const_iterator it = s2.begin(); it != s2.end(); ++it)
-                                tmp = (tmp << 7) | (static_cast<raw_type::value_type> (*it) & '\x7F');
+                                tmp = (tmp << 7) | (static_cast<octet_type> (*it) & '\x7F');
                             val = tag(tmp, s1[0] & '\xE0');
                             return (1 + s2.size());
                         }

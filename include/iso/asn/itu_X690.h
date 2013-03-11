@@ -28,22 +28,18 @@ namespace boost {
         namespace x690 {
 
 
-            const int8_t NEGATIVE_MARKER = '\x80';
-            const int8_t POSITIVE_START = '\xFF';
+            const octet_type NEGATIVE_MARKER = '\x80';
+            const octet_type POSITIVE_START = '\xFF';
 
-            const int8_t CONTENT_CONIIUE = '\x80';
-            const int8_t UNDEF_BLOCK_SIZE = '\x80';
+            const octet_type CONTENT_CONIIUE = '\x80';
+            const octet_type UNDEF_BLOCK_SIZE = '\x80';
 
-
-
-            const int8_t NAN_REAL_ID = '\x42';
-            const int8_t INFINITY_REAL_ID = '\x40';
-            const int8_t NEGATINFINITY_REAL_ID = '\x41';
-            const int8_t NEGATNULL_REAL_ID = '\x43';
-
+            const octet_type NAN_REAL_ID = '\x42';
+            const octet_type INFINITY_REAL_ID = '\x40';
+            const octet_type NEGATINFINITY_REAL_ID = '\x41';
+            const octet_type NEGATNULL_REAL_ID = '\x43';
 
             const std::size_t MAX_SIMPLELENGTH_SIZE = 0x80;
-
 
             const std::size_t FLOAT_MANTISSA_SIZE = 23;
             const std::size_t FLOAT_EXPONENTA_DELT = 127;
@@ -57,10 +53,6 @@ namespace boost {
 
             const std::size_t CER_STRING_MAX_SIZE = 1000;
             // const std::size_t CER_STRING_MAX_SIZE = 2;
-
-
-
-
 
 
             //////  Endian conv;
@@ -139,23 +131,23 @@ namespace boost {
                 if (negat)
                     if (val & (T(1) << (sizeof (T)*8 - 1))) {
                         val &= ~(T(1) << (sizeof (T)*8 - 1));
-                        tmp.push_back(static_cast<raw_type::value_type> (POSITIVE_START & val));
+                        tmp.push_back(static_cast<octet_type> (POSITIVE_START & val));
                         val >>= 8;
                         val |= (T(1) << ((sizeof (T) - 1)*8 - 1));
                     }
                 while (val) {
-                    tmp.push_back(static_cast<raw_type::value_type> (POSITIVE_START & val));
+                    tmp.push_back(static_cast<octet_type> (POSITIVE_START & val));
                     val >>= 8;
                 }
                 if (negat && !tmp.empty())
-                    while ((tmp.size() > 1) && (tmp.back() == static_cast<raw_type::value_type> (POSITIVE_START)))
+                    while ((tmp.size() > 1) && (tmp.back() == static_cast<octet_type> (POSITIVE_START)))
                         tmp.pop_back();
 
                 if ((tmp.empty() || (!negat && (tmp.back() & NEGATIVE_MARKER))))
-                    tmp.push_back(static_cast<raw_type::value_type> (0));
+                    tmp.push_back(static_cast<octet_type> (0));
                 else {
                     if (negat && !(tmp.back() & NEGATIVE_MARKER))
-                        tmp.push_back(static_cast<raw_type::value_type> (POSITIVE_START));
+                        tmp.push_back(static_cast<octet_type> (POSITIVE_START));
                 }
                 endian_push_pack(tmp, src);
 
@@ -346,17 +338,7 @@ namespace boost {
                 template<typename T>
                 void operator&(const std::deque<T >& vl) {
                     *this << vl;
-                }
-
-                // template<typename T>
-                //void operator&(const choice_value<T >& vl) {
-                //       *this  <<  vl;
-                //  }
-
-                //template<typename T>
-                //void operator&(const value_holder<T >& vl) {
-                //    *this  &  (*vl);
-                //}                    
+                }                  
 
                 iterator addtag(const tag& tg, bool settype);
 
@@ -367,8 +349,6 @@ namespace boost {
                 bool canonical() const {
                     return rule_ == boost::iso::CER_ENCODING;
                 }
-
-
 
             private:
 
@@ -520,18 +500,13 @@ namespace boost {
                 return stream;
             }
 
-            /*  template<typename T>
-               oarchive& operator<<(oarchive& stream, const choice_value<T>& vl) {
-                   const_cast<T*> (&(vl.value()))->serialize(stream);
-                   return stream;
-               }         */
 
 
 
             ////////////////// STRING REALIZATION
 
             template<typename T>
-            void x690_string_to_stream_cast(const T& val, oarchive& stream, int8_t lentype) {
+            void x690_string_to_stream_cast(const T& val, oarchive& stream, octet_type lentype) {
                 if (!lentype) {
                     stream.add(val);
                     return;
@@ -543,7 +518,6 @@ namespace boost {
 
                     const_iterator_type it = val.begin();
                     while (it != val.end()) {
-                        //stream.add(raw_type(1, static_cast<raw_type::value_type> ( tag_traits<T>::number())));
                         stream.addtag(tag(tag_traits<T>::number()), false);
                         difference_type diff = std::distance(it, val.end());
                         if (diff > CER_STRING_MAX_SIZE) {
@@ -562,14 +536,14 @@ namespace boost {
 
 
             template<>
-            void x690_string_to_stream_cast(const bitstring_type& val, oarchive& stream, int8_t lentype);
+            void x690_string_to_stream_cast(const bitstring_type& val, oarchive& stream, octet_type lentype);
 
             template<typename T>
-            oarchive& stringtype_writer(oarchive& stream, const T& vl, id_type id, int8_t mask) {
+            oarchive& stringtype_writer(oarchive& stream, const T& vl, id_type id, octet_type mask) {
 
 
 
-                int8_t construct = vl.size()<(tag_traits<T>::number() == TYPE_BITSTRING ? (CER_STRING_MAX_SIZE - 1) : CER_STRING_MAX_SIZE)
+                octet_type construct = vl.size()<(tag_traits<T>::number() == TYPE_BITSTRING ? (CER_STRING_MAX_SIZE - 1) : CER_STRING_MAX_SIZE)
                         ? PRIMITIVE_ENCODING : (stream.canonical() ? CONSTRUCTED_ENCODING : PRIMITIVE_ENCODING);
 
                 stream.addtag(tag(id, mask | construct), false);
@@ -716,7 +690,7 @@ namespace boost {
 #else              
                 endian_conv(val);
                 if (sizeof (T) > val.size())
-                    val.resize(sizeof (T), raw_type::value_type((val.empty() || (val.back() & NEGATIVE_MARKER)) ? POSITIVE_START : 0));
+                    val.resize(sizeof (T), octet_type((val.empty() || (val.back() & NEGATIVE_MARKER)) ? POSITIVE_START : 0));
                 vl = (*(T*) (&val[0]));
 #endif                  
                 return true;
@@ -875,17 +849,7 @@ namespace boost {
                 template<typename T>
                 void operator&(const std::deque<T >& vl) {
                     *this >> vl;
-                }
-
-                // template<typename T>
-                //void operator&(const choice_value<T >& vl) {
-                //     *this  >>  vl;
-                // }
-
-                //template<typename T>
-                //void operator&(const value_holder<T >& vl) {
-                //   *this  &  (*vl);
-                // }                                  
+                }                            
 
                 tag test_tl(size_class& sz);
 
@@ -917,9 +881,6 @@ namespace boost {
                 void pop_stack();
 
                 bool next(std::size_t & sz) const;
-
-
-
 
             private:
 
@@ -1076,12 +1037,6 @@ namespace boost {
                 return stream;
             }
 
-            /*  template<typename T>
-              iarchive& operator>>(iarchive& stream, const choice_value<T>& vl) {
-                  const_cast<T*> (&(vl.value()))->serialize(stream);
-                  return stream;
-              }*/
-
 
             //////////////////////////////////////////////////////////////////////////////////
 
@@ -1102,7 +1057,7 @@ namespace boost {
             }
 
             template<typename T>
-            bool stringtype_reader(iarchive& stream, T& vl, id_type id, int8_t mask) {
+            bool stringtype_reader(iarchive& stream, T& vl, id_type id, octet_type mask) {
 
                 size_class tmpsize;
                 tag tmptag = stream.test_tl(tmpsize);
