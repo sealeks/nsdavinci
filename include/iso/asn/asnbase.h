@@ -160,8 +160,8 @@ namespace boost {
         typedef boost::asio::mutable_buffer mutable_buffer;
         typedef boost::asio::mutable_buffers_1 mutable_buffers_1;
 
-        typedef boost::iso::list_mutable_buffers list_mutable_buffers;
-        typedef boost::iso::list_const_buffers list_const_buffers;
+        typedef boost::iso::mutable_sequence mutable_sequence;
+        typedef boost::iso::const_sequence const_sequence;
 
         using boost::iso::encoding_rule;
         using boost::iso::octet_type;        

@@ -374,7 +374,7 @@ namespace boost {
             oarchive& operator<<(oarchive& stream, const explicit_value<T>& vl) {
 
                 stream.addtag(tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING), (tag_traits<T>::number() == TYPE_SET));
-                oarchive::list_buffers::iterator it = stream.last();
+                const_sequence::iterator it = stream.last();
 
                 std::size_t sz = stream.size();
                 stream & vl.value();
@@ -406,7 +406,7 @@ namespace boost {
             oarchive& operator<<(oarchive& stream, const implicit_value<T>& vl) {
 
                 stream.addtag(tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING), (tag_traits<T>::number() == TYPE_SET));
-                oarchive::list_buffers::iterator it = stream.last();
+                const_sequence::iterator it = stream.last();
 
                 std::size_t sz = stream.size();
                 const_cast<T*> (&(vl.value()))->serialize(stream);
@@ -428,7 +428,7 @@ namespace boost {
             oarchive& operator<<(oarchive& stream, const implicit_value<std::vector<T> >& vl) {
 
                 stream.addtag(tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING), false);
-                oarchive::list_buffers::iterator it = stream.last();
+                const_sequence::iterator it = stream.last();
 
                 std::size_t sz = stream.size();
                 typedef typename std::vector<T>::const_iterator vect_type_iterator;
@@ -451,7 +451,7 @@ namespace boost {
             oarchive& operator<<(oarchive& stream, const implicit_value<std::deque<T> >& vl) {
 
                 stream.addtag(tag(vl.id(), vl.mask() | CONSTRUCTED_ENCODING), false);
-                oarchive::list_buffers::iterator it = stream.last();
+                const_sequence::iterator it = stream.last();
 
                 std::size_t sz = stream.size();
                 typedef typename std::deque<T>::const_iterator vect_type_iterator;
@@ -474,7 +474,7 @@ namespace boost {
             oarchive& primitive_sirialize(oarchive& stream, const implicit_value<T>& vl) {
 
                 stream.addtag(tag(vl.id(), vl.mask()), (tag_traits<T>::number() == TYPE_SET));
-                oarchive::list_buffers::iterator it = stream.last();
+                const_sequence::iterator it = stream.last();
 
                 std::size_t sz = stream.size();
                 stream << vl.value();
@@ -547,7 +547,7 @@ namespace boost {
                         ? PRIMITIVE_ENCODING : (stream.canonical() ? CONSTRUCTED_ENCODING : PRIMITIVE_ENCODING);
 
                 stream.addtag(tag(id, mask | construct), false);
-                oarchive::list_buffers::iterator it = stream.last();
+                const_sequence::iterator it = stream.last();
 
                 std::size_t sz = stream.size();
                 x690_string_to_stream_cast(vl, stream, construct);
@@ -674,7 +674,7 @@ namespace boost {
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-            bool find_marked_sequece(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, raw_type& raw, std::size_t start = 0);
+            bool find_marked_sequece(const mutable_sequence& val, mutable_sequence::const_iterator bit, raw_type& raw, std::size_t start = 0);
 
 
             /////  CAST FROM AND TO TYPE
@@ -704,12 +704,12 @@ namespace boost {
 
             std::size_t tag_from_x690_cast(const tag& val, const raw_type& src);
 
-            std::size_t tag_x690_cast(tag& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit, std::size_t beg = 0);
+            std::size_t tag_x690_cast(tag& val, const mutable_sequence& src, mutable_sequence::const_iterator bit, std::size_t beg = 0);
 
             ///////////////////////////////////////////////////////////////////////////////////
             // size_class from X.690
 
-            std::size_t size_x690_cast(size_class& val, const list_mutable_buffers& src, list_mutable_buffers::const_iterator bit, std::size_t beg = 0);
+            std::size_t size_x690_cast(size_class& val, const mutable_sequence& src, mutable_sequence::const_iterator bit, std::size_t beg = 0);
 
             ///////////////////////////////////////////////////////////////////////////////////
             // real from X.690
