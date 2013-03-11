@@ -83,21 +83,21 @@ namespace boost {
 
         oid_type encoding_to_oid(encoding_rule rule) {
             switch (rule) {
-                case BER_ENCODING: return BASIC_ENCODING_OID;
-                case CER_ENCODING: return CANONICAL_ENCODING_OID;
-                case DER_ENCODING: return DISTINGUISH_ENCODING_OID;
+                case BER_ENCODING: return boost::asn1::BASIC_ENCODING_OID;
+                case CER_ENCODING: return boost::asn1::CANONICAL_ENCODING_OID;
+                case DER_ENCODING: return boost::asn1::DISTINGUISH_ENCODING_OID;
             }
             return oid_type();
         }
 
         encoding_rule oid_to_encoding(const oid_type& val) {
-            if (val == BASIC_ENCODING_OID) {
+            if (val == boost::asn1::BASIC_ENCODING_OID) {
                 return BER_ENCODING;
             }
-            if (val == CANONICAL_ENCODING_OID) {
+            if (val == boost::asn1::CANONICAL_ENCODING_OID) {
                 return CER_ENCODING;
             }
-            if (val == DISTINGUISH_ENCODING_OID) {
+            if (val == boost::asn1::DISTINGUISH_ENCODING_OID) {
                 return DER_ENCODING;
             }
             return NULL_ENCODING;
