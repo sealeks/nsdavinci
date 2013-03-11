@@ -17,6 +17,9 @@ namespace boost {
     namespace iso {
         namespace prot8823 {
 
+            using boost::asio::basic_socket;
+            using boost::asio::basic_socket_acceptor;
+
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8073 utill   //
@@ -937,7 +940,7 @@ namespace boost {
             typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
 
 #if !defined(BOOST_NO_IOSTREAM)
-            typedef basic_socket_iostream<boost::asio::ip::tcp> iostream;
+            typedef boost::asio::basic_socket_iostream<boost::asio::ip::tcp> iostream;
 #endif 
 
 

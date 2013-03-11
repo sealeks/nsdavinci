@@ -49,7 +49,7 @@ namespace boost {\
                 static  id_type number() {\
                     return TYPE_SET;\
                 }\
-                static  int8_t class_type() {\
+                static  octet_type class_type() {\
                     return 0;\
                 }\
             } ;\
@@ -64,8 +64,8 @@ namespace boost {\
                 static  id_type number() {\
                     return id;\
                 }\
-                static  int8_t class_type() {\
-                    return static_cast<int8_t>(cl);\
+                static  octet_type class_type() {\
+                    return static_cast<octet_type>(cl);\
                 }\
             } ;\
         }\
@@ -79,7 +79,7 @@ namespace boost {\
                 static  id_type number() {\
                     return id;\
                 }\
-                static  int8_t class_type() {\
+                static  octet_type class_type() {\
                     return 0;\
                 }\
             } ;\
@@ -106,7 +106,7 @@ namespace boost {\
                 static  id_type number() {\
                     return id;\
                 }\
-                static  int8_t class_type() {\
+                static  octet_type class_type() {\
                     return 0;\
                 }\
             } ;\
@@ -164,6 +164,8 @@ namespace boost {
         typedef boost::iso::list_const_buffers list_const_buffers;
 
         using boost::iso::encoding_rule;
+        using boost::iso::octet_type;        
+        
 
         template<typename T>
         inline boost::shared_ptr< T> simple_build_type() {
@@ -181,8 +183,8 @@ namespace boost {
 
 
 
-        const int8_t PRIMITIVE_ENCODING = '\x0';
-        const int8_t CONSTRUCTED_ENCODING = '\x20';
+        const octet_type PRIMITIVE_ENCODING = '\x0';
+        const octet_type CONSTRUCTED_ENCODING = '\x20';
 
 
         ///////////////////
@@ -313,13 +315,13 @@ namespace boost {
 
         ///  BITSTRING TYPE
 
-        class bitstring_type : public std::vector<int8_t> {
+        class bitstring_type : public std::vector<octet_type> {
         public:
 
             typedef std::vector<bool> bool_vector_type;
             typedef boost::dynamic_bitset<> dynamic_bitset_type;
 
-            bitstring_type() : std::vector<int8_t>(), unuse_(0) {
+            bitstring_type() : std::vector<octet_type>(), unuse_(0) {
             };
 
             explicit bitstring_type(uint8_t vl, std::size_t unuse = 0);
@@ -344,7 +346,7 @@ namespace boost {
 
             explicit bitstring_type(bool vl, std::size_t n);
 
-            bitstring_type(const dynamic_bitset_type& vl) : std::vector<int8_t>() {
+            bitstring_type(const dynamic_bitset_type& vl) : std::vector<octet_type>() {
                 construct(vl);
             };
 
@@ -398,10 +400,10 @@ namespace boost {
             void construct(T val, std::size_t unuse) {
                 if (unuse<sizeof (T)*8) {
                     std::size_t cnt = 0;
-                    int8_t tmp = 0;
+                    octet_type tmp = 0;
                     while (cnt < (sizeof (T)*8 - unuse)) {
                         if ((T(1) << cnt) & val)
-                            tmp |= int8_t(1) << (7 - (cnt % 8));
+                            tmp |= octet_type(1) << (7 - (cnt % 8));
 
 
                         if (!((++cnt) % 8)) {
@@ -440,16 +442,16 @@ namespace boost {
 
         ///  OCTETSTRING TYPE           
 
-        class octetstring_type : public std::vector<int8_t> {
+        class octetstring_type : public std::vector<octet_type> {
         public:
 
-            octetstring_type() : std::vector<int8_t>() {
+            octetstring_type() : std::vector<octet_type>() {
             }
 
-            explicit octetstring_type(const raw_type& vl) : std::vector<int8_t>(vl.begin(), vl.end()) {
+            explicit octetstring_type(const raw_type& vl) : std::vector<octet_type>(vl.begin(), vl.end()) {
             }
 
-            octetstring_type(const std::string& vl) : std::vector<int8_t>(vl.begin(), vl.end()) {
+            octetstring_type(const std::string& vl) : std::vector<octet_type>(vl.begin(), vl.end()) {
             }
             //operator raw_type() const{
             //     return  *this;}   
@@ -755,11 +757,11 @@ namespace boost {
             PRIVATE_CLASS = 0xC0,
         } class_type;
 
-        inline static int8_t from_cast(class_type vl) {
-            return static_cast<int8_t> (vl);
+        inline static octet_type from_cast(class_type vl) {
+            return static_cast<octet_type> (vl);
         }
 
-        class_type to_class_type(int8_t vl);
+        class_type to_class_type(octet_type vl);
 
 
         // tag traits
@@ -773,7 +775,7 @@ namespace boost {
                 return TYPE_SEQ;
             }
 
-            static int8_t class_type() {
+            static octet_type class_type() {
                 return 0;
             }
         };
@@ -785,7 +787,7 @@ namespace boost {
                 return TYPE_SET;
             }
 
-            static int8_t class_type() {
+            static octet_type class_type() {
                 return 0;
             }
         };
@@ -837,10 +839,10 @@ namespace boost {
             tag() : id_(null_tag), mask_(0) {
             }
 
-            tag(id_type vl, int8_t type = 0) : id_(vl), mask_(type) {
+            tag(id_type vl, octet_type type = 0) : id_(vl), mask_(type) {
             }
 
-            int8_t mask() const {
+            octet_type mask() const {
                 return mask_;
             }
 
@@ -853,7 +855,7 @@ namespace boost {
             }
 
             id_type simpleid() const {
-                return (id_ < EXTENDED_TAGID) ? static_cast<int8_t> (mask_ | id_) : 0;
+                return (id_ < EXTENDED_TAGID) ? static_cast<octet_type> (mask_ | id_) : 0;
             }
 
             operator bool() const {
@@ -879,7 +881,7 @@ namespace boost {
 
         private:
             id_type id_;
-            int8_t mask_;
+            octet_type mask_;
         };
 
         inline std::ostream& operator<<(std::ostream& stream, const tag& vl) {
@@ -927,7 +929,7 @@ namespace boost {
                 return to_class_type(mask_);
             }
 
-            int8_t mask() const {
+            octet_type mask() const {
                 return mask_;
             }
 
@@ -943,7 +945,7 @@ namespace boost {
         private:
             id_type id_;
             T& val_;
-            int8_t mask_;
+            octet_type mask_;
         };
 
 
@@ -997,7 +999,7 @@ namespace boost {
                 return to_class_type(mask_);
             }
 
-            int8_t mask() const {
+            octet_type mask() const {
                 return mask_;
             }
 
@@ -1017,7 +1019,7 @@ namespace boost {
         private:
             id_type id_;
             T& val_;
-            mutable int8_t mask_;
+            mutable octet_type mask_;
         };
 
 
@@ -1057,7 +1059,7 @@ namespace boost {
                 return to_class_type(mask_);
             }
 
-            int8_t mask() const {
+            octet_type mask() const {
                 return mask_;
             }
 
@@ -1077,7 +1079,7 @@ namespace boost {
         private:
             id_type id_;
             T& val_;
-            int8_t mask_;
+            octet_type mask_;
         };
 
 
@@ -1132,7 +1134,7 @@ namespace boost {
                 return to_class_type(mask_);
             }
 
-            int8_t mask() const {
+            octet_type mask() const {
                 return mask_;
             }
 
@@ -1148,7 +1150,7 @@ namespace boost {
         private:
             id_type id_;
             T& val_;
-            int8_t mask_;
+            octet_type mask_;
         };
 
 

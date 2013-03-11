@@ -19,7 +19,7 @@ namespace boost {
             return boost::lexical_cast<T > (val);
         }
 
-        class_type to_class_type(int8_t vl) {
+        class_type to_class_type(octet_type vl) {
             switch (vl & 0xC0) {
                 case 0x40: return APPLICATION_CLASS;
                 case 0x80: return CONTEXT_CLASS;
@@ -79,47 +79,47 @@ namespace boost {
 
         /// bitstring type
 
-        bitstring_type::bitstring_type(uint8_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(uint8_t vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             construct(vl, unuse);
         };
 
-        bitstring_type::bitstring_type(uint16_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(uint16_t vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             construct(vl, unuse);
         };
 
-        bitstring_type::bitstring_type(uint32_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(uint32_t vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             construct(vl, unuse);
         };
 
-        bitstring_type::bitstring_type(uint64_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(uint64_t vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             construct(vl, unuse);
         };
 
-        bitstring_type::bitstring_type(int8_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(int8_t vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             construct(*reinterpret_cast<uint8_t*> (&vl), unuse);
         };
 
-        bitstring_type::bitstring_type(int16_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(int16_t vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             construct(*reinterpret_cast<uint16_t*> (&vl), unuse);
         };
 
-        bitstring_type::bitstring_type(int32_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(int32_t vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             construct(*reinterpret_cast<uint32_t*> (&vl), unuse);
         };
 
-        bitstring_type::bitstring_type(int64_t vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(int64_t vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             construct(*reinterpret_cast<uint64_t*> (&vl), unuse);
         };
 
-        bitstring_type::bitstring_type(const raw_type& vl, std::size_t unuse) : std::vector<int8_t>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(const raw_type& vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             insert_bitstring(vl, unuse);
         };
 
-        bitstring_type::bitstring_type(const std::vector<bool>& vl) : std::vector<int8_t>() {
+        bitstring_type::bitstring_type(const std::vector<bool>& vl) : std::vector<octet_type>() {
             construct(vl);
         };
 
-        bitstring_type::bitstring_type(bool vl, std::size_t n) : std::vector<int8_t>(), unuse_(7 - n % 8) {
+        bitstring_type::bitstring_type(bool vl, std::size_t n) : std::vector<octet_type>(), unuse_(7 - n % 8) {
             if ((vl) && (n < 256)) {
                 insert(begin(), (n / 8 + 1), 0);
                 back() = (0x1 << (7 - (n % 8)));
@@ -133,8 +133,8 @@ namespace boost {
 
         bool bitstring_type::bit(std::size_t num) const {
             if (sizebits() > num) {
-                int8_t vl = ((num / 8) < size()) ? (operator[](num / 8)) : 0;
-                return static_cast<int8_t> (1 << (7 - (num % 8))) & vl;
+                octet_type vl = ((num / 8) < size()) ? (operator[](num / 8)) : 0;
+                return static_cast<octet_type> (1 << (7 - (num % 8))) & vl;
             }
             return false;
         }
@@ -143,9 +143,9 @@ namespace boost {
             if (sizebits() > num) {
                 if ((num / 8) < size()) {
                     if (val)
-                        operator[](num / 8) |= static_cast<int8_t> (1 << (7 - num % 8));
+                        operator[](num / 8) |= static_cast<octet_type> (1 << (7 - num % 8));
                     else
-                        operator[](num / 8) &= ~static_cast<int8_t> (1 << (7 - num % 8));
+                        operator[](num / 8) &= ~static_cast<octet_type> (1 << (7 - num % 8));
                 }
             }
         }
