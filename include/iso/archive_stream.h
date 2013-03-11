@@ -21,9 +21,6 @@
 #include <set>
 #include <map>
 
-
-
-
 namespace boost {
     namespace asn1 {
 

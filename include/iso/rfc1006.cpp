@@ -11,8 +11,7 @@
 namespace boost {
     namespace iso {
         namespace prot8073 {
-            
-            
+           
 
             boost::system::error_code errorcode_by_reason(octet_type val) {
                 if (!val)
@@ -400,15 +399,15 @@ namespace boost {
 
             boost::system::error_code receive_seq::check_tkpt() {
                 mutable_buffer buff_ = tkpt_buff_;
-                raw_type hdr = raw_type(boost::asio::buffer_cast<const raw_type::value_type*>(buff_), boost::asio::buffer_cast<const raw_type::value_type*>(buff_) + 2);
+                raw_type hdr = buffer_to_raw( buff_, 0 ,2);
                 if (hdr != TKPT_START) {
                     return errcode(ERROR__SEQ);
                 }
-                int16_t pdsz = endiancnv_copy<int16_t > (raw_type(boost::asio::buffer_cast<const char*>(buff_ + 2), boost::asio::buffer_cast<const char*>(buff_ + 2) + 2));
+                int16_t pdsz = endiancnv_copy<int16_t > (buffer_to_raw( buff_, 2 ,2));
                 if (pdsz < 0) {
                     return errcode(ERROR__EPROTO);
                 }
-                std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + 4));
+                std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<uint8_t*>(buff_ + 4));
                 if (!li)
                     return errcode(ERROR__EPROTO);
                 state_ = waitheader;
@@ -445,14 +444,14 @@ namespace boost {
                             return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 1), boost::asio::buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
+                        raw_to_inttype(buffer_to_raw( buff_, 1 ,2), dst_tsap_);
                         dst_tsap_ = endiancnv_copy(dst_tsap_);
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 3), boost::asio::buffer_cast<const char*>(buff_ + 3) + 2), src_tsap_);
+                        raw_to_inttype(buffer_to_raw( buff_, 3 ,2), src_tsap_);
                         src_tsap_ = endiancnv_copy(src_tsap_);
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 5), boost::asio::buffer_cast<const char*>(buff_ + 5) + 1), class_option_);
+                        raw_to_inttype(buffer_to_raw( buff_, 5 , 1), class_option_);
                         headarvarvalues vars;
                         ;
-                        if (!parse_vars(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 6), boost::asio::buffer_cast<const char*>(buff_ + 6)+ (estimatesize_ - 6)), vars))
+                        if (!parse_vars(buffer_to_raw( buff_,  6, (estimatesize_ - 6)), vars))
                             return errcode(ERROR__EPROTO);
                         options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                         state(complete);
@@ -465,13 +464,13 @@ namespace boost {
                             return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 1), boost::asio::buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
+                        raw_to_inttype(buffer_to_raw( buff_, 1 ,2) , dst_tsap_);
                         dst_tsap_ = endiancnv_copy(dst_tsap_);
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 3), boost::asio::buffer_cast<const char*>(buff_ + 3) + 2), src_tsap_);
+                        raw_to_inttype(buffer_to_raw( buff_, 3 ,2), src_tsap_);
                         src_tsap_ = endiancnv_copy(src_tsap_);
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 5), boost::asio::buffer_cast<const char*>(buff_ + 5) + 1), class_option_);
+                        raw_to_inttype(buffer_to_raw( buff_, 5 ,1), class_option_);
                         headarvarvalues vars;
-                        if (!parse_vars(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 6), boost::asio::buffer_cast<const char*>(buff_ + 6) + (estimatesize_ - 6)), vars))
+                        if (!parse_vars(buffer_to_raw( buff_,  6, (estimatesize_ - 6)), vars))
                             return errcode(ERROR__EPROTO);
                         options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                         state(complete);
@@ -485,15 +484,15 @@ namespace boost {
                         ; /* невозможно см. 13.3.2*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 1), boost::asio::buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
+                        raw_to_inttype(buffer_to_raw( buff_, 1 ,2) , dst_tsap_);
                         dst_tsap_ = endiancnv_copy(dst_tsap_);
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 3), boost::asio::buffer_cast<const char*>(buff_ + 3) + 2), src_tsap_);
+                        raw_to_inttype(buffer_to_raw( buff_, 3 ,2) , src_tsap_);
                         src_tsap_ = endiancnv_copy(src_tsap_);
                         octet_type rsn = 0;
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 5), boost::asio::buffer_cast<const char*>(buff_ + 5) + 1), rsn);
+                        raw_to_inttype(buffer_to_raw( buff_, 5 ,1) , rsn);
                         reject_reason(rsn);
                         headarvarvalues vars;
-                        if (!parse_vars(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 6), boost::asio::buffer_cast<const char*>(buff_ + 6) + (estimatesize_ - 6)), vars))
+                        if (!parse_vars(buffer_to_raw( buff_,  6, (estimatesize_ - 6)), vars))
                             return errcode(ERROR__EPROTO);
                         ;
                         options_ = protocol_options(dst_tsap_, src_tsap_, vars);
@@ -507,10 +506,10 @@ namespace boost {
                             return errcode(ERROR__EPROTO);
                         ; /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 1), boost::asio::buffer_cast<const char*>(buff_ + 1) + 2), dst_tsap_);
-                        raw_to_inttype(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 3), boost::asio::buffer_cast<const char*>(buff_ + 3) + 1), reject_reason_);
+                        raw_to_inttype(buffer_to_raw( buff_, 1 ,2), dst_tsap_);
+                        raw_to_inttype(buffer_to_raw( buff_, 3 ,1), reject_reason_);
                         headarvarvalues vars;
-                        if (!parse_vars(raw_type(boost::asio::buffer_cast<const char*>(buff_ + 4), boost::asio::buffer_cast<const char*>(buff_ + 4) + (estimatesize_ - 4)), vars))
+                        if (!parse_vars(buffer_to_raw( buff_,  4, (estimatesize_ - 4)), vars))
                             return errcode(ERROR__EPROTO);
                         ;
                         state(complete);
