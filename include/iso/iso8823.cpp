@@ -48,13 +48,13 @@ namespace boost {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-            const oid_type X690_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID, CANONICAL_ENCODING_OID, DISTINGUISH_ENCODING_OID};
+            const oid_type X690_TRANSFER_SINTAXS_ARR[] = {boost::asn1::BASIC_ENCODING_OID, boost::asn1::CANONICAL_ENCODING_OID, boost::asn1::DISTINGUISH_ENCODING_OID};
             const transfer_synaxes_type X690_TRANSFER_SINTAXS = transfer_synaxes_type(X690_TRANSFER_SINTAXS_ARR, X690_TRANSFER_SINTAXS_ARR + 3);
 
-            const oid_type BASE_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID};
+            const oid_type BASE_TRANSFER_SINTAXS_ARR[] = {boost::asn1::BASIC_ENCODING_OID};
             const transfer_synaxes_type BASE_TRANSFER_SINTAXS = transfer_synaxes_type(BASE_TRANSFER_SINTAXS_ARR, BASE_TRANSFER_SINTAXS_ARR + 1);
 
-            const oid_type ALL_TRANSFER_SINTAXS_ARR[] = {BASIC_ENCODING_OID, CANONICAL_ENCODING_OID, DISTINGUISH_ENCODING_OID};
+            const oid_type ALL_TRANSFER_SINTAXS_ARR[] = {boost::asn1::BASIC_ENCODING_OID, boost::asn1::CANONICAL_ENCODING_OID, boost::asn1::DISTINGUISH_ENCODING_OID};
             const transfer_synaxes_type ALL_TRANSFER_SINTAXS = transfer_synaxes_type(ALL_TRANSFER_SINTAXS_ARR, ALL_TRANSFER_SINTAXS_ARR + 3);
 
             presentation_context_unit::presentation_context_unit(const oid_type& asyntax, const encoding_rule& tsyntax) :
@@ -109,7 +109,7 @@ namespace boost {
 
             oid_type presentation_connection_option::has_abstract_syntax(const oid_type& asyntax, const std::vector<oid_type>& tsyntax) const {
                 if (has_abstract_syntax(asyntax, BER_ENCODING))
-                    return BASIC_ENCODING_OID;
+                    return boost::asn1::BASIC_ENCODING_OID;
                 return oid_type();
             }
 
