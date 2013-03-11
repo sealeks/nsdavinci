@@ -11,7 +11,6 @@
 namespace boost {
     namespace iso {
         namespace prot8073 {
-           
 
             boost::system::error_code errorcode_by_reason(octet_type val) {
                 if (!val)
@@ -399,11 +398,11 @@ namespace boost {
 
             boost::system::error_code receive_seq::check_tkpt() {
                 mutable_buffer buff_ = tkpt_buff_;
-                raw_type hdr = buffer_to_raw( buff_, 0 ,2);
+                raw_type hdr = buffer_to_raw(buff_, 0, 2);
                 if (hdr != TKPT_START) {
                     return errcode(ERROR__SEQ);
                 }
-                int16_t pdsz = endiancnv_copy<int16_t > (buffer_to_raw( buff_, 2 ,2));
+                int16_t pdsz = endiancnv_copy<int16_t > (buffer_to_raw(buff_, 2, 2));
                 if (pdsz < 0) {
                     return errcode(ERROR__EPROTO);
                 }
@@ -444,14 +443,14 @@ namespace boost {
                             return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
-                        raw_to_inttype(buffer_to_raw( buff_, 1 ,2), dst_tsap_);
+                        raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
                         dst_tsap_ = endiancnv_copy(dst_tsap_);
-                        raw_to_inttype(buffer_to_raw( buff_, 3 ,2), src_tsap_);
+                        raw_to_inttype(buffer_to_raw(buff_, 3, 2), src_tsap_);
                         src_tsap_ = endiancnv_copy(src_tsap_);
-                        raw_to_inttype(buffer_to_raw( buff_, 5 , 1), class_option_);
+                        raw_to_inttype(buffer_to_raw(buff_, 5, 1), class_option_);
                         headarvarvalues vars;
                         ;
-                        if (!parse_vars(buffer_to_raw( buff_,  6, (estimatesize_ - 6)), vars))
+                        if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ERROR__EPROTO);
                         options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                         state(complete);
@@ -464,13 +463,13 @@ namespace boost {
                             return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
-                        raw_to_inttype(buffer_to_raw( buff_, 1 ,2) , dst_tsap_);
+                        raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
                         dst_tsap_ = endiancnv_copy(dst_tsap_);
-                        raw_to_inttype(buffer_to_raw( buff_, 3 ,2), src_tsap_);
+                        raw_to_inttype(buffer_to_raw(buff_, 3, 2), src_tsap_);
                         src_tsap_ = endiancnv_copy(src_tsap_);
-                        raw_to_inttype(buffer_to_raw( buff_, 5 ,1), class_option_);
+                        raw_to_inttype(buffer_to_raw(buff_, 5, 1), class_option_);
                         headarvarvalues vars;
-                        if (!parse_vars(buffer_to_raw( buff_,  6, (estimatesize_ - 6)), vars))
+                        if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ERROR__EPROTO);
                         options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                         state(complete);
@@ -484,15 +483,15 @@ namespace boost {
                         ; /* невозможно см. 13.3.2*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
-                        raw_to_inttype(buffer_to_raw( buff_, 1 ,2) , dst_tsap_);
+                        raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
                         dst_tsap_ = endiancnv_copy(dst_tsap_);
-                        raw_to_inttype(buffer_to_raw( buff_, 3 ,2) , src_tsap_);
+                        raw_to_inttype(buffer_to_raw(buff_, 3, 2), src_tsap_);
                         src_tsap_ = endiancnv_copy(src_tsap_);
                         octet_type rsn = 0;
-                        raw_to_inttype(buffer_to_raw( buff_, 5 ,1) , rsn);
+                        raw_to_inttype(buffer_to_raw(buff_, 5, 1), rsn);
                         reject_reason(rsn);
                         headarvarvalues vars;
-                        if (!parse_vars(buffer_to_raw( buff_,  6, (estimatesize_ - 6)), vars))
+                        if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ERROR__EPROTO);
                         ;
                         options_ = protocol_options(dst_tsap_, src_tsap_, vars);
@@ -506,10 +505,10 @@ namespace boost {
                             return errcode(ERROR__EPROTO);
                         ; /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
-                        raw_to_inttype(buffer_to_raw( buff_, 1 ,2), dst_tsap_);
-                        raw_to_inttype(buffer_to_raw( buff_, 3 ,1), reject_reason_);
+                        raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
+                        raw_to_inttype(buffer_to_raw(buff_, 3, 1), reject_reason_);
                         headarvarvalues vars;
-                        if (!parse_vars(buffer_to_raw( buff_,  4, (estimatesize_ - 4)), vars))
+                        if (!parse_vars(buffer_to_raw(buff_, 4, (estimatesize_ - 4)), vars))
                             return errcode(ERROR__EPROTO);
                         ;
                         state(complete);
@@ -539,26 +538,37 @@ namespace boost {
 
 
 
+            ///////////////////////////////////////////////////////////////////////////////////////                 
 
+            class atom_send_buffer : public send_buffer_impl {
+            public:
+
+                atom_send_buffer(const raw_type& send) : send_buffer_impl(), send_(send) {
+                    buff_.push_back(const_buffer(&send_.front(), send_.size()));
+                }
+
+            private:
+                raw_type send_;
+            };
 
 
 
             ///////////////////////////////////////////////////////////////////////////////////////
 
             void send_seq::constructCR(const protocol_options& opt) {
-                buf_ = send_buffer_ptr(new sevice_send_buffer_implb(generate_header_TKPT_CR(opt)));
+                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CR(opt)));
             }
 
             void send_seq::constructCC(const protocol_options& opt) {
-                buf_ = send_buffer_ptr(new sevice_send_buffer_implb(generate_header_TKPT_CC(opt)));
+                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CC(opt)));
             }
 
             void send_seq::constructER(int16_t dst, const raw_type& errorreason, octet_type err) {
-                buf_ = send_buffer_ptr(new sevice_send_buffer_implb(generate_header_TKPT_ER(dst, errorreason, err)));
+                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_ER(dst, errorreason, err)));
             }
 
             void send_seq::constructDR(int16_t dst, int16_t src, octet_type rsn) {
-                buf_ = send_buffer_ptr(new sevice_send_buffer_implb(generate_header_TKPT_DR(dst, src, rsn)));
+                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_DR(dst, src, rsn)));
             }
 
         }
