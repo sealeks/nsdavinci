@@ -11,12 +11,12 @@ namespace boost {
     namespace iso {
         namespace prot8327 {
 
-            std::size_t from_triple_size(const std::string& val, std::size_t& it) {
-                if ((!val.size()) || (val[0] == '\xFF' && val.size() < 3))
+            std::size_t from_triple_size(const raw_type& val, std::size_t& it) {
+                if ((val.empty()) || (val[0] == '\xFF' && val.size() < 3))
                     return 0;
                 if (val[0] == '\xFF') {
                     uint16_t sz;
-                    if (str_to_inttype(val.substr(1), sz)) {
+                    if (raw_to_inttype( raw_type(val.begin()+1, val.end()), sz)) {
                         sz = endiancnv_copy(sz);
                         it += 2;
                         return static_cast<std::size_t> (sz);
@@ -24,7 +24,7 @@ namespace boost {
                 }
                 else {
                     uint8_t sz;
-                    if (str_to_inttype(val, sz)) {
+                    if (raw_to_inttype(val, sz)) {
                         it += 1;
                         return static_cast<std::size_t> (sz);
                     }
@@ -600,7 +600,7 @@ namespace boost {
                 return boost::system::error_code();
             }
 
-            void receive_seq::reject_reason(int8_t val) {
+            void receive_seq::reject_reason(octet_type val) {
                 errcode_ = boost::system::error_code();
                 reject_reason_ = val;
             }
