@@ -430,8 +430,8 @@ namespace boost {
                     return (!buf_) || (buf_->ready());
                 }
 
-                const_vector_buffer pop() {
-                    return buf_ ? buf_->pop() : NULL_VECTOR_BUFFER;
+                const const_sequence& pop() {
+                    return buf_ ? buf_->pop() : NULL_const_sequence;
                 }
 
                 std::size_t size(std::size_t sz) {

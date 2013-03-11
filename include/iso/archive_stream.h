@@ -104,26 +104,22 @@ namespace boost {
         typedef boost::asio::mutable_buffers_1 mutable_buffers_1;
 
 
-        typedef std::vector<const_buffer> vector_buffer;
-        typedef const vector_buffer& const_vector_buffer;
-        typedef vector_buffer::iterator vector_buffer_iterator;
-
-        const vector_buffer NULL_VECTOR_BUFFER = vector_buffer();
-
         typedef int8_t octet_type;
         typedef std::vector<octet_type> raw_type;
         typedef boost::shared_ptr<raw_type> raw_type_ptr;
         typedef std::vector<raw_type_ptr> vect_raw_type_ptr;
 
-        typedef std::list<mutable_buffer> list_mutable_buffers;
-        typedef std::list<const_buffer> list_const_buffers;
+        typedef std::list<mutable_buffer> mutable_sequence;
+        typedef std::list<const_buffer> const_sequence;
+
+        const const_sequence NULL_const_sequence = const_sequence();        
 
 
 
-        std::size_t pop_frontlist(list_mutable_buffers& val, std::size_t start);
-        bool splice_frontlist(list_mutable_buffers& val, std::size_t firstend, std::size_t secondend);
-        bool find_eof(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, std::size_t& rslt, std::size_t start = 0);
-        bool row_cast(const list_mutable_buffers& val, list_mutable_buffers::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size);
+        std::size_t pop_frontlist(mutable_sequence& val, std::size_t start);
+        bool splice_frontlist(mutable_sequence& val, std::size_t firstend, std::size_t secondend);
+        bool find_eof(const mutable_sequence& val, mutable_sequence::const_iterator bit, std::size_t& rslt, std::size_t start = 0);
+        bool row_cast(const mutable_sequence& val, mutable_sequence::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size);
 
 
 
@@ -135,8 +131,7 @@ namespace boost {
         class base_oarchive {
         public:
 
-            typedef list_const_buffers list_buffers;
-            typedef list_const_buffers::iterator iterator;
+            typedef const_sequence::iterator iterator;
 
             static bool __input__() {
                 return false;
@@ -148,12 +143,12 @@ namespace boost {
             virtual ~base_oarchive() {
             }
 
-            list_buffers buffers() const {
+            const_sequence buffers() const {
                 return listbuffers_;
             }
 
-            vector_buffer const_buffers() const {
-                return vector_buffer(listbuffers_.begin(), listbuffers_.end());
+            const_sequence const_buffers() const {
+                return const_sequence(listbuffers_.begin(), listbuffers_.end());
             }
 
             iterator add(const raw_type& vl);
@@ -198,7 +193,7 @@ namespace boost {
 
         protected:
 
-            list_buffers listbuffers_;
+            const_sequence listbuffers_;
             vect_raw_type_ptr rows_vect;
             std::size_t size_;
 
@@ -213,8 +208,7 @@ namespace boost {
         class base_iarchive {
         public:
 
-            typedef list_mutable_buffers list_buffers;
-            typedef list_mutable_buffers::iterator iterator;
+            typedef mutable_sequence::iterator iterator;
 
             static bool __input__() {
                 return true;
@@ -226,11 +220,11 @@ namespace boost {
             virtual ~base_iarchive() {
             }
 
-            const list_buffers& buffers() const {
+            const mutable_sequence& buffers() const {
                 return listbuffers_;
             }
 
-            list_buffers& buffers() {
+            mutable_sequence& buffers() {
                 return listbuffers_;
             }
 
@@ -276,7 +270,7 @@ namespace boost {
                 //std::cout << "decsize IARCHVE size:"  << size_  << std::endl;
             }
 
-            list_buffers listbuffers_;
+            mutable_sequence listbuffers_;
             vect_raw_type_ptr rows_vect;
             std::size_t size_;
 
@@ -316,7 +310,7 @@ namespace boost {
                 return output_;
             }
 
-            vector_buffer request() const {
+            const_sequence request() const {
                 return output_->const_buffers();
             }
 
@@ -422,17 +416,17 @@ namespace boost {
 
 
 
-        std::ostream& operator<<(std::ostream& stream, const list_const_buffers& self);
+        std::ostream& operator<<(std::ostream& stream, const const_sequence& self);
 
-        std::ofstream& operator<<(std::ofstream& stream, const list_const_buffers& self);
+        std::ofstream& operator<<(std::ofstream& stream, const const_sequence& self);
 
         std::ostream& operator<<(std::ostream& stream, const base_oarchive& vl);
 
         std::ofstream& operator<<(std::ofstream& stream, const base_oarchive& vl);
 
-        std::ostream& operator<<(std::ostream& stream, const list_mutable_buffers& vl);
+        std::ostream& operator<<(std::ostream& stream, const mutable_sequence& vl);
 
-        std::ofstream& operator<<(std::ofstream& stream, const list_mutable_buffers& vl);
+        std::ofstream& operator<<(std::ofstream& stream, const mutable_sequence& vl);
 
 
 
@@ -449,7 +443,7 @@ namespace boost {
             virtual ~send_buffer_impl() {
             }
 
-            const_vector_buffer pop() {
+            const const_sequence& pop() {
                 return buff_;
             }
 
@@ -465,7 +459,7 @@ namespace boost {
 
 
         protected:
-            vector_buffer buff_;
+            const_sequence buff_;
             std::size_t size_;
         };
 

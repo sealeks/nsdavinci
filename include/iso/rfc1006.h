@@ -215,16 +215,18 @@ namespace boost {
                     sizenorm_.insert(sizenorm_.end(), '\x2');
                     sizenorm_.insert(sizenorm_.end(), DT_TPDU_ID);
                     sizenorm_.insert(sizenorm_.end(), TPDU_CONTINIUE);
+                    
+                    typedef typename ConstBufferSequence::const_iterator    constbuffseq_iterator;
+                    typedef typename ConstBufferSequence::value_type         constbuffseq_value;
 
+                    constbuffseq_iterator it = buff.begin();
+                    constbuffseq_iterator end = buff.end();
+                    constbuffseq_value val;
 
-                    typename ConstBufferSequence::const_iterator it = buff.begin();
-                    typename ConstBufferSequence::const_iterator end = buff.end();
-                    typename ConstBufferSequence::value_type val;
-
-                    vector_buffer tmp;
+                    const_sequence tmp;
                     std::size_t tmpsize = 0;
-
-                    bool ended = (it != end) ? ((it + 1) == end) : true;
+                    
+                    bool ended = (it != end) ? ( (++constbuffseq_iterator(it)) == end) : true;
 
                     while (it != end) {
                         val = *it;
@@ -262,8 +264,8 @@ namespace boost {
                             }
                         }
                         while (boost::asio::buffer_size(val));
-                        ++it;
-                        ended = (it != end) ? ((it + 1) == end) : true;
+                        ++it;                   
+                        ended = (it != end) ? ( (++constbuffseq_iterator(it)) == end) : true;
                     }
                 }
 
@@ -313,8 +315,8 @@ namespace boost {
                     return (!buf_) || (buf_->ready());
                 }
 
-                const_vector_buffer pop() {
-                    return buf_ ? buf_->pop() : NULL_VECTOR_BUFFER;
+                const const_sequence& pop() {
+                    return buf_ ? buf_->pop() : NULL_const_sequence;
                 }
 
                 std::size_t size(std::size_t sz) {
