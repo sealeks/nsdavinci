@@ -183,10 +183,6 @@ namespace boost {
                 explicit spdudata(spdu_type spdu) : spdudata_type(), type_(spdu), error_(false) {
                 }
 
-                explicit spdudata(const std::string& vl) : spdudata_type(), seq_(vl), type_(0), error_(false) {
-                    parse();
-                }
-
                 explicit spdudata(const const_buffer& vl) : spdudata_type(), seq_(), type_(0), error_(false) {
                     parse_vars(std::string(boost::asio::buffer_cast<const char*>(vl), boost::asio::buffer_size(vl)));
                 }
