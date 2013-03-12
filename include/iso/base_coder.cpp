@@ -305,23 +305,23 @@ namespace boost {
 
         base_output_coder::iterator_type base_output_coder::add(const raw_type& vl) {
             if (vl.empty()) return
-                listbuffers_.end();
+                listbuffers_->end();
             rows_vect.push_back(raw_type_ptr(new raw_type(vl)));
             size_ += vl.size();
-            return listbuffers_.insert(listbuffers_.end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
+            return listbuffers_->insert(listbuffers_->end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
         }
 
         base_output_coder::iterator_type base_output_coder::add(const raw_type& vl, iterator_type it) {
             if (vl.empty()) return
-                listbuffers_.end();
+                listbuffers_->end();
             rows_vect.push_back(raw_type_ptr(new raw_type(vl)));
             size_ += vl.size();
-            return listbuffers_.insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
+            return listbuffers_->insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
         }
 
         bool base_output_coder::bind(raw_type& vl) {
             vl.clear();
-            for (iterator_type it = listbuffers_.begin(); it != listbuffers_.end(); ++it)
+            for (iterator_type it = listbuffers_->begin(); it != listbuffers_->end(); ++it)
                 vl.insert(vl.end(),
                     const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)),
                     const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)) + boost::asio::buffer_size(*it));
@@ -336,12 +336,12 @@ namespace boost {
         void base_input_coder::add(const raw_type& vl) {
             rows_vect.push_back(raw_type_ptr(new raw_type(vl.begin(), vl.end())));
             size_ += vl.size();
-            listbuffers_.push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
+            listbuffers_->push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
         }
 
         bool base_input_coder::is_endof(std::size_t beg) const {
             raw_type data;
-            if (row_cast(listbuffers_, listbuffers_.begin(), data, beg, 2)) {
+            if (row_cast(*listbuffers_, listbuffers_->begin(), data, beg, 2)) {
                 if ((data.size() == 2) && (data[0] == 0) && (data[1] == 0)) {
                     return true;
                 }
@@ -350,7 +350,7 @@ namespace boost {
         }
 
         void base_input_coder::clear() {
-            listbuffers_.clear();
+            listbuffers_->clear();
             size_ = 0;
         }
 
@@ -408,15 +408,15 @@ namespace boost {
 
             if (sz == 0) return size_;
             std::size_t tmpsize = sz;
-            while ((!buff_.empty()) && tmpsize) {
-                const_sequence::iterator it = buff_.begin();
+            while ((!buffer_->empty()) && tmpsize) {
+                const_sequence::iterator it = buffer_->begin();
                 if (tmpsize < buffer_size(*it)) {
                     *it = const_buffer((*it) + sz);
                     return size_ += sz;
                 }
                 else {
                     tmpsize = buffer_size(*it) > tmpsize ? 0 : (tmpsize - buffer_size(*it));
-                    buff_.erase(it);
+                    buffer_->erase(it);
                 }
             }
             return size_ += sz;

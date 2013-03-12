@@ -33,6 +33,8 @@
 #include <iso/base_coder.h>
 #include <iso/asn/asnbase.h>
 
+//#define CHECK_ISO_SELECTOR
+
 
 namespace boost {
     namespace iso {

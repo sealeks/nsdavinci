@@ -25,9 +25,9 @@
 namespace boost {
     namespace iso {
         namespace prot8073 {
-            
-        using boost::asio::basic_socket;
-        using boost::asio::basic_socket_acceptor;
+
+            using boost::asio::basic_socket;
+            using boost::asio::basic_socket_acceptor;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8073 utill   //
@@ -198,13 +198,13 @@ namespace boost {
             class data_send_buffer_impl : public send_buffer_impl {
             public:
 
-                data_send_buffer_impl(const ConstBufferSequence& buff, tpdu_size pdusize) :
+                data_send_buffer_impl(const ConstBufferSequence& bf, tpdu_size pdusize) :
                 send_buffer_impl(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
-                    construct(buff, pdusize);
+                    construct(bf, pdusize);
 
                 }
 
-                void construct(const ConstBufferSequence& buff, tpdu_size pdusize) {
+                void construct(const ConstBufferSequence& bf, tpdu_size pdusize) {
                     std::size_t pdusz = tpdu_byte_size(pdusize);
                     if (!pdusz) pdusz = 2048;
                     pdusz -= 3;
@@ -215,28 +215,31 @@ namespace boost {
                     sizenorm_.insert(sizenorm_.end(), '\x2');
                     sizenorm_.insert(sizenorm_.end(), DT_TPDU_ID);
                     sizenorm_.insert(sizenorm_.end(), TPDU_CONTINIUE);
-                    
-                    typedef typename ConstBufferSequence::const_iterator    constbuffseq_iterator;
-                    typedef typename ConstBufferSequence::value_type         constbuffseq_value;
 
-                    constbuffseq_iterator it = buff.begin();
-                    constbuffseq_iterator end = buff.end();
+                    typedef typename ConstBufferSequence::const_iterator constbuffseq_iterator;
+                    typedef typename ConstBufferSequence::value_type constbuffseq_value;
+
+                    constbuffseq_iterator it = bf.begin();
+                    constbuffseq_iterator end = bf.end();
+                    constbuffseq_iterator pend = end;
+                    if (it != end)
+                        --pend;
+
                     constbuffseq_value val;
 
                     const_sequence tmp;
                     std::size_t tmpsize = 0;
-                    
-                    bool ended = (it != end) ? ( (++constbuffseq_iterator(it)) == end) : true;
 
+                    bool ended = (it == end) || (it == pend);
                     while (it != end) {
                         val = *it;
                         do {
                             if ((boost::asio::buffer_size(val) + tmpsize) > pdusz) {
-                                buff_.push_back(const_buffer(&sizenorm_.front(), sizenorm_.size()));
+                                buff().push_back(const_buffer(&sizenorm_.front(), sizenorm_.size()));
                                 if (!tmp.empty())
-                                    std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));
+                                    std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff()));
                                 tmp.clear();
-                                buff_.push_back(boost::asio::buffer(val, pdusz - tmpsize));
+                                buff().push_back(boost::asio::buffer(val, pdusz - tmpsize));
                                 val = val + (pdusz - tmpsize);
                                 tmpsize = 0;
                             }
@@ -248,11 +251,11 @@ namespace boost {
                                     sizeeof_ .insert(sizeeof_ .end(), '\x2');
                                     sizeeof_ .insert(sizeeof_ .end(), DT_TPDU_ID);
                                     sizeeof_ .insert(sizeeof_ .end(), TPDU_ENDED);
-                                    buff_.push_back(const_buffer(&sizeeof_.front(), sizeeof_.size()));
+                                    buff().push_back(const_buffer(&sizeeof_.front(), sizeeof_.size()));
                                     if (!tmp.empty())
-                                        std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff_));
+                                        std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff()));
                                     tmp.clear();
-                                    buff_.push_back(const_buffer(val));
+                                    buff().push_back(const_buffer(val));
                                     val = val + pdusz;
                                     tmpsize = 0;
                                 }
@@ -264,8 +267,8 @@ namespace boost {
                             }
                         }
                         while (boost::asio::buffer_size(val));
-                        ++it;                   
-                        ended = (it != end) ? ( (++constbuffseq_iterator(it)) == end) : true;
+                        ++it;
+                        ended = (it == end) || (it == pend);
                     }
                 }
 
@@ -275,8 +278,8 @@ namespace boost {
                 raw_type sizeeof_;
 
             };
-            
-            
+
+
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //  iso8073 send_seq   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  

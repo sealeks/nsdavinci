@@ -110,7 +110,9 @@ namespace boost {
         typedef std::vector<raw_type_ptr> vect_raw_type_ptr;
 
         typedef std::list<mutable_buffer> mutable_sequence;
+        typedef boost::shared_ptr<mutable_sequence>  mutable_sequence_ptr;           
         typedef std::list<const_buffer> const_sequence;
+        typedef boost::shared_ptr<const_sequence>  const_sequence_ptr;          
 
         const const_sequence NULL_CONST_SEQUENCE = const_sequence();        
 
@@ -128,35 +130,45 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class base_output_coder {
+        class base_output_coder {            
+            
         public:
-
+            
+          
             typedef const_sequence::iterator iterator_type;
 
             static bool __input__() {
                 return false;
             }
 
-            base_output_coder(encoding_rule rl = NULL_ENCODING) : size_(0) {
+            base_output_coder(encoding_rule rl = NULL_ENCODING) : listbuffers_( new const_sequence()) ,size_(0) {
             }
 
             virtual ~base_output_coder() {
             }
 
             const const_sequence& buffers() const {
-                return listbuffers_;
+                return *listbuffers_;
             }
             
             const_sequence& buffers()  {
+                return *listbuffers_;
+            }       
+            
+            const_sequence_ptr buffers_ptr() const {
                 return listbuffers_;
-            }           
+            }
+            
+            const_sequence_ptr buffers_ptr()  {
+                return listbuffers_;
+            }                     
             
             iterator_type add(const raw_type& vl);
 
             iterator_type add(const raw_type& vl, iterator_type it);
 
             iterator_type last() {
-                return listbuffers_.empty() ? listbuffers_.end() : (--listbuffers_.end());
+                return listbuffers_->empty() ? listbuffers_->end() : (--(listbuffers_->end()));
             }
 
             std::size_t size(std::size_t sz = 0) const {
@@ -164,7 +176,7 @@ namespace boost {
             }
 
             virtual void clear() {
-                listbuffers_.clear();
+                listbuffers_->clear();
                 rows_vect.clear();
                 size_ = 0;
             }
@@ -191,9 +203,9 @@ namespace boost {
             }
 
 
-        protected:
+        private:
 
-            const_sequence listbuffers_;
+            const_sequence_ptr listbuffers_;
             vect_raw_type_ptr rows_vect;
             std::size_t size_;
         };
@@ -212,30 +224,30 @@ namespace boost {
                 return true;
             }
 
-            base_input_coder() : size_(0) {
+            base_input_coder() : listbuffers_( new mutable_sequence()), size_(0) {
             }
 
             virtual ~base_input_coder() {
             }
 
             const mutable_sequence& buffers() const {
-                return listbuffers_;
+                return *listbuffers_;
             }
 
             mutable_sequence& buffers() {
-                return listbuffers_;
+                return *listbuffers_;
             }
 
             void add(const raw_type& vl);
 
             void pop_front(std::size_t sz) {
-                decsize(pop_frontlist(listbuffers_, sz));
+                decsize(pop_frontlist(*listbuffers_, sz));
             }
 
             bool is_endof(std::size_t beg = 0) const;
 
             iterator_type last() {
-                return listbuffers_.empty() ? listbuffers_.end() : (--listbuffers_.end());
+                return listbuffers_->empty() ? listbuffers_->end() : (--(listbuffers_->end()));
             }
 
             std::size_t size(std::size_t sz) {
@@ -268,7 +280,9 @@ namespace boost {
                 //std::cout << "decsize IARCHVE size:"  << size_  << std::endl;
             }
 
-            mutable_sequence listbuffers_;
+         private:
+            
+            mutable_sequence_ptr listbuffers_;
             vect_raw_type_ptr rows_vect;
             std::size_t size_;
 
@@ -434,29 +448,41 @@ namespace boost {
         class send_buffer_impl {
         public:
 
-            send_buffer_impl() : size_(0) {
+            send_buffer_impl() : buffer_( new const_sequence()) , size_(0) {
             }
-
+            
+            send_buffer_impl(const_sequence_ptr bf) : buffer_(bf) , size_(0) {
+            }            
+            
             virtual ~send_buffer_impl() {
             }
 
             const const_sequence& pop() {
-                return buff_;
+                return *buffer_;
             }
 
             std::size_t size(std::size_t sz = 0);
 
             std::size_t receivesize() const {
-                return buffer_size(buff_);
+                return buffer_size(*buffer_);
             }
 
             bool ready() const {
-                return !buffer_size(buff_);
+                return !buffer_size(*buffer_);
             }
-
-
+            
         protected:
-            const_sequence buff_;
+            
+            const const_sequence& buff() const {
+                return *buffer_;
+            }
+            
+            const_sequence& buff()  {
+                return *buffer_;
+            } 
+
+        private:
+            const_sequence_ptr buffer_;
             std::size_t size_;
         };
 
