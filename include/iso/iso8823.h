@@ -855,7 +855,7 @@ namespace boost {
                         endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     static_cast<stream_socket*> (&peer)->option(option_);
-                    super_type::async_accept(peer, peer_endpoint, static_cast<stream_socket*> (&peer)->coder(), handler);
+                    super_type::async_accept(peer, peer_endpoint, handler);
                 }
 
                 template <typename SocketService, typename AcceptHandler>
@@ -863,7 +863,7 @@ namespace boost {
                         BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     static_cast<stream_socket*> (&peer)->option(option_);
-                    super_type::async_accept(peer, static_cast<stream_socket*> (&peer)->coder(), handler);
+                    super_type::async_accept(peer, handler);
                 }
 
                 template <typename SocketService>
@@ -871,7 +871,7 @@ namespace boost {
                         basic_socket<protocol_type, SocketService>& peer,
                         endpoint_type& peer_endpoint, boost::system::error_code& ec) {
                     static_cast<stream_socket*> (&peer)->option(option_);
-                    super_type::accept(peer, peer_endpoint, static_cast<stream_socket*> (&peer)->coder(), ec);
+                    super_type::accept(peer, peer_endpoint, ec);
                     return ec;
                 }
 
@@ -880,7 +880,7 @@ namespace boost {
                         basic_socket<protocol_type, SocketService>& peer,
                         boost::system::error_code& ec) {
                     static_cast<stream_socket*> (&peer)->option(option_);
-                    super_type::accept(peer, static_cast<stream_socket*> (&peer)->coder(), ec);
+                    super_type::accept(peer, ec);
                     return ec;
                 }
 
