@@ -364,8 +364,8 @@ namespace boost {
             };
 
 
-            typedef x690_archive presentation_archive;
-            typedef boost::shared_ptr<presentation_archive> presentation_isocoder_ptr;
+            typedef x690_archive presentation_coder_type;
+            typedef boost::shared_ptr<presentation_coder_type> presentation_isocoder_ptr;
 
 
 
@@ -394,14 +394,14 @@ namespace boost {
 
                 explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel = presentation_selector(),
                         const presentation_connection_option& connectoption = presentation_connection_option())
-                : super_type(io_service, psel.sselector()),
-                basiccoder(new presentation_archive()), selector_(psel), ppm_(new presentation_pm(connectoption)) {
+                : super_type(io_service, psel.sselector(), isocoder_ptr(new presentation_coder_type())),
+                 selector_(psel), ppm_(new presentation_pm(connectoption)) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const presentation_selector& psel = presentation_selector())
-                : super_type(io_service, endpoint, psel.sselector()),
-                basiccoder(new presentation_archive()), selector_(psel), ppm_(new presentation_pm()) {
+                : super_type(io_service, endpoint, psel.sselector(), isocoder_ptr(new presentation_coder_type())),
+                 selector_(psel), ppm_(new presentation_pm()) {
                 }
 
 
@@ -501,7 +501,7 @@ namespace boost {
                         return;
                     }
 
-                    super_type::async_connect(peer_endpoint, coder(), boost::bind(&connect_op<ConnectHandler>::run,
+                    super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run,
                             connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
                 }
 
@@ -669,11 +669,11 @@ namespace boost {
                 }
 
                 presentation_isocoder_ptr coder() {
-                    return basiccoder;
+                    return  boost::static_pointer_cast<presentation_coder_type, base_coder >(super_type::rootcoder());
                 }
 
                 presentation_isocoder_ptr coder() const {
-                    return basiccoder;
+                    return boost::static_pointer_cast<presentation_coder_type, base_coder >(super_type::rootcoder());
                 }
 
                 presentation_selector& selector() {
@@ -685,8 +685,8 @@ namespace boost {
                 }
 
                 virtual bool negotiate_session_accept(const std::string& req, std::string& resp) {
-                    basiccoder->clear_input();
-                    basiccoder->input().add(raw_type(req.begin(), req.end()));
+                    coder()->clear_input();
+                    coder()->input().add(raw_type(req.begin(), req.end()));
                     switch (parse_CP()) {
                         case error_negotiate: return false;
                         default:
@@ -740,7 +740,7 @@ namespace boost {
                         boost::system::error_code& ec) {
                     if (presentation_error_ = build_CP_type())
                         return presentation_error_;
-                    if (!super_type::connect(peer_endpoint, coder(), ec)) {
+                    if (!super_type::connect(peer_endpoint, ec)) {
                         return presentation_error_ = parse_CR();
                     }
                     return presentation_error_;
@@ -761,7 +761,7 @@ namespace boost {
 
 
 
-                presentation_isocoder_ptr basiccoder;
+                //presentation_isocoder_ptr basiccoder;
                 presentation_selector selector_;
                 presentation_pm_ptr ppm_;
                 presentation_connection_option option_;

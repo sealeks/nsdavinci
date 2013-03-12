@@ -167,11 +167,14 @@ namespace boost {
 
             /////////////////////
 
+            
             bool negotiate_prot8073_option(protocol_options& self, const protocol_options& dist, octet_type& error) {
+#ifndef CHECK_ISO_SELECTOR
                 if (!self.tsap_called().empty() && self.tsap_called() != dist.tsap_called()) {
                     error = REJECT_REASON_ADDR;
                     return false;
                 }
+#endif                
                 self = protocol_options(dist.src_tsap(), self.src_tsap(),
                         less_tpdu(dist.pdusize(), self.pdusize()),
                         self.tsap_calling(), dist.tsap_calling());
@@ -544,7 +547,7 @@ namespace boost {
             public:
 
                 atom_send_buffer(const raw_type& send) : send_buffer_impl(), send_(send) {
-                    buff_.push_back(const_buffer(&send_.front(), send_.size()));
+                    buff().push_back(const_buffer(&send_.front(), send_.size()));
                 }
 
             private:

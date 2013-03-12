@@ -5,6 +5,7 @@
  * 
  */
 #include <iso/iso8327.h>
+#include <string>
 
 
 namespace boost {
@@ -219,7 +220,7 @@ namespace boost {
                 return getPGIsize(0, cod);
             }
 
-            const std::string& spdudata::sequence() const {
+            const_sequence_ptr spdudata::sequence(isocoder_ptr coder) const {
                 std::string tmp;
                 spdudata_type::const_iterator strtit = end();
                 for (spdudata_type::const_iterator it = begin(); it != end(); ++it) {
@@ -236,13 +237,20 @@ namespace boost {
                 if (strtit != end()) {
                     std::string tmppi;
                     for (pgi_type::const_iterator itpgi = strtit->second.begin(); itpgi != strtit->second.end(); ++itpgi) {
-                        tmppi += (inttype_to_str(itpgi->first) + to_triple_size(itpgi->second.first) + itpgi->second.second);
+                        if (itpgi->first == PI_USERDATA) {
+                        }
+                        else
+                            tmppi += (inttype_to_str(itpgi->first) + to_triple_size(itpgi->second.first) + itpgi->second.second);
                     }
                     tmp += tmppi;
                 }
-                tmp = inttype_to_str(type_) + to_triple_size(tmp.size()) + tmp;
-                seq_.swap(tmp);
-                return seq_;
+                if (coder->out()->size()) {
+                    tmp += (inttype_to_str(PI_USERDATA) + to_triple_size(coder->out()->size()));
+                    coder->out()->add(raw_type(tmp.begin(), tmp.end()), coder->out()->buffers().begin());
+                }
+                std::string header = inttype_to_str(type_) + to_triple_size(coder->out()->size());
+                coder->out()->add(raw_type(header.begin(), header.end()), coder->out()->buffers().begin());
+                return coder->out()->buffers_ptr();
             }
 
             bool spdudata::parse() {
@@ -361,80 +369,79 @@ namespace boost {
 
             /////////////////////
 
-            bool correspond_protocol_option(protocol_options& self, const protocol_options& dist, std::string& error) {
+            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist, std::string& error) {
+#ifndef CHECK_ISO_SELECTOR        
                 if (!self.ssap_called().empty() && self.ssap_called() != dist.ssap_called()) {
                     error = REJECT_REASON_ADDR;
                     return false;
                 }
+#endif                
                 self = protocol_options(self.ssap_calling(), dist.ssap_calling());
                 return true;
             }
 
-            //
-            //  const int8_t WORK_PROT_OPTION='\x0';
-            //const int8_t WORK_PROT_VERSION='\x2';    
-
-            std::string generate_header_CN(const protocol_options& opt, const std::string& data) {
+            const_sequence_ptr generate_header_CN(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(CN_SPDU_ID);
                 tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
                 tmp.setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
                 tmp.setPI(PI_SUREQ, FU_WORK);
                 tmp.setPI(PI_CALLING, opt.ssap_calling());
                 tmp.setPI(PI_CALLED, opt.ssap_called());
-                tmp.setPI(PI_USERDATA, data);
-                return tmp.sequence();
+                tmp.setPI(PI_USERDATA);
+                //data->out()->add()
+                return tmp.sequence(data);
             }
 
-            std::string generate_header_AC(const protocol_options& opt, const std::string& data) {
+            const_sequence_ptr generate_header_AC(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AC_SPDU_ID);
                 tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
                 tmp.setPGI(PGI_CN_AC, WORK_PROT_VERSION, WORK_PROT_VERSION);
                 tmp.setPI(PI_SUREQ, FU_WORK);
                 tmp.setPI(PI_CALLING, opt.ssap_calling());
                 tmp.setPI(PI_CALLED, opt.ssap_called());
-                tmp.setPI(PI_USERDATA, data);
-                return tmp.sequence();
+                tmp.setPI(PI_USERDATA);
+                return tmp.sequence(data);
             }
 
-            std::string generate_header_DN(const protocol_options& opt, const std::string& data) {
+            const_sequence_ptr generate_header_DN(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(DN_SPDU_ID);
-                tmp.setPI(PI_USERDATA, data);
-                return tmp.sequence();
+                tmp.setPI(PI_USERDATA);
+                return tmp.sequence(data);
             }
 
-            std::string generate_header_RF(const protocol_options& opt) {
+            const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(RF_SPDU_ID);
                 tmp.setPI(PI_TRANDISK, DISCONNECT_OPTION);
                 tmp.setPI(PI_SUREQ, FU_WORK);
                 tmp.setPI(WORK_PROT_VERSION, WORK_PROT_VERSION);
                 tmp.setPI(PI_REASON, opt.reason().size() ? opt.reason() : std::string("\x0", 1));
-                return tmp.sequence();
+                return tmp.sequence(data);
             }
 
-            std::string generate_header_AB(const protocol_options& opt, const std::string& data) {
+            const_sequence_ptr generate_header_AB(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AB_SPDU_ID);
-                tmp.setPI(PI_USERDATA, data);
+                tmp.setPI(PI_USERDATA);
                 tmp.setPI(PI_REASON, REJECT_REASON_NODEF);
-                return tmp.sequence();
+                return tmp.sequence(data);
             }
 
-            std::string generate_header_AA(const protocol_options& opt, const std::string& data) {
+            const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AA_SPDU_ID);
-                tmp.setPI(PI_USERDATA, data);
-                return tmp.sequence();
+                tmp.setPI(PI_USERDATA);
+                return tmp.sequence(data);
             }
 
-            std::string generate_header_FN(const protocol_options& opt, const std::string& data) {
+            const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(FN_SPDU_ID);
-                tmp.setPI(PI_USERDATA, data);
+                tmp.setPI(PI_USERDATA);
                 tmp.setPI(PI_REASON, REJECT_REASON_NODEF);
-                return tmp.sequence();
+                return tmp.sequence(data);
             }
 
-            std::string generate_header_NF(const protocol_options& opt, const std::string& data) {
+            const_sequence_ptr generate_header_NF(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(NF_SPDU_ID);
-                tmp.setPI(PI_USERDATA, data);
-                return tmp.sequence();
+                tmp.setPI(PI_USERDATA);
+                return tmp.sequence(data);
             }
 
 
@@ -600,7 +607,7 @@ namespace boost {
                 return boost::system::error_code();
             }
 
-            void receive_seq::reject_reason(int8_t val) {
+            void receive_seq::reject_reason(octet_type val) {
                 errcode_ = boost::system::error_code();
                 reject_reason_ = val;
             }

@@ -568,7 +568,7 @@ namespace boost {
                 tlv_map mps;
                 for (tlv_vector::iterator it = vct.begin(); it != vct.end(); ++it) {
                     if (mps.upper_bound(it->tg) != mps.end())
-                        listbuffers_.splice(mps.upper_bound(it->tg)->second.first, listbuffers_, it->iterators.first, ++ iterator_type(it->iterators.second));
+                       buffers().splice(mps.upper_bound(it->tg)->second.first, buffers(), it->iterators.first, ++ iterator_type(it->iterators.second));
                     mps.insert(std::make_pair(it->tg, iterator_pair(it->iterators.first, it->iterators.second)));
                 }
             }
