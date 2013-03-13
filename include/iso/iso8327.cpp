@@ -345,6 +345,15 @@ namespace boost {
             const raw_type& protocol_options::data() const {
                 return vars_->existPI(PI_EXUSERDATA) ? vars_->getPI(PI_EXUSERDATA) : vars_->getPI(PI_USERDATA);
             }
+            
+            session_version_type protocol_options::version() const{
+                  if (vars_->existPI(PI_VERS)){
+                      session_version_type tmp;
+                      if (vars_->getPI(PI_VERS,tmp))
+                          return  tmp & '\x2' ? VERSION2 : VERSION1;
+                  }
+                 return VERSION1;     
+            }            
 
             const raw_type& protocol_options::reason() const {
                 return vars_->getPI(PI_REASON);

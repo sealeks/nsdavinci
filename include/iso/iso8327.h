@@ -21,7 +21,7 @@ namespace boost {
             typedef uint8_t spdu_type;
             typedef uint16_t valuelenth_type;  
             typedef uint8_t varid_type;                
-
+            typedef uint8_t session_version_type; 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8327 utill   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -163,7 +163,9 @@ namespace boost {
             const varid_type PI_REASON = 50; //Reason Code 
             const varid_type PI_TRANDISK = 17; //Transport Disconnect                
 
-
+            const session_version_type  VERSION1=1;
+            const session_version_type  VERSION2=2;
+            
             const std::size_t triple_npos = static_cast<std::size_t> (0xFFFF + 1);
 
             inline static raw_type to_triple_size(std::size_t val) {
@@ -305,6 +307,8 @@ namespace boost {
                 const raw_type& data() const;
 
                 const raw_type& reason() const;
+                
+                session_version_type version() const;                
 
                 void reason(const raw_type & val);
 
@@ -640,12 +644,12 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(), isocoder_ptr coder = isocoder_ptr( new default_coder_type()))
-                : boost::iso::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder) {
+                : boost::iso::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder), session_version_(VERSION2) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const session_selector& ssel = session_selector(), isocoder_ptr coder = isocoder_ptr( new default_coder_type()))
-                : boost::iso::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()) , rootcoder_(coder) {
+                : boost::iso::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()) , rootcoder_(coder), session_version_(VERSION2) {
                 }
 
 
@@ -754,6 +758,7 @@ namespace boost {
                                 {
                                     socket_->negotiate_session_option(receive_->options());
                                     socket_->rootcoder()->in()->add(receive_->options().data());
+                                    socket_->session_version_=receive_->options().version();
                                     handler_(ec);
                                     return;
                                 }
@@ -1061,6 +1066,7 @@ namespace boost {
                             operator()(ec, 0);
                             return;
                         }
+                        socket_->session_version_=options_.version();
                         send_ = send_seq_ptr(new send_seq(AC_SPDU_ID, options_, socket_->rootcoder()));
                         state(send);
                         operator()(ec, 0);
@@ -1432,6 +1438,10 @@ namespace boost {
                 isocoder_ptr  rootcoder() const {
                     return rootcoder_;
                 }
+                
+                session_version_type session_version() const{
+                    return session_version_;
+                }
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1507,6 +1517,7 @@ namespace boost {
                             {
                                 negotiate_session_option(receive_->options());
                                 rootcoder()->in()->add(receive_->options().data());
+                                session_version_=receive_->options().version();
                                 return ec;
                             }
                             default:
@@ -1583,6 +1594,7 @@ namespace boost {
                         send_ = send_seq_ptr(new send_seq(RF_SPDU_ID, options_, rootcoder()));
                     }
                     else {
+                        session_version_=options_.version();
                         send_ = send_seq_ptr(new send_seq(AC_SPDU_ID, options_, rootcoder()));
                     }
 
@@ -1650,6 +1662,7 @@ namespace boost {
 
                 protocol_options option_;
                 isocoder_ptr rootcoder_;
+                session_version_type session_version_;
                 
             };
 
