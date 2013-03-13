@@ -22,6 +22,7 @@ namespace boost {
             typedef uint16_t valuelenth_type;  
             typedef uint8_t varid_type;                
             typedef uint8_t session_version_type; 
+            
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8327 utill   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -188,6 +189,16 @@ namespace boost {
             typedef std::map<varid_type, raw_type > pgi_type;
             typedef std::pair<varid_type, pgi_type> pgis_type;
             typedef std::map<varid_type, pgi_type> spdudata_type; // (it->first==0 contain pi_type in vector
+            
+            
+            
+            
+            
+            
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //   spdudata utill   //
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                 
+            
 
             class spdudata : protected spdudata_type {
             public:
@@ -261,7 +272,6 @@ namespace boost {
 
                 bool nullPI(varid_type cod) const;
 
-
                 const_sequence_ptr sequence(isocoder_ptr seq) const;
 
 
@@ -283,7 +293,14 @@ namespace boost {
                 raw_type null_val;
 
             };
-
+            
+            
+            
+            
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //   protocol_options   //
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
+            
             struct protocol_options {
                 
                 typedef boost::shared_ptr<spdudata> spdudata_ptr;
@@ -316,8 +333,34 @@ namespace boost {
                 spdudata_ptr vars_;
             };
 
+            
+
             //negotiate_prot8327_option
             bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist, raw_type& error);
+
+            const_sequence_ptr generate_header_CN(const protocol_options& opt, isocoder_ptr data); //CONNECT SPDU
+
+            const_sequence_ptr generate_header_AC(const protocol_options& opt, isocoder_ptr data); //ACCEPT SPDU
+
+            const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data); //REFUSE  SPDU                     
+
+            const_sequence_ptr generate_header_DN(const protocol_options& opt,  isocoder_ptr data); //DISCONNECT  SPDU          
+
+            const_sequence_ptr generate_header_AB(const protocol_options& opt, isocoder_ptr data); //ABORT SPDU                     
+
+            const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data); //ABORT ACCEPT  SPDU         
+
+            const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data); //FINISH SPDU                     
+
+            const_sequence_ptr generate_header_NF(const protocol_options& opt, isocoder_ptr data); //NOT FINISH  SPDU                      
+
+            
+            
+            
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //   data_send_buffer_impl    //
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////           
 
             template <typename ConstBufferSequence>
             class data_send_buffer_impl : public send_buffer_impl {
@@ -343,29 +386,6 @@ namespace boost {
                 }
 
             };
-
-
-
-
-
-            const_sequence_ptr generate_header_CN(const protocol_options& opt, isocoder_ptr data); //CONNECT SPDU
-
-            const_sequence_ptr generate_header_AC(const protocol_options& opt, isocoder_ptr data); //ACCEPT SPDU
-
-            const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data); //REFUSE  SPDU                     
-
-            const_sequence_ptr generate_header_DN(const protocol_options& opt,  isocoder_ptr data); //DISCONNECT  SPDU          
-
-            const_sequence_ptr generate_header_AB(const protocol_options& opt, isocoder_ptr data); //ABORT SPDU                     
-
-            const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data); //ABORT ACCEPT  SPDU         
-
-            const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data); //FINISH SPDU                     
-
-            const_sequence_ptr generate_header_NF(const protocol_options& opt, isocoder_ptr data); //NOT FINISH  SPDU                      
-
-
-
 
 
 
