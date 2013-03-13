@@ -92,19 +92,17 @@ namespace boost {
                 setPI(cod, inttype_to_raw(endiancnv_copy(val)));
             }
 
-            bool spdudata::getPGI(varid_type cod1, varid_type cod2, raw_type& val) const {
+            const raw_type& spdudata::getPGI(varid_type cod1, varid_type cod2) const {
                 spdudata_type::const_iterator it = find(cod1);
                 if (it == end())
-                    return false;
+                    return null_val;
                 pgi_type::const_iterator itpi = it->second. find(cod2);
-                val = (itpi != it->second.end()) ? itpi->second : raw_type();
-
-                return itpi != it->second.end();
+                return (itpi != it->second.end()) ? itpi->second : null_val;
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, int8_t& val, int8_t def) const {
-                raw_type tmp;
-                if (getPGI(cod1, cod2, tmp)) {
+                const raw_type& tmp = getPGI(cod1, cod2);
+                if (!tmp.empty()) {
                     val = tmp.size() ? static_cast<int8_t> (tmp[0]) : def;
                     return true;
                 }
@@ -114,8 +112,8 @@ namespace boost {
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, uint8_t& val, uint8_t def) const {
-                raw_type tmp;
-                if (getPGI(cod1, cod2, tmp)) {
+                const raw_type& tmp = getPGI(cod1, cod2);
+                if (!tmp.empty()) {
                     val = tmp.size() ? static_cast<varid_type> (tmp[0]) : def;
                     return true;
                 }
@@ -125,8 +123,8 @@ namespace boost {
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, int16_t& val, int16_t def) const {
-                raw_type tmp;
-                if (getPGI(cod1, cod2, tmp)) {
+                const raw_type& tmp = getPGI(cod1, cod2);
+                if (!tmp.empty()) {
                     if (raw_to_inttype(tmp, val))
                         val = endiancnv_copy(val);
                     else
@@ -134,13 +132,12 @@ namespace boost {
                     return true;
                 }
                 val = def;
-
                 return false;
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, uint16_t& val, uint16_t def) const {
-                raw_type tmp;
-                if (getPGI(cod1, cod2, tmp)) {
+                const raw_type& tmp = getPGI(cod1, cod2);
+                if (!tmp.empty()) {
                     if (raw_to_inttype(tmp, val))
                         val = endiancnv_copy(val);
                     else
@@ -152,9 +149,9 @@ namespace boost {
                 return false;
             }
 
-            bool spdudata::getPI(varid_type cod, raw_type& val) const {
+            const raw_type& spdudata::getPI(varid_type cod) const {
 
-                return getPGI(0, cod, val);
+                return getPGI(0, cod);
             }
 
             bool spdudata::getPI(varid_type cod, int8_t& val, int8_t def) const {
@@ -205,7 +202,6 @@ namespace boost {
                 return nullPGI(0, cod);
             }
 
-            
             const_sequence_ptr spdudata::sequence(isocoder_ptr coder) const {
                 raw_type tmp;
                 spdudata_type::const_iterator strtit = end();
@@ -320,50 +316,42 @@ namespace boost {
 
             //  protocol_option
 
-            protocol_options::protocol_options(const raw_type& called, const raw_type& calling) {
-                spdudata tmp;
-                tmp.setPI(PI_CALLING, calling);
-                tmp.setPI(PI_CALLED, called);
-                tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
-                tmp.setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
-                tmp.setPI(PI_SUREQ, FU_WORK);
-                vars_ = tmp;
+            protocol_options::protocol_options(const raw_type& called, const raw_type& calling)  : vars_( new spdudata()) {
+                vars_->setPI(PI_CALLING, calling);
+                vars_->setPI(PI_CALLED, called);
+                vars_->setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
+                vars_->setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
+                vars_->setPI(PI_SUREQ, FU_WORK);
             }
 
-            raw_type protocol_options::ssap_calling() const {
-                raw_type tmp;
-                return vars_.getPI(PI_CALLING, tmp) ? tmp : raw_type();
+            const raw_type& protocol_options::ssap_calling() const {
+                return vars_->getPI(PI_CALLING);
             }
 
             void protocol_options::ssap_calling(const raw_type& val) {
-                vars_.setPI(PI_CALLING, val);
+                if (!val.empty())
+                    vars_->setPI(PI_CALLING, val);
             }
 
-            raw_type protocol_options::ssap_called() const {
-                raw_type tmp;
-                return vars_.getPI(PI_CALLED, tmp) ? tmp : raw_type();
+            const raw_type& protocol_options::ssap_called() const {
+                return vars_->getPI(PI_CALLED);
             }
 
             void protocol_options::ssap_called(const raw_type& val) {
-                vars_.setPI(PI_CALLED, val);
+                if (!val.empty())
+                    vars_->setPI(PI_CALLED, val);
             }
 
-            raw_type protocol_options::data() const {
-                raw_type tmp;
-                return vars_.getPI(PI_USERDATA, tmp) ? tmp : raw_type();
+            const raw_type& protocol_options::data() const {
+                return vars_->existPI(PI_EXUSERDATA) ? vars_->getPI(PI_EXUSERDATA) : vars_->getPI(PI_USERDATA);
             }
 
-            void protocol_options::data(const raw_type& val) {
-                vars_.setPI(PI_USERDATA, val);
-            }
-
-            raw_type protocol_options::reason() const {
-                raw_type tmp;
-                return vars_.getPI(PI_REASON, tmp) ? tmp : raw_type();
+            const raw_type& protocol_options::reason() const {
+                return vars_->getPI(PI_REASON);
             }
 
             void protocol_options::reason(const raw_type& val) {
-                vars_.setPI(PI_REASON, val);
+                vars_->setPI(PI_REASON, val);
             }
 
             /////////////////////
