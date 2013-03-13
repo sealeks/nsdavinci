@@ -684,7 +684,7 @@ namespace boost {
                     return selector_;
                 }
 
-                virtual bool negotiate_session_accept(const std::string& req, std::string& resp) {
+               /*virtual bool negotiate_session_accept(const std::string& req, std::string& resp) {
                     coder()->clear_input();
                     coder()->input().add(raw_type(req.begin(), req.end()));
                     switch (parse_CP()) {
@@ -695,7 +695,7 @@ namespace boost {
                     }
                     resp = coder()->request_str();
                     return true;
-                }
+                }*/ 
 
                 virtual bool negotiate_presentation_accept() {
                     return true;

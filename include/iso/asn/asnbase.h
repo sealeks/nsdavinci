@@ -155,33 +155,24 @@ namespace boost {
     namespace asn1 {
 
 
-        typedef boost::asio::const_buffer const_buffer;
-        typedef boost::asio::const_buffers_1 const_buffers_1;
-        typedef boost::asio::mutable_buffer mutable_buffer;
-        typedef boost::asio::mutable_buffers_1 mutable_buffers_1;
+        using boost::asio::const_buffer;
+        using boost::asio::const_buffers_1;
+        using boost::asio::mutable_buffer;
+        using boost::asio::mutable_buffers_1;
 
-        typedef boost::iso::mutable_sequence mutable_sequence;
-        typedef boost::iso::const_sequence const_sequence;
-
-        using boost::iso::encoding_rule;
-        using boost::iso::octet_type;        
-        
+        using  boost::iso::mutable_sequence;
+        using  boost::iso::const_sequence;
+        using  boost::iso::encoding_rule;
+        using  boost::iso::octet_type;        
+        using  boost::iso::raw_type;        
 
         template<typename T>
         inline boost::shared_ptr< T> simple_build_type() {
             return boost::shared_ptr< T > (new T());
         }
 
-
-
-        typedef boost::iso::raw_type raw_type;
-
-
         typedef std::size_t id_type;
         typedef std::size_t size_type;
-
-
-
 
         const octet_type PRIMITIVE_ENCODING = '\x0';
         const octet_type CONSTRUCTED_ENCODING = '\x20';

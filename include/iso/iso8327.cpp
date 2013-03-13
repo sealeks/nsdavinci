@@ -12,12 +12,12 @@ namespace boost {
     namespace iso {
         namespace prot8327 {
 
-            std::size_t from_triple_size(const std::string& val, std::size_t& it) {
-                if ((!val.size()) || (val[0] == '\xFF' && val.size() < 3))
+            std::size_t from_triple_size(const raw_type& val, std::size_t& it) {
+                if ((val.empty()) || (val[0] == '\xFF' && val.size() < 3))
                     return 0;
                 if (val[0] == '\xFF') {
                     uint16_t sz;
-                    if (str_to_inttype(val.substr(1), sz)) {
+                    if (raw_to_inttype(raw_type(val.begin() + 1, val.end()), sz)) {
                         sz = endiancnv_copy(sz);
                         it += 2;
                         return static_cast<std::size_t> (sz);
@@ -25,7 +25,7 @@ namespace boost {
                 }
                 else {
                     uint8_t sz;
-                    if (str_to_inttype(val, sz)) {
+                    if (raw_to_inttype(val, sz)) {
                         it += 1;
                         return static_cast<std::size_t> (sz);
                     }
@@ -36,7 +36,7 @@ namespace boost {
 
             //  spdudata 
 
-            void spdudata::setPGI(varid_type cod1, varid_type cod2, const std::string& val) {
+            void spdudata::setPGI(varid_type cod1, varid_type cod2, const raw_type& val) {
                 spdudata_type::iterator it = find(cod1);
                 if (it == end()) {
                     pgi_type pgi;
@@ -50,61 +50,61 @@ namespace boost {
 
             void spdudata::setPGI(varid_type cod1, varid_type cod2, int8_t val) {
 
-                setPGI(cod1, cod2, inttype_to_str(val));
+                setPGI(cod1, cod2, inttype_to_raw(val));
             }
 
             void spdudata::setPGI(varid_type cod1, varid_type cod2, uint8_t val) {
 
-                setPGI(cod1, cod2, inttype_to_str(val));
+                setPGI(cod1, cod2, inttype_to_raw(val));
             }
 
             void spdudata::setPGI(varid_type cod1, varid_type cod2, int16_t val) {
 
-                setPGI(cod1, cod2, inttype_to_str(endiancnv_copy(val)));
+                setPGI(cod1, cod2, inttype_to_raw(endiancnv_copy(val)));
             }
 
             void spdudata::setPGI(varid_type cod1, varid_type cod2, uint16_t val) {
 
-                setPGI(cod1, cod2, inttype_to_str(endiancnv_copy(val)));
+                setPGI(cod1, cod2, inttype_to_raw(endiancnv_copy(val)));
             }
 
-            void spdudata::setPI(varid_type cod, const std::string& val) {
+            void spdudata::setPI(varid_type cod, const raw_type& val) {
 
                 setPGI(0, cod, val);
             }
 
             void spdudata::setPI(varid_type cod, int8_t val) {
 
-                setPI(cod, inttype_to_str(val));
+                setPI(cod, inttype_to_raw(val));
             }
 
             void spdudata::setPI(varid_type cod, uint8_t val) {
 
-                setPI(cod, inttype_to_str(val));
+                setPI(cod, inttype_to_raw(val));
             }
 
             void spdudata::setPI(varid_type cod, int16_t val) {
 
-                setPI(cod, inttype_to_str(endiancnv_copy(val)));
+                setPI(cod, inttype_to_raw(endiancnv_copy(val)));
             }
 
             void spdudata::setPI(varid_type cod, uint16_t val) {
 
-                setPI(cod, inttype_to_str(endiancnv_copy(val)));
+                setPI(cod, inttype_to_raw(endiancnv_copy(val)));
             }
 
-            bool spdudata::getPGI(varid_type cod1, varid_type cod2, std::string& val) const {
+            bool spdudata::getPGI(varid_type cod1, varid_type cod2, raw_type& val) const {
                 spdudata_type::const_iterator it = find(cod1);
                 if (it == end())
                     return false;
                 pgi_type::const_iterator itpi = it->second. find(cod2);
-                val = (itpi != it->second.end()) ? itpi->second.second : "";
+                val = (itpi != it->second.end()) ? itpi->second.second : raw_type();
 
                 return itpi != it->second.end();
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, int8_t& val, int8_t def) const {
-                std::string tmp;
+                raw_type tmp;
                 if (getPGI(cod1, cod2, tmp)) {
                     val = tmp.size() ? static_cast<int8_t> (tmp[0]) : def;
                     return true;
@@ -115,7 +115,7 @@ namespace boost {
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, uint8_t& val, uint8_t def) const {
-                std::string tmp;
+                raw_type tmp;
                 if (getPGI(cod1, cod2, tmp)) {
                     val = tmp.size() ? static_cast<varid_type> (tmp[0]) : def;
                     return true;
@@ -126,9 +126,9 @@ namespace boost {
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, int16_t& val, int16_t def) const {
-                std::string tmp;
+                raw_type tmp;
                 if (getPGI(cod1, cod2, tmp)) {
-                    if (str_to_inttype(tmp, val))
+                    if (raw_to_inttype(tmp, val))
                         val = endiancnv_copy(val);
                     else
                         val = def;
@@ -140,9 +140,9 @@ namespace boost {
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, uint16_t& val, uint16_t def) const {
-                std::string tmp;
+                raw_type tmp;
                 if (getPGI(cod1, cod2, tmp)) {
-                    if (str_to_inttype(tmp, val))
+                    if (raw_to_inttype(tmp, val))
                         val = endiancnv_copy(val);
                     else
                         val = def;
@@ -153,7 +153,7 @@ namespace boost {
                 return false;
             }
 
-            bool spdudata::getPI(varid_type cod, std::string& val) const {
+            bool spdudata::getPI(varid_type cod, raw_type& val) const {
 
                 return getPGI(0, cod, val);
             }
@@ -221,60 +221,67 @@ namespace boost {
             }
 
             const_sequence_ptr spdudata::sequence(isocoder_ptr coder) const {
-                std::string tmp;
+                raw_type tmp;
                 spdudata_type::const_iterator strtit = end();
                 for (spdudata_type::const_iterator it = begin(); it != end(); ++it) {
                     if ((!it->first && it == begin()))
                         strtit = it;
                     else {
-                        std::string tmppgi;
+                        raw_type tmppgi;
                         for (pgi_type::const_iterator itpgi = it->second.begin(); itpgi != it->second.end(); ++itpgi) {
-                            tmppgi += (inttype_to_str(itpgi->first) + to_triple_size(itpgi->second.first) + itpgi->second.second);
+                            raw_back_insert(tmppgi, inttype_to_raw(itpgi->first));
+                            raw_back_insert(tmppgi, to_triple_size(itpgi->second.first));
+                            raw_back_insert(tmppgi, itpgi->second.second);
                         }
-                        tmp += (inttype_to_str(it->first) + to_triple_size(tmppgi.size()) + tmppgi);
+                        raw_back_insert(tmp, inttype_to_raw(it->first));
+                        raw_back_insert(tmp, to_triple_size(tmppgi.size()));
+                        raw_back_insert(tmp, tmppgi);
                     }
                 }
                 if (strtit != end()) {
-                    std::string tmppi;
+                    raw_type tmppi;
                     for (pgi_type::const_iterator itpgi = strtit->second.begin(); itpgi != strtit->second.end(); ++itpgi) {
-                        if (itpgi->first == PI_USERDATA) {
+                        if ((itpgi->first != PI_USERDATA) && (itpgi->first != PI_EXUSERDATA)) {
+                            raw_back_insert(tmppi, inttype_to_raw(itpgi->first));
+                            raw_back_insert(tmppi, to_triple_size(itpgi->second.first));
+                            raw_back_insert(tmppi, itpgi->second.second);
                         }
-                        else
-                            tmppi += (inttype_to_str(itpgi->first) + to_triple_size(itpgi->second.first) + itpgi->second.second);
                     }
-                    tmp += tmppi;
+                    raw_back_insert(tmp, tmppi);
                 }
                 if (coder->out()->size()) {
-                    tmp += (inttype_to_str(PI_USERDATA) + to_triple_size(coder->out()->size()));
-                    coder->out()->add(raw_type(tmp.begin(), tmp.end()), coder->out()->buffers().begin());
+                    raw_back_insert(tmp, inttype_to_raw(PI_USERDATA));
+                    raw_back_insert(tmp, to_triple_size(coder->out()->size()));
                 }
-                std::string header = inttype_to_str(type_) + to_triple_size(coder->out()->size());
+                coder->out()->add(raw_type(tmp.begin(), tmp.end()), coder->out()->buffers().begin());
+                raw_type header(inttype_to_raw(type_));
+                raw_back_insert(header, to_triple_size(coder->out()->size()));
                 coder->out()->add(raw_type(header.begin(), header.end()), coder->out()->buffers().begin());
                 return coder->out()->buffers_ptr();
             }
 
             bool spdudata::parse() {
-                std::string::size_type it = 0;
+                raw_type::size_type it = 0;
                 if (seq_.size() < 2)
                     return error(true);
                 type_ = static_cast<spdu_type> (seq_[it++]);
-                std::size_t sz = from_triple_size(seq_.substr(1), it);
+                std::size_t sz = from_triple_size(raw_type(seq_.begin() + 1, seq_.end()), it);
                 if (sz == triple_npos)
                     return error(true);
                 if (sz == 0)
                     return false;
                 if (sz + it > seq_.size())
                     return false;
-                return parse_vars(seq_.substr(++it));
+                return parse_vars(raw_type(seq_.begin()+(++it), seq_.end()));
             }
 
-            bool spdudata::parse_vars(const std::string& vl) {
-                std::string::size_type it = 0;
+            bool spdudata::parse_vars(const raw_type& vl) {
+                raw_type::size_type it = 0;
                 do {
                     if (vl.size() < 2)
                         return error(true);
                     varid_type vr = static_cast<varid_type> (vl[it++]);
-                    std::size_t sz = from_triple_size(vl.substr(it), it);
+                    std::size_t sz = from_triple_size(raw_type(vl.begin() + it, vl.end()), it);
                     if (sz == triple_npos)
                         return error(true);
                     if (sz + it > vl.size())
@@ -283,12 +290,12 @@ namespace boost {
                         case PGI_CN_IND:
                         case PGI_CN_AC:
                         {
-                            if (!parse_pgi(vr, vl.substr(it, sz))) return error(true);
+                            if (!parse_pgi(vr, raw_type(vl.begin() + it, vl.begin() + it + sz))) return error(true);
                             else break;
                         }
                         default:
                         {
-                            setPI(vr, vl.substr(it, sz));
+                            setPI(vr, raw_type(vl.begin() + it, vl.begin() + it + sz));
                             break;
                         }
                     }
@@ -298,18 +305,18 @@ namespace boost {
                 return true;
             }
 
-            bool spdudata::parse_pgi(varid_type tp, const std::string& vl) {
-                std::string::size_type it = 0;
+            bool spdudata::parse_pgi(varid_type tp, const raw_type& vl) {
+                raw_type::size_type it = 0;
                 do {
                     if (vl.size() < 2)
                         return error(true);
                     varid_type vr = static_cast<varid_type> (vl[it++]);
-                    std::size_t sz = from_triple_size(vl.substr(it), it);
+                    std::size_t sz = from_triple_size(raw_type(vl.begin() + it, vl.end()), it);
                     if (sz == triple_npos)
                         return error(true);
                     if (sz + it > vl.size())
                         return false;
-                    setPGI(tp, vr, vl.substr(it, sz));
+                    setPGI(tp, vr, raw_type(vl.begin() + it, vl.begin() + it + sz));
                     it += sz;
                 }
                 while (it < vl.size());
@@ -321,7 +328,7 @@ namespace boost {
 
             //  protocol_option
 
-            protocol_options::protocol_options(const std::string& called, const std::string& calling) {
+            protocol_options::protocol_options(const raw_type& called, const raw_type& calling) {
                 spdudata tmp;
                 tmp.setPI(PI_CALLING, calling);
                 tmp.setPI(PI_CALLED, called);
@@ -331,45 +338,45 @@ namespace boost {
                 vars_ = tmp;
             }
 
-            std::string protocol_options::ssap_calling() const {
-                std::string tmp;
-                return vars_.getPI(PI_CALLING, tmp) ? tmp : "";
+            raw_type protocol_options::ssap_calling() const {
+                raw_type tmp;
+                return vars_.getPI(PI_CALLING, tmp) ? tmp : raw_type();
             }
 
-            void protocol_options::ssap_calling(const std::string& val) {
+            void protocol_options::ssap_calling(const raw_type& val) {
                 vars_.setPI(PI_CALLING, val);
             }
 
-            std::string protocol_options::ssap_called() const {
-                std::string tmp;
-                return vars_.getPI(PI_CALLED, tmp) ? tmp : "";
+            raw_type protocol_options::ssap_called() const {
+                raw_type tmp;
+                return vars_.getPI(PI_CALLED, tmp) ? tmp : raw_type();
             }
 
-            void protocol_options::ssap_called(const std::string& val) {
+            void protocol_options::ssap_called(const raw_type& val) {
                 vars_.setPI(PI_CALLED, val);
             }
 
-            std::string protocol_options::data() const {
-                std::string tmp;
-                return vars_.getPI(PI_USERDATA, tmp) ? tmp : "";
+            raw_type protocol_options::data() const {
+                raw_type tmp;
+                return vars_.getPI(PI_USERDATA, tmp) ? tmp : raw_type();
             }
 
-            void protocol_options::data(const std::string& val) {
+            void protocol_options::data(const raw_type& val) {
                 vars_.setPI(PI_USERDATA, val);
             }
 
-            std::string protocol_options::reason() const {
-                std::string tmp;
-                return vars_.getPI(PI_REASON, tmp) ? tmp : "";
+            raw_type protocol_options::reason() const {
+                raw_type tmp;
+                return vars_.getPI(PI_REASON, tmp) ? tmp : raw_type();
             }
 
-            void protocol_options::reason(const std::string& val) {
+            void protocol_options::reason(const raw_type& val) {
                 vars_.setPI(PI_REASON, val);
             }
 
             /////////////////////
 
-            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist, std::string& error) {
+            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist, raw_type& error) {
 #ifndef CHECK_ISO_SELECTOR        
                 if (!self.ssap_called().empty() && self.ssap_called() != dist.ssap_called()) {
                     error = REJECT_REASON_ADDR;
@@ -414,7 +421,7 @@ namespace boost {
                 tmp.setPI(PI_TRANDISK, DISCONNECT_OPTION);
                 tmp.setPI(PI_SUREQ, FU_WORK);
                 tmp.setPI(WORK_PROT_VERSION, WORK_PROT_VERSION);
-                tmp.setPI(PI_REASON, opt.reason().size() ? opt.reason() : std::string("\x0", 1));
+                tmp.setPI(PI_REASON, opt.reason().size() ? opt.reason() : raw_type(1, '\x0'));
                 return tmp.sequence(data);
             }
 
@@ -593,7 +600,7 @@ namespace boost {
             boost::system::error_code receive_seq::check_size() {
                 mutable_buffer buff_ = type_buff_;
                 uint16_t li = 0;
-                str_to_inttype(std::string(boost::asio::buffer_cast<const char*>(buff_), 2), li);
+                raw_to_inttype(buffer_to_raw(buff_, 0, 2), li);
                 li = endiancnv_copy(li);
                 state(waitheader);
                 header_data = data_type_ptr(new data_type(li));

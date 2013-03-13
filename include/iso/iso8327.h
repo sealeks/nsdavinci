@@ -19,10 +19,18 @@ namespace boost {
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8327 utill   //
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                   
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+            
+            const octet_type SEND_HEADERarr[] = { '\x1' ,'\x0', '\x1', '\x0'};
+            const raw_type SEND_HEADER = raw_type(SEND_HEADERarr, SEND_HEADERarr + 4);
+            
+            const octet_type ECHO_NEGOTIATEarr[] = { 'e' ,'c', 'h', 'o', ':', ' '};
+            const raw_type ECHO_NEGOTIATE = raw_type(ECHO_NEGOTIATEarr, ECHO_NEGOTIATEarr + 6);            
 
-
-            const std::string SEND_HEADER = std::string("\x1\x0\x1\x0", 4);
+            const octet_type REJECT_REASON_ADDRarr[] = { '\x0' , '\x81' };
+            const raw_type REJECT_REASON_ADDR = raw_type(REJECT_REASON_ADDRarr, REJECT_REASON_ADDRarr + 2);
+             
+            const  raw_type REJECT_REASON_NODEF = raw_type(1, '\x0'); 
 
             const octet_type WORK_PROT_OPTION = '\x0';
             const octet_type WORK_PROT_VERSION = '\x2';
@@ -151,24 +159,25 @@ namespace boost {
             const varid_type PI_TRANDISK = 17; //Transport Disconnect                
 
 
-            const std::string REJECT_REASON_ADDR = std::string("\x0\x81", 2);
-            const std::string REJECT_REASON_NODEF = std::string("\x0", 1);
-
             const std::size_t triple_npos = static_cast<std::size_t> (0xFFFF + 1);
 
-            inline static std::string to_triple_size(std::size_t val) {
-                return (val < 0xFF) ? inttype_to_str(static_cast<uint8_t> (val)) : ((val < triple_npos) ? ("\xFF" + inttype_to_str(endiancnv_copy(static_cast<uint16_t> (val)))) : "");
+            inline static raw_type to_triple_size(std::size_t val) {
+                if (val < 0xFF)
+                    return inttype_to_raw(static_cast<uint8_t> (val));
+                raw_type rslt(1, '\xFF');
+                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(static_cast<uint16_t> (val))));
+                return rslt;
             }
 
-            inline static bool valid_triple_size(const std::string& val) {
-                return !((!val.size()) || (val[0] == '\xFF' && val.size() < 3));
+            inline static bool valid_triple_size(const raw_type& val) {
+                return !((val.empty()) || (val[0] == '\xFF' && val.size() < 3));
             }
 
             // return triple_npos if no success
-            std::size_t from_triple_size(const std::string& val, std::size_t& it);
+            std::size_t from_triple_size(const raw_type& val, std::size_t& it);
 
 
-            typedef std::pair<std::size_t, std::string> parameter_ln_type;
+            typedef std::pair<std::size_t, raw_type> parameter_ln_type;
             typedef std::pair<varid_type, parameter_ln_type> pi_type;
             typedef std::map<varid_type, parameter_ln_type> pgi_type;
             typedef std::pair<varid_type, pgi_type> pgis_type;
@@ -184,7 +193,7 @@ namespace boost {
                 }
 
                 explicit spdudata(const const_buffer& vl) : spdudata_type(), seq_(), type_(0), error_(false) {
-                    parse_vars(std::string(boost::asio::buffer_cast<const char*>(vl), boost::asio::buffer_size(vl)));
+                    parse_vars(buffer_to_raw(vl));
                 }
 
                 spdu_type type() const {
@@ -195,7 +204,7 @@ namespace boost {
                     return error_;
                 }
 
-                void setPGI(varid_type cod1, varid_type cod2, const std::string& val = "");
+                void setPGI(varid_type cod1, varid_type cod2, const raw_type& val = raw_type());
 
                 void setPGI(varid_type cod1, varid_type cod2, int8_t val);
 
@@ -206,7 +215,7 @@ namespace boost {
                 void setPGI(varid_type cod1, varid_type cod2, uint16_t val);
 
 
-                void setPI(varid_type cod, const std::string& val = "");
+                void setPI(varid_type cod, const raw_type& val = raw_type());
 
                 void setPI(varid_type cod, int8_t val);
 
@@ -217,7 +226,7 @@ namespace boost {
                 void setPI(varid_type cod, uint16_t val);
 
 
-                bool getPGI(varid_type cod1, varid_type cod2, std::string& val) const;
+                bool getPGI(varid_type cod1, varid_type cod2, raw_type& val) const;
 
                 bool getPGI(varid_type cod1, varid_type cod2, int8_t& val, int8_t def = 0) const;
 
@@ -227,7 +236,7 @@ namespace boost {
 
                 bool getPGI(varid_type cod1, varid_type cod2, uint16_t& val, uint16_t def = 0) const;
 
-                bool getPI(varid_type cod, std::string& val) const;
+                bool getPI(varid_type cod, raw_type& val) const;
 
                 bool getPI(varid_type cod, int8_t& val, int8_t def = 0) const;
 
@@ -263,10 +272,10 @@ namespace boost {
                 }
 
                 bool parse();
-                bool parse_vars(const std::string& vl);
-                bool parse_pgi(varid_type tp, const std::string& vl);
+                bool parse_vars(const raw_type& vl);
+                bool parse_pgi(varid_type tp, const raw_type& vl);
 
-                mutable std::string seq_;
+                mutable raw_type seq_;
                 spdu_type type_;
                 bool error_;
 
@@ -284,30 +293,30 @@ namespace boost {
                 protocol_options(const const_buffer & vl) : vars_(vl) {
                 }
 
-                protocol_options(const std::string& called, const std::string& calling = "");
+                protocol_options(const raw_type& called, const raw_type& calling = raw_type());
 
-                std::string ssap_calling() const;
+                raw_type ssap_calling() const;
 
-                void ssap_calling(const std::string & val);
+                void ssap_calling(const raw_type & val);
 
-                std::string ssap_called() const;
+                raw_type ssap_called() const;
 
-                void ssap_called(const std::string & val);
+                void ssap_called(const raw_type & val);
 
-                std::string data() const;
+                raw_type data() const;
 
-                void data(const std::string & val);
+                void data(const raw_type & val);
 
-                std::string reason() const;
+                raw_type reason() const;
 
-                void reason(const std::string & val);
+                void reason(const raw_type & val);
 
             private:
                 spdudata vars_;
             };
 
             //negotiate_prot8327_option
-            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist, std::string& error);
+            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist, raw_type& error);
 
             template <typename ConstBufferSequence>
             class data_send_buffer_impl : public send_buffer_impl {
@@ -318,14 +327,12 @@ namespace boost {
                 }
 
                 void construct(const ConstBufferSequence& bf) {
-                    header_ = SEND_HEADER;
 
                     typename ConstBufferSequence::const_iterator it = bf.begin();
                     typename ConstBufferSequence::const_iterator end = bf.end();
                     typename ConstBufferSequence::value_type val;
 
-                    buff().push_back(const_buffer(SEND_HEADER.data(), SEND_HEADER.size()));
-                    //buff().insert(buff().begin(), const_buffer(header_.data(), header_.size()));
+                    buff().push_back(const_buffer(&SEND_HEADER[0], SEND_HEADER.size()));
 
                     while (it != end) {
                         buff().push_back(const_buffer(*it));
@@ -334,8 +341,6 @@ namespace boost {
 
                 }
 
-            private:
-                std::string header_;
             };
 
 
@@ -751,7 +756,7 @@ namespace boost {
                                 case AC_SPDU_ID:
                                 {
                                     socket_->negotiate_session_option(receive_->options());
-                                    socket_->rootcoder()->respond_str(receive_->options().data());
+                                    socket_->rootcoder()->in()->add(receive_->options().data());
                                     handler_(ec);
                                     return;
                                 }
@@ -888,7 +893,7 @@ namespace boost {
                             switch (receive_->type()) {
                                 case DN_SPDU_ID:
                                 {
-                                    socket_->rootcoder()->respond_str(receive_->options().data());
+                                    socket_->rootcoder()->in()->add(receive_->options().data());
                                     handler_(ec);
                                     boost::system::error_code ecc;
                                     socket_->close(ecc);
@@ -896,7 +901,7 @@ namespace boost {
                                 }
                                 case AA_SPDU_ID:
                                 {
-                                    socket_->rootcoder()->respond_str(receive_->options().data());
+                                    socket_->rootcoder()->in()->add(receive_->options().data());
                                     handler_(ec);
                                     boost::system::error_code ecc;
                                     socket_->close(ecc);
@@ -1049,8 +1054,8 @@ namespace boost {
                             handler_(ERROR__EPROTO);
                             return;
                         }
-                        std::string error_accept;
-                        socket_->rootcoder()->request_str(receive_->options().data());
+                        raw_type error_accept;
+                        socket_->rootcoder()->in()->add(receive_->options().data());
                         if (!negotiate_prot8327_option(options_, receive_->options(), error_accept) || 
                                 !socket_->negotiate_session_accept(error_accept)) {
                             options_.reason(error_accept);
@@ -1443,7 +1448,7 @@ namespace boost {
                         return send_seq_ptr();
                     if (rootcoder()) {
                         rootcoder()->clear();
-                        rootcoder()->request_str(receive->options().data());
+                        rootcoder()->in()->add(receive->options().data());
                     }
                     switch (receive->type()) {
                         case FN_SPDU_ID: return send_seq_ptr(new send_seq(DN_SPDU_ID, session_option(), rootcoder()));
@@ -1455,10 +1460,10 @@ namespace boost {
                     return send_seq_ptr();
                 }
 
-                virtual bool negotiate_session_accept(std::string& error) {
-                    std::string req = rootcoder()->request_str();
-                    std::string resp = rootcoder()->respond_str();                    
-                    rootcoder()->respond_str(" echo :" + rootcoder()->request_str());
+                virtual bool negotiate_session_accept(raw_type& error) {
+                    rootcoder()->in()->clear();  
+                    rootcoder()->in()->add(ECHO_NEGOTIATE);
+                    rootcoder()->in()->add(rootcoder()->out()->buffers());
                     return true;
                 }
 
@@ -1504,7 +1509,7 @@ namespace boost {
                             case AC_SPDU_ID:
                             {
                                 negotiate_session_option(receive_->options());
-                                rootcoder()->respond_str(receive_->options().data());
+                                rootcoder()->in()->add(receive_->options().data());
                                 return ec;
                             }
                             default:
@@ -1532,14 +1537,14 @@ namespace boost {
                             switch (receive_->type()) {
                                 case DN_SPDU_ID:
                                 {
-                                    rootcoder()->respond_str(receive_->options().data());
+                                rootcoder()->in()->add(receive_->options().data());
                                     boost::system::error_code ecc;
                                     close(ecc);
                                     return ec;
                                 }
                                 case AA_SPDU_ID:
                                 {
-                                    rootcoder()->respond_str(receive_->options().data());
+                                rootcoder()->in()->add(receive_->options().data());
                                     boost::system::error_code ecc;
                                     close(ecc);
                                     return ec;
@@ -1572,8 +1577,8 @@ namespace boost {
                         close(ecc);
                         return ERROR__EPROTO;
                     }
-                    std::string error_accept;
-                    rootcoder()->request_str(receive_->options().data());
+                    raw_type error_accept;
+                    rootcoder()->in()->add(receive_->options().data());
                     if (!negotiate_prot8327_option(options_, receive_->options(), error_accept) ||
                             !negotiate_session_accept(error_accept)) {
                         canseled = true;
