@@ -115,15 +115,17 @@ namespace boost {
         std::string binary_to_hexsequence_debug(const std::string& vl);
 
         inline static raw_type buffer_to_raw(const mutable_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
-            return raw_type(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
-                    boost::asio::buffer_cast<const octet_type*>(buff) + (len ? (beg + len) : ((beg && (boost::asio::buffer_size(buff) >= beg)) ?
-                    (boost::asio::buffer_size(buff) - beg) : boost::asio::buffer_size(buff))));
+            std::size_t buffsize = boost::asio::buffer_size(buff);
+            len = (buffsize>beg)  ?  ( ((buffsize>(beg+len)) && len) ? len : (buffsize -beg)) : 0;
+            return len ? raw_type(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
+                    boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len)) : raw_type();
         }
 
         inline static raw_type buffer_to_raw(const const_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
-            return raw_type(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
-                    boost::asio::buffer_cast<const octet_type*>(buff) + (len ? (beg + len) : ((beg && (boost::asio::buffer_size(buff) >= beg)) ?
-                    (boost::asio::buffer_size(buff) - beg) : boost::asio::buffer_size(buff))));
+            std::size_t buffsize = boost::asio::buffer_size(buff);
+            len = (buffsize>beg)  ?  ( ((buffsize>(beg+len)) && len) ? len : (buffsize -beg)) : 0;
+            return len ? raw_type(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
+                    boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len)) : raw_type();
         }
 
         template <typename T> raw_type

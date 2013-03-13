@@ -818,17 +818,29 @@ namespace boost {
                 //  Release operation  //
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
-                void release(release_type type) {
+                void release() {
 
                     boost::system::error_code ec;
-                    release(type,  ec);
+                    release(ec);
                     boost::asio::detail::throw_error(ec, "release");
                 }
 
-                boost::system::error_code release(release_type type, boost::system::error_code& ec) {
+                boost::system::error_code release(boost::system::error_code& ec) {
                     rootcoder()->in()->clear();
-                    return release_impl(type, ec);
+                    return release_impl(SESSION_NORMAL_RELEASE, ec);
                 }
+                
+                void abort() {
+
+                    boost::system::error_code ec;
+                    release(ec);
+                    boost::asio::detail::throw_error(ec, "abort");
+                }
+
+                boost::system::error_code abort(boost::system::error_code& ec) {
+                    rootcoder()->in()->clear();
+                    return release_impl(SESSION_ABORT_RELEASE, ec);
+                }                
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                    
@@ -949,19 +961,28 @@ namespace boost {
             public:
 
                 template <typename ReleaseHandler>
-                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
-                        release_type type) {
+                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler ) {
                     //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                     rootcoder()->in()->clear(); 
                     if (is_open()) {
                         this->get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
-                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, type)));
+                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, SESSION_NORMAL_RELEASE)));
                     }
                     else
                         handler(ERROR_ECONNREFUSED);
                 }
 
-
+                template <typename ReleaseHandler>
+                void asyn_abort(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler ) {
+                    //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
+                    rootcoder()->in()->clear(); 
+                    if (is_open()) {
+                        this->get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
+                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, SESSION_ABORT_RELEASE)));
+                    }
+                    else
+                        handler(ERROR_ECONNREFUSED);
+                }
 
 
 
