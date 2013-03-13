@@ -38,7 +38,7 @@ namespace boost {
             const  raw_type REJECT_REASON_NODEF = raw_type(1, '\x0'); 
 
             const octet_type WORK_PROT_OPTION = '\x0';
-            const octet_type WORK_PROT_VERSION = '\x2';
+            const octet_type WORK_PROT_VERSION = '\x3';
 
             const octet_type DISCONNECT_OPTION = '\x1';
         
@@ -230,7 +230,7 @@ namespace boost {
                 void setPI(varid_type cod, uint16_t val);
 
 
-                bool getPGI(varid_type cod1, varid_type cod2, raw_type& val) const;
+                const raw_type&  getPGI(varid_type cod1, varid_type cod2) const;
 
                 bool getPGI(varid_type cod1, varid_type cod2, int8_t& val, int8_t def = 0) const;
 
@@ -240,7 +240,7 @@ namespace boost {
 
                 bool getPGI(varid_type cod1, varid_type cod2, uint16_t& val, uint16_t def = 0) const;
 
-                bool getPI(varid_type cod, raw_type& val) const;
+                const raw_type&  getPI(varid_type cod) const;
 
                 bool getPI(varid_type cod, int8_t& val, int8_t def = 0) const;
 
@@ -278,41 +278,38 @@ namespace boost {
                 mutable raw_type seq_;
                 spdu_type type_;
                 bool error_;
+                raw_type null_val;
 
             };
 
             struct protocol_options {
+                
+                typedef boost::shared_ptr<spdudata> spdudata_ptr;
 
-                protocol_options() {
+                protocol_options() : vars_( new spdudata()) {
                 }
 
-                protocol_options(const spdudata & vars) :
-                vars_(vars) {
-                }
-
-                protocol_options(const const_buffer & vl) : vars_(vl) {
+                protocol_options(const const_buffer & vl) : vars_( new spdudata(vl))  {
                 }
 
                 protocol_options(const raw_type& called, const raw_type& calling = raw_type());
 
-                raw_type ssap_calling() const;
+                const raw_type& ssap_calling() const;
 
                 void ssap_calling(const raw_type & val);
 
-                raw_type ssap_called() const;
+                const raw_type& ssap_called() const;
 
                 void ssap_called(const raw_type & val);
 
-                raw_type data() const;
+                const raw_type& data() const;
 
-                void data(const raw_type & val);
-
-                raw_type reason() const;
+                const raw_type& reason() const;
 
                 void reason(const raw_type & val);
 
             private:
-                spdudata vars_;
+                spdudata_ptr vars_;
             };
 
             //negotiate_prot8327_option
