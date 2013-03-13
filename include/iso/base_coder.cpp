@@ -388,6 +388,7 @@ namespace boost {
         };
 
         void base_coder::request_str(const std::string& val) {
+            output_->clear();
             output_->add(raw_type(val.begin(), val.end()));
         };
 
@@ -404,7 +405,8 @@ namespace boost {
         };
 
         void base_coder::respond_str(const std::string& val) {
-            insert_to_input(raw_type(val.begin(), val.end()));
+            input_->clear();
+            input_->add(raw_type(val.begin(), val.end()));
         };
 
 

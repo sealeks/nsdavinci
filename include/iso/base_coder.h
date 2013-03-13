@@ -371,10 +371,6 @@ namespace boost {
                 return output_->buffers();
             }
 
-            void insert_to_input(const raw_type& vl) {
-                input_->add(vl);
-            }
-
             std::string request_str() const;
 
             void request_str(const std::string& val);
