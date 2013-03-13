@@ -699,15 +699,15 @@ namespace boost {
                 //  Release operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                void releaseconnect(octet_type rsn) {
+                void release(octet_type rsn) {
                     boost::system::error_code ec;
-                    releaseconnect(rsn, ec);
-                    boost::asio::detail::throw_error(ec, "releaseconnect");
+                    release(rsn, ec);
+                    boost::asio::detail::throw_error(ec, "release");
                 }
 
-                boost::system::error_code releaseconnect(octet_type rsn, boost::system::error_code& ec) {
+                boost::system::error_code release(octet_type rsn, boost::system::error_code& ec) {
 
-                    return releaseconnect_impl(rsn, ec);
+                    return release_impl(rsn, ec);
                 }
 
 
@@ -717,10 +717,10 @@ namespace boost {
             private:
 
                 template <typename ReleaseHandler>
-                class releaseconnect_op {
+                class release_op {
                 public:
 
-                    releaseconnect_op(stream_socket* socket, ReleaseHandler handler, octet_type rsn) :
+                    release_op(stream_socket* socket, ReleaseHandler handler, octet_type rsn) :
                     socket_(socket),
                     handler_(handler),
                     send_(send_seq_ptr(new send_seq(socket->transport_option().dst_tsap(), socket->transport_option().src_tsap(), rsn))) {
@@ -758,12 +758,12 @@ namespace boost {
             public:
 
                 template <typename ReleaseHandler>
-                void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
+                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
                         octet_type rsn = REJECT_REASON_NORM) {
                     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
                     if (is_open()) {
-                        this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
-                                releaseconnect_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, rsn)));
+                        this->get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
+                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, rsn)));
                     }
                     else
                         handler(ERROR_ECONNREFUSED);
@@ -1300,7 +1300,7 @@ namespace boost {
                     return ec = ERROR__EPROTO;
                 }
 
-                boost::system::error_code releaseconnect_impl(octet_type rsn, boost::system::error_code& ec) {
+                boost::system::error_code release_impl(octet_type rsn, boost::system::error_code& ec) {
                     if (is_open()) {
                         send_seq_ptr send_(send_seq_ptr(new send_seq(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                         while (!ec && !send_->ready())
@@ -1633,10 +1633,6 @@ namespace boost {
 
     } // namespace ip
 
-    template<typename ReleaseConnectHandler>
-    void asyn_releaseconnect(boost::iso::prot8073::stream_socket& s, ReleaseConnectHandler handler, int8_t rsn = boost::iso::prot8073::REJECT_REASON_NORM) {
-        s.asyn_releaseconnect<ReleaseConnectHandler > (handler, rsn);
-    }
 
     inline static bool input_empty(boost::iso::prot8073::stream_socket& s) {
         return s.input_empty();

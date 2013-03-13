@@ -712,7 +712,7 @@ namespace boost {
                         if (!ec)
                             operator()(ec, 0);
                         else
-                            exit(ec);
+                            exit_handler(ec);
                     }
 
                     void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
@@ -743,7 +743,7 @@ namespace boost {
                                 }
                             }
                         }
-                        exit(ec);
+                        exit_handler(ec);
                     }
   
                 private:
@@ -756,7 +756,7 @@ namespace boost {
                                     socket_->negotiate_session_option(receive_->options());
                                     socket_->rootcoder()->in()->add(receive_->options().data());
                                     socket_->session_version_=receive_->options().version();
-                                    exit(ec);
+                                    exit_handler(ec);
                                     return;
                                 }
                                 default:
@@ -766,10 +766,10 @@ namespace boost {
                                 }
                             }
                         }
-                        exit(ERROR__EPROTO);
+                        exit_handler(ERROR__EPROTO);
                     }
                     
-                    void exit(const boost::system::error_code& ec) {
+                    void exit_handler(const boost::system::error_code& ec) {
                         socket_->rootcoder()->out()->clear();
                         handler_(ec);
                     }                    
@@ -818,16 +818,16 @@ namespace boost {
                 //  Release operation  //
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
-                void releaseconnect(release_type type) {
+                void release(release_type type) {
 
                     boost::system::error_code ec;
-                    releaseconnect(type,  ec);
-                    boost::asio::detail::throw_error(ec, "releaseconnect");
+                    release(type,  ec);
+                    boost::asio::detail::throw_error(ec, "release");
                 }
 
-                boost::system::error_code releaseconnect(release_type type, boost::system::error_code& ec) {
+                boost::system::error_code release(release_type type, boost::system::error_code& ec) {
                     rootcoder()->in()->clear();
-                    return releaseconnect_impl(type, ec);
+                    return release_impl(type, ec);
                 }
 
 
@@ -836,7 +836,7 @@ namespace boost {
             private:
 
                 template <typename ReleaseHandler>
-                class releaseconnect_op {
+                class release_op {
 
                     enum stateconnection {
                         request,
@@ -845,7 +845,7 @@ namespace boost {
 
                 public:
 
-                    releaseconnect_op(stream_socket* socket, ReleaseHandler handler, release_type type) :
+                    release_op(stream_socket* socket, ReleaseHandler handler, release_type type) :
                     socket_(socket),
                     handler_(handler),
                     send_(send_seq_ptr(new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID, socket->session_option(), socket_->rootcoder()))),
@@ -885,7 +885,7 @@ namespace boost {
                                 }
                             }
                         }
-                        exit(ec);
+                        exit_handler(ec);
                         boost::system::error_code ecc;
                         socket_->close(ecc);
                     }
@@ -899,7 +899,7 @@ namespace boost {
                                 case DN_SPDU_ID:
                                 {
                                     socket_->rootcoder()->in()->add(receive_->options().data());
-                                    exit(ec);
+                                    exit_handler(ec);
                                     boost::system::error_code ecc;
                                     socket_->close(ecc);
                                     return;
@@ -907,14 +907,14 @@ namespace boost {
                                 case AA_SPDU_ID:
                                 {
                                     socket_->rootcoder()->in()->add(receive_->options().data());
-                                    exit(ec);
+                                    exit_handler(ec);
                                     boost::system::error_code ecc;
                                     socket_->close(ecc);
                                     return;
                                 }
                                 default:
                                 {
-                                    exit(ERROR__EPROTO);
+                                    exit_handler(ERROR__EPROTO);
                                 }
                             }
                         }
@@ -922,7 +922,7 @@ namespace boost {
                         socket_->close(ecc);
                     }
                     
-                    void exit(const boost::system::error_code& ec) {
+                    void exit_handler(const boost::system::error_code& ec) {
                         socket_->rootcoder()->out()->clear();
                         handler_(ec);
                     }                      
@@ -949,13 +949,13 @@ namespace boost {
             public:
 
                 template <typename ReleaseHandler>
-                void asyn_releaseconnect(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
+                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
                         release_type type) {
                     //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                     rootcoder()->in()->clear(); 
                     if (is_open()) {
-                        this->get_io_service().post(boost::bind(&releaseconnect_op<ReleaseHandler>::run,
-                                releaseconnect_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, type)));
+                        this->get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
+                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, type)));
                     }
                     else
                         handler(ERROR_ECONNREFUSED);
@@ -1043,12 +1043,12 @@ namespace boost {
                                     }
                                     boost::system::error_code ecc;
                                     socket_->close(ecc);
-                                    exit(ERROR_EDOM);
+                                    exit_handler(ERROR_EDOM);
                                     return;
                                 }
                             }
                         }
-                        exit(ec);
+                        exit_handler(ec);
                     }
 
 
@@ -1063,7 +1063,7 @@ namespace boost {
                         if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
                             boost::system::error_code ecc;
                             socket_->close(ecc);
-                            exit(ERROR__EPROTO);
+                            exit_handler(ERROR__EPROTO);
                             return;
                         }
                         raw_type error_accept;
@@ -1086,10 +1086,10 @@ namespace boost {
 
                         protocol_options opt = receive_->options();
                         socket_->negotiate_session_option(opt);
-                        exit(ec);
+                        exit_handler(ec);
                     }
                     
-                    void exit(const boost::system::error_code& ec) {
+                    void exit_handler(const boost::system::error_code& ec) {
                         socket_->rootcoder()->in()->clear();
                         handler_(ec);
                     }                       
@@ -1549,18 +1549,18 @@ namespace boost {
                 }    
                 
 
-                boost::system::error_code releaseconnect_impl(release_type type, boost::system::error_code& ec) {
+                boost::system::error_code release_impl(release_type type, boost::system::error_code& ec) {
                     if (is_open()) {
                         send_seq_ptr send_(new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID, session_option(), rootcoder()));
                         while (!ec && !send_->ready())
                             send_->size(super_type::send(send_->pop(), 0, ec));
                         if (ec)
-                            return releaseconnect_impl_exit(ec);
+                            return release_impl_exit(ec);
                         receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
                         while (!ec && !receive_->ready())
                             receive_->put(super_type::receive(boost::asio::buffer(receive_->buffer()), 0, ec));
                         if (ec)
-                            return releaseconnect_impl_exit(ec);
+                            return release_impl_exit(ec);
                         if (receive_->state() == receive_seq::complete) {
                             switch (receive_->type()) {
                                 case DN_SPDU_ID:
@@ -1568,14 +1568,14 @@ namespace boost {
                                 rootcoder()->in()->add(receive_->options().data());
                                     boost::system::error_code ecc;
                                     close(ecc);
-                                    return releaseconnect_impl_exit(ec);
+                                    return release_impl_exit(ec);
                                 }
                                 case AA_SPDU_ID:
                                 {
                                 rootcoder()->in()->add(receive_->options().data());
                                     boost::system::error_code ecc;
                                     close(ecc);
-                                    return releaseconnect_impl_exit(ec);
+                                    return release_impl_exit(ec);
                                 }
                                 default:
                                 {
@@ -1585,10 +1585,10 @@ namespace boost {
                         boost::system::error_code ecc;
                         close(ecc);
                     }
-                    return releaseconnect_impl_exit(ec = ERROR_ECONNREFUSED);
+                    return release_impl_exit(ec = ERROR_ECONNREFUSED);
                 }
                 
-                const boost::system::error_code& releaseconnect_impl_exit(const boost::system::error_code& err){
+                const boost::system::error_code& release_impl_exit(const boost::system::error_code& err){
                     rootcoder()->out()->clear();
                     return err;
                 }                    
@@ -1933,10 +1933,6 @@ namespace boost {
         return s.input_empty();
     }
 
-    template<typename ReleaseConnectHandler>
-    void asyn_releaseconnect(boost::iso::prot8327::stream_socket& s, ReleaseConnectHandler handler, iso::release_type type, iso::isocoder_ptr data) {
-        s.asyn_releaseconnect<ReleaseConnectHandler > (handler, type, data);
-    }
 
 } // namespace boost
 
