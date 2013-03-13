@@ -77,20 +77,19 @@ namespace boost {
 
     namespace iso {
 
-
         typedef enum {
             NULL_ENCODING = 0,
             BER_ENCODING,
             CER_ENCODING,
             DER_ENCODING
         } encoding_rule;
-        
+
         using boost::asio::const_buffer;
         using boost::asio::const_buffers_1;
         using boost::asio::mutable_buffer;
-        using boost::asio::mutable_buffers_1;       
+        using boost::asio::mutable_buffers_1;
         using boost::asn1::oid_type;
-        
+
 
 
         typedef int contex_id_type;
@@ -103,8 +102,8 @@ namespace boost {
         typedef boost::shared_ptr<mutable_sequence> mutable_sequence_ptr;
         typedef std::list<const_buffer> const_sequence;
         typedef boost::shared_ptr<const_sequence> const_sequence_ptr;
-        
-        
+
+
 
         const const_sequence NULL_CONST_SEQUENCE = const_sequence();
 
@@ -126,7 +125,7 @@ namespace boost {
                     boost::asio::buffer_cast<const octet_type*>(buff) + (len ? (beg + len) : ((beg && (boost::asio::buffer_size(buff) >= beg)) ?
                     (boost::asio::buffer_size(buff) - beg) : boost::asio::buffer_size(buff))));
         }
-        
+
         template <typename T> raw_type
         inline static inttype_to_raw(T vl) {
             return raw_type(((const octet_type*) &vl), ((const octet_type*) &vl) + sizeof (T));
@@ -159,21 +158,21 @@ namespace boost {
 
         inline static void raw_front_insert(raw_type& dst, const raw_type& src) {
             dst.insert(dst.begin(), src.begin(), src.end());
-        }        
-        
+        }
+
         std::size_t pop_frontlist(mutable_sequence& val, std::size_t start);
-        
+
         bool splice_frontlist(mutable_sequence& val, std::size_t firstend, std::size_t secondend);
-        
+
         bool find_eof(const mutable_sequence& val, mutable_sequence::const_iterator bit, std::size_t& rslt, std::size_t start = 0);
-        
-        bool row_cast(const mutable_sequence& val, mutable_sequence::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size);        
+
+        bool row_cast(const mutable_sequence& val, mutable_sequence::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size);
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class base_output_coder {            
+        class base_output_coder {
         public:
 
 
@@ -208,6 +207,8 @@ namespace boost {
             iterator_type add(const raw_type& vl);
 
             iterator_type add(const raw_type& vl, iterator_type it);
+
+            void add(const mutable_sequence& vl);
 
             iterator_type last() {
                 return listbuffers_->empty() ? listbuffers_->end() : (--(listbuffers_->end()));
