@@ -37,39 +37,38 @@
 #if defined(PRES_PROT)
 
 #elif defined(SESSION_PROT)
-using boost::asio::iso::iso8327;
-typedef boost::asio::iso::iso8327                                        protocol_type;
+using boost::iso::iso8327;
+typedef boost::iso::iso8327 protocol_type;
 #else
-using boost::asio::iso::rfc1006;
-typedef boost::asio::iso::rfc1006                                       protocol_type;
+using boost::iso::rfc1006;
+typedef boost::iso::rfc1006 protocol_type;
 #endif
 
-
-typedef protocol_type::selector                                         selector_type;
-typedef protocol_type::socket                                            socket_type;
-typedef protocol_type::acceptor                                        acceptor_type;
-typedef protocol_type::endpoint                                       endpoint_type;
-typedef protocol_type::resolver                                         resolver_type;
+typedef boost::iso::selectorvalue_type selectorvalue_type;
+typedef protocol_type::selector selector_type;
+typedef protocol_type::socket socket_type;
+typedef protocol_type::acceptor acceptor_type;
+typedef protocol_type::endpoint endpoint_type;
+typedef protocol_type::resolver resolver_type;
 
 #if defined(PRES_PROT)
 
 #elif defined(SESSION_PROT)
 
-typedef protocol_type::lowselector                     lowselector_type;
-const selector_type  SELECTOR = selector_type("SERVER-SSEL", lowselector_type("SERVER-TSEL", boost::asio::iso::SIZE128));
+typedef protocol_type::lowselector lowselector_type;
+const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-SSEL"), lowselector_type(selectorvalue_type("SERVER-TSEL")));
 #else
-const selector_type  SELECTOR = selector_type("SERVER-TSEL", boost::asio::iso::SIZE128);
+const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"), boost::iso::SIZE128);
 #endif
 
-typedef boost::asio::iso::archive_temp<>    trans_data;
-typedef boost::asio::iso::archive_ptr            trans_data_type;
+
 
 
 int port = 102;
 
 enum {
     max_length = 100
-} ;
+};
 
 //#define NET_BLOCKING
 
@@ -78,8 +77,8 @@ enum {
 class session {
 public:
 
-    session(boost::asio::io_service& io_service, trans_data_type trans = trans_data_type())
-    : socket_(io_service, SELECTOR), trans_(trans) {
+    session(boost::asio::io_service& io_service)
+    : socket_(io_service, SELECTOR) {
         std::cout << "New sesion\n";
     }
 
@@ -88,9 +87,9 @@ public:
     }
 
     void start() {
-        if (trans_) {
-            std::cout << "Client accept data : " << trans_->respond_str() << std::endl;
-        }
+#if defined(SESSION_PROT)       
+        std::cout << "Client accept data : " << socket_.rootcoder()->respond_str() << std::endl;
+#endif        
 
         socket_.async_read_some(boost::asio::buffer(data_, max_length),
                 boost::bind(&session::handle_read, this,
@@ -108,7 +107,7 @@ private:
                     boost::asio::buffer(data_, bytes_transferred),
                     boost::bind(&session::handle_write, this,
                     boost::asio::placeholders::error));
-            std::cout << "Server reade: " <<  std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred << std::endl;
+            std::cout << "Server reade: " << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
             message = std::string(data_, bytes_transferred);
         }
         else {
@@ -118,12 +117,12 @@ private:
 
     void handle_write(const boost::system::error_code& error) {
         if (!error) {
-            std::cout << "Server write: " <<  message <<  " size: " <<  message.size() << std::endl;
+            std::cout << "Server write: " << message << " size: " << message.size() << std::endl;
             socket_.async_read_some(boost::asio::buffer(data_, max_length),
                     boost::bind(&session::handle_read, this,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
-            std::cout << "Data indication: " <<  socket_.input_empty() << std::endl;
+            std::cout << "Data indication: " << socket_.input_empty() << std::endl;
 
         }
         else {
@@ -134,8 +133,7 @@ private:
     socket_type socket_;
     char data_[max_length];
     std::string message;
-    trans_data_type trans_;
-} ;
+};
 
 class server {
 public:
@@ -149,20 +147,12 @@ public:
 private:
 
     void start_accept() {
-        trans_data_type trans_ = trans_data_type( new   trans_data());
 
-        session* new_session = new session(io_service_, trans_);
+        session* new_session = new session(io_service_);
 
 
 
         acceptor_.async_accept(new_session->socket(),
-
-#if defined(PRES_PROT)
-                trans_,
-#elif defined(SESSION_PROT)
-                trans_,
-#else
-#endif            
                 boost::bind(&server::handle_accept, this, new_session,
                 boost::asio::placeholders::error));
     }
@@ -182,54 +172,46 @@ private:
     boost::asio::io_service& io_service_;
     acceptor_type acceptor_;
 
-} ;
+};
 
 class client {
 public:
 
     client(boost::asio::io_service& io_service,
-            resolver_type::iterator endpoint_iterator, const std::string& called = "")
+            resolver_type::iterator endpoint_iterator)
     : io_service_(io_service),
     socket_(io_service, SELECTOR) {
         endpoint_type endpoint = *endpoint_iterator;
 
-        trans_ = trans_data_type( new   trans_data(/*"Hello server from test"*/));
-        trans_->request_str("Hello server from test");
+#if defined(SESSION_PROT)
+        socket_.rootcoder()->request_str(std::string(20, 'a'));
+#else
+#endif  
 
         socket_.async_connect(endpoint,
-
-#if defined(PRES_PROT)
-                trans_,
-#elif defined(SESSION_PROT)
-                trans_,
-#else
-#endif   
-
                 boost::bind(&client::handle_connect, this,
                 boost::asio::placeholders::error, ++endpoint_iterator));
     }
 
     ~client() {
-        if (socket_.is_open()) {
-     
-        }
+        //if (socket_.is_open()) {
+
+        //}
     }
 
     void release() {
-        std::cout << "Start release"  << std::endl;
+        std::cout << "Start release" << std::endl;
 #if defined(PRES_PROT)
         io_service_.reset();
-        boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+        socket_.asyn_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
         io_service_.poll();
 #elif defined(SESSION_PROT)
         io_service_.reset();
-        trans_ = trans_data_type( new   trans_data());
-        socket_.asyn_releaseconnect(boost::bind(&client::handle_release, this, boost::asio::placeholders::error), boost::asio::iso::SESSION_NORMAL_RELEASE, trans_);
+        socket_.asyn_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error), boost::iso::SESSION_NORMAL_RELEASE);
         io_service_.poll();
 #else
         io_service_.reset();
-         trans_ = trans_data_type();
-        boost::asio::asyn_releaseconnect(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+        //  boost::asio::asyn_release(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
         io_service_.poll();
 #endif           
 
@@ -250,54 +232,50 @@ private:
     void handle_connect(const boost::system::error_code& error,
             resolver_type::iterator endpoint_iterator) {
         if (!error) {
-            if (trans_) {
-                
+
 #if defined(SESSION_PROT)                
-                std::cout << "Server accept data : " << trans_->respond_str() << std::endl;
+            std::cout << "Server accept data : " << socket_.rootcoder()->respond_str() << std::endl;
 #else
-                std::cout << "Server accept data : " << trans_->respond_str() << std::endl;
+
 #endif                
-                
-            }
+            socket_.rootcoder()->request_str("Client release");
+            socket_.asyn_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error), boost::iso::SESSION_NORMAL_RELEASE);
+
         }
         else if (endpoint_iterator != resolver_type::iterator()) {
-            socket_.close();
+            //socket_.close();
             endpoint_type endpoint = *endpoint_iterator;
 
-            trans_ = trans_data_type( new   trans_data());
-            trans_->request_str("Hello server from test");
+#if defined(SESSION_PROT)
+            socket_.rootcoder()->request_str("Hello server from test");
+#else
+#endif  
 
             socket_.async_connect(endpoint,
-
-#if defined(PRES_PROT)
-                    trans_,
-#elif defined(SESSION_PROT)
-                    trans_,
-#else
-#endif               
-                    boost::bind(&client::handle_connect,  this,
+                    boost::bind(&client::handle_connect, this,
                     boost::asio::placeholders::error, ++endpoint_iterator));
         }
     }
 
     void handle_release(const boost::system::error_code& error) {
         std::cout << "Client release :" << (error ? "error " : "success") << std::endl;
-        if (trans_) {
-            std::cout << "Server release data : " << trans_->respond_str() << std::endl;
-        }
+#if defined(SESSION_PROT)         
+        std::cout << "Server release data : " << socket_.rootcoder()->respond_str() << std::endl;
+#endif
+
     }
 
     void handle_read(const boost::system::error_code& error,
             size_t bytes_transferred) {
         if (!error) {
-            std::cout << "Client read:" << std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred <<  " is complete: "  <<  socket_.input_empty() << std::endl;
-            if (!socket_.input_empty()){
-                    std::cout << "Client read continiu" <<  std::endl;                
-                    socket_.async_read_some(boost::asio::buffer(data_, max_length),
-                    boost::bind(&client::handle_read, this,
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred));   
-                    
+            std::cout << "Client read:" << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << " is complete: " << socket_.input_empty() << std::endl;
+            if (!socket_.input_empty()) {
+                std::cout << "Client read continiu" << std::endl;
+                socket_.async_read_some(boost::asio::buffer(data_, max_length),
+                        boost::bind(&client::handle_read, this,
+                        boost::asio::placeholders::error,
+                        boost::asio::placeholders::bytes_transferred));
+
             }
         }
         else {
@@ -306,7 +284,7 @@ private:
     }
 
     void do_write() {
-        std::cout << "Client write:" << message <<  " size: " <<  message.size() << std::endl;
+        std::cout << "Client write:" << message << " size: " << message.size() << std::endl;
         boost::asio::async_write(socket_,
                 boost::asio::buffer(message.data(),
                 message.size()),
@@ -328,24 +306,23 @@ private:
     }
 
     void do_close() {
-        socket_.close();
+        // socket_.close();
     }
 
 private:
     boost::asio::io_service& io_service_;
     socket_type socket_;
     std::string message;
-    trans_data_type trans_;
     char data_[max_length];
-} ;
+};
 
 #else
 
 class session {
 public:
 
-    session(boost::asio::io_service& io_service, trans_data_type trans)
-    : socket_(io_service, SELECTOR), trans_(trans) {
+    session(boost::asio::io_service& io_service)
+    : socket_(io_service, SELECTOR) {
         std::cout << "New sesion\n";
     }
 
@@ -354,14 +331,13 @@ public:
     }
 
     void run() {
-        if (trans_) 
-            std::cout << "Client accept data : " << trans_->respond_str() << std::endl;
+        std::cout << "Client accept data : " << socket_.rootcoder()->request_str() << std::endl;
         boost::system::error_code ec;
         while (!ec) {
             std::size_t bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
             if (ec) break;
             message = std::string(data_, bytes_transferred);
-            std::cout << "Server read: " <<  message <<  " size: " <<  message.size() << std::endl;
+            std::cout << "Server read: " << message << " size: " << message.size() << std::endl;
             socket_.write_some(boost::asio::buffer(data_, bytes_transferred), ec);
         }
     }
@@ -372,8 +348,7 @@ private:
     socket_type socket_;
     char data_[max_length];
     std::string message;
-    trans_data_type trans_;
-} ;
+};
 
 class server {
 public:
@@ -388,19 +363,12 @@ private:
 
     void start_accept() {
         while (true) {
-            
-            trans_data_type trans_ = trans_data_type( new   trans_data("Hello client from test"));
-            
-            session* new_session = new session(io_service_, trans_);
+
+
+            session* new_session = new session(io_service_);
             boost::system::error_code ec;
             acceptor_.accept(new_session->socket(),
-#if defined(PRES_PROT)
-                trans_,
-#elif defined(SESSION_PROT)
-                trans_,
-#else
-#endif            
-            ec);
+                    ec);
             if (ec)
                 delete new_session;
             else
@@ -410,32 +378,28 @@ private:
 
     boost::asio::io_service& io_service_;
     acceptor_type acceptor_;
-} ;
+};
 
 class client {
 public:
 
     client(boost::asio::io_service& io_service,
-            resolver_type::iterator endpoint_iterator, const std::string& called = "")
+            resolver_type::iterator endpoint_iterator)
     : io_service_(io_service),
     socket_(io_service, SELECTOR) {
-        
-        trans_ = trans_data_type( new   trans_data("Hello server  from test"));        
-        
+
+#if defined(SESSION_PROT)
+        socket_.rootcoder()->request_str("Hello server from test");
+#else
+#endif       
+
         boost::system::error_code ec;
         endpoint_type endpoint = *endpoint_iterator;
-        socket_.connect(endpoint, 
-#if defined(PRES_PROT)
-                trans_,
-#elif defined(SESSION_PROT)
-                trans_,
-#else
-#endif          
-        ec);
-        if (!ec) {
-        if (trans_) 
-            std::cout << "Client accept data : " << trans_->respond_str() << std::endl; 
-        }
+        socket_.connect(endpoint,
+                ec);
+        if (!ec)
+
+            std::cout << "Client accept data : " << socket_.rootcoder()->respond_str() << std::endl;
     }
 
     ~client() {
@@ -448,26 +412,26 @@ public:
 #if defined(PRES_PROT)
 
 #elif defined(SESSION_PROT)
-                trans_ = trans_data_type( new   trans_data("Goodbuy server  from test"));
-                boost::system::error_code ecc;
-                socket_.releaseconnect(boost::asio::iso::SESSION_NORMAL_RELEASE, trans_,ecc);
-                if (trans_) 
-                       std::cout << "Server release data : " << trans_->respond_str() << std::endl;
-                
+        //    trans_ = trans_data_type( new   trans_data("Goodbuy server  from test"));
+        //  boost::system::error_code ecc;
+        //    socket_.release(boost::iso::SESSION_NORMAL_RELEASE, trans_,ecc);
+        //    if (trans_) 
+        //          std::cout << "Server release data : " << trans_->respond_str() << std::endl;
+
 #else
-                boost::system::error_code ecc;
-                socket_.releaseconnect(ecc); 
+        boost::system::error_code ecc;
+        socket_.release(ecc);
 #endif  
     }
 
     void write(const std::string& msg) {
-       
-        
+
+
         message = msg;
         boost::system::error_code ec;
         socket_.write_some(boost::asio::buffer(message.data(), message.size()), ec);
         std::size_t bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
-        std::cout << "Client read:" << std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred << std::endl;
+        std::cout << "Client read:" << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
 
     }
 
@@ -481,9 +445,8 @@ private:
     boost::asio::io_service& io_service_;
     socket_type socket_;
     std::string message;
-    trans_data_type trans_ ;
     char data_[max_length];
-} ;
+};
 
 
 #endif
@@ -515,15 +478,15 @@ private:
     bool terminated_;
     boost::asio::io_service& io_service;
     server server_;
-} ;
+};
 
-typedef callable_shared_ptr< Server >                         server_ptr;
+typedef callable_shared_ptr< Server > server_ptr;
 
 struct Client {
 
-    Client(boost::asio::io_service& serv, const std::string & host) : terminated_(false), io_service(serv), resolver(io_service), query(boost::asio::ip::tcp::v4(), host , dvnci::to_str(port)),
-    iterator(resolver.resolve(query)) ,
-    client_(io_service, iterator, "SERVER-TSEL") {
+    Client(boost::asio::io_service& serv, const std::string & host) : terminated_(false), io_service(serv), resolver(io_service), query(boost::asio::ip::tcp::v4(), host, dvnci::to_str(port)),
+    iterator(resolver.resolve(query)),
+    client_(io_service, iterator) {
     }
 
     bool operator()() {
@@ -565,12 +528,12 @@ private:
     client client_;
     boost::mutex mtx;
     std::string msg;
-} ;
+};
 
 
 
 
-typedef callable_shared_ptr< Client >                         client_ptr;
+typedef callable_shared_ptr< Client > client_ptr;
 
 struct IO {
 
@@ -584,7 +547,7 @@ struct IO {
             dvnci::addmillisec_to_now(xt_loop, 100);
             boost::thread::sleep(xt_loop);
         }
-       // io_service.stop();
+        // io_service.stop();
         return true;
     }
 
@@ -596,12 +559,12 @@ private:
     bool terminated_;
     boost::asio::io_service& io_service;
 
-} ;
+};
 
 
 
 
-typedef callable_shared_ptr<IO >                         io_ptr;
+typedef callable_shared_ptr<IO > io_ptr;
 
 int main(int argc, char* argv[]) {
 
@@ -612,7 +575,7 @@ int main(int argc, char* argv[]) {
 
             boost::asio::io_service io_service;
 
-            server_ptr ss = server_ptr( new Server(io_service));
+            server_ptr ss = server_ptr(new Server(io_service));
             boost::thread serverth = boost::thread(ss);
 
             io_ptr io = io_ptr(new IO(io_service));
@@ -628,7 +591,7 @@ int main(int argc, char* argv[]) {
 
             ss->terminate();
             serverth.join();
-            
+
 
 
         }
@@ -636,7 +599,7 @@ int main(int argc, char* argv[]) {
 
             boost::asio::io_service io_service;
 
-           client_ptr cc = client_ptr( new Client(io_service, argv[1]) );
+            client_ptr cc = client_ptr(new Client(io_service, argv[1]));
             boost::thread clientth = boost::thread(cc);
 
             io_ptr io = io_ptr(new IO(io_service));
@@ -654,10 +617,10 @@ int main(int argc, char* argv[]) {
 
             cc->terminate();
             clientth.join();
-            
 
-            
-        
+
+
+
 
 
         }
