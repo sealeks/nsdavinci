@@ -48,66 +48,6 @@ namespace boost {
         const boost::system::error_code ERROR_EIO = boost::system::error_code(boost::system::errc::io_error, boost::system::system_category());
         const boost::system::error_code ERROR_ECONNREFUSED = boost::system::error_code(boost::system::errc::connection_refused, boost::system::system_category());
 
-        template <typename T> std::string
-        inline static inttype_to_str(T vl) {
-            return std::string(((const char*) &vl), sizeof (T));
-        }
-
-        template <typename T> raw_type
-        inline static inttype_to_raw(T vl) {
-            return raw_type(((const octet_type*) &vl), ((const octet_type*) &vl) + sizeof (T));
-        }
-
-        template <typename T>
-        inline static bool str_to_inttype(const std::string& dblk, T& vl) {
-            if (sizeof (vl) > dblk.size()) return false;
-            vl = *(reinterpret_cast<T*> (const_cast<char*> (dblk.data())));
-            return true;
-        }
-
-        template <typename T>
-        inline static bool raw_to_inttype(const raw_type& dblk, T& vl) {
-            if (sizeof (vl) > dblk.size()) return false;
-            vl = *(reinterpret_cast<T*> (const_cast<octet_type*> (&dblk.front())));
-            return true;
-        }
-
-        inline static int16_t endiancnv_copy(int16_t vl) {
-            return (((vl >> 8) & 0xFF) | (0xFF00 & (vl << 8)));
-        }
-
-        inline static uint16_t endiancnv_copy(uint16_t vl) {
-            return (((vl >> 8) & 0xFF) | (0xFF00 & (vl << 8)));
-        }
-
-        template <typename T>
-        inline static T endiancnv_copy(const std::string& vl) {
-            T tmp = 0;
-            return str_to_inttype<T > (vl, tmp) ? (((tmp >> 8) & 0xFF) | (0xFF00 & (tmp << 8))) : 0;
-        }
-
-        template <typename T>
-        inline static T endiancnv_copy(const raw_type& vl) {
-            T tmp = 0;
-            return raw_to_inttype<T > (vl, tmp) ? (((tmp >> 8) & 0xFF) | (0xFF00 & (tmp << 8))) : 0;
-        }
-
-        inline static void raw_back_insert(raw_type& dst, const raw_type& src) {
-            dst.insert(dst.end(), src.begin(), src.end());
-        }
-
-        inline static void raw_front_insert(raw_type& dst, const raw_type& src) {
-            dst.insert(dst.begin(), src.begin(), src.end());
-        }
-        
-        inline static raw_type buffer_to_raw( const  mutable_buffer& buff, std::size_t beg, std::size_t len){
-            return raw_type(boost::asio::buffer_cast<const octet_type*>(buff) +beg , boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len));
-        }
-        
-        inline static raw_type buffer_to_raw( const  const_buffer& buff, std::size_t beg, std::size_t len){
-            return raw_type(boost::asio::buffer_cast<const octet_type*>(buff) +beg , boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len));
-        }        
-
 
         //   transport
 
@@ -210,11 +150,11 @@ namespace boost {
             transport_selector(tpdu_size pdusize) : pdusize_(pdusize) {
             }
 
-            raw_type called() const {
+            const raw_type& called() const {
                 return called_.to_raw();
             }
 
-            raw_type calling() const {
+            const raw_type& calling() const {
                 return calling_.to_raw();
             }
 
@@ -253,12 +193,12 @@ namespace boost {
             session_selector(const transport_selector& tselector) : tselector_(tselector) {
             }
 
-            std::string called() const {
-                return called_.to_string();
+            const raw_type& called() const {
+                return called_.to_raw();
             }
 
-            std::string calling() const {
-                return calling_.to_string();
+            const raw_type& calling() const {
+                return calling_.to_raw();
             }
 
             const transport_selector& tselector() const {

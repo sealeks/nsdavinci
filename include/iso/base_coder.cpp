@@ -338,6 +338,11 @@ namespace boost {
             size_ += vl.size();
             listbuffers_->push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
         }
+        
+        void base_input_coder::add(const const_sequence& vl) {
+            for (const_sequence::const_iterator it=vl.begin(); it!=vl.end(); ++it)
+                add(buffer_to_raw(*it));
+        }        
 
         bool base_input_coder::is_endof(std::size_t beg) const {
             raw_type data;

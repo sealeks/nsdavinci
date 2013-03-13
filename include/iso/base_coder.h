@@ -78,17 +78,36 @@ namespace boost {
     namespace iso {
 
 
-
-
-        typedef boost::asn1::oid_type oid_type;
-        typedef int contex_id_type;
-
         typedef enum {
             NULL_ENCODING = 0,
             BER_ENCODING,
             CER_ENCODING,
             DER_ENCODING
         } encoding_rule;
+        
+        using boost::asio::const_buffer;
+        using boost::asio::const_buffers_1;
+        using boost::asio::mutable_buffer;
+        using boost::asio::mutable_buffers_1;       
+        using boost::asn1::oid_type;
+        
+
+
+        typedef int contex_id_type;
+        typedef int8_t octet_type;
+        typedef std::vector<octet_type> raw_type;
+        typedef boost::shared_ptr<raw_type> raw_type_ptr;
+        typedef std::vector<raw_type_ptr> vect_raw_type_ptr;
+
+        typedef std::list<mutable_buffer> mutable_sequence;
+        typedef boost::shared_ptr<mutable_sequence> mutable_sequence_ptr;
+        typedef std::list<const_buffer> const_sequence;
+        typedef boost::shared_ptr<const_sequence> const_sequence_ptr;
+        
+        
+
+        const const_sequence NULL_CONST_SEQUENCE = const_sequence();
+
 
         oid_type encoding_to_oid(encoding_rule rule);
 
@@ -96,52 +115,75 @@ namespace boost {
 
         std::string binary_to_hexsequence_debug(const std::string& vl);
 
+        inline static raw_type buffer_to_raw(const mutable_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
+            return raw_type(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
+                    boost::asio::buffer_cast<const octet_type*>(buff) + (len ? (beg + len) : ((beg && (boost::asio::buffer_size(buff) >= beg)) ?
+                    (boost::asio::buffer_size(buff) - beg) : boost::asio::buffer_size(buff))));
+        }
 
+        inline static raw_type buffer_to_raw(const const_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
+            return raw_type(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
+                    boost::asio::buffer_cast<const octet_type*>(buff) + (len ? (beg + len) : ((beg && (boost::asio::buffer_size(buff) >= beg)) ?
+                    (boost::asio::buffer_size(buff) - beg) : boost::asio::buffer_size(buff))));
+        }
+        
+        template <typename T> raw_type
+        inline static inttype_to_raw(T vl) {
+            return raw_type(((const octet_type*) &vl), ((const octet_type*) &vl) + sizeof (T));
+        }
 
-        typedef boost::asio::const_buffer const_buffer;
-        typedef boost::asio::const_buffers_1 const_buffers_1;
-        typedef boost::asio::mutable_buffer mutable_buffer;
-        typedef boost::asio::mutable_buffers_1 mutable_buffers_1;
+        template <typename T>
+        inline static bool raw_to_inttype(const raw_type& dblk, T& vl) {
+            if (sizeof (vl) > dblk.size()) return false;
+            vl = *(reinterpret_cast<T*> (const_cast<octet_type*> (&dblk.front())));
+            return true;
+        }
 
+        inline static int16_t endiancnv_copy(int16_t vl) {
+            return (((vl >> 8) & 0xFF) | (0xFF00 & (vl << 8)));
+        }
 
-        typedef int8_t octet_type;
-        typedef std::vector<octet_type> raw_type;
-        typedef boost::shared_ptr<raw_type> raw_type_ptr;
-        typedef std::vector<raw_type_ptr> vect_raw_type_ptr;
+        inline static uint16_t endiancnv_copy(uint16_t vl) {
+            return (((vl >> 8) & 0xFF) | (0xFF00 & (vl << 8)));
+        }
 
-        typedef std::list<mutable_buffer> mutable_sequence;
-        typedef boost::shared_ptr<mutable_sequence>  mutable_sequence_ptr;           
-        typedef std::list<const_buffer> const_sequence;
-        typedef boost::shared_ptr<const_sequence>  const_sequence_ptr;          
+        template <typename T>
+        inline static T endiancnv_copy(const raw_type& vl) {
+            T tmp = 0;
+            return raw_to_inttype<T > (vl, tmp) ? (((tmp >> 8) & 0xFF) | (0xFF00 & (tmp << 8))) : 0;
+        }
 
-        const const_sequence NULL_CONST_SEQUENCE = const_sequence();        
+        inline static void raw_back_insert(raw_type& dst, const raw_type& src) {
+            dst.insert(dst.end(), src.begin(), src.end());
+        }
 
-
-
+        inline static void raw_front_insert(raw_type& dst, const raw_type& src) {
+            dst.insert(dst.begin(), src.begin(), src.end());
+        }        
+        
         std::size_t pop_frontlist(mutable_sequence& val, std::size_t start);
+        
         bool splice_frontlist(mutable_sequence& val, std::size_t firstend, std::size_t secondend);
+        
         bool find_eof(const mutable_sequence& val, mutable_sequence::const_iterator bit, std::size_t& rslt, std::size_t start = 0);
-        bool row_cast(const mutable_sequence& val, mutable_sequence::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size);
-
-
-
+        
+        bool row_cast(const mutable_sequence& val, mutable_sequence::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size);        
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class base_output_coder {            
-            
         public:
-            
-          
+
+
             typedef const_sequence::iterator iterator_type;
 
             static bool __input__() {
                 return false;
             }
 
-            base_output_coder(encoding_rule rl = NULL_ENCODING) : listbuffers_( new const_sequence()) ,size_(0) {
+            base_output_coder(encoding_rule rl = NULL_ENCODING) : listbuffers_(new const_sequence()), size_(0) {
             }
 
             virtual ~base_output_coder() {
@@ -150,19 +192,19 @@ namespace boost {
             const const_sequence& buffers() const {
                 return *listbuffers_;
             }
-            
-            const_sequence& buffers()  {
+
+            const_sequence& buffers() {
                 return *listbuffers_;
-            }       
-            
+            }
+
             const_sequence_ptr buffers_ptr() const {
                 return listbuffers_;
             }
-            
-            const_sequence_ptr buffers_ptr()  {
+
+            const_sequence_ptr buffers_ptr() {
                 return listbuffers_;
-            }                     
-            
+            }
+
             iterator_type add(const raw_type& vl);
 
             iterator_type add(const raw_type& vl, iterator_type it);
@@ -224,7 +266,7 @@ namespace boost {
                 return true;
             }
 
-            base_input_coder() : listbuffers_( new mutable_sequence()), size_(0) {
+            base_input_coder() : listbuffers_(new mutable_sequence()), size_(0) {
             }
 
             virtual ~base_input_coder() {
@@ -239,6 +281,8 @@ namespace boost {
             }
 
             void add(const raw_type& vl);
+
+            void add(const const_sequence& vl);
 
             void pop_front(std::size_t sz) {
                 decsize(pop_frontlist(*listbuffers_, sz));
@@ -280,8 +324,8 @@ namespace boost {
                 //std::cout << "decsize IARCHVE size:"  << size_  << std::endl;
             }
 
-         private:
-            
+        private:
+
             mutable_sequence_ptr listbuffers_;
             vect_raw_type_ptr rows_vect;
             std::size_t size_;
@@ -369,7 +413,7 @@ namespace boost {
 
 
         protected:
-            
+
             input_coder_ptr input_;
             output_coder_ptr output_;
         };
@@ -448,12 +492,12 @@ namespace boost {
         class send_buffer_impl {
         public:
 
-            send_buffer_impl() : buffer_( new const_sequence()) , size_(0) {
+            send_buffer_impl() : buffer_(new const_sequence()), size_(0) {
             }
-            
-            send_buffer_impl(const_sequence_ptr bf) : buffer_(bf) , size_(0) {
-            }            
-            
+
+            send_buffer_impl(const_sequence_ptr bf) : buffer_(bf), size_(0) {
+            }
+
             virtual ~send_buffer_impl() {
             }
 
@@ -470,16 +514,16 @@ namespace boost {
             bool ready() const {
                 return !buffer_size(*buffer_);
             }
-            
+
         protected:
-            
+
             const const_sequence& buff() const {
                 return *buffer_;
             }
-            
-            const_sequence& buff()  {
+
+            const_sequence& buff() {
                 return *buffer_;
-            } 
+            }
 
         private:
             const_sequence_ptr buffer_;
