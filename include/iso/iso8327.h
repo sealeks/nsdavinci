@@ -16,6 +16,11 @@ namespace boost {
         namespace prot8327 {
 
             using boost::asio::basic_socket;
+            
+
+            typedef uint8_t spdu_type;
+            typedef uint16_t valuelenth_type;  
+            typedef uint8_t varid_type;                
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8327 utill   //
@@ -36,8 +41,9 @@ namespace boost {
             const octet_type WORK_PROT_VERSION = '\x2';
 
             const octet_type DISCONNECT_OPTION = '\x1';
-
-            typedef uint8_t spdu_type;
+        
+            const std::size_t  SIMPLE_CONNECT_PDUSIZE_LIMIT = 512;
+            const std::size_t  EXTENDED_CONNECT_PDUSIZE_LIMIT = 10240;            
 
             const spdu_type CN_SPDU_ID = 13; //CONNECT SPDU
             const spdu_type OA_SPDU_ID = 16; //OVERFLOW ACCEPT
@@ -138,7 +144,6 @@ namespace boost {
             const int16_t FU_WORK = FU_DUPLEX; //work;
 
 
-            typedef uint8_t varid_type;
 
             const varid_type PGI_CN_IND = 1; // Connection Identifier              
             const varid_type PGI_CN_AC = 5; // Connect/Accept Item
@@ -177,9 +182,8 @@ namespace boost {
             std::size_t from_triple_size(const raw_type& val, std::size_t& it);
 
 
-            typedef std::pair<std::size_t, raw_type> parameter_ln_type;
-            typedef std::pair<varid_type, parameter_ln_type> pi_type;
-            typedef std::map<varid_type, parameter_ln_type> pgi_type;
+            typedef std::pair<varid_type, raw_type> pi_type;
+            typedef std::map<varid_type, raw_type > pgi_type;
             typedef std::pair<varid_type, pgi_type> pgis_type;
             typedef std::map<varid_type, pgi_type> spdudata_type; // (it->first==0 contain pi_type in vector
 
@@ -255,10 +259,6 @@ namespace boost {
 
                 bool nullPI(varid_type cod) const;
 
-
-                std::size_t getPGIsize(varid_type cod1, varid_type cod2) const;
-
-                std::size_t getPIsize(varid_type cod) const;
 
                 const_sequence_ptr sequence(isocoder_ptr seq) const;
 
@@ -1461,9 +1461,9 @@ namespace boost {
                 }
 
                 virtual bool negotiate_session_accept(raw_type& error) {
-                    rootcoder()->in()->clear();  
-                    rootcoder()->in()->add(ECHO_NEGOTIATE);
-                    rootcoder()->in()->add(rootcoder()->out()->buffers());
+                    rootcoder()->out()->clear();  
+                    rootcoder()->out()->add(ECHO_NEGOTIATE);
+                    rootcoder()->out()->add(rootcoder()->in()->buffers());
                     return true;
                 }
 

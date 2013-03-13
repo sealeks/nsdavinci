@@ -40,12 +40,11 @@ namespace boost {
                 spdudata_type::iterator it = find(cod1);
                 if (it == end()) {
                     pgi_type pgi;
-                    pgi.insert(pi_type(cod2, parameter_ln_type(val.size(), val)));
+                    pgi.insert(pi_type(cod2, val));
                     insert(pgis_type(cod1, pgi));
                 }
-
                 else
-                    it->second.insert(pi_type(cod2, parameter_ln_type(val.size(), val)));
+                    it->second.insert(pi_type(cod2, val));
             }
 
             void spdudata::setPGI(varid_type cod1, varid_type cod2, int8_t val) {
@@ -98,7 +97,7 @@ namespace boost {
                 if (it == end())
                     return false;
                 pgi_type::const_iterator itpi = it->second. find(cod2);
-                val = (itpi != it->second.end()) ? itpi->second.second : raw_type();
+                val = (itpi != it->second.end()) ? itpi->second : raw_type();
 
                 return itpi != it->second.end();
             }
@@ -198,7 +197,7 @@ namespace boost {
                     return false;
                 pgi_type::const_iterator itpi = it->second.find(cod2);
 
-                return (itpi != it->second.end() ? (!itpi->second.first) : false);
+                return (itpi != it->second.end() ? (!itpi->second.empty()) : false);
             }
 
             bool spdudata::nullPI(varid_type cod) const {
@@ -206,20 +205,7 @@ namespace boost {
                 return nullPGI(0, cod);
             }
 
-            std::size_t spdudata::getPGIsize(varid_type cod1, varid_type cod2) const {
-                spdudata_type::const_iterator it = find(cod1);
-                if (it == end())
-                    return false;
-                pgi_type::const_iterator itpi = it->second. find(cod2);
-
-                return (itpi != it->second.end()) ? itpi->second.first : 0;
-            }
-
-            std::size_t spdudata::getPIsize(varid_type cod) const {
-
-                return getPGIsize(0, cod);
-            }
-
+            
             const_sequence_ptr spdudata::sequence(isocoder_ptr coder) const {
                 raw_type tmp;
                 spdudata_type::const_iterator strtit = end();
@@ -230,8 +216,8 @@ namespace boost {
                         raw_type tmppgi;
                         for (pgi_type::const_iterator itpgi = it->second.begin(); itpgi != it->second.end(); ++itpgi) {
                             raw_back_insert(tmppgi, inttype_to_raw(itpgi->first));
-                            raw_back_insert(tmppgi, to_triple_size(itpgi->second.first));
-                            raw_back_insert(tmppgi, itpgi->second.second);
+                            raw_back_insert(tmppgi, to_triple_size(itpgi->second.size()));
+                            raw_back_insert(tmppgi, itpgi->second);
                         }
                         raw_back_insert(tmp, inttype_to_raw(it->first));
                         raw_back_insert(tmp, to_triple_size(tmppgi.size()));
@@ -243,15 +229,21 @@ namespace boost {
                     for (pgi_type::const_iterator itpgi = strtit->second.begin(); itpgi != strtit->second.end(); ++itpgi) {
                         if ((itpgi->first != PI_USERDATA) && (itpgi->first != PI_EXUSERDATA)) {
                             raw_back_insert(tmppi, inttype_to_raw(itpgi->first));
-                            raw_back_insert(tmppi, to_triple_size(itpgi->second.first));
-                            raw_back_insert(tmppi, itpgi->second.second);
+                            raw_back_insert(tmppi, to_triple_size(itpgi->second.size()));
+                            raw_back_insert(tmppi, itpgi->second);
                         }
                     }
                     raw_back_insert(tmp, tmppi);
                 }
                 if (coder->out()->size()) {
-                    raw_back_insert(tmp, inttype_to_raw(PI_USERDATA));
-                    raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                    if ((type_ == CN_SPDU_ID) && (coder->out()->size() > SIMPLE_CONNECT_PDUSIZE_LIMIT)) {
+                        raw_back_insert(tmp, inttype_to_raw(PI_EXUSERDATA));
+                        raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                    }
+                    else {
+                        raw_back_insert(tmp, inttype_to_raw(PI_USERDATA));
+                        raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                    }
                 }
                 coder->out()->add(raw_type(tmp.begin(), tmp.end()), coder->out()->buffers().begin());
                 raw_type header(inttype_to_raw(type_));
@@ -394,8 +386,8 @@ namespace boost {
                 tmp.setPI(PI_SUREQ, FU_WORK);
                 tmp.setPI(PI_CALLING, opt.ssap_calling());
                 tmp.setPI(PI_CALLED, opt.ssap_called());
-                tmp.setPI(PI_USERDATA);
-                //data->out()->add()
+                //if  (data->out()->size() > SIMPLE_CONNECT_PDUSIZE_LIMIT)
+                //    tmp.setPI(PI_DTOVER);                
                 return tmp.sequence(data);
             }
 
@@ -406,18 +398,17 @@ namespace boost {
                 tmp.setPI(PI_SUREQ, FU_WORK);
                 tmp.setPI(PI_CALLING, opt.ssap_calling());
                 tmp.setPI(PI_CALLED, opt.ssap_called());
-                tmp.setPI(PI_USERDATA);
                 return tmp.sequence(data);
             }
 
             const_sequence_ptr generate_header_DN(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(DN_SPDU_ID);
-                tmp.setPI(PI_USERDATA);
                 return tmp.sequence(data);
             }
 
             const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(RF_SPDU_ID);
+                data->out()->clear();
                 tmp.setPI(PI_TRANDISK, DISCONNECT_OPTION);
                 tmp.setPI(PI_SUREQ, FU_WORK);
                 tmp.setPI(WORK_PROT_VERSION, WORK_PROT_VERSION);
@@ -427,27 +418,23 @@ namespace boost {
 
             const_sequence_ptr generate_header_AB(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AB_SPDU_ID);
-                tmp.setPI(PI_USERDATA);
                 tmp.setPI(PI_REASON, REJECT_REASON_NODEF);
                 return tmp.sequence(data);
             }
 
             const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AA_SPDU_ID);
-                tmp.setPI(PI_USERDATA);
                 return tmp.sequence(data);
             }
 
             const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(FN_SPDU_ID);
-                tmp.setPI(PI_USERDATA);
                 tmp.setPI(PI_REASON, REJECT_REASON_NODEF);
                 return tmp.sequence(data);
             }
 
             const_sequence_ptr generate_header_NF(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(NF_SPDU_ID);
-                tmp.setPI(PI_USERDATA);
                 return tmp.sequence(data);
             }
 

@@ -319,6 +319,11 @@ namespace boost {
             return listbuffers_->insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
         }
 
+        void base_output_coder::add(const mutable_sequence& vl) {
+            for (mutable_sequence::const_iterator it = vl.begin(); it != vl.end(); ++it)
+                add(buffer_to_raw(*it));
+        }
+
         bool base_output_coder::bind(raw_type& vl) {
             vl.clear();
             for (iterator_type it = listbuffers_->begin(); it != listbuffers_->end(); ++it)
@@ -338,11 +343,11 @@ namespace boost {
             size_ += vl.size();
             listbuffers_->push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
         }
-        
+
         void base_input_coder::add(const const_sequence& vl) {
-            for (const_sequence::const_iterator it=vl.begin(); it!=vl.end(); ++it)
+            for (const_sequence::const_iterator it = vl.begin(); it != vl.end(); ++it)
                 add(buffer_to_raw(*it));
-        }        
+        }
 
         bool base_input_coder::is_endof(std::size_t beg) const {
             raw_type data;
