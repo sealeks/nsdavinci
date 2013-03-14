@@ -168,7 +168,7 @@ namespace boost {
                 headarvarvalues vars_;
                 raw_type null_;
             };
-
+            
 
             bool negotiate_prot8073_option(protocol_options& self, const protocol_options& dist, octet_type& error);
 
@@ -437,6 +437,10 @@ namespace boost {
                 const protocol_options& options() const {
                     return options_;
                 }
+                
+                protocol_options& options() {
+                    return options_;
+                }                
 
                 error_code errcode() const {
                     return errcode_;
@@ -577,7 +581,6 @@ namespace boost {
                     socket_(socket),
                     handler_(handler),
                     state_(request),
-                    options_(socket->transport_option()),
                     peer_endpoint_(peer_endpoint),
                     send_(send_seq_ptr(new send_seq(socket->transport_option()))),
                     receive_(new receive_seq()) {
@@ -662,7 +665,6 @@ namespace boost {
                     stream_socket* socket_;
                     ConnectHandler handler_;
                     stateconnection state_;
-                    protocol_options options_;
                     endpoint_type peer_endpoint_;
                     send_seq_ptr send_;
                     receive_seq_ptr receive_;
@@ -806,8 +808,8 @@ namespace boost {
                     socket_(socket),
                     handler_(handler),
                     state_(wait),
-                    options_(socket->transport_option()),
                     send_(),
+                    tpdusize(socket->transport_option().pdusize()),
                     receive_(new receive_seq()) {
                     }
 
@@ -870,6 +872,7 @@ namespace boost {
                             handler_(ER_PROTOCOL);
                             return;
                         }
+                        protocol_options options_= socket_->transport_option();
                         octet_type error_accept = 0;
                         if (!negotiate_prot8073_option(options_, receive_->options(), error_accept)) {
                             send_ = send_seq_ptr(new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
@@ -877,6 +880,7 @@ namespace boost {
                             operator()(ec, 0);
                             return;
                         }
+                        tpdusize = options_.pdusize();
                         send_ = send_seq_ptr(new send_seq(1, options_));
                         state(send);
                         operator()(ec, 0);
@@ -884,9 +888,8 @@ namespace boost {
 
                     void finish(const error_code& ec) {
 
-                        protocol_options opt = receive_->options();
-                        opt.pdusize(options_.pdusize());
-                        socket_->negotiate_transport_option(opt);
+                        receive_->options().pdusize(tpdusize);
+                        socket_->negotiate_transport_option(receive_->options());
                         handler_(ec);
                     }
 
@@ -901,9 +904,9 @@ namespace boost {
                     stream_socket* socket_;
                     CheckAcceptHandler handler_;
                     stateconnection state_;
-                    protocol_options options_;
                     send_seq_ptr send_;
                     receive_seq_ptr receive_;
+                     tpdu_size  tpdusize;
 
                 };
 
@@ -1248,9 +1251,12 @@ namespace boost {
                 const protocol_options& transport_option() const {
                     return transport_option_;
                 }
+                
+                protocol_options& transport_option() {
+                    return transport_option_;
+                }                
 
                 void negotiate_transport_option(const protocol_options& val) {
-
                     pdusize_ = val.pdusize();
                     transport_option_.dst_tsap(val.src_tsap());
                 }
