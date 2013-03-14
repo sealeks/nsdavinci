@@ -28,6 +28,8 @@ namespace boost {
 
             using boost::asio::basic_socket;
             using boost::asio::basic_socket_acceptor;
+            
+            typedef boost::asio::socket_base::message_flags message_flags;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   iso8073 utill   //
@@ -979,7 +981,7 @@ namespace boost {
                 public:
 
                     send_op(stream_socket* socket, SendHandler handler,
-                            const ConstBufferSequence& buffers, boost::asio::socket_base::message_flags flags) :
+                            const ConstBufferSequence& buffers, message_flags flags) :
                     socket_(socket),
                     handler_(handler),
                     in_(send_seq_ptr(new send_seq_data<ConstBufferSequence>(buffers, socket->pdusize()))),
@@ -1011,7 +1013,7 @@ namespace boost {
                     stream_socket* socket_;
                     SendHandler handler_;
                     send_seq_ptr in_;
-                    boost::asio::socket_base::message_flags flags_;
+                    message_flags flags_;
                     std::size_t send_lower_;
 
 
@@ -1104,7 +1106,7 @@ namespace boost {
                 public:
 
                     receive_op(stream_socket* socket, ReceiveHandler handler,
-                            receive_seq_ptr receive, const Mutable_Buffers& buff, boost::asio::socket_base::message_flags flags) :
+                            receive_seq_ptr receive, const Mutable_Buffers& buff, message_flags flags) :
                     socket_(socket),
                     handler_(handler),
                     receive_(receive),
@@ -1178,7 +1180,7 @@ namespace boost {
                     ReceiveHandler handler_;
                     const Mutable_Buffers& buff_;
                     receive_seq_ptr receive_;
-                    boost::asio::socket_base::message_flags flags_;
+                    message_flags flags_;
                 };
 
 

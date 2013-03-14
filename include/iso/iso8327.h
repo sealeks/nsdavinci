@@ -17,6 +17,8 @@ namespace boost {
 
             using boost::asio::basic_socket;
             
+            typedef boost::asio::socket_base::message_flags message_flags;
+            
 
             typedef uint8_t spdu_type;
             typedef uint16_t valuelenth_type;  
@@ -1227,7 +1229,7 @@ namespace boost {
                 public:
 
                     send_op(stream_socket* socket, SendHandler handler,
-                            const ConstBufferSequence& buffers, boost::asio::socket_base::message_flags flags) :
+                            const ConstBufferSequence& buffers, message_flags flags) :
                     socket_(socket),
                     handler_(handler),
                     in_(send_seq_ptr(new send_seq_data<ConstBufferSequence>(buffers))),
@@ -1258,7 +1260,7 @@ namespace boost {
                     stream_socket* socket_;
                     SendHandler handler_;
                     send_seq_ptr in_;
-                    boost::asio::socket_base::message_flags flags_;
+                    message_flags flags_;
                     std::size_t send_lower_;
 
 
@@ -1362,7 +1364,7 @@ namespace boost {
                 public:
 
                     receive_op(stream_socket* socket, ReceiveHandler handler,
-                            receive_seq_ptr receive, const Mutable_Buffers& buff, boost::asio::socket_base::message_flags flags) :
+                            receive_seq_ptr receive, const Mutable_Buffers& buff, message_flags flags) :
                     socket_(socket),
                     handler_(handler),
                     receive_(receive),
@@ -1447,7 +1449,7 @@ namespace boost {
                     receive_seq_ptr receive_;
                     send_seq_ptr send_;
                     stateconnection state_;
-                    boost::asio::socket_base::message_flags flags_;
+                    message_flags flags_;
                 };
 
 
