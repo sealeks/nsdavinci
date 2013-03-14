@@ -644,7 +644,7 @@ namespace boost {
                                 case DR:
                                 {
                                     boost::system::error_code ecc;
-                                    socket_->get_service().close(socket_->get_implementation(), ecc);
+                                    //socket_->get_service().close(socket_->get_implementation(), ecc);
                                     handler_(receive_->errcode() ? receive_->errcode() : ERROR_EIO);
                                     return;
                                 }
@@ -848,7 +848,7 @@ namespace boost {
                                         return;
                                     }
                                     boost::system::error_code ecc;
-                                    socket_->get_service().close(socket_->get_implementation(), ecc);
+                                    //socket_->get_service().close(socket_->get_implementation(), ecc);
                                     handler_(ERROR_EDOM);
 
                                     return;
@@ -866,7 +866,7 @@ namespace boost {
                     void parse_response(const boost::system::error_code& ec) {
                         if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
                             boost::system::error_code ecc;
-                            socket_->get_service().close(socket_->get_implementation(), ecc);
+                            //socket_->get_service().close(socket_->get_implementation(), ecc);
                             handler_(ERROR__EPROTO);
                             return;
                         }
@@ -1153,14 +1153,14 @@ namespace boost {
                             case ER:
                             {
                                 boost::system::error_code ecc;
-                                socket_->get_service().close(socket_->get_implementation(), ecc);
+                                //socket_->get_service().close(socket_->get_implementation(), ecc);
                                 handler_(ERROR__SEQ, static_cast<std::size_t> (receive_->datasize()));
                                 break;
                             }
                             case DR:
                             {
                                 boost::system::error_code ecc;
-                                socket_->get_service().close(socket_->get_implementation(), ecc);
+                                //socket_->get_service().close(socket_->get_implementation(), ecc);
                                 handler_(ERROR_ECONNREFUSED, static_cast<std::size_t> (receive_->datasize()));
                                 break;
                             }
@@ -1168,7 +1168,7 @@ namespace boost {
                             {
 
                                 boost::system::error_code ecc;
-                                socket_->get_service().close(socket_->get_implementation(), ecc);
+                                //socket_->get_service().close(socket_->get_implementation(), ecc);
                                 handler_(ERROR__EPROTO, 0);
                             }
                         }
@@ -1289,7 +1289,7 @@ namespace boost {
                             case DR:
                             {
                                 boost::system::error_code ecc;
-                                this->get_service().close(this->get_implementation(), ecc);
+                                //this->get_service().close(this->get_implementation(), ecc);
 
                                 return ec = receive_->errcode() ? receive_->errcode() : ERROR_EIO;
                             }
@@ -1326,7 +1326,7 @@ namespace boost {
                     protocol_options options_ = transport_option();
                     if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
                         boost::system::error_code ecc;
-                        this->get_service().close(this->get_implementation(), ecc);
+                        //this->get_service().close(this->get_implementation(), ecc);
                         return ERROR__EPROTO;
                     }
                     octet_type error_accept = 0;
@@ -1343,7 +1343,7 @@ namespace boost {
                         return ec;
                     if (canseled) {
                         boost::system::error_code ecc;
-                        this->get_service().close(this->get_implementation(), ecc);
+                        //this->get_service().close(this->get_implementation(), ecc);
                     }
                     else {
 
@@ -1384,13 +1384,13 @@ namespace boost {
                         case DR:
                         {
                             boost::system::error_code ecc;
-                            this->get_service().close(this->get_implementation(), ecc);
+                            //this->get_service().close(this->get_implementation(), ecc);
                             ec = (receive_->type() == DR) ? ERROR_ECONNREFUSED : ERROR__SEQ;
                             return static_cast<std::size_t> (receive_->datasize());
                         }
                     }
                     boost::system::error_code ecc;
-                    this->get_service().close(this->get_implementation(), ecc);
+                    //this->get_service().close(this->get_implementation(), ecc);
                     ec = ERROR__EPROTO;
                     return 0;
                 }
@@ -1459,7 +1459,7 @@ namespace boost {
                         if (!service_impl_.accept(impl, peer, peer_endpoint, ec)) {
                             if (static_cast<stream_socket*> (&peer)->check_accept(src(), ec)) {
                                 boost::system::error_code ecc;
-                                static_cast<stream_socket*> (&peer)->close(ecc);
+                                //static_cast<stream_socket*> (&peer)->close(ecc);
                             }
                         }
                         return ec;
