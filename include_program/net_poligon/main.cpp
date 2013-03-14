@@ -207,7 +207,7 @@ public:
         io_service_.poll();
 #elif defined(SESSION_PROT)
         io_service_.reset();
-        socket_.asyn_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error), boost::iso::SESSION_NORMAL_RELEASE);
+        socket_.asyn_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
         io_service_.poll();
 #else
         io_service_.reset();
@@ -238,8 +238,6 @@ private:
 #else
 
 #endif                
-            socket_.rootcoder()->request_str("Client release");
-            socket_.asyn_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error), boost::iso::SESSION_NORMAL_RELEASE);
 
         }
         else if (endpoint_iterator != resolver_type::iterator()) {
@@ -277,6 +275,8 @@ private:
                         boost::asio::placeholders::bytes_transferred));
 
             }
+            socket_.rootcoder()->request_str("Client release");
+            socket_.asyn_abort(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
         }
         else {
             do_close();
@@ -414,7 +414,7 @@ public:
 #elif defined(SESSION_PROT)
         //    trans_ = trans_data_type( new   trans_data("Goodbuy server  from test"));
         //  boost::system::error_code ecc;
-        //    socket_.release(boost::iso::SESSION_NORMAL_RELEASE, trans_,ecc);
+        //    socket_.release( trans_,ecc);
         //    if (trans_) 
         //          std::cout << "Server release data : " << trans_->respond_str() << std::endl;
 
