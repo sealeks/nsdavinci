@@ -9,39 +9,39 @@
  #endif
 
 
-const boost::array<boost::asio::asn::oidindx_type, 5 >  ACSE_1_OID_ARR = { 2  ,  2  ,  1  ,  0  ,  1 };
-const boost::asio::asn::oid_type ACSE_1_OID = boost::asio::asn::oid_type(ACSE_1_OID_ARR);
+const boost::array<boost::asn1::oidindx_type, 5 >  ACSE_1_OID_ARR = { 2  ,  2  ,  1  ,  0  ,  1 };
+const boost::asn1::oid_type ACSE_1_OID = boost::asn1::oid_type(ACSE_1_OID_ARR);
 
 
 namespace ACSE_1  {
 
 
-	using  boost::asio::asn::null_type;
- 	using  boost::asio::asn::enumerated_type;
- 	using  boost::asio::asn::bitstring_type;
- 	using  boost::asio::asn::octetstring_type;
- 	using  boost::asio::asn::oid_type;
- 	using  boost::asio::asn::reloid_type;
- 	using  boost::asio::asn::utctime_type;
- 	using  boost::asio::asn::gentime_type;
- 	using  boost::asio::asn::ia5string_type;
- 	using  boost::asio::asn::printablestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::numericstring_type;
- 	using  boost::asio::asn::universalstring_type;
- 	using  boost::asio::asn::bmpstring_type;
- 	using  boost::asio::asn::utf8string_type;
- 	using  boost::asio::asn::generalstring_type;
- 	using  boost::asio::asn::graphicstring_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::videotexstring_type;
- 	using  boost::asio::asn::objectdescriptor_type;
- 	using  boost::asio::asn::external_type;
- 	using  boost::asio::asn::embeded_type;
- 	using  boost::asio::asn::characterstring_type;
- 	using  boost::asio::asn::any_type;
+	using  boost::asn1::null_type;
+ 	using  boost::asn1::enumerated_type;
+ 	using  boost::asn1::bitstring_type;
+ 	using  boost::asn1::octetstring_type;
+ 	using  boost::asn1::oid_type;
+ 	using  boost::asn1::reloid_type;
+ 	using  boost::asn1::utctime_type;
+ 	using  boost::asn1::gentime_type;
+ 	using  boost::asn1::ia5string_type;
+ 	using  boost::asn1::printablestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::numericstring_type;
+ 	using  boost::asn1::universalstring_type;
+ 	using  boost::asn1::bmpstring_type;
+ 	using  boost::asn1::utf8string_type;
+ 	using  boost::asn1::generalstring_type;
+ 	using  boost::asn1::graphicstring_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::videotexstring_type;
+ 	using  boost::asn1::objectdescriptor_type;
+ 	using  boost::asn1::external_type;
+ 	using  boost::asn1::embeded_type;
+ 	using  boost::asn1::characterstring_type;
+ 	using  boost::asn1::any_type;
 
 	//  type is  CHOICE
 	struct  ACSE_apdu;
@@ -237,7 +237,7 @@ namespace ACSE_1  {
 
 		struct  ASOI_tag_sequence_of{
 
-			boost::asio::asn::value_holder<ASO_qualifier >  qualifier;
+			boost::asn1::value_holder<ASO_qualifier >  qualifier;
 			boost::shared_ptr<ASOI_identifier > identifier;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(ASOI_identifier ,  identifier)
 
@@ -266,9 +266,9 @@ namespace ACSE_1  {
 			typedef std::vector<Transfer_syntax_name >   transfer_syntaxes_type;
 
 
-			boost::asio::asn::value_holder<Presentation_context_identifier >  pci;
-			boost::asio::asn::value_holder<Abstract_syntax_name >  abstract_syntax;
-			boost::asio::asn::value_holder<transfer_syntaxes_type >  transfer_syntaxes;
+			boost::asn1::value_holder<Presentation_context_identifier >  pci;
+			boost::asn1::value_holder<Abstract_syntax_name >  abstract_syntax;
+			boost::asn1::value_holder<transfer_syntaxes_type >  transfer_syntaxes;
 
 			Context_list_sequence_of()  : pci() , abstract_syntax() , transfer_syntaxes()  {}
 
@@ -292,7 +292,7 @@ namespace ACSE_1  {
 			boost::shared_ptr<Abstract_syntax_name > abstract_syntax_name;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(Abstract_syntax_name ,  abstract_syntax_name)
 
- 			boost::asio::asn::value_holder<Transfer_syntax_name >  transfer_syntax_name;
+ 			boost::asn1::value_holder<Transfer_syntax_name >  transfer_syntax_name;
 
 			Default_Context_List_sequence_of()  : transfer_syntax_name()  {}
 
@@ -319,7 +319,7 @@ namespace ACSE_1  {
 			static const int provider_reason_local_limit_on_DCS_exceeded = 3;
 
 
-			boost::asio::asn::value_holder<Result >  result;
+			boost::asn1::value_holder<Result >  result;
 			boost::shared_ptr<Concrete_syntax_name > concrete_syntax_name;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(Concrete_syntax_name ,  concrete_syntax_name)
 
@@ -389,8 +389,8 @@ namespace ACSE_1  {
 
 		struct  other_type{
 
-			boost::asio::asn::value_holder<MECHANISM_NAME >  other_mechanism_name;
-			boost::asio::asn::value_holder<any_type >  other_mechanism_value;
+			boost::asn1::value_holder<MECHANISM_NAME >  other_mechanism_name;
+			boost::asn1::value_holder<any_type >  other_mechanism_value;
 
 			other_type()  : other_mechanism_name() , other_mechanism_value()  {}
 
@@ -514,8 +514,8 @@ namespace ACSE_1  {
 		boost::shared_ptr<Transfer_syntax_name > transfer_syntax_name;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Transfer_syntax_name ,  transfer_syntax_name)
 
- 		boost::asio::asn::value_holder<Presentation_context_identifier >  presentation_context_identifier;
-		boost::asio::asn::value_holder<presentation_data_values_type >  presentation_data_values;
+ 		boost::asn1::value_holder<Presentation_context_identifier >  presentation_context_identifier;
+		boost::asn1::value_holder<presentation_data_values_type >  presentation_data_values;
 
 		PDV_list()  : presentation_context_identifier() , presentation_data_values()  {}
 
@@ -895,7 +895,7 @@ namespace ACSE_1  {
 
 	struct  ACRP_apdu__impl{
 
-		boost::asio::asn::value_holder<ASO_qualifier >  aso_qualifier;
+		boost::asn1::value_holder<ASO_qualifier >  aso_qualifier;
 		boost::shared_ptr<ASOI_identifier > asoi_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ASOI_identifier ,  asoi_identifier)
 
@@ -927,7 +927,7 @@ namespace ACSE_1  {
 
 	struct  ACRQ_apdu__impl{
 
-		boost::asio::asn::value_holder<ASO_qualifier >  aso_qualifier;
+		boost::asn1::value_holder<ASO_qualifier >  aso_qualifier;
 		boost::shared_ptr<ASOI_identifier > asoi_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ASOI_identifier ,  asoi_identifier)
 
@@ -937,7 +937,7 @@ namespace ACSE_1  {
  		boost::shared_ptr<ASO_context_name_list > aSO_context_name_list;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ASO_context_name_list ,  aSO_context_name_list)
 
- 		boost::asio::asn::value_holder<Syntactic_context_list >  p_context_definition_list;
+ 		boost::asn1::value_holder<Syntactic_context_list >  p_context_definition_list;
 		boost::shared_ptr<User_information > user_information;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(User_information ,  user_information)
 
@@ -961,11 +961,11 @@ namespace ACSE_1  {
 
 	struct  A_DT_apdu__impl{
 
-		boost::asio::asn::value_holder<ASO_qualifier >  aso_qualifier;
+		boost::asn1::value_holder<ASO_qualifier >  aso_qualifier;
 		boost::shared_ptr<ASOI_identifier > asoi_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ASOI_identifier ,  asoi_identifier)
 
- 		boost::asio::asn::value_holder<User_Data >  a_user_data;
+ 		boost::asn1::value_holder<User_Data >  a_user_data;
 
 		A_DT_apdu__impl()  : aso_qualifier() , a_user_data()  {}
 
@@ -983,11 +983,11 @@ namespace ACSE_1  {
 
 	struct  ABRT_apdu__impl{
 
-		boost::asio::asn::value_holder<ABRT_source >  abort_source;
+		boost::asn1::value_holder<ABRT_source >  abort_source;
 		boost::shared_ptr<ABRT_diagnostic > abort_diagnostic;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ABRT_diagnostic ,  abort_diagnostic)
 
- 		boost::asio::asn::value_holder<ASO_qualifier >  aso_qualifier;
+ 		boost::asn1::value_holder<ASO_qualifier >  aso_qualifier;
 		boost::shared_ptr<ASOI_identifier > asoi_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ASOI_identifier ,  asoi_identifier)
 
@@ -1016,7 +1016,7 @@ namespace ACSE_1  {
 		boost::shared_ptr<Release_response_reason > reason;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Release_response_reason ,  reason)
 
- 		boost::asio::asn::value_holder<ASO_qualifier >  aso_qualifier;
+ 		boost::asn1::value_holder<ASO_qualifier >  aso_qualifier;
 		boost::shared_ptr<ASOI_identifier > asoi_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ASOI_identifier ,  asoi_identifier)
 
@@ -1044,7 +1044,7 @@ namespace ACSE_1  {
 		boost::shared_ptr<Release_request_reason > reason;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Release_request_reason ,  reason)
 
- 		boost::asio::asn::value_holder<ASO_qualifier >  aso_qualifier;
+ 		boost::asn1::value_holder<ASO_qualifier >  aso_qualifier;
 		boost::shared_ptr<ASOI_identifier > asoi_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ASOI_identifier ,  asoi_identifier)
 
@@ -1076,11 +1076,11 @@ namespace ACSE_1  {
 		boost::shared_ptr<bitstring_type > protocol_version;   //  DEFAULT  {version1} 
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bitstring_type ,  protocol_version)
 
- 		boost::asio::asn::value_holder<ASO_context_name >  aSO_context_name;
-		boost::asio::asn::value_holder<Associate_result >  result;
-		boost::asio::asn::value_holder<Associate_source_diagnostic >  result_source_diagnostic;
-		boost::asio::asn::value_holder<AP_title >  responding_AP_title;
-		boost::asio::asn::value_holder<AE_qualifier >  responding_AE_qualifier;
+ 		boost::asn1::value_holder<ASO_context_name >  aSO_context_name;
+		boost::asn1::value_holder<Associate_result >  result;
+		boost::asn1::value_holder<Associate_source_diagnostic >  result_source_diagnostic;
+		boost::asn1::value_holder<AP_title >  responding_AP_title;
+		boost::asn1::value_holder<AE_qualifier >  responding_AE_qualifier;
 		boost::shared_ptr<AP_invocation_identifier > responding_AP_invocation_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(AP_invocation_identifier ,  responding_AP_invocation_identifier)
 
@@ -1150,17 +1150,17 @@ namespace ACSE_1  {
 		boost::shared_ptr<bitstring_type > protocol_version;   //  DEFAULT  {version1} 
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bitstring_type ,  protocol_version)
 
- 		boost::asio::asn::value_holder<ASO_context_name >  aSO_context_name;
-		boost::asio::asn::value_holder<AP_title >  called_AP_title;
-		boost::asio::asn::value_holder<AE_qualifier >  called_AE_qualifier;
+ 		boost::asn1::value_holder<ASO_context_name >  aSO_context_name;
+		boost::asn1::value_holder<AP_title >  called_AP_title;
+		boost::asn1::value_holder<AE_qualifier >  called_AE_qualifier;
 		boost::shared_ptr<AP_invocation_identifier > called_AP_invocation_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(AP_invocation_identifier ,  called_AP_invocation_identifier)
 
  		boost::shared_ptr<AE_invocation_identifier > called_AE_invocation_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(AE_invocation_identifier ,  called_AE_invocation_identifier)
 
- 		boost::asio::asn::value_holder<AP_title >  calling_AP_title;
-		boost::asio::asn::value_holder<AE_qualifier >  calling_AE_qualifier;
+ 		boost::asn1::value_holder<AP_title >  calling_AP_title;
+		boost::asn1::value_holder<AE_qualifier >  calling_AE_qualifier;
 		boost::shared_ptr<AP_invocation_identifier > calling_AP_invocation_identifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(AP_invocation_identifier ,  calling_AP_invocation_identifier)
 

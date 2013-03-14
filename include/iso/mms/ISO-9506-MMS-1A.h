@@ -9,39 +9,39 @@
  #endif
 
 
-const boost::array<boost::asio::asn::oidindx_type, 5 >  ISO_9506_MMS_1A_OID_ARR = { 2  ,  2  ,  9506  ,  2  ,  3 };
-const boost::asio::asn::oid_type ISO_9506_MMS_1A_OID = boost::asio::asn::oid_type(ISO_9506_MMS_1A_OID_ARR);
+const boost::array<boost::asn1::oidindx_type, 5 >  ISO_9506_MMS_1A_OID_ARR = { 2  ,  2  ,  9506  ,  2  ,  3 };
+const boost::asn1::oid_type ISO_9506_MMS_1A_OID = boost::asn1::oid_type(ISO_9506_MMS_1A_OID_ARR);
 
 
 namespace ISO_9506_MMS_1A  {
 
 
-	using  boost::asio::asn::null_type;
- 	using  boost::asio::asn::enumerated_type;
- 	using  boost::asio::asn::bitstring_type;
- 	using  boost::asio::asn::octetstring_type;
- 	using  boost::asio::asn::oid_type;
- 	using  boost::asio::asn::reloid_type;
- 	using  boost::asio::asn::utctime_type;
- 	using  boost::asio::asn::gentime_type;
- 	using  boost::asio::asn::ia5string_type;
- 	using  boost::asio::asn::printablestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::numericstring_type;
- 	using  boost::asio::asn::universalstring_type;
- 	using  boost::asio::asn::bmpstring_type;
- 	using  boost::asio::asn::utf8string_type;
- 	using  boost::asio::asn::generalstring_type;
- 	using  boost::asio::asn::graphicstring_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::videotexstring_type;
- 	using  boost::asio::asn::objectdescriptor_type;
- 	using  boost::asio::asn::external_type;
- 	using  boost::asio::asn::embeded_type;
- 	using  boost::asio::asn::characterstring_type;
- 	using  boost::asio::asn::any_type;
+	using  boost::asn1::null_type;
+ 	using  boost::asn1::enumerated_type;
+ 	using  boost::asn1::bitstring_type;
+ 	using  boost::asn1::octetstring_type;
+ 	using  boost::asn1::oid_type;
+ 	using  boost::asn1::reloid_type;
+ 	using  boost::asn1::utctime_type;
+ 	using  boost::asn1::gentime_type;
+ 	using  boost::asn1::ia5string_type;
+ 	using  boost::asn1::printablestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::numericstring_type;
+ 	using  boost::asn1::universalstring_type;
+ 	using  boost::asn1::bmpstring_type;
+ 	using  boost::asn1::utf8string_type;
+ 	using  boost::asn1::generalstring_type;
+ 	using  boost::asn1::graphicstring_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::videotexstring_type;
+ 	using  boost::asn1::objectdescriptor_type;
+ 	using  boost::asn1::external_type;
+ 	using  boost::asn1::embeded_type;
+ 	using  boost::asn1::characterstring_type;
+ 	using  boost::asn1::any_type;
 
 	//  type is  SEQUENCE
 	struct  ObtainFile_Request;
@@ -129,7 +129,7 @@ namespace ISO_9506_MMS_1A  {
 			boost::shared_ptr<Identifier > componentName;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  componentName)
 
- 			boost::asio::asn::value_holder<VariableSpecification >  variableSpecification;
+ 			boost::asn1::value_holder<VariableSpecification >  variableSpecification;
 			boost::shared_ptr<AlternateAccess > alternateAccess;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(AlternateAccess ,  alternateAccess)
 
@@ -165,8 +165,8 @@ namespace ISO_9506_MMS_1A  {
 	struct  GetScatteredAccessAttributes_Response{
 
 
-		boost::asio::asn::value_holder<bool >  mmsDeletable;
-		boost::asio::asn::value_holder<ScatteredAccessDescription >  scatteredAccessDescription;
+		boost::asn1::value_holder<bool >  mmsDeletable;
+		boost::asn1::value_holder<ScatteredAccessDescription >  scatteredAccessDescription;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -187,8 +187,8 @@ namespace ISO_9506_MMS_1A  {
 
 	struct  DefineScatteredAccess_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  scatteredAccessName;
-		boost::asio::asn::value_holder<ScatteredAccessDescription >  scatteredAccessDescription;
+		boost::asn1::value_holder<ObjectName >  scatteredAccessName;
+		boost::asn1::value_holder<ScatteredAccessDescription >  scatteredAccessDescription;
 
 		DefineScatteredAccess_Request()  : scatteredAccessName() , scatteredAccessDescription()  {}
 
@@ -206,7 +206,7 @@ namespace ISO_9506_MMS_1A  {
 	struct  FileAttributes{
 
 
-		boost::asio::asn::value_holder<Unsigned32 >  sizeOfFile;
+		boost::asn1::value_holder<Unsigned32 >  sizeOfFile;
 		boost::shared_ptr<gentime_type > lastModified;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(gentime_type ,  lastModified)
 
@@ -226,8 +226,8 @@ namespace ISO_9506_MMS_1A  {
 
 	struct  DirectoryEntry{
 
-		boost::asio::asn::value_holder<FileName >  fileName;
-		boost::asio::asn::value_holder<FileAttributes >  fileAttributes;
+		boost::asn1::value_holder<FileName >  fileName;
+		boost::asn1::value_holder<FileAttributes >  fileAttributes;
 
 		DirectoryEntry()  : fileName() , fileAttributes()  {}
 
@@ -248,7 +248,7 @@ namespace ISO_9506_MMS_1A  {
 
 
 
-		boost::asio::asn::value_holder<listOfDirectoryEntry_type >  listOfDirectoryEntry;
+		boost::asn1::value_holder<listOfDirectoryEntry_type >  listOfDirectoryEntry;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -294,8 +294,8 @@ namespace ISO_9506_MMS_1A  {
 
 	struct  FileRename_Request{
 
-		boost::asio::asn::value_holder<FileName >  currentFileName;
-		boost::asio::asn::value_holder<FileName >  newFileName;
+		boost::asn1::value_holder<FileName >  currentFileName;
+		boost::asn1::value_holder<FileName >  newFileName;
 
 		FileRename_Request()  : currentFileName() , newFileName()  {}
 
@@ -314,7 +314,7 @@ namespace ISO_9506_MMS_1A  {
 
 
 
-		boost::asio::asn::value_holder<octetstring_type >  fileData;
+		boost::asn1::value_holder<octetstring_type >  fileData;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -334,8 +334,8 @@ namespace ISO_9506_MMS_1A  {
 
 	struct  FileOpen_Response{
 
-		boost::asio::asn::value_holder<Integer32 >  frsmID;
-		boost::asio::asn::value_holder<FileAttributes >  fileAttributes;
+		boost::asn1::value_holder<Integer32 >  frsmID;
+		boost::asn1::value_holder<FileAttributes >  fileAttributes;
 
 		FileOpen_Response()  : frsmID() , fileAttributes()  {}
 
@@ -352,8 +352,8 @@ namespace ISO_9506_MMS_1A  {
 
 	struct  FileOpen_Request{
 
-		boost::asio::asn::value_holder<FileName >  fileName;
-		boost::asio::asn::value_holder<Unsigned32 >  initialPosition;
+		boost::asn1::value_holder<FileName >  fileName;
+		boost::asn1::value_holder<Unsigned32 >  initialPosition;
 
 		FileOpen_Request()  : fileName() , initialPosition()  {}
 
@@ -377,8 +377,8 @@ namespace ISO_9506_MMS_1A  {
 		boost::shared_ptr<ApplicationReference > sourceFileServer;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ApplicationReference ,  sourceFileServer)
 
- 		boost::asio::asn::value_holder<FileName >  sourceFile;
-		boost::asio::asn::value_holder<FileName >  destinationFile;
+ 		boost::asn1::value_holder<FileName >  sourceFile;
+		boost::asn1::value_holder<FileName >  destinationFile;
 
 		ObtainFile_Request()  : sourceFileServer() , sourceFile() , destinationFile()  {}
 

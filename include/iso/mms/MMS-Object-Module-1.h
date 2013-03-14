@@ -9,39 +9,39 @@
  #endif
 
 
-const boost::array<boost::asio::asn::oidindx_type, 5 >  MMS_Object_Module_1_OID_ARR = { 2  ,  2  ,  9506  ,  1  ,  2 };
-const boost::asio::asn::oid_type MMS_Object_Module_1_OID = boost::asio::asn::oid_type(MMS_Object_Module_1_OID_ARR);
+const boost::array<boost::asn1::oidindx_type, 5 >  MMS_Object_Module_1_OID_ARR = { 2  ,  2  ,  9506  ,  1  ,  2 };
+const boost::asn1::oid_type MMS_Object_Module_1_OID = boost::asn1::oid_type(MMS_Object_Module_1_OID_ARR);
 
 
 namespace MMS_Object_Module_1  {
 
 
-	using  boost::asio::asn::null_type;
- 	using  boost::asio::asn::enumerated_type;
- 	using  boost::asio::asn::bitstring_type;
- 	using  boost::asio::asn::octetstring_type;
- 	using  boost::asio::asn::oid_type;
- 	using  boost::asio::asn::reloid_type;
- 	using  boost::asio::asn::utctime_type;
- 	using  boost::asio::asn::gentime_type;
- 	using  boost::asio::asn::ia5string_type;
- 	using  boost::asio::asn::printablestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::numericstring_type;
- 	using  boost::asio::asn::universalstring_type;
- 	using  boost::asio::asn::bmpstring_type;
- 	using  boost::asio::asn::utf8string_type;
- 	using  boost::asio::asn::generalstring_type;
- 	using  boost::asio::asn::graphicstring_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::videotexstring_type;
- 	using  boost::asio::asn::objectdescriptor_type;
- 	using  boost::asio::asn::external_type;
- 	using  boost::asio::asn::embeded_type;
- 	using  boost::asio::asn::characterstring_type;
- 	using  boost::asio::asn::any_type;
+	using  boost::asn1::null_type;
+ 	using  boost::asn1::enumerated_type;
+ 	using  boost::asn1::bitstring_type;
+ 	using  boost::asn1::octetstring_type;
+ 	using  boost::asn1::oid_type;
+ 	using  boost::asn1::reloid_type;
+ 	using  boost::asn1::utctime_type;
+ 	using  boost::asn1::gentime_type;
+ 	using  boost::asn1::ia5string_type;
+ 	using  boost::asn1::printablestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::numericstring_type;
+ 	using  boost::asn1::universalstring_type;
+ 	using  boost::asn1::bmpstring_type;
+ 	using  boost::asn1::utf8string_type;
+ 	using  boost::asn1::generalstring_type;
+ 	using  boost::asn1::graphicstring_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::videotexstring_type;
+ 	using  boost::asn1::objectdescriptor_type;
+ 	using  boost::asn1::external_type;
+ 	using  boost::asn1::embeded_type;
+ 	using  boost::asn1::characterstring_type;
+ 	using  boost::asn1::any_type;
 
 	//  type is  SEQUENCE
 	struct  ModifierStep;
@@ -161,8 +161,8 @@ namespace MMS_Object_Module_1  {
 
 	struct  Journal_Variable{
 
-		boost::asio::asn::value_holder<MMS255String >  variableTag;
-		boost::asio::asn::value_holder<Data >  valueSpecification;
+		boost::asn1::value_holder<MMS255String >  variableTag;
+		boost::asn1::value_holder<Data >  valueSpecification;
 
 		Journal_Variable()  : variableTag() , valueSpecification()  {}
 
@@ -295,8 +295,8 @@ namespace MMS_Object_Module_1  {
 			boost::shared_ptr<bool > packed;   //  DEFAULT   
  			BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  packed)
 
- 			boost::asio::asn::value_holder<Unsigned32 >  numberOfElements;
-			boost::asio::asn::value_holder<TypeSpecification >  elementType;
+ 			boost::asn1::value_holder<Unsigned32 >  numberOfElements;
+			boost::asn1::value_holder<TypeSpecification >  elementType;
 
 			array_type()  : numberOfElements() , elementType()  {}
 
@@ -324,7 +324,7 @@ namespace MMS_Object_Module_1  {
 					boost::shared_ptr<Identifier > componentName;   //  OPTIONAL
 					BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  componentName)
 
- 					boost::asio::asn::value_holder<TypeSpecification >  componentType;
+ 					boost::asn1::value_holder<TypeSpecification >  componentType;
 
 					components_type_sequence_of()  : componentType()  {}
 
@@ -342,7 +342,7 @@ namespace MMS_Object_Module_1  {
 			boost::shared_ptr<bool > packed;   //  DEFAULT   
  			BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  packed)
 
- 			boost::asio::asn::value_holder<components_type >  components;
+ 			boost::asn1::value_holder<components_type >  components;
 
 			structure_type()  : components()  {}
 
@@ -361,8 +361,8 @@ namespace MMS_Object_Module_1  {
 
 		struct  floating_point_type{
 
-			boost::asio::asn::value_holder<Unsigned8 >  format_width;
-			boost::asio::asn::value_holder<Unsigned8 >  exponent_width;
+			boost::asn1::value_holder<Unsigned8 >  format_width;
+			boost::asn1::value_holder<Unsigned8 >  exponent_width;
 
 			floating_point_type()  : format_width() , exponent_width()  {}
 
@@ -880,8 +880,8 @@ namespace MMS_Object_Module_1  {
 	struct  ModifierStep{
 
 
-		boost::asio::asn::value_holder<int >  modifierID;
-		boost::asio::asn::value_holder<Modifier >  modifier;
+		boost::asn1::value_holder<int >  modifierID;
+		boost::asn1::value_holder<Modifier >  modifier;
 
 		ModifierStep()  : modifierID() , modifier()  {}
 

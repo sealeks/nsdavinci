@@ -9,39 +9,39 @@
  #endif
 
 
-const boost::array<boost::asio::asn::oidindx_type, 5 >  MMS_SCI_Module_1_OID_ARR = { 2  ,  2  ,  9506  ,  2  ,  2 };
-const boost::asio::asn::oid_type MMS_SCI_Module_1_OID = boost::asio::asn::oid_type(MMS_SCI_Module_1_OID_ARR);
+const boost::array<boost::asn1::oidindx_type, 5 >  MMS_SCI_Module_1_OID_ARR = { 2  ,  2  ,  9506  ,  2  ,  2 };
+const boost::asn1::oid_type MMS_SCI_Module_1_OID = boost::asn1::oid_type(MMS_SCI_Module_1_OID_ARR);
 
 
 namespace MMS_SCI_Module_1  {
 
 
-	using  boost::asio::asn::null_type;
- 	using  boost::asio::asn::enumerated_type;
- 	using  boost::asio::asn::bitstring_type;
- 	using  boost::asio::asn::octetstring_type;
- 	using  boost::asio::asn::oid_type;
- 	using  boost::asio::asn::reloid_type;
- 	using  boost::asio::asn::utctime_type;
- 	using  boost::asio::asn::gentime_type;
- 	using  boost::asio::asn::ia5string_type;
- 	using  boost::asio::asn::printablestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::numericstring_type;
- 	using  boost::asio::asn::universalstring_type;
- 	using  boost::asio::asn::bmpstring_type;
- 	using  boost::asio::asn::utf8string_type;
- 	using  boost::asio::asn::generalstring_type;
- 	using  boost::asio::asn::graphicstring_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::videotexstring_type;
- 	using  boost::asio::asn::objectdescriptor_type;
- 	using  boost::asio::asn::external_type;
- 	using  boost::asio::asn::embeded_type;
- 	using  boost::asio::asn::characterstring_type;
- 	using  boost::asio::asn::any_type;
+	using  boost::asn1::null_type;
+ 	using  boost::asn1::enumerated_type;
+ 	using  boost::asn1::bitstring_type;
+ 	using  boost::asn1::octetstring_type;
+ 	using  boost::asn1::oid_type;
+ 	using  boost::asn1::reloid_type;
+ 	using  boost::asn1::utctime_type;
+ 	using  boost::asn1::gentime_type;
+ 	using  boost::asn1::ia5string_type;
+ 	using  boost::asn1::printablestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::numericstring_type;
+ 	using  boost::asn1::universalstring_type;
+ 	using  boost::asn1::bmpstring_type;
+ 	using  boost::asn1::utf8string_type;
+ 	using  boost::asn1::generalstring_type;
+ 	using  boost::asn1::graphicstring_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::videotexstring_type;
+ 	using  boost::asn1::objectdescriptor_type;
+ 	using  boost::asn1::external_type;
+ 	using  boost::asn1::embeded_type;
+ 	using  boost::asn1::characterstring_type;
+ 	using  boost::asn1::any_type;
 
 	//  type is  SEQUENCE
 	struct  SCI_Information;
@@ -191,7 +191,7 @@ namespace MMS_SCI_Module_1  {
 
 	struct  FileManagementParameters{
 
-		boost::asio::asn::value_holder<MMSString >  fileName;
+		boost::asn1::value_holder<MMSString >  fileName;
 
 		FileManagementParameters()  : fileName()  {}
 
@@ -213,8 +213,8 @@ namespace MMS_SCI_Module_1  {
 		struct  additionalDetial_type{
 
 
-			boost::asio::asn::value_holder<int >  size;
-			boost::asio::asn::value_holder<MMSString >  syntax;
+			boost::asn1::value_holder<int >  size;
+			boost::asn1::value_holder<MMSString >  syntax;
 
 			additionalDetial_type()  : size() , syntax()  {}
 
@@ -227,8 +227,8 @@ namespace MMS_SCI_Module_1  {
 
 	//end==============================================================
 
-		boost::asio::asn::value_holder<MMSString >  additionalCode;
-		boost::asio::asn::value_holder<additionalDetial_type >  additionalDetial;
+		boost::asn1::value_holder<MMSString >  additionalCode;
+		boost::asn1::value_holder<additionalDetial_type >  additionalDetial;
 
 		ErrorParameters()  : additionalCode() , additionalDetial()  {}
 
@@ -246,7 +246,7 @@ namespace MMS_SCI_Module_1  {
 	struct  OperatorCommunicationParameters{
 
 
-		boost::asio::asn::value_holder<int >  input_time_out;
+		boost::asn1::value_holder<int >  input_time_out;
 
 		OperatorCommunicationParameters()  : input_time_out()  {}
 
@@ -262,7 +262,7 @@ namespace MMS_SCI_Module_1  {
 
 	struct  SemaphoreManagementParameters{
 
-		boost::asio::asn::value_holder<MMSString >  algorithm;
+		boost::asn1::value_holder<MMSString >  algorithm;
 
 		SemaphoreManagementParameters()  : algorithm()  {}
 
@@ -288,8 +288,8 @@ namespace MMS_SCI_Module_1  {
 
 
 
-			boost::asio::asn::value_holder<int >  total;
-			boost::asio::asn::value_holder<int >  exponent;
+			boost::asn1::value_holder<int >  total;
+			boost::asn1::value_holder<int >  exponent;
 
 			floating_point_type()  : total() , exponent()  {}
 
@@ -359,9 +359,9 @@ namespace MMS_SCI_Module_1  {
 
 
 
-		boost::asio::asn::value_holder<MMSString >  uninterruptibleAccess;
-		boost::asio::asn::value_holder<bool >  singleMode;
-		boost::asio::asn::value_holder<bool >  unnamedMode;
+		boost::asn1::value_holder<MMSString >  uninterruptibleAccess;
+		boost::asn1::value_holder<bool >  singleMode;
+		boost::asn1::value_holder<bool >  unnamedMode;
 
 		VariableAccessParameters()  : uninterruptibleAccess() , singleMode() , unnamedMode()  {}
 
@@ -384,11 +384,11 @@ namespace MMS_SCI_Module_1  {
 
 
 
-		boost::asio::asn::value_holder<int >  executionArgMaxSize;
-		boost::asio::asn::value_holder<MMSString >  executionArgParseRules;
-		boost::asio::asn::value_holder<executionArgSyntaxes_type >  executionArgSyntaxes;
-		boost::asio::asn::value_holder<MMSString >  programLoction;
-		boost::asio::asn::value_holder<bool >  stepMode;
+		boost::asn1::value_holder<int >  executionArgMaxSize;
+		boost::asn1::value_holder<MMSString >  executionArgParseRules;
+		boost::asn1::value_holder<executionArgSyntaxes_type >  executionArgSyntaxes;
+		boost::asn1::value_holder<MMSString >  programLoction;
+		boost::asn1::value_holder<bool >  stepMode;
 
 		ProgramInvocationManagementParameters()  : executionArgMaxSize() , executionArgParseRules() , executionArgSyntaxes() , programLoction() , stepMode()  {}
 
@@ -412,9 +412,9 @@ namespace MMS_SCI_Module_1  {
 
 
 
-		boost::asio::asn::value_holder<MMSString >  loadDataOctet;
-		boost::asio::asn::value_holder<loadDataSyntax_type >  loadDataSyntax;
-		boost::asio::asn::value_holder<int >  maxUploads;
+		boost::asn1::value_holder<MMSString >  loadDataOctet;
+		boost::asn1::value_holder<loadDataSyntax_type >  loadDataSyntax;
+		boost::asn1::value_holder<int >  maxUploads;
 
 		DomainManagementParameters()  : loadDataOctet() , loadDataSyntax() , maxUploads()  {}
 
@@ -432,8 +432,8 @@ namespace MMS_SCI_Module_1  {
 
 	struct  VMDSupportParameters{
 
-		boost::asio::asn::value_holder<MMSString >  localDetail;
-		boost::asio::asn::value_holder<MMSString >  extendedDerivation;
+		boost::asn1::value_holder<MMSString >  localDetail;
+		boost::asn1::value_holder<MMSString >  extendedDerivation;
 
 		VMDSupportParameters()  : localDetail() , extendedDerivation()  {}
 
@@ -457,8 +457,8 @@ namespace MMS_SCI_Module_1  {
 
 
 
-			boost::asio::asn::value_holder<bool >  timeOfDay;
-			boost::asio::asn::value_holder<bool >  timeSequence;
+			boost::asn1::value_holder<bool >  timeOfDay;
+			boost::asn1::value_holder<bool >  timeSequence;
 
 			supportForTime_type()  : timeOfDay() , timeSequence()  {}
 
@@ -472,9 +472,9 @@ namespace MMS_SCI_Module_1  {
 	//end==============================================================
 
 
-		boost::asio::asn::value_holder<MMSString >  localDetail;
-		boost::asio::asn::value_holder<supportForTime_type >  supportForTime;
-		boost::asio::asn::value_holder<int >  granularityOfTime;
+		boost::asn1::value_holder<MMSString >  localDetail;
+		boost::asn1::value_holder<supportForTime_type >  supportForTime;
+		boost::asn1::value_holder<int >  granularityOfTime;
 
 		GeneralManagementParameters()  : localDetail() , supportForTime() , granularityOfTime()  {}
 
@@ -493,23 +493,23 @@ namespace MMS_SCI_Module_1  {
 	struct  Service_and_Parameter_CBBs{
 
 
-		boost::asio::asn::value_holder<ServiceSupportOptions >  services_Client;
-		boost::asio::asn::value_holder<ServiceSupportOptions >  services_Server;
-		boost::asio::asn::value_holder<ParameterSupportOptions >  parameters;
-		boost::asio::asn::value_holder<int >  nest;
-		boost::asio::asn::value_holder<AdditionalSupportOptions >  extendedServices_Client;
-		boost::asio::asn::value_holder<AdditionalSupportOptions >  extendedServices_Server;
-		boost::asio::asn::value_holder<AdditionalCBBOptions >  extendedParameters;
-		boost::asio::asn::value_holder<GeneralManagementParameters >  generalManagement;
-		boost::asio::asn::value_holder<VMDSupportParameters >  vMDSupport;
-		boost::asio::asn::value_holder<DomainManagementParameters >  domainManagement;
-		boost::asio::asn::value_holder<ProgramInvocationManagementParameters >  programInvocation;
-		boost::asio::asn::value_holder<VariableAccessParameters >  variableAccess;
-		boost::asio::asn::value_holder<DataParameters >  dataParameters;
-		boost::asio::asn::value_holder<SemaphoreManagementParameters >  semaphoreManagement;
-		boost::asio::asn::value_holder<OperatorCommunicationParameters >  operatorCommunication;
-		boost::asio::asn::value_holder<ErrorParameters >  errors;
-		boost::asio::asn::value_holder<FileManagementParameters >  fileManagement;
+		boost::asn1::value_holder<ServiceSupportOptions >  services_Client;
+		boost::asn1::value_holder<ServiceSupportOptions >  services_Server;
+		boost::asn1::value_holder<ParameterSupportOptions >  parameters;
+		boost::asn1::value_holder<int >  nest;
+		boost::asn1::value_holder<AdditionalSupportOptions >  extendedServices_Client;
+		boost::asn1::value_holder<AdditionalSupportOptions >  extendedServices_Server;
+		boost::asn1::value_holder<AdditionalCBBOptions >  extendedParameters;
+		boost::asn1::value_holder<GeneralManagementParameters >  generalManagement;
+		boost::asn1::value_holder<VMDSupportParameters >  vMDSupport;
+		boost::asn1::value_holder<DomainManagementParameters >  domainManagement;
+		boost::asn1::value_holder<ProgramInvocationManagementParameters >  programInvocation;
+		boost::asn1::value_holder<VariableAccessParameters >  variableAccess;
+		boost::asn1::value_holder<DataParameters >  dataParameters;
+		boost::asn1::value_holder<SemaphoreManagementParameters >  semaphoreManagement;
+		boost::asn1::value_holder<OperatorCommunicationParameters >  operatorCommunication;
+		boost::asn1::value_holder<ErrorParameters >  errors;
+		boost::asn1::value_holder<FileManagementParameters >  fileManagement;
 
 		Service_and_Parameter_CBBs()  : services_Client() , services_Server() , parameters() , nest() , extendedServices_Client() , extendedServices_Server() , extendedParameters() , generalManagement() , vMDSupport() , domainManagement() , programInvocation() , variableAccess() , dataParameters() , semaphoreManagement() , operatorCommunication() , errors() , fileManagement()  {}
 
@@ -549,8 +549,8 @@ namespace MMS_SCI_Module_1  {
 
 		struct  eventTransitionRecord_type{
 
-			boost::asio::asn::value_holder<ObjectName >  name;
-			boost::asio::asn::value_holder<EC_State >  currentState;
+			boost::asn1::value_holder<ObjectName >  name;
+			boost::asn1::value_holder<EC_State >  currentState;
 
 			eventTransitionRecord_type()  : name() , currentState()  {}
 
@@ -568,8 +568,8 @@ namespace MMS_SCI_Module_1  {
 
 			struct  journalVariables_type_sequence_of{
 
-				boost::asio::asn::value_holder<MMS255String >  variableTag;
-				boost::asio::asn::value_holder<Data >  valueSpecification;
+				boost::asn1::value_holder<MMS255String >  variableTag;
+				boost::asn1::value_holder<Data >  valueSpecification;
 
 				journalVariables_type_sequence_of()  : variableTag() , valueSpecification()  {}
 
@@ -587,11 +587,11 @@ namespace MMS_SCI_Module_1  {
 		boost::shared_ptr<Journal_instance > journal;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Journal_instance ,  journal)
 
- 		boost::asio::asn::value_holder<octetstring_type >  entry;
-		boost::asio::asn::value_holder<ApplicationReference >  clientApplication;
-		boost::asio::asn::value_holder<TimeOfDay >  timeStamp;
-		boost::asio::asn::value_holder<int >  orderOfReceipt;
-		boost::asio::asn::value_holder<enumerated_type >  informationType;
+ 		boost::asn1::value_holder<octetstring_type >  entry;
+		boost::asn1::value_holder<ApplicationReference >  clientApplication;
+		boost::asn1::value_holder<TimeOfDay >  timeStamp;
+		boost::asn1::value_holder<int >  orderOfReceipt;
+		boost::asn1::value_holder<enumerated_type >  informationType;
 		boost::shared_ptr<MMS255String > textComment;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(MMS255String ,  textComment)
 
@@ -648,7 +648,7 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<entries_type >  entries;
+ 				boost::asn1::value_holder<entries_type >  entries;
 
 				details_type()  : accessControl() , entries()  {}
 
@@ -701,8 +701,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<ObjectName >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Journal_instance()  : name() , definition()  {}
 
@@ -749,9 +749,9 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<eventConditions_type >  eventConditions;
-				boost::asio::asn::value_holder<eventConditionLists_type >  eventConditionLists;
-				boost::asio::asn::value_holder<referencingEventConditionLists_type >  referencingEventConditionLists;
+ 				boost::asn1::value_holder<eventConditions_type >  eventConditions;
+				boost::asn1::value_holder<eventConditionLists_type >  eventConditionLists;
+				boost::asn1::value_holder<referencingEventConditionLists_type >  referencingEventConditionLists;
 
 				details_type()  : accessControl() , eventConditions() , eventConditionLists() , referencingEventConditionLists()  {}
 
@@ -806,8 +806,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<ObjectName >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Event_Condition_List_instance()  : name() , definition()  {}
 
@@ -958,12 +958,12 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<EE_Class >  eeClass;
+ 				boost::asn1::value_holder<EE_Class >  eeClass;
 				boost::shared_ptr<Event_Condition_instance > eventCondition;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Event_Condition_instance ,  eventCondition)
 
- 				boost::asio::asn::value_holder<Transitions >  ecTransitions;
-				boost::asio::asn::value_holder<remainingDelay_type >  remainingDelay;
+ 				boost::asn1::value_holder<Transitions >  ecTransitions;
+				boost::asn1::value_holder<remainingDelay_type >  remainingDelay;
 				boost::shared_ptr<Event_Action_instance > eventAction;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Event_Action_instance ,  eventAction)
 
@@ -976,7 +976,7 @@ namespace MMS_SCI_Module_1  {
  				boost::shared_ptr<AlarmAckRule > aaRule;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(AlarmAckRule ,  aaRule)
 
- 				boost::asio::asn::value_holder<displayEnhancement_type >  displayEnhancement;
+ 				boost::asn1::value_holder<displayEnhancement_type >  displayEnhancement;
 
 				details_type()  : accessControl() , eeClass() , eventCondition() , ecTransitions() , eventAction() , clientApplication() , displayEnhancement()  {}
 
@@ -1038,8 +1038,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<ObjectName >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Event_Enrollment_instance()  : name() , definition()  {}
 
@@ -1083,9 +1083,9 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<ConfirmedServiceRequest >  confirmedServiceRequest;
-				boost::asio::asn::value_holder<modifiers_type >  modifiers;
-				boost::asio::asn::value_holder<eventEnrollments_type >  eventEnrollments;
+ 				boost::asn1::value_holder<ConfirmedServiceRequest >  confirmedServiceRequest;
+				boost::asn1::value_holder<modifiers_type >  modifiers;
+				boost::asn1::value_holder<eventEnrollments_type >  eventEnrollments;
 
 				details_type()  : accessControl() , confirmedServiceRequest() , modifiers() , eventEnrollments()  {}
 
@@ -1140,8 +1140,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<ObjectName >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Event_Action_instance()  : name() , definition()  {}
 
@@ -1357,23 +1357,23 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<EC_Class >  ecClass;
-				boost::asio::asn::value_holder<EC_State >  ecState;
-				boost::asio::asn::value_holder<Priority >  priority;
-				boost::asio::asn::value_holder<Severity >  severity;
-				boost::asio::asn::value_holder<eventEnrollments_type >  eventEnrollments;
+ 				boost::asn1::value_holder<EC_Class >  ecClass;
+				boost::asn1::value_holder<EC_State >  ecState;
+				boost::asn1::value_holder<Priority >  priority;
+				boost::asn1::value_holder<Severity >  severity;
+				boost::asn1::value_holder<eventEnrollments_type >  eventEnrollments;
 				boost::shared_ptr<bool > enabled;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  enabled)
 
  				boost::shared_ptr<bool > alarmSummaryReports;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  alarmSummaryReports)
 
- 				boost::asio::asn::value_holder<monitoredVariable_type >  monitoredVariable;
+ 				boost::asn1::value_holder<monitoredVariable_type >  monitoredVariable;
 				boost::shared_ptr<int > evaluationInterval;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  evaluationInterval)
 
- 				boost::asio::asn::value_holder<displayEnhancement_type >  displayEnhancement;
-				boost::asio::asn::value_holder<group_Priority_Override_type >  group_Priority_Override;
+ 				boost::asn1::value_holder<displayEnhancement_type >  displayEnhancement;
+				boost::asn1::value_holder<group_Priority_Override_type >  group_Priority_Override;
 				boost::shared_ptr<referencingEventConditionLists_type > referencingEventConditionLists;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(referencingEventConditionLists_type ,  referencingEventConditionLists)
 
@@ -1441,8 +1441,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<ObjectName >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Event_Condition_instance()  : name() , definition()  {}
 
@@ -1481,7 +1481,7 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<enumerated_type >  stationType;
+ 				boost::asn1::value_holder<enumerated_type >  stationType;
 
 				details_type()  : accessControl() , stationType()  {}
 
@@ -1534,8 +1534,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<Identifier >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Operator_Station_instance()  : name() , definition()  {}
 
@@ -1578,7 +1578,7 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<enumerated_type >  classV;
+ 				boost::asn1::value_holder<enumerated_type >  classV;
 				boost::shared_ptr<int > numberOfTokens;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  numberOfTokens)
 
@@ -1643,8 +1643,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<Identifier >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Semaphore_instance()  : name() , definition()  {}
 
@@ -1689,9 +1689,9 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<request_type >  request;
-				boost::asio::asn::value_holder<response_type >  response;
-				boost::asio::asn::value_holder<bool >  linked;
+ 				boost::asn1::value_holder<request_type >  request;
+				boost::asn1::value_holder<response_type >  response;
+				boost::asn1::value_holder<bool >  linked;
 				boost::shared_ptr<Program_Invocation_instance > programInvocation;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Program_Invocation_instance ,  programInvocation)
 
@@ -1750,8 +1750,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<Identifier >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Data_Exchange_instance()  : name() , definition()  {}
 
@@ -1790,7 +1790,7 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<TypeDescription >  typeDescription;
+ 				boost::asn1::value_holder<TypeDescription >  typeDescription;
 				boost::shared_ptr<visiblestring_type > meaning;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(visiblestring_type ,  meaning)
 
@@ -1847,8 +1847,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<ObjectName >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Named_Type_instance()  : name() , definition()  {}
 
@@ -1915,7 +1915,7 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<listOfVariables_type >  listOfVariables;
+ 				boost::asn1::value_holder<listOfVariables_type >  listOfVariables;
 
 				details_type()  : accessControl() , listOfVariables()  {}
 
@@ -1968,8 +1968,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<ObjectName >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Named_Variable_List_instance()  : name() , definition()  {}
 
@@ -2008,8 +2008,8 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<TypeDescription >  typeDescription;
-				boost::asio::asn::value_holder<Address >  address;
+ 				boost::asn1::value_holder<TypeDescription >  typeDescription;
+				boost::asn1::value_holder<Address >  address;
 				boost::shared_ptr<visiblestring_type > meaning;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(visiblestring_type ,  meaning)
 
@@ -2067,8 +2067,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<ObjectName >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Named_Variable_instance()  : name() , definition()  {}
 
@@ -2085,11 +2085,11 @@ namespace MMS_SCI_Module_1  {
 
 	struct  Unnamed_Variable_instance{
 
-		boost::asio::asn::value_holder<Address >  address;
+		boost::asn1::value_holder<Address >  address;
 		boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 		boost::asio::asn::value_holder<TypeDescription >  typeDescription;
+ 		boost::asn1::value_holder<TypeDescription >  typeDescription;
 
 		Unnamed_Variable_instance()  : address() , accessControl() , typeDescription()  {}
 
@@ -2134,8 +2134,8 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<domains_type >  domains;
-				boost::asio::asn::value_holder<programInvocations_type >  programInvocations;
+ 				boost::asn1::value_holder<domains_type >  domains;
+				boost::asn1::value_holder<programInvocations_type >  programInvocations;
 
 				details_type()  : accessControl() , domains() , programInvocations()  {}
 
@@ -2189,8 +2189,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<Identifier >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Unit_Control_instance()  : name() , definition()  {}
 
@@ -2246,11 +2246,11 @@ namespace MMS_SCI_Module_1  {
 				typedef std::vector<Program_Invocation_instance >   controlled_Program_Invocations_type;
 
 
-				boost::asio::asn::value_holder<ProgramInvocationState >  programInvocationState;
-				boost::asio::asn::value_holder<domains_type >  domains;
-				boost::asio::asn::value_holder<accessControl_type >  accessControl;
-				boost::asio::asn::value_holder<bool >  reusable;
-				boost::asio::asn::value_holder<bool >  monitor;
+				boost::asn1::value_holder<ProgramInvocationState >  programInvocationState;
+				boost::asn1::value_holder<domains_type >  domains;
+				boost::asn1::value_holder<accessControl_type >  accessControl;
+				boost::asn1::value_holder<bool >  reusable;
+				boost::asn1::value_holder<bool >  monitor;
 				boost::shared_ptr<eventCondition_type > eventCondition;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(eventCondition_type ,  eventCondition)
 
@@ -2260,7 +2260,7 @@ namespace MMS_SCI_Module_1  {
  				boost::shared_ptr<eventEnrollment_type > eventEnrollment;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(eventEnrollment_type ,  eventEnrollment)
 
- 				boost::asio::asn::value_holder<MMSString >  executionArgument;
+ 				boost::asn1::value_holder<MMSString >  executionArgument;
 				boost::shared_ptr<Control_State > control;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Control_State ,  control)
 
@@ -2333,8 +2333,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<Identifier >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Program_Invocation_instance()  : name() , definition()  {}
 
@@ -2397,20 +2397,20 @@ namespace MMS_SCI_Module_1  {
 				typedef std::vector<Event_Condition_List_instance >   eventConditionLists_type;
 
 
-				boost::asio::asn::value_holder<capabilities_type >  capabilities;
-				boost::asio::asn::value_holder<DomainState >  state;
+				boost::asn1::value_holder<capabilities_type >  capabilities;
+				boost::asn1::value_holder<DomainState >  state;
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<bool >  sharable;
-				boost::asio::asn::value_holder<programInvocations_type >  programInvocations;
-				boost::asio::asn::value_holder<namedVariables_type >  namedVariables;
-				boost::asio::asn::value_holder<namedVariableLists_type >  namedVariableLists;
-				boost::asio::asn::value_holder<namedTypes_type >  namedTypes;
-				boost::asio::asn::value_holder<eventConditions_type >  eventConditions;
-				boost::asio::asn::value_holder<eventActions_type >  eventActions;
-				boost::asio::asn::value_holder<eventEnrollments_type >  eventEnrollments;
-				boost::asio::asn::value_holder<eventConditionLists_type >  eventConditionLists;
+ 				boost::asn1::value_holder<bool >  sharable;
+				boost::asn1::value_holder<programInvocations_type >  programInvocations;
+				boost::asn1::value_holder<namedVariables_type >  namedVariables;
+				boost::asn1::value_holder<namedVariableLists_type >  namedVariableLists;
+				boost::asn1::value_holder<namedTypes_type >  namedTypes;
+				boost::asn1::value_holder<eventConditions_type >  eventConditions;
+				boost::asn1::value_holder<eventActions_type >  eventActions;
+				boost::asn1::value_holder<eventEnrollments_type >  eventEnrollments;
+				boost::asn1::value_holder<eventConditionLists_type >  eventConditionLists;
 
 				details_type()  : capabilities() , state() , accessControl() , sharable() , programInvocations() , namedVariables() , namedVariableLists() , namedTypes() , eventConditions() , eventActions() , eventEnrollments() , eventConditionLists()  {}
 
@@ -2473,8 +2473,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<Identifier >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Domain_instance()  : name() , definition()  {}
 
@@ -2561,28 +2561,28 @@ namespace MMS_SCI_Module_1  {
 				boost::shared_ptr<Access_Control_List_instance > accessControl;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(Access_Control_List_instance ,  accessControl)
 
- 				boost::asio::asn::value_holder<AccessCondition >  readAccessCondition;
-				boost::asio::asn::value_holder<AccessCondition >  storeAccessCondition;
-				boost::asio::asn::value_holder<AccessCondition >  writeAccessCondition;
-				boost::asio::asn::value_holder<AccessCondition >  loadAccessCondition;
-				boost::asio::asn::value_holder<AccessCondition >  executeAccessCondition;
-				boost::asio::asn::value_holder<AccessCondition >  deleteAccessCondition;
-				boost::asio::asn::value_holder<AccessCondition >  editAccessCondition;
-				boost::asio::asn::value_holder<accessControlLists_type >  accessControlLists;
-				boost::asio::asn::value_holder<domains_type >  domains;
-				boost::asio::asn::value_holder<programInvocations_type >  programInvocations;
-				boost::asio::asn::value_holder<unitControls_type >  unitControls;
-				boost::asio::asn::value_holder<unnamedVariables_type >  unnamedVariables;
-				boost::asio::asn::value_holder<namedVariables_type >  namedVariables;
-				boost::asio::asn::value_holder<namedVariableLists_type >  namedVariableLists;
-				boost::asio::asn::value_holder<namedTypes_type >  namedTypes;
-				boost::asio::asn::value_holder<dataExchanges_type >  dataExchanges;
-				boost::asio::asn::value_holder<semaphores_type >  semaphores;
-				boost::asio::asn::value_holder<operatorStations_type >  operatorStations;
-				boost::asio::asn::value_holder<eventConditions_type >  eventConditions;
-				boost::asio::asn::value_holder<eventActions_type >  eventActions;
-				boost::asio::asn::value_holder<eventEnrollments_type >  eventEnrollments;
-				boost::asio::asn::value_holder<journals_type >  journals;
+ 				boost::asn1::value_holder<AccessCondition >  readAccessCondition;
+				boost::asn1::value_holder<AccessCondition >  storeAccessCondition;
+				boost::asn1::value_holder<AccessCondition >  writeAccessCondition;
+				boost::asn1::value_holder<AccessCondition >  loadAccessCondition;
+				boost::asn1::value_holder<AccessCondition >  executeAccessCondition;
+				boost::asn1::value_holder<AccessCondition >  deleteAccessCondition;
+				boost::asn1::value_holder<AccessCondition >  editAccessCondition;
+				boost::asn1::value_holder<accessControlLists_type >  accessControlLists;
+				boost::asn1::value_holder<domains_type >  domains;
+				boost::asn1::value_holder<programInvocations_type >  programInvocations;
+				boost::asn1::value_holder<unitControls_type >  unitControls;
+				boost::asn1::value_holder<unnamedVariables_type >  unnamedVariables;
+				boost::asn1::value_holder<namedVariables_type >  namedVariables;
+				boost::asn1::value_holder<namedVariableLists_type >  namedVariableLists;
+				boost::asn1::value_holder<namedTypes_type >  namedTypes;
+				boost::asn1::value_holder<dataExchanges_type >  dataExchanges;
+				boost::asn1::value_holder<semaphores_type >  semaphores;
+				boost::asn1::value_holder<operatorStations_type >  operatorStations;
+				boost::asn1::value_holder<eventConditions_type >  eventConditions;
+				boost::asn1::value_holder<eventActions_type >  eventActions;
+				boost::asn1::value_holder<eventEnrollments_type >  eventEnrollments;
+				boost::asn1::value_holder<journals_type >  journals;
 				boost::shared_ptr<eventConditionLists_type > eventConditionLists;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(eventConditionLists_type ,  eventConditionLists)
 
@@ -2661,8 +2661,8 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  name;
-		boost::asio::asn::value_holder<definition_type >  definition;
+		boost::asn1::value_holder<Identifier >  name;
+		boost::asn1::value_holder<definition_type >  definition;
 
 		Access_Control_List_instance()  : name() , definition()  {}
 
@@ -2786,33 +2786,33 @@ namespace MMS_SCI_Module_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ApplicationReference >  executiveFunction;
-		boost::asio::asn::value_holder<MMSString >  vendorName;
-		boost::asio::asn::value_holder<MMSString >  modelName;
-		boost::asio::asn::value_holder<MMSString >  revision;
-		boost::asio::asn::value_holder<oid_type >  abstractSyntaxes;
-		boost::asio::asn::value_holder<Access_Control_List_instance >  accessControl;
-		boost::asio::asn::value_holder<LogicalStatus >  logicalStatus;
-		boost::asio::asn::value_holder<capabilities_type >  capabilities;
-		boost::asio::asn::value_holder<PhysicalStatus >  physicalStatus;
-		boost::asio::asn::value_holder<bitstring_type >  local_detail;
-		boost::asio::asn::value_holder<accessControlLists_type >  accessControlLists;
-		boost::asio::asn::value_holder<domains_type >  domains;
-		boost::asio::asn::value_holder<programInvocations_type >  programInvocations;
-		boost::asio::asn::value_holder<unitControls_type >  unitControls;
-		boost::asio::asn::value_holder<unnamedVariables_type >  unnamedVariables;
-		boost::asio::asn::value_holder<namedVariables_type >  namedVariables;
-		boost::asio::asn::value_holder<namedVariableLists_type >  namedVariableLists;
-		boost::asio::asn::value_holder<namedTypes_type >  namedTypes;
-		boost::asio::asn::value_holder<dataExchanges_type >  dataExchanges;
-		boost::asio::asn::value_holder<semaphores_type >  semaphores;
-		boost::asio::asn::value_holder<operatorStations_type >  operatorStations;
-		boost::asio::asn::value_holder<eventConditions_type >  eventConditions;
-		boost::asio::asn::value_holder<eventActions_type >  eventActions;
-		boost::asio::asn::value_holder<eventEnrollments_type >  eventEnrollments;
-		boost::asio::asn::value_holder<eventConditionLists_type >  eventConditionLists;
-		boost::asio::asn::value_holder<journals_type >  journals;
-		boost::asio::asn::value_holder<selected_Program_Invocation_type >  selected_Program_Invocation;
+		boost::asn1::value_holder<ApplicationReference >  executiveFunction;
+		boost::asn1::value_holder<MMSString >  vendorName;
+		boost::asn1::value_holder<MMSString >  modelName;
+		boost::asn1::value_holder<MMSString >  revision;
+		boost::asn1::value_holder<oid_type >  abstractSyntaxes;
+		boost::asn1::value_holder<Access_Control_List_instance >  accessControl;
+		boost::asn1::value_holder<LogicalStatus >  logicalStatus;
+		boost::asn1::value_holder<capabilities_type >  capabilities;
+		boost::asn1::value_holder<PhysicalStatus >  physicalStatus;
+		boost::asn1::value_holder<bitstring_type >  local_detail;
+		boost::asn1::value_holder<accessControlLists_type >  accessControlLists;
+		boost::asn1::value_holder<domains_type >  domains;
+		boost::asn1::value_holder<programInvocations_type >  programInvocations;
+		boost::asn1::value_holder<unitControls_type >  unitControls;
+		boost::asn1::value_holder<unnamedVariables_type >  unnamedVariables;
+		boost::asn1::value_holder<namedVariables_type >  namedVariables;
+		boost::asn1::value_holder<namedVariableLists_type >  namedVariableLists;
+		boost::asn1::value_holder<namedTypes_type >  namedTypes;
+		boost::asn1::value_holder<dataExchanges_type >  dataExchanges;
+		boost::asn1::value_holder<semaphores_type >  semaphores;
+		boost::asn1::value_holder<operatorStations_type >  operatorStations;
+		boost::asn1::value_holder<eventConditions_type >  eventConditions;
+		boost::asn1::value_holder<eventActions_type >  eventActions;
+		boost::asn1::value_holder<eventEnrollments_type >  eventEnrollments;
+		boost::asn1::value_holder<eventConditionLists_type >  eventConditionLists;
+		boost::asn1::value_holder<journals_type >  journals;
+		boost::asn1::value_holder<selected_Program_Invocation_type >  selected_Program_Invocation;
 
 		VMD_File()  : executiveFunction() , vendorName() , modelName() , revision() , abstractSyntaxes() , accessControl() , logicalStatus() , capabilities() , physicalStatus() , local_detail() , accessControlLists() , domains() , programInvocations() , unitControls() , unnamedVariables() , namedVariables() , namedVariableLists() , namedTypes() , dataExchanges() , semaphores() , operatorStations() , eventConditions() , eventActions() , eventEnrollments() , eventConditionLists() , journals() , selected_Program_Invocation()  {}
 
@@ -2855,8 +2855,8 @@ namespace MMS_SCI_Module_1  {
 
 	struct  SCI_Information{
 
-		boost::asio::asn::value_holder<VMD_File >  partOne;
-		boost::asio::asn::value_holder<Service_and_Parameter_CBBs >  partTwo;
+		boost::asn1::value_holder<VMD_File >  partOne;
+		boost::asn1::value_holder<Service_and_Parameter_CBBs >  partTwo;
 
 		SCI_Information()  : partOne() , partTwo()  {}
 
