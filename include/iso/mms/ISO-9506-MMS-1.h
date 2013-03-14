@@ -9,39 +9,39 @@
  #endif
 
 
-const boost::array<boost::asio::asn::oidindx_type, 5 >  ISO_9506_MMS_1_OID_ARR = { 2  ,  2  ,  9506  ,  2  ,  1 };
-const boost::asio::asn::oid_type ISO_9506_MMS_1_OID = boost::asio::asn::oid_type(ISO_9506_MMS_1_OID_ARR);
+const boost::array<boost::asn1::oidindx_type, 5 >  ISO_9506_MMS_1_OID_ARR = { 2  ,  2  ,  9506  ,  2  ,  1 };
+const boost::asn1::oid_type ISO_9506_MMS_1_OID = boost::asn1::oid_type(ISO_9506_MMS_1_OID_ARR);
 
 
 namespace ISO_9506_MMS_1  {
 
 
-	using  boost::asio::asn::null_type;
- 	using  boost::asio::asn::enumerated_type;
- 	using  boost::asio::asn::bitstring_type;
- 	using  boost::asio::asn::octetstring_type;
- 	using  boost::asio::asn::oid_type;
- 	using  boost::asio::asn::reloid_type;
- 	using  boost::asio::asn::utctime_type;
- 	using  boost::asio::asn::gentime_type;
- 	using  boost::asio::asn::ia5string_type;
- 	using  boost::asio::asn::printablestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::visiblestring_type;
- 	using  boost::asio::asn::numericstring_type;
- 	using  boost::asio::asn::universalstring_type;
- 	using  boost::asio::asn::bmpstring_type;
- 	using  boost::asio::asn::utf8string_type;
- 	using  boost::asio::asn::generalstring_type;
- 	using  boost::asio::asn::graphicstring_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::t61string_type;
- 	using  boost::asio::asn::videotexstring_type;
- 	using  boost::asio::asn::objectdescriptor_type;
- 	using  boost::asio::asn::external_type;
- 	using  boost::asio::asn::embeded_type;
- 	using  boost::asio::asn::characterstring_type;
- 	using  boost::asio::asn::any_type;
+	using  boost::asn1::null_type;
+ 	using  boost::asn1::enumerated_type;
+ 	using  boost::asn1::bitstring_type;
+ 	using  boost::asn1::octetstring_type;
+ 	using  boost::asn1::oid_type;
+ 	using  boost::asn1::reloid_type;
+ 	using  boost::asn1::utctime_type;
+ 	using  boost::asn1::gentime_type;
+ 	using  boost::asn1::ia5string_type;
+ 	using  boost::asn1::printablestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::visiblestring_type;
+ 	using  boost::asn1::numericstring_type;
+ 	using  boost::asn1::universalstring_type;
+ 	using  boost::asn1::bmpstring_type;
+ 	using  boost::asn1::utf8string_type;
+ 	using  boost::asn1::generalstring_type;
+ 	using  boost::asn1::graphicstring_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::t61string_type;
+ 	using  boost::asn1::videotexstring_type;
+ 	using  boost::asn1::objectdescriptor_type;
+ 	using  boost::asn1::external_type;
+ 	using  boost::asn1::embeded_type;
+ 	using  boost::asn1::characterstring_type;
+ 	using  boost::asn1::any_type;
 
 	//  type is  CHOICE
 	struct  MMSpdu;
@@ -886,8 +886,8 @@ namespace ISO_9506_MMS_1  {
 
 			struct  named_type{
 
-				boost::asio::asn::value_holder<Identifier >  componentName;
-				boost::asio::asn::value_holder<AlternateAccessSelection >  access;
+				boost::asn1::value_holder<Identifier >  componentName;
+				boost::asn1::value_holder<AlternateAccessSelection >  access;
 
 				named_type()  : componentName() , access()  {}
 
@@ -1176,8 +1176,8 @@ namespace ISO_9506_MMS_1  {
 
 				struct  event_type{
 
-					boost::asio::asn::value_holder<ObjectName >  eventConditionName;
-					boost::asio::asn::value_holder<EC_State >  currentState;
+					boost::asn1::value_holder<ObjectName >  eventConditionName;
+					boost::asn1::value_holder<EC_State >  currentState;
 
 					event_type()  : eventConditionName() , currentState()  {}
 
@@ -1251,8 +1251,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<TimeOfDay >  occurrenceTime;
-		boost::asio::asn::value_holder<entryForm_type >  entryForm;
+		boost::asn1::value_holder<TimeOfDay >  occurrenceTime;
+		boost::asn1::value_holder<entryForm_type >  entryForm;
 
 		EntryContent()  : occurrenceTime() , entryForm()  {}
 
@@ -1269,7 +1269,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  DeleteJournal_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  journalName;
+		boost::asn1::value_holder<ObjectName >  journalName;
 
 		DeleteJournal_Request()  : journalName()  {}
 
@@ -1285,7 +1285,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  CreateJournal_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  journalName;
+		boost::asn1::value_holder<ObjectName >  journalName;
 
 		CreateJournal_Request()  : journalName()  {}
 
@@ -1302,8 +1302,8 @@ namespace ISO_9506_MMS_1  {
 	struct  ReportJournalStatus_Response{
 
 
-		boost::asio::asn::value_holder<Unsigned32 >  currentEntries;
-		boost::asio::asn::value_holder<bool >  mmsDeletable;
+		boost::asn1::value_holder<Unsigned32 >  currentEntries;
+		boost::asn1::value_holder<bool >  mmsDeletable;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -1330,7 +1330,7 @@ namespace ISO_9506_MMS_1  {
 		struct  limitSpecification_type{
 
 
-			boost::asio::asn::value_holder<TimeOfDay >  limitingTime;
+			boost::asn1::value_holder<TimeOfDay >  limitingTime;
 			boost::shared_ptr<octetstring_type > limitingEntry;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(octetstring_type ,  limitingEntry)
 
@@ -1346,7 +1346,7 @@ namespace ISO_9506_MMS_1  {
 
 	//end==============================================================
 
-		boost::asio::asn::value_holder<ObjectName >  journalName;
+		boost::asn1::value_holder<ObjectName >  journalName;
 		boost::shared_ptr<limitSpecification_type > limitSpecification;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(limitSpecification_type ,  limitSpecification)
 
@@ -1369,8 +1369,8 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<EntryContent >   listOfJournalEntry_type;
 
 
-		boost::asio::asn::value_holder<ObjectName >  journalName;
-		boost::asio::asn::value_holder<listOfJournalEntry_type >  listOfJournalEntry;
+		boost::asn1::value_holder<ObjectName >  journalName;
+		boost::asn1::value_holder<listOfJournalEntry_type >  listOfJournalEntry;
 
 		WriteJournal_Request()  : journalName() , listOfJournalEntry()  {}
 
@@ -1388,9 +1388,9 @@ namespace ISO_9506_MMS_1  {
 	struct  JournalEntry{
 
 
-		boost::asio::asn::value_holder<octetstring_type >  entryIdentifier;
-		boost::asio::asn::value_holder<ApplicationReference >  originatingApplication;
-		boost::asio::asn::value_holder<EntryContent >  entryContent;
+		boost::asn1::value_holder<octetstring_type >  entryIdentifier;
+		boost::asn1::value_holder<ApplicationReference >  originatingApplication;
+		boost::asn1::value_holder<EntryContent >  entryContent;
 
 		JournalEntry()  : entryIdentifier() , originatingApplication() , entryContent()  {}
 
@@ -1412,7 +1412,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfJournalEntry_type >  listOfJournalEntry;
+		boost::asn1::value_holder<listOfJournalEntry_type >  listOfJournalEntry;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -1546,8 +1546,8 @@ namespace ISO_9506_MMS_1  {
 		struct  entryToStartAfter_type{
 
 
-			boost::asio::asn::value_holder<TimeOfDay >  timeSpecification;
-			boost::asio::asn::value_holder<octetstring_type >  entrySpecification;
+			boost::asn1::value_holder<TimeOfDay >  timeSpecification;
+			boost::asn1::value_holder<octetstring_type >  entrySpecification;
 
 			entryToStartAfter_type()  : timeSpecification() , entrySpecification()  {}
 
@@ -1560,9 +1560,9 @@ namespace ISO_9506_MMS_1  {
 
 	//end==============================================================
 
-		boost::asio::asn::value_holder<ObjectName >  journalName;
-		boost::asio::asn::value_holder<rangeStartSpecification_type >  rangeStartSpecification;
-		boost::asio::asn::value_holder<rangeStopSpecification_type >  rangeStopSpecification;
+		boost::asn1::value_holder<ObjectName >  journalName;
+		boost::asn1::value_holder<rangeStartSpecification_type >  rangeStartSpecification;
+		boost::asn1::value_holder<rangeStopSpecification_type >  rangeStopSpecification;
 		boost::shared_ptr<listOfVariables_type > listOfVariables;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfVariables_type ,  listOfVariables)
 
@@ -1643,9 +1643,9 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionListName;
-		boost::asio::asn::value_holder<bool >  enabled;
-		boost::asio::asn::value_holder<priorityChange_type >  priorityChange;
+		boost::asn1::value_holder<ObjectName >  eventConditionListName;
+		boost::asn1::value_holder<bool >  enabled;
+		boost::asn1::value_holder<priorityChange_type >  priorityChange;
 
 		AlterEventConditionListMonitoring_Request()  : eventConditionListName() , enabled()  {}
 
@@ -1664,14 +1664,14 @@ namespace ISO_9506_MMS_1  {
 	struct  EventConditionStatus{
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionName;
-		boost::asio::asn::value_holder<EC_State >  currentState;
-		boost::asio::asn::value_holder<Unsigned32 >  numberOfEventEnrollments;
+		boost::asn1::value_holder<ObjectName >  eventConditionName;
+		boost::asn1::value_holder<EC_State >  currentState;
+		boost::asn1::value_holder<Unsigned32 >  numberOfEventEnrollments;
 		boost::shared_ptr<bool > enabled;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  enabled)
 
- 		boost::asio::asn::value_holder<EventTime >  timeOfLastTransitionToActive;
-		boost::asio::asn::value_holder<EventTime >  timeOfLastTransitionToIdle;
+ 		boost::asn1::value_holder<EventTime >  timeOfLastTransitionToActive;
+		boost::asn1::value_holder<EventTime >  timeOfLastTransitionToIdle;
 
 		EventConditionStatus()  : eventConditionName() , currentState() , numberOfEventEnrollments() , timeOfLastTransitionToActive() , timeOfLastTransitionToIdle()  {}
 
@@ -1696,7 +1696,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfEventConditionStatus_type >  listOfEventConditionStatus;
+		boost::asn1::value_holder<listOfEventConditionStatus_type >  listOfEventConditionStatus;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -1716,7 +1716,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  ReportEventConditionListStatus_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionListName;
+		boost::asn1::value_holder<ObjectName >  eventConditionListName;
 		boost::shared_ptr<Identifier > continueAfter;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  continueAfter)
 
@@ -1742,7 +1742,7 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<ObjectName >   listOfEventConditionListName_type;
 
 
-		boost::asio::asn::value_holder<listOfEventConditionName_type >  listOfEventConditionName;
+		boost::asn1::value_holder<listOfEventConditionName_type >  listOfEventConditionName;
 		boost::shared_ptr<listOfEventConditionListName_type > listOfEventConditionListName;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfEventConditionListName_type ,  listOfEventConditionListName)
 
@@ -1819,9 +1819,9 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<ObjectName >   listOfEventConditionListName_type;
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionListName;
-		boost::asio::asn::value_holder<listOfEventConditionName_type >  listOfEventConditionName;
-		boost::asio::asn::value_holder<listOfEventConditionListName_type >  listOfEventConditionListName;
+		boost::asn1::value_holder<ObjectName >  eventConditionListName;
+		boost::asn1::value_holder<listOfEventConditionName_type >  listOfEventConditionName;
+		boost::asn1::value_holder<listOfEventConditionListName_type >  listOfEventConditionListName;
 
 		RemoveEventConditionListReference_Request()  : eventConditionListName() , listOfEventConditionName() , listOfEventConditionListName()  {}
 
@@ -1845,8 +1845,8 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<ObjectName >   listOfEventConditionListName_type;
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionListName;
-		boost::asio::asn::value_holder<listOfEventConditionName_type >  listOfEventConditionName;
+		boost::asn1::value_holder<ObjectName >  eventConditionListName;
+		boost::asn1::value_holder<listOfEventConditionName_type >  listOfEventConditionName;
 		boost::shared_ptr<listOfEventConditionListName_type > listOfEventConditionListName;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfEventConditionListName_type ,  listOfEventConditionListName)
 
@@ -1873,8 +1873,8 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<ObjectName >   listOfEventConditionListName_type;
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionListName;
-		boost::asio::asn::value_holder<listOfEventConditionName_type >  listOfEventConditionName;
+		boost::asn1::value_holder<ObjectName >  eventConditionListName;
+		boost::asn1::value_holder<listOfEventConditionName_type >  listOfEventConditionName;
 		boost::shared_ptr<listOfEventConditionListName_type > listOfEventConditionListName;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfEventConditionListName_type ,  listOfEventConditionListName)
 
@@ -1965,7 +1965,7 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<changeDisplay_type >  changeDisplay;
+		boost::asn1::value_holder<changeDisplay_type >  changeDisplay;
 
 		CS_AlterEventEnrollment_Request()  {}
 
@@ -2034,8 +2034,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<currentState_type >  currentState;
-		boost::asio::asn::value_holder<EventTime >  transitionTime;
+		boost::asn1::value_holder<currentState_type >  currentState;
+		boost::asn1::value_holder<EventTime >  transitionTime;
 
 		AlterEventEnrollment_Response()  : currentState() , transitionTime()  {}
 
@@ -2052,7 +2052,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  AlterEventEnrollment_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  eventEnrollmentName;
+		boost::asn1::value_holder<ObjectName >  eventEnrollmentName;
 		boost::shared_ptr<Transitions > eventConditionTransitions;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Transitions ,  eventConditionTransitions)
 
@@ -2077,15 +2077,15 @@ namespace ISO_9506_MMS_1  {
 	struct  ReportEventEnrollmentStatus_Response{
 
 
-		boost::asio::asn::value_holder<Transitions >  eventConditionTransitions;
+		boost::asn1::value_holder<Transitions >  eventConditionTransitions;
 		boost::shared_ptr<bool > notificationLost;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  notificationLost)
 
- 		boost::asio::asn::value_holder<EE_Duration >  duration;
+ 		boost::asn1::value_holder<EE_Duration >  duration;
 		boost::shared_ptr<AlarmAckRule > alarmAcknowledgmentRule;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(AlarmAckRule ,  alarmAcknowledgmentRule)
 
- 		boost::asio::asn::value_holder<EE_State >  currentState;
+ 		boost::asn1::value_holder<EE_State >  currentState;
 
 		ReportEventEnrollmentStatus_Response()  : eventConditionTransitions() , duration() , currentState()  {}
 
@@ -2271,16 +2271,16 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventEnrollmentName;
-		boost::asio::asn::value_holder<eventConditionName_type >  eventConditionName;
-		boost::asio::asn::value_holder<eventActionName_type >  eventActionName;
+		boost::asn1::value_holder<ObjectName >  eventEnrollmentName;
+		boost::asn1::value_holder<eventConditionName_type >  eventConditionName;
+		boost::asn1::value_holder<eventActionName_type >  eventActionName;
 		boost::shared_ptr<ApplicationReference > clientApplication;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ApplicationReference ,  clientApplication)
 
  		boost::shared_ptr<bool > mmsDeletable;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  mmsDeletable)
 
- 		boost::asio::asn::value_holder<EE_Class >  enrollmentClass;
+ 		boost::asn1::value_holder<EE_Class >  enrollmentClass;
 		boost::shared_ptr<EE_Duration > duration;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(EE_Duration ,  duration)
 
@@ -2290,7 +2290,7 @@ namespace ISO_9506_MMS_1  {
  		boost::shared_ptr<Unsigned32 > remainingAcceptableDelay;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Unsigned32 ,  remainingAcceptableDelay)
 
- 		boost::asio::asn::value_holder<displayEnhancement_type >  displayEnhancement;
+ 		boost::asn1::value_holder<displayEnhancement_type >  displayEnhancement;
 
 		EEAttributes()  : eventEnrollmentName() , eventConditionName() , clientApplication() , enrollmentClass() , duration() , displayEnhancement()  {}
 
@@ -2319,7 +2319,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfEEAttributes_type >  listOfEEAttributes;
+		boost::asn1::value_holder<listOfEEAttributes_type >  listOfEEAttributes;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -2358,9 +2358,9 @@ namespace ISO_9506_MMS_1  {
  		boost::shared_ptr<ApplicationReference > clientApplication;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ApplicationReference ,  clientApplication)
 
- 		boost::asio::asn::value_holder<ObjectName >  eventConditionName;
-		boost::asio::asn::value_holder<ObjectName >  eventActionName;
-		boost::asio::asn::value_holder<ObjectName >  continueAfter;
+ 		boost::asn1::value_holder<ObjectName >  eventConditionName;
+		boost::asn1::value_holder<ObjectName >  eventActionName;
+		boost::asn1::value_holder<ObjectName >  continueAfter;
 
 		GetEventEnrollmentAttributes_Request()  : clientApplication() , eventConditionName() , eventActionName() , continueAfter()  {}
 
@@ -2497,11 +2497,11 @@ namespace ISO_9506_MMS_1  {
 
 	struct  DefineEventEnrollment_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  eventEnrollmentName;
-		boost::asio::asn::value_holder<ObjectName >  eventConditionName;
-		boost::asio::asn::value_holder<Transitions >  eventConditionTransitions;
-		boost::asio::asn::value_holder<AlarmAckRule >  alarmAcknowledgmentRule;
-		boost::asio::asn::value_holder<ObjectName >  eventActionName;
+		boost::asn1::value_holder<ObjectName >  eventEnrollmentName;
+		boost::asn1::value_holder<ObjectName >  eventConditionName;
+		boost::asn1::value_holder<Transitions >  eventConditionTransitions;
+		boost::asn1::value_holder<AlarmAckRule >  alarmAcknowledgmentRule;
+		boost::asn1::value_holder<ObjectName >  eventActionName;
 		boost::shared_ptr<ApplicationReference > clientApplication;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ApplicationReference ,  clientApplication)
 
@@ -2532,9 +2532,9 @@ namespace ISO_9506_MMS_1  {
 		boost::shared_ptr<bool > mmsDeletable;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  mmsDeletable)
 
- 		boost::asio::asn::value_holder<listOfModifier_type >  listOfModifier;
-		boost::asio::asn::value_holder<ConfirmedServiceRequest >  confirmedServiceRequest;
-		boost::asio::asn::value_holder<Request_Detail >  cs_extension;
+ 		boost::asn1::value_holder<listOfModifier_type >  listOfModifier;
+		boost::asn1::value_holder<ConfirmedServiceRequest >  confirmedServiceRequest;
+		boost::asn1::value_holder<Request_Detail >  cs_extension;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -2624,12 +2624,12 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Modifier >   listOfModifier_type;
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventActionName;
+		boost::asn1::value_holder<ObjectName >  eventActionName;
 		boost::shared_ptr<listOfModifier_type > listOfModifier;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfModifier_type ,  listOfModifier)
 
- 		boost::asio::asn::value_holder<ConfirmedServiceRequest >  confirmedServiceRequest;
-		boost::asio::asn::value_holder<Request_Detail >  cs_extension;
+ 		boost::asn1::value_holder<ConfirmedServiceRequest >  confirmedServiceRequest;
+		boost::asn1::value_holder<Request_Detail >  cs_extension;
 
 		DefineEventAction_Request()  : eventActionName() , confirmedServiceRequest() , cs_extension()  {}
 
@@ -2707,7 +2707,7 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<changeDisplay_type >  changeDisplay;
+		boost::asn1::value_holder<changeDisplay_type >  changeDisplay;
 
 		CS_AlterEventConditionMonitoring_Request()  {}
 
@@ -2725,7 +2725,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionName;
+		boost::asn1::value_holder<ObjectName >  eventConditionName;
 		boost::shared_ptr<bool > enabled;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  enabled)
 
@@ -2758,13 +2758,13 @@ namespace ISO_9506_MMS_1  {
 	struct  ReportEventConditionStatus_Response{
 
 
-		boost::asio::asn::value_holder<EC_State >  currentState;
-		boost::asio::asn::value_holder<Unsigned32 >  numberOfEventEnrollments;
+		boost::asn1::value_holder<EC_State >  currentState;
+		boost::asn1::value_holder<Unsigned32 >  numberOfEventEnrollments;
 		boost::shared_ptr<bool > enabled;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  enabled)
 
- 		boost::asio::asn::value_holder<EventTime >  timeOfLastTransitionToActive;
-		boost::asio::asn::value_holder<EventTime >  timeOfLastTransitionToIdle;
+ 		boost::asn1::value_holder<EventTime >  timeOfLastTransitionToActive;
+		boost::asn1::value_holder<EventTime >  timeOfLastTransitionToIdle;
 
 		ReportEventConditionStatus_Response()  : currentState() , numberOfEventEnrollments() , timeOfLastTransitionToActive() , timeOfLastTransitionToIdle()  {}
 
@@ -2899,11 +2899,11 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<groupPriorityOverride_type >  groupPriorityOverride;
+		boost::asn1::value_holder<groupPriorityOverride_type >  groupPriorityOverride;
 		boost::shared_ptr<listOfReferencingECL_type > listOfReferencingECL;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfReferencingECL_type ,  listOfReferencingECL)
 
- 		boost::asio::asn::value_holder<displayEnhancement_type >  displayEnhancement;
+ 		boost::asn1::value_holder<displayEnhancement_type >  displayEnhancement;
 
 		CS_GetEventConditionAttributes_Response()  : displayEnhancement()  {}
 
@@ -2979,7 +2979,7 @@ namespace ISO_9506_MMS_1  {
 		boost::shared_ptr<bool > mmsDeletable;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  mmsDeletable)
 
- 		boost::asio::asn::value_holder<EC_Class >  classV;
+ 		boost::asn1::value_holder<EC_Class >  classV;
 		boost::shared_ptr<Priority > priority;   //  DEFAULT  int  64  
  		BOOST_ASN_VALUE_FUNC_DECLARATE(Priority ,  priority)
 
@@ -2989,7 +2989,7 @@ namespace ISO_9506_MMS_1  {
  		boost::shared_ptr<bool > alarmSummaryReports;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  alarmSummaryReports)
 
- 		boost::asio::asn::value_holder<monitoredVariable_type >  monitoredVariable;
+ 		boost::asn1::value_holder<monitoredVariable_type >  monitoredVariable;
 		boost::shared_ptr<Unsigned32 > evaluationInterval;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Unsigned32 ,  evaluationInterval)
 
@@ -3141,8 +3141,8 @@ namespace ISO_9506_MMS_1  {
 	struct  DefineEventCondition_Request{
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionName;
-		boost::asio::asn::value_holder<EC_Class >  classV;
+		boost::asn1::value_holder<ObjectName >  eventConditionName;
+		boost::asn1::value_holder<EC_Class >  classV;
 		boost::shared_ptr<Priority > priority;   //  DEFAULT  int  64  
  		BOOST_ASN_VALUE_FUNC_DECLARATE(Priority ,  priority)
 
@@ -3152,7 +3152,7 @@ namespace ISO_9506_MMS_1  {
  		boost::shared_ptr<bool > alarmSummaryReports;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  alarmSummaryReports)
 
- 		boost::asio::asn::value_holder<VariableSpecification >  monitoredVariable;
+ 		boost::asn1::value_holder<VariableSpecification >  monitoredVariable;
 		boost::shared_ptr<Unsigned32 > evaluationInterval;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Unsigned32 ,  evaluationInterval)
 
@@ -3177,9 +3177,9 @@ namespace ISO_9506_MMS_1  {
 
 	struct  AttachToEventCondition{
 
-		boost::asio::asn::value_holder<ObjectName >  eventEnrollmentName;
-		boost::asio::asn::value_holder<ObjectName >  eventConditionName;
-		boost::asio::asn::value_holder<Transitions >  causingTransitions;
+		boost::asn1::value_holder<ObjectName >  eventEnrollmentName;
+		boost::asn1::value_holder<ObjectName >  eventConditionName;
+		boost::asn1::value_holder<Transitions >  causingTransitions;
 		boost::shared_ptr<Unsigned32 > acceptableDelay;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Unsigned32 ,  acceptableDelay)
 
@@ -3202,24 +3202,24 @@ namespace ISO_9506_MMS_1  {
 	struct  AlarmEnrollmentSummary{
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventEnrollmentName;
+		boost::asn1::value_holder<ObjectName >  eventEnrollmentName;
 		boost::shared_ptr<ApplicationReference > clientApplication;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ApplicationReference ,  clientApplication)
 
- 		boost::asio::asn::value_holder<Unsigned8 >  severity;
-		boost::asio::asn::value_holder<EC_State >  currentState;
-		boost::asio::asn::value_holder<EN_Additional_Detail >  displayEnhancement;
+ 		boost::asn1::value_holder<Unsigned8 >  severity;
+		boost::asn1::value_holder<EC_State >  currentState;
+		boost::asn1::value_holder<EN_Additional_Detail >  displayEnhancement;
 		boost::shared_ptr<bool > notificationLost;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  notificationLost)
 
- 		boost::asio::asn::value_holder<AlarmAckRule >  alarmAcknowledgmentRule;
+ 		boost::asn1::value_holder<AlarmAckRule >  alarmAcknowledgmentRule;
 		boost::shared_ptr<EE_State > enrollmentState;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(EE_State ,  enrollmentState)
 
- 		boost::asio::asn::value_holder<EventTime >  timeOfLastTransitionToActive;
-		boost::asio::asn::value_holder<EventTime >  timeActiveAcknowledged;
-		boost::asio::asn::value_holder<EventTime >  timeOfLastTransitionToIdle;
-		boost::asio::asn::value_holder<EventTime >  timeIdleAcknowledged;
+ 		boost::asn1::value_holder<EventTime >  timeOfLastTransitionToActive;
+		boost::asn1::value_holder<EventTime >  timeActiveAcknowledged;
+		boost::asn1::value_holder<EventTime >  timeOfLastTransitionToIdle;
+		boost::asn1::value_holder<EventTime >  timeIdleAcknowledged;
 
 		AlarmEnrollmentSummary()  : eventEnrollmentName() , clientApplication() , severity() , currentState() , displayEnhancement() , alarmAcknowledgmentRule() , timeOfLastTransitionToActive() , timeActiveAcknowledged() , timeOfLastTransitionToIdle() , timeIdleAcknowledged()  {}
 
@@ -3250,7 +3250,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfAlarmEnrollmentSummary_type >  listOfAlarmEnrollmentSummary;
+		boost::asn1::value_holder<listOfAlarmEnrollmentSummary_type >  listOfAlarmEnrollmentSummary;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -3283,8 +3283,8 @@ namespace ISO_9506_MMS_1  {
 
 		struct  severityFilter_type{
 
-			boost::asio::asn::value_holder<Unsigned8 >  mostSevere;
-			boost::asio::asn::value_holder<Unsigned8 >  leastSevere;
+			boost::asn1::value_holder<Unsigned8 >  mostSevere;
+			boost::asn1::value_holder<Unsigned8 >  leastSevere;
 
 			severityFilter_type()  : mostSevere() , leastSevere()  {}
 
@@ -3309,7 +3309,7 @@ namespace ISO_9506_MMS_1  {
  		boost::shared_ptr<severityFilter_type > severityFilter;   //  DEFAULT  { mostSevere 0, leastSevere 127 } 
  		BOOST_ASN_VALUE_FUNC_DECLARATE(severityFilter_type ,  severityFilter)
 
- 		boost::asio::asn::value_holder<ObjectName >  continueAfter;
+ 		boost::asn1::value_holder<ObjectName >  continueAfter;
 
 		GetAlarmEnrollmentSummary_Request()  : acknowledgementFilter() , continueAfter()  {}
 
@@ -3394,13 +3394,13 @@ namespace ISO_9506_MMS_1  {
 		static const int unacknowledgedState_both = 3;
 
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionName;
-		boost::asio::asn::value_holder<Unsigned8 >  severity;
-		boost::asio::asn::value_holder<EC_State >  currentState;
-		boost::asio::asn::value_holder<int >  unacknowledgedState;
-		boost::asio::asn::value_holder<EN_Additional_Detail >  displayEnhancement;
-		boost::asio::asn::value_holder<EventTime >  timeOfLastTransitionToActive;
-		boost::asio::asn::value_holder<EventTime >  timeOfLastTransitionToIdle;
+		boost::asn1::value_holder<ObjectName >  eventConditionName;
+		boost::asn1::value_holder<Unsigned8 >  severity;
+		boost::asn1::value_holder<EC_State >  currentState;
+		boost::asn1::value_holder<int >  unacknowledgedState;
+		boost::asn1::value_holder<EN_Additional_Detail >  displayEnhancement;
+		boost::asn1::value_holder<EventTime >  timeOfLastTransitionToActive;
+		boost::asn1::value_holder<EventTime >  timeOfLastTransitionToIdle;
 
 		AlarmSummary()  : eventConditionName() , severity() , currentState() , unacknowledgedState() , displayEnhancement() , timeOfLastTransitionToActive() , timeOfLastTransitionToIdle()  {}
 
@@ -3426,7 +3426,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfAlarmSummary_type >  listOfAlarmSummary;
+		boost::asn1::value_holder<listOfAlarmSummary_type >  listOfAlarmSummary;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -3459,8 +3459,8 @@ namespace ISO_9506_MMS_1  {
 
 		struct  severityFilter_type{
 
-			boost::asio::asn::value_holder<Unsigned8 >  mostSevere;
-			boost::asio::asn::value_holder<Unsigned8 >  leastSevere;
+			boost::asn1::value_holder<Unsigned8 >  mostSevere;
+			boost::asn1::value_holder<Unsigned8 >  leastSevere;
 
 			severityFilter_type()  : mostSevere() , leastSevere()  {}
 
@@ -3485,7 +3485,7 @@ namespace ISO_9506_MMS_1  {
  		boost::shared_ptr<severityFilter_type > severityFilter;   //  DEFAULT  { mostSevere 0, leastSevere 127 } 
  		BOOST_ASN_VALUE_FUNC_DECLARATE(severityFilter_type ,  severityFilter)
 
- 		boost::asio::asn::value_holder<ObjectName >  continueAfter;
+ 		boost::asn1::value_holder<ObjectName >  continueAfter;
 
 		GetAlarmSummary_Request()  : acknowledgementFilter() , continueAfter()  {}
 
@@ -3505,9 +3505,9 @@ namespace ISO_9506_MMS_1  {
 
 	struct  AcknowledgeEventNotification_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  eventEnrollmentName;
-		boost::asio::asn::value_holder<EC_State >  acknowledgedState;
-		boost::asio::asn::value_holder<EventTime >  timeOfAcknowledgedTransition;
+		boost::asn1::value_holder<ObjectName >  eventEnrollmentName;
+		boost::asn1::value_holder<EC_State >  acknowledgedState;
+		boost::asn1::value_holder<EventTime >  timeOfAcknowledgedTransition;
 
 		AcknowledgeEventNotification_Request()  : eventEnrollmentName() , acknowledgedState() , timeOfAcknowledgedTransition()  {}
 
@@ -3606,8 +3606,8 @@ namespace ISO_9506_MMS_1  {
 
 				struct  success_type{
 
-					boost::asio::asn::value_holder<ConfirmedServiceResponse >  confirmedServiceResponse;
-					boost::asio::asn::value_holder<Response_Detail >  cs_Response_Detail;
+					boost::asn1::value_holder<ConfirmedServiceResponse >  confirmedServiceResponse;
+					boost::asn1::value_holder<Response_Detail >  cs_Response_Detail;
 
 					success_type()  : confirmedServiceResponse() , cs_Response_Detail()  {}
 
@@ -3628,7 +3628,7 @@ namespace ISO_9506_MMS_1  {
 					boost::shared_ptr<Unsigned32 > modifierPosition;   //  OPTIONAL
 					BOOST_ASN_VALUE_FUNC_DECLARATE(Unsigned32 ,  modifierPosition)
 
- 					boost::asio::asn::value_holder<ServiceError >  serviceError;
+ 					boost::asn1::value_holder<ServiceError >  serviceError;
 
 					failure_type()  : serviceError()  {}
 
@@ -3681,8 +3681,8 @@ namespace ISO_9506_MMS_1  {
 			};
 
 
-			boost::asio::asn::value_holder<ObjectName >  eventActionName;
-			boost::asio::asn::value_holder<successOrFailure_type >  successOrFailure;
+			boost::asn1::value_holder<ObjectName >  eventActionName;
+			boost::asn1::value_holder<successOrFailure_type >  successOrFailure;
 
 			actionResult_type()  : eventActionName() , successOrFailure()  {}
 
@@ -3695,13 +3695,13 @@ namespace ISO_9506_MMS_1  {
 
 	//end==============================================================
 
-		boost::asio::asn::value_holder<ObjectName >  eventEnrollmentName;
-		boost::asio::asn::value_holder<ObjectName >  eventConditionName;
-		boost::asio::asn::value_holder<Severity >  severity;
+		boost::asn1::value_holder<ObjectName >  eventEnrollmentName;
+		boost::asn1::value_holder<ObjectName >  eventConditionName;
+		boost::asn1::value_holder<Severity >  severity;
 		boost::shared_ptr<EC_State > currentState;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(EC_State ,  currentState)
 
- 		boost::asio::asn::value_holder<EventTime >  transitionTime;
+ 		boost::asn1::value_holder<EventTime >  transitionTime;
 		boost::shared_ptr<bool > notificationLost;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  notificationLost)
 
@@ -3733,7 +3733,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  TriggerEvent_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  eventConditionName;
+		boost::asn1::value_holder<ObjectName >  eventConditionName;
 		boost::shared_ptr<Priority > priority;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Priority ,  priority)
 
@@ -3756,8 +3756,8 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<MMSString >   listOfOutputData_type;
 
 
-		boost::asio::asn::value_holder<Identifier >  operatorStationName;
-		boost::asio::asn::value_holder<listOfOutputData_type >  listOfOutputData;
+		boost::asn1::value_holder<Identifier >  operatorStationName;
+		boost::asn1::value_holder<listOfOutputData_type >  listOfOutputData;
 
 		Output_Request()  : operatorStationName() , listOfOutputData()  {}
 
@@ -3778,7 +3778,7 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<MMSString >   listOfPromptData_type;
 
 
-		boost::asio::asn::value_holder<Identifier >  operatorStationName;
+		boost::asn1::value_holder<Identifier >  operatorStationName;
 		boost::shared_ptr<bool > echo;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  echo)
 
@@ -3808,7 +3808,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<ObjectName >  semaphoreName;
+		boost::asn1::value_holder<ObjectName >  semaphoreName;
 		boost::shared_ptr<Identifier > namedToken;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  namedToken)
 
@@ -3856,9 +3856,9 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<octetstring_type >  entryID;
-		boost::asio::asn::value_holder<int >  entryClass;
-		boost::asio::asn::value_holder<ApplicationReference >  applicationReference;
+		boost::asn1::value_holder<octetstring_type >  entryID;
+		boost::asn1::value_holder<int >  entryClass;
+		boost::asn1::value_holder<ApplicationReference >  applicationReference;
 		boost::shared_ptr<Identifier > namedToken;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  namedToken)
 
@@ -3900,7 +3900,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfSemaphoreEntry_type >  listOfSemaphoreEntry;
+		boost::asn1::value_holder<listOfSemaphoreEntry_type >  listOfSemaphoreEntry;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -3927,8 +3927,8 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<ObjectName >  semaphoreName;
-		boost::asio::asn::value_holder<int >  state;
+		boost::asn1::value_holder<ObjectName >  semaphoreName;
+		boost::asn1::value_holder<int >  state;
 		boost::shared_ptr<octetstring_type > entryIDToStartAfter;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(octetstring_type ,  entryIDToStartAfter)
 
@@ -4008,7 +4008,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfNamedTokens_type >  listOfNamedTokens;
+		boost::asn1::value_holder<listOfNamedTokens_type >  listOfNamedTokens;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -4028,7 +4028,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  ReportPoolSemaphoreStatus_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  semaphoreName;
+		boost::asn1::value_holder<ObjectName >  semaphoreName;
 		boost::shared_ptr<Identifier > nameToStartAfter;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  nameToStartAfter)
 
@@ -4054,11 +4054,11 @@ namespace ISO_9506_MMS_1  {
 		static const int classV_pool = 1;
 
 
-		boost::asio::asn::value_holder<bool >  mmsDeletable;
-		boost::asio::asn::value_holder<int >  classV;
-		boost::asio::asn::value_holder<Unsigned16 >  numberOfTokens;
-		boost::asio::asn::value_holder<Unsigned16 >  numberOfOwnedTokens;
-		boost::asio::asn::value_holder<Unsigned16 >  numberOfHungTokens;
+		boost::asn1::value_holder<bool >  mmsDeletable;
+		boost::asn1::value_holder<int >  classV;
+		boost::asn1::value_holder<Unsigned16 >  numberOfTokens;
+		boost::asn1::value_holder<Unsigned16 >  numberOfOwnedTokens;
+		boost::asn1::value_holder<Unsigned16 >  numberOfHungTokens;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -4082,8 +4082,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  DefineSemaphore_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  semaphoreName;
-		boost::asio::asn::value_holder<Unsigned16 >  numberOfTokens;
+		boost::asn1::value_holder<ObjectName >  semaphoreName;
+		boost::asn1::value_holder<Unsigned16 >  numberOfTokens;
 
 		DefineSemaphore_Request()  : semaphoreName() , numberOfTokens()  {}
 
@@ -4100,7 +4100,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  RelinquishControl_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  semaphoreName;
+		boost::asn1::value_holder<ObjectName >  semaphoreName;
 		boost::shared_ptr<Identifier > namedToken;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  namedToken)
 
@@ -4174,7 +4174,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<ObjectName >  semaphoreName;
+		boost::asn1::value_holder<ObjectName >  semaphoreName;
 		boost::shared_ptr<Identifier > namedToken;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  namedToken)
 
@@ -4225,9 +4225,9 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<TypeDescription >   listOfResponseTypeDescriptions_type;
 
 
-		boost::asio::asn::value_holder<bool >  inUse;
-		boost::asio::asn::value_holder<listOfRequestTypeDescriptions_type >  listOfRequestTypeDescriptions;
-		boost::asio::asn::value_holder<listOfResponseTypeDescriptions_type >  listOfResponseTypeDescriptions;
+		boost::asn1::value_holder<bool >  inUse;
+		boost::asn1::value_holder<listOfRequestTypeDescriptions_type >  listOfRequestTypeDescriptions;
+		boost::asn1::value_holder<listOfResponseTypeDescriptions_type >  listOfResponseTypeDescriptions;
 		boost::shared_ptr<Identifier > programInvocation;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  programInvocation)
 
@@ -4256,7 +4256,7 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Data >   listOfResponseData_type;
 
 
-		boost::asio::asn::value_holder<listOfResponseData_type >  listOfResponseData;
+		boost::asn1::value_holder<listOfResponseData_type >  listOfResponseData;
 
 		ExchangeData_Response()  : listOfResponseData()  {}
 
@@ -4275,8 +4275,8 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Data >   listOfRequestData_type;
 
 
-		boost::asio::asn::value_holder<ObjectName >  dataExchangeName;
-		boost::asio::asn::value_holder<listOfRequestData_type >  listOfRequestData;
+		boost::asn1::value_holder<ObjectName >  dataExchangeName;
+		boost::asn1::value_holder<listOfRequestData_type >  listOfRequestData;
 
 		ExchangeData_Request()  : dataExchangeName() , listOfRequestData()  {}
 
@@ -4293,8 +4293,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  DeleteNamedType_Response{
 
-		boost::asio::asn::value_holder<Unsigned32 >  numberMatched;
-		boost::asio::asn::value_holder<Unsigned32 >  numberDeleted;
+		boost::asn1::value_holder<Unsigned32 >  numberMatched;
+		boost::asn1::value_holder<Unsigned32 >  numberDeleted;
 
 		DeleteNamedType_Response()  : numberMatched() , numberDeleted()  {}
 
@@ -4349,8 +4349,8 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<bool >  mmsDeletable;
-		boost::asio::asn::value_holder<TypeSpecification >  typeSpecification;
+		boost::asn1::value_holder<bool >  mmsDeletable;
+		boost::asn1::value_holder<TypeSpecification >  typeSpecification;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -4375,8 +4375,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  DefineNamedType_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  typeName;
-		boost::asio::asn::value_holder<TypeSpecification >  typeSpecification;
+		boost::asn1::value_holder<ObjectName >  typeName;
+		boost::asn1::value_holder<TypeSpecification >  typeSpecification;
 
 		DefineNamedType_Request()  : typeName() , typeSpecification()  {}
 
@@ -4393,8 +4393,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  DeleteNamedVariableList_Response{
 
-		boost::asio::asn::value_holder<Unsigned32 >  numberMatched;
-		boost::asio::asn::value_holder<Unsigned32 >  numberDeleted;
+		boost::asn1::value_holder<Unsigned32 >  numberMatched;
+		boost::asn1::value_holder<Unsigned32 >  numberDeleted;
 
 		DeleteNamedVariableList_Response()  : numberMatched() , numberDeleted()  {}
 
@@ -4453,7 +4453,7 @@ namespace ISO_9506_MMS_1  {
 
 			struct  listOfVariable_type_sequence_of{
 
-				boost::asio::asn::value_holder<VariableSpecification >  variableSpecification;
+				boost::asn1::value_holder<VariableSpecification >  variableSpecification;
 				boost::shared_ptr<AlternateAccess > alternateAccess;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(AlternateAccess ,  alternateAccess)
 
@@ -4471,8 +4471,8 @@ namespace ISO_9506_MMS_1  {
 	typedef std::vector<listOfVariable_type_sequence_of >   listOfVariable_type;
 
 
-		boost::asio::asn::value_holder<bool >  mmsDeletable;
-		boost::asio::asn::value_holder<listOfVariable_type >  listOfVariable;
+		boost::asn1::value_holder<bool >  mmsDeletable;
+		boost::asn1::value_holder<listOfVariable_type >  listOfVariable;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -4498,7 +4498,7 @@ namespace ISO_9506_MMS_1  {
 
 			struct  listOfVariable_type_sequence_of{
 
-				boost::asio::asn::value_holder<VariableSpecification >  variableSpecification;
+				boost::asn1::value_holder<VariableSpecification >  variableSpecification;
 				boost::shared_ptr<AlternateAccess > alternateAccess;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(AlternateAccess ,  alternateAccess)
 
@@ -4516,8 +4516,8 @@ namespace ISO_9506_MMS_1  {
 	typedef std::vector<listOfVariable_type_sequence_of >   listOfVariable_type;
 
 
-		boost::asio::asn::value_holder<ObjectName >  variableListName;
-		boost::asio::asn::value_holder<listOfVariable_type >  listOfVariable;
+		boost::asn1::value_holder<ObjectName >  variableListName;
+		boost::asn1::value_holder<listOfVariable_type >  listOfVariable;
 
 		DefineNamedVariableList_Request()  : variableListName() , listOfVariable()  {}
 
@@ -4534,8 +4534,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  DeleteVariableAccess_Response{
 
-		boost::asio::asn::value_holder<Unsigned32 >  numberMatched;
-		boost::asio::asn::value_holder<Unsigned32 >  numberDeleted;
+		boost::asn1::value_holder<Unsigned32 >  numberMatched;
+		boost::asn1::value_holder<Unsigned32 >  numberDeleted;
 
 		DeleteVariableAccess_Response()  : numberMatched() , numberDeleted()  {}
 
@@ -4588,9 +4588,9 @@ namespace ISO_9506_MMS_1  {
 
 	struct  DefineNamedVariable_Request{
 
-		boost::asio::asn::value_holder<ObjectName >  variableName;
-		boost::asio::asn::value_holder<Address >  address;
-		boost::asio::asn::value_holder<TypeSpecification >  typeSpecification;
+		boost::asn1::value_holder<ObjectName >  variableName;
+		boost::asn1::value_holder<Address >  address;
+		boost::asn1::value_holder<TypeSpecification >  typeSpecification;
 
 		DefineNamedVariable_Request()  : variableName() , address() , typeSpecification()  {}
 
@@ -4610,9 +4610,9 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<bool >  mmsDeletable;
+		boost::asn1::value_holder<bool >  mmsDeletable;
 		boost::shared_ptr<Address >  address;
-		boost::asio::asn::value_holder<TypeDescription >  typeDescription;
+		boost::asn1::value_holder<TypeDescription >  typeDescription;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -4692,8 +4692,8 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<AccessResult >   listOfAccessResult_type;
 
 
-		boost::asio::asn::value_holder<VariableAccessSpecification >  variableAccessSpecification;
-		boost::asio::asn::value_holder<listOfAccessResult_type >  listOfAccessResult;
+		boost::asn1::value_holder<VariableAccessSpecification >  variableAccessSpecification;
+		boost::asn1::value_holder<listOfAccessResult_type >  listOfAccessResult;
 
 		InformationReport()  : variableAccessSpecification() , listOfAccessResult()  {}
 
@@ -4713,8 +4713,8 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Data >   listOfData_type;
 
 
-		boost::asio::asn::value_holder<VariableAccessSpecification >  variableAccessSpecification;
-		boost::asio::asn::value_holder<listOfData_type >  listOfData;
+		boost::asn1::value_holder<VariableAccessSpecification >  variableAccessSpecification;
+		boost::asn1::value_holder<listOfData_type >  listOfData;
 
 		Write_Request()  : variableAccessSpecification() , listOfData()  {}
 
@@ -4735,7 +4735,7 @@ namespace ISO_9506_MMS_1  {
 
 
 		boost::shared_ptr<VariableAccessSpecification >  variableAccessSpecification;
-		boost::asio::asn::value_holder<listOfAccessResult_type >  listOfAccessResult;
+		boost::asn1::value_holder<listOfAccessResult_type >  listOfAccessResult;
 
 		Read_Response()  : variableAccessSpecification() , listOfAccessResult()  {}
 
@@ -4756,7 +4756,7 @@ namespace ISO_9506_MMS_1  {
 		boost::shared_ptr<bool > specificationWithResult;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  specificationWithResult)
 
- 		boost::asio::asn::value_holder<VariableAccessSpecification >  variableAccessSpecification;
+ 		boost::asn1::value_holder<VariableAccessSpecification >  variableAccessSpecification;
 
 		Read_Request()  : variableAccessSpecification()  {}
 
@@ -4788,8 +4788,8 @@ namespace ISO_9506_MMS_1  {
 
 		struct  variableDescription_type{
 
-			boost::asio::asn::value_holder<Address >  address;
-			boost::asio::asn::value_holder<TypeSpecification >  typeSpecification;
+			boost::asn1::value_holder<Address >  address;
+			boost::asn1::value_holder<TypeSpecification >  typeSpecification;
 
 			variableDescription_type()  : address() , typeSpecification()  {}
 
@@ -4868,7 +4868,7 @@ namespace ISO_9506_MMS_1  {
 
 			struct  listOfVariable_type_sequence_of{
 
-				boost::asio::asn::value_holder<VariableSpecification >  variableSpecification;
+				boost::asn1::value_holder<VariableSpecification >  variableSpecification;
 				boost::shared_ptr<AlternateAccess > alternateAccess;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(AlternateAccess ,  alternateAccess)
 
@@ -5146,8 +5146,8 @@ namespace ISO_9506_MMS_1  {
 
 				struct  indexRange_type{
 
-					boost::asio::asn::value_holder<Unsigned32 >  lowIndex;
-					boost::asio::asn::value_holder<Unsigned32 >  numberOfElements;
+					boost::asn1::value_holder<Unsigned32 >  lowIndex;
+					boost::asn1::value_holder<Unsigned32 >  numberOfElements;
 
 					indexRange_type()  : lowIndex() , numberOfElements()  {}
 
@@ -5207,7 +5207,7 @@ namespace ISO_9506_MMS_1  {
 			};
 
 
-			boost::asio::asn::value_holder<accessSelection_type >  accessSelection;
+			boost::asn1::value_holder<accessSelection_type >  accessSelection;
 			boost::shared_ptr<AlternateAccess > alternateAccess;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(AlternateAccess ,  alternateAccess)
 
@@ -5242,8 +5242,8 @@ namespace ISO_9506_MMS_1  {
 
 			struct  indexRange_type{
 
-				boost::asio::asn::value_holder<Unsigned32 >  lowIndex;
-				boost::asio::asn::value_holder<Unsigned32 >  numberOfElements;
+				boost::asn1::value_holder<Unsigned32 >  lowIndex;
+				boost::asn1::value_holder<Unsigned32 >  numberOfElements;
 
 				indexRange_type()  : lowIndex() , numberOfElements()  {}
 
@@ -5449,8 +5449,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  StoreUnitControlToFile_Request{
 
-		boost::asio::asn::value_holder<Identifier >  unitControlName;
-		boost::asio::asn::value_holder<FileName >  fileName;
+		boost::asn1::value_holder<Identifier >  unitControlName;
+		boost::asn1::value_holder<FileName >  fileName;
 		boost::shared_ptr<ApplicationReference > thirdParty;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ApplicationReference ,  thirdParty)
 
@@ -5527,8 +5527,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  LoadUnitControlFromFile_Request{
 
-		boost::asio::asn::value_holder<Identifier >  unitControlName;
-		boost::asio::asn::value_holder<FileName >  fileName;
+		boost::asn1::value_holder<Identifier >  unitControlName;
+		boost::asn1::value_holder<FileName >  fileName;
 		boost::shared_ptr<ApplicationReference > thirdParty;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ApplicationReference ,  thirdParty)
 
@@ -5555,8 +5555,8 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Identifier >   programInvocations_type;
 
 
-		boost::asio::asn::value_holder<domains_type >  domains;
-		boost::asio::asn::value_holder<programInvocations_type >  programInvocations;
+		boost::asn1::value_holder<domains_type >  domains;
+		boost::asn1::value_holder<programInvocations_type >  programInvocations;
 
 		GetUnitControlAttributes_Response()  : domains() , programInvocations()  {}
 
@@ -5579,9 +5579,9 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Identifier >   programInvocations_type;
 
 
-		boost::asio::asn::value_holder<Identifier >  unitControl;
-		boost::asio::asn::value_holder<domains_type >  domains;
-		boost::asio::asn::value_holder<programInvocations_type >  programInvocations;
+		boost::asn1::value_holder<Identifier >  unitControl;
+		boost::asn1::value_holder<domains_type >  domains;
+		boost::asn1::value_holder<programInvocations_type >  programInvocations;
 
 		RemoveFromUnitControl_Request()  : unitControl() , domains() , programInvocations()  {}
 
@@ -5605,9 +5605,9 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Identifier >   programInvocations_type;
 
 
-		boost::asio::asn::value_holder<Identifier >  unitControl;
-		boost::asio::asn::value_holder<domains_type >  domains;
-		boost::asio::asn::value_holder<programInvocations_type >  programInvocations;
+		boost::asn1::value_holder<Identifier >  unitControl;
+		boost::asn1::value_holder<domains_type >  domains;
+		boost::asn1::value_holder<programInvocations_type >  programInvocations;
 
 		AddToUnitControl_Request()  : unitControl() , domains() , programInvocations()  {}
 
@@ -5631,9 +5631,9 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Identifier >   programInvocations_type;
 
 
-		boost::asio::asn::value_holder<Identifier >  unitControl;
-		boost::asio::asn::value_holder<domains_type >  domains;
-		boost::asio::asn::value_holder<programInvocations_type >  programInvocations;
+		boost::asn1::value_holder<Identifier >  unitControl;
+		boost::asn1::value_holder<domains_type >  domains;
+		boost::asn1::value_holder<programInvocations_type >  programInvocations;
 
 		CreateUnitControl_Request()  : unitControl() , domains() , programInvocations()  {}
 
@@ -5651,8 +5651,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  StopUnitControl_Error{
 
-		boost::asio::asn::value_holder<Identifier >  programInvocationName;
-		boost::asio::asn::value_holder<ProgramInvocationState >  programInvocationState;
+		boost::asn1::value_holder<Identifier >  programInvocationName;
+		boost::asn1::value_holder<ProgramInvocationState >  programInvocationState;
 
 		StopUnitControl_Error()  : programInvocationName() , programInvocationState()  {}
 
@@ -5669,8 +5669,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  StartUnitControl_Error{
 
-		boost::asio::asn::value_holder<Identifier >  programInvocationName;
-		boost::asio::asn::value_holder<ProgramInvocationState >  programInvocationState;
+		boost::asn1::value_holder<Identifier >  programInvocationName;
+		boost::asn1::value_holder<ProgramInvocationState >  programInvocationState;
 
 		StartUnitControl_Error()  : programInvocationName() , programInvocationState()  {}
 
@@ -5745,8 +5745,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  unitControlName;
-		boost::asio::asn::value_holder<executionArgument_type >  executionArgument;
+		boost::asn1::value_holder<Identifier >  unitControlName;
+		boost::asn1::value_holder<executionArgument_type >  executionArgument;
 
 		StartUnitControl_Request()  : unitControlName()  {}
 
@@ -5823,8 +5823,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<controlElements_type >  controlElements;
-		boost::asio::asn::value_holder<nextElement_type >  nextElement;
+		boost::asn1::value_holder<controlElements_type >  controlElements;
+		boost::asn1::value_holder<nextElement_type >  nextElement;
 
 		UnitControlUpload_Response()  : controlElements()  {}
 
@@ -5898,8 +5898,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  unitControlName;
-		boost::asio::asn::value_holder<continueAfter_type >  continueAfter;
+		boost::asn1::value_holder<Identifier >  unitControlName;
+		boost::asn1::value_holder<continueAfter_type >  continueAfter;
 
 		UnitControlUpload_Request()  : unitControlName()  {}
 
@@ -5920,7 +5920,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<controlElements_type >  controlElements;
+		boost::asn1::value_holder<controlElements_type >  controlElements;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -6009,10 +6009,10 @@ namespace ISO_9506_MMS_1  {
 
 
 
-			boost::asio::asn::value_holder<Identifier >  domainName;
-			boost::asio::asn::value_holder<capabilities_type >  capabilities;
-			boost::asio::asn::value_holder<bool >  sharable;
-			boost::asio::asn::value_holder<LoadData >  loadData;
+			boost::asn1::value_holder<Identifier >  domainName;
+			boost::asn1::value_holder<capabilities_type >  capabilities;
+			boost::asn1::value_holder<bool >  sharable;
+			boost::asn1::value_holder<LoadData >  loadData;
 
 			beginDomainDef_type()  : domainName() , capabilities() , sharable() , loadData()  {}
 
@@ -6032,8 +6032,8 @@ namespace ISO_9506_MMS_1  {
 
 		struct  continueDomainDef_type{
 
-			boost::asio::asn::value_holder<Identifier >  domainName;
-			boost::asio::asn::value_holder<LoadData >  loadData;
+			boost::asn1::value_holder<Identifier >  domainName;
+			boost::asn1::value_holder<LoadData >  loadData;
 
 			continueDomainDef_type()  : domainName() , loadData()  {}
 
@@ -6056,8 +6056,8 @@ namespace ISO_9506_MMS_1  {
 
 
 
-			boost::asio::asn::value_holder<Identifier >  piName;
-			boost::asio::asn::value_holder<listOfDomains_type >  listOfDomains;
+			boost::asn1::value_holder<Identifier >  piName;
+			boost::asn1::value_holder<listOfDomains_type >  listOfDomains;
 			boost::shared_ptr<bool > reusable;   //  DEFAULT   
  			BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  reusable)
 
@@ -6138,12 +6138,12 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Identifier >   domainsToRemove_type;
 
 
-		boost::asio::asn::value_holder<Identifier >  oldProgramInvocationName;
+		boost::asn1::value_holder<Identifier >  oldProgramInvocationName;
 		boost::shared_ptr<Identifier > newProgramInvocationName;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  newProgramInvocationName)
 
- 		boost::asio::asn::value_holder<domainsToAdd_type >  domainsToAdd;
-		boost::asio::asn::value_holder<domainsToRemove_type >  domainsToRemove;
+ 		boost::asn1::value_holder<domainsToAdd_type >  domainsToAdd;
+		boost::asn1::value_holder<domainsToRemove_type >  domainsToRemove;
 
 		ReconfigureProgramInvocation_Request()  : oldProgramInvocationName() , domainsToAdd() , domainsToRemove()  {}
 
@@ -6162,8 +6162,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  AlterProgramInvocationAttributes_Request{
 
-		boost::asio::asn::value_holder<Identifier >  programInvocation;
-		boost::asio::asn::value_holder<StartCount >  startCount;
+		boost::asn1::value_holder<Identifier >  programInvocation;
+		boost::asn1::value_holder<StartCount >  startCount;
 
 		AlterProgramInvocationAttributes_Request()  : programInvocation() , startCount()  {}
 
@@ -6287,11 +6287,11 @@ namespace ISO_9506_MMS_1  {
 				};
 
 
-				boost::asio::asn::value_holder<controlledPI_type >  controlledPI;
+				boost::asn1::value_holder<controlledPI_type >  controlledPI;
 				boost::shared_ptr<visiblestring_type > programLocation;   //  OPTIONAL
 				BOOST_ASN_VALUE_FUNC_DECLARATE(visiblestring_type ,  programLocation)
 
- 				boost::asio::asn::value_holder<runningMode_type >  runningMode;
+ 				boost::asn1::value_holder<runningMode_type >  runningMode;
 
 				controlling_type()  : controlledPI() , runningMode()  {}
 
@@ -6402,8 +6402,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<int >  errorCode;
-		boost::asio::asn::value_holder<control_type >  control;
+		boost::asn1::value_holder<int >  errorCode;
+		boost::asn1::value_holder<control_type >  control;
 
 		CS_GetProgramInvocationAttributes_Response()  : errorCode() , control()  {}
 
@@ -6484,12 +6484,12 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ProgramInvocationState >  state;
-		boost::asio::asn::value_holder<listOfDomainNames_type >  listOfDomainNames;
-		boost::asio::asn::value_holder<bool >  mmsDeletable;
-		boost::asio::asn::value_holder<bool >  reusable;
-		boost::asio::asn::value_holder<bool >  monitor;
-		boost::asio::asn::value_holder<executionArgument_type >  executionArgument;
+		boost::asn1::value_holder<ProgramInvocationState >  state;
+		boost::asn1::value_holder<listOfDomainNames_type >  listOfDomainNames;
+		boost::asn1::value_holder<bool >  mmsDeletable;
+		boost::asn1::value_holder<bool >  reusable;
+		boost::asn1::value_holder<bool >  monitor;
+		boost::asn1::value_holder<executionArgument_type >  executionArgument;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -6514,7 +6514,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  Kill_Request{
 
-		boost::asio::asn::value_holder<Identifier >  programInvocationName;
+		boost::asn1::value_holder<Identifier >  programInvocationName;
 
 		Kill_Request()  : programInvocationName()  {}
 
@@ -6530,7 +6530,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  Reset_Request{
 
-		boost::asio::asn::value_holder<Identifier >  programInvocationName;
+		boost::asn1::value_holder<Identifier >  programInvocationName;
 
 		Reset_Request()  : programInvocationName()  {}
 
@@ -6612,7 +6612,7 @@ namespace ISO_9506_MMS_1  {
 			};
 
 
-			boost::asio::asn::value_holder<modeType_type >  modeType;
+			boost::asn1::value_holder<modeType_type >  modeType;
 
 			controlling_type()  : modeType()  {}
 
@@ -6726,8 +6726,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  programInvocationName;
-		boost::asio::asn::value_holder<executionArgument_type >  executionArgument;
+		boost::asn1::value_holder<Identifier >  programInvocationName;
+		boost::asn1::value_holder<executionArgument_type >  executionArgument;
 
 		Resume_Request()  : programInvocationName()  {}
 
@@ -6744,7 +6744,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  Stop_Request{
 
-		boost::asio::asn::value_holder<Identifier >  programInvocationName;
+		boost::asn1::value_holder<Identifier >  programInvocationName;
 
 		Stop_Request()  : programInvocationName()  {}
 
@@ -6835,7 +6835,7 @@ namespace ISO_9506_MMS_1  {
 			boost::shared_ptr<visiblestring_type > startLocation;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(visiblestring_type ,  startLocation)
 
- 			boost::asio::asn::value_holder<StartCount >  startCount;
+ 			boost::asn1::value_holder<StartCount >  startCount;
 
 			controlling_type()  : startCount()  {}
 
@@ -6950,8 +6950,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<Identifier >  programInvocationName;
-		boost::asio::asn::value_holder<executionArgument_type >  executionArgument;
+		boost::asn1::value_holder<Identifier >  programInvocationName;
+		boost::asn1::value_holder<executionArgument_type >  executionArgument;
 
 		Start_Request()  : programInvocationName()  {}
 
@@ -6978,8 +6978,8 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<Identifier >  programInvocationName;
-		boost::asio::asn::value_holder<listOfDomainNames_type >  listOfDomainNames;
+		boost::asn1::value_holder<Identifier >  programInvocationName;
+		boost::asn1::value_holder<listOfDomainNames_type >  listOfDomainNames;
 		boost::shared_ptr<bool > reusable;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  reusable)
 
@@ -7012,12 +7012,12 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<Identifier >   listOfProgramInvocations_type;
 
 
-		boost::asio::asn::value_holder<listOfCapabilities_type >  listOfCapabilities;
-		boost::asio::asn::value_holder<DomainState >  state;
-		boost::asio::asn::value_holder<bool >  mmsDeletable;
-		boost::asio::asn::value_holder<bool >  sharable;
-		boost::asio::asn::value_holder<listOfProgramInvocations_type >  listOfProgramInvocations;
-		boost::asio::asn::value_holder<Integer8 >  uploadInProgress;
+		boost::asn1::value_holder<listOfCapabilities_type >  listOfCapabilities;
+		boost::asn1::value_holder<DomainState >  state;
+		boost::asn1::value_holder<bool >  mmsDeletable;
+		boost::asn1::value_holder<bool >  sharable;
+		boost::asn1::value_holder<listOfProgramInvocations_type >  listOfProgramInvocations;
+		boost::asn1::value_holder<Integer8 >  uploadInProgress;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -7042,8 +7042,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  StoreDomainContent_Request{
 
-		boost::asio::asn::value_holder<Identifier >  domainName;
-		boost::asio::asn::value_holder<FileName >  fileName;
+		boost::asn1::value_holder<Identifier >  domainName;
+		boost::asn1::value_holder<FileName >  fileName;
 		boost::shared_ptr<ApplicationReference > thirdParty;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ApplicationReference ,  thirdParty)
 
@@ -7068,12 +7068,12 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<Identifier >  domainName;
+		boost::asn1::value_holder<Identifier >  domainName;
 		boost::shared_ptr<listOfCapabilities_type > listOfCapabilities;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfCapabilities_type ,  listOfCapabilities)
 
- 		boost::asio::asn::value_holder<bool >  sharable;
-		boost::asio::asn::value_holder<FileName >  fileName;
+ 		boost::asn1::value_holder<bool >  sharable;
+		boost::asn1::value_holder<FileName >  fileName;
 		boost::shared_ptr<ApplicationReference > thirdParty;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ApplicationReference ,  thirdParty)
 
@@ -7096,8 +7096,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  RequestDomainUpload_Request{
 
-		boost::asio::asn::value_holder<Identifier >  domainName;
-		boost::asio::asn::value_holder<FileName >  fileName;
+		boost::asn1::value_holder<Identifier >  domainName;
+		boost::asn1::value_holder<FileName >  fileName;
 
 		RequestDomainUpload_Request()  : domainName() , fileName()  {}
 
@@ -7118,12 +7118,12 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<Identifier >  domainName;
+		boost::asn1::value_holder<Identifier >  domainName;
 		boost::shared_ptr<listOfCapabilities_type > listOfCapabilities;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfCapabilities_type ,  listOfCapabilities)
 
- 		boost::asio::asn::value_holder<bool >  sharable;
-		boost::asio::asn::value_holder<FileName >  fileName;
+ 		boost::asn1::value_holder<bool >  sharable;
+		boost::asn1::value_holder<FileName >  fileName;
 
 		RequestDomainDownload_Request()  : domainName() , sharable() , fileName()  {}
 
@@ -7143,7 +7143,7 @@ namespace ISO_9506_MMS_1  {
 	struct  UploadSegment_Response{
 
 
-		boost::asio::asn::value_holder<LoadData >  loadData;
+		boost::asn1::value_holder<LoadData >  loadData;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -7166,8 +7166,8 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<MMSString >   listOfCapabilities_type;
 
 
-		boost::asio::asn::value_holder<Integer32 >  ulsmID;
-		boost::asio::asn::value_holder<listOfCapabilities_type >  listOfCapabilities;
+		boost::asn1::value_holder<Integer32 >  ulsmID;
+		boost::asn1::value_holder<listOfCapabilities_type >  listOfCapabilities;
 
 		InitiateUploadSequence_Response()  : ulsmID() , listOfCapabilities()  {}
 
@@ -7184,7 +7184,7 @@ namespace ISO_9506_MMS_1  {
 
 	struct  TerminateDownloadSequence_Request{
 
-		boost::asio::asn::value_holder<Identifier >  domainName;
+		boost::asn1::value_holder<Identifier >  domainName;
 		boost::shared_ptr<ServiceError > discard;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(ServiceError ,  discard)
 
@@ -7263,7 +7263,7 @@ namespace ISO_9506_MMS_1  {
 	struct  DownloadSegment_Response{
 
 
-		boost::asio::asn::value_holder<LoadData >  loadData;
+		boost::asn1::value_holder<LoadData >  loadData;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -7287,9 +7287,9 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<Identifier >  domainName;
-		boost::asio::asn::value_holder<listOfCapabilities_type >  listOfCapabilities;
-		boost::asio::asn::value_holder<bool >  sharable;
+		boost::asn1::value_holder<Identifier >  domainName;
+		boost::asn1::value_holder<listOfCapabilities_type >  listOfCapabilities;
+		boost::asn1::value_holder<bool >  sharable;
 
 		InitiateDownloadSequence_Request()  : domainName() , listOfCapabilities() , sharable()  {}
 
@@ -7311,7 +7311,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfCapabilities_type >  listOfCapabilities;
+		boost::asn1::value_holder<listOfCapabilities_type >  listOfCapabilities;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -7349,9 +7349,9 @@ namespace ISO_9506_MMS_1  {
 
 	struct  Rename_Request{
 
-		boost::asio::asn::value_holder<ObjectClass >  objectClass;
-		boost::asio::asn::value_holder<ObjectName >  currentName;
-		boost::asio::asn::value_holder<Identifier >  newIdentifier;
+		boost::asn1::value_holder<ObjectClass >  objectClass;
+		boost::asn1::value_holder<ObjectName >  currentName;
+		boost::asn1::value_holder<Identifier >  newIdentifier;
 
 		Rename_Request()  : objectClass() , currentName() , newIdentifier()  {}
 
@@ -7372,9 +7372,9 @@ namespace ISO_9506_MMS_1  {
 		typedef std::vector<oid_type >   listOfAbstractSyntaxes_type;
 
 
-		boost::asio::asn::value_holder<MMSString >  vendorName;
-		boost::asio::asn::value_holder<MMSString >  modelName;
-		boost::asio::asn::value_holder<MMSString >  revision;
+		boost::asn1::value_holder<MMSString >  vendorName;
+		boost::asn1::value_holder<MMSString >  modelName;
+		boost::asn1::value_holder<MMSString >  revision;
 		boost::shared_ptr<listOfAbstractSyntaxes_type > listOfAbstractSyntaxes;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfAbstractSyntaxes_type ,  listOfAbstractSyntaxes)
 
@@ -7400,7 +7400,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfIdentifier_type >  listOfIdentifier;
+		boost::asn1::value_holder<listOfIdentifier_type >  listOfIdentifier;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -7478,8 +7478,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<ObjectClass >  objectClass;
-		boost::asio::asn::value_holder<objectScope_type >  objectScope;
+		boost::asn1::value_holder<ObjectClass >  objectClass;
+		boost::asn1::value_holder<objectScope_type >  objectScope;
 		boost::shared_ptr<Identifier > continueAfter;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  continueAfter)
 
@@ -7579,12 +7579,12 @@ namespace ISO_9506_MMS_1  {
 			};
 
 
-			boost::asio::asn::value_holder<OperationState >  operationState;
-			boost::asio::asn::value_holder<ExtendedStatus >  extendedStatus;
+			boost::asn1::value_holder<OperationState >  operationState;
+			boost::asn1::value_holder<ExtendedStatus >  extendedStatus;
 			boost::shared_ptr<ExtendedStatus > extendedStatusMask;   //  DEFAULT  � 
  			BOOST_ASN_VALUE_FUNC_DECLARATE(ExtendedStatus ,  extendedStatusMask)
 
- 			boost::asio::asn::value_holder<selectedProgramInvocation_type >  selectedProgramInvocation;
+ 			boost::asn1::value_holder<selectedProgramInvocation_type >  selectedProgramInvocation;
 
 			fullResponse_type()  : operationState() , extendedStatus() , selectedProgramInvocation()  {}
 
@@ -7659,8 +7659,8 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<int >  vmdLogicalStatus;
-		boost::asio::asn::value_holder<int >  vmdPhysicalStatus;
+		boost::asn1::value_holder<int >  vmdLogicalStatus;
+		boost::asn1::value_holder<int >  vmdPhysicalStatus;
 		boost::shared_ptr<bitstring_type > localDetail;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(bitstring_type ,  localDetail)
 
@@ -7681,8 +7681,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  ChangeAccessControl_Response{
 
-		boost::asio::asn::value_holder<Unsigned32 >  numberMatched;
-		boost::asio::asn::value_holder<Unsigned32 >  numberChanged;
+		boost::asn1::value_holder<Unsigned32 >  numberMatched;
+		boost::asn1::value_holder<Unsigned32 >  numberChanged;
 
 		ChangeAccessControl_Response()  : numberMatched() , numberChanged()  {}
 
@@ -7782,8 +7782,8 @@ namespace ISO_9506_MMS_1  {
 				};
 
 
-				boost::asio::asn::value_holder<ObjectClass >  objectClass;
-				boost::asio::asn::value_holder<objectScope_type >  objectScope;
+				boost::asn1::value_holder<ObjectClass >  objectClass;
+				boost::asn1::value_holder<objectScope_type >  objectScope;
 
 				listOfObjects_type()  : objectClass() , objectScope()  {}
 
@@ -7836,8 +7836,8 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<scopeOfChange_type >  scopeOfChange;
-		boost::asio::asn::value_holder<Identifier >  accessControlListName;
+		boost::asn1::value_holder<scopeOfChange_type >  scopeOfChange;
+		boost::asn1::value_holder<Identifier >  accessControlListName;
 
 		ChangeAccessControl_Request()  : scopeOfChange() , accessControlListName()  {}
 
@@ -7858,7 +7858,7 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<listOfNames_type >  listOfNames;
+		boost::asn1::value_holder<listOfNames_type >  listOfNames;
 		boost::shared_ptr<bool > moreFollows;   //  DEFAULT   
  		BOOST_ASN_VALUE_FUNC_DECLARATE(bool ,  moreFollows)
 
@@ -7878,9 +7878,9 @@ namespace ISO_9506_MMS_1  {
 
 	struct  ReportAccessControlledObjects_Request{
 
-		boost::asio::asn::value_holder<Identifier >  accessControlList;
-		boost::asio::asn::value_holder<ObjectClass >  objectClass;
-		boost::asio::asn::value_holder<ObjectName >  continueAfter;
+		boost::asn1::value_holder<Identifier >  accessControlList;
+		boost::asn1::value_holder<ObjectClass >  objectClass;
+		boost::asn1::value_holder<ObjectName >  continueAfter;
 
 		ReportAccessControlledObjects_Request()  : accessControlList() , objectClass() , continueAfter()  {}
 
@@ -7903,13 +7903,13 @@ namespace ISO_9506_MMS_1  {
 
 		struct  accessControlListElements_type{
 
-			boost::asio::asn::value_holder<AccessCondition >  readAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  storeAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  writeAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  loadAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  executeAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  deleteAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  editAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  readAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  storeAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  writeAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  loadAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  executeAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  deleteAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  editAccessCondition;
 
 			accessControlListElements_type()  : readAccessCondition() , storeAccessCondition() , writeAccessCondition() , loadAccessCondition() , executeAccessCondition() , deleteAccessCondition() , editAccessCondition()  {}
 
@@ -7934,8 +7934,8 @@ namespace ISO_9506_MMS_1  {
 			struct  references_type_sequence_of{
 
 
-				boost::asio::asn::value_holder<ObjectClass >  objectClass;
-				boost::asio::asn::value_holder<int >  objectCount;
+				boost::asn1::value_holder<ObjectClass >  objectClass;
+				boost::asn1::value_holder<int >  objectCount;
 
 				references_type_sequence_of()  : objectClass() , objectCount()  {}
 
@@ -7950,10 +7950,10 @@ namespace ISO_9506_MMS_1  {
 	typedef std::vector<references_type_sequence_of >   references_type;
 
 
-		boost::asio::asn::value_holder<Identifier >  name;
-		boost::asio::asn::value_holder<accessControlListElements_type >  accessControlListElements;
-		boost::asio::asn::value_holder<bool >  vMDuse;
-		boost::asio::asn::value_holder<references_type >  references;
+		boost::asn1::value_holder<Identifier >  name;
+		boost::asn1::value_holder<accessControlListElements_type >  accessControlListElements;
+		boost::asn1::value_holder<bool >  vMDuse;
+		boost::asn1::value_holder<references_type >  references;
 		boost::shared_ptr<Identifier > accessControlList;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Identifier ,  accessControlList)
 
@@ -7990,8 +7990,8 @@ namespace ISO_9506_MMS_1  {
 
 		struct  namedObject_type{
 
-			boost::asio::asn::value_holder<ObjectClass >  objectClass;
-			boost::asio::asn::value_holder<ObjectName >  objectName;
+			boost::asn1::value_holder<ObjectClass >  objectClass;
+			boost::asn1::value_holder<ObjectName >  objectName;
 
 			namedObject_type()  : objectClass() , objectName()  {}
 
@@ -8056,13 +8056,13 @@ namespace ISO_9506_MMS_1  {
 
 		struct  accessControlListElements_type{
 
-			boost::asio::asn::value_holder<AccessCondition >  readAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  storeAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  writeAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  loadAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  executeAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  deleteAccessCondition;
-			boost::asio::asn::value_holder<AccessCondition >  editAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  readAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  storeAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  writeAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  loadAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  executeAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  deleteAccessCondition;
+			boost::asn1::value_holder<AccessCondition >  editAccessCondition;
 
 			accessControlListElements_type()  : readAccessCondition() , storeAccessCondition() , writeAccessCondition() , loadAccessCondition() , executeAccessCondition() , deleteAccessCondition() , editAccessCondition()  {}
 
@@ -8080,8 +8080,8 @@ namespace ISO_9506_MMS_1  {
 
 	//end==============================================================
 
-		boost::asio::asn::value_holder<Identifier >  accessControlListName;
-		boost::asio::asn::value_holder<accessControlListElements_type >  accessControlListElements;
+		boost::asn1::value_holder<Identifier >  accessControlListName;
+		boost::asn1::value_holder<accessControlListElements_type >  accessControlListElements;
 
 		DefineAccessControlList_Request()  : accessControlListName() , accessControlListElements()  {}
 
@@ -8265,7 +8265,7 @@ namespace ISO_9506_MMS_1  {
 		boost::shared_ptr<Unsigned32 > originalInvokeID;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Unsigned32 ,  originalInvokeID)
 
- 		boost::asio::asn::value_holder<rejectReason_type >  rejectReason;
+ 		boost::asn1::value_holder<rejectReason_type >  rejectReason;
 
 		RejectPDU()  : rejectReason()  {}
 
@@ -8282,8 +8282,8 @@ namespace ISO_9506_MMS_1  {
 
 	struct  Cancel_ErrorPDU{
 
-		boost::asio::asn::value_holder<Unsigned32 >  originalInvokeID;
-		boost::asio::asn::value_holder<ServiceError >  serviceError;
+		boost::asn1::value_holder<Unsigned32 >  originalInvokeID;
+		boost::asn1::value_holder<ServiceError >  serviceError;
 
 		Cancel_ErrorPDU()  : originalInvokeID() , serviceError()  {}
 
@@ -8307,9 +8307,9 @@ namespace ISO_9506_MMS_1  {
 
 
 
-			boost::asio::asn::value_holder<Integer16 >  negotiatedVersionNumber;
-			boost::asio::asn::value_holder<ParameterSupportOptions >  negotiatedParameterCBB;
-			boost::asio::asn::value_holder<ServiceSupportOptions >  servicesSupportedCalled;
+			boost::asn1::value_holder<Integer16 >  negotiatedVersionNumber;
+			boost::asn1::value_holder<ParameterSupportOptions >  negotiatedParameterCBB;
+			boost::asn1::value_holder<ServiceSupportOptions >  servicesSupportedCalled;
 			boost::shared_ptr<AdditionalSupportOptions > additionalSupportedCalled;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(AdditionalSupportOptions ,  additionalSupportedCalled)
 
@@ -8339,12 +8339,12 @@ namespace ISO_9506_MMS_1  {
 		boost::shared_ptr<Integer32 > localDetailCalled;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Integer32 ,  localDetailCalled)
 
- 		boost::asio::asn::value_holder<Integer16 >  negotiatedMaxServOutstandingCalling;
-		boost::asio::asn::value_holder<Integer16 >  negotiatedMaxServOutstandingCalled;
+ 		boost::asn1::value_holder<Integer16 >  negotiatedMaxServOutstandingCalling;
+		boost::asn1::value_holder<Integer16 >  negotiatedMaxServOutstandingCalled;
 		boost::shared_ptr<Integer8 > negotiatedDataStructureNestingLevel;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Integer8 ,  negotiatedDataStructureNestingLevel)
 
- 		boost::asio::asn::value_holder<initResponseDetail_type >  initResponseDetail;
+ 		boost::asn1::value_holder<initResponseDetail_type >  initResponseDetail;
 
 		Initiate_ResponsePDU()  : negotiatedMaxServOutstandingCalling() , negotiatedMaxServOutstandingCalled() , initResponseDetail()  {}
 
@@ -8371,9 +8371,9 @@ namespace ISO_9506_MMS_1  {
 
 
 
-			boost::asio::asn::value_holder<Integer16 >  proposedVersionNumber;
-			boost::asio::asn::value_holder<ParameterSupportOptions >  proposedParameterCBB;
-			boost::asio::asn::value_holder<ServiceSupportOptions >  servicesSupportedCalling;
+			boost::asn1::value_holder<Integer16 >  proposedVersionNumber;
+			boost::asn1::value_holder<ParameterSupportOptions >  proposedParameterCBB;
+			boost::asn1::value_holder<ServiceSupportOptions >  servicesSupportedCalling;
 			boost::shared_ptr<AdditionalSupportOptions > additionalSupportedCalling;   //  OPTIONAL
 			BOOST_ASN_VALUE_FUNC_DECLARATE(AdditionalSupportOptions ,  additionalSupportedCalling)
 
@@ -8403,12 +8403,12 @@ namespace ISO_9506_MMS_1  {
 		boost::shared_ptr<Integer32 > localDetailCalling;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Integer32 ,  localDetailCalling)
 
- 		boost::asio::asn::value_holder<Integer16 >  proposedMaxServOutstandingCalling;
-		boost::asio::asn::value_holder<Integer16 >  proposedMaxServOutstandingCalled;
+ 		boost::asn1::value_holder<Integer16 >  proposedMaxServOutstandingCalling;
+		boost::asn1::value_holder<Integer16 >  proposedMaxServOutstandingCalled;
 		boost::shared_ptr<Integer8 > proposedDataStructureNestingLevel;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Integer8 ,  proposedDataStructureNestingLevel)
 
- 		boost::asio::asn::value_holder<initRequestDetail_type >  initRequestDetail;
+ 		boost::asn1::value_holder<initRequestDetail_type >  initRequestDetail;
 
 		Initiate_RequestPDU()  : proposedMaxServOutstandingCalling() , proposedMaxServOutstandingCalled() , initRequestDetail()  {}
 
@@ -8515,8 +8515,8 @@ namespace ISO_9506_MMS_1  {
 
 		struct  domain_specific_type{
 
-			boost::asio::asn::value_holder<Identifier >  domainID;
-			boost::asio::asn::value_holder<Identifier >  itemID;
+			boost::asn1::value_holder<Identifier >  domainID;
+			boost::asn1::value_holder<Identifier >  itemID;
 
 			domain_specific_type()  : domainID() , itemID()  {}
 
@@ -8938,14 +8938,14 @@ namespace ISO_9506_MMS_1  {
 		};
 
 
-		boost::asio::asn::value_holder<errorClass_type >  errorClass;
+		boost::asn1::value_holder<errorClass_type >  errorClass;
 		boost::shared_ptr<int > additionalCode;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(int ,  additionalCode)
 
  		boost::shared_ptr<visiblestring_type > additionalDescription;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(visiblestring_type ,  additionalDescription)
 
- 		boost::asio::asn::value_holder<serviceSpecificInfo_type >  serviceSpecificInfo;
+ 		boost::asn1::value_holder<serviceSpecificInfo_type >  serviceSpecificInfo;
 
 		ServiceError()  : errorClass()  {}
 
@@ -8964,11 +8964,11 @@ namespace ISO_9506_MMS_1  {
 
 	struct  Confirmed_ErrorPDU{
 
-		boost::asio::asn::value_holder<Unsigned32 >  invokeID;
+		boost::asn1::value_holder<Unsigned32 >  invokeID;
 		boost::shared_ptr<Unsigned32 > modifierPosition;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(Unsigned32 ,  modifierPosition)
 
- 		boost::asio::asn::value_holder<ServiceError >  serviceError;
+ 		boost::asn1::value_holder<ServiceError >  serviceError;
 
 		Confirmed_ErrorPDU()  : invokeID() , serviceError()  {}
 
@@ -9566,8 +9566,8 @@ namespace ISO_9506_MMS_1  {
 	struct  Confirmed_ResponsePDU{
 
 
-		boost::asio::asn::value_holder<Unsigned32 >  invokeID;
-		boost::asio::asn::value_holder<ConfirmedServiceResponse >  service;
+		boost::asn1::value_holder<Unsigned32 >  invokeID;
+		boost::asn1::value_holder<ConfirmedServiceResponse >  service;
 		boost::shared_ptr<Response_Detail >  service_ext;
 
 		Confirmed_ResponsePDU()  : invokeID() , service() , service_ext()  {}
@@ -9695,8 +9695,8 @@ namespace ISO_9506_MMS_1  {
 	struct  Unconfirmed_PDU{
 
 
-		boost::asio::asn::value_holder<UnconfirmedService >  service;
-		boost::asio::asn::value_holder<Unconfirmed_Detail >  service_ext;
+		boost::asn1::value_holder<UnconfirmedService >  service;
+		boost::asn1::value_holder<Unconfirmed_Detail >  service_ext;
 
 		Unconfirmed_PDU()  : service() , service_ext()  {}
 
@@ -10317,11 +10317,11 @@ namespace ISO_9506_MMS_1  {
 
 
 
-		boost::asio::asn::value_holder<Unsigned32 >  invokeID;
+		boost::asn1::value_holder<Unsigned32 >  invokeID;
 		boost::shared_ptr<listOfModifiers_type > listOfModifiers;   //  OPTIONAL
 		BOOST_ASN_VALUE_FUNC_DECLARATE(listOfModifiers_type ,  listOfModifiers)
 
- 		boost::asio::asn::value_holder<ConfirmedServiceRequest >  service;
+ 		boost::asn1::value_holder<ConfirmedServiceRequest >  service;
 		boost::shared_ptr<Request_Detail >  service_ext;
 
 		Confirmed_RequestPDU()  : invokeID() , service() , service_ext()  {}

@@ -40,12 +40,15 @@ typedef protocol_type::acceptor                                      acceptor_ty
 typedef protocol_type::endpoint                                        endpoint_type;
 typedef protocol_type::resolver                                         resolver_type;
 
+typedef boost::iso::selectorvalue_type                    selectorvalue_type;
 typedef protocol_type::presentation_selector                      presentation_selector ;
 typedef protocol_type::session_selector                      session_selector;
 typedef protocol_type::transport_selector                  transport_selector;
-const session_selector   LSELECTOR = session_selector ("SERVER-SSEL", std::string("\x0\x1",2) ,  transport_selector("SERVER-TSEL",std::string("\x0\x0",2), boost::asio::iso::SIZE128));
-const presentation_selector   PSELECTOR = presentation_selector ("P-EXAMPLE-SERVER",std::string("\x0\x0\x0\x1", 4), LSELECTOR);
+const session_selector   LSELECTOR = session_selector (selectorvalue_type(std::string("\x0\x1", 2)) ,  selectorvalue_type(std::string("\x0\x0", 2)) , transport_selector(selectorvalue_type(std::string("\x0\x0", 2)), selectorvalue_type(std::string("\x0\x1", 2))));
+const presentation_selector   PSELECTOR = presentation_selector (selectorvalue_type(std::string("\x0\x0\x0\x1", 4)), selectorvalue_type(std::string("\x0\x0\x0\x0", 4)), LSELECTOR);
 
+namespace MMS = ISO_9506_MMS_1;
+namespace MMSO = MMS_Object_Module_1;
 
 int port = 102;
 
@@ -55,7 +58,7 @@ class session {
 public:
 
     session(boost::asio::io_service& io_service)
-    : socket_(io_service, PSELECTOR){
+    : socket_(io_service, PSELECTOR) {
         std::cout << "New sesion\n";
     }
 
@@ -64,14 +67,14 @@ public:
     }
 
     void start() {
-     /*   if (trans_) {
-            std::cout << "Client accept data : " << trans_->respond_str() << std::endl;
-        }
+        /*   if (trans_) {
+               std::cout << "Client accept data : " << trans_->respond_str() << std::endl;
+           }
 
-        socket_.async_read_some(boost::asio::buffer(data_, max_length),
-                boost::bind(&session::handle_read, this,
-                boost::asio::placeholders::error,
-                boost::asio::placeholders::bytes_transferred));*/
+           socket_.async_read_some(boost::asio::buffer(data_, max_length),
+                   boost::bind(&session::handle_read, this,
+                   boost::asio::placeholders::error,
+                   boost::asio::placeholders::bytes_transferred));*/
 
     }
 
@@ -79,32 +82,32 @@ private:
 
     void handle_read(const boost::system::error_code& error,
             size_t bytes_transferred) {
-     /* if (!error) {
-           boost::asio::async_write(socket_,
-                    boost::asio::buffer(data_, bytes_transferred),
-                    boost::bind(&session::handle_write, this,
-                    boost::asio::placeholders::error));
-            std::cout << "Server read: " <<  std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred << std::endl;
-            message = std::string(data_, bytes_transferred); 
-        }
-        else {
-            delete this;
-        }*/  
+        /* if (!error) {
+              boost::asio::async_write(socket_,
+                       boost::asio::buffer(data_, bytes_transferred),
+                       boost::bind(&session::handle_write, this,
+                       boost::asio::placeholders::error));
+               std::cout << "Server read: " <<  std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred << std::endl;
+               message = std::string(data_, bytes_transferred); 
+           }
+           else {
+               delete this;
+           }*/
     }
 
     void handle_write(const boost::system::error_code& error) {
-      /*  if (!error) {
-            std::cout << "Server write: " <<  message <<  " size: " <<  message.size() << std::endl;
-            socket_.async_read_some(boost::asio::buffer(data_, max_length),
-                    boost::bind(&session::handle_read, this,
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred));
-            std::cout << "Data indication: " <<  socket_.input_empty() << std::endl;
+        /*  if (!error) {
+              std::cout << "Server write: " <<  message <<  " size: " <<  message.size() << std::endl;
+              socket_.async_read_some(boost::asio::buffer(data_, max_length),
+                      boost::bind(&session::handle_read, this,
+                      boost::asio::placeholders::error,
+                      boost::asio::placeholders::bytes_transferred));
+              std::cout << "Data indication: " <<  socket_.input_empty() << std::endl;
 
-        }
-        else {
-            delete this;
-        }*/
+          }
+          else {
+              delete this;
+          }*/
     }
 
     socket_type socket_;
@@ -123,14 +126,14 @@ public:
 private:
 
     void start_accept() {
-        //archive_ptr trans_ = boost::asio::iso::create_simple_data("Hello client from test");
+        //isocoder_ptr trans_ = boost::iso::create_simple_data("Hello client from test");
 
         session* new_session = new session(io_service_);
 
 
 
         acceptor_.async_accept(new_session->socket(),
-       
+
                 boost::bind(&server::handle_accept, this, new_session,
                 boost::asio::placeholders::error));
     }
@@ -155,12 +158,18 @@ private:
 class client {
 public:
 
+    typedef prot9506::identify_operation_type identify_operation_type;
+    typedef prot9506::getnamelist_operation_type getnamelist_operation_type;
+    typedef prot9506::getvaraccess_operation_type  getvaraccess_operation_type;
+    typedef prot9506::read_operation_type  read_operation_type;
+    
+
     client(boost::asio::io_service& io_service,
             resolver_type::iterator endpoint_iterator, const std::string& called = "")
     : io_service_(io_service),
     socket_(io_service, PSELECTOR ) {
         endpoint_type endpoint = *endpoint_iterator;
-        socket_.async_connect(endpoint, 
+        socket_.async_connect(endpoint,
                 boost::bind(&client::handle_connect, this,
                 boost::asio::placeholders::error, ++endpoint_iterator));
     }
@@ -168,17 +177,6 @@ public:
     ~client() {
         std::cout << "Socket destuctor"  << std::endl;
         socket_.close();
-    }
-
-    void release() {
-        std::cout << "Start release"  << std::endl;
-        io_service_.reset();
-
-    }
-
-    void write(const std::string& msg) {
-          message = msg;
-          io_service_.post(boost::bind(&client::do_write, this));
     }
 
     void close() {
@@ -190,41 +188,203 @@ private:
     void handle_connect(const boost::system::error_code& error,
             resolver_type::iterator endpoint_iterator) {
         if (!error) {
-            socket_.identify_request();
-            socket_.async_request(boost::bind(&client::handle_request,  this,
-                    boost::asio::placeholders::error));
-            
-              // std::cout << "Server accept message: " << complete_connect(socket_.ppm()) << std::endl; 
+
+            boost::shared_ptr<identify_operation_type> operation =
+                    boost::shared_ptr<identify_operation_type > ( new identify_operation_type());
+
+            operation->request_new();
+            socket_.async_confirm_request(operation,
+                    boost::bind(&client::handle_idenify_response, this, operation));
+
+
 
         }
-     //   else if (endpoint_iterator != resolver_type::iterator()) {
+    }
 
-       //     endpoint_type endpoint = *endpoint_iterator;
-       //     socket_.async_connect(endpoint, 
-        //            boost::bind(&client::handle_connect,  this,
-        //            boost::asio::placeholders::error, ++endpoint_iterator));
-       // }
+    void handle_idenify_response(boost::shared_ptr<identify_operation_type> rslt) {
+        if (rslt->response()) {
+
+            std::cout << "Vendor: " <<  (*(rslt->response()->vendorName))   <<   " Model: " <<  (*(rslt->response()->modelName))   << " Rev: " <<  (*(rslt->response()->revision)) << std::endl;
+
+            boost::shared_ptr<getnamelist_operation_type > operation =
+                    boost::shared_ptr<getnamelist_operation_type > ( new getnamelist_operation_type());
+
+            operation->request_new();
+            operation->request()->objectClass->basicObjectClass( new int( MMS::ObjectClass::basicObjectClass_domain));
+            operation->request()->objectScope->vmdSpecific__new();
+
+            socket_.async_confirm_request(operation,
+                    boost::bind(&client::handle_domainlist_response, this, operation));
+
+        }
+        else {
+            std::cout << "handle_idenify_response: " <<  std::endl;
+        }
+    }
+
+    void handle_domainlist_response(boost::shared_ptr<getnamelist_operation_type> rslt) {
+        if (rslt->response()) {
+            
+            domain = rslt->response()->listOfIdentifier->operator [](0);            
+            
+            std::cout << " domain name: " <<     domain   << std::endl;
+
+
+
+            boost::shared_ptr<getnamelist_operation_type > operation =
+                    boost::shared_ptr<getnamelist_operation_type > ( new getnamelist_operation_type());
+
+            operation->request_new();
+            operation->request()->objectClass->basicObjectClass( new int( MMS::ObjectClass::basicObjectClass_namedVariable));
+            operation->request()->objectScope->domainSpecific__new( new MMS::Identifier(domain ));
+
+            socket_.async_confirm_request(operation,
+                    boost::bind(&client::handle_variablelist_response, this, operation));
+
+        }
+        else {
+            std::cout << "handle_domainlist_response: " <<  std::endl;
+        }
+    }
+
+    void handle_variablelist_response(boost::shared_ptr<getnamelist_operation_type> rslt) {
+        if (rslt->response()) {
+            
+            std::string  last;
+            
+            typedef MMS::GetNameList_Response::listOfIdentifier_type  namedlist_type;
+            for (namedlist_type::iterator it = rslt->response()->listOfIdentifier->begin(); it!= rslt->response()->listOfIdentifier->end(); ++it){
+                fulllist.push_back((*it));
+                last= (*it); }
+
+            if ((!domain.empty()) && ((!rslt->response()->moreFollows) || (*(rslt->response()->moreFollows))) ) {
+
+                boost::shared_ptr<getnamelist_operation_type > operation =
+                        boost::shared_ptr<getnamelist_operation_type > ( new getnamelist_operation_type());
+
+                operation->request_new();
+                operation->request()->objectClass->basicObjectClass( new int( MMS::ObjectClass::basicObjectClass_namedVariable));
+                operation->request()->objectScope->domainSpecific__new( new MMS::Identifier(domain ));
+                operation->request()->continueAfter__assign( new MMS::Identifier(last));
+                //operation->request()->continueAfter = MMS::Identifier(last));                
+
+                socket_.async_confirm_request(operation,
+                        boost::bind(&client::handle_variablelist_response, this, operation));
+
+
+            }
+            else{
+                
+                for (std::vector<std::string>::const_iterator it=fulllist.begin();it!=fulllist.end();++it){
+                    std::cout << " full lst var name: " <<     (*it)   << std::endl;
+                }
+                    std::cout << " full lst var size: " <<    fulllist.size()  << std::endl;
+
+                
+                fullcnt=0;
+                
+                if (!(fullcnt<fulllist.size())) return;
+                
+                 boost::shared_ptr<getvaraccess_operation_type > operation =
+                        boost::shared_ptr<getvaraccess_operation_type > ( new getvaraccess_operation_type());
+
+                 operation->request_new();
+                 operation->request()->name__new();
+                 operation->request()->name()->domain_specific__new();   
+                 operation->request()->name()->domain_specific()->domainID =domain;
+                operation->request()->name()->domain_specific()->itemID =fulllist[fullcnt];               
+                 
+                  socket_.async_confirm_request(operation,
+                        boost::bind(&client::handle_accesslist_response, this, operation));               
+                
+                
+            }
+        }
+        else {
+            std::cout << "handle_domainlist_response: " <<  std::endl;
+        }
     }
     
-    void handle_request(const boost::system::error_code& error) {
-          if (!error) {
-            socket_.async_respond(boost::bind(&client::handle_respond,  this,
-                    boost::asio::placeholders::error));
-          }
-          else {
-              std::cout << "Message ERROR recieve to Server: " <<  std::endl; 
-          }
-    }    
-    
-    
-    void handle_respond(const boost::system::error_code& error) {
-          if (!error) {
-              socket_.identify_response();
-              std::cout << "Message recieve from Server: " <<   std::endl; 
-          }
-          else {
-              std::cout << "Message ERROR recieve to Server: " <<  std::endl; 
-          }
+        void handle_accesslist_response(boost::shared_ptr<getvaraccess_operation_type> rslt) {
+        if (rslt->response()) {
+            
+            //std::cout << "access var name: " <<     (int)( rslt->response()->typeDescription->type() )  << std::endl; 
+
+            if ((int)( rslt->response()->typeDescription->type() ) > (int)(MMSO::TypeDescription_structure))
+                simplelist.push_back(fulllist[fullcnt]);
+                
+            
+            fullcnt++;
+            
+            if (fullcnt<fulllist.size()){
+                
+                boost::shared_ptr<getvaraccess_operation_type > operation =
+                        boost::shared_ptr<getvaraccess_operation_type > ( new getvaraccess_operation_type());
+
+                 operation->request_new();
+                 operation->request()->name__new();
+                 operation->request()->name()->domain_specific__new();   
+                 operation->request()->name()->domain_specific()->domainID =domain;
+                operation->request()->name()->domain_specific()->itemID =fulllist[fullcnt];               
+                 
+                  socket_.async_confirm_request(operation,
+                        boost::bind(&client::handle_accesslist_response, this, operation));   
+                
+            
+            }
+            else{
+                  for (std::vector<std::string>::const_iterator it=simplelist.begin();it!=simplelist.end();++it)
+                    std::cout << " simple lst var name: " <<     (*it)   << std::endl;
+
+                    std::cout << " simple lst var size: " <<    simplelist.size()  << std::endl;
+                    
+                boost::shared_ptr<read_operation_type > operationl =
+                        boost::shared_ptr<read_operation_type > ( new read_operation_type());      
+                
+                simplecnt=0;
+                
+                if (!(simplecnt<simplelist.size())) return;                
+                
+                operationl->request_new();
+                operationl->request()->variableAccessSpecification->listOfVariable__new();
+
+                
+                MMS::VariableAccessSpecification::listOfVariable_type_sequence_of vacs;
+
+                vacs.variableSpecification->name__new();
+                vacs.variableSpecification->name()->domain_specific__new();                   
+                vacs.variableSpecification->name()->domain_specific()->domainID =domain;
+                vacs.variableSpecification->name()->domain_specific()->itemID =simplelist[simplecnt];  
+                
+                operationl->request()->variableAccessSpecification->listOfVariable()->push_back(vacs);                
+                
+                
+                
+                  socket_.async_confirm_request(operationl,
+                        boost::bind(&client::handle_readlist_response, this, operationl));                   
+            
+            }
+
+        }
+        else {
+            std::cout << "handle_accesslist_response: " <<  std::endl;
+        }
+    }
+        
+        
+        
+        void handle_readlist_response(boost::shared_ptr<read_operation_type> rslt) {
+        if (rslt->response()) {
+            
+             
+            std::cout << "access var val: " /*<<     rslt->response()->listOfAccessResult->operator [](0)->*/ << std::endl;       
+
+
+
+        }
+        else {
+            std::cout << "handle_readlist_response: " <<  std::endl;
+        }
     }        
 
     void handle_release(const boost::system::error_code& error) {
@@ -234,46 +394,19 @@ private:
         // }
     }
 
-    void handle_read(const boost::system::error_code& error,
-            size_t bytes_transferred) {
-        //  if (!error) {
-        //      std::cout << "Client read:" << std::string(data_, bytes_transferred) <<  " size: " <<  bytes_transferred << std::endl;
-        //   }
-        //  else {
-        //      do_close();
-        //  }
-    }
-
-    void do_write() {
-    /*   std::cout << "Client write:" << message <<  " size: " <<  message.size() << std::endl;
-                    bld_write_request(socket_.ppm(), message);
-                    socket_.async_request( boost::bind(&client::handle_request,  this,
-                    boost::asio::placeholders::error));*/   
-
-    }
-
-    void handle_write(const boost::system::error_code& error) {
-        /*  if (!error) {
-              socket_.async_read_some(boost::asio::buffer(data_, max_length),
-                      boost::bind(&client::handle_read, this,
-                      boost::asio::placeholders::error,
-                      boost::asio::placeholders::bytes_transferred));
-          }
-          else {
-              do_close();
-          }*/
-    }
-
     void do_close() {
-     //   socket_.close();
+        //   socket_.close();
     }
 
 private:
     boost::asio::io_service& io_service_;
     socket_type socket_;
-    std::string message;
-    //archive_ptr trans_;
-    //char data_[max_length];
+    std::string domain;
+    std::vector<std::string> fulllist;
+    std::vector<std::string> simplelist;    
+    std::size_t                         fullcnt;
+    std::size_t                         simplecnt;  
+
 } ;
 
 #else
@@ -281,7 +414,7 @@ private:
 class session {
 public:
 
-    session(boost::asio::io_service& io_service, archive_ptr trans)
+    session(boost::asio::io_service& io_service, isocoder_ptr trans)
     : socket_(io_service, SELECTOR), trans_(trans) {
         std::cout << "New sesion\n";
     }
@@ -309,7 +442,7 @@ private:
     socket_type socket_;
     char data_[max_length];
     std::string message;
-    archive_ptr trans_;
+    isocoder_ptr trans_;
 } ;
 
 class server {
@@ -326,7 +459,7 @@ private:
     void start_accept() {
         while (true) {
 
-            archive_ptr trans_ = boost::asio::iso::create_simple_data("Hello client from test");
+            isocoder_ptr trans_ = boost::iso::create_simple_data("Hello client from test");
 
             session* new_session = new session(io_service_, trans_);
             boost::system::error_code ec;
@@ -357,7 +490,7 @@ public:
     : io_service_(io_service),
     socket_(io_service, SELECTOR) {
 
-        trans_ = boost::asio::iso::create_simple_data("Hello server  from test");
+        trans_ = boost::iso::create_simple_data("Hello server  from test");
 
         boost::system::error_code ec;
         endpoint_type endpoint = *endpoint_iterator;
@@ -385,9 +518,9 @@ public:
 #if defined(PRES_PROT)
 
 #elif defined(SESSION_PROT)
-        trans_ = archive_ptr( new   trans_data("Goodbuy server  from test"));
+        trans_ = isocoder_ptr( new   trans_data("Goodbuy server  from test"));
         boost::system::error_code ecc;
-        socket_.releaseconnect(boost::asio::iso::SESSION_NORMAL_RELEASE, trans_, ecc);
+        socket_.releaseconnect(boost::iso::SESSION_NORMAL_RELEASE, trans_, ecc);
         if (trans_)
             std::cout << "Server release data : " << trans_->respond_str() << std::endl;
 
@@ -418,7 +551,7 @@ private:
     boost::asio::io_service& io_service_;
     socket_type socket_;
     std::string message;
-    archive_ptr trans_ ;
+    isocoder_ptr trans_ ;
     char data_[max_length];
 } ;
 
@@ -470,7 +603,7 @@ struct Client {
                 THD_EXCLUSIVE_LOCK(mtx)
                 if (msg.size()) {
                     io_service.reset();
-                    client_.write(msg);
+                    //client_.write(msg);
                     io_service.run();
                     msg = "";
                 }
@@ -480,7 +613,7 @@ struct Client {
             boost::thread::sleep(xt_loop);
         }
         //io_service.stop();
-        client_.release();
+        //client_.release();
         return true;
     }
 
@@ -545,59 +678,59 @@ int main(int argc, char* argv[]) {
 
 
     try {
-          if (argc < 2) {
+        if (argc < 2) {
 
-          boost::asio::io_service io_service;
+            boost::asio::io_service io_service;
 
-             server_ptr ss = server_ptr( new Server(io_service));
-             boost::thread serverth = boost::thread(ss);
+            server_ptr ss = server_ptr( new Server(io_service));
+            boost::thread serverth = boost::thread(ss);
 
-             io_ptr io = io_ptr(new IO(io_service));
-             boost::thread clientio = boost::thread(io);
-
-
-
-             std::string quit_in;
-             while (true) {
-                 std::getline(std::cin, quit_in);
-                 if (quit_in == "q") break;
-             }
-
-             ss->terminate();
-             serverth.join();
-            
-
-
-         }
-         else {
-
-        boost::asio::io_service io_service;
-
-        client_ptr cc = client_ptr( new Client(io_service, argv[1]) );
-        boost::thread clientth = boost::thread(cc);
-
-        io_ptr io = io_ptr(new IO(io_service));
-        boost::thread clientio = boost::thread(io);
+            io_ptr io = io_ptr(new IO(io_service));
+            boost::thread clientio = boost::thread(io);
 
 
 
-        std::string quit_in;
-        while (true) {
-            std::getline(std::cin, quit_in);
-            if (quit_in == "q") break;
-            cc->set(quit_in);
+            std::string quit_in;
+            while (true) {
+                std::getline(std::cin, quit_in);
+                if (quit_in == "q") break;
+            }
+
+            ss->terminate();
+            serverth.join();
+
+
+
         }
+        else {
+
+            boost::asio::io_service io_service;
+
+            client_ptr cc = client_ptr( new Client(io_service, argv[1]) );
+            boost::thread clientth = boost::thread(cc);
+
+            io_ptr io = io_ptr(new IO(io_service));
+            boost::thread clientio = boost::thread(io);
 
 
-        cc->terminate();
-        clientth.join();
+
+            std::string quit_in;
+            while (true) {
+                std::getline(std::cin, quit_in);
+                if (quit_in == "q") break;
+                cc->set(quit_in);
+            }
+
+
+            cc->terminate();
+            clientth.join();
 
 
 
 
 
 
-          }
+        }
 
     }
     catch (std::exception& e) {
