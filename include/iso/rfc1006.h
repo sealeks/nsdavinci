@@ -76,7 +76,7 @@ namespace boost {
             const octet_type REJECT_REASON_ADDR = '\x03'; // address   error 
             const octet_type REJECT_REASON_NODEF = '\x00'; // address   error               
 
-            boost::system::error_code errorcode_by_reason(octet_type val);
+            error_code errorcode_by_reason(octet_type val);
 
             inline octet_type tpdu_type_size(tpdu_size val) {
                 return static_cast<octet_type> (val);
@@ -438,7 +438,7 @@ namespace boost {
                     return options_;
                 }
 
-                boost::system::error_code errcode() const {
+                error_code errcode() const {
                     return errcode_;
                 }
 
@@ -447,13 +447,13 @@ namespace boost {
 
                 operation_state state(operation_state val);
 
-                boost::system::error_code errcode(const boost::system::error_code& err);
+                error_code errcode(const error_code& err);
 
                 void reject_reason(octet_type val);
 
-                boost::system::error_code check_tkpt();
+                error_code check_tkpt();
 
-                boost::system::error_code check_header();
+                error_code check_header();
 
                 operation_state state_;
                 std::size_t size_;
@@ -464,7 +464,7 @@ namespace boost {
                 octet_type class_option_;
                 octet_type reject_reason_;
                 protocol_options options_;
-                boost::system::error_code errcode_;
+                error_code errcode_;
                 bool eof_;
 
                 data_type_ptr tkpt_data;
@@ -510,13 +510,13 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 std::size_t available() const {
-                    boost::system::error_code ec;
+                    error_code ec;
                     std::size_t s = available(ec);
                     boost::asio::detail::throw_error(ec, "available");
                     return s;
                 }
 
-                std::size_t available(boost::system::error_code& ec) const {
+                std::size_t available(error_code& ec) const {
                     std::size_t s = this->get_service().available(this->get_implementation(), ec);
                     if (ec) return 0;
                     return waiting_data_size_ < s ? waiting_data_size_ : s;
@@ -541,13 +541,13 @@ namespace boost {
 
                 void connect(const endpoint_type& peer_endpoint) {
 
-                    boost::system::error_code ec;
+                    error_code ec;
                     connect(peer_endpoint, ec);
                     boost::asio::detail::throw_error(ec, "connect");
                 }
 
-                boost::system::error_code connect(const endpoint_type& peer_endpoint,
-                        boost::system::error_code& ec) {
+                error_code connect(const endpoint_type& peer_endpoint,
+                        error_code& ec) {
                     if (!is_open()) {
                         if (this->get_service().open(this->get_implementation(),
                                 peer_endpoint.protocol(), ec)) {
@@ -587,7 +587,7 @@ namespace boost {
                         socket_->get_service().async_connect(socket_->get_implementation(), peer_endpoint_, *this);
                     }
 
-                    void operator()(const boost::system::error_code& ec) {
+                    void operator()(const error_code& ec) {
                         if (!ec)
                             operator()(ec, 0);
 
@@ -595,7 +595,7 @@ namespace boost {
                             handler_(ec);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case request:
@@ -631,7 +631,7 @@ namespace boost {
 
                 private:
 
-                    void finish(const boost::system::error_code& ec) {
+                    void finish(const error_code& ec) {
                         if (receive_->state() == receive_seq::complete) {
                             switch (receive_->type()) {
                                 case CC:
@@ -643,14 +643,14 @@ namespace boost {
                                 case ER:
                                 case DR:
                                 {
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     //socket_->get_service().close(socket_->get_implementation(), ecc);
-                                    handler_(receive_->errcode() ? receive_->errcode() : ERROR_EIO);
+                                    handler_(receive_->errcode() ? receive_->errcode() : ER_INOUT);
                                     return;
                                 }
                             }
                         }
-                        handler_(ERROR__EPROTO);
+                        handler_(ER_PROTOCOL);
                     }
 
                     void state(stateconnection st) {
@@ -680,7 +680,7 @@ namespace boost {
                     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
                     if (!is_open()) {
-                        boost::system::error_code ec;
+                        error_code ec;
                         const protocol_type protocol = peer_endpoint.protocol();
                         if (get_service().open(get_implementation(), protocol, ec)) {
                             get_io_service().post(
@@ -702,12 +702,12 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 void release(octet_type rsn) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     release(rsn, ec);
                     boost::asio::detail::throw_error(ec, "release");
                 }
 
-                boost::system::error_code release(octet_type rsn, boost::system::error_code& ec) {
+                error_code release(octet_type rsn, error_code& ec) {
 
                     return release_impl(rsn, ec);
                 }
@@ -730,11 +730,11 @@ namespace boost {
 
                     void run() {
 
-                        boost::system::error_code ec;
+                        error_code ec;
                         operator()(ec, 0);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         std::size_t n = 0;
                         if (!ec) {
                             send_->size(bytes_transferred);
@@ -768,7 +768,7 @@ namespace boost {
                                 release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, rsn)));
                     }
                     else
-                        handler(ERROR_ECONNREFUSED);
+                        handler( ER_REFUSE);
                 }
 
 
@@ -780,11 +780,11 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 void check_accept(int16_t src = 1) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     boost::asio::detail::throw_error(ec, "connect");
                 }
 
-                boost::system::error_code check_accept(int16_t src, boost::system::error_code& ec) {
+                error_code check_accept(int16_t src, error_code& ec) {
                     return check_accept_imp(src, ec);
                 }
 
@@ -813,11 +813,11 @@ namespace boost {
 
                     void run() {
 
-                        boost::system::error_code ec;
+                        error_code ec;
                         operator()(ec, 0);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case wait:
@@ -847,9 +847,9 @@ namespace boost {
                                         socket_->get_service().async_send(socket_->get_implementation(), send_->pop(), 0, *this);
                                         return;
                                     }
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     //socket_->get_service().close(socket_->get_implementation(), ecc);
-                                    handler_(ERROR_EDOM);
+                                    handler_(ER_OUTDOMAIN);
 
                                     return;
                                 }
@@ -863,11 +863,11 @@ namespace boost {
 
                 private:
 
-                    void parse_response(const boost::system::error_code& ec) {
+                    void parse_response(const error_code& ec) {
                         if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
-                            boost::system::error_code ecc;
+                            error_code ecc;
                             //socket_->get_service().close(socket_->get_implementation(), ecc);
-                            handler_(ERROR__EPROTO);
+                            handler_(ER_PROTOCOL);
                             return;
                         }
                         octet_type error_accept = 0;
@@ -882,7 +882,7 @@ namespace boost {
                         operator()(ec, 0);
                     }
 
-                    void finish(const boost::system::error_code& ec) {
+                    void finish(const error_code& ec) {
 
                         protocol_options opt = receive_->options();
                         opt.pdusize(options_.pdusize());
@@ -940,7 +940,7 @@ namespace boost {
                 template <typename ConstBufferSequence>
                 std::size_t send(const ConstBufferSequence& buffers,
                         socket_base::message_flags flags) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     std::size_t s = send(buffers, flags, ec);
                     boost::asio::detail::throw_error(ec, "send");
 
@@ -949,7 +949,7 @@ namespace boost {
 
                 template <typename ConstBufferSequence>
                 std::size_t write_some(const ConstBufferSequence& buffers) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     std::size_t s = send(buffers, 0, ec);
                     boost::asio::detail::throw_error(ec, "write_some");
 
@@ -958,14 +958,14 @@ namespace boost {
 
                 template <typename ConstBufferSequence>
                 std::size_t write_some(const ConstBufferSequence& buffers,
-                        boost::system::error_code& ec) {
+                        error_code& ec) {
 
                     return send(buffers, 0, ec);
                 }
 
                 template <typename ConstBufferSequence>
                 std::size_t send(const ConstBufferSequence& buffers,
-                        socket_base::message_flags flags, boost::system::error_code& ec) {
+                        socket_base::message_flags flags, error_code& ec) {
 
                     return send_impl(buffers, flags, ec);
                 }
@@ -991,11 +991,11 @@ namespace boost {
 
                     void run() {
 
-                        boost::system::error_code ec;
+                        error_code ec;
                         operator()(ec, 0);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             in_->size(bytes_transferred);
                             if (!in_->ready()) {
@@ -1066,7 +1066,7 @@ namespace boost {
                 template <typename MutableBufferSequence>
                 std::size_t receive(const MutableBufferSequence& buffers,
                         socket_base::message_flags flags) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     std::size_t s = receive(buffers, flags, ec);
                     boost::asio::detail::throw_error(ec, "receive");
 
@@ -1075,14 +1075,14 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t read_some(const MutableBufferSequence& buffers,
-                        boost::system::error_code& ec) {
+                        error_code& ec) {
 
                     return receive(buffers, 0, ec);
                 }
 
                 template <typename MutableBufferSequence>
                 std::size_t read_some(const MutableBufferSequence& buffers) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     std::size_t s = receive(buffers, 0, ec);
                     boost::asio::detail::throw_error(ec, "read_some");
 
@@ -1091,7 +1091,7 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t receive(const MutableBufferSequence& buffers,
-                        socket_base::message_flags flags, boost::system::error_code& ec) {
+                        socket_base::message_flags flags, error_code& ec) {
 
                     return receive_impl(buffers, flags, ec);
                 }
@@ -1116,11 +1116,11 @@ namespace boost {
 
                     void run() {
 
-                        boost::system::error_code ec;
+                        error_code ec;
                         operator()(ec, 0);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         std::size_t n = 0;
                         if (!ec) {
                             receive_->put(bytes_transferred);
@@ -1142,7 +1142,7 @@ namespace boost {
                         switch (receive_->type()) {
                             case CR:
                             {
-                                boost::system::error_code decc;
+                                error_code decc;
                                 handler_(decc, 0);
                                 return false;
                             }
@@ -1152,24 +1152,24 @@ namespace boost {
                             }
                             case ER:
                             {
-                                boost::system::error_code ecc;
+                                error_code ecc;
                                 //socket_->get_service().close(socket_->get_implementation(), ecc);
-                                handler_(ERROR__SEQ, static_cast<std::size_t> (receive_->datasize()));
+                                handler_(ER_BEDSEQ, static_cast<std::size_t> (receive_->datasize()));
                                 break;
                             }
                             case DR:
                             {
-                                boost::system::error_code ecc;
+                                error_code ecc;
                                 //socket_->get_service().close(socket_->get_implementation(), ecc);
-                                handler_(ERROR_ECONNREFUSED, static_cast<std::size_t> (receive_->datasize()));
+                                handler_( ER_REFUSE, static_cast<std::size_t> (receive_->datasize()));
                                 break;
                             }
                             default:
                             {
 
-                                boost::system::error_code ecc;
+                                error_code ecc;
                                 //socket_->get_service().close(socket_->get_implementation(), ecc);
-                                handler_(ERROR__EPROTO, 0);
+                                handler_(ER_PROTOCOL, 0);
                             }
                         }
 
@@ -1261,8 +1261,8 @@ namespace boost {
                 //  private implementator  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
 
-                boost::system::error_code connect_impl(const endpoint_type& peer_endpoint,
-                        boost::system::error_code& ec) {
+                error_code connect_impl(const endpoint_type& peer_endpoint,
+                        error_code& ec) {
 
                     if (this->get_service().connect(this->get_implementation(), peer_endpoint, ec))
                         return ec;
@@ -1288,21 +1288,21 @@ namespace boost {
                             case ER:
                             case DR:
                             {
-                                boost::system::error_code ecc;
+                                error_code ecc;
                                 //this->get_service().close(this->get_implementation(), ecc);
 
-                                return ec = receive_->errcode() ? receive_->errcode() : ERROR_EIO;
+                                return ec = receive_->errcode() ? receive_->errcode() : ER_INOUT;
                             }
                             default:
                             {
-                                ec = ERROR__EPROTO;
+                                ec = ER_PROTOCOL;
                             }
                         }
                     }
-                    return ec = ERROR__EPROTO;
+                    return ec = ER_PROTOCOL;
                 }
 
-                boost::system::error_code release_impl(octet_type rsn, boost::system::error_code& ec) {
+                error_code release_impl(octet_type rsn, error_code& ec) {
                     if (is_open()) {
                         send_seq_ptr send_(send_seq_ptr(new send_seq(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                         while (!ec && !send_->ready())
@@ -1310,10 +1310,10 @@ namespace boost {
 
                         return ec;
                     }
-                    return ec = ERROR_ECONNREFUSED;
+                    return ec =  ER_REFUSE;
                 }
 
-                boost::system::error_code check_accept_imp(int16_t src, boost::system::error_code& ec) {
+                error_code check_accept_imp(int16_t src, error_code& ec) {
                     transport_option_.src_tsap(src);
                     bool canseled = false;
                     receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
@@ -1325,9 +1325,9 @@ namespace boost {
                     send_seq_ptr send_;
                     protocol_options options_ = transport_option();
                     if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
-                        boost::system::error_code ecc;
+                        error_code ecc;
                         //this->get_service().close(this->get_implementation(), ecc);
-                        return ERROR__EPROTO;
+                        return ER_PROTOCOL;
                     }
                     octet_type error_accept = 0;
                     if (!negotiate_prot8073_option(options_, receive_->options(), error_accept)) {
@@ -1342,7 +1342,7 @@ namespace boost {
                     if (ec)
                         return ec;
                     if (canseled) {
-                        boost::system::error_code ecc;
+                        error_code ecc;
                         //this->get_service().close(this->get_implementation(), ecc);
                     }
                     else {
@@ -1351,12 +1351,12 @@ namespace boost {
                         opt.pdusize(options_.pdusize());
                         negotiate_transport_option(receive_->options());
                     }
-                    return ec = canseled ? ERROR_EDOM : ec;
+                    return ec = canseled ? ER_OUTDOMAIN : ec;
                 }
 
                 template <typename ConstBufferSequence>
                 std::size_t send_impl(const ConstBufferSequence& buffers,
-                        socket_base::message_flags flags, boost::system::error_code& ec) {
+                        socket_base::message_flags flags, error_code& ec) {
                     send_seq_ptr send_(new send_seq_data<ConstBufferSequence > (buffers, pdusize()));
                     while (!ec && !send_->ready())
                         send_->size(this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
@@ -1365,7 +1365,7 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t receive_impl(const MutableBufferSequence& buffers,
-                        socket_base::message_flags flags, boost::system::error_code& ec) {
+                        socket_base::message_flags flags, error_code& ec) {
                     receive_seq_ptr receive_(new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state()));
                     while (!ec && !receive_->ready()) {
                         receive_->put(this->get_service().receive(this->get_implementation(), boost::asio::buffer(
@@ -1383,15 +1383,15 @@ namespace boost {
                         case ER:
                         case DR:
                         {
-                            boost::system::error_code ecc;
+                            error_code ecc;
                             //this->get_service().close(this->get_implementation(), ecc);
-                            ec = (receive_->type() == DR) ? ERROR_ECONNREFUSED : ERROR__SEQ;
+                            ec = (receive_->type() == DR) ?  ER_REFUSE : ER_BEDSEQ;
                             return static_cast<std::size_t> (receive_->datasize());
                         }
                     }
-                    boost::system::error_code ecc;
+                    error_code ecc;
                     //this->get_service().close(this->get_implementation(), ecc);
-                    ec = ERROR__EPROTO;
+                    ec = ER_PROTOCOL;
                     return 0;
                 }
 
@@ -1453,12 +1453,12 @@ namespace boost {
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                        
 
                     template <typename SocketService>
-                    boost::system::error_code accept(implementation_type& impl,
+                    error_code accept(implementation_type& impl,
                             basic_socket<protocol_type, SocketService>& peer,
-                            endpoint_type* peer_endpoint, boost::system::error_code& ec) {
+                            endpoint_type* peer_endpoint, error_code& ec) {
                         if (!service_impl_.accept(impl, peer, peer_endpoint, ec)) {
                             if (static_cast<stream_socket*> (&peer)->check_accept(src(), ec)) {
-                                boost::system::error_code ecc;
+                                error_code ecc;
                                 //static_cast<stream_socket*> (&peer)->close(ecc);
                             }
                         }
@@ -1482,7 +1482,7 @@ namespace boost {
                             service_impl_.async_accept(impl_, socket_, endpoint_, *this);
                         }
 
-                        void operator()(const boost::system::error_code& ec) {
+                        void operator()(const error_code& ec) {
                             if (!ec) {
                                 static_cast<stream_socket*> (&socket_)->asyn_check_accept<Handler > (handler_, src_);
                                 return;
