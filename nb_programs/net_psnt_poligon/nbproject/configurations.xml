@@ -4,10 +4,15 @@
     <logicalFolder name="SourceFiles"
                    displayName="Исходные файлы "
                    projectFiles="true">
-      <itemPath>../../include_program/net_psnt_poligon/P-EXAMPLE-1.h</itemPath>
+      <itemPath>../../include/iso/mms/ACSE-1.h</itemPath>
+      <itemPath>../../include/iso/mms/ISO-9506-MMS-1.h</itemPath>
+      <itemPath>../../include/iso/mms/ISO-9506-MMS-1A.h</itemPath>
+      <itemPath>../../include/iso/mms/MMS-Environment-1.h</itemPath>
+      <itemPath>../../include/iso/mms/MMS-Object-Module-1.h</itemPath>
+      <itemPath>../../include/iso/mms/MMS-SCI-Module-1.h</itemPath>
       <itemPath>../../include_program/net_psnt_poligon/main.cpp</itemPath>
-      <itemPath>../../include_program/net_psnt_poligon/present.cpp</itemPath>
-      <itemPath>../../include_program/net_psnt_poligon/present.h</itemPath>
+      <itemPath>../../include_program/net_psnt_poligon/mmssocket.cpp</itemPath>
+      <itemPath>../../include_program/net_psnt_poligon/mmssocket.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Файлы тестов"

@@ -34,8 +34,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1689547802/present.o \
-	${OBJECTDIR}/_ext/1689547802/main.o
+	${OBJECTDIR}/_ext/242829560/main.o \
+	${OBJECTDIR}/_ext/242829560/mmssocket.o
 
 
 # C Compiler Flags
@@ -56,21 +56,21 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/net_poligon
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/net_psnt_poligon
 
-../../bin/${CND_CONF}/net_poligon: ${OBJECTFILES}
+../../bin/${CND_CONF}/net_psnt_poligon: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/net_poligon ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -o ../../bin/${CND_CONF}/net_psnt_poligon ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/1689547802/present.o: ../../include_program/net_poligon/present.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1689547802
+${OBJECTDIR}/_ext/242829560/main.o: ../../include_program/net_psnt_poligon/main.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/242829560
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1689547802/present.o ../../include_program/net_poligon/present.cpp
+	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/242829560/main.o ../../include_program/net_psnt_poligon/main.cpp
 
-${OBJECTDIR}/_ext/1689547802/main.o: ../../include_program/net_poligon/main.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1689547802
+${OBJECTDIR}/_ext/242829560/mmssocket.o: ../../include_program/net_psnt_poligon/mmssocket.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/242829560
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1689547802/main.o ../../include_program/net_poligon/main.cpp
+	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/242829560/mmssocket.o ../../include_program/net_psnt_poligon/mmssocket.cpp
 
 # Subprojects
 .build-subprojects:
@@ -78,7 +78,7 @@ ${OBJECTDIR}/_ext/1689547802/main.o: ../../include_program/net_poligon/main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/net_poligon
+	${RM} ../../bin/${CND_CONF}/net_psnt_poligon
 
 # Subprojects
 .clean-subprojects:

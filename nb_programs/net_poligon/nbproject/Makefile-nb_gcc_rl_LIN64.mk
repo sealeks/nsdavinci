@@ -63,7 +63,8 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 ${OBJECTDIR}/_ext/1689547802/main.o: ../../include_program/net_poligon/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1689547802
-	$(COMPILE.cc) -O2 -I../../include -o ${OBJECTDIR}/_ext/1689547802/main.o ../../include_program/net_poligon/main.cpp
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1689547802/main.o ../../include_program/net_poligon/main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -75,3 +76,8 @@ ${OBJECTDIR}/_ext/1689547802/main.o: ../../include_program/net_poligon/main.cpp
 
 # Subprojects
 .clean-subprojects:
+
+# Enable dependency checking
+.dep.inc: .depcheck-impl
+
+include .dep.inc
