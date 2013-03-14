@@ -70,10 +70,7 @@ namespace boost {
             //SIZE4 = TPDU_SIZE4
         } tpdu_size;
 
-        enum release_type {
-            SESSION_NORMAL_RELEASE,
-            SESSION_ABORT_RELEASE
-        };
+
 
 
         ///   selectors type            
