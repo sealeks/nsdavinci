@@ -344,16 +344,53 @@ namespace boost {
 
             const raw_type& protocol_options::data() const {
                 return vars_->existPI(PI_EXUSERDATA) ? vars_->getPI(PI_EXUSERDATA) : vars_->getPI(PI_USERDATA);
-            }
+            }      
             
-            session_version_type protocol_options::version() const{
-                  if (vars_->existPI(PI_VERS)){
-                      session_version_type tmp;
-                      if (vars_->getPI(PI_VERS,tmp))
-                          return  tmp & '\x2' ? VERSION2 : VERSION1;
-                  }
-                 return VERSION1;     
+            
+           octet_type protocol_options::accept_version() const{
+                octet_type tmp;
+                return vars_->getPGI(PGI_CN_AC, PI_VERS,tmp) ?
+                    ( (tmp & VERSIONMASK2) ? 
+                        VERSIONMASK2 : VERSIONMASK1)  : VERSIONMASK1;
+            }                  
+            
+            void protocol_options::accept_version(octet_type vl) {
+                vars_->setPGI( PGI_CN_AC, PI_VERS , (vl > VERSIONMASK1) ?
+                    VERSIONMASK2 : VERSIONMASK2);
+            } 
+            
+            octet_type protocol_options::reject_version() const{
+                octet_type tmp;
+                return vars_->getPI( PI_VERS,tmp) ? 
+                    ( (tmp & VERSIONMASK2) ? 
+                        VERSIONMASK2 : VERSIONMASK1)  : VERSIONMASK1;
+            }              
+                  
+            void protocol_options::reject_version(octet_type vl) {
+                return vars_->setPI(  PI_VERS , (vl > VERSIONMASK1) ?
+                    VERSIONMASK2 : VERSIONMASK2);
+            }
+
+            int16_t protocol_options::user_requirement() const {
+                int16_t tmp;
+                return vars_->getPI( PI_SUREQ ,tmp) ? tmp : FU_DEFAULT;
+            }
+
+            void protocol_options::user_requirement(int16_t vl) {
+                return vars_->setPI(  PI_SUREQ,  vl );
             }            
+            
+           octet_type protocol_options::prot_option() const{
+                octet_type tmp;
+                return vars_->getPGI(PGI_CN_AC, PI_PROPT,tmp) ?
+                    ( (tmp & FAIL_PROT_OPTION) ? 
+                        FAIL_PROT_OPTION : WORK_PROT_OPTION)  : WORK_PROT_OPTION;
+            }                  
+            
+            void protocol_options::prot_option(octet_type vl) {
+                vars_->setPGI( PGI_CN_AC, PI_PROPT , (vl) ?
+                    FAIL_PROT_OPTION : WORK_PROT_OPTION);
+            }             
 
             const raw_type& protocol_options::reason() const {
                 return vars_->getPI(PI_REASON);
@@ -365,14 +402,28 @@ namespace boost {
 
             /////////////////////
 
-            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist, raw_type& error) {
+            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist) {
+                
+                self = protocol_options(self.ssap_calling(), dist.ssap_calling());
+                
+                std::cout << "negotiate session : UREQ=" << ((int) dist.user_requirement()) << " PROTOP=" << ((int) dist.prot_option()) << " VER=" << ((int) dist.accept_version()) << std::endl;
+                
+                if (!(dist.user_requirement() & FU_WORK) || dist.prot_option()){
+                    self.reason(REFUSE_REASON_NEGOTIATE);
+                    self.user_requirement(FU_WORK);    
+                    self.prot_option(WORK_PROT_OPTION);                        
+                    return false;
+                }  
+                
 #ifndef CHECK_ISO_SELECTOR        
                 if (!self.ssap_called().empty() && self.ssap_called() != dist.ssap_called()) {
-                    error = REJECT_REASON_ADDR;
+                    self.reason(REFUSE_REASON_ADDR);
                     return false;
                 }
-#endif                
-                self = protocol_options(self.ssap_calling(), dist.ssap_calling());
+#endif                      
+                self.accept_version(dist.accept_version() & VERSIONMASK2 ? VERSIONMASK2 : VERSIONMASK1 );
+                self.user_requirement(FU_WORK);         
+                self.prot_option(WORK_PROT_OPTION);                  
                 return true;
             }
 
@@ -382,51 +433,52 @@ namespace boost {
                 tmp.setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
                 tmp.setPI(PI_SUREQ, FU_WORK);
                 tmp.setPI(PI_CALLING, opt.ssap_calling());
-                tmp.setPI(PI_CALLED, opt.ssap_called());
-                //if  (data->out()->size() > SIMPLE_CONNECT_PDUSIZE_LIMIT)
-                //    tmp.setPI(PI_DTOVER);                
+                tmp.setPI(PI_CALLED, opt.ssap_called());       
                 return tmp.sequence(data);
             }
 
             const_sequence_ptr generate_header_AC(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AC_SPDU_ID);
                 tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
-                tmp.setPGI(PGI_CN_AC, WORK_PROT_VERSION, WORK_PROT_VERSION);
+                tmp.setPGI(PGI_CN_AC, WORK_PROT_VERSION, opt.accept_version());
                 tmp.setPI(PI_SUREQ, FU_WORK);
                 tmp.setPI(PI_CALLING, opt.ssap_calling());
                 tmp.setPI(PI_CALLED, opt.ssap_called());
                 return tmp.sequence(data);
             }
+            
+
+            const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data) {
+                spdudata tmp(RF_SPDU_ID);
+                data->out()->clear();
+                tmp.setPI(PI_TRANDISK, TDSK_NOKEEPCON);
+                tmp.setPI(PI_SUREQ, FU_WORK);
+                tmp.setPI(PI_VERS, opt.reject_version());
+                tmp.setPI(PI_REASON, (!opt.reason().empty()) ? opt.reason() : raw_type(1, '\x0'));
+                return tmp.sequence(data);
+            }            
+            
+
+            const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data) {
+                spdudata tmp(FN_SPDU_ID);
+                tmp.setPI(PI_REASON, ABORT_REASON_ADDR);
+                return tmp.sequence(data);
+            }            
 
             const_sequence_ptr generate_header_DN(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(DN_SPDU_ID);
                 return tmp.sequence(data);
             }
 
-            const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data) {
-                spdudata tmp(RF_SPDU_ID);
-                data->out()->clear();
-                tmp.setPI(PI_TRANDISK, DISCONNECT_OPTION);
-                tmp.setPI(PI_SUREQ, FU_WORK);
-                tmp.setPI(WORK_PROT_VERSION, WORK_PROT_VERSION);
-                tmp.setPI(PI_REASON, opt.reason().size() ? opt.reason() : raw_type(1, '\x0'));
-                return tmp.sequence(data);
-            }
-
             const_sequence_ptr generate_header_AB(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AB_SPDU_ID);
-                tmp.setPI(PI_REASON, REJECT_REASON_NODEF);
+                tmp.setPI(PI_TRANDISK, TDSK_NOKEEPCON);
                 return tmp.sequence(data);
             }
 
             const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AA_SPDU_ID);
-                return tmp.sequence(data);
-            }
-
-            const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data) {
-                spdudata tmp(FN_SPDU_ID);
-                tmp.setPI(PI_REASON, REJECT_REASON_NODEF);
+                data->out()->clear();                
                 return tmp.sequence(data);
             }
 
