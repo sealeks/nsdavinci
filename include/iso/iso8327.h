@@ -35,15 +35,30 @@ namespace boost {
             const octet_type ECHO_NEGOTIATEarr[] = { 'e' ,'c', 'h', 'o', ':', ' '};
             const raw_type ECHO_NEGOTIATE = raw_type(ECHO_NEGOTIATEarr, ECHO_NEGOTIATEarr + 6);            
 
-            const octet_type REJECT_REASON_ADDRarr[] = { '\x0' , '\x81' };
-            const raw_type REJECT_REASON_ADDR = raw_type(REJECT_REASON_ADDRarr, REJECT_REASON_ADDRarr + 2);
-             
-            const  raw_type REJECT_REASON_NODEF = raw_type(1, '\x0'); 
+            const octet_type REFUSE_REASON_ADDRarr[] = { '\x1' , '\x81' };
+            const raw_type REFUSE_REASON_ADDR = raw_type(REFUSE_REASON_ADDRarr, REFUSE_REASON_ADDRarr + 2);
+            
+            const octet_type REFUSE_REASON_NEGOTIATEarr[] = { '\x1' , '\x82' };
+            const raw_type REFUSE_REASON_NEGOTIATE = raw_type(REFUSE_REASON_NEGOTIATEarr, REFUSE_REASON_NEGOTIATEarr + 2);        
+            
+            const octet_type REFUSE_REASON_USERarr[] = { '\x1' , '\x85' };
+            const raw_type REFUSE_REASON_USER = raw_type(REFUSE_REASON_USERarr, REFUSE_REASON_USERarr + 2);                    
+
+            const octet_type ABORT_REASON_ADDR = '\x0';                      
 
             const octet_type WORK_PROT_OPTION = '\x0';
+            const octet_type FAIL_PROT_OPTION = '\x1';            
             const octet_type WORK_PROT_VERSION = '\x3';
 
-            const octet_type DISCONNECT_OPTION = '\x1';
+            const octet_type TDSK_NOKEEPCON = '\x1';
+            const octet_type TDSK_USER_ABORT = '\x2'; 
+            const octet_type TDSK_PROT_ERROR = '\x4';              
+            const octet_type TDSK_NO_REASON = '\x8';    
+            const octet_type TDSK_IMPLRESTRICT = '\x10';            
+            
+            
+            const octet_type  VERSIONMASK1='\x1';
+            const octet_type  VERSIONMASK2='\x2';                   
         
             const std::size_t  SIMPLE_CONNECT_PDUSIZE_LIMIT = 512;
             const std::size_t  EXTENDED_CONNECT_PDUSIZE_LIMIT = 10240;            
@@ -60,10 +75,11 @@ namespace boost {
             const spdu_type AA_SPDU_ID = 26; //ABORT ACCEPT
             const spdu_type DT_SPDU_ID = 1; //DATA TRANSFER 
             const spdu_type PR_SPDU_ID = 7; //PREPARE 
+            //const spdu_type NF_SPDU_ID = 8;      //NOT FINISHED
 
             //  Negotiated realease
 
-            //const spdu_type NF_SPDU_ID = 8;      //NOT FINISHED
+
             //const spdu_type GT_SPDU_ID = 1;   //GIVE TOKENS
             //const spdu_type  PT_SPDU_ID = 2;           //PLEASE TOKENS
 
@@ -145,7 +161,7 @@ namespace boost {
 
 
             const int16_t FU_WORK = FU_DUPLEX; //work;
-
+            const int16_t FU_DEFAULT = FU_HALFDUPLEX | FU_MINORSYNC | FU_ACTIVEMG | FU_CAPABDATA |  FU_EXCEPTION; //default;
 
 
             const varid_type PGI_CN_IND = 1; // Connection Identifier              
@@ -168,6 +184,7 @@ namespace boost {
 
             const session_version_type  VERSION1=1;
             const session_version_type  VERSION2=2;
+                 
             
             const std::size_t triple_npos = static_cast<std::size_t> (0xFFFF + 1);
 
@@ -275,10 +292,7 @@ namespace boost {
                 bool nullPI(varid_type cod) const;
 
                 const_sequence_ptr sequence(isocoder_ptr seq) const;
-
-
-
-
+                
             private:
 
                 bool error(bool val) {
@@ -323,14 +337,28 @@ namespace boost {
 
                 void ssap_called(const raw_type & val);
 
-                const raw_type& data() const;
-
-                const raw_type& reason() const;
+                const raw_type& data() const; 
                 
-                session_version_type version() const;                
+                octet_type accept_version() const;   
+                
+                void accept_version(octet_type vl);                 
+                
+                octet_type reject_version() const;  
+                
+                void reject_version(octet_type vl);   
+                
+                int16_t user_requirement() const;  
+                
+                void user_requirement(int16_t vl);          
+                
+                octet_type prot_option() const;  
+                
+                void prot_option(octet_type vl);                
 
                 void reason(const raw_type & val);
-
+                
+                const raw_type& reason() const;                  
+                
             private:
                 spdudata_ptr vars_;
             };
@@ -338,21 +366,21 @@ namespace boost {
             
 
             //negotiate_prot8327_option
-            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist, raw_type& error);
+            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist);
 
             const_sequence_ptr generate_header_CN(const protocol_options& opt, isocoder_ptr data); //CONNECT SPDU
 
             const_sequence_ptr generate_header_AC(const protocol_options& opt, isocoder_ptr data); //ACCEPT SPDU
 
-            const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data); //REFUSE  SPDU                     
+            const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data); //REFUSE  SPDU        
+            
+            const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data); //FINISH SPDU            
 
             const_sequence_ptr generate_header_DN(const protocol_options& opt,  isocoder_ptr data); //DISCONNECT  SPDU          
 
             const_sequence_ptr generate_header_AB(const protocol_options& opt, isocoder_ptr data); //ABORT SPDU                     
 
-            const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data); //ABORT ACCEPT  SPDU         
-
-            const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data); //FINISH SPDU                     
+            const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data); //ABORT ACCEPT  SPDU                              
 
             const_sequence_ptr generate_header_NF(const protocol_options& opt, isocoder_ptr data); //NOT FINISH  SPDU                      
 
@@ -777,10 +805,17 @@ namespace boost {
                                 {
                                     socket_->negotiate_session_option(receive_->options());
                                     socket_->rootcoder()->in()->add(receive_->options().data());
-                                    socket_->session_version_=receive_->options().version();
+                                    socket_->session_version_=(receive_->options().accept_version() & VERSIONMASK2) ? VERSION2 : VERSION1;
                                     exit_handler(ec);
                                     return;
                                 }
+                                case RF_SPDU_ID:
+                                {
+                                    boost::system::error_code ecc;
+                                    socket_->close(ecc);
+                                    exit_handler(ERROR_ECONNREFUSED);
+                                    return;
+                                }                                
                                 default:
                                 {
                                     boost::system::error_code ecc;
@@ -919,9 +954,9 @@ namespace boost {
                                 }
                             }
                         }
-                        exit_handler(ec);
                         boost::system::error_code ecc;
-                        socket_->close(ecc);
+                        socket_->close(ecc);                        
+                        exit_handler(ec);
                     }
 
 
@@ -933,27 +968,27 @@ namespace boost {
                                 case DN_SPDU_ID:
                                 {
                                     socket_->rootcoder()->in()->add(receive_->options().data());
-                                    exit_handler(ec);
                                     boost::system::error_code ecc;
                                     socket_->close(ecc);
+                                    exit_handler(ec);                                    
                                     return;
                                 }
                                 case AA_SPDU_ID:
                                 {
                                     socket_->rootcoder()->in()->add(receive_->options().data());
-                                    exit_handler(ec);
                                     boost::system::error_code ecc;
                                     socket_->close(ecc);
+                                    exit_handler(ec);                                    
                                     return;
                                 }
                                 default:
                                 {
-                                    exit_handler(ERROR__EPROTO);
                                 }
                             }
                         }
                         boost::system::error_code ecc;
                         socket_->close(ecc);
+                        exit_handler(ERROR__EPROTO);
                     }
                     
                     void exit_handler(const boost::system::error_code& ec) {
@@ -1021,7 +1056,7 @@ namespace boost {
                 }
 
                 boost::system::error_code check_accept(boost::system::error_code& ec) {
-                    rootcoder()->out()->clear();                    
+                    rootcoder()->in()->clear();                    
                     return check_accept_imp(ec);
                 }
 
@@ -1109,17 +1144,18 @@ namespace boost {
                             exit_handler(ERROR__EPROTO);
                             return;
                         }
-                        raw_type error_accept;
+                        bool nouserreject = true;
                         socket_->rootcoder()->in()->add(receive_->options().data());
-                        if (!negotiate_prot8327_option(options_, receive_->options(), error_accept) || 
-                                !socket_->negotiate_session_accept(error_accept)) {
-                            options_.reason(error_accept);
+                        if (!negotiate_prot8327_option(options_, receive_->options()) || 
+                                !(nouserreject =socket_->negotiate_session_accept())) {
+                            if (!nouserreject)
+                                options_.reason(REFUSE_REASON_USER);
                             send_ = send_seq_ptr(new send_seq(RF_SPDU_ID, options_, socket_->rootcoder()));
                             state(refuse);
                             operator()(ec, 0);
                             return;
                         }
-                        socket_->session_version_=options_.version();
+                        socket_->session_version_=(options_.accept_version() & VERSIONMASK2) ? VERSION2 : VERSION1;
                         send_ = send_seq_ptr(new send_seq(AC_SPDU_ID, options_, socket_->rootcoder()));
                         state(send);
                         operator()(ec, 0);
@@ -1133,7 +1169,7 @@ namespace boost {
                     }
                     
                     void exit_handler(const boost::system::error_code& ec) {
-                        socket_->rootcoder()->in()->clear();
+                        socket_->rootcoder()->out()->clear();
                         handler_(ec);
                     }                       
 
@@ -1162,7 +1198,7 @@ namespace boost {
                 template <typename CheckAcceptHandler>
                 void asyn_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler) {
                     // BOOST_ASIO_CONNECT_HANDLER_CHECK(CheckAcceptHandler, handler) type_check;
-                    rootcoder()->out()->clear();
+                    rootcoder()->in()->clear();
                     this->get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
                             accept_op<CheckAcceptHandler > (const_cast<stream_socket*> (this), handler)));
                 }
@@ -1417,7 +1453,7 @@ namespace boost {
                             case DT_SPDU_ID:
                             {
                                 return true;
-                            }
+                            }                         
                             default:
                             {
                                 send_ = socket_->session_release_reaction(receive_);
@@ -1525,7 +1561,7 @@ namespace boost {
                     return send_seq_ptr();
                 }
 
-                virtual bool negotiate_session_accept(raw_type& error) {
+                virtual bool negotiate_session_accept() {
                     rootcoder()->out()->clear();  
                     rootcoder()->out()->add(ECHO_NEGOTIATE);
                     rootcoder()->out()->add(rootcoder()->in()->buffers());
@@ -1574,12 +1610,17 @@ namespace boost {
                             {
                                 negotiate_session_option(receive_->options());
                                 rootcoder()->in()->add(receive_->options().data());
-                                session_version_=receive_->options().version();
+                                session_version_=(receive_->options().accept_version() & VERSIONMASK2) ? VERSION2 : VERSION1;
                                 return connect_impl_exit(ec);
                             }
+                            case RF_SPDU_ID:
+                            {
+                                boost::system::error_code ecc;
+                                close(ecc);
+                                return connect_impl_exit(ERROR_ECONNREFUSED);
+                            }                                           
                             default:
                             {
-                                ec = ERROR__EPROTO;
                             }
                         }
                     }
@@ -1652,16 +1693,17 @@ namespace boost {
                         close(ecc);
                         return check_accept_imp_exit(ERROR__EPROTO);
                     }
-                    raw_type error_accept;
+                    bool nouserreject = true;
                     rootcoder()->in()->add(receive_->options().data());
-                    if (!negotiate_prot8327_option(options_, receive_->options(), error_accept) ||
-                            !negotiate_session_accept(error_accept)) {
+                    if (!negotiate_prot8327_option(options_, receive_->options()) ||
+                            !(nouserreject =negotiate_session_accept())) {
+                        if (!nouserreject)
+                            options_.reason(REFUSE_REASON_USER);
                         canseled = true;
-                        options_.reason(error_accept);
                         send_ = send_seq_ptr(new send_seq(RF_SPDU_ID, options_, rootcoder()));
                     }
                     else {
-                        session_version_=options_.version();
+                        session_version_=(options_.accept_version() & VERSIONMASK2) ? VERSION2 : VERSION1;
                         send_ = send_seq_ptr(new send_seq(AC_SPDU_ID, options_, rootcoder()));
                     }
 
@@ -1681,7 +1723,7 @@ namespace boost {
                 }
                 
                 const boost::system::error_code& check_accept_imp_exit(const boost::system::error_code& err){
-                    rootcoder()->in()->clear();
+                    rootcoder()->out()->clear();
                     return err;
                 }                  
 

@@ -235,19 +235,19 @@ namespace boost {
             presentation_selector(const session_selector& sselector) : sselector_(sselector) {
             }
 
-            std::string called() const {
-                return called_.to_string();
+            const raw_type& called() const {
+                return called_.to_raw();
             }
 
-            std::string calling() const {
-                return calling_.to_string();
+            const raw_type& calling() const {
+                return calling_.to_raw();
             }
 
-            void called(const std::string& val) {
+            void called(const raw_type& val) {
                 called_ = selectorvalue_type(val);
             }
 
-            void calling(const std::string& val) {
+            void calling(const raw_type& val) {
                 calling_ = selectorvalue_type(val);
             }
 
