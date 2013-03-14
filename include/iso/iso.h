@@ -54,8 +54,8 @@ namespace boost {
 
         //   transport
 
-        const octet_type TPDU_SIZE8192 = '\xD'; // denied in 0 class
-        const octet_type TPDU_SIZE4096 = '\xC'; // denied in 0 class
+        const octet_type TPDU_SIZE8192 = '\xD'; // not denied in 0 class
+        const octet_type TPDU_SIZE4096 = '\xC'; // not denied in 0 class
         const octet_type TPDU_SIZE2048 = '\xB';
         const octet_type TPDU_SIZE1024 = '\xA';
         const octet_type TPDU_SIZE512 = '\x9';
