@@ -20,6 +20,8 @@ namespace boost {
             typedef boost::asio::socket_base::message_flags message_flags;
             
 
+            
+
             typedef uint8_t spdu_type;
             typedef uint16_t valuelenth_type;  
             typedef uint8_t varid_type;                
@@ -79,7 +81,8 @@ namespace boost {
 
             //  Negotiated realease
 
-
+            
+            
             //const spdu_type GT_SPDU_ID = 1;   //GIVE TOKENS
             //const spdu_type  PT_SPDU_ID = 2;           //PLEASE TOKENS
 
@@ -184,7 +187,19 @@ namespace boost {
 
             const session_version_type  VERSION1=1;
             const session_version_type  VERSION2=2;
-                 
+            
+            
+
+        enum release_type {
+            SESSION_FN_RELEASE = FN_SPDU_ID ,
+            SESSION_AB_RELEASE = AB_SPDU_ID,
+            SESSION_DN_RELEASE = DN_SPDU_ID ,
+            SESSION_AA_RELEASE = AA_SPDU_ID,           
+        };
+        
+        inline static spdu_type release_type_to_spdu(release_type vl){
+            return static_cast<spdu_type>(vl);
+        }
             
             const std::size_t triple_npos = static_cast<std::size_t> (0xFFFF + 1);
 
@@ -884,7 +899,7 @@ namespace boost {
 
                 boost::system::error_code release(boost::system::error_code& ec) {
                     rootcoder()->in()->clear();
-                    return release_impl(SESSION_NORMAL_RELEASE, ec);
+                    return release_impl(SESSION_FN_RELEASE, ec);
                 }
                 
                 void abort() {
@@ -896,7 +911,7 @@ namespace boost {
 
                 boost::system::error_code abort(boost::system::error_code& ec) {
                     rootcoder()->in()->clear();
-                    return release_impl(SESSION_ABORT_RELEASE, ec);
+                    return release_impl(SESSION_AB_RELEASE, ec);
                 }                
 
 
@@ -917,7 +932,7 @@ namespace boost {
                     release_op(stream_socket* socket, ReleaseHandler handler, release_type type) :
                     socket_(socket),
                     handler_(handler),
-                    send_(send_seq_ptr(new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID, socket->session_option(), socket_->rootcoder()))),
+                    send_(send_seq_ptr(new send_seq( release_type_to_spdu(type), socket->session_option(), socket_->rootcoder()))),
                     receive_(new receive_seq()),
                     type_(type),
                     state_(request) {
@@ -1018,12 +1033,12 @@ namespace boost {
             public:
 
                 template <typename ReleaseHandler>
-                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler ) {
+                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler , release_type type = SESSION_FN_RELEASE) {
                     //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                     rootcoder()->in()->clear(); 
                     if (is_open()) {
                         this->get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
-                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, SESSION_NORMAL_RELEASE)));
+                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, type)));
                     }
                     else
                         handler(ERROR_ECONNREFUSED);
@@ -1035,7 +1050,7 @@ namespace boost {
                     rootcoder()->in()->clear(); 
                     if (is_open()) {
                         this->get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
-                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, SESSION_ABORT_RELEASE)));
+                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, SESSION_AB_RELEASE)));
                     }
                     else
                         handler(ERROR_ECONNREFUSED);
@@ -1394,8 +1409,9 @@ namespace boost {
 
                     enum stateconnection {
                         request,
-                        response
+                        response,       
                     };
+                    
 
                 public:
 
@@ -1442,6 +1458,11 @@ namespace boost {
                         }
                         handler_(ec, static_cast<std::size_t> (receive_->datasize()));
                     }
+                    
+                    void release(const boost::system::error_code& ec) {
+                        std::cout << " FINISH pdu"  << std::endl;
+                        handler_(ec, 0);
+                    }                    
 
 
 
@@ -1453,7 +1474,25 @@ namespace boost {
                             case DT_SPDU_ID:
                             {
                                 return true;
-                            }                         
+                            } 
+                            case FN_SPDU_ID:
+                            {          
+                                socket_->rootcoder()->in()->clear();                                
+                                socket_->rootcoder()->in()->add(receive_->options().data());
+                                socket_->negotiate_session_release();
+                                socket_->asyn_release(boost::bind(&receive_op<ReceiveHandler, Mutable_Buffers>::release, 
+                                          this, boost::asio::placeholders::error), SESSION_DN_RELEASE);
+                                return false;                         
+                            }
+                            case AB_SPDU_ID:
+                            {          
+                                socket_->rootcoder()->in()->clear();                                
+                                socket_->rootcoder()->in()->add(receive_->options().data());
+                                socket_->negotiate_session_release();
+                                socket_->asyn_release(boost::bind(&receive_op<ReceiveHandler, Mutable_Buffers>::release, 
+                                          this, boost::asio::placeholders::error), SESSION_AA_RELEASE);
+                                return false;                         
+                            }                            
                             default:
                             {
                                 send_ = socket_->session_release_reaction(receive_);
@@ -1567,6 +1606,13 @@ namespace boost {
                     rootcoder()->out()->add(rootcoder()->in()->buffers());
                     return true;
                 }
+                
+                virtual bool negotiate_session_release() {
+                    rootcoder()->out()->clear();  
+                    rootcoder()->out()->add(ECHO_NEGOTIATE);
+                    rootcoder()->out()->add(rootcoder()->in()->buffers());
+                    return true;
+                }                
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1635,7 +1681,7 @@ namespace boost {
 
                 boost::system::error_code release_impl(release_type type, boost::system::error_code& ec) {
                     if (is_open()) {
-                        send_seq_ptr send_(new send_seq(type == SESSION_NORMAL_RELEASE ? FN_SPDU_ID : AB_SPDU_ID, session_option(), rootcoder()));
+                        send_seq_ptr send_(new send_seq( release_type_to_spdu(type) , session_option(), rootcoder()));
                         while (!ec && !send_->ready())
                             send_->size(super_type::send(send_->pop(), 0, ec));
                         if (ec)
