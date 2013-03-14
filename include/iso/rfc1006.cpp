@@ -12,12 +12,12 @@ namespace boost {
     namespace iso {
         namespace prot8073 {
 
-            boost::system::error_code errorcode_by_reason(octet_type val) {
+            error_code errorcode_by_reason(octet_type val) {
                 if (!val)
-                    return ERROR_EIO;
+                    return ER_INOUT;
                 if (val & '\x1')
-                    return ERROR_EDOM;
-                return ERROR_EIO;
+                    return ER_OUTDOMAIN;
+                return ER_INOUT;
             }
 
             tpdu_type tpdu_type_from(octet_type val) {
@@ -377,7 +377,7 @@ namespace boost {
                         }
                         default:
                         {
-                            errcode(ERROR__SEQ);
+                            errcode(ER_BEDSEQ);
                             return;
                         }
                     }
@@ -399,31 +399,31 @@ namespace boost {
                 return state_ = val;
             }
 
-            boost::system::error_code receive_seq::check_tkpt() {
+            error_code receive_seq::check_tkpt() {
                 mutable_buffer buff_ = tkpt_buff_;
                 raw_type hdr = buffer_to_raw(buff_, 0, 2);
                 if (hdr != TKPT_START) {
-                    return errcode(ERROR__SEQ);
+                    return errcode(ER_BEDSEQ);
                 }
                 int16_t pdsz = endiancnv_copy<int16_t > (buffer_to_raw(buff_, 2, 2));
                 if (pdsz < 0) {
-                    return errcode(ERROR__EPROTO);
+                    return errcode(ER_PROTOCOL);
                 }
                 std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<uint8_t*>(buff_ + 4));
                 if (!li)
-                    return errcode(ERROR__EPROTO);
+                    return errcode(ER_PROTOCOL);
                 state_ = waitheader;
                 header_data = data_type_ptr(new data_type(li));
                 header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
                 size_ = 0;
                 if (li > 128)
-                    return errcode(ERROR__EPROTO);
+                    return errcode(ER_PROTOCOL);
                 estimatesize_ = li;
                 waitdatasize_ = pdsz - 5 - li;
-                return boost::system::error_code();
+                return error_code();
             }
 
-            boost::system::error_code receive_seq::check_header() {
+            error_code receive_seq::check_header() {
                 mutable_buffer buff_ = header_buff_;
                 octet_type nativetp = *boost::asio::buffer_cast<octet_type*>(buff_);
                 type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
@@ -433,17 +433,17 @@ namespace boost {
                     {
                         octet_type eof = *boost::asio::buffer_cast<octet_type*>(buff_ + 1);
                         if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
-                            return errcode(ERROR__EPROTO); /* !!должен быть только класс 0 см. 13.7*/
+                            return errcode(ER_PROTOCOL); /* !!должен быть только класс 0 см. 13.7*/
                         estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
                         eof_ = (eof == TPDU_ENDED);
                         state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
-                        return boost::system::error_code();
+                        return error_code();
                     }
                     case CR:
                     {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
-                            return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
+                            return errcode(ER_PROTOCOL); /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
@@ -454,16 +454,16 @@ namespace boost {
                         headarvarvalues vars;
                         ;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
-                            return errcode(ERROR__EPROTO);
+                            return errcode(ER_PROTOCOL);
                         options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                         state(complete);
-                        return boost::system::error_code();
+                        return error_code();
                     }
                     case CC:
                     {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
-                            return errcode(ERROR__EPROTO); /* невозможно см. 13.3.1*/
+                            return errcode(ER_PROTOCOL); /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
@@ -473,16 +473,16 @@ namespace boost {
                         raw_to_inttype(buffer_to_raw(buff_, 5, 1), class_option_);
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
-                            return errcode(ERROR__EPROTO);
+                            return errcode(ER_PROTOCOL);
                         options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                         state(complete);
-                        return boost::system::error_code();
+                        return error_code();
                     }
                     case DR:
                     {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
-                            return errcode(ERROR__EPROTO);
+                            return errcode(ER_PROTOCOL);
                         ; /* невозможно см. 13.3.2*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
@@ -495,35 +495,35 @@ namespace boost {
                         reject_reason(rsn);
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
-                            return errcode(ERROR__EPROTO);
+                            return errcode(ER_PROTOCOL);
                         ;
                         options_ = protocol_options(dst_tsap_, src_tsap_, vars);
                         state(complete);
-                        return boost::system::error_code();
+                        return error_code();
                     }
                     case ER:
                     {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 4)
-                            return errcode(ERROR__EPROTO);
+                            return errcode(ER_PROTOCOL);
                         ; /* невозможно см. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
                         raw_to_inttype(buffer_to_raw(buff_, 3, 1), reject_reason_);
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 4, (estimatesize_ - 4)), vars))
-                            return errcode(ERROR__EPROTO);
+                            return errcode(ER_PROTOCOL);
                         ;
                         state(complete);
-                        return boost::system::error_code();
+                        return error_code();
 
                     }
                     default:
                     {
-                        errcode(ERROR__EPROTO);
+                        errcode(ER_PROTOCOL);
                     }
                 }
-                return errcode(ERROR__EPROTO);
+                return errcode(ER_PROTOCOL);
             }
 
             void receive_seq::reject_reason(octet_type val) {
@@ -531,7 +531,7 @@ namespace boost {
                 reject_reason_ = val;
             }
 
-            boost::system::error_code receive_seq::errcode(const boost::system::error_code& err) {
+            error_code receive_seq::errcode(const error_code& err) {
                 if (!errcode_ && err)
                     errcode_ = err;
                 if (err)

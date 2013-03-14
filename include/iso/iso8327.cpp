@@ -560,7 +560,7 @@ namespace boost {
                         }
                         default:
                         {
-                            errcode(ERROR__SEQ);
+                            errcode(ER_BEDSEQ);
                             return;
                         }
                     }
@@ -582,7 +582,7 @@ namespace boost {
                 return state_ = val;
             }
 
-            boost::system::error_code receive_seq::check_type() {
+            error_code receive_seq::check_type() {
                 mutable_buffer buff_ = type_buff_;
                 spdu_type tp = *boost::asio::buffer_cast<spdu_type*>(buff_);
                 first_in_seq_ = !type_ && !first_in_seq_;
@@ -609,18 +609,18 @@ namespace boost {
                 if (li == '\xFF') {
                     estimatesize_ = HDR_LI;
                     state(waitsize);
-                    return boost::system::error_code();
+                    return error_code();
                 }
 
                 if (!li) {
                     if (first_in_seq_) {
                         estimatesize_ = HDR_LI;
                         size_ = 0;
-                        return boost::system::error_code();
+                        return error_code();
                     }
                     else {
                         state(tp == DT_SPDU_ID ? waitdata : complete);
-                        return boost::system::error_code();
+                        return error_code();
                     }
                 }
                 else {
@@ -628,12 +628,12 @@ namespace boost {
                     header_data = data_type_ptr(new data_type(li));
                     header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
                     estimatesize_ = li;
-                    return boost::system::error_code();
+                    return error_code();
                 }
-                return errcode(ERROR__EPROTO);
+                return errcode(ER_PROTOCOL);
             }
 
-            boost::system::error_code receive_seq::check_size() {
+            error_code receive_seq::check_size() {
                 mutable_buffer buff_ = type_buff_;
                 uint16_t li = 0;
                 raw_to_inttype(buffer_to_raw(buff_, 0, 2), li);
@@ -641,21 +641,21 @@ namespace boost {
                 state(waitheader);
                 header_data = data_type_ptr(new data_type(li));
                 estimatesize_ = li;
-                return boost::system::error_code();
+                return error_code();
             }
 
-            boost::system::error_code receive_seq::check_header() {
+            error_code receive_seq::check_header() {
                 options_ = protocol_options(header_buff_);
                 state(first_in_seq_ ? waittype : complete);
-                return boost::system::error_code();
+                return error_code();
             }
 
             void receive_seq::reject_reason(octet_type val) {
-                errcode_ = boost::system::error_code();
+                errcode_ = error_code();
                 reject_reason_ = val;
             }
 
-            boost::system::error_code receive_seq::errcode(const boost::system::error_code& err) {
+            error_code receive_seq::errcode(const error_code& err) {
                 if (!errcode_ && err)
                     errcode_ = err;
                 if (err)

@@ -637,7 +637,7 @@ namespace boost {
                     return options_;
                 }
 
-                boost::system::error_code errcode() const {
+                error_code errcode() const {
                     return errcode_;
                 }
 
@@ -646,15 +646,15 @@ namespace boost {
 
                 operation_state state(operation_state val);
 
-                boost::system::error_code errcode(const boost::system::error_code& err);
+                error_code errcode(const error_code& err);
 
                 void reject_reason(octet_type val);
 
-                boost::system::error_code check_type();
+                error_code check_type();
 
-                boost::system::error_code check_size();
+                error_code check_size();
 
-                boost::system::error_code check_header();
+                error_code check_header();
 
 
 
@@ -667,7 +667,7 @@ namespace boost {
                 octet_type class_option_;
                 octet_type reject_reason_;
                 protocol_options options_;
-                boost::system::error_code errcode_;
+                error_code errcode_;
 
 
                 data_type_ptr type_data;
@@ -725,13 +725,13 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 void connect(const endpoint_type& peer_endpoint) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     connect(peer_endpoint, ec);
                     boost::asio::detail::throw_error(ec, "connect");
                 }
 
-                boost::system::error_code connect(const endpoint_type& peer_endpoint,
-                        boost::system::error_code& ec) {
+                error_code connect(const endpoint_type& peer_endpoint,
+                        error_code& ec) {
                     rootcoder()->in()->clear();                    
                     if (!is_open()) {
                         if (this->get_service().open(this->get_implementation(),
@@ -769,18 +769,18 @@ namespace boost {
                         
                     }
 
-                    void run(const boost::system::error_code& ec) {
+                    void run(const error_code& ec) {
                         operator()(ec, 0);
                     }
 
-                    void operator()(const boost::system::error_code& ec) {
+                    void operator()(const error_code& ec) {
                         if (!ec)
                             operator()(ec, 0);
                         else
                             exit_handler(ec);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case request:
@@ -813,7 +813,7 @@ namespace boost {
   
                 private:
 
-                    void finish(const boost::system::error_code& ec) {
+                    void finish(const error_code& ec) {
                         if (receive_->state() == receive_seq::complete) {
                             switch (receive_->type()) {
                                 case AC_SPDU_ID:
@@ -826,22 +826,22 @@ namespace boost {
                                 }
                                 case RF_SPDU_ID:
                                 {
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     //socket_->close(ecc);
-                                    exit_handler(ERROR_ECONNREFUSED);
+                                    exit_handler( ER_REFUSE);
                                     return;
                                 }                                
                                 default:
                                 {
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     //socket_->close(ecc);
                                 }
                             }
                         }
-                        exit_handler(ERROR__EPROTO);
+                        exit_handler(ER_PROTOCOL);
                     }
                     
-                    void exit_handler(const boost::system::error_code& ec) {
+                    void exit_handler(const error_code& ec) {
                         socket_->rootcoder()->out()->clear();
                         handler_(ec);
                     }                    
@@ -872,7 +872,7 @@ namespace boost {
                         BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
                     rootcoder()->in()->clear(); 
                     if (!is_open()) {
-                        boost::system::error_code ec;
+                        error_code ec;
                         const protocol_type protocol = peer_endpoint.protocol();
                         if (this->get_service().open(get_implementation(), protocol, ec)) {
                             this->get_io_service().post(
@@ -892,24 +892,24 @@ namespace boost {
 
                 void release() {
 
-                    boost::system::error_code ec;
+                    error_code ec;
                     release(ec);
                     boost::asio::detail::throw_error(ec, "release");
                 }
 
-                boost::system::error_code release(boost::system::error_code& ec) {
+                error_code release(error_code& ec) {
                     rootcoder()->in()->clear();
                     return release_impl(SESSION_FN_RELEASE, ec);
                 }
                 
                 void abort() {
 
-                    boost::system::error_code ec;
+                    error_code ec;
                     release(ec);
                     boost::asio::detail::throw_error(ec, "abort");
                 }
 
-                boost::system::error_code abort(boost::system::error_code& ec) {
+                error_code abort(error_code& ec) {
                     rootcoder()->in()->clear();
                     return release_impl(SESSION_AB_RELEASE, ec);
                 }                
@@ -941,11 +941,11 @@ namespace boost {
                     }
 
                     void run() {
-                        boost::system::error_code ec;
+                        error_code ec;
                         operator()(ec, 0);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case request:
@@ -977,7 +977,7 @@ namespace boost {
                             }
 
                         }
-                        //boost::system::error_code ecc;
+                        //error_code ecc;
                         //socket_->close(ecc);                        
                         exit_handler(ec);
                     }
@@ -985,13 +985,13 @@ namespace boost {
 
                 private:
 
-                    void finish(const boost::system::error_code& ec) {
+                    void finish(const error_code& ec) {
                         if (receive_->state() == receive_seq::complete) {
                             switch (receive_->type()) {
                                 case DN_SPDU_ID:
                                 {
                                     socket_->rootcoder()->in()->add(receive_->options().data());
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     //socket_->close(ecc);
                                     exit_handler(ec);                                    
                                     return;
@@ -999,7 +999,7 @@ namespace boost {
                                 case AA_SPDU_ID:
                                 {
                                     socket_->rootcoder()->in()->add(receive_->options().data());
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     //socket_->close(ecc);
                                     exit_handler(ec);                                    
                                     return;
@@ -1009,12 +1009,12 @@ namespace boost {
                                 }
                             }
                         }
-                        boost::system::error_code ecc;
+                        error_code ecc;
                         //socket_->close(ecc);
-                        exit_handler(ERROR__EPROTO);
+                        exit_handler(ER_PROTOCOL);
                     }
                     
-                    void exit_handler(const boost::system::error_code& ec) {
+                    void exit_handler(const error_code& ec) {
                         //socket_->rootcoder()->out()->clear();
                         handler_(ec);
                     }                      
@@ -1049,7 +1049,7 @@ namespace boost {
                                 release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, type)));
                     }
                     else
-                        handler(ERROR_ECONNREFUSED);
+                        handler( ER_REFUSE);
                 }
 
                 template <typename ReleaseHandler>
@@ -1061,7 +1061,7 @@ namespace boost {
                                 release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, SESSION_AB_RELEASE)));
                     }
                     else
-                        handler(ERROR_ECONNREFUSED);
+                        handler( ER_REFUSE);
                 }
 
 
@@ -1073,12 +1073,12 @@ namespace boost {
 
                 void check_accept() {
 
-                    boost::system::error_code ec;
+                    error_code ec;
                     check_accept( ec);
                     boost::asio::detail::throw_error(ec, "connect");
                 }
 
-                boost::system::error_code check_accept(boost::system::error_code& ec) {
+                error_code check_accept(error_code& ec) {
                     rootcoder()->in()->clear();                    
                     return check_accept_imp(ec);
                 }
@@ -1108,11 +1108,11 @@ namespace boost {
 
                     void run() {
 
-                        boost::system::error_code ec;
+                        error_code ec;
                         operator()(ec, 0);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case wait:
@@ -1142,9 +1142,9 @@ namespace boost {
                                         socket_->super_type::async_send(send_->pop(), 0, *this);
                                         return;
                                     }
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     //socket_->close(ecc);
-                                    exit_handler(ERROR_EDOM);
+                                    exit_handler(ER_OUTDOMAIN);
                                     return;
                                 }
                             }
@@ -1160,11 +1160,11 @@ namespace boost {
 
                 private:
 
-                    void parse_response(const boost::system::error_code& ec) {
+                    void parse_response(const error_code& ec) {
                         if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
-                            boost::system::error_code ecc;
+                            error_code ecc;
                             //socket_->close(ecc);
-                            exit_handler(ERROR__EPROTO);
+                            exit_handler(ER_PROTOCOL);
                             return;
                         }
                         bool nouserreject = true;
@@ -1184,14 +1184,14 @@ namespace boost {
                         operator()(ec, 0);
                     }
 
-                    void finish(const boost::system::error_code& ec) {
+                    void finish(const error_code& ec) {
 
                         protocol_options opt = receive_->options();
                         socket_->negotiate_session_option(opt);
                         exit_handler(ec);
                     }
                     
-                    void exit_handler(const boost::system::error_code& ec) {
+                    void exit_handler(const error_code& ec) {
                         socket_->rootcoder()->out()->clear();
                         handler_(ec);
                     }                       
@@ -1246,7 +1246,7 @@ namespace boost {
                 template <typename ConstBufferSequence>
                 std::size_t send(const ConstBufferSequence& buffers,
                         socket_base::message_flags flags) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     std::size_t s = send(buffers, flags, ec);
                     boost::asio::detail::throw_error(ec, "send");
 
@@ -1255,7 +1255,7 @@ namespace boost {
 
                 template <typename ConstBufferSequence>
                 std::size_t write_some(const ConstBufferSequence& buffers) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     std::size_t s = send(buffers, 0, ec);
                     boost::asio::detail::throw_error(ec, "write_some");
 
@@ -1264,14 +1264,14 @@ namespace boost {
 
                 template <typename ConstBufferSequence>
                 std::size_t write_some(const ConstBufferSequence& buffers,
-                        boost::system::error_code& ec) {
+                        error_code& ec) {
 
                     return send(buffers, 0, ec);
                 }
 
                 template <typename ConstBufferSequence>
                 std::size_t send(const ConstBufferSequence& buffers,
-                        socket_base::message_flags flags, boost::system::error_code& ec) {
+                        socket_base::message_flags flags, error_code& ec) {
 
                     return send_impl(buffers, flags, ec);
                 }
@@ -1298,11 +1298,11 @@ namespace boost {
 
                     void run() {
 
-                        boost::system::error_code ec;
+                        error_code ec;
                         operator()(ec, 0);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             in_->size(bytes_transferred);
                             if (!in_->ready()) {
@@ -1375,7 +1375,7 @@ namespace boost {
                 template <typename MutableBufferSequence>
                 std::size_t receive(const MutableBufferSequence& buffers,
                         socket_base::message_flags flags) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     std::size_t s = receive(buffers, flags, ec);
                     boost::asio::detail::throw_error(ec, "receive");
                     return s;
@@ -1383,14 +1383,14 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t read_some(const MutableBufferSequence& buffers,
-                        boost::system::error_code& ec) {
+                        error_code& ec) {
 
                     return receive(buffers, 0, ec);
                 }
 
                 template <typename MutableBufferSequence>
                 std::size_t read_some(const MutableBufferSequence& buffers) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     std::size_t s = receive(buffers, 0, ec);
                     boost::asio::detail::throw_error(ec, "read_some");
 
@@ -1399,7 +1399,7 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t receive(const MutableBufferSequence& buffers,
-                        socket_base::message_flags flags, boost::system::error_code& ec) {
+                        socket_base::message_flags flags, error_code& ec) {
 
                     return receive_impl(buffers, flags, ec);
                 }
@@ -1446,11 +1446,11 @@ namespace boost {
                     }
 
                     void run() {
-                        boost::system::error_code ec;
+                        error_code ec;
                         operator()(ec, 0);
                     }
 
-                    void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case request:
@@ -1470,7 +1470,7 @@ namespace boost {
                                         socket_->super_type::async_send(send_->pop(), 0, *this);
                                         return;
                                     }
-                                    handler_(ERROR_ECONNREFUSED, static_cast<std::size_t> (receive_->datasize()));
+                                    handler_( ER_REFUSE, static_cast<std::size_t> (receive_->datasize()));
                                     return;
                                 }
                             }
@@ -1478,14 +1478,14 @@ namespace boost {
                         handler_(ec, static_cast<std::size_t> (receive_->datasize()));
                     }
                     
-                    void release_result(const boost::system::error_code& ec) {
+                    void release_result(const error_code& ec) {
                         switch(resultst_){
                             case abortresult:{
-                                handler_(ERROR_ECONNABORT , 0);
+                                handler_(ER_ABORT , 0);
                                 return;
                             }
                             case releaseresult:{
-                                handler_(ERROR_ECONNRELRSE, 0);
+                                handler_(ER_RELEASE, 0);
                                 return;
                             }                            
                         }
@@ -1527,14 +1527,14 @@ namespace boost {
                             {
                                 send_ = socket_->session_release_reaction(receive_);
                                 if (send_) {
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     state(response);
                                     operator()(ecc, 0);
                                     return false;
                                 }
-                                boost::system::error_code ecc;
+                                error_code ecc;
                                 //socket_->close(ecc);
-                                handler_(ERROR_ECONNREFUSED, 0);
+                                handler_( ER_REFUSE, 0);
                                 return false;
                             }
                         }
@@ -1665,8 +1665,8 @@ namespace boost {
                 //  private implementator  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 
-                boost::system::error_code connect_impl(const endpoint_type& peer_endpoint, 
-                        boost::system::error_code& ec) {
+                error_code connect_impl(const endpoint_type& peer_endpoint, 
+                        error_code& ec) {
                     if (super_type::connect(peer_endpoint, ec))
                         return connect_impl_exit(ec);
 
@@ -1692,25 +1692,25 @@ namespace boost {
                             }
                             case RF_SPDU_ID:
                             {
-                                boost::system::error_code ecc;
+                                error_code ecc;
                                 //close(ecc);
-                                return connect_impl_exit(ERROR_ECONNREFUSED);
+                                return connect_impl_exit( ER_REFUSE);
                             }                                           
                             default:
                             {
                             }
                         }
                     }
-                    return connect_impl_exit(ec = ERROR__EPROTO);
+                    return connect_impl_exit(ec = ER_PROTOCOL);
                 }
                 
-                const boost::system::error_code& connect_impl_exit(const boost::system::error_code& err){
+                const error_code& connect_impl_exit(const error_code& err){
                     rootcoder()->out()->clear();
                     return err;
                 }    
                 
 
-                boost::system::error_code release_impl(release_type type, boost::system::error_code& ec) {
+                error_code release_impl(release_type type, error_code& ec) {
                     if (is_open()) {
                         send_seq_ptr send_(new send_seq( release_type_to_spdu(type) , session_option(), rootcoder()));
                         while (!ec && !send_->ready())
@@ -1727,14 +1727,14 @@ namespace boost {
                                 case DN_SPDU_ID:
                                 {
                                 rootcoder()->in()->add(receive_->options().data());
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     //close(ecc);
                                     return release_impl_exit(ec);
                                 }
                                 case AA_SPDU_ID:
                                 {
                                 rootcoder()->in()->add(receive_->options().data());
-                                    boost::system::error_code ecc;
+                                    error_code ecc;
                                     //close(ecc);
                                     return release_impl_exit(ec);
                                 }
@@ -1743,18 +1743,18 @@ namespace boost {
                                 }
                             }
                         }
-                        boost::system::error_code ecc;
+                        error_code ecc;
                         //close(ecc);
                     }
-                    return release_impl_exit(ec = ERROR_ECONNREFUSED);
+                    return release_impl_exit(ec =  ER_REFUSE);
                 }
                 
-                const boost::system::error_code& release_impl_exit(const boost::system::error_code& err){
+                const error_code& release_impl_exit(const error_code& err){
                     rootcoder()->out()->clear();
                     return err;
                 }                    
 
-                boost::system::error_code check_accept_imp(boost::system::error_code& ec) {
+                error_code check_accept_imp(error_code& ec) {
                     bool canseled = false;
                     receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
                     while (!ec && !receive_->ready()) {
@@ -1766,9 +1766,9 @@ namespace boost {
 
                     protocol_options options_ = session_option();
                     if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
-                        boost::system::error_code ecc;
+                        error_code ecc;
                         //close(ecc);
-                        return check_accept_imp_exit(ERROR__EPROTO);
+                        return check_accept_imp_exit(ER_PROTOCOL);
                     }
                     bool nouserreject = true;
                     rootcoder()->in()->add(receive_->options().data());
@@ -1789,24 +1789,24 @@ namespace boost {
                     if (ec)
                         return check_accept_imp_exit(ec);
                     if (canseled) {
-                        boost::system::error_code ecc;
+                        error_code ecc;
                         //close(ecc);
                     }
                     else {
                         protocol_options opt = receive_->options();
                         negotiate_session_option(receive_->options());
                     }
-                    return check_accept_imp_exit(ec = canseled ? ERROR_EDOM : ec);
+                    return check_accept_imp_exit(ec = canseled ? ER_OUTDOMAIN : ec);
                 }
                 
-                const boost::system::error_code& check_accept_imp_exit(const boost::system::error_code& err){
+                const error_code& check_accept_imp_exit(const error_code& err){
                     rootcoder()->out()->clear();
                     return err;
                 }                  
 
                 template <typename ConstBufferSequence>
                 std::size_t send_impl(const ConstBufferSequence& buffers,
-                        socket_base::message_flags flags, boost::system::error_code& ec) {
+                        socket_base::message_flags flags, error_code& ec) {
                     send_seq_ptr send_(new send_seq_data<ConstBufferSequence > (buffers));
                     while (!ec && !send_->ready())
                         send_->size(super_type::send(send_->pop(), 0, ec));
@@ -1815,7 +1815,7 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t receive_impl(const MutableBufferSequence& buffers,
-                        socket_base::message_flags flags, boost::system::error_code& ec) {
+                        socket_base::message_flags flags, error_code& ec) {
 
                     if (!input_empty())
                         return super_type::receive(boost::asio::buffer(buffers), flags, ec);
@@ -1837,17 +1837,17 @@ namespace boost {
                             if (send_) {
                                 while (!ec && !send_->ready())
                                     send_->size(super_type::send(send_->pop(), 0, ec));
-                                ec = ERROR_ECONNREFUSED;
-                                boost::system::error_code ecc;
+                                ec =  ER_REFUSE;
+                                error_code ecc;
                                // close(ecc);
                                 return receive_->datasize();
 
                             }
                         }
                     }
-                    boost::system::error_code ecc;
+                    error_code ecc;
                     //close(ecc);
-                    ec = ERROR__EPROTO;
+                    ec = ER_PROTOCOL;
                     return 0;
                 }
 
@@ -1899,31 +1899,31 @@ namespace boost {
 
                 template <typename SocketService>
                 void accept(basic_socket<protocol_type, SocketService>& peer) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     accept_impl(peer, ec);
                     boost::asio::detail::throw_error(ec, "accept");
                 }
 
                 template <typename SocketService>
-                boost::system::error_code accept(
+                error_code accept(
                         basic_socket<protocol_type, SocketService>& peer,
-                        boost::system::error_code& ec) {
+                        error_code& ec) {
                     return accept_impl(peer, ec);
                 }
 
                 template <typename SocketService>
                 void accept(basic_socket<protocol_type, SocketService>& peer,
                         endpoint_type& peer_endpoint) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     accept_impl(peer, peer_endpoint, ec);
                     boost::asio::detail::throw_error(ec, "accept");
                 }
 
 
                 template <typename SocketService>
-                boost::system::error_code accept(
+                error_code accept(
                         basic_socket<protocol_type, SocketService>& peer,
-                        endpoint_type& peer_endpoint, boost::system::error_code& ec) {
+                        endpoint_type& peer_endpoint, error_code& ec) {
                     return accept_impl(peer, peer_endpoint, ec);
                 }
 
@@ -1954,7 +1954,7 @@ namespace boost {
                     : handler_(h), socket_(socket) {
                     }
 
-                    void operator()(const boost::system::error_code& ec) {
+                    void operator()(const error_code& ec) {
                         if (!ec)
                             static_cast<stream_socket*> (socket_)->asyn_check_accept(handler_);
                         else
@@ -1985,9 +1985,9 @@ namespace boost {
                 }
 
                 template <typename SocketService>
-                boost::system::error_code accept_impl(
+                error_code accept_impl(
                         basic_socket<protocol_type, SocketService>& peer,
-                        endpoint_type& peer_endpoint, boost::system::error_code& ec) {
+                        endpoint_type& peer_endpoint, error_code& ec) {
                     super_type::accept(peer, peer_endpoint, ec);
                     if (ec)
                         return ec;
@@ -1996,9 +1996,9 @@ namespace boost {
                 }
 
                 template <typename SocketService>
-                boost::system::error_code accept_impl(
+                error_code accept_impl(
                         basic_socket<protocol_type, SocketService>& peer,
-                        boost::system::error_code& ec) {
+                        error_code& ec) {
                     super_type::accept(peer, ec);
                     if (ec)
                         return ec;

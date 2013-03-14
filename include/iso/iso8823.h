@@ -411,15 +411,15 @@ namespace boost {
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
                 void connect(const endpoint_type& peer_endpoint) {
-                    boost::system::error_code ec;
+                    error_code ec;
                     connect(peer_endpoint, ec);
                     boost::asio::detail::throw_error(ec, "connect");
                 }
 
-                boost::system::error_code connect(const endpoint_type& peer_endpoint,
-                        boost::system::error_code& ec) {
+                error_code connect(const endpoint_type& peer_endpoint,
+                        error_code& ec) {
                     if (!ppm()) {
-                        ec = ERROR_EDOM;
+                        ec = ER_OUTDOMAIN;
                         return ec;
                     }
                     if (!is_open()) {
@@ -443,13 +443,13 @@ namespace boost {
                     connect_op(stream_socket* socket, ConnectHandler handler) : socket_(socket), handler_(handler) {
                     }
 
-                    void run(const boost::system::error_code& ec) {
+                    void run(const error_code& ec) {
                         operator()(ec);
                     }
 
-                    void operator()(const boost::system::error_code& ec) {
+                    void operator()(const error_code& ec) {
                         if (!ec) {
-                            if (boost::system::error_code erreslt = socket_->parse_CR()) {
+                            if (error_code erreslt = socket_->parse_CR()) {
                                 handler_(erreslt);
                                 return;
                             }
@@ -479,12 +479,12 @@ namespace boost {
                     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
                     if (!ppm()) {
-                        handler(ERROR_EDOM);
+                        handler(ER_OUTDOMAIN);
                         return;
                     }
 
                     if (!is_open()) {
-                        boost::system::error_code ec;
+                        error_code ec;
                         const protocol_type protocol = peer_endpoint.protocol();
                         if (this->get_service().open(this->get_implementation(), protocol, ec)) {
                             this->get_io_service().post(
@@ -496,8 +496,8 @@ namespace boost {
 
                     clear_input();
 
-                    if (boost::system::error_code erreslt = build_CP_type()) {
-                        handler(ERROR__EPROTO);
+                    if (error_code erreslt = build_CP_type()) {
+                        handler(ER_PROTOCOL);
                         return;
                     }
 
@@ -529,11 +529,11 @@ namespace boost {
                     handler_(handler) {
                     }
 
-                    void run(const boost::system::error_code& ec) {
+                    void run(const error_code& ec) {
                         operator()(ec);
                     }
 
-                    void operator()(const boost::system::error_code& ec) {
+                    void operator()(const error_code& ec) {
                         socket_->clear_output();
                         handler_(ec);
                     }
@@ -557,7 +557,7 @@ namespace boost {
 
                     clear_input();
 
-                    if (boost::system::error_code erreslt = build_DT_type()) {
+                    if (error_code erreslt = build_DT_type()) {
                         handler(erreslt);
                         return;
                     }
@@ -586,11 +586,11 @@ namespace boost {
                     handler_(handler) {
                     }
 
-                    void run(const boost::system::error_code& error, size_t bytes_transferred) {
+                    void run(const error_code& error, size_t bytes_transferred) {
                         operator()(error, bytes_transferred);
                     }
 
-                    void operator()(const boost::system::error_code& error, size_t bytes_transferred) {
+                    void operator()(const error_code& error, size_t bytes_transferred) {
                         if (!error) {
                             socket_->coder()->input().add(raw_type(socket_->databuff, socket_->databuff + bytes_transferred));
                             if (!socket_->input_empty()) {
@@ -602,7 +602,7 @@ namespace boost {
                             }
                             else {
                                 ppdu_enum ppdutype;
-                                if (boost::system::error_code erreslt = socket_->parse_RESPONSE(ppdutype)) {
+                                if (error_code erreslt = socket_->parse_RESPONSE(ppdutype)) {
                                     handler_(erreslt);
                                     return;
                                 }
@@ -736,8 +736,8 @@ namespace boost {
                 //  private implementator  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
-                boost::system::error_code connect_impl(const endpoint_type& peer_endpoint,
-                        boost::system::error_code& ec) {
+                error_code connect_impl(const endpoint_type& peer_endpoint,
+                        error_code& ec) {
                     if (presentation_error_ = build_CP_type())
                         return presentation_error_;
                     if (!super_type::connect(peer_endpoint, ec)) {
@@ -749,13 +749,13 @@ namespace boost {
 
                 ppdu_enum check_response();
 
-                boost::system::error_code build_DT_type();
+                error_code build_DT_type();
 
-                boost::system::error_code build_CP_type();
+                error_code build_CP_type();
 
-                boost::system::error_code parse_CR();
+                error_code parse_CR();
 
-                boost::system::error_code parse_RESPONSE(ppdu_enum& ppdutype);
+                error_code parse_RESPONSE(ppdu_enum& ppdutype);
 
                 negotiate_rslt_enum parse_CP();
 
@@ -765,7 +765,7 @@ namespace boost {
                 presentation_selector selector_;
                 presentation_pm_ptr ppm_;
                 presentation_connection_option option_;
-                boost::system::error_code presentation_error_;
+                error_code presentation_error_;
                 int8_t databuff[BUFFER_SIZE];
             };
 
@@ -811,16 +811,16 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                          
 
                 template <typename SocketService>
-                boost::system::error_code accept(
+                error_code accept(
                         basic_socket<protocol_type, SocketService>& peer,
-                        boost::system::error_code& ec) {
+                        error_code& ec) {
                     return accept_impl(peer, ec);
                 }
 
                 template <typename SocketService>
-                boost::system::error_code accept(
+                error_code accept(
                         basic_socket<protocol_type, SocketService>& peer,
-                        endpoint_type& peer_endpoint, boost::system::error_code& ec) {
+                        endpoint_type& peer_endpoint, error_code& ec) {
                     return accept_impl(peer, peer_endpoint, ec);
                 }
 
@@ -867,18 +867,18 @@ namespace boost {
                 }
 
                 template <typename SocketService>
-                boost::system::error_code accept_impl(
+                error_code accept_impl(
                         basic_socket<protocol_type, SocketService>& peer,
-                        endpoint_type& peer_endpoint, boost::system::error_code& ec) {
+                        endpoint_type& peer_endpoint, error_code& ec) {
                     static_cast<stream_socket*> (&peer)->option(option_);
                     super_type::accept(peer, peer_endpoint, ec);
                     return ec;
                 }
 
                 template <typename SocketService>
-                boost::system::error_code accept_impl(
+                error_code accept_impl(
                         basic_socket<protocol_type, SocketService>& peer,
-                        boost::system::error_code& ec) {
+                        error_code& ec) {
                     static_cast<stream_socket*> (&peer)->option(option_);
                     super_type::accept(peer, ec);
                     return ec;

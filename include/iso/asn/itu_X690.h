@@ -897,7 +897,7 @@ namespace boost {
                     stream.pop_stack();
                     return stream;
                 }
-                throw boost::system::system_error(boost::iso::ERROR__SEQ);
+                throw boost::system::system_error(boost::iso::ER_BEDSEQ);
             }
 
             template<typename T>
@@ -941,7 +941,7 @@ namespace boost {
                     stream.pop_stack();
                     return stream;
                 }
-                throw boost::system::system_error(boost::iso::ERROR__SEQ);
+                throw boost::system::system_error(boost::iso::ER_BEDSEQ);
             }
 
             template<typename T>
@@ -1053,7 +1053,7 @@ namespace boost {
                     stream.pop_stack();
                     return stream;
                 }
-                throw boost::system::system_error(boost::iso::ERROR__SEQ);
+                throw boost::system::system_error(boost::iso::ER_BEDSEQ);
             }
 
             template<typename T>

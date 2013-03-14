@@ -197,14 +197,14 @@ namespace boost {
                         case ISO8823_PRESENTATION::User_data_simply_encoded_data:
                         {
                             if (!data.simply_encoded_data())
-                                throw boost::system::error_code(ERROR__SEQ);
+                                throw error_code(ER_BEDSEQ);
                             const simpledata_type& value = *data.simply_encoded_data();
                             return;
                         }
                         case ISO8823_PRESENTATION::User_data_fully_encoded_data:
                         {
                             if (!data.fully_encoded_data())
-                                throw boost::system::error_code(ERROR__SEQ);
+                                throw error_code(ER_BEDSEQ);
                             const fulldata_type& values = *data.fully_encoded_data();
                             for (fulldata_type::const_iterator it = values.begin(); it != values.end(); ++it) {
                                 if (ppm->exists(it->presentation_context_identifier)) {
@@ -222,23 +222,23 @@ namespace boost {
                                         }
                                         case ISO8823_PRESENTATION::PDV_list::presentation_data_values_type_octet_aligned:
                                         {
-                                            boost::system::error_code(ERROR__SEQ);
+                                            error_code(ER_BEDSEQ);
                                             break;
                                         }
                                         case ISO8823_PRESENTATION::PDV_list::presentation_data_values_type_arbitrary:
                                         {
-                                            boost::system::error_code(ERROR__SEQ);
+                                            error_code(ER_BEDSEQ);
                                             break;
                                         }
                                         default:
                                         {
-                                            boost::system::error_code(ERROR__SEQ);
+                                            error_code(ER_BEDSEQ);
                                         }
                                     }
 
                                 }
                                 else {
-                                    throw boost::system::error_code(ERROR__EPROTO);
+                                    throw error_code(ER_PROTOCOL);
                                 }
                             }
                             return;
@@ -253,7 +253,7 @@ namespace boost {
                 }
                 catch (...) {
                 }
-                throw boost::system::error_code(ERROR__EPROTO);
+                throw error_code(ER_PROTOCOL);
             }
 
             ppdu_enum stream_socket::check_response() {
@@ -290,22 +290,22 @@ namespace boost {
                 return error_ppdu;
             }
 
-            boost::system::error_code stream_socket::build_DT_type() {
+            error_code stream_socket::build_DT_type() {
                 try {
                     User_data udt;
                     build_userdata(ppm(), udt);
                     udt.serialize(coder()->output());
-                    return boost::system::error_code();
+                    return error_code();
                 }
                 catch (const boost::system::system_error& cerr) {
                     return cerr.code();
                 }
                 catch (...) {
                 }
-                return ERROR__EPROTO;
+                return ER_PROTOCOL;
             }
 
-            boost::system::error_code stream_socket::build_CP_type() {
+            error_code stream_socket::build_CP_type() {
                 try {
                     CP_type cp;
                     cp.mode_selector.mode_value = mode_type::mode_value_normal_mode;
@@ -330,17 +330,17 @@ namespace boost {
                     }
                     build_userdata(ppm(), cp.normal_mode_parameters->user_data);
                     (coder()->output()) & cp;
-                    return boost::system::error_code();
+                    return error_code();
                 }
                 catch (const boost::system::system_error& cerr) {
                     return cerr.code();
                 }
                 catch (...) {
                 }
-                return ERROR__EPROTO;
+                return ER_PROTOCOL;
             }
 
-            boost::system::error_code stream_socket::parse_CR() {
+            error_code stream_socket::parse_CR() {
                 try {
                     switch (check_response()) {
                         case cp_ppdu:
@@ -377,7 +377,7 @@ namespace boost {
                                     }
 
                                     parse_userdata(ppm(), cpa.normal_mode_parameters->user_data);
-                                    return boost::system::error_code();
+                                    return error_code();
 
                                 }
                             }
@@ -392,7 +392,7 @@ namespace boost {
                 }
                 catch (...) {
                 }
-                return ERROR__EPROTO;
+                return ER_PROTOCOL;
             }
 
             negotiate_rslt_enum stream_socket::parse_CP() {
@@ -465,7 +465,7 @@ namespace boost {
                 return error_negotiate;
             }
 
-            boost::system::error_code stream_socket::parse_RESPONSE(ppdu_enum& ppdutype) {
+            error_code stream_socket::parse_RESPONSE(ppdu_enum& ppdutype) {
                 try {
                     switch (check_response()) {
                         case dt_ppdu:
@@ -473,7 +473,7 @@ namespace boost {
                             User_data data;
                             data.serialize(coder()->input());
                             parse_userdata(ppm(), data);
-                            return boost::system::error_code();
+                            return error_code();
 
                         }
                         default:
@@ -486,7 +486,7 @@ namespace boost {
                 }
                 catch (...) {
                 }
-                return ERROR__EPROTO;
+                return ER_PROTOCOL;
             }
 
         }
