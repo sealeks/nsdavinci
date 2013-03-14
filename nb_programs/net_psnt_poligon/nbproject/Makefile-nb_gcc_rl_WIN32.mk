@@ -17,11 +17,11 @@ RANLIB=ranlib
 CC=gcc.exe
 CCC=g++.exe
 CXX=g++.exe
-FC=g77.exe
+FC=gfortran
 AS=as.exe
 
 # Macros
-CND_PLATFORM=Cygwin_4.x-Windows
+CND_PLATFORM=MinGW-Windows
 CND_CONF=nb_gcc_rl_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -35,7 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/242829560/main.o \
-	${OBJECTDIR}/_ext/242829560/present.o
+	${OBJECTDIR}/_ext/242829560/mmssocket.o
 
 
 # C Compiler Flags
@@ -67,10 +67,10 @@ ${OBJECTDIR}/_ext/242829560/main.o: ../../include_program/net_psnt_poligon/main.
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/242829560/main.o ../../include_program/net_psnt_poligon/main.cpp
 
-${OBJECTDIR}/_ext/242829560/present.o: ../../include_program/net_psnt_poligon/present.cpp 
+${OBJECTDIR}/_ext/242829560/mmssocket.o: ../../include_program/net_psnt_poligon/mmssocket.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/242829560
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/242829560/present.o ../../include_program/net_psnt_poligon/present.cpp
+	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/242829560/mmssocket.o ../../include_program/net_psnt_poligon/mmssocket.cpp
 
 # Subprojects
 .build-subprojects:

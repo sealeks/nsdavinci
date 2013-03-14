@@ -12,9 +12,9 @@ CND_DISTDIR=dist
 CND_BUILDDIR=build
 NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=../../bin/${CND_CONF}/net_poligon
-OUTPUT_BASENAME=net_poligon
-PACKAGE_TOP_DIR=netpoligon/
+OUTPUT_PATH=../../bin/${CND_CONF}/net_psnt_poligon
+OUTPUT_BASENAME=net_psnt_poligon
+PACKAGE_TOP_DIR=netpsntpoligon/
 
 # Functions
 function checkReturnCode
@@ -59,15 +59,15 @@ mkdir -p ${NBTMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory "${NBTMPDIR}/netpoligon/bin"
+makeDirectory "${NBTMPDIR}/netpsntpoligon/bin"
 copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
 
 
 # Generate tar file
 cd "${TOP}"
-rm -f ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/netpoligon.tar
+rm -f ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/netpsntpoligon.tar
 cd ${NBTMPDIR}
-tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/netpoligon.tar *
+tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/netpsntpoligon.tar *
 checkReturnCode
 
 # Cleanup
