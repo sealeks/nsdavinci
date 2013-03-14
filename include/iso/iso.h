@@ -38,8 +38,10 @@
 
 namespace boost {
     namespace iso {
+        
+        using boost::system::error_code;
 
-        const boost::system::error_code ERROR__SEQ = boost::system::error_code(boost::system::errc::illegal_byte_sequence, boost::system::system_category());
+        const error_code ERROR__SEQ = boost::system::error_code(boost::system::errc::illegal_byte_sequence, boost::system::system_category());
         const boost::system::error_code ERROR__ENOBUFS = boost::system::error_code(boost::system::errc::no_buffer_space, boost::system::system_category());
         const boost::system::error_code ERROR__EPROTO = boost::system::error_code(boost::system::errc::protocol_error, boost::system::system_category());
         const boost::system::error_code ERROR_EFAULT = boost::system::error_code(boost::system::errc::bad_address, boost::system::system_category());
@@ -47,7 +49,8 @@ namespace boost {
         const boost::system::error_code ERROR_EDOM = boost::system::error_code(boost::system::errc::argument_out_of_domain, boost::system::system_category());
         const boost::system::error_code ERROR_EIO = boost::system::error_code(boost::system::errc::io_error, boost::system::system_category());
         const boost::system::error_code ERROR_ECONNREFUSED = boost::system::error_code(boost::system::errc::connection_refused, boost::system::system_category());
-
+        const boost::system::error_code ERROR_ECONNABORT = boost::system::error_code(boost::system::errc::connection_aborted , boost::system::system_category());      
+        const boost::system::error_code ERROR_ECONNRELRSE = boost::system::error_code(boost::system::errc::connection_reset  , boost::system::system_category()); 
 
         //   transport
 

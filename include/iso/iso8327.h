@@ -827,14 +827,14 @@ namespace boost {
                                 case RF_SPDU_ID:
                                 {
                                     boost::system::error_code ecc;
-                                    socket_->close(ecc);
+                                    //socket_->close(ecc);
                                     exit_handler(ERROR_ECONNREFUSED);
                                     return;
                                 }                                
                                 default:
                                 {
                                     boost::system::error_code ecc;
-                                    socket_->close(ecc);
+                                    //socket_->close(ecc);
                                 }
                             }
                         }
@@ -924,7 +924,9 @@ namespace boost {
 
                     enum stateconnection {
                         request,
-                        response
+                        response,
+                        waitclose,
+                        stop
                     };
 
                 public:
@@ -953,7 +955,7 @@ namespace boost {
                                         socket_->super_type::async_send(send_->pop(), 0, *this);
                                         return;
                                     }
-                                    state(response);
+                                    state((type_ == SESSION_DN_RELEASE ||  type_ == SESSION_AA_RELEASE ) ? waitclose: response);
                                     operator()(ec, 0);
                                     return;
                                 }
@@ -967,10 +969,16 @@ namespace boost {
                                     finish(ec);
                                     return;
                                 }
+                                case waitclose:{
+                                    socket_->super_type::async_receive(boost::asio::buffer(receive_->buffer()), 0, *this);
+                                    state(stop);
+                                    return;
+                                }
                             }
+
                         }
-                        boost::system::error_code ecc;
-                        socket_->close(ecc);                        
+                        //boost::system::error_code ecc;
+                        //socket_->close(ecc);                        
                         exit_handler(ec);
                     }
 
@@ -984,7 +992,7 @@ namespace boost {
                                 {
                                     socket_->rootcoder()->in()->add(receive_->options().data());
                                     boost::system::error_code ecc;
-                                    socket_->close(ecc);
+                                    //socket_->close(ecc);
                                     exit_handler(ec);                                    
                                     return;
                                 }
@@ -992,7 +1000,7 @@ namespace boost {
                                 {
                                     socket_->rootcoder()->in()->add(receive_->options().data());
                                     boost::system::error_code ecc;
-                                    socket_->close(ecc);
+                                    //socket_->close(ecc);
                                     exit_handler(ec);                                    
                                     return;
                                 }
@@ -1002,12 +1010,12 @@ namespace boost {
                             }
                         }
                         boost::system::error_code ecc;
-                        socket_->close(ecc);
+                        //socket_->close(ecc);
                         exit_handler(ERROR__EPROTO);
                     }
                     
                     void exit_handler(const boost::system::error_code& ec) {
-                        socket_->rootcoder()->out()->clear();
+                        //socket_->rootcoder()->out()->clear();
                         handler_(ec);
                     }                      
 
@@ -1135,7 +1143,7 @@ namespace boost {
                                         return;
                                     }
                                     boost::system::error_code ecc;
-                                    socket_->close(ecc);
+                                    //socket_->close(ecc);
                                     exit_handler(ERROR_EDOM);
                                     return;
                                 }
@@ -1155,7 +1163,7 @@ namespace boost {
                     void parse_response(const boost::system::error_code& ec) {
                         if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
                             boost::system::error_code ecc;
-                            socket_->close(ecc);
+                            //socket_->close(ecc);
                             exit_handler(ERROR__EPROTO);
                             return;
                         }
@@ -1412,18 +1420,29 @@ namespace boost {
                         response,       
                     };
                     
+                    enum resultstate {
+                        nodefresult,
+                        releaseresult,  
+                        abortresult      
+                    };                    
+                    
 
                 public:
 
                     receive_op(stream_socket* socket, ReceiveHandler handler,
-                            receive_seq_ptr receive, const Mutable_Buffers& buff, message_flags flags) :
+                            receive_seq_ptr receive, const Mutable_Buffers& buff, message_flags flags) : 
                     socket_(socket),
                     handler_(handler),
                     receive_(receive),
                     buff_(buff),
                     send_(),
                     state_(request),
+                    resultst_(nodefresult), 
                     flags_(flags) {
+                    }
+
+                    ~receive_op(){
+                        std::cout << "receive_op dstructor" << std::endl;
                     }
 
                     void run() {
@@ -1459,8 +1478,17 @@ namespace boost {
                         handler_(ec, static_cast<std::size_t> (receive_->datasize()));
                     }
                     
-                    void release(const boost::system::error_code& ec) {
-                        std::cout << " FINISH pdu"  << std::endl;
+                    void release_result(const boost::system::error_code& ec) {
+                        switch(resultst_){
+                            case abortresult:{
+                                handler_(ERROR_ECONNABORT , 0);
+                                return;
+                            }
+                            case releaseresult:{
+                                handler_(ERROR_ECONNRELRSE, 0);
+                                return;
+                            }                            
+                        }
                         handler_(ec, 0);
                     }                    
 
@@ -1480,8 +1508,9 @@ namespace boost {
                                 socket_->rootcoder()->in()->clear();                                
                                 socket_->rootcoder()->in()->add(receive_->options().data());
                                 socket_->negotiate_session_release();
-                                socket_->asyn_release(boost::bind(&receive_op<ReceiveHandler, Mutable_Buffers>::release, 
+                                socket_->asyn_release(boost::bind(&receive_op<ReceiveHandler, Mutable_Buffers>::release_result, 
                                           this, boost::asio::placeholders::error), SESSION_DN_RELEASE);
+                                resultst_=releaseresult;
                                 return false;                         
                             }
                             case AB_SPDU_ID:
@@ -1489,8 +1518,9 @@ namespace boost {
                                 socket_->rootcoder()->in()->clear();                                
                                 socket_->rootcoder()->in()->add(receive_->options().data());
                                 socket_->negotiate_session_release();
-                                socket_->asyn_release(boost::bind(&receive_op<ReceiveHandler, Mutable_Buffers>::release, 
+                                socket_->asyn_release(boost::bind(&receive_op<ReceiveHandler, Mutable_Buffers>::release_result, 
                                           this, boost::asio::placeholders::error), SESSION_AA_RELEASE);
+                                resultst_=abortresult;
                                 return false;                         
                             }                            
                             default:
@@ -1503,7 +1533,7 @@ namespace boost {
                                     return false;
                                 }
                                 boost::system::error_code ecc;
-                                socket_->close(ecc);
+                                //socket_->close(ecc);
                                 handler_(ERROR_ECONNREFUSED, 0);
                                 return false;
                             }
@@ -1524,6 +1554,7 @@ namespace boost {
                     receive_seq_ptr receive_;
                     send_seq_ptr send_;
                     stateconnection state_;
+                    resultstate resultst_;
                     message_flags flags_;
                 };
 
@@ -1662,7 +1693,7 @@ namespace boost {
                             case RF_SPDU_ID:
                             {
                                 boost::system::error_code ecc;
-                                close(ecc);
+                                //close(ecc);
                                 return connect_impl_exit(ERROR_ECONNREFUSED);
                             }                                           
                             default:
@@ -1697,14 +1728,14 @@ namespace boost {
                                 {
                                 rootcoder()->in()->add(receive_->options().data());
                                     boost::system::error_code ecc;
-                                    close(ecc);
+                                    //close(ecc);
                                     return release_impl_exit(ec);
                                 }
                                 case AA_SPDU_ID:
                                 {
                                 rootcoder()->in()->add(receive_->options().data());
                                     boost::system::error_code ecc;
-                                    close(ecc);
+                                    //close(ecc);
                                     return release_impl_exit(ec);
                                 }
                                 default:
@@ -1713,7 +1744,7 @@ namespace boost {
                             }
                         }
                         boost::system::error_code ecc;
-                        close(ecc);
+                        //close(ecc);
                     }
                     return release_impl_exit(ec = ERROR_ECONNREFUSED);
                 }
@@ -1736,7 +1767,7 @@ namespace boost {
                     protocol_options options_ = session_option();
                     if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
                         boost::system::error_code ecc;
-                        close(ecc);
+                        //close(ecc);
                         return check_accept_imp_exit(ERROR__EPROTO);
                     }
                     bool nouserreject = true;
@@ -1759,7 +1790,7 @@ namespace boost {
                         return check_accept_imp_exit(ec);
                     if (canseled) {
                         boost::system::error_code ecc;
-                        close(ecc);
+                        //close(ecc);
                     }
                     else {
                         protocol_options opt = receive_->options();
@@ -1808,14 +1839,14 @@ namespace boost {
                                     send_->size(super_type::send(send_->pop(), 0, ec));
                                 ec = ERROR_ECONNREFUSED;
                                 boost::system::error_code ecc;
-                                close(ecc);
+                               // close(ecc);
                                 return receive_->datasize();
 
                             }
                         }
                     }
                     boost::system::error_code ecc;
-                    close(ecc);
+                    //close(ecc);
                     ec = ERROR__EPROTO;
                     return 0;
                 }
