@@ -14,10 +14,10 @@
     </logicalFolder>
     <itemPath>../../include/iso/presentation/ISO8823-PRESENTATION.h</itemPath>
     <itemPath>../../include/iso/presentation/Reliable-Transfer-APDUs.h</itemPath>
-    <itemPath>../../include/iso/archive_stream.cpp</itemPath>
-    <itemPath>../../include/iso/archive_stream.h</itemPath>
     <itemPath>../../include/iso/asn/asnbase.cpp</itemPath>
     <itemPath>../../include/iso/asn/asnbase.h</itemPath>
+    <itemPath>../../include/iso/base_coder.cpp</itemPath>
+    <itemPath>../../include/iso/base_coder.h</itemPath>
     <itemPath>../../include/iso/iso.cpp</itemPath>
     <itemPath>../../include/iso/iso.h</itemPath>
     <itemPath>../../include/iso/iso8327.cpp</itemPath>
