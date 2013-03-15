@@ -14,8 +14,8 @@
 
 
 namespace boost {
-    namespace iso {
-        namespace prot8823 {
+    namespace itu {
+        namespace x226impl {
 
             using boost::asio::basic_socket;
             using boost::asio::basic_socket_acceptor;
@@ -38,7 +38,7 @@ namespace boost {
 
             typedef boost::asn1::x690::input_coder x690_input_coder_type;
             typedef boost::asn1::x690::output_coder x690_output_coder_type;
-            typedef boost::iso::isocoder_templ<x690_input_coder_type, x690_output_coder_type> x690_archive;
+            typedef boost::itu::isocoder_templ<x690_input_coder_type, x690_output_coder_type> x690_archive;
 
             typedef std::set<oid_type> transfer_synaxes_type;
 
@@ -378,10 +378,10 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
-            class stream_socket : public boost::iso::prot8327::stream_socket {
+            class stream_socket : public boost::itu::x225impl::stream_socket {
+                
                 friend class socket_acceptor;
-
-                typedef boost::iso::prot8327::stream_socket super_type;
+                typedef boost::itu::x225impl::stream_socket super_type;
 
             public:
 
@@ -778,12 +778,12 @@ namespace boost {
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  iso8823 socket_acceptor //
+            //  x226 socket_acceptor //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            class socket_acceptor : public boost::iso::prot8327::socket_acceptor {
-                typedef boost::iso::prot8327::socket_acceptor super_type;
+            class socket_acceptor : public boost::itu::x225impl::socket_acceptor {
+                typedef boost::itu::x226impl::socket_acceptor super_type;
 
             public:
 
@@ -795,12 +795,12 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                          
 
                 explicit socket_acceptor(boost::asio::io_service& io_service, const presentation_connection_option& opt)
-                : boost::iso::prot8327::socket_acceptor(io_service), option_(opt) {
+                : boost::itu::x225impl::socket_acceptor(io_service), option_(opt) {
                 }
 
                 socket_acceptor(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const presentation_connection_option& opt, bool reuse_addr = true)
-                : boost::iso::prot8327::socket_acceptor(io_service, endpoint, reuse_addr), option_(opt) {
+                : boost::itu::x225impl::socket_acceptor(io_service, endpoint, reuse_addr), option_(opt) {
                 }
 
 
@@ -893,11 +893,11 @@ namespace boost {
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  iso8823 declaration  //
+        //  x226 declaration  //
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
 
-        class iso8823 {
+        class x226 {
         public:
 
             typedef boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> endpoint;
@@ -908,14 +908,14 @@ namespace boost {
 
             typedef transport_selector lowerselector;
 
-            static iso8823 v4() {
+            static x226 v4() {
 
-                return iso8823(PF_INET);
+                return x226(PF_INET);
             }
 
-            static iso8823 v6() {
+            static x226 v6() {
 
-                return iso8823(PF_INET6);
+                return x226(PF_INET6);
             }
 
             int type() const {
@@ -933,9 +933,9 @@ namespace boost {
                 return family_;
             }
 
-            typedef prot8823::stream_socket socket;
+            typedef x226impl::stream_socket socket;
 
-            typedef prot8823::socket_acceptor acceptor;
+            typedef x226impl::socket_acceptor acceptor;
 
             typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
 
@@ -949,27 +949,27 @@ namespace boost {
 
             /// Compare two protocols for equality.
 
-            friend bool operator==(const iso8823& p1, const iso8823& p2) {
+            friend bool operator==(const x226& p1, const x226& p2) {
 
                 return p1.family_ == p2.family_;
             }
 
-            friend bool operator!=(const iso8823& p1, const iso8823& p2) {
+            friend bool operator!=(const x226& p1, const x226& p2) {
 
                 return p1.family_ != p2.family_;
             }
 
         private:
 
-            explicit iso8823(int family)
+            explicit x226(int family)
             : family_(family) {
             }
 
             int family_;
         };
 
-        typedef boost::iso::prot8823::presentation_pm_ptr presentation_pm_ptr;
-        typedef boost::iso::prot8823::presentation_connection_option presentation_option;
+        typedef boost::itu::x226impl::presentation_pm_ptr presentation_pm_ptr;
+        typedef boost::itu::x226impl::presentation_connection_option presentation_option;
 
     }
 } // namespace boost

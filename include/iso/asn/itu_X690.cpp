@@ -542,7 +542,7 @@ namespace boost {
             /// output_coder
 
             output_coder::iterator_type output_coder::addtag(const tag& tg, bool settype) {
-                if (/*false*/rule_ != boost::iso::CER_ENCODING) return add(to_x690_cast(tg));
+                if (/*false*/rule_ != boost::itu::CER_ENCODING) return add(to_x690_cast(tg));
                 iterator_type it = add(to_x690_cast(tg));
                 if (!stack_.empty() && stack_.top().is_set)
                     stack_.top().tlv_iterators.push_back(tlv_info(tg, iterator_pair(it, it)));
@@ -551,7 +551,7 @@ namespace boost {
             }
 
             void output_coder::pop_stack() {
-                if (/*false*/rule_ != boost::iso::CER_ENCODING) return;
+                if (/*false*/rule_ != boost::itu::CER_ENCODING) return;
                 if (!stack_.empty()) {
                     if (stack_.top().is_set)
                         sort_tlv(stack_.top().tlv_iterators);
@@ -576,7 +576,7 @@ namespace boost {
             void output_coder::clear() {
                 while (!stack_.empty())
                     stack_.pop();
-                boost::iso::base_output_coder::clear();
+                boost::itu::base_output_coder::clear();
 
             }
 
@@ -628,7 +628,7 @@ namespace boost {
 
             std::size_t tag_x690_cast(tag& val, const mutable_sequence& src, mutable_sequence::const_iterator bit, std::size_t beg) {
                 raw_type s1;
-                if (boost::iso::row_cast(src, bit, s1, beg, 1) && (!s1.empty())) {
+                if (boost::itu::row_cast(src, bit, s1, beg, 1) && (!s1.empty())) {
                     if ((s1[0] & '\x1F') != '\x1F') {
                         val = tag(s1[0] & '\x1F', s1[0] & '\xE0');
                         return 1;
@@ -653,7 +653,7 @@ namespace boost {
 
             std::size_t size_x690_cast(size_class& val, const mutable_sequence& src, mutable_sequence::const_iterator bit, std::size_t beg) {
                 raw_type s1;
-                if (boost::iso::row_cast(src, bit, s1, beg, 1) && (!s1.empty())) {
+                if (boost::itu::row_cast(src, bit, s1, beg, 1) && (!s1.empty())) {
                     if (!(s1[0] & '\x80')) {
                         val = size_class(s1[0] & '\x7F');
                         return 1;
@@ -662,7 +662,7 @@ namespace boost {
                         if ((s1[0] != '\x80')) {
                             std::size_t szblk = static_cast<std::size_t> (s1[0] & '\x7F');
                             raw_type s2;
-                            if (boost::iso::row_cast(src, bit, s2, beg + 1, szblk) && (!s2.empty()) && (s2.size() <= sizeof (std::size_t))) {
+                            if (boost::itu::row_cast(src, bit, s2, beg + 1, szblk) && (!s2.empty()) && (s2.size() <= sizeof (std::size_t))) {
                                 if (s2.front() & '\x80') {
                                     s2.insert(s2.begin(), '\x0');
                                     std::size_t bodysize = 0;
@@ -1100,7 +1100,7 @@ namespace boost {
             input_coder& operator>>(input_coder& stream, const implicit_value<any_type>& vl) {
                 std::size_t sz = stream.stack_size();
                 raw_type data;
-                if (boost::iso::row_cast(stream.buffers(), stream.buffers().begin(), data, 0, sz)) {
+                if (boost::itu::row_cast(stream.buffers(), stream.buffers().begin(), data, 0, sz)) {
                     if (from_x690_cast(*const_cast<any_type*> (&vl.value()), data)) {
                         // stream.pop_stack();
                     }
@@ -1258,7 +1258,7 @@ namespace boost {
                 }
 
                 //std::cout << " buffer: ";
-                //boost::iso::operator <<(std::cout, buffers());
+                //boost::itu::operator <<(std::cout, buffers());
                 //std::cout << std::endl;
 
                 while (size_test < size_tlv) {
@@ -1305,7 +1305,7 @@ namespace boost {
                         else {
 
                             size_test += next_test;
-                            if (!boost::iso::splice_frontlist(buffers(), next_test, size_tlv))
+                            if (!boost::itu::splice_frontlist(buffers(), next_test, size_tlv))
                                 return false;
 
                         }
@@ -1350,7 +1350,7 @@ namespace boost {
                             }
                             else {
                                 std::size_t rsltsz = 0;
-                                if (boost::iso::find_eof(buffers(), buffers().begin(), rsltsz, sz)) {
+                                if (boost::itu::find_eof(buffers(), buffers().begin(), rsltsz, sz)) {
                                     sz += (szsize + sztag + rsltsz);
                                     return true;
                                 }

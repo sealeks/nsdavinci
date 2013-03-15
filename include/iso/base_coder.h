@@ -28,6 +28,8 @@ namespace boost {
 
 
         //// OID_TYPE
+        
+
 
         class oid_type : public std::vector<oidindx_type> {
         public:
@@ -75,7 +77,7 @@ namespace boost {
 
     }
 
-    namespace iso {
+    namespace itu {
 
         typedef enum {
             NULL_ENCODING = 0,

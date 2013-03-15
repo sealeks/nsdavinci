@@ -160,11 +160,11 @@ namespace boost {
         using boost::asio::mutable_buffer;
         using boost::asio::mutable_buffers_1;
 
-        using  boost::iso::mutable_sequence;
-        using  boost::iso::const_sequence;
-        using  boost::iso::encoding_rule;
-        using  boost::iso::octet_type;        
-        using  boost::iso::raw_type;        
+        using  boost::itu::mutable_sequence;
+        using  boost::itu::const_sequence;
+        using  boost::itu::encoding_rule;
+        using  boost::itu::octet_type;        
+        using  boost::itu::raw_type;        
 
         template<typename T>
         inline boost::shared_ptr< T> simple_build_type() {

@@ -256,7 +256,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////
             ///  archiver                
 
-            class output_coder : public boost::iso::base_output_coder {
+            class output_coder : public boost::itu::base_output_coder {
                 typedef std::pair<iterator_type, iterator_type> iterator_pair;
 
                 struct tlv_info {
@@ -288,7 +288,7 @@ namespace boost {
 
             public:
 
-                output_coder(encoding_rule rul = boost::iso::BER_ENCODING) : boost::iso::base_output_coder(), rule_(rul) {
+                output_coder(encoding_rule rul = boost::itu::BER_ENCODING) : boost::itu::base_output_coder(), rule_(rul) {
                 }
 
                 virtual encoding_rule rule() const {
@@ -347,7 +347,7 @@ namespace boost {
                 virtual void clear();
 
                 bool canonical() const {
-                    return rule_ == boost::iso::CER_ENCODING;
+                    return rule_ == boost::itu::CER_ENCODING;
                 }
 
             private:
@@ -779,7 +779,7 @@ namespace boost {
             //////////////////////////////////////////////////////////
             //   archiver
 
-            class input_coder : public boost::iso::base_input_coder {
+            class input_coder : public boost::itu::base_input_coder {
 
                 struct tlv_size {
 
@@ -803,7 +803,7 @@ namespace boost {
 
             public:
 
-                input_coder() : boost::iso::base_input_coder() {
+                input_coder() : boost::itu::base_input_coder() {
                 }
 
                 template<typename T>
@@ -897,7 +897,7 @@ namespace boost {
                     stream.pop_stack();
                     return stream;
                 }
-                throw boost::system::system_error(boost::iso::ER_BEDSEQ);
+                throw boost::system::system_error(boost::itu::ER_BEDSEQ);
             }
 
             template<typename T>
@@ -941,7 +941,7 @@ namespace boost {
                     stream.pop_stack();
                     return stream;
                 }
-                throw boost::system::system_error(boost::iso::ER_BEDSEQ);
+                throw boost::system::system_error(boost::itu::ER_BEDSEQ);
             }
 
             template<typename T>
@@ -1046,14 +1046,14 @@ namespace boost {
                 if (stream.parse_tl(vl, tmpsize, tag_traits<T>::number() == TYPE_SET)) {
                     raw_type data;
                     std::size_t sz = tmpsize.size();
-                    if (boost::iso::row_cast(stream.buffers(), stream.buffers().begin(), data, 0, sz)) {
+                    if (boost::itu::row_cast(stream.buffers(), stream.buffers().begin(), data, 0, sz)) {
                         if (from_x690_cast(*const_cast<T*> (&vl.value()), data)) {
                         }
                     }
                     stream.pop_stack();
                     return stream;
                 }
-                throw boost::system::system_error(boost::iso::ER_BEDSEQ);
+                throw boost::system::system_error(boost::itu::ER_BEDSEQ);
             }
 
             template<typename T>
@@ -1073,9 +1073,9 @@ namespace boost {
                         }
                         else {
                             std::size_t sz = 0;
-                            if (boost::iso::find_eof(stream.buffers(), stream.buffers().begin(), sz)) {
+                            if (boost::itu::find_eof(stream.buffers(), stream.buffers().begin(), sz)) {
                                 raw_type data;
-                                if (boost::iso::row_cast(stream.buffers(), stream.buffers().begin(), data, 0, sz)) {
+                                if (boost::itu::row_cast(stream.buffers(), stream.buffers().begin(), data, 0, sz)) {
                                     vl.insert(vl.end(), data.begin(), data.end());
                                     return true;
                                 }
@@ -1096,7 +1096,7 @@ namespace boost {
                         }
                         else {
                             raw_type data;
-                            if (boost::iso::row_cast(stream.buffers(), stream.buffers().begin(), data, 0, tmpsize.size())) {
+                            if (boost::itu::row_cast(stream.buffers(), stream.buffers().begin(), data, 0, tmpsize.size())) {
                                 vl.insert(vl.end(), data.begin(), data.end());
                                 stream.pop_stack();
                                 return true;
