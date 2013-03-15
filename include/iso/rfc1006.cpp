@@ -383,7 +383,7 @@ namespace boost {
                         }
                         default:
                         {
-                            errcode(ER_BEDSEQ);
+                            errcode(ER_PROTOCOL);
                             return;
                         }
                     }
@@ -409,7 +409,7 @@ namespace boost {
                 mutable_buffer buff_ = tkpt_buff_;
                 raw_type hdr = buffer_to_raw(buff_, 0, 2);
                 if (hdr != TKPT_START) {
-                    return errcode(ER_BEDSEQ);
+                    return errcode(ER_PROTOCOL);
                 }
                 int16_t pdsz = endiancnv_copy<int16_t > (buffer_to_raw(buff_, 2, 2));
                 if (pdsz < 0) {
@@ -433,13 +433,12 @@ namespace boost {
                 mutable_buffer buff_ = header_buff_;
                 octet_type nativetp = *boost::asio::buffer_cast<octet_type*>(buff_);
                 type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
-                /* Р В·Р В°Р С—РЎР‚Р С•РЎРѓ Р Р†Р С•Р В·Р С�Р С•Р В¶Р ВµР Р… Р С‘ Р С•РЎвЂљ Р Т‘РЎР‚ Р С”Р В»Р В°РЎРѓРЎРѓР С•Р Р†*/
                 switch (type_) {
                     case DT:
                     {
                         octet_type eof = *boost::asio::buffer_cast<octet_type*>(buff_ + 1);
                         if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
-                            return errcode(ER_PROTOCOL); /* !!Р Т‘Р С•Р В»Р В¶Р ВµР Р… Р В±РЎвЂ№РЎвЂљРЎРЉ РЎвЂљР С•Р В»РЎРЉР С”Р С• Р С”Р В»Р В°РЎРѓРЎРѓ 0 РЎРѓР С�. 13.7*/
+                            return errcode(ER_PROTOCOL); 
                         estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
                         eof_ = (eof == TPDU_ENDED);
                         state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
@@ -449,7 +448,7 @@ namespace boost {
                     {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
-                            return errcode(ER_PROTOCOL); /* Р Р…Р ВµР Р†Р С•Р В·Р С�Р С•Р В¶Р Р…Р С• РЎРѓР С�. 13.3.1*/
+                            return errcode(ER_PROTOCOL);
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
@@ -469,7 +468,7 @@ namespace boost {
                     {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
-                            return errcode(ER_PROTOCOL); /* Р Р…Р ВµР Р†Р С•Р В·Р С�Р С•Р В¶Р Р…Р С• РЎРѓР С�. 13.3.1*/
+                            return errcode(ER_PROTOCOL); 
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
@@ -489,7 +488,6 @@ namespace boost {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
                             return errcode(ER_PROTOCOL);
-                        ; /* Р Р…Р ВµР Р†Р С•Р В·Р С�Р С•Р В¶Р Р…Р С• РЎРѓР С�. 13.3.2*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
@@ -512,7 +510,6 @@ namespace boost {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 4)
                             return errcode(ER_PROTOCOL);
-                        ; /* Р Р…Р ВµР Р†Р С•Р В·Р С�Р С•Р В¶Р Р…Р С• РЎРѓР С�. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
                         raw_to_inttype(buffer_to_raw(buff_, 3, 1), reject_reason_);
