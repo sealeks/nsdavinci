@@ -37,14 +37,14 @@
 #if defined(PRES_PROT)
 
 #elif defined(SESSION_PROT)
-using boost::iso::iso8327;
-typedef boost::iso::iso8327 protocol_type;
+using boost::itu::x225;
+typedef boost::itu::x225 protocol_type;
 #else
-using boost::iso::rfc1006;
-typedef boost::iso::rfc1006 protocol_type;
+using boost::itu::rfc1006;
+typedef boost::itu::rfc1006 protocol_type;
 #endif
 
-typedef boost::iso::selectorvalue_type selectorvalue_type;
+typedef boost::itu::selectorvalue_type selectorvalue_type;
 typedef protocol_type::selector selector_type;
 typedef protocol_type::socket socket_type;
 typedef protocol_type::acceptor acceptor_type;
@@ -58,7 +58,7 @@ typedef protocol_type::resolver resolver_type;
 typedef protocol_type::lowselector lowselector_type;
 const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-SSEL"), lowselector_type(selectorvalue_type("SERVER-TSEL")));
 #else
-const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"), boost::iso::SIZE128);
+const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"), boost::itu::SIZE128);
 #endif
 
 
@@ -81,6 +81,10 @@ public:
     : socket_(io_service, SELECTOR) {
         std::cout << "New sesion\n";
     }
+    
+   ~session(){
+        std::cout << " sesion destructor\n";
+    }    
 
     socket_type& socket() {
         return socket_;
@@ -275,8 +279,10 @@ private:
                         boost::asio::placeholders::bytes_transferred));
 
             }
+#if defined(SESSION_PROT)              
             socket_.rootcoder()->request_str("Client release");
             socket_.asyn_abort(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+ #endif           
         }
         else {
             do_close();
