@@ -1484,8 +1484,7 @@ namespace boost {
                             {          
                                 socket_->rootcoder()->in()->clear();                                
                                 socket_->rootcoder()->in()->add(receive_->options().data());
-                                socket_->negotiate_session_release();                                
-                                state(request);
+                                socket_->negotiate_session_abort();                                
                                 error_code ecc;
                                 socket_->close(ecc);
                                 handler_( ER_ABORT, 0);                     
@@ -1796,6 +1795,29 @@ namespace boost {
                         {
                             return receive_->datasize();
                         }
+                        case FN_SPDU_ID:
+                        {
+                            rootcoder()->in()->clear();
+                            rootcoder()->in()->add(receive_->options().data());
+                            negotiate_session_release();
+                            send_seq_ptr send_ = send_seq_ptr(new send_seq(DN_SPDU_ID, session_option(), rootcoder()));
+                            while (!ec && !send_->ready())
+                                 send_->size(super_type::send(send_->pop(), 0, ec));
+                            error_code ecc;                            
+                            close(ecc);
+                            ec = ER_RELEASE;
+                            return 0;
+                        }
+                        case AB_SPDU_ID:
+                        {
+                            rootcoder()->in()->clear();
+                            rootcoder()->in()->add(receive_->options().data());
+                            negotiate_session_abort();                                
+                            error_code ecc;
+                            close(ecc);
+                            ec = ER_ABORT;
+                            return 0;
+                        }                            
                         default:
                         {
                             send_seq_ptr send_ = session_release_reaction(receive_);
