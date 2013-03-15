@@ -44,6 +44,7 @@ namespace boost {
         using boost::system::error_code;
 
         const error_code ER_BEDSEQ = error_code(boost::system::errc::illegal_byte_sequence, boost::system::system_category());
+        const error_code ER_REQBUSY = error_code(boost::system::errc::device_or_resource_busy,  boost::system::system_category());
         const error_code ER_NOBUFFER = error_code(boost::system::errc::no_buffer_space, boost::system::system_category());
         const error_code ER_PROTOCOL = error_code(boost::system::errc::protocol_error, boost::system::system_category());
         const error_code ER_BADADDRESS = error_code(boost::system::errc::bad_address, boost::system::system_category());
@@ -53,6 +54,7 @@ namespace boost {
         const error_code ER_REFUSE = error_code(boost::system::errc::connection_refused, boost::system::system_category());
         const error_code ER_ABORT = error_code(boost::system::errc::connection_aborted , boost::system::system_category());      
         const error_code ER_RELEASE = error_code(boost::system::errc::connection_reset  , boost::system::system_category()); 
+        const error_code ER_EAGAIN = error_code(boost::system::errc::resource_unavailable_try_again , boost::system::system_category()); 
 
         //   transport
             // TPDU size  ref X224  13.3.4 b)

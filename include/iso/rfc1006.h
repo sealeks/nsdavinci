@@ -54,17 +54,17 @@ namespace boost {
 
             // Disconnection request REASON CODE ref X224  13.5.3 d)           
             const octet_type DR_REASON_NODEF = '\x00'; // Reason not specified         
-            const octet_type DR_REASON_CONGST = '\x01'; // Congestion at TSAP             
-            const octet_type DR_REASON_SESSION = '\x02'; // Session entity not attached to TSAP        
-            const octet_type DR_REASON_ADDRESS = '\x03'; // address   error                 
-            const octet_type DR_REASON_NORM = '\x80'; // Normal disconnect initiated by session entity.
-            const octet_type DR_REASON_RCNGS = '\x81';  //Remote transport entity congestion at connect request time.            
-            const octet_type DR_REASON_NEGOT = '\x82'; // Connection negotiation failed [i.e. proposed class(es) not supported].           
-            const octet_type DR_REASON_PROTO = '\x85'; // Protocol error. 
+            const octet_type DR_REASON_CONGST = '\x01'; // Congestion at TSAP                                                   - ER_EAGAIN             
+            const octet_type DR_REASON_SESSION = '\x02'; // Session entity not attached to TSAP                       
+            const octet_type DR_REASON_ADDRESS = '\x03'; // address   error                                                           - ER_NAADDRESS
+            const octet_type DR_REASON_NORM = '\x80'; // Normal disconnect initiated by session entity.          -ER_RELEASE
+            const octet_type DR_REASON_RCNGS = '\x81';  //Remote transport entity congestion at connect request time.                          -ER_REQBUSY   
+            const octet_type DR_REASON_NEGOT = '\x82'; // Connection negotiation failed [i.e. proposed class(es) not supported].          -ER_REQBUSY
+            const octet_type DR_REASON_PROTO = '\x85'; // Protocol error.                                                                                                          -ER_PROTOCOL
             const octet_type DR_REASON_INVLN = '\x8A'; // Header or parameter length invalid.           
      
             // Error REASON CODE ref X224  13.12.3 c)   
-            const octet_type ERT_REASON_NODEF = '\x0'; // Reason not specified            
+            const octet_type ERT_REASON_NODEF = '\x0'; // Reason not specified                                                       - all ER_PROTOCOL
             const octet_type ERT_REASON_PARAM_CODE = '\x1'; // Invalid parameter code
             const octet_type ERT_REASON_TPDU_TYPE = '\x2'; // Invalid TPDU type
             const octet_type ERT_REASON_PARAM_VALUE = '\x3'; // Invalid parameter value
@@ -458,7 +458,7 @@ namespace boost {
                 }                
 
                 error_code errcode() const {
-                    return errcode_;
+                    return errcode_ ? errcode_ : ER_REFUSE;
                 }
 
 
@@ -661,16 +661,23 @@ namespace boost {
                                     handler_(ec);
                                     return;
                                 }
-                                case ER:
+                                case ER:{
+                                    error_code ecc;
+                                    socket_->get_service().close(socket_->get_implementation(), ecc);                                    
+                                    handler_(ER_PROTOCOL);
+                                    return;                                   
+                                }
                                 case DR:
                                 {
                                     error_code ecc;
-                                    //socket_->get_service().close(socket_->get_implementation(), ecc);
-                                    handler_(receive_->errcode() ? receive_->errcode() : ER_INOUT);
+                                    socket_->get_service().close(socket_->get_implementation(), ecc);
+                                    handler_(receive_->errcode());
                                     return;
                                 }
                             }
                         }
+                        error_code ecc;
+                        socket_->get_service().close(socket_->get_implementation(), ecc);                        
                         handler_(ER_PROTOCOL);
                     }
 
@@ -706,11 +713,11 @@ namespace boost {
                             get_io_service().post(
                                     boost::asio::detail::bind_handler(
                                     BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler), ec));
-
                             return;
                         }
                     }
-                    get_io_service().post(boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint)));
+                    get_io_service().post(boost::bind(&connect_op<ConnectHandler>::run, 
+                               connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint)));
                 }
 
 
@@ -721,15 +728,15 @@ namespace boost {
                 //  Release operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                void release(octet_type rsn) {
+                void release(octet_type rsn = 0) {
                     error_code ec;
-                    release(rsn, ec);
+                    release(ec, rsn);
                     boost::asio::detail::throw_error(ec, "release");
                 }
 
-                error_code release(octet_type rsn, error_code& ec) {
+                error_code release(error_code& ec, octet_type rsn = 0) {
 
-                    return release_impl(rsn, ec);
+                    return release_impl(ec , rsn);
                 }
 
 
@@ -758,7 +765,6 @@ namespace boost {
                             send_->size(bytes_transferred);
                             if (!send_->ready()) {
                                 socket_->get_service().async_send(socket_->get_implementation(), send_->pop(), 0, *this);
-
                                 return;
                             }
                         }
@@ -779,7 +785,7 @@ namespace boost {
 
                 template <typename ReleaseHandler>
                 void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
-                        octet_type rsn = DR_REASON_NORM) {
+                        octet_type rsn = 0) {
                     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
                     if (is_open()) {
                         get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
@@ -866,7 +872,7 @@ namespace boost {
                                         return;
                                     }
                                     error_code ecc;
-                                    //socket_->get_service().close(socket_->get_implementation(), ecc);
+                                    socket_->get_service().close(socket_->get_implementation(), ecc);
                                     handler_(ER_OUTDOMAIN);
 
                                     return;
@@ -884,7 +890,7 @@ namespace boost {
                     void parse_response(const error_code& ec) {
                         if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
                             error_code ecc;
-                            //socket_->get_service().close(socket_->get_implementation(), ecc);
+                            socket_->get_service().close(socket_->get_implementation(), ecc);
                             handler_(ER_PROTOCOL);
                             return;
                         }
@@ -1056,7 +1062,8 @@ namespace boost {
                         BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
 
                     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-                    get_io_service().post(boost::bind(&send_op<WriteHandler, ConstBufferSequence>::run, send_op<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
+                    get_io_service().post(boost::bind(&send_op<WriteHandler, ConstBufferSequence>::run, 
+                                     send_op<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
@@ -1172,22 +1179,21 @@ namespace boost {
                             case ER:
                             {
                                 error_code ecc;
-                                //socket_->get_service().close(socket_->get_implementation(), ecc);
-                                handler_(ER_BEDSEQ, static_cast<std::size_t> (receive_->datasize()));
+                                socket_->get_service().close(socket_->get_implementation(), ecc);
+                                handler_(ER_PROTOCOL, static_cast<std::size_t> (receive_->datasize()));
                                 break;
                             }
                             case DR:
                             {
                                 error_code ecc;
-                                //socket_->get_service().close(socket_->get_implementation(), ecc);
+                                socket_->get_service().close(socket_->get_implementation(), ecc);
                                 handler_( ER_REFUSE, static_cast<std::size_t> (receive_->datasize()));
                                 break;
                             }
                             default:
                             {
-
                                 error_code ecc;
-                                //socket_->get_service().close(socket_->get_implementation(), ecc);
+                                socket_->get_service().close(socket_->get_implementation(), ecc);
                                 handler_(ER_PROTOCOL, 0);
                             }
                         }
@@ -1307,29 +1313,34 @@ namespace boost {
                                 negotiate_transport_option(receive_->options());
                                 return ec;
                             }
-                            case ER:
+                            case ER:{
+                               error_code ecc;
+                                get_service().close(get_implementation(), ecc);
+                                return ec =ER_PROTOCOL;                      
+                            }
                             case DR:
                             {
                                 error_code ecc;
-                                //get_service().close(get_implementation(), ecc);
-
-                                return ec = receive_->errcode() ? receive_->errcode() : ER_INOUT;
+                                get_service().close(get_implementation(), ecc);
+                                return ec = receive_->errcode();
                             }
                             default:
                             {
-                                ec = ER_PROTOCOL;
                             }
                         }
                     }
+                    error_code ecc;
+                    get_service().close(get_implementation(), ecc);                    
                     return ec = ER_PROTOCOL;
                 }
 
-                error_code release_impl(octet_type rsn, error_code& ec) {
+                error_code release_impl(error_code& ec, octet_type rsn) {
                     if (is_open()) {
                         send_seq_ptr send_(send_seq_ptr(new send_seq(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                         while (!ec && !send_->ready())
                             send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
-
+                         error_code ecc;
+                        get_service().close(get_implementation(), ecc);                          
                         return ec;
                     }
                     return ec =  ER_REFUSE;
@@ -1348,7 +1359,7 @@ namespace boost {
                     protocol_options options_ = transport_option();
                     if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
                         error_code ecc;
-                        //get_service().close(get_implementation(), ecc);
+                        get_service().close(get_implementation(), ecc);
                         return ER_PROTOCOL;
                     }
                     octet_type error_accept = 0;
@@ -1365,7 +1376,7 @@ namespace boost {
                         return ec;
                     if (canseled) {
                         error_code ecc;
-                        //get_service().close(get_implementation(), ecc);
+                        get_service().close(get_implementation(), ecc);
                     }
                     else {
 
@@ -1373,7 +1384,7 @@ namespace boost {
                         opt.pdusize(options_.pdusize());
                         negotiate_transport_option(receive_->options());
                     }
-                    return ec = canseled ? ER_OUTDOMAIN : ec;
+                    return ec = canseled ? ER_BADADDRESS : ec;
                 }
 
                 template <typename ConstBufferSequence>
@@ -1406,13 +1417,13 @@ namespace boost {
                         case DR:
                         {
                             error_code ecc;
-                            //get_service().close(get_implementation(), ecc);
-                            ec = (receive_->type() == DR) ?  ER_REFUSE : ER_BEDSEQ;
+                            get_service().close(get_implementation(), ecc);
+                            ec = (receive_->type() == DR) ?  ER_REFUSE : ER_PROTOCOL;
                             return static_cast<std::size_t> (receive_->datasize());
                         }
                     }
                     error_code ecc;
-                    //get_service().close(get_implementation(), ecc);
+                    get_service().close(get_implementation(), ecc);
                     ec = ER_PROTOCOL;
                     return 0;
                 }
