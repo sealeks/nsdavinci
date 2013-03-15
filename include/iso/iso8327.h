@@ -190,9 +190,7 @@ namespace boost {
 
         enum release_type {
             SESSION_FN_RELEASE = FN_SPDU_ID ,
-            SESSION_AB_RELEASE = AB_SPDU_ID,
-            SESSION_DN_RELEASE = DN_SPDU_ID ,
-            SESSION_AA_RELEASE = AA_SPDU_ID,           
+            SESSION_AB_RELEASE = AB_SPDU_ID          
         };
         
         inline static spdu_type release_type_to_spdu(release_type vl){
@@ -486,7 +484,6 @@ namespace boost {
                         }
                         default:
                         {
-                            //buf_ = send_buffer_ptr(new send_buffer_impl(""));
                         }
                     }
                 }
@@ -954,7 +951,6 @@ namespace boost {
                                         socket_->super_type::async_send(send_->pop(), 0, *this);
                                         return;
                                     }
-                                    state((type_ == SESSION_DN_RELEASE ||  type_ == SESSION_AA_RELEASE ) ? waitclose: response);
                                     operator()(ec, 0);
                                     return;
                                 }
@@ -975,9 +971,7 @@ namespace boost {
                                 }
                             }
 
-                        }
-                        //error_code ecc;
-                        //socket_->close(ecc);                        
+                        }                    
                         exit_handler(ec);
                     }
 
@@ -1040,12 +1034,12 @@ namespace boost {
             public:
 
                 template <typename ReleaseHandler>
-                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler , release_type type = SESSION_FN_RELEASE) {
+                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler , release_type type) {
                     //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                     rootcoder()->in()->clear(); 
                     if (is_open()) {
                         get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
-                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, type)));
+                                release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, SESSION_FN_RELEASE)));
                     }
                     else
                         handler( ER_REFUSE);
