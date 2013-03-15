@@ -19,14 +19,14 @@ namespace prot9506 {
     namespace MMSO = MMS_Object_Module_1;
 
 
-    typedef boost::iso::presentation_pm_ptr                  presentation_pm_ptr;
-    typedef boost::iso::presentation_option                    presentation_option;
+    typedef boost::itu::presentation_pm_ptr                  presentation_pm_ptr;
+    typedef boost::itu::presentation_option                    presentation_option;
     typedef MMSO::Unsigned32                                                   invoke_id_type;
 
     const invoke_id_type  MAXINVOKEID  = 100000;
 
 
-    using boost::iso::presentation_selector;
+    using boost::itu::presentation_selector;
 
     const boost::array<boost::asn1::oidindx_type, 5 > MMS_ARR = {1, 0, 9506 , 2,  1};
     const boost::asn1::oid_type MMS_OID = boost::asn1::oid_type(MMS_ARR);
@@ -207,9 +207,9 @@ namespace prot9506 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class stream_socket : public boost::iso::prot8823::stream_socket  {
-        typedef boost::iso::prot8823::stream_socket                                          super_type;
-        typedef boost::iso::prot8823::presentation_context_unit_ptr    application_context_ptr;
+    class stream_socket : public boost::itu::x226impl::stream_socket  {
+        typedef boost::itu::x226impl::stream_socket                                          super_type;
+        typedef boost::itu::x226impl::presentation_context_unit_ptr    application_context_ptr;
 
 
     public:
@@ -388,7 +388,7 @@ namespace prot9506 {
                 }
                 catch (...) {
                 }
-                operation_->error(boost::iso::ERROR__EPROTO);
+                operation_->error(boost::itu::ER_PROTOCOL);
             }
 
         private:
@@ -476,8 +476,8 @@ namespace prot9506 {
 
     /////////////////////////////
 
-    class socket_acceptor : public boost::iso::prot8823::socket_acceptor  {
-        typedef boost::iso::prot8823::socket_acceptor      super_type;
+    class socket_acceptor : public boost::itu::x226impl::socket_acceptor  {
+        typedef boost::itu::x226impl::socket_acceptor      super_type;
         typedef boost::asio::basic_socket<protocol_type, boost::asio::socket_acceptor_service< protocol_type > >   basic_socket_type;
 
     public:
@@ -569,11 +569,11 @@ public:
 
     typedef boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>          endpoint;
 
-    typedef boost::iso::presentation_selector                                 presentation_selector;
+    typedef boost::itu::presentation_selector                                 presentation_selector;
 
-    typedef boost::iso::session_selector                                           session_selector;
+    typedef boost::itu::session_selector                                           session_selector;
 
-    typedef boost::iso::transport_selector                                        transport_selector;
+    typedef boost::itu::transport_selector                                        transport_selector;
 
     /// Construct to represent the IPv4 TCP protocol.
 
