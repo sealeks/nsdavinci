@@ -1034,7 +1034,7 @@ namespace boost {
             public:
 
                 template <typename ReleaseHandler>
-                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler , release_type type) {
+                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler) {
                     //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                     rootcoder()->in()->clear(); 
                     if (is_open()) {
@@ -1411,12 +1411,7 @@ namespace boost {
                         request,
                         response
                     };
-                    
-                    enum resultstate {
-                        nodefresult,
-                        releaseresult,  
-                        abortresult      
-                    };                    
+                           
                     
 
                 public:
@@ -1429,7 +1424,6 @@ namespace boost {
                     buff_(buff),
                     send_(),
                     state_(request),
-                    resultst_(nodefresult), 
                     flags_(flags) {
                     }
 
@@ -1464,8 +1458,7 @@ namespace boost {
                                 }                          
                             }
                         }
-                        handler_(( resultst_ == nodefresult) ? ec :
-                            ( resultst_==releaseresult ? ER_RELEASE : ER_ABORT ) , static_cast<std::size_t> (receive_->datasize()));
+                        handler_( ec, static_cast<std::size_t> (receive_->datasize()));
                     }                                      
 
 
@@ -1484,7 +1477,6 @@ namespace boost {
                                 socket_->negotiate_session_release();
                                 send_ = send_seq_ptr(new send_seq(DN_SPDU_ID, socket_->session_option(), socket_->rootcoder()));                                
                                 state(response);
-                                resultst_=releaseresult;
                                 run();
                                 return false;                         
                             }
@@ -1492,29 +1484,20 @@ namespace boost {
                             {          
                                 socket_->rootcoder()->in()->clear();                                
                                 socket_->rootcoder()->in()->add(receive_->options().data());
-                                send_ = send_seq_ptr(new send_seq(AA_SPDU_ID, socket_->session_option(), socket_->rootcoder()));
-                                state(response);                                
-                                resultst_=abortresult;
-                                run();                               
+                                socket_->negotiate_session_release();                                
+                                state(request);
+                                error_code ecc;
+                                socket_->close(ecc);
+                                handler_( ER_ABORT, 0);                     
                                 return false;                         
-                            }      
-                            case AA_SPDU_ID:{
-                                state(request);
-                                return false;
-                            }   
-                             case DN_SPDU_ID:{
-                                state(request);
-                                return false;
-                            }                                
+                            }                             
                             default:
                             {
                                 socket_->rootcoder()->in()->clear();                                
                                 socket_->rootcoder()->in()->add(receive_->options().data());
                                 send_ = send_seq_ptr(new send_seq(AB_SPDU_ID, socket_->session_option(), socket_->rootcoder()));
-                                state(response);                                
-                                resultst_=abortresult;
-                                run();                               
-                                return false;
+                                state(response);
+                                run();
                             }
                         }
 
@@ -1533,7 +1516,6 @@ namespace boost {
                     receive_seq_ptr receive_;
                     send_seq_ptr send_;
                     stateconnection state_;
-                    resultstate resultst_;
                     message_flags flags_;
                 };
 
@@ -1622,7 +1604,11 @@ namespace boost {
                     rootcoder()->out()->add(ECHO_NEGOTIATE);
                     rootcoder()->out()->add(rootcoder()->in()->buffers());
                     return true;
-                }                
+                }      
+                
+                 virtual bool negotiate_session_abort() {
+                    return true;
+                }                     
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
