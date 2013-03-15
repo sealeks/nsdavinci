@@ -79,7 +79,7 @@ namespace boost {
     }
 
 
-    namespace iso {
+    namespace itu {
 
         oid_type encoding_to_oid(encoding_rule rule) {
             switch (rule) {
