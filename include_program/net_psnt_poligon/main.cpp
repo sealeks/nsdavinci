@@ -40,7 +40,7 @@ typedef protocol_type::acceptor                                      acceptor_ty
 typedef protocol_type::endpoint                                        endpoint_type;
 typedef protocol_type::resolver                                         resolver_type;
 
-typedef boost::iso::selectorvalue_type                    selectorvalue_type;
+typedef boost::itu::selectorvalue_type                    selectorvalue_type;
 typedef protocol_type::presentation_selector                      presentation_selector ;
 typedef protocol_type::session_selector                      session_selector;
 typedef protocol_type::transport_selector                  transport_selector;
@@ -126,7 +126,7 @@ public:
 private:
 
     void start_accept() {
-        //isocoder_ptr trans_ = boost::iso::create_simple_data("Hello client from test");
+        //isocoder_ptr trans_ = boost::itu::create_simple_data("Hello client from test");
 
         session* new_session = new session(io_service_);
 
@@ -459,7 +459,7 @@ private:
     void start_accept() {
         while (true) {
 
-            isocoder_ptr trans_ = boost::iso::create_simple_data("Hello client from test");
+            isocoder_ptr trans_ = boost::itu::create_simple_data("Hello client from test");
 
             session* new_session = new session(io_service_, trans_);
             boost::system::error_code ec;
@@ -490,7 +490,7 @@ public:
     : io_service_(io_service),
     socket_(io_service, SELECTOR) {
 
-        trans_ = boost::iso::create_simple_data("Hello server  from test");
+        trans_ = boost::itu::create_simple_data("Hello server  from test");
 
         boost::system::error_code ec;
         endpoint_type endpoint = *endpoint_iterator;
@@ -520,7 +520,7 @@ public:
 #elif defined(SESSION_PROT)
         trans_ = isocoder_ptr( new   trans_data("Goodbuy server  from test"));
         boost::system::error_code ecc;
-        socket_.releaseconnect(boost::iso::SESSION_NORMAL_RELEASE, trans_, ecc);
+        socket_.releaseconnect(boost::itu::SESSION_NORMAL_RELEASE, trans_, ecc);
         if (trans_)
             std::cout << "Server release data : " << trans_->respond_str() << std::endl;
 

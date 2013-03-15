@@ -38,10 +38,10 @@ namespace prot9506 {
         mmsppm_ = ppm()->get_context(MMS_OID);
 
         if (!acseppm_ || !mmsppm_)
-            return boost::iso::ERROR_EDOM;
+            return boost::itu::ER_OUTDOMAIN;
 
         if (!acseppm_->valid() || !mmsppm_->valid())
-            return boost::iso::ERROR_EDOM;
+            return boost::itu::ER_OUTDOMAIN;
 
         MMS::MMSpdu mms;
         mms.initiate_RequestPDU__new();
@@ -93,10 +93,10 @@ namespace prot9506 {
             mmsppm_ = ppm()->get_context(MMS_OID);
 
             if (!acseppm_ || !mmsppm_)
-                return boost::iso::ERROR_EDOM;
+                return boost::itu::ER_OUTDOMAIN;
 
             if (!acseppm_->valid() || !mmsppm_->valid())
-                return boost::iso::ERROR_EDOM;
+                return boost::itu::ER_OUTDOMAIN;
 
             ACSE::ACSE_apdu  apdu;
 
@@ -124,14 +124,14 @@ namespace prot9506 {
                                         }
                                         default:
                                         {
-                                            return  boost::iso::ERROR_ECONNREFUSED;
+                                            return  boost::itu:: ER_REFUSE;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                    return boost::iso::ERROR__EPROTO;
+                    return boost::itu::ER_PROTOCOL;
                 }
                 default:
                 {
@@ -143,7 +143,7 @@ namespace prot9506 {
         }
         catch (...) {
         }
-        return boost::iso::ERROR_EADDRNOTAVAIL;
+        return boost::itu::ER_NAADDRESS;
     }
 
 
