@@ -1444,15 +1444,9 @@ namespace boost {
                 public:
 
                     typedef boost::asio::socket_acceptor_service<boost::asio::ip::tcp> service_impl_type;
-
-                    /// The protocol type.
                     typedef boost::asio::ip::tcp protocol_type;
-
-                    /// The endpoint type.
                     typedef boost::asio::ip::tcp::endpoint endpoint_type;
-
                     typedef service_impl_type::implementation_type implementation_type;
-
                     typedef service_impl_type::native_type native_type;
 
                     static boost::asio::io_service::id id;

@@ -232,16 +232,19 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                 
             
 
-            class spdudata : protected spdudata_type {
+            class spdudata {
+                
+                typedef boost::shared_ptr<spdudata_type> spdudata_type_ptr;
+                
             public:
 
-                spdudata() : spdudata_type(), type_(0), error_(false) {
+                spdudata() : value_(new spdudata_type()), type_(0), error_(false) {
                 }
 
-                explicit spdudata(spdu_type spdu) : spdudata_type(), type_(spdu), error_(false) {
-                }
+                explicit spdudata(spdu_type spdu) :   value_(new spdudata_type()),  type_(spdu), error_(false) {
+               }
 
-                explicit spdudata(const const_buffer& vl) : spdudata_type(), seq_(), type_(0), error_(false) {
+                explicit spdudata(const const_buffer& vl) :  value_(new spdudata_type()) ,  seq_(), type_(0), error_(false) {
                     parse_vars(buffer_to_raw(vl));
                 }
 
@@ -320,7 +323,7 @@ namespace boost {
                 spdu_type type_;
                 bool error_;
                 raw_type null_val;
-
+                spdudata_type_ptr value_;
             };
             
             
@@ -760,7 +763,6 @@ namespace boost {
                     socket_(socket),
                     handler_(handler),
                     state_(request),
-                    options_(socket->session_option()),
                     peer_endpoint_(peer_endpoint),
                     send_(send_seq_ptr(new send_seq(CN_SPDU_ID, socket->session_option(), socket_->rootcoder()))),
                     receive_(new receive_seq()){
@@ -852,7 +854,6 @@ namespace boost {
                     stream_socket* socket_;
                     ConnectHandler handler_;
                     stateconnection state_;
-                    protocol_options options_;
                     endpoint_type peer_endpoint_;
                     send_seq_ptr send_;
                     receive_seq_ptr receive_;
