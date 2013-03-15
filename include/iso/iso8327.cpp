@@ -37,11 +37,11 @@ namespace boost {
             //  spdudata 
 
             void spdudata::setPGI(varid_type cod1, varid_type cod2, const raw_type& val) {
-                spdudata_type::iterator it = find(cod1);
-                if (it == end()) {
+                spdudata_type::iterator it =value_->find(cod1);
+                if (it == value_->end()) {
                     pgi_type pgi;
                     pgi.insert(pi_type(cod2, val));
-                    insert(pgis_type(cod1, pgi));
+                    value_->insert(pgis_type(cod1, pgi));
                 }
                 else
                     it->second.insert(pi_type(cod2, val));
@@ -93,8 +93,8 @@ namespace boost {
             }
 
             const raw_type& spdudata::getPGI(varid_type cod1, varid_type cod2) const {
-                spdudata_type::const_iterator it = find(cod1);
-                if (it == end())
+                spdudata_type::const_iterator it = value_->find(cod1);
+                if (it == value_->end())
                     return null_val;
                 pgi_type::const_iterator itpi = it->second. find(cod2);
                 return (itpi != it->second.end()) ? itpi->second : null_val;
@@ -175,8 +175,8 @@ namespace boost {
             }
 
             bool spdudata::existPGI(varid_type cod1, varid_type cod2) const {
-                spdudata_type::const_iterator it = find(cod1);
-                if (it == end())
+                spdudata_type::const_iterator it = value_->find(cod1);
+                if (it == value_->end())
                     return false;
                 pgi_type::const_iterator itpi = it->second.find(cod2);
 
@@ -189,8 +189,8 @@ namespace boost {
             }
 
             bool spdudata::nullPGI(varid_type cod1, varid_type cod2) const {
-                spdudata_type::const_iterator it = find(cod1);
-                if (it == end())
+                spdudata_type::const_iterator it = value_->find(cod1);
+                if (it == value_->end())
                     return false;
                 pgi_type::const_iterator itpi = it->second.find(cod2);
 
@@ -204,9 +204,9 @@ namespace boost {
 
             const_sequence_ptr spdudata::sequence(isocoder_ptr coder) const {
                 raw_type tmp;
-                spdudata_type::const_iterator strtit = end();
-                for (spdudata_type::const_iterator it = begin(); it != end(); ++it) {
-                    if ((!it->first && it == begin()))
+                spdudata_type::const_iterator strtit = value_->end();
+                for (spdudata_type::const_iterator it = value_->begin(); it != value_->end(); ++it) {
+                    if ((!it->first && it == value_->begin()))
                         strtit = it;
                     else {
                         raw_type tmppgi;
@@ -220,7 +220,7 @@ namespace boost {
                         raw_back_insert(tmp, tmppgi);
                     }
                 }
-                if (strtit != end()) {
+                if (strtit != value_->end()) {
                     raw_type tmppi;
                     for (pgi_type::const_iterator itpgi = strtit->second.begin(); itpgi != strtit->second.end(); ++itpgi) {
                         if ((itpgi->first != PI_USERDATA) && (itpgi->first != PI_EXUSERDATA)) {
