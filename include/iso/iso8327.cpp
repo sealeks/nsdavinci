@@ -9,8 +9,8 @@
 
 
 namespace boost {
-    namespace iso {
-        namespace prot8327 {
+    namespace itu {
+        namespace x225impl {
 
             std::size_t from_triple_size(const raw_type& val, std::size_t& it) {
                 if ((val.empty()) || (val[0] == '\xFF' && val.size() < 3))
@@ -402,7 +402,7 @@ namespace boost {
 
             /////////////////////
 
-            bool negotiate_prot8327_option(protocol_options& self, const protocol_options& dist) {
+            bool negotiate_x225impl_option(protocol_options& self, const protocol_options& dist) {
                 
                 self = protocol_options(self.ssap_calling(), dist.ssap_calling());
                 

@@ -23,8 +23,11 @@
 
 
 namespace boost {
-    namespace iso {
-        namespace prot8073 {
+    namespace itu {
+        namespace rfc1006impl {
+            
+            // ref X224 = ITU-T Rec. X.224(1995 E)
+            
 
             using boost::asio::basic_socket;
             using boost::asio::basic_socket_acceptor;
@@ -35,22 +38,51 @@ namespace boost {
             //   iso8073 utill   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
 
-            const octet_type TKPT_STARTar[] = {'\x3', '\x0'};
-            const raw_type TKPT_START = raw_type(TKPT_STARTar, TKPT_STARTar + 2);
 
-            const std::size_t TKPT_LENGTH = 4;
+            // TPDU code ref X224 c1 13.1 Table 8   only class 0 implement ( over rfc1006 )
+            const octet_type CR_TPDU_ID = '\xE0'; //Connection request   !!xxxx - out class 0
+            const octet_type CC_TPDU_ID = '\xD0'; //Connection confirm   !!xxxx - out class 0
+            const octet_type DR_TPDU_ID = '\x80'; //Disconnection request 
+            const octet_type DC_TPDU_ID = '\xC0'; //Disconnection  confirm                                        !!not used here impl
+            const octet_type DT_TPDU_ID = '\xF0'; //Data !!y - out class 0
+            const octet_type ED_TPDU_ID = '\x10'; //Expedited data !!not use here impl                     !!not used here impl
+            const octet_type DA_TPDU_ID = '\x60'; //Data acknowledgement !!not use here impl
+            const octet_type EA_TPDU_ID = '\x20'; //Expedited data acknowledgement                      !!not used here impl
+            const octet_type RJ_TPDU_ID = '\x50'; //Reject                                                                       !!not used here impl
+            const octet_type ER_TPDU_ID = '\x70'; //Error
 
-            const octet_type CR_TPDU_ID = '\xE0'; //connection request
-            const octet_type CC_TPDU_ID = '\xD0'; //connection confirm
-            const octet_type DR_TPDU_ID = '\x80'; //disconnection request
-            const octet_type DC_TPDU_ID = '\xC0'; //disconnection  confirm
-            const octet_type DT_TPDU_ID = '\xF0'; //data
-            const octet_type ED_TPDU_ID = '\x10'; //expedited data
-            const octet_type DA_TPDU_ID = '\x60'; //data acknowledgement
-            const octet_type EA_TPDU_ID = '\x20'; //expedited data acknowledgement
-            const octet_type RJ_TPDU_ID = '\x50'; //reject
-            const octet_type ER_TPDU_ID = '\x70'; //error
 
+            // Disconnection request REASON CODE ref X224  13.5.3 d)           
+            const octet_type DR_REASON_NODEF = '\x00'; // Reason not specified         
+            const octet_type DR_REASON_CONGST = '\x01'; // Congestion at TSAP             
+            const octet_type DR_REASON_SESSION = '\x02'; // Session entity not attached to TSAP        
+            const octet_type DR_REASON_ADDRESS = '\x03'; // address   error                 
+            const octet_type DR_REASON_NORM = '\x80'; // Normal disconnect initiated by session entity.
+            const octet_type DR_REASON_RCNGS = '\x81';  //Remote transport entity congestion at connect request time.            
+            const octet_type DR_REASON_NEGOT = '\x82'; // Connection negotiation failed [i.e. proposed class(es) not supported].           
+            const octet_type DR_REASON_PROTO = '\x85'; // Protocol error. 
+            const octet_type DR_REASON_INVLN = '\x8A'; // Header or parameter length invalid.           
+     
+            // Error REASON CODE ref X224  13.12.3 c)   
+            const octet_type ERT_REASON_NODEF = '\x0'; // Reason not specified            
+            const octet_type ERT_REASON_PARAM_CODE = '\x1'; // Invalid parameter code
+            const octet_type ERT_REASON_TPDU_TYPE = '\x2'; // Invalid TPDU type
+            const octet_type ERT_REASON_PARAM_VALUE = '\x3'; // Invalid parameter value
+            
+            // Error REASON CODE ref X224  13.12.4
+            const octet_type ERT_PARAM_ID = '\xC1';    //Parameter code:        
+            
+            // VAR ID  ref X224  13.3.4
+            const octet_type VAR_TSAPCALLING_ID = '\xC1';  //calling Transport-Selector 13.3.4 a)
+            const octet_type VAR_TSAPCALLED_ID = '\xC2';   //called Transport-Selector  13.3.4 a)
+            const octet_type VAR_TPDU_SIZE = '\xC0';  //TPDU size 13.3.4 b)
+            const octet_type VAR_MAXTPDU_SIZE = '\xF0';   // Preferred maximum TPDU size 13.3.4 c)
+            
+            // EOT ref X224  13.7.3  d)
+            const octet_type TPDU_ENDED = '\x80';
+            const octet_type TPDU_CONTINIUE = '\x0';               
+            
+            
             enum tpdu_type {
                 NL = 0,
                 CR = CR_TPDU_ID,
@@ -69,12 +101,7 @@ namespace boost {
                 return static_cast<octet_type> (val);
             }
 
-            tpdu_type tpdu_type_from(octet_type val);
-
-            const octet_type REJECT_REASON_NORM = '\x80'; // normal release
-            const octet_type REJECT_REASON_SESS = '\x02'; // session   error  
-            const octet_type REJECT_REASON_ADDR = '\x03'; // address   error 
-            const octet_type REJECT_REASON_NODEF = '\x00'; // address   error               
+            tpdu_type tpdu_type_from(octet_type val);            
 
             error_code errorcode_by_reason(octet_type val);
 
@@ -93,15 +120,6 @@ namespace boost {
 
             tpdu_size tpdu_size_frombyte(octet_type val);
 
-            const octet_type ERROR_REASON_NODEF = '\x0'; // no def
-            const octet_type ERROR_REASON_PARAM_CODE = '\x1'; // parameter code error
-            const octet_type ERROR_REASON_PARAM_TYPE = '\x2'; // parameter type error
-            const octet_type ERROR_REASON_PARAM_VALUE = '\x3'; // parameter value error
-
-            const octet_type TPDU_ENDED = '\x80';
-            const octet_type TPDU_CONTINIUE = '\x0';
-
-            const octet_type WRONG_TPDU = '\xC1';
 
             size_t getPDUsize(octet_type sz);
 
@@ -112,11 +130,6 @@ namespace boost {
             typedef std::pair<headarvar, raw_type> headarvarvalue;
             typedef std::vector<headarvarvalue> headarvarvalues;
 
-
-            const octet_type VAR_TSAPCALLING_ID = '\xC1';
-            const octet_type VAR_TSAPCALLED_ID = '\xC2';
-            const octet_type VAR_TPDU_SIZE = '\xC0';
-            const octet_type VAR_MAXTPDU_SIZE = '\xF0';
 
             struct protocol_options {
 
@@ -170,9 +183,7 @@ namespace boost {
             };
             
 
-            bool negotiate_prot8073_option(protocol_options& self, const protocol_options& dist, octet_type& error);
-
-
+            bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error);
 
             bool parse_vars(const raw_type& str, headarvarvalues& vars);
 
@@ -186,16 +197,22 @@ namespace boost {
 
             raw_type generate_header_TKPT_DC(int16_t dst, int16_t src);
 
-            raw_type generate_header_TKPT_ER(int16_t dst, const raw_type& errorreason = raw_type(), octet_type err = 0);
+            raw_type generate_header_TKPT_ER(int16_t dst, const raw_type& errorseq = raw_type(), octet_type err = 0);
 
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //  iso8073 data_send_buffer_impl   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+            
+ 
+            const octet_type TKPT_STARTar[] = {'\x3', '\x0'};
+            const raw_type TKPT_START = raw_type(TKPT_STARTar, TKPT_STARTar + 2);           
 
             const std::size_t DT_SEND_BUFF_HEADER = 5;
-
+            
+            const std::size_t TKPT_LENGTH = 4;
+            
             template <typename ConstBufferSequence>
             class data_send_buffer_impl : public send_buffer_impl {
             public:
@@ -278,7 +295,6 @@ namespace boost {
 
                 raw_type sizenorm_;
                 raw_type sizeeof_;
-
             };
 
 
@@ -363,7 +379,6 @@ namespace boost {
                 send_seq_data(const ConstBufferSequence& buff, tpdu_size pdusize) : send_seq(DT) {
                     constructDT(buff, pdusize);
                 }
-
 
             protected:
 
@@ -490,6 +505,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
             class stream_socket : public boost::asio::basic_stream_socket<boost::asio::ip::tcp > {
+                
             public:
 
 
@@ -498,12 +514,14 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
                 explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector())
-                : boost::asio::basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(SIZE2048), transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
+                : boost::asio::basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(SIZE2048), 
+                transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const transport_selector& tsel = transport_selector())
-                : boost::asio::basic_stream_socket<boost::asio::ip::tcp >(io_service, endpoint), pdusize_(tsel.pdusize()), transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
+                : boost::asio::basic_stream_socket<boost::asio::ip::tcp >(io_service, endpoint), pdusize_(tsel.pdusize()), 
+                transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
                 }
 
 
@@ -521,7 +539,7 @@ namespace boost {
                 }
 
                 std::size_t available(error_code& ec) const {
-                    std::size_t s = this->get_service().available(this->get_implementation(), ec);
+                    std::size_t s = get_service().available(get_implementation(), ec);
                     if (ec) return 0;
                     return waiting_data_size_ < s ? waiting_data_size_ : s;
                 }
@@ -553,7 +571,7 @@ namespace boost {
                 error_code connect(const endpoint_type& peer_endpoint,
                         error_code& ec) {
                     if (!is_open()) {
-                        if (this->get_service().open(this->get_implementation(),
+                        if (get_service().open(get_implementation(),
                                 peer_endpoint.protocol(), ec)) {
                             return ec;
                         }
@@ -731,13 +749,11 @@ namespace boost {
                     }
 
                     void run() {
-
                         error_code ec;
                         operator()(ec, 0);
                     }
 
                     void operator()(const error_code& ec, std::size_t bytes_transferred) {
-                        std::size_t n = 0;
                         if (!ec) {
                             send_->size(bytes_transferred);
                             if (!send_->ready()) {
@@ -763,10 +779,10 @@ namespace boost {
 
                 template <typename ReleaseHandler>
                 void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
-                        octet_type rsn = REJECT_REASON_NORM) {
+                        octet_type rsn = DR_REASON_NORM) {
                     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
                     if (is_open()) {
-                        this->get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
+                        get_io_service().post(boost::bind(&release_op<ReleaseHandler>::run,
                                 release_op<ReleaseHandler > (const_cast<stream_socket*> (this), handler, rsn)));
                     }
                     else
@@ -874,7 +890,7 @@ namespace boost {
                         }
                         protocol_options options_= socket_->transport_option();
                         octet_type error_accept = 0;
-                        if (!negotiate_prot8073_option(options_, receive_->options(), error_accept)) {
+                        if (!negotiate_rfc1006impl_option(options_, receive_->options(), error_accept)) {
                             send_ = send_seq_ptr(new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
                             state(refuse);
                             operator()(ec, 0);
@@ -919,7 +935,7 @@ namespace boost {
                 void asyn_check_accept(CheckAcceptHandler handler, int16_t src) {
 
                     transport_option_.src_tsap(src);
-                    this->get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
+                    get_io_service().post(boost::bind(&accept_op<CheckAcceptHandler>::run,
                             accept_op<CheckAcceptHandler > (const_cast<stream_socket*> (this), handler)));
                 }
 
@@ -1040,7 +1056,7 @@ namespace boost {
                         BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
 
                     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-                    this->get_io_service().post(boost::bind(&send_op<WriteHandler, ConstBufferSequence>::run, send_op<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
+                    get_io_service().post(boost::bind(&send_op<WriteHandler, ConstBufferSequence>::run, send_op<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
@@ -1205,7 +1221,7 @@ namespace boost {
 
                     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-                    this->get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
+                    get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
                             receive_seq_ptr(new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state())), buffers, flags)));
 
                 }
@@ -1270,17 +1286,17 @@ namespace boost {
                 error_code connect_impl(const endpoint_type& peer_endpoint,
                         error_code& ec) {
 
-                    if (this->get_service().connect(this->get_implementation(), peer_endpoint, ec))
+                    if (get_service().connect(get_implementation(), peer_endpoint, ec))
                         return ec;
 
                     send_seq_ptr send_(send_seq_ptr(new send_seq(transport_option())));
                     while (!ec && !send_->ready())
-                        send_->size(this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
+                        send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
                     if (ec)
                         return ec;
                     receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
                     while (!ec && !receive_->ready()) {
-                        receive_->put(this->get_service().receive(this->get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
+                        receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
                     if (ec)
                         return ec;
@@ -1295,7 +1311,7 @@ namespace boost {
                             case DR:
                             {
                                 error_code ecc;
-                                //this->get_service().close(this->get_implementation(), ecc);
+                                //get_service().close(get_implementation(), ecc);
 
                                 return ec = receive_->errcode() ? receive_->errcode() : ER_INOUT;
                             }
@@ -1312,7 +1328,7 @@ namespace boost {
                     if (is_open()) {
                         send_seq_ptr send_(send_seq_ptr(new send_seq(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                         while (!ec && !send_->ready())
-                            send_->size(this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
+                            send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
 
                         return ec;
                     }
@@ -1324,7 +1340,7 @@ namespace boost {
                     bool canseled = false;
                     receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
                     while (!ec && !receive_->ready()) {
-                        receive_->put(this->get_service().receive(this->get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
+                        receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
                     if (ec)
                         return ec;
@@ -1332,11 +1348,11 @@ namespace boost {
                     protocol_options options_ = transport_option();
                     if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
                         error_code ecc;
-                        //this->get_service().close(this->get_implementation(), ecc);
+                        //get_service().close(get_implementation(), ecc);
                         return ER_PROTOCOL;
                     }
                     octet_type error_accept = 0;
-                    if (!negotiate_prot8073_option(options_, receive_->options(), error_accept)) {
+                    if (!negotiate_rfc1006impl_option(options_, receive_->options(), error_accept)) {
                         canseled = true;
                         send_ = send_seq_ptr(new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
                     }
@@ -1344,12 +1360,12 @@ namespace boost {
                         send_ = send_seq_ptr(new send_seq(1, options_));
                     }
                     while (!ec && !send_->ready())
-                        send_->size(this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
+                        send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
                     if (ec)
                         return ec;
                     if (canseled) {
                         error_code ecc;
-                        //this->get_service().close(this->get_implementation(), ecc);
+                        //get_service().close(get_implementation(), ecc);
                     }
                     else {
 
@@ -1365,7 +1381,7 @@ namespace boost {
                         socket_base::message_flags flags, error_code& ec) {
                     send_seq_ptr send_(new send_seq_data<ConstBufferSequence > (buffers, pdusize()));
                     while (!ec && !send_->ready())
-                        send_->size(this->get_service().send(this->get_implementation(), send_->pop(), 0, ec));
+                        send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
                     return ec ? 0 : boost::asio::buffer_size(buffers);
                 }
 
@@ -1374,7 +1390,7 @@ namespace boost {
                         socket_base::message_flags flags, error_code& ec) {
                     receive_seq_ptr receive_(new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state()));
                     while (!ec && !receive_->ready()) {
-                        receive_->put(this->get_service().receive(this->get_implementation(), boost::asio::buffer(
+                        receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(
                                 receive_->buffer()), 0, ec));
                     }
                     if (ec)
@@ -1390,13 +1406,13 @@ namespace boost {
                         case DR:
                         {
                             error_code ecc;
-                            //this->get_service().close(this->get_implementation(), ecc);
+                            //get_service().close(get_implementation(), ecc);
                             ec = (receive_->type() == DR) ?  ER_REFUSE : ER_BEDSEQ;
                             return static_cast<std::size_t> (receive_->datasize());
                         }
                     }
                     error_code ecc;
-                    //this->get_service().close(this->get_implementation(), ecc);
+                    //get_service().close(get_implementation(), ecc);
                     ec = ER_PROTOCOL;
                     return 0;
                 }
@@ -1603,9 +1619,9 @@ namespace boost {
                 return family_;
             }
 
-            typedef prot8073::stream_socket socket;
+            typedef rfc1006impl::stream_socket socket;
 
-            typedef prot8073::socket_acceptor acceptor;
+            typedef rfc1006impl::socket_acceptor acceptor;
 
             typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
 
@@ -1639,14 +1655,8 @@ namespace boost {
 
 
 
-    } // namespace ip
-
-
-    inline static bool input_empty(boost::iso::prot8073::stream_socket& s) {
-        return s.input_empty();
-    }
-
-} // namespace boost
+    } 
+} 
 
 #include <boost/asio/detail/pop_options.hpp>
 

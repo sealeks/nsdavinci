@@ -37,7 +37,9 @@
 
 
 namespace boost {
-    namespace iso {
+    namespace itu {
+        
+         // ref X224 = ITU-T Rec. X.224(1995 E)
         
         using boost::system::error_code;
 
@@ -53,7 +55,7 @@ namespace boost {
         const error_code ER_RELEASE = error_code(boost::system::errc::connection_reset  , boost::system::system_category()); 
 
         //   transport
-
+            // TPDU size  ref X224  13.3.4 b)
         const octet_type TPDU_SIZE8192 = '\xD'; // not denied in 0 class
         const octet_type TPDU_SIZE4096 = '\xC'; // not denied in 0 class
         const octet_type TPDU_SIZE2048 = '\xB';
@@ -69,8 +71,7 @@ namespace boost {
             SIZE1024 = TPDU_SIZE1024,
             SIZE512 = TPDU_SIZE512,
             SIZE256 = TPDU_SIZE256,
-            SIZE128 = TPDU_SIZE128,
-            //SIZE4 = TPDU_SIZE4
+            SIZE128 = TPDU_SIZE128
         } tpdu_size;
 
 

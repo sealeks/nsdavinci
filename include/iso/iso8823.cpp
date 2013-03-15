@@ -9,9 +9,9 @@
 #include <iso/presentation/ISO8823-PRESENTATION.h>
 
 namespace boost {
-    namespace iso {
+    namespace itu {
 
-        namespace prot8823 {
+        namespace x226impl {
 
 
             typedef ISO8823_PRESENTATION::CP_type CP_type;

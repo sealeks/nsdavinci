@@ -9,8 +9,8 @@
 
 
 namespace boost {
-    namespace iso {
-        namespace prot8073 {
+    namespace itu {
+        namespace rfc1006impl {
 
             error_code errorcode_by_reason(octet_type val) {
                 if (!val)
@@ -168,10 +168,10 @@ namespace boost {
             /////////////////////
 
             
-            bool negotiate_prot8073_option(protocol_options& self, const protocol_options& dist, octet_type& error) {
+            bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error) {
 #ifndef CHECK_ISO_SELECTOR
                 if (!self.tsap_called().empty() && self.tsap_called() != dist.tsap_called()) {
-                    error = REJECT_REASON_ADDR;
+                    error = DR_REASON_ADDRESS;
                     return false;
                 }
 #endif                
@@ -283,14 +283,14 @@ namespace boost {
                 return rslt;
             }
 
-            raw_type generate_header_TKPT_ER(int16_t dst, const raw_type& errorreason, octet_type err) {
+            raw_type generate_header_TKPT_ER(int16_t dst, const raw_type& errorseq, octet_type err) {
                 raw_type rslt;
                 rslt.insert(rslt.end(), ER_TPDU_ID);
                 raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(dst)));
                 rslt.insert(rslt.end(), err);
-                rslt.insert(rslt.end(), WRONG_TPDU);
-                rslt.insert(rslt.end(), static_cast<octet_type> (errorreason.size()));
-                raw_back_insert(rslt, raw_type(errorreason.begin(), errorreason.end()));
+                rslt.insert(rslt.end(), ERT_PARAM_ID);
+                rslt.insert(rslt.end(), static_cast<octet_type> (errorseq.size()));
+                raw_back_insert(rslt, raw_type(errorseq.begin(), errorseq.end()));
                 std::size_t sz = rslt.size();
                 raw_front_insert(rslt, inttype_to_raw(static_cast<octet_type> (sz)));
                 generate_TKPTDU(rslt);
@@ -427,13 +427,13 @@ namespace boost {
                 mutable_buffer buff_ = header_buff_;
                 octet_type nativetp = *boost::asio::buffer_cast<octet_type*>(buff_);
                 type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
-                /* запрос возможен и от др классов*/
+                /* Р В·Р В°Р С—РЎР‚Р С•РЎРѓ Р Р†Р С•Р В·Р С�Р С•Р В¶Р ВµР Р… Р С‘ Р С•РЎвЂљ Р Т‘РЎР‚ Р С”Р В»Р В°РЎРѓРЎРѓР С•Р Р†*/
                 switch (type_) {
                     case DT:
                     {
                         octet_type eof = *boost::asio::buffer_cast<octet_type*>(buff_ + 1);
                         if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
-                            return errcode(ER_PROTOCOL); /* !!должен быть только класс 0 см. 13.7*/
+                            return errcode(ER_PROTOCOL); /* !!Р Т‘Р С•Р В»Р В¶Р ВµР Р… Р В±РЎвЂ№РЎвЂљРЎРЉ РЎвЂљР С•Р В»РЎРЉР С”Р С• Р С”Р В»Р В°РЎРѓРЎРѓ 0 РЎРѓР С�. 13.7*/
                         estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
                         eof_ = (eof == TPDU_ENDED);
                         state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
@@ -443,7 +443,7 @@ namespace boost {
                     {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
-                            return errcode(ER_PROTOCOL); /* невозможно см. 13.3.1*/
+                            return errcode(ER_PROTOCOL); /* Р Р…Р ВµР Р†Р С•Р В·Р С�Р С•Р В¶Р Р…Р С• РЎРѓР С�. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
@@ -463,7 +463,7 @@ namespace boost {
                     {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
-                            return errcode(ER_PROTOCOL); /* невозможно см. 13.3.1*/
+                            return errcode(ER_PROTOCOL); /* Р Р…Р ВµР Р†Р С•Р В·Р С�Р С•Р В¶Р Р…Р С• РЎРѓР С�. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
@@ -483,7 +483,7 @@ namespace boost {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
                             return errcode(ER_PROTOCOL);
-                        ; /* невозможно см. 13.3.2*/
+                        ; /* Р Р…Р ВµР Р†Р С•Р В·Р С�Р С•Р В¶Р Р…Р С• РЎРѓР С�. 13.3.2*/
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
@@ -506,7 +506,7 @@ namespace boost {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 4)
                             return errcode(ER_PROTOCOL);
-                        ; /* невозможно см. 13.3.1*/
+                        ; /* Р Р…Р ВµР Р†Р С•Р В·Р С�Р С•Р В¶Р Р…Р С• РЎРѓР С�. 13.3.1*/
                         int16_t dst_tsap_ = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
                         raw_to_inttype(buffer_to_raw(buff_, 3, 1), reject_reason_);
@@ -566,8 +566,8 @@ namespace boost {
                 buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CC(opt)));
             }
 
-            void send_seq::constructER(int16_t dst, const raw_type& errorreason, octet_type err) {
-                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_ER(dst, errorreason, err)));
+            void send_seq::constructER(int16_t dst, const raw_type& errorseq, octet_type err) {
+                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_ER(dst, errorseq, err)));
             }
 
             void send_seq::constructDR(int16_t dst, int16_t src, octet_type rsn) {
