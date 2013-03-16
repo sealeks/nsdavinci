@@ -306,7 +306,7 @@ namespace boost {
             reject_reason_(0),
             errcode_(),
             eof_(ef),
-            tkpt_data(new data_type(TKPT_WITH_LI)),
+            tkpt_data(new raw_type(TKPT_WITH_LI)),
             tkpt_buff_(boost::asio::buffer(*tkpt_data)),
             header_buff_(),
             userbuff_(buff) {
@@ -323,7 +323,7 @@ namespace boost {
             reject_reason_(0),
             errcode_(),
             eof_(true),
-            tkpt_data(new data_type(TKPT_WITH_LI)),
+            tkpt_data(new raw_type(TKPT_WITH_LI)),
             tkpt_buff_(boost::asio::buffer(*tkpt_data)),
             header_buff_(),
             userbuff_() {
@@ -406,7 +406,7 @@ namespace boost {
                 if (!li)
                     return errcode(ER_PROTOCOL);
                 state_ = waitheader;
-                header_data = data_type_ptr(new data_type(li));
+                header_data = raw_type_ptr(new raw_type(li));
                 header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
                 size_ = 0;
                 if (li > 128)
@@ -419,14 +419,15 @@ namespace boost {
             error_code receive_seq::check_header() {
                 mutable_buffer buff_ = header_buff_;
                 octet_type nativetp = *boost::asio::buffer_cast<octet_type*>(buff_);
-                type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
+                type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp); 
                 switch (type_) {
                     case DT:
                     {
                         octet_type eof = *boost::asio::buffer_cast<octet_type*>(buff_ + 1);
                         if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
                             return errcode(ER_PROTOCOL); 
-                        estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ? boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
+                        estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ?
+                            boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
                         eof_ = (eof == TPDU_ENDED);
                         state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
                         return error_code();
@@ -444,10 +445,9 @@ namespace boost {
                         src_tsap_ = endiancnv_copy(src_tsap_);
                         raw_to_inttype(buffer_to_raw(buff_, 5, 1), class_option_);
                         headarvarvalues vars;
-                        ;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ER_PROTOCOL);
-                        options_ = protocol_options(dst_tsap_, src_tsap_, vars);
+                        options_ = protocol_options_ptr ( new protocol_options(dst_tsap_, src_tsap_, vars));
                         state(complete);
                         return error_code();
                     }
@@ -466,7 +466,7 @@ namespace boost {
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ER_PROTOCOL);
-                        options_ = protocol_options(dst_tsap_, src_tsap_, vars);
+                        options_ = protocol_options_ptr ( new protocol_options(dst_tsap_, src_tsap_, vars));
                         state(complete);
                         return error_code();
                     }
@@ -487,8 +487,7 @@ namespace boost {
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ER_PROTOCOL);
-                        ;
-                        options_ = protocol_options(dst_tsap_, src_tsap_, vars);
+                        options_ = protocol_options_ptr ( new protocol_options(dst_tsap_, src_tsap_, vars));
                         state(complete);
                         return error_code();
                     }
@@ -502,8 +501,6 @@ namespace boost {
                         raw_to_inttype(buffer_to_raw(buff_, 3, 1), reject_reason_);
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 4, (estimatesize_ - 4)), vars))
-                            return errcode(ER_PROTOCOL);
-                        ;
                         state(complete);
                         return error_code();
 
