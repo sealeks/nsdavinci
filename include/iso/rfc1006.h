@@ -35,7 +35,7 @@ namespace boost {
             typedef boost::asio::socket_base::message_flags message_flags;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //   iso8073 utill   //
+            //   rfc1006 utill   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
 
 
@@ -126,11 +126,13 @@ namespace boost {
                 dst_(0), src_(0) {
                 }
 
-                protocol_options(int16_t dst, int16_t src, const headarvarvalues& vars = headarvarvalues()) :
+                protocol_options(int16_t dst, int16_t src,
+                const headarvarvalues& vars = headarvarvalues()) :
                 dst_(dst), src_(src), vars_(vars) {
                 }
 
-                protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, const raw_type& called = raw_type(), const raw_type& calling = raw_type());
+                protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, 
+                const raw_type& called = raw_type(), const raw_type& calling = raw_type());
 
                 int16_t dst_tsap() const {
                     return dst_;
@@ -191,7 +193,7 @@ namespace boost {
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  iso8073 data_send_buffer_impl   //
+            //  rfc1006 data_send_buffer_impl   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
             
  
@@ -285,10 +287,13 @@ namespace boost {
                 raw_type sizenorm_;
                 raw_type sizeeof_;
             };
+            
+            
+          
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  iso8073 send_seq   //
+            //  rfc1006 send_seq   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
 
             class send_seq {
@@ -360,6 +365,12 @@ namespace boost {
             };
 
             typedef boost::shared_ptr<send_seq> send_seq_ptr;
+            
+            
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //  rfc1006 send_seq_data   //
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+            
 
             template <typename ConstBufferSequence >
             class send_seq_data : public send_seq {
@@ -375,11 +386,11 @@ namespace boost {
                     buf_ = send_buffer_ptr(new data_send_buffer_impl<ConstBufferSequence > (buff, pdusize));
                 }
 
-            };
+            };  
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  iso8073 receive_seq   //
+            //  rfc1006 receive_seq   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 
             const std::size_t TKPT_WITH_LI = 5;
@@ -583,24 +594,21 @@ namespace boost {
 
                 public:
 
-                    connect_op(stream_socket* socket, ConnectHandler handler,
-                            const endpoint_type& peer_endpoint) :
+                    connect_op(stream_socket* socket, ConnectHandler handler) :
                     socket_(socket),
                     handler_(handler),
                     state_(request),
-                    peer_endpoint_(peer_endpoint),
                     send_(send_seq_ptr(new send_seq(socket->transport_option()))),
                     receive_(new receive_seq()) {
                     }
 
-                    void run() {
-                        socket_->get_service().async_connect(socket_->get_implementation(), peer_endpoint_, *this);
+                    void run(const error_code& ec) {
+                        operator()(ec);
                     }
 
                     void operator()(const error_code& ec) {
                         if (!ec)
                             operator()(ec, 0);
-
                         else
                             handler_(ec);
                     }
@@ -679,7 +687,6 @@ namespace boost {
                     stream_socket* socket_;
                     ConnectHandler handler_;
                     stateconnection state_;
-                    endpoint_type peer_endpoint_;
                     send_seq_ptr send_;
                     receive_seq_ptr receive_;
 
@@ -693,6 +700,7 @@ namespace boost {
                 template <typename ConnectHandler>
                 void async_connect(const endpoint_type& peer_endpoint,
                         BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
+                    
                     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
                     if (!is_open()) {
@@ -705,8 +713,10 @@ namespace boost {
                             return;
                         }
                     }
-                    get_io_service().post(boost::bind(&connect_op<ConnectHandler>::run, 
-                               connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint)));
+                    
+                    get_service().async_connect(get_implementation(), peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run, 
+                               connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
+
                 }
 
 
