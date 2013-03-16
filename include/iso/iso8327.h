@@ -200,12 +200,7 @@ namespace boost {
             
             const octet_type ECHO_NEGOTIATEarr[] = { 'e' ,'c', 'h', 'o', ':', ' '};
             const raw_type ECHO_NEGOTIATE = raw_type(ECHO_NEGOTIATEarr, ECHO_NEGOTIATEarr + 6);  
-            
-            
                     
-            
-            const octet_type REFUSE_REASON_USERarr[] = { '\x1' , '\x85' };
-            const raw_type REFUSE_REASON_USER = raw_type(REFUSE_REASON_USERarr, REFUSE_REASON_USERarr + 2);                    
 
             const octet_type ABORT_REASON_ADDR = '\x0';                      
             const octet_type TDSK_USER_ABORT = '\x2'; 
@@ -417,7 +412,13 @@ namespace boost {
              
                 void refuse_reason(octet_type rsn, const raw_type& val = raw_type());                
                 
-                octet_type refuse_reason() const;                  
+                octet_type refuse_reason() const; 
+                
+                uint16_t maxTPDU_self() const;   
+                
+                uint16_t maxTPDU_dist() const;                  
+                
+                void maxTPDU(uint16_t self, uint16_t dist);                
                 
             private:
                 spdudata_ptr vars_;
