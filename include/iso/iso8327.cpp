@@ -374,24 +374,50 @@ namespace boost {
 
             int16_t protocol_options::user_requirement() const {
                 int16_t tmp;
-                return vars_->getPI( PI_SES_USERREQ ,tmp) ? tmp : FU_DEFAULT;
+                return vars_->getPI( PI_SES_USERREQ ,tmp) ? tmp : FU_DEFAULT; // *ref X225 8.3.1.16
             }
 
             void protocol_options::user_requirement(int16_t vl) {
                 return vars_->setPI(  PI_SES_USERREQ,  vl );
             }            
             
-           octet_type protocol_options::prot_option() const{
+           bool protocol_options::extendedSPDU() const{
                 octet_type tmp;
                 return vars_->getPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION,tmp) ?
-                    ( (tmp & EXTENDED_SPDU) ? 
-                        EXTENDED_SPDU : NOEXTENDED_SPDU)  : NOEXTENDED_SPDU;
+                    tmp   : false; // *ref X225 8.3.1.7
             }                  
             
-            void protocol_options::prot_option(octet_type vl) {
-                vars_->setPGI( PGI_CONN_ACC, PI_PROTOCOL_OPTION , (vl) ?
-                    EXTENDED_SPDU : NOEXTENDED_SPDU);
-            }             
+            void protocol_options::extendedSPDU(bool vl) {
+                vars_->setPGI( PGI_CONN_ACC, PI_PROTOCOL_OPTION , vl ? EXTENDED_SPDU : NOEXTENDED_SPDU );
+            }    
+            
+           bool protocol_options::endSPDU() const{
+                octet_type tmp;
+                return vars_->getPI(PI_ENCLOSURE, tmp) ?
+                    (tmp & 2)  : true; // *ref X225 8.3.3.3
+            }      
+           
+           bool protocol_options::beginSPDU() const{
+                octet_type tmp;
+                return vars_->getPI(PI_ENCLOSURE, tmp) ?
+                    (tmp & 1)  : true; // *ref X225 8.3.3.3
+            }               
+            
+            void protocol_options::endSPDU(bool end, bool beg) {
+                if ( !end ||  !beg)                  
+                vars_->setPI( PI_ENCLOSURE, static_cast<octet_type>(( end ?  2 : 0) | ( beg ? 1 : 0 ) )); // *ref X225 8.3.3.19
+            }   
+            
+           bool protocol_options::overflow() const{
+                octet_type tmp;
+                return vars_->getPI(PI_DATAOVERFLOW ,tmp) ?
+                    tmp   : false; // *ref X225 8.3.1.19
+            }                  
+            
+            void protocol_options::overflow(bool vl) {
+                vars_->setPI( PI_DATAOVERFLOW , static_cast<octet_type>(vl ? 1 : 0));
+            }            
+            
 
             octet_type protocol_options::refuse_reason() const {
                 raw_type tmp = vars_->getPI(PI_REASON);
@@ -414,12 +440,12 @@ namespace boost {
                 
                 self = protocol_options(self.ssap_calling(), dist.ssap_calling());
                 
-                //std::cout << "negotiate session : UREQ=" << ((int) dist.user_requirement()) << " PROTOP=" << ((int) dist.prot_option()) << " VER=" << ((int) dist.accept_version()) << std::endl;
+                //std::cout << "negotiate session : UREQ=" << ((int) dist.user_requirement()) << " PROTOP=" << ((int) dist.extendedSPDU()) << " VER=" << ((int) dist.accept_version()) << std::endl;
                 
-                if (!(dist.user_requirement() & FU_WORK) || dist.prot_option()){
+                if (!(dist.user_requirement() & FU_WORK) || dist.extendedSPDU()){
                     self.refuse_reason(DR_REASON_NEGOT);
                     self.user_requirement(FU_WORK);    
-                    self.prot_option(NOEXTENDED_SPDU);                        
+                    self.extendedSPDU(false);                        
                     return false;
                 }  
                 
@@ -429,9 +455,9 @@ namespace boost {
                     return false;
                 }
 #endif                      
-                self.accept_version(dist.accept_version() & VERSION2 ? VERSION2 : VERSION1 );
+                self.accept_version(dist.accept_version());
                 self.user_requirement(FU_WORK);         
-                self.prot_option(NOEXTENDED_SPDU);                  
+                self.extendedSPDU(false);                  
                 return true;
             }
 
