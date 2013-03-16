@@ -223,7 +223,7 @@ namespace boost {
                 if (strtit != value_->end()) {
                     raw_type tmppi;
                     for (pgi_type::const_iterator itpgi = strtit->second.begin(); itpgi != strtit->second.end(); ++itpgi) {
-                        if ((itpgi->first != PI_USERDATA) && (itpgi->first != PI_EXUSERDATA)) {
+                        if ((itpgi->first != PGI_USERDATA) && (itpgi->first != PGI_EXUSERDATA)) {
                             raw_back_insert(tmppi, inttype_to_raw(itpgi->first));
                             raw_back_insert(tmppi, to_triple_size(itpgi->second.size()));
                             raw_back_insert(tmppi, itpgi->second);
@@ -232,12 +232,12 @@ namespace boost {
                     raw_back_insert(tmp, tmppi);
                 }
                 if (coder->out()->size()) {
-                    if ((type_ == CN_SPDU_ID) && (coder->out()->size() > SIMPLE_CONNECT_PDUSIZE_LIMIT)) {
-                        raw_back_insert(tmp, inttype_to_raw(PI_EXUSERDATA));
+                    if ((type_ == CN_SPDU_ID) && (coder->out()->size() > SIMPLE_USERDATA_LIMIT)) {
+                        raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
                         raw_back_insert(tmp, to_triple_size(coder->out()->size()));
                     }
                     else {
-                        raw_back_insert(tmp, inttype_to_raw(PI_USERDATA));
+                        raw_back_insert(tmp, inttype_to_raw(PGI_USERDATA));
                         raw_back_insert(tmp, to_triple_size(coder->out()->size()));
                     }
                 }
@@ -275,8 +275,9 @@ namespace boost {
                     if (sz + it > vl.size())
                         return false;
                     switch (vr) {
-                        case PGI_CN_IND:
-                        case PGI_CN_AC:
+                        case PGI_CONN_ID:
+                        case PGI_CONN_ACC:
+                        case PGI_LINK_INF:    
                         {
                             if (!parse_pgi(vr, raw_type(vl.begin() + it, vl.begin() + it + sz))) return error(true);
                             else break;
@@ -319,9 +320,9 @@ namespace boost {
             protocol_options::protocol_options(const raw_type& called, const raw_type& calling)  : vars_( new spdudata()) {
                 vars_->setPI(PI_CALLING, calling);
                 vars_->setPI(PI_CALLED, called);
-                vars_->setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
-                vars_->setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
-                vars_->setPI(PI_SUREQ, FU_WORK);
+                vars_->setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
+                vars_->setPGI(PGI_CONN_ACC, PI_VERSION, WORK_PROT_VERSION);
+                vars_->setPI(PI_SES_USERREQ, FU_WORK);
             }
 
             const raw_type& protocol_options::ssap_calling() const {
@@ -343,61 +344,68 @@ namespace boost {
             }
 
             const raw_type& protocol_options::data() const {
-                return vars_->existPI(PI_EXUSERDATA) ? vars_->getPI(PI_EXUSERDATA) : vars_->getPI(PI_USERDATA);
+                return vars_->existPI(PGI_EXUSERDATA) ? vars_->getPI(PGI_EXUSERDATA) : vars_->getPI(PGI_USERDATA);
             }      
             
             
            octet_type protocol_options::accept_version() const{
                 octet_type tmp;
-                return vars_->getPGI(PGI_CN_AC, PI_VERS,tmp) ?
-                    ( (tmp & VERSIONMASK2) ? 
-                        VERSIONMASK2 : VERSIONMASK1)  : VERSIONMASK1;
+                return vars_->getPGI(PGI_CONN_ACC, PI_VERSION,tmp) ?
+                    ( (tmp & VERSION2) ? 
+                        VERSION2 : VERSION1)  : VERSION1;
             }                  
             
             void protocol_options::accept_version(octet_type vl) {
-                vars_->setPGI( PGI_CN_AC, PI_VERS , (vl > VERSIONMASK1) ?
-                    VERSIONMASK2 : VERSIONMASK2);
+                vars_->setPGI( PGI_CONN_ACC, PI_VERSION , (vl > VERSION1) ?
+                    VERSION2 : VERSION2);
             } 
             
             octet_type protocol_options::reject_version() const{
                 octet_type tmp;
-                return vars_->getPI( PI_VERS,tmp) ? 
-                    ( (tmp & VERSIONMASK2) ? 
-                        VERSIONMASK2 : VERSIONMASK1)  : VERSIONMASK1;
+                return vars_->getPI( PI_VERSION,tmp) ? 
+                    ( (tmp & VERSION2) ? 
+                        VERSION2 : VERSION1)  : VERSION1;
             }              
                   
             void protocol_options::reject_version(octet_type vl) {
-                return vars_->setPI(  PI_VERS , (vl > VERSIONMASK1) ?
-                    VERSIONMASK2 : VERSIONMASK2);
+                return vars_->setPI(  PI_VERSION , (vl > VERSION1) ?
+                    VERSION2 : VERSION2);
             }
 
             int16_t protocol_options::user_requirement() const {
                 int16_t tmp;
-                return vars_->getPI( PI_SUREQ ,tmp) ? tmp : FU_DEFAULT;
+                return vars_->getPI( PI_SES_USERREQ ,tmp) ? tmp : FU_DEFAULT;
             }
 
             void protocol_options::user_requirement(int16_t vl) {
-                return vars_->setPI(  PI_SUREQ,  vl );
+                return vars_->setPI(  PI_SES_USERREQ,  vl );
             }            
             
            octet_type protocol_options::prot_option() const{
                 octet_type tmp;
-                return vars_->getPGI(PGI_CN_AC, PI_PROPT,tmp) ?
-                    ( (tmp & FAIL_PROT_OPTION) ? 
-                        FAIL_PROT_OPTION : WORK_PROT_OPTION)  : WORK_PROT_OPTION;
+                return vars_->getPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION,tmp) ?
+                    ( (tmp & EXTENDED_SPDU) ? 
+                        EXTENDED_SPDU : NOEXTENDED_SPDU)  : NOEXTENDED_SPDU;
             }                  
             
             void protocol_options::prot_option(octet_type vl) {
-                vars_->setPGI( PGI_CN_AC, PI_PROPT , (vl) ?
-                    FAIL_PROT_OPTION : WORK_PROT_OPTION);
+                vars_->setPGI( PGI_CONN_ACC, PI_PROTOCOL_OPTION , (vl) ?
+                    EXTENDED_SPDU : NOEXTENDED_SPDU);
             }             
 
-            const raw_type& protocol_options::reason() const {
-                return vars_->getPI(PI_REASON);
+            octet_type protocol_options::refuse_reason() const {
+                raw_type tmp = vars_->getPI(PI_REASON);
+                return tmp.empty() ? DR_REASON_NODEF : tmp[0];
             }
 
-            void protocol_options::reason(const raw_type& val) {
-                vars_->setPI(PI_REASON, val);
+            void protocol_options::refuse_reason(octet_type rsn, const raw_type& val) {
+                if (val.empty())
+                   vars_->setPI(PI_REASON, rsn);
+                else{
+                   raw_type tmp(1,rsn);
+                   tmp.insert(tmp.end(), val.begin(), val.end());
+                   vars_->setPI(PI_REASON, tmp);
+                }                   
             }
 
             /////////////////////
@@ -406,32 +414,32 @@ namespace boost {
                 
                 self = protocol_options(self.ssap_calling(), dist.ssap_calling());
                 
-                std::cout << "negotiate session : UREQ=" << ((int) dist.user_requirement()) << " PROTOP=" << ((int) dist.prot_option()) << " VER=" << ((int) dist.accept_version()) << std::endl;
+                //std::cout << "negotiate session : UREQ=" << ((int) dist.user_requirement()) << " PROTOP=" << ((int) dist.prot_option()) << " VER=" << ((int) dist.accept_version()) << std::endl;
                 
                 if (!(dist.user_requirement() & FU_WORK) || dist.prot_option()){
-                    self.reason(REFUSE_REASON_NEGOTIATE);
+                    self.refuse_reason(DR_REASON_NEGOT);
                     self.user_requirement(FU_WORK);    
-                    self.prot_option(WORK_PROT_OPTION);                        
+                    self.prot_option(NOEXTENDED_SPDU);                        
                     return false;
                 }  
                 
 #ifndef CHECK_ISO_SELECTOR        
                 if (!self.ssap_called().empty() && self.ssap_called() != dist.ssap_called()) {
-                    self.reason(REFUSE_REASON_ADDR);
+                    self.refuse_reason(DR_REASON_ADDRESS);
                     return false;
                 }
 #endif                      
-                self.accept_version(dist.accept_version() & VERSIONMASK2 ? VERSIONMASK2 : VERSIONMASK1 );
+                self.accept_version(dist.accept_version() & VERSION2 ? VERSION2 : VERSION1 );
                 self.user_requirement(FU_WORK);         
-                self.prot_option(WORK_PROT_OPTION);                  
+                self.prot_option(NOEXTENDED_SPDU);                  
                 return true;
             }
 
             const_sequence_ptr generate_header_CN(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(CN_SPDU_ID);
-                tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
-                tmp.setPGI(PGI_CN_AC, PI_VERS, WORK_PROT_VERSION);
-                tmp.setPI(PI_SUREQ, FU_WORK);
+                tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
+                tmp.setPGI(PGI_CONN_ACC, PI_VERSION, WORK_PROT_VERSION);
+                tmp.setPI(PI_SES_USERREQ, FU_WORK);
                 tmp.setPI(PI_CALLING, opt.ssap_calling());
                 tmp.setPI(PI_CALLED, opt.ssap_called());       
                 return tmp.sequence(data);
@@ -439,9 +447,9 @@ namespace boost {
 
             const_sequence_ptr generate_header_AC(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AC_SPDU_ID);
-                tmp.setPGI(PGI_CN_AC, PI_PROPT, WORK_PROT_OPTION);
-                tmp.setPGI(PGI_CN_AC, WORK_PROT_VERSION, opt.accept_version());
-                tmp.setPI(PI_SUREQ, FU_WORK);
+                tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
+                tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
+                tmp.setPI(PI_SES_USERREQ, FU_WORK);
                 tmp.setPI(PI_CALLING, opt.ssap_calling());
                 tmp.setPI(PI_CALLED, opt.ssap_called());
                 return tmp.sequence(data);
@@ -451,10 +459,10 @@ namespace boost {
             const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(RF_SPDU_ID);
                 data->out()->clear();
-                tmp.setPI(PI_TRANDISK, TDSK_NOKEEPCON);
-                tmp.setPI(PI_SUREQ, FU_WORK);
-                tmp.setPI(PI_VERS, opt.reject_version());
-                tmp.setPI(PI_REASON, (!opt.reason().empty()) ? opt.reason() : raw_type(1, '\x0'));
+                tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
+                tmp.setPI(PI_SES_USERREQ, FU_WORK);
+                tmp.setPI(PI_VERSION, opt.reject_version());
+                tmp.setPI(PI_REASON, opt.refuse_reason());
                 return tmp.sequence(data);
             }            
             
@@ -472,7 +480,7 @@ namespace boost {
 
             const_sequence_ptr generate_header_AB(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AB_SPDU_ID);
-                tmp.setPI(PI_TRANDISK, TDSK_NOKEEPCON);
+                tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 return tmp.sequence(data);
             }
 
