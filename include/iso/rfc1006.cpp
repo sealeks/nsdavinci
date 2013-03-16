@@ -302,7 +302,6 @@ namespace boost {
             datasize_(0),
             waitdatasize_(waitingsize),
             type_(waitingsize ? DT : NL),
-            class_option_(0),
             reject_reason_(0),
             errcode_(),
             eof_(ef),
@@ -319,7 +318,6 @@ namespace boost {
             datasize_(0),
             waitdatasize_(0),
             type_(NL),
-            class_option_(0),
             reject_reason_(0),
             errcode_(),
             eof_(true),
@@ -439,11 +437,12 @@ namespace boost {
                             return errcode(ER_PROTOCOL);
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
+                        octet_type class_option;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
                         dst_tsap_ = endiancnv_copy(dst_tsap_);
                         raw_to_inttype(buffer_to_raw(buff_, 3, 2), src_tsap_);
                         src_tsap_ = endiancnv_copy(src_tsap_);
-                        raw_to_inttype(buffer_to_raw(buff_, 5, 1), class_option_);
+                        raw_to_inttype(buffer_to_raw(buff_, 5, 1), class_option);
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ER_PROTOCOL);
@@ -458,11 +457,12 @@ namespace boost {
                             return errcode(ER_PROTOCOL); 
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
+                        octet_type class_option;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
                         dst_tsap_ = endiancnv_copy(dst_tsap_);
                         raw_to_inttype(buffer_to_raw(buff_, 3, 2), src_tsap_);
                         src_tsap_ = endiancnv_copy(src_tsap_);
-                        raw_to_inttype(buffer_to_raw(buff_, 5, 1), class_option_);
+                        raw_to_inttype(buffer_to_raw(buff_, 5, 1), class_option);
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ER_PROTOCOL);
