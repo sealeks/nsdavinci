@@ -420,7 +420,7 @@ namespace boost {
             
 
             octet_type protocol_options::refuse_reason() const {
-                raw_type tmp = vars_->getPI(PI_REASON);
+                const raw_type& tmp = vars_->getPI(PI_REASON);
                 return tmp.empty() ? DR_REASON_NODEF : tmp[0];
             }
 
@@ -432,6 +432,31 @@ namespace boost {
                    tmp.insert(tmp.end(), val.begin(), val.end());
                    vars_->setPI(PI_REASON, tmp);
                 }                   
+            }
+            
+            uint16_t protocol_options::maxTPDU_self() const {
+                const raw_type& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
+                if (tmp.size()==4){
+                    return endiancnv_copy<uint16_t>(raw_type(tmp.begin(), tmp.begin()+2));
+                }
+                return 0;
+            }
+
+            uint16_t protocol_options::maxTPDU_dist() const {
+                const raw_type& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
+                if (tmp.size()==4){
+                    return endiancnv_copy<uint16_t>(raw_type(tmp.begin()+2, tmp.end()));
+                }
+                return 0;
+            }            
+
+            void protocol_options::maxTPDU(uint16_t self, uint16_t dist) {
+                if (self || dist){
+                    raw_type tmpself(inttype_to_raw(endiancnv_copy(self)));
+                    raw_type tmpdist(inttype_to_raw(endiancnv_copy(dist)));
+                    tmpself.insert(tmpself.begin(), tmpdist.begin(), tmpdist.end());
+                    vars_->setPGI(PGI_CONN_ACC, PI_TSDUMAX , tmpself);                   
+                }
             }
 
             /////////////////////
