@@ -450,9 +450,6 @@ namespace boost {
                     return waitdatasize_;
                 }
 
-                octet_type reject_reason() const {
-                    return reject_reason_;
-                }
 
                 const protocol_options& options() const {
                     return options_ ? *options_ :  NULL_PROTOCOL_OPTION;
@@ -481,14 +478,13 @@ namespace boost {
                 std::size_t datasize_;
                 std::size_t waitdatasize_;
                 tpdu_type type_;
-                octet_type reject_reason_;
                 error_code errcode_;
-                bool eof_;
+                bool eof_;       
+                raw_type_ptr tkpt_data;
+                raw_type_ptr header_data;         
                 mutable_buffer tkpt_buff_;                
                 mutable_buffer header_buff_;
-                mutable_buffer userbuff_;         
-                raw_type_ptr tkpt_data;
-                raw_type_ptr header_data;        
+                mutable_buffer userbuff_;
                 protocol_options_ptr options_;                
             };
 

@@ -302,7 +302,6 @@ namespace boost {
             datasize_(0),
             waitdatasize_(waitingsize),
             type_(waitingsize ? DT : NL),
-            reject_reason_(0),
             errcode_(),
             eof_(ef),
             tkpt_data(new raw_type(TKPT_WITH_LI)),
@@ -310,7 +309,7 @@ namespace boost {
             header_buff_(),
             userbuff_(buff) {
             }
-
+                         
             receive_seq::receive_seq() :
             state_(waittkpt),
             size_(0),
@@ -318,7 +317,6 @@ namespace boost {
             datasize_(0),
             waitdatasize_(0),
             type_(NL),
-            reject_reason_(0),
             errcode_(),
             eof_(true),
             tkpt_data(new raw_type(TKPT_WITH_LI)),
@@ -497,8 +495,9 @@ namespace boost {
                         if (estimatesize_ < 4)
                             return errcode(ER_PROTOCOL);
                         int16_t dst_tsap_ = 0;
+                        octet_type reject_rsn = 0;
                         raw_to_inttype(buffer_to_raw(buff_, 1, 2), dst_tsap_);
-                        raw_to_inttype(buffer_to_raw(buff_, 3, 1), reject_reason_);
+                        raw_to_inttype(buffer_to_raw(buff_, 3, 1), reject_rsn);
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 4, (estimatesize_ - 4)), vars))
                         state(complete);
@@ -515,7 +514,6 @@ namespace boost {
 
             void receive_seq::reject_reason(octet_type val) {
                 errcode_ = errorcode_by_reason(val);
-                reject_reason_ = val;
             }
 
             error_code receive_seq::errcode(const error_code& err) {
