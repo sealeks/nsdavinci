@@ -206,6 +206,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
             
  
+            // see RFC1006
             const octet_type TKPT_STARTar[] = {'\x3', '\x0'};
             const raw_type TKPT_START = raw_type(TKPT_STARTar, TKPT_STARTar + 2);           
 
@@ -449,21 +450,13 @@ namespace boost {
                     return waitdatasize_;
                 }
 
-                octet_type class_option() const {
-                    return class_option_;
-                }
-
                 octet_type reject_reason() const {
                     return reject_reason_;
                 }
 
                 const protocol_options& options() const {
                     return options_ ? *options_ :  NULL_PROTOCOL_OPTION;
-                }
-                
-               // protocol_options& options() {
-               //     return options_;
-               // }                
+                }               
 
                 error_code errcode() const {
                     return errcode_ ? errcode_ : ER_REFUSE;
@@ -488,17 +481,15 @@ namespace boost {
                 std::size_t datasize_;
                 std::size_t waitdatasize_;
                 tpdu_type type_;
-                octet_type class_option_;
                 octet_type reject_reason_;
-                protocol_options_ptr options_;
                 error_code errcode_;
                 bool eof_;
-
-                raw_type_ptr tkpt_data;
-                mutable_buffer tkpt_buff_;
-                raw_type_ptr header_data;
+                mutable_buffer tkpt_buff_;                
                 mutable_buffer header_buff_;
-                mutable_buffer userbuff_;
+                mutable_buffer userbuff_;         
+                raw_type_ptr tkpt_data;
+                raw_type_ptr header_data;        
+                protocol_options_ptr options_;                
             };
 
 
@@ -1320,7 +1311,7 @@ namespace boost {
                                 return ec;
                             }
                             case ER:{
-                               error_code ecc;
+                                error_code ecc;
                                 get_service().close(get_implementation(), ecc);
                                 return ec =ER_PROTOCOL;                      
                             }
