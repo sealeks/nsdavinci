@@ -401,9 +401,19 @@ namespace boost {
                 
                 void user_requirement(int16_t vl);          
                 
-                octet_type prot_option() const;  
+                bool extendedSPDU() const;  
                 
-                void prot_option(octet_type vl);                
+                void extendedSPDU(bool vl);
+                
+                bool beginSPDU() const;  
+                
+                bool endSPDU() const;                
+                
+                void endSPDU(bool end = true, bool beg = true); 
+                
+                bool overflow() const;                
+                
+                void overflow(bool val);                 
              
                 void refuse_reason(octet_type rsn, const raw_type& val = raw_type());                
                 
