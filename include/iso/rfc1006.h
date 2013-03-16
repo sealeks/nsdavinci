@@ -509,7 +509,7 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
                 explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector())
-                : boost::asio::basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(SIZE2048), 
+                : boost::asio::basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(tsel.pdusize()), 
                 transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
                 }
 
