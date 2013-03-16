@@ -520,7 +520,7 @@ namespace boost {
 
             const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(FN_SPDU_ID);
-                tmp.setPI(PI_REASON, ABORT_REASON_ADDR);
+                tmp.setPI(PI_REASON, DR_REASON_NORM);
                 return tmp.sequence(data);
             }            
 
