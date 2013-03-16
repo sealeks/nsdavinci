@@ -509,7 +509,7 @@ namespace boost {
 
             const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(RF_SPDU_ID);
-                data->out()->clear();
+                data->out()->clear(); // no user data *ref X225 Tab 15
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 tmp.setPI(PI_SES_USERREQ, FU_WORK);
                 tmp.setPI(PI_VERSION, opt.reject_version());
@@ -520,7 +520,7 @@ namespace boost {
 
             const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(FN_SPDU_ID);
-                tmp.setPI(PI_REASON, DR_REASON_NORM);
+                tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 return tmp.sequence(data);
             }            
 
@@ -537,7 +537,7 @@ namespace boost {
 
             const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data) {
                 spdudata tmp(AA_SPDU_ID);
-                data->out()->clear();                
+                data->out()->clear(); // no user data *ref X225  8.3.10.2             
                 return tmp.sequence(data);
             }
 
