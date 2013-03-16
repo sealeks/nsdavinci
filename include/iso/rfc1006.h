@@ -120,6 +120,11 @@ namespace boost {
             typedef std::vector<headarvarvalue> headarvarvalues;
 
 
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //  rfc1006 protocol_options   //
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+                        
+            
             struct protocol_options {
 
                 protocol_options() :
@@ -172,6 +177,10 @@ namespace boost {
                 headarvarvalues vars_;
                 raw_type null_;
             };
+            
+
+            const protocol_options NULL_PROTOCOL_OPTION = protocol_options();
+            
             
 
             bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error);
@@ -398,8 +407,7 @@ namespace boost {
             class receive_seq {
             public:
 
-                typedef raw_type data_type;
-                typedef boost::shared_ptr< data_type > data_type_ptr;
+                typedef boost::shared_ptr< protocol_options > protocol_options_ptr;
 
                 enum operation_state {
                     waittkpt,
@@ -450,12 +458,12 @@ namespace boost {
                 }
 
                 const protocol_options& options() const {
-                    return options_;
+                    return options_ ? *options_ :  NULL_PROTOCOL_OPTION;
                 }
                 
-                protocol_options& options() {
-                    return options_;
-                }                
+               // protocol_options& options() {
+               //     return options_;
+               // }                
 
                 error_code errcode() const {
                     return errcode_ ? errcode_ : ER_REFUSE;
@@ -482,13 +490,13 @@ namespace boost {
                 tpdu_type type_;
                 octet_type class_option_;
                 octet_type reject_reason_;
-                protocol_options options_;
+                protocol_options_ptr options_;
                 error_code errcode_;
                 bool eof_;
 
-                data_type_ptr tkpt_data;
+                raw_type_ptr tkpt_data;
                 mutable_buffer tkpt_buff_;
-                data_type_ptr header_data;
+                raw_type_ptr header_data;
                 mutable_buffer header_buff_;
                 mutable_buffer userbuff_;
             };
@@ -908,7 +916,7 @@ namespace boost {
 
                     void finish(const error_code& ec) {
 
-                        receive_->options().pdusize(tpdusize);
+                        //receive_->options().pdusize(tpdusize);
                         socket_->negotiate_transport_option(receive_->options());
                         handler_(ec);
                     }
@@ -926,7 +934,7 @@ namespace boost {
                     stateconnection state_;
                     send_seq_ptr send_;
                     receive_seq_ptr receive_;
-                     tpdu_size  tpdusize;
+                    tpdu_size  tpdusize;
 
                 };
 
