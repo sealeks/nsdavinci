@@ -77,7 +77,19 @@ namespace boost {
         } tpdu_size;
 
 
-
+        // Disconnection  REASON CODE *ref X224  13.5.3 d) and  *ref X225 8.3.5.10          
+        const octet_type DR_REASON_NODEF = '\x00'; // Reason not specified         
+        const octet_type DR_REASON_CONGST = '\x01'; // Congestion at TSAP  - ER_EAGAIN             
+        const octet_type DR_REASON_SESSION = '\x02'; // Session entity not attached to TSAP                       
+        const octet_type DR_REASON_ADDRESS = '\x03'; // address   error  - ER_NAADDRESS
+        const octet_type DR_REASON_NORM = '\x80'; // Normal disconnect initiated by session entity.  -ER_RELEASE
+        const octet_type DR_REASON_RCNGS = '\x81'; //Remote transport entity congestion at connect request time. -ER_REQBUSY   
+        const octet_type DR_REASON_NEGOT = '\x82'; // Connection negotiation failed [i.e. proposed class(es) not supported].-ER_REQBUSY
+        const octet_type DR_REASON_PROTO = '\x85'; // Protocol error.  -ER_PROTOCOL
+        const octet_type DR_REASON_USER = '\x86'; // User refuse.  -ER_PROTOCOL        
+        const octet_type DR_REASON_INVLN = '\x8A'; // Header or parameter length invalid.
+        
+        error_code errorcode_by_reason(octet_type val);        
 
         ///   selectors type            
 

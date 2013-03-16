@@ -15,176 +15,212 @@ namespace boost {
     namespace itu {
         namespace x225impl {
 
-            using boost::asio::basic_socket;
+            // ref X225 = ITU-T Rec. X.225(1995 E)           
             
+            using boost::asio::basic_socket;      
             typedef boost::asio::socket_base::message_flags message_flags;
           
      
             typedef uint8_t spdu_type;
             typedef uint16_t valuelenth_type;  
-            typedef uint8_t varid_type;                
-            typedef uint8_t session_version_type; 
+            typedef uint8_t varid_type; 
             
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   x225 utill   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+   
+            
+            // SPDU identifier  *ref X225 5.6  Table 3 – Functional units (only kernel and half-duplex implemented here)
+            // Kernel FU
+            const spdu_type CN_SPDU_ID = 13; //CONNECT SPDU *ref X225 8.3.1.1
+            const spdu_type OA_SPDU_ID = 16; //OVERFLOW ACCEPT *ref X225 8.3.2.1
+            const spdu_type CDO_SPDU_ID = 15; //CONNECT DATA OVERFLOW *ref X225 8.3.3.1
+            const spdu_type AC_SPDU_ID = 14; //ACCEPT*ref X225 8.3.4.1
+            const spdu_type RF_SPDU_ID = 12; //REFUSE *ref X225 8.3.5.1
+            const spdu_type FN_SPDU_ID = 9; //FINISH *ref X225 8.3.6.1
+            const spdu_type DN_SPDU_ID = 10; //DISCONNECT *ref X225 8.3.7.1
+            const spdu_type NF_SPDU_ID = 8; //NOT FINISHED *ref X225 8.3.8.1
+            const spdu_type AB_SPDU_ID = 25; //ABORT *ref X225 8.3.9.1
+            const spdu_type AA_SPDU_ID = 26; //ABORT ACCEPT *ref X225 8.3.10.1
+            const spdu_type DT_SPDU_ID = 1; //DATA TRANSFER *ref X225 8.3.11.1
+            const spdu_type PR_SPDU_ID = 7; //PREPARE *ref X225 8.3.26.1
+            
+            //  Negotiated realease
+            // GIVE TOKENS , PLEASE TOKENS             
+
+            //Half-duplex FU
+            const spdu_type GT_SPDU_ID = 1; // GIVE TOKENS  *ref X225 8.3.16.1
+            const spdu_type PT_SPDU_ID = 2; //PLEASE TOKENS  *ref X225 8.3.17.1             
+       
+            //Duplex FU    
+            //
+
+            //Expedited data FU
+            const spdu_type EX_SPDU_ID = 5; //EXPEDITED *ref X225 8.3.12.1  
+
+            //Typed data FU
+            const spdu_type TD_SPDU_ID = 33; //TYPED DATA *ref X225 8.3.13.1  
+
+            //Capability data exchange FU
+            const spdu_type CD_SPDU_ID = 61; //CAPABILITY DATA *ref X225 8.3.14.1  
+            const spdu_type CDA_SPDU_ID = 62; //CAPABILITY DATA ACK *ref X225 8.3.15.1  
+
+            // Minor synchronize FU
+            const spdu_type MIP_SPDU_ID = 49; //MINOR SYNC POINT  *ref X225 8.3.20.1
+            const spdu_type MIA_SPDU_ID = 50; //MINOR SYNC ACK *ref X225 8.3.21.1
+            // GIVE TOKENS , PLEASE TOKENS
+
+            // Symmetric synchronize FU                
+            // MINOR SYNC POINT , MINOR SYNC ACK 
+
+            //Major synchronize FU
+            const spdu_type MAP_SPDU_ID = 41; //MAJOR SYNC POINT *ref X225 8.3.22.1 
+            const spdu_type MAA_SPDU_ID = 42; //MAJOR SYNC ACK  *ref X225 8.3.23.1
+            // PREPARE ,GIVE TOKENS, PLEASE TOKENS   
+
+            // Resynchronize FU     
+            const spdu_type RS_SPDU_ID = 53; //RESYNCHRONIZE MINOR  *ref X225 8.3.24.1    
+            const spdu_type RA_SPDU_ID = 34; //RESYNCHRONIZE ACK   *ref X225 8.3.25.1
+            // PREPARE 
+
+            // Exceptions FU                 
+            const spdu_type ER_SPDU_ID = 0; //EXCEPTION REPORT   *ref X225 8.3.27.1
+            const spdu_type ED_SPDU_ID = 48; //EXCEPTION DATA  *ref X225 8.3.28.1
+
+            // Activity management FU
+            const spdu_type AS_SPDU_ID = 45; //ACTIVITY START   *ref X225 8.3.29.1
+            const spdu_type AR_SPDU_ID = 29; //ACTIVITY RESUME  *ref X225 8.3.30.1       
+            const spdu_type AI_SPDU_ID = 25; //ACTIVITY INTERRUPT  *ref X225 8.3.31.1               
+            const spdu_type AIA_SPDU_ID = 26; //ACTIVITY INTERRUPT ACK  *ref X225 8.3.32.1 
+            const spdu_type AD_SPDU_ID = 57; //ACTIVITY DISCARD   *ref X225 8.3.33.1
+            const spdu_type ADA_SPDU_ID = 58; //ACTIVITY DISCARD ACK   *ref X225 8.3.34.1
+            const spdu_type AE_SPDU_ID = 41; //ACTIVITY END   *ref X225 8.3.35.1
+            const spdu_type AEA_SPDU_ID = 42; //ACTIVITY END ACK   *ref X225 8.3.36.1            
+            const spdu_type GTC_SPDU_ID = 21; //GIVE TOKENS CONFIRM *ref X225 8.3.18.1
+            const spdu_type GTA_SPDU_ID = 22; //GIVE TOKENS ACK *ref X225 8.3.19.1
+            //GIVE TOKENS, PLEASE TOKENS, PREPARE   
+            
+
+            // PGI Connection Identifier *ref X225 Tab 11, 14, 15
+            const varid_type PGI_CONN_ID = 1;      
+            // PGI Connect/Accept Item *ref X225 Tab 11, 14           
+            const varid_type PGI_CONN_ACC = 5; 
+            // PGI Linking Information *ref X225 Tab 38
+            const varid_type PGI_LINK_INF = 33;
+            // PGI  User Data *ref X225 Tab 11 .. 46          
+            const varid_type PGI_USERDATA = 193; // pi here
+            // PGI  Extended User Data *ref X225 Tab 11           
+            const varid_type PGI_EXUSERDATA = 194; // pi here  
+            
+            //  User data limitation  *ref X225 8.3.1.19
+            const std::size_t  SIMPLE_USERDATA_LIMIT = 512;
+            const std::size_t  EXTEDED_USERDATA_LIMIT = 10240; 
+            
+            
+
+            // PI Session User Requirements *ref X225 Tab 11, 14, 15
+            const varid_type PI_SES_USERREQ = 20; 
+            
+            //  Session User Requirements mask *ref X225 8.3.1.16 , 7.1.1 c), 7.4.1 d), 7.5.1 c)
+            const int16_t FU_HALFDUPLEX = 0x1; //half-duplex FU            
+            const int16_t FU_DUPLEX = 0x2; // duplex FU
+            const int16_t FU_EXPDATA = 0x4; //expedited data FU            
+            const int16_t FU_MINORSYNC = 0x8; // minor synchronize FU
+            const int16_t FU_MAJORORSYNC = 0x10; //major synchronize FU         
+            const int16_t FU_RESYNC = 0x20; // resynchronize FU;
+            const int16_t FU_ACTIVEMG = 0x40; //activity management FU            
+            const int16_t FU_NEGOTREL = 0x80; // negotiated release FU               
+            const int16_t FU_CAPABDATA = 0x100; //capability data exchange FU
+            const int16_t FU_EXCEPTION = 0x200; //exceptions FU 
+            const int16_t FU_TYPEDDATA = 0x400; //typed data FU 
+            const int16_t FU_SYMSYNC = 0x800; //symmetric synchronize FU  
+            const int16_t FU_DATASEP = 0x1000; //data separation FU     
+            
+            const int16_t FU_WORK = FU_DUPLEX; // this implementation
+            const int16_t FU_DEFAULT = FU_HALFDUPLEX | FU_MINORSYNC | FU_ACTIVEMG | FU_CAPABDATA |  FU_EXCEPTION; //default *ref X225 8.3.1.16       
+       
+            
+             // PI Version Number *ref X225 Tab 11, 12 , 14, 15
+            const varid_type PI_VERSION = 22;
+
+            // Version Number *ref X225 8.3.1.9 
+            const octet_type  VERSION1=1;
+            const octet_type  VERSION2=2;
+            
+            const octet_type WORK_PROT_VERSION = 3; // both version implemented here
+            
+            
+            // PI Protocol Options Selector *ref X225 Tab 11 , 14 and 8.3.1.7            
+            const varid_type PI_PROTOCOL_OPTION = 19;     
+            
+            const octet_type NOEXTENDED_SPDU = 0;
+            const octet_type EXTENDED_SPDU = 1;            
+            
+            
+            // PI Calling Session Selector *ref X225 Tab 11,  14  and 8.3.1.17
+            const varid_type PI_CALLING = 51; 
+            
+            
+            // PI Called Session Selector *ref X225 Tab 11 and 8.3.1.18
+            const varid_type PI_CALLED = 52;    
+            
+            
+            // PI TSDU Maximum Size *ref X225 Tab 11 , 14 and 8.3.1.8
+            const varid_type PI_TSDUMAX = 21;     
+            
+                      
+            // PI Data Overflow *ref X225 Tab 11 and 8.3.1.19
+            const varid_type PI_DATAOVERFLOW = 60;  
+            
+
+            // PI Enclosure Item *ref X225 Tab 13 .. 46 and 8.3.3.3            
+            const varid_type PI_ENCLOSURE = 25; 
+            
+  
+            // PI Transport Disconnect *ref X225 Tab 15, 16, 19  and 8.3.5.6            
+            const varid_type PI_TRANSPORT_DC = 17; 
+            
+            // Transport Disconnect *ref X225 8.3.5.6             
+            const octet_type KEEP_TRANSPORT = 0;
+            const octet_type RELEASE_TRANSPORT = 1;
+            
+            
+            // Refuse Reason Code *ref X225 Tab 15 and  8.3.5.10   
+            const varid_type PI_REASON = 50;
+            
+            // see Disconnection  REASON CODE  iso.h
+            
+            
+            
+            
+            
             
             const octet_type SEND_HEADERarr[] = { '\x1' ,'\x0', '\x1', '\x0'};
             const raw_type SEND_HEADER = raw_type(SEND_HEADERarr, SEND_HEADERarr + 4);
             
             const octet_type ECHO_NEGOTIATEarr[] = { 'e' ,'c', 'h', 'o', ':', ' '};
-            const raw_type ECHO_NEGOTIATE = raw_type(ECHO_NEGOTIATEarr, ECHO_NEGOTIATEarr + 6);            
-
-            const octet_type REFUSE_REASON_ADDRarr[] = { '\x1' , '\x81' };
-            const raw_type REFUSE_REASON_ADDR = raw_type(REFUSE_REASON_ADDRarr, REFUSE_REASON_ADDRarr + 2);
+            const raw_type ECHO_NEGOTIATE = raw_type(ECHO_NEGOTIATEarr, ECHO_NEGOTIATEarr + 6);  
             
-            const octet_type REFUSE_REASON_NEGOTIATEarr[] = { '\x1' , '\x82' };
-            const raw_type REFUSE_REASON_NEGOTIATE = raw_type(REFUSE_REASON_NEGOTIATEarr, REFUSE_REASON_NEGOTIATEarr + 2);        
+            
+                    
             
             const octet_type REFUSE_REASON_USERarr[] = { '\x1' , '\x85' };
             const raw_type REFUSE_REASON_USER = raw_type(REFUSE_REASON_USERarr, REFUSE_REASON_USERarr + 2);                    
 
             const octet_type ABORT_REASON_ADDR = '\x0';                      
-
-            const octet_type WORK_PROT_OPTION = '\x0';
-            const octet_type FAIL_PROT_OPTION = '\x1';            
-            const octet_type WORK_PROT_VERSION = '\x3';
-
-            const octet_type TDSK_NOKEEPCON = '\x1';
             const octet_type TDSK_USER_ABORT = '\x2'; 
             const octet_type TDSK_PROT_ERROR = '\x4';              
             const octet_type TDSK_NO_REASON = '\x8';    
             const octet_type TDSK_IMPLRESTRICT = '\x10';            
             
-            
-            const octet_type  VERSIONMASK1='\x1';
-            const octet_type  VERSIONMASK2='\x2';                   
-        
-            const std::size_t  SIMPLE_CONNECT_PDUSIZE_LIMIT = 512;
-            const std::size_t  EXTENDED_CONNECT_PDUSIZE_LIMIT = 10240;            
-
-            const spdu_type CN_SPDU_ID = 13; //CONNECT SPDU
-            const spdu_type OA_SPDU_ID = 16; //OVERFLOW ACCEPT
-            const spdu_type CDO_SPDU_ID = 15; //CONNECT DATA OVERFLOW
-            const spdu_type AC_SPDU_ID = 14; //ACCEPT
-            const spdu_type RF_SPDU_ID = 12; //REFUSE 
-            const spdu_type FN_SPDU_ID = 9; //FINISH 
-            const spdu_type DN_SPDU_ID = 10; //DISCONNECT
-            const spdu_type NF_SPDU_ID = 8; //NOT FINISHED
-            const spdu_type AB_SPDU_ID = 25; //ABORT
-            const spdu_type AA_SPDU_ID = 26; //ABORT ACCEPT
-            const spdu_type DT_SPDU_ID = 1; //DATA TRANSFER 
-            const spdu_type PR_SPDU_ID = 7; //PREPARE 
-            //const spdu_type NF_SPDU_ID = 8;      //NOT FINISHED
-
-            //  Negotiated realease
-
-            
-            
-            //const spdu_type GT_SPDU_ID = 1;   //GIVE TOKENS
-            //const spdu_type  PT_SPDU_ID = 2;           //PLEASE TOKENS
-
-            //half-duplex
-            const spdu_type GT_SPDU_ID = 1; //GIVE TOKENS
-            const spdu_type PT_SPDU_ID = 2; //PLEASE TOKENS               
-
-            //duplex      
-            //
-
-            //expedited data functional unit;
-            const spdu_type EX_SPDU_ID = 5; //EXPEDITED
-
-            //typed data functional unit
-            const spdu_type TD_SPDU_ID = 33; //TYPED DATA
-
-            //capability data exchange functional unit;
-            const spdu_type CD_SPDU_ID = 61; //CAPABILITY DATA
-            const spdu_type CDA_SPDU_ID = 62; //CAPABILITY DATA ACK
-
-            // minor synchronize functional unit;
-            const spdu_type MIP_SPDU_ID = 49; //MINOR SYNC POINT
-            const spdu_type MIA_SPDU_ID = 50; //MINOR SYNC ACK
-            //const spdu_type GT_SPDU_ID = 1;   //GIVE TOKENS
-            //const spdu_type  PT_SPDU_ID = 2;           //PLEASE TOKENS   
-
-            // symmetric synchronize functional unit;                
-            //const spdu_type MIP_SPDU_ID = 49;      //MINOR SYNC POINT
-            //const spdu_type MIA_SPDU_ID = 50;    //MINOR SYNC ACK  
-
-            //major synchronize functional unit;
-            const spdu_type MAP_SPDU_ID = 41; //MAJOR SYNC POINT
-            const spdu_type MAA_SPDU_ID = 42; //MAJOR SYNC ACK 
-            //const spdu_type PR_SPDU_ID = 7;      //PREPARE               
-            //const spdu_type GT_SPDU_ID = 1;   //GIVE TOKENS
-            //const spdu_type  PT_SPDU_ID = 2;           //PLEASE TOKENS   
-
-            // resynchronize functional unit     
-            const spdu_type RS_SPDU_ID = 53; //RESYNCHRONIZE        
-            const spdu_type RA_SPDU_ID = 34; //RESYNCHRONIZE ACK
-            //const spdu_type PR_SPDU_ID = 7;      //PREPARE 
-
-            //exceptions functional unit;                 
-            const spdu_type ER_SPDU_ID = 0; //EXCEPTION REPORT
-            const spdu_type ED_SPDU_ID = 48; //EXCEPTION DATA
 
 
-            const spdu_type AS_SPDU_ID = 45; //ACTIVITY START
-            const spdu_type AR_SPDU_ID = 29; //ACTIVITY RESUME       
-            const spdu_type AI_SPDU_ID = 25; //ACTIVITY INTERRUPT               
-            const spdu_type AIA_SPDU_ID = 26; //ACTIVITY INTERRUPT ACK 
-            const spdu_type AD_SPDU_ID = 57; //ACTIVITY DISCARD
-            const spdu_type ADA_SPDU_ID = 58; //ACTIVITY DISCARD ACK
-            const spdu_type AE_SPDU_ID = 41; //ACTIVITY END
-            const spdu_type AEA_SPDU_ID = 42; //ACTIVITY END ACK   
 
-            //const spdu_type GT_SPDU_ID = 1;   //GIVE TOKENS
-            //const spdu_type  PT_SPDU_ID = 2;           //PLEASE TOKENS
-            //const spdu_type PR_SPDU_ID = 7;      //PREPARE               
-            const spdu_type GTC_SPDU_ID = 21; //GIVE TOKENS CONFIRM
-            const spdu_type GTA_SPDU_ID = 22; //GIVE TOKENS ACK
+             
+ 
+              
 
 
-            //  Function unit
-
-            const int16_t FU_HALFDUPLEX = 0x1; //half-duplex functional unit;            
-            const int16_t FU_DUPLEX = 0x2; // duplex functional unit;
-            const int16_t FU_EXPDATA = 0x4; //expedited data functional unit;            
-            const int16_t FU_MINORSYNC = 0x8; // minor synchronize functional unit;
-            const int16_t FU_MAJORORSYNC = 0x10; //major synchronize functional unit;         
-            const int16_t FU_RESYNC = 0x20; // resynchronize functional unit;;
-            const int16_t FU_ACTIVEMG = 0x40; //activity management functional unit;            
-            const int16_t FU_NEGOTREL = 0x80; // negotiated release functional unit;               
-            const int16_t FU_CAPABDATA = 0x100; //capability data exchange functional unit;
-            const int16_t FU_EXCEPTION = 0x200; //exceptions functional unit; 
-            const int16_t FU_TYPEDDATA = 0x400; //typed data functional unit; 
-            const int16_t FU_SYMSYNC = 0x800; //symmetric synchronize functional unit;  
-            const int16_t FU_DATASEP = 0x1000; //data separation functional unit;
-
-
-            const int16_t FU_WORK = FU_DUPLEX; //work;
-            const int16_t FU_DEFAULT = FU_HALFDUPLEX | FU_MINORSYNC | FU_ACTIVEMG | FU_CAPABDATA |  FU_EXCEPTION; //default;
-
-
-            const varid_type PGI_CN_IND = 1; // Connection Identifier              
-            const varid_type PGI_CN_AC = 5; // Connect/Accept Item
-            //const varid_type    PGI_CN_AC = 33; // AR  SPDU Linking Information         
-
-            const varid_type PI_PROPT = 19; // Protocol Options
-            const varid_type PI_TSDUMAX = 21; // TSDU Maximum Size              
-            const varid_type PI_VERS = 22; // Version Number  
-
-            const varid_type PI_SUREQ = 20; //Session User Requirements               
-            const varid_type PI_CALLING = 51; //Calling Session Selector
-            const varid_type PI_CALLED = 52; //Responding Session Selector
-            const varid_type PI_DTOVER = 60; //  Data Overflow 
-            const varid_type PI_USERDATA = 193; //User Data        
-            const varid_type PI_EXUSERDATA = 194; //Extended User Data
-            const varid_type PI_ENCLOSURE = 25; //Enclosure Item
-            const varid_type PI_REASON = 50; //Reason Code 
-            const varid_type PI_TRANDISK = 17; //Transport Disconnect                
-
-            const session_version_type  VERSION1=1;
-            const session_version_type  VERSION2=2;
             
             
 
@@ -368,10 +404,10 @@ namespace boost {
                 octet_type prot_option() const;  
                 
                 void prot_option(octet_type vl);                
-
-                void reason(const raw_type & val);
+             
+                void refuse_reason(octet_type rsn, const raw_type& val = raw_type());                
                 
-                const raw_type& reason() const;                  
+                octet_type refuse_reason() const;                  
                 
             private:
                 spdudata_ptr vars_;
@@ -817,7 +853,7 @@ namespace boost {
                                 {
                                     socket_->negotiate_session_option(receive_->options());
                                     socket_->rootcoder()->in()->add(receive_->options().data());
-                                    socket_->session_version_=(receive_->options().accept_version() & VERSIONMASK2) ? VERSION2 : VERSION1;
+                                    socket_->session_version_=(receive_->options().accept_version() & VERSION2) ? VERSION2 : VERSION1;
                                     exit_handler(ec);
                                     return;
                                 }
@@ -1165,13 +1201,13 @@ namespace boost {
                         if (!negotiate_x225impl_option(options_, receive_->options()) || 
                                 !(nouserreject =socket_->negotiate_session_accept())) {
                             if (!nouserreject)
-                                options_.reason(REFUSE_REASON_USER);
+                                options_.refuse_reason(DR_REASON_USER);
                             send_ = send_seq_ptr(new send_seq(RF_SPDU_ID, options_, socket_->rootcoder()));
                             state(refuse);
                             operator()(ec, 0);
                             return;
                         }
-                        socket_->session_version_=(options_.accept_version() & VERSIONMASK2) ? VERSION2 : VERSION1;
+                        socket_->session_version_=(options_.accept_version() & VERSION2) ? VERSION2 : VERSION1;
                         send_ = send_seq_ptr(new send_seq(AC_SPDU_ID, options_, socket_->rootcoder()));
                         state(send);
                         operator()(ec, 0);
@@ -1563,7 +1599,7 @@ namespace boost {
                     return rootcoder_;
                 }
                 
-                session_version_type session_version() const{
+                octet_type session_version() const{
                     return session_version_;
                 }
 
@@ -1651,7 +1687,7 @@ namespace boost {
                             {
                                 negotiate_session_option(receive_->options());
                                 rootcoder()->in()->add(receive_->options().data());
-                                session_version_=(receive_->options().accept_version() & VERSIONMASK2) ? VERSION2 : VERSION1;
+                                session_version_=(receive_->options().accept_version() & VERSION2) ? VERSION2 : VERSION1;
                                 return connect_impl_exit(ec);
                             }
                             case RF_SPDU_ID:
@@ -1739,12 +1775,12 @@ namespace boost {
                     if (!negotiate_x225impl_option(options_, receive_->options()) ||
                             !(nouserreject =negotiate_session_accept())) {
                         if (!nouserreject)
-                            options_.reason(REFUSE_REASON_USER);
+                            options_.refuse_reason(DR_REASON_USER);
                         canseled = true;
                         send_ = send_seq_ptr(new send_seq(RF_SPDU_ID, options_, rootcoder()));
                     }
                     else {
-                        session_version_=(options_.accept_version() & VERSIONMASK2) ? VERSION2 : VERSION1;
+                        session_version_=(options_.accept_version() & VERSION2) ? VERSION2 : VERSION1;
                         send_ = send_seq_ptr(new send_seq(AC_SPDU_ID, options_, rootcoder()));
                     }
 
@@ -1840,7 +1876,7 @@ namespace boost {
 
                 protocol_options option_;
                 isocoder_ptr rootcoder_;
-                session_version_type session_version_;
+                octet_type session_version_;
                 
             };
 

@@ -39,46 +39,37 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
 
 
-            // TPDU code ref X224 c1 13.1 Table 8   only class 0 implement ( over rfc1006 )
+            // TPDU code *ref X224  13.1 Table 8   only class 0 implement ( over rfc1006 )
             const octet_type CR_TPDU_ID = '\xE0'; //Connection request   !!xxxx - out class 0
             const octet_type CC_TPDU_ID = '\xD0'; //Connection confirm   !!xxxx - out class 0
             const octet_type DR_TPDU_ID = '\x80'; //Disconnection request 
-            const octet_type DC_TPDU_ID = '\xC0'; //Disconnection  confirm                                        !!not used here impl
+            const octet_type DC_TPDU_ID = '\xC0'; //Disconnection  confirm                              !!not used here impl
             const octet_type DT_TPDU_ID = '\xF0'; //Data !!y - out class 0
-            const octet_type ED_TPDU_ID = '\x10'; //Expedited data !!not use here impl                     !!not used here impl
+            const octet_type ED_TPDU_ID = '\x10'; //Expedited data !!not use here impl                  !!not used here impl
             const octet_type DA_TPDU_ID = '\x60'; //Data acknowledgement !!not use here impl
             const octet_type EA_TPDU_ID = '\x20'; //Expedited data acknowledgement                      !!not used here impl
-            const octet_type RJ_TPDU_ID = '\x50'; //Reject                                                                       !!not used here impl
+            const octet_type RJ_TPDU_ID = '\x50'; //Reject                                              !!not used here impl
             const octet_type ER_TPDU_ID = '\x70'; //Error
 
 
-            // Disconnection request REASON CODE ref X224  13.5.3 d)           
-            const octet_type DR_REASON_NODEF = '\x00'; // Reason not specified         
-            const octet_type DR_REASON_CONGST = '\x01'; // Congestion at TSAP                                                   - ER_EAGAIN             
-            const octet_type DR_REASON_SESSION = '\x02'; // Session entity not attached to TSAP                       
-            const octet_type DR_REASON_ADDRESS = '\x03'; // address   error                                                           - ER_NAADDRESS
-            const octet_type DR_REASON_NORM = '\x80'; // Normal disconnect initiated by session entity.          -ER_RELEASE
-            const octet_type DR_REASON_RCNGS = '\x81';  //Remote transport entity congestion at connect request time.                          -ER_REQBUSY   
-            const octet_type DR_REASON_NEGOT = '\x82'; // Connection negotiation failed [i.e. proposed class(es) not supported].          -ER_REQBUSY
-            const octet_type DR_REASON_PROTO = '\x85'; // Protocol error.                                                                                                          -ER_PROTOCOL
-            const octet_type DR_REASON_INVLN = '\x8A'; // Header or parameter length invalid.           
+           // see Disconnection  REASON CODE  iso.h
      
-            // Error REASON CODE ref X224  13.12.3 c)   
-            const octet_type ERT_REASON_NODEF = '\x0'; // Reason not specified                                                       - all ER_PROTOCOL
+            // Error REASON CODE *ref X224  13.12.3 c)   
+            const octet_type ERT_REASON_NODEF = '\x0'; // Reason not specified    - all ER_PROTOCOL
             const octet_type ERT_REASON_PARAM_CODE = '\x1'; // Invalid parameter code
             const octet_type ERT_REASON_TPDU_TYPE = '\x2'; // Invalid TPDU type
             const octet_type ERT_REASON_PARAM_VALUE = '\x3'; // Invalid parameter value
             
-            // Error REASON CODE ref X224  13.12.4
+            // Error REASON CODE *ref X224  13.12.4
             const octet_type ERT_PARAM_ID = '\xC1';    //Parameter code:        
             
-            // VAR ID  ref X224  13.3.4
-            const octet_type VAR_TSAPCALLING_ID = '\xC1';  //calling Transport-Selector 13.3.4 a)
-            const octet_type VAR_TSAPCALLED_ID = '\xC2';   //called Transport-Selector  13.3.4 a)
-            const octet_type VAR_TPDU_SIZE = '\xC0';  //TPDU size 13.3.4 b)
-            const octet_type VAR_MAXTPDU_SIZE = '\xF0';   // Preferred maximum TPDU size 13.3.4 c)
+            // VAR ID  *ref X224  13.3.4
+            const octet_type VAR_TSAPCALLING_ID = '\xC1';  //calling Transport-Selector *ref X224 13.3.4 a)
+            const octet_type VAR_TSAPCALLED_ID = '\xC2';   //called Transport-Selector *ref X224 13.3.4 a)
+            const octet_type VAR_TPDU_SIZE = '\xC0';  //TPDU size *ref X224 13.3.4 b)
+            const octet_type VAR_MAXTPDU_SIZE = '\xF0';   // Preferred maximum TPDU size *ref X224 13.3.4 c)
             
-            // EOT ref X224  13.7.3  d)
+            // EOT *ref X224  13.7.3  d)
             const octet_type TPDU_ENDED = '\x80';
             const octet_type TPDU_CONTINIUE = '\x0';               
             
@@ -102,8 +93,6 @@ namespace boost {
             }
 
             tpdu_type tpdu_type_from(octet_type val);            
-
-            error_code errorcode_by_reason(octet_type val);
 
             inline octet_type tpdu_type_size(tpdu_size val) {
                 return static_cast<octet_type> (val);
