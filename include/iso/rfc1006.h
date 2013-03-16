@@ -499,7 +499,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
-            class stream_socket : public boost::asio::basic_stream_socket<boost::asio::ip::tcp > {
+            class stream_socket : protected boost::asio::basic_stream_socket<boost::asio::ip::tcp > {
                 
             public:
 
@@ -519,8 +519,11 @@ namespace boost {
                 transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
                 }
 
-
-
+             
+                boost::asio::basic_stream_socket<boost::asio::ip::tcp >& basic_cast(){
+                    return *this;                   
+                }
+                               
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Available  //
@@ -1624,7 +1627,7 @@ namespace boost {
             typedef boost::asio::ip::basic_resolver<boost::asio::ip::tcp> resolver;
 
 #if !defined(BOOST_NO_IOSTREAM)
-            typedef boost::asio::basic_socket_iostream<boost::asio::ip::tcp> iostream;
+            //typedef boost::asio::basic_socket_iostream<boost::asio::ip::tcp> iostream;
 #endif 
 
 
