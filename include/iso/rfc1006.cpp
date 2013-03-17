@@ -295,7 +295,7 @@ namespace boost {
 
             /////////////////////////////////////////////////////////////////////////////////////////
 
-            receive_seq::receive_seq(const mutable_buffer& buff, std::size_t waitingsize, bool ef) :
+            receiver::receiver(const mutable_buffer& buff, std::size_t waitingsize, bool ef) :
             state_(waitingsize ? waitdata : waittkpt),
             size_(0),
             estimatesize_(waitingsize ? ((boost::asio::buffer_size(buff) < waitingsize) ? boost::asio::buffer_size(buff) : waitingsize) : TKPT_WITH_LI),
@@ -310,7 +310,7 @@ namespace boost {
             userbuff_(buff) {
             }
                          
-            receive_seq::receive_seq() :
+            receiver::receiver() :
             state_(waittkpt),
             size_(0),
             estimatesize_(TKPT_WITH_LI),
@@ -326,7 +326,7 @@ namespace boost {
 
             }
 
-            mutable_buffer receive_seq::buffer() {
+            mutable_buffer receiver::buffer() {
                 switch (state_) {
                     case waittkpt: return tkpt_buff_ + size_;
                     case waitheader: return header_buff_ + size_;
@@ -336,7 +336,7 @@ namespace boost {
                 return mutable_buffer();
             }
 
-            void receive_seq::put(std::size_t sz) {
+            void receiver::put(std::size_t sz) {
                 if (!sz) return;
                 size_ += sz;
                 if ((size_ + sz) >= estimatesize_) {
@@ -378,7 +378,7 @@ namespace boost {
                 }
             }
 
-            receive_seq::operation_state receive_seq::state(operation_state val) {
+            receiver::operation_state receiver::state(operation_state val) {
                 if (val != state_) {
                     size_ = 0;
                 }
@@ -388,7 +388,7 @@ namespace boost {
                 return state_ = val;
             }
 
-            error_code receive_seq::check_tkpt() {
+            error_code receiver::check_tkpt() {
                 mutable_buffer buff_ = tkpt_buff_;
                 raw_type hdr = buffer_to_raw(buff_, 0, 2);
                 if (hdr != TKPT_START) {
@@ -412,7 +412,7 @@ namespace boost {
                 return error_code();
             }
 
-            error_code receive_seq::check_header() {
+            error_code receiver::check_header() {
                 mutable_buffer buff_ = header_buff_;
                 octet_type nativetp = *boost::asio::buffer_cast<octet_type*>(buff_);
                 type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp); 
@@ -512,11 +512,11 @@ namespace boost {
                 return errcode(ER_PROTOCOL);
             }
 
-            void receive_seq::reject_reason(octet_type val) {
+            void receiver::reject_reason(octet_type val) {
                 errcode_ = errorcode_by_reason(val);
             }
 
-            error_code receive_seq::errcode(const error_code& err) {
+            error_code receiver::errcode(const error_code& err) {
                 if (!errcode_ && err)
                     errcode_ = err;
                 if (err)
