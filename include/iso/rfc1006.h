@@ -202,7 +202,7 @@ namespace boost {
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  rfc1006 data_senders_buffer   //
+            //  rfc1006 data_sequences_sender   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
             
  
@@ -215,11 +215,11 @@ namespace boost {
             const std::size_t TKPT_LENGTH = 4;
             
             template <typename ConstBufferSequence>
-            class data_senders_buffer : public base_senders_buffer {
+            class data_sequences_sender : public basic_sequences_sender {
             public:
 
-                data_senders_buffer(const ConstBufferSequence& bf, tpdu_size pdusize) :
-                base_senders_buffer(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
+                data_sequences_sender(const ConstBufferSequence& bf, tpdu_size pdusize) :
+                basic_sequences_sender(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
                     construct(bf, pdusize);
 
                 }
@@ -393,7 +393,7 @@ namespace boost {
             protected:
 
                 void constructDT(const ConstBufferSequence& buff, tpdu_size pdusize) {
-                    buf_ = senders_buffer_ptr(new data_senders_buffer<ConstBufferSequence > (buff, pdusize));
+                    buf_ = senders_buffer_ptr(new data_sequences_sender<ConstBufferSequence > (buff, pdusize));
                 }
 
             };  

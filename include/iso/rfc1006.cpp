@@ -528,10 +528,10 @@ namespace boost {
 
             ///////////////////////////////////////////////////////////////////////////////////////                 
 
-            class atom_send_buffer : public base_senders_buffer {
+            class atom_send_buffer : public basic_sequences_sender {
             public:
 
-                atom_send_buffer(const raw_type& send) : base_senders_buffer(), send_(send) {
+                atom_send_buffer(const raw_type& send) : basic_sequences_sender(), send_(send) {
                     buff().push_back(const_buffer(&send_.front(), send_.size()));
                 }
 
