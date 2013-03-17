@@ -429,14 +429,14 @@ namespace boost {
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //   data_senders_buffer    //
+            //   data_sequences_sender    //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////           
 
             template <typename ConstBufferSequence>
-            class data_senders_buffer : public base_senders_buffer {
+            class data_sequences_sender : public basic_sequences_sender {
             public:
 
-                data_senders_buffer(const ConstBufferSequence& bf) : base_senders_buffer() {
+                data_sequences_sender(const ConstBufferSequence& bf) : basic_sequences_sender() {
                     construct(bf);
                 }
 
@@ -543,31 +543,31 @@ namespace boost {
             protected:
 
                 void constructCN(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_CN(opt, data)));
+                    buf_ = senders_buffer_ptr(new basic_sequences_sender(generate_header_CN(opt, data)));
                 }
 
                 void constructAC(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_AC(opt, data)));
+                    buf_ = senders_buffer_ptr(new basic_sequences_sender(generate_header_AC(opt, data)));
                 }
 
                 void constructRF(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_RF(opt, data)));
+                    buf_ = senders_buffer_ptr(new basic_sequences_sender(generate_header_RF(opt, data)));
                 }
 
                 void constructFN(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_FN(opt, data)));
+                    buf_ = senders_buffer_ptr(new basic_sequences_sender(generate_header_FN(opt, data)));
                 }
 
                 void constructAB(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_AB(opt, data)));
+                    buf_ = senders_buffer_ptr(new basic_sequences_sender(generate_header_AB(opt, data)));
                 }
 
                 void constructDN(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_DN(opt, data)));
+                    buf_ = senders_buffer_ptr(new basic_sequences_sender(generate_header_DN(opt, data)));
                 }
 
                 void constructAA(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_AA(opt, data)));
+                    buf_ = senders_buffer_ptr(new basic_sequences_sender(generate_header_AA(opt, data)));
                 }
 
                 spdu_type type_;
@@ -596,7 +596,7 @@ namespace boost {
             protected:
 
                 void constructDT(const ConstBufferSequence& buff) {
-                    buf_ = senders_buffer_ptr(new data_senders_buffer<ConstBufferSequence > (buff));
+                    buf_ = senders_buffer_ptr(new data_sequences_sender<ConstBufferSequence > (buff));
                 }
 
             };

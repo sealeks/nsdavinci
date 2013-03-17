@@ -488,18 +488,18 @@ namespace boost {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////            
-        //   class  base_senders_buffer 
+        //   class  basic_sequences_sender 
 
-        class base_senders_buffer {
+        class basic_sequences_sender {
         public:
 
-            base_senders_buffer() : buffer_(new const_sequences()), size_(0) {
+            basic_sequences_sender() : buffer_(new const_sequences()), size_(0) {
             }
 
-            base_senders_buffer(const_sequences_ptr bf) : buffer_(bf), size_(0) {
+            basic_sequences_sender(const_sequences_ptr bf) : buffer_(bf), size_(0) {
             }
 
-            virtual ~base_senders_buffer() {
+            virtual ~basic_sequences_sender() {
             }
 
             const const_sequences& pop() {
@@ -532,7 +532,7 @@ namespace boost {
         };
 
 
-        typedef boost::shared_ptr<base_senders_buffer> senders_buffer_ptr;
+        typedef boost::shared_ptr<basic_sequences_sender> senders_buffer_ptr;
 
 
 
