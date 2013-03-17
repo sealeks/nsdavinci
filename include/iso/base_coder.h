@@ -532,7 +532,7 @@ namespace boost {
         };
 
 
-        typedef boost::shared_ptr<basic_sequences_sender> senders_buffer_ptr;
+        typedef boost::shared_ptr<basic_sequences_sender> semder_sequnces_ptr;
 
 
 

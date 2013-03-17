@@ -544,19 +544,19 @@ namespace boost {
             ///////////////////////////////////////////////////////////////////////////////////////
 
             void sender::constructCR(const protocol_options& opt) {
-                buf_ = senders_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CR(opt)));
+                buf_ = semder_sequnces_ptr(new atom_send_buffer(generate_header_TKPT_CR(opt)));
             }
 
             void sender::constructCC(const protocol_options& opt) {
-                buf_ = senders_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CC(opt)));
+                buf_ = semder_sequnces_ptr(new atom_send_buffer(generate_header_TKPT_CC(opt)));
             }
 
             void sender::constructER(int16_t dst, const raw_type& errorseq, octet_type err) {
-                buf_ = senders_buffer_ptr(new atom_send_buffer(generate_header_TKPT_ER(dst, errorseq, err)));
+                buf_ = semder_sequnces_ptr(new atom_send_buffer(generate_header_TKPT_ER(dst, errorseq, err)));
             }
 
             void sender::constructDR(int16_t dst, int16_t src, octet_type rsn) {
-                buf_ = senders_buffer_ptr(new atom_send_buffer(generate_header_TKPT_DR(dst, src, rsn)));
+                buf_ = semder_sequnces_ptr(new atom_send_buffer(generate_header_TKPT_DR(dst, src, rsn)));
             }
 
         }
