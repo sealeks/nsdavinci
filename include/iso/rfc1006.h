@@ -371,7 +371,7 @@ namespace boost {
                 void constructDR(int16_t dst, int16_t src, octet_type rsn);
 
                 tpdu_type type_;
-                senders_buffer_ptr buf_;
+                semder_sequnces_ptr buf_;
             };
 
 
@@ -393,7 +393,7 @@ namespace boost {
             protected:
 
                 void constructDT(const ConstBufferSequence& buff, tpdu_size pdusize) {
-                    buf_ = senders_buffer_ptr(new data_sequences_sender<ConstBufferSequence > (buff, pdusize));
+                    buf_ = semder_sequnces_ptr(new data_sequences_sender<ConstBufferSequence > (buff, pdusize));
                 }
 
             };  
