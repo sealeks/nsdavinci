@@ -782,12 +782,10 @@ namespace boost {
 
                 public:
 
-                    connect_op(stream_socket* socket, ConnectHandler handler,
-                            const endpoint_type& peer_endpoint) :
+                    connect_op(stream_socket* socket, ConnectHandler handler) :
                     socket_(socket),
                     handler_(handler),
                     state_(request),
-                    peer_endpoint_(peer_endpoint),
                     send_(sender_ptr(new sender(CN_SPDU_ID, socket->session_option(), socket_->rootcoder()))),
                     receive_(new receiver()) {
 
@@ -878,7 +876,6 @@ namespace boost {
                     stream_socket* socket_;
                     ConnectHandler handler_;
                     stateconnection state_;
-                    endpoint_type peer_endpoint_;
                     sender_ptr send_;
                     receiver_ptr receive_;
 
@@ -902,7 +899,8 @@ namespace boost {
                             return;
                         }
                     }
-                    super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run, connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler, peer_endpoint), boost::asio::placeholders::error));
+                    super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run, 
+                    connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
                 }
 
 
