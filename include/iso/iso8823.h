@@ -592,7 +592,7 @@ namespace boost {
 
                     void operator()(const error_code& error, size_t bytes_transferred) {
                         if (!error) {
-                            socket_->coder()->input().add(raw_type(socket_->databuff, socket_->databuff + bytes_transferred));
+                            socket_->coder()->input().add(octet_sequnce(socket_->databuff, socket_->databuff + bytes_transferred));
                             if (!socket_->input_empty()) {
                                 socket_->super_type::async_read_some(
                                         boost::asio::buffer(socket_->databuff, BUFFER_SIZE),
@@ -686,7 +686,7 @@ namespace boost {
 
                /*virtual bool negotiate_session_accept(const std::string& req, std::string& resp) {
                     coder()->clear_input();
-                    coder()->input().add(raw_type(req.begin(), req.end()));
+                    coder()->input().add(octet_sequnce(req.begin(), req.end()));
                     switch (parse_CP()) {
                         case error_negotiate: return false;
                         default:

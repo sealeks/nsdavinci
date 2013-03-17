@@ -412,14 +412,14 @@ namespace boost {
                     if (cp.mode_selector.mode_value == mode_type::mode_value_normal_mode && cp.normal_mode_parameters) {
 
                         selector().called(cp.normal_mode_parameters->called_presentation_selector ?
-                                *(cp.normal_mode_parameters->called_presentation_selector) : raw_type());
+                                *(cp.normal_mode_parameters->called_presentation_selector) : octet_sequnce());
                         if (cp.normal_mode_parameters->called_presentation_selector) {
                             cpa.normal_mode_parameters->responding_presentation_selector__assign((cp.normal_mode_parameters->called_presentation_selector));
                             cpr.normal_mode_parameters()->responding_presentation_selector__assign((cp.normal_mode_parameters->called_presentation_selector));
                         }
 
                         selector().calling(cp.normal_mode_parameters->calling_presentation_selector ?
-                                *(cp.normal_mode_parameters->calling_presentation_selector) : raw_type());
+                                *(cp.normal_mode_parameters->calling_presentation_selector) : octet_sequnce());
 
                         if (!cp.normal_mode_parameters->presentation_context_definition_list)
                             return error_negotiate;

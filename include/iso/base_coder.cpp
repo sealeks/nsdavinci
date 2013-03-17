@@ -210,14 +210,14 @@ namespace boost {
                     for (std::size_t i = 0; i < size; ++i) {
                         if (i >= start) {
                             if (findend) {
-                                if (!(*boost::asio::buffer_cast<raw_type::value_type*>(boost::asio::buffer(tmp + i, 1)))) {
+                                if (!(*boost::asio::buffer_cast<octet_sequnce::value_type*>(boost::asio::buffer(tmp + i, 1)))) {
                                     rslt--;
                                     return true;
                                 }
                                 findend = false;
                             }
                             else
-                                findend = !(*boost::asio::buffer_cast<raw_type::value_type*>(boost::asio::buffer(tmp + i, 1)));
+                                findend = !(*boost::asio::buffer_cast<octet_sequnce::value_type*>(boost::asio::buffer(tmp + i, 1)));
                         }
                         rslt++;
                     }
@@ -231,7 +231,7 @@ namespace boost {
             return false;
         }
 
-        bool row_cast(const mutable_sequences& val, mutable_sequences::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size) {
+        bool row_cast(const mutable_sequences& val, mutable_sequences::const_iterator bit, octet_sequnce& raw, std::size_t start, std::size_t size) {
             if (!size)
                 return true;
             mutable_sequences::const_iterator it = bit;
@@ -246,7 +246,7 @@ namespace boost {
                     szb = sz > start ? 0 : start - sz;
                     sze = (!size || ((szb + size) > szc)) ? szc - szb : size;
                     mutable_buffer tmp = boost::asio::buffer(*it + szb, sze);
-                    raw.insert(raw.end(), boost::asio::buffer_cast<raw_type::value_type*>(tmp), boost::asio::buffer_cast<raw_type::value_type*>(tmp) + boost::asio::buffer_size(tmp));
+                    raw.insert(raw.end(), boost::asio::buffer_cast<octet_sequnce::value_type*>(tmp), boost::asio::buffer_cast<octet_sequnce::value_type*>(tmp) + boost::asio::buffer_size(tmp));
                 }
                 sz += szc;
                 ++it;
@@ -303,18 +303,18 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        base_output_coder::iterator_type base_output_coder::add(const raw_type& vl) {
+        base_output_coder::iterator_type base_output_coder::add(const octet_sequnce& vl) {
             if (vl.empty()) return
                 listbuffers_->end();
-            rows_vect.push_back(raw_type_ptr(new raw_type(vl)));
+            rows_vect.push_back(octet_sequnce_ptr(new octet_sequnce(vl)));
             size_ += vl.size();
             return listbuffers_->insert(listbuffers_->end(), const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
         }
 
-        base_output_coder::iterator_type base_output_coder::add(const raw_type& vl, iterator_type it) {
+        base_output_coder::iterator_type base_output_coder::add(const octet_sequnce& vl, iterator_type it) {
             if (vl.empty()) return
                 listbuffers_->end();
-            rows_vect.push_back(raw_type_ptr(new raw_type(vl)));
+            rows_vect.push_back(octet_sequnce_ptr(new octet_sequnce(vl)));
             size_ += vl.size();
             return listbuffers_->insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
         }
@@ -324,12 +324,12 @@ namespace boost {
                 add(buffer_to_raw(*it));
         }
 
-        bool base_output_coder::bind(raw_type& vl) {
+        bool base_output_coder::bind(octet_sequnce& vl) {
             vl.clear();
             for (iterator_type it = listbuffers_->begin(); it != listbuffers_->end(); ++it)
                 vl.insert(vl.end(),
-                    const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)),
-                    const_cast<raw_type::value_type*> (boost::asio::buffer_cast<const raw_type::value_type*>(*it)) + boost::asio::buffer_size(*it));
+                    const_cast<octet_sequnce::value_type*> (boost::asio::buffer_cast<const octet_sequnce::value_type*>(*it)),
+                    const_cast<octet_sequnce::value_type*> (boost::asio::buffer_cast<const octet_sequnce::value_type*>(*it)) + boost::asio::buffer_size(*it));
             clear();
             return true;
         }
@@ -338,8 +338,8 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////      
 
-        void base_input_coder::add(const raw_type& vl) {
-            rows_vect.push_back(raw_type_ptr(new raw_type(vl.begin(), vl.end())));
+        void base_input_coder::add(const octet_sequnce& vl) {
+            rows_vect.push_back(octet_sequnce_ptr(new octet_sequnce(vl.begin(), vl.end())));
             size_ += vl.size();
             listbuffers_->push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
         }
@@ -350,7 +350,7 @@ namespace boost {
         }
 
         bool base_input_coder::is_endof(std::size_t beg) const {
-            raw_type data;
+            octet_sequnce data;
             if (row_cast(*listbuffers_, listbuffers_->begin(), data, beg, 2)) {
                 if ((data.size() == 2) && (data[0] == 0) && (data[1] == 0)) {
                     return true;
@@ -364,7 +364,7 @@ namespace boost {
             size_ = 0;
         }
 
-        bool base_input_coder::bind(const raw_type& vl) {
+        bool base_input_coder::bind(const octet_sequnce& vl) {
             clear();
             add(vl);
             return true;
@@ -389,7 +389,7 @@ namespace boost {
 
         void basic_coder::request_str(const std::string& val) {
             output_->clear();
-            output_->add(raw_type(val.begin(), val.end()));
+            output_->add(octet_sequnce(val.begin(), val.end()));
         };
 
         std::string basic_coder::respond_str() const {
@@ -406,7 +406,7 @@ namespace boost {
 
         void basic_coder::respond_str(const std::string& val) {
             input_->clear();
-            input_->add(raw_type(val.begin(), val.end()));
+            input_->add(octet_sequnce(val.begin(), val.end()));
         };
 
 

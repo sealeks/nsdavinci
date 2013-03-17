@@ -111,7 +111,7 @@ namespace boost {
             construct(*reinterpret_cast<uint64_t*> (&vl), unuse);
         };
 
-        bitstring_type::bitstring_type(const raw_type& vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
+        bitstring_type::bitstring_type(const octet_sequnce& vl, std::size_t unuse) : std::vector<octet_type>(), unuse_(unuse) {
             insert_bitstring(vl, unuse);
         };
 
@@ -126,7 +126,7 @@ namespace boost {
             }
         }
 
-        void bitstring_type::insert_bitstring(const raw_type& val, std::size_t unuse) {
+        void bitstring_type::insert_bitstring(const octet_sequnce& val, std::size_t unuse) {
             unuse_ = unuse % 8;
             std::copy(val.begin(), val.end(), std::back_inserter(*this));
         };
@@ -227,7 +227,7 @@ namespace boost {
             return return_int<int16_t > ();
         }
 
-        //bitstring_type::operator raw_type() const{
+        //bitstring_type::operator octet_sequnce() const{
         //    return  *this;
         //}    
 
@@ -317,8 +317,8 @@ namespace boost {
             return utctime_type();
         }
 
-        static raw_type from_impltime(const utctime_type& val, bool full) {
-            raw_type rslt;
+        static octet_sequnce from_impltime(const utctime_type& val, bool full) {
+            octet_sequnce rslt;
             if (!val.is_special()) {
                 std::string tmp = boost::posix_time::to_iso_string(val) + "Z";
                 //std::string tmp = boost::posix_time::to_iso_string(val) + "+0400";
@@ -335,7 +335,7 @@ namespace boost {
             return rslt;
         }
 
-        static utctime_type to_impl_time(const raw_type& val, bool full) {
+        static utctime_type to_impl_time(const octet_sequnce& val, bool full) {
             if (val.size() > 8) {
                 try {
                     std::string tmp(val.begin(), val.end());
@@ -436,19 +436,19 @@ namespace boost {
             return utctime_type();
         }
 
-        raw_type from_utctime(const utctime_type& val) {
+        octet_sequnce from_utctime(const utctime_type& val) {
             return from_impltime(val, false);
         }
 
-        utctime_type to_utctime(const raw_type& val) {
+        utctime_type to_utctime(const octet_sequnce& val) {
             return to_impl_time(val, false);
         }
 
-        raw_type from_gentime(const gentime_type& val) {
+        octet_sequnce from_gentime(const gentime_type& val) {
             return from_impltime(val.value(), true);
         }
 
-        gentime_type to_gentime(const raw_type& val) {
+        gentime_type to_gentime(const octet_sequnce& val) {
             return gentime_type(to_impl_time(val, true));
         }
 

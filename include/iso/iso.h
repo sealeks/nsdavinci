@@ -99,10 +99,10 @@ namespace boost {
             selectorvalue_type() {
             }
 
-            selectorvalue_type(const std::string& vl) : value_(raw_type(vl.begin(), vl.end())) {
+            selectorvalue_type(const std::string& vl) : value_(octet_sequnce(vl.begin(), vl.end())) {
             }
 
-            explicit selectorvalue_type(const raw_type& vl) : value_(vl) {
+            explicit selectorvalue_type(const octet_sequnce& vl) : value_(vl) {
             }
 
             explicit selectorvalue_type(const int8_t vl) : value_(inttype_to_raw(vl)) {
@@ -133,12 +133,12 @@ namespace boost {
                 return value_.empty() ? "" : std::string(value_.begin(), value_.end());
             }
 
-            const raw_type& to_raw() const {
+            const octet_sequnce& to_raw() const {
                 return value_;
             }
 
         private:
-            raw_type value_;
+            octet_sequnce value_;
         };
 
 
@@ -165,11 +165,11 @@ namespace boost {
             transport_selector(tpdu_size pdusize) : pdusize_(pdusize) {
             }
 
-            const raw_type& called() const {
+            const octet_sequnce& called() const {
                 return called_.to_raw();
             }
 
-            const raw_type& calling() const {
+            const octet_sequnce& calling() const {
                 return calling_.to_raw();
             }
 
@@ -208,11 +208,11 @@ namespace boost {
             session_selector(const transport_selector& tselector) : tselector_(tselector) {
             }
 
-            const raw_type& called() const {
+            const octet_sequnce& called() const {
                 return called_.to_raw();
             }
 
-            const raw_type& calling() const {
+            const octet_sequnce& calling() const {
                 return calling_.to_raw();
             }
 
@@ -250,19 +250,19 @@ namespace boost {
             presentation_selector(const session_selector& sselector) : sselector_(sselector) {
             }
 
-            const raw_type& called() const {
+            const octet_sequnce& called() const {
                 return called_.to_raw();
             }
 
-            const raw_type& calling() const {
+            const octet_sequnce& calling() const {
                 return calling_.to_raw();
             }
 
-            void called(const raw_type& val) {
+            void called(const octet_sequnce& val) {
                 called_ = selectorvalue_type(val);
             }
 
-            void calling(const raw_type& val) {
+            void calling(const octet_sequnce& val) {
                 calling_ = selectorvalue_type(val);
             }
 
