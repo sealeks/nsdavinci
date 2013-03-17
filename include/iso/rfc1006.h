@@ -39,16 +39,16 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
 
 
-            // TPDU code *ref X224  13.1 Table 8   only class 0 implement ( over rfc1006 )
+            // TPDU code *ref X224  13.1 Table 8   only class 0 implemented ( over rfc1006 )
             const octet_type CR_TPDU_ID = '\xE0'; //Connection request   !!xxxx - out class 0
             const octet_type CC_TPDU_ID = '\xD0'; //Connection confirm   !!xxxx - out class 0
             const octet_type DR_TPDU_ID = '\x80'; //Disconnection request 
-            const octet_type DC_TPDU_ID = '\xC0'; //Disconnection  confirm                              !!not used here impl
+            const octet_type DC_TPDU_ID = '\xC0'; //Disconnection  confirm                              !!not used here
             const octet_type DT_TPDU_ID = '\xF0'; //Data !!y - out class 0
-            const octet_type ED_TPDU_ID = '\x10'; //Expedited data !!not use here impl                  !!not used here impl
+            const octet_type ED_TPDU_ID = '\x10'; //Expedited data !!not use here impl                  !!not used here
             const octet_type DA_TPDU_ID = '\x60'; //Data acknowledgement !!not use here impl
-            const octet_type EA_TPDU_ID = '\x20'; //Expedited data acknowledgement                      !!not used here impl
-            const octet_type RJ_TPDU_ID = '\x50'; //Reject                                              !!not used here impl
+            const octet_type EA_TPDU_ID = '\x20'; //Expedited data acknowledgement                      !!not used here
+            const octet_type RJ_TPDU_ID = '\x50'; //Reject                                              !!not used here
             const octet_type ER_TPDU_ID = '\x70'; //Error
 
 
@@ -400,12 +400,12 @@ namespace boost {
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  rfc1006 receive_seq   //
+            //  rfc1006 receiver   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 
             const std::size_t TKPT_WITH_LI = 5;
 
-            class receive_seq {
+            class receiver {
             public:
 
                 typedef boost::shared_ptr< protocol_options > protocol_options_ptr;
@@ -418,9 +418,9 @@ namespace boost {
                     error
                 };
 
-                receive_seq(const mutable_buffer& buff, std::size_t waitingsize, bool ef);
+                receiver(const mutable_buffer& buff, std::size_t waitingsize, bool ef);
 
-                receive_seq();
+                receiver();
 
                 mutable_buffer buffer();
 
@@ -489,7 +489,7 @@ namespace boost {
             };
 
 
-            typedef boost::shared_ptr<receive_seq> receive_seq_ptr;
+            typedef boost::shared_ptr<receiver> receiver_ptr;
 
 
 
@@ -597,7 +597,7 @@ namespace boost {
                     handler_(handler),
                     state_(request),
                     send_(send_seq_ptr(new send_seq(socket->transport_option()))),
-                    receive_(new receive_seq()) {
+                    receive_(new receiver()) {
                     }
 
                     void run(const error_code& ec) {
@@ -648,7 +648,7 @@ namespace boost {
                 private:
 
                     void finish(const error_code& ec) {
-                        if (receive_->state() == receive_seq::complete) {
+                        if (receive_->state() == receiver::complete) {
                             switch (receive_->type()) {
                                 case CC:
                                 {
@@ -686,7 +686,7 @@ namespace boost {
                     ConnectHandler handler_;
                     stateconnection state_;
                     send_seq_ptr send_;
-                    receive_seq_ptr receive_;
+                    receiver_ptr receive_;
 
                 };
 
@@ -828,7 +828,7 @@ namespace boost {
                     state_(wait),
                     send_(),
                     tpdusize(socket->transport_option().pdusize()),
-                    receive_(new receive_seq()) {
+                    receive_(new receiver()) {
                     }
 
                     void run() {
@@ -884,7 +884,7 @@ namespace boost {
                 private:
 
                     void parse_response(const error_code& ec) {
-                        if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
+                        if (receive_->type() != CR || receive_->state() != receiver::complete) {
                             error_code ecc;
                             socket_->get_service().close(socket_->get_implementation(), ecc);
                             handler_(ER_PROTOCOL);
@@ -923,7 +923,7 @@ namespace boost {
                     CheckAcceptHandler handler_;
                     stateconnection state_;
                     send_seq_ptr send_;
-                    receive_seq_ptr receive_;
+                    receiver_ptr receive_;
                     tpdu_size  tpdusize;
 
                 };
@@ -1128,7 +1128,7 @@ namespace boost {
                 public:
 
                     receive_op(stream_socket* socket, ReceiveHandler handler,
-                            receive_seq_ptr receive, const Mutable_Buffers& buff, message_flags flags) :
+                            receiver_ptr receive, const Mutable_Buffers& buff, message_flags flags) :
                     socket_(socket),
                     handler_(handler),
                     receive_(receive),
@@ -1200,7 +1200,7 @@ namespace boost {
                     stream_socket* socket_;
                     ReceiveHandler handler_;
                     const Mutable_Buffers& buff_;
-                    receive_seq_ptr receive_;
+                    receiver_ptr receive_;
                     message_flags flags_;
                 };
 
@@ -1224,7 +1224,7 @@ namespace boost {
                     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
                     get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
-                            receive_seq_ptr(new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state())), buffers, flags)));
+                            receiver_ptr(new receiver(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state())), buffers, flags)));
 
                 }
 
@@ -1296,13 +1296,13 @@ namespace boost {
                         send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
                     if (ec)
                         return ec;
-                    receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
+                    receiver_ptr receive_(receiver_ptr(new receiver()));
                     while (!ec && !receive_->ready()) {
                         receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
                     if (ec)
                         return ec;
-                    if (receive_->state() == receive_seq::complete) {
+                    if (receive_->state() == receiver::complete) {
                         switch (receive_->type()) {
                             case CC:
                             {
@@ -1345,7 +1345,7 @@ namespace boost {
                 error_code check_accept_imp(int16_t src, error_code& ec) {
                     transport_option_.src_tsap(src);
                     bool canseled = false;
-                    receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
+                    receiver_ptr receive_(receiver_ptr(new receiver()));
                     while (!ec && !receive_->ready()) {
                         receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
@@ -1353,7 +1353,7 @@ namespace boost {
                         return ec;
                     send_seq_ptr send_;
                     protocol_options options_ = transport_option();
-                    if (receive_->type() != CR || receive_->state() != receive_seq::complete) {
+                    if (receive_->type() != CR || receive_->state() != receiver::complete) {
                         error_code ecc;
                         get_service().close(get_implementation(), ecc);
                         return ER_PROTOCOL;
@@ -1395,7 +1395,7 @@ namespace boost {
                 template <typename MutableBufferSequence>
                 std::size_t receive_impl(const MutableBufferSequence& buffers,
                         socket_base::message_flags flags, error_code& ec) {
-                    receive_seq_ptr receive_(new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state()));
+                    receiver_ptr receive_(new receiver(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state()));
                     while (!ec && !receive_->ready()) {
                         receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(
                                 receive_->buffer()), 0, ec));
