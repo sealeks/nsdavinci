@@ -421,7 +421,7 @@ namespace boost {
 
 
 
-        typedef boost::shared_ptr<base_coder> asncoder_ptr;
+        typedef boost::shared_ptr<base_coder> asn_coder_ptr;
 
         template<typename INPUT_TYPE = base_input_coder, typename OUTPUT_TYPE = base_output_coder>
                 class isocoder_templ : public base_coder {
@@ -462,8 +462,8 @@ namespace boost {
 
         typedef isocoder_templ<> simple_trans_data;
 
-        static inline asncoder_ptr create_simple_data(const std::string& val) {
-            asncoder_ptr tmp = asncoder_ptr(new simple_trans_data());
+        static inline asn_coder_ptr create_simple_data(const std::string& val) {
+            asn_coder_ptr tmp = asn_coder_ptr(new simple_trans_data());
             tmp->request_str(val);
             return tmp;
         }

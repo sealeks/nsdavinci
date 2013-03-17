@@ -80,7 +80,7 @@ namespace boost {
                     return archiver_;
                 }
 
-                asncoder_ptr archiver() {
+                asn_coder_ptr archiver() {
                     return archiver_;
                 }
 
@@ -125,7 +125,7 @@ namespace boost {
             private:
                 oid_type abstract_syntax_;
                 transfer_synaxes_type transfer_syntaxes_;
-                asncoder_ptr archiver_;
+                asn_coder_ptr archiver_;
             };
 
 
@@ -211,9 +211,9 @@ namespace boost {
 
                 context_id_type remove_contex(context_id_type id);
 
-                asncoder_ptr find(context_id_type id) {
+                asn_coder_ptr find(context_id_type id) {
                     presentation_context_map::iterator it = contexts_.find(id);
-                    return it != contexts_.end() ? it->second->archiver() : asncoder_ptr();
+                    return it != contexts_.end() ? it->second->archiver() : asn_coder_ptr();
                 }
 
                 presentation_context_unit_ptr get_context(const oid_type& oid) {
@@ -221,9 +221,9 @@ namespace boost {
                     return it != contexts_.end() ? it->second : presentation_context_unit_ptr();
                 }
 
-                asncoder_ptr exists(context_id_type id) {
+                asn_coder_ptr exists(context_id_type id) {
                     presentation_context_map::iterator it = contexts_.find(id);
-                    return it != contexts_.end() ? it->second->archiver() : asncoder_ptr();
+                    return it != contexts_.end() ? it->second->archiver() : asn_coder_ptr();
                 }
 
                 void clear() {
@@ -365,7 +365,7 @@ namespace boost {
 
 
             typedef x690_archive presentation_coder_type;
-            typedef boost::shared_ptr<presentation_coder_type> presentation_asncoder_ptr;
+            typedef boost::shared_ptr<presentation_coder_type> presentation_asn_coder_ptr;
 
 
 
@@ -394,13 +394,13 @@ namespace boost {
 
                 explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel = presentation_selector(),
                         const presentation_connection_option& connectoption = presentation_connection_option())
-                : super_type(io_service, psel.sselector(), asncoder_ptr(new presentation_coder_type())),
+                : super_type(io_service, psel.sselector(), asn_coder_ptr(new presentation_coder_type())),
                  selector_(psel), ppm_(new presentation_pm(connectoption)) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const presentation_selector& psel = presentation_selector())
-                : super_type(io_service, endpoint, psel.sselector(), asncoder_ptr(new presentation_coder_type())),
+                : super_type(io_service, endpoint, psel.sselector(), asn_coder_ptr(new presentation_coder_type())),
                  selector_(psel), ppm_(new presentation_pm()) {
                 }
 
@@ -668,11 +668,11 @@ namespace boost {
                     coder()->clear_output();
                 }
 
-                presentation_asncoder_ptr coder() {
+                presentation_asn_coder_ptr coder() {
                     return  boost::static_pointer_cast<presentation_coder_type, base_coder >(super_type::rootcoder());
                 }
 
-                presentation_asncoder_ptr coder() const {
+                presentation_asn_coder_ptr coder() const {
                     return boost::static_pointer_cast<presentation_coder_type, base_coder >(super_type::rootcoder());
                 }
 
@@ -761,7 +761,7 @@ namespace boost {
 
 
 
-                //presentation_asncoder_ptr basiccoder;
+                //presentation_asn_coder_ptr basiccoder;
                 presentation_selector selector_;
                 presentation_pm_ptr ppm_;
                 presentation_connection_option option_;
