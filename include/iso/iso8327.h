@@ -316,7 +316,7 @@ namespace boost {
 
                 bool nullPI(varid_type cod) const;
 
-                const_sequences_ptr sequence(asncoder_ptr seq) const;
+                const_sequences_ptr sequence(asn_coder_ptr seq) const;
 
             private:
 
@@ -408,21 +408,21 @@ namespace boost {
             //negotiate_x225impl_option
             bool negotiate_x225impl_option(protocol_options& self, const protocol_options& dist);
 
-            const_sequences_ptr generate_header_CN(const protocol_options& opt, asncoder_ptr data); //CONNECT SPDU
+            const_sequences_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data); //CONNECT SPDU
 
-            const_sequences_ptr generate_header_AC(const protocol_options& opt, asncoder_ptr data); //ACCEPT SPDU
+            const_sequences_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data); //ACCEPT SPDU
 
-            const_sequences_ptr generate_header_RF(const protocol_options& opt, asncoder_ptr data); //REFUSE  SPDU        
+            const_sequences_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data); //REFUSE  SPDU        
 
-            const_sequences_ptr generate_header_FN(const protocol_options& opt, asncoder_ptr data); //FINISH SPDU            
+            const_sequences_ptr generate_header_FN(const protocol_options& opt, asn_coder_ptr data); //FINISH SPDU            
 
-            const_sequences_ptr generate_header_DN(const protocol_options& opt, asncoder_ptr data); //DISCONNECT  SPDU          
+            const_sequences_ptr generate_header_DN(const protocol_options& opt, asn_coder_ptr data); //DISCONNECT  SPDU          
 
-            const_sequences_ptr generate_header_AB(const protocol_options& opt, asncoder_ptr data); //ABORT SPDU                     
+            const_sequences_ptr generate_header_AB(const protocol_options& opt, asn_coder_ptr data); //ABORT SPDU                     
 
-            const_sequences_ptr generate_header_AA(const protocol_options& opt, asncoder_ptr data); //ABORT ACCEPT  SPDU                              
+            const_sequences_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data); //ABORT ACCEPT  SPDU                              
 
-            const_sequences_ptr generate_header_NF(const protocol_options& opt, asncoder_ptr data); //NOT FINISH  SPDU                      
+            const_sequences_ptr generate_header_NF(const protocol_options& opt, asn_coder_ptr data); //NOT FINISH  SPDU                      
 
 
 
@@ -460,17 +460,17 @@ namespace boost {
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //   x225 send_seq  //
+            //   x225 sender  //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////              
 
-            class send_seq {
+            class sender {
             public:
 
-                send_seq(spdu_type type) : type_(type) {
+                sender(spdu_type type) : type_(type) {
 
                 }
 
-                send_seq(spdu_type type, const protocol_options& opt, asncoder_ptr data) :
+                sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data) :
                 type_(type) {
                     switch (type) {
                         case CN_SPDU_ID:
@@ -514,7 +514,7 @@ namespace boost {
                     }
                 }
 
-                virtual ~send_seq() {
+                virtual ~sender() {
                 }
 
                 bool ready() const {
@@ -542,39 +542,37 @@ namespace boost {
 
             protected:
 
-                void constructCN(const protocol_options& opt, asncoder_ptr data) {
+                void constructCN(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_CN(opt, data)));
                 }
 
-                void constructAC(const protocol_options& opt, asncoder_ptr data) {
+                void constructAC(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_AC(opt, data)));
                 }
 
-                void constructRF(const protocol_options& opt, asncoder_ptr data) {
+                void constructRF(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_RF(opt, data)));
                 }
 
-                void constructFN(const protocol_options& opt, asncoder_ptr data) {
+                void constructFN(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_FN(opt, data)));
                 }
 
-                void constructAB(const protocol_options& opt, asncoder_ptr data) {
+                void constructAB(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_AB(opt, data)));
                 }
 
-                void constructDN(const protocol_options& opt, asncoder_ptr data) {
+                void constructDN(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_DN(opt, data)));
                 }
 
-                void constructAA(const protocol_options& opt, asncoder_ptr data) {
+                void constructAA(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_AA(opt, data)));
                 }
 
                 spdu_type type_;
                 senders_buffer_ptr buf_;
             };
-
-            typedef boost::shared_ptr<send_seq> send_seq_ptr;
 
 
 
@@ -584,14 +582,14 @@ namespace boost {
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //   x225 send_seq_data  //
+            //   x225 data_sender  //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
             template <typename ConstBufferSequence >
-            class send_seq_data : public send_seq {
+            class data_sender : public sender {
             public:
 
-                send_seq_data(const ConstBufferSequence& buff) : send_seq(DN_SPDU_ID) {
+                data_sender(const ConstBufferSequence& buff) : sender(DN_SPDU_ID) {
                     constructDT(buff);
                 }
 
@@ -605,12 +603,12 @@ namespace boost {
 
 
 
-            //receive_seq
+            //receiver
 
             const std::size_t SI_WITH_LI = 2;
             const std::size_t HDR_LI = 2;
 
-            class receive_seq {
+            class receiver {
             public:
 
                 typedef raw_type data_type;
@@ -625,9 +623,9 @@ namespace boost {
                     error
                 };
 
-                receive_seq(const mutable_buffer& buff);
+                receiver(const mutable_buffer& buff);
 
-                receive_seq();
+                receiver();
 
                 mutable_buffer buffer();
 
@@ -701,7 +699,7 @@ namespace boost {
                 mutable_buffer userbuff_;
             };
 
-            typedef boost::shared_ptr<receive_seq> receive_seq_ptr;
+
 
 
 
@@ -724,6 +722,9 @@ namespace boost {
                 typedef boost::itu::rfc1006::socket super_type;
                 typedef boost::itu::isocoder_templ<> default_coder_type;
 
+                typedef boost::shared_ptr<receiver> receiver_ptr;
+                typedef boost::shared_ptr<sender> sender_ptr;
+
             public:
 
 
@@ -732,12 +733,12 @@ namespace boost {
                 //  Constructors  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(), asncoder_ptr coder = asncoder_ptr(new default_coder_type()))
+                explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(), asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder), session_version_(VERSION2) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
-                        const endpoint_type& endpoint, const session_selector& ssel = session_selector(), asncoder_ptr coder = asncoder_ptr(new default_coder_type()))
+                        const endpoint_type& endpoint, const session_selector& ssel = session_selector(), asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder), session_version_(VERSION2) {
                 }
 
@@ -787,8 +788,8 @@ namespace boost {
                     handler_(handler),
                     state_(request),
                     peer_endpoint_(peer_endpoint),
-                    send_(send_seq_ptr(new send_seq(CN_SPDU_ID, socket->session_option(), socket_->rootcoder()))),
-                    receive_(new receive_seq()) {
+                    send_(sender_ptr(new sender(CN_SPDU_ID, socket->session_option(), socket_->rootcoder()))),
+                    receive_(new receiver()) {
 
                     }
 
@@ -837,7 +838,7 @@ namespace boost {
                 private:
 
                     void finish(const error_code& ec) {
-                        if (receive_->state() == receive_seq::complete) {
+                        if (receive_->state() == receiver::complete) {
                             switch (receive_->type()) {
                                 case AC_SPDU_ID:
                                 {
@@ -878,8 +879,8 @@ namespace boost {
                     ConnectHandler handler_;
                     stateconnection state_;
                     endpoint_type peer_endpoint_;
-                    send_seq_ptr send_;
-                    receive_seq_ptr receive_;
+                    sender_ptr send_;
+                    receiver_ptr receive_;
 
                 };
 
@@ -955,8 +956,8 @@ namespace boost {
                     release_op(stream_socket* socket, ReleaseHandler handler, release_type type) :
                     socket_(socket),
                     handler_(handler),
-                    send_(send_seq_ptr(new send_seq(release_type_to_spdu(type), socket->session_option(), socket_->rootcoder()))),
-                    receive_(new receive_seq()),
+                    send_(sender_ptr(new sender(release_type_to_spdu(type), socket->session_option(), socket_->rootcoder()))),
+                    receive_(new receiver()),
                     type_(type),
                     state_(request) {
                     }
@@ -1005,7 +1006,7 @@ namespace boost {
                 private:
 
                     void finish(const error_code& ec) {
-                        if (receive_->state() == receive_seq::complete) {
+                        if (receive_->state() == receiver::complete) {
                             switch (receive_->type()) {
                                 case DN_SPDU_ID:
                                 {
@@ -1046,8 +1047,8 @@ namespace boost {
 
                     stream_socket* socket_;
                     ReleaseHandler handler_;
-                    send_seq_ptr send_;
-                    receive_seq_ptr receive_;
+                    sender_ptr send_;
+                    receiver_ptr receive_;
                     release_type type_;
                     stateconnection state_;
 
@@ -1121,7 +1122,7 @@ namespace boost {
                     handler_(handler),
                     state_(wait),
                     send_(),
-                    receive_(new receive_seq()) {
+                    receive_(new receiver()) {
                     }
 
                     void run() {
@@ -1179,7 +1180,7 @@ namespace boost {
                 private:
 
                     void parse_response(const error_code& ec) {
-                        if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
+                        if (receive_->type() != CN_SPDU_ID || receive_->state() != receiver::complete) {
                             error_code ecc;
                             //socket_->close(ecc);
                             exit_handler(ER_PROTOCOL);
@@ -1192,13 +1193,13 @@ namespace boost {
                                 !(nouserreject = socket_->negotiate_session_accept())) {
                             if (!nouserreject)
                                 options_.refuse_reason(DR_REASON_USER);
-                            send_ = send_seq_ptr(new send_seq(RF_SPDU_ID, options_, socket_->rootcoder()));
+                            send_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket_->rootcoder()));
                             state(refuse);
                             operator()(ec, 0);
                             return;
                         }
                         socket_->session_version_ = (options_.accept_version() & VERSION2) ? VERSION2 : VERSION1;
-                        send_ = send_seq_ptr(new send_seq(AC_SPDU_ID, options_, socket_->rootcoder()));
+                        send_ = sender_ptr(new sender(AC_SPDU_ID, options_, socket_->rootcoder()));
                         state(send);
                         operator()(ec, 0);
                     }
@@ -1226,8 +1227,8 @@ namespace boost {
                     stream_socket* socket_;
                     CheckAcceptHandler handler_;
                     stateconnection state_;
-                    send_seq_ptr send_;
-                    receive_seq_ptr receive_;
+                    sender_ptr send_;
+                    receiver_ptr receive_;
 
                 };
 
@@ -1309,7 +1310,7 @@ namespace boost {
                             const ConstBufferSequence& buffers, message_flags flags) :
                     socket_(socket),
                     handler_(handler),
-                    in_(send_seq_ptr(new send_seq_data<ConstBufferSequence>(buffers))),
+                    in_(sender_ptr(new data_sender<ConstBufferSequence>(buffers))),
                     flags_(flags),
                     send_lower_(boost::asio::buffer_size(buffers)) {
                     }
@@ -1336,7 +1337,7 @@ namespace boost {
 
                     stream_socket* socket_;
                     SendHandler handler_;
-                    send_seq_ptr in_;
+                    sender_ptr in_;
                     message_flags flags_;
                     std::size_t send_lower_;
 
@@ -1443,7 +1444,7 @@ namespace boost {
                 public:
 
                     receive_op(stream_socket* socket, ReceiveHandler handler,
-                            receive_seq_ptr receive, const Mutable_Buffers& buff, message_flags flags) :
+                            receiver_ptr receive, const Mutable_Buffers& buff, message_flags flags) :
                     socket_(socket),
                     handler_(handler),
                     receive_(receive),
@@ -1500,7 +1501,7 @@ namespace boost {
                                 socket_->rootcoder()->in()->clear();
                                 socket_->rootcoder()->in()->add(receive_->options().data());
                                 socket_->negotiate_session_release();
-                                send_ = send_seq_ptr(new send_seq(DN_SPDU_ID, socket_->session_option(), socket_->rootcoder()));
+                                send_ = sender_ptr(new sender(DN_SPDU_ID, socket_->session_option(), socket_->rootcoder()));
                                 state(response);
                                 run();
                                 return false;
@@ -1519,7 +1520,7 @@ namespace boost {
                             {
                                 socket_->rootcoder()->in()->clear();
                                 socket_->rootcoder()->in()->add(receive_->options().data());
-                                send_ = send_seq_ptr(new send_seq(AB_SPDU_ID, socket_->session_option(), socket_->rootcoder()));
+                                send_ = sender_ptr(new sender(AB_SPDU_ID, socket_->session_option(), socket_->rootcoder()));
                                 state(response);
                                 run();
                             }
@@ -1537,8 +1538,8 @@ namespace boost {
                     stream_socket* socket_;
                     ReceiveHandler handler_;
                     const Mutable_Buffers& buff_;
-                    receive_seq_ptr receive_;
-                    send_seq_ptr send_;
+                    receiver_ptr receive_;
+                    sender_ptr send_;
                     stateconnection state_;
                     message_flags flags_;
                 };
@@ -1566,7 +1567,7 @@ namespace boost {
 
                     if (input_empty())
                         get_io_service().post(boost::bind(&receive_op<ReadHandler, MutableBufferSequence>::run, receive_op<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
-                            receive_seq_ptr(new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers))), buffers, flags)));
+                            receiver_ptr(new receiver(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers))), buffers, flags)));
                     else
                         super_type::async_receive(buffers, flags, handler);
 
@@ -1579,11 +1580,11 @@ namespace boost {
                     async_receive<MutableBufferSequence, ReadHandler > (buffers, 0, handler);
                 }
 
-                asncoder_ptr rootcoder() {
+                asn_coder_ptr rootcoder() {
                     return rootcoder_;
                 }
 
-                asncoder_ptr rootcoder() const {
+                asn_coder_ptr rootcoder() const {
                     return rootcoder_;
                 }
 
@@ -1598,21 +1599,21 @@ namespace boost {
 
             protected:
 
-                virtual send_seq_ptr session_release_reaction(receive_seq_ptr receive) {
+                virtual sender_ptr session_release_reaction(receiver_ptr receive) {
                     if (!receive)
-                        return send_seq_ptr();
+                        return sender_ptr();
                     if (rootcoder()) {
                         rootcoder()->clear();
                         rootcoder()->in()->add(receive->options().data());
                     }
                     switch (receive->type()) {
-                        case FN_SPDU_ID: return send_seq_ptr(new send_seq(DN_SPDU_ID, session_option(), rootcoder()));
-                        case AB_SPDU_ID: return send_seq_ptr(new send_seq(AC_SPDU_ID, session_option(), rootcoder()));
+                        case FN_SPDU_ID: return sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
+                        case AB_SPDU_ID: return sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder()));
                         default:
                         {
                         }
                     }
-                    return send_seq_ptr();
+                    return sender_ptr();
                 }
 
                 virtual bool negotiate_session_accept() {
@@ -1658,18 +1659,18 @@ namespace boost {
                     if (super_type::connect(peer_endpoint, ec))
                         return connect_impl_exit(ec);
 
-                    send_seq_ptr send_(send_seq_ptr(new send_seq(CN_SPDU_ID, session_option(), rootcoder())));
+                    sender_ptr send_(sender_ptr(new sender(CN_SPDU_ID, session_option(), rootcoder())));
                     while (!ec && !send_->ready())
                         send_->size(super_type::send(send_->pop(), 0, ec));
                     if (ec)
                         return connect_impl_exit(ec);
-                    receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
+                    receiver_ptr receive_(receiver_ptr(new receiver()));
                     while (!ec && !receive_->ready()) {
                         receive_->put(super_type::receive(boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
                     if (ec)
                         return connect_impl_exit(ec);
-                    if (receive_->state() == receive_seq::complete) {
+                    if (receive_->state() == receiver::complete) {
                         switch (receive_->type()) {
                             case AC_SPDU_ID:
                             {
@@ -1699,17 +1700,17 @@ namespace boost {
 
                 error_code release_impl(release_type type, error_code& ec) {
                     if (is_open()) {
-                        send_seq_ptr send_(new send_seq(release_type_to_spdu(type), session_option(), rootcoder()));
+                        sender_ptr send_(new sender(release_type_to_spdu(type), session_option(), rootcoder()));
                         while (!ec && !send_->ready())
                             send_->size(super_type::send(send_->pop(), 0, ec));
                         if (ec)
                             return release_impl_exit(ec);
-                        receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
+                        receiver_ptr receive_(receiver_ptr(new receiver()));
                         while (!ec && !receive_->ready())
                             receive_->put(super_type::receive(boost::asio::buffer(receive_->buffer()), 0, ec));
                         if (ec)
                             return release_impl_exit(ec);
-                        if (receive_->state() == receive_seq::complete) {
+                        if (receive_->state() == receiver::complete) {
                             switch (receive_->type()) {
                                 case DN_SPDU_ID:
                                 {
@@ -1743,16 +1744,16 @@ namespace boost {
 
                 error_code check_accept_imp(error_code& ec) {
                     bool canseled = false;
-                    receive_seq_ptr receive_(receive_seq_ptr(new receive_seq()));
+                    receiver_ptr receive_(receiver_ptr(new receiver()));
                     while (!ec && !receive_->ready()) {
                         receive_->put(super_type::receive(boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
                     if (ec)
                         return check_accept_imp_exit(ec);
-                    send_seq_ptr send_;
+                    sender_ptr send_;
 
                     protocol_options options_ = session_option();
-                    if (receive_->type() != CN_SPDU_ID || receive_->state() != receive_seq::complete) {
+                    if (receive_->type() != CN_SPDU_ID || receive_->state() != receiver::complete) {
                         error_code ecc;
                         //close(ecc);
                         return check_accept_imp_exit(ER_PROTOCOL);
@@ -1764,11 +1765,11 @@ namespace boost {
                         if (!nouserreject)
                             options_.refuse_reason(DR_REASON_USER);
                         canseled = true;
-                        send_ = send_seq_ptr(new send_seq(RF_SPDU_ID, options_, rootcoder()));
+                        send_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder()));
                     }
                     else {
                         session_version_ = (options_.accept_version() & VERSION2) ? VERSION2 : VERSION1;
-                        send_ = send_seq_ptr(new send_seq(AC_SPDU_ID, options_, rootcoder()));
+                        send_ = sender_ptr(new sender(AC_SPDU_ID, options_, rootcoder()));
                     }
 
                     while (!ec && !send_->ready())
@@ -1794,7 +1795,7 @@ namespace boost {
                 template <typename ConstBufferSequence>
                 std::size_t send_impl(const ConstBufferSequence& buffers,
                         socket_base::message_flags flags, error_code& ec) {
-                    send_seq_ptr send_(new send_seq_data<ConstBufferSequence > (buffers));
+                    sender_ptr send_(new data_sender<ConstBufferSequence > (buffers));
                     while (!ec && !send_->ready())
                         send_->size(super_type::send(send_->pop(), 0, ec));
                     return ec ? 0 : boost::asio::buffer_size(buffers);
@@ -1807,7 +1808,7 @@ namespace boost {
                     if (!input_empty())
                         return super_type::receive(boost::asio::buffer(buffers), flags, ec);
 
-                    receive_seq_ptr receive_(new receive_seq(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers)));
+                    receiver_ptr receive_(new receiver(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers)));
                     while (!ec && !receive_->ready()) {
                         receive_->put(super_type::receive(boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
@@ -1823,7 +1824,7 @@ namespace boost {
                             rootcoder()->in()->clear();
                             rootcoder()->in()->add(receive_->options().data());
                             negotiate_session_release();
-                            send_seq_ptr send_ = send_seq_ptr(new send_seq(DN_SPDU_ID, session_option(), rootcoder()));
+                            sender_ptr send_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
                             while (!ec && !send_->ready())
                                 send_->size(super_type::send(send_->pop(), 0, ec));
                             error_code ecc;
@@ -1843,7 +1844,7 @@ namespace boost {
                         }
                         default:
                         {
-                            send_seq_ptr send_ = session_release_reaction(receive_);
+                            sender_ptr send_ = session_release_reaction(receive_);
                             if (send_) {
                                 while (!ec && !send_->ready())
                                     send_->size(super_type::send(send_->pop(), 0, ec));
@@ -1862,7 +1863,7 @@ namespace boost {
                 }
 
                 protocol_options option_;
-                asncoder_ptr rootcoder_;
+                asn_coder_ptr rootcoder_;
                 octet_type session_version_;
 
             };

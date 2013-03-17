@@ -202,7 +202,7 @@ namespace boost {
                 return nullPGI(0, cod);
             }
 
-            const_sequences_ptr spdudata::sequence(asncoder_ptr coder) const {
+            const_sequences_ptr spdudata::sequence(asn_coder_ptr coder) const {
                 raw_type tmp;
                 spdudata_type::const_iterator strtit = value_->end();
                 for (spdudata_type::const_iterator it = value_->begin(); it != value_->end(); ++it) {
@@ -486,7 +486,7 @@ namespace boost {
                 return true;
             }
 
-            const_sequences_ptr generate_header_CN(const protocol_options& opt, asncoder_ptr data) {
+            const_sequences_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(CN_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, PI_VERSION, WORK_PROT_VERSION);
@@ -496,7 +496,7 @@ namespace boost {
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_AC(const protocol_options& opt, asncoder_ptr data) {
+            const_sequences_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(AC_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
@@ -507,7 +507,7 @@ namespace boost {
             }
             
 
-            const_sequences_ptr generate_header_RF(const protocol_options& opt, asncoder_ptr data) {
+            const_sequences_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(RF_SPDU_ID);
                 data->out()->clear(); // no user data *ref X225 Tab 15
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
@@ -518,38 +518,38 @@ namespace boost {
             }            
             
 
-            const_sequences_ptr generate_header_FN(const protocol_options& opt, asncoder_ptr data) {
+            const_sequences_ptr generate_header_FN(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(FN_SPDU_ID);
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 return tmp.sequence(data);
             }            
 
-            const_sequences_ptr generate_header_DN(const protocol_options& opt, asncoder_ptr data) {
+            const_sequences_ptr generate_header_DN(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(DN_SPDU_ID);
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_AB(const protocol_options& opt, asncoder_ptr data) {
+            const_sequences_ptr generate_header_AB(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(AB_SPDU_ID);
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_AA(const protocol_options& opt, asncoder_ptr data) {
+            const_sequences_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(AA_SPDU_ID);
                 data->out()->clear(); // no user data *ref X225  8.3.10.2             
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_NF(const protocol_options& opt, asncoder_ptr data) {
+            const_sequences_ptr generate_header_NF(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(NF_SPDU_ID);
                 return tmp.sequence(data);
             }
 
 
-            //receive_seq
+            //receiver
 
-            receive_seq::receive_seq(const mutable_buffer& buff) :
+            receiver::receiver(const mutable_buffer& buff) :
             state_(waittype),
             size_(0),
             estimatesize_(SI_WITH_LI),
@@ -565,7 +565,7 @@ namespace boost {
             userbuff_(buff) {
             }
 
-            receive_seq::receive_seq() :
+            receiver::receiver() :
             state_(waittype),
             size_(0),
             estimatesize_(SI_WITH_LI),
@@ -582,7 +582,7 @@ namespace boost {
 
             }
 
-            mutable_buffer receive_seq::buffer() {
+            mutable_buffer receiver::buffer() {
                 switch (state_) {
                     case waittype: return type_buff_ + size_;
                     case waitsize: return type_buff_ + size_;
@@ -593,7 +593,7 @@ namespace boost {
                 return mutable_buffer();
             }
 
-            void receive_seq::put(std::size_t sz) {
+            void receiver::put(std::size_t sz) {
                 if (!sz) return;
                 size_ += sz;
                 if ((size_ + sz) >= estimatesize_) {
@@ -631,7 +631,7 @@ namespace boost {
                 }
             }
 
-            receive_seq::operation_state receive_seq::state(operation_state val) {
+            receiver::operation_state receiver::state(operation_state val) {
                 if (val != state_) {
                     size_ = 0;
                 }
@@ -641,7 +641,7 @@ namespace boost {
                 return state_ = val;
             }
 
-            error_code receive_seq::check_type() {
+            error_code receiver::check_type() {
                 mutable_buffer buff_ = type_buff_;
                 spdu_type tp = *boost::asio::buffer_cast<spdu_type*>(buff_);
                 first_in_seq_ = !type_ && !first_in_seq_;
@@ -692,7 +692,7 @@ namespace boost {
                 return errcode(ER_PROTOCOL);
             }
 
-            error_code receive_seq::check_size() {
+            error_code receiver::check_size() {
                 mutable_buffer buff_ = type_buff_;
                 uint16_t li = 0;
                 raw_to_inttype(buffer_to_raw(buff_, 0, 2), li);
@@ -703,18 +703,18 @@ namespace boost {
                 return error_code();
             }
 
-            error_code receive_seq::check_header() {
+            error_code receiver::check_header() {
                 options_ = protocol_options(header_buff_);
                 state(first_in_seq_ ? waittype : complete);
                 return error_code();
             }
 
-            void receive_seq::reject_reason(octet_type val) {
+            void receiver::reject_reason(octet_type val) {
                 errcode_ = error_code();
                 reject_reason_ = val;
             }
 
-            error_code receive_seq::errcode(const error_code& err) {
+            error_code receiver::errcode(const error_code& err) {
                 if (!errcode_ && err)
                     errcode_ = err;
                 if (err)
