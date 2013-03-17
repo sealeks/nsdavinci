@@ -586,8 +586,8 @@ namespace boost {
             /*INPUT STREAM                                                                                                                                                                                               */
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            bool find_marked_sequece(const mutable_sequence& val, mutable_sequence::const_iterator bit, raw_type& raw, std::size_t start) {
-                mutable_sequence::const_iterator it = bit;
+            bool find_marked_sequece(const mutable_sequences& val, mutable_sequences::const_iterator bit, raw_type& raw, std::size_t start) {
+                mutable_sequences::const_iterator it = bit;
                 std::size_t sz = 0;
                 std::size_t szc = 0;
                 std::size_t szb = 0;
@@ -626,7 +626,7 @@ namespace boost {
                 return 0;
             }
 
-            std::size_t tag_x690_cast(tag& val, const mutable_sequence& src, mutable_sequence::const_iterator bit, std::size_t beg) {
+            std::size_t tag_x690_cast(tag& val, const mutable_sequences& src, mutable_sequences::const_iterator bit, std::size_t beg) {
                 raw_type s1;
                 if (boost::itu::row_cast(src, bit, s1, beg, 1) && (!s1.empty())) {
                     if ((s1[0] & '\x1F') != '\x1F') {
@@ -651,7 +651,7 @@ namespace boost {
             ///////////////////////////////////////////////////////////////////////////////////
             // size_class from X.690                
 
-            std::size_t size_x690_cast(size_class& val, const mutable_sequence& src, mutable_sequence::const_iterator bit, std::size_t beg) {
+            std::size_t size_x690_cast(size_class& val, const mutable_sequences& src, mutable_sequences::const_iterator bit, std::size_t beg) {
                 raw_type s1;
                 if (boost::itu::row_cast(src, bit, s1, beg, 1) && (!s1.empty())) {
                     if (!(s1[0] & '\x80')) {

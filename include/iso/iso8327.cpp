@@ -202,7 +202,7 @@ namespace boost {
                 return nullPGI(0, cod);
             }
 
-            const_sequence_ptr spdudata::sequence(isocoder_ptr coder) const {
+            const_sequences_ptr spdudata::sequence(asncoder_ptr coder) const {
                 raw_type tmp;
                 spdudata_type::const_iterator strtit = value_->end();
                 for (spdudata_type::const_iterator it = value_->begin(); it != value_->end(); ++it) {
@@ -486,7 +486,7 @@ namespace boost {
                 return true;
             }
 
-            const_sequence_ptr generate_header_CN(const protocol_options& opt, isocoder_ptr data) {
+            const_sequences_ptr generate_header_CN(const protocol_options& opt, asncoder_ptr data) {
                 spdudata tmp(CN_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, PI_VERSION, WORK_PROT_VERSION);
@@ -496,7 +496,7 @@ namespace boost {
                 return tmp.sequence(data);
             }
 
-            const_sequence_ptr generate_header_AC(const protocol_options& opt, isocoder_ptr data) {
+            const_sequences_ptr generate_header_AC(const protocol_options& opt, asncoder_ptr data) {
                 spdudata tmp(AC_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
@@ -507,7 +507,7 @@ namespace boost {
             }
             
 
-            const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data) {
+            const_sequences_ptr generate_header_RF(const protocol_options& opt, asncoder_ptr data) {
                 spdudata tmp(RF_SPDU_ID);
                 data->out()->clear(); // no user data *ref X225 Tab 15
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
@@ -518,30 +518,30 @@ namespace boost {
             }            
             
 
-            const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data) {
+            const_sequences_ptr generate_header_FN(const protocol_options& opt, asncoder_ptr data) {
                 spdudata tmp(FN_SPDU_ID);
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 return tmp.sequence(data);
             }            
 
-            const_sequence_ptr generate_header_DN(const protocol_options& opt, isocoder_ptr data) {
+            const_sequences_ptr generate_header_DN(const protocol_options& opt, asncoder_ptr data) {
                 spdudata tmp(DN_SPDU_ID);
                 return tmp.sequence(data);
             }
 
-            const_sequence_ptr generate_header_AB(const protocol_options& opt, isocoder_ptr data) {
+            const_sequences_ptr generate_header_AB(const protocol_options& opt, asncoder_ptr data) {
                 spdudata tmp(AB_SPDU_ID);
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 return tmp.sequence(data);
             }
 
-            const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data) {
+            const_sequences_ptr generate_header_AA(const protocol_options& opt, asncoder_ptr data) {
                 spdudata tmp(AA_SPDU_ID);
                 data->out()->clear(); // no user data *ref X225  8.3.10.2             
                 return tmp.sequence(data);
             }
 
-            const_sequence_ptr generate_header_NF(const protocol_options& opt, isocoder_ptr data) {
+            const_sequences_ptr generate_header_NF(const protocol_options& opt, asncoder_ptr data) {
                 spdudata tmp(NF_SPDU_ID);
                 return tmp.sequence(data);
             }

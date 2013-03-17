@@ -100,14 +100,14 @@ namespace boost {
         typedef boost::shared_ptr<raw_type> raw_type_ptr;
         typedef std::vector<raw_type_ptr> vect_raw_type_ptr;
 
-        typedef std::list<mutable_buffer> mutable_sequence;
-        typedef boost::shared_ptr<mutable_sequence> mutable_sequence_ptr;
-        typedef std::list<const_buffer> const_sequence;
-        typedef boost::shared_ptr<const_sequence> const_sequence_ptr;
+        typedef std::list<mutable_buffer> mutable_sequences;
+        typedef boost::shared_ptr<mutable_sequences> mutable_sequences_ptr;
+        typedef std::list<const_buffer> const_sequences;
+        typedef boost::shared_ptr<const_sequences> const_sequences_ptr;
 
 
 
-        const const_sequence NULL_CONST_SEQUENCE = const_sequence();
+        const const_sequences NULL_CONST_SEQUENCE = const_sequences();
 
 
         oid_type encoding_to_oid(encoding_rule rule);
@@ -164,13 +164,13 @@ namespace boost {
             dst.insert(dst.begin(), src.begin(), src.end());
         }
 
-        std::size_t pop_frontlist(mutable_sequence& val, std::size_t start);
+        std::size_t pop_frontlist(mutable_sequences& val, std::size_t start);
 
-        bool splice_frontlist(mutable_sequence& val, std::size_t firstend, std::size_t secondend);
+        bool splice_frontlist(mutable_sequences& val, std::size_t firstend, std::size_t secondend);
 
-        bool find_eof(const mutable_sequence& val, mutable_sequence::const_iterator bit, std::size_t& rslt, std::size_t start = 0);
+        bool find_eof(const mutable_sequences& val, mutable_sequences::const_iterator bit, std::size_t& rslt, std::size_t start = 0);
 
-        bool row_cast(const mutable_sequence& val, mutable_sequence::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size);
+        bool row_cast(const mutable_sequences& val, mutable_sequences::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size);
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,31 +180,31 @@ namespace boost {
         public:
 
 
-            typedef const_sequence::iterator iterator_type;
+            typedef const_sequences::iterator iterator_type;
 
             static bool __input__() {
                 return false;
             }
 
-            base_output_coder(encoding_rule rl = NULL_ENCODING) : listbuffers_(new const_sequence()), size_(0) {
+            base_output_coder(encoding_rule rl = NULL_ENCODING) : listbuffers_(new const_sequences()), size_(0) {
             }
 
             virtual ~base_output_coder() {
             }
 
-            const const_sequence& buffers() const {
+            const const_sequences& buffers() const {
                 return *listbuffers_;
             }
 
-            const_sequence& buffers() {
+            const_sequences& buffers() {
                 return *listbuffers_;
             }
 
-            const_sequence_ptr buffers_ptr() const {
+            const_sequences_ptr buffers_ptr() const {
                 return listbuffers_;
             }
 
-            const_sequence_ptr buffers_ptr() {
+            const_sequences_ptr buffers_ptr() {
                 return listbuffers_;
             }
 
@@ -212,7 +212,7 @@ namespace boost {
 
             iterator_type add(const raw_type& vl, iterator_type it);
 
-            void add(const mutable_sequence& vl);
+            void add(const mutable_sequences& vl);
 
             iterator_type last() {
                 return listbuffers_->empty() ? listbuffers_->end() : (--(listbuffers_->end()));
@@ -252,7 +252,7 @@ namespace boost {
 
         private:
 
-            const_sequence_ptr listbuffers_;
+            const_sequences_ptr listbuffers_;
             vect_raw_type_ptr rows_vect;
             std::size_t size_;
         };
@@ -265,29 +265,29 @@ namespace boost {
         class base_input_coder {
         public:
 
-            typedef mutable_sequence::iterator iterator_type;
+            typedef mutable_sequences::iterator iterator_type;
 
             static bool __input__() {
                 return true;
             }
 
-            base_input_coder() : listbuffers_(new mutable_sequence()), size_(0) {
+            base_input_coder() : listbuffers_(new mutable_sequences()), size_(0) {
             }
 
             virtual ~base_input_coder() {
             }
 
-            const mutable_sequence& buffers() const {
+            const mutable_sequences& buffers() const {
                 return *listbuffers_;
             }
 
-            mutable_sequence& buffers() {
+            mutable_sequences& buffers() {
                 return *listbuffers_;
             }
 
             void add(const raw_type& vl);
 
-            void add(const const_sequence& vl);
+            void add(const const_sequences& vl);
 
             void pop_front(std::size_t sz) {
                 decsize(pop_frontlist(*listbuffers_, sz));
@@ -331,7 +331,7 @@ namespace boost {
 
         private:
 
-            mutable_sequence_ptr listbuffers_;
+            mutable_sequences_ptr listbuffers_;
             vect_raw_type_ptr rows_vect;
             std::size_t size_;
 
@@ -371,7 +371,7 @@ namespace boost {
                 return output_;
             }
 
-            const const_sequence& request() const {
+            const const_sequences& request() const {
                 return output_->buffers();
             }
 
@@ -421,7 +421,7 @@ namespace boost {
 
 
 
-        typedef boost::shared_ptr<base_coder> isocoder_ptr;
+        typedef boost::shared_ptr<base_coder> asncoder_ptr;
 
         template<typename INPUT_TYPE = base_input_coder, typename OUTPUT_TYPE = base_output_coder>
                 class isocoder_templ : public base_coder {
@@ -462,8 +462,8 @@ namespace boost {
 
         typedef isocoder_templ<> simple_trans_data;
 
-        static inline isocoder_ptr create_simple_data(const std::string& val) {
-            isocoder_ptr tmp = isocoder_ptr(new simple_trans_data());
+        static inline asncoder_ptr create_simple_data(const std::string& val) {
+            asncoder_ptr tmp = asncoder_ptr(new simple_trans_data());
             tmp->request_str(val);
             return tmp;
         }
@@ -472,43 +472,43 @@ namespace boost {
 
 
 
-        std::ostream& operator<<(std::ostream& stream, const const_sequence& self);
+        std::ostream& operator<<(std::ostream& stream, const const_sequences& self);
 
-        std::ofstream& operator<<(std::ofstream& stream, const const_sequence& self);
+        std::ofstream& operator<<(std::ofstream& stream, const const_sequences& self);
 
         std::ostream& operator<<(std::ostream& stream, const base_output_coder& vl);
 
         std::ofstream& operator<<(std::ofstream& stream, const base_output_coder& vl);
 
-        std::ostream& operator<<(std::ostream& stream, const mutable_sequence& vl);
+        std::ostream& operator<<(std::ostream& stream, const mutable_sequences& vl);
 
-        std::ofstream& operator<<(std::ofstream& stream, const mutable_sequence& vl);
+        std::ofstream& operator<<(std::ofstream& stream, const mutable_sequences& vl);
 
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////            
-        //   class  send_buffer_impl 
+        //   class  base_senders_buffer 
 
-        class send_buffer_impl {
+        class base_senders_buffer {
         public:
 
-            send_buffer_impl() : buffer_(new const_sequence()), size_(0) {
+            base_senders_buffer() : buffer_(new const_sequences()), size_(0) {
             }
 
-            send_buffer_impl(const_sequence_ptr bf) : buffer_(bf), size_(0) {
+            base_senders_buffer(const_sequences_ptr bf) : buffer_(bf), size_(0) {
             }
 
-            virtual ~send_buffer_impl() {
+            virtual ~base_senders_buffer() {
             }
 
-            const const_sequence& pop() {
+            const const_sequences& pop() {
                 return *buffer_;
             }
 
             std::size_t size(std::size_t sz = 0);
 
-            std::size_t receivesize() const {
+            std::size_t receive_size() const {
                 return buffer_size(*buffer_);
             }
 
@@ -518,21 +518,21 @@ namespace boost {
 
         protected:
 
-            const const_sequence& buff() const {
+            const const_sequences& buff() const {
                 return *buffer_;
             }
 
-            const_sequence& buff() {
+            const_sequences& buff() {
                 return *buffer_;
             }
 
         private:
-            const_sequence_ptr buffer_;
+            const_sequences_ptr buffer_;
             std::size_t size_;
         };
 
 
-        typedef boost::shared_ptr<send_buffer_impl> send_buffer_ptr;
+        typedef boost::shared_ptr<base_senders_buffer> senders_buffer_ptr;
 
 
 

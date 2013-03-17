@@ -316,7 +316,7 @@ namespace boost {
 
                 bool nullPI(varid_type cod) const;
 
-                const_sequence_ptr sequence(isocoder_ptr seq) const;
+                const_sequences_ptr sequence(asncoder_ptr seq) const;
 
             private:
 
@@ -408,35 +408,35 @@ namespace boost {
             //negotiate_x225impl_option
             bool negotiate_x225impl_option(protocol_options& self, const protocol_options& dist);
 
-            const_sequence_ptr generate_header_CN(const protocol_options& opt, isocoder_ptr data); //CONNECT SPDU
+            const_sequences_ptr generate_header_CN(const protocol_options& opt, asncoder_ptr data); //CONNECT SPDU
 
-            const_sequence_ptr generate_header_AC(const protocol_options& opt, isocoder_ptr data); //ACCEPT SPDU
+            const_sequences_ptr generate_header_AC(const protocol_options& opt, asncoder_ptr data); //ACCEPT SPDU
 
-            const_sequence_ptr generate_header_RF(const protocol_options& opt, isocoder_ptr data); //REFUSE  SPDU        
+            const_sequences_ptr generate_header_RF(const protocol_options& opt, asncoder_ptr data); //REFUSE  SPDU        
 
-            const_sequence_ptr generate_header_FN(const protocol_options& opt, isocoder_ptr data); //FINISH SPDU            
+            const_sequences_ptr generate_header_FN(const protocol_options& opt, asncoder_ptr data); //FINISH SPDU            
 
-            const_sequence_ptr generate_header_DN(const protocol_options& opt, isocoder_ptr data); //DISCONNECT  SPDU          
+            const_sequences_ptr generate_header_DN(const protocol_options& opt, asncoder_ptr data); //DISCONNECT  SPDU          
 
-            const_sequence_ptr generate_header_AB(const protocol_options& opt, isocoder_ptr data); //ABORT SPDU                     
+            const_sequences_ptr generate_header_AB(const protocol_options& opt, asncoder_ptr data); //ABORT SPDU                     
 
-            const_sequence_ptr generate_header_AA(const protocol_options& opt, isocoder_ptr data); //ABORT ACCEPT  SPDU                              
+            const_sequences_ptr generate_header_AA(const protocol_options& opt, asncoder_ptr data); //ABORT ACCEPT  SPDU                              
 
-            const_sequence_ptr generate_header_NF(const protocol_options& opt, isocoder_ptr data); //NOT FINISH  SPDU                      
+            const_sequences_ptr generate_header_NF(const protocol_options& opt, asncoder_ptr data); //NOT FINISH  SPDU                      
 
 
 
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //   data_send_buffer_impl    //
+            //   data_senders_buffer    //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////           
 
             template <typename ConstBufferSequence>
-            class data_send_buffer_impl : public send_buffer_impl {
+            class data_senders_buffer : public base_senders_buffer {
             public:
 
-                data_send_buffer_impl(const ConstBufferSequence& bf) : send_buffer_impl() {
+                data_senders_buffer(const ConstBufferSequence& bf) : base_senders_buffer() {
                     construct(bf);
                 }
 
@@ -470,7 +470,7 @@ namespace boost {
 
                 }
 
-                send_seq(spdu_type type, const protocol_options& opt, isocoder_ptr data) :
+                send_seq(spdu_type type, const protocol_options& opt, asncoder_ptr data) :
                 type_(type) {
                     switch (type) {
                         case CN_SPDU_ID:
@@ -521,7 +521,7 @@ namespace boost {
                     return (!buf_) || (buf_->ready());
                 }
 
-                const const_sequence& pop() {
+                const const_sequences& pop() {
                     return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
                 }
 
@@ -529,8 +529,8 @@ namespace boost {
                     return ready() ? 0 : buf_->size(sz);
                 }
 
-                std::size_t receivesize() const {
-                    return ready() ? 0 : buf_->receivesize();
+                std::size_t receive_size() const {
+                    return ready() ? 0 : buf_->receive_size();
                 }
 
                 spdu_type type() const {
@@ -542,36 +542,36 @@ namespace boost {
 
             protected:
 
-                void constructCN(const protocol_options& opt, isocoder_ptr data) {
-                    buf_ = send_buffer_ptr(new send_buffer_impl(generate_header_CN(opt, data)));
+                void constructCN(const protocol_options& opt, asncoder_ptr data) {
+                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_CN(opt, data)));
                 }
 
-                void constructAC(const protocol_options& opt, isocoder_ptr data) {
-                    buf_ = send_buffer_ptr(new send_buffer_impl(generate_header_AC(opt, data)));
+                void constructAC(const protocol_options& opt, asncoder_ptr data) {
+                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_AC(opt, data)));
                 }
 
-                void constructRF(const protocol_options& opt, isocoder_ptr data) {
-                    buf_ = send_buffer_ptr(new send_buffer_impl(generate_header_RF(opt, data)));
+                void constructRF(const protocol_options& opt, asncoder_ptr data) {
+                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_RF(opt, data)));
                 }
 
-                void constructFN(const protocol_options& opt, isocoder_ptr data) {
-                    buf_ = send_buffer_ptr(new send_buffer_impl(generate_header_FN(opt, data)));
+                void constructFN(const protocol_options& opt, asncoder_ptr data) {
+                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_FN(opt, data)));
                 }
 
-                void constructAB(const protocol_options& opt, isocoder_ptr data) {
-                    buf_ = send_buffer_ptr(new send_buffer_impl(generate_header_AB(opt, data)));
+                void constructAB(const protocol_options& opt, asncoder_ptr data) {
+                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_AB(opt, data)));
                 }
 
-                void constructDN(const protocol_options& opt, isocoder_ptr data) {
-                    buf_ = send_buffer_ptr(new send_buffer_impl(generate_header_DN(opt, data)));
+                void constructDN(const protocol_options& opt, asncoder_ptr data) {
+                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_DN(opt, data)));
                 }
 
-                void constructAA(const protocol_options& opt, isocoder_ptr data) {
-                    buf_ = send_buffer_ptr(new send_buffer_impl(generate_header_AA(opt, data)));
+                void constructAA(const protocol_options& opt, asncoder_ptr data) {
+                    buf_ = senders_buffer_ptr(new base_senders_buffer(generate_header_AA(opt, data)));
                 }
 
                 spdu_type type_;
-                send_buffer_ptr buf_;
+                senders_buffer_ptr buf_;
             };
 
             typedef boost::shared_ptr<send_seq> send_seq_ptr;
@@ -598,7 +598,7 @@ namespace boost {
             protected:
 
                 void constructDT(const ConstBufferSequence& buff) {
-                    buf_ = send_buffer_ptr(new data_send_buffer_impl<ConstBufferSequence > (buff));
+                    buf_ = senders_buffer_ptr(new data_senders_buffer<ConstBufferSequence > (buff));
                 }
 
             };
@@ -732,12 +732,12 @@ namespace boost {
                 //  Constructors  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(), isocoder_ptr coder = isocoder_ptr(new default_coder_type()))
+                explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(), asncoder_ptr coder = asncoder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder), session_version_(VERSION2) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
-                        const endpoint_type& endpoint, const session_selector& ssel = session_selector(), isocoder_ptr coder = isocoder_ptr(new default_coder_type()))
+                        const endpoint_type& endpoint, const session_selector& ssel = session_selector(), asncoder_ptr coder = asncoder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder), session_version_(VERSION2) {
                 }
 
@@ -1579,11 +1579,11 @@ namespace boost {
                     async_receive<MutableBufferSequence, ReadHandler > (buffers, 0, handler);
                 }
 
-                isocoder_ptr rootcoder() {
+                asncoder_ptr rootcoder() {
                     return rootcoder_;
                 }
 
-                isocoder_ptr rootcoder() const {
+                asncoder_ptr rootcoder() const {
                     return rootcoder_;
                 }
 
@@ -1862,7 +1862,7 @@ namespace boost {
                 }
 
                 protocol_options option_;
-                isocoder_ptr rootcoder_;
+                asncoder_ptr rootcoder_;
                 octet_type session_version_;
 
             };

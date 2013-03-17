@@ -160,8 +160,8 @@ namespace boost {
         using boost::asio::mutable_buffer;
         using boost::asio::mutable_buffers_1;
 
-        using  boost::itu::mutable_sequence;
-        using  boost::itu::const_sequence;
+        using  boost::itu::mutable_sequences;
+        using  boost::itu::const_sequences;
         using  boost::itu::encoding_rule;
         using  boost::itu::octet_type;        
         using  boost::itu::raw_type;        

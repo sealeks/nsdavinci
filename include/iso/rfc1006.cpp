@@ -528,10 +528,10 @@ namespace boost {
 
             ///////////////////////////////////////////////////////////////////////////////////////                 
 
-            class atom_send_buffer : public send_buffer_impl {
+            class atom_send_buffer : public base_senders_buffer {
             public:
 
-                atom_send_buffer(const raw_type& send) : send_buffer_impl(), send_(send) {
+                atom_send_buffer(const raw_type& send) : base_senders_buffer(), send_(send) {
                     buff().push_back(const_buffer(&send_.front(), send_.size()));
                 }
 
@@ -544,19 +544,19 @@ namespace boost {
             ///////////////////////////////////////////////////////////////////////////////////////
 
             void sender::constructCR(const protocol_options& opt) {
-                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CR(opt)));
+                buf_ = senders_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CR(opt)));
             }
 
             void sender::constructCC(const protocol_options& opt) {
-                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CC(opt)));
+                buf_ = senders_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CC(opt)));
             }
 
             void sender::constructER(int16_t dst, const raw_type& errorseq, octet_type err) {
-                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_ER(dst, errorseq, err)));
+                buf_ = senders_buffer_ptr(new atom_send_buffer(generate_header_TKPT_ER(dst, errorseq, err)));
             }
 
             void sender::constructDR(int16_t dst, int16_t src, octet_type rsn) {
-                buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_DR(dst, src, rsn)));
+                buf_ = senders_buffer_ptr(new atom_send_buffer(generate_header_TKPT_DR(dst, src, rsn)));
             }
 
         }
