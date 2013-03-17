@@ -543,19 +543,19 @@ namespace boost {
 
             ///////////////////////////////////////////////////////////////////////////////////////
 
-            void send_seq::constructCR(const protocol_options& opt) {
+            void sender::constructCR(const protocol_options& opt) {
                 buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CR(opt)));
             }
 
-            void send_seq::constructCC(const protocol_options& opt) {
+            void sender::constructCC(const protocol_options& opt) {
                 buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_CC(opt)));
             }
 
-            void send_seq::constructER(int16_t dst, const raw_type& errorseq, octet_type err) {
+            void sender::constructER(int16_t dst, const raw_type& errorseq, octet_type err) {
                 buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_ER(dst, errorseq, err)));
             }
 
-            void send_seq::constructDR(int16_t dst, int16_t src, octet_type rsn) {
+            void sender::constructDR(int16_t dst, int16_t src, octet_type rsn) {
                 buf_ = send_buffer_ptr(new atom_send_buffer(generate_header_TKPT_DR(dst, src, rsn)));
             }
 

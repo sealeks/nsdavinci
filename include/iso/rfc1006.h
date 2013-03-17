@@ -303,37 +303,37 @@ namespace boost {
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  rfc1006 send_seq   //
+            //  rfc1006 sender   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
 
-            class send_seq {
+            class sender {
             public:
 
-                send_seq(tpdu_type type) :
+                sender(tpdu_type type) :
                 type_(type) {
                 }
 
-                send_seq(const protocol_options& opt) :
+                sender(const protocol_options& opt) :
                 type_(CR) {
                     constructCR(opt);
                 }
 
-                send_seq(int16_t dst, const protocol_options& opt) :
+                sender(int16_t dst, const protocol_options& opt) :
                 type_(CC) {
                     constructCC(opt);
                 }
 
-                send_seq(int16_t dst, const raw_type& errorreason, octet_type err) :
+                sender(int16_t dst, const raw_type& errorreason, octet_type err) :
                 type_(ER) {
                     constructER(dst, errorreason, err);
                 }
 
-                send_seq(int16_t dst, int16_t src, octet_type rsn) :
+                sender(int16_t dst, int16_t src, octet_type rsn) :
                 type_(DR) {
                     constructDR(dst, src, rsn);
                 }
 
-                virtual ~send_seq() {
+                virtual ~sender() {
                 }
 
                 bool ready() const {
@@ -374,19 +374,19 @@ namespace boost {
                 send_buffer_ptr buf_;
             };
 
-            typedef boost::shared_ptr<send_seq> send_seq_ptr;
+
             
             
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  rfc1006 send_seq_data   //
+            //  rfc1006 data_sender   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
             
 
             template <typename ConstBufferSequence >
-            class send_seq_data : public send_seq {
+            class data_sender : public sender {
             public:
 
-                send_seq_data(const ConstBufferSequence& buff, tpdu_size pdusize) : send_seq(DT) {
+                data_sender(const ConstBufferSequence& buff, tpdu_size pdusize) : sender(DT) {
                     constructDT(buff, pdusize);
                 }
 
@@ -489,7 +489,7 @@ namespace boost {
             };
 
 
-            typedef boost::shared_ptr<receiver> receiver_ptr;
+
 
 
 
@@ -500,6 +500,9 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
             class stream_socket : public boost::asio::basic_stream_socket<boost::asio::ip::tcp > {
+                
+            typedef boost::shared_ptr<receiver> receiver_ptr;
+            typedef boost::shared_ptr<sender> sender_ptr;
                 
             public:
 
@@ -596,7 +599,7 @@ namespace boost {
                     socket_(socket),
                     handler_(handler),
                     state_(request),
-                    send_(send_seq_ptr(new send_seq(socket->transport_option()))),
+                    send_(sender_ptr(new sender(socket->transport_option()))),
                     receive_(new receiver()) {
                     }
 
@@ -685,7 +688,7 @@ namespace boost {
                     stream_socket* socket_;
                     ConnectHandler handler_;
                     stateconnection state_;
-                    send_seq_ptr send_;
+                    sender_ptr send_;
                     receiver_ptr receive_;
 
                 };
@@ -748,7 +751,7 @@ namespace boost {
                     release_op(stream_socket* socket, ReleaseHandler handler, octet_type rsn) :
                     socket_(socket),
                     handler_(handler),
-                    send_(send_seq_ptr(new send_seq(socket->transport_option().dst_tsap(), socket->transport_option().src_tsap(), rsn))) {
+                    send_(sender_ptr(new sender(socket->transport_option().dst_tsap(), socket->transport_option().src_tsap(), rsn))) {
                     }
 
                     void run() {
@@ -771,7 +774,7 @@ namespace boost {
                 private:
                     stream_socket* socket_;
                     ReleaseHandler handler_;
-                    send_seq_ptr send_;
+                    sender_ptr send_;
                 };
 
 
@@ -893,13 +896,13 @@ namespace boost {
                         protocol_options options_= socket_->transport_option();
                         octet_type error_accept = 0;
                         if (!negotiate_rfc1006impl_option(options_, receive_->options(), error_accept)) {
-                            send_ = send_seq_ptr(new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
+                            send_ = sender_ptr(new sender(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
                             state(refuse);
                             operator()(ec, 0);
                             return;
                         }
                         tpdusize = options_.pdusize();
-                        send_ = send_seq_ptr(new send_seq(1, options_));
+                        send_ = sender_ptr(new sender(1, options_));
                         state(send);
                         operator()(ec, 0);
                     }
@@ -922,7 +925,7 @@ namespace boost {
                     stream_socket* socket_;
                     CheckAcceptHandler handler_;
                     stateconnection state_;
-                    send_seq_ptr send_;
+                    sender_ptr send_;
                     receiver_ptr receive_;
                     tpdu_size  tpdusize;
 
@@ -1005,7 +1008,7 @@ namespace boost {
                             const ConstBufferSequence& buffers, message_flags flags) :
                     socket_(socket),
                     handler_(handler),
-                    in_(send_seq_ptr(new send_seq_data<ConstBufferSequence>(buffers, socket->pdusize()))),
+                    in_(sender_ptr(new data_sender<ConstBufferSequence>(buffers, socket->pdusize()))),
                     flags_(flags),
                     send_lower_(boost::asio::buffer_size(buffers)) {
                     }
@@ -1033,7 +1036,7 @@ namespace boost {
 
                     stream_socket* socket_;
                     SendHandler handler_;
-                    send_seq_ptr in_;
+                    sender_ptr in_;
                     message_flags flags_;
                     std::size_t send_lower_;
 
@@ -1291,7 +1294,7 @@ namespace boost {
                     if (get_service().connect(get_implementation(), peer_endpoint, ec))
                         return ec;
 
-                    send_seq_ptr send_(send_seq_ptr(new send_seq(transport_option())));
+                    sender_ptr send_(sender_ptr(new sender(transport_option())));
                     while (!ec && !send_->ready())
                         send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
                     if (ec)
@@ -1332,7 +1335,7 @@ namespace boost {
 
                 error_code release_impl(error_code& ec, octet_type rsn) {
                     if (is_open()) {
-                        send_seq_ptr send_(send_seq_ptr(new send_seq(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
+                        sender_ptr send_(sender_ptr(new sender(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                         while (!ec && !send_->ready())
                             send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
                          error_code ecc;
@@ -1351,7 +1354,7 @@ namespace boost {
                     }
                     if (ec)
                         return ec;
-                    send_seq_ptr send_;
+                    sender_ptr send_;
                     protocol_options options_ = transport_option();
                     if (receive_->type() != CR || receive_->state() != receiver::complete) {
                         error_code ecc;
@@ -1361,10 +1364,10 @@ namespace boost {
                     octet_type error_accept = 0;
                     if (!negotiate_rfc1006impl_option(options_, receive_->options(), error_accept)) {
                         canseled = true;
-                        send_ = send_seq_ptr(new send_seq(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
+                        send_ = sender_ptr(new sender(receive_->options().src_tsap(), options_.src_tsap(), error_accept));
                     }
                     else {
-                        send_ = send_seq_ptr(new send_seq(1, options_));
+                        send_ = sender_ptr(new sender(1, options_));
                     }
                     while (!ec && !send_->ready())
                         send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
@@ -1386,7 +1389,7 @@ namespace boost {
                 template <typename ConstBufferSequence>
                 std::size_t send_impl(const ConstBufferSequence& buffers,
                         socket_base::message_flags flags, error_code& ec) {
-                    send_seq_ptr send_(new send_seq_data<ConstBufferSequence > (buffers, pdusize()));
+                    sender_ptr send_(new data_sender<ConstBufferSequence > (buffers, pdusize()));
                     while (!ec && !send_->ready())
                         send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
                     return ec ? 0 : boost::asio::buffer_size(buffers);
