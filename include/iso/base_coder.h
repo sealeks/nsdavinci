@@ -110,7 +110,7 @@ namespace boost {
         const const_sequences NULL_CONST_SEQUENCE = const_sequences();
 
 
-        oid_type encoding_to_oid(encoding_rule rule);
+        const oid_type& encoding_to_oid(encoding_rule rule);
 
         encoding_rule oid_to_encoding(const oid_type& val);
 
@@ -245,7 +245,7 @@ namespace boost {
                 return NULL_ENCODING;
             }
 
-            oid_type transfer_syntax() const {
+            const oid_type& transfer_syntax() const {
                 return encoding_to_oid(rule());
             }
 
@@ -408,7 +408,7 @@ namespace boost {
                 return output_->rule();
             }
 
-            oid_type transfer_syntax() const {
+            const oid_type& transfer_syntax() const {
                 return output_->transfer_syntax();
             }
 
@@ -541,6 +541,8 @@ namespace boost {
     }
 
     namespace asn1 {
+        
+        const boost::asn1::oid_type NULL_ENCODING_OID = boost::asn1::oid_type();
 
         const boost::array<boost::asn1::oidindx_type, 3 > BASIC_ENCODING_ARR = {2, 1, 1};
         const boost::asn1::oid_type BASIC_ENCODING_OID = boost::asn1::oid_type(BASIC_ENCODING_ARR);

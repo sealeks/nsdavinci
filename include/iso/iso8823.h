@@ -70,8 +70,8 @@ namespace boost {
 
                 bool encoding(encoding_rule val);
 
-                oid_type transfer_syntax() const {
-                    return archiver_ ? archiver_->transfer_syntax() : oid_type();
+                const oid_type& transfer_syntax() const {
+                    return archiver_ ? archiver_->transfer_syntax() : boost::asn1::NULL_ENCODING_OID;
                 }
 
                 bool transfer_syntax(const oid_type& val);
