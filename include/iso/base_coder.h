@@ -343,16 +343,16 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class base_coder {
+        class basic_coder {
         public:
 
             typedef boost::shared_ptr<base_input_coder> input_coder_ptr;
             typedef boost::shared_ptr<base_output_coder> output_coder_ptr;
 
-            base_coder(base_input_coder* in, base_output_coder* out) : input_(in), output_(out) {
+            basic_coder(base_input_coder* in, base_output_coder* out) : input_(in), output_(out) {
             }
 
-            virtual ~base_coder() {
+            virtual ~basic_coder() {
             }
 
             input_coder_ptr in() {
@@ -400,7 +400,7 @@ namespace boost {
                 return oid_type();
             }
 
-            friend bool operator<(const base_coder& ls, const base_coder& rs) {
+            friend bool operator<(const basic_coder& ls, const basic_coder& rs) {
                 return ls<rs;
             }
 
@@ -421,16 +421,16 @@ namespace boost {
 
 
 
-        typedef boost::shared_ptr<base_coder> asn_coder_ptr;
+        typedef boost::shared_ptr<basic_coder> asn_coder_ptr;
 
         template<typename INPUT_TYPE = base_input_coder, typename OUTPUT_TYPE = base_output_coder>
-                class isocoder_templ : public base_coder {
+                class asn_coder_templ : public basic_coder {
         public:
 
             typedef INPUT_TYPE in_archive_type;
             typedef OUTPUT_TYPE out_archive_type;
 
-            isocoder_templ(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING) : base_coder(new in_archive_type(), new out_archive_type(rul)), abstract_syntax_(asx) {
+            asn_coder_templ(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING) : basic_coder(new in_archive_type(), new out_archive_type(rul)), abstract_syntax_(asx) {
             }
 
             in_archive_type& input() {
@@ -460,7 +460,7 @@ namespace boost {
 
         };
 
-        typedef isocoder_templ<> simple_trans_data;
+        typedef asn_coder_templ<> simple_trans_data;
 
         static inline asn_coder_ptr create_simple_data(const std::string& val) {
             asn_coder_ptr tmp = asn_coder_ptr(new simple_trans_data());
