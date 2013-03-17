@@ -724,7 +724,7 @@ namespace boost {
             class stream_socket : public boost::itu::rfc1006::socket {
                 
                 typedef boost::itu::rfc1006::socket super_type;
-                typedef boost::itu::isocoder_templ<> default_coder_type;
+                typedef boost::itu::asn_coder_templ<> default_coder_type;
 
                 typedef boost::shared_ptr<receiver> receiver_ptr;
                 typedef boost::shared_ptr<sender> sender_ptr;

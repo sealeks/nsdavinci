@@ -38,7 +38,7 @@ namespace boost {
 
             typedef boost::asn1::x690::input_coder x690_input_coder_type;
             typedef boost::asn1::x690::output_coder x690_output_coder_type;
-            typedef boost::itu::isocoder_templ<x690_input_coder_type, x690_output_coder_type> x690_archive;
+            typedef boost::itu::asn_coder_templ<x690_input_coder_type, x690_output_coder_type> x690_archive;
 
             typedef std::set<oid_type> transfer_synaxes_type;
 
@@ -91,7 +91,7 @@ namespace boost {
                             case DER_ENCODING:
                             case CER_ENCODING:
                             {
-                                data.serialize(boost::static_pointer_cast<x690_archive, base_coder > (archiver_)->output());
+                                data.serialize(boost::static_pointer_cast<x690_archive, basic_coder > (archiver_)->output());
                                 return true;
                             };
                             default:
@@ -109,7 +109,7 @@ namespace boost {
                             case DER_ENCODING:
                             case CER_ENCODING:
                             {
-                                data.serialize(boost::static_pointer_cast<x690_archive, base_coder > (archiver_)->input());
+                                data.serialize(boost::static_pointer_cast<x690_archive, basic_coder > (archiver_)->input());
                                 return true;
                             };
                             default:
@@ -669,11 +669,11 @@ namespace boost {
                 }
 
                 presentation_asn_coder_ptr coder() {
-                    return  boost::static_pointer_cast<presentation_coder_type, base_coder >(super_type::rootcoder());
+                    return  boost::static_pointer_cast<presentation_coder_type, basic_coder >(super_type::rootcoder());
                 }
 
                 presentation_asn_coder_ptr coder() const {
-                    return boost::static_pointer_cast<presentation_coder_type, base_coder >(super_type::rootcoder());
+                    return boost::static_pointer_cast<presentation_coder_type, basic_coder >(super_type::rootcoder());
                 }
 
                 presentation_selector& selector() {

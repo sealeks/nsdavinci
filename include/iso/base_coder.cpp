@@ -375,7 +375,7 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////  
 
-        std::string base_coder::request_str() const {
+        std::string basic_coder::request_str() const {
             const const_sequences& tmp = request();
             std::string rslt;
             for (const_sequences::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
@@ -387,12 +387,12 @@ namespace boost {
             return rslt;
         };
 
-        void base_coder::request_str(const std::string& val) {
+        void basic_coder::request_str(const std::string& val) {
             output_->clear();
             output_->add(raw_type(val.begin(), val.end()));
         };
 
-        std::string base_coder::respond_str() const {
+        std::string basic_coder::respond_str() const {
             const mutable_sequences& tmp = input_->buffers();
             std::string rslt;
             for (mutable_sequences::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
@@ -404,7 +404,7 @@ namespace boost {
             return rslt;
         };
 
-        void base_coder::respond_str(const std::string& val) {
+        void basic_coder::respond_str(const std::string& val) {
             input_->clear();
             input_->add(raw_type(val.begin(), val.end()));
         };
