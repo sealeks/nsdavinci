@@ -81,13 +81,13 @@ namespace boost {
 
     namespace itu {
 
-        oid_type encoding_to_oid(encoding_rule rule) {
+        const oid_type& encoding_to_oid(encoding_rule rule) {
             switch (rule) {
                 case BER_ENCODING: return boost::asn1::BASIC_ENCODING_OID;
                 case CER_ENCODING: return boost::asn1::CANONICAL_ENCODING_OID;
                 case DER_ENCODING: return boost::asn1::DISTINGUISH_ENCODING_OID;
             }
-            return oid_type();
+            return boost::asn1::NULL_ENCODING_OID;
         }
 
         encoding_rule oid_to_encoding(const oid_type& val) {
