@@ -96,9 +96,9 @@ namespace boost {
 
         typedef int contex_id_type;
         typedef int8_t octet_type;
-        typedef std::vector<octet_type> raw_type;
-        typedef boost::shared_ptr<raw_type> raw_type_ptr;
-        typedef std::vector<raw_type_ptr> vect_raw_type_ptr;
+        typedef std::vector<octet_type> octet_sequnce;
+        typedef boost::shared_ptr<octet_sequnce> octet_sequnce_ptr;
+        typedef std::vector<octet_sequnce_ptr> vect_octet_sequnce_ptr;
 
         typedef std::list<mutable_buffer> mutable_sequences;
         typedef boost::shared_ptr<mutable_sequences> mutable_sequences_ptr;
@@ -116,27 +116,27 @@ namespace boost {
 
         std::string binary_to_hexsequence_debug(const std::string& vl);
 
-        inline static raw_type buffer_to_raw(const mutable_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
+        inline static octet_sequnce buffer_to_raw(const mutable_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
             std::size_t buffsize = boost::asio::buffer_size(buff);
             len = (buffsize>beg)  ?  ( ((buffsize>(beg+len)) && len) ? len : (buffsize -beg)) : 0;
-            return len ? raw_type(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
-                    boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len)) : raw_type();
+            return len ? octet_sequnce(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
+                    boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len)) : octet_sequnce();
         }
 
-        inline static raw_type buffer_to_raw(const const_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
+        inline static octet_sequnce buffer_to_raw(const const_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
             std::size_t buffsize = boost::asio::buffer_size(buff);
             len = (buffsize>beg)  ?  ( ((buffsize>(beg+len)) && len) ? len : (buffsize -beg)) : 0;
-            return len ? raw_type(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
-                    boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len)) : raw_type();
+            return len ? octet_sequnce(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
+                    boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len)) : octet_sequnce();
         }
 
-        template <typename T> raw_type
+        template <typename T> octet_sequnce
         inline static inttype_to_raw(T vl) {
-            return raw_type(((const octet_type*) &vl), ((const octet_type*) &vl) + sizeof (T));
+            return octet_sequnce(((const octet_type*) &vl), ((const octet_type*) &vl) + sizeof (T));
         }
 
         template <typename T>
-        inline static bool raw_to_inttype(const raw_type& dblk, T& vl) {
+        inline static bool raw_to_inttype(const octet_sequnce& dblk, T& vl) {
             if (sizeof (vl) > dblk.size()) return false;
             vl = *(reinterpret_cast<T*> (const_cast<octet_type*> (&dblk.front())));
             return true;
@@ -151,16 +151,16 @@ namespace boost {
         }
 
         template <typename T>
-        inline static T endiancnv_copy(const raw_type& vl) {
+        inline static T endiancnv_copy(const octet_sequnce& vl) {
             T tmp = 0;
             return raw_to_inttype<T > (vl, tmp) ? (((tmp >> 8) & 0xFF) | (0xFF00 & (tmp << 8))) : 0;
         }
 
-        inline static void raw_back_insert(raw_type& dst, const raw_type& src) {
+        inline static void raw_back_insert(octet_sequnce& dst, const octet_sequnce& src) {
             dst.insert(dst.end(), src.begin(), src.end());
         }
 
-        inline static void raw_front_insert(raw_type& dst, const raw_type& src) {
+        inline static void raw_front_insert(octet_sequnce& dst, const octet_sequnce& src) {
             dst.insert(dst.begin(), src.begin(), src.end());
         }
 
@@ -170,7 +170,7 @@ namespace boost {
 
         bool find_eof(const mutable_sequences& val, mutable_sequences::const_iterator bit, std::size_t& rslt, std::size_t start = 0);
 
-        bool row_cast(const mutable_sequences& val, mutable_sequences::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size);
+        bool row_cast(const mutable_sequences& val, mutable_sequences::const_iterator bit, octet_sequnce& raw, std::size_t start, std::size_t size);
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,9 +208,9 @@ namespace boost {
                 return listbuffers_;
             }
 
-            iterator_type add(const raw_type& vl);
+            iterator_type add(const octet_sequnce& vl);
 
-            iterator_type add(const raw_type& vl, iterator_type it);
+            iterator_type add(const octet_sequnce& vl, iterator_type it);
 
             void add(const mutable_sequences& vl);
 
@@ -228,7 +228,7 @@ namespace boost {
                 size_ = 0;
             }
 
-            bool bind(raw_type& vl);
+            bool bind(octet_sequnce& vl);
 
             virtual int test_id() {
                 return 0;
@@ -253,7 +253,7 @@ namespace boost {
         private:
 
             const_sequences_ptr listbuffers_;
-            vect_raw_type_ptr rows_vect;
+            vect_octet_sequnce_ptr rows_vect;
             std::size_t size_;
         };
 
@@ -285,7 +285,7 @@ namespace boost {
                 return *listbuffers_;
             }
 
-            void add(const raw_type& vl);
+            void add(const octet_sequnce& vl);
 
             void add(const const_sequences& vl);
 
@@ -309,7 +309,7 @@ namespace boost {
                 return size_;
             }
 
-            bool bind(const raw_type& vl);
+            bool bind(const octet_sequnce& vl);
 
             virtual int test_id() {
                 return 0;
@@ -332,7 +332,7 @@ namespace boost {
         private:
 
             mutable_sequences_ptr listbuffers_;
-            vect_raw_type_ptr rows_vect;
+            vect_octet_sequnce_ptr rows_vect;
             std::size_t size_;
 
         };

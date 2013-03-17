@@ -196,10 +196,10 @@ namespace boost {
 
 
             const octet_type SEND_HEADERarr[] = {'\x1', '\x0', '\x1', '\x0'};
-            const raw_type SEND_HEADER = raw_type(SEND_HEADERarr, SEND_HEADERarr + 4);
+            const octet_sequnce SEND_HEADER = octet_sequnce(SEND_HEADERarr, SEND_HEADERarr + 4);
 
             const octet_type ECHO_NEGOTIATEarr[] = {'e', 'c', 'h', 'o', ':', ' '};
-            const raw_type ECHO_NEGOTIATE = raw_type(ECHO_NEGOTIATEarr, ECHO_NEGOTIATEarr + 6);
+            const octet_sequnce ECHO_NEGOTIATE = octet_sequnce(ECHO_NEGOTIATEarr, ECHO_NEGOTIATEarr + 6);
 
             enum release_type {
                 SESSION_FN_RELEASE = FN_SPDU_ID,
@@ -212,24 +212,24 @@ namespace boost {
 
             const std::size_t triple_npos = static_cast<std::size_t> (0xFFFF + 1);
 
-            inline static raw_type to_triple_size(std::size_t val) {
+            inline static octet_sequnce to_triple_size(std::size_t val) {
                 if (val < 0xFF)
                     return inttype_to_raw(static_cast<uint8_t> (val));
-                raw_type rslt(1, '\xFF');
+                octet_sequnce rslt(1, '\xFF');
                 raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(static_cast<uint16_t> (val))));
                 return rslt;
             }
 
-            inline static bool valid_triple_size(const raw_type& val) {
+            inline static bool valid_triple_size(const octet_sequnce& val) {
                 return !((val.empty()) || (val[0] == '\xFF' && val.size() < 3));
             }
 
             // return triple_npos if no success
-            std::size_t from_triple_size(const raw_type& val, std::size_t& it);
+            std::size_t from_triple_size(const octet_sequnce& val, std::size_t& it);
 
 
-            typedef std::pair<varid_type, raw_type> pi_type;
-            typedef std::map<varid_type, raw_type > pgi_type;
+            typedef std::pair<varid_type, octet_sequnce> pi_type;
+            typedef std::map<varid_type, octet_sequnce > pgi_type;
             typedef std::pair<varid_type, pgi_type> pgis_type;
             typedef std::map<varid_type, pgi_type> spdudata_type; // (it->first==0 contain pi_type in vector
 
@@ -265,7 +265,7 @@ namespace boost {
                     return error_;
                 }
 
-                void setPGI(varid_type cod1, varid_type cod2, const raw_type& val = raw_type());
+                void setPGI(varid_type cod1, varid_type cod2, const octet_sequnce& val = octet_sequnce());
 
                 void setPGI(varid_type cod1, varid_type cod2, int8_t val);
 
@@ -276,7 +276,7 @@ namespace boost {
                 void setPGI(varid_type cod1, varid_type cod2, uint16_t val);
 
 
-                void setPI(varid_type cod, const raw_type& val = raw_type());
+                void setPI(varid_type cod, const octet_sequnce& val = octet_sequnce());
 
                 void setPI(varid_type cod, int8_t val);
 
@@ -287,7 +287,7 @@ namespace boost {
                 void setPI(varid_type cod, uint16_t val);
 
 
-                const raw_type& getPGI(varid_type cod1, varid_type cod2) const;
+                const octet_sequnce& getPGI(varid_type cod1, varid_type cod2) const;
 
                 bool getPGI(varid_type cod1, varid_type cod2, int8_t& val, int8_t def = 0) const;
 
@@ -297,7 +297,7 @@ namespace boost {
 
                 bool getPGI(varid_type cod1, varid_type cod2, uint16_t& val, uint16_t def = 0) const;
 
-                const raw_type& getPI(varid_type cod) const;
+                const octet_sequnce& getPI(varid_type cod) const;
 
                 bool getPI(varid_type cod, int8_t& val, int8_t def = 0) const;
 
@@ -325,13 +325,13 @@ namespace boost {
                 }
 
                 bool parse();
-                bool parse_vars(const raw_type& vl);
-                bool parse_pgi(varid_type tp, const raw_type& vl);
+                bool parse_vars(const octet_sequnce& vl);
+                bool parse_pgi(varid_type tp, const octet_sequnce& vl);
 
-                mutable raw_type seq_;
+                mutable octet_sequnce seq_;
                 spdu_type type_;
                 bool error_;
-                raw_type null_val;
+                octet_sequnce null_val;
                 spdudata_type_ptr value_;
             };
 
@@ -351,17 +351,17 @@ namespace boost {
                 protocol_options(const const_buffer & vl) : vars_(new spdudata(vl)) {
                 }
 
-                protocol_options(const raw_type& called, const raw_type& calling = raw_type());
+                protocol_options(const octet_sequnce& called, const octet_sequnce& calling = octet_sequnce());
 
-                const raw_type & ssap_calling() const;
+                const octet_sequnce & ssap_calling() const;
 
-                void ssap_calling(const raw_type & val);
+                void ssap_calling(const octet_sequnce & val);
 
-                const raw_type & ssap_called() const;
+                const octet_sequnce & ssap_called() const;
 
-                void ssap_called(const raw_type & val);
+                void ssap_called(const octet_sequnce & val);
 
-                const raw_type & data() const;
+                const octet_sequnce & data() const;
 
                 octet_type accept_version() const;
 
@@ -389,7 +389,7 @@ namespace boost {
 
                 void overflow(bool val);
 
-                void refuse_reason(octet_type rsn, const raw_type& val = raw_type());
+                void refuse_reason(octet_type rsn, const octet_sequnce& val = octet_sequnce());
 
                 octet_type refuse_reason() const;
 
@@ -615,7 +615,7 @@ namespace boost {
             class receiver {
             public:
 
-                typedef raw_type data_type;
+                typedef octet_sequnce data_type;
                 typedef boost::shared_ptr< data_type > data_type_ptr;
 
                 enum operation_state {

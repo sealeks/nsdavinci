@@ -112,11 +112,11 @@ namespace boost {
 
             size_t getPDUsize(octet_type sz);
 
-            void generate_TKPTDU(raw_type& val);
+            void generate_TKPTDU(octet_sequnce& val);
 
             typedef std::pair<octet_type, std::size_t> headarvar;
 
-            typedef std::pair<headarvar, raw_type> headarvarvalue;
+            typedef std::pair<headarvar, octet_sequnce> headarvarvalue;
             typedef std::vector<headarvarvalue> headarvarvalues;
 
 
@@ -137,7 +137,7 @@ namespace boost {
                 }
 
                 protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, 
-                const raw_type& called = raw_type(), const raw_type& calling = raw_type());
+                const octet_sequnce& called = octet_sequnce(), const octet_sequnce& calling = octet_sequnce());
 
                 int16_t dst_tsap() const {
                     return dst_;
@@ -159,13 +159,13 @@ namespace boost {
 
                 void pdusize(tpdu_size val);
 
-                const raw_type & tsap_calling() const;
+                const octet_sequnce & tsap_calling() const;
 
-                void tsap_calling(const raw_type & val);
+                void tsap_calling(const octet_sequnce & val);
 
-                const raw_type & tsap_called() const;
+                const octet_sequnce & tsap_called() const;
 
-                void tsap_called(const raw_type & val);
+                void tsap_called(const octet_sequnce & val);
 
                 std::size_t maxpdusize() const;
 
@@ -175,7 +175,7 @@ namespace boost {
                 int16_t dst_;
                 int16_t src_;
                 headarvarvalues vars_;
-                raw_type null_;
+                octet_sequnce null_;
             };
             
 
@@ -185,19 +185,19 @@ namespace boost {
 
             bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error);
 
-            bool parse_vars(const raw_type& str, headarvarvalues& vars);
+            bool parse_vars(const octet_sequnce& str, headarvarvalues& vars);
 
-            raw_type generate_header(octet_type type, int16_t dst, int16_t src, const headarvarvalues& vars = headarvarvalues());
+            octet_sequnce generate_header(octet_type type, int16_t dst, int16_t src, const headarvarvalues& vars = headarvarvalues());
 
-            raw_type generate_header_TKPT_CR(const protocol_options& opt);
+            octet_sequnce generate_header_TKPT_CR(const protocol_options& opt);
 
-            raw_type generate_header_TKPT_CC(const protocol_options& opt);
+            octet_sequnce generate_header_TKPT_CC(const protocol_options& opt);
 
-            raw_type generate_header_TKPT_DR(int16_t dst, int16_t src, octet_type rsn);
+            octet_sequnce generate_header_TKPT_DR(int16_t dst, int16_t src, octet_type rsn);
 
-            raw_type generate_header_TKPT_DC(int16_t dst, int16_t src);
+            octet_sequnce generate_header_TKPT_DC(int16_t dst, int16_t src);
 
-            raw_type generate_header_TKPT_ER(int16_t dst, const raw_type& errorseq = raw_type(), octet_type err = 0);
+            octet_sequnce generate_header_TKPT_ER(int16_t dst, const octet_sequnce& errorseq = octet_sequnce(), octet_type err = 0);
 
 
 
@@ -208,7 +208,7 @@ namespace boost {
  
             // see RFC1006
             const octet_type TKPT_STARTar[] = {'\x3', '\x0'};
-            const raw_type TKPT_START = raw_type(TKPT_STARTar, TKPT_STARTar + 2);           
+            const octet_sequnce TKPT_START = octet_sequnce(TKPT_STARTar, TKPT_STARTar + 2);           
 
             const std::size_t DT_SEND_BUFF_HEADER = 5;
             
@@ -294,8 +294,8 @@ namespace boost {
 
             private:
 
-                raw_type sizenorm_;
-                raw_type sizeeof_;
+                octet_sequnce sizenorm_;
+                octet_sequnce sizeeof_;
             };
             
             
@@ -323,7 +323,7 @@ namespace boost {
                     constructCC(opt);
                 }
 
-                sender(int16_t dst, const raw_type& errorreason, octet_type err) :
+                sender(int16_t dst, const octet_sequnce& errorreason, octet_type err) :
                 type_(ER) {
                     constructER(dst, errorreason, err);
                 }
@@ -366,7 +366,7 @@ namespace boost {
 
                 void constructCC(const protocol_options& opt);
 
-                void constructER(int16_t dst, const raw_type& errorreason, octet_type err);
+                void constructER(int16_t dst, const octet_sequnce& errorreason, octet_type err);
 
                 void constructDR(int16_t dst, int16_t src, octet_type rsn);
 
@@ -480,8 +480,8 @@ namespace boost {
                 tpdu_type type_;
                 error_code errcode_;
                 bool eof_;       
-                raw_type_ptr tkpt_data;
-                raw_type_ptr header_data;         
+                octet_sequnce_ptr tkpt_data;
+                octet_sequnce_ptr header_data;         
                 mutable_buffer tkpt_buff_;                
                 mutable_buffer header_buff_;
                 mutable_buffer userbuff_;

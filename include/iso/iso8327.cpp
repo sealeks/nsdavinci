@@ -12,12 +12,12 @@ namespace boost {
     namespace itu {
         namespace x225impl {
 
-            std::size_t from_triple_size(const raw_type& val, std::size_t& it) {
+            std::size_t from_triple_size(const octet_sequnce& val, std::size_t& it) {
                 if ((val.empty()) || (val[0] == '\xFF' && val.size() < 3))
                     return 0;
                 if (val[0] == '\xFF') {
                     uint16_t sz;
-                    if (raw_to_inttype(raw_type(val.begin() + 1, val.end()), sz)) {
+                    if (raw_to_inttype(octet_sequnce(val.begin() + 1, val.end()), sz)) {
                         sz = endiancnv_copy(sz);
                         it += 2;
                         return static_cast<std::size_t> (sz);
@@ -36,7 +36,7 @@ namespace boost {
 
             //  spdudata 
 
-            void spdudata::setPGI(varid_type cod1, varid_type cod2, const raw_type& val) {
+            void spdudata::setPGI(varid_type cod1, varid_type cod2, const octet_sequnce& val) {
                 spdudata_type::iterator it =value_->find(cod1);
                 if (it == value_->end()) {
                     pgi_type pgi;
@@ -67,7 +67,7 @@ namespace boost {
                 setPGI(cod1, cod2, inttype_to_raw(endiancnv_copy(val)));
             }
 
-            void spdudata::setPI(varid_type cod, const raw_type& val) {
+            void spdudata::setPI(varid_type cod, const octet_sequnce& val) {
 
                 setPGI(0, cod, val);
             }
@@ -92,7 +92,7 @@ namespace boost {
                 setPI(cod, inttype_to_raw(endiancnv_copy(val)));
             }
 
-            const raw_type& spdudata::getPGI(varid_type cod1, varid_type cod2) const {
+            const octet_sequnce& spdudata::getPGI(varid_type cod1, varid_type cod2) const {
                 spdudata_type::const_iterator it = value_->find(cod1);
                 if (it == value_->end())
                     return null_val;
@@ -101,7 +101,7 @@ namespace boost {
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, int8_t& val, int8_t def) const {
-                const raw_type& tmp = getPGI(cod1, cod2);
+                const octet_sequnce& tmp = getPGI(cod1, cod2);
                 if (!tmp.empty()) {
                     val = tmp.size() ? static_cast<int8_t> (tmp[0]) : def;
                     return true;
@@ -112,7 +112,7 @@ namespace boost {
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, uint8_t& val, uint8_t def) const {
-                const raw_type& tmp = getPGI(cod1, cod2);
+                const octet_sequnce& tmp = getPGI(cod1, cod2);
                 if (!tmp.empty()) {
                     val = tmp.size() ? static_cast<varid_type> (tmp[0]) : def;
                     return true;
@@ -123,7 +123,7 @@ namespace boost {
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, int16_t& val, int16_t def) const {
-                const raw_type& tmp = getPGI(cod1, cod2);
+                const octet_sequnce& tmp = getPGI(cod1, cod2);
                 if (!tmp.empty()) {
                     if (raw_to_inttype(tmp, val))
                         val = endiancnv_copy(val);
@@ -136,7 +136,7 @@ namespace boost {
             }
 
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, uint16_t& val, uint16_t def) const {
-                const raw_type& tmp = getPGI(cod1, cod2);
+                const octet_sequnce& tmp = getPGI(cod1, cod2);
                 if (!tmp.empty()) {
                     if (raw_to_inttype(tmp, val))
                         val = endiancnv_copy(val);
@@ -149,7 +149,7 @@ namespace boost {
                 return false;
             }
 
-            const raw_type& spdudata::getPI(varid_type cod) const {
+            const octet_sequnce& spdudata::getPI(varid_type cod) const {
 
                 return getPGI(0, cod);
             }
@@ -203,13 +203,13 @@ namespace boost {
             }
 
             const_sequences_ptr spdudata::sequence(asn_coder_ptr coder) const {
-                raw_type tmp;
+                octet_sequnce tmp;
                 spdudata_type::const_iterator strtit = value_->end();
                 for (spdudata_type::const_iterator it = value_->begin(); it != value_->end(); ++it) {
                     if ((!it->first && it == value_->begin()))
                         strtit = it;
                     else {
-                        raw_type tmppgi;
+                        octet_sequnce tmppgi;
                         for (pgi_type::const_iterator itpgi = it->second.begin(); itpgi != it->second.end(); ++itpgi) {
                             raw_back_insert(tmppgi, inttype_to_raw(itpgi->first));
                             raw_back_insert(tmppgi, to_triple_size(itpgi->second.size()));
@@ -221,7 +221,7 @@ namespace boost {
                     }
                 }
                 if (strtit != value_->end()) {
-                    raw_type tmppi;
+                    octet_sequnce tmppi;
                     for (pgi_type::const_iterator itpgi = strtit->second.begin(); itpgi != strtit->second.end(); ++itpgi) {
                         if ((itpgi->first != PGI_USERDATA) && (itpgi->first != PGI_EXUSERDATA)) {
                             raw_back_insert(tmppi, inttype_to_raw(itpgi->first));
@@ -241,35 +241,35 @@ namespace boost {
                         raw_back_insert(tmp, to_triple_size(coder->out()->size()));
                     }
                 }
-                coder->out()->add(raw_type(tmp.begin(), tmp.end()), coder->out()->buffers().begin());
-                raw_type header(inttype_to_raw(type_));
+                coder->out()->add(octet_sequnce(tmp.begin(), tmp.end()), coder->out()->buffers().begin());
+                octet_sequnce header(inttype_to_raw(type_));
                 raw_back_insert(header, to_triple_size(coder->out()->size()));
-                coder->out()->add(raw_type(header.begin(), header.end()), coder->out()->buffers().begin());
+                coder->out()->add(octet_sequnce(header.begin(), header.end()), coder->out()->buffers().begin());
                 return coder->out()->buffers_ptr();
             }
 
             bool spdudata::parse() {
-                raw_type::size_type it = 0;
+                octet_sequnce::size_type it = 0;
                 if (seq_.size() < 2)
                     return error(true);
                 type_ = static_cast<spdu_type> (seq_[it++]);
-                std::size_t sz = from_triple_size(raw_type(seq_.begin() + 1, seq_.end()), it);
+                std::size_t sz = from_triple_size(octet_sequnce(seq_.begin() + 1, seq_.end()), it);
                 if (sz == triple_npos)
                     return error(true);
                 if (sz == 0)
                     return false;
                 if (sz + it > seq_.size())
                     return false;
-                return parse_vars(raw_type(seq_.begin()+(++it), seq_.end()));
+                return parse_vars(octet_sequnce(seq_.begin()+(++it), seq_.end()));
             }
 
-            bool spdudata::parse_vars(const raw_type& vl) {
-                raw_type::size_type it = 0;
+            bool spdudata::parse_vars(const octet_sequnce& vl) {
+                octet_sequnce::size_type it = 0;
                 do {
                     if (vl.size() < 2)
                         return error(true);
                     varid_type vr = static_cast<varid_type> (vl[it++]);
-                    std::size_t sz = from_triple_size(raw_type(vl.begin() + it, vl.end()), it);
+                    std::size_t sz = from_triple_size(octet_sequnce(vl.begin() + it, vl.end()), it);
                     if (sz == triple_npos)
                         return error(true);
                     if (sz + it > vl.size())
@@ -279,12 +279,12 @@ namespace boost {
                         case PGI_CONN_ACC:
                         case PGI_LINK_INF:    
                         {
-                            if (!parse_pgi(vr, raw_type(vl.begin() + it, vl.begin() + it + sz))) return error(true);
+                            if (!parse_pgi(vr, octet_sequnce(vl.begin() + it, vl.begin() + it + sz))) return error(true);
                             else break;
                         }
                         default:
                         {
-                            setPI(vr, raw_type(vl.begin() + it, vl.begin() + it + sz));
+                            setPI(vr, octet_sequnce(vl.begin() + it, vl.begin() + it + sz));
                             break;
                         }
                     }
@@ -294,18 +294,18 @@ namespace boost {
                 return true;
             }
 
-            bool spdudata::parse_pgi(varid_type tp, const raw_type& vl) {
-                raw_type::size_type it = 0;
+            bool spdudata::parse_pgi(varid_type tp, const octet_sequnce& vl) {
+                octet_sequnce::size_type it = 0;
                 do {
                     if (vl.size() < 2)
                         return error(true);
                     varid_type vr = static_cast<varid_type> (vl[it++]);
-                    std::size_t sz = from_triple_size(raw_type(vl.begin() + it, vl.end()), it);
+                    std::size_t sz = from_triple_size(octet_sequnce(vl.begin() + it, vl.end()), it);
                     if (sz == triple_npos)
                         return error(true);
                     if (sz + it > vl.size())
                         return false;
-                    setPGI(tp, vr, raw_type(vl.begin() + it, vl.begin() + it + sz));
+                    setPGI(tp, vr, octet_sequnce(vl.begin() + it, vl.begin() + it + sz));
                     it += sz;
                 }
                 while (it < vl.size());
@@ -317,7 +317,7 @@ namespace boost {
 
             //  protocol_option
 
-            protocol_options::protocol_options(const raw_type& called, const raw_type& calling)  : vars_( new spdudata()) {
+            protocol_options::protocol_options(const octet_sequnce& called, const octet_sequnce& calling)  : vars_( new spdudata()) {
                 vars_->setPI(PI_CALLING, calling);
                 vars_->setPI(PI_CALLED, called);
                 vars_->setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
@@ -325,25 +325,25 @@ namespace boost {
                 vars_->setPI(PI_SES_USERREQ, FU_WORK);
             }
 
-            const raw_type& protocol_options::ssap_calling() const {
+            const octet_sequnce& protocol_options::ssap_calling() const {
                 return vars_->getPI(PI_CALLING);
             }
 
-            void protocol_options::ssap_calling(const raw_type& val) {
+            void protocol_options::ssap_calling(const octet_sequnce& val) {
                 if (!val.empty())
                     vars_->setPI(PI_CALLING, val);
             }
 
-            const raw_type& protocol_options::ssap_called() const {
+            const octet_sequnce& protocol_options::ssap_called() const {
                 return vars_->getPI(PI_CALLED);
             }
 
-            void protocol_options::ssap_called(const raw_type& val) {
+            void protocol_options::ssap_called(const octet_sequnce& val) {
                 if (!val.empty())
                     vars_->setPI(PI_CALLED, val);
             }
 
-            const raw_type& protocol_options::data() const {
+            const octet_sequnce& protocol_options::data() const {
                 return vars_->existPI(PGI_EXUSERDATA) ? vars_->getPI(PGI_EXUSERDATA) : vars_->getPI(PGI_USERDATA);
             }      
             
@@ -420,40 +420,40 @@ namespace boost {
             
 
             octet_type protocol_options::refuse_reason() const {
-                const raw_type& tmp = vars_->getPI(PI_REASON);
+                const octet_sequnce& tmp = vars_->getPI(PI_REASON);
                 return tmp.empty() ? DR_REASON_NODEF : tmp[0];
             }
 
-            void protocol_options::refuse_reason(octet_type rsn, const raw_type& val) {
+            void protocol_options::refuse_reason(octet_type rsn, const octet_sequnce& val) {
                 if (val.empty())
                    vars_->setPI(PI_REASON, rsn);
                 else{
-                   raw_type tmp(1,rsn);
+                   octet_sequnce tmp(1,rsn);
                    tmp.insert(tmp.end(), val.begin(), val.end());
                    vars_->setPI(PI_REASON, tmp);
                 }                   
             }
             
             uint16_t protocol_options::maxTPDU_self() const {
-                const raw_type& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
+                const octet_sequnce& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
                 if (tmp.size()==4){
-                    return endiancnv_copy<uint16_t>(raw_type(tmp.begin(), tmp.begin()+2));
+                    return endiancnv_copy<uint16_t>(octet_sequnce(tmp.begin(), tmp.begin()+2));
                 }
                 return 0;
             }
 
             uint16_t protocol_options::maxTPDU_dist() const {
-                const raw_type& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
+                const octet_sequnce& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
                 if (tmp.size()==4){
-                    return endiancnv_copy<uint16_t>(raw_type(tmp.begin()+2, tmp.end()));
+                    return endiancnv_copy<uint16_t>(octet_sequnce(tmp.begin()+2, tmp.end()));
                 }
                 return 0;
             }            
 
             void protocol_options::maxTPDU(uint16_t self, uint16_t dist) {
                 if (self || dist){
-                    raw_type tmpself(inttype_to_raw(endiancnv_copy(self)));
-                    raw_type tmpdist(inttype_to_raw(endiancnv_copy(dist)));
+                    octet_sequnce tmpself(inttype_to_raw(endiancnv_copy(self)));
+                    octet_sequnce tmpdist(inttype_to_raw(endiancnv_copy(dist)));
                     tmpself.insert(tmpself.begin(), tmpdist.begin(), tmpdist.end());
                     vars_->setPGI(PGI_CONN_ACC, PI_TSDUMAX , tmpself);                   
                 }
