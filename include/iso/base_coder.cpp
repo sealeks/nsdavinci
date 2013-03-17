@@ -119,7 +119,7 @@ namespace boost {
             return rslt;
         }
 
-        std::size_t pop_frontlist(mutable_sequence& val, std::size_t start) {
+        std::size_t pop_frontlist(mutable_sequences& val, std::size_t start) {
             std::size_t rslt = 0;
             while (start && (!val.empty())) {
                 if (boost::asio::buffer_size(val.front()) < start) {
@@ -136,18 +136,18 @@ namespace boost {
             return rslt;
         }
 
-        bool splice_frontlist(mutable_sequence& val, std::size_t firstend, std::size_t secondend) {
+        bool splice_frontlist(mutable_sequences& val, std::size_t firstend, std::size_t secondend) {
             if ((!firstend) || (firstend > secondend))
                 return false;
             if (firstend == secondend)
                 return true;
 
-            mutable_sequence::iterator fit = val.end();
-            mutable_sequence::iterator sit = val.end();
+            mutable_sequences::iterator fit = val.end();
+            mutable_sequences::iterator sit = val.end();
             bool fset = false;
             bool sset = false;
 
-            for (mutable_sequence::iterator it = val.begin(); it != val.end(); ++it) {
+            for (mutable_sequences::iterator it = val.begin(); it != val.end(); ++it) {
                 mutable_buffer tmp = *it;
                 std::size_t size = boost::asio::buffer_size(*it);
                 if (!fset) {
@@ -200,10 +200,10 @@ namespace boost {
             return false;
         }
 
-        bool find_eof(const mutable_sequence& val, mutable_sequence::const_iterator bit, std::size_t& rslt, std::size_t start) {
+        bool find_eof(const mutable_sequences& val, mutable_sequences::const_iterator bit, std::size_t& rslt, std::size_t start) {
             rslt = 0;
             bool findend = false;
-            for (mutable_sequence::const_iterator it = bit; it != val.end(); ++it) {
+            for (mutable_sequences::const_iterator it = bit; it != val.end(); ++it) {
                 mutable_buffer tmp = *it;
                 std::size_t size = boost::asio::buffer_size(*it);
                 if (size > start) {
@@ -231,10 +231,10 @@ namespace boost {
             return false;
         }
 
-        bool row_cast(const mutable_sequence& val, mutable_sequence::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size) {
+        bool row_cast(const mutable_sequences& val, mutable_sequences::const_iterator bit, raw_type& raw, std::size_t start, std::size_t size) {
             if (!size)
                 return true;
-            mutable_sequence::const_iterator it = bit;
+            mutable_sequences::const_iterator it = bit;
             std::size_t sz = 0;
             std::size_t szc = 0;
             std::size_t szb = 0;
@@ -254,16 +254,16 @@ namespace boost {
             return (raw.size() == size);
         }
 
-        std::ostream& operator<<(std::ostream& stream, const const_sequence& self) {
-            for (const_sequence::const_iterator it = self.begin(); it != self.end(); ++it)
+        std::ostream& operator<<(std::ostream& stream, const const_sequences& self) {
+            for (const_sequences::const_iterator it = self.begin(); it != self.end(); ++it)
                 stream << binary_to_hexsequence_debug(std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it)));
             stream << std::endl;
 
             return stream;
         }
 
-        std::ofstream& operator<<(std::ofstream& stream, const const_sequence& self) {
-            for (const_sequence::const_iterator it = self.begin(); it != self.end(); ++it)
+        std::ofstream& operator<<(std::ofstream& stream, const const_sequences& self) {
+            for (const_sequences::const_iterator it = self.begin(); it != self.end(); ++it)
                 stream << std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it));
             stream << std::endl;
 
@@ -282,8 +282,8 @@ namespace boost {
             return stream;
         }
 
-        std::ostream& operator<<(std::ostream& stream, const mutable_sequence& self) {
-            for (mutable_sequence::const_iterator it = self.begin(); it != self.end(); ++it)
+        std::ostream& operator<<(std::ostream& stream, const mutable_sequences& self) {
+            for (mutable_sequences::const_iterator it = self.begin(); it != self.end(); ++it)
                 stream << binary_to_hexsequence_debug(std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it)));
             stream << std::endl;
 
@@ -291,8 +291,8 @@ namespace boost {
 
         }
 
-        std::ofstream& operator<<(std::ofstream& stream, const mutable_sequence& self) {
-            for (mutable_sequence::const_iterator it = self.begin(); it != self.end(); ++it)
+        std::ofstream& operator<<(std::ofstream& stream, const mutable_sequences& self) {
+            for (mutable_sequences::const_iterator it = self.begin(); it != self.end(); ++it)
                 stream << std::string(boost::asio::buffer_cast<const char*>(*it), boost::asio::buffer_size(*it));
             stream << std::endl;
             return stream;
@@ -319,8 +319,8 @@ namespace boost {
             return listbuffers_->insert(it, const_buffer(&(rows_vect.back()->operator[](0)), rows_vect.back()->size()));
         }
 
-        void base_output_coder::add(const mutable_sequence& vl) {
-            for (mutable_sequence::const_iterator it = vl.begin(); it != vl.end(); ++it)
+        void base_output_coder::add(const mutable_sequences& vl) {
+            for (mutable_sequences::const_iterator it = vl.begin(); it != vl.end(); ++it)
                 add(buffer_to_raw(*it));
         }
 
@@ -344,8 +344,8 @@ namespace boost {
             listbuffers_->push_back(mutable_buffer(&rows_vect.back()->operator [](0), rows_vect.back()->size()));
         }
 
-        void base_input_coder::add(const const_sequence& vl) {
-            for (const_sequence::const_iterator it = vl.begin(); it != vl.end(); ++it)
+        void base_input_coder::add(const const_sequences& vl) {
+            for (const_sequences::const_iterator it = vl.begin(); it != vl.end(); ++it)
                 add(buffer_to_raw(*it));
         }
 
@@ -376,9 +376,9 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////  
 
         std::string base_coder::request_str() const {
-            const const_sequence& tmp = request();
+            const const_sequences& tmp = request();
             std::string rslt;
-            for (const_sequence::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
+            for (const_sequences::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
                 rslt.insert(rslt.end(),
                         const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)),
                         const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)) + boost::asio::buffer_size(*it)
@@ -393,9 +393,9 @@ namespace boost {
         };
 
         std::string base_coder::respond_str() const {
-            const mutable_sequence& tmp = input_->buffers();
+            const mutable_sequences& tmp = input_->buffers();
             std::string rslt;
-            for (mutable_sequence::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
+            for (mutable_sequences::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
                 rslt.insert(rslt.end(),
                         const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)),
                         const_cast<std::string::value_type*> (boost::asio::buffer_cast<const std::string::value_type*>(*it)) + boost::asio::buffer_size(*it)
@@ -416,12 +416,12 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////  
 
-        std::size_t send_buffer_impl::size(std::size_t sz) {
+        std::size_t base_senders_buffer::size(std::size_t sz) {
 
             if (sz == 0) return size_;
             std::size_t tmpsize = sz;
             while ((!buffer_->empty()) && tmpsize) {
-                const_sequence::iterator it = buffer_->begin();
+                const_sequences::iterator it = buffer_->begin();
                 if (tmpsize < buffer_size(*it)) {
                     *it = const_buffer((*it) + sz);
                     return size_ += sz;

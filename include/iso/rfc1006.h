@@ -202,7 +202,7 @@ namespace boost {
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  rfc1006 data_send_buffer_impl   //
+            //  rfc1006 data_senders_buffer   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
             
  
@@ -215,11 +215,11 @@ namespace boost {
             const std::size_t TKPT_LENGTH = 4;
             
             template <typename ConstBufferSequence>
-            class data_send_buffer_impl : public send_buffer_impl {
+            class data_senders_buffer : public base_senders_buffer {
             public:
 
-                data_send_buffer_impl(const ConstBufferSequence& bf, tpdu_size pdusize) :
-                send_buffer_impl(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
+                data_senders_buffer(const ConstBufferSequence& bf, tpdu_size pdusize) :
+                base_senders_buffer(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
                     construct(bf, pdusize);
 
                 }
@@ -247,7 +247,7 @@ namespace boost {
 
                     constbuffseq_value val;
 
-                    const_sequence tmp;
+                    const_sequences tmp;
                     std::size_t tmpsize = 0;
 
                     bool ended = (it == end) || (it == pend);
@@ -340,7 +340,7 @@ namespace boost {
                     return (!buf_) || (buf_->ready());
                 }
 
-                const const_sequence& pop() {
+                const const_sequences& pop() {
                     return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
                 }
 
@@ -348,8 +348,8 @@ namespace boost {
                     return ready() ? 0 : buf_->size(sz);
                 }
 
-                std::size_t receivesize() const {
-                    return ready() ? 0 : buf_->receivesize();
+                std::size_t receive_size() const {
+                    return ready() ? 0 : buf_->receive_size();
                 }
 
                 tpdu_type type() const {
@@ -371,7 +371,7 @@ namespace boost {
                 void constructDR(int16_t dst, int16_t src, octet_type rsn);
 
                 tpdu_type type_;
-                send_buffer_ptr buf_;
+                senders_buffer_ptr buf_;
             };
 
 
@@ -393,7 +393,7 @@ namespace boost {
             protected:
 
                 void constructDT(const ConstBufferSequence& buff, tpdu_size pdusize) {
-                    buf_ = send_buffer_ptr(new data_send_buffer_impl<ConstBufferSequence > (buff, pdusize));
+                    buf_ = senders_buffer_ptr(new data_senders_buffer<ConstBufferSequence > (buff, pdusize));
                 }
 
             };  
