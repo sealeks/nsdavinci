@@ -427,27 +427,27 @@ namespace boost {
                 class asn_coder_templ : public basic_coder {
         public:
 
-            typedef INPUT_TYPE in_archive_type;
-            typedef OUTPUT_TYPE out_archive_type;
+            typedef INPUT_TYPE input_coder_type;
+            typedef OUTPUT_TYPE output_coder_type;
 
             asn_coder_templ(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING) : 
-               basic_coder(new in_archive_type(), new out_archive_type(rul)), abstract_syntax_(asx) {
+               basic_coder(new input_coder_type(), new output_coder_type(rul)), abstract_syntax_(asx) {
             }
 
-            in_archive_type& input() {
-                return *boost::static_pointer_cast<in_archive_type, base_input_coder > (input_);
+            input_coder_type& input() {
+                return *boost::static_pointer_cast<input_coder_type, base_input_coder > (input_);
             }
 
-            const in_archive_type& input() const {
-                return *boost::static_pointer_cast<in_archive_type, base_input_coder > (input_);
+            const input_coder_type& input() const {
+                return *boost::static_pointer_cast<input_coder_type, base_input_coder > (input_);
             }
 
-            out_archive_type& output() {
-                return *boost::static_pointer_cast<out_archive_type, base_output_coder > (output_);
+            output_coder_type& output() {
+                return *boost::static_pointer_cast<output_coder_type, base_output_coder > (output_);
             }
 
-            const out_archive_type& output() const {
-                return *boost::static_pointer_cast<out_archive_type, base_output_coder > (output_);
+            const output_coder_type& output() const {
+                return *boost::static_pointer_cast<output_coder_type, base_output_coder > (output_);
             }
 
             virtual oid_type abstract_syntax() const {
@@ -461,13 +461,12 @@ namespace boost {
 
         };
 
-        typedef asn_coder_templ<> simple_trans_data;
 
-        static inline asn_coder_ptr create_simple_data(const std::string& val) {
+ /*      static inline asn_coder_ptr create_simple_data(const std::string& val) {
             asn_coder_ptr tmp = asn_coder_ptr(new simple_trans_data());
             tmp->request_str(val);
             return tmp;
-        }
+        }*/ 
 
         //////////////////////////////////////////////////////////////////////////////             
 
@@ -489,18 +488,18 @@ namespace boost {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////            
-        //   class  basic_sequences_sender 
+        //   class  basic_sender_sequences 
 
-        class basic_sequences_sender {
+        class basic_sender_sequences {
         public:
 
-            basic_sequences_sender() : buffer_(new const_sequences()), size_(0) {
+            basic_sender_sequences() : buffer_(new const_sequences()), size_(0) {
             }
 
-            basic_sequences_sender(const_sequences_ptr bf) : buffer_(bf), size_(0) {
+            basic_sender_sequences(const_sequences_ptr bf) : buffer_(bf), size_(0) {
             }
 
-            virtual ~basic_sequences_sender() {
+            virtual ~basic_sender_sequences() {
             }
 
             const const_sequences& pop() {
@@ -533,7 +532,7 @@ namespace boost {
         };
 
 
-        typedef boost::shared_ptr<basic_sequences_sender> semder_sequnces_ptr;
+        typedef boost::shared_ptr<basic_sender_sequences> sender_sequnces_ptr;
 
 
 

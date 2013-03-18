@@ -528,11 +528,11 @@ namespace boost {
 
             ///////////////////////////////////////////////////////////////////////////////////////                 
 
-            class atom_send_buffer : public basic_sequences_sender {
+            class service_sender_sequences : public basic_sender_sequences {
             public:
 
-                atom_send_buffer(const octet_sequnce& send) : basic_sequences_sender(), send_(send) {
-                    buff().push_back(const_buffer(&send_.front(), send_.size()));
+                service_sender_sequences(const octet_sequnce& send) : basic_sender_sequences(), send_(send) {
+                    buff().push_back( send_.empty() ? const_buffer() : const_buffer(&send_.front(), send_.size()));
                 }
 
             private:
@@ -544,19 +544,19 @@ namespace boost {
             ///////////////////////////////////////////////////////////////////////////////////////
 
             void sender::constructCR(const protocol_options& opt) {
-                buf_ = semder_sequnces_ptr(new atom_send_buffer(generate_header_TKPT_CR(opt)));
+                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_CR(opt)));
             }
 
             void sender::constructCC(const protocol_options& opt) {
-                buf_ = semder_sequnces_ptr(new atom_send_buffer(generate_header_TKPT_CC(opt)));
+                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_CC(opt)));
             }
 
             void sender::constructER(int16_t dst, const octet_sequnce& errorseq, octet_type err) {
-                buf_ = semder_sequnces_ptr(new atom_send_buffer(generate_header_TKPT_ER(dst, errorseq, err)));
+                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_ER(dst, errorseq, err)));
             }
 
             void sender::constructDR(int16_t dst, int16_t src, octet_type rsn) {
-                buf_ = semder_sequnces_ptr(new atom_send_buffer(generate_header_TKPT_DR(dst, src, rsn)));
+                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_DR(dst, src, rsn)));
             }
 
         }
