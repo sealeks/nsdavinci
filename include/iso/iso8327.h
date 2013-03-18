@@ -1266,7 +1266,7 @@ namespace boost {
 
                 template <typename ConstBufferSequence>
                 std::size_t send(const ConstBufferSequence& buffers,
-                        socket_base::message_flags flags) {
+                        message_flags flags) {
                     error_code ec;
                     std::size_t s = send(buffers, flags, ec);
                     boost::asio::detail::throw_error(ec, "send");
@@ -1292,7 +1292,7 @@ namespace boost {
 
                 template <typename ConstBufferSequence>
                 std::size_t send(const ConstBufferSequence& buffers,
-                        socket_base::message_flags flags, error_code& ec) {
+                        message_flags flags, error_code& ec) {
 
                     return send_impl(buffers, flags, ec);
                 }
@@ -1363,7 +1363,7 @@ namespace boost {
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
-                        socket_base::message_flags flags,
+                        message_flags flags,
                         BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
 
                     //BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
@@ -1395,7 +1395,7 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t receive(const MutableBufferSequence& buffers,
-                        socket_base::message_flags flags) {
+                        message_flags flags) {
                     error_code ec;
                     std::size_t s = receive(buffers, flags, ec);
                     boost::asio::detail::throw_error(ec, "receive");
@@ -1420,7 +1420,7 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t receive(const MutableBufferSequence& buffers,
-                        socket_base::message_flags flags, error_code& ec) {
+                        message_flags flags, error_code& ec) {
 
                     return receive_impl(buffers, flags, ec);
                 }
@@ -1563,7 +1563,7 @@ namespace boost {
 
                 template <typename MutableBufferSequence, typename ReadHandler>
                 void async_receive(const MutableBufferSequence& buffers,
-                        socket_base::message_flags flags,
+                        message_flags flags,
                         BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
                     //BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
@@ -1796,7 +1796,7 @@ namespace boost {
 
                 template <typename ConstBufferSequence>
                 std::size_t send_impl(const ConstBufferSequence& buffers,
-                        socket_base::message_flags flags, error_code& ec) {
+                        message_flags flags, error_code& ec) {
                     sender_ptr send_(new data_sender<ConstBufferSequence > (buffers));
                     while (!ec && !send_->ready())
                         send_->size(super_type::send(send_->pop(), 0, ec));
@@ -1805,7 +1805,7 @@ namespace boost {
 
                 template <typename MutableBufferSequence>
                 std::size_t receive_impl(const MutableBufferSequence& buffers,
-                        socket_base::message_flags flags, error_code& ec) {
+                        message_flags flags, error_code& ec) {
 
                     if (!input_empty())
                         return super_type::receive(boost::asio::buffer(buffers), flags, ec);
