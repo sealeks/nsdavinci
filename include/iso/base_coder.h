@@ -430,7 +430,8 @@ namespace boost {
             typedef INPUT_TYPE in_archive_type;
             typedef OUTPUT_TYPE out_archive_type;
 
-            asn_coder_templ(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING) : basic_coder(new in_archive_type(), new out_archive_type(rul)), abstract_syntax_(asx) {
+            asn_coder_templ(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING) : 
+               basic_coder(new in_archive_type(), new out_archive_type(rul)), abstract_syntax_(asx) {
             }
 
             in_archive_type& input() {
