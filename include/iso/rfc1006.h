@@ -554,6 +554,23 @@ namespace boost {
                 bool input_empty() const {
                     return (!waiting_data_size_) && (eof_state_);
                 }
+                
+                
+ 
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //  Colose operation  //
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
+                
+                
+                void close() {
+                    error_code ecc;
+                    get_service().close(get_implementation(), ecc);
+                    boost::asio::detail::throw_error(ecc, "close");
+                }
+
+                boost::system::error_code close(boost::system::error_code& ec) {
+                    get_service().close(get_implementation(), ec);
+                }               
 
 
 
@@ -586,7 +603,7 @@ namespace boost {
             private:
 
                 template <typename ConnectHandler>
-                class connect_op {
+                class connect_operation {
 
                     enum stateconnection {
                         request,
@@ -595,7 +612,7 @@ namespace boost {
 
                 public:
 
-                    connect_op(stream_socket* socket, ConnectHandler handler) :
+                    connect_operation(stream_socket* socket, ConnectHandler handler) :
                     socket_(socket),
                     handler_(handler),
                     state_(request),
@@ -714,8 +731,8 @@ namespace boost {
                         }
                     }
                     
-                    get_service().async_connect(get_implementation(), peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run, 
-                               connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
+                    get_service().async_connect(get_implementation(), peer_endpoint, boost::bind(&connect_operation<ConnectHandler>::run, 
+                               connect_operation<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
 
                 }
 
@@ -733,7 +750,7 @@ namespace boost {
                     boost::asio::detail::throw_error(ec, "release");
                 }
 
-                error_code release(error_code& ec, octet_type rsn = 0) {
+                error_code release(error_code& ec, octet_type rsn = DR_REASON_NORM) {
 
                     return release_impl(ec , rsn);
                 }
@@ -802,7 +819,7 @@ namespace boost {
                 //  Check accept operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                void check_accept(int16_t src = 1) {
+                void check_accept(int16_t src) {
                     error_code ec;
                     boost::asio::detail::throw_error(ec, "connect");
                 }
@@ -878,6 +895,10 @@ namespace boost {
                                 }
                             }
                         }
+                        if (socket_->is_open()){
+                            error_code ecc;
+                            socket_->get_service().close(socket_->get_implementation(), ecc);                            
+                        }
                         handler_(ec);
                     }
 
@@ -908,8 +929,6 @@ namespace boost {
                     }
 
                     void finish(const error_code& ec) {
-
-                        //receive_->options().pdusize(tpdusize);
                         socket_->negotiate_transport_option(receive_->options());
                         handler_(ec);
                     }
@@ -1167,8 +1186,8 @@ namespace boost {
                         switch (receive_->type()) {
                             case CR:
                             {
-                                error_code decc;
-                                handler_(decc, 0);
+                                error_code ecc;
+                                handler_(ecc, 0);
                                 return false;
                             }
                             case DT:
@@ -1297,14 +1316,22 @@ namespace boost {
                     sender_ptr send_(sender_ptr(new sender(transport_option())));
                     while (!ec && !send_->ready())
                         send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
-                    if (ec)
+                    if (ec) {
+                        error_code ecc;
+                        get_service().close(get_implementation(), ecc);
                         return ec;
+                    }
+                    
                     receiver_ptr receive_(receiver_ptr(new receiver()));
                     while (!ec && !receive_->ready()) {
                         receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
-                    if (ec)
+                    if (ec) {
+                        error_code ecc;
+                        get_service().close(get_implementation(), ecc);
                         return ec;
+                    }
+                    
                     if (receive_->state() == receiver::complete) {
                         switch (receive_->type()) {
                             case CC:
@@ -1333,7 +1360,7 @@ namespace boost {
                     return ec = ER_PROTOCOL;
                 }
 
-                error_code release_impl(error_code& ec, octet_type rsn) {
+                error_code release_impl(error_code& ec, octet_type rsn = DR_REASON_NORM) {
                     if (is_open()) {
                         sender_ptr send_(sender_ptr(new sender(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                         while (!ec && !send_->ready())
@@ -1352,8 +1379,11 @@ namespace boost {
                     while (!ec && !receive_->ready()) {
                         receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
-                    if (ec)
+                    if (ec) {
+                        error_code ecc;
+                        get_service().close(get_implementation(), ecc);
                         return ec;
+                    }
                     sender_ptr send_;
                     protocol_options options_ = transport_option();
                     if (receive_->type() != CR || receive_->state() != receiver::complete) {
@@ -1371,8 +1401,11 @@ namespace boost {
                     }
                     while (!ec && !send_->ready())
                         send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
-                    if (ec)
+                    if (ec) {
+                        error_code ecc;
+                        get_service().close(get_implementation(), ecc);
                         return ec;
+                    }
                     if (canseled) {
                         error_code ecc;
                         get_service().close(get_implementation(), ecc);
