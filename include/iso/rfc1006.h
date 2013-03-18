@@ -677,22 +677,19 @@ namespace boost {
                                     return;
                                 }
                                 case ER:{
-                                    error_code ecc;
-                                    socket_->get_service().close(socket_->get_implementation(), ecc);                                    
+                                    socket_->self_shutdown();                                  
                                     handler_(ER_PROTOCOL);
                                     return;                                   
                                 }
                                 case DR:
                                 {
-                                    error_code ecc;
-                                    socket_->get_service().close(socket_->get_implementation(), ecc);
+                                    socket_->self_shutdown();
                                     handler_(receive_->errcode());
                                     return;
                                 }
                             }
                         }
-                        error_code ecc;
-                        socket_->get_service().close(socket_->get_implementation(), ecc);                        
+                        socket_->self_shutdown();
                         handler_(ER_PROTOCOL);
                     }
 
@@ -751,7 +748,6 @@ namespace boost {
                 }
 
                 error_code release(error_code& ec, octet_type rsn = DR_REASON_NORM) {
-
                     return release_impl(ec , rsn);
                 }
 
@@ -784,6 +780,7 @@ namespace boost {
                                 return;
                             }
                         }
+                        self_shutdown();
                         handler_(ec);
                     }
 
@@ -887,18 +884,13 @@ namespace boost {
                                         socket_->get_service().async_send(socket_->get_implementation(), send_->pop(), 0, *this);
                                         return;
                                     }
-                                    error_code ecc;
-                                    socket_->get_service().close(socket_->get_implementation(), ecc);
+                                    socket_->self_shutdown();
                                     handler_(ER_OUTDOMAIN);
-
                                     return;
                                 }
                             }
                         }
-                        if (socket_->is_open()){
-                            error_code ecc;
-                            socket_->get_service().close(socket_->get_implementation(), ecc);                            
-                        }
+                        socket_->self_shutdown();
                         handler_(ec);
                     }
 
@@ -909,8 +901,7 @@ namespace boost {
 
                     void parse_response(const error_code& ec) {
                         if (receive_->type() != CR || receive_->state() != receiver::complete) {
-                            error_code ecc;
-                            socket_->get_service().close(socket_->get_implementation(), ecc);
+                            socket_->self_shutdown();
                             handler_(ER_PROTOCOL);
                             return;
                         }
@@ -1043,7 +1034,6 @@ namespace boost {
                             in_->size(bytes_transferred);
                             if (!in_->ready()) {
                                 socket_->get_service().async_send(socket_->get_implementation(), in_->pop(), flags_, *this);
-
                                 return;
                             }
                         }
@@ -1196,22 +1186,19 @@ namespace boost {
                             }
                             case ER:
                             {
-                                error_code ecc;
-                                socket_->get_service().close(socket_->get_implementation(), ecc);
+                                socket_->self_shutdown();
                                 handler_(ER_PROTOCOL, static_cast<std::size_t> (receive_->datasize()));
                                 break;
                             }
                             case DR:
                             {
-                                error_code ecc;
-                                socket_->get_service().close(socket_->get_implementation(), ecc);
+                                socket_->self_shutdown();
                                 handler_( ER_REFUSE, static_cast<std::size_t> (receive_->datasize()));
                                 break;
                             }
                             default:
                             {
-                                error_code ecc;
-                                socket_->get_service().close(socket_->get_implementation(), ecc);
+                                socket_->self_shutdown();
                                 handler_(ER_PROTOCOL, 0);
                             }
                         }
@@ -1283,6 +1270,12 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
             private:
+                
+                boost::system::error_code self_shutdown(){  
+                    error_code ecc;
+                    get_service().shutdown(get_implementation(),boost::asio::socket_base::shutdown_both,ecc);
+                    return ecc;
+                }
 
                 tpdu_size pdusize() const {
                     return pdusize_;
@@ -1317,8 +1310,7 @@ namespace boost {
                     while (!ec && !send_->ready())
                         send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
                     if (ec) {
-                        error_code ecc;
-                        get_service().close(get_implementation(), ecc);
+                        self_shutdown();
                         return ec;
                     }
                     
@@ -1327,8 +1319,7 @@ namespace boost {
                         receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
                     if (ec) {
-                        error_code ecc;
-                        get_service().close(get_implementation(), ecc);
+                        self_shutdown();
                         return ec;
                     }
                     
@@ -1340,14 +1331,12 @@ namespace boost {
                                 return ec;
                             }
                             case ER:{
-                                error_code ecc;
-                                get_service().close(get_implementation(), ecc);
+                                self_shutdown();
                                 return ec =ER_PROTOCOL;                      
                             }
                             case DR:
                             {
-                                error_code ecc;
-                                get_service().close(get_implementation(), ecc);
+                                self_shutdown();
                                 return ec = receive_->errcode();
                             }
                             default:
@@ -1355,8 +1344,7 @@ namespace boost {
                             }
                         }
                     }
-                    error_code ecc;
-                    get_service().close(get_implementation(), ecc);                    
+                    self_shutdown();                   
                     return ec = ER_PROTOCOL;
                 }
 
@@ -1365,8 +1353,7 @@ namespace boost {
                         sender_ptr send_(sender_ptr(new sender(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                         while (!ec && !send_->ready())
                             send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
-                         error_code ecc;
-                        get_service().close(get_implementation(), ecc);                          
+                        self_shutdown();                          
                         return ec;
                     }
                     return ec =  ER_REFUSE;
@@ -1380,15 +1367,13 @@ namespace boost {
                         receive_->put(get_service().receive(get_implementation(), boost::asio::buffer(receive_->buffer()), 0, ec));
                     }
                     if (ec) {
-                        error_code ecc;
-                        get_service().close(get_implementation(), ecc);
+                        self_shutdown();
                         return ec;
                     }
                     sender_ptr send_;
                     protocol_options options_ = transport_option();
                     if (receive_->type() != CR || receive_->state() != receiver::complete) {
-                        error_code ecc;
-                        get_service().close(get_implementation(), ecc);
+                        self_shutdown();
                         return ER_PROTOCOL;
                     }
                     octet_type error_accept = 0;
@@ -1402,13 +1387,11 @@ namespace boost {
                     while (!ec && !send_->ready())
                         send_->size(get_service().send(get_implementation(), send_->pop(), 0, ec));
                     if (ec) {
-                        error_code ecc;
-                        get_service().close(get_implementation(), ecc);
+                        self_shutdown();
                         return ec;
                     }
                     if (canseled) {
-                        error_code ecc;
-                        get_service().close(get_implementation(), ecc);
+                        self_shutdown();
                     }
                     else {
 
@@ -1448,14 +1431,12 @@ namespace boost {
                         case ER:
                         case DR:
                         {
-                            error_code ecc;
-                            get_service().close(get_implementation(), ecc);
+                            self_shutdown();
                             ec = (receive_->type() == DR) ?  ER_REFUSE : ER_PROTOCOL;
                             return static_cast<std::size_t> (receive_->datasize());
                         }
                     }
-                    error_code ecc;
-                    get_service().close(get_implementation(), ecc);
+                    self_shutdown();
                     ec = ER_PROTOCOL;
                     return 0;
                 }
