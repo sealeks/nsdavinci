@@ -202,7 +202,7 @@ namespace boost {
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  rfc1006 data_sequences_sender   //
+            //  rfc1006 data_sender_sequences   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
             
  
@@ -215,11 +215,11 @@ namespace boost {
             const std::size_t TKPT_LENGTH = 4;
             
             template <typename ConstBufferSequence>
-            class data_sequences_sender : public basic_sequences_sender {
+            class data_sender_sequences : public basic_sender_sequences {
             public:
 
-                data_sequences_sender(const ConstBufferSequence& bf, tpdu_size pdusize) :
-                basic_sequences_sender(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
+                data_sender_sequences(const ConstBufferSequence& bf, tpdu_size pdusize) :
+                basic_sender_sequences(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
                     construct(bf, pdusize);
 
                 }
@@ -371,7 +371,7 @@ namespace boost {
                 void constructDR(int16_t dst, int16_t src, octet_type rsn);
 
                 tpdu_type type_;
-                semder_sequnces_ptr buf_;
+                sender_sequnces_ptr buf_;
             };
 
 
@@ -393,7 +393,7 @@ namespace boost {
             protected:
 
                 void constructDT(const ConstBufferSequence& buff, tpdu_size pdusize) {
-                    buf_ = semder_sequnces_ptr(new data_sequences_sender<ConstBufferSequence > (buff, pdusize));
+                    buf_ = sender_sequnces_ptr(new data_sender_sequences<ConstBufferSequence > (buff, pdusize));
                 }
 
             };  
