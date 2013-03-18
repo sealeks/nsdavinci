@@ -25,13 +25,13 @@
 namespace boost {
     namespace itu {
         namespace rfc1006impl {
-            
+
             // ref X224 = ITU-T Rec. X.224(1995 E)
-            
+
 
             using boost::asio::basic_socket;
             using boost::asio::basic_socket_acceptor;
-            
+
             typedef boost::asio::socket_base::message_flags message_flags;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,28 +52,27 @@ namespace boost {
             const octet_type ER_TPDU_ID = '\x70'; //Error
 
 
-           // see Disconnection  REASON CODE  iso.h
-     
+            // see Disconnection  REASON CODE  iso.h
+
             // Error REASON CODE *ref X224  13.12.3 c)   
             const octet_type ERT_REASON_NODEF = '\x0'; // Reason not specified    - all ER_PROTOCOL
             const octet_type ERT_REASON_PARAM_CODE = '\x1'; // Invalid parameter code
             const octet_type ERT_REASON_TPDU_TYPE = '\x2'; // Invalid TPDU type
             const octet_type ERT_REASON_PARAM_VALUE = '\x3'; // Invalid parameter value
-            
+
             // Error REASON CODE *ref X224  13.12.4
-            const octet_type ERT_PARAM_ID = '\xC1';    //Parameter code:        
-            
+            const octet_type ERT_PARAM_ID = '\xC1'; //Parameter code:        
+
             // VAR ID  *ref X224  13.3.4
-            const octet_type VAR_TSAPCALLING_ID = '\xC1';  //calling Transport-Selector *ref X224 13.3.4 a)
-            const octet_type VAR_TSAPCALLED_ID = '\xC2';   //called Transport-Selector *ref X224 13.3.4 a)
-            const octet_type VAR_TPDU_SIZE = '\xC0';  //TPDU size *ref X224 13.3.4 b)
-            const octet_type VAR_MAXTPDU_SIZE = '\xF0';   // Preferred maximum TPDU size *ref X224 13.3.4 c)
-            
+            const octet_type VAR_TSAPCALLING_ID = '\xC1'; //calling Transport-Selector *ref X224 13.3.4 a)
+            const octet_type VAR_TSAPCALLED_ID = '\xC2'; //called Transport-Selector *ref X224 13.3.4 a)
+            const octet_type VAR_TPDU_SIZE = '\xC0'; //TPDU size *ref X224 13.3.4 b)
+            const octet_type VAR_MAXTPDU_SIZE = '\xF0'; // Preferred maximum TPDU size *ref X224 13.3.4 c)
+
             // EOT *ref X224  13.7.3  d)
             const octet_type TPDU_ENDED = '\x80';
-            const octet_type TPDU_CONTINIUE = '\x0';               
-            
-            
+            const octet_type TPDU_CONTINIUE = '\x0';
+
             enum tpdu_type {
                 NL = 0,
                 CR = CR_TPDU_ID,
@@ -92,7 +91,7 @@ namespace boost {
                 return static_cast<octet_type> (val);
             }
 
-            tpdu_type tpdu_type_from(octet_type val);            
+            tpdu_type tpdu_type_from(octet_type val);
 
             inline octet_type tpdu_type_size(tpdu_size val) {
                 return static_cast<octet_type> (val);
@@ -123,8 +122,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //  rfc1006 protocol_options   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-                        
-            
+
             struct protocol_options {
 
                 protocol_options() :
@@ -132,12 +130,12 @@ namespace boost {
                 }
 
                 protocol_options(int16_t dst, int16_t src,
-                const headarvarvalues& vars = headarvarvalues()) :
+                        const headarvarvalues& vars = headarvarvalues()) :
                 dst_(dst), src_(src), vars_(vars) {
                 }
 
-                protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, 
-                const octet_sequnce& called = octet_sequnce(), const octet_sequnce& calling = octet_sequnce());
+                protocol_options(int16_t dst, int16_t src, tpdu_size pdusize,
+                        const octet_sequnce& called = octet_sequnce(), const octet_sequnce& calling = octet_sequnce());
 
                 int16_t dst_tsap() const {
                     return dst_;
@@ -177,11 +175,11 @@ namespace boost {
                 headarvarvalues vars_;
                 octet_sequnce null_;
             };
-            
+
 
             const protocol_options NULL_PROTOCOL_OPTION = protocol_options();
-            
-            
+
+
 
             bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error);
 
@@ -204,22 +202,22 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //  rfc1006 data_sender_sequences   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-            
- 
+
+
             // see RFC1006
             const octet_type TKPT_STARTar[] = {'\x3', '\x0'};
-            const octet_sequnce TKPT_START = octet_sequnce(TKPT_STARTar, TKPT_STARTar + 2);           
+            const octet_sequnce TKPT_START = octet_sequnce(TKPT_STARTar, TKPT_STARTar + 2);
 
             const octet_sequnce::size_type DT_SEND_BUFF_HEADER = 7;
-            
+
             const std::size_t TKPT_LENGTH = 4;
-            
+
             template <typename ConstBufferSequence>
             class data_sender_sequences : public basic_sender_sequences {
             public:
 
                 data_sender_sequences(const ConstBufferSequence& bf, tpdu_size pdusize) :
-                basic_sender_sequences(), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER) {
+                basic_sender_sequences(), sizenorm_(), sizeeof_() {
                     construct(bf, pdusize);
 
                 }
@@ -229,6 +227,7 @@ namespace boost {
                     if (!pdusz) pdusz = 2048;
                     pdusz -= 3;
 
+                    sizenorm_.reserve(DT_SEND_BUFF_HEADER);
                     uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
                     sizenorm_ = TKPT_START;
                     raw_back_insert(sizenorm_, inttype_to_raw(normalsz));
@@ -266,6 +265,7 @@ namespace boost {
                             else {
                                 if (ended) {
                                     uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (boost::asio::buffer_size(val) + boost::asio::buffer_size(tmp) + 7));
+                                    sizeeof_.reserve(DT_SEND_BUFF_HEADER);
                                     sizeeof_ = TKPT_START;
                                     raw_back_insert(sizeeof_, inttype_to_raw(eofsz));
                                     sizeeof_ .insert(sizeeof_ .end(), '\x2');
@@ -297,76 +297,80 @@ namespace boost {
                 octet_sequnce sizenorm_;
                 octet_sequnce sizeeof_;
             };
-            
-            
+
             template<>
             class data_sender_sequences<const_sequences> : public basic_sender_sequences {
             public:
 
                 data_sender_sequences<const_sequences>(const const_sequences& bf, tpdu_size pdusize) :
-                basic_sender_sequences(const_cast<const_sequences&>(bf)), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER)  {
+                basic_sender_sequences(const_cast<const_sequences&> (bf)), sizenorm_(), sizeeof_() {
                     construct(pdusize);
                 }
 
                 void construct(tpdu_size pdusize) {
-                    if(buff().empty()) return;
+                    if (buff().empty()) return;
                     std::size_t pdusz = tpdu_byte_size(pdusize);
                     if (!pdusz) pdusz = 2048;
                     pdusz -= 3;
                     std::size_t tmpsize = 0;
                     std::size_t buffsize = 0;
-                    const_sequences::iterator it=buff().begin();
-                    const_sequences::iterator insert_pos=it;
-                    while(it!=buff().end()){
-                        buffsize =boost::asio::buffer_size(*it);
-                        if ((buffsize + tmpsize)>=pdusz){
+                    const_sequences::iterator it = buff().begin();
+                    const_sequences::iterator insert_pos = it;
+
+                    while (it != buff().end()) {
+                        buffsize = boost::asio::buffer_size(*it);
+                        if ((buffsize + tmpsize) >= pdusz) {
+
                             if (sizenorm_.empty()) {
                                 uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
+                                sizenorm_.reserve(DT_SEND_BUFF_HEADER);
                                 sizenorm_ = TKPT_START;
                                 raw_back_insert(sizenorm_, inttype_to_raw(normalsz));
                                 sizenorm_.insert(sizenorm_.end(), '\x2');
                                 sizenorm_.insert(sizenorm_.end(), DT_TPDU_ID);
-                                sizenorm_.insert(sizenorm_.end(), TPDU_CONTINIUE);                                
+                                sizenorm_.insert(sizenorm_.end(), TPDU_CONTINIUE);
                             }
-                            if ((buffsize +  tmpsize)==pdusz){
-                                buff().insert(insert_pos,const_buffer(static_cast<const octet_type*>(&sizenorm_[0]),sizenorm_.size()));
-                                insert_pos=it;
-                                ++insert_pos;
-                                tmpsize=0;
-                            }
-                            else{
-                                const_buffer firstpart=boost::asio::buffer(*it, (pdusz-tmpsize));
-                                const_buffer secondpart=(*it)+((buffsize+tmpsize)-pdusz);
+
+                            if ((buffsize + tmpsize) == pdusz) {
                                 buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&sizenorm_[0]), sizenorm_.size()));
-                                insert_pos=buff().insert(buff().erase(it),secondpart);
-                                it = buff().insert(insert_pos,firstpart);
-                                tmpsize=0;
-                            }                 
+                                insert_pos = it;
+                                ++insert_pos;
+                                tmpsize = 0;
+                            }
+                            else {
+                                const_buffer firstpart = boost::asio::buffer(*it, (pdusz - tmpsize));
+                                const_buffer secondpart = (*it)+(pdusz - tmpsize);
+                                buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&sizenorm_[0]), sizenorm_.size()));
+                                insert_pos = buff().insert(buff().erase(it), secondpart);
+                                it = buff().insert(insert_pos, firstpart);
+                                tmpsize = 0;
+                            }
                         }
                         else
                             tmpsize += buffsize;
                         ++it;
                     }
                     if (tmpsize) {
+                        sizeeof_.reserve(DT_SEND_BUFF_HEADER);
                         sizeeof_ = TKPT_START;
                         uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (tmpsize + 7));
                         raw_back_insert(sizeeof_, inttype_to_raw(eofsz));
                         sizeeof_ .insert(sizeeof_ .end(), '\x2');
                         sizeeof_ .insert(sizeeof_ .end(), DT_TPDU_ID);
-                        sizeeof_ .insert(sizeeof_ .end(), TPDU_ENDED);    
-                        buff().insert(insert_pos,const_buffer(static_cast<const octet_type*>(&sizeeof_[0]),sizeeof_.size()));
-                    }                   
+                        sizeeof_ .insert(sizeeof_ .end(), TPDU_ENDED);
+                        buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&sizeeof_[0]), sizeeof_.size()));
+                    }
                 }
-                
-             private:
+
+            private:
 
                 octet_sequnce sizenorm_;
-                octet_sequnce sizeeof_;                         
+                octet_sequnce sizeeof_;
 
-            };            
-            
-            
-          
+            };
+
+
+
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -442,12 +446,11 @@ namespace boost {
             };
 
 
-            
-            
+
+
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //  rfc1006 data_sender   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-            
 
             template <typename ConstBufferSequence >
             class data_sender : public sender {
@@ -463,7 +466,7 @@ namespace boost {
                     buf_ = sender_sequnces_ptr(new data_sender_sequences<ConstBufferSequence > (buff, pdusize));
                 }
 
-            };  
+            };
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -517,10 +520,9 @@ namespace boost {
                     return waitdatasize_;
                 }
 
-
                 const protocol_options& options() const {
-                    return options_ ? *options_ :  NULL_PROTOCOL_OPTION;
-                }               
+                    return options_ ? *options_ : NULL_PROTOCOL_OPTION;
+                }
 
                 error_code errcode() const {
                     return errcode_ ? errcode_ : ER_REFUSE;
@@ -546,13 +548,13 @@ namespace boost {
                 std::size_t waitdatasize_;
                 tpdu_type type_;
                 error_code errcode_;
-                bool eof_;       
+                bool eof_;
                 octet_sequnce_ptr tkpt_data;
-                octet_sequnce_ptr header_data;         
-                mutable_buffer tkpt_buff_;                
+                octet_sequnce_ptr header_data;
+                mutable_buffer tkpt_buff_;
                 mutable_buffer header_buff_;
                 mutable_buffer userbuff_;
-                protocol_options_ptr options_;                
+                protocol_options_ptr options_;
             };
 
 
@@ -567,10 +569,9 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
             class stream_socket : public boost::asio::basic_stream_socket<boost::asio::ip::tcp > {
-                
-            typedef boost::shared_ptr<receiver> receiver_ptr;
-            typedef boost::shared_ptr<sender> sender_ptr;
-                
+                typedef boost::shared_ptr<receiver> receiver_ptr;
+                typedef boost::shared_ptr<sender> sender_ptr;
+
             public:
 
 
@@ -579,21 +580,20 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
                 explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector())
-                : boost::asio::basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(tsel.pdusize()), 
+                : boost::asio::basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(tsel.pdusize()),
                 transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const transport_selector& tsel = transport_selector())
-                : boost::asio::basic_stream_socket<boost::asio::ip::tcp >(io_service, endpoint), pdusize_(tsel.pdusize()), 
+                : boost::asio::basic_stream_socket<boost::asio::ip::tcp >(io_service, endpoint), pdusize_(tsel.pdusize()),
                 transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
                 }
 
-             
-                boost::asio::basic_stream_socket<boost::asio::ip::tcp >& basic_cast(){
-                    return *this;                   
+                boost::asio::basic_stream_socket<boost::asio::ip::tcp >& basic_cast() {
+                    return *this;
                 }
-       
+
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Available  //
@@ -621,14 +621,13 @@ namespace boost {
                 bool input_empty() const {
                     return (!waiting_data_size_) && (eof_state_);
                 }
-                
-                
- 
+
+
+
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Colose operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
-                
-                
+
                 void close() {
                     error_code ecc;
                     get_service().close(get_implementation(), ecc);
@@ -638,7 +637,7 @@ namespace boost {
                 boost::system::error_code close(boost::system::error_code& ec) {
                     get_service().close(get_implementation(), ec);
                     return ec;
-                }               
+                }
 
 
 
@@ -744,10 +743,11 @@ namespace boost {
                                     handler_(ec);
                                     return;
                                 }
-                                case ER:{
-                                    socket_->self_shutdown();                                  
+                                case ER:
+                                {
+                                    socket_->self_shutdown();
                                     handler_(ER_PROTOCOL);
-                                    return;                                   
+                                    return;
                                 }
                                 case DR:
                                 {
@@ -795,9 +795,9 @@ namespace boost {
                             return;
                         }
                     }
-                    
-                    get_service().async_connect(get_implementation(), peer_endpoint, boost::bind(&connect_operation<ConnectHandler>::run, 
-                               connect_operation<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
+
+                    get_service().async_connect(get_implementation(), peer_endpoint, boost::bind(&connect_operation<ConnectHandler>::run,
+                            connect_operation<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
 
                 }
 
@@ -816,7 +816,7 @@ namespace boost {
                 }
 
                 error_code release(error_code& ec, octet_type rsn = DR_REASON_NORM) {
-                    return release_impl(ec , rsn);
+                    return release_impl(ec, rsn);
                 }
 
 
@@ -873,7 +873,7 @@ namespace boost {
                                 release_operation<ReleaseHandler > (const_cast<stream_socket*> (this), handler, rsn)));
                     }
                     else
-                        handler( ER_REFUSE);
+                        handler(ER_REFUSE);
                 }
 
 
@@ -973,7 +973,7 @@ namespace boost {
                             handler_(ER_PROTOCOL);
                             return;
                         }
-                        protocol_options options_= socket_->transport_option();
+                        protocol_options options_ = socket_->transport_option();
                         octet_type error_accept = 0;
                         if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
                             sender_ = sender_ptr(new sender(receiver_->options().src_tsap(), options_.src_tsap(), error_accept));
@@ -1005,7 +1005,7 @@ namespace boost {
                     stateconnection state_;
                     sender_ptr sender_;
                     receiver_ptr receiver_;
-                    tpdu_size  tpdusize;
+                    tpdu_size tpdusize;
 
                 };
 
@@ -1138,8 +1138,8 @@ namespace boost {
                         BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
 
                     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-                    get_io_service().post(boost::bind(&send_operation<WriteHandler, ConstBufferSequence>::run, 
-                                     send_operation<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
+                    get_io_service().post(boost::bind(&send_operation<WriteHandler, ConstBufferSequence>::run,
+                            send_operation<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
@@ -1261,7 +1261,7 @@ namespace boost {
                             case DR:
                             {
                                 socket_->self_shutdown();
-                                handler_( ER_REFUSE, static_cast<std::size_t> (receiver_->datasize()));
+                                handler_(ER_REFUSE, static_cast<std::size_t> (receiver_->datasize()));
                                 break;
                             }
                             default:
@@ -1338,10 +1338,10 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
             private:
-                
-                boost::system::error_code self_shutdown(){  
+
+                boost::system::error_code self_shutdown() {
                     error_code ecc;
-                    get_service().shutdown(get_implementation(),boost::asio::socket_base::shutdown_both,ecc);
+                    get_service().shutdown(get_implementation(), boost::asio::socket_base::shutdown_both, ecc);
                     return ecc;
                 }
 
@@ -1352,10 +1352,10 @@ namespace boost {
                 const protocol_options& transport_option() const {
                     return transport_option_;
                 }
-                
+
                 protocol_options& transport_option() {
                     return transport_option_;
-                }                
+                }
 
                 void negotiate_transport_option(const protocol_options& val) {
                     pdusize_ = val.pdusize();
@@ -1381,7 +1381,7 @@ namespace boost {
                         self_shutdown();
                         return ec;
                     }
-                    
+
                     receiver_ptr receiver_(receiver_ptr(new receiver()));
                     while (!ec && !receiver_->ready()) {
                         receiver_->put(get_service().receive(get_implementation(), boost::asio::buffer(receiver_->buffer()), 0, ec));
@@ -1390,7 +1390,7 @@ namespace boost {
                         self_shutdown();
                         return ec;
                     }
-                    
+
                     if (receiver_->state() == receiver::complete) {
                         switch (receiver_->type()) {
                             case CC:
@@ -1398,9 +1398,10 @@ namespace boost {
                                 negotiate_transport_option(receiver_->options());
                                 return ec;
                             }
-                            case ER:{
+                            case ER:
+                            {
                                 self_shutdown();
-                                return ec =ER_PROTOCOL;                      
+                                return ec = ER_PROTOCOL;
                             }
                             case DR:
                             {
@@ -1412,7 +1413,7 @@ namespace boost {
                             }
                         }
                     }
-                    self_shutdown();                   
+                    self_shutdown();
                     return ec = ER_PROTOCOL;
                 }
 
@@ -1421,10 +1422,10 @@ namespace boost {
                         sender_ptr sender_(sender_ptr(new sender(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                         while (!ec && !sender_->ready())
                             sender_->size(get_service().send(get_implementation(), sender_->pop(), 0, ec));
-                        self_shutdown();                          
+                        self_shutdown();
                         return ec;
                     }
-                    return ec =  ER_REFUSE;
+                    return ec = ER_REFUSE;
                 }
 
                 error_code check_accept_imp(int16_t src, error_code& ec) {
@@ -1500,7 +1501,7 @@ namespace boost {
                         case DR:
                         {
                             self_shutdown();
-                            ec = (receiver_->type() == DR) ?  ER_REFUSE : ER_PROTOCOL;
+                            ec = (receiver_->type() == DR) ? ER_REFUSE : ER_PROTOCOL;
                             return static_cast<std::size_t> (receiver_->datasize());
                         }
                     }
@@ -1741,8 +1742,8 @@ namespace boost {
 
 
 
-    } 
-} 
+    }
+}
 
 #include <boost/asio/detail/pop_options.hpp>
 
