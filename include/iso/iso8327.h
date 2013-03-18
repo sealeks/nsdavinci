@@ -343,6 +343,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
             struct protocol_options {
+                
                 typedef boost::shared_ptr<spdudata> spdudata_ptr;
 
                 protocol_options() : vars_(new spdudata()) {
@@ -402,6 +403,8 @@ namespace boost {
             private:
                 spdudata_ptr vars_;
             };
+            
+             const protocol_options NULL_PROTOCOL_OPTION = protocol_options();           
 
 
 
@@ -615,8 +618,7 @@ namespace boost {
             class receiver {
             public:
 
-                typedef octet_sequnce data_type;
-                typedef boost::shared_ptr< data_type > data_type_ptr;
+                typedef boost::shared_ptr< protocol_options > protocol_options_ptr;
 
                 enum operation_state {
                     waittype,
@@ -696,9 +698,9 @@ namespace boost {
                 error_code errcode_;
 
 
-                data_type_ptr type_data;
+                octet_sequnce_ptr type_data;
                 mutable_buffer type_buff_;
-                data_type_ptr header_data;
+                octet_sequnce_ptr header_data;
                 mutable_buffer header_buff_;
                 mutable_buffer userbuff_;
             };
@@ -1208,7 +1210,7 @@ namespace boost {
 
                     void finish(const error_code& ec) {
 
-                        protocol_options opt = receive_->options();
+                        const protocol_options& opt = receive_->options();
                         socket_->negotiate_session_option(opt);
                         exit_handler(ec);
                     }
@@ -1783,7 +1785,7 @@ namespace boost {
                         //close(ecc);
                     }
                     else {
-                        protocol_options opt = receive_->options();
+                        const protocol_options& opt = receive_->options();
                         negotiate_session_option(receive_->options());
                     }
                     return check_accept_imp_exit(ec = canseled ? ER_OUTDOMAIN : ec);

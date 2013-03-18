@@ -559,7 +559,7 @@ namespace boost {
             class_option_(0),
             reject_reason_(0),
             errcode_(),
-            type_data(new data_type(SI_WITH_LI)),
+            type_data(new octet_sequnce(SI_WITH_LI)),
             type_buff_(boost::asio::buffer(*type_data)),
             header_buff_(),
             userbuff_(buff) {
@@ -575,7 +575,7 @@ namespace boost {
             class_option_(0),
             reject_reason_(0),
             errcode_(),
-            type_data(new data_type(SI_WITH_LI)),
+            type_data(new octet_sequnce(SI_WITH_LI)),
             type_buff_(boost::asio::buffer(*type_data)),
             header_buff_(),
             userbuff_() {
@@ -684,7 +684,7 @@ namespace boost {
                 }
                 else {
                     state(waitheader);
-                    header_data = data_type_ptr(new data_type(li));
+                    header_data = octet_sequnce_ptr(new octet_sequnce(li));
                     header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
                     estimatesize_ = li;
                     return error_code();
@@ -698,7 +698,7 @@ namespace boost {
                 raw_to_inttype(buffer_to_raw(buff_, 0, 2), li);
                 li = endiancnv_copy(li);
                 state(waitheader);
-                header_data = data_type_ptr(new data_type(li));
+                header_data = octet_sequnce_ptr(new octet_sequnce(li));
                 estimatesize_ = li;
                 return error_code();
             }
