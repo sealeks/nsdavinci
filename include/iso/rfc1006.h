@@ -343,7 +343,8 @@ namespace boost {
                                 tmpsize=0;
                             }                 
                         }
-                        tmpsize+=buffsize;
+                        else
+                            tmpsize += buffsize;
                         ++it;
                     }
                     if (tmpsize) {
