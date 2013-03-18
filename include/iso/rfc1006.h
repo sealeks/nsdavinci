@@ -217,7 +217,7 @@ namespace boost {
             public:
 
                 data_sender_sequences(const ConstBufferSequence& bf, tpdu_size pdusize) :
-                basic_sender_sequences(), sizenorm_(), sizeeof_() {
+                basic_sender_sequences(), headercontinue_(), headereof_() {
                     construct(bf, pdusize);
 
                 }
@@ -227,13 +227,13 @@ namespace boost {
                     if (!pdusz) pdusz = 2048;
                     pdusz -= 3;
 
-                    sizenorm_.reserve(DT_SEND_BUFF_HEADER);
+                    headercontinue_.reserve(DT_SEND_BUFF_HEADER);
                     uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
-                    sizenorm_ = TKPT_START;
-                    raw_back_insert(sizenorm_, inttype_to_raw(normalsz));
-                    sizenorm_.insert(sizenorm_.end(), '\x2');
-                    sizenorm_.insert(sizenorm_.end(), DT_TPDU_ID);
-                    sizenorm_.insert(sizenorm_.end(), TPDU_CONTINIUE);
+                    headercontinue_ = TKPT_START;
+                    raw_back_insert(headercontinue_, inttype_to_raw(normalsz));
+                    headercontinue_.insert(headercontinue_.end(), '\x2');
+                    headercontinue_.insert(headercontinue_.end(), DT_TPDU_ID);
+                    headercontinue_.insert(headercontinue_.end(), TPDU_CONTINIUE);
 
                     typedef typename ConstBufferSequence::const_iterator constbuffseq_iterator;
                     typedef typename ConstBufferSequence::value_type constbuffseq_value;
@@ -254,7 +254,7 @@ namespace boost {
                         val = *it;
                         do {
                             if ((boost::asio::buffer_size(val) + tmpsize) > pdusz) {
-                                buff().push_back(const_buffer(&sizenorm_.front(), sizenorm_.size()));
+                                buff().push_back(const_buffer(&headercontinue_.front(), headercontinue_.size()));
                                 if (!tmp.empty())
                                     std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff()));
                                 tmp.clear();
@@ -265,13 +265,13 @@ namespace boost {
                             else {
                                 if (ended) {
                                     uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (boost::asio::buffer_size(val) + boost::asio::buffer_size(tmp) + 7));
-                                    sizeeof_.reserve(DT_SEND_BUFF_HEADER);
-                                    sizeeof_ = TKPT_START;
-                                    raw_back_insert(sizeeof_, inttype_to_raw(eofsz));
-                                    sizeeof_ .insert(sizeeof_ .end(), '\x2');
-                                    sizeeof_ .insert(sizeeof_ .end(), DT_TPDU_ID);
-                                    sizeeof_ .insert(sizeeof_ .end(), TPDU_ENDED);
-                                    buff().push_back(const_buffer(&sizeeof_.front(), sizeeof_.size()));
+                                    headereof_.reserve(DT_SEND_BUFF_HEADER);
+                                    headereof_ = TKPT_START;
+                                    raw_back_insert(headereof_, inttype_to_raw(eofsz));
+                                    headereof_ .insert(headereof_ .end(), '\x2');
+                                    headereof_ .insert(headereof_ .end(), DT_TPDU_ID);
+                                    headereof_ .insert(headereof_ .end(), TPDU_ENDED);
+                                    buff().push_back(const_buffer(&headereof_.front(), headereof_.size()));
                                     if (!tmp.empty())
                                         std::copy(tmp.begin(), tmp.end(), std::back_inserter(buff()));
                                     tmp.clear();
@@ -294,8 +294,8 @@ namespace boost {
 
             private:
 
-                octet_sequnce sizenorm_;
-                octet_sequnce sizeeof_;
+                octet_sequnce headercontinue_;
+                octet_sequnce headereof_;
             };
 
             template<>
@@ -303,7 +303,7 @@ namespace boost {
             public:
 
                 data_sender_sequences<const_sequences>(const const_sequences& bf, tpdu_size pdusize) :
-                basic_sender_sequences(const_cast<const_sequences&> (bf)), sizenorm_(), sizeeof_() {
+                basic_sender_sequences(const_cast<const_sequences&> (bf)), headercontinue_(), headereof_() {
                     construct(pdusize);
                 }
 
@@ -321,18 +321,18 @@ namespace boost {
                         buffsize = boost::asio::buffer_size(*it);
                         if ((buffsize + tmpsize) >= pdusz) {
 
-                            if (sizenorm_.empty()) {
+                            if (headercontinue_.empty()) {
                                 uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
-                                sizenorm_.reserve(DT_SEND_BUFF_HEADER);
-                                sizenorm_ = TKPT_START;
-                                raw_back_insert(sizenorm_, inttype_to_raw(normalsz));
-                                sizenorm_.insert(sizenorm_.end(), '\x2');
-                                sizenorm_.insert(sizenorm_.end(), DT_TPDU_ID);
-                                sizenorm_.insert(sizenorm_.end(), TPDU_CONTINIUE);
+                                headercontinue_.reserve(DT_SEND_BUFF_HEADER);
+                                headercontinue_ = TKPT_START;
+                                raw_back_insert(headercontinue_, inttype_to_raw(normalsz));
+                                headercontinue_.insert(headercontinue_.end(), '\x2');
+                                headercontinue_.insert(headercontinue_.end(), DT_TPDU_ID);
+                                headercontinue_.insert(headercontinue_.end(), TPDU_CONTINIUE);
                             }
 
                             if ((buffsize + tmpsize) == pdusz) {
-                                buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&sizenorm_[0]), sizenorm_.size()));
+                                buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&headercontinue_[0]), headercontinue_.size()));
                                 insert_pos = it;
                                 ++insert_pos;
                                 tmpsize = 0;
@@ -340,7 +340,7 @@ namespace boost {
                             else {
                                 const_buffer firstpart = boost::asio::buffer(*it, (pdusz - tmpsize));
                                 const_buffer secondpart = (*it)+(pdusz - tmpsize);
-                                buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&sizenorm_[0]), sizenorm_.size()));
+                                buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&headercontinue_[0]), headercontinue_.size()));
                                 insert_pos = buff().insert(buff().erase(it), secondpart);
                                 it = buff().insert(insert_pos, firstpart);
                                 tmpsize = 0;
@@ -351,21 +351,21 @@ namespace boost {
                         ++it;
                     }
                     if (tmpsize) {
-                        sizeeof_.reserve(DT_SEND_BUFF_HEADER);
-                        sizeeof_ = TKPT_START;
+                        headereof_.reserve(DT_SEND_BUFF_HEADER);
+                        headereof_ = TKPT_START;
                         uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (tmpsize + 7));
-                        raw_back_insert(sizeeof_, inttype_to_raw(eofsz));
-                        sizeeof_ .insert(sizeeof_ .end(), '\x2');
-                        sizeeof_ .insert(sizeeof_ .end(), DT_TPDU_ID);
-                        sizeeof_ .insert(sizeeof_ .end(), TPDU_ENDED);
-                        buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&sizeeof_[0]), sizeeof_.size()));
+                        raw_back_insert(headereof_, inttype_to_raw(eofsz));
+                        headereof_ .insert(headereof_ .end(), '\x2');
+                        headereof_ .insert(headereof_ .end(), DT_TPDU_ID);
+                        headereof_ .insert(headereof_ .end(), TPDU_ENDED);
+                        buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&headereof_[0]), headereof_.size()));
                     }
                 }
 
             private:
 
-                octet_sequnce sizenorm_;
-                octet_sequnce sizeeof_;
+                octet_sequnce headercontinue_;
+                octet_sequnce headereof_;
 
             };
 
