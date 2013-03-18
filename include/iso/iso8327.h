@@ -459,6 +459,21 @@ namespace boost {
                 }
 
             };
+            
+
+            template<>
+            class data_sender_sequences<const_sequences> : public basic_sender_sequences {
+            public:
+
+                data_sender_sequences<const_sequences>(const const_sequences& bf) : basic_sender_sequences(const_cast<const_sequences&>(bf)) {
+                    construct();
+                }
+
+                void construct() {
+                    buff().insert(buff().begin(),const_buffer(&SEND_HEADER[0], SEND_HEADER.size()));
+                }
+
+            };
 
 
 

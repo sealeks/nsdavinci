@@ -493,41 +493,45 @@ namespace boost {
         class basic_sender_sequences {
         public:
 
-            basic_sender_sequences() : buffer_(new const_sequences()), size_(0) {
+            basic_sender_sequences() : bufferptr_(new const_sequences()), buffer_(*bufferptr_)  ,size_(0) {
             }
 
-            basic_sender_sequences(const_sequences_ptr bf) : buffer_(bf), size_(0) {
+            basic_sender_sequences(const_sequences_ptr bf) : bufferptr_(bf), buffer_(*bufferptr_) , size_(0) {
             }
+            
+            basic_sender_sequences(const_sequences& bf) : buffer_(bf), size_(0) {
+            }            
 
             virtual ~basic_sender_sequences() {
             }
 
             const const_sequences& pop() {
-                return *buffer_;
+                return buffer_;
             }
 
             std::size_t size(std::size_t sz = 0);
 
             std::size_t receive_size() const {
-                return buffer_size(*buffer_);
+                return buffer_size(buffer_);
             }
 
             bool ready() const {
-                return !buffer_size(*buffer_);
+                return !buffer_size(buffer_);
             }
 
         protected:
 
             const const_sequences& buff() const {
-                return *buffer_;
+                return buffer_;
             }
 
             const_sequences& buff() {
-                return *buffer_;
+                return buffer_;
             }
 
         private:
-            const_sequences_ptr buffer_;
+            const_sequences_ptr bufferptr_;
+            const_sequences& buffer_;
             std::size_t size_;
         };
 

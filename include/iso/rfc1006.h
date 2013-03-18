@@ -210,7 +210,7 @@ namespace boost {
             const octet_type TKPT_STARTar[] = {'\x3', '\x0'};
             const octet_sequnce TKPT_START = octet_sequnce(TKPT_STARTar, TKPT_STARTar + 2);           
 
-            const std::size_t DT_SEND_BUFF_HEADER = 5;
+            const octet_sequnce::size_type DT_SEND_BUFF_HEADER = 7;
             
             const std::size_t TKPT_LENGTH = 4;
             
@@ -297,6 +297,72 @@ namespace boost {
                 octet_sequnce sizenorm_;
                 octet_sequnce sizeeof_;
             };
+            
+            
+            template<>
+            class data_sender_sequences<const_sequences> : public basic_sender_sequences {
+            public:
+
+                data_sender_sequences<const_sequences>(const const_sequences& bf, tpdu_size pdusize) :
+                basic_sender_sequences(const_cast<const_sequences&>(bf)), sizenorm_(DT_SEND_BUFF_HEADER), sizeeof_(DT_SEND_BUFF_HEADER)  {
+                    construct(pdusize);
+                }
+
+                void construct(tpdu_size pdusize) {
+                    if(buff().empty()) return;
+                    std::size_t pdusz = tpdu_byte_size(pdusize);
+                    if (!pdusz) pdusz = 2048;
+                    pdusz -= 3;
+                    std::size_t tmpsize = 0;
+                    std::size_t buffsize = 0;
+                    const_sequences::iterator it=buff().begin();
+                    const_sequences::iterator insert_pos=it;
+                    while(it!=buff().end()){
+                        buffsize =boost::asio::buffer_size(*it);
+                        if ((buffsize + tmpsize)>=pdusz){
+                            if (sizenorm_.empty()) {
+                                uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
+                                sizenorm_ = TKPT_START;
+                                raw_back_insert(sizenorm_, inttype_to_raw(normalsz));
+                                sizenorm_.insert(sizenorm_.end(), '\x2');
+                                sizenorm_.insert(sizenorm_.end(), DT_TPDU_ID);
+                                sizenorm_.insert(sizenorm_.end(), TPDU_CONTINIUE);                                
+                            }
+                            if ((buffsize +  tmpsize)==pdusz){
+                                buff().insert(insert_pos,const_buffer(static_cast<const octet_type*>(&sizenorm_[0]),sizenorm_.size()));
+                                insert_pos=it;
+                                ++insert_pos;
+                                tmpsize=0;
+                            }
+                            else{
+                                const_buffer firstpart=boost::asio::buffer(*it, (pdusz-tmpsize));
+                                const_buffer secondpart=(*it)+((buffsize+tmpsize)-pdusz);
+                                buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&sizenorm_[0]), sizenorm_.size()));
+                                insert_pos=buff().insert(buff().erase(it),secondpart);
+                                it = buff().insert(insert_pos,firstpart);
+                                tmpsize=0;
+                            }                 
+                        }
+                        tmpsize+=buffsize;
+                        ++it;
+                    }
+                    if (tmpsize) {
+                        sizeeof_ = TKPT_START;
+                        uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (tmpsize + 7));
+                        raw_back_insert(sizeeof_, inttype_to_raw(eofsz));
+                        sizeeof_ .insert(sizeeof_ .end(), '\x2');
+                        sizeeof_ .insert(sizeeof_ .end(), DT_TPDU_ID);
+                        sizeeof_ .insert(sizeeof_ .end(), TPDU_ENDED);    
+                        buff().insert(insert_pos,const_buffer(static_cast<const octet_type*>(&sizeeof_[0]),sizeeof_.size()));
+                    }                   
+                }
+                
+             private:
+
+                octet_sequnce sizenorm_;
+                octet_sequnce sizeeof_;                         
+
+            };            
             
             
           
@@ -570,6 +636,7 @@ namespace boost {
 
                 boost::system::error_code close(boost::system::error_code& ec) {
                     get_service().close(get_implementation(), ec);
+                    return ec;
                 }               
 
 
