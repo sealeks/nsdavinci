@@ -460,12 +460,17 @@ namespace boost {
 
             };
             
-
+            
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //  optimized data_sender_sequences    //
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////               
+            
             template<>
             class data_sender_sequences<const_sequences> : public basic_sender_sequences {
             public:
 
-                data_sender_sequences<const_sequences>(const const_sequences& bf) : basic_sender_sequences(const_cast<const_sequences&>(bf)) {
+                data_sender_sequences<const_sequences>(const const_sequences& bf) :
+                basic_sender_sequences(const_cast<const_sequences&>(bf)) {
                     construct();
                 }
 
