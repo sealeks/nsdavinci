@@ -783,7 +783,8 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             class socket_acceptor : public boost::itu::x225impl::socket_acceptor {
-                typedef boost::itu::x226impl::socket_acceptor super_type;
+                
+                typedef boost::itu::x225impl::socket_acceptor super_type;
 
             public:
 
@@ -795,12 +796,12 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                          
 
                 explicit socket_acceptor(boost::asio::io_service& io_service, const presentation_connection_option& opt)
-                : boost::itu::x225impl::socket_acceptor(io_service), option_(opt) {
+                : super_type(io_service), option_(opt) {
                 }
 
                 socket_acceptor(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const presentation_connection_option& opt, bool reuse_addr = true)
-                : boost::itu::x225impl::socket_acceptor(io_service, endpoint, reuse_addr), option_(opt) {
+                : super_type(io_service, endpoint, reuse_addr), option_(opt) {
                 }
 
 
@@ -810,29 +811,27 @@ namespace boost {
                 //  Accept operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                          
 
-                template <typename SocketService>
                 error_code accept(
-                        basic_socket<protocol_type, SocketService>& peer,
+                        stream_socket& peer,
                         error_code& ec) {
                     return accept_impl(peer, ec);
                 }
 
-                template <typename SocketService>
                 error_code accept(
-                        basic_socket<protocol_type, SocketService>& peer,
+                        stream_socket& peer,
                         endpoint_type& peer_endpoint, error_code& ec) {
                     return accept_impl(peer, peer_endpoint, ec);
                 }
 
-                template <typename SocketService, typename AcceptHandler>
-                void async_accept(basic_socket<protocol_type, SocketService>& peer,
+                template <typename AcceptHandler>
+                void async_accept(stream_socket& peer,
                         BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     async_accept_impl(peer, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
                 }
 
-                template <typename SocketService, typename AcceptHandler>
-                void async_accept(basic_socket<protocol_type, SocketService>& peer,
+                template <typename AcceptHandler>
+                void async_accept(stream_socket& peer,
                         endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     async_accept_impl(peer, peer_endpoint, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
@@ -843,41 +842,36 @@ namespace boost {
             private:
 
 
-
-
-
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Private implementator  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
 
-                template <typename SocketService, typename AcceptHandler>
-                void async_accept_impl(basic_socket<protocol_type, SocketService>& peer,
+                template <typename AcceptHandler>
+                void async_accept_impl(stream_socket& peer,
                         endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     static_cast<stream_socket*> (&peer)->option(option_);
                     super_type::async_accept(peer, peer_endpoint, handler);
                 }
 
-                template <typename SocketService, typename AcceptHandler>
-                void async_accept_impl(basic_socket<protocol_type, SocketService>& peer,
+                template <typename AcceptHandler>
+                void async_accept_impl(stream_socket& peer,
                         BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
                     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
                     static_cast<stream_socket*> (&peer)->option(option_);
                     super_type::async_accept(peer, handler);
                 }
 
-                template <typename SocketService>
                 error_code accept_impl(
-                        basic_socket<protocol_type, SocketService>& peer,
+                        stream_socket& peer,
                         endpoint_type& peer_endpoint, error_code& ec) {
                     static_cast<stream_socket*> (&peer)->option(option_);
                     super_type::accept(peer, peer_endpoint, ec);
                     return ec;
                 }
 
-                template <typename SocketService>
                 error_code accept_impl(
-                        basic_socket<protocol_type, SocketService>& peer,
+                        stream_socket& peer,
                         error_code& ec) {
                     static_cast<stream_socket*> (&peer)->option(option_);
                     super_type::accept(peer, ec);
