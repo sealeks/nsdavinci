@@ -297,8 +297,8 @@ namespace boost {
                 octet_sequnce headercontinue_;
                 octet_sequnce headereof_;
             };
-            
-            
+
+
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // optimized rfc1006 data_sender_sequences   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
@@ -573,14 +573,15 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
-            class stream_socket : public  boost::asio::basic_stream_socket<boost::asio::ip::tcp > {
-                
+            class stream_socket : protected boost::asio::basic_stream_socket<boost::asio::ip::tcp > {
                 typedef boost::shared_ptr<receiver> receiver_ptr;
                 typedef boost::shared_ptr<sender> sender_ptr;
 
+                friend class socket_acceptor;
+
             public:
-                
-                
+
+
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Constructors  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
@@ -1530,142 +1531,143 @@ namespace boost {
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  rfc1006 socket_acceptor_service //
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-            namespace datail {
-
-                template <typename Protocol>
-                class socket_acceptor_service
-                : public boost::asio::socket_acceptor_service<boost::asio::ip::tcp> {
-                public:
-
-                    typedef boost::asio::socket_acceptor_service<boost::asio::ip::tcp> service_impl_type;
-                    typedef boost::asio::ip::tcp protocol_type;
-                    typedef boost::asio::ip::tcp::endpoint endpoint_type;
-                    typedef service_impl_type::implementation_type implementation_type;
-                    typedef service_impl_type::native_type native_type;
-
-                    static boost::asio::io_service::id id;
-
-
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    //  Constructors  //
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                         
-
-                    explicit socket_acceptor_service(boost::asio::io_service& io_service)
-                    : boost::asio::socket_acceptor_service<Protocol> (io_service),
-                    service_impl_(boost::asio::use_service<service_impl_type>(io_service)), src_(0) {
-                    }
-
-
-
-
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    //  Accept  operation //
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                        
-
-                    template <typename SocketService>
-                    error_code accept(implementation_type& impl,
-                            basic_socket<protocol_type, SocketService>& peer,
-                            endpoint_type* peer_endpoint, error_code& ec) {
-                        if (!service_impl_.accept(impl, peer, peer_endpoint, ec)) {
-                            if (static_cast<stream_socket*> (&peer)->check_accept(src(), ec)) {
-                                error_code ecc;
-                                //static_cast<stream_socket*> (&peer)->close(ecc);
-                            }
-                        }
-                        return ec;
-                    }
-
-
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                         
-
-                private:
-
-                    template <typename Handler, typename Socket>
-                    class accept_handler {
-                    public:
-
-                        accept_handler(service_impl_type& service_impl, implementation_type& impl, Handler h, Socket& socket, endpoint_type* endpoint, int16_t src)
-                        : service_impl_(service_impl), impl_(impl), handler_(h), socket_(socket), endpoint_(endpoint), src_(src) {
-                        }
-
-                        void run() {
-                            service_impl_.async_accept(impl_, socket_, endpoint_, *this);
-                        }
-
-                        void operator()(const error_code& ec) {
-                            if (!ec) {
-                                static_cast<stream_socket*> (&socket_)->asyn_check_accept<Handler > (handler_, src_);
-                                return;
-                            }
-                            handler_(ec);
-                        }
-
-                    private:
-                        service_impl_type& service_impl_;
-                        implementation_type& impl_;
-                        Handler handler_;
-                        Socket& socket_;
-                        endpoint_type* endpoint_;
-                        int16_t src_;
-                    };
-
-
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                         
-
-                public:
-
-                    template <typename SocketService, typename AcceptHandler>
-                    void async_accept(implementation_type& impl,
-                            basic_socket<protocol_type, SocketService>& peer,
-                            endpoint_type* peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-
-                        service_impl_.get_io_service().post(boost::bind(&accept_handler<AcceptHandler, basic_socket<protocol_type, SocketService> >::run,
-                                accept_handler<AcceptHandler, basic_socket<protocol_type, SocketService> >(service_impl_, impl, handler, peer, peer_endpoint, src())));
-                    }
-
-
-                private:
-
-                    int16_t src() const {
-                        boost::mutex::scoped_lock(mtx);
-                        return src_ = ((src_ + 1) ? (src_ + 1) : 1);
-                    }
-
-                    service_impl_type& service_impl_;
-                    mutable int16_t src_;
-                    boost::mutex mtx;
-
-                };
-
-
-                template <typename Protocol>
-                boost::asio::io_service::id socket_acceptor_service<Protocol>::id;
-            }
-
-
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //  rfc1006 socket_ acceptor  //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
-            class socket_acceptor : public basic_socket_acceptor<boost::asio::ip::tcp, datail::socket_acceptor_service<boost::asio::ip::tcp> > {
+            class socket_acceptor : public basic_socket_acceptor<boost::asio::ip::tcp> {
+                typedef basic_socket_acceptor<boost::asio::ip::tcp> super_type;
+
             public:
 
                 explicit socket_acceptor(boost::asio::io_service& io_service)
-                : basic_socket_acceptor<boost::asio::ip::tcp, datail::socket_acceptor_service<boost::asio::ip::tcp> >(io_service) {
+                : super_type(io_service) {
                 }
 
                 socket_acceptor(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, bool reuse_addr = true)
-                : basic_socket_acceptor<boost::asio::ip::tcp, datail::socket_acceptor_service<boost::asio::ip::tcp> >(io_service, endpoint, reuse_addr) {
+                : super_type(io_service, endpoint, reuse_addr) {
                 }
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //  Accept operation  //
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////            
+
+                void accept(stream_socket& peer) {
+                    error_code ec;
+                    accept_impl(peer, ec);
+                    boost::asio::detail::throw_error(ec, "accept");
+                }
+
+                error_code accept(
+                        stream_socket& peer,
+                        error_code& ec) {
+                    return accept_impl(peer, ec);
+                }
+
+                void accept(stream_socket& peer,
+                        endpoint_type& peer_endpoint) {
+                    error_code ec;
+                    accept_impl(peer, peer_endpoint, ec);
+                    boost::asio::detail::throw_error(ec, "accept");
+                }
+
+                error_code accept(
+                        stream_socket& peer,
+                        endpoint_type& peer_endpoint, error_code& ec) {
+                    return accept_impl(peer, peer_endpoint, ec);
+                }
+
+                template <typename AcceptHandler>
+                void async_accept(stream_socket& peer,
+                        endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
+                    //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                    async_accept_impl(peer, peer_endpoint, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
+                }
+
+                template <typename AcceptHandler>
+                void async_accept(stream_socket& peer,
+                        BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
+                    //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                    async_accept_impl(peer, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
+                }
+
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                         
+
+            private:
+
+                template <typename Handler>
+                class accept_op {
+                public:
+
+                    accept_op(Handler h, stream_socket& socket, int16_t src)
+                    : handler_(h), socket_(socket), src_(src) {
+                    }
+
+                    void run(const error_code& ec) {
+                        operator()(ec);
+                    }
+
+                    void operator()(const error_code& ec) {
+                        if (!ec) {
+                            socket_.asyn_check_accept<Handler > (handler_, src_);
+                            return;
+                        }
+                        handler_(ec);
+                    }
+
+                private:
+                    Handler handler_;
+                    stream_socket& socket_;
+                    int16_t src_;
+                };
+
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                         
+
+                template <typename AcceptHandler>
+                void async_accept_impl(stream_socket& peer,
+                        endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
+                    //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                    super_type::async_accept(peer, peer_endpoint, accept_op<AcceptHandler > (handler, peer, src()));
+                }
+
+                template < typename AcceptHandler>
+                void async_accept_impl(stream_socket& peer,
+                        BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
+                    //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                    super_type::async_accept(peer, accept_op<AcceptHandler > (handler, peer, src()));
+                }
+
+                error_code accept_impl(
+                        stream_socket& peer,
+                        endpoint_type& peer_endpoint, error_code& ec) {
+                    super_type::accept(peer, peer_endpoint, ec);
+                    if (ec)
+                        return ec;
+                    peer.check_accept(src(), ec);
+                    return ec;
+                }
+
+                error_code accept_impl(
+                        stream_socket& peer,
+                        error_code& ec) {
+                    super_type::accept(peer, ec);
+                    if (ec)
+                        return ec;
+                    peer.check_accept(src(), ec);
+                    return ec;
+                }
+
+                int16_t src() const {
+                    boost::mutex::scoped_lock(mtx);
+                    return src_ = ((src_ + 1) ? (src_ + 1) : 1);
+                }
+
+
+                mutable int16_t src_;
+                boost::mutex mtx;
 
             };
 
