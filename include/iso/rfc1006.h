@@ -32,7 +32,6 @@ namespace boost {
             using boost::asio::basic_socket;
             using boost::asio::basic_socket_acceptor;
 
-            typedef boost::asio::socket_base::message_flags message_flags;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //   rfc1006 utill   //
@@ -574,50 +573,69 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
             class stream_socket : protected boost::asio::basic_stream_socket<boost::asio::ip::tcp > {
+                
                 typedef boost::shared_ptr<receiver> receiver_ptr;
                 typedef boost::shared_ptr<sender> sender_ptr;
+                typedef boost::asio::basic_stream_socket<boost::asio::ip::tcp >  super_type;
 
                 friend class socket_acceptor;
 
             public:
+   
+                typedef super_type::protocol_type protocol_type;   
+                typedef super_type::lowest_layer_type lowest_layer_type;   
+                typedef super_type::native_handle_type native_handle_type;
+                typedef super_type::native_type native_type;        
+                typedef super_type::message_flags message_flags;                 
+                typedef super_type::endpoint_type endpoint_type;
+                typedef super_type::service_type service_type;   
+                typedef super_type::shutdown_type shutdown_type;
+                typedef super_type::implementation_type implementation_type;     
+          
 
+                using super_type::assign;
+                using super_type::at_mark;
+                using super_type::available;
+                using super_type::bind;
+                using super_type::cancel;
+                using super_type::close;
+                using super_type::get_io_service;
+                using super_type::get_option;
+                using super_type::io_control;
+                using super_type::is_open;
+                using super_type::lowest_layer;
+                using super_type::native;
+                using super_type::native_handle;
+                using super_type::native_non_blocking;
+                using super_type::non_blocking;
+                using super_type::open;
+                using super_type::remote_endpoint;
+                using super_type::set_option;
+                using super_type::shutdown;                  
+                
+            protected:
+                
+                using super_type::get_service;                   
+                using super_type::get_implementation; 
 
+            public:
+                
+                
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Constructors  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
                 explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector())
-                : boost::asio::basic_stream_socket<boost::asio::ip::tcp>(io_service), pdusize_(tsel.pdusize()),
+                : super_type(io_service), pdusize_(tsel.pdusize()),
                 transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const transport_selector& tsel = transport_selector())
-                : boost::asio::basic_stream_socket<boost::asio::ip::tcp >(io_service, endpoint), pdusize_(tsel.pdusize()),
+                : super_type(io_service, endpoint), pdusize_(tsel.pdusize()),
                 transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
                 }
 
-                boost::asio::basic_stream_socket<boost::asio::ip::tcp >& basic_cast() {
-                    return *this;
-                }
-
-
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //  Available  //
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
-
-                std::size_t available() const {
-                    error_code ec;
-                    std::size_t s = available(ec);
-                    boost::asio::detail::throw_error(ec, "available");
-                    return s;
-                }
-
-                std::size_t available(error_code& ec) const {
-                    std::size_t s = get_service().available(get_implementation(), ec);
-                    if (ec) return 0;
-                    return waiting_data_size_ < s ? waiting_data_size_ : s;
-                }
 
 
 
@@ -630,31 +648,11 @@ namespace boost {
                 }
 
 
-
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //  Colose operation  //
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
-
-                void close() {
-                    error_code ecc;
-                    get_service().close(get_implementation(), ecc);
-                    boost::asio::detail::throw_error(ecc, "close");
-                }
-
-                boost::system::error_code close(boost::system::error_code& ec) {
-                    get_service().close(get_implementation(), ec);
-                    return ec;
-                }
-
-
-
-
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Connnect operations  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 void connect(const endpoint_type& peer_endpoint) {
-
                     error_code ec;
                     connect(peer_endpoint, ec);
                     boost::asio::detail::throw_error(ec, "connect");
@@ -891,6 +889,8 @@ namespace boost {
                 //  Check accept operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
+            protected:    
+                
                 void check_accept(int16_t src) {
                     error_code ec;
                     boost::asio::detail::throw_error(ec, "connect");
@@ -1019,7 +1019,9 @@ namespace boost {
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                    
 
-            public:
+            protected:
+                
+                
 
                 template <typename CheckAcceptHandler>
                 void asyn_check_accept(CheckAcceptHandler handler, int16_t src) {
@@ -1535,8 +1537,45 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
-            class socket_acceptor : public basic_socket_acceptor<boost::asio::ip::tcp> {
+            class socket_acceptor : protected basic_socket_acceptor<boost::asio::ip::tcp> {
+                
                 typedef basic_socket_acceptor<boost::asio::ip::tcp> super_type;
+                
+              friend class stream_socket;
+
+            public:
+    
+                typedef super_type::protocol_type  protocol_type;                   
+                typedef super_type::endpoint_type endpoint_type;         
+                typedef super_type::implementation_type implementation_type;
+                typedef super_type::service_type service_type;    
+                typedef super_type::message_flags message_flags;                     
+                typedef super_type::native_handle_type native_handle_type;
+                typedef super_type::native_type native_type;        
+                
+                using super_type::assign;
+                using super_type::bind;  
+                using super_type::cancel;
+                using super_type::close;
+                using super_type::get_io_service;            
+                using super_type::get_option;
+                using super_type::io_control;   
+                using super_type::is_open;                
+                using super_type::listen;      
+                using super_type::local_endpoint;   
+                using super_type::native;
+                using super_type::native_handle;
+                using super_type::native_non_blocking;
+                using super_type::non_blocking;                
+                using super_type::open; 
+                using super_type::set_option;
+
+                                
+            protected:
+                
+                using super_type::get_service;                   
+                using super_type::get_implementation; 
+                
 
             public:
 
