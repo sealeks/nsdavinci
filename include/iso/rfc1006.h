@@ -704,7 +704,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.get_service().async_send(socket.get_implementation(), sender_->pop(), 0, *this);
+                                        socket.super_type::async_send( sender_->pop(), 0, *this);
                                         return;
                                     }
                                     else {
@@ -717,7 +717,7 @@ namespace boost {
                                 {
                                     receiver_->put(bytes_transferred);
                                     if (!receiver_->ready()) {
-                                        socket.get_service().async_receive(socket.get_implementation(), boost::asio::buffer(receiver_->buffer()), 0, *this);
+                                        socket.super_type::async_receive( boost::asio::buffer(receiver_->buffer()), 0, *this);
                                         return;
                                     }
                                     finish(ec);
@@ -785,7 +785,7 @@ namespace boost {
                     
                     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
-                    get_service().async_connect(get_implementation(), peer_endpoint, boost::bind(&connect_operation<ConnectHandler>::run,
+                    super_type::async_connect( peer_endpoint, boost::bind(&connect_operation<ConnectHandler>::run,
                             connect_operation<ConnectHandler > (*this, handler), boost::asio::placeholders::error));
 
                 }
@@ -835,11 +835,11 @@ namespace boost {
                         if (!ec) {
                             sender_->size(bytes_transferred);
                             if (!sender_->ready()) {
-                                socket.get_service().async_send(socket.get_implementation(), sender_->pop(), 0, *this);
+                                socket.super_type::async_send( sender_->pop(), 0, *this);
                                 return;
                             }
                         }
-                        self_shutdown();
+                        socket.self_shutdown();
                         handler(ec);
                     }
 
@@ -922,7 +922,7 @@ namespace boost {
                                 {
                                     receiver_->put(bytes_transferred);
                                     if (!receiver_->ready()) {
-                                        socket.get_service().async_receive(socket.get_implementation(), boost::asio::buffer(receiver_->buffer()), 0, *this);
+                                        socket.super_type::async_receive( boost::asio::buffer(receiver_->buffer()), 0, *this);
                                         return;
                                     }
                                     parse_response(ec);
@@ -932,7 +932,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.get_service().async_send(socket.get_implementation(), sender_->pop(), 0, *this);
+                                        socket.super_type::async_send( sender_->pop(), 0, *this);
                                         return;
                                     }
                                     finish(ec);
@@ -942,7 +942,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.get_service().async_send(socket.get_implementation(), sender_->pop(), 0, *this);
+                                        socket.super_type::async_send( sender_->pop(), 0, *this);
                                         return;
                                     }
                                     socket.self_shutdown();
@@ -1096,7 +1096,7 @@ namespace boost {
                         if (!ec) {
                             in_->size(bytes_transferred);
                             if (!in_->ready()) {
-                                socket.get_service().async_send(socket.get_implementation(), in_->pop(), flags_, *this);
+                                socket.super_type::async_send( in_->pop(), flags_, *this);
                                 return;
                             }
                         }
@@ -1222,7 +1222,7 @@ namespace boost {
                         if (!ec) {
                             receiver_->put(bytes_transferred);
                             if (!receiver_->ready()) {
-                                socket.get_service().async_receive(socket.get_implementation(), boost::asio::buffer(receiver_->buffer()), flags_, *this);
+                                socket.super_type::async_receive( boost::asio::buffer(receiver_->buffer()), flags_, *this);
                                 return;
                             }
 
@@ -1339,7 +1339,7 @@ namespace boost {
 
                 boost::system::error_code self_shutdown() {
                     error_code ecc;
-                    get_service().shutdown(get_implementation(), boost::asio::socket_base::shutdown_both, ecc);
+                    super_type::shutdown( boost::asio::socket_base::shutdown_both, ecc);
                     return ecc;
                 }
 
@@ -1369,12 +1369,12 @@ namespace boost {
                 error_code connect_impl(const endpoint_type& peer_endpoint,
                         error_code& ec) {
 
-                    if (get_service().connect(get_implementation(), peer_endpoint, ec))
+                    if (super_type::connect( peer_endpoint, ec))
                         return ec;
 
                     sender_ptr sender_(sender_ptr(new sender(transport_option())));
                     while (!ec && !sender_->ready())
-                        sender_->size(get_service().send(get_implementation(), sender_->pop(), 0, ec));
+                        sender_->size(super_type::send( sender_->pop(), 0, ec));
                     if (ec) {
                         self_shutdown();
                         return ec;
@@ -1382,7 +1382,7 @@ namespace boost {
 
                     receiver_ptr receiver_(receiver_ptr(new receiver()));
                     while (!ec && !receiver_->ready()) {
-                        receiver_->put(get_service().receive(get_implementation(), boost::asio::buffer(receiver_->buffer()), 0, ec));
+                        receiver_->put(super_type::receive( boost::asio::buffer(receiver_->buffer()), 0, ec));
                     }
                     if (ec) {
                         self_shutdown();
@@ -1419,7 +1419,7 @@ namespace boost {
                     if (is_open()) {
                         sender_ptr sender_(sender_ptr(new sender(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
                         while (!ec && !sender_->ready())
-                            sender_->size(get_service().send(get_implementation(), sender_->pop(), 0, ec));
+                            sender_->size(super_type::send( sender_->pop(), 0, ec));
                         self_shutdown();
                         return ec;
                     }
@@ -1431,7 +1431,7 @@ namespace boost {
                     bool canseled = false;
                     receiver_ptr receiver_(receiver_ptr(new receiver()));
                     while (!ec && !receiver_->ready()) {
-                        receiver_->put(get_service().receive(get_implementation(), boost::asio::buffer(receiver_->buffer()), 0, ec));
+                        receiver_->put(super_type::receive( boost::asio::buffer(receiver_->buffer()), 0, ec));
                     }
                     if (ec) {
                         self_shutdown();
@@ -1452,7 +1452,7 @@ namespace boost {
                         sender_ = sender_ptr(new sender(1, options_));
                     }
                     while (!ec && !sender_->ready())
-                        sender_->size(get_service().send(get_implementation(), sender_->pop(), 0, ec));
+                        sender_->size(super_type::send( sender_->pop(), 0, ec));
                     if (ec) {
                         self_shutdown();
                         return ec;
@@ -1474,7 +1474,7 @@ namespace boost {
                         message_flags flags, error_code& ec) {
                     sender_ptr sender_(new data_sender<ConstBufferSequence > (buffers, pdusize()));
                     while (!ec && !sender_->ready())
-                        sender_->size(get_service().send(get_implementation(), sender_->pop(), 0, ec));
+                        sender_->size(super_type::send( sender_->pop(), 0, ec));
                     return ec ? 0 : boost::asio::buffer_size(buffers);
                 }
 
@@ -1483,7 +1483,7 @@ namespace boost {
                         message_flags flags, error_code& ec) {
                     receiver_ptr receiver_(new receiver(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state()));
                     while (!ec && !receiver_->ready()) {
-                        receiver_->put(get_service().receive(get_implementation(), boost::asio::buffer(
+                        receiver_->put(super_type::receive( boost::asio::buffer(
                                 receiver_->buffer()), 0, ec));
                     }
                     if (ec)
