@@ -856,15 +856,15 @@ namespace boost {
             public:
 
                 template <typename ReleaseHandler>
-                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
+                void async_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler,
                         octet_type rsn = DR_REASON_NORM) {
                   
                     if (is_open()) {
                         get_io_service().post(boost::bind(&release_operation<ReleaseHandler>::run,
                                 release_operation<ReleaseHandler > (*this , handler, rsn)));
                     }
-                    else
-                        handler(ER_NOLINK);
+                   // else
+                   //     handler(ER_NOLINK);
                 }
 
 
@@ -1010,7 +1010,7 @@ namespace boost {
                 
 
                 template <typename CheckAcceptHandler>
-                void asyn_check_accept( BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler, int16_t src) {
+                void async_check_accept( BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler, int16_t src) {
 
                     transport_option_.src_tsap(src);
                     get_io_service().post(boost::bind(&accept_operation<CheckAcceptHandler>::run,
@@ -1639,7 +1639,7 @@ namespace boost {
 
                     void operator()(const error_code& ec) {
                         if (!ec) {
-                            socket.asyn_check_accept<Handler > (handler, src_);
+                            socket.async_check_accept<Handler > (handler, src_);
                             return;
                         }
                         handler(ec);
