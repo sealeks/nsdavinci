@@ -997,8 +997,7 @@ namespace boost {
                     enum stateconnection {
                         request,
                         response,
-                        waitclose,
-                        stop
+                        transportdisconnect
                     };
 
                 public:
@@ -1027,6 +1026,7 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
+                                    state(response);
                                     operator()(ec, 0);
                                     return;
                                 }
@@ -1040,10 +1040,9 @@ namespace boost {
                                     finish(ec);
                                     return;
                                 }
-                                case waitclose:
+                                case transportdisconnect:
                                 {
-                                    socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), 0, *this);
-                                    state(stop);
+                                    socket.super_type::async_release(*this);
                                     return;
                                 }
                             }
@@ -1051,6 +1050,10 @@ namespace boost {
                         }
                         exit_handler(ec);
                     }
+                    
+                    void operator()(const error_code& ec) {
+                        exit_handler(ec);
+                    }                   
 
 
                 private:
@@ -1061,17 +1064,15 @@ namespace boost {
                                 case DN_SPDU_ID:
                                 {
                                     socket.rootcoder()->in()->add(receiver_->options().data());
-                                    error_code ecc;
-                                    //socket.close(ecc);
-                                    exit_handler(ec);
+                                    state(transportdisconnect);
+                                    run();
                                     return;
                                 }
                                 case AA_SPDU_ID:
                                 {
                                     socket.rootcoder()->in()->add(receiver_->options().data());
-                                    error_code ecc;
-                                    //socket.close(ecc);
-                                    exit_handler(ec);
+                                    state(transportdisconnect);
+                                    run();
                                     return;
                                 }
                                 default:
@@ -1122,7 +1123,7 @@ namespace boost {
                 }
 
                 template <typename ReleaseHandler>
-                void asyn_abort(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler) {
+                void async_abort(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler) {
                     //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                     rootcoder()->in()->clear();
                     if (is_open()) {
