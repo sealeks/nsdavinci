@@ -50,11 +50,14 @@ namespace boost {
         const error_code ER_BADADDRESS = error_code(boost::system::errc::bad_address, boost::system::system_category());
         const error_code ER_NAADDRESS = error_code(boost::system::errc::address_not_available, boost::system::system_category());
         const error_code ER_OUTDOMAIN = error_code(boost::system::errc::argument_out_of_domain, boost::system::system_category());
+        const error_code ER_PROTOPT = error_code(boost::system::errc::no_protocol_option, boost::system::system_category());
         const error_code ER_INOUT = error_code(boost::system::errc::io_error, boost::system::system_category());
         const error_code ER_REFUSE = error_code(boost::system::errc::connection_refused, boost::system::system_category());
         const error_code ER_ABORT = error_code(boost::system::errc::connection_aborted , boost::system::system_category());      
         const error_code ER_RELEASE = error_code(boost::system::errc::connection_reset  , boost::system::system_category()); 
+        const error_code ER_NOLINK = error_code(boost::system::errc::no_link  , boost::system::system_category());         
         const error_code ER_EAGAIN = error_code(boost::system::errc::resource_unavailable_try_again , boost::system::system_category()); 
+        const error_code ER_TIMEOUT = error_code(boost::system::errc::timed_out , boost::system::system_category());     
 
         //   transport
             // TPDU size  ref X224  13.3.4 b)
