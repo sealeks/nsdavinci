@@ -593,7 +593,7 @@ namespace boost {
                     void operator()(const error_code& error, size_t bytes_transferred) {
                         if (!error) {
                             socket_->coder()->input().add(octet_sequnce(socket_->databuff, socket_->databuff + bytes_transferred));
-                            if (!socket_->input_empty()) {
+                            if (!socket_->ready()) {
                                 socket_->super_type::async_read_some(
                                         boost::asio::buffer(socket_->databuff, BUFFER_SIZE),
                                         boost::bind(&respond_op<RespondHandler >::run,

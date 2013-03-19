@@ -643,7 +643,7 @@ namespace boost {
                 //  Data indication  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                bool input_empty() const {
+                bool ready() const {
                     return (!waiting_data_size_) && (eof_state_);
                 }
 
@@ -1539,7 +1539,7 @@ namespace boost {
 
             class socket_acceptor : protected basic_socket_acceptor<boost::asio::ip::tcp> {
                 
-                typedef basic_socket_acceptor<boost::asio::ip::tcp> super_type;
+               typedef basic_socket_acceptor<boost::asio::ip::tcp> super_type;
                 
               friend class stream_socket;
 
