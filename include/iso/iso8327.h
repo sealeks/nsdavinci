@@ -785,6 +785,7 @@ namespace boost {
                 using super_type::shutdown;
 
                 using super_type::ready;
+                //using super_type::async_release;            
 
             protected:
 
@@ -871,8 +872,7 @@ namespace boost {
                                     if (!sender_->ready()) {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
-                                    }
-                                    else {
+                                    } else {
                                         state(response);
                                         operator()(ec, 0);
                                         return;
@@ -1111,14 +1111,13 @@ namespace boost {
             public:
 
                 template <typename ReleaseHandler>
-                void asyn_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler) {
+                void async_release(BOOST_ASIO_MOVE_ARG(ReleaseHandler) handler) {
                     //BOOST_ASIO_CONNECT_HANDLER_CHECK(ReleaseHandler, handler) type_check;
                     rootcoder()->in()->clear();
                     if (is_open()) {
                         get_io_service().post(boost::bind(&release_operation<ReleaseHandler>::run,
                                 release_operation<ReleaseHandler > (*this, handler, SESSION_FN_RELEASE)));
-                    }
-                    else
+                    } else
                         handler(ER_REFUSE);
                 }
 
@@ -1129,8 +1128,7 @@ namespace boost {
                     if (is_open()) {
                         get_io_service().post(boost::bind(&release_operation<ReleaseHandler>::run,
                                 release_operation<ReleaseHandler > (*this, handler, SESSION_AB_RELEASE)));
-                    }
-                    else
+                    } else
                         handler(ER_REFUSE);
                 }
 
@@ -1290,7 +1288,7 @@ namespace boost {
             protected:
 
                 template <typename CheckAcceptHandler>
-                void asyn_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler) {
+                void async_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler) {
                     // BOOST_ASIO_CONNECT_HANDLER_CHECK(CheckAcceptHandler, handler) type_check;
                     rootcoder()->in()->clear();
                     get_io_service().post(boost::bind(&check_accept_operation<CheckAcceptHandler>::run,
@@ -1492,7 +1490,8 @@ namespace boost {
 
                     enum stateconnection {
                         request,
-                        response
+                        response,
+                        trasportdisconnect
                     };
 
 
@@ -1535,12 +1534,22 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
-                                    handler(ER_REFUSE, static_cast<std::size_t> (receiver_->datasize()));
+                                    state(trasportdisconnect);
+                                    //handler(ER_REFUSE, static_cast<std::size_t> (receiver_->datasize()));
+                                    return;
+                                }
+                                case trasportdisconnect:
+                                {
+                                    socket.super_type::async_release(*this);
                                     return;
                                 }
                             }
                         }
                         handler(ec, static_cast<std::size_t> (receiver_->datasize()));
+                    }
+
+                    void operator()(const error_code& ec) {
+                        handler(ER_REFUSE, 0);
                     }
 
 
@@ -1565,11 +1574,10 @@ namespace boost {
                             case AB_SPDU_ID:
                             {
                                 socket.rootcoder()->in()->clear();
-                                socket.rootcoder()->in()->add(receiver_->options().data());
+                                //socket.rootcoder()->in()->add(receiver_->options().data());
                                 socket.negotiate_session_abort();
-                                error_code ecc;
-                                socket.close(ecc);
-                                handler(ER_ABORT, 0);
+                                state(trasportdisconnect);
+                                run();
                                 return false;
                             }
                             default:
@@ -1823,8 +1831,7 @@ namespace boost {
                             options_.refuse_reason(DR_REASON_USER);
                         canseled = true;
                         sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder()));
-                    }
-                    else {
+                    } else {
                         session_version_ = (options_.accept_version() & VERSION2) ? VERSION2 : VERSION1;
                         sender_ = sender_ptr(new sender(AC_SPDU_ID, options_, rootcoder()));
                     }
@@ -1836,8 +1843,7 @@ namespace boost {
                     if (canseled) {
                         error_code ecc;
                         //close(ecc);
-                    }
-                    else {
+                    } else {
                         const protocol_options& opt = receiver_->options();
                         negotiate_session_option(receiver_->options());
                     }
@@ -1892,10 +1898,9 @@ namespace boost {
                         case AB_SPDU_ID:
                         {
                             rootcoder()->in()->clear();
-                            rootcoder()->in()->add(receiver_->options().data());
                             negotiate_session_abort();
                             error_code ecc;
-                            close(ecc);
+                            super_type::release(ecc);
                             ec = ER_ABORT;
                             return 0;
                         }
@@ -1907,8 +1912,8 @@ namespace boost {
                                     sender_->size(super_type::send(sender_->pop(), 0, ec));
                                 ec = ER_REFUSE;
                                 error_code ecc;
-                                // close(ecc);
-                                return receiver_->datasize();
+                                super_type::release(ecc);
+                                return 0;
 
                             }
                         }
@@ -2051,7 +2056,7 @@ namespace boost {
 
                     void operator()(const error_code& ec) {
                         if (!ec)
-                            socket.asyn_check_accept(handler);
+                            socket.async_check_accept(handler);
                         else
                             handler(ec);
                     }
