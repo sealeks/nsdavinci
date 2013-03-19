@@ -1077,11 +1077,11 @@ namespace boost {
                 class send_operation {
                 public:
 
-                    send_operation(stream_socket* socket, SendHandler handler,
+                    send_operation(stream_socket& sock, SendHandler handlr,
                             const ConstBufferSequence& buffers, message_flags flags) :
-                    socket_(socket),
-                    handler_(handler),
-                    in_(sender_ptr(new data_sender<ConstBufferSequence>(buffers, socket->pdusize()))),
+                    socket(sock),
+                    handler(handlr),
+                    in_(sender_ptr(new data_sender<ConstBufferSequence>(buffers, sock.pdusize()))),
                     flags_(flags),
                     send_lower_(boost::asio::buffer_size(buffers)) {
                     }
@@ -1096,18 +1096,18 @@ namespace boost {
                         if (!ec) {
                             in_->size(bytes_transferred);
                             if (!in_->ready()) {
-                                socket_->get_service().async_send(socket_->get_implementation(), in_->pop(), flags_, *this);
+                                socket.get_service().async_send(socket.get_implementation(), in_->pop(), flags_, *this);
                                 return;
                             }
                         }
-                        handler_(ec, static_cast<std::size_t> (send_lower_));
+                        handler(ec, static_cast<std::size_t> (send_lower_));
                     }
 
 
                 private:
 
-                    stream_socket* socket_;
-                    SendHandler handler_;
+                    stream_socket& socket;
+                    SendHandler handler;
                     sender_ptr in_;
                     message_flags flags_;
                     std::size_t send_lower_;
@@ -1128,20 +1128,20 @@ namespace boost {
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
+                void async_write_some(const ConstBufferSequence& buffers,
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
+
+                    async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler);
+                }
+
+                template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
                         message_flags flags,
                         BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
 
                     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
                     get_io_service().post(boost::bind(&send_operation<WriteHandler, ConstBufferSequence>::run,
-                            send_operation<WriteHandler, ConstBufferSequence > (const_cast<stream_socket*> (this), handler, buffers, flags)));
-                }
-
-                template <typename ConstBufferSequence, typename WriteHandler>
-                void async_write_some(const ConstBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
-
-                    async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler);
+                            send_operation<WriteHandler, ConstBufferSequence > (*this, handler, buffers, flags)));
                 }
 
 
@@ -1202,10 +1202,10 @@ namespace boost {
                 class receive_operation {
                 public:
 
-                    receive_operation(stream_socket* socket, ReceiveHandler handler,
+                    receive_operation(stream_socket& sock, ReceiveHandler handlr,
                             receiver_ptr receive, const Mutable_Buffers& buff, message_flags flags) :
-                    socket_(socket),
-                    handler_(handler),
+                    socket(sock),
+                    handler(handlr),
                     receiver_(receive),
                     buff_(buff),
                     flags_(flags) {
@@ -1222,14 +1222,14 @@ namespace boost {
                         if (!ec) {
                             receiver_->put(bytes_transferred);
                             if (!receiver_->ready()) {
-                                socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(receiver_->buffer()), flags_, *this);
+                                socket.get_service().async_receive(socket.get_implementation(), boost::asio::buffer(receiver_->buffer()), flags_, *this);
                                 return;
                             }
 
                             if (!success()) return;
                         }
-                        socket_->waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
-                        handler_(ec, static_cast<std::size_t> (receiver_->datasize()));
+                        socket.waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
+                        handler(ec, static_cast<std::size_t> (receiver_->datasize()));
                     }
 
 
@@ -1240,7 +1240,7 @@ namespace boost {
                             case CR:
                             {
                                 error_code ecc;
-                                handler_(ecc, 0);
+                                handler(ecc, 0);
                                 return false;
                             }
                             case DT:
@@ -1249,28 +1249,28 @@ namespace boost {
                             }
                             case ER:
                             {
-                                socket_->self_shutdown();
-                                handler_(ER_PROTOCOL, static_cast<std::size_t> (receiver_->datasize()));
+                                socket.self_shutdown();
+                                handler(ER_PROTOCOL, static_cast<std::size_t> (receiver_->datasize()));
                                 break;
                             }
                             case DR:
                             {
-                                socket_->self_shutdown();
-                                handler_(ER_REFUSE, static_cast<std::size_t> (receiver_->datasize()));
+                                socket.self_shutdown();
+                                handler(ER_REFUSE, static_cast<std::size_t> (receiver_->datasize()));
                                 break;
                             }
                             default:
                             {
-                                socket_->self_shutdown();
-                                handler_(ER_PROTOCOL, 0);
+                                socket.self_shutdown();
+                                handler(ER_PROTOCOL, 0);
                             }
                         }
 
                         return false;
                     }
 
-                    stream_socket* socket_;
-                    ReceiveHandler handler_;
+                    stream_socket& socket;
+                    ReceiveHandler handler;
                     const Mutable_Buffers& buff_;
                     receiver_ptr receiver_;
                     message_flags flags_;
@@ -1287,6 +1287,14 @@ namespace boost {
 
                     async_receive<MutableBufferSequence, ReadHandler > (buffers, handler, 0);
                 }
+                
+                template <typename MutableBufferSequence, typename ReadHandler>
+                void async_read_some(const MutableBufferSequence& buffers,
+                        BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
+
+                    async_receive<MutableBufferSequence, ReadHandler > (buffers, 0, handler);
+                }
+                
 
                 template <typename MutableBufferSequence, typename ReadHandler>
                 void async_receive(const MutableBufferSequence& buffers,
@@ -1295,17 +1303,12 @@ namespace boost {
 
                     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-                    get_io_service().post(boost::bind(&receive_operation<ReadHandler, MutableBufferSequence>::run, receive_operation<ReadHandler, MutableBufferSequence > (const_cast<stream_socket*> (this), handler,
+                    get_io_service().post(boost::bind(&receive_operation<ReadHandler, MutableBufferSequence>::run, receive_operation<ReadHandler, MutableBufferSequence > (*this, handler,
                             receiver_ptr(new receiver(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state())), buffers, flags)));
 
                 }
 
-                template <typename MutableBufferSequence, typename ReadHandler>
-                void async_read_some(const MutableBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
 
-                    async_receive<MutableBufferSequence, ReadHandler > (buffers, 0, handler);
-                }
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
