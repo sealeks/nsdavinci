@@ -660,12 +660,6 @@ namespace boost {
 
                 error_code connect(const endpoint_type& peer_endpoint,
                         error_code& ec) {
-                    if (!is_open()) {
-                        if (get_service().open(get_implementation(),
-                                peer_endpoint.protocol(), ec)) {
-                            return ec;
-                        }
-                    }
                     return connect_impl(peer_endpoint, ec);
                 }
 
@@ -684,11 +678,11 @@ namespace boost {
 
                 public:
 
-                    connect_operation(stream_socket* socket, ConnectHandler handler) :
-                    socket_(socket),
-                    handler_(handler),
+                    connect_operation(stream_socket& sock, ConnectHandler handlr) :
+                    socket(sock),
+                    handler(handlr),
                     state_(request),
-                    sender_(sender_ptr(new sender(socket->transport_option()))),
+                    sender_(sender_ptr(new sender(sock.transport_option()))),
                     receiver_(new receiver()) {
                     }
 
@@ -700,7 +694,7 @@ namespace boost {
                         if (!ec)
                             operator()(ec, 0);
                         else
-                            handler_(ec);
+                            handler(ec);
                     }
 
                     void operator()(const error_code& ec, std::size_t bytes_transferred) {
@@ -710,7 +704,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket_->get_service().async_send(socket_->get_implementation(), sender_->pop(), 0, *this);
+                                        socket.get_service().async_send(socket.get_implementation(), sender_->pop(), 0, *this);
                                         return;
                                     }
                                     else {
@@ -723,7 +717,7 @@ namespace boost {
                                 {
                                     receiver_->put(bytes_transferred);
                                     if (!receiver_->ready()) {
-                                        socket_->get_service().async_receive(socket_->get_implementation(), boost::asio::buffer(receiver_->buffer()), 0, *this);
+                                        socket.get_service().async_receive(socket.get_implementation(), boost::asio::buffer(receiver_->buffer()), 0, *this);
                                         return;
                                     }
                                     finish(ec);
@@ -732,7 +726,7 @@ namespace boost {
                                 }
                             }
                         }
-                        handler_(ec);
+                        handler(ec);
                     }
 
 
@@ -744,26 +738,26 @@ namespace boost {
                             switch (receiver_->type()) {
                                 case CC:
                                 {
-                                    socket_->negotiate_transport_option(receiver_->options());
-                                    handler_(ec);
+                                    socket.negotiate_transport_option(receiver_->options());
+                                    handler(ec);
                                     return;
                                 }
                                 case ER:
                                 {
-                                    socket_->self_shutdown();
-                                    handler_(ER_PROTOCOL);
+                                    socket.self_shutdown();
+                                    handler(ER_PROTOCOL);
                                     return;
                                 }
                                 case DR:
                                 {
-                                    socket_->self_shutdown();
-                                    handler_(receiver_->errcode());
+                                    socket.self_shutdown();
+                                    handler(receiver_->errcode());
                                     return;
                                 }
                             }
                         }
-                        socket_->self_shutdown();
-                        handler_(ER_PROTOCOL);
+                        socket.self_shutdown();
+                        handler(ER_PROTOCOL);
                     }
 
                     void state(stateconnection st) {
@@ -772,8 +766,8 @@ namespace boost {
                         }
                     }
 
-                    stream_socket* socket_;
-                    ConnectHandler handler_;
+                    stream_socket& socket;
+                    ConnectHandler handler;
                     stateconnection state_;
                     sender_ptr sender_;
                     receiver_ptr receiver_;
@@ -788,21 +782,11 @@ namespace boost {
                 template <typename ConnectHandler>
                 void async_connect(const endpoint_type& peer_endpoint,
                         BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
+                    
                     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
-                    if (!is_open()) {
-                        error_code ec;
-                        const protocol_type protocol = peer_endpoint.protocol();
-                        if (get_service().open(get_implementation(), protocol, ec)) {
-                            get_io_service().post(
-                                    boost::asio::detail::bind_handler(
-                                    BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler), ec));
-                            return;
-                        }
-                    }
-
                     get_service().async_connect(get_implementation(), peer_endpoint, boost::bind(&connect_operation<ConnectHandler>::run,
-                            connect_operation<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
+                            connect_operation<ConnectHandler > (*this, handler), boost::asio::placeholders::error));
 
                 }
 
@@ -814,7 +798,7 @@ namespace boost {
                 //  Release operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                void release(octet_type rsn = 0) {
+                void release(octet_type rsn = DR_REASON_NORM) {
                     error_code ec;
                     release(ec, rsn);
                     boost::asio::detail::throw_error(ec, "release");
