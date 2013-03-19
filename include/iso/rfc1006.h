@@ -946,7 +946,7 @@ namespace boost {
                                         return;
                                     }
                                     socket.self_shutdown();
-                                    handler(ER_OUTDOMAIN);
+                                    handler(ER_PROTOPT);
                                     return;
                                 }
                             }
@@ -1466,7 +1466,7 @@ namespace boost {
                         opt.pdusize(options_.pdusize());
                         negotiate_transport_option(receiver_->options());
                     }
-                    return ec = canseled ? ER_BADADDRESS : ec;
+                    return ec = canseled ? ER_PROTOPT : ec;
                 }
 
                 template <typename ConstBufferSequence>
@@ -1609,15 +1609,15 @@ namespace boost {
                 template <typename AcceptHandler>
                 void async_accept(stream_socket& peer,
                         endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                    //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-                    async_accept_impl(peer, peer_endpoint, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
+
+                    async_accept_impl(peer, peer_endpoint, handler );
                 }
 
                 template <typename AcceptHandler>
                 void async_accept(stream_socket& peer,
                         BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                    //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-                    async_accept_impl(peer, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
+   
+                    async_accept_impl(peer, handler );
                 }
 
 
@@ -1626,11 +1626,11 @@ namespace boost {
             private:
 
                 template <typename Handler>
-                class accept_op {
+                class accept_operation {
                 public:
 
-                    accept_op(Handler h, stream_socket& socket, int16_t src)
-                    : handler_(h), socket_(socket), src_(src) {
+                    accept_operation(Handler hendlr, stream_socket& sock, int16_t src)
+                    : handler(hendlr), socket(sock), src_(src) {
                     }
 
                     void run(const error_code& ec) {
@@ -1639,15 +1639,15 @@ namespace boost {
 
                     void operator()(const error_code& ec) {
                         if (!ec) {
-                            socket_.asyn_check_accept<Handler > (handler_, src_);
+                            socket.asyn_check_accept<Handler > (handler, src_);
                             return;
                         }
-                        handler_(ec);
+                        handler(ec);
                     }
 
                 private:
-                    Handler handler_;
-                    stream_socket& socket_;
+                    Handler handler;
+                    stream_socket& socket;
                     int16_t src_;
                 };
 
@@ -1657,15 +1657,17 @@ namespace boost {
                 template <typename AcceptHandler>
                 void async_accept_impl(stream_socket& peer,
                         endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                    //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-                    super_type::async_accept(peer, peer_endpoint, accept_op<AcceptHandler > (handler, peer, src()));
+                    
+                    BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                    super_type::async_accept(peer, peer_endpoint, accept_operation<AcceptHandler > (handler, peer, src()));
                 }
 
                 template < typename AcceptHandler>
                 void async_accept_impl(stream_socket& peer,
                         BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                    //BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-                    super_type::async_accept(peer, accept_op<AcceptHandler > (handler, peer, src()));
+                    
+                    BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+                    super_type::async_accept(peer, accept_operation<AcceptHandler > (handler, peer, src()));
                 }
 
                 error_code accept_impl(
