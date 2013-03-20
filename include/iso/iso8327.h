@@ -352,6 +352,8 @@ namespace boost {
                 }
 
                 protocol_options(const octet_sequnce& called, const octet_sequnce& calling = octet_sequnce());
+                
+                protocol_options(const session_selector& ssel);                
 
                 const octet_sequnce & ssap_calling() const;
 
@@ -743,6 +745,7 @@ namespace boost {
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
             class stream_socket : protected boost::itu::rfc1006::socket {
+                
                 typedef boost::itu::rfc1006::socket super_type;
                 typedef boost::itu::asn_coder_templ<> default_coder_type;
 
@@ -785,9 +788,11 @@ namespace boost {
                 using super_type::shutdown;
 
                 using super_type::ready;
-                //using super_type::async_release;            
+                using super_type::is_acceptor;                
+
 
             protected:
+                
 
                 using super_type::get_service;
                 using super_type::get_implementation;
@@ -1740,7 +1745,10 @@ namespace boost {
                 virtual bool negotiate_session_abort() {
                     return true;
                 }
-
+                                
+                void session_option(const session_selector& ssel) {
+                    option_ = protocol_options(ssel);
+                }
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  private member  //
@@ -2027,13 +2035,13 @@ namespace boost {
                 //  Constructors  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                                
 
-                explicit socket_acceptor(boost::asio::io_service& io_service)
-                : boost::itu::rfc1006impl::socket_acceptor(io_service) {
+                explicit socket_acceptor(boost::asio::io_service& io_service, const session_selector& ssel =  session_selector())
+                : boost::itu::rfc1006impl::socket_acceptor(io_service, ssel.tselector()), session_selector_(ssel) {
                 }
 
                 socket_acceptor(boost::asio::io_service& io_service,
-                        const endpoint_type& endpoint, bool reuse_addr = true)
-                : boost::itu::rfc1006impl::socket_acceptor(io_service, endpoint, reuse_addr) {
+                        const endpoint_type& endpoint,  const session_selector& ssel =  session_selector() , bool reuse_addr = true)
+                : boost::itu::rfc1006impl::socket_acceptor(io_service, endpoint, ssel.tselector(), reuse_addr), session_selector_(ssel) {
                 }
 
 
@@ -2128,6 +2136,7 @@ namespace boost {
 
                     typedef accept_operation<AcceptHandler > accept_operation_type;        
                     
+                    peer.session_option(session_selector_);                        
                     super_type::async_accept(peer, peer_endpoint, boost::bind(&accept_operation_type::execute, 
                     accept_operation_type(handler, peer),  boost::asio::placeholders::error));
                     
@@ -2140,7 +2149,8 @@ namespace boost {
                     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;          
 
                     typedef accept_operation<AcceptHandler > accept_operation_type;                    
-                    
+ 
+                    peer.session_option(session_selector_);                     
                     super_type::async_accept(peer, boost::bind(&accept_operation_type::execute,
                     accept_operation_type (handler, peer), boost::asio::placeholders::error));
                     
@@ -2149,6 +2159,7 @@ namespace boost {
                 error_code accept_impl(
                         stream_socket& peer,
                         endpoint_type& peer_endpoint, error_code& ec) {
+                    peer.session_option(session_selector_);                     
                     super_type::accept(peer, peer_endpoint, ec);
                     if (ec)
                         return ec;
@@ -2159,6 +2170,7 @@ namespace boost {
                 error_code accept_impl(
                         stream_socket& peer,
                         error_code& ec) {
+                    peer.session_option(session_selector_);                     
                     super_type::accept(peer, ec);
                     if (ec)
                         return ec;
@@ -2166,6 +2178,8 @@ namespace boost {
                     return ec;
                 }
 
+            private:
+                session_selector session_selector_;
 
             };
         }

@@ -12,7 +12,6 @@ namespace boost {
     namespace itu {
         namespace rfc1006impl {
 
-
             tpdu_type tpdu_type_from(octet_type val) {
                 switch (val) {
                     case CR_TPDU_ID: return CR;
@@ -79,6 +78,13 @@ namespace boost {
                 if (SIZENULL != pdusize) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw(static_cast<int8_t> (tpdu_type_size(pdusize)))));
                 if (!calling.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, calling.size()), calling));
                 if (!called.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, called.size()), called));
+            }
+
+            protocol_options::protocol_options(const transport_selector& tsl) :
+            dst_(0), src_(0) {
+                if (SIZENULL != tsl.pdusize()) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw(static_cast<int8_t> (tpdu_type_size(tsl.pdusize())))));
+                if (!tsl.calling().empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, tsl.calling().size()), tsl.calling()));
+                if (!tsl.called().empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, tsl.called().size()), tsl.called()));
             }
 
             tpdu_size protocol_options::pdusize() const {
@@ -160,7 +166,6 @@ namespace boost {
 
             /////////////////////
 
-            
             bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error) {
 #ifndef CHECK_ISO_SELECTOR
                 if (!self.tsap_called().empty() && self.tsap_called() != dist.tsap_called()) {
@@ -309,7 +314,7 @@ namespace boost {
             header_buff_(),
             userbuff_(buff) {
             }
-                         
+
             receiver::receiver() :
             state_(waittkpt),
             size_(0),
@@ -415,15 +420,15 @@ namespace boost {
             error_code receiver::check_header() {
                 mutable_buffer buff_ = header_buff_;
                 octet_type nativetp = *boost::asio::buffer_cast<octet_type*>(buff_);
-                type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp); 
+                type_ = tpdu_type_from(((nativetp & '\xF0') == CR_TPDU_ID) ? (nativetp & '\xF0') : nativetp);
                 switch (type_) {
                     case DT:
                     {
                         octet_type eof = *boost::asio::buffer_cast<octet_type*>(buff_ + 1);
                         if (estimatesize_ != 2 || !((eof == TPDU_CONTINIUE) || (eof == TPDU_ENDED)))
-                            return errcode(ER_PROTOCOL); 
+                            return errcode(ER_PROTOCOL);
                         estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ?
-                            boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
+                                boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
                         eof_ = (eof == TPDU_ENDED);
                         state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
                         return error_code();
@@ -444,7 +449,7 @@ namespace boost {
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ER_PROTOCOL);
-                        options_ = protocol_options_ptr ( new protocol_options(dst_tsap_, src_tsap_, vars));
+                        options_ = protocol_options_ptr(new protocol_options(dst_tsap_, src_tsap_, vars));
                         state(complete);
                         return error_code();
                     }
@@ -452,7 +457,7 @@ namespace boost {
                     {
                         waitdatasize_ = 0;
                         if (estimatesize_ < 6)
-                            return errcode(ER_PROTOCOL); 
+                            return errcode(ER_PROTOCOL);
                         int16_t dst_tsap_ = 0;
                         int16_t src_tsap_ = 0;
                         octet_type class_option;
@@ -464,7 +469,7 @@ namespace boost {
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ER_PROTOCOL);
-                        options_ = protocol_options_ptr ( new protocol_options(dst_tsap_, src_tsap_, vars));
+                        options_ = protocol_options_ptr(new protocol_options(dst_tsap_, src_tsap_, vars));
                         state(complete);
                         return error_code();
                     }
@@ -485,7 +490,7 @@ namespace boost {
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 6, (estimatesize_ - 6)), vars))
                             return errcode(ER_PROTOCOL);
-                        options_ = protocol_options_ptr ( new protocol_options(dst_tsap_, src_tsap_, vars));
+                        options_ = protocol_options_ptr(new protocol_options(dst_tsap_, src_tsap_, vars));
                         state(complete);
                         return error_code();
                     }
@@ -500,7 +505,7 @@ namespace boost {
                         raw_to_inttype(buffer_to_raw(buff_, 3, 1), reject_rsn);
                         headarvarvalues vars;
                         if (!parse_vars(buffer_to_raw(buff_, 4, (estimatesize_ - 4)), vars))
-                        state(complete);
+                            state(complete);
                         return error_code();
 
                     }
@@ -532,7 +537,7 @@ namespace boost {
             public:
 
                 service_sender_sequences(const octet_sequnce& send) : basic_sender_sequences(), send_(send) {
-                    buff().push_back( send_.empty() ? const_buffer() : const_buffer(&send_.front(), send_.size()));
+                    buff().push_back(send_.empty() ? const_buffer() : const_buffer(&send_.front(), send_.size()));
                 }
 
             private:

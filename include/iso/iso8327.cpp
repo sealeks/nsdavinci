@@ -324,6 +324,14 @@ namespace boost {
                 vars_->setPGI(PGI_CONN_ACC, PI_VERSION, WORK_PROT_VERSION);
                 vars_->setPI(PI_SES_USERREQ, FU_WORK);
             }
+            
+            protocol_options::protocol_options(const session_selector& ssel)  : vars_( new spdudata()) {
+                vars_->setPI(PI_CALLING, ssel.calling());
+                vars_->setPI(PI_CALLED, ssel.called());
+                vars_->setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
+                vars_->setPGI(PGI_CONN_ACC, PI_VERSION, WORK_PROT_VERSION);
+                vars_->setPI(PI_SES_USERREQ, FU_WORK);
+            }            
 
             const octet_sequnce& protocol_options::ssap_calling() const {
                 return vars_->getPI(PI_CALLING);
