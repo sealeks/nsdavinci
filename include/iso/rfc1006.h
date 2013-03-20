@@ -135,8 +135,8 @@ namespace boost {
 
                 protocol_options(int16_t dst, int16_t src, tpdu_size pdusize,
                         const octet_sequnce& called = octet_sequnce(), const octet_sequnce& calling = octet_sequnce());
-                
-                protocol_options(const transport_selector& tsl);                
+
+                protocol_options(const transport_selector & tsl);
 
                 int16_t dst_tsap() const {
                     return dst_;
@@ -176,6 +176,18 @@ namespace boost {
                 headarvarvalues vars_;
                 octet_sequnce null_;
             };
+
+
+#if defined(ITUX200_DEBUG) 
+
+            inline static std::ostream& operator<<(std::ostream& stream, const protocol_options& self) {
+                octet_sequnce calling = self.tsap_calling();
+                octet_sequnce called = self.tsap_called();
+                return stream << "transport option   dst = " << self.dst_tsap() << ",  src = " << self.src_tsap() << ",  tpdusize = "
+                        << tpdu_byte_size(self.pdusize()) << " , calling = " << std::string(calling.begin(), calling.end()) << ",  called = "
+                        << std::string(called.begin(), called.end()) << " ;\n";
+            }
+#endif     
 
 
             const protocol_options NULL_PROTOCOL_OPTION = protocol_options();
@@ -627,13 +639,13 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
                 explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector())
-                : super_type(io_service), pdusize_(tsel.pdusize()),
+                : super_type(io_service),
                 transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true), is_acceptor_(false) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const transport_selector& tsel = transport_selector())
-                : super_type(io_service, endpoint), pdusize_(tsel.pdusize()),
+                : super_type(io_service, endpoint),
                 transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true), is_acceptor_(false) {
                 }
 
@@ -647,14 +659,14 @@ namespace boost {
                 bool ready() const {
                     return (!waiting_data_size_) && (eof_state_);
                 }
-                
+
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  This Is accptor  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 bool is_acceptor() const {
                     return is_acceptor_;
-                }                
+                }
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Connnect operations  //
@@ -678,7 +690,6 @@ namespace boost {
 
                 template <typename ConnectHandler>
                 class connect_operation {
-                    
                     typedef connect_operation <ConnectHandler> operation_type;
 
                     enum stateconnection {
@@ -749,7 +760,13 @@ namespace boost {
                             switch (receiver_->type()) {
                                 case CC:
                                 {
-                                    socket.negotiate_transport_option(receiver_->options());
+                                    socket.transport_option_.pdusize(receiver_->options().pdusize());
+                                    socket.transport_option_.dst_tsap(receiver_->options().src_tsap());
+
+#if defined(ITUX200_DEBUG) 
+                                    std::cout << "TRANSPORT SUCCESS CONNECT " << (socket.is_acceptor() ? " It is acceptor" : " It is requester") << "\n" <<
+                                            " with" << socket.transport_option() << std::endl;
+#endif                                      
                                     handler(ec);
                                     return;
                                 }
@@ -831,7 +848,6 @@ namespace boost {
 
                 template <typename ReleaseHandler>
                 class release_operation {
-                    
                     typedef release_operation<ReleaseHandler> operation_type;
 
                 public:
@@ -893,14 +909,14 @@ namespace boost {
 
             protected:
 
-                void check_accept(int16_t src) {
+                void check_accept() {
                     error_code ec;
                     boost::asio::detail::throw_error(ec, "connect");
                 }
 
-                error_code check_accept(int16_t src, error_code& ec) {
+                error_code check_accept(error_code& ec) {
 
-                    return check_accept_imp(src, ec);
+                    return check_accept_imp(ec);
                 }
 
 
@@ -908,8 +924,7 @@ namespace boost {
 
                 template <typename CheckAcceptHandler>
                 class check_accept_operation {
-                                      
-                    typedef check_accept_operation<CheckAcceptHandler> operation_type;                    
+                    typedef check_accept_operation<CheckAcceptHandler> operation_type;
 
                     enum stateconnection {
                         response,
@@ -988,7 +1003,7 @@ namespace boost {
                 private:
 
                     void parse_response(const error_code& ec) {
-                        
+
                         if (receiver_->type() != CR || receiver_->state() != receiver::complete) {
                             socket.self_shutdown();
                             handler(ER_PROTOCOL);
@@ -1002,14 +1017,20 @@ namespace boost {
                             execute(ec, 0);
                             return;
                         }
-                        tpdusize = options_.pdusize();
+                        socket.transport_option_.dst_tsap(receiver_->options().src_tsap());
+                        socket.transport_option_.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
+                        options_.pdusize(socket.transport_option_.pdusize());
                         sender_ = sender_ptr(new sender(1, options_));
                         state(request);
                         execute(ec, 0);
                     }
 
                     void finish(const error_code& ec) {
-                        socket.negotiate_transport_option(receiver_->options());
+
+#if defined(ITUX200_DEBUG) 
+                        std::cout << "TRANSPORT SUCCESS CONNECT " << (socket.is_acceptor() ? " It is acceptor" : " It is requester") << "\n" <<
+                                " with" << socket.transport_option() << std::endl;
+#endif                          
                         handler(ec);
                     }
 
@@ -1034,11 +1055,10 @@ namespace boost {
             protected:
 
                 template <typename CheckAcceptHandler>
-                void async_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler, int16_t src) {
-                    
+                void async_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler) {
+
                     typedef check_accept_operation<CheckAcceptHandler > check_accept_operation_type;
 
-                    transport_option_.src_tsap(src);
                     get_io_service().post(boost::bind(&check_accept_operation_type::start,
                             check_accept_operation_type(*this, handler)));
                 }
@@ -1101,10 +1121,9 @@ namespace boost {
 
                 template <typename SendHandler, typename ConstBufferSequence>
                 class send_operation {
-                    
-                 typedef send_operation<SendHandler, ConstBufferSequence>  operation_type;
-                    
-                    
+                    typedef send_operation<SendHandler, ConstBufferSequence> operation_type;
+
+
                 public:
 
                     send_operation(stream_socket& sock, SendHandler handlr,
@@ -1125,10 +1144,10 @@ namespace boost {
                         if (!ec) {
                             sender_->size(bytes_transferred);
                             if (!sender_->ready()) {
-                                socket.super_type::async_send(sender_->pop(), flags_ ,
-                                                boost::bind(&operation_type::execute, *this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                socket.super_type::async_send(sender_->pop(), flags_,
+                                        boost::bind(&operation_type::execute, *this,
+                                        boost::asio::placeholders::error,
+                                        boost::asio::placeholders::bytes_transferred));
                                 return;
                             }
                         }
@@ -1167,14 +1186,14 @@ namespace boost {
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
                         message_flags flags,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {                   
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
                     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-                    typedef send_operation<WriteHandler, ConstBufferSequence>  send_operation_type;        
-                    
-                    get_io_service().post(boost::bind(&send_operation_type::start, 
-                    send_operation_type (*this, handler, buffers, flags)));
-                    
+                    typedef send_operation<WriteHandler, ConstBufferSequence> send_operation_type;
+
+                    get_io_service().post(boost::bind(&send_operation_type::start,
+                            send_operation_type(*this, handler, buffers, flags)));
+
                 }
 
 
@@ -1233,9 +1252,8 @@ namespace boost {
 
                 template <typename ReceiveHandler, typename Mutable_Buffers>
                 class receive_operation {
-                    
-                 typedef receive_operation<ReceiveHandler,  Mutable_Buffers>  operation_type;                    
-                    
+                    typedef receive_operation<ReceiveHandler, Mutable_Buffers> operation_type;
+
                 public:
 
                     receive_operation(stream_socket& sock, ReceiveHandler handlr,
@@ -1253,14 +1271,14 @@ namespace boost {
                         execute(ec, 0);
                     }
 
-                    void execute(const error_code& ec, std::size_t bytes_transferred) {                        
+                    void execute(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             receiver_->put(bytes_transferred);
                             if (!receiver_->ready()) {
-                                socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), flags_ ,
-                                                boost::bind(&operation_type::execute, *this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), flags_,
+                                        boost::bind(&operation_type::execute, *this,
+                                        boost::asio::placeholders::error,
+                                        boost::asio::placeholders::bytes_transferred));
                                 return;
                             }
                             if (!success()) return;
@@ -1337,11 +1355,11 @@ namespace boost {
                         BOOST_ASIO_MOVE_ARG(ReadHandler) handler) {
 
                     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-                    
-                    typedef receive_operation<ReadHandler, MutableBufferSequence> receive_operation_type;
-                    typedef boost::asio::detail::buffer_sequence_adapter< mutable_buffer, MutableBufferSequence>   sequence_adapter_type;                    
 
-                    get_io_service().post(boost::bind(&receive_operation_type::start, receive_operation_type (*this, handler,
+                    typedef receive_operation<ReadHandler, MutableBufferSequence> receive_operation_type;
+                    typedef boost::asio::detail::buffer_sequence_adapter< mutable_buffer, MutableBufferSequence> sequence_adapter_type;
+
+                    get_io_service().post(boost::bind(&receive_operation_type::start, receive_operation_type(*this, handler,
                             receiver_ptr(new receiver(sequence_adapter_type::first(buffers), waiting_data_size(), eof_state())), buffers, flags)));
 
                 }
@@ -1367,11 +1385,10 @@ namespace boost {
                 bool eof_state() const {
                     return eof_state_;
                 }
-                    
-                
+
                 void set_is_acceptor(bool val) {
-                    is_acceptor_=val;
-                }                   
+                    is_acceptor_ = val;
+                }
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1379,34 +1396,23 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
             private:
-                
-                void set_transport_option(const transport_selector& opt)  {
-                        transport_option_= protocol_options(opt);
-                }        
-                
+
+                void set_transport_option(int16_t src, const transport_selector& tsel) {
+                    transport_option_ = protocol_options(0, src, tsel.pdusize(), tsel.called(), tsel.calling());
+                }
+
                 const protocol_options& transport_option() const {
                     return transport_option_;
                 }
 
-                protocol_options& transport_option() {
-                    return transport_option_;
-                }                      
+                tpdu_size pdusize() const {
+                    return transport_option_.pdusize();
+                };
 
                 boost::system::error_code self_shutdown() {
                     error_code ecc;
                     super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
                     return ecc;
-                }
-
-                tpdu_size pdusize() const {
-                    return pdusize_;
-                };
-
-
-
-                void negotiate_transport_option(const protocol_options& val) {
-                    pdusize_ = val.pdusize();
-                    transport_option_.dst_tsap(val.src_tsap());
                 }
 
 
@@ -1442,7 +1448,8 @@ namespace boost {
                         switch (receiver_->type()) {
                             case CC:
                             {
-                                negotiate_transport_option(receiver_->options());
+                                transport_option_.pdusize(receiver_->options().pdusize());
+                                transport_option_.dst_tsap(receiver_->options().src_tsap());
                                 return ec;
                             }
                             case ER:
@@ -1475,8 +1482,7 @@ namespace boost {
                     return ec = ER_NOLINK;
                 }
 
-                error_code check_accept_imp(int16_t src, error_code& ec) {
-                    transport_option_.src_tsap(src);
+                error_code check_accept_imp(error_code& ec) {
                     bool canseled = false;
                     receiver_ptr receiver_(receiver_ptr(new receiver()));
                     while (!ec && !receiver_->ready()) {
@@ -1498,6 +1504,9 @@ namespace boost {
                         sender_ = sender_ptr(new sender(receiver_->options().src_tsap(), options_.src_tsap(), error_accept));
                     }
                     else {
+                        transport_option_.pdusize(less_tpdu(receiver_->options().pdusize(), transport_option().pdusize()));
+                        transport_option_.dst_tsap(receiver_->options().src_tsap());
+                        options_.pdusize(transport_option_.pdusize());
                         sender_ = sender_ptr(new sender(1, options_));
                     }
                     while (!ec && !sender_->ready())
@@ -1508,12 +1517,6 @@ namespace boost {
                     }
                     if (canseled) {
                         self_shutdown();
-                    }
-                    else {
-
-                        protocol_options opt = receiver_->options();
-                        opt.pdusize(options_.pdusize());
-                        negotiate_transport_option(receiver_->options());
                     }
                     return ec = canseled ? ER_PROTOPT : ec;
                 }
@@ -1557,8 +1560,6 @@ namespace boost {
                     return 0;
                 }
 
-
-                tpdu_size pdusize_;
                 protocol_options transport_option_;
                 std::size_t waiting_data_size_;
                 bool eof_state_;
@@ -1617,13 +1618,13 @@ namespace boost {
 
             public:
 
-                explicit socket_acceptor(boost::asio::io_service& io_service, const transport_selector& tsel =  transport_selector())
-                : super_type(io_service), src_(0),  transport_selector_(tsel) {
+                explicit socket_acceptor(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector())
+                : super_type(io_service), src_(0), transport_selector_(tsel) {
                 }
 
                 socket_acceptor(boost::asio::io_service& io_service,
-                        const endpoint_type& endpoint, const transport_selector& tsel =  transport_selector(),  bool reuse_addr = true)
-                : super_type(io_service, endpoint, reuse_addr), src_(0),  transport_selector_(tsel) {
+                        const endpoint_type& endpoint, const transport_selector& tsel = transport_selector(), bool reuse_addr = true)
+                : super_type(io_service, endpoint, reuse_addr), src_(0), transport_selector_(tsel) {
                 }
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1676,33 +1677,30 @@ namespace boost {
 
                 template <typename AcceptHandler>
                 class accept_operation {
-
                     typedef accept_operation<AcceptHandler> operation_type;
-                    
+
                 public:
 
-                    accept_operation(AcceptHandler hendlr, stream_socket& sock, int16_t src)
-                    : handler(hendlr), socket(sock), src_(src) {
+                    accept_operation(AcceptHandler hendlr, stream_socket& sock)
+                    : handler(hendlr), socket(sock) {
                     }
-
 
                     void execute(const error_code& ec) {
                         if (!ec) {
-                            socket.async_check_accept (boost::bind(&operation_type::accept_result, *this,
-                                        boost::asio::placeholders::error), src_);
+                            socket.async_check_accept(boost::bind(&operation_type::accept_result, *this,
+                                    boost::asio::placeholders::error));
                             return;
                         }
                         handler(ec);
                     }
-                    
+
                     void accept_result(const error_code& ec) {
-                        handler(ec);                        
-                    }                    
+                        handler(ec);
+                    }
 
                 private:
                     AcceptHandler handler;
                     stream_socket& socket;
-                    int16_t src_;
                 };
 
 
@@ -1711,42 +1709,42 @@ namespace boost {
                 template <typename AcceptHandler>
                 void async_accept_impl(stream_socket& peer,
                         endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                    
+
                     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
-                    typedef accept_operation<AcceptHandler > accept_operation_type;        
-                    
-                    peer.set_is_acceptor(true);                    
-                    peer.set_transport_option(transport_selector_);                    
-                    super_type::async_accept(peer, peer_endpoint, boost::bind(&accept_operation_type::execute, 
-                    accept_operation_type(handler, peer, src()),  boost::asio::placeholders::error));
-                    
+                    typedef accept_operation<AcceptHandler > accept_operation_type;
+
+                    peer.set_is_acceptor(true);
+                    peer.set_transport_option(src(), transport_selector_);
+                    super_type::async_accept(peer, peer_endpoint, boost::bind(&accept_operation_type::execute,
+                            accept_operation_type(handler, peer), boost::asio::placeholders::error));
+
                 }
 
                 template < typename AcceptHandler>
                 void async_accept_impl(stream_socket& peer,
                         BOOST_ASIO_MOVE_ARG(AcceptHandler) handler) {
-                    
-                    BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;          
 
-                    typedef accept_operation<AcceptHandler > accept_operation_type;                    
-   
+                    BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+
+                    typedef accept_operation<AcceptHandler > accept_operation_type;
+
                     peer.set_is_acceptor(true);
-                    peer.set_transport_option(transport_selector_);
+                    peer.set_transport_option(src(), transport_selector_);
                     super_type::async_accept(peer, boost::bind(&accept_operation_type::execute,
-                    accept_operation_type (handler, peer, src()), boost::asio::placeholders::error));
-                    
+                            accept_operation_type(handler, peer), boost::asio::placeholders::error));
+
                 }
 
                 error_code accept_impl(
                         stream_socket& peer,
                         endpoint_type& peer_endpoint, error_code& ec) {
-                    peer.set_is_acceptor(true);                
-                    peer.set_transport_option(transport_selector_);                    
+                    peer.set_is_acceptor(true);
+                    peer.set_transport_option(src(), transport_selector_);
                     super_type::accept(peer, peer_endpoint, ec);
                     if (ec)
                         return ec;
-                    peer.check_accept(src(), ec);
+                    peer.check_accept(ec);
                     return ec;
                 }
 
@@ -1754,11 +1752,11 @@ namespace boost {
                         stream_socket& peer,
                         error_code& ec) {
                     peer.set_is_acceptor(true);
-                    peer.set_transport_option(transport_selector_);
+                    peer.set_transport_option(src(), transport_selector_);
                     super_type::accept(peer, ec);
                     if (ec)
                         return ec;
-                    peer.check_accept(src(), ec);
+                    peer.check_accept(ec);
                     return ec;
                 }
 
@@ -1769,7 +1767,7 @@ namespace boost {
 
 
                 mutable int16_t src_;
-                transport_selector transport_selector_;          
+                transport_selector transport_selector_;
                 boost::mutex mtx;
 
             };
