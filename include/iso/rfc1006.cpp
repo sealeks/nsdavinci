@@ -167,6 +167,12 @@ namespace boost {
             /////////////////////
 
             bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error) {
+
+#if defined(ITUX200_DEBUG)                 
+                std::cout << "Negotiate transport level: LOCAL =" << self << " DISTANCE =" << dist << std::endl;
+#endif                       
+
+
 #ifndef CHECK_ISO_SELECTOR
                 if (!self.tsap_called().empty() && self.tsap_called() != dist.tsap_called()) {
                     error = DR_REASON_ADDRESS;

@@ -38,13 +38,13 @@
 
 namespace boost {
     namespace itu {
-        
-         // ref X224 = ITU-T Rec. X.224(1995 E)
-        
+
+        // ref X224 = ITU-T Rec. X.224(1995 E)
+
         using boost::system::error_code;
 
         const error_code ER_BEDSEQ = error_code(boost::system::errc::illegal_byte_sequence, boost::system::system_category());
-        const error_code ER_REQBUSY = error_code(boost::system::errc::device_or_resource_busy,  boost::system::system_category());
+        const error_code ER_REQBUSY = error_code(boost::system::errc::device_or_resource_busy, boost::system::system_category());
         const error_code ER_NOBUFFER = error_code(boost::system::errc::no_buffer_space, boost::system::system_category());
         const error_code ER_PROTOCOL = error_code(boost::system::errc::protocol_error, boost::system::system_category());
         const error_code ER_BADADDRESS = error_code(boost::system::errc::bad_address, boost::system::system_category());
@@ -53,14 +53,14 @@ namespace boost {
         const error_code ER_PROTOPT = error_code(boost::system::errc::no_protocol_option, boost::system::system_category());
         const error_code ER_INOUT = error_code(boost::system::errc::io_error, boost::system::system_category());
         const error_code ER_REFUSE = error_code(boost::system::errc::connection_refused, boost::system::system_category());
-        const error_code ER_ABORT = error_code(boost::system::errc::connection_aborted , boost::system::system_category());      
-        const error_code ER_RELEASE = error_code(boost::system::errc::connection_reset  , boost::system::system_category()); 
-        const error_code ER_NOLINK = error_code(boost::system::errc::no_link  , boost::system::system_category());         
-        const error_code ER_EAGAIN = error_code(boost::system::errc::resource_unavailable_try_again , boost::system::system_category()); 
-        const error_code ER_TIMEOUT = error_code(boost::system::errc::timed_out , boost::system::system_category());     
+        const error_code ER_ABORT = error_code(boost::system::errc::connection_aborted, boost::system::system_category());
+        const error_code ER_RELEASE = error_code(boost::system::errc::connection_reset, boost::system::system_category());
+        const error_code ER_NOLINK = error_code(boost::system::errc::no_link, boost::system::system_category());
+        const error_code ER_EAGAIN = error_code(boost::system::errc::resource_unavailable_try_again, boost::system::system_category());
+        const error_code ER_TIMEOUT = error_code(boost::system::errc::timed_out, boost::system::system_category());
 
         //   transport
-            // TPDU size  ref X224  13.3.4 b)
+        // TPDU size  ref X224  13.3.4 b)
         const octet_type TPDU_SIZE8192 = '\xD'; // not denied in 0 class
         const octet_type TPDU_SIZE4096 = '\xC'; // not denied in 0 class
         const octet_type TPDU_SIZE2048 = '\xB';
@@ -91,8 +91,8 @@ namespace boost {
         const octet_type DR_REASON_PROTO = '\x85'; // Protocol error.  -ER_PROTOCOL
         const octet_type DR_REASON_USER = '\x86'; // User refuse.  -ER_PROTOCOL        
         const octet_type DR_REASON_INVLN = '\x8A'; // Header or parameter length invalid.
-        
-        error_code errorcode_by_reason(octet_type val);        
+
+        error_code errorcode_by_reason(octet_type val);
 
         ///   selectors type            
 
@@ -176,6 +176,14 @@ namespace boost {
                 return calling_.to_raw();
             }
 
+            std::string called_str() const {
+                return called_.to_string();
+            }
+
+            std::string calling_str() const {
+                return calling_.to_string();
+            }
+
             tpdu_size pdusize() const {
                 return pdusize_;
             }
@@ -185,6 +193,8 @@ namespace boost {
             selectorvalue_type calling_;
             tpdu_size pdusize_;
         };
+
+
 
 
 
@@ -219,6 +229,14 @@ namespace boost {
                 return calling_.to_raw();
             }
 
+            std::string called_str() const {
+                return called_.to_string();
+            }
+
+            std::string calling_str() const {
+                return calling_.to_string();
+            }
+
             const transport_selector& tselector() const {
                 return tselector_;
             }
@@ -230,7 +248,8 @@ namespace boost {
         };
 
 
-        ///
+
+        /// Presentation
 
         class presentation_selector {
         public:
@@ -269,6 +288,14 @@ namespace boost {
                 calling_ = selectorvalue_type(val);
             }
 
+            std::string called_str() const {
+                return called_.to_string();
+            }
+
+            std::string calling_str() const {
+                return calling_.to_string();
+            }
+
             const session_selector& sselector() const {
                 return sselector_;
             }
@@ -280,6 +307,26 @@ namespace boost {
             selectorvalue_type calling_;
 
         };
+
+
+
+#if defined(ITUX200_DEBUG) 
+
+        inline static std::ostream& operator<<(std::ostream& stream, const transport_selector& self) {
+            return stream << "Transport selector is called  = " << self.called_str() << ",  calling = " << self.calling_str() << ",  tpdusize = " << (int) self.pdusize() << " ;\n";
+        }
+
+        inline static std::ostream& operator<<(std::ostream& stream, const session_selector& self) {
+            stream << "Session selector is called  = " << self.called_str() << ",  calling = " << self.calling_str() << ";\n";
+            return stream << self.tselector();
+        }
+
+        inline static std::ostream& operator<<(std::ostream& stream, const presentation_selector& self) {
+            stream << "Presentation selector is called  = " << self.called_str() << ",  calling = " << self.calling_str() << ";\n";
+            return stream << self.sselector();
+        }
+
+#endif                   
 
     }
 } // namespace boost
