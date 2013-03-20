@@ -903,9 +903,9 @@ namespace boost {
             private:
 
                 template <typename CheckAcceptHandler>
-                class accept_operation {
+                class check_accept_operation {
                                       
-                    typedef accept_operation<CheckAcceptHandler> operation_type;                    
+                    typedef check_accept_operation<CheckAcceptHandler> operation_type;                    
 
                     enum stateconnection {
                         response,
@@ -915,7 +915,7 @@ namespace boost {
 
                 public:
 
-                    accept_operation(stream_socket& sock, CheckAcceptHandler handlr) :
+                    check_accept_operation(stream_socket& sock, CheckAcceptHandler handlr) :
                     socket(sock),
                     handler(handlr),
                     state_(response),
@@ -1032,11 +1032,11 @@ namespace boost {
                 template <typename CheckAcceptHandler>
                 void async_check_accept(BOOST_ASIO_MOVE_ARG(CheckAcceptHandler) handler, int16_t src) {
                     
-                    typedef accept_operation<CheckAcceptHandler > accept_operation_type;
+                    typedef check_accept_operation<CheckAcceptHandler > check_accept_operation_type;
 
                     transport_option_.src_tsap(src);
-                    get_io_service().post(boost::bind(&accept_operation_type::start,
-                            accept_operation_type(*this, handler)));
+                    get_io_service().post(boost::bind(&check_accept_operation_type::start,
+                            check_accept_operation_type(*this, handler)));
                 }
 
 
