@@ -669,6 +669,7 @@ namespace boost {
 
                 template <typename ConnectHandler>
                 class connect_operation {
+                    
                     typedef connect_operation <ConnectHandler> operation_type;
 
                     enum stateconnection {
