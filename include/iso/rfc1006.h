@@ -670,6 +670,8 @@ namespace boost {
 
                 template <typename ConnectHandler>
                 class connect_operation {
+                    
+                    typedef connect_operation <ConnectHandler> operation_type;
 
                     enum stateconnection {
                         request,
@@ -686,30 +688,29 @@ namespace boost {
                     receiver_(new receiver()) {
                     }
 
-                    void run(const error_code& ec) {
-                        operator()(ec);
-                    }
-
-                    void operator()(const error_code& ec) {
+                    void start(const error_code& ec) {
                         if (!ec)
-                            operator()(ec, 0);
+                             execute(ec, 0);
                         else
                             handler(ec);
                     }
 
-                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
+                    void execute(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case request:
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send( sender_->pop(), 0, *this);
+                                        socket.super_type::async_send( sender_->pop(), 0, 
+                                                boost::bind( &operation_type::execute, this,
+                                                boost::asio::placeholders::error,
+                                                boost::asio::placeholders::bytes_transferred));
                                         return;
                                     }
                                     else {
                                         state(response);
-                                        operator()(ec, 0);
+                                        execute(ec, 0);
                                         return;
                                     }
                                 }
@@ -717,7 +718,10 @@ namespace boost {
                                 {
                                     receiver_->put(bytes_transferred);
                                     if (!receiver_->ready()) {
-                                        socket.super_type::async_receive( boost::asio::buffer(receiver_->buffer()), 0, *this);
+                                        socket.super_type::async_receive( boost::asio::buffer(receiver_->buffer()), 0, 
+                                                boost::bind( &operation_type::execute, this,
+                                                boost::asio::placeholders::error,
+                                                boost::asio::placeholders::bytes_transferred));
                                         return;
                                     }
                                     finish(ec);
@@ -784,9 +788,11 @@ namespace boost {
                         BOOST_ASIO_MOVE_ARG(ConnectHandler) handler) {
                     
                     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
+                    
+                    typedef connect_operation<ConnectHandler> connect_operation_type;
 
-                    super_type::async_connect( peer_endpoint, boost::bind(&connect_operation<ConnectHandler>::run,
-                            connect_operation<ConnectHandler > (*this, handler), boost::asio::placeholders::error));
+                    super_type::async_connect( peer_endpoint, boost::bind(&connect_operation_type::start,
+                            connect_operation_type(*this, handler), boost::asio::placeholders::error));
 
                 }
 
