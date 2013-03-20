@@ -135,6 +135,8 @@ namespace boost {
 
                 protocol_options(int16_t dst, int16_t src, tpdu_size pdusize,
                         const octet_sequnce& called = octet_sequnce(), const octet_sequnce& calling = octet_sequnce());
+                
+                protocol_options(const transport_selector& tsl);                
 
                 int16_t dst_tsap() const {
                     return dst_;
@@ -626,13 +628,13 @@ namespace boost {
 
                 explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector())
                 : super_type(io_service), pdusize_(tsel.pdusize()),
-                transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
+                transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true), is_acceptor_(false) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const transport_selector& tsel = transport_selector())
                 : super_type(io_service, endpoint), pdusize_(tsel.pdusize()),
-                transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true) {
+                transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true), is_acceptor_(false) {
                 }
 
 
@@ -645,7 +647,14 @@ namespace boost {
                 bool ready() const {
                     return (!waiting_data_size_) && (eof_state_);
                 }
+                
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //  This Is accptor  //
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
+                bool is_acceptor() const {
+                    return is_acceptor_;
+                }                
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Connnect operations  //
@@ -1358,6 +1367,11 @@ namespace boost {
                 bool eof_state() const {
                     return eof_state_;
                 }
+                    
+                
+                void set_is_acceptor(bool val) {
+                    is_acceptor_=val;
+                }                   
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1365,6 +1379,18 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
             private:
+                
+                void set_transport_option(const transport_selector& opt)  {
+                        transport_option_= protocol_options(opt);
+                }        
+                
+                const protocol_options& transport_option() const {
+                    return transport_option_;
+                }
+
+                protocol_options& transport_option() {
+                    return transport_option_;
+                }                      
 
                 boost::system::error_code self_shutdown() {
                     error_code ecc;
@@ -1376,13 +1402,7 @@ namespace boost {
                     return pdusize_;
                 };
 
-                const protocol_options& transport_option() const {
-                    return transport_option_;
-                }
 
-                protocol_options& transport_option() {
-                    return transport_option_;
-                }
 
                 void negotiate_transport_option(const protocol_options& val) {
                     pdusize_ = val.pdusize();
@@ -1542,6 +1562,7 @@ namespace boost {
                 protocol_options transport_option_;
                 std::size_t waiting_data_size_;
                 bool eof_state_;
+                bool is_acceptor_;
             };
 
 
@@ -1596,13 +1617,13 @@ namespace boost {
 
             public:
 
-                explicit socket_acceptor(boost::asio::io_service& io_service)
-                : super_type(io_service), src_(0) {
+                explicit socket_acceptor(boost::asio::io_service& io_service, const transport_selector& tsel =  transport_selector())
+                : super_type(io_service), src_(0),  transport_selector_(tsel) {
                 }
 
                 socket_acceptor(boost::asio::io_service& io_service,
-                        const endpoint_type& endpoint, bool reuse_addr = true)
-                : super_type(io_service, endpoint, reuse_addr), src_(0) {
+                        const endpoint_type& endpoint, const transport_selector& tsel =  transport_selector(),  bool reuse_addr = true)
+                : super_type(io_service, endpoint, reuse_addr), src_(0),  transport_selector_(tsel) {
                 }
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1695,6 +1716,8 @@ namespace boost {
 
                     typedef accept_operation<AcceptHandler > accept_operation_type;        
                     
+                    peer.set_is_acceptor(true);                    
+                    peer.set_transport_option(transport_selector_);                    
                     super_type::async_accept(peer, peer_endpoint, boost::bind(&accept_operation_type::execute, 
                     accept_operation_type(handler, peer, src()),  boost::asio::placeholders::error));
                     
@@ -1707,7 +1730,9 @@ namespace boost {
                     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;          
 
                     typedef accept_operation<AcceptHandler > accept_operation_type;                    
-                    
+   
+                    peer.set_is_acceptor(true);
+                    peer.set_transport_option(transport_selector_);
                     super_type::async_accept(peer, boost::bind(&accept_operation_type::execute,
                     accept_operation_type (handler, peer, src()), boost::asio::placeholders::error));
                     
@@ -1716,6 +1741,8 @@ namespace boost {
                 error_code accept_impl(
                         stream_socket& peer,
                         endpoint_type& peer_endpoint, error_code& ec) {
+                    peer.set_is_acceptor(true);                
+                    peer.set_transport_option(transport_selector_);                    
                     super_type::accept(peer, peer_endpoint, ec);
                     if (ec)
                         return ec;
@@ -1726,6 +1753,8 @@ namespace boost {
                 error_code accept_impl(
                         stream_socket& peer,
                         error_code& ec) {
+                    peer.set_is_acceptor(true);
+                    peer.set_transport_option(transport_selector_);
                     super_type::accept(peer, ec);
                     if (ec)
                         return ec;
@@ -1740,6 +1769,7 @@ namespace boost {
 
 
                 mutable int16_t src_;
+                transport_selector transport_selector_;          
                 boost::mutex mtx;
 
             };

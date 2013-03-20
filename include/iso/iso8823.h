@@ -801,7 +801,7 @@ namespace boost {
 
                 socket_acceptor(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const presentation_connection_option& opt, bool reuse_addr = true)
-                : super_type(io_service, endpoint, reuse_addr), option_(opt) {
+                : super_type(io_service, endpoint, session_selector() , reuse_addr), option_(opt) {
                 }
 
 
