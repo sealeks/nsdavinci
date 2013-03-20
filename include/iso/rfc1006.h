@@ -833,8 +833,7 @@ namespace boost {
                     sender_(sender_ptr(new sender(sock.transport_option().dst_tsap(), sock.transport_option().src_tsap(), rsn))) {
                     }
 
-                    void start() {
-                        error_code ec;
+                    void start(const error_code& ec) {
                         execute(ec, 0);
                     }
 
@@ -871,12 +870,8 @@ namespace boost {
 
                     typedef release_operation<ReleaseHandler > release_operation_type;
 
-                    if (is_open()) {
-                        get_io_service().post(boost::bind(&release_operation_type::start,
-                                release_operation_type(*this, handler, rsn)));
-                    }
-                    //else
-                    //    handler(ER_NOLINK);
+                    get_io_service().post(boost::bind(&release_operation_type::start,
+                            release_operation_type(*this, handler, rsn), is_open() ? error_code() : ER_NOLINK));
                 }
 
 
@@ -1262,7 +1257,7 @@ namespace boost {
                             if (!success()) return;
                         }
                         socket.waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
-                        handler(ec, static_cast<std::size_t> (receiver_->datasize()));
+                        handler(ec, ec ? 0 : static_cast<std::size_t> (receiver_->datasize()));
                     }
 
 
@@ -1660,6 +1655,9 @@ namespace boost {
 
                 template <typename AcceptHandler>
                 class accept_operation {
+
+                    typedef accept_operation<AcceptHandler> operation_type;
+                    
                 public:
 
                     accept_operation(AcceptHandler hendlr, stream_socket& sock, int16_t src)
@@ -1669,11 +1667,16 @@ namespace boost {
 
                     void execute(const error_code& ec) {
                         if (!ec) {
-                            socket.async_check_accept<AcceptHandler > (handler, src_);
+                            socket.async_check_accept (boost::bind(&operation_type::accept_result, *this,
+                                        boost::asio::placeholders::error), src_);
                             return;
                         }
                         handler(ec);
                     }
+                    
+                    void accept_result(const error_code& ec) {
+                        handler(ec);                        
+                    }                    
 
                 private:
                     AcceptHandler handler;
