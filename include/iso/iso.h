@@ -58,6 +58,7 @@ namespace boost {
         const error_code ER_NOLINK = error_code(boost::system::errc::no_link, boost::system::system_category());
         const error_code ER_EAGAIN = error_code(boost::system::errc::resource_unavailable_try_again, boost::system::system_category());
         const error_code ER_TIMEOUT = error_code(boost::system::errc::timed_out, boost::system::system_category());
+        const error_code ER_INPROGRESS = error_code(boost::system::errc::operation_in_progress, boost::system::system_category());
 
         //   transport
         // TPDU size  ref X224  13.3.4 b)

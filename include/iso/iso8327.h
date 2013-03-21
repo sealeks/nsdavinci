@@ -1714,7 +1714,6 @@ namespace boost {
 
                     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-
                     if (ready()) {
 
                         typedef receive_operation<ReadHandler, MutableBufferSequence> receive_operation_type;
