@@ -1270,7 +1270,13 @@ namespace boost {
 
                 template <typename ReceiveHandler, typename Mutable_Buffers>
                 class receive_operation {
+                    
                     typedef receive_operation<ReceiveHandler, Mutable_Buffers> operation_type;
+                    
+                     enum stateconnection {
+                        response,
+                        refuse
+                    };
 
                 public:
 
@@ -1280,7 +1286,8 @@ namespace boost {
                     handler(handlr),
                     receiver_(receive),
                     buff_(buff),
-                    flags_(flags) {
+                    flags_(flags),
+                    state_(response){
                     }
 
                     void start() {
@@ -1291,61 +1298,112 @@ namespace boost {
 
                     void execute(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
-                            receiver_->put(bytes_transferred);
-                            if (!receiver_->ready()) {
-                                socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), flags_,
-                                        boost::bind(&operation_type::execute, *this,
-                                        boost::asio::placeholders::error,
-                                        boost::asio::placeholders::bytes_transferred));
-                                return;
+                            switch (state_) {
+                                case response:
+                                {
+                                    receiver_->put(bytes_transferred);
+                                    if (!receiver_->ready()) {
+                                        socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), flags_,
+                                                boost::bind(&operation_type::execute, *this,
+                                                boost::asio::placeholders::error,
+                                                boost::asio::placeholders::bytes_transferred));
+                                        return;
+                                    }
+                                    parse_response(ec);
+                                    return;
+                                }
+                                case refuse:
+                                {
+                                    sender_->size(bytes_transferred);
+                                    if (!sender_->ready()) {
+                                        socket.super_type::async_send(sender_->pop(), 0,
+                                                boost::bind(&operation_type::execute, *this,
+                                                boost::asio::placeholders::error,
+                                                boost::asio::placeholders::bytes_transferred));
+                                        return;
+                                    }
+                                    socket.self_shutdown();
+                                    handler(ER_PROTOPT, 0);
+                                    return;
+                                }
                             }
-                            if (!success()) return;
                         }
-                        socket.waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
-                        handler(ec, ec ? 0 : static_cast<std::size_t> (receiver_->datasize()));
+                        handler(ec, 0);
                     }
 
 
                 private:
 
-                    bool success() {
-                        switch (receiver_->type()) {
-                            case CR:
+                    void parse_response(const error_code& ec) {
+
+                        switch (receiver_->state()) {
+                            case receiver::complete:
                             {
-                                error_code ecc;
-                                handler(ecc, 0);
-                                return false;
+                                switch (receiver_->type()) {
+                                    case CR:
+                                    {
+                                        socket.waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
+                                        handler(ec, 0);
+                                        return;
+                                    }
+                                    case DT:
+                                    {
+                                        socket.waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
+                                        handler(ec,  static_cast<std::size_t> (receiver_->datasize()));
+                                        return;
+                                    }
+                                    case ER:
+                                    {
+                                        socket.self_shutdown();
+                                        handler(ER_PROTOCOL, 0);
+                                        return;
+                                    }
+                                    case DR:
+                                    {
+                                        socket.self_shutdown();
+                                        handler(ER_REFUSE, 0);
+                                        return;
+                                    }
+                                    default:
+                                    {
+                                        sender_ = sender_ptr(new sender(ER, socket.transport_option(),
+                                                ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
+                                        state(refuse);
+                                        execute(ec, 0);
+                                        return;
+                                    }
+                                }
+                                return;break;
                             }
-                            case DT:
+                            case receiver::error:
                             {
-                                return true;
-                            }
-                            case ER:
-                            {
-                                socket.self_shutdown();
-                                handler(ER_PROTOCOL, static_cast<std::size_t> (receiver_->datasize()));
-                                break;
-                            }
-                            case DR:
-                            {
-                                socket.self_shutdown();
-                                handler(ER_REFUSE, static_cast<std::size_t> (receiver_->datasize()));
-                                break;
+                                sender_ = sender_ptr(new sender(ER, socket.transport_option(),
+                                        ERT_REASON_NODEF, receiver_->errsequense()));
+                                state(refuse);
+                                execute(ec, 0);
+                                return;break;
                             }
                             default:
                             {
-                                socket.self_shutdown();
-                                handler(ER_PROTOCOL, 0);
                             }
                         }
-                        return false;
+                        socket.self_shutdown();
+                        handler(ER_PROTOCOL, 0);
                     }
+                    
+                    void state(stateconnection st) {
+
+                        if (state_ != st)
+                            state_ = st;
+                    }                    
 
                     stream_socket& socket;
                     ReceiveHandler handler;
                     const Mutable_Buffers& buff_;
                     receiver_ptr receiver_;
+                    sender_ptr sender_;
                     message_flags flags_;
+                    stateconnection state_;
                 };
 
 
@@ -1576,30 +1634,64 @@ namespace boost {
                     return ec ? 0 : boost::asio::buffer_size(buffers);
                 }
 
+                
                 template <typename MutableBufferSequence>
                 std::size_t receive_impl(const MutableBufferSequence& buffers,
                         message_flags flags, error_code& ec) {
-                    receiver_ptr receiver_(new receiver(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers), waiting_data_size(), eof_state()));
+
+                    typedef boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence> sequence_adapter_type;
+
+                    receiver_ptr receiver_(new receiver(sequence_adapter_type::first(buffers), waiting_data_size(), eof_state()));
                     while (!ec && !receiver_->ready()) {
                         receiver_->put(super_type::receive(boost::asio::buffer(
                                 receiver_->buffer()), 0, ec));
                     }
-                    if (ec)
-                        return 0;
-                    switch (receiver_->type()) {
-                        case CR:
-                        case DT:
-                        {
-                            waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
-                            return receiver_->datasize();
+
+                    if (!ec) {
+
+                        sender_ptr sender_;
+                        switch (receiver_->state()) {
+                            case receiver::complete:
+                            {
+                                switch (receiver_->type()) {
+                                    case CR:
+                                    {
+                                        waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
+                                        return 0;
+                                    }
+                                    case DT:
+                                    {
+                                        waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
+                                        return receiver_->datasize();
+                                    }
+                                    case ER:
+                                    {
+                                        self_shutdown();
+                                        ec = ER_PROTOCOL;
+                                        return 0;
+                                    }
+                                    case DR:
+                                    {
+                                        self_shutdown();
+                                        ec = ER_REFUSE;
+                                        return 0;
+                                    }
+                                    default:
+                                    {
+                                        sender_ = sender_ptr(new sender(ER, transport_option(),
+                                                ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
+                                    }
+                                }
+                                break;
+                            }
+                            default:
+                            {
+                                sender_ = sender_ptr(new sender(ER, transport_option(),
+                                        ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
+                            }
                         }
-                        case ER:
-                        case DR:
-                        {
-                            self_shutdown();
-                            ec = (receiver_->type() == DR) ? ER_REFUSE : ER_PROTOCOL;
-                            return static_cast<std::size_t> (receiver_->datasize());
-                        }
+                        while (!ec && !sender_->ready())
+                            sender_->size(super_type::send(sender_->pop(), 0, ec));
                     }
                     self_shutdown();
                     ec = ER_PROTOCOL;
