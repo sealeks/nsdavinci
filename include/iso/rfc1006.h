@@ -760,8 +760,8 @@ namespace boost {
                             switch (receiver_->type()) {
                                 case CC:
                                 {
-                                    socket.transport_option_.pdusize(receiver_->options().pdusize());
-                                    socket.transport_option_.dst_tsap(receiver_->options().src_tsap());
+                                    socket.pdusize(receiver_->options().pdusize());
+                                    socket.dst_tsap(receiver_->options().src_tsap());
 
 #if defined(ITUX200_DEBUG) 
                                     std::cout << "TRANSPORT SUCCESS CONNECT " << (socket.is_acceptor() ? " It is acceptor" : " It is requester") << "\n" <<
@@ -1017,9 +1017,10 @@ namespace boost {
                             execute(ec, 0);
                             return;
                         }
-                        socket.transport_option_.dst_tsap(receiver_->options().src_tsap());
-                        socket.transport_option_.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
-                        options_.pdusize(socket.transport_option_.pdusize());
+                        socket.dst_tsap(receiver_->options().src_tsap());
+                        socket.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
+                        options_.pdusize(socket.pdusize());
+                        
                         sender_ = sender_ptr(new sender(1, options_));
                         state(request);
                         execute(ec, 0);
@@ -1381,6 +1382,18 @@ namespace boost {
                 tpdu_size pdusize() const {
                     return transport_option_.pdusize();
                 };
+                
+                void pdusize( tpdu_size val) {
+                    return transport_option_.pdusize(val);
+                };        
+                
+                int16_t dst_tsap() const {
+                    return transport_option_.dst_tsap();
+                }
+
+                void dst_tsap(int16_t val) {
+                    transport_option_.dst_tsap(val);
+                }            
 
                 boost::system::error_code self_shutdown() {
                     error_code ecc;
@@ -1434,8 +1447,8 @@ namespace boost {
                         switch (receiver_->type()) {
                             case CC:
                             {
-                                transport_option_.pdusize(receiver_->options().pdusize());
-                                transport_option_.dst_tsap(receiver_->options().src_tsap());
+                                pdusize(receiver_->options().pdusize());
+                                dst_tsap(receiver_->options().src_tsap());
                                 return ec;
                             }
                             case ER:
@@ -1490,9 +1503,11 @@ namespace boost {
                         sender_ = sender_ptr(new sender(receiver_->options().src_tsap(), options_.src_tsap(), error_accept));
                     }
                     else {
-                        transport_option_.pdusize(less_tpdu(receiver_->options().pdusize(), transport_option().pdusize()));
-                        transport_option_.dst_tsap(receiver_->options().src_tsap());
-                        options_.pdusize(transport_option_.pdusize());
+                        
+                        pdusize(less_tpdu(receiver_->options().pdusize(), transport_option().pdusize()));
+                        dst_tsap(receiver_->options().src_tsap());
+                        
+                        options_.pdusize(pdusize());
                         sender_ = sender_ptr(new sender(1, options_));
                     }
                     while (!ec && !sender_->ready())
