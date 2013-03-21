@@ -964,7 +964,7 @@ namespace boost {
                                                 boost::asio::placeholders::bytes_transferred));
                                         return;
                                     }
-                                    finish(ec);
+                                    handler(ec);
                                     return;
                                 }
                                 case refuse:
@@ -1008,7 +1008,7 @@ namespace boost {
                                             execute(ec, 0);
                                             return;
                                         }
-                                        
+
                                         socket.dst_tsap(receiver_->options().src_tsap());
                                         socket.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
                                         options_.pdusize(socket.pdusize());
@@ -1019,7 +1019,7 @@ namespace boost {
                                     }
                                     default:
                                     {
-                                        sender_ = sender_ptr(new sender(ER, socket.transport_option(), 
+                                        sender_ = sender_ptr(new sender(ER, socket.transport_option(),
                                                 ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
                                         state(refuse);
                                         execute(ec, 0);
@@ -1032,7 +1032,7 @@ namespace boost {
                             {
                                 sender_ = sender_ptr(new sender(ER, socket.transport_option(), ERT_REASON_NODEF));
                                 state(refuse);
-                                execute(ec, 0);         
+                                execute(ec, 0);
                                 return;
                             }
                             default:
@@ -1041,15 +1041,6 @@ namespace boost {
                         }
                         socket.self_shutdown();
                         handler(ER_PROTOCOL);
-                    }
-
-                    void finish(const error_code& ec) {
-
-#if defined(ITUX200_DEBUG) 
-                        std::cout << "TRANSPORT SUCCESS CONNECT " << (socket.is_acceptor() ? " It is acceptor" : " It is requester") << "\n" <<
-                                " with" << socket.transport_option() << std::endl;
-#endif                          
-                        handler(ec);
                     }
 
                     void state(stateconnection st) {
@@ -1270,10 +1261,9 @@ namespace boost {
 
                 template <typename ReceiveHandler, typename Mutable_Buffers>
                 class receive_operation {
-                    
                     typedef receive_operation<ReceiveHandler, Mutable_Buffers> operation_type;
-                    
-                     enum stateconnection {
+
+                    enum stateconnection {
                         response,
                         refuse
                     };
@@ -1287,7 +1277,7 @@ namespace boost {
                     receiver_(receive),
                     buff_(buff),
                     flags_(flags),
-                    state_(response){
+                    state_(response) {
                     }
 
                     void start() {
@@ -1349,7 +1339,7 @@ namespace boost {
                                     case DT:
                                     {
                                         socket.waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
-                                        handler(ec,  static_cast<std::size_t> (receiver_->datasize()));
+                                        handler(ec, static_cast<std::size_t> (receiver_->datasize()));
                                         return;
                                     }
                                     case ER:
@@ -1373,7 +1363,8 @@ namespace boost {
                                         return;
                                     }
                                 }
-                                return;break;
+                                return;
+                                break;
                             }
                             case receiver::error:
                             {
@@ -1381,7 +1372,8 @@ namespace boost {
                                         ERT_REASON_NODEF, receiver_->errsequense()));
                                 state(refuse);
                                 execute(ec, 0);
-                                return;break;
+                                return;
+                                break;
                             }
                             default:
                             {
@@ -1390,12 +1382,12 @@ namespace boost {
                         socket.self_shutdown();
                         handler(ER_PROTOCOL, 0);
                     }
-                    
+
                     void state(stateconnection st) {
 
                         if (state_ != st)
                             state_ = st;
-                    }                    
+                    }
 
                     stream_socket& socket;
                     ReceiveHandler handler;
@@ -1537,7 +1529,7 @@ namespace boost {
                                     {
                                         ec = receiver_->errcode();
                                         break;
-                                    }                                    
+                                    }
                                     default:
                                     {
                                         ec = ER_PROTOCOL;
@@ -1634,7 +1626,6 @@ namespace boost {
                     return ec ? 0 : boost::asio::buffer_size(buffers);
                 }
 
-                
                 template <typename MutableBufferSequence>
                 std::size_t receive_impl(const MutableBufferSequence& buffers,
                         message_flags flags, error_code& ec) {
