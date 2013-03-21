@@ -1126,8 +1126,7 @@ namespace boost {
                     sendsize(boost::asio::buffer_size(buffers)) {
                     }
 
-                    void start() {
-                        error_code ec;
+                    void start(const error_code& ec) {
                         operator()(ec, 0);
                     }
 
@@ -1179,8 +1178,9 @@ namespace boost {
 
                     typedef send_operation<WriteHandler, ConstBufferSequence> send_operation_type;
 
+                        
                     get_io_service().post(boost::bind(&send_operation_type::start,
-                            send_operation_type(*this, handler, buffers, flags)));
+                            send_operation_type(*this, handler, buffers, flags), ready() ? error_code() : ER_INPROGRESS));
 
                 }
 
@@ -1599,6 +1599,10 @@ namespace boost {
                 template <typename ConstBufferSequence>
                 std::size_t send_impl(const ConstBufferSequence& buffers,
                         message_flags flags, error_code& ec) {
+                    if (!ready()){
+                        ec = ER_INPROGRESS;
+                        return 0;
+                    }
                     sender_ptr sender_(new data_sender<ConstBufferSequence > (buffers, pdusize()));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec));
