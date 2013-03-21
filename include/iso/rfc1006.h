@@ -751,7 +751,7 @@ namespace boost {
                                     case ER:
                                     case DR:
                                     {
-                                        socket.self_shutdown();
+                                        socket.async_internal_close();
                                         handler(receiver_->errcode());
                                         return;
                                     }
@@ -760,7 +760,7 @@ namespace boost {
                             }
                             case receiver::error:
                             {
-                                socket.self_shutdown();
+                                socket.async_internal_close();
                                 handler(receiver_->errcode());
                                 return;
                             }
@@ -768,7 +768,7 @@ namespace boost {
                             {
                             }
                         }
-                        socket.self_shutdown();
+                        socket.async_internal_close();
                         handler(ER_PROTOCOL);
                     }
 
@@ -854,7 +854,7 @@ namespace boost {
                                 return;
                             }
                         }
-                        socket.self_shutdown();
+                        socket.async_internal_close();
                         handler(ec);
                     }
 
@@ -959,13 +959,13 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
-                                    socket.self_shutdown();
+                                    socket.async_internal_close();
                                     handler(ER_PROTOPT);
                                     return;
                                 }
                             }
                         }
-                        socket.self_shutdown();
+                        socket.async_internal_close();
                         handler(ec);
                     }
 
@@ -1021,7 +1021,7 @@ namespace boost {
                             {
                             }
                         }
-                        socket.self_shutdown();
+                        socket.async_internal_close();
                         handler(ER_PROTOCOL);
                     }
 
@@ -1285,7 +1285,7 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
-                                    socket.self_shutdown();
+                                    socket.async_internal_close();
                                     handler(ER_PROTOPT, 0);
                                     return;
                                 }
@@ -1317,13 +1317,13 @@ namespace boost {
                                     }
                                     case ER:
                                     {
-                                        socket.self_shutdown();
+                                        socket.async_internal_close();
                                         handler(ER_PROTOCOL, 0);
                                         return;
                                     }
                                     case DR:
                                     {
-                                        socket.self_shutdown();
+                                        socket.async_internal_close();
                                         handler(ER_REFUSE, 0);
                                         return;
                                     }
@@ -1352,7 +1352,7 @@ namespace boost {
                             {
                             }
                         }
-                        socket.self_shutdown();
+                        socket.async_internal_close();
                         handler(ER_PROTOCOL, 0);
                     }
 
@@ -1453,11 +1453,17 @@ namespace boost {
                 //  private implementator  //
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
-                boost::system::error_code self_shutdown() {
+                boost::system::error_code async_internal_close() {
                     error_code ecc;
                     super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
                     return ecc;
                 }
+                
+                boost::system::error_code internal_close() {
+                    error_code ecc;
+                    super_type::close(ecc);
+                    return ecc;
+                }                
 
                 error_code connect_impl(const endpoint_type& peer_endpoint,
                         error_code& ec) {
@@ -1511,7 +1517,7 @@ namespace boost {
                             }
                         }
                     }
-                    self_shutdown();
+                    internal_close();
                     return ec;
                 }
 
@@ -1520,7 +1526,7 @@ namespace boost {
                         sender_ptr sender_(sender_ptr(new sender(DR, transport_option(), rsn)));
                         while (!ec && !sender_->ready())
                             sender_->size(super_type::send(sender_->pop(), 0, ec));
-                        self_shutdown();
+                        internal_close();
                         return ec;
                     }
                     return ec = ER_NOLINK;
@@ -1574,7 +1580,7 @@ namespace boost {
                             }
                             default:
                             {
-                                self_shutdown();
+                                internal_close();
                                 return ER_PROTOCOL;
                             }
                         }
@@ -1583,7 +1589,7 @@ namespace boost {
                             sender_->size(super_type::send(sender_->pop(), 0, ec));
                         if (!ec) {
                             if (!canceled) return ec;
-                            self_shutdown();
+                            internal_close();
                             ec = ER_PROTOCOL;
                         }
                     }
@@ -1630,13 +1636,13 @@ namespace boost {
                                     }
                                     case ER:
                                     {
-                                        self_shutdown();
+                                        internal_close();
                                         ec = ER_PROTOCOL;
                                         return 0;
                                     }
                                     case DR:
                                     {
-                                        self_shutdown();
+                                        internal_close();
                                         ec = ER_REFUSE;
                                         return 0;
                                     }
@@ -1657,7 +1663,7 @@ namespace boost {
                         while (!ec && !sender_->ready())
                             sender_->size(super_type::send(sender_->pop(), 0, ec));
                     }
-                    self_shutdown();
+                    internal_close();
                     ec = ER_PROTOCOL;
                     return 0;
                 }
