@@ -194,7 +194,7 @@ namespace boost {
                 raw_front_insert(val, hdr);
             }
 
-            octet_sequnce generate_header(octet_type type, int16_t dst, int16_t src, const headarvarvalues& vars) {
+            /*octet_sequnce generate_header(octet_type type, int16_t dst, int16_t src, const headarvarvalues& vars) {
                 octet_sequnce rslt;
                 rslt.insert(rslt.end(), type);
                 raw_back_insert(rslt, inttype_to_raw(dst));
@@ -208,7 +208,7 @@ namespace boost {
                 std::size_t sz = rslt.size();
                 raw_front_insert(rslt, inttype_to_raw(static_cast<octet_type> (sz)));
                 return rslt;
-            }
+            }*/
 
             octet_sequnce generate_header_TKPT_CR(const protocol_options& opt) {
                 octet_sequnce rslt;
@@ -263,12 +263,23 @@ namespace boost {
                 generate_TKPTDU(rslt);
                 return rslt;
             }
-
-            octet_sequnce generate_header_TKPT_DR(int16_t dst, int16_t src, octet_type rsn) {
+            
+            octet_sequnce generate_header_TKPT_DC(const protocol_options& opt) {
                 octet_sequnce rslt;
                 rslt.insert(rslt.end(), DR_TPDU_ID);
-                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(dst)));
-                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(src)));
+                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(opt.dst_tsap())));
+                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(opt.src_tsap())));
+                std::size_t sz = rslt.size();
+                raw_front_insert(rslt, inttype_to_raw(static_cast<octet_type> (sz)));
+                generate_TKPTDU(rslt);
+                return rslt;
+            }            
+
+            octet_sequnce generate_header_TKPT_DR(const protocol_options& opt, octet_type rsn) {
+                octet_sequnce rslt;
+                rslt.insert(rslt.end(), DR_TPDU_ID);
+                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(opt.dst_tsap())));
+                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(opt.src_tsap())));
                 rslt.insert(rslt.end(), rsn);
                 std::size_t sz = rslt.size();
                 raw_front_insert(rslt, inttype_to_raw(static_cast<octet_type> (sz)));
@@ -276,21 +287,11 @@ namespace boost {
                 return rslt;
             }
 
-            octet_sequnce generate_header_TKPT_DC(int16_t dst, int16_t src) {
-                octet_sequnce rslt;
-                rslt.insert(rslt.end(), DR_TPDU_ID);
-                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(dst)));
-                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(src)));
-                std::size_t sz = rslt.size();
-                raw_front_insert(rslt, inttype_to_raw(static_cast<octet_type> (sz)));
-                generate_TKPTDU(rslt);
-                return rslt;
-            }
 
-            octet_sequnce generate_header_TKPT_ER(int16_t dst, const octet_sequnce& errorseq, octet_type err) {
+            octet_sequnce generate_header_TKPT_ER(const protocol_options& opt, octet_type err, const octet_sequnce& errorseq) {
                 octet_sequnce rslt;
                 rslt.insert(rslt.end(), ER_TPDU_ID);
-                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(dst)));
+                raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(opt.dst_tsap())));
                 rslt.insert(rslt.end(), err);
                 rslt.insert(rslt.end(), ERT_PARAM_ID);
                 rslt.insert(rslt.end(), static_cast<octet_type> (errorseq.size()));
@@ -413,13 +414,13 @@ namespace boost {
                 if (!li)
                     return errcode(ER_PROTOCOL);
                 state_ = waitheader;
+                if (li > 128)
+                    return errcode(ER_PROTOCOL);                
                 header_data = octet_sequnce_ptr(new octet_sequnce(li));
                 header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
                 size_ = 0;
-                if (li > 128)
-                    return errcode(ER_PROTOCOL);
                 estimatesize_ = li;
-                waitdatasize_ = pdsz - 5 - li;
+                waitdatasize_ = pdsz - TKPT_WITH_LI - li;
                 return error_code();
             }
 
@@ -554,6 +555,35 @@ namespace boost {
 
             ///////////////////////////////////////////////////////////////////////////////////////
 
+            sender::sender(tpdu_type type, const protocol_options& opt, octet_type reason_or_error, const octet_sequnce& errorseq) :
+            type_(type) {
+                switch (type_) {
+                    case CR:
+                    {
+                        constructCR(opt);
+                        break;
+                    }
+                    case CC:
+                    {
+                        constructCC(opt);
+                        break;
+                    }
+                    case DR:
+                    {
+                        constructDR(opt, reason_or_error);
+                        break;
+                    }
+                    case ER:
+                    {
+                        constructER(opt, reason_or_error, errorseq);
+                        break;
+                    }
+                    default:
+                    {
+                    }
+                }
+            }            
+
             void sender::constructCR(const protocol_options& opt) {
                 buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_CR(opt)));
             }
@@ -561,14 +591,16 @@ namespace boost {
             void sender::constructCC(const protocol_options& opt) {
                 buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_CC(opt)));
             }
+            
+            void sender::constructDR(const protocol_options& opt, octet_type rsn) {
+                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_DR(opt, rsn)));
+            }            
 
-            void sender::constructER(int16_t dst, const octet_sequnce& errorseq, octet_type err) {
-                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_ER(dst, errorseq, err)));
+            void sender::constructER(const protocol_options& opt, octet_type errtype, const octet_sequnce& errorseq) {
+                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_ER(opt,  errtype, errorseq)));
             }
 
-            void sender::constructDR(int16_t dst, int16_t src, octet_type rsn) {
-                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_DR(dst, src, rsn)));
-            }
+
 
         }
     }
