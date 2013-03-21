@@ -203,12 +203,12 @@ namespace boost {
             octet_sequnce generate_header_TKPT_CR(const protocol_options& opt);
 
             octet_sequnce generate_header_TKPT_CC(const protocol_options& opt);
-            
-            octet_sequnce generate_header_TKPT_DC(const protocol_options& opt);            
+
+            octet_sequnce generate_header_TKPT_DC(const protocol_options& opt);
 
             octet_sequnce generate_header_TKPT_DR(const protocol_options& opt, octet_type reason);
 
-            octet_sequnce generate_header_TKPT_ER(const protocol_options& opt,  octet_type errortype , const octet_sequnce& errorseq);
+            octet_sequnce generate_header_TKPT_ER(const protocol_options& opt, octet_type errortype, const octet_sequnce& errorseq);
 
 
 
@@ -402,9 +402,9 @@ namespace boost {
                 type_(type) {
                 }
 
-                sender(tpdu_type type, const protocol_options& opt, 
-                      octet_type reason_or_error = 0, const octet_sequnce& errorseq = NULL_OCTET_SEQUENCE);
-                
+                sender(tpdu_type type, const protocol_options& opt,
+                        octet_type reason_or_error = 0, const octet_sequnce& errorseq = NULL_OCTET_SEQUENCE);
+
                 virtual ~sender() {
                 }
 
@@ -437,8 +437,8 @@ namespace boost {
                 void constructCR(const protocol_options& opt);
 
                 void constructCC(const protocol_options& opt);
-                
-                void constructDR(const protocol_options& opt, octet_type reason);                
+
+                void constructDR(const protocol_options& opt, octet_type reason);
 
                 void constructER(const protocol_options& opt, octet_type errtype, const octet_sequnce& errorreason);
 
@@ -530,10 +530,10 @@ namespace boost {
                 error_code errcode() const {
                     return errcode_ ? errcode_ : ER_REFUSE;
                 }
-                
-                 const octet_sequnce& errsequense() const {
-                    return header_data ? *header_data : NULL_OCTET_SEQUENCE ;
-                }               
+
+                const octet_sequnce& errsequense() const {
+                    return header_data ? *header_data : NULL_OCTET_SEQUENCE;
+                }
 
 
             private:
@@ -745,32 +745,35 @@ namespace boost {
                 private:
 
                     void finish(const error_code& ec) {
-                        if (receiver_->state() == receiver::complete) {
-                            switch (receiver_->type()) {
-                                case CC:
-                                {
-                                    socket.pdusize(receiver_->options().pdusize());
-                                    socket.dst_tsap(receiver_->options().src_tsap());
-
-#if defined(ITUX200_DEBUG) 
-                                    std::cout << "TRANSPORT SUCCESS CONNECT " << (socket.is_acceptor() ? " It is acceptor" : " It is requester") << "\n" <<
-                                            " with" << socket.transport_option() << std::endl;
-#endif                                      
-                                    handler(ec);
-                                    return;
+                        switch (receiver_->state()) {
+                            case receiver::complete:
+                            {
+                                switch (receiver_->type()) {
+                                    case CC:
+                                    {
+                                        socket.pdusize(receiver_->options().pdusize());
+                                        socket.dst_tsap(receiver_->options().src_tsap());
+                                        handler(ec);
+                                        return;
+                                    }
+                                    case ER:
+                                    case DR:
+                                    {
+                                        socket.self_shutdown();
+                                        handler(receiver_->errcode());
+                                        return;
+                                    }
                                 }
-                                case ER:
-                                {
-                                    socket.self_shutdown();
-                                    handler(ER_PROTOCOL);
-                                    return;
-                                }
-                                case DR:
-                                {
-                                    socket.self_shutdown();
-                                    handler(receiver_->errcode());
-                                    return;
-                                }
+                                break;
+                            }
+                            case receiver::error:
+                            {
+                                socket.self_shutdown();
+                                handler(receiver_->errcode());
+                                return;
+                            }
+                            default:
+                            {
                             }
                         }
                         socket.self_shutdown();
@@ -844,7 +847,7 @@ namespace boost {
                     release_operation(stream_socket& sock, ReleaseHandler handlr, octet_type rsn) :
                     socket(sock),
                     handler(handlr),
-                    sender_(sender_ptr(new sender(DR, sock.transport_option() , rsn))) {
+                    sender_(sender_ptr(new sender(DR, sock.transport_option(), rsn))) {
                     }
 
                     void start(const error_code& ec) {
@@ -1009,7 +1012,7 @@ namespace boost {
                         socket.dst_tsap(receiver_->options().src_tsap());
                         socket.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
                         options_.pdusize(socket.pdusize());
-                        
+
                         sender_ = sender_ptr(new sender(CC, socket.transport_option()));
                         state(request);
                         execute(ec, 0);
@@ -1363,7 +1366,6 @@ namespace boost {
 
             private:
 
-
                 const protocol_options& transport_option() const {
                     return transport_option_;
                 }
@@ -1371,19 +1373,19 @@ namespace boost {
                 tpdu_size pdusize() const {
                     return transport_option_.pdusize();
                 };
-                
-                void pdusize( tpdu_size val) {
+
+                void pdusize(tpdu_size val) {
                     return transport_option_.pdusize(val);
-                };        
-                
+                };
+
                 int16_t dst_tsap() const {
                     return transport_option_.dst_tsap();
                 }
 
                 void dst_tsap(int16_t val) {
                     transport_option_.dst_tsap(val);
-                }            
-                
+                }
+
                 std::size_t waiting_data_size() const {
                     return waiting_data_size_;
                 }
@@ -1395,71 +1397,74 @@ namespace boost {
 
                 bool eof_state() const {
                     return eof_state_;
-                }               
+                }
 
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  private implementator  //
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-                
-                
 
                 boost::system::error_code self_shutdown() {
                     error_code ecc;
                     super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
                     return ecc;
                 }
-                
 
                 error_code connect_impl(const endpoint_type& peer_endpoint,
                         error_code& ec) {
 
-                    if (super_type::connect(peer_endpoint, ec))
-                        return ec;
+                    if (!super_type::connect(peer_endpoint, ec)) {
 
-                    sender_ptr sender_(sender_ptr(new sender(CR, transport_option())));
-                    while (!ec && !sender_->ready())
-                        sender_->size(super_type::send(sender_->pop(), 0, ec));
-                    if (ec) {
-                        self_shutdown();
-                        return ec;
-                    }
 
-                    receiver_ptr receiver_(receiver_ptr(new receiver()));
-                    while (!ec && !receiver_->ready()) {
-                        receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
-                    }
-                    if (ec) {
-                        self_shutdown();
-                        return ec;
-                    }
+                        sender_ptr sender_(sender_ptr(new sender(CR, transport_option())));
+                        while (!ec && !sender_->ready())
+                            sender_->size(super_type::send(sender_->pop(), 0, ec));
 
-                    if (receiver_->state() == receiver::complete) {
-                        switch (receiver_->type()) {
-                            case CC:
-                            {
-                                pdusize(receiver_->options().pdusize());
-                                dst_tsap(receiver_->options().src_tsap());
-                                return ec;
+                        if (!ec) {
+                            receiver_ptr receiver_(receiver_ptr(new receiver()));
+                            while (!ec && !receiver_->ready()) {
+                                receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
                             }
-                            case ER:
-                            {
-                                self_shutdown();
-                                return ec = ER_PROTOCOL;
-                            }
-                            case DR:
-                            {
-                                self_shutdown();
-                                return ec = receiver_->errcode();
-                            }
-                            default:
-                            {
+                            if (!ec) {
+                                switch (receiver_->state()) {
+                                    case receiver::complete:
+                                    {
+                                        switch (receiver_->type()) {
+                                            case CC:
+                                            {
+                                                pdusize(receiver_->options().pdusize());
+                                                dst_tsap(receiver_->options().src_tsap());
+                                                return ec;
+                                            }
+                                            case ER:
+                                            case DR:
+                                            {
+                                                ec = receiver_->errcode();
+                                                break;
+                                            }
+                                            default:
+                                            {
+                                                ec = ER_PROTOCOL;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    case receiver::error:
+                                    {
+                                        ec = receiver_->errcode();
+                                        break;
+                                    }                                    
+                                    default:
+                                    {
+                                        ec = ER_PROTOCOL;
+                                    }
+                                }
                             }
                         }
                     }
                     self_shutdown();
-                    return ec = ER_PROTOCOL;
+                    return ec;
                 }
 
                 error_code release_impl(error_code& ec, octet_type rsn = DR_REASON_NORM) {
@@ -1492,13 +1497,13 @@ namespace boost {
                     octet_type error_accept = 0;
                     if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
                         canseled = true;
-                        sender_ = sender_ptr(new sender(DR, transport_option(),  error_accept));
+                        sender_ = sender_ptr(new sender(DR, transport_option(), error_accept));
                     }
                     else {
-                        
+
                         pdusize(less_tpdu(receiver_->options().pdusize(), transport_option().pdusize()));
                         dst_tsap(receiver_->options().src_tsap());
-                        
+
                         options_.pdusize(pdusize());
                         sender_ = sender_ptr(new sender(CC, transport_option()));
                     }
@@ -1625,7 +1630,7 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////            
 
                 void accept(stream_socket& peer) {
-                    
+
                     error_code ec;
                     accept_impl(peer, ec);
                     boost::asio::detail::throw_error(ec, "accept");
@@ -1634,13 +1639,13 @@ namespace boost {
                 error_code accept(
                         stream_socket& peer,
                         error_code& ec) {
-                    
+
                     return accept_impl(peer, ec);
                 }
 
                 void accept(stream_socket& peer,
                         endpoint_type& peer_endpoint) {
-                    
+
                     error_code ec;
                     accept_impl(peer, peer_endpoint, ec);
                     boost::asio::detail::throw_error(ec, "accept");
@@ -1649,7 +1654,7 @@ namespace boost {
                 error_code accept(
                         stream_socket& peer,
                         endpoint_type& peer_endpoint, error_code& ec) {
-                    
+
                     return accept_impl(peer, peer_endpoint, ec);
                 }
 
@@ -1712,7 +1717,7 @@ namespace boost {
                     typedef accept_operation<AcceptHandler > accept_operation_type;
 
                     peer.is_acceptor_ = true;
-                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());                    
+                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());
 
                     super_type::async_accept(peer, peer_endpoint, boost::bind(&accept_operation_type::execute,
                             accept_operation_type(handler, peer), boost::asio::placeholders::error));
@@ -1728,8 +1733,8 @@ namespace boost {
                     typedef accept_operation<AcceptHandler > accept_operation_type;
 
                     peer.is_acceptor_ = true;
-                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());   
-                    
+                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());
+
                     super_type::async_accept(peer, boost::bind(&accept_operation_type::execute,
                             accept_operation_type(handler, peer), boost::asio::placeholders::error));
 
@@ -1738,10 +1743,10 @@ namespace boost {
                 error_code accept_impl(
                         stream_socket& peer,
                         endpoint_type& peer_endpoint, error_code& ec) {
-                    
+
                     peer.is_acceptor_ = true;
-                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());   
-                    
+                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());
+
                     super_type::accept(peer, peer_endpoint, ec);
                     if (ec)
                         return ec;
@@ -1752,10 +1757,10 @@ namespace boost {
                 error_code accept_impl(
                         stream_socket& peer,
                         error_code& ec) {
-                    
+
                     peer.is_acceptor_ = true;
-                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());   
-                    
+                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());
+
                     super_type::accept(peer, ec);
                     if (ec)
                         return ec;
