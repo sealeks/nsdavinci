@@ -194,21 +194,6 @@ namespace boost {
                 raw_front_insert(val, hdr);
             }
 
-            /*octet_sequnce generate_header(octet_type type, int16_t dst, int16_t src, const headarvarvalues& vars) {
-                octet_sequnce rslt;
-                rslt.insert(rslt.end(), type);
-                raw_back_insert(rslt, inttype_to_raw(dst));
-                raw_back_insert(rslt, inttype_to_raw(src));
-                rslt.insert(rslt.end(), '\x0');
-                for (headarvarvalues::const_iterator it = vars.begin(); it != vars.end(); ++it) {
-                    raw_back_insert(rslt, inttype_to_raw(it->first.first));
-                    raw_back_insert(rslt, inttype_to_raw(static_cast<octet_type> (it->first.second)));
-                    raw_back_insert(rslt, it->second);
-                }
-                std::size_t sz = rslt.size();
-                raw_front_insert(rslt, inttype_to_raw(static_cast<octet_type> (sz)));
-                return rslt;
-            }*/
 
             octet_sequnce generate_header_TKPT_CR(const protocol_options& opt) {
                 octet_sequnce rslt;

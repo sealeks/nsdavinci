@@ -198,8 +198,6 @@ namespace boost {
 
             bool parse_vars(const octet_sequnce& str, headarvarvalues& vars);
 
-            /*octet_sequnce generate_header(octet_type type, int16_t dst, int16_t src, const headarvarvalues& vars = headarvarvalues());*/
-
             octet_sequnce generate_header_TKPT_CR(const protocol_options& opt);
 
             octet_sequnce generate_header_TKPT_CC(const protocol_options& opt);
@@ -996,26 +994,53 @@ namespace boost {
 
                     void parse_response(const error_code& ec) {
 
-                        if (receiver_->type() != CR || receiver_->state() != receiver::complete) {
-                            socket.self_shutdown();
-                            handler(ER_PROTOCOL);
-                            return;
+                        switch (receiver_->state()) {
+                            case receiver::complete:
+                            {
+                                switch (receiver_->type()) {
+                                    case CR:
+                                    {
+                                        protocol_options options_ = socket.transport_option();
+                                        octet_type error_accept = 0;
+                                        if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
+                                            sender_ = sender_ptr(new sender(DR, socket.transport_option(), error_accept));
+                                            state(refuse);
+                                            execute(ec, 0);
+                                            return;
+                                        }
+                                        
+                                        socket.dst_tsap(receiver_->options().src_tsap());
+                                        socket.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
+                                        options_.pdusize(socket.pdusize());
+                                        sender_ = sender_ptr(new sender(CC, socket.transport_option()));
+                                        state(request);
+                                        execute(ec, 0);
+                                        return;
+                                    }
+                                    default:
+                                    {
+                                        sender_ = sender_ptr(new sender(ER, socket.transport_option(), 
+                                                ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
+                                        state(refuse);
+                                        execute(ec, 0);
+                                        return;
+                                    }
+                                }
+                                break;
+                            }
+                            case receiver::error:
+                            {
+                                sender_ = sender_ptr(new sender(ER, socket.transport_option(), ERT_REASON_NODEF));
+                                state(refuse);
+                                execute(ec, 0);         
+                                return;
+                            }
+                            default:
+                            {
+                            }
                         }
-                        protocol_options options_ = socket.transport_option();
-                        octet_type error_accept = 0;
-                        if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
-                            sender_ = sender_ptr(new sender(DR, socket.transport_option(), error_accept));
-                            state(refuse);
-                            execute(ec, 0);
-                            return;
-                        }
-                        socket.dst_tsap(receiver_->options().src_tsap());
-                        socket.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
-                        options_.pdusize(socket.pdusize());
-
-                        sender_ = sender_ptr(new sender(CC, socket.transport_option()));
-                        state(request);
-                        execute(ec, 0);
+                        socket.self_shutdown();
+                        handler(ER_PROTOCOL);
                     }
 
                     void finish(const error_code& ec) {
@@ -1479,44 +1504,67 @@ namespace boost {
                 }
 
                 error_code check_accept_imp(error_code& ec) {
-                    bool canseled = false;
+
+                    bool canceled = false;
                     receiver_ptr receiver_(receiver_ptr(new receiver()));
                     while (!ec && !receiver_->ready()) {
                         receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
                     }
-                    if (ec) {
-                        self_shutdown();
-                        return ec;
-                    }
-                    sender_ptr sender_;
-                    protocol_options options_ = transport_option();
-                    if (receiver_->type() != CR || receiver_->state() != receiver::complete) {
-                        self_shutdown();
-                        return ER_PROTOCOL;
-                    }
-                    octet_type error_accept = 0;
-                    if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
-                        canseled = true;
-                        sender_ = sender_ptr(new sender(DR, transport_option(), error_accept));
-                    }
-                    else {
+                    if (!ec) {
 
-                        pdusize(less_tpdu(receiver_->options().pdusize(), transport_option().pdusize()));
-                        dst_tsap(receiver_->options().src_tsap());
+                        sender_ptr sender_;
+                        protocol_options options_ = transport_option();
+                        switch (receiver_->state()) {
+                            case receiver::complete:
+                            {
+                                switch (receiver_->type()) {
+                                    case CR:
+                                    {
+                                        octet_type error_accept = 0;
+                                        if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
+                                            canceled = true;
+                                            sender_ = sender_ptr(new sender(DR, transport_option(), error_accept));
+                                        }
+                                        else {
+                                            pdusize(less_tpdu(receiver_->options().pdusize(), transport_option().pdusize()));
+                                            dst_tsap(receiver_->options().src_tsap());
+                                            options_.pdusize(pdusize());
+                                            sender_ = sender_ptr(new sender(CC, transport_option()));
+                                        }
+                                        break;
+                                    }
+                                    default:
+                                    {
+                                        canceled = true;
+                                        sender_ = sender_ptr(new sender(ER, transport_option(),
+                                                ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
+                                    }
+                                }
+                                break;
+                            }
+                            case receiver::error:
+                            {
+                                canceled = true;
+                                sender_ = sender_ptr(new sender(ER, transport_option(),
+                                        ERT_REASON_NODEF, receiver_->errsequense()));
+                                break;
+                            }
+                            default:
+                            {
+                                self_shutdown();
+                                return ER_PROTOCOL;
+                            }
+                        }
 
-                        options_.pdusize(pdusize());
-                        sender_ = sender_ptr(new sender(CC, transport_option()));
+                        while (!ec && !sender_->ready())
+                            sender_->size(super_type::send(sender_->pop(), 0, ec));
+                        if (!ec) {
+                            if (!canceled) return ec;
+                            self_shutdown();
+                            ec = ER_PROTOCOL;
+                        }
                     }
-                    while (!ec && !sender_->ready())
-                        sender_->size(super_type::send(sender_->pop(), 0, ec));
-                    if (ec) {
-                        self_shutdown();
-                        return ec;
-                    }
-                    if (canseled) {
-                        self_shutdown();
-                    }
-                    return ec = canseled ? ER_PROTOPT : ec;
+                    return ec;
                 }
 
                 template <typename ConstBufferSequence>
