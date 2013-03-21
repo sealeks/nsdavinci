@@ -1368,38 +1368,11 @@ namespace boost {
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //  protected member  //
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-
-            protected:
-
-                std::size_t waiting_data_size() const {
-                    return waiting_data_size_;
-                }
-
-                void waiting_data_size(std::size_t val, bool st) {
-                    eof_state_ = st;
-                    waiting_data_size_ = val;
-                }
-
-                bool eof_state() const {
-                    return eof_state_;
-                }
-
-                void set_is_acceptor(bool val) {
-                    is_acceptor_ = val;
-                }
-
-
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  private member  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
             private:
 
-                void set_transport_option(int16_t src, const transport_selector& tsel) {
-                    transport_option_ = protocol_options(0, src, tsel.pdusize(), tsel.called(), tsel.calling());
-                }
 
                 const protocol_options& transport_option() const {
                     return transport_option_;
@@ -1414,6 +1387,19 @@ namespace boost {
                     super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
                     return ecc;
                 }
+                
+                std::size_t waiting_data_size() const {
+                    return waiting_data_size_;
+                }
+
+                void waiting_data_size(std::size_t val, bool st) {
+                    eof_state_ = st;
+                    waiting_data_size_ = val;
+                }
+
+                bool eof_state() const {
+                    return eof_state_;
+                }               
 
 
 
@@ -1619,12 +1605,12 @@ namespace boost {
             public:
 
                 explicit socket_acceptor(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector())
-                : super_type(io_service), src_(0), transport_selector_(tsel) {
+                : super_type(io_service), src_(0), tselector(tsel) {
                 }
 
                 socket_acceptor(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const transport_selector& tsel = transport_selector(), bool reuse_addr = true)
-                : super_type(io_service, endpoint, reuse_addr), src_(0), transport_selector_(tsel) {
+                : super_type(io_service, endpoint, reuse_addr), src_(0), tselector(tsel) {
                 }
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1632,6 +1618,7 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////            
 
                 void accept(stream_socket& peer) {
+                    
                     error_code ec;
                     accept_impl(peer, ec);
                     boost::asio::detail::throw_error(ec, "accept");
@@ -1640,11 +1627,13 @@ namespace boost {
                 error_code accept(
                         stream_socket& peer,
                         error_code& ec) {
+                    
                     return accept_impl(peer, ec);
                 }
 
                 void accept(stream_socket& peer,
                         endpoint_type& peer_endpoint) {
+                    
                     error_code ec;
                     accept_impl(peer, peer_endpoint, ec);
                     boost::asio::detail::throw_error(ec, "accept");
@@ -1653,6 +1642,7 @@ namespace boost {
                 error_code accept(
                         stream_socket& peer,
                         endpoint_type& peer_endpoint, error_code& ec) {
+                    
                     return accept_impl(peer, peer_endpoint, ec);
                 }
 
@@ -1714,8 +1704,9 @@ namespace boost {
 
                     typedef accept_operation<AcceptHandler > accept_operation_type;
 
-                    peer.set_is_acceptor(true);
-                    peer.set_transport_option(src(), transport_selector_);
+                    peer.is_acceptor_ = true;
+                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());                    
+
                     super_type::async_accept(peer, peer_endpoint, boost::bind(&accept_operation_type::execute,
                             accept_operation_type(handler, peer), boost::asio::placeholders::error));
 
@@ -1729,8 +1720,9 @@ namespace boost {
 
                     typedef accept_operation<AcceptHandler > accept_operation_type;
 
-                    peer.set_is_acceptor(true);
-                    peer.set_transport_option(src(), transport_selector_);
+                    peer.is_acceptor_ = true;
+                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());   
+                    
                     super_type::async_accept(peer, boost::bind(&accept_operation_type::execute,
                             accept_operation_type(handler, peer), boost::asio::placeholders::error));
 
@@ -1739,8 +1731,10 @@ namespace boost {
                 error_code accept_impl(
                         stream_socket& peer,
                         endpoint_type& peer_endpoint, error_code& ec) {
-                    peer.set_is_acceptor(true);
-                    peer.set_transport_option(src(), transport_selector_);
+                    
+                    peer.is_acceptor_ = true;
+                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());   
+                    
                     super_type::accept(peer, peer_endpoint, ec);
                     if (ec)
                         return ec;
@@ -1751,8 +1745,10 @@ namespace boost {
                 error_code accept_impl(
                         stream_socket& peer,
                         error_code& ec) {
-                    peer.set_is_acceptor(true);
-                    peer.set_transport_option(src(), transport_selector_);
+                    
+                    peer.is_acceptor_ = true;
+                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());   
+                    
                     super_type::accept(peer, ec);
                     if (ec)
                         return ec;
@@ -1767,7 +1763,7 @@ namespace boost {
 
 
                 mutable int16_t src_;
-                transport_selector transport_selector_;
+                transport_selector tselector;
                 boost::mutex mtx;
 
             };
