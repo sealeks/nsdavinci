@@ -696,27 +696,24 @@ namespace boost {
 
                     void start(const error_code& ec) {
                         if (!ec)
-                            execute(ec, 0);
+                            operator()(ec, 0);
                         else
                             handler(ec);
                     }
 
-                    void execute(const error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case request:
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0,
-                                                boost::bind(&operation_type::execute, * this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                        socket.super_type::async_send(sender_->pop(), 0,  *this);
                                         return;
                                     }
                                     else {
                                         state(response);
-                                        execute(ec, 0);
+                                        operator()(ec, 0);
                                         return;
                                     }
                                 }
@@ -724,10 +721,7 @@ namespace boost {
                                 {
                                     receiver_->put(bytes_transferred);
                                     if (!receiver_->ready()) {
-                                        socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), 0,
-                                                boost::bind(&operation_type::execute, *this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                        socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), 0,*this);
                                         return;
                                     }
                                     finish(ec);
@@ -849,17 +843,14 @@ namespace boost {
                     }
 
                     void start(const error_code& ec) {
-                        execute(ec, 0);
+                        operator()(ec, 0);
                     }
 
-                    void execute(const error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             sender_->size(bytes_transferred);
                             if (!sender_->ready()) {
-                                socket.super_type::async_send(sender_->pop(), 0,
-                                        boost::bind(&operation_type::execute, *this,
-                                        boost::asio::placeholders::error,
-                                        boost::asio::placeholders::bytes_transferred));
+                                socket.super_type::async_send(sender_->pop(), 0, *this);
                                 return;
                             }
                         }
@@ -935,20 +926,17 @@ namespace boost {
 
                     void start() {
                         error_code ec;
-                        execute(ec, 0);
+                        operator()(ec, 0);
                     }
 
-                    void execute(const error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case response:
                                 {
                                     receiver_->put(bytes_transferred);
                                     if (!receiver_->ready()) {
-                                        socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), 0,
-                                                boost::bind(&operation_type::execute, *this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                        socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), 0, *this);
                                         return;
                                     }
                                     parse_response(ec);
@@ -958,10 +946,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0,
-                                                boost::bind(&operation_type::execute, *this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                        socket.super_type::async_send(sender_->pop(), 0, *this );
                                         return;
                                     }
                                     handler(ec);
@@ -971,10 +956,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0,
-                                                boost::bind(&operation_type::execute, *this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                        socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
                                     socket.self_shutdown();
@@ -1005,7 +987,7 @@ namespace boost {
                                         if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
                                             sender_ = sender_ptr(new sender(DR, socket.transport_option(), error_accept));
                                             state(refuse);
-                                            execute(ec, 0);
+                                            operator()(ec, 0);
                                             return;
                                         }
 
@@ -1014,7 +996,7 @@ namespace boost {
                                         options_.pdusize(socket.pdusize());
                                         sender_ = sender_ptr(new sender(CC, socket.transport_option()));
                                         state(request);
-                                        execute(ec, 0);
+                                        operator()(ec, 0);
                                         return;
                                     }
                                     default:
@@ -1022,7 +1004,7 @@ namespace boost {
                                         sender_ = sender_ptr(new sender(ER, socket.transport_option(),
                                                 ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
                                         state(refuse);
-                                        execute(ec, 0);
+                                        operator()(ec, 0);
                                         return;
                                     }
                                 }
@@ -1032,7 +1014,7 @@ namespace boost {
                             {
                                 sender_ = sender_ptr(new sender(ER, socket.transport_option(), ERT_REASON_NODEF));
                                 state(refuse);
-                                execute(ec, 0);
+                                operator()(ec, 0);
                                 return;
                             }
                             default:
@@ -1146,17 +1128,14 @@ namespace boost {
 
                     void start() {
                         error_code ec;
-                        execute(ec, 0);
+                        operator()(ec, 0);
                     }
 
-                    void execute(const error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             sender_->size(bytes_transferred);
                             if (!sender_->ready()) {
-                                socket.super_type::async_send(sender_->pop(), flags_,
-                                        boost::bind(&operation_type::execute, *this,
-                                        boost::asio::placeholders::error,
-                                        boost::asio::placeholders::bytes_transferred));
+                                socket.super_type::async_send(sender_->pop(), flags_, *this );
                                 return;
                             }
                         }
@@ -1283,20 +1262,17 @@ namespace boost {
                     void start() {
 
                         error_code ec;
-                        execute(ec, 0);
+                        operator()(ec, 0);
                     }
 
-                    void execute(const error_code& ec, std::size_t bytes_transferred) {
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
                                 case response:
                                 {
                                     receiver_->put(bytes_transferred);
                                     if (!receiver_->ready()) {
-                                        socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), flags_,
-                                                boost::bind(&operation_type::execute, *this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                        socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), flags_, *this);
                                         return;
                                     }
                                     parse_response(ec);
@@ -1306,10 +1282,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0,
-                                                boost::bind(&operation_type::execute, *this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                        socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
                                     socket.self_shutdown();
@@ -1359,7 +1332,7 @@ namespace boost {
                                         sender_ = sender_ptr(new sender(ER, socket.transport_option(),
                                                 ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
                                         state(refuse);
-                                        execute(ec, 0);
+                                        operator()(ec, 0);
                                         return;
                                     }
                                 }
@@ -1371,7 +1344,7 @@ namespace boost {
                                 sender_ = sender_ptr(new sender(ER, socket.transport_option(),
                                         ERT_REASON_NODEF, receiver_->errsequense()));
                                 state(refuse);
-                                execute(ec, 0);
+                                operator()(ec, 0);
                                 return;
                                 break;
                             }
