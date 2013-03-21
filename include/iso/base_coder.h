@@ -106,7 +106,7 @@ namespace boost {
         typedef boost::shared_ptr<const_sequences> const_sequences_ptr;
 
 
-
+        const octet_sequnce NULL_OCTET_SEQUENCE = octet_sequnce();
         const const_sequences NULL_CONST_SEQUENCE = const_sequences();
 
 

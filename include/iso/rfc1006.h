@@ -198,17 +198,17 @@ namespace boost {
 
             bool parse_vars(const octet_sequnce& str, headarvarvalues& vars);
 
-            octet_sequnce generate_header(octet_type type, int16_t dst, int16_t src, const headarvarvalues& vars = headarvarvalues());
+            /*octet_sequnce generate_header(octet_type type, int16_t dst, int16_t src, const headarvarvalues& vars = headarvarvalues());*/
 
             octet_sequnce generate_header_TKPT_CR(const protocol_options& opt);
 
             octet_sequnce generate_header_TKPT_CC(const protocol_options& opt);
+            
+            octet_sequnce generate_header_TKPT_DC(const protocol_options& opt);            
 
-            octet_sequnce generate_header_TKPT_DR(int16_t dst, int16_t src, octet_type rsn);
+            octet_sequnce generate_header_TKPT_DR(const protocol_options& opt, octet_type reason);
 
-            octet_sequnce generate_header_TKPT_DC(int16_t dst, int16_t src);
-
-            octet_sequnce generate_header_TKPT_ER(int16_t dst, const octet_sequnce& errorseq = octet_sequnce(), octet_type err = 0);
+            octet_sequnce generate_header_TKPT_ER(const protocol_options& opt,  octet_type errortype , const octet_sequnce& errorseq);
 
 
 
@@ -402,26 +402,9 @@ namespace boost {
                 type_(type) {
                 }
 
-                sender(const protocol_options& opt) :
-                type_(CR) {
-                    constructCR(opt);
-                }
-
-                sender(int16_t dst, const protocol_options& opt) :
-                type_(CC) {
-                    constructCC(opt);
-                }
-
-                sender(int16_t dst, const octet_sequnce& errorreason, octet_type err) :
-                type_(ER) {
-                    constructER(dst, errorreason, err);
-                }
-
-                sender(int16_t dst, int16_t src, octet_type rsn) :
-                type_(DR) {
-                    constructDR(dst, src, rsn);
-                }
-
+                sender(tpdu_type type, const protocol_options& opt, 
+                      octet_type reason_or_error = 0, const octet_sequnce& errorseq = NULL_OCTET_SEQUENCE);
+                
                 virtual ~sender() {
                 }
 
@@ -454,10 +437,12 @@ namespace boost {
                 void constructCR(const protocol_options& opt);
 
                 void constructCC(const protocol_options& opt);
+                
+                void constructDR(const protocol_options& opt, octet_type reason);                
 
-                void constructER(int16_t dst, const octet_sequnce& errorreason, octet_type err);
+                void constructER(const protocol_options& opt, octet_type errtype, const octet_sequnce& errorreason);
 
-                void constructDR(int16_t dst, int16_t src, octet_type rsn);
+
 
                 tpdu_type type_;
                 sender_sequnces_ptr buf_;
@@ -545,6 +530,10 @@ namespace boost {
                 error_code errcode() const {
                     return errcode_ ? errcode_ : ER_REFUSE;
                 }
+                
+                 const octet_sequnce& errsequense() const {
+                    return header_data ? *header_data : NULL_OCTET_SEQUENCE ;
+                }               
 
 
             private:
@@ -703,7 +692,7 @@ namespace boost {
                     socket(sock),
                     handler(handlr),
                     state_(request),
-                    sender_(sender_ptr(new sender(sock.transport_option()))),
+                    sender_(sender_ptr(new sender(CR, sock.transport_option()))),
                     receiver_(new receiver()) {
                     }
 
@@ -855,7 +844,7 @@ namespace boost {
                     release_operation(stream_socket& sock, ReleaseHandler handlr, octet_type rsn) :
                     socket(sock),
                     handler(handlr),
-                    sender_(sender_ptr(new sender(sock.transport_option().dst_tsap(), sock.transport_option().src_tsap(), rsn))) {
+                    sender_(sender_ptr(new sender(DR, sock.transport_option() , rsn))) {
                     }
 
                     void start(const error_code& ec) {
@@ -1012,7 +1001,7 @@ namespace boost {
                         protocol_options options_ = socket.transport_option();
                         octet_type error_accept = 0;
                         if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
-                            sender_ = sender_ptr(new sender(receiver_->options().src_tsap(), options_.src_tsap(), error_accept));
+                            sender_ = sender_ptr(new sender(DR, socket.transport_option(), error_accept));
                             state(refuse);
                             execute(ec, 0);
                             return;
@@ -1021,7 +1010,7 @@ namespace boost {
                         socket.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
                         options_.pdusize(socket.pdusize());
                         
-                        sender_ = sender_ptr(new sender(1, options_));
+                        sender_ = sender_ptr(new sender(CC, socket.transport_option()));
                         state(request);
                         execute(ec, 0);
                     }
@@ -1394,12 +1383,6 @@ namespace boost {
                 void dst_tsap(int16_t val) {
                     transport_option_.dst_tsap(val);
                 }            
-
-                boost::system::error_code self_shutdown() {
-                    error_code ecc;
-                    super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
-                    return ecc;
-                }
                 
                 std::size_t waiting_data_size() const {
                     return waiting_data_size_;
@@ -1418,7 +1401,16 @@ namespace boost {
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  private implementator  //
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+                
+                
+
+                boost::system::error_code self_shutdown() {
+                    error_code ecc;
+                    super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
+                    return ecc;
+                }
+                
 
                 error_code connect_impl(const endpoint_type& peer_endpoint,
                         error_code& ec) {
@@ -1426,7 +1418,7 @@ namespace boost {
                     if (super_type::connect(peer_endpoint, ec))
                         return ec;
 
-                    sender_ptr sender_(sender_ptr(new sender(transport_option())));
+                    sender_ptr sender_(sender_ptr(new sender(CR, transport_option())));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec));
                     if (ec) {
@@ -1472,7 +1464,7 @@ namespace boost {
 
                 error_code release_impl(error_code& ec, octet_type rsn = DR_REASON_NORM) {
                     if (is_open()) {
-                        sender_ptr sender_(sender_ptr(new sender(transport_option().dst_tsap(), transport_option().src_tsap(), rsn)));
+                        sender_ptr sender_(sender_ptr(new sender(DR, transport_option(), rsn)));
                         while (!ec && !sender_->ready())
                             sender_->size(super_type::send(sender_->pop(), 0, ec));
                         self_shutdown();
@@ -1500,7 +1492,7 @@ namespace boost {
                     octet_type error_accept = 0;
                     if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
                         canseled = true;
-                        sender_ = sender_ptr(new sender(receiver_->options().src_tsap(), options_.src_tsap(), error_accept));
+                        sender_ = sender_ptr(new sender(DR, transport_option(),  error_accept));
                     }
                     else {
                         
@@ -1508,7 +1500,7 @@ namespace boost {
                         dst_tsap(receiver_->options().src_tsap());
                         
                         options_.pdusize(pdusize());
-                        sender_ = sender_ptr(new sender(1, options_));
+                        sender_ = sender_ptr(new sender(CC, transport_option()));
                     }
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec));
