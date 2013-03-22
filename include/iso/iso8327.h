@@ -1191,12 +1191,10 @@ namespace boost {
                     typedef release_operation<ReleaseHandler > release_operation_type;
 
                     rootcoder()->in()->clear();
-                    if (is_open()) {
-                        get_io_service().post(boost::bind(&release_operation_type::start,
-                                release_operation<ReleaseHandler > (*this, handler, SESSION_FN_RELEASE)));
-                    }
-                    else
-                        handler(ER_REFUSE);
+
+                    get_io_service().post(boost::bind(&release_operation_type::start,
+                            release_operation<ReleaseHandler > (*this, handler, SESSION_FN_RELEASE)));
+
                 }
 
                 template <typename ReleaseHandler>
@@ -1205,12 +1203,10 @@ namespace boost {
                     typedef release_operation<ReleaseHandler > release_operation_type;
 
                     rootcoder()->in()->clear();
-                    if (is_open()) {
-                        get_io_service().post(boost::bind(&release_operation_type::start,
-                                release_operation_type(*this, handler, SESSION_AB_RELEASE)));
-                    }
-                    else
-                        handler(ER_REFUSE);
+
+                    get_io_service().post(boost::bind(&release_operation_type::start,
+                            release_operation_type(*this, handler, SESSION_AB_RELEASE)));
+
                 }
 
 
@@ -1245,7 +1241,7 @@ namespace boost {
                     enum stateconnection {
                         response,
                         request,
-                        refuse
+                        reject
                     };
 
                 public:
@@ -1287,7 +1283,7 @@ namespace boost {
                                     finish(ec);
                                     return;
                                 }
-                                case refuse:
+                                case reject:
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
@@ -1323,7 +1319,7 @@ namespace boost {
                             if (!nouserreject)
                                 options_.refuse_reason(DR_REASON_USER);
                             sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder()));
-                            state(refuse);
+                            state(reject);
                             operator()(ec, 0);
                             return;
                         }
