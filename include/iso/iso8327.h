@@ -1629,8 +1629,9 @@ namespace boost {
                     receiver_(receive),
                     buff_(buff),
                     sender_(),
-                    state_(request),
-                    flags_(flags) {
+                    state_(response),
+                    flags_(flags),
+                    errorrefuse_() {
                     }
 
                     void start() {
@@ -1641,17 +1642,17 @@ namespace boost {
                     void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
                             switch (state_) {
-                                case request:
+                                case response:
                                 {
                                     receiver_->put(bytes_transferred);
                                     if (!receiver_->ready()) {
                                         socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), flags_, *this);
                                         return;
                                     }
-                                    if (!success()) return;
+                                    if (!success(ec )) return;
                                     break;
                                 }
-                                case response:
+                                case request:
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
@@ -1675,47 +1676,56 @@ namespace boost {
                     }
 
                     void disconnect(const error_code& ec) {
-                        handler(ER_REFUSE, 0);
+                        handler(errorrefuse_ ? errorrefuse_ : ER_PROTOCOL , 0);
                     }
 
 
                 private:
 
-                    bool success() {
-                        switch (receiver_->type()) {
-                            case DT_SPDU_ID:
+                    bool success(const error_code& ec) {
+                        switch (receiver_->state()) {
+                            case receiver::complete:
                             {
-                                return true;
-                            }
-                            case FN_SPDU_ID:
-                            {
-                                socket.rootcoder()->in()->clear();
-                                socket.rootcoder()->in()->add(receiver_->options().data());
-                                socket.negotiate_session_release();
-                                sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder()));
-                                state(response);
-                                start();
-                                return false;
-                            }
-                            case AB_SPDU_ID:
-                            {
-                                socket.rootcoder()->in()->clear();
-                                socket.rootcoder()->in()->add(receiver_->options().data());
-                                socket.negotiate_session_abort();
-                                state(refuse);
-                                start();
-                                return false;
+                                switch (receiver_->type()) {
+                                    case DT_SPDU_ID:
+                                    {
+                                        return true;
+                                    }
+                                    case FN_SPDU_ID:
+                                    {
+                                        socket.rootcoder()->in()->clear();
+                                        socket.rootcoder()->in()->add(receiver_->options().data());
+                                        socket.negotiate_session_release();
+                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                        state(request);
+                                        errorrefuse_= ER_RELEASE;
+                                        operator()(ec, 0);
+                                        return false;
+                                    }
+                                    case AB_SPDU_ID:
+                                    {
+                                        socket.rootcoder()->in()->clear();
+                                        socket.rootcoder()->in()->add(receiver_->options().data());
+                                        socket.negotiate_session_abort();
+                                        state(refuse);
+                                        errorrefuse_= ER_ABORT;                                      
+                                        operator()(ec, 0);
+                                        return false;
+                                    }
+                                    default:
+                                    {
+                                    }
+                                }
+                                break;
                             }
                             default:
                             {
-                                socket.rootcoder()->in()->clear();
-                                socket.rootcoder()->in()->add(receiver_->options().data());
-                                sender_ = sender_ptr(new sender(AB_SPDU_ID, socket.session_option(), socket.rootcoder()));
-                                state(response);
-                                start();
                             }
                         }
-
+                        // unexpected
+                        errorrefuse_= ER_PROTOCOL;  
+                        state(refuse);
+                        operator()(ec, 0);
                         return false;
                     }
 
@@ -1732,6 +1742,7 @@ namespace boost {
                     sender_ptr sender_;
                     stateconnection state_;
                     message_flags flags_;
+                    error_code errorrefuse_;
                 };
 
 
@@ -2087,7 +2098,6 @@ namespace boost {
                             }
                         }
                     }
-                    // unexpected
                     error_code ecc;
                     super_type::release(ecc);
                     return check_accept_imp_exit(ec ? ec : ER_PROTOCOL);
@@ -2118,51 +2128,50 @@ namespace boost {
                     while (!ec && !receiver_->ready()) {
                         receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
                     }
-                    if (ec)
-                        return 0;
-                    switch (receiver_->type()) {
-                        case DT_SPDU_ID:
-                        {
-                            return receiver_->datasize();
-                        }
-                        case FN_SPDU_ID:
-                        {
-                            rootcoder()->in()->clear();
-                            rootcoder()->in()->add(receiver_->options().data());
-                            negotiate_session_release();
-                            sender_ptr sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
-                            while (!ec && !sender_->ready())
-                                sender_->size(super_type::send(sender_->pop(), 0, ec));
-                            error_code ecc;
-                            close(ecc);
-                            ec = ER_RELEASE;
-                            return 0;
-                        }
-                        case AB_SPDU_ID:
-                        {
-                            rootcoder()->in()->clear();
-                            negotiate_session_abort();
-                            error_code ecc;
-                            super_type::release(ecc);
-                            ec = ER_ABORT;
-                            return 0;
-                        }
-                        default:
-                        {
-                            /*if (sender_) {
-                                while (!ec && !sender_->ready())
-                                    sender_->size(super_type::send(sender_->pop(), 0, ec));
-                                ec = ER_REFUSE;
-                                error_code ecc;
-                                super_type::release(ecc);
-                                return 0;
-
-                            }*/
+                    if (!ec) {
+                        switch (receiver_->state()) {
+                            case receiver::complete:
+                            {
+                                switch (receiver_->type()) {
+                                    case DT_SPDU_ID:
+                                    {
+                                        return receiver_->datasize();
+                                    }
+                                    case FN_SPDU_ID:
+                                    {
+                                        sender_ptr sender_;
+                                        rootcoder()->in()->clear();
+                                        rootcoder()->in()->add(receiver_->options().data());
+                                        negotiate_session_release();
+                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
+                                        while (!ec && !sender_->ready())
+                                            sender_->size(super_type::send(sender_->pop(), 0, ec));
+                                        ec = ER_RELEASE;
+                                        break;
+                                    }
+                                    case AB_SPDU_ID:
+                                    {
+                                        rootcoder()->in()->clear();
+                                        rootcoder()->in()->add(receiver_->options().data());
+                                        negotiate_session_abort();
+                                        ec = ER_ABORT;
+                                        break;
+                                    }
+                                    default:
+                                    {
+                                        ec = ER_PROTOCOL;
+                                    }
+                                }
+                                break;
+                            }
+                            default:
+                            {
+                                ec = ER_PROTOCOL;
+                            }
                         }
                     }
                     error_code ecc;
-                    //close(ecc);
-                    ec = ER_PROTOCOL;
+                    super_type::release(ecc);
                     return 0;
                 }
 
