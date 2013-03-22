@@ -329,11 +329,11 @@ namespace boost {
                 bool parse_vars(const octet_sequnce& vl);
                 bool parse_pgi(varid_type tp, const octet_sequnce& vl);
 
+                spdudata_type_ptr value_;
                 mutable octet_sequnce seq_;
                 spdu_type type_;
                 bool error_;
                 octet_sequnce null_val;
-                spdudata_type_ptr value_;
             };
 
 
