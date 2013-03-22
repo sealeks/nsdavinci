@@ -265,7 +265,7 @@ namespace boost {
                     return error_;
                 }
 
-                void setPGI(varid_type cod1, varid_type cod2, const octet_sequnce& val = octet_sequnce());
+                void setPGI(varid_type cod1, varid_type cod2, const octet_sequnce& val = NULL_OCTET_SEQUENCE);
 
                 void setPGI(varid_type cod1, varid_type cod2, int8_t val);
 
@@ -276,7 +276,7 @@ namespace boost {
                 void setPGI(varid_type cod1, varid_type cod2, uint16_t val);
 
 
-                void setPI(varid_type cod, const octet_sequnce& val = octet_sequnce());
+                void setPI(varid_type cod, const octet_sequnce& val = NULL_OCTET_SEQUENCE);
 
                 void setPI(varid_type cod, int8_t val);
 
@@ -351,7 +351,7 @@ namespace boost {
                 protocol_options(const const_buffer & vl) : vars_(new spdudata(vl)) {
                 }
 
-                protocol_options(const octet_sequnce& called, const octet_sequnce& calling = octet_sequnce());
+                protocol_options(const octet_sequnce& called, const octet_sequnce& calling = NULL_OCTET_SEQUENCE);
 
                 protocol_options(const session_selector & ssel);
 
@@ -391,11 +391,11 @@ namespace boost {
 
                 void overflow(bool val);
 
-                void refuse_reason(octet_type rsn, const octet_sequnce& val = octet_sequnce());
+                void refuse_reason(octet_type rsn, const octet_sequnce& val = NULL_OCTET_SEQUENCE);
 
                 octet_type refuse_reason() const;
 
-                uint16_t maxTPDU_self() const;
+                uint16_t maxTPDU_src() const;
 
                 uint16_t maxTPDU_dist() const;
 
@@ -417,7 +417,7 @@ namespace boost {
                         "  calling = " << std::string(calling.begin(), calling.end()) << "\n" <<
                         "  called = " << std::string(called.begin(), called.end()) << " \n" <<
                         "  extendedSPDU = " << (self.extendedSPDU() ? "yes" : "no") << "\n" <<
-                        "  maxspdu_self = " << self.maxTPDU_self() << "\n" <<
+                        "  maxspdu_src = " << self.maxTPDU_src() << "\n" <<
                         "  maxspdu_dist = " << self.maxTPDU_dist() << "\n" << "\n";
             }
 #endif           
@@ -819,13 +819,17 @@ namespace boost {
                 //  Constructors  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(), asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
-                : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder), session_version_(VERSION2) {
+                explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(), 
+                        asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
+                : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder), 
+                        session_version_(VERSION2), user_requirement_(FU_WORK ),  maxTPDU_src_(0), maxTPDU_dist_(0) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
-                        const endpoint_type& endpoint, const session_selector& ssel = session_selector(), asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
-                : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder), session_version_(VERSION2) {
+                        const endpoint_type& endpoint, const session_selector& ssel = session_selector(), 
+                        asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
+                : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
+                        session_version_(VERSION2), user_requirement_(FU_WORK ),  maxTPDU_src_(0), maxTPDU_dist_(0)  {
                 }
 
 
@@ -1705,10 +1709,6 @@ namespace boost {
                     return rootcoder_;
                 }
 
-                octet_type session_version() const {
-                    return session_version_;
-                }
-
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  protected member  //
@@ -1734,20 +1734,59 @@ namespace boost {
                     return true;
                 }
 
-                void session_option(const session_selector& ssel) {
-                    option_ = protocol_options(ssel);
-                }
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  private member  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
             private:
-
+                
                 const protocol_options& session_option() const {
                     return option_;
                 }
+                
+                void session_option(const session_selector& ssel) {
+                    option_ = protocol_options(ssel);
+                }                          
+                
+                octet_type session_version() const {
+                    return session_version_;
+                }                
+                
+                void session_version(octet_type val)  {
+                    session_version_ = (val & VERSION2) ?  VERSION2 : VERSION1;
+                    option_.accept_version( session_version_ );
+                }
+                
+                int16_t user_requirement() const{
+                    return user_requirement_;                    
+                }
 
+                void user_requirement(int16_t val){
+                    user_requirement_ = val & FU_WORK;
+                    option_.user_requirement( user_requirement_ );                    
+                }             
+                
+                std::size_t  maxTPDU_src() const{
+                    return static_cast<std::size_t >(maxTPDU_src_);
+                }
+
+                std::size_t maxTPDU_dist() const{
+                    return static_cast<std::size_t >(maxTPDU_dist_);                    
+                }
+
+                void maxTPDU(uint16_t self, uint16_t dist){
+                    maxTPDU_src_=self;
+                    maxTPDU_dist_=dist;
+                    option_.maxTPDU( maxTPDU_src_,  maxTPDU_dist_ );                      
+                }      
+                
+                bool unlimitTPDU() const{
+                    return !(maxTPDU_src_ |  maxTPDU_dist_);             
+                }                      
+      
+
+                
                 void negotiate_session_option(const protocol_options& val) {
 
                 }
@@ -1966,6 +2005,9 @@ namespace boost {
                 protocol_options option_;
                 asn_coder_ptr rootcoder_;
                 octet_type session_version_;
+                int16_t user_requirement_;
+                uint16_t maxTPDU_src_;
+                uint16_t maxTPDU_dist_;
 
             };
 
