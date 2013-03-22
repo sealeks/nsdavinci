@@ -27,6 +27,7 @@ namespace boost {
         namespace rfc1006impl {
 
             // ref X224 = ITU-T Rec. X.224(1995 E)
+            // ref RFC1006
 
 
             using boost::asio::basic_socket;
@@ -38,7 +39,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
 
 
-            // TPDU code *ref X224  13.1 Table 8   only class 0 implemented ( over rfc1006 )
+            // TPDU code *ref X224  13.1 Table 8   only class 0 implemented ( over RFC1006 )
             const octet_type CR_TPDU_ID = '\xE0'; //Connection request   !!xxxx - out class 0
             const octet_type CC_TPDU_ID = '\xD0'; //Connection confirm   !!xxxx - out class 0
             const octet_type DR_TPDU_ID = '\x80'; //Disconnection request 
@@ -177,23 +178,13 @@ namespace boost {
                 octet_sequnce null_;
             };
 
-
-#if defined(ITUX200_DEBUG) 
-
-            inline static std::ostream& operator<<(std::ostream& stream, const protocol_options& self) {
-                octet_sequnce calling = self.tsap_calling();
-                octet_sequnce called = self.tsap_called();
-                return stream << "transport option   dst = " << self.dst_tsap() << ",  src = " << self.src_tsap() << ",  tpdusize = "
-                        << tpdu_byte_size(self.pdusize()) << " , calling = " << std::string(calling.begin(), calling.end()) << ",  called = "
-                        << std::string(called.begin(), called.end()) << " ;\n";
-            }
-#endif     
-
-
             const protocol_options NULL_PROTOCOL_OPTION = protocol_options();
 
 
 
+            
+            
+            
             bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error);
 
             bool parse_vars(const octet_sequnce& str, headarvarvalues& vars);
@@ -215,13 +206,17 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 
 
-            // see RFC1006
+            // *ref RFC1006 6.0
             const octet_type TKPT_STARTar[] = {'\x3', '\x0'};
             const octet_sequnce TKPT_START = octet_sequnce(TKPT_STARTar, TKPT_STARTar + 2);
+            
+            const std::size_t TKPT_LENGTH = 4;            
 
             const octet_sequnce::size_type DT_SEND_BUFF_HEADER = 7;
+            
+            // allways 2 fore class 0 *ref X224 13.7.1
+            const octet_type DATA_HEADER_LI = '\x2';
 
-            const std::size_t TKPT_LENGTH = 4;
 
             template <typename ConstBufferSequence>
             class data_sender_sequences : public basic_sender_sequences {
@@ -241,8 +236,9 @@ namespace boost {
                     headercontinue_.reserve(DT_SEND_BUFF_HEADER);
                     uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
                     headercontinue_ = TKPT_START;
+                    // packet lengh *ref RFC1006 6.0
                     raw_back_insert(headercontinue_, inttype_to_raw(normalsz));
-                    headercontinue_.insert(headercontinue_.end(), '\x2');
+                    headercontinue_.insert(headercontinue_.end(), DATA_HEADER_LI );
                     headercontinue_.insert(headercontinue_.end(), DT_TPDU_ID);
                     headercontinue_.insert(headercontinue_.end(), TPDU_CONTINIUE);
 
@@ -278,8 +274,9 @@ namespace boost {
                                     uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (boost::asio::buffer_size(val) + boost::asio::buffer_size(tmp) + 7));
                                     headereof_.reserve(DT_SEND_BUFF_HEADER);
                                     headereof_ = TKPT_START;
+                                    // packet lengh  *ref RFC1006 6.0
                                     raw_back_insert(headereof_, inttype_to_raw(eofsz));
-                                    headereof_ .insert(headereof_ .end(), '\x2');
+                                    headereof_ .insert(headereof_ .end(), DATA_HEADER_LI );
                                     headereof_ .insert(headereof_ .end(), DT_TPDU_ID);
                                     headereof_ .insert(headereof_ .end(), TPDU_ENDED);
                                     buff().push_back(const_buffer(&headereof_.front(), headereof_.size()));
@@ -341,8 +338,10 @@ namespace boost {
                                 uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
                                 headercontinue_.reserve(DT_SEND_BUFF_HEADER);
                                 headercontinue_ = TKPT_START;
+                                //  packet lengh *ref RFC1006 6.0
                                 raw_back_insert(headercontinue_, inttype_to_raw(normalsz));
-                                headercontinue_.insert(headercontinue_.end(), '\x2');
+                                
+                                headercontinue_.insert(headercontinue_.end(), DATA_HEADER_LI );
                                 headercontinue_.insert(headercontinue_.end(), DT_TPDU_ID);
                                 headercontinue_.insert(headercontinue_.end(), TPDU_CONTINIUE);
                             }
@@ -370,8 +369,9 @@ namespace boost {
                         headereof_.reserve(DT_SEND_BUFF_HEADER);
                         headereof_ = TKPT_START;
                         uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (tmpsize + 7));
+                        // packet lengh  *ref RFC1006 6.0
                         raw_back_insert(headereof_, inttype_to_raw(eofsz));
-                        headereof_ .insert(headereof_ .end(), '\x2');
+                        headereof_ .insert(headereof_ .end(), DATA_HEADER_LI );
                         headereof_ .insert(headereof_ .end(), DT_TPDU_ID);
                         headereof_ .insert(headereof_ .end(), TPDU_ENDED);
                         buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&headereof_[0]), headereof_.size()));
@@ -742,15 +742,17 @@ namespace boost {
                             {
                                 switch (receiver_->type()) {
                                     case CC:
-                                    {
+                                    {   // Accepted. Negotiate options *ref X224 6.5.4 a) j)
                                         socket.pdusize(receiver_->options().pdusize());
                                         socket.dst_tsap(receiver_->options().src_tsap());
+                                        
                                         handler(ec);
                                         return;
                                     }
                                     case ER:
                                     case DR:
-                                    {
+                                    {   // Both cases indicates connections refuse  *ref X224 6.6.2
+                                        // Release by means implicit variant  *ref X224 6.7.1.4  
                                         socket.async_internal_close();
                                         handler(receiver_->errcode());
                                         return;
@@ -760,6 +762,7 @@ namespace boost {
                             }
                             case receiver::error:
                             {
+                                // Release by means implicit variant  *ref X224 6.7.1.4
                                 socket.async_internal_close();
                                 handler(receiver_->errcode());
                                 return;
@@ -768,6 +771,7 @@ namespace boost {
                             {
                             }
                         }
+                        // Release by means implicit variant  *ref X224 6.7.1.4
                         socket.async_internal_close();
                         handler(ER_PROTOCOL);
                     }
@@ -812,6 +816,7 @@ namespace boost {
                 //  Release operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
+                // It is in general agreement with *ref X224 (TPM understands DR)   
                 void release(octet_type rsn = DR_REASON_NORM) {
 
                     error_code ec;
@@ -854,6 +859,7 @@ namespace boost {
                                 return;
                             }
                         }
+                        // Release by means implicit variant  *ref X224 6.7.1.4
                         socket.async_internal_close();
                         handler(ec);
                     }
@@ -959,12 +965,14 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
+                                    // Release by means implicit variant  *ref X224 6.7.1.4
                                     socket.async_internal_close();
                                     handler(ER_PROTOPT);
                                     return;
                                 }
                             }
                         }
+                        // Release by means implicit variant  *ref X224 6.7.1.4
                         socket.async_internal_close();
                         handler(ec);
                     }
@@ -981,16 +989,17 @@ namespace boost {
                             {
                                 switch (receiver_->type()) {
                                     case CR:
-                                    {
+                                    {   //  *ref X224 6.5.4 
                                         protocol_options options_ = socket.transport_option();
                                         octet_type error_accept = 0;
                                         if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
+                                            //  Not negotiated.  send DR
                                             sender_ = sender_ptr(new sender(DR, socket.transport_option(), error_accept));
                                             state(refuse);
                                             operator()(ec, 0);
                                             return;
                                         }
-
+                                        //  Accepted. send CC
                                         socket.dst_tsap(receiver_->options().src_tsap());
                                         socket.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
                                         options_.pdusize(socket.pdusize());
@@ -1001,6 +1010,7 @@ namespace boost {
                                     }
                                     default:
                                     {
+                                        //  Error. send ER
                                         sender_ = sender_ptr(new sender(ER, socket.transport_option(),
                                                 ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
                                         state(refuse);
@@ -1012,6 +1022,7 @@ namespace boost {
                             }
                             case receiver::error:
                             {
+                                //  Error. send ER
                                 sender_ = sender_ptr(new sender(ER, socket.transport_option(), ERT_REASON_NODEF));
                                 state(refuse);
                                 operator()(ec, 0);
@@ -1021,6 +1032,7 @@ namespace boost {
                             {
                             }
                         }
+                        // Release by means implicit variant  *ref X224 6.7.1.4
                         socket.async_internal_close();
                         handler(ER_PROTOCOL);
                     }
@@ -1267,6 +1279,7 @@ namespace boost {
 
                     void operator()(const error_code& ec, std::size_t bytes_transferred) {
                         if (!ec) {
+                            //  *ref X224 6.2
                             switch (state_) {
                                 case response:
                                 {
@@ -1285,6 +1298,7 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
+                                    // Release by means implicit variant  *ref X224 6.7.1.4
                                     socket.async_internal_close();
                                     handler(ER_PROTOPT, 0);
                                     return;
@@ -1305,30 +1319,35 @@ namespace boost {
                                 switch (receiver_->type()) {
                                     case CR:
                                     {
+                                        // ??? unexpected duplecated CR-TPDU *ref X224 6.5.4
                                         socket.waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
                                         handler(ec, 0);
                                         return;
                                     }
                                     case DT:
                                     {
+                                        // Data. Ok
                                         socket.waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
                                         handler(ec, static_cast<std::size_t> (receiver_->datasize()));
                                         return;
                                     }
                                     case ER:
                                     {
+                                        // Error. // Release by means implicit variant  *ref X224 6.7.1.4
                                         socket.async_internal_close();
                                         handler(ER_PROTOCOL, 0);
                                         return;
                                     }
                                     case DR:
                                     {
+                                        // Refuse. // Release by means implicit variant  *ref X224 6.7.1.4
                                         socket.async_internal_close();
                                         handler(ER_REFUSE, 0);
                                         return;
                                     }
                                     default:
                                     {
+                                        // Unexpected. Send refuse
                                         sender_ = sender_ptr(new sender(ER, socket.transport_option(),
                                                 ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
                                         state(refuse);
@@ -1341,6 +1360,7 @@ namespace boost {
                             }
                             case receiver::error:
                             {
+                                // Error. Send refuse
                                 sender_ = sender_ptr(new sender(ER, socket.transport_option(),
                                         ERT_REASON_NODEF, receiver_->errsequense()));
                                 state(refuse);
@@ -1352,6 +1372,7 @@ namespace boost {
                             {
                             }
                         }
+                        // Release by means implicit variant  *ref X224 6.7.1.4
                         socket.async_internal_close();
                         handler(ER_PROTOCOL, 0);
                     }
@@ -1486,14 +1507,14 @@ namespace boost {
                                     {
                                         switch (receiver_->type()) {
                                             case CC:
-                                            {
+                                            {   // Negotiate option *ref X224 6.5.4 a) j)
                                                 pdusize(receiver_->options().pdusize());
                                                 dst_tsap(receiver_->options().src_tsap());
                                                 return ec;
                                             }
-                                            case ER:
+                                            case ER:  //Both cases indicates connections refuse  *ref X224 6.6.2
                                             case DR:
-                                            {
+                                            {   
                                                 ec = receiver_->errcode();
                                                 break;
                                             }
@@ -1517,21 +1538,25 @@ namespace boost {
                             }
                         }
                     }
+                    // Release by means implicit variant  *ref X224 6.7.1.4
                     internal_close();
                     return ec;
                 }
 
+                // It is in general agreement with *ref X224 (TPM understands DR)   
                 error_code release_impl(error_code& ec, octet_type rsn = DR_REASON_NORM) {
                     if (is_open()) {
                         sender_ptr sender_(sender_ptr(new sender(DR, transport_option(), rsn)));
                         while (!ec && !sender_->ready())
                             sender_->size(super_type::send(sender_->pop(), 0, ec));
+                        // Release by means implicit variant  *ref X224 6.7.1.4
                         internal_close();
                         return ec;
                     }
                     return ec = ER_NOLINK;
                 }
 
+                //  *ref X224 6.5.4 
                 error_code check_accept_imp(error_code& ec) {
 
                     bool canceled = false;
@@ -1551,10 +1576,12 @@ namespace boost {
                                     {
                                         octet_type error_accept = 0;
                                         if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
+                                            //  Not negotiated.  send DR
                                             canceled = true;
                                             sender_ = sender_ptr(new sender(DR, transport_option(), error_accept));
                                         }
                                         else {
+                                            //  Accepted.  send CC
                                             pdusize(less_tpdu(receiver_->options().pdusize(), transport_option().pdusize()));
                                             dst_tsap(receiver_->options().src_tsap());
                                             options_.pdusize(pdusize());
@@ -1565,6 +1592,7 @@ namespace boost {
                                     default:
                                     {
                                         canceled = true;
+                                        //  Error.  send ER
                                         sender_ = sender_ptr(new sender(ER, transport_option(),
                                                 ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
                                     }
@@ -1580,6 +1608,7 @@ namespace boost {
                             }
                             default:
                             {
+                                // Release by means implicit variant  *ref X224 6.7.1.4
                                 internal_close();
                                 return ER_PROTOCOL;
                             }
@@ -1589,6 +1618,7 @@ namespace boost {
                             sender_->size(super_type::send(sender_->pop(), 0, ec));
                         if (!ec) {
                             if (!canceled) return ec;
+                            // Release by means implicit variant  *ref X224 6.7.1.4
                             internal_close();
                             ec = ER_PROTOCOL;
                         }
@@ -1609,6 +1639,7 @@ namespace boost {
                     return ec ? 0 : boost::asio::buffer_size(buffers);
                 }
 
+                //  *ref X224 6.2
                 template <typename MutableBufferSequence>
                 std::size_t receive_impl(const MutableBufferSequence& buffers,
                         message_flags flags, error_code& ec) {
@@ -1630,28 +1661,33 @@ namespace boost {
                                 switch (receiver_->type()) {
                                     case CR:
                                     {
+                                        // ??? unexpected duplecated CR-TPDU *ref X224 6.5.4
                                         waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
                                         return 0;
                                     }
                                     case DT:
                                     {
+                                        // Data. Ok.
                                         waiting_data_size(receiver_->waitdatasize(), receiver_->eof());
                                         return receiver_->datasize();
                                     }
                                     case ER:
                                     {
+                                        // Error. // Release by means implicit variant  *ref X224 6.7.1.4
                                         internal_close();
                                         ec = ER_PROTOCOL;
                                         return 0;
                                     }
                                     case DR:
                                     {
+                                        // Refuse. // Release by means implicit variant  *ref X224 6.7.1.4
                                         internal_close();
                                         ec = ER_REFUSE;
                                         return 0;
                                     }
                                     default:
                                     {
+                                        // Unexpected. Send refuse
                                         sender_ = sender_ptr(new sender(ER, transport_option(),
                                                 ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
                                     }
@@ -1660,6 +1696,7 @@ namespace boost {
                             }
                             default:
                             {
+                                // Error. Send refuse
                                 sender_ = sender_ptr(new sender(ER, transport_option(),
                                         ERT_REASON_TPDU_TYPE, receiver_->errsequense()));
                             }
@@ -1667,6 +1704,7 @@ namespace boost {
                         while (!ec && !sender_->ready())
                             sender_->size(super_type::send(sender_->pop(), 0, ec));
                     }
+                    // Release by means implicit variant  *ref X224 6.7.1.4
                     internal_close();
                     ec = ER_PROTOCOL;
                     return 0;
