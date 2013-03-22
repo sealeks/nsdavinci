@@ -2125,9 +2125,9 @@ namespace boost {
                         return super_type::receive(boost::asio::buffer(buffers), flags, ec);
 
                     receiver_ptr receiver_(new receiver(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers)));
-                    while (!ec && !receiver_->ready()) {
+                    while (!ec && !receiver_->ready()) 
                         receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
-                    }
+               
                     if (!ec) {
                         switch (receiver_->state()) {
                             case receiver::complete:
