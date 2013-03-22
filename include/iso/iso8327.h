@@ -15,7 +15,7 @@ namespace boost {
     namespace itu {
         namespace x225impl {
 
-            
+
             // ref X225 = ITU-T Rec. X.225(1995 E)           
 
             using boost::asio::basic_socket;
@@ -775,17 +775,17 @@ namespace boost {
                 //  Constructors  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
-                explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(), 
+                explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(),
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
-                : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder), 
-                        session_version_(VERSION2), user_requirement_(FU_WORK ),  maxTPDU_src_(0), maxTPDU_dist_(0) {
+                : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
+                session_version_(VERSION2), user_requirement_(FU_WORK), maxTPDU_src_(0), maxTPDU_dist_(0) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
-                        const endpoint_type& endpoint, const session_selector& ssel = session_selector(), 
+                        const endpoint_type& endpoint, const session_selector& ssel = session_selector(),
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
-                        session_version_(VERSION2), user_requirement_(FU_WORK ),  maxTPDU_src_(0), maxTPDU_dist_(0)  {
+                session_version_(VERSION2), user_requirement_(FU_WORK), maxTPDU_src_(0), maxTPDU_dist_(0) {
                 }
 
 
@@ -872,7 +872,7 @@ namespace boost {
                                             boost::bind(&operation_type::disconnect, * this,
                                             boost::asio::placeholders::error));
                                     return;
-                                }                           
+                                }
                             }
                         }
                         exit_handler(ec);
@@ -880,12 +880,12 @@ namespace boost {
 
                     void disconnect(const error_code& ec) {
                         exit_handler(receiver_->reject_reason() ? errorcode_by_reason(receiver_->reject_reason()) : ER_REFUSE);
-                    }           
+                    }
 
                 private:
 
                     void parse_response(const error_code& ec) {
-                        
+
                         switch (receiver_->state()) {
                             case receiver::complete:
                             {
@@ -901,6 +901,7 @@ namespace boost {
                                         socket.rootcoder()->in()->add(receiver_->options().data());
                                         exit_handler(ec);
                                         return;
+                                        break;
                                     }
                                     case RF_SPDU_ID:
                                     {
@@ -909,8 +910,14 @@ namespace boost {
                                         state(refuse);
                                         operator()(ec, 0);
                                         return;
+                                        break;
+                                    }
+                                    default:
+                                    {
+
                                     }
                                 }
+                                break;
                             }
                             default:
                             {
@@ -1011,7 +1018,9 @@ namespace boost {
                     sender_(sender_ptr(new sender(release_type_to_spdu(type), sock.session_option(), sock.rootcoder()))),
                     receiver_(new receiver()),
                     type_(type),
-                    state_(request) {
+                    state_(request),
+                    errorrelease_(),
+                    collision_(false) {
                     }
 
                     void start() {
@@ -1029,7 +1038,8 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
-                                    state(response);
+                                    // no keep transport  it dont wait AA *ref X225 7.9.2
+                                    state((collision_ || type_ == SESSION_AB_RELEASE) ? refuse : response);
                                     operator()(ec, 0);
                                     return;
                                 }
@@ -1057,37 +1067,94 @@ namespace boost {
                     }
 
                     void disconnect(const error_code& ec) {
-                        exit_handler(ec);
+                        // ignore transport refuse error
+                        exit_handler(errorrelease_);
                     }
 
 
                 private:
 
                     void finish(const error_code& ec) {
-                        if (receiver_->state() == receiver::complete) {
-                            switch (receiver_->type()) {
-                                case DN_SPDU_ID:
-                                {
-                                    socket.rootcoder()->in()->add(receiver_->options().data());
-                                    state(refuse);
-                                    start();
-                                    return;
+                        switch (receiver_->state()) {
+                            case receiver::complete:
+                            {
+                                switch (receiver_->type()) {
+                                    case DN_SPDU_ID:
+                                    {
+                                        if (type_ == SESSION_FN_RELEASE) {
+                                            //Accepted disconnect. *ref X225 7.7
+                                            socket.rootcoder()->in()->add(receiver_->options().data());
+                                        }
+                                        else {
+                                            // unexpected;
+                                            errorrelease_ = ER_PROTOCOL;
+                                        }
+                                        break;
+                                    }
+                                    case AA_SPDU_ID:
+                                    {
+                                        //Accepted abort. *ref X225 7.10 
+                                        if (type_ != SESSION_AB_RELEASE) {
+                                            // unexpected;
+                                            errorrelease_ = ER_PROTOCOL;
+                                        }
+                                        break;
+                                    }
+                                    case RF_SPDU_ID:
+                                    {
+                                        // collision /. *ref X225 7.6
+                                        if (type_ == SESSION_FN_RELEASE) {
+                                            // initiators preference
+                                            if (socket.is_acceptor()) {
+                                                socket.rootcoder()->in()->clear();
+                                                socket.rootcoder()->in()->add(receiver_->options().data());
+                                                socket.negotiate_session_release();
+                                                sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                                state(request);
+                                                start();
+                                                collision_ = true;
+                                                return;
+                                            }
+                                            // abort or  initiators release colision preference
+                                        }
+                                        break;
+                                    }
+                                    case AB_SPDU_ID:
+                                    {
+                                        // collision /. *ref X225 7.9
+                                        if (type_ == SESSION_FN_RELEASE) {
+                                            // abort colision
+                                            // abort preference
+                                            socket.rootcoder()->in()->clear();
+                                            socket.rootcoder()->in()->add(receiver_->options().data());
+                                            socket.negotiate_session_abort();
+                                        }
+                                        else {
+                                            // initiators preference
+                                            if (socket.is_acceptor()) {
+                                                socket.rootcoder()->in()->clear();
+                                                socket.rootcoder()->in()->add(receiver_->options().data());
+                                                socket.negotiate_session_abort();
+                                            }
+                                            // abort colision
+                                            // abort preference
+                                        }
+                                        break;
+                                    }
+                                    default:
+                                    {
+                                        errorrelease_ = ER_PROTOCOL;
+                                    }
                                 }
-                                case AA_SPDU_ID:
-                                {
-                                    socket.rootcoder()->in()->add(receiver_->options().data());
-                                    state(refuse);
-                                    start();
-                                    return;
-                                }
-                                default:
-                                {
-                                }
+                                break;
+                            }
+                            default:
+                            {
+                                errorrelease_ = ER_PROTOCOL;
                             }
                         }
-                        error_code ecc;
-                        //socket.close(ecc);
-                        exit_handler(ER_PROTOCOL);
+                        state(refuse);
+                        start();
                     }
 
                     void exit_handler(const error_code& ec) {
@@ -1107,6 +1174,8 @@ namespace boost {
                     receiver_ptr receiver_;
                     release_type type_;
                     stateconnection state_;
+                    error_code errorrelease_;
+                    bool collision_;
 
                 };
 
@@ -1512,7 +1581,7 @@ namespace boost {
                     enum stateconnection {
                         request,
                         response,
-                        disconect
+                        refuse
                     };
 
 
@@ -1555,11 +1624,11 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
-                                    state(disconect);
+                                    state(refuse);
                                     start();
                                     return;
                                 }
-                                case disconect:
+                                case refuse:
                                 {
                                     socket.super_type::async_release(
                                             boost::bind(&operation_type::disconnect, * this,
@@ -1597,9 +1666,9 @@ namespace boost {
                             case AB_SPDU_ID:
                             {
                                 socket.rootcoder()->in()->clear();
-                                //socket.rootcoder()->in()->add(receiver_->options().data());
+                                socket.rootcoder()->in()->add(receiver_->options().data());
                                 socket.negotiate_session_abort();
-                                state(disconect);
+                                state(refuse);
                                 start();
                                 return false;
                             }
@@ -1712,53 +1781,53 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
             private:
-                
+
                 const protocol_options& session_option() const {
                     return option_;
                 }
-                
+
                 void session_option(const session_selector& ssel) {
                     option_ = protocol_options(ssel);
-                }                          
-                
+                }
+
                 octet_type session_version() const {
                     return session_version_;
-                }                
-                
-                void session_version(octet_type val)  {
-                    session_version_ = (val & VERSION2) ?  VERSION2 : VERSION1;
-                    option_.accept_version( session_version_ );
-                }
-                
-                int16_t user_requirement() const{
-                    return user_requirement_;                    
                 }
 
-                void user_requirement(int16_t val){
+                void session_version(octet_type val) {
+                    session_version_ = (val & VERSION2) ? VERSION2 : VERSION1;
+                    option_.accept_version(session_version_);
+                }
+
+                int16_t user_requirement() const {
+                    return user_requirement_;
+                }
+
+                void user_requirement(int16_t val) {
                     user_requirement_ = val & FU_WORK;
-                    option_.user_requirement( user_requirement_ );                    
-                }             
-                
-                std::size_t  maxTPDU_src() const{
-                    return static_cast<std::size_t >(maxTPDU_src_);
+                    option_.user_requirement(user_requirement_);
                 }
 
-                std::size_t maxTPDU_dist() const{
-                    return static_cast<std::size_t >(maxTPDU_dist_);                    
+                std::size_t maxTPDU_src() const {
+                    return static_cast<std::size_t> (maxTPDU_src_);
                 }
 
-                void maxTPDU(uint16_t self, uint16_t dist){
-                    maxTPDU_src_=self;
-                    maxTPDU_dist_=dist;
-                    option_.maxTPDU( maxTPDU_src_,  maxTPDU_dist_ );                      
-                }      
-                
-                bool unlimitTPDU() const{
-                    return !(maxTPDU_src_ |  maxTPDU_dist_);             
-                }                      
-      
+                std::size_t maxTPDU_dist() const {
+                    return static_cast<std::size_t> (maxTPDU_dist_);
+                }
 
-                
+                void maxTPDU(uint16_t self, uint16_t dist) {
+                    maxTPDU_src_ = self;
+                    maxTPDU_dist_ = dist;
+                    option_.maxTPDU(maxTPDU_src_, maxTPDU_dist_);
+                }
+
+                bool unlimitTPDU() const {
+                    return !(maxTPDU_src_ | maxTPDU_dist_);
+                }
+
+
+
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1813,7 +1882,7 @@ namespace boost {
                             return connect_impl_exit(receiver_->reject_reason() ? errorcode_by_reason(receiver_->reject_reason()) : ER_REFUSE);
                         }
                     }
-                    super_type::release(ec);                    
+                    super_type::release(ec);
                     return connect_impl_exit(ec);
                 }
 
@@ -1823,42 +1892,100 @@ namespace boost {
                 }
 
                 error_code release_impl(release_type type, error_code& ec) {
-                    if (is_open()) {
-                        sender_ptr sender_(new sender(release_type_to_spdu(type), session_option(), rootcoder()));
-                        while (!ec && !sender_->ready())
-                            sender_->size(super_type::send(sender_->pop(), 0, ec));
-                        if (ec)
-                            return release_impl_exit(ec);
+
+                    sender_ptr sender_(new sender(release_type_to_spdu(type), session_option(), rootcoder()));
+                    while (!ec && !sender_->ready())
+                        sender_->size(super_type::send(sender_->pop(), 0, ec));
+                    // no keep transport  it dont wait AA *ref X225 7.9.2
+                    if (!ec && (type == SESSION_FN_RELEASE)) {
                         receiver_ptr receiver_(receiver_ptr(new receiver()));
                         while (!ec && !receiver_->ready())
                             receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
-                        if (ec)
-                            return release_impl_exit(ec);
-                        if (receiver_->state() == receiver::complete) {
-                            switch (receiver_->type()) {
-                                case DN_SPDU_ID:
+                        if (!ec) {
+                            switch (receiver_->state()) {
+                                case receiver::complete:
                                 {
-                                    rootcoder()->in()->add(receiver_->options().data());
-                                    error_code ecc;
-                                    //close(ecc);
-                                    return release_impl_exit(ec);
-                                }
-                                case AA_SPDU_ID:
-                                {
-                                    rootcoder()->in()->add(receiver_->options().data());
-                                    error_code ecc;
-                                    //close(ecc);
-                                    return release_impl_exit(ec);
+                                    switch (receiver_->type()) {
+                                        case DN_SPDU_ID:
+                                        {
+                                            if (type == SESSION_FN_RELEASE) {
+                                                //Accepted disconnect. *ref X225 7.7
+                                                rootcoder()->in()->add(receiver_->options().data());
+                                            }
+                                            else {
+                                                // unexpected;
+                                                ec = ER_PROTOCOL;
+                                            }
+                                            break;
+                                        }
+                                        case AA_SPDU_ID:
+                                        {
+                                            //Accepted abort. *ref X225 7.10 
+                                            if (type != SESSION_AB_RELEASE) {
+                                                // unexpected;
+                                                ec = ER_PROTOCOL;
+                                            }
+                                            break;
+                                        }
+                                        case RF_SPDU_ID:
+                                        {
+                                            // collision /. *ref X225 7.6
+                                            if (type == SESSION_FN_RELEASE) {
+                                                // initiators preference
+                                                if (is_acceptor()) {
+                                                    rootcoder()->in()->clear();
+                                                    rootcoder()->in()->add(receiver_->options().data());
+                                                    negotiate_session_release();
+                                                    sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
+                                                    while (!ec && !sender_->ready())         
+                                                         sender_->size(super_type::send(sender_->pop(), 0, ec));
+                                                }
+                                                // abort or  initiators release colision preference
+                                            }
+                                            break;
+                                        }
+                                        case AB_SPDU_ID:
+                                        {
+                                            // collision /. *ref X225 7.9
+                                            if (type == SESSION_FN_RELEASE) {
+                                                // abort colision
+                                                // abort preference
+                                                rootcoder()->in()->clear();
+                                                rootcoder()->in()->add(receiver_->options().data());
+                                                negotiate_session_abort();
+                                            }
+                                            else {
+                                                // initiators preference
+                                                if (is_acceptor()) {
+                                                    rootcoder()->in()->clear();
+                                                    rootcoder()->in()->add(receiver_->options().data());
+                                                    negotiate_session_abort();
+                                                }
+                                                // abort colision
+                                                // abort preference
+                                            }
+                                            break;
+                                        }
+                                        default:
+                                        {
+                                            ec = ER_PROTOCOL;
+                                        }
+                                    }
+                                    break;
                                 }
                                 default:
                                 {
+                                    ec = ER_PROTOCOL;
                                 }
                             }
+                            error_code ecc;
+                            super_type::release(ecc);
+                            return connect_impl_exit(ec);
                         }
-                        error_code ecc;
-                        //close(ecc);
                     }
-                    return release_impl_exit(ec = ER_REFUSE);
+                    error_code ecc;
+                    super_type::release(ecc);
+                    return connect_impl_exit(ec);
                 }
 
                 const error_code& release_impl_exit(const error_code& err) {
