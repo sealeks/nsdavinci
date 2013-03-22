@@ -711,7 +711,7 @@ namespace boost {
                 }
                 std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + 1));
 
-                if (li == '\xFF') {
+                if (li == static_cast< std::size_t >('\xFF')) {
                     estimatesize_ = HDR_LI;
                     state(waitsize);
                     return error_code();
