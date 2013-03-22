@@ -426,7 +426,7 @@ namespace boost {
 
 
             //negotiate_x225impl_option
-            bool negotiate_x225impl_option(protocol_options& self, const protocol_options& dist);
+            bool negotiate_x225impl_option(const protocol_options& self, const protocol_options& dist, octet_type& errorreason);
 
             const_sequences_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data); //CONNECT SPDU
 
@@ -1050,7 +1050,7 @@ namespace boost {
                                         socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), 0, *this);
                                         return;
                                     }
-                                    finish(ec);
+                                    parse_response(ec);
                                     return;
                                 }
                                 case refuse:
@@ -1074,7 +1074,7 @@ namespace boost {
 
                 private:
 
-                    void finish(const error_code& ec) {
+                    void parse_response(const error_code& ec) {
                         switch (receiver_->state()) {
                             case receiver::complete:
                             {
@@ -1111,7 +1111,7 @@ namespace boost {
                                                 socket.negotiate_session_release();
                                                 sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder()));
                                                 state(request);
-                                                start();
+                                                operator()(ec, 0);
                                                 collision_ = true;
                                                 return;
                                             }
@@ -1154,7 +1154,7 @@ namespace boost {
                             }
                         }
                         state(refuse);
-                        start();
+                        operator()(ec, 0);
                     }
 
                     void exit_handler(const error_code& ec) {
@@ -1241,7 +1241,8 @@ namespace boost {
                     enum stateconnection {
                         response,
                         request,
-                        reject
+                        reject,
+                        refuse
                     };
 
                 public:
@@ -1251,7 +1252,8 @@ namespace boost {
                     handler(handlr),
                     state_(response),
                     sender_(),
-                    receiver_(new receiver()) {
+                    receiver_(new receiver()),
+                    errorrefuse_() {
                     }
 
                     void start() {
@@ -1280,7 +1282,7 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
-                                    finish(ec);
+                                    exit_handler(ec);
                                     return;
                                 }
                                 case reject:
@@ -1290,12 +1292,25 @@ namespace boost {
                                         socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
-                                    exit_handler(ER_OUTDOMAIN);
+                                    state(refuse);
+                                    operator()(ec, 0);
+                                    return;
+                                }
+                                case refuse:
+                                {
+                                    socket.super_type::async_release(
+                                            boost::bind(&operation_type::disconnect, * this,
+                                            boost::asio::placeholders::error));
                                     return;
                                 }
                             }
                         }
                         exit_handler(ec);
+                    }
+
+                    void disconnect(const error_code& ec) {
+                        // ignore transport refuse error
+                        exit_handler(errorrefuse_ ? errorrefuse_ : ER_PROTOCOL);
                     }
 
 
@@ -1307,36 +1322,58 @@ namespace boost {
                 private:
 
                     void parse_response(const error_code& ec) {
-                        if (receiver_->type() != CN_SPDU_ID || receiver_->state() != receiver::complete) {
-                            exit_handler(ER_PROTOCOL);
-                            return;
+                        switch (receiver_->state()) {
+                            case receiver::complete:
+                            {
+                                switch (receiver_->type()) {
+                                        //Connect response. *ref X225 7.1
+                                    case CN_SPDU_ID:
+                                    {
+                                        bool nouserreject = true;
+                                        octet_type errorreason= 0;
+                                        
+                                        if (!negotiate_x225impl_option(socket.session_option(), receiver_->options(), errorreason) ||
+                                                !(nouserreject = socket.negotiate_session_accept())) {
+                                            // Netotiation fail send RF
+                                            protocol_options options_ = socket.session_option();
+                                            if (!nouserreject)
+                                                options_.refuse_reason(DR_REASON_USER);
+                                            else
+                                                options_.refuse_reason(errorreason);
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder()));
+                                            state(reject);
+                                            errorrefuse_ = ER_PROTOPT;
+                                            operator()(ec, 0);
+                                            return;
+                                        }
+
+                                        // Netotiation success send AC
+                                        socket.rootcoder()->in()->add(receiver_->options().data());
+                                        socket.session_version(receiver_->options().accept_version());
+                                        /*if (receiver_->options().maxTPDU_dist() || receiver_->options().maxTPDU_src()){
+                                            socket.maxTPDU(receiver_->options().maxTPDU_src(), receiver_->options().maxTPDU_dist());
+                                        }     
+                                        socket.user_requirement(receiver_->options().user_requirement());*/
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option() , socket.rootcoder()));
+                                        state(request);
+                                        operator()(ec, 0);
+                                        return;
+                                        break;
+                                    }
+                                    default:
+                                    {
+                                    }
+                                }
+                                break;
+                            }
+                            default:
+                            {
+                            }
                         }
-                        bool nouserreject = true;
-                        protocol_options options_ = socket.session_option();
-                        socket.rootcoder()->in()->add(receiver_->options().data());
-                        if (!negotiate_x225impl_option(options_, receiver_->options()) ||
-                                !(nouserreject = socket.negotiate_session_accept())) {
-                            if (!nouserreject)
-                                options_.refuse_reason(DR_REASON_USER);
-                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder()));
-                            state(reject);
-                            operator()(ec, 0);
-                            return;
-                        }
-#if defined(ITUX200_DEBUG) 
-                        std::cout << "SESSION SUCCESS CONNECT " << (socket.is_acceptor() ? " It is acceptor" : " It is requester") << "\n" <<
-                                " with" << socket.session_option() << std::endl;
-#endif                           
-                        socket.session_version_ = (options_.accept_version() & VERSION2) ? VERSION2 : VERSION1;
-                        sender_ = sender_ptr(new sender(AC_SPDU_ID, options_, socket.rootcoder()));
-                        state(request);
+                        // unexpected
+                        state(refuse);
+                        errorrefuse_ = ER_PROTOCOL;
                         operator()(ec, 0);
-                    }
-
-                    void finish(const error_code& ec) {
-
-                        const protocol_options& opt = receiver_->options();
-                        exit_handler(ec);
                     }
 
                     void exit_handler(const error_code& ec) {
@@ -1357,6 +1394,7 @@ namespace boost {
                     stateconnection state_;
                     sender_ptr sender_;
                     receiver_ptr receiver_;
+                    error_code errorrefuse_;
 
                 };
 
@@ -1933,8 +1971,8 @@ namespace boost {
                                                     rootcoder()->in()->add(receiver_->options().data());
                                                     negotiate_session_release();
                                                     sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
-                                                    while (!ec && !sender_->ready())         
-                                                         sender_->size(super_type::send(sender_->pop(), 0, ec));
+                                                    while (!ec && !sender_->ready())
+                                                        sender_->size(super_type::send(sender_->pop(), 0, ec));
                                                 }
                                                 // abort or  initiators release colision preference
                                             }
@@ -1990,47 +2028,69 @@ namespace boost {
                 }
 
                 error_code check_accept_imp(error_code& ec) {
-                    bool canseled = false;
                     receiver_ptr receiver_(receiver_ptr(new receiver()));
                     while (!ec && !receiver_->ready()) {
                         receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
                     }
-                    if (ec)
-                        return check_accept_imp_exit(ec);
-                    sender_ptr sender_;
+                    if (!ec) {
 
-                    protocol_options options_ = session_option();
-                    if (receiver_->type() != CN_SPDU_ID || receiver_->state() != receiver::complete) {
-                        error_code ecc;
-                        //close(ecc);
-                        return check_accept_imp_exit(ER_PROTOCOL);
-                    }
-                    bool nouserreject = true;
-                    rootcoder()->in()->add(receiver_->options().data());
-                    if (!negotiate_x225impl_option(options_, receiver_->options()) ||
-                            !(nouserreject = negotiate_session_accept())) {
-                        if (!nouserreject)
-                            options_.refuse_reason(DR_REASON_USER);
-                        canseled = true;
-                        sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder()));
-                    }
-                    else {
-                        session_version_ = (options_.accept_version() & VERSION2) ? VERSION2 : VERSION1;
-                        sender_ = sender_ptr(new sender(AC_SPDU_ID, options_, rootcoder()));
-                    }
+                        switch (receiver_->state()) {
+                            case receiver::complete:
+                            {
+                                sender_ptr sender_;
+                                switch (receiver_->type()) {
+                                        //Connect response. *ref X225 7.1
+                                    case CN_SPDU_ID:
+                                    {
+                                        bool nouserreject = true;
+                                        octet_type errorreason = 0;
 
-                    while (!ec && !sender_->ready())
-                        sender_->size(super_type::send(sender_->pop(), 0, ec));
-                    if (ec)
-                        return check_accept_imp_exit(ec);
-                    if (canseled) {
-                        error_code ecc;
-                        //close(ecc);
+                                        if (!negotiate_x225impl_option(session_option(), receiver_->options(), errorreason) ||
+                                                !(nouserreject = negotiate_session_accept())) {
+                                            // Netotiation fail send RF
+                                            protocol_options options_ = session_option();
+                                            if (!nouserreject)
+                                                options_.refuse_reason(DR_REASON_USER);
+                                            else
+                                                options_.refuse_reason(errorreason);
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder()));
+                                            while (!ec && !sender_->ready())
+                                                sender_->size(super_type::send(sender_->pop(), 0, ec));
+                                            ec = ER_PROTOPT;
+                                            break;
+                                        }
+
+                                        // Netotiation success send AC
+                                        rootcoder()->in()->add(receiver_->options().data());
+                                        session_version(receiver_->options().accept_version());
+                                        /*if (receiver_->options().maxTPDU_dist() || receiver_->options().maxTPDU_src()){
+                                            maxTPDU(receiver_->options().maxTPDU_src(), receiver_->options().maxTPDU_dist());
+                                        }     
+                                        user_requirement(receiver_->options().user_requirement());*/
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder()));
+                                        while (!ec && !sender_->ready())
+                                            sender_->size(super_type::send(sender_->pop(), 0, ec));
+                                        if (!ec)
+                                            return check_accept_imp_exit(ec);
+                                        break;
+                                    }
+                                    default:
+                                    {
+                                        ec = ER_PROTOCOL;
+                                    }
+                                }
+                                break;
+                            }
+                            default:
+                            {
+                                ec = ER_PROTOCOL;
+                            }
+                        }
                     }
-                    else {
-                        const protocol_options& opt = receiver_->options();
-                    }
-                    return check_accept_imp_exit(ec = canseled ? ER_OUTDOMAIN : ec);
+                    // unexpected
+                    error_code ecc;
+                    super_type::release(ecc);
+                    return check_accept_imp_exit(ec ? ec : ER_PROTOCOL);
                 }
 
                 const error_code& check_accept_imp_exit(const error_code& err) {

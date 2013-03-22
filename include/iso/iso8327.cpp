@@ -467,29 +467,22 @@ namespace boost {
 
             /////////////////////
 
-            bool negotiate_x225impl_option(protocol_options& self, const protocol_options& dist) {
-
-                //self = protocol_options(self.ssap_calling(), dist.ssap_calling());
+            bool negotiate_x225impl_option(const protocol_options& self, const protocol_options& dist, octet_type& errorreason) {
 
 #if defined(ITUX200_DEBUG)                 
                 std::cout << "Negotiate session level: LOCAL =" << self << " DISTANCE =" << dist << std::endl;
 #endif                
                 if (!(dist.user_requirement() & FU_WORK) || dist.extendedSPDU()) {
-                    self.refuse_reason(DR_REASON_NEGOT);
-                    self.user_requirement(FU_WORK);
-                    self.extendedSPDU(false);
+                    errorreason =  DR_REASON_NEGOT;
                     return false;
                 }
 
 #ifndef CHECK_ISO_SELECTOR        
                 if (!self.ssap_called().empty() && self.ssap_called() != dist.ssap_called()) {
-                    self.refuse_reason(DR_REASON_ADDRESS);
+                    errorreason =  DR_REASON_ADDRESS;
                     return false;
                 }
 #endif                      
-                self.accept_version(dist.accept_version());
-                self.user_requirement(FU_WORK);
-                self.extendedSPDU(false);
                 return true;
             }
 
