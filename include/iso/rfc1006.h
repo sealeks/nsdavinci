@@ -134,7 +134,7 @@ namespace boost {
                 }
 
                 protocol_options(int16_t dst, int16_t src, tpdu_size pdusize,
-                        const octet_sequnce& called = octet_sequnce(), const octet_sequnce& calling = octet_sequnce());
+                        const octet_sequnce& called = NULL_OCTET_SEQUENCE, const octet_sequnce& calling = NULL_OCTET_SEQUENCE);
 
                 protocol_options(const transport_selector & tsl);
 
