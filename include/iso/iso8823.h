@@ -161,7 +161,7 @@ namespace boost {
                 }
 
                 presentation_context_unit_vct abstract_syntaxes() {
-                    connection_syntax_;
+                    return connection_syntax_;
                 }
 
                 void insert_abstract_syntax(presentation_context_unit_ptr val) {
@@ -738,7 +738,8 @@ namespace boost {
 
                 error_code connect_impl(const endpoint_type& peer_endpoint,
                         error_code& ec) {
-                    if (presentation_error_ = build_CP_type())
+                    presentation_error_ = build_CP_type();
+                    if (presentation_error_)
                         return presentation_error_;
                     if (!super_type::connect(peer_endpoint, ec)) {
                         return presentation_error_ = parse_CR();
