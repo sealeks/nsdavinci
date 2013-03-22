@@ -440,7 +440,7 @@ namespace boost {
                 }
             }
 
-            uint16_t protocol_options::maxTPDU_self() const {
+            uint16_t protocol_options::maxTPDU_src() const {
                 const octet_sequnce& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
                 if (tmp.size() == 4) {
                     return endiancnv_copy<uint16_t > (octet_sequnce(tmp.begin(), tmp.begin() + 2));
