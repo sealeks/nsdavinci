@@ -9,8 +9,8 @@
  #endif
 
 
-const boost::array<boost::asn1::oidindx_type, 3 >  Reliable_Transfer_APDUs_OID_ARR = { 2  ,  3  ,  0 };
-const boost::asn1::oid_type Reliable_Transfer_APDUs_OID = boost::asn1::oid_type(Reliable_Transfer_APDUs_OID_ARR);
+const boost::asn1::oidindx_type  Reliable_Transfer_APDUs_OID_ARR[] = { 2  ,  3  ,  0 };
+const boost::asn1::oid_type Reliable_Transfer_APDUs_OID = boost::asn1::oid_type(Reliable_Transfer_APDUs_OID_ARR, 3);
 
 
 namespace Reliable_Transfer_APDUs  {
