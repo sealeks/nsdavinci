@@ -698,7 +698,7 @@ namespace boost {
                 }
 
                 const protocol_options& options() const {
-                    return options_;
+                    return options_ ? *options_ : NULL_PROTOCOL_OPTION;
                 }
 
                 error_code errcode() const {
@@ -730,7 +730,7 @@ namespace boost {
                 bool first_in_seq_;
                 octet_type class_option_;
                 octet_type reject_reason_;
-                protocol_options options_;
+                protocol_options_ptr options_;
                 error_code errcode_;
 
 

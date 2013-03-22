@@ -624,7 +624,7 @@ namespace boost {
                         }
                         default:
                         {
-                            errcode(ER_BEDSEQ);
+                            errcode(ER_PROTOCOL);
                             return;
                         }
                     }
@@ -709,7 +709,7 @@ namespace boost {
             }
 
             error_code receiver::check_header() {
-                options_ = protocol_options(header_buff_);
+                options_ = protocol_options_ptr (new protocol_options(header_buff_));
                 state(first_in_seq_ ? waittype : complete);
                 return error_code();
             }
