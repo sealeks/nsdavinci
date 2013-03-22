@@ -86,6 +86,9 @@ namespace boost {
                 case BER_ENCODING: return boost::asn1::BASIC_ENCODING_OID;
                 case CER_ENCODING: return boost::asn1::CANONICAL_ENCODING_OID;
                 case DER_ENCODING: return boost::asn1::DISTINGUISH_ENCODING_OID;
+                default:
+                {
+                }
             }
             return boost::asn1::NULL_ENCODING_OID;
         }
