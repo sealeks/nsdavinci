@@ -520,8 +520,8 @@ namespace boost {
                     while (it != val.end()) {
                         stream.addtag(tag(tag_traits<T>::number()), false);
                         difference_type diff = std::distance(it, val.end());
-                        if (diff > CER_STRING_MAX_SIZE) {
-                            diff = CER_STRING_MAX_SIZE;
+                        if (diff >static_cast<difference_type>( CER_STRING_MAX_SIZE)) {
+                            diff = static_cast<difference_type>( CER_STRING_MAX_SIZE);
                             stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff))));
                         }
                         else {
@@ -1084,7 +1084,6 @@ namespace boost {
                         }
                     }
                     else {
-                        std::size_t sz = tmpsize.size();
                         if (tmptag.constructed()) {
                             while (!stream.buffers().empty()) {
                                 if (!stringtype_reader(stream, vl, tag_traits<T>::number(), 0)) {
