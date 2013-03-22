@@ -243,9 +243,9 @@ namespace boost {
             }
 
         private:
-            transport_selector tselector_;
             selectorvalue_type called_;
             selectorvalue_type calling_;
+            transport_selector tselector_;            
         };
 
 
@@ -255,22 +255,22 @@ namespace boost {
         class presentation_selector {
         public:
 
-            presentation_selector() : sselector_() {
+            presentation_selector() :  called_(), calling_(),sselector_() {
             }
 
-            explicit presentation_selector(const selectorvalue_type& called) : called_(called), sselector_() {
+            explicit presentation_selector(const selectorvalue_type& called) : called_(called),  calling_(), sselector_(){
             }
 
             explicit presentation_selector(const selectorvalue_type& called, const selectorvalue_type& calling) : called_(called), calling_(calling), sselector_() {
             }
 
-            explicit presentation_selector(const selectorvalue_type& called, const session_selector& sselector) : called_(called), sselector_(sselector) {
+            explicit presentation_selector(const selectorvalue_type& called, const session_selector& sselector) : called_(called), calling_(),  sselector_(sselector) {
             }
 
             explicit presentation_selector(const selectorvalue_type& called, const selectorvalue_type& calling, const session_selector& sselector) : called_(called), calling_(calling), sselector_(sselector) {
             }
 
-            presentation_selector(const session_selector& sselector) : sselector_(sselector) {
+            presentation_selector(const session_selector& sselector) : called_(), calling_(), sselector_(sselector) {
             }
 
             const octet_sequnce& called() const {
@@ -303,9 +303,9 @@ namespace boost {
 
         private:
 
-            session_selector sselector_;
             selectorvalue_type called_;
             selectorvalue_type calling_;
+            session_selector sselector_;
 
         };
 
