@@ -551,6 +551,54 @@ namespace boost {
                 return tmp.sequence(data);
             }
 
+            
+            //sender
+
+            sender::sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data) :
+            type_(type) {
+                switch (type) {
+                    case CN_SPDU_ID:
+                    {
+                        constructCN(opt, data);
+                        break;
+                    }
+                    case AC_SPDU_ID:
+                    {
+                        constructAC(opt, data);
+                        break;
+                    }
+                    case RF_SPDU_ID:
+                    {
+                        constructRF(opt, data);
+                        break;
+                    }
+                    case FN_SPDU_ID:
+                    {
+                        constructFN(opt, data);
+                        break;
+                    }
+                    case AB_SPDU_ID:
+                    {
+                        constructAB(opt, data);
+                        break;
+                    }
+                    case DN_SPDU_ID:
+                    {
+                        constructDN(opt, data);
+                        break;
+                    }
+                    case AA_SPDU_ID:
+                    {
+                        constructAA(opt, data);
+                        break;
+                    }
+                    default:
+                    {
+                    }
+                }
+            }
+            
+            
 
             //receiver
 

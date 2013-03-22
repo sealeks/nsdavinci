@@ -507,52 +507,9 @@ namespace boost {
             public:
 
                 sender(spdu_type type) : type_(type) {
-
                 }
 
-                sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data) :
-                type_(type) {
-                    switch (type) {
-                        case CN_SPDU_ID:
-                        {
-                            constructCN(opt, data);
-                            break;
-                        }
-                        case AC_SPDU_ID:
-                        {
-                            constructAC(opt, data);
-                            break;
-                        }
-                        case RF_SPDU_ID:
-                        {
-                            constructRF(opt, data);
-                            break;
-                        }
-                        case FN_SPDU_ID:
-                        {
-                            constructFN(opt, data);
-                            break;
-                        }
-                        case AB_SPDU_ID:
-                        {
-                            constructAB(opt, data);
-                            break;
-                        }
-                        case DN_SPDU_ID:
-                        {
-                            constructDN(opt, data);
-                            break;
-                        }
-                        case AA_SPDU_ID:
-                        {
-                            constructAA(opt, data);
-                            break;
-                        }
-                        default:
-                        {
-                        }
-                    }
-                }
+                sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data);
 
                 virtual ~sender() {
                 }
@@ -576,8 +533,6 @@ namespace boost {
                 spdu_type type() const {
                     return type_;
                 }
-
-
 
 
             protected:
@@ -863,7 +818,8 @@ namespace boost {
 
                     enum stateconnection {
                         request,
-                        response
+                        response,
+                        refuse
                     };
 
                 public:
@@ -907,46 +863,62 @@ namespace boost {
                                         socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), 0, *this);
                                         return;
                                     }
-                                    finish(ec);
+                                    parse_response(ec);
                                     return;
                                 }
+                                case refuse:
+                                {
+                                    socket.super_type::async_release(
+                                            boost::bind(&operation_type::disconnect, * this,
+                                            boost::asio::placeholders::error));
+                                    return;
+                                }                           
                             }
                         }
                         exit_handler(ec);
                     }
 
+                    void disconnect(const error_code& ec) {
+                        exit_handler(receiver_->reject_reason() ? errorcode_by_reason(receiver_->reject_reason()) : ER_REFUSE);
+                    }           
+
                 private:
 
-                    void finish(const error_code& ec) {
-                        if (receiver_->state() == receiver::complete) {
-                            switch (receiver_->type()) {
-                                case AC_SPDU_ID:
-                                {
-                                    socket.negotiate_session_option(receiver_->options());
-                                    socket.rootcoder()->in()->add(receiver_->options().data());
-                                    socket.session_version_ = (receiver_->options().accept_version() & VERSION2) ? VERSION2 : VERSION1;
-#if defined(ITUX200_DEBUG) 
-                                    std::cout << "SESSION SUCCESS CONNECT " << (socket.is_acceptor() ? " It is acceptor" : " It is requester") << "\n" <<
-                                            " with" << socket.session_option() << std::endl;
-#endif                                                                
-                                    exit_handler(ec);
-                                    return;
-                                }
-                                case RF_SPDU_ID:
-                                {
-                                    error_code ecc;
-                                    //socket.close(ecc);
-                                    exit_handler(ER_REFUSE);
-                                    return;
-                                }
-                                default:
-                                {
-                                    error_code ecc;
-                                    //socket.close(ecc);
+                    void parse_response(const error_code& ec) {
+                        
+                        switch (receiver_->state()) {
+                            case receiver::complete:
+                            {
+                                switch (receiver_->type()) {
+                                    case AC_SPDU_ID:
+                                    {
+                                        // Accepted. Negotiate options *ref X225 7.4.3
+                                        socket.session_version(receiver_->options().accept_version());
+                                        /*if (receiver_->options().maxTPDU_dist() || receiver_->options().maxTPDU_src()){
+                                            socket.maxTPDU(receiver_->options().maxTPDU_src(), receiver_->options().maxTPDU_dist());
+                                        }     
+                                        socket.user_requirement(receiver_->options().user_requirement());*/
+                                        socket.rootcoder()->in()->add(receiver_->options().data());
+                                        exit_handler(ec);
+                                        return;
+                                    }
+                                    case RF_SPDU_ID:
+                                    {
+                                        // Refuse. *ref X225 7.5.3
+                                        // allways  transport disconnect
+                                        state(refuse);
+                                        operator()(ec, 0);
+                                        return;
+                                    }
                                 }
                             }
+                            default:
+                            {
+                            }
                         }
-                        exit_handler(ER_PROTOCOL);
+                        // allways  transport disconnect
+                        state(refuse);
+                        operator()(ec, 0);
                     }
 
                     void exit_handler(const error_code& ec) {
@@ -1028,7 +1000,7 @@ namespace boost {
                     enum stateconnection {
                         request,
                         response,
-                        transportdisconnect
+                        refuse
                     };
 
                 public:
@@ -1071,7 +1043,7 @@ namespace boost {
                                     finish(ec);
                                     return;
                                 }
-                                case transportdisconnect:
+                                case refuse:
                                 {
                                     socket.super_type::async_release(
                                             boost::bind(&operation_type::disconnect, * this,
@@ -1097,14 +1069,14 @@ namespace boost {
                                 case DN_SPDU_ID:
                                 {
                                     socket.rootcoder()->in()->add(receiver_->options().data());
-                                    state(transportdisconnect);
+                                    state(refuse);
                                     start();
                                     return;
                                 }
                                 case AA_SPDU_ID:
                                 {
                                     socket.rootcoder()->in()->add(receiver_->options().data());
-                                    state(transportdisconnect);
+                                    state(refuse);
                                     start();
                                     return;
                                 }
@@ -1299,7 +1271,6 @@ namespace boost {
                     void finish(const error_code& ec) {
 
                         const protocol_options& opt = receiver_->options();
-                        socket.negotiate_session_option(opt);
                         exit_handler(ec);
                     }
 
@@ -1788,9 +1759,6 @@ namespace boost {
       
 
                 
-                void negotiate_session_option(const protocol_options& val) {
-
-                }
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1805,35 +1773,48 @@ namespace boost {
                     sender_ptr sender_(sender_ptr(new sender(CN_SPDU_ID, session_option(), rootcoder())));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec));
-                    if (ec)
-                        return connect_impl_exit(ec);
-                    receiver_ptr receiver_(receiver_ptr(new receiver()));
-                    while (!ec && !receiver_->ready()) {
-                        receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
-                    }
-                    if (ec)
-                        return connect_impl_exit(ec);
-                    if (receiver_->state() == receiver::complete) {
-                        switch (receiver_->type()) {
-                            case AC_SPDU_ID:
-                            {
-                                negotiate_session_option(receiver_->options());
-                                rootcoder()->in()->add(receiver_->options().data());
-                                session_version_ = (receiver_->options().accept_version() & VERSION2) ? VERSION2 : VERSION1;
-                                return connect_impl_exit(ec);
+
+                    if (!ec) {
+                        receiver_ptr receiver_(receiver_ptr(new receiver()));
+                        while (!ec && !receiver_->ready())
+                            receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
+
+                        if (!ec) {
+                            switch (receiver_->state()) {
+                                case receiver::complete:
+                                {
+                                    switch (receiver_->type()) {
+                                        case AC_SPDU_ID:
+                                        {
+                                            // Accepted. Negotiate options *ref X225 7.4.3
+                                            session_version(receiver_->options().accept_version());
+                                            /*if (receiver_->options().maxTPDU_dist() || receiver_->options().maxTPDU_src()){
+                                                socket.maxTPDU(receiver_->options().maxTPDU_src(), receiver_->options().maxTPDU_dist());
+                                            }     
+                                            socket.user_requirement(receiver_->options().user_requirement());*/
+                                            rootcoder()->in()->add(receiver_->options().data());
+                                            return connect_impl_exit(ec);
+                                        }
+                                        case RF_SPDU_ID:
+                                        {
+                                            // Refuse. *ref X225 7.5.3
+                                            // allways  transport disconnect
+                                            super_type::release(ec);
+                                            return connect_impl_exit(receiver_->reject_reason() ? errorcode_by_reason(receiver_->reject_reason()) : ER_REFUSE);
+                                        }
+                                    }
+                                }
+                                default:
+                                {
+                                }
                             }
-                            case RF_SPDU_ID:
-                            {
-                                error_code ecc;
-                                //close(ecc);
-                                return connect_impl_exit(ER_REFUSE);
-                            }
-                            default:
-                            {
-                            }
+                            // allways  transport disconnect
+                            super_type::release(ec);
+                            return connect_impl_exit(receiver_->reject_reason() ? errorcode_by_reason(receiver_->reject_reason()) : ER_REFUSE);
                         }
                     }
-                    return connect_impl_exit(ec = ER_PROTOCOL);
+                    super_type::release(ec);                    
+                    return connect_impl_exit(ec);
                 }
 
                 const error_code& connect_impl_exit(const error_code& err) {
@@ -1925,7 +1906,6 @@ namespace boost {
                     }
                     else {
                         const protocol_options& opt = receiver_->options();
-                        negotiate_session_option(receiver_->options());
                     }
                     return check_accept_imp_exit(ec = canseled ? ER_OUTDOMAIN : ec);
                 }
