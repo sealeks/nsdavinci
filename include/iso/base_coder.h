@@ -548,14 +548,14 @@ namespace boost {
         
         const boost::asn1::oid_type NULL_ENCODING_OID = boost::asn1::oid_type();
 
-        const boost::array<boost::asn1::oidindx_type, 3 > BASIC_ENCODING_ARR = {2, 1, 1};
-        const boost::asn1::oid_type BASIC_ENCODING_OID = boost::asn1::oid_type(BASIC_ENCODING_ARR);
+        const boost::asn1::oidindx_type  BASIC_ENCODING_ARR[] = {2, 1, 1};
+        const boost::asn1::oid_type BASIC_ENCODING_OID = boost::asn1::oid_type(BASIC_ENCODING_ARR, 3);
 
-        const boost::array<boost::asn1::oidindx_type, 4 > CANONICAL_ENCODING_ARR = {2, 1, 2, 0};
-        const boost::asn1::oid_type CANONICAL_ENCODING_OID = boost::asn1::oid_type(CANONICAL_ENCODING_ARR);
+        const boost::asn1::oidindx_type CANONICAL_ENCODING_ARR[] = {2, 1, 2, 0};
+        const boost::asn1::oid_type CANONICAL_ENCODING_OID = boost::asn1::oid_type(CANONICAL_ENCODING_ARR, 4);
 
-        const boost::array<boost::asn1::oidindx_type, 4 > DISTINGUISH_ENCODING_ARR = {2, 1, 2, 1};
-        const boost::asn1::oid_type DISTINGUISH_ENCODING_OID = boost::asn1::oid_type(DISTINGUISH_ENCODING_ARR);
+        const boost::asn1::oidindx_type  DISTINGUISH_ENCODING_ARR[] = {2, 1, 2, 1};
+        const boost::asn1::oid_type DISTINGUISH_ENCODING_OID = boost::asn1::oid_type(DISTINGUISH_ENCODING_ARR, 4);
 
     }
 
