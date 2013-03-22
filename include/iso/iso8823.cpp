@@ -198,7 +198,6 @@ namespace boost {
                         {
                             if (!data.simply_encoded_data())
                                 throw error_code(ER_BEDSEQ);
-                            const simpledata_type& value = *data.simply_encoded_data();
                             return;
                         }
                         case ISO8823_PRESENTATION::User_data_fully_encoded_data:
