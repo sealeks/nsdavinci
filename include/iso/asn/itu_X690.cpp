@@ -340,8 +340,8 @@ namespace boost {
                         //stream.add(octet_sequnce(1, static_cast<octet_type> (TYPE_BITSTRING)));
                         stream.addtag(tag(TYPE_BITSTRING), false);
                         difference_type diff = std::distance(it, val.end());
-                        if (diff > (CER_STRING_MAX_SIZE - 1)) {
-                            diff = (CER_STRING_MAX_SIZE - 1);
+                        if (diff > static_cast<difference_type>(CER_STRING_MAX_SIZE - 1)) {
+                            diff = static_cast<difference_type>(CER_STRING_MAX_SIZE - 1);
                             stream.add(to_x690_cast(size_class(static_cast<std::size_t> (diff + 1))));
                             stream.add(octet_sequnce(1, static_cast<octet_type> (0)));
                         }
