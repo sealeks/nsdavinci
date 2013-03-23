@@ -1330,8 +1330,10 @@ namespace boost {
                                     case CN_SPDU_ID:
                                     {
                                         bool nouserreject = true;
-                                        octet_type errorreason= 0;
-                                        
+                                        octet_type errorreason = 0;
+
+                                        socket.rootcoder()->in()->add(receiver_->options().data());
+
                                         if (!negotiate_x225impl_option(socket.session_option(), receiver_->options(), errorreason) ||
                                                 !(nouserreject = socket.negotiate_session_accept())) {
                                             // Netotiation fail send RF
@@ -1348,13 +1350,12 @@ namespace boost {
                                         }
 
                                         // Netotiation success send AC
-                                        socket.rootcoder()->in()->add(receiver_->options().data());
                                         socket.session_version(receiver_->options().accept_version());
                                         /*if (receiver_->options().maxTPDU_dist() || receiver_->options().maxTPDU_src()){
                                             socket.maxTPDU(receiver_->options().maxTPDU_src(), receiver_->options().maxTPDU_dist());
                                         }     
                                         socket.user_requirement(receiver_->options().user_requirement());*/
-                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option() , socket.rootcoder()));
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder()));
                                         state(request);
                                         operator()(ec, 0);
                                         return;
@@ -1649,7 +1650,7 @@ namespace boost {
                                         socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), flags_, *this);
                                         return;
                                     }
-                                    if (!success(ec )) return;
+                                    if (!success(ec)) return;
                                     break;
                                 }
                                 case request:
@@ -1676,7 +1677,7 @@ namespace boost {
                     }
 
                     void disconnect(const error_code& ec) {
-                        handler(errorrefuse_ ? errorrefuse_ : ER_PROTOCOL , 0);
+                        handler(errorrefuse_ ? errorrefuse_ : ER_PROTOCOL, 0);
                     }
 
 
@@ -1698,7 +1699,7 @@ namespace boost {
                                         socket.negotiate_session_release();
                                         sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder()));
                                         state(request);
-                                        errorrefuse_= ER_RELEASE;
+                                        errorrefuse_ = ER_RELEASE;
                                         operator()(ec, 0);
                                         return false;
                                     }
@@ -1708,7 +1709,7 @@ namespace boost {
                                         socket.rootcoder()->in()->add(receiver_->options().data());
                                         socket.negotiate_session_abort();
                                         state(refuse);
-                                        errorrefuse_= ER_ABORT;                                      
+                                        errorrefuse_ = ER_ABORT;
                                         operator()(ec, 0);
                                         return false;
                                     }
@@ -1723,7 +1724,7 @@ namespace boost {
                             }
                         }
                         // unexpected
-                        errorrefuse_= ER_PROTOCOL;  
+                        errorrefuse_ = ER_PROTOCOL;
                         state(refuse);
                         operator()(ec, 0);
                         return false;
@@ -2056,6 +2057,8 @@ namespace boost {
                                         bool nouserreject = true;
                                         octet_type errorreason = 0;
 
+                                        rootcoder()->in()->add(receiver_->options().data());
+
                                         if (!negotiate_x225impl_option(session_option(), receiver_->options(), errorreason) ||
                                                 !(nouserreject = negotiate_session_accept())) {
                                             // Netotiation fail send RF
@@ -2072,7 +2075,6 @@ namespace boost {
                                         }
 
                                         // Netotiation success send AC
-                                        rootcoder()->in()->add(receiver_->options().data());
                                         session_version(receiver_->options().accept_version());
                                         /*if (receiver_->options().maxTPDU_dist() || receiver_->options().maxTPDU_src()){
                                             maxTPDU(receiver_->options().maxTPDU_src(), receiver_->options().maxTPDU_dist());
@@ -2125,9 +2127,9 @@ namespace boost {
                         return super_type::receive(boost::asio::buffer(buffers), flags, ec);
 
                     receiver_ptr receiver_(new receiver(boost::asio::detail::buffer_sequence_adapter< boost::asio::mutable_buffer, MutableBufferSequence>::first(buffers)));
-                    while (!ec && !receiver_->ready()) 
+                    while (!ec && !receiver_->ready())
                         receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
-               
+
                     if (!ec) {
                         switch (receiver_->state()) {
                             case receiver::complete:
