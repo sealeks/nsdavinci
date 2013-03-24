@@ -895,8 +895,8 @@ namespace boost {
 
                     release_operation(stream_socket& sock, ReleaseHandler handlr, octet_type rsn) :
                     socket(sock),
-                    handler(handlr),
-                    sender_(sender_ptr(new sender(DR, sock.transport_option(), rsn))) {
+                    handler(handlr)//,
+                    /*sender_(sender_ptr(new sender(DR, sock.transport_option(), rsn)))*/ {
                     }
 
                     void start(const error_code& ec) {
@@ -904,13 +904,13 @@ namespace boost {
                     }
 
                     void operator()(const error_code& ec, std::size_t bytes_transferred) {
-                        if (!ec) {
+                        /*if (!ec) {
                             sender_->size(bytes_transferred);
                             if (!sender_->ready()) {
                                 socket.super_type::async_send(sender_->pop(), 0, *this);
                                 return;
                             }
-                        }
+                        }*/
                         // Release by means implicit variant  *ref X224 6.7.1.4
                         socket.async_internal_close();
                         handler(ec);
@@ -920,7 +920,7 @@ namespace boost {
                 private:
                     stream_socket& socket;
                     ReleaseHandler handler;
-                    sender_ptr sender_;
+                    //sender_ptr sender_;
                 };
 
 
@@ -1529,16 +1529,23 @@ namespace boost {
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
                 boost::system::error_code async_internal_close() {
-                    error_code ecc;
-                    super_type::close(ecc); // generate abort error
-                    //super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
-                    return ecc;
+                    if (is_open()) {
+                        error_code ecc;
+                        super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
+                        super_type::close(ecc); // generate abort error
+                        //super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
+                        return ecc;
+                    }
+                    return boost::system::error_code();
                 }
 
                 boost::system::error_code internal_close() {
-                    error_code ecc;
-                    super_type::close(ecc);
-                    return ecc;
+                    if (is_open()) {
+                        error_code ecc;
+                        super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
+                        super_type::close(ecc);
+                    }
+                    return boost::system::error_code();
                 }
 
                 error_code connect_impl(const endpoint_type& peer_endpoint,
@@ -1602,9 +1609,9 @@ namespace boost {
 
                 error_code release_impl(error_code& ec, octet_type rsn = DR_REASON_NORM) {
                     if (is_open()) {
-                        sender_ptr sender_(sender_ptr(new sender(DR, transport_option(), rsn)));
+                        /*sender_ptr sender_(sender_ptr(new sender(DR, transport_option(), rsn)));
                         while (!ec && !sender_->ready())
-                            sender_->size(super_type::send(sender_->pop(), 0, ec));
+                            sender_->size(super_type::send(sender_->pop(), 0, ec));*/
                         // Release by means implicit variant  *ref X224 6.7.1.4
                         internal_close();
                         return ec;

@@ -52,7 +52,7 @@ namespace boost {
                     else {
                         uint16_t tmp;
                         if (raw_to_inttype(pref, tmp)) {
-                            preferred(tmp);
+                            preferred(endiancnv_copy(tmp));
                         }
                         else {
                             basic(bas);
