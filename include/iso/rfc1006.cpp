@@ -28,31 +28,58 @@ namespace boost {
                 return NL;
             }
 
-            std::size_t getPDUsize(octet_type sz) {
-                switch (sz) {
+
+            /// tpdu_size
+
+            tpdu_size::tpdu_size() : preferred_(), basic_(), size_(0) {
+                basic(TPDU_SIZE2048);
+                preferred(PREFFERED_TPDU_SIZE);
+            }
+
+            tpdu_size::tpdu_size(octet_type bas) : preferred_(), basic_(), size_(0) {
+                basic(bas);
+            }
+
+            tpdu_size::tpdu_size(const octet_sequnce& pref, octet_type bas) : preferred_(), basic_(), size_(0) {
+                if (pref.empty() && pref.size() > 2) {
+                    basic(bas);
+                    preferred_ = 0;
+                }
+                else {
+                    if (pref.size() == 1) {
+                        preferred(static_cast<uint16_t> (pref[0]));
+                    }
+                    else {
+                        uint16_t tmp;
+                        if (raw_to_inttype(pref, tmp)) {
+                            preferred(tmp);
+                        }
+                        else {
+                            basic(bas);
+                            preferred_ = 0;
+                        }
+                    }
+                }
+            }
+
+            std::size_t tpdu_size::size_from_octet(octet_type val) {
+                switch (val) {
+                    case TPDU_SIZE8192: return 8192;
+                    case TPDU_SIZE4096: return 4096;
                     case TPDU_SIZE2048: return 2048;
                     case TPDU_SIZE1024: return 1024;
                     case TPDU_SIZE512: return 512;
                     case TPDU_SIZE256: return 256;
                     case TPDU_SIZE128: return 128;
                 }
-                return 0;
+                return 128;
             }
 
-            std::size_t tpdu_byte_size(tpdu_size val) {
-                return getPDUsize(tpdu_type_size(val));
-            }
 
-            tpdu_size tpdu_size_frombyte(octet_type val) {
-                switch (val) {
-                    case TPDU_SIZE2048: return SIZE2048;
-                    case TPDU_SIZE1024: return SIZE1024;
-                    case TPDU_SIZE512: return SIZE512;
-                    case TPDU_SIZE256: return SIZE256;
-                    case TPDU_SIZE128: return SIZE128;
-                }
-                return SIZENULL;
-            }
+
+
+
+            /////
 
             bool parse_vars(const octet_sequnce& data, headarvarvalues& vars) {
                 vars.clear();
@@ -73,37 +100,36 @@ namespace boost {
 
             ///   protocol_options
 
-            protocol_options::protocol_options(int16_t dst, int16_t src, tpdu_size pdusize, const octet_sequnce& called, const octet_sequnce& calling) :
+            protocol_options::protocol_options(int16_t dst, int16_t src, const tpdu_size& pdusz, const octet_sequnce& called, const octet_sequnce& calling) :
             dst_(dst), src_(src) {
-                if (SIZENULL != pdusize) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw(static_cast<int8_t> (tpdu_type_size(pdusize)))));
+                vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw<octet_type > (pdusz.basic())));
+                if (pdusz.preferred())
+                    vars_.push_back(headarvarvalue(headarvar(VAR_MAXTPDU_SIZE, 2), inttype_to_raw<uint16_t > (pdusz.preferred())));
                 if (!calling.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, calling.size()), calling));
                 if (!called.empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, called.size()), called));
             }
 
-            protocol_options::protocol_options(const transport_selector& tsl) :
+            protocol_options::protocol_options(const transport_selector& tsl, const tpdu_size& pdusz) :
             dst_(0), src_(0) {
-                if (SIZENULL != tsl.pdusize()) vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw(static_cast<int8_t> (tpdu_type_size(tsl.pdusize())))));
+                vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw(pdusz.basic())));
+                if (pdusz.preferred())
+                    vars_.push_back(headarvarvalue(headarvar(VAR_MAXTPDU_SIZE, 2), inttype_to_raw(pdusz.preferred())));
                 if (!tsl.calling().empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLING_ID, tsl.calling().size()), tsl.calling()));
                 if (!tsl.called().empty()) vars_.push_back(headarvarvalue(headarvar(VAR_TSAPCALLED_ID, tsl.called().size()), tsl.called()));
             }
 
             tpdu_size protocol_options::pdusize() const {
+                octet_type basic = TPDU_SIZE128;
+                octet_sequnce preferred;
                 for (headarvarvalues::const_reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
                     if (it->first.first == VAR_TPDU_SIZE && !it->second.empty()) {
-                        return tpdu_size_frombyte(static_cast<octet_type> (it->second[0]));
+                        basic = static_cast<octet_type> (it->second[0]);
+                    }
+                    if (it->first.first == VAR_MAXTPDU_SIZE && !it->second.empty()) {
+                        preferred = it->second;
                     }
                 }
-                return SIZENULL;
-            }
-
-            void protocol_options::pdusize(tpdu_size val) {
-                for (headarvarvalues::reverse_iterator it = vars_.rbegin(); it != vars_.rend(); ++it) {
-                    if (it->first.first == VAR_TPDU_SIZE) {
-                        it->second = inttype_to_raw(static_cast<octet_type> (tpdu_type_size(val)));
-                        return;
-                    }
-                }
-                vars_.push_back(headarvarvalue(headarvar(VAR_TPDU_SIZE, 1), inttype_to_raw(static_cast<octet_type> (tpdu_type_size(val)))));
+                return preferred.empty() ? tpdu_size(basic) : tpdu_size(preferred, basic);
             }
 
             const octet_sequnce& protocol_options::tsap_calling() const {
@@ -166,7 +192,7 @@ namespace boost {
 
             /////////////////////
 
-            bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error) {              
+            bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error) {
 #ifndef CHECK_ISO_SELECTOR
                 if (!self.tsap_called().empty() && self.tsap_called() != dist.tsap_called()) {
                     error = DR_REASON_ADDRESS;
@@ -188,18 +214,23 @@ namespace boost {
                 raw_front_insert(val, hdr);
             }
 
-
-            octet_sequnce generate_header_TKPT_CR(const protocol_options& opt) {
+            octet_sequnce generate_header_TKPT_CR(const protocol_options& opt, const tpdu_size& tpdusize) {
                 octet_sequnce rslt;
                 rslt.insert(rslt.end(), CR_TPDU_ID);
                 raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(static_cast<int16_t> (0))));
                 raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(opt.src_tsap())));
                 rslt.insert(rslt.end(), '\x0');
-                if (opt.pdusize() != SIZENULL) {
-                    rslt.insert(rslt.end(), VAR_TPDU_SIZE);
-                    rslt.insert(rslt.end(), static_cast<octet_type> (1));
-                    raw_back_insert(rslt, inttype_to_raw(tpdu_type_size(opt.pdusize())));
+
+                rslt.insert(rslt.end(), VAR_TPDU_SIZE);
+                rslt.insert(rslt.end(), static_cast<octet_type> (1));
+                raw_back_insert(rslt, inttype_to_raw(tpdusize.basic()));
+
+                if (tpdusize.preferred()) {
+                    rslt.insert(rslt.end(), VAR_MAXTPDU_SIZE);
+                    rslt.insert(rslt.end(), static_cast<octet_type> (2));
+                    raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(tpdusize.preferred())));
                 }
+
                 if (!opt.tsap_calling().empty()) {
                     rslt.insert(rslt.end(), VAR_TSAPCALLING_ID);
                     rslt.insert(rslt.end(), static_cast<octet_type> (opt.tsap_calling().size()));
@@ -216,17 +247,24 @@ namespace boost {
                 return rslt;
             }
 
-            octet_sequnce generate_header_TKPT_CC(const protocol_options& opt) {
+            octet_sequnce generate_header_TKPT_CC(const protocol_options& opt, const tpdu_size& tpdusize) {
                 octet_sequnce rslt;
                 rslt.insert(rslt.end(), CC_TPDU_ID);
                 raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(opt.dst_tsap())));
                 raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(opt.src_tsap())));
                 rslt.insert(rslt.end(), '\x0');
-                if (opt.pdusize() != SIZENULL) {
+
+                if (tpdusize.preferred()) {
+                    rslt.insert(rslt.end(), VAR_MAXTPDU_SIZE);
+                    rslt.insert(rslt.end(), static_cast<octet_type> (2));
+                    raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(tpdusize.preferred())));
+                }
+                else {
                     rslt.insert(rslt.end(), VAR_TPDU_SIZE);
                     rslt.insert(rslt.end(), static_cast<octet_type> (1));
-                    raw_back_insert(rslt, inttype_to_raw(tpdu_type_size(opt.pdusize())));
+                    raw_back_insert(rslt, inttype_to_raw(tpdusize.basic()));
                 }
+
                 if (!opt.tsap_calling().empty()) {
                     rslt.insert(rslt.end(), VAR_TSAPCALLING_ID);
                     rslt.insert(rslt.end(), static_cast<octet_type> (opt.tsap_calling().size()));
@@ -242,7 +280,7 @@ namespace boost {
                 generate_TKPTDU(rslt);
                 return rslt;
             }
-            
+
             octet_sequnce generate_header_TKPT_DC(const protocol_options& opt) {
                 octet_sequnce rslt;
                 rslt.insert(rslt.end(), DR_TPDU_ID);
@@ -252,7 +290,7 @@ namespace boost {
                 raw_front_insert(rslt, inttype_to_raw(static_cast<octet_type> (sz)));
                 generate_TKPTDU(rslt);
                 return rslt;
-            }            
+            }
 
             octet_sequnce generate_header_TKPT_DR(const protocol_options& opt, octet_type rsn) {
                 octet_sequnce rslt;
@@ -265,7 +303,6 @@ namespace boost {
                 generate_TKPTDU(rslt);
                 return rslt;
             }
-
 
             octet_sequnce generate_header_TKPT_ER(const protocol_options& opt, octet_type err, const octet_sequnce& errorseq) {
                 octet_sequnce rslt;
@@ -394,7 +431,7 @@ namespace boost {
                     return errcode(ER_PROTOCOL);
                 state_ = waitheader;
                 if (li > 128)
-                    return errcode(ER_PROTOCOL);                
+                    return errcode(ER_PROTOCOL);
                 header_data = octet_sequnce_ptr(new octet_sequnce(li));
                 header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
                 size_ = 0;
@@ -537,16 +574,6 @@ namespace boost {
             sender::sender(tpdu_type type, const protocol_options& opt, octet_type reason_or_error, const octet_sequnce& errorseq) :
             type_(type) {
                 switch (type_) {
-                    case CR:
-                    {
-                        constructCR(opt);
-                        break;
-                    }
-                    case CC:
-                    {
-                        constructCC(opt);
-                        break;
-                    }
                     case DR:
                     {
                         constructDR(opt, reason_or_error);
@@ -561,22 +588,38 @@ namespace boost {
                     {
                     }
                 }
-            }            
-
-            void sender::constructCR(const protocol_options& opt) {
-                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_CR(opt)));
             }
 
-            void sender::constructCC(const protocol_options& opt) {
-                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_CC(opt)));
+            sender::sender(tpdu_type type, const protocol_options& opt, const tpdu_size& tpdusize) :
+            type_(type) {
+                switch (type_) {
+                    case CR:
+                    {
+                        constructCR(opt, tpdusize);
+                        break;
+                    }
+                    case CC:
+                    {
+                        constructCC(opt, tpdusize);
+                        break;
+                    }
+                }
             }
-            
+
+            void sender::constructCR(const protocol_options& opt, const tpdu_size& tpdusize) {
+                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_CR(opt, tpdusize)));
+            }
+
+            void sender::constructCC(const protocol_options& opt, const tpdu_size& tpdusize) {
+                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_CC(opt, tpdusize)));
+            }
+
             void sender::constructDR(const protocol_options& opt, octet_type rsn) {
                 buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_DR(opt, rsn)));
-            }            
+            }
 
             void sender::constructER(const protocol_options& opt, octet_type errtype, const octet_sequnce& errorseq) {
-                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_ER(opt,  errtype, errorseq)));
+                buf_ = sender_sequnces_ptr(new service_sender_sequences(generate_header_TKPT_ER(opt, errtype, errorseq)));
             }
 
 

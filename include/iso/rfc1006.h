@@ -93,23 +93,71 @@ namespace boost {
 
             tpdu_type tpdu_type_from(octet_type val);
 
-            inline octet_type tpdu_type_size(tpdu_size val) {
-                return static_cast<octet_type> (val);
+
+
+            //   transport
+            // TPDU size  ref X224  13.3.4 b)
+            const octet_type TPDU_SIZE8192 = '\xD'; // not denied in 0 class
+            const octet_type TPDU_SIZE4096 = '\xC'; // not denied in 0 class
+            const octet_type TPDU_SIZE2048 = '\xB';
+            const octet_type TPDU_SIZE1024 = '\xA';
+            const octet_type TPDU_SIZE512 = '\x9';
+            const octet_type TPDU_SIZE256 = '\x8';
+            const octet_type TPDU_SIZE128 = '\x7';
+            //const octet_type TPDU_SIZE4 = '\x5';   /// test
+
+            class tpdu_size {
+                static const uint16_t PREFFERED_TPDU_SIZE = 511; // (510 * 128 = 65408 <  max 65535 * ref RFC1006 )
+
+            public:
+
+                tpdu_size();
+
+                tpdu_size(octet_type bas);
+
+                tpdu_size(const octet_sequnce& pref, octet_type bas = TPDU_SIZE2048);
+
+                uint16_t preferred() const {
+                    return preferred_;
+                }
+
+                octet_type basic() const {
+                    return basic_;
+                }
+
+                std::size_t size() const {
+                    return size_;
+                }
+
+            private:
+
+                void preferred(uint16_t val) {
+                    preferred_ = val > PREFFERED_TPDU_SIZE ? PREFFERED_TPDU_SIZE : val;
+                    size_ = val * 128;
+                }
+
+                void basic(octet_type val) {
+                    basic_ = val;
+                    size_ = size_from_octet(basic_);
+                }
+
+                static std::size_t size_from_octet(octet_type val);
+
+                uint16_t preferred_;
+                octet_type basic_;
+                std::size_t size_;
+            };
+
+            inline const tpdu_size& less_tpdu(const tpdu_size& left, const tpdu_size& right) {
+                if (((bool)left.preferred()) == ((bool)right.preferred()))
+                    return left.size() < right.size() ? left : right;
+                else
+                    return right.preferred() ? left : right;
             }
 
-            inline tpdu_size less_tpdu(const tpdu_size& left, const tpdu_size& right) {
-                if (left == right && right == SIZENULL) return SIZE2048;
-                if (right == SIZENULL) return left;
-                if (left == SIZENULL) return right;
-                return (tpdu_type_size(left) < tpdu_type_size(right)) ? left : right;
-            }
-
-            std::size_t tpdu_byte_size(tpdu_size val);
-
-            tpdu_size tpdu_size_frombyte(octet_type val);
+            const tpdu_size DEFAULT_TPDU_SIZE = tpdu_size();
 
 
-            size_t getPDUsize(octet_type sz);
 
             void generate_TKPTDU(octet_sequnce& val);
 
@@ -134,10 +182,10 @@ namespace boost {
                 dst_(dst), src_(src), vars_(vars) {
                 }
 
-                protocol_options(int16_t dst, int16_t src, tpdu_size pdusize,
+                protocol_options(int16_t dst, int16_t src, const tpdu_size& pdusize,
                         const octet_sequnce& called = NULL_OCTET_SEQUENCE, const octet_sequnce& calling = NULL_OCTET_SEQUENCE);
 
-                protocol_options(const transport_selector & tsl);
+                protocol_options(const transport_selector & tsl, const tpdu_size& pdusize = DEFAULT_TPDU_SIZE);
 
                 int16_t dst_tsap() const {
                     return dst_;
@@ -156,8 +204,6 @@ namespace boost {
                 }
 
                 tpdu_size pdusize() const;
-
-                void pdusize(tpdu_size val);
 
                 const octet_sequnce & tsap_calling() const;
 
@@ -182,16 +228,16 @@ namespace boost {
 
 
 
-            
-            
-            
+
+
+
             bool negotiate_rfc1006impl_option(protocol_options& self, const protocol_options& dist, octet_type& error);
 
             bool parse_vars(const octet_sequnce& str, headarvarvalues& vars);
 
-            octet_sequnce generate_header_TKPT_CR(const protocol_options& opt);
+            octet_sequnce generate_header_TKPT_CR(const protocol_options& opt, const tpdu_size& tpdusize);
 
-            octet_sequnce generate_header_TKPT_CC(const protocol_options& opt);
+            octet_sequnce generate_header_TKPT_CC(const protocol_options& opt, const tpdu_size& tpdusize);
 
             octet_sequnce generate_header_TKPT_DC(const protocol_options& opt);
 
@@ -209,27 +255,26 @@ namespace boost {
             // *ref RFC1006 6.0
             const octet_type TKPT_STARTar[] = {'\x3', '\x0'};
             const octet_sequnce TKPT_START = octet_sequnce(TKPT_STARTar, TKPT_STARTar + 2);
-            
-            const std::size_t TKPT_LENGTH = 4;            
+
+            const std::size_t TKPT_LENGTH = 4;
 
             const octet_sequnce::size_type DT_SEND_BUFF_HEADER = 7;
-            
+
             // allways 2 fore class 0 *ref X224 13.7.1
             const octet_type DATA_HEADER_LI = '\x2';
-
 
             template <typename ConstBufferSequence>
             class data_sender_sequences : public basic_sender_sequences {
             public:
 
-                data_sender_sequences(const ConstBufferSequence& bf, tpdu_size pdusize) :
+                data_sender_sequences(const ConstBufferSequence& bf, const tpdu_size& pdusize) :
                 basic_sender_sequences(), headercontinue_(), headereof_() {
                     construct(bf, pdusize);
 
                 }
 
-                void construct(const ConstBufferSequence& bf, tpdu_size pdusize) {
-                    std::size_t pdusz = tpdu_byte_size(pdusize);
+                void construct(const ConstBufferSequence& bf, const tpdu_size& pdusize) {
+                    std::size_t pdusz = pdusize.size();
                     if (!pdusz) pdusz = 2048;
                     pdusz -= 3;
 
@@ -238,7 +283,7 @@ namespace boost {
                     headercontinue_ = TKPT_START;
                     // packet lengh *ref RFC1006 6.0
                     raw_back_insert(headercontinue_, inttype_to_raw(normalsz));
-                    headercontinue_.insert(headercontinue_.end(), DATA_HEADER_LI );
+                    headercontinue_.insert(headercontinue_.end(), DATA_HEADER_LI);
                     headercontinue_.insert(headercontinue_.end(), DT_TPDU_ID);
                     headercontinue_.insert(headercontinue_.end(), TPDU_CONTINIUE);
 
@@ -276,7 +321,7 @@ namespace boost {
                                     headereof_ = TKPT_START;
                                     // packet lengh  *ref RFC1006 6.0
                                     raw_back_insert(headereof_, inttype_to_raw(eofsz));
-                                    headereof_ .insert(headereof_ .end(), DATA_HEADER_LI );
+                                    headereof_ .insert(headereof_ .end(), DATA_HEADER_LI);
                                     headereof_ .insert(headereof_ .end(), DT_TPDU_ID);
                                     headereof_ .insert(headereof_ .end(), TPDU_ENDED);
                                     buff().push_back(const_buffer(&headereof_.front(), headereof_.size()));
@@ -315,14 +360,14 @@ namespace boost {
             class data_sender_sequences<const_sequences> : public basic_sender_sequences {
             public:
 
-                data_sender_sequences<const_sequences>(const const_sequences& bf, tpdu_size pdusize) :
+                data_sender_sequences<const_sequences>(const const_sequences& bf, const tpdu_size& pdusize) :
                 basic_sender_sequences(const_cast<const_sequences&> (bf)), headercontinue_(), headereof_() {
                     construct(pdusize);
                 }
 
-                void construct(tpdu_size pdusize) {
+                void construct(const tpdu_size& pdusize) {
                     if (buff().empty()) return;
-                    std::size_t pdusz = tpdu_byte_size(pdusize);
+                    std::size_t pdusz = pdusize.size();
                     if (!pdusz) pdusz = 2048;
                     pdusz -= 3;
                     std::size_t tmpsize = 0;
@@ -340,8 +385,8 @@ namespace boost {
                                 headercontinue_ = TKPT_START;
                                 //  packet lengh *ref RFC1006 6.0
                                 raw_back_insert(headercontinue_, inttype_to_raw(normalsz));
-                                
-                                headercontinue_.insert(headercontinue_.end(), DATA_HEADER_LI );
+
+                                headercontinue_.insert(headercontinue_.end(), DATA_HEADER_LI);
                                 headercontinue_.insert(headercontinue_.end(), DT_TPDU_ID);
                                 headercontinue_.insert(headercontinue_.end(), TPDU_CONTINIUE);
                             }
@@ -371,7 +416,7 @@ namespace boost {
                         uint16_t eofsz = endiancnv_copy(static_cast<uint16_t> (tmpsize + 7));
                         // packet lengh  *ref RFC1006 6.0
                         raw_back_insert(headereof_, inttype_to_raw(eofsz));
-                        headereof_ .insert(headereof_ .end(), DATA_HEADER_LI );
+                        headereof_ .insert(headereof_ .end(), DATA_HEADER_LI);
                         headereof_ .insert(headereof_ .end(), DT_TPDU_ID);
                         headereof_ .insert(headereof_ .end(), TPDU_ENDED);
                         buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&headereof_[0]), headereof_.size()));
@@ -403,6 +448,8 @@ namespace boost {
                 sender(tpdu_type type, const protocol_options& opt,
                         octet_type reason_or_error = 0, const octet_sequnce& errorseq = NULL_OCTET_SEQUENCE);
 
+                sender(tpdu_type type, const protocol_options& opt, const tpdu_size& tpdusize);
+
                 virtual ~sender() {
                 }
 
@@ -432,9 +479,9 @@ namespace boost {
             protected:
 
 
-                void constructCR(const protocol_options& opt);
+                void constructCR(const protocol_options& opt, const tpdu_size& tpdusize);
 
-                void constructCC(const protocol_options& opt);
+                void constructCC(const protocol_options& opt, const tpdu_size& tpdusize);
 
                 void constructDR(const protocol_options& opt, octet_type reason);
 
@@ -457,13 +504,13 @@ namespace boost {
             class data_sender : public sender {
             public:
 
-                data_sender(const ConstBufferSequence& buff, tpdu_size pdusize) : sender(DT) {
+                data_sender(const ConstBufferSequence& buff, const tpdu_size& pdusize) : sender(DT) {
                     constructDT(buff, pdusize);
                 }
 
             protected:
 
-                void constructDT(const ConstBufferSequence& buff, tpdu_size pdusize) {
+                void constructDT(const ConstBufferSequence& buff, const tpdu_size& pdusize) {
                     buf_ = sender_sequnces_ptr(new data_sender_sequences<ConstBufferSequence > (buff, pdusize));
                 }
 
@@ -627,13 +674,15 @@ namespace boost {
 
                 explicit stream_socket(boost::asio::io_service& io_service, const transport_selector& tsel = transport_selector())
                 : super_type(io_service),
-                transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true), is_acceptor_(false) {
+                transport_option_(0, 1, DEFAULT_TPDU_SIZE, tsel.called(), tsel.calling()), waiting_data_size_(0),
+                eof_state_(true), is_acceptor_(false), tpdusize_(DEFAULT_TPDU_SIZE) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const transport_selector& tsel = transport_selector())
                 : super_type(io_service, endpoint),
-                transport_option_(0, 1, tsel.pdusize(), tsel.called(), tsel.calling()), waiting_data_size_(0), eof_state_(true), is_acceptor_(false) {
+                transport_option_(0, 1, DEFAULT_TPDU_SIZE, tsel.called(), tsel.calling()), waiting_data_size_(0),
+                eof_state_(true), is_acceptor_(false), tpdusize_(DEFAULT_TPDU_SIZE) {
                 }
 
 
@@ -690,7 +739,7 @@ namespace boost {
                     socket(sock),
                     handler(handlr),
                     state_(request),
-                    sender_(sender_ptr(new sender(CR, sock.transport_option()))),
+                    sender_(sender_ptr(new sender(CR, sock.transport_option(), sock.pdusize()))),
                     receiver_(new receiver()) {
                     }
 
@@ -708,7 +757,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0,  *this);
+                                        socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
                                     else {
@@ -721,7 +770,7 @@ namespace boost {
                                 {
                                     receiver_->put(bytes_transferred);
                                     if (!receiver_->ready()) {
-                                        socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), 0,*this);
+                                        socket.super_type::async_receive(boost::asio::buffer(receiver_->buffer()), 0, *this);
                                         return;
                                     }
                                     finish(ec);
@@ -742,16 +791,18 @@ namespace boost {
                             {
                                 switch (receiver_->type()) {
                                     case CC:
-                                    {   // Accepted. Negotiate options *ref X224 6.5.4 a) j)
+                                    { // Accepted. Negotiate options *ref X224 6.5.4 a) j)
+                                        tpdu_size pdsize = receiver_->options().pdusize();
+                                        socket.pdusize(pdsize);
                                         socket.pdusize(receiver_->options().pdusize());
                                         socket.dst_tsap(receiver_->options().src_tsap());
-                                        
+
                                         handler(ec);
                                         return;
                                     }
                                     case ER:
                                     case DR:
-                                    {   // Both cases indicates connections refuse  *ref X224 6.6.2
+                                    { // Both cases indicates connections refuse  *ref X224 6.6.2
                                         // Release by means implicit variant  *ref X224 6.7.1.4  
                                         socket.async_internal_close();
                                         handler(receiver_->errcode());
@@ -817,6 +868,7 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 
                 // It is in general agreement with *ref X224 (TPM understands DR)   
+
                 void release(octet_type rsn = DR_REASON_NORM) {
 
                     error_code ec;
@@ -952,7 +1004,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0, *this );
+                                        socket.super_type::async_send(sender_->pop(), 0, *this);
                                         return;
                                     }
                                     handler(ec);
@@ -989,7 +1041,7 @@ namespace boost {
                             {
                                 switch (receiver_->type()) {
                                     case CR:
-                                    {   //  *ref X224 6.5.4 
+                                    { //  *ref X224 6.5.4 
                                         protocol_options options_ = socket.transport_option();
                                         octet_type error_accept = 0;
                                         if (!negotiate_rfc1006impl_option(options_, receiver_->options(), error_accept)) {
@@ -1002,8 +1054,9 @@ namespace boost {
                                         //  Accepted. send CC
                                         socket.dst_tsap(receiver_->options().src_tsap());
                                         socket.pdusize(less_tpdu(receiver_->options().pdusize(), socket.transport_option().pdusize()));
-                                        options_.pdusize(socket.pdusize());
-                                        sender_ = sender_ptr(new sender(CC, socket.transport_option()));
+                                        tpdu_size pdsize = options_.pdusize();
+                                        socket.pdusize(pdsize);
+                                        sender_ = sender_ptr(new sender(CC, socket.transport_option(), socket.pdusize()));
                                         state(request);
                                         operator()(ec, 0);
                                         return;
@@ -1146,7 +1199,7 @@ namespace boost {
                         if (!ec) {
                             sender_->size(bytes_transferred);
                             if (!sender_->ready()) {
-                                socket.super_type::async_send(sender_->pop(), flags_, *this );
+                                socket.super_type::async_send(sender_->pop(), flags_, *this);
                                 return;
                             }
                         }
@@ -1190,7 +1243,7 @@ namespace boost {
 
                     typedef send_operation<WriteHandler, ConstBufferSequence> send_operation_type;
 
-                        
+
                     get_io_service().post(boost::bind(&send_operation_type::start,
                             send_operation_type(*this, handler, buffers, flags), ready() ? error_code() : ER_INPROGRESS));
 
@@ -1439,12 +1492,13 @@ namespace boost {
                     return transport_option_;
                 }
 
-                tpdu_size pdusize() const {
-                    return transport_option_.pdusize();
+                const tpdu_size& pdusize() const {
+                    return tpdusize_;
                 };
 
-                void pdusize(tpdu_size val) {
-                    return transport_option_.pdusize(val);
+                void pdusize(const tpdu_size& val) {
+                    //transport_option_.pdusize(val);
+                    tpdusize_ = val;
                 };
 
                 int16_t dst_tsap() const {
@@ -1476,15 +1530,16 @@ namespace boost {
 
                 boost::system::error_code async_internal_close() {
                     error_code ecc;
-                    super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
+                    super_type::close(ecc); // generate abort error
+                    //super_type::shutdown(boost::asio::socket_base::shutdown_both, ecc);
                     return ecc;
                 }
-                
+
                 boost::system::error_code internal_close() {
                     error_code ecc;
                     super_type::close(ecc);
                     return ecc;
-                }                
+                }
 
                 error_code connect_impl(const endpoint_type& peer_endpoint,
                         error_code& ec) {
@@ -1492,7 +1547,7 @@ namespace boost {
                     if (!super_type::connect(peer_endpoint, ec)) {
 
 
-                        sender_ptr sender_(sender_ptr(new sender(CR, transport_option())));
+                        sender_ptr sender_(sender_ptr(new sender(CR, transport_option(), pdusize())));
                         while (!ec && !sender_->ready())
                             sender_->size(super_type::send(sender_->pop(), 0, ec));
 
@@ -1507,14 +1562,14 @@ namespace boost {
                                     {
                                         switch (receiver_->type()) {
                                             case CC:
-                                            {   // Negotiate option *ref X224 6.5.4 a) j)
+                                            { // Negotiate option *ref X224 6.5.4 a) j)
                                                 pdusize(receiver_->options().pdusize());
                                                 dst_tsap(receiver_->options().src_tsap());
                                                 return ec;
                                             }
-                                            case ER:  //Both cases indicates connections refuse  *ref X224 6.6.2
+                                            case ER: //Both cases indicates connections refuse  *ref X224 6.6.2
                                             case DR:
-                                            {   
+                                            {
                                                 ec = receiver_->errcode();
                                                 break;
                                             }
@@ -1544,6 +1599,7 @@ namespace boost {
                 }
 
                 // It is in general agreement with *ref X224 (TPM understands DR)   
+
                 error_code release_impl(error_code& ec, octet_type rsn = DR_REASON_NORM) {
                     if (is_open()) {
                         sender_ptr sender_(sender_ptr(new sender(DR, transport_option(), rsn)));
@@ -1557,6 +1613,7 @@ namespace boost {
                 }
 
                 //  *ref X224 6.5.4 
+
                 error_code check_accept_imp(error_code& ec) {
 
                     bool canceled = false;
@@ -1584,8 +1641,9 @@ namespace boost {
                                             //  Accepted.  send CC
                                             pdusize(less_tpdu(receiver_->options().pdusize(), transport_option().pdusize()));
                                             dst_tsap(receiver_->options().src_tsap());
-                                            options_.pdusize(pdusize());
-                                            sender_ = sender_ptr(new sender(CC, transport_option()));
+                                            tpdu_size pdsize = options_.pdusize();
+                                            pdusize(pdsize);
+                                            sender_ = sender_ptr(new sender(CC, transport_option(), pdusize()));
                                         }
                                         break;
                                     }
@@ -1629,7 +1687,7 @@ namespace boost {
                 template <typename ConstBufferSequence>
                 std::size_t send_impl(const ConstBufferSequence& buffers,
                         message_flags flags, error_code& ec) {
-                    if (!ready()){
+                    if (!ready()) {
                         ec = ER_INPROGRESS;
                         return 0;
                     }
@@ -1640,6 +1698,7 @@ namespace boost {
                 }
 
                 //  *ref X224 6.2
+
                 template <typename MutableBufferSequence>
                 std::size_t receive_impl(const MutableBufferSequence& buffers,
                         message_flags flags, error_code& ec) {
@@ -1710,6 +1769,7 @@ namespace boost {
                     return 0;
                 }
 
+                tpdu_size tpdusize_;
                 protocol_options transport_option_;
                 std::size_t waiting_data_size_;
                 bool eof_state_;
@@ -1869,7 +1929,7 @@ namespace boost {
                     typedef accept_operation<AcceptHandler > accept_operation_type;
 
                     peer.is_acceptor_ = true;
-                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());
+                    peer.transport_option_ = protocol_options(0, src(), DEFAULT_TPDU_SIZE, tselector.called(), tselector.calling());
 
                     super_type::async_accept(peer, peer_endpoint, boost::bind(&accept_operation_type::execute,
                             accept_operation_type(handler, peer), boost::asio::placeholders::error));
@@ -1885,7 +1945,7 @@ namespace boost {
                     typedef accept_operation<AcceptHandler > accept_operation_type;
 
                     peer.is_acceptor_ = true;
-                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());
+                    peer.transport_option_ = protocol_options(0, src(), DEFAULT_TPDU_SIZE, tselector.called(), tselector.calling());
 
                     super_type::async_accept(peer, boost::bind(&accept_operation_type::execute,
                             accept_operation_type(handler, peer), boost::asio::placeholders::error));
@@ -1897,7 +1957,7 @@ namespace boost {
                         endpoint_type& peer_endpoint, error_code& ec) {
 
                     peer.is_acceptor_ = true;
-                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());
+                    peer.transport_option_ = protocol_options(0, src(), DEFAULT_TPDU_SIZE, tselector.called(), tselector.calling());
 
                     super_type::accept(peer, peer_endpoint, ec);
                     if (ec)
@@ -1911,7 +1971,7 @@ namespace boost {
                         error_code& ec) {
 
                     peer.is_acceptor_ = true;
-                    peer.transport_option_ = protocol_options(0, src(), tselector.pdusize(), tselector.called(), tselector.calling());
+                    peer.transport_option_ = protocol_options(0, src(), DEFAULT_TPDU_SIZE, tselector.called(), tselector.calling());
 
                     super_type::accept(peer, ec);
                     if (ec)
