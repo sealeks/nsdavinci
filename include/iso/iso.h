@@ -60,25 +60,7 @@ namespace boost {
         const error_code ER_TIMEOUT = error_code(boost::system::errc::timed_out, boost::system::system_category());
         const error_code ER_INPROGRESS = error_code(boost::system::errc::operation_in_progress, boost::system::system_category());
 
-        //   transport
-        // TPDU size  ref X224  13.3.4 b)
-        const octet_type TPDU_SIZE8192 = '\xD'; // not denied in 0 class
-        const octet_type TPDU_SIZE4096 = '\xC'; // not denied in 0 class
-        const octet_type TPDU_SIZE2048 = '\xB';
-        const octet_type TPDU_SIZE1024 = '\xA';
-        const octet_type TPDU_SIZE512 = '\x9';
-        const octet_type TPDU_SIZE256 = '\x8';
-        const octet_type TPDU_SIZE128 = '\x7';
-        //const octet_type TPDU_SIZE4 = '\x5';   /// test
 
-        typedef enum {
-            SIZENULL = 0,
-            SIZE2048 = TPDU_SIZE2048,
-            SIZE1024 = TPDU_SIZE1024,
-            SIZE512 = TPDU_SIZE512,
-            SIZE256 = TPDU_SIZE256,
-            SIZE128 = TPDU_SIZE128
-        } tpdu_size;
 
 
         // Disconnection  REASON CODE *ref X224  13.5.3 d) and  *ref X225 8.3.5.10          
@@ -151,22 +133,13 @@ namespace boost {
         class transport_selector {
         public:
 
-            transport_selector() : pdusize_(SIZE2048) {
+            transport_selector()  {
             }
 
-            transport_selector(const selectorvalue_type& called) : called_(called), pdusize_(SIZE2048) {
+            transport_selector(const selectorvalue_type& called) : called_(called) {
             }
 
-            transport_selector(const selectorvalue_type& called, const selectorvalue_type& calling) : called_(called), calling_(calling), pdusize_(SIZE2048) {
-            }
-
-            transport_selector(const selectorvalue_type& called, tpdu_size pdusize) : called_(called), pdusize_(pdusize) {
-            }
-
-            transport_selector(const selectorvalue_type& called, const selectorvalue_type& calling, tpdu_size pdusize) : called_(called), calling_(calling), pdusize_(pdusize) {
-            }
-
-            transport_selector(tpdu_size pdusize) : pdusize_(pdusize) {
+            transport_selector(const selectorvalue_type& called, const selectorvalue_type& calling) : called_(called), calling_(calling){
             }
 
             const octet_sequnce& called() const {
@@ -184,15 +157,10 @@ namespace boost {
             std::string calling_str() const {
                 return calling_.to_string();
             }
-
-            tpdu_size pdusize() const {
-                return pdusize_;
-            }
-
+            
         private:
             selectorvalue_type called_;
             selectorvalue_type calling_;
-            tpdu_size pdusize_;
         };
 
 
@@ -314,7 +282,7 @@ namespace boost {
 #if defined(ITUX200_DEBUG) 
 
         inline static std::ostream& operator<<(std::ostream& stream, const transport_selector& self) {
-            return stream << "Transport selector is called  = " << self.called_str() << ",  calling = " << self.calling_str() << ",  tpdusize = " << (int) self.pdusize() << " ;\n";
+            return stream << "Transport selector is called  = " << self.called_str() << ",  calling = " << self.calling_str()  << " ;\n";
         }
 
         inline static std::ostream& operator<<(std::ostream& stream, const session_selector& self) {
