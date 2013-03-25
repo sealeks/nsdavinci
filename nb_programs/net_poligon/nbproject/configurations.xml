@@ -30,6 +30,9 @@
           <incDir>
             <pElem>../../include</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>ITUX200_DEBUG</Elem>
+          </preprocessorList>
         </ccTool>
         <linkerTool>
           <output>../../bin/${CND_CONF}/net_poligon</output>
