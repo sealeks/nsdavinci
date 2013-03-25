@@ -512,11 +512,11 @@ namespace boost {
             std::size_t size(std::size_t sz = 0);
 
             std::size_t receive_size() const {
-                return buffer_size(buffer_);
+                return boost::asio::buffer_size(buffer_);
             }
 
             bool ready() const {
-                return !buffer_size(buffer_);
+                return !boost::asio::buffer_size(buffer_);
             }
 
         protected:
