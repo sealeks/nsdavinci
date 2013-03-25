@@ -1,7 +1,7 @@
 /*  * File:   main.cpp
  * Author: sealeks@mail.ru
  *
- * Created on 27 Р  Р Р‹Р  Р’ВµР  Р вЂ¦Р РЋРІР‚С™Р РЋР РЏР  Р’В±Р РЋР вЂљР РЋР Р‰ 2012 Р  РЎвЂ“., 15:58
+ * Created on 27 Р В  Р В Р вЂ№Р В  Р вЂ™Р’ВµР В  Р В РІР‚В¦Р В Р Р‹Р Р†Р вЂљРЎв„ўР В Р Р‹Р В Р РЏР В  Р вЂ™Р’В±Р В Р Р‹Р В РІР‚С™Р В Р Р‹Р В Р вЂ° 2012 Р В  Р РЋРІР‚вЂњ., 15:58
  */
 
 #include <cstdlib>
@@ -58,7 +58,7 @@ typedef protocol_type::resolver resolver_type;
 typedef protocol_type::lowselector lowselector_type;
 const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-SSEL"), lowselector_type(selectorvalue_type("SERVER-TSEL")));
 #else
-const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"), boost::itu::SIZE128);
+const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"), boost::itu::SIZE256);
 #endif
 
 
@@ -115,6 +115,7 @@ private:
             message = std::string(data_, bytes_transferred);
         }
         else {
+            std::cout << "Release data :   "  << socket_.rootcoder()->respond_str()  << std::endl;
             delete this;
         }
     }
@@ -126,10 +127,11 @@ private:
                     boost::bind(&session::handle_read, this,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
-            std::cout << "Data indication: " << socket_.input_empty() << std::endl;
+            std::cout << "available: " << socket_.ready() << std::endl;
 
         }
         else {
+            std::cout << "Release data :  "  << socket_.rootcoder()->respond_str()  << std::endl;            
             delete this;
         }
     }
@@ -144,7 +146,7 @@ public:
 
     server(boost::asio::io_service& io_service, short port)
     : io_service_(io_service),
-    acceptor_(io_service, endpoint_type(boost::asio::ip::tcp::v4(), port)) {
+    acceptor_(io_service, endpoint_type(boost::asio::ip::tcp::v4(), port), SELECTOR) {
         start_accept();
     }
 
@@ -207,15 +209,15 @@ public:
         std::cout << "Start release" << std::endl;
 #if defined(PRES_PROT)
         io_service_.reset();
-        socket_.asyn_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+        socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
         io_service_.poll();
 #elif defined(SESSION_PROT)
         io_service_.reset();
-        socket_.asyn_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+        socket_.async_abort(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
         io_service_.poll();
 #else
         io_service_.reset();
-        //  boost::asio::asyn_release(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+        //  boost::asio::async_release(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
         io_service_.poll();
 #endif           
 
@@ -261,6 +263,8 @@ private:
 
     void handle_release(const boost::system::error_code& error) {
         std::cout << "Client release :" << (error ? "error " : "success") << std::endl;
+        if (error) 
+            std::cout << "Release error: " <<  error << std::endl;
 #if defined(SESSION_PROT)         
         std::cout << "Server release data : " << socket_.rootcoder()->respond_str() << std::endl;
 #endif
@@ -270,19 +274,22 @@ private:
     void handle_read(const boost::system::error_code& error,
             size_t bytes_transferred) {
         if (!error) {
-            std::cout << "Client read:" << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << " is complete: " << socket_.input_empty() << std::endl;
-            if (!socket_.input_empty()) {
+            std::cout << "Client read:" << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << " is complete: " << socket_.ready() << std::endl;
+            if (!socket_.ready()) {
                 std::cout << "Client read continiu" << std::endl;
                 socket_.async_read_some(boost::asio::buffer(data_, max_length),
                         boost::bind(&client::handle_read, this,
                         boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));
+                return;
 
             }
 #if defined(SESSION_PROT)              
             socket_.rootcoder()->request_str("Client release");
-            socket_.asyn_abort(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
- #endif           
+            socket_.async_abort(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+#else
+            socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+#endif           
         }
         else {
             do_close();
@@ -312,7 +319,7 @@ private:
     }
 
     void do_close() {
-        // socket_.close();
+        socket_.close();
     }
 
 private:
