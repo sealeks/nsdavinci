@@ -221,6 +221,8 @@ namespace boost {
             std::size_t size(std::size_t sz = 0) const {
                 return (sz < size_) ? (size_ - sz) : 0;
             }
+            
+            std::size_t load_sequence(const_sequences& val, std::size_t lim);
 
             virtual void clear() {
                 listbuffers_->clear();
@@ -489,8 +491,13 @@ namespace boost {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////            
         //   class  basic_sender_sequences 
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////     
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class basic_sender_sequences {
+            
+            friend class basic_itu_sequences;
+            
         public:
 
             basic_sender_sequences() : bufferptr_(new const_sequences()), buffer_(*bufferptr_)  ,size_(0) {
@@ -506,40 +513,90 @@ namespace boost {
             }
 
             const const_sequences& pop() {
-                return buffer_;
+                return buff();
             }
 
             std::size_t size(std::size_t sz = 0);
 
-            std::size_t receive_size() const {
-                return boost::asio::buffer_size(buffer_);
+            std::size_t receive_size()  const  {
+                return boost::asio::buffer_size(buff());
             }
 
-            bool ready() const {
-                return !boost::asio::buffer_size(buffer_);
+            virtual bool ready() const {
+                return !boost::asio::buffer_size(buff());
             }
 
         protected:
 
-            const const_sequences& buff() const {
+            virtual const_sequences& buff() {
                 return buffer_;
             }
-
-            const_sequences& buff() {
+            
+             virtual const_sequences& buff() const {
                 return buffer_;
-            }
+            }           
 
         private:
             const_sequences_ptr bufferptr_;
-            const_sequences& buffer_;
+            mutable const_sequences& buffer_;
             std::size_t size_;
         };
 
 
         typedef boost::shared_ptr<basic_sender_sequences> sender_sequnces_ptr;
+        
+        
+         ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////            
+        //   class  basic_itu_sequences
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////     
+        //////////////////////////////////////////////////////////////////////////////////////////////////////       
 
+        class basic_itu_sequences : public basic_sender_sequences {
+        public:
+            
+             basic_itu_sequences(asn_coder_ptr codr, std::size_t limit =0 ) : 
+            basic_sender_sequences(codr->out()->buffers_ptr()) , coder_(codr),  
+                    limit_(limit) , limited_( limit && (codr->out()->buffers().size()> limit))
+                    {}     
+            
+            
+            virtual bool ready()  const  {
+                if (basic_sender_sequences::ready()) {
+                    if (!limited_)
+                        coder_->out()->clear();
+                    return true;
+                }
+                return false;
+            }         
+            
+        protected:      
+            
+            virtual const_sequences& buff()  {
+                return limited_ ? prepare() : buffer_;
+            }            
+            
+            virtual const_sequences& buff() const  {
+                return limited_ ? prepare() : buffer_;
+            }                  
 
-
+        private:
+            
+            const_sequences&  prepare() const {
+                if (limitedbuff_)
+                    *limitedbuff_;
+                limitedbuff_ =  const_sequences_ptr( new const_sequences());
+                coder_->out()->load_sequence(*limitedbuff_, limit_);
+                return *limitedbuff_;
+            }          
+                     
+            asn_coder_ptr coder_;
+            std::size_t limit_;
+            bool limited_;
+            mutable const_sequences_ptr limitedbuff_;               
+        };
+        
+        typedef boost::shared_ptr<basic_itu_sequences> basic_itu_sequences_ptr;
 
 
     }
