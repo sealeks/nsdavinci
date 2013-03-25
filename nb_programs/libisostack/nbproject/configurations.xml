@@ -49,6 +49,7 @@
           <preprocessorList>
             <Elem>_WIN32_WINNT=0x0501</Elem>
             <Elem>DVNCI_DEDUG</Elem>
+            <Elem>ITUX200_DEBUG</Elem>
           </preprocessorList>
         </ccTool>
         <archiverTool>

@@ -38,9 +38,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/894376469/asnbase.o \
 	${OBJECTDIR}/_ext/894376469/itu_X690.o \
 	${OBJECTDIR}/_ext/1901903102/iso8327.o \
+	${OBJECTDIR}/_ext/1901903102/base_coder.o \
 	${OBJECTDIR}/_ext/1901903102/iso8823.o \
 	${OBJECTDIR}/_ext/894376469/utf8.o \
-	${OBJECTDIR}/_ext/1901903102/archive_stream.o \
 	${OBJECTDIR}/_ext/1901903102/rfc1006.o
 
 
@@ -90,6 +90,11 @@ ${OBJECTDIR}/_ext/1901903102/iso8327.o: ../../include/iso/iso8327.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -Wall -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso8327.o ../../include/iso/iso8327.cpp
 
+${OBJECTDIR}/_ext/1901903102/base_coder.o: ../../include/iso/base_coder.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -Wall -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/base_coder.o ../../include/iso/base_coder.cpp
+
 ${OBJECTDIR}/_ext/1901903102/iso8823.o: ../../include/iso/iso8823.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
 	${RM} $@.d
@@ -99,11 +104,6 @@ ${OBJECTDIR}/_ext/894376469/utf8.o: ../../include/iso/asn/utf8.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/894376469
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -Wall -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/utf8.o ../../include/iso/asn/utf8.cpp
-
-${OBJECTDIR}/_ext/1901903102/archive_stream.o: ../../include/iso/archive_stream.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/archive_stream.o ../../include/iso/archive_stream.cpp
 
 ${OBJECTDIR}/_ext/1901903102/rfc1006.o: ../../include/iso/rfc1006.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
