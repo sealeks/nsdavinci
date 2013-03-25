@@ -91,7 +91,10 @@ public:
     }
 
     void start() {
-#if defined(SESSION_PROT)       
+#if defined(SESSION_PROT)  
+        if (socket_.rootcoder()->respond_str().size()>600)
+              std::cout << "Client accept data size : " << socket_.rootcoder()->respond_str().size() << std::endl;
+        else    
         std::cout << "Client accept data : " << socket_.rootcoder()->respond_str() << std::endl;
 #endif        
 
@@ -199,7 +202,7 @@ public:
         endpoint_type endpoint = *endpoint_iterator;
 
 #if defined(SESSION_PROT)
-        socket_.rootcoder()->request_str(std::string(20, 'a'));
+        socket_.rootcoder()->request_str(std::string(20000, 'a'));
 #else
 #endif  
 
