@@ -102,7 +102,7 @@ private:
                       boost::bind(&session::handle_read, this,
                       boost::asio::placeholders::error,
                       boost::asio::placeholders::bytes_transferred));
-              std::cout << "Data indication: " <<  socket_.input_empty() << std::endl;
+              std::cout << "Data indication: " <<  socket_.ready() << std::endl;
 
           }
           else {
@@ -126,7 +126,7 @@ public:
 private:
 
     void start_accept() {
-        //isocoder_ptr trans_ = boost::itu::create_simple_data("Hello client from test");
+        //asn_coder_ptr trans_ = boost::itu::create_simple_data("Hello client from test");
 
         session* new_session = new session(io_service_);
 
@@ -414,7 +414,7 @@ private:
 class session {
 public:
 
-    session(boost::asio::io_service& io_service, isocoder_ptr trans)
+    session(boost::asio::io_service& io_service, asn_coder_ptr trans)
     : socket_(io_service, SELECTOR), trans_(trans) {
         std::cout << "New sesion\n";
     }
@@ -442,7 +442,7 @@ private:
     socket_type socket_;
     char data_[max_length];
     std::string message;
-    isocoder_ptr trans_;
+    asn_coder_ptr trans_;
 } ;
 
 class server {
@@ -459,7 +459,7 @@ private:
     void start_accept() {
         while (true) {
 
-            isocoder_ptr trans_ = boost::itu::create_simple_data("Hello client from test");
+            asn_coder_ptr trans_ = boost::itu::create_simple_data("Hello client from test");
 
             session* new_session = new session(io_service_, trans_);
             boost::system::error_code ec;
@@ -518,7 +518,7 @@ public:
 #if defined(PRES_PROT)
 
 #elif defined(SESSION_PROT)
-        trans_ = isocoder_ptr( new   trans_data("Goodbuy server  from test"));
+        trans_ = asn_coder_ptr( new   trans_data("Goodbuy server  from test"));
         boost::system::error_code ecc;
         socket_.releaseconnect(boost::itu::SESSION_NORMAL_RELEASE, trans_, ecc);
         if (trans_)
@@ -551,7 +551,7 @@ private:
     boost::asio::io_service& io_service_;
     socket_type socket_;
     std::string message;
-    isocoder_ptr trans_ ;
+    asn_coder_ptr trans_ ;
     char data_[max_length];
 } ;
 
