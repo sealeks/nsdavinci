@@ -73,42 +73,42 @@ LDLIBSOPTIONS=
 ${OBJECTDIR}/_ext/1901903102/iso.o: ../../include/iso/iso.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso.o ../../include/iso/iso.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso.o ../../include/iso/iso.cpp
 
 ${OBJECTDIR}/_ext/894376469/asnbase.o: ../../include/iso/asn/asnbase.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/894376469
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/asnbase.o ../../include/iso/asn/asnbase.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/asnbase.o ../../include/iso/asn/asnbase.cpp
 
 ${OBJECTDIR}/_ext/894376469/itu_X690.o: ../../include/iso/asn/itu_X690.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/894376469
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/itu_X690.o ../../include/iso/asn/itu_X690.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/itu_X690.o ../../include/iso/asn/itu_X690.cpp
 
 ${OBJECTDIR}/_ext/1901903102/iso8327.o: ../../include/iso/iso8327.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso8327.o ../../include/iso/iso8327.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso8327.o ../../include/iso/iso8327.cpp
 
 ${OBJECTDIR}/_ext/1901903102/base_coder.o: ../../include/iso/base_coder.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/base_coder.o ../../include/iso/base_coder.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/base_coder.o ../../include/iso/base_coder.cpp
 
 ${OBJECTDIR}/_ext/1901903102/iso8823.o: ../../include/iso/iso8823.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso8823.o ../../include/iso/iso8823.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso8823.o ../../include/iso/iso8823.cpp
 
 ${OBJECTDIR}/_ext/894376469/utf8.o: ../../include/iso/asn/utf8.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/894376469
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/utf8.o ../../include/iso/asn/utf8.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/utf8.o ../../include/iso/asn/utf8.cpp
 
 ${OBJECTDIR}/_ext/1901903102/rfc1006.o: ../../include/iso/rfc1006.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/rfc1006.o ../../include/iso/rfc1006.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/rfc1006.o ../../include/iso/rfc1006.cpp
 
 # Subprojects
 .build-subprojects:
