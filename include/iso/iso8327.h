@@ -173,6 +173,12 @@ namespace boost {
             // PI Data Overflow *ref X225 Tab 11 and 8.3.1.19
             const varid_type PI_DATAOVERFLOW = 60;
 
+            // PI Overflow User data *ref X225 Tab 13 and 8.3.3.4        
+            const varid_type PI_OVERFLOWUSERDATA = 22; // pi here              
+            
+            // PI Data Overflow *ref X225 Tab 11 and 8.3.1.19
+            const octet_type MORE_DATA = 1;            
+
 
             // PI Enclosure Item *ref X225 Tab 13 .. 46 and 8.3.3.3            
             const varid_type PI_ENCLOSURE = 25;
@@ -317,7 +323,7 @@ namespace boost {
 
                 bool nullPI(varid_type cod) const;
 
-                const_sequences_ptr sequence(asn_coder_ptr seq) const;
+                asn_coder_ptr sequence(asn_coder_ptr seq) const;
 
             private:
 
@@ -428,21 +434,25 @@ namespace boost {
             //negotiate_x225impl_option
             bool negotiate_x225impl_option(const protocol_options& self, const protocol_options& dist, octet_type& errorreason);
 
-            const_sequences_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data); //CONNECT SPDU
+            asn_coder_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data); //CONNECT SPDU
+            
+            asn_coder_ptr generate_header_OA(const protocol_options& opt, asn_coder_ptr data); //OVERFLOW ACCEPT SPDU
+            
+            asn_coder_ptr generate_header_CDO(const protocol_options& opt, asn_coder_ptr data); //CONNECT DATA OVERFLOW SPDU            
+            
+            asn_coder_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data); //ACCEPT SPDU
 
-            const_sequences_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data); //ACCEPT SPDU
+            asn_coder_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data); //REFUSE  SPDU        
 
-            const_sequences_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data); //REFUSE  SPDU        
+            asn_coder_ptr generate_header_FN(const protocol_options& opt, asn_coder_ptr data); //FINISH SPDU            
 
-            const_sequences_ptr generate_header_FN(const protocol_options& opt, asn_coder_ptr data); //FINISH SPDU            
+            asn_coder_ptr generate_header_DN(const protocol_options& opt, asn_coder_ptr data); //DISCONNECT  SPDU          
 
-            const_sequences_ptr generate_header_DN(const protocol_options& opt, asn_coder_ptr data); //DISCONNECT  SPDU          
+            asn_coder_ptr generate_header_AB(const protocol_options& opt, asn_coder_ptr data); //ABORT SPDU                     
 
-            const_sequences_ptr generate_header_AB(const protocol_options& opt, asn_coder_ptr data); //ABORT SPDU                     
+            asn_coder_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data); //ABORT ACCEPT  SPDU                              
 
-            const_sequences_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data); //ABORT ACCEPT  SPDU                              
-
-            const_sequences_ptr generate_header_NF(const protocol_options& opt, asn_coder_ptr data); //NOT FINISH  SPDU                      
+            asn_coder_ptr generate_header_NF(const protocol_options& opt, asn_coder_ptr data); //NOT FINISH  SPDU                      
 
 
 
@@ -538,31 +548,39 @@ namespace boost {
             protected:
 
                 void constructCN(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_sender_sequences(generate_header_CN(opt, data)));
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_CN(opt, data), EXTEDED_USERDATA_LIMIT));
                 }
+                
+                void constructOA(const protocol_options& opt, asn_coder_ptr data) {
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_OA(opt, data)));
+                }                             
+                
+                void constructCDO(const protocol_options& opt, asn_coder_ptr data) {
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_CDO(opt, data)));
+                }                
 
                 void constructAC(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_sender_sequences(generate_header_AC(opt, data)));
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_AC(opt, data)));
                 }
 
                 void constructRF(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_sender_sequences(generate_header_RF(opt, data)));
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_RF(opt, data)));
                 }
 
                 void constructFN(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_sender_sequences(generate_header_FN(opt, data)));
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_FN(opt, data)));
                 }
 
                 void constructAB(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_sender_sequences(generate_header_AB(opt, data)));
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_AB(opt, data)));
                 }
 
                 void constructDN(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_sender_sequences(generate_header_DN(opt, data)));
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_DN(opt, data)));
                 }
 
                 void constructAA(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_sender_sequences(generate_header_AA(opt, data)));
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_AA(opt, data)));
                 }
 
                 spdu_type type_;
@@ -912,6 +930,12 @@ namespace boost {
                                         return;
                                         break;
                                     }
+                                    case OA_SPDU_ID:{
+                                        sender_= sender_ptr(new sender(CDO_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                        state(request);
+                                        operator()(ec, 0);
+                                        return;               
+                                    }
                                     default:
                                     {
 
@@ -1242,7 +1266,7 @@ namespace boost {
                         response,
                         request,
                         reject,
-                        refuse
+                        refuse    
                     };
 
                 public:
@@ -1347,7 +1371,7 @@ namespace boost {
                                             errorrefuse_ = ER_PROTOPT;
                                             operator()(ec, 0);
                                             return;
-                                        }
+                                        }                                        
 
                                         // Netotiation success send AC
                                         socket.session_version(receiver_->options().accept_version());
@@ -1355,11 +1379,36 @@ namespace boost {
                                             socket.maxTPDU(receiver_->options().maxTPDU_src(), receiver_->options().maxTPDU_dist());
                                         }     
                                         socket.user_requirement(receiver_->options().user_requirement());*/
+                                                                             
+                                        if (receiver_->options().overflow()) {
+                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                            state(request);
+                                            operator()(ec, 0);
+                                            return;                                             
+                                        }                                        
+                                        
                                         sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder()));
                                         state(request);
                                         operator()(ec, 0);
                                         return;
                                         break;
+                                    }
+                                    case CDO_SPDU_ID:{
+                                        
+                                        socket.rootcoder()->in()->add(receiver_->options().data());
+                                        
+                                         if (!receiver_->options().endSPDU()) {
+                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                            state(request);
+                                            operator()(ec, 0);
+                                            return;                                             
+                                        }
+                                         else {
+                                            sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                            state(request);
+                                            operator()(ec, 0);
+                                            return;                                             
+                                         }                       
                                     }
                                     default:
                                     {

@@ -327,6 +327,30 @@ namespace boost {
                 add(buffer_to_raw(*it));
         }
 
+        std::size_t base_output_coder::load_sequence(const_sequences& val, std::size_t lim) {
+            if (!lim) return 0;
+            std::size_t rslt = 0;
+            for (const_sequences::iterator it = listbuffers_->begin(); it != listbuffers_->end(); ++it) {
+                std::size_t itbuffsz = boost::asio::buffer_size(*it);
+                if ((itbuffsz+rslt)>lim){
+                    val.push_back(boost::asio::buffer(*it, lim - rslt  ));
+                    *it = *it + (lim - rslt);
+                    size(lim - rslt);
+                    return lim;
+                }
+                else{
+                    val.push_back(*it);
+                    listbuffers_->erase(it);
+                    size(itbuffsz);
+                    rslt+=itbuffsz;
+                    if (rslt==lim) 
+                        return rslt;
+                }
+            }
+            return rslt;
+        }
+                    
+
         bool base_output_coder::bind(octet_sequnce& vl) {
             vl.clear();
             for (iterator_type it = listbuffers_->begin(); it != listbuffers_->end(); ++it)
@@ -423,15 +447,15 @@ namespace boost {
 
             if (sz == 0) return size_;
             std::size_t tmpsize = sz;
-            while ((!buffer_.empty()) && tmpsize) {
-                const_sequences::iterator it = buffer_.begin();
+            while ((!buff().empty()) && tmpsize) {
+                const_sequences::iterator it = buff().begin();
                 if (tmpsize < boost::asio::buffer_size(*it)) {
                     *it = const_buffer((*it) + sz);
                     return size_ += sz;
                 }
                 else {
                     tmpsize = boost::asio::buffer_size(*it) > tmpsize ? 0 : (tmpsize - boost::asio::buffer_size(*it));
-                    buffer_.erase(it);
+                    buff().erase(it);
                 }
             }
             return size_ += sz;

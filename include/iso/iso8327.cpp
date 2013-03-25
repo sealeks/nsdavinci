@@ -202,7 +202,7 @@ namespace boost {
                 return nullPGI(0, cod);
             }
 
-            const_sequences_ptr spdudata::sequence(asn_coder_ptr coder) const {
+            asn_coder_ptr spdudata::sequence(asn_coder_ptr coder) const {
                 octet_sequnce tmp;
                 spdudata_type::const_iterator strtit = value_->end();
                 for (spdudata_type::const_iterator it = value_->begin(); it != value_->end(); ++it) {
@@ -233,19 +233,35 @@ namespace boost {
                 }
                 if (coder->out()->size()) {
                     if ((type_ == CN_SPDU_ID) && (coder->out()->size() > SIMPLE_USERDATA_LIMIT)) {
-                        raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
-                        raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                        if (coder->out()->size()>EXTEDED_USERDATA_LIMIT) {
+                            raw_back_insert(tmp, inttype_to_raw(PI_DATAOVERFLOW));
+                            raw_back_insert(tmp, to_triple_size(1)); 
+                            raw_back_insert(tmp, inttype_to_raw(MORE_DATA));
+                             
+                            raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
+                            raw_back_insert(tmp, to_triple_size(EXTEDED_USERDATA_LIMIT));
+                        }
+                        else {
+                            raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
+                            raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                        }
                     }
                     else {
-                        raw_back_insert(tmp, inttype_to_raw(PGI_USERDATA));
-                        raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                        if (type_ == CDO_SPDU_ID) {
+                            raw_back_insert(tmp, inttype_to_raw(PGI_USERDATA));
+                            raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                        }
+                        else {
+                            raw_back_insert(tmp, inttype_to_raw(PGI_USERDATA));
+                            raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                        }
                     }
                 }
                 coder->out()->add(octet_sequnce(tmp.begin(), tmp.end()), coder->out()->buffers().begin());
                 octet_sequnce header(inttype_to_raw(type_));
                 raw_back_insert(header, to_triple_size(coder->out()->size()));
                 coder->out()->add(octet_sequnce(header.begin(), header.end()), coder->out()->buffers().begin());
-                return coder->out()->buffers_ptr();
+                return coder;
             }
 
             bool spdudata::parse() {
@@ -352,7 +368,8 @@ namespace boost {
             }
 
             const octet_sequnce& protocol_options::data() const {
-                return vars_->existPI(PGI_EXUSERDATA) ? vars_->getPI(PGI_EXUSERDATA) : vars_->getPI(PGI_USERDATA);
+                return vars_->existPI(PGI_USERDATA) ? vars_->getPI(PGI_USERDATA) : 
+                    (vars_->existPI(PGI_EXUSERDATA) ? vars_->getPI(PGI_EXUSERDATA) :  vars_->getPGI(PGI_USERDATA , PI_OVERFLOWUSERDATA));
             }
 
             octet_type protocol_options::accept_version() const {
@@ -486,7 +503,7 @@ namespace boost {
                 return true;
             }
 
-            const_sequences_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data) {
+            asn_coder_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(CN_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, PI_VERSION, WORK_PROT_VERSION);
@@ -496,9 +513,21 @@ namespace boost {
                 if (!opt.ssap_called().empty())
                     tmp.setPI(PI_CALLED, opt.ssap_called());
                 return tmp.sequence(data);
-            }
-
-            const_sequences_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data) {
+            }                           
+            
+            asn_coder_ptr generate_header_OA(const protocol_options& opt, asn_coder_ptr data) {
+                spdudata tmp(OA_SPDU_ID);
+                tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, VERSION2);
+                data->out()->clear(); // no user data *ref X225 Tab 12
+                return tmp.sequence(data);
+            }                    
+            
+            asn_coder_ptr generate_header_CDO(const protocol_options& opt, asn_coder_ptr data) {
+                spdudata tmp(CDO_SPDU_ID);
+                return tmp.sequence(data);
+            }         
+            
+            asn_coder_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(AC_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
@@ -510,7 +539,7 @@ namespace boost {
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data) {
+            asn_coder_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(RF_SPDU_ID);
                 data->out()->clear(); // no user data *ref X225 Tab 15
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
@@ -520,30 +549,30 @@ namespace boost {
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_FN(const protocol_options& opt, asn_coder_ptr data) {
+            asn_coder_ptr generate_header_FN(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(FN_SPDU_ID);
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_DN(const protocol_options& opt, asn_coder_ptr data) {
+            asn_coder_ptr generate_header_DN(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(DN_SPDU_ID);
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_AB(const protocol_options& opt, asn_coder_ptr data) {
+            asn_coder_ptr generate_header_AB(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(AB_SPDU_ID);
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data) {
+            asn_coder_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(AA_SPDU_ID);
                 data->out()->clear(); // no user data *ref X225  8.3.10.2             
                 return tmp.sequence(data);
             }
 
-            const_sequences_ptr generate_header_NF(const protocol_options& opt, asn_coder_ptr data) {
+            asn_coder_ptr generate_header_NF(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(NF_SPDU_ID);
                 return tmp.sequence(data);
             }
