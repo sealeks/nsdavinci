@@ -208,6 +208,7 @@ namespace prot9506 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class stream_socket : public boost::itu::x226impl::stream_socket  {
+        
         typedef boost::itu::x226impl::stream_socket                                          super_type;
         typedef boost::itu::x226impl::presentation_context_unit_ptr    application_context_ptr;
 
