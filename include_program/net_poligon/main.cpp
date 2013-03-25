@@ -107,19 +107,21 @@ private:
     void handle_read(const boost::system::error_code& error,
             size_t bytes_transferred) {
         if (!error) {
+            if (!socket_.ready()) {
+                std::cout << "Server read: " << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
+                std::cout << "Server read continiu" << std::endl;
+                socket_.async_read_some(boost::asio::buffer(data_, max_length),
+                        boost::bind(&session::handle_read, this,
+                        boost::asio::placeholders::error,
+                        boost::asio::placeholders::bytes_transferred));
+                return; }            
             boost::asio::async_write(socket_,
                     boost::asio::buffer(data_, bytes_transferred),
                     boost::bind(&session::handle_write, this,
                     boost::asio::placeholders::error));
             std::cout << "Server read: " << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
             message = std::string(data_, bytes_transferred);
-            if (!socket_.ready()) {
-                std::cout << "Server read continiu" << std::endl;
-                socket_.async_read_some(boost::asio::buffer(data_, max_length),
-                        boost::bind(&session::handle_read, this,
-                        boost::asio::placeholders::error,
-                        boost::asio::placeholders::bytes_transferred));
-                return; }
+
         }
         else {
             std::cout << "Release data :   "  << socket_.rootcoder()->respond_str()  << std::endl;
