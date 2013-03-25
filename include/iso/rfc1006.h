@@ -131,15 +131,9 @@ namespace boost {
 
             private:
 
-                void preferred(uint16_t val) {
-                    preferred_ = val > PREFFERED_TPDU_SIZE ? PREFFERED_TPDU_SIZE : val;
-                    size_ = val * 128;
-                }
+                void preferred(uint16_t val, octet_type bas);
 
-                void basic(octet_type val) {
-                    basic_ = val;
-                    size_ = size_from_octet(basic_);
-                }
+                void basic(octet_type val);
 
                 static std::size_t size_from_octet(octet_type val);
 

@@ -33,7 +33,7 @@ namespace boost {
 
             tpdu_size::tpdu_size() : preferred_(), basic_(), size_(0) {
                 basic(TPDU_SIZE2048);
-                preferred(PREFFERED_TPDU_SIZE);
+                preferred(PREFFERED_TPDU_SIZE, TPDU_SIZE2048);
             }
 
             tpdu_size::tpdu_size(octet_type bas) : preferred_(), basic_(), size_(0) {
@@ -41,18 +41,18 @@ namespace boost {
             }
 
             tpdu_size::tpdu_size(const octet_sequnce& pref, octet_type bas) : preferred_(), basic_(), size_(0) {
-                if (pref.empty() && pref.size() > 2) {
+                if (pref.empty()) {
                     basic(bas);
                     preferred_ = 0;
                 }
                 else {
                     if (pref.size() == 1) {
-                        preferred(static_cast<uint16_t> (pref[0]));
+                        preferred(static_cast<uint16_t> (pref[0]), bas);
                     }
                     else {
                         uint16_t tmp;
-                        if (raw_to_inttype(pref, tmp)) {
-                            preferred(endiancnv_copy(tmp));
+                        if (raw_to_inttype( octet_sequnce (pref.begin() + (pref.size() <3 ? 0 : (pref.size() - 2)), pref.end()) , tmp)) {
+                            preferred(endiancnv_copy( tmp), bas);
                         }
                         else {
                             basic(bas);
@@ -61,6 +61,22 @@ namespace boost {
                     }
                 }
             }
+
+            void tpdu_size::preferred(uint16_t val, octet_type bas) {
+                if (val) {
+                    preferred_ = val > PREFFERED_TPDU_SIZE ? PREFFERED_TPDU_SIZE : val;
+                    size_ = val * 128;
+                }
+                else {
+                    preferred_ = 0;
+                    basic(bas);
+                }
+            }
+
+            void tpdu_size::basic(octet_type val) {
+                basic_ = val;
+                size_ = size_from_octet(basic_);
+            }            
 
             std::size_t tpdu_size::size_from_octet(octet_type val) {
                 switch (val) {
@@ -226,9 +242,16 @@ namespace boost {
                 raw_back_insert(rslt, inttype_to_raw(tpdusize.basic()));
 
                 if (tpdusize.preferred()) {
-                    rslt.insert(rslt.end(), VAR_MAXTPDU_SIZE);
-                    rslt.insert(rslt.end(), static_cast<octet_type> (2));
-                    raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(tpdusize.preferred())));
+                    if (tpdusize.preferred() < static_cast<uint16_t> (0x100)) {
+                        rslt.insert(rslt.end(), VAR_MAXTPDU_SIZE);
+                        rslt.insert(rslt.end(), static_cast<octet_type> (1));
+                        raw_back_insert(rslt, inttype_to_raw(static_cast<uint8_t> (tpdusize.preferred())));
+                    }
+                    else {
+                        rslt.insert(rslt.end(), VAR_MAXTPDU_SIZE);
+                        rslt.insert(rslt.end(), static_cast<octet_type> (2));
+                        raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(tpdusize.preferred())));
+                    }
                 }
 
                 if (!opt.tsap_calling().empty()) {
@@ -255,9 +278,16 @@ namespace boost {
                 rslt.insert(rslt.end(), '\x0');
 
                 if (tpdusize.preferred()) {
-                    rslt.insert(rslt.end(), VAR_MAXTPDU_SIZE);
-                    rslt.insert(rslt.end(), static_cast<octet_type> (2));
-                    raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(tpdusize.preferred())));
+                    if (tpdusize.preferred() < static_cast<uint16_t> (0x100)) {
+                        rslt.insert(rslt.end(), VAR_MAXTPDU_SIZE);
+                        rslt.insert(rslt.end(), static_cast<octet_type> (1));
+                        raw_back_insert(rslt, inttype_to_raw(static_cast<uint8_t> (tpdusize.preferred())));
+                    }
+                    else {
+                        rslt.insert(rslt.end(), VAR_MAXTPDU_SIZE);
+                        rslt.insert(rslt.end(), static_cast<octet_type> (2));
+                        raw_back_insert(rslt, inttype_to_raw(endiancnv_copy(tpdusize.preferred())));
+                    }
                 }
                 else {
                     rslt.insert(rslt.end(), VAR_TPDU_SIZE);
