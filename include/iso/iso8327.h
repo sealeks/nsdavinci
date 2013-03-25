@@ -182,6 +182,8 @@ namespace boost {
 
             // PI Enclosure Item *ref X225 Tab 13 .. 46 and 8.3.3.3            
             const varid_type PI_ENCLOSURE = 25;
+            const octet_type ENCLOSURE_BEGIN =1;
+            const octet_type ENCLOSURE_END = 2;            
 
 
             // PI Transport Disconnect *ref X225 Tab 15, 16, 19  and 8.3.5.6            
