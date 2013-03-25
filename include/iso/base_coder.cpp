@@ -425,12 +425,12 @@ namespace boost {
             std::size_t tmpsize = sz;
             while ((!buffer_.empty()) && tmpsize) {
                 const_sequences::iterator it = buffer_.begin();
-                if (tmpsize < buffer_size(*it)) {
+                if (tmpsize < boost::asio::buffer_size(*it)) {
                     *it = const_buffer((*it) + sz);
                     return size_ += sz;
                 }
                 else {
-                    tmpsize = buffer_size(*it) > tmpsize ? 0 : (tmpsize - buffer_size(*it));
+                    tmpsize = boost::asio::buffer_size(*it) > tmpsize ? 0 : (tmpsize - boost::asio::buffer_size(*it));
                     buffer_.erase(it);
                 }
             }
