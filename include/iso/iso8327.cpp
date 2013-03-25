@@ -524,6 +524,7 @@ namespace boost {
             
             asn_coder_ptr generate_header_CDO(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(CDO_SPDU_ID);
+                tmp.setPGI(PI_ENCLOSURE, ENCLOSURE_END);
                 return tmp.sequence(data);
             }         
             
@@ -588,6 +589,16 @@ namespace boost {
                         constructCN(opt, data);
                         break;
                     }
+                    case OA_SPDU_ID:
+                    {
+                        constructOA(opt, data);
+                        break;
+                    }
+                    case CDO_SPDU_ID:
+                    {
+                        constructCDO(opt, data);
+                        break;
+                    }                    
                     case AC_SPDU_ID:
                     {
                         constructAC(opt, data);
