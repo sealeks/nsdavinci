@@ -64,7 +64,7 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 ${OBJECTDIR}/_ext/1689547802/main.o: ../../include_program/net_poligon/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1689547802
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1689547802/main.o ../../include_program/net_poligon/main.cpp
+	$(COMPILE.cc) -g -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1689547802/main.o ../../include_program/net_poligon/main.cpp
 
 # Subprojects
 .build-subprojects:
