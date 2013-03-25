@@ -491,8 +491,10 @@ namespace boost {
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, PI_VERSION, WORK_PROT_VERSION);
                 tmp.setPI(PI_SES_USERREQ, FU_WORK);
-                tmp.setPI(PI_CALLING, opt.ssap_calling());
-                tmp.setPI(PI_CALLED, opt.ssap_called());
+                if (!opt.ssap_calling().empty())
+                    tmp.setPI(PI_CALLING, opt.ssap_calling());
+                if (!opt.ssap_called().empty())
+                    tmp.setPI(PI_CALLED, opt.ssap_called());
                 return tmp.sequence(data);
             }
 
@@ -501,8 +503,10 @@ namespace boost {
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
                 tmp.setPI(PI_SES_USERREQ, FU_WORK);
-                tmp.setPI(PI_CALLING, opt.ssap_calling());
-                tmp.setPI(PI_CALLED, opt.ssap_called());
+                if (!opt.ssap_calling().empty())
+                    tmp.setPI(PI_CALLING, opt.ssap_calling());
+                if (!opt.ssap_called().empty())
+                    tmp.setPI(PI_CALLED, opt.ssap_called());
                 return tmp.sequence(data);
             }
 

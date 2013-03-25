@@ -119,12 +119,14 @@ namespace boost {
                 return value_.empty() ? "" : std::string(value_.begin(), value_.end());
             }
 
-            const octet_sequnce& to_raw() const {
+            const octet_sequnce& to_raw(std::size_t constraintsize = 0) const {
+                if (constraintsize && (value_.size()>constraintsize))
+                    value_=octet_sequnce(value_.begin(), value_.begin()+constraintsize);              
                 return value_;
             }
 
         private:
-            octet_sequnce value_;
+            mutable octet_sequnce value_;
         };
 
 
@@ -167,9 +169,13 @@ namespace boost {
 
 
 
+        
         // session            
 
         class session_selector {
+            
+            static const std::size_t SIZE_CONSTRAINT = 16;
+            
         public:
 
             session_selector() : tselector_() {
@@ -191,11 +197,11 @@ namespace boost {
             }
 
             const octet_sequnce& called() const {
-                return called_.to_raw();
+                return called_.to_raw(SIZE_CONSTRAINT);
             }
 
             const octet_sequnce& calling() const {
-                return calling_.to_raw();
+                return calling_.to_raw(SIZE_CONSTRAINT);
             }
 
             std::string called_str() const {
