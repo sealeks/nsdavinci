@@ -350,7 +350,7 @@ namespace boost {
             // optimized rfc1006 data_sender_sequences   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
-            template<>
+         /*template<>
             class data_sender_sequences<const_sequences> : public basic_sender_sequences {
             public:
 
@@ -422,7 +422,7 @@ namespace boost {
                 octet_sequnce headercontinue_;
                 octet_sequnce headereof_;
 
-            };
+            };*/   
 
 
 

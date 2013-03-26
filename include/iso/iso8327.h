@@ -1359,9 +1359,11 @@ namespace boost {
                                         octet_type errorreason = 0;
 
                                         socket.rootcoder()->in()->add(receiver_->options().data());
+                                        
+                                        bool continiue_ = receiver_->options().overflow();
 
                                         if (!negotiate_x225impl_option(socket.session_option(), receiver_->options(), errorreason) ||
-                                                !(nouserreject = socket.negotiate_session_accept())) {
+                                                !(nouserreject = (continiue_ ? true : socket.negotiate_session_accept()))) {
                                             // Netotiation fail send RF
                                             protocol_options options_ = socket.session_option();
                                             if (!nouserreject)
