@@ -232,26 +232,41 @@ namespace boost {
                     raw_back_insert(tmp, tmppi);
                 }
                 if (coder->out()->size()) {
-                    if ((type_ == CN_SPDU_ID) && (coder->out()->size() > SIMPLE_USERDATA_LIMIT)) {
-                        if (coder->out()->size()>EXTEDED_USERDATA_LIMIT) {
-                            raw_back_insert(tmp, inttype_to_raw(PI_DATAOVERFLOW));
-                            raw_back_insert(tmp, to_triple_size(1)); 
-                            raw_back_insert(tmp, inttype_to_raw(MORE_DATA));
-                             
-                            raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
-                            raw_back_insert(tmp, to_triple_size(EXTEDED_USERDATA_LIMIT));
+                    switch (type_) {
+                        case CN_SPDU_ID:
+                        {
+                            if ((coder->out()->size() > SIMPLE_USERDATA_LIMIT)) {
+                                if (coder->out()->size() > EXTEDED_USERDATA_LIMIT) {
+                                    raw_back_insert(tmp, inttype_to_raw(PI_DATAOVERFLOW));
+                                    raw_back_insert(tmp, to_triple_size(1));
+                                    raw_back_insert(tmp, inttype_to_raw(MORE_DATA));
+
+                                    raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
+                                    raw_back_insert(tmp, to_triple_size(EXTEDED_USERDATA_LIMIT));
+                                } else {
+                                    raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
+                                    raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                                }
+                            }
+                            break;
                         }
-                        else {
-                            raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
-                            raw_back_insert(tmp, to_triple_size(coder->out()->size()));
-                        }
-                    }
-                    else {
-                        if (type_ == CDO_SPDU_ID) {
+                        case CDO_SPDU_ID:
+                        {
                             raw_back_insert(tmp, inttype_to_raw(PGI_USERDATA));
+                            raw_back_insert(tmp, to_triple_size(coder->out()->size() + (1 + ( (coder->out()->size()+ 1) >0x100) ? 3 : 1)));
+                            raw_back_insert(tmp, inttype_to_raw(PI_OVERFLOWUSERDATA));
                             raw_back_insert(tmp, to_triple_size(coder->out()->size()));
+                            break;
                         }
-                        else {
+                        case AA_SPDU_ID:
+                        case RF_SPDU_ID:
+                        case OA_SPDU_ID:
+                        {
+                            coder->out()->clear();
+                            break; //no data
+                        }
+                        default:
+                        {
                             raw_back_insert(tmp, inttype_to_raw(PGI_USERDATA));
                             raw_back_insert(tmp, to_triple_size(coder->out()->size()));
                         }
@@ -517,8 +532,8 @@ namespace boost {
             
             asn_coder_ptr generate_header_OA(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(OA_SPDU_ID);
-                tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, VERSION2);
-                data->out()->clear(); // no user data *ref X225 Tab 12
+                tmp.setPI(PI_VERSION, VERSION2);
+                //data->out()->clear(); // no user data *ref X225 Tab 12
                 return tmp.sequence(data);
             }                    
             
@@ -542,7 +557,7 @@ namespace boost {
 
             asn_coder_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(RF_SPDU_ID);
-                data->out()->clear(); // no user data *ref X225 Tab 15
+                //data->out()->clear(); // no user data *ref X225 Tab 15
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 tmp.setPI(PI_SES_USERREQ, FU_WORK);
                 tmp.setPI(PI_VERSION, opt.reject_version());
@@ -568,8 +583,8 @@ namespace boost {
             }
 
             asn_coder_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data) {
-                spdudata tmp(AA_SPDU_ID);
-                data->out()->clear(); // no user data *ref X225  8.3.10.2             
+                spdudata tmp(AA_SPDU_ID); 
+                //data->out()->clear(); // no user data *ref X225  8.3.10.2             
                 return tmp.sequence(data);
             }
 
@@ -753,9 +768,9 @@ namespace boost {
                         first_in_seq_ = false;
                     }
                 }
-                std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<unsigned char*>(buff_ + 1));
+                std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<uint8_t*>(buff_ + 1));
 
-                if (li == static_cast< std::size_t >('\xFF')) {
+                if (li == static_cast< std::size_t >(0xFF)) {
                     estimatesize_ = HDR_LI;
                     state(waitsize);
                     return error_code();
@@ -789,6 +804,7 @@ namespace boost {
                 li = endiancnv_copy(li);
                 state(waitheader);
                 header_data = octet_sequnce_ptr(new octet_sequnce(li));
+                header_buff_ = mutable_buffer(boost::asio::buffer(*header_data));
                 estimatesize_ = li;
                 return error_code();
             }
