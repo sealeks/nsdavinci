@@ -202,7 +202,7 @@ public:
         endpoint_type endpoint = *endpoint_iterator;
 
 #if defined(SESSION_PROT)
-        socket_.rootcoder()->request_str(std::string(20000, 'a'));
+        socket_.rootcoder()->request_str(std::string(13000, 'a'));
 #else
 #endif  
 
