@@ -350,7 +350,7 @@ namespace boost {
             // optimized rfc1006 data_sender_sequences   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
-         /*template<>
+         template<>
             class data_sender_sequences<const_sequences> : public basic_sender_sequences {
             public:
 
@@ -422,7 +422,7 @@ namespace boost {
                 octet_sequnce headercontinue_;
                 octet_sequnce headereof_;
 
-            };*/   
+            };  
 
 
 
@@ -1179,10 +1179,11 @@ namespace boost {
                     send_operation(stream_socket& sock, SendHandler handlr,
                             const ConstBufferSequence& buffers, message_flags flags) :
                     socket(sock),
+                    sendsize(boost::asio::buffer_size(buffers)),
                     handler(handlr),
                     sender_(sender_ptr(new data_sender<ConstBufferSequence>(buffers, sock.pdusize()))),
-                    flags_(flags),
-                    sendsize(boost::asio::buffer_size(buffers)) {
+                    flags_(flags)
+                    {
                     }
 
                     void start(const error_code& ec) {
@@ -1204,10 +1205,11 @@ namespace boost {
                 private:
 
                     stream_socket& socket;
+                    std::size_t sendsize;
                     SendHandler handler;
                     sender_ptr sender_;
                     message_flags flags_;
-                    std::size_t sendsize;
+                    
                 };
 
 
