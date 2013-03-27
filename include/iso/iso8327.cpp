@@ -257,7 +257,6 @@ namespace boost {
                         case RF_SPDU_ID:
                         case OA_SPDU_ID:
                         {
-                            coder->out()->clear();
                             break; //no data
                         }
                         default:
@@ -514,7 +513,8 @@ namespace boost {
                 return true;
             }
 
-            asn_coder_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data) {
+                std::size_t before = data->out()->size();
                 spdudata tmp(CN_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, PI_VERSION, WORK_PROT_VERSION);
@@ -523,23 +523,28 @@ namespace boost {
                     tmp.setPI(PI_CALLING, opt.ssap_calling());
                 if (!opt.ssap_called().empty())
                     tmp.setPI(PI_CALLED, opt.ssap_called());
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size() - before;
             }
 
-            asn_coder_ptr generate_header_OA(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data) {
+                data->out()->clear(); // no user data *ref X225 Tab 12
                 spdudata tmp(OA_SPDU_ID);
                 tmp.setPI(PI_VERSION, VERSION2);
-                //data->out()->clear(); // no user data *ref X225 Tab 12
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size();
             }
 
-            asn_coder_ptr generate_header_CDO(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data) {
+                std::size_t before = data->out()->size();
                 spdudata tmp(CDO_SPDU_ID);
                 tmp.setPI(PI_ENCLOSURE, ENCLOSURE_END);
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size() - before;
             }
 
-            asn_coder_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data) {
+                std::size_t before = data->out()->size();
                 spdudata tmp(AC_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                 tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
@@ -548,45 +553,56 @@ namespace boost {
                     tmp.setPI(PI_CALLING, opt.ssap_calling());
                 if (!opt.ssap_called().empty())
                     tmp.setPI(PI_CALLED, opt.ssap_called());
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size() - before;
             }
 
-            asn_coder_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data) {
+                data->out()->clear(); // no user data *ref X225 Tab 15                               
                 spdudata tmp(RF_SPDU_ID);
-                //data->out()->clear(); // no user data *ref X225 Tab 15
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 tmp.setPI(PI_SES_USERREQ, FU_WORK);
                 tmp.setPI(PI_VERSION, opt.reject_version());
                 tmp.setPI(PI_REASON, opt.refuse_reason());
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size();
             }
 
-            asn_coder_ptr generate_header_FN(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data) {
+                std::size_t before = data->out()->size();
                 spdudata tmp(FN_SPDU_ID);
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size() - before;
             }
 
-            asn_coder_ptr generate_header_DN(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data) {
+                std::size_t before = data->out()->size();
                 spdudata tmp(DN_SPDU_ID);
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size() - before;
             }
 
-            asn_coder_ptr generate_header_AB(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data) {
+                std::size_t before = data->out()->size();
                 spdudata tmp(AB_SPDU_ID);
                 tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size() - before;
             }
 
-            asn_coder_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data) {
+                data->out()->clear(); // no user data *ref X225  8.3.10.2                              
                 spdudata tmp(AA_SPDU_ID);
-                //data->out()->clear(); // no user data *ref X225  8.3.10.2             
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size();
             }
 
-            asn_coder_ptr generate_header_NF(const protocol_options& opt, asn_coder_ptr data) {
+            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data) {
+                std::size_t before = data->out()->size();
                 spdudata tmp(NF_SPDU_ID);
-                return tmp.sequence(data);
+                tmp.sequence(data);
+                return data->out()->size() - before;
             }
 
 
@@ -697,7 +713,7 @@ namespace boost {
             void receiver::put(std::size_t sz) {
                 if (!sz) return;
                 size_ += sz;
-                if (size_  >= estimatesize_) {
+                if (size_ >= estimatesize_) {
                     switch (state_) {
                         case waittype:
                         {
