@@ -397,7 +397,7 @@ namespace boost {
             void receiver::put(std::size_t sz) {
                 if (!sz) return;
                 size_ += sz;
-                if ((size_ + sz) >= estimatesize_) {
+                if (size_ >= estimatesize_) {
                     switch (state_) {
                         case waittkpt:
                         {
