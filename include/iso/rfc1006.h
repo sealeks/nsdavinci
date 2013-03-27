@@ -459,10 +459,6 @@ namespace boost {
                     return ready() ? 0 : buf_->size(sz);
                 }
 
-                std::size_t receive_size() const {
-                    return ready() ? 0 : buf_->receive_size();
-                }
-
                 tpdu_type type() const {
                     return type_;
                 }

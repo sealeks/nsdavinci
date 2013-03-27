@@ -517,14 +517,14 @@ namespace boost {
             }
 
             std::size_t size(std::size_t sz = 0);
-
-            std::size_t receive_size()  const  {
-                return boost::asio::buffer_size(buff());
-            }
-
+            
             virtual bool ready() const {
-                return !boost::asio::buffer_size(buff());
-            }
+                return buff().empty();
+            }            
+            
+            virtual bool overflowed() const {
+                return false;
+            }                 
 
         protected:
 
@@ -554,19 +554,15 @@ namespace boost {
 
         class basic_itu_sequences : public basic_sender_sequences {
         public:
-            
-             basic_itu_sequences(asn_coder_ptr codr, std::size_t limit =0 ) : 
-            basic_sender_sequences(codr->out()->buffers_ptr()) , coder_(codr),  
-                    limit_(limit) , limited_( limit && (codr->out()->size()> limit))
-                    {}     
-            
-            
-           /* virtual bool ready()  const  {
-                if (basic_sender_sequences::ready()) {
-                    return true;
-                }
-                return false;
-            }     */    
+
+            basic_itu_sequences(asn_coder_ptr codr, std::size_t limit = 0) :
+            basic_sender_sequences(codr->out()->buffers_ptr()), coder_(codr),
+            limit_(limit), limited_(limit && (codr->out()->size() > limit)) {
+            }
+
+            virtual bool overflowed() const {
+                return limited_;
+            }       
             
         protected:      
             
