@@ -434,25 +434,25 @@ namespace boost {
             //negotiate_x225impl_option
             bool negotiate_x225impl_option(const protocol_options& self, const protocol_options& dist, octet_type& errorreason);
 
-            asn_coder_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data); //CONNECT SPDU
+            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data); //CONNECT SPDU
 
-            asn_coder_ptr generate_header_OA(const protocol_options& opt, asn_coder_ptr data); //OVERFLOW ACCEPT SPDU
+            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data); //OVERFLOW ACCEPT SPDU
 
-            asn_coder_ptr generate_header_CDO(const protocol_options& opt, asn_coder_ptr data); //CONNECT DATA OVERFLOW SPDU            
+            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data); //CONNECT DATA OVERFLOW SPDU            
 
-            asn_coder_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data); //ACCEPT SPDU
+            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data); //ACCEPT SPDU
 
-            asn_coder_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data); //REFUSE  SPDU        
+            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data); //REFUSE  SPDU        
 
-            asn_coder_ptr generate_header_FN(const protocol_options& opt, asn_coder_ptr data); //FINISH SPDU            
+            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data); //FINISH SPDU            
 
-            asn_coder_ptr generate_header_DN(const protocol_options& opt, asn_coder_ptr data); //DISCONNECT  SPDU          
+            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data); //DISCONNECT  SPDU          
 
-            asn_coder_ptr generate_header_AB(const protocol_options& opt, asn_coder_ptr data); //ABORT SPDU                     
+            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data); //ABORT SPDU                     
 
-            asn_coder_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data); //ABORT ACCEPT  SPDU                              
+            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data); //ABORT ACCEPT  SPDU                              
 
-            asn_coder_ptr generate_header_NF(const protocol_options& opt, asn_coder_ptr data); //NOT FINISH  SPDU                      
+            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data); //NOT FINISH  SPDU                      
 
 
 
@@ -544,42 +544,48 @@ namespace boost {
             protected:
 
                 void constructCN(const protocol_options& opt, asn_coder_ptr data) {
-                    std::size_t inc_size = data->out()->size();
-                    generate_header_CN(opt, data);
-                    inc_size = data->out()->size() - inc_size;
+                    std::size_t inc_size = generate_header_CN(opt, data);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(data, EXTEDED_USERDATA_LIMIT + inc_size));
                 }
 
                 void constructOA(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_OA(opt, data)));
+                    generate_header_OA(opt, data);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
                 }
 
                 void constructCDO(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_CDO(opt, data)));
+                    generate_header_CDO(opt, data);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
                 }
 
                 void constructAC(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_AC(opt, data)));
+                    generate_header_AC(opt, data);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
                 }
 
                 void constructRF(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_RF(opt, data)));
+                    generate_header_RF(opt, data);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
                 }
 
                 void constructFN(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_FN(opt, data)));
+                    generate_header_FN(opt, data);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
                 }
 
                 void constructAB(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_AB(opt, data)));
+                    generate_header_AB(opt, data);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
                 }
 
                 void constructDN(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_DN(opt, data)));
+                    generate_header_DN(opt, data);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
                 }
 
                 void constructAA(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_AA(opt, data)));
+                    generate_header_AA(opt, data);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
                 }
 
                 spdu_type type_;
