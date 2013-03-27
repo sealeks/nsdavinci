@@ -203,6 +203,7 @@ namespace boost {
             }
 
             asn_coder_ptr spdudata::sequence(asn_coder_ptr coder) const {
+                std::size_t codersize = coder->out()->size();
                 octet_sequnce tmp;
                 spdudata_type::const_iterator strtit = value_->end();
                 for (spdudata_type::const_iterator it = value_->begin(); it != value_->end(); ++it) {
@@ -240,22 +241,16 @@ namespace boost {
                                     raw_back_insert(tmp, inttype_to_raw(PI_DATAOVERFLOW));
                                     raw_back_insert(tmp, to_triple_size(1));
                                     raw_back_insert(tmp, inttype_to_raw(MORE_DATA));
+                                    codersize = EXTEDED_USERDATA_LIMIT;
 
                                     raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
-                                    raw_back_insert(tmp, to_triple_size(EXTEDED_USERDATA_LIMIT));
-                                } else {
+                                    raw_back_insert(tmp, to_triple_size(codersize));
+                                }
+                                else {
                                     raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
                                     raw_back_insert(tmp, to_triple_size(coder->out()->size()));
                                 }
                             }
-                            break;
-                        }
-                        case CDO_SPDU_ID:
-                        {
-                            raw_back_insert(tmp, inttype_to_raw(PGI_USERDATA));
-                            raw_back_insert(tmp, to_triple_size(coder->out()->size() + (1 + ( (coder->out()->size()+ 1) >0x100) ? 3 : 1)));
-                            raw_back_insert(tmp, inttype_to_raw(PI_OVERFLOWUSERDATA));
-                            raw_back_insert(tmp, to_triple_size(coder->out()->size()));
                             break;
                         }
                         case AA_SPDU_ID:
@@ -273,8 +268,9 @@ namespace boost {
                     }
                 }
                 coder->out()->add(octet_sequnce(tmp.begin(), tmp.end()), coder->out()->buffers().begin());
+                codersize += tmp.size();
                 octet_sequnce header(inttype_to_raw(type_));
-                raw_back_insert(header, to_triple_size(coder->out()->size()));
+                raw_back_insert(header, to_triple_size(codersize));
                 coder->out()->add(octet_sequnce(header.begin(), header.end()), coder->out()->buffers().begin());
                 return coder;
             }
@@ -383,8 +379,8 @@ namespace boost {
             }
 
             const octet_sequnce& protocol_options::data() const {
-                return vars_->existPI(PGI_USERDATA) ? vars_->getPI(PGI_USERDATA) : 
-                    (vars_->existPI(PGI_EXUSERDATA) ? vars_->getPI(PGI_EXUSERDATA) :  vars_->getPGI(PGI_USERDATA , PI_OVERFLOWUSERDATA));
+                return vars_->existPI(PGI_USERDATA) ? vars_->getPI(PGI_USERDATA) :
+                        vars_->getPI(PGI_EXUSERDATA);
             }
 
             octet_type protocol_options::accept_version() const {
@@ -505,13 +501,13 @@ namespace boost {
                 std::cout << "Negotiate session level: LOCAL =" << self << " DISTANCE =" << dist << std::endl;
 #endif                
                 if (!(dist.user_requirement() & FU_WORK) || dist.extendedSPDU()) {
-                    errorreason =  DR_REASON_NEGOT;
+                    errorreason = DR_REASON_NEGOT;
                     return false;
                 }
 
 #ifndef CHECK_ISO_SELECTOR        
                 if (!self.ssap_called().empty() && self.ssap_called() != dist.ssap_called()) {
-                    errorreason =  DR_REASON_ADDRESS;
+                    errorreason = DR_REASON_ADDRESS;
                     return false;
                 }
 #endif                      
@@ -528,21 +524,21 @@ namespace boost {
                 if (!opt.ssap_called().empty())
                     tmp.setPI(PI_CALLED, opt.ssap_called());
                 return tmp.sequence(data);
-            }                           
-            
+            }
+
             asn_coder_ptr generate_header_OA(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(OA_SPDU_ID);
                 tmp.setPI(PI_VERSION, VERSION2);
                 //data->out()->clear(); // no user data *ref X225 Tab 12
                 return tmp.sequence(data);
-            }                    
-            
+            }
+
             asn_coder_ptr generate_header_CDO(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(CDO_SPDU_ID);
-                tmp.setPGI(PI_ENCLOSURE, ENCLOSURE_END);
+                tmp.setPI(PI_ENCLOSURE, ENCLOSURE_END);
                 return tmp.sequence(data);
-            }         
-            
+            }
+
             asn_coder_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data) {
                 spdudata tmp(AC_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
@@ -583,7 +579,7 @@ namespace boost {
             }
 
             asn_coder_ptr generate_header_AA(const protocol_options& opt, asn_coder_ptr data) {
-                spdudata tmp(AA_SPDU_ID); 
+                spdudata tmp(AA_SPDU_ID);
                 //data->out()->clear(); // no user data *ref X225  8.3.10.2             
                 return tmp.sequence(data);
             }
@@ -593,7 +589,7 @@ namespace boost {
                 return tmp.sequence(data);
             }
 
-            
+
             //sender
 
             sender::sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data) :
@@ -613,7 +609,7 @@ namespace boost {
                     {
                         constructCDO(opt, data);
                         break;
-                    }                    
+                    }
                     case AC_SPDU_ID:
                     {
                         constructAC(opt, data);
@@ -649,8 +645,8 @@ namespace boost {
                     }
                 }
             }
-            
-            
+
+
 
             //receiver
 
@@ -770,7 +766,7 @@ namespace boost {
                 }
                 std::size_t li = static_cast<std::size_t> (*boost::asio::buffer_cast<uint8_t*>(buff_ + 1));
 
-                if (li == static_cast< std::size_t >(0xFF)) {
+                if (li == static_cast<std::size_t> (0xFF)) {
                     estimatesize_ = HDR_LI;
                     state(waitsize);
                     return error_code();
@@ -810,7 +806,7 @@ namespace boost {
             }
 
             error_code receiver::check_header() {
-                options_ = protocol_options_ptr (new protocol_options(header_buff_));
+                options_ = protocol_options_ptr(new protocol_options(header_buff_));
                 state(first_in_seq_ ? waittype : complete);
                 return error_code();
             }
