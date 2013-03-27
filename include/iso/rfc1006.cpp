@@ -452,7 +452,7 @@ namespace boost {
                 if (hdr != TKPT_START) {
                     return errcode(ER_PROTOCOL);
                 }
-                int16_t pdsz = endiancnv_copy<int16_t > (buffer_to_raw(buff_, 2, 2));
+                uint16_t pdsz = endiancnv_copy<uint16_t > (buffer_to_raw(buff_, 2, 2));
                 if (pdsz < 0) {
                     return errcode(ER_PROTOCOL);
                 }
