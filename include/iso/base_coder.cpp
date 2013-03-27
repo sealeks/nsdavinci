@@ -330,18 +330,19 @@ namespace boost {
         std::size_t base_output_coder::load_sequence(const_sequences& val, std::size_t lim) {
             if (!lim) return 0;
             std::size_t rslt = 0;
-            for (const_sequences::iterator it = listbuffers_->begin(); it != listbuffers_->end(); ++it) {
+            const_sequences::iterator it = listbuffers_->begin();
+            while ((it != listbuffers_->end()) && (rslt<lim)) {
                 std::size_t itbuffsz = boost::asio::buffer_size(*it);
                 if ((itbuffsz+rslt)>lim){
                     val.push_back(boost::asio::buffer(*it, lim - rslt  ));
                     *it = *it + (lim - rslt);
-                    size(lim - rslt);
+                    size_ = size(lim - rslt);
                     return lim;
                 }
                 else{
                     val.push_back(*it);
-                    listbuffers_->erase(it);
-                    size(itbuffsz);
+                    it =listbuffers_->erase(it);
+                    size_ = size(itbuffsz);
                     rslt+=itbuffsz;
                     if (rslt==lim) 
                         return rslt;

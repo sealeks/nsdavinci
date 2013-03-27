@@ -557,18 +557,16 @@ namespace boost {
             
              basic_itu_sequences(asn_coder_ptr codr, std::size_t limit =0 ) : 
             basic_sender_sequences(codr->out()->buffers_ptr()) , coder_(codr),  
-                    limit_(limit) , limited_( limit && (codr->out()->buffers().size()> limit))
+                    limit_(limit) , limited_( limit && (codr->out()->size()> limit))
                     {}     
             
             
-            virtual bool ready()  const  {
+           /* virtual bool ready()  const  {
                 if (basic_sender_sequences::ready()) {
-                    if (!limited_)
-                        coder_->out()->clear();
                     return true;
                 }
                 return false;
-            }         
+            }     */    
             
         protected:      
             
@@ -584,7 +582,7 @@ namespace boost {
             
             const_sequences&  prepare() const {
                 if (limitedbuff_)
-                    *limitedbuff_;
+                    return *limitedbuff_;
                 limitedbuff_ =  const_sequences_ptr( new const_sequences());
                 coder_->out()->load_sequence(*limitedbuff_, limit_);
                 return *limitedbuff_;

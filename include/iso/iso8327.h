@@ -172,18 +172,16 @@ namespace boost {
 
             // PI Data Overflow *ref X225 Tab 11 and 8.3.1.19
             const varid_type PI_DATAOVERFLOW = 60;
-
-            // PI Overflow User data *ref X225 Tab 13 and 8.3.3.4        
-            const varid_type PI_OVERFLOWUSERDATA = 22; // pi here              
             
+
             // PI Data Overflow *ref X225 Tab 11 and 8.3.1.19
-            const octet_type MORE_DATA = 1;            
+            const octet_type MORE_DATA = 1;
 
 
             // PI Enclosure Item *ref X225 Tab 13 .. 46 and 8.3.3.3            
             const varid_type PI_ENCLOSURE = 25;
-            const octet_type ENCLOSURE_BEGIN =1;
-            const octet_type ENCLOSURE_END = 2;            
+            const octet_type ENCLOSURE_BEGIN = 1;
+            const octet_type ENCLOSURE_END = 2;
 
 
             // PI Transport Disconnect *ref X225 Tab 15, 16, 19  and 8.3.5.6            
@@ -437,11 +435,11 @@ namespace boost {
             bool negotiate_x225impl_option(const protocol_options& self, const protocol_options& dist, octet_type& errorreason);
 
             asn_coder_ptr generate_header_CN(const protocol_options& opt, asn_coder_ptr data); //CONNECT SPDU
-            
+
             asn_coder_ptr generate_header_OA(const protocol_options& opt, asn_coder_ptr data); //OVERFLOW ACCEPT SPDU
-            
+
             asn_coder_ptr generate_header_CDO(const protocol_options& opt, asn_coder_ptr data); //CONNECT DATA OVERFLOW SPDU            
-            
+
             asn_coder_ptr generate_header_AC(const protocol_options& opt, asn_coder_ptr data); //ACCEPT SPDU
 
             asn_coder_ptr generate_header_RF(const protocol_options& opt, asn_coder_ptr data); //REFUSE  SPDU        
@@ -550,16 +548,19 @@ namespace boost {
             protected:
 
                 void constructCN(const protocol_options& opt, asn_coder_ptr data) {
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_CN(opt, data), EXTEDED_USERDATA_LIMIT));
+                    std::size_t inc_size = data->out()->size();
+                    generate_header_CN(opt, data);
+                    inc_size = data->out()->size() - inc_size;
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data, EXTEDED_USERDATA_LIMIT + inc_size));
                 }
-                
+
                 void constructOA(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_OA(opt, data)));
-                }                             
-                
+                }
+
                 void constructCDO(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_CDO(opt, data)));
-                }                
+                }
 
                 void constructAC(const protocol_options& opt, asn_coder_ptr data) {
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(generate_header_AC(opt, data)));
@@ -932,11 +933,13 @@ namespace boost {
                                         return;
                                         break;
                                     }
-                                    case OA_SPDU_ID:{
-                                        sender_= sender_ptr(new sender(CDO_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                    case OA_SPDU_ID:
+                                    {
+                                        sender_ = sender_ptr(new sender(CDO_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                        receiver_ = receiver_ptr(new receiver());
                                         state(request);
                                         operator()(ec, 0);
-                                        return;               
+                                        return;
                                     }
                                     default:
                                     {
@@ -1267,8 +1270,9 @@ namespace boost {
                     enum stateconnection {
                         response,
                         request,
+                        overflow,
                         reject,
-                        refuse    
+                        refuse
                     };
 
                 public:
@@ -1311,6 +1315,17 @@ namespace boost {
                                     exit_handler(ec);
                                     return;
                                 }
+                                case overflow:
+                                {
+                                    sender_->size(bytes_transferred);
+                                    if (!sender_->ready()) {
+                                        socket.super_type::async_send(sender_->pop(), 0, *this);
+                                        return;
+                                    }
+                                    state(response);
+                                    operator()(ec, 0);
+                                    return;
+                                }                                
                                 case reject:
                                 {
                                     sender_->size(bytes_transferred);
@@ -1359,7 +1374,7 @@ namespace boost {
                                         octet_type errorreason = 0;
 
                                         socket.rootcoder()->in()->add(receiver_->options().data());
-                                        
+
                                         bool continiue_ = receiver_->options().overflow();
 
                                         if (!negotiate_x225impl_option(socket.session_option(), receiver_->options(), errorreason) ||
@@ -1375,7 +1390,7 @@ namespace boost {
                                             errorrefuse_ = ER_PROTOPT;
                                             operator()(ec, 0);
                                             return;
-                                        }                                        
+                                        }
 
                                         // Netotiation success send AC
                                         socket.session_version(receiver_->options().accept_version());
@@ -1383,36 +1398,51 @@ namespace boost {
                                             socket.maxTPDU(receiver_->options().maxTPDU_src(), receiver_->options().maxTPDU_dist());
                                         }     
                                         socket.user_requirement(receiver_->options().user_requirement());*/
-                                                                             
+
                                         if (receiver_->options().overflow()) {
                                             sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder()));
-                                            state(request);
+                                            receiver_= receiver_ptr(new receiver());
+                                            state(overflow);
+                                            
                                             operator()(ec, 0);
-                                            return;                                             
-                                        }                                        
-                                        
+                                            return;
+                                        }
+
                                         sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder()));
                                         state(request);
                                         operator()(ec, 0);
                                         return;
                                         break;
                                     }
-                                    case CDO_SPDU_ID:{
-                                        
+                                    case CDO_SPDU_ID:
+                                    {
+
                                         socket.rootcoder()->in()->add(receiver_->options().data());
-                                        
-                                         if (!receiver_->options().endSPDU()) {
+
+                                        if (!receiver_->options().endSPDU()) {
                                             sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder()));
-                                            state(request);
+                                            receiver_ = receiver_ptr(new receiver());
+                                            state(overflow);
                                             operator()(ec, 0);
-                                            return;                                             
+                                            return;
                                         }
-                                         else {
+                                        else {
+                                            if (!socket.negotiate_session_accept()) {
+                                                protocol_options options_ = socket.session_option();
+                                                options_.refuse_reason(DR_REASON_USER);
+
+                                                sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder()));
+                                                state(reject);
+                                                errorrefuse_ = ER_PROTOPT;
+                                                operator()(ec, 0);
+                                                return;
+                                            }
                                             sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder()));
                                             state(request);
                                             operator()(ec, 0);
-                                            return;                                             
-                                         }                       
+                                            return;
+                                        }
+                                        break;
                                     }
                                     default:
                                     {
