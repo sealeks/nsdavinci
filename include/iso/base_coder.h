@@ -1,9 +1,7 @@
-/* 
- * File:   iso.cpp
- * Author: sealeks@mail.ru
- * 
- * 
- */
+//  Copyright 2013 Alexeev Sergey sealeks@mail.ru
+
+//  Distributed under the Boost Software License, Version 1.0.
+//  See http://www.boost.org/LICENSE_1_0.txt
 
 #ifndef         ISOARCHIVESTREAM_H_H
 #define         ISOARCHIVESTREAM_H_H
