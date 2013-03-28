@@ -116,6 +116,7 @@ namespace boost {
             //  User data limitation  *ref X225 8.3.1.19
             const std::size_t SIMPLE_USERDATA_LIMIT = 512;
             const std::size_t EXTEDED_USERDATA_LIMIT = 10240;
+            const std::size_t SERVICE_SPDU_CONSTRAINTS = 65539 - 100; //(SI LI reserved);
 
 
 
@@ -196,9 +197,6 @@ namespace boost {
             const varid_type PI_REASON = 50;
 
             // see Disconnection  REASON CODE  iso.h
-
-
-
 
 
 
@@ -692,12 +690,11 @@ namespace boost {
                     return errcode_;
                 }
 
+                error_code errcode(const error_code& err);
 
             private:
 
                 operation_state state(operation_state val);
-
-                error_code errcode(const error_code& err);
 
                 void reject_reason(octet_type val);
 
@@ -867,8 +864,13 @@ namespace boost {
                     }
 
                     void start(const error_code& ec) {
-                        if (!ec)
+                        if (!ec) {
+                            if (!socket.check_size_constrants(CN_SPDU_ID)) {
+                                state(refuse);
+                                receiver_->errcode(ER_NOBUFFER);
+                            }
                             operator()(ec, 0);
+                        }
                         else
                             exit_handler(ec);
                     }
@@ -953,15 +955,8 @@ namespace boost {
                                         operator()(ec, 0);
                                         return;
                                     }
-                                    default:
-                                    {
-
-                                    }
                                 }
                                 break;
-                            }
-                            default:
-                            {
                             }
                         }
                         // allways  transport disconnect
@@ -1456,14 +1451,8 @@ namespace boost {
                                         }
                                         break;
                                     }
-                                    default:
-                                    {
-                                    }
                                 }
                                 break;
-                            }
-                            default:
-                            {
                             }
                         }
                         // unexpected
@@ -1895,14 +1884,8 @@ namespace boost {
                                         operator()(ec, 0);
                                         return false;
                                     }
-                                    default:
-                                    {
-                                    }
                                 }
                                 break;
-                            }
-                            default:
-                            {
                             }
                         }
                         // unexpected
@@ -2249,6 +2232,11 @@ namespace boost {
 
                 error_code connect_impl(const endpoint_type& peer_endpoint,
                         error_code& ec) {
+
+                    if (!check_size_constrants(CN_SPDU_ID)) {
+                        return connect_impl_exit(ER_NOBUFFER);
+                    }
+
                     if (super_type::connect(peer_endpoint, ec))
                         return connect_impl_exit(ec);
 
@@ -2285,9 +2273,6 @@ namespace boost {
                                             return connect_impl_exit(receiver_->reject_reason() ? errorcode_by_reason(receiver_->reject_reason()) : ER_REFUSE);
                                         }
                                     }
-                                }
-                                default:
-                                {
                                 }
                             }
                             // allways  transport disconnect
@@ -2542,6 +2527,13 @@ namespace boost {
                     error_code ecc;
                     super_type::release(ecc);
                     return 0;
+                }
+
+                bool check_size_constrants(spdu_type tp) {
+                    if (tp == DT_SPDU_ID) return true;
+                    if (tp == CN_SPDU_ID)
+                        return rootcoder()->out()->size() <= (SERVICE_SPDU_CONSTRAINTS + EXTEDED_USERDATA_LIMIT);
+                    return rootcoder()->out()->size() <= SERVICE_SPDU_CONSTRAINTS;
                 }
 
                 mutable_buffer response_buffer() {

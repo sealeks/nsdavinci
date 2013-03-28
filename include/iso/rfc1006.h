@@ -817,9 +817,6 @@ namespace boost {
                                 handler(receiver_->errcode());
                                 return;
                             }
-                            default:
-                            {
-                            }
                         }
                         // Release by means implicit variant  *ref X224 6.7.1.4
                         socket.async_internal_close();
@@ -1079,9 +1076,6 @@ namespace boost {
                                 state(refuse);
                                 operator()(ec, 0);
                                 return;
-                            }
-                            default:
-                            {
                             }
                         }
                         // Release by means implicit variant  *ref X224 6.7.1.4
@@ -1422,9 +1416,6 @@ namespace boost {
                                 operator()(ec, 0);
                                 return;
                                 break;
-                            }
-                            default:
-                            {
                             }
                         }
                         // Release by means implicit variant  *ref X224 6.7.1.4
