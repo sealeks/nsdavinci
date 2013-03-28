@@ -331,26 +331,25 @@ namespace boost {
             if (!lim) return 0;
             std::size_t rslt = 0;
             const_sequences::iterator it = listbuffers_->begin();
-            while ((it != listbuffers_->end()) && (rslt<lim)) {
+            while ((it != listbuffers_->end()) && (rslt < lim)) {
                 std::size_t itbuffsz = boost::asio::buffer_size(*it);
-                if ((itbuffsz+rslt)>lim){
-                    val.push_back(boost::asio::buffer(*it, lim - rslt  ));
+                if ((itbuffsz + rslt) > lim) {
+                    val.push_back(boost::asio::buffer(*it, lim - rslt));
                     *it = *it + (lim - rslt);
                     size_ = size(lim - rslt);
                     return lim;
                 }
-                else{
+                else {
                     val.push_back(*it);
-                    it =listbuffers_->erase(it);
+                    it = listbuffers_->erase(it);
                     size_ = size(itbuffsz);
-                    rslt+=itbuffsz;
-                    if (rslt==lim) 
+                    rslt += itbuffsz;
+                    if (rslt == lim)
                         return rslt;
                 }
             }
             return rslt;
         }
-                    
 
         bool base_output_coder::bind(octet_sequnce& vl) {
             vl.clear();

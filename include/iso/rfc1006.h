@@ -350,7 +350,7 @@ namespace boost {
             // optimized rfc1006 data_sender_sequences   //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
-         template<>
+            template<>
             class data_sender_sequences<const_sequences> : public basic_sender_sequences {
             public:
 
@@ -368,7 +368,7 @@ namespace boost {
                     std::size_t buffsize = 0;
                     const_sequences::iterator it = buff().begin();
                     const_sequences::iterator insert_pos = it;
-                    
+
 
                     if (constraint_size && (pdusz >= constraint_size)) {
                         // optimize here ,  buffer size is known
@@ -431,7 +431,7 @@ namespace boost {
                 octet_sequnce headercontinue_;
                 octet_sequnce headereof_;
 
-            };  
+            };
 
 
 
@@ -510,7 +510,7 @@ namespace boost {
             protected:
 
                 void constructDT(const ConstBufferSequence& buff, const tpdu_size& pdusize, std::size_t constraint_size) {
-                    buf_ = sender_sequnces_ptr(new data_sender_sequences<ConstBufferSequence > (buff, pdusize, constraint_size ));
+                    buf_ = sender_sequnces_ptr(new data_sender_sequences<ConstBufferSequence > (buff, pdusize, constraint_size));
                 }
 
             };
@@ -1167,7 +1167,7 @@ namespace boost {
 
                     return send_impl(buffers, flags, ec, constraint_size);
                 }
-                
+
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
@@ -1182,13 +1182,12 @@ namespace boost {
                 public:
 
                     send_operation(stream_socket& sock, SendHandler handlr,
-                            const ConstBufferSequence& buffers, message_flags flags, std::size_t constraint_size ) :
+                            const ConstBufferSequence& buffers, message_flags flags, std::size_t constraint_size) :
                     socket(sock),
                     sendsize(boost::asio::buffer_size(buffers)),
                     handler(handlr),
                     sender_(sender_ptr(new data_sender<ConstBufferSequence>(buffers, sock.pdusize(), constraint_size))),
-                    flags_(flags)
-                    {
+                    flags_(flags) {
                     }
 
                     void start(const error_code& ec) {
@@ -1214,7 +1213,7 @@ namespace boost {
                     SendHandler handler;
                     sender_ptr sender_;
                     message_flags flags_;
-                    
+
                 };
 
 
@@ -1227,7 +1226,7 @@ namespace boost {
                         BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint_size = 0) {
 
                     async_send(buffers, 0, handler, constraint_size);
-                }              
+                }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_write_some(const ConstBufferSequence& buffers,
@@ -1249,8 +1248,8 @@ namespace boost {
                             send_operation_type(*this, handler, buffers, flags, constraint_size), ready() ? error_code() : ER_INPROGRESS));
 
                 }
-                
-    
+
+
 
 
 

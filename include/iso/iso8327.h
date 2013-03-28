@@ -541,9 +541,9 @@ namespace boost {
                 }
 
                 std::size_t constraint() const {
-                    return buf_ ? buf_->constraint() : 0 ;
+                    return buf_ ? buf_->constraint() : 0;
                 }
-                
+
             protected:
 
                 void constructCN(const protocol_options& opt, asn_coder_ptr data) {
@@ -1610,7 +1610,7 @@ namespace boost {
                     sender_ptr sender_;
                     message_flags flags_;
                     std::size_t constraint;
-                    
+
                 };
 
 
@@ -1623,14 +1623,14 @@ namespace boost {
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint =0 ) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint = 0) {
 
                     async_send(buffers, 0, handler, constraint);
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_write_some(const ConstBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint =0 ) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint = 0) {
 
                     async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler, constraint);
                 }
@@ -1638,7 +1638,7 @@ namespace boost {
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
                         message_flags flags,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler,  std::size_t constraint =0) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint = 0) {
 
                     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
@@ -1701,7 +1701,7 @@ namespace boost {
                         if (!ec) {
                             sender_->size(bytes_transferred);
                             if (!sender_->ready()) {
-                                socket.super_type::async_send(sender_->pop(), 0 ,* this,  sender_->constraint());
+                                socket.super_type::async_send(sender_->pop(), 0, * this, sender_->constraint());
                                 return;
                             }
                         }
@@ -1973,8 +1973,8 @@ namespace boost {
                 }
 
 
-                
-                
+
+
 
 
 
@@ -2064,14 +2064,14 @@ namespace boost {
                             response_operation_type(*this, handler), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 
                 }
-                
-                
-                
-                
-                
-                
-                
-                
+
+
+
+
+
+
+
+
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  Conversation (request-response) operation from coder  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
@@ -2120,11 +2120,11 @@ namespace boost {
                                     boost::bind(&operation_type::exit_handler, * this,
                                     boost::asio::placeholders::error));
                             return;
-                            }
+                        }
                         handler(ec);
                     }
-                    
-                    void exit_handler(const error_code& ec){
+
+                    void exit_handler(const error_code& ec) {
                         handler(ec);
                     }
 
@@ -2156,12 +2156,6 @@ namespace boost {
                             conversation_operation_type(*this, handler)));
 
                 }
-                
-                
-                
-                
-                
-                
 
                 asn_coder_ptr rootcoder() {
                     return rootcoder_;
@@ -2583,7 +2577,6 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             class socket_acceptor : protected boost::itu::rfc1006impl::socket_acceptor {
-                
                 typedef boost::itu::rfc1006impl::socket_acceptor super_type;
 
                 friend class stream_socket;
