@@ -379,11 +379,10 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
             class stream_socket : protected boost::itu::x225impl::stream_socket {
-                
                 friend class socket_acceptor;
                 typedef boost::itu::x225impl::stream_socket super_type;
-                                
-                
+
+
 
             public:
 
@@ -421,19 +420,19 @@ namespace boost {
 
                 //using super_type::ready;
                 using super_type::is_acceptor;
-                
+
                 /*using super_type::request;
                 using super_type::async_request;                     
                 using super_type::response;
                 using super_type::async_response;   */
                 using super_type::conversation;
-                using super_type::async_conversation;         
-                
+                using super_type::async_conversation;
+
             protected:
 
 
                 using super_type::get_service;
-                using super_type::get_implementation;                
+                using super_type::get_implementation;
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -443,13 +442,13 @@ namespace boost {
                 explicit stream_socket(boost::asio::io_service& io_service, const presentation_selector& psel = presentation_selector(),
                         const presentation_connection_option& connectoption = presentation_connection_option())
                 : super_type(io_service, psel.sselector(), asn_coder_ptr(new presentation_coder_type())),
-                 selector_(psel), ppm_(new presentation_pm(connectoption)) {
+                selector_(psel), ppm_(new presentation_pm(connectoption)) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const presentation_selector& psel = presentation_selector())
                 : super_type(io_service, endpoint, psel.sselector(), asn_coder_ptr(new presentation_coder_type())),
-                 selector_(psel), ppm_(new presentation_pm()) {
+                selector_(psel), ppm_(new presentation_pm()) {
                 }
 
 
@@ -550,7 +549,7 @@ namespace boost {
                     }
 
                     super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run,
-                            connect_op<ConnectHandler > (this , handler), boost::asio::placeholders::error));
+                            connect_op<ConnectHandler > (this, handler), boost::asio::placeholders::error));
                 }
 
 
@@ -705,11 +704,11 @@ namespace boost {
                 }
 
                 presentation_asn_coder_ptr coder() {
-                    return  boost::static_pointer_cast<presentation_coder_type, basic_coder >(super_type::rootcoder());
+                    return boost::static_pointer_cast<presentation_coder_type, basic_coder > (super_type::rootcoder());
                 }
 
                 presentation_asn_coder_ptr coder() const {
-                    return boost::static_pointer_cast<presentation_coder_type, basic_coder >(super_type::rootcoder());
+                    return boost::static_pointer_cast<presentation_coder_type, basic_coder > (super_type::rootcoder());
                 }
 
                 presentation_selector& selector() {
@@ -720,18 +719,18 @@ namespace boost {
                     return selector_;
                 }
 
-               /*virtual bool negotiate_session_accept(const std::string& req, std::string& resp) {
-                    coder()->clear_input();
-                    coder()->input().add(octet_sequnce(req.begin(), req.end()));
-                    switch (parse_CP()) {
-                        case error_negotiate: return false;
-                        default:
-                        {
-                        }
-                    }
-                    resp = coder()->request_str();
-                    return true;
-                }*/ 
+                /*virtual bool negotiate_session_accept(const std::string& req, std::string& resp) {
+                     coder()->clear_input();
+                     coder()->input().add(octet_sequnce(req.begin(), req.end()));
+                     switch (parse_CP()) {
+                         case error_negotiate: return false;
+                         default:
+                         {
+                         }
+                     }
+                     resp = coder()->request_str();
+                     return true;
+                 }*/
 
                 virtual bool negotiate_presentation_accept() {
                     return true;
@@ -792,9 +791,8 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             class socket_acceptor : public boost::itu::x225impl::socket_acceptor {
-                
                 typedef boost::itu::x225impl::socket_acceptor super_type;
-                
+
                 friend class stream_socket;
 
             public:
@@ -829,7 +827,7 @@ namespace boost {
 
                 using super_type::get_service;
                 using super_type::get_implementation;
-                
+
             public:
 
 
@@ -845,7 +843,7 @@ namespace boost {
 
                 socket_acceptor(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const presentation_connection_option& opt, bool reuse_addr = true)
-                : super_type(io_service, endpoint, session_selector() , reuse_addr), option_(opt) {
+                : super_type(io_service, endpoint, session_selector(), reuse_addr), option_(opt) {
                 }
 
 

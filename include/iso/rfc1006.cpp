@@ -51,8 +51,8 @@ namespace boost {
                     }
                     else {
                         uint16_t tmp;
-                        if (raw_to_inttype( octet_sequnce (pref.begin() + (pref.size() <3 ? 0 : (pref.size() - 2)), pref.end()) , tmp)) {
-                            preferred(endiancnv_copy( tmp), bas);
+                        if (raw_to_inttype(octet_sequnce(pref.begin() + (pref.size() < 3 ? 0 : (pref.size() - 2)), pref.end()), tmp)) {
+                            preferred(endiancnv_copy(tmp), bas);
                         }
                         else {
                             basic(bas);
@@ -76,7 +76,7 @@ namespace boost {
             void tpdu_size::basic(octet_type val) {
                 basic_ = val;
                 size_ = size_from_octet(basic_);
-            }            
+            }
 
             std::size_t tpdu_size::size_from_octet(octet_type val) {
                 switch (val) {

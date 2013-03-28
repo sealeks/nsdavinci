@@ -28,8 +28,6 @@ namespace boost {
 
 
         //// OID_TYPE
-        
-
 
         class oid_type : public std::vector<oidindx_type> {
         public:
@@ -118,14 +116,14 @@ namespace boost {
 
         inline static octet_sequnce buffer_to_raw(const mutable_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
             std::size_t buffsize = boost::asio::buffer_size(buff);
-            len = (buffsize>beg)  ?  ( ((buffsize>(beg+len)) && len) ? len : (buffsize -beg)) : 0;
+            len = (buffsize > beg) ? (((buffsize > (beg + len)) && len) ? len : (buffsize - beg)) : 0;
             return len ? octet_sequnce(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
                     boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len)) : octet_sequnce();
         }
 
         inline static octet_sequnce buffer_to_raw(const const_buffer& buff, std::size_t beg = 0, std::size_t len = 0) {
             std::size_t buffsize = boost::asio::buffer_size(buff);
-            len = (buffsize>beg)  ?  ( ((buffsize>(beg+len)) && len) ? len : (buffsize -beg)) : 0;
+            len = (buffsize > beg) ? (((buffsize > (beg + len)) && len) ? len : (buffsize - beg)) : 0;
             return len ? octet_sequnce(boost::asio::buffer_cast<const octet_type*>(buff) + beg,
                     boost::asio::buffer_cast<const octet_type*>(buff) + (beg + len)) : octet_sequnce();
         }
@@ -221,7 +219,7 @@ namespace boost {
             std::size_t size(std::size_t sz = 0) const {
                 return (sz < size_) ? (size_ - sz) : 0;
             }
-            
+
             std::size_t load_sequence(const_sequences& val, std::size_t lim);
 
             virtual void clear() {
@@ -432,8 +430,8 @@ namespace boost {
             typedef INPUT_TYPE input_coder_type;
             typedef OUTPUT_TYPE output_coder_type;
 
-            asn_coder_templ(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING) : 
-               basic_coder(new input_coder_type(), new output_coder_type(rul)), abstract_syntax_(asx) {
+            asn_coder_templ(const oid_type& asx = oid_type(), encoding_rule rul = NULL_ENCODING) :
+            basic_coder(new input_coder_type(), new output_coder_type(rul)), abstract_syntax_(asx) {
             }
 
             input_coder_type& input() {
@@ -464,11 +462,11 @@ namespace boost {
         };
 
 
- /*      static inline asn_coder_ptr create_simple_data(const std::string& val) {
-            asn_coder_ptr tmp = asn_coder_ptr(new simple_trans_data());
-            tmp->request_str(val);
-            return tmp;
-        }*/ 
+        /*      static inline asn_coder_ptr create_simple_data(const std::string& val) {
+                   asn_coder_ptr tmp = asn_coder_ptr(new simple_trans_data());
+                   tmp->request_str(val);
+                   return tmp;
+               }*/
 
         //////////////////////////////////////////////////////////////////////////////             
 
@@ -495,19 +493,18 @@ namespace boost {
         //////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class basic_sender_sequences {
-            
             friend class basic_itu_sequences;
-            
+
         public:
 
-            basic_sender_sequences() : bufferptr_(new const_sequences()), buffer_(*bufferptr_)  ,size_(0) {
+            basic_sender_sequences() : bufferptr_(new const_sequences()), buffer_(*bufferptr_), size_(0) {
             }
 
-            basic_sender_sequences(const_sequences_ptr bf) : bufferptr_(bf), buffer_(*bufferptr_) , size_(0) {
+            basic_sender_sequences(const_sequences_ptr bf) : bufferptr_(bf), buffer_(*bufferptr_), size_(0) {
             }
-            
+
             basic_sender_sequences(const_sequences& bf) : buffer_(bf), size_(0) {
-            }            
+            }
 
             virtual ~basic_sender_sequences() {
             }
@@ -517,28 +514,28 @@ namespace boost {
             }
 
             std::size_t size(std::size_t sz = 0);
-            
+
             virtual bool ready() const {
                 return buff().empty();
-            }            
-            
+            }
+
             virtual bool overflowed() const {
                 return false;
-            }      
-            
+            }
+
             virtual std::size_t constraint() const {
                 return 0;
-            }                   
+            }
 
         protected:
 
             virtual const_sequences& buff() {
                 return buffer_;
             }
-            
-             virtual const_sequences& buff() const {
+
+            virtual const_sequences& buff() const {
                 return buffer_;
-            }           
+            }
 
         private:
             const_sequences_ptr bufferptr_;
@@ -548,9 +545,9 @@ namespace boost {
 
 
         typedef boost::shared_ptr<basic_sender_sequences> sender_sequnces_ptr;
-        
-        
-         ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////            
         //   class  basic_itu_sequences
         ///////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -566,54 +563,54 @@ namespace boost {
 
             virtual bool overflowed() const {
                 return limited_;
-            }     
-            
+            }
+
             virtual std::size_t constraint() const {
-                return limited_ ? limit_  : coder_->out()->size();
-            }                    
-            
-        protected:      
-            
-            virtual const_sequences& buff()  {
+                return limited_ ? limit_ : coder_->out()->size();
+            }
+
+        protected:
+
+            virtual const_sequences& buff() {
                 return limited_ ? prepare() : buffer_;
-            }            
-            
-            virtual const_sequences& buff() const  {
+            }
+
+            virtual const_sequences& buff() const {
                 return limited_ ? prepare() : buffer_;
-            }                  
+            }
 
         private:
-            
-            const_sequences&  prepare() const {
+
+            const_sequences& prepare() const {
                 if (limitedbuff_)
                     return *limitedbuff_;
-                limitedbuff_ =  const_sequences_ptr( new const_sequences());
+                limitedbuff_ = const_sequences_ptr(new const_sequences());
                 coder_->out()->load_sequence(*limitedbuff_, limit_);
                 return *limitedbuff_;
-            }          
-                     
+            }
+
             asn_coder_ptr coder_;
             std::size_t limit_;
             bool limited_;
-            mutable const_sequences_ptr limitedbuff_;               
+            mutable const_sequences_ptr limitedbuff_;
         };
-        
+
         typedef boost::shared_ptr<basic_itu_sequences> basic_itu_sequences_ptr;
 
 
     }
 
     namespace asn1 {
-        
+
         const boost::asn1::oid_type NULL_ENCODING_OID = boost::asn1::oid_type();
 
-        const boost::asn1::oidindx_type  BASIC_ENCODING_ARR[] = {2, 1, 1};
+        const boost::asn1::oidindx_type BASIC_ENCODING_ARR[] = {2, 1, 1};
         const boost::asn1::oid_type BASIC_ENCODING_OID = boost::asn1::oid_type(BASIC_ENCODING_ARR, 3);
 
         const boost::asn1::oidindx_type CANONICAL_ENCODING_ARR[] = {2, 1, 2, 0};
         const boost::asn1::oid_type CANONICAL_ENCODING_OID = boost::asn1::oid_type(CANONICAL_ENCODING_ARR, 4);
 
-        const boost::asn1::oidindx_type  DISTINGUISH_ENCODING_ARR[] = {2, 1, 2, 1};
+        const boost::asn1::oidindx_type DISTINGUISH_ENCODING_ARR[] = {2, 1, 2, 1};
         const boost::asn1::oid_type DISTINGUISH_ENCODING_OID = boost::asn1::oid_type(DISTINGUISH_ENCODING_ARR, 4);
 
     }
