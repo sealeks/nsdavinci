@@ -1184,7 +1184,7 @@ namespace boost {
                     send_operation(stream_socket& sock, SendHandler handlr,
                             const ConstBufferSequence& buffers, message_flags flags, std::size_t constraint_size) :
                     socket(sock),
-                    sendsize(boost::asio::buffer_size(buffers)),
+                    sendsize(constraint_size ? constraint_size : boost::asio::buffer_size(buffers)),
                     handler(handlr),
                     sender_(sender_ptr(new data_sender<ConstBufferSequence>(buffers, sock.pdusize(), constraint_size))),
                     flags_(flags) {
@@ -1700,10 +1700,11 @@ namespace boost {
                         ec = ER_INPROGRESS;
                         return 0;
                     }
+                    std::size_t  sendersize =constraint_size ? constraint_size : boost::asio::buffer_size(buffers);
                     sender_ptr sender_(new data_sender<ConstBufferSequence > (buffers, pdusize(), constraint_size));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec));
-                    return ec ? 0 : boost::asio::buffer_size(buffers);
+                    return ec ? 0 : sendersize;
                 }
 
                 //  *ref X224 6.2

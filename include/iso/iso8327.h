@@ -1575,13 +1575,12 @@ namespace boost {
                 public:
 
                     send_operation(stream_socket& sock, SendHandler handlr,
-                            const ConstBufferSequence& buffers, message_flags flags, std::size_t constraints) :
+                            const ConstBufferSequence& buffers, message_flags flags) :
                     socket(sock),
                     handler(handlr),
                     sendersize(boost::asio::buffer_size(buffers)),
                     sender_(sender_ptr(new data_sender<ConstBufferSequence>(buffers))),
-                    flags_(flags),
-                    constraint(constraints) {
+                    flags_(flags) {
                     }
 
                     void start() {
@@ -1594,7 +1593,7 @@ namespace boost {
                         if (!ec) {
                             sender_->size(bytes_transferred);
                             if (!sender_->ready()) {
-                                socket.super_type::async_send(sender_->pop(), flags_, * this, constraint);
+                                socket.super_type::async_send(sender_->pop(), flags_, * this);
                                 return;
                             }
                         }
@@ -1609,7 +1608,6 @@ namespace boost {
                     std::size_t sendersize;
                     sender_ptr sender_;
                     message_flags flags_;
-                    std::size_t constraint;
 
                 };
 
@@ -1623,29 +1621,29 @@ namespace boost {
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint = 0) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
 
-                    async_send(buffers, 0, handler, constraint);
+                    async_send(buffers, 0, handler);
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_write_some(const ConstBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint = 0) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
 
-                    async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler, constraint);
+                    async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler);
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
                         message_flags flags,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint = 0) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
 
                     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
                     typedef send_operation<WriteHandler, ConstBufferSequence> send_operation_type;
 
                     get_io_service().post(boost::bind(&send_operation_type::start,
-                            send_operation_type(*this, handler, buffers, flags, constraint)));
+                            send_operation_type(*this, handler, buffers, flags)));
                 }
 
 
