@@ -251,6 +251,10 @@ namespace boost {
                                     raw_back_insert(tmp, to_triple_size(coder->out()->size()));
                                 }
                             }
+                            else {
+                                   raw_back_insert(tmp, inttype_to_raw(PGI_USERDATA));
+                                    raw_back_insert(tmp, to_triple_size(codersize));                         
+                            }
                             break;
                         }
                         case AA_SPDU_ID:
@@ -604,6 +608,11 @@ namespace boost {
                 tmp.sequence(data);
                 return data->out()->size() - before;
             }
+            
+            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data) {
+                data->out()->add(SEND_HEADER, data->out()->buffers().begin());
+                return SEND_HEADER.size();
+            }            
 
 
             //sender
@@ -656,6 +665,11 @@ namespace boost {
                         constructAA(opt, data);
                         break;
                     }
+                    case DT_SPDU_ID:
+                    {
+                        constructDT(opt, data);
+                        break;
+                    }                    
                     default:
                     {
                     }

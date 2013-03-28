@@ -524,7 +524,11 @@ namespace boost {
             
             virtual bool overflowed() const {
                 return false;
-            }                 
+            }      
+            
+            virtual std::size_t constraint() const {
+                return 0;
+            }                   
 
         protected:
 
@@ -562,7 +566,11 @@ namespace boost {
 
             virtual bool overflowed() const {
                 return limited_;
-            }       
+            }     
+            
+            virtual std::size_t constraint() const {
+                return limited_ ? limit_  : coder_->out()->size();
+            }                    
             
         protected:      
             
