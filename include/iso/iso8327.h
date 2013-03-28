@@ -172,7 +172,7 @@ namespace boost {
 
             // PI Data Overflow *ref X225 Tab 11 and 8.3.1.19
             const varid_type PI_DATAOVERFLOW = 60;
-            
+
 
             // PI Data Overflow *ref X225 Tab 11 and 8.3.1.19
             const octet_type MORE_DATA = 1;
@@ -454,7 +454,7 @@ namespace boost {
 
             std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data); //NOT FINISH  SPDU                      
 
-
+            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data); //DATA TRANSFER  SPDU   
 
 
 
@@ -540,7 +540,10 @@ namespace boost {
                     return type_;
                 }
 
-
+                std::size_t constraint() const {
+                    return buf_ ? buf_->constraint() : 0 ;
+                }
+                
             protected:
 
                 void constructCN(const protocol_options& opt, asn_coder_ptr data) {
@@ -585,6 +588,11 @@ namespace boost {
 
                 void constructAA(const protocol_options& opt, asn_coder_ptr data) {
                     generate_header_AA(opt, data);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                }
+
+                void constructDT(const protocol_options& opt, asn_coder_ptr data) {
+                    generate_header_DT(opt, data);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
                 }
 
@@ -739,6 +747,8 @@ namespace boost {
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
             class stream_socket : protected boost::itu::rfc1006::socket {
+                static const std::size_t RESPONSE_BUFFER_SIZE = 1024;
+
                 typedef boost::itu::rfc1006::socket super_type;
                 typedef boost::itu::asn_coder_templ<> default_coder_type;
 
@@ -870,7 +880,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0, *this);
+                                        socket.super_type::async_send(sender_->pop(), 0, *this, sender_->constraint());
                                         return;
                                     }
                                     else {
@@ -1066,7 +1076,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0, *this);
+                                        socket.super_type::async_send(sender_->pop(), 0, *this, sender_->constraint());
                                         return;
                                     }
                                     // no keep transport  it dont wait AA *ref X225 7.9.2
@@ -1311,7 +1321,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0, *this);
+                                        socket.super_type::async_send(sender_->pop(), 0, *this, sender_->constraint());
                                         return;
                                     }
                                     exit_handler(ec);
@@ -1321,18 +1331,18 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0, *this);
+                                        socket.super_type::async_send(sender_->pop(), 0, *this, sender_->constraint());
                                         return;
                                     }
                                     state(response);
                                     operator()(ec, 0);
                                     return;
-                                }                                
+                                }
                                 case reject:
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0, *this);
+                                        socket.super_type::async_send(sender_->pop(), 0, *this, sender_->constraint());
                                         return;
                                     }
                                     state(refuse);
@@ -1403,9 +1413,9 @@ namespace boost {
 
                                         if (receiver_->options().overflow()) {
                                             sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder()));
-                                            receiver_= receiver_ptr(new receiver());
+                                            receiver_ = receiver_ptr(new receiver());
                                             state(overflow);
-                                            
+
                                             operator()(ec, 0);
                                             return;
                                         }
@@ -1565,12 +1575,13 @@ namespace boost {
                 public:
 
                     send_operation(stream_socket& sock, SendHandler handlr,
-                            const ConstBufferSequence& buffers, message_flags flags) :
+                            const ConstBufferSequence& buffers, message_flags flags, std::size_t constraints) :
                     socket(sock),
                     handler(handlr),
+                    sendersize(boost::asio::buffer_size(buffers)),
                     sender_(sender_ptr(new data_sender<ConstBufferSequence>(buffers))),
                     flags_(flags),
-                    send_lower_(boost::asio::buffer_size(buffers)) {
+                    constraint(constraints) {
                     }
 
                     void start() {
@@ -1583,11 +1594,11 @@ namespace boost {
                         if (!ec) {
                             sender_->size(bytes_transferred);
                             if (!sender_->ready()) {
-                                socket.super_type::async_send(sender_->pop(), flags_, * this);
+                                socket.super_type::async_send(sender_->pop(), flags_, * this, constraint);
                                 return;
                             }
                         }
-                        handler(ec, ec ? 0 : static_cast<std::size_t> (send_lower_));
+                        handler(ec, ec ? 0 : static_cast<std::size_t> (sendersize));
                     }
 
 
@@ -1595,11 +1606,11 @@ namespace boost {
 
                     stream_socket& socket;
                     SendHandler handler;
+                    std::size_t sendersize;
                     sender_ptr sender_;
                     message_flags flags_;
-                    std::size_t send_lower_;
-
-
+                    std::size_t constraint;
+                    
                 };
 
 
@@ -1612,31 +1623,119 @@ namespace boost {
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint =0 ) {
 
-                    async_send(buffers, 0, handler);
+                    async_send(buffers, 0, handler, constraint);
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_write_some(const ConstBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint =0 ) {
 
-                    async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler);
+                    async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler, constraint);
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
                         message_flags flags,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler,  std::size_t constraint =0) {
 
                     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
                     typedef send_operation<WriteHandler, ConstBufferSequence> send_operation_type;
 
                     get_io_service().post(boost::bind(&send_operation_type::start,
-                            send_operation_type(*this, handler, buffers, flags)));
+                            send_operation_type(*this, handler, buffers, flags, constraint)));
                 }
 
+
+
+
+
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //  Request operation from coder  //
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
+
+            public:
+
+                error_code& request(error_code& ec) {
+
+                    //rootcoder()->in()->clear();
+                    std::size_t sendsize = rootcoder()->out()->size();
+                    if (!sendsize)
+                        return ec;
+                    sender_ptr sender_(new sender(DT_SPDU_ID, session_option(), rootcoder()));
+                    sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
+                    while (!ec && !sender_->ready())
+                        sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
+                    return ec;
+                }
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
+
+            private:
+
+                template <typename RequestHandler>
+                class request_operation {
+                    typedef request_operation<RequestHandler> operation_type;
+
+                public:
+
+                    request_operation(stream_socket& sock, RequestHandler handlr) :
+                    socket(sock),
+                    handler(handlr),
+                    sender_(sender_ptr(new sender(DT_SPDU_ID, sock.session_option(), sock.rootcoder()))),
+                    sendsize(sock.rootcoder()->out()->size()) {
+                    }
+
+                    void start() {
+                        error_code ec;
+                        if (!sendsize)
+                            return handler(ec);
+                        else
+                            operator()(ec, 0);
+                    }
+
+                    void operator()(const error_code& ec, std::size_t bytes_transferred) {
+                        if (!ec) {
+                            sender_->size(bytes_transferred);
+                            if (!sender_->ready()) {
+                                socket.super_type::async_send(sender_->pop(), 0 ,* this,  sender_->constraint());
+                                return;
+                            }
+                        }
+                        handler(ec);
+                    }
+
+
+                private:
+
+                    stream_socket& socket;
+                    RequestHandler handler;
+                    sender_ptr sender_;
+                    std::size_t sendsize;
+                };
+
+
+
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
+
+
+            public:
+
+                template <typename RequestHandler>
+                void async_request(BOOST_ASIO_MOVE_ARG(RequestHandler) handler) {
+
+                    typedef request_operation<RequestHandler> request_operation_type;
+
+                    //rootcoder()->in()->clear();
+
+                    get_io_service().post(boost::bind(&request_operation_type::start,
+                            request_operation_type(*this, handler)));
+
+                }
 
 
 
@@ -1742,7 +1841,7 @@ namespace boost {
                                 {
                                     sender_->size(bytes_transferred);
                                     if (!sender_->ready()) {
-                                        socket.super_type::async_send(sender_->pop(), 0, *this);
+                                        socket.super_type::async_send(sender_->pop(), 0, *this, sender_->constraint());
                                         return;
                                     }
                                     state(refuse);
@@ -1873,6 +1972,197 @@ namespace boost {
 
                 }
 
+
+                
+                
+
+
+
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //  Response operation from coder  //
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
+
+            public:
+
+                error_code& response(error_code& ec) {
+                    rootcoder()->in()->clear();
+                    std::size_t bytes_transferred = read_some(boost::asio::buffer(response_buffer()), ec);
+                    if (!ec) {
+                        octet_type* begin = boost::asio::buffer_cast<octet_type*>(response_buffer());
+                        bytes_transferred = (bytes_transferred > RESPONSE_BUFFER_SIZE) ? RESPONSE_BUFFER_SIZE : bytes_transferred;
+                        rootcoder()->in()->add(octet_sequnce(begin, begin + bytes_transferred));
+
+                        while (!ec && !ready()) {
+                            bytes_transferred = read_some(boost::asio::buffer(response_buffer()), ec);
+                            if (!ec) {
+                                begin = boost::asio::buffer_cast<octet_type*>(response_buffer());
+                                bytes_transferred = (bytes_transferred > RESPONSE_BUFFER_SIZE) ? RESPONSE_BUFFER_SIZE : bytes_transferred;
+                                rootcoder()->in()->add(octet_sequnce(begin, begin + bytes_transferred));
+                            }
+                        }
+                    }
+                    return ec;
+                }
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
+
+            private:
+
+                template <typename ResponseHandler>
+                class response_operation {
+                    typedef response_operation<ResponseHandler> operation_type;
+
+                public:
+
+                    response_operation(stream_socket& sock, ResponseHandler handlr) :
+                    socket(sock),
+                    handler(handlr) {
+                    }
+
+                    void start(const error_code& ec, size_t bytes_transferred) {
+                        operator()(ec, bytes_transferred);
+                    }
+
+                    void operator()(const error_code& ec, size_t bytes_transferred) {
+                        if (!ec) {
+                            bytes_transferred = (bytes_transferred > RESPONSE_BUFFER_SIZE) ? RESPONSE_BUFFER_SIZE : bytes_transferred;
+                            octet_type* begin = boost::asio::buffer_cast<octet_type*>(socket.response_buffer());
+                            socket.rootcoder()->in()->add(octet_sequnce(begin, begin + bytes_transferred));
+
+                            if (!socket.ready()) {
+                                socket.async_read_some(boost::asio::buffer(socket.response_buffer()), *this);
+                                return;
+                            }
+                        }
+                        handler(ec);
+                    }
+
+
+                private:
+
+                    stream_socket& socket;
+                    ResponseHandler handler;
+                };
+
+
+
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
+
+
+            public:
+
+                template <typename ResponseHandler>
+                void async_response(BOOST_ASIO_MOVE_ARG(ResponseHandler) handler) {
+
+                    typedef response_operation<ResponseHandler> response_operation_type;
+
+                    rootcoder()->in()->clear();
+                    async_read_some(boost::asio::buffer(response_buffer()),
+                            boost::bind(&response_operation_type::start,
+                            response_operation_type(*this, handler), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+
+                }
+                
+                
+                
+                
+                
+                
+                
+                
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //  Conversation (request-response) operation from coder  //
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
+
+            public:
+
+                error_code& conversation(error_code& ec) {
+                    if (!rootcoder()->out()->size())
+                        return ec;
+                    request(ec);
+                    if (!ec) {
+                        rootcoder()->out()->clear();
+                        response(ec);
+                    }
+                    return ec;
+                }
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
+
+            private:
+
+                template <typename ConversationHandler>
+                class conversation_operation {
+                    typedef conversation_operation<ConversationHandler> operation_type;
+
+                public:
+
+                    conversation_operation(stream_socket& sock, ConversationHandler handlr) :
+                    socket(sock),
+                    handler(handlr),
+                    sendsize(sock.rootcoder()->out()->size()) {
+                    }
+
+                    void start() {
+                        error_code ec;
+                        if (!sendsize)
+                            return handler(ec);
+                        else
+                            socket.async_request(* this);
+                    }
+
+                    void operator()(const error_code& ec) {
+                        if (!ec) {
+                            socket.rootcoder()->out()->clear();
+                            socket.async_response(
+                                    boost::bind(&operation_type::exit_handler, * this,
+                                    boost::asio::placeholders::error));
+                            return;
+                            }
+                        handler(ec);
+                    }
+                    
+                    void exit_handler(const error_code& ec){
+                        handler(ec);
+                    }
+
+
+                private:
+
+                    stream_socket& socket;
+                    ConversationHandler handler;
+                    sender_ptr sender_;
+                    std::size_t sendsize;
+                };
+
+
+
+
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
+
+
+            public:
+
+                template <typename ConversationHandler>
+                void async_conversation(BOOST_ASIO_MOVE_ARG(ConversationHandler) handler) {
+
+                    typedef conversation_operation<ConversationHandler> conversation_operation_type;
+
+                    //rootcoder()->in()->clear();
+
+                    get_io_service().post(boost::bind(&conversation_operation_type::start,
+                            conversation_operation_type(*this, handler)));
+
+                }
+                
+                
+                
+                
+                
+                
+
                 asn_coder_ptr rootcoder() {
                     return rootcoder_;
                 }
@@ -1972,7 +2262,7 @@ namespace boost {
 
                     sender_ptr sender_(sender_ptr(new sender(CN_SPDU_ID, session_option(), rootcoder())));
                     while (!ec && !sender_->ready())
-                        sender_->size(super_type::send(sender_->pop(), 0, ec));
+                        sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
 
                     if (!ec) {
                         receiver_ptr receiver_(receiver_ptr(new receiver()));
@@ -2026,7 +2316,7 @@ namespace boost {
 
                     sender_ptr sender_(new sender(release_type_to_spdu(type), session_option(), rootcoder()));
                     while (!ec && !sender_->ready())
-                        sender_->size(super_type::send(sender_->pop(), 0, ec));
+                        sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                     // no keep transport  it dont wait AA *ref X225 7.9.2
                     if (!ec && (type == SESSION_FN_RELEASE)) {
                         receiver_ptr receiver_(receiver_ptr(new receiver()));
@@ -2069,7 +2359,7 @@ namespace boost {
                                                     negotiate_session_release();
                                                     sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
                                                     while (!ec && !sender_->ready())
-                                                        sender_->size(super_type::send(sender_->pop(), 0, ec));
+                                                        sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                                 }
                                                 // abort or  initiators release colision preference
                                             }
@@ -2154,7 +2444,7 @@ namespace boost {
                                                 options_.refuse_reason(errorreason);
                                             sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder()));
                                             while (!ec && !sender_->ready())
-                                                sender_->size(super_type::send(sender_->pop(), 0, ec));
+                                                sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                             ec = ER_PROTOPT;
                                             break;
                                         }
@@ -2167,7 +2457,7 @@ namespace boost {
                                         user_requirement(receiver_->options().user_requirement());*/
                                         sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder()));
                                         while (!ec && !sender_->ready())
-                                            sender_->size(super_type::send(sender_->pop(), 0, ec));
+                                            sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                         if (!ec)
                                             return check_accept_imp_exit(ec);
                                         break;
@@ -2200,7 +2490,7 @@ namespace boost {
                         message_flags flags, error_code& ec) {
                     sender_ptr sender_(new data_sender<ConstBufferSequence > (buffers));
                     while (!ec && !sender_->ready())
-                        sender_->size(super_type::send(sender_->pop(), 0, ec));
+                        sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                     return ec ? 0 : boost::asio::buffer_size(buffers);
                 }
 
@@ -2232,7 +2522,7 @@ namespace boost {
                                         negotiate_session_release();
                                         sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
                                         while (!ec && !sender_->ready())
-                                            sender_->size(super_type::send(sender_->pop(), 0, ec));
+                                            sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                         ec = ER_RELEASE;
                                         break;
                                     }
@@ -2262,12 +2552,22 @@ namespace boost {
                     return 0;
                 }
 
+                mutable_buffer response_buffer() {
+                    if (response_buffer_)
+                        return boost::asio::buffer(*response_buffer_);
+                    response_buffer_ = octet_sequnce_ptr(new octet_sequnce(RESPONSE_BUFFER_SIZE));
+                    return boost::asio::buffer(*response_buffer_);
+                }
+
+
+
                 protocol_options option_;
                 asn_coder_ptr rootcoder_;
                 octet_type session_version_;
                 int16_t user_requirement_;
                 uint16_t maxTPDU_src_;
                 uint16_t maxTPDU_dist_;
+                octet_sequnce_ptr response_buffer_;
 
             };
 
@@ -2283,6 +2583,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             class socket_acceptor : protected boost::itu::rfc1006impl::socket_acceptor {
+                
                 typedef boost::itu::rfc1006impl::socket_acceptor super_type;
 
                 friend class stream_socket;

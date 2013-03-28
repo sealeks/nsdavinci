@@ -378,14 +378,62 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
-            class stream_socket : public boost::itu::x225impl::stream_socket {
+            class stream_socket : protected boost::itu::x225impl::stream_socket {
                 
                 friend class socket_acceptor;
                 typedef boost::itu::x225impl::stream_socket super_type;
+                                
+                
 
             public:
 
 
+                typedef super_type::protocol_type protocol_type;
+                typedef super_type::lowest_layer_type lowest_layer_type;
+                typedef super_type::native_handle_type native_handle_type;
+                typedef super_type::native_type native_type;
+                typedef super_type::message_flags message_flags;
+                typedef super_type::endpoint_type endpoint_type;
+                typedef super_type::service_type service_type;
+                typedef super_type::shutdown_type shutdown_type;
+                typedef super_type::implementation_type implementation_type;
+
+
+                using super_type::assign;
+                using super_type::at_mark;
+                using super_type::available;
+                using super_type::bind;
+                using super_type::cancel;
+                using super_type::close;
+                using super_type::get_io_service;
+                using super_type::get_option;
+                using super_type::io_control;
+                using super_type::is_open;
+                using super_type::lowest_layer;
+                using super_type::native;
+                using super_type::native_handle;
+                using super_type::native_non_blocking;
+                using super_type::non_blocking;
+                using super_type::open;
+                using super_type::remote_endpoint;
+                using super_type::set_option;
+                using super_type::shutdown;
+
+                //using super_type::ready;
+                using super_type::is_acceptor;
+                
+                /*using super_type::request;
+                using super_type::async_request;                     
+                using super_type::response;
+                using super_type::async_response;   */
+                using super_type::conversation;
+                using super_type::async_conversation;         
+                
+            protected:
+
+
+                using super_type::get_service;
+                using super_type::get_implementation;                
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -502,7 +550,7 @@ namespace boost {
                     }
 
                     super_type::async_connect(peer_endpoint, boost::bind(&connect_op<ConnectHandler>::run,
-                            connect_op<ConnectHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
+                            connect_op<ConnectHandler > (this , handler), boost::asio::placeholders::error));
                 }
 
 
@@ -563,12 +611,12 @@ namespace boost {
                     }
 
 
-                    super_type::async_write_some(coder()->output().buffers(), boost::bind(&request_op<RequestHandler>::run,
+                    super_type::async_request(boost::bind(&request_op<RequestHandler>::run,
                             request_op<RequestHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
                 }
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //  respond operation  //
+                //  response operation  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
 
@@ -577,62 +625,50 @@ namespace boost {
 
             private:
 
-                template <typename RespondHandler>
-                class respond_op {
+                template <typename ResponseHandler>
+                class response_op {
                 public:
 
-                    respond_op(stream_socket* socket, RespondHandler handler) :
+                    response_op(stream_socket* socket, ResponseHandler handler) :
                     socket_(socket),
                     handler_(handler) {
                     }
 
-                    void run(const error_code& error, size_t bytes_transferred) {
-                        operator()(error, bytes_transferred);
+                    void run(const error_code& error) {
+                        operator()(error);
                     }
 
-                    void operator()(const error_code& error, size_t bytes_transferred) {
-                        if (!error) {
-                            socket_->coder()->input().add(octet_sequnce(socket_->databuff, socket_->databuff + bytes_transferred));
-                            if (!socket_->ready()) {
-                                socket_->super_type::async_read_some(
-                                        boost::asio::buffer(socket_->databuff, BUFFER_SIZE),
-                                        boost::bind(&respond_op<RespondHandler >::run,
-                                        respond_op<RespondHandler > (socket_, handler_), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                    void operator()(const error_code& ec) {
+                        if (!ec) {
+                            ppdu_enum ppdutype;
+                            if (error_code erreslt = socket_->parse_RESPONSE(ppdutype)) {
+                                handler_(erreslt);
                                 return;
                             }
-                            else {
-                                ppdu_enum ppdutype;
-                                if (error_code erreslt = socket_->parse_RESPONSE(ppdutype)) {
-                                    handler_(erreslt);
-                                    return;
-                                }
-                            }
                         }
-                        socket_->clear_output();
-                        handler_(error);
+                        handler_(ec);
                     }
 
                 private:
                     stream_socket* socket_;
-                    RespondHandler handler_;
+                    ResponseHandler handler_;
 
                 };
 
 
             public:
 
-                template <typename RespondHandler>
-                void async_respond(
-                        RespondHandler handler) {
+                template <typename ResponseHandler>
+                void async_response(
+                        ResponseHandler handler) {
 
-                    BOOST_ASIO_CONNECT_HANDLER_CHECK(RespondHandler, handler) type_check;
+                    //BOOST_ASIO_CONNECT_HANDLER_CHECK(ResponseHandler, handler) type_check;
 
                     ppm()->clear_input();
-                    coder()->clear_input();
 
-                    super_type::async_read_some(boost::asio::buffer(databuff, BUFFER_SIZE),
-                            boost::bind(&respond_op<RespondHandler >::run,
-                            respond_op<RespondHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                    super_type::async_response(
+                            boost::bind(&response_op<ResponseHandler >::run,
+                            response_op<ResponseHandler > (const_cast<stream_socket*> (this), handler), boost::asio::placeholders::error));
                 }
 
                 void option(const presentation_connection_option& opt) {
@@ -705,34 +741,6 @@ namespace boost {
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //  private member  //
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
-
-                void send() {
-                };
-
-                void write_some() {
-                };
-
-                void async_send() {
-                };
-
-                void async_write_some() {
-                };
-
-                void receive() {
-                };
-
-                void read_some() {
-                };
-
-                void async_receive() {
-                };
-
-                void async_read_some() {
-                };
-
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //  private implementator  //
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
@@ -786,7 +794,42 @@ namespace boost {
             class socket_acceptor : public boost::itu::x225impl::socket_acceptor {
                 
                 typedef boost::itu::x225impl::socket_acceptor super_type;
+                
+                friend class stream_socket;
 
+            public:
+
+                typedef super_type::protocol_type protocol_type;
+                typedef super_type::endpoint_type endpoint_type;
+                typedef super_type::implementation_type implementation_type;
+                typedef super_type::service_type service_type;
+                typedef super_type::message_flags message_flags;
+                typedef super_type::native_handle_type native_handle_type;
+                typedef super_type::native_type native_type;
+
+                using super_type::assign;
+                using super_type::bind;
+                using super_type::cancel;
+                using super_type::close;
+                using super_type::get_io_service;
+                using super_type::get_option;
+                using super_type::io_control;
+                using super_type::is_open;
+                using super_type::listen;
+                using super_type::local_endpoint;
+                using super_type::native;
+                using super_type::native_handle;
+                using super_type::native_non_blocking;
+                using super_type::non_blocking;
+                using super_type::open;
+                using super_type::set_option;
+
+
+            protected:
+
+                using super_type::get_service;
+                using super_type::get_implementation;
+                
             public:
 
 
