@@ -261,15 +261,15 @@ namespace boost {
             class data_sender_sequences : public basic_sender_sequences {
             public:
 
-                data_sender_sequences(const ConstBufferSequence& bf, const tpdu_size& pdusize) :
+                data_sender_sequences(const ConstBufferSequence& bf, const tpdu_size& pdusize, std::size_t constraint_size) :
                 basic_sender_sequences(), headercontinue_(), headereof_() {
                     construct(bf, pdusize);
 
                 }
 
-                void construct(const ConstBufferSequence& bf, const tpdu_size& pdusize) {
+                void construct(const ConstBufferSequence& bf, const tpdu_size& pdusize, std::size_t constraint_size) {
                     std::size_t pdusz = pdusize.size();
-                    if (!pdusz) pdusz = 2048;
+                    if (!pdusz) pdusz = 128;
                     pdusz -= 3;
 
                     headercontinue_.reserve(DT_SEND_BUFF_HEADER);
@@ -354,55 +354,64 @@ namespace boost {
             class data_sender_sequences<const_sequences> : public basic_sender_sequences {
             public:
 
-                data_sender_sequences<const_sequences>(const const_sequences& bf, const tpdu_size& pdusize) :
+                data_sender_sequences<const_sequences>(const const_sequences& bf, const tpdu_size& pdusize, std::size_t constraint_size) :
                 basic_sender_sequences(const_cast<const_sequences&> (bf)), headercontinue_(), headereof_() {
-                    construct(pdusize);
+                    construct(pdusize, constraint_size);
                 }
 
-                void construct(const tpdu_size& pdusize) {
+                void construct(const tpdu_size& pdusize, std::size_t constraint_size) {
                     if (buff().empty()) return;
                     std::size_t pdusz = pdusize.size();
-                    if (!pdusz) pdusz = 2048;
+                    if (!pdusz) pdusz = 128;
                     pdusz -= 3;
                     std::size_t tmpsize = 0;
                     std::size_t buffsize = 0;
                     const_sequences::iterator it = buff().begin();
                     const_sequences::iterator insert_pos = it;
+                    
 
-                    while (it != buff().end()) {
-                        buffsize = boost::asio::buffer_size(*it);
-                        if ((buffsize + tmpsize) >= pdusz) {
+                    if (constraint_size && (pdusz >= constraint_size)) {
+                        // optimize here ,  buffer size is known
+                        //std::cout << "rfc1006 sender data has constraint val = " << constraint_size << "  and it is " << 
+                        //((pdusz > constraint_size) ? " less than pdu OK opt" : "more then pdu. NO opt") << std::endl;                        
+                        tmpsize = constraint_size;
+                    }
+                    else {
+                        while (it != buff().end()) {
+                            buffsize = boost::asio::buffer_size(*it);
+                            if ((buffsize + tmpsize) >= pdusz) {
 
-                            if (headercontinue_.empty()) {
-                                uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
-                                headercontinue_.reserve(DT_SEND_BUFF_HEADER);
-                                headercontinue_ = TKPT_START;
-                                //  packet lengh *ref RFC1006 6.0
-                                raw_back_insert(headercontinue_, inttype_to_raw(normalsz));
+                                if (headercontinue_.empty()) {
+                                    uint16_t normalsz = endiancnv_copy(static_cast<uint16_t> (pdusz + 7));
+                                    headercontinue_.reserve(DT_SEND_BUFF_HEADER);
+                                    headercontinue_ = TKPT_START;
+                                    //  packet lengh *ref RFC1006 6.0
+                                    raw_back_insert(headercontinue_, inttype_to_raw(normalsz));
 
-                                headercontinue_.insert(headercontinue_.end(), DATA_HEADER_LI);
-                                headercontinue_.insert(headercontinue_.end(), DT_TPDU_ID);
-                                headercontinue_.insert(headercontinue_.end(), TPDU_CONTINIUE);
+                                    headercontinue_.insert(headercontinue_.end(), DATA_HEADER_LI);
+                                    headercontinue_.insert(headercontinue_.end(), DT_TPDU_ID);
+                                    headercontinue_.insert(headercontinue_.end(), TPDU_CONTINIUE);
+                                }
+
+                                if ((buffsize + tmpsize) == pdusz) {
+                                    buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&headercontinue_[0]), headercontinue_.size()));
+                                    insert_pos = it;
+                                    ++insert_pos;
+                                    tmpsize = 0;
+                                }
+                                else {
+                                    const_buffer firstpart = boost::asio::buffer(*it, (pdusz - tmpsize));
+                                    const_buffer secondpart = (*it)+(pdusz - tmpsize);
+                                    buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&headercontinue_[0]), headercontinue_.size()));
+                                    insert_pos = buff().insert(buff().erase(it), secondpart);
+                                    it = buff().insert(insert_pos, firstpart);
+                                    tmpsize = 0;
+                                }
                             }
-
-                            if ((buffsize + tmpsize) == pdusz) {
-                                buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&headercontinue_[0]), headercontinue_.size()));
-                                insert_pos = it;
-                                ++insert_pos;
-                                tmpsize = 0;
-                            }
-                            else {
-                                const_buffer firstpart = boost::asio::buffer(*it, (pdusz - tmpsize));
-                                const_buffer secondpart = (*it)+(pdusz - tmpsize);
-                                buff().insert(insert_pos, const_buffer(static_cast<const octet_type*> (&headercontinue_[0]), headercontinue_.size()));
-                                insert_pos = buff().insert(buff().erase(it), secondpart);
-                                it = buff().insert(insert_pos, firstpart);
-                                tmpsize = 0;
-                            }
+                            else
+                                tmpsize += buffsize;
+                            ++it;
                         }
-                        else
-                            tmpsize += buffsize;
-                        ++it;
                     }
                     if (tmpsize) {
                         headereof_.reserve(DT_SEND_BUFF_HEADER);
@@ -494,14 +503,14 @@ namespace boost {
             class data_sender : public sender {
             public:
 
-                data_sender(const ConstBufferSequence& buff, const tpdu_size& pdusize) : sender(DT) {
-                    constructDT(buff, pdusize);
+                data_sender(const ConstBufferSequence& buff, const tpdu_size& pdusize, std::size_t constraint_size) : sender(DT) {
+                    constructDT(buff, pdusize, constraint_size);
                 }
 
             protected:
 
-                void constructDT(const ConstBufferSequence& buff, const tpdu_size& pdusize) {
-                    buf_ = sender_sequnces_ptr(new data_sender_sequences<ConstBufferSequence > (buff, pdusize));
+                void constructDT(const ConstBufferSequence& buff, const tpdu_size& pdusize, std::size_t constraint_size) {
+                    buf_ = sender_sequnces_ptr(new data_sender_sequences<ConstBufferSequence > (buff, pdusize, constraint_size ));
                 }
 
             };
@@ -1121,25 +1130,25 @@ namespace boost {
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                       
 
                 template <typename ConstBufferSequence>
-                std::size_t send(const ConstBufferSequence& buffers) {
+                std::size_t send(const ConstBufferSequence& buffers, std::size_t constraint_size = 0) {
 
-                    return send(buffers, 0);
+                    return send(buffers, 0, constraint_size);
                 }
 
                 template <typename ConstBufferSequence>
                 std::size_t send(const ConstBufferSequence& buffers,
-                        message_flags flags) {
+                        message_flags flags, std::size_t constraint_size = 0) {
                     error_code ec;
-                    std::size_t s = send(buffers, flags, ec);
+                    std::size_t s = send(buffers, flags, ec, constraint_size);
                     boost::asio::detail::throw_error(ec, "send");
 
                     return s;
                 }
 
                 template <typename ConstBufferSequence>
-                std::size_t write_some(const ConstBufferSequence& buffers) {
+                std::size_t write_some(const ConstBufferSequence& buffers, std::size_t constraint_size = 0) {
                     error_code ec;
-                    std::size_t s = send(buffers, 0, ec);
+                    std::size_t s = send(buffers, 0, ec, constraint_size);
                     boost::asio::detail::throw_error(ec, "write_some");
 
                     return s;
@@ -1147,18 +1156,18 @@ namespace boost {
 
                 template <typename ConstBufferSequence>
                 std::size_t write_some(const ConstBufferSequence& buffers,
-                        error_code& ec) {
+                        error_code& ec, std::size_t constraint_size = 0) {
 
-                    return send(buffers, 0, ec);
+                    return send(buffers, 0, ec, constraint_size);
                 }
 
                 template <typename ConstBufferSequence>
                 std::size_t send(const ConstBufferSequence& buffers,
-                        message_flags flags, error_code& ec) {
+                        message_flags flags, error_code& ec, std::size_t constraint_size = 0) {
 
-                    return send_impl(buffers, flags, ec);
+                    return send_impl(buffers, flags, ec, constraint_size);
                 }
-
+                
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                     
@@ -1173,11 +1182,11 @@ namespace boost {
                 public:
 
                     send_operation(stream_socket& sock, SendHandler handlr,
-                            const ConstBufferSequence& buffers, message_flags flags) :
+                            const ConstBufferSequence& buffers, message_flags flags, std::size_t constraint_size ) :
                     socket(sock),
                     sendsize(boost::asio::buffer_size(buffers)),
                     handler(handlr),
-                    sender_(sender_ptr(new data_sender<ConstBufferSequence>(buffers, sock.pdusize()))),
+                    sender_(sender_ptr(new data_sender<ConstBufferSequence>(buffers, sock.pdusize(), constraint_size))),
                     flags_(flags)
                     {
                     }
@@ -1215,31 +1224,33 @@ namespace boost {
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint_size = 0) {
 
-                    async_send(buffers, 0, handler);
-                }
+                    async_send(buffers, 0, handler, constraint_size);
+                }              
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_write_some(const ConstBufferSequence& buffers,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint_size = 0) {
 
-                    async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler);
+                    async_send<ConstBufferSequence, WriteHandler > (buffers, 0, handler, constraint_size);
                 }
 
                 template <typename ConstBufferSequence, typename WriteHandler>
                 void async_send(const ConstBufferSequence& buffers,
                         message_flags flags,
-                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler) {
+                        BOOST_ASIO_MOVE_ARG(WriteHandler) handler, std::size_t constraint_size = 0) {
                     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
                     typedef send_operation<WriteHandler, ConstBufferSequence> send_operation_type;
 
 
                     get_io_service().post(boost::bind(&send_operation_type::start,
-                            send_operation_type(*this, handler, buffers, flags), ready() ? error_code() : ER_INPROGRESS));
+                            send_operation_type(*this, handler, buffers, flags, constraint_size), ready() ? error_code() : ER_INPROGRESS));
 
                 }
+                
+    
 
 
 
@@ -1685,12 +1696,12 @@ namespace boost {
 
                 template <typename ConstBufferSequence>
                 std::size_t send_impl(const ConstBufferSequence& buffers,
-                        message_flags flags, error_code& ec) {
+                        message_flags flags, error_code& ec, std::size_t constraint_size) {
                     if (!ready()) {
                         ec = ER_INPROGRESS;
                         return 0;
                     }
-                    sender_ptr sender_(new data_sender<ConstBufferSequence > (buffers, pdusize()));
+                    sender_ptr sender_(new data_sender<ConstBufferSequence > (buffers, pdusize(), constraint_size));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec));
                     return ec ? 0 : boost::asio::buffer_size(buffers);
