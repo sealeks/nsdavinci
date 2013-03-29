@@ -2246,7 +2246,7 @@ namespace boost {
                         while (!ec && !receiver_->ready())
                             receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
 
-                        if (!ec) {
+                        while (!ec) {
                             switch (receiver_->state()) {
                                 case receiver::complete:
                                 {
@@ -2269,13 +2269,30 @@ namespace boost {
                                             super_type::release(ec);
                                             return connect_impl_exit(receiver_->reject_reason() ? errorcode_by_reason(receiver_->reject_reason()) : ER_REFUSE);
                                         }
+                                        case OA_SPDU_ID:
+                                        {
+                                            sender_ = sender_ptr(new sender(CDO_SPDU_ID, session_option(), rootcoder()));
+                                            receiver_ = receiver_ptr(new receiver());
+                                            while (!ec && !sender_->ready())
+                                                sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
+                                            if (ec)
+                                                break;
+                                            while (!ec && !receiver_->ready())
+                                                receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
+                                            break;
+                                        }
+                                        default:
+                                        {
+                                            ec = ER_PROTOCOL;
+                                        }
                                     }
                                 }
                             }
-                            // allways  transport disconnect
-                            super_type::release(ec);
-                            return connect_impl_exit(receiver_->reject_reason() ? errorcode_by_reason(receiver_->reject_reason()) : ER_REFUSE);
                         }
+                        // allways  transport disconnect
+                        super_type::release(ec);
+                        return connect_impl_exit(receiver_->reject_reason() ? errorcode_by_reason(receiver_->reject_reason()) : ER_REFUSE);
+
                     }
                     super_type::release(ec);
                     return connect_impl_exit(ec);
@@ -2393,7 +2410,7 @@ namespace boost {
                     while (!ec && !receiver_->ready()) {
                         receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
                     }
-                    if (!ec) {
+                    while(!ec) {
 
                         switch (receiver_->state()) {
                             case receiver::complete:
@@ -2408,8 +2425,10 @@ namespace boost {
 
                                         rootcoder()->in()->add(receiver_->options().data());
 
+                                        bool continiue_ = receiver_->options().overflow();
+
                                         if (!negotiate_x225impl_option(session_option(), receiver_->options(), errorreason) ||
-                                                !(nouserreject = negotiate_session_accept())) {
+                                                !(nouserreject = (continiue_ ? true : negotiate_session_accept()))) {
                                             // Netotiation fail send RF
                                             protocol_options options_ = session_option();
                                             if (!nouserreject)
@@ -2429,6 +2448,20 @@ namespace boost {
                                             maxTPDU(receiver_->options().maxTPDU_src(), receiver_->options().maxTPDU_dist());
                                         }     
                                         user_requirement(receiver_->options().user_requirement());*/
+
+                                        if (receiver_->options().overflow()) {
+                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder()));
+                                            while (!ec && !sender_->ready())
+                                                sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
+                                            if (ec)
+                                                break;                                            
+                                            receiver_ = receiver_ptr(new receiver());
+                                            while (!ec && !receiver_->ready())
+                                                receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
+                                            break;
+                                        }
+
+
                                         sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder()));
                                         while (!ec && !sender_->ready())
                                             sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
@@ -2436,6 +2469,44 @@ namespace boost {
                                             return check_accept_imp_exit(ec);
                                         break;
                                     }
+                                    case CDO_SPDU_ID:
+                                    {
+
+                                        rootcoder()->in()->add(receiver_->options().data());
+
+                                        if (!receiver_->options().endSPDU()) {
+                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder()));
+                                            while (!ec && !sender_->ready())
+                                                sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
+                                            if (ec)
+                                                break;                                                
+                                            receiver_ = receiver_ptr(new receiver());
+                                            while (!ec && !receiver_->ready())
+                                                receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
+                                            break;
+                                        }
+                                        else {
+                                            if (!negotiate_session_accept()) {
+                                                protocol_options options_ = session_option();
+                                                options_.refuse_reason(DR_REASON_USER);
+
+                                                sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder()));
+                                                while (!ec && !sender_->ready())
+                                                    sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
+                                                if (ec)
+                                                    break;
+                                                ec = ER_PROTOPT;
+                                                break;
+                                            }
+                                            sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder()));
+                                            while (!ec && !sender_->ready())
+                                                sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
+                                            if (!ec)
+                                                return check_accept_imp_exit(ec);
+                                            break;
+                                        }
+                                        break;
+                                    }                                 
                                     default:
                                     {
                                         ec = ER_PROTOCOL;
