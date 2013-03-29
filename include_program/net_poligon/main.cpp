@@ -8,7 +8,7 @@
 #include <deque>
 #include <iostream>
 
-#define SESSION_PROT
+//#define SESSION_PROT
 
 #include <kernel/constdef.h>
 #include <kernel/memfile.h>
@@ -38,7 +38,7 @@ std::string RELEASE_DATA = "RELEASE-DATA";
 std::string ABORT_DATA = "ABORT-DATA";
 
 inline static std::string generate_message(std::string vl){
-    if ((vl == "release" || vl == "abort")) 
+    if ((vl == "release" || vl == "abort" || vl == "release!" || vl == "abort!")) 
         return vl;
     
     std::size_t r=MULTIFACTOR;
@@ -81,8 +81,8 @@ const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"));
 int port = 102;
 
 
-#define SESSION_CODER
-#define NET_BLOCKING
+//#define SESSION_CODER
+//#define NET_BLOCKING
 
 #ifndef NET_BLOCKING
 
@@ -96,7 +96,7 @@ public:
     }
     
    ~session(){
-        std::cout << " sesion destructor\n";
+        std::cout << " Kill session\n";
     }    
 
     socket_type& socket() {
@@ -105,10 +105,10 @@ public:
 
     void start() {
 #if defined(SESSION_PROT)  
-        if (socket_.rootcoder()->respond_str().size()>600)
-              std::cout << "Client accept data size : " << socket_.rootcoder()->respond_str().size() << std::endl;
-        else    
-        std::cout << "Client accept data : " << socket_.rootcoder()->respond_str() << std::endl;
+        if (socket_.rootcoder()->respond_str().size() > 600)
+            std::cout << "Client accept data size : " << socket_.rootcoder()->respond_str().size() << std::endl;
+        else
+            std::cout << "Client accept data : " << socket_.rootcoder()->respond_str() << std::endl;
 #endif        
 
         socket_.async_read_some(boost::asio::buffer(data_, max_length),
@@ -130,21 +130,67 @@ private:
                         boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));
                 return;
-            }            
-            boost::asio::async_write(socket_,
-                    boost::asio::buffer(data_, bytes_transferred),
-                    boost::bind(&session::handle_write, this,
-                    boost::asio::placeholders::error));
-            std::cout << "Server read: " << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
-            message = std::string(data_, bytes_transferred);
+            }
+            if (!(message == "release!" || message == "abort!")) {
+
+                boost::asio::async_write(socket_,
+                        boost::asio::buffer(data_, bytes_transferred),
+                        boost::bind(&session::handle_write, this,
+                        boost::asio::placeholders::error));
+                std::cout << "Server read: " << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
+                message = std::string(data_, bytes_transferred);
+            }
+            else{
+                std::cout << "Client wants " << message << std::endl;
+                if (message == "release!") {
+#if defined(SESSION_PROT)                         
+                    socket_.rootcoder()->request_str(RELEASE_DATA);
+                    socket_.async_release(boost::bind(&session::handle_release, this, boost::asio::placeholders::error));
+#else
+                    socket_.async_release(boost::bind(&session::handle_release, this, boost::asio::placeholders::error));
+#endif                        
+                }
+                else {
+#if defined(SESSION_PROT)                         
+                    socket_.rootcoder()->request_str(ABORT_DATA);
+                    socket_.async_abort(boost::bind(&session::handle_abort, this, boost::asio::placeholders::error));
+#else
+                    socket_.async_release(boost::bind(&session::handle_release, this, boost::asio::placeholders::error));
+#endif   
+                }                
+            }
         }
-        else {
+            else {
 #if defined(SESSION_PROT)              
-            std::cout << "Release data :   "  << socket_.rootcoder()->respond_str()  << std::endl;
+                std::cout << "Release data :   " << socket_.rootcoder()->respond_str() << std::endl;
 #endif              
-            delete this;
+                delete this;
+            }
         }
+
+    void handle_release(const boost::system::error_code& error) {
+        if (!error) {
+            std::cout << "Release success" << std::endl;
+#if defined(SESSION_PROT)         
+            std::cout << "Server release data : " << socket_.rootcoder()->respond_str() << std::endl;
+#endif
+        }
+        else
+            std::cout << "handle_release error: " << error << std::endl;
+        delete this;
     }
+
+    void handle_abort(const boost::system::error_code& error) {
+        if (!error) {
+            std::cout << "Abort success" << std::endl;
+#if defined(SESSION_PROT)         
+            //std::cout << "Server release data : " << socket_.rootcoder()->respond_str() << std::endl;
+#endif
+        }
+        else
+            std::cout << "handle_abort error: " << error << std::endl;
+        delete this;
+    }        
 
     void handle_write(const boost::system::error_code& error) {
         if (!error) {
@@ -200,7 +246,6 @@ private:
 
     boost::asio::io_service& io_service_;
     acceptor_type acceptor_;
-
 };
 
 class client {
@@ -483,11 +528,18 @@ public:
 
         if (socket_.is_open()) {
             message =generate_message(msg);
+
             boost::system::error_code ec;
-            socket_.write_some(boost::asio::buffer(message.data(), message.size()), ec);
-            
+                
             if (!(msg == "release" || msg == "abort")) {
                  std::cout << "Client write data size =" << message.size() << std::endl;
+#if defined(SESSION_PROT)  &&   defined(SESSION_CODER) 
+                socket_.rootcoder()->request_str(message);
+                socket_.conversation(ec);   
+                std::cout << "Client read data:" <<socket_.rootcoder()->respond_str() << std::endl;               
+#else                 
+                boost::system::error_code ec;
+                socket_.write_some(boost::asio::buffer(message.data(), message.size()), ec);
                 std::size_t bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
                 std::cout << "Client read data:" << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
                 if (!socket_.ready()) {
@@ -496,6 +548,7 @@ public:
                         std::cout << "Client read cont:" << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;                      
                     }
                 }
+#endif                  
             }
             else {
                 std::cout << "Client " << message << std::endl;
@@ -515,11 +568,13 @@ public:
 
     void release() {
 #if defined(SESSION_PROT)
-
-        //  boost::system::error_code ecc;
-        //    socket_.release( trans_,ecc);
-        //    if (trans_) 
-        //          std::cout << "Server release data : " << trans_->respond_str() << std::endl;
+          socket_.rootcoder()->request_str(RELEASE_DATA);
+          boost::system::error_code ecc;
+           socket_.release( ecc);
+           if (!ecc) 
+                std::cout << "Server success release data : " << socket_.rootcoder()->respond_str() << std::endl;
+           else
+               std::cout << "Server release error : " << ecc << std::endl;
 
 #else
         boost::system::error_code ec;
@@ -533,11 +588,13 @@ public:
 
     void abort() {
 #if defined(SESSION_PROT)
-
-        //  boost::system::error_code ecc;
-        //    socket_.release( trans_,ecc);
-        //    if (trans_) 
-        //          std::cout << "Server release data : " << trans_->respond_str() << std::endl;
+          socket_.rootcoder()->request_str(ABORT_DATA);
+          boost::system::error_code ecc;
+           socket_.abort( ecc);
+           if (!ecc) 
+                std::cout << "Server success abort "   << std::endl;
+           else
+               std::cout << "Server abort error : " << ecc << std::endl;
 
 #else
         boost::system::error_code ec;
