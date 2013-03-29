@@ -8,7 +8,7 @@
 #include <deque>
 #include <iostream>
 
-//#define SESSION_PROT
+#define SESSION_PROT
 
 #include <kernel/constdef.h>
 #include <kernel/memfile.h>
