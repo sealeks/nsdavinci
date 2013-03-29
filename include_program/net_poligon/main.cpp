@@ -31,12 +31,28 @@
 #include <cstdlib>
 #include <cstring>
 
+std::size_t MULTIFACTOR = 4;
 
+std::string CONNECT_DATA = "CONNECT-DATA";
+std::string RELEASE_DATA = "RELEASE-DATA";
+std::string ABORT_DATA = "ABORT-DATA";
 
+inline static std::string generate_message(std::string vl){
+    if ((vl == "release" || vl == "abort")) 
+        return vl;
+    
+    std::size_t r=MULTIFACTOR;
+    while(r--){
+        vl+=vl;
+    }
+    return vl;
+}
 
-#if defined(PRES_PROT)
+enum {
+    max_length = 100
+};
 
-#elif defined(SESSION_PROT)
+#if defined(SESSION_PROT)
 using boost::itu::x225;
 typedef boost::itu::x225 protocol_type;
 #else
@@ -51,28 +67,25 @@ typedef protocol_type::acceptor acceptor_type;
 typedef protocol_type::endpoint endpoint_type;
 typedef protocol_type::resolver resolver_type;
 
-#if defined(PRES_PROT)
 
-#elif defined(SESSION_PROT)
+
+#if defined(SESSION_PROT)
 
 typedef protocol_type::lowselector lowselector_type;
 const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-SSEL"), lowselector_type(selectorvalue_type("SERVER-TSEL")));
 #else
-const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"), boost::itu::SIZE256);
+const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"));
 #endif
-
-
 
 
 int port = 102;
 
-enum {
-    max_length = 100
-};
 
-//#define NET_BLOCKING
+#define SESSION_CODER
+#define NET_BLOCKING
 
 #ifndef NET_BLOCKING
+
 
 class session {
 public:
@@ -102,7 +115,6 @@ public:
                 boost::bind(&session::handle_read, this,
                 boost::asio::placeholders::error,
                 boost::asio::placeholders::bytes_transferred));
-
     }
 
 private:
@@ -112,22 +124,24 @@ private:
         if (!error) {
             if (!socket_.ready()) {
                 std::cout << "Server read: " << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
-                std::cout << "Server read continiu" << std::endl;
+                std::cout << "Server read continiue" << std::endl;
                 socket_.async_read_some(boost::asio::buffer(data_, max_length),
                         boost::bind(&session::handle_read, this,
                         boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));
-                return; }            
+                return;
+            }            
             boost::asio::async_write(socket_,
                     boost::asio::buffer(data_, bytes_transferred),
                     boost::bind(&session::handle_write, this,
                     boost::asio::placeholders::error));
             std::cout << "Server read: " << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
             message = std::string(data_, bytes_transferred);
-
         }
         else {
+#if defined(SESSION_PROT)              
             std::cout << "Release data :   "  << socket_.rootcoder()->respond_str()  << std::endl;
+#endif              
             delete this;
         }
     }
@@ -143,7 +157,9 @@ private:
 
         }
         else {
-            std::cout << "Release data :  "  << socket_.rootcoder()->respond_str()  << std::endl;            
+#if defined(SESSION_PROT)            
+            std::cout << "Release data :  "  << socket_.rootcoder()->respond_str()  << std::endl;           
+#endif              
             delete this;
         }
     }
@@ -165,11 +181,7 @@ public:
 private:
 
     void start_accept() {
-
         session* new_session = new session(io_service_);
-
-
-
         acceptor_.async_accept(new_session->socket(),
                 boost::bind(&server::handle_accept, this, new_session,
                 boost::asio::placeholders::error));
@@ -183,7 +195,6 @@ private:
         else {
             delete new_session;
         }
-
         start_accept();
     }
 
@@ -202,8 +213,7 @@ public:
         endpoint_type endpoint = *endpoint_iterator;
 
 #if defined(SESSION_PROT)
-        socket_.rootcoder()->request_str(std::string(33000, 'a'));
-#else
+        socket_.rootcoder()->request_str(CONNECT_DATA);
 #endif  
 
         socket_.async_connect(endpoint,
@@ -212,76 +222,55 @@ public:
     }
 
     ~client() {
-        //if (socket_.is_open()) {
-
-        //}
+        if (socket_.is_open()) {
+            socket_.close();
+        }
     }
 
-    void release() {
-        std::cout << "Start release" << std::endl;
-#if defined(PRES_PROT)
-        io_service_.reset();
-        socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
-        io_service_.poll();
-#elif defined(SESSION_PROT)
-        io_service_.reset();
-        socket_.async_abort(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
-        io_service_.poll();
-#else
-        io_service_.reset();
-        //  boost::asio::async_release(socket_, boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
-        io_service_.poll();
-#endif           
-
-
-    }
 
     void write(const std::string& msg) {
-        message = msg;
+        message = generate_message(msg);
         io_service_.post(boost::bind(&client::do_write, this));
     }
 
-    void close() {
-        io_service_.post(boost::bind(&client::do_close, this));
-    }
 
 private:
 
     void handle_connect(const boost::system::error_code& error,
             resolver_type::iterator endpoint_iterator) {
         if (!error) {
-
 #if defined(SESSION_PROT)                
             std::cout << "Server accept data : " << socket_.rootcoder()->respond_str() << std::endl;
 #else
-
+            std::cout << "Client successfull connect" << std::endl;
 #endif                
-
         }
-        else if (endpoint_iterator != resolver_type::iterator()) {
-            //socket_.close();
-            endpoint_type endpoint = *endpoint_iterator;
-
-#if defined(SESSION_PROT)
-            socket_.rootcoder()->request_str("Hello server from test");
-#else
-#endif  
-
-            socket_.async_connect(endpoint,
-                    boost::bind(&client::handle_connect, this,
-                    boost::asio::placeholders::error, ++endpoint_iterator));
+        else {
+            std::cout << "Connect fail with error:" << error << std::endl;
+            if (endpoint_iterator != resolver_type::iterator()) {
+                std::cout << "Next endpoint:"  << std::endl;
+                endpoint_type endpoint = *endpoint_iterator;               
+                socket_.async_connect(endpoint,
+                        boost::bind(&client::handle_connect, this,
+                        boost::asio::placeholders::error, ++endpoint_iterator));
+            }
         }
     }
+    
+    
 
-    void handle_release(const boost::system::error_code& error) {
-        std::cout << "Client release :" << (error ? "error " : "success") << std::endl;
-        if (error) 
-            std::cout << "Release error: " <<  error << std::endl;
-#if defined(SESSION_PROT)         
-        std::cout << "Server release data : " << socket_.rootcoder()->respond_str() << std::endl;
-#endif
-
+    void handle_write(const boost::system::error_code& error,
+            size_t bytes_transferred) {
+        if (!error) {
+            socket_.async_read_some(boost::asio::buffer(data_, max_length),
+                    boost::bind(&client::handle_read, this,
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
+        }
+        else
+            std::cout << "handle_write error: " << error << std::endl;         
     }
+
 
     void handle_read(const boost::system::error_code& error,
             size_t bytes_transferred) {
@@ -295,43 +284,85 @@ private:
                         boost::asio::placeholders::bytes_transferred));
                 return;
 
-            }
-#if defined(SESSION_PROT)              
-            socket_.rootcoder()->request_str("Client release");
-            socket_.async_abort(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
-#else
-            socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
-#endif           
+            }    
         }
-        else {
-            do_close();
-        }
+        else
+            std::cout << "handle_read error: " <<error  << std::endl;      
     }
+    
+        void handle_conversation(const boost::system::error_code& error) {
+#if defined(SESSION_PROT)   
+        if (!error) {
+            std::cout << "Client read:" << socket_.rootcoder()->respond_str()  << std::endl;
+        }
+        else
+            std::cout << "handle_conversation error: " << error << std::endl;
+#endif       
+    }
+
+
+    
+    void handle_release(const boost::system::error_code& error) {
+        if (!error){
+            std::cout << "Release success" << std::endl;
+#if defined(SESSION_PROT)         
+        std::cout << "Server release data : " << socket_.rootcoder()->respond_str() << std::endl;
+#endif
+        }
+        else
+            std::cout << "handle_release error: " << error << std::endl;   
+    }    
+    
+    void handle_abort(const boost::system::error_code& error) {
+        if (!error){
+            std::cout << "Abort success" << std::endl;
+#if defined(SESSION_PROT)         
+        //std::cout << "Server release data : " << socket_.rootcoder()->respond_str() << std::endl;
+#endif
+        }
+        else
+            std::cout << "handle_abort error: " << error << std::endl;   
+    }        
 
     void do_write() {
-        std::cout << "Client write:" << message << " size: " << message.size() << std::endl;
-        boost::asio::async_write(socket_,
-                boost::asio::buffer(message.data(),
-                message.size()),
-                boost::bind(&client::handle_write, this,
-                boost::asio::placeholders::error));
-
-    }
-
-    void handle_write(const boost::system::error_code& error) {
-        if (!error) {
-            socket_.async_read_some(boost::asio::buffer(data_, max_length),
-                    boost::bind(&client::handle_read, this,
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred));
+        if (socket_.is_open()) {
+            if (!(message == "release" || message == "abort")) {
+                std::cout << "Client write:" << message << " size: " << message.size() << std::endl;
+#if defined(SESSION_PROT)  &&   defined(SESSION_CODER) 
+                socket_.rootcoder()->request_str(message);
+                socket_.async_conversation(boost::bind(&client::handle_conversation, this,
+                        boost::asio::placeholders::error));                
+ #else               
+                socket_.async_write_some(
+                        boost::asio::buffer(message.data(),
+                        message.size()),
+                        boost::bind(&client::handle_write, this,
+                        boost::asio::placeholders::error,  boost::asio::placeholders::bytes_transferred));
+#endif                
+            }
+            else {
+                std::cout << "Client " << message << std::endl;
+                if (message == "release") {
+#if defined(SESSION_PROT)                         
+                    socket_.rootcoder()->request_str(RELEASE_DATA);
+                    socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+ #else
+               socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+#endif                        
+                }
+                else {
+#if defined(SESSION_PROT)                         
+                    socket_.rootcoder()->request_str(ABORT_DATA);
+                    socket_.async_abort(boost::bind(&client::handle_abort, this, boost::asio::placeholders::error));
+ #else
+               socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
+#endif   
+                }
+            }
         }
-        else {
-            do_close();
+        else{
+            std::cout << "Socket closed" << std::endl;
         }
-    }
-
-    void do_close() {
-        socket_.close();
     }
 
 private:
@@ -356,7 +387,9 @@ public:
     }
 
     void run() {
+#if defined(SESSION_PROT)          
         std::cout << "Client accept data : " << socket_.rootcoder()->request_str() << std::endl;
+#endif        
         boost::system::error_code ec;
         while (!ec) {
             std::size_t bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
@@ -415,16 +448,27 @@ public:
 
 #if defined(SESSION_PROT)
         socket_.rootcoder()->request_str("Hello server from test");
-#else
 #endif       
 
         boost::system::error_code ec;
-        endpoint_type endpoint = *endpoint_iterator;
-        socket_.connect(endpoint,
-                ec);
+        while (endpoint_iterator != resolver_type::iterator()) {
+            endpoint_type endpoint = *endpoint_iterator;
+            socket_.connect(endpoint,
+                    ec);
+            if (!ec) {
+                std::cout << "Client successfull connect" << std::endl;
+                return;
+            }
+            else {
+                std::cout << "Connect fail with error:" << ec << std::endl;
+                ++endpoint_iterator;
+            }
+        }
+            
+#if defined(SESSION_PROT)
         if (!ec)
-
             std::cout << "Client accept data : " << socket_.rootcoder()->respond_str() << std::endl;
+#endif  
     }
 
     ~client() {
@@ -433,37 +477,77 @@ public:
         }
     }
 
-    void release() {
-#if defined(PRES_PROT)
 
-#elif defined(SESSION_PROT)
-        //    trans_ = trans_data_type( new   trans_data("Goodbuy server  from test"));
+
+    void write(const std::string& msg) {
+
+        if (socket_.is_open()) {
+            message =generate_message(msg);
+            boost::system::error_code ec;
+            socket_.write_some(boost::asio::buffer(message.data(), message.size()), ec);
+            
+            if (!(msg == "release" || msg == "abort")) {
+                 std::cout << "Client write data size =" << message.size() << std::endl;
+                std::size_t bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
+                std::cout << "Client read data:" << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
+                if (!socket_.ready()) {
+                    while (!ec && !socket_.ready()) {
+                        bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
+                        std::cout << "Client read cont:" << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;                      
+                    }
+                }
+            }
+            else {
+                std::cout << "Client " << message << std::endl;
+                if (message == "release"){
+                release();
+                }
+                else{
+                abort();    
+                }           
+            }
+        }
+        else {
+            std::cout << "Socket closed" << std::endl;
+        }
+
+    }
+
+    void release() {
+#if defined(SESSION_PROT)
+
         //  boost::system::error_code ecc;
         //    socket_.release( trans_,ecc);
         //    if (trans_) 
         //          std::cout << "Server release data : " << trans_->respond_str() << std::endl;
 
 #else
-        boost::system::error_code ecc;
-        socket_.release(ecc);
+        boost::system::error_code ec;
+        socket_.release(ec);
+        if (!ec)
+            std::cout << "Socket release success" << std::endl;
+        else
+           std::cout << "Socket release error" << ec << std::endl; 
 #endif  
     }
 
-    void write(const std::string& msg) {
+    void abort() {
+#if defined(SESSION_PROT)
 
+        //  boost::system::error_code ecc;
+        //    socket_.release( trans_,ecc);
+        //    if (trans_) 
+        //          std::cout << "Server release data : " << trans_->respond_str() << std::endl;
 
-        message = msg;
+#else
         boost::system::error_code ec;
-        socket_.write_some(boost::asio::buffer(message.data(), message.size()), ec);
-        std::size_t bytes_transferred = socket_.read_some(boost::asio::buffer(data_, max_length), ec);
-        std::cout << "Client read:" << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
-
-    }
-
-    void close() {
-        socket_.close();
-    }
-
+        socket_.release(ec);
+        if (!ec)
+            std::cout << "Socket release success" << std::endl;
+        else
+           std::cout << "Socket release error" << ec << std::endl; 
+#endif  
+    }    
 
 
 private:
@@ -531,7 +615,6 @@ struct Client {
             boost::thread::sleep(xt_loop);
         }
         //io_service.stop();
-        client_.release();
         return true;
     }
 
