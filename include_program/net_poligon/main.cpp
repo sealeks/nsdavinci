@@ -87,12 +87,10 @@ const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-SSEL"), 
 const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"));
 #endif
 
-
 int port = 102;
 
-
 #define SESSION_CODER
-#define NET_BLOCKING
+//#define NET_BLOCKING
 
 #ifndef NET_BLOCKING
 
@@ -114,10 +112,7 @@ public:
 
     void start() {
 #if defined(SESSION_PROT)  
-        if (socket_.rootcoder()->respond_str().size() > 600)
-            std::cout << "Client accept data size : " << socket_.rootcoder()->respond_str().size() << std::endl;
-        else
-            std::cout << "Client accept data : " << socket_.rootcoder()->respond_str() << std::endl;
+         PRINT_INPUT("Server S-CONNECT-ind" )
 #endif        
 
 #if defined(SESSION_PROT)  &&   defined(SESSION_CODER)    
@@ -161,6 +156,7 @@ private:
                 if (message == "release!") {
 #if defined(SESSION_PROT)                         
                     socket_.rootcoder()->request_str(RELEASE_DATA);
+                    PRINT_OUTPUT("Server S-FINISH-req" )
                     socket_.async_release(boost::bind(&session::handle_release, this, boost::asio::placeholders::error));
 #else
                     socket_.async_release(boost::bind(&session::handle_release, this, boost::asio::placeholders::error));
@@ -169,6 +165,7 @@ private:
                 else {
 #if defined(SESSION_PROT)                         
                     socket_.rootcoder()->request_str(ABORT_DATA);
+                    PRINT_OUTPUT("Server S-ABORT-req" )
                     socket_.async_abort(boost::bind(&session::handle_abort, this, boost::asio::placeholders::error));
 #else
                     socket_.async_release(boost::bind(&session::handle_release, this, boost::asio::placeholders::error));
@@ -179,7 +176,7 @@ private:
         else {
             std::cout << "Finish session with error :  " << error.message() << std::endl;
 #if defined(SESSION_PROT)              
-            std::cout << "Release data :   " << socket_.rootcoder()->respond_str() << std::endl;
+            PRINT_INPUT("Server S-RELEASE-conf" )
 #endif              
             delete this;
         }
@@ -199,7 +196,7 @@ private:
         else {
             std::cout << "Finish session with error :  " << error.message() << std::endl;
 #if defined(SESSION_PROT)            
-            std::cout << "Release data :  " << socket_.rootcoder()->respond_str() << std::endl;
+            PRINT_INPUT("Server S-RELEASE-ind" )
 #endif              
             delete this;
         }
@@ -207,7 +204,7 @@ private:
 
     void handle_conversation(const boost::system::error_code& error) {
         if (!error) {
-            std::cout << "Server read: " << socket_.rootcoder()->respond_str() << " size: " << socket_.rootcoder()->respond_str().size() << std::endl;
+            PRINT_INPUT("Server S-DATA-ind" )
             message = socket_.rootcoder()->respond_str();
             if (!(message == "release!" || message == "abort!")) {
                 socket_.rootcoder()->request_str(socket_.rootcoder()->respond_str());
@@ -219,6 +216,7 @@ private:
                 if (message == "release!") {
 #if defined(SESSION_PROT)                         
                     socket_.rootcoder()->request_str(RELEASE_DATA);
+                    PRINT_OUTPUT("Server S-FINISH-req" )
                     socket_.async_release(boost::bind(&session::handle_release, this, boost::asio::placeholders::error));
 #else
                     socket_.async_release(boost::bind(&session::handle_release, this, boost::asio::placeholders::error));
@@ -227,6 +225,7 @@ private:
                 else {
 #if defined(SESSION_PROT)                         
                     socket_.rootcoder()->request_str(ABORT_DATA);
+                    PRINT_OUTPUT("Server S-ABORT-req" )
                     socket_.async_abort(boost::bind(&session::handle_abort, this, boost::asio::placeholders::error));
 #else
                     socket_.async_release(boost::bind(&session::handle_release, this, boost::asio::placeholders::error));
@@ -237,7 +236,7 @@ private:
         else {
             std::cout << "Finish session with error :  " << error.message() << std::endl;
 #if defined(SESSION_PROT)            
-            std::cout << "Release data :  " << socket_.rootcoder()->respond_str() << std::endl;
+            PRINT_INPUT("Server S-RELEASE-ind" )
 #endif              
             delete this;
         }
@@ -247,7 +246,7 @@ private:
         if (!error) {
             std::cout << "Release success" << std::endl;
 #if defined(SESSION_PROT)         
-            std::cout << "Server release data : " << socket_.rootcoder()->respond_str() << std::endl;
+            PRINT_INPUT("Server S-RELEASE-ind" )
 #endif
         }
         else
@@ -343,7 +342,7 @@ private:
             resolver_type::iterator endpoint_iterator) {
         if (!error) {
 #if defined(SESSION_PROT)                
-            std::cout << "Server accept data : " << socket_.rootcoder()->respond_str() << std::endl;
+            PRINT_INPUT("Client S-CONNECT-conf" )
 #else
             std::cout << "Client successfull connect" << std::endl;
 #endif                
@@ -393,7 +392,7 @@ private:
     void handle_conversation(const boost::system::error_code& error) {
 #if defined(SESSION_PROT)   
         if (!error) {
-            std::cout << "Client read:" << socket_.rootcoder()->respond_str() << std::endl;
+            PRINT_INPUT("Client S-DATA-ind" )
         }
         else
             std::cout << "handle_conversation error: " << error << std::endl;
@@ -404,7 +403,7 @@ private:
         if (!error) {
             std::cout << "Release success" << std::endl;
 #if defined(SESSION_PROT)         
-            std::cout << "Server release data : " << socket_.rootcoder()->respond_str() << std::endl;
+            PRINT_INPUT("Client S-RELEASE-conf" )
 #endif
         }
         else
@@ -443,6 +442,7 @@ private:
                 if (message == "release") {
 #if defined(SESSION_PROT)                         
                     socket_.rootcoder()->request_str(RELEASE_DATA);
+                    PRINT_OUTPUT("Client S-RELEASE-req" )
                     socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
 #else
                     socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
@@ -451,6 +451,7 @@ private:
                 else {
 #if defined(SESSION_PROT)                         
                     socket_.rootcoder()->request_str(ABORT_DATA);
+                    PRINT_OUTPUT("Client S-ABORT-req" )
                     socket_.async_abort(boost::bind(&client::handle_abort, this, boost::asio::placeholders::error));
 #else
                     socket_.async_release(boost::bind(&client::handle_release, this, boost::asio::placeholders::error));
