@@ -18,7 +18,7 @@ namespace boost {
                     uint16_t sz;
                     if (raw_to_inttype(octet_sequnce(val.begin() + 1, val.end()), sz)) {
                         sz = endiancnv_copy(sz);
-                        it += 2;
+                        it += 3;
                         return static_cast<std::size_t> (sz);
                     }
                 }
