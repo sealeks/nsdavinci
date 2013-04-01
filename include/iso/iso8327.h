@@ -318,7 +318,7 @@ namespace boost {
 
                 bool nullPI(varid_type cod) const;
 
-                asn_coder_ptr sequence(asn_coder_ptr seq) const;
+                asn_coder_ptr sequence(asn_coder_ptr seq, std::size_t constrants) const;
 
             private:
 
@@ -429,27 +429,27 @@ namespace boost {
             //negotiate_x225impl_option
             bool negotiate_x225impl_option(const protocol_options& self, const protocol_options& dist, octet_type& errorreason);
 
-            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data); //CONNECT SPDU
+            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //CONNECT SPDU
 
-            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data); //OVERFLOW ACCEPT SPDU
+            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //OVERFLOW ACCEPT SPDU
 
-            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data); //CONNECT DATA OVERFLOW SPDU            
+            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //CONNECT DATA OVERFLOW SPDU            
 
-            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data); //ACCEPT SPDU
+            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //ACCEPT SPDU
 
-            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data); //REFUSE  SPDU        
+            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //REFUSE  SPDU        
 
-            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data); //FINISH SPDU            
+            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //FINISH SPDU            
 
-            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data); //DISCONNECT  SPDU          
+            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //DISCONNECT  SPDU          
 
-            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data); //ABORT SPDU                     
+            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //ABORT SPDU                     
 
-            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data); //ABORT ACCEPT  SPDU                              
+            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //ABORT ACCEPT  SPDU                              
 
-            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data); //NOT FINISH  SPDU                      
+            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //NOT FINISH  SPDU                      
 
-            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data); //DATA TRANSFER  SPDU   
+            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //DATA TRANSFER  SPDU   
 
 
 
@@ -511,10 +511,10 @@ namespace boost {
             class sender {
             public:
 
-                sender(spdu_type type) : type_(type) {
+                sender(spdu_type type) : type_(type), constrants_(0), option(NULL_PROTOCOL_OPTION) {
                 }
 
-                sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data);
+                sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t constrantstpdu = 0);
 
                 virtual ~sender() {
                 }
@@ -541,58 +541,64 @@ namespace boost {
 
             protected:
 
-                void constructCN(const protocol_options& opt, asn_coder_ptr data) {
-                    std::size_t inc_size = generate_header_CN(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data, EXTEDED_USERDATA_LIMIT + inc_size));
+                void construct(bool first = false);
+
+                void constructCN(bool first) {
+                    std::size_t inc_size = generate_header_CN(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, EXTEDED_USERDATA_LIMIT + inc_size));
                 }
 
-                void constructOA(const protocol_options& opt, asn_coder_ptr data) {
-                    generate_header_OA(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                void constructOA(bool first) {
+                    generate_header_OA(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
                 }
 
-                void constructCDO(const protocol_options& opt, asn_coder_ptr data) {
-                    generate_header_CDO(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                void constructCDO(bool first) {
+                    generate_header_CDO(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
                 }
 
-                void constructAC(const protocol_options& opt, asn_coder_ptr data) {
-                    generate_header_AC(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                void constructAC(bool first) {
+                    generate_header_AC(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
                 }
 
-                void constructRF(const protocol_options& opt, asn_coder_ptr data) {
-                    generate_header_RF(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                void constructRF(bool first) {
+                    generate_header_RF(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
                 }
 
-                void constructFN(const protocol_options& opt, asn_coder_ptr data) {
-                    generate_header_FN(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                void constructFN(bool first) {
+                    generate_header_FN(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
                 }
 
-                void constructAB(const protocol_options& opt, asn_coder_ptr data) {
-                    generate_header_AB(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                void constructAB(bool first) {
+                    generate_header_AB(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
                 }
 
-                void constructDN(const protocol_options& opt, asn_coder_ptr data) {
-                    generate_header_DN(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                void constructDN(bool first) {
+                    generate_header_DN(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
                 }
 
-                void constructAA(const protocol_options& opt, asn_coder_ptr data) {
-                    generate_header_AA(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                void constructAA(bool first) {
+                    generate_header_AA(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
                 }
 
-                void constructDT(const protocol_options& opt, asn_coder_ptr data) {
-                    generate_header_DT(opt, data);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(data));
+                void constructDT(bool first) {
+                    generate_header_DT(option, coder, constrants_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
                 }
 
                 spdu_type type_;
                 sender_sequnces_ptr buf_;
+                std::size_t constrants_;
+                asn_coder_ptr coder;
+                const protocol_options& option;
+
             };
 
 
@@ -855,7 +861,7 @@ namespace boost {
                     socket(sock),
                     handler(handlr),
                     state_(request),
-                    sender_(sender_ptr(new sender(CN_SPDU_ID, sock.session_option(), sock.rootcoder()))),
+                    sender_(sender_ptr(new sender(CN_SPDU_ID, sock.session_option(), sock.rootcoder(), sock.maxTPDU_dist()))),
                     receiver_(new receiver()) {
 
                     }
@@ -946,7 +952,7 @@ namespace boost {
                                     }
                                     case OA_SPDU_ID:
                                     {
-                                        sender_ = sender_ptr(new sender(CDO_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                        sender_ = sender_ptr(new sender(CDO_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_dist()));
                                         receiver_ = receiver_ptr(new receiver());
                                         state(request);
                                         operator()(ec, 0);
@@ -1048,7 +1054,7 @@ namespace boost {
                     release_operation(stream_socket& sock, ReleaseHandler handlr, release_type type) :
                     socket(sock),
                     handler(handlr),
-                    sender_(sender_ptr(new sender(release_type_to_spdu(type), sock.session_option(), sock.rootcoder()))),
+                    sender_(sender_ptr(new sender(release_type_to_spdu(type), sock.session_option(), sock.rootcoder(), sock.maxTPDU_dist()))),
                     receiver_(new receiver()),
                     type_(type),
                     state_(request),
@@ -1142,7 +1148,7 @@ namespace boost {
                                                 socket.rootcoder()->in()->clear();
                                                 socket.rootcoder()->in()->add(receiver_->options().data());
                                                 socket.negotiate_session_release();
-                                                sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                                sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_dist()));
                                                 state(request);
                                                 operator()(ec, 0);
                                                 collision_ = true;
@@ -1389,7 +1395,7 @@ namespace boost {
                                                 options_.refuse_reason(DR_REASON_USER);
                                             else
                                                 options_.refuse_reason(errorreason);
-                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder()));
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder(), socket.maxTPDU_dist()));
                                             state(reject);
                                             errorrefuse_ = ER_PROTOPT;
                                             operator()(ec, 0);
@@ -1404,7 +1410,7 @@ namespace boost {
                                         socket.user_requirement(receiver_->options().user_requirement());*/
 
                                         if (receiver_->options().overflow()) {
-                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_dist()));
                                             receiver_ = receiver_ptr(new receiver());
                                             state(overflow);
 
@@ -1412,7 +1418,7 @@ namespace boost {
                                             return;
                                         }
 
-                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_dist()));
                                         state(request);
                                         operator()(ec, 0);
                                         return;
@@ -1649,7 +1655,7 @@ namespace boost {
                     std::size_t sendsize = rootcoder()->out()->size();
                     if (!sendsize)
                         return ec;
-                    sender_ptr sender_(new sender(DT_SPDU_ID, session_option(), rootcoder()));
+                    sender_ptr sender_(new sender(DT_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
                     sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
@@ -1669,7 +1675,7 @@ namespace boost {
                     request_operation(stream_socket& sock, RequestHandler handlr) :
                     socket(sock),
                     handler(handlr),
-                    sender_(sender_ptr(new sender(DT_SPDU_ID, sock.session_option(), sock.rootcoder()))),
+                    sender_(sender_ptr(new sender(DT_SPDU_ID, sock.session_option(), sock.rootcoder(), sock.maxTPDU_dist()))),
                     sendsize(sock.rootcoder()->out()->size()) {
                     }
 
@@ -1865,7 +1871,7 @@ namespace boost {
                                         socket.rootcoder()->in()->clear();
                                         socket.rootcoder()->in()->add(receiver_->options().data());
                                         socket.negotiate_session_release();
-                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_dist()));
                                         state(request);
                                         errorrefuse_ = ER_RELEASE;
                                         operator()(ec, 0);
@@ -2219,7 +2225,9 @@ namespace boost {
                     return !(maxTPDU_src_ | maxTPDU_dist_);
                 }
 
-
+                bool segmentationTPDU() const {
+                    return maxTPDU_dist_;
+                }
 
 
 
@@ -2237,7 +2245,7 @@ namespace boost {
                     if (super_type::connect(peer_endpoint, ec))
                         return connect_impl_exit(ec);
 
-                    sender_ptr sender_(sender_ptr(new sender(CN_SPDU_ID, session_option(), rootcoder())));
+                    sender_ptr sender_(sender_ptr(new sender(CN_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist())));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
 
@@ -2271,7 +2279,7 @@ namespace boost {
                                         }
                                         case OA_SPDU_ID:
                                         {
-                                            sender_ = sender_ptr(new sender(CDO_SPDU_ID, session_option(), rootcoder()));
+                                            sender_ = sender_ptr(new sender(CDO_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
                                             receiver_ = receiver_ptr(new receiver());
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
@@ -2305,7 +2313,7 @@ namespace boost {
 
                 error_code release_impl(release_type type, error_code& ec) {
 
-                    sender_ptr sender_(new sender(release_type_to_spdu(type), session_option(), rootcoder()));
+                    sender_ptr sender_(new sender(release_type_to_spdu(type), session_option(), rootcoder(), maxTPDU_dist()));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                     // no keep transport  it dont wait AA *ref X225 7.9.2
@@ -2348,7 +2356,7 @@ namespace boost {
                                                     rootcoder()->in()->clear();
                                                     rootcoder()->in()->add(receiver_->options().data());
                                                     negotiate_session_release();
-                                                    sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
+                                                    sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
                                                     while (!ec && !sender_->ready())
                                                         sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                                 }
@@ -2410,7 +2418,7 @@ namespace boost {
                     while (!ec && !receiver_->ready()) {
                         receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
                     }
-                    while(!ec) {
+                    while (!ec) {
 
                         switch (receiver_->state()) {
                             case receiver::complete:
@@ -2435,7 +2443,7 @@ namespace boost {
                                                 options_.refuse_reason(DR_REASON_USER);
                                             else
                                                 options_.refuse_reason(errorreason);
-                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder()));
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder(), maxTPDU_dist()));
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                             ec = ER_PROTOPT;
@@ -2450,11 +2458,11 @@ namespace boost {
                                         user_requirement(receiver_->options().user_requirement());*/
 
                                         if (receiver_->options().overflow()) {
-                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder()));
+                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                             if (ec)
-                                                break;                                            
+                                                break;
                                             receiver_ = receiver_ptr(new receiver());
                                             while (!ec && !receiver_->ready())
                                                 receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
@@ -2462,7 +2470,7 @@ namespace boost {
                                         }
 
 
-                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder()));
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
                                         while (!ec && !sender_->ready())
                                             sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                         if (!ec)
@@ -2475,11 +2483,11 @@ namespace boost {
                                         rootcoder()->in()->add(receiver_->options().data());
 
                                         if (!receiver_->options().endSPDU()) {
-                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder()));
+                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                             if (ec)
-                                                break;                                                
+                                                break;
                                             receiver_ = receiver_ptr(new receiver());
                                             while (!ec && !receiver_->ready())
                                                 receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
@@ -2490,7 +2498,7 @@ namespace boost {
                                                 protocol_options options_ = session_option();
                                                 options_.refuse_reason(DR_REASON_USER);
 
-                                                sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder()));
+                                                sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder(), maxTPDU_dist()));
                                                 while (!ec && !sender_->ready())
                                                     sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                                 if (ec)
@@ -2498,7 +2506,7 @@ namespace boost {
                                                 ec = ER_PROTOPT;
                                                 break;
                                             }
-                                            sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder()));
+                                            sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                             if (!ec)
@@ -2506,7 +2514,7 @@ namespace boost {
                                             break;
                                         }
                                         break;
-                                    }                                 
+                                    }
                                     default:
                                     {
                                         ec = ER_PROTOCOL;
@@ -2565,7 +2573,7 @@ namespace boost {
                                         rootcoder()->in()->clear();
                                         rootcoder()->in()->add(receiver_->options().data());
                                         negotiate_session_release();
-                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder()));
+                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
                                         while (!ec && !sender_->ready())
                                             sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                         ec = ER_RELEASE;
