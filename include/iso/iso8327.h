@@ -318,7 +318,7 @@ namespace boost {
 
                 bool nullPI(varid_type cod) const;
 
-                asn_coder_ptr sequence(asn_coder_ptr seq, std::size_t constrants) const;
+                asn_coder_ptr sequence(asn_coder_ptr seq, std::size_t& constraints, bool first) const;
 
             private:
 
@@ -429,27 +429,27 @@ namespace boost {
             //negotiate_x225impl_option
             bool negotiate_x225impl_option(const protocol_options& self, const protocol_options& dist, octet_type& errorreason);
 
-            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //CONNECT SPDU
+            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //CONNECT SPDU
 
-            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //OVERFLOW ACCEPT SPDU
+            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //OVERFLOW ACCEPT SPDU
 
-            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //CONNECT DATA OVERFLOW SPDU            
+            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //CONNECT DATA OVERFLOW SPDU            
 
-            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //ACCEPT SPDU
+            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //ACCEPT SPDU
 
-            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //REFUSE  SPDU        
+            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //REFUSE  SPDU        
 
-            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //FINISH SPDU            
+            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //FINISH SPDU            
 
-            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //DISCONNECT  SPDU          
+            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //DISCONNECT  SPDU          
 
-            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //ABORT SPDU                     
+            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //ABORT SPDU                     
 
-            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //ABORT ACCEPT  SPDU                              
+            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //ABORT ACCEPT  SPDU                              
 
-            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //NOT FINISH  SPDU                      
+            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //NOT FINISH  SPDU                      
 
-            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t constrants, bool first); //DATA TRANSFER  SPDU   
+            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //DATA TRANSFER  SPDU   
 
 
 
@@ -511,19 +511,24 @@ namespace boost {
             class sender {
             public:
 
-                sender(spdu_type type) : type_(type), constrants_(0), option(NULL_PROTOCOL_OPTION) {
+                sender(spdu_type type) : type_(type), constraints_(0), option(NULL_PROTOCOL_OPTION) {
                 }
 
-                sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t constrantstpdu = 0);
+                sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t constraintstpdu = 0);
 
                 virtual ~sender() {
                 }
 
                 bool ready() const {
-                    return (!buf_) || (buf_->ready());
+                    return (!buf_) || (constraints_ ? ((buf_->ready() && !buf_->overflowed())) : (buf_->ready()));
                 }
 
                 const const_sequences& pop() {
+                    if (constraints_){
+                        if (buf_->ready() && buf_->overflowed()){
+                            construct();              
+                        }
+                    }
                     return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
                 }
 
@@ -544,58 +549,59 @@ namespace boost {
                 void construct(bool first = false);
 
                 void constructCN(bool first) {
-                    std::size_t inc_size = generate_header_CN(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, EXTEDED_USERDATA_LIMIT + inc_size));
+                    std::size_t inc_size = generate_header_CN(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_ ? constraints_ : (EXTEDED_USERDATA_LIMIT + inc_size)));
+                    constraints_=0;
                 }
 
                 void constructOA(bool first) {
-                    generate_header_OA(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    generate_header_OA(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
 
                 void constructCDO(bool first) {
-                    generate_header_CDO(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    generate_header_CDO(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
 
                 void constructAC(bool first) {
-                    generate_header_AC(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    generate_header_AC(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
 
                 void constructRF(bool first) {
-                    generate_header_RF(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    generate_header_RF(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
 
                 void constructFN(bool first) {
-                    generate_header_FN(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    generate_header_FN(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
 
                 void constructAB(bool first) {
-                    generate_header_AB(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    generate_header_AB(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
 
                 void constructDN(bool first) {
-                    generate_header_DN(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    generate_header_DN(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
 
                 void constructAA(bool first) {
-                    generate_header_AA(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    generate_header_AA(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
 
                 void constructDT(bool first) {
-                    generate_header_DT(option, coder, constrants_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    generate_header_DT(option, coder, constraints_, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
 
                 spdu_type type_;
                 sender_sequnces_ptr buf_;
-                std::size_t constrants_;
+                std::size_t constraints_;
                 asn_coder_ptr coder;
                 const protocol_options& option;
 
@@ -868,7 +874,7 @@ namespace boost {
 
                     void start(const error_code& ec) {
                         if (!ec) {
-                            if (!socket.check_size_constrants(CN_SPDU_ID)) {
+                            if (!socket.check_size_constraints(CN_SPDU_ID)) {
                                 state(refuse);
                                 receiver_->errcode(ER_NOBUFFER);
                             }
@@ -2238,7 +2244,7 @@ namespace boost {
                 error_code connect_impl(const endpoint_type& peer_endpoint,
                         error_code& ec) {
 
-                    if (!check_size_constrants(CN_SPDU_ID)) {
+                    if (!check_size_constraints(CN_SPDU_ID)) {
                         return connect_impl_exit(ER_NOBUFFER);
                     }
 
@@ -2605,7 +2611,7 @@ namespace boost {
                     return 0;
                 }
 
-                bool check_size_constrants(spdu_type tp) {
+                bool check_size_constraints(spdu_type tp) {
                     if (tp == DT_SPDU_ID) return true;
                     if (tp == CN_SPDU_ID)
                         return rootcoder()->out()->size() <= (SERVICE_SPDU_CONSTRAINTS + EXTEDED_USERDATA_LIMIT);
