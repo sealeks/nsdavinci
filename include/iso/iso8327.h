@@ -459,6 +459,8 @@ namespace boost {
 
             std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //DATA TRANSFER  SPDU   
 
+            std::size_t generate_end_segment(spdu_type type, asn_coder_ptr data);
+
 
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -516,8 +518,6 @@ namespace boost {
             //   x225 sender  //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////              
 
-            const octet_type END_OF_SEGMENTarr[] = {'\x3', PI_ENCLOSURE, '\x1', ENCLOSURE_END};
-            const octet_sequnce END_OF_SEGMENT = octet_sequnce(END_OF_SEGMENTarr, END_OF_SEGMENTarr + 4);
 
             class sender {
             public:
@@ -530,22 +530,27 @@ namespace boost {
                 virtual ~sender() {
                 }
 
-                bool ready() {
-                    if (segment_size) {
-                        if (buf_->ready()) {
-                            if (buf_->overflowed() && !eofsegment)
-                                construct();
-                            else {
-                                if (!eofsegment)
-                                    constructEND();
-                            }
-                        }
-                        return ((buf_->ready() && (eofsegment)));
-                    }
+                bool ready() const {
+                    if (segment_size) 
+                        return (buf_->ready() && !buf_->overflowed()  && eofsegment);
                     return buf_->ready();
                 }
 
                 const const_sequences& pop() {
+                    if (segment_size) {
+                        if (buf_->ready()) {
+                            if (buf_->overflowed()) {
+                                construct();
+                                return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
+                            }
+                            if (!eofsegment) {
+                                generate_end_segment(type_, coder);
+                                buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                                eofsegment=true;
+                                return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
+                            }
+                        }
+                    }
                     return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
                 }
 
@@ -622,14 +627,6 @@ namespace boost {
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
 
-                void constructEND() {
-                    coder->out()->clear();
-                    coder->out()->add(octet_sequnce(1, type_));
-                    coder->out()->add(END_OF_SEGMENT);
-                    buf_ = sender_sequnces_ptr(new basic_sender_sequences(coder->out()->buffers_ptr()));
-                    segment_size = 0;
-                    eofsegment = true;
-                }
 
                 spdu_type type_;
                 sender_sequnces_ptr buf_;
