@@ -201,6 +201,17 @@ namespace boost {
 
             const octet_type SEND_HEADERarr[] = {'\x1', '\x0', '\x1', '\x0'};
             const octet_sequnce SEND_HEADER = octet_sequnce(SEND_HEADERarr, SEND_HEADERarr + 4);
+            
+            const octet_type SEND_HEADER_F_arr[] = {'\x1', '\x0', '\x1', '\x3', PI_ENCLOSURE, '\x1', ENCLOSURE_BEGIN};
+            const octet_sequnce SEND_HEADER_F = octet_sequnce(SEND_HEADER_F_arr, SEND_HEADER_F_arr + 7);  
+            
+            const octet_type SEND_HEADER_M_arr[] = {'\x1', '\x0', '\x1', '\x3', PI_ENCLOSURE, '\x1', ENCLOSURE_MIDLE};
+            const octet_sequnce SEND_HEADER_M = octet_sequnce(SEND_HEADER_M_arr, SEND_HEADER_M_arr + 7);      
+            
+            const octet_type SEND_HEADER_E_arr[] = {'\x1', '\x0', '\x1', '\x3', PI_ENCLOSURE, '\x1', ENCLOSURE_END};
+            const octet_sequnce SEND_HEADER_E = octet_sequnce(SEND_HEADER_E_arr, SEND_HEADER_E_arr + 7);     
+            
+            
 
             const octet_type ECHO_NEGOTIATEarr[] = {'e', 'c', 'h', 'o', ':', ' '};
             const octet_sequnce ECHO_NEGOTIATE = octet_sequnce(ECHO_NEGOTIATEarr, ECHO_NEGOTIATEarr + 6);
@@ -324,7 +335,7 @@ namespace boost {
 
                 bool nullPI(varid_type cod) const;
 
-                asn_coder_ptr sequence(asn_coder_ptr seq, std::size_t& constraints, bool first) const;
+                asn_coder_ptr sequence(asn_coder_ptr seq, std::size_t& segment_size, bool first) const;
 
             private:
 
@@ -437,29 +448,27 @@ namespace boost {
             //negotiate_x225impl_option
             bool negotiate_x225impl_option(const protocol_options& self, const protocol_options& dist, octet_type& errorreason);
 
-            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //CONNECT SPDU
+            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //CONNECT SPDU
 
-            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //OVERFLOW ACCEPT SPDU
+            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //OVERFLOW ACCEPT SPDU
 
-            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //CONNECT DATA OVERFLOW SPDU            
+            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //CONNECT DATA OVERFLOW SPDU            
 
-            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //ACCEPT SPDU
+            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //ACCEPT SPDU
 
-            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //REFUSE  SPDU        
+            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //REFUSE  SPDU        
 
-            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //FINISH SPDU            
+            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //FINISH SPDU            
 
-            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //DISCONNECT  SPDU          
+            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //DISCONNECT  SPDU          
 
-            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //ABORT SPDU                     
+            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //ABORT SPDU                     
 
-            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //ABORT ACCEPT  SPDU                              
+            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //ABORT ACCEPT  SPDU                              
 
-            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //NOT FINISH  SPDU                      
+            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //NOT FINISH  SPDU                      
 
-            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first); //DATA TRANSFER  SPDU   
-
-            std::size_t generate_end_segment(spdu_type type, asn_coder_ptr data);
+            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first); //DATA TRANSFER  SPDU   
 
 
 
