@@ -672,6 +672,16 @@ namespace boost {
                 return SEND_HEADER.size();
             }
 
+            const octet_type END_OF_SEGMENTarr[] = {'\x3', PI_ENCLOSURE, '\x1', ENCLOSURE_END};
+            const octet_sequnce END_OF_SEGMENT = octet_sequnce(END_OF_SEGMENTarr, END_OF_SEGMENTarr + 4);
+
+            std::size_t generate_end_segment(spdu_type type, asn_coder_ptr data) {
+                data->out()->clear();
+                data->out()->add(octet_sequnce(1, type));
+                data->out()->add(END_OF_SEGMENT);
+                return 5;
+            }            
+
 
             //sender
 
