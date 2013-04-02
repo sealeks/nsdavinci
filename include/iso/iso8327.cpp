@@ -4,7 +4,6 @@
 //  See http://www.boost.org/LICENSE_1_0.txt
 
 #include <iso/iso8327.h>
-#include <string>
 
 
 namespace boost {
@@ -99,6 +98,15 @@ namespace boost {
                 return (itpi != it->second.end()) ? itpi->second : null_val;
             }
 
+            octet_sequnce& spdudata::getPGI(varid_type cod1, varid_type cod2) {
+                if (!existPGI(cod1, cod2)) {
+                    setPGI(cod1, cod2, octet_sequnce());
+                }
+                spdudata_type::iterator it = value_->find(cod1);
+                pgi_type::iterator itpi = it->second. find(cod2);
+                return itpi->second;
+            }
+
             bool spdudata::getPGI(varid_type cod1, varid_type cod2, int8_t& val, int8_t def) const {
                 const octet_sequnce& tmp = getPGI(cod1, cod2);
                 if (!tmp.empty()) {
@@ -153,6 +161,11 @@ namespace boost {
                 return getPGI(0, cod);
             }
 
+            octet_sequnce& spdudata::getPI(varid_type cod) {
+
+                return getPGI(0, cod);
+            }
+
             bool spdudata::getPI(varid_type cod, int8_t& val, int8_t def) const {
 
                 return getPGI(0, cod, val, def);
@@ -201,9 +214,12 @@ namespace boost {
                 return nullPGI(0, cod);
             }
 
-            asn_coder_ptr spdudata::sequence(asn_coder_ptr coder, std::size_t& constraints, bool first ) const {
+            asn_coder_ptr spdudata::sequence(asn_coder_ptr coder, std::size_t& constraints, bool first) const {
+
                 std::size_t codersize = coder->out()->size();
                 octet_sequnce tmp;
+
+
                 spdudata_type::const_iterator strtit = value_->end();
                 for (spdudata_type::const_iterator it = value_->begin(); it != value_->end(); ++it) {
                     if ((!it->first && it == value_->begin()))
@@ -233,37 +249,45 @@ namespace boost {
                 }
 
                 std::size_t datasize = codersize;
-                if (constraints) {
+                
+                if (constraints && datasize) {
 
-                    if (constraints <= (tmp.size() + 12 /*(4 -main header + 3 - ENCLOSURE + 4 - data val + 1 data)*/))
-                        constraints += 12; // ??? 
+                    bool connect_spdu = (type_ == CN_SPDU_ID);
+                    
+                    if (constraints < (tmp.size() + (connect_spdu ? 9 : 12) /*(4 -main header + 3 - ENCLOSURE + 4 - data val + 1 data)*/))
+                        constraints += (connect_spdu ? 9 : 12); // ??? 
 
-                    std::size_t datasize_with_header = constraints - (tmp.size() +((constraints > 0x100) ? 4 : 2/* main header*/) + ((type_ != CN_SPDU_ID) ? 3 : 0 ) /*ENCLOSURE*/);
-                    datasize = (datasize_with_header > 0x100) ? (datasize - 4) : (datasize - 2);
+                    std::size_t max_datasize_with_header = constraints - (tmp.size() +((constraints > 0x100) ? 4 : 2/* main header*/) +
+                            (connect_spdu ? 0 : 3) /*ENCLOSURE*/);
 
-                    if (type_ != CN_SPDU_ID) {
-                        if (codersize > datasize) {
+                    std::size_t max_datasize = (max_datasize_with_header > 0x100) ? (max_datasize_with_header - 4) : (max_datasize_with_header - 2);
+
+
+                    if (max_datasize < datasize) {
+                        datasize = max_datasize;
+                        if (!connect_spdu) {
                             raw_back_insert(tmp, inttype_to_raw(PI_ENCLOSURE));
                             raw_back_insert(tmp, to_triple_size(1));
-                            raw_back_insert(tmp, inttype_to_raw(first ? ENCLOSURE_BEGIN : 0));
+                            raw_back_insert(tmp, inttype_to_raw(first ? ENCLOSURE_BEGIN : ENCLOSURE_MIDLE));
                         }
-                        else {
-
+                    }
+                    else {
+                        if (!first && !connect_spdu) {
                             raw_back_insert(tmp, inttype_to_raw(PI_ENCLOSURE));
                             raw_back_insert(tmp, to_triple_size(1));
-                            raw_back_insert(tmp, inttype_to_raw(first ? (ENCLOSURE_BEGIN | ENCLOSURE_END) : ENCLOSURE_END));
+                            raw_back_insert(tmp, inttype_to_raw(ENCLOSURE_MIDLE));
                         }
                     }
                 }
-     
+
                 if (codersize) {
-                    switch (type_) {                        
+                    switch (type_) {
                         case CN_SPDU_ID:
                         {
                             if ((codersize > SIMPLE_USERDATA_LIMIT)) {
                                 if (codersize > EXTEDED_USERDATA_LIMIT) {
 
-                                    datasize = (EXTEDED_USERDATA_LIMIT > datasize) ? datasize :  EXTEDED_USERDATA_LIMIT;                                   
+                                    datasize = (EXTEDED_USERDATA_LIMIT > datasize) ? datasize : EXTEDED_USERDATA_LIMIT;
 
                                     raw_back_insert(tmp, inttype_to_raw(PGI_EXUSERDATA));
                                     raw_back_insert(tmp, to_triple_size(datasize));
@@ -292,10 +316,10 @@ namespace boost {
                         }
                     }
                 }
-                
+
                 coder->out()->add(octet_sequnce(tmp.begin(), tmp.end()), coder->out()->buffers().begin());
                 datasize += tmp.size();
-                            
+
                 octet_sequnce header(inttype_to_raw(type_));
                 raw_back_insert(header, to_triple_size(datasize));
                 coder->out()->add(octet_sequnce(header.begin(), header.end()), coder->out()->buffers().begin());
@@ -406,6 +430,11 @@ namespace boost {
             }
 
             const octet_sequnce& protocol_options::data() const {
+                return vars_->existPI(PGI_USERDATA) ? vars_->getPI(PGI_USERDATA) :
+                        vars_->getPI(PGI_EXUSERDATA);
+            }
+
+            octet_sequnce& protocol_options::data() {
                 return vars_->existPI(PGI_USERDATA) ? vars_->getPI(PGI_USERDATA) :
                         vars_->getPI(PGI_EXUSERDATA);
             }
@@ -551,11 +580,11 @@ namespace boost {
                     tmp.setPI(PI_CALLING, opt.ssap_calling());
                 if (!opt.ssap_called().empty())
                     tmp.setPI(PI_CALLED, opt.ssap_called());
-                if (before>EXTEDED_USERDATA_LIMIT){
-                    tmp.setPI(PI_DATAOVERFLOW, MORE_DATA);                  
+                if (before > EXTEDED_USERDATA_LIMIT) {
+                    tmp.setPI(PI_DATAOVERFLOW, MORE_DATA);
                 }
-                if (opt.maxTPDU_dist() || opt.maxTPDU_src()){
-                    
+                if (opt.maxTPDU_dist() || opt.maxTPDU_src()) {
+
                 }
                 tmp.sequence(data, constraints, first);
                 return data->out()->size() - before;
@@ -572,7 +601,6 @@ namespace boost {
             std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(CDO_SPDU_ID);
-                tmp.setPI(PI_ENCLOSURE, ENCLOSURE_END);
                 tmp.sequence(data, constraints, first);
                 return data->out()->size() - before;
             }
@@ -648,7 +676,7 @@ namespace boost {
             //sender
 
             sender::sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t constr) :
-            type_(type), constraints_(constr), coder(data), option(opt) {
+            type_(type), constraints_(constr), coder(data), option(opt), ended_(constr ? false : true) {
                 construct(true);
             }
 
@@ -727,7 +755,8 @@ namespace boost {
             type_data(new octet_sequnce(SI_WITH_LI)),
             type_buff_(boost::asio::buffer(*type_data)),
             header_buff_(),
-            userbuff_(buff) {
+            userbuff_(buff),
+            overflowed_(false) {
             }
 
             receiver::receiver() :
@@ -743,7 +772,8 @@ namespace boost {
             type_data(new octet_sequnce(SI_WITH_LI)),
             type_buff_(boost::asio::buffer(*type_data)),
             header_buff_(),
-            userbuff_() {
+            userbuff_(),
+            overflowed_(false) {
 
             }
 
@@ -870,7 +900,15 @@ namespace boost {
             }
 
             error_code receiver::check_header() {
-                options_ = protocol_options_ptr(new protocol_options(header_buff_));
+                if (overflowed_) {
+                    protocol_options_ptr tmp = protocol_options_ptr(new protocol_options(header_buff_));
+                    options_->data().insert(options_->data().end(), tmp->data().begin(), tmp->data().end());
+                    overflowed_ = tmp->overflow();
+                }
+                else {
+                    options_ = protocol_options_ptr(new protocol_options(header_buff_));
+                    overflowed_ = options_->overflow();
+                }
                 state(first_in_seq_ ? waittype : complete);
                 return error_code();
             }
