@@ -41,7 +41,7 @@
         else\
             std::cout << val <<"  more 200 bytes, datasize: " << socket_.rootcoder()->request_str().size() << " data : " << socket_.rootcoder()->request_str().substr(0, 199) << "..."<< std::endl;
 
-std::size_t MULTIFACTOR = 0;
+std::size_t MULTIFACTOR = 5;
 
 std::string CONNECT_DATA = std::string(12000, 'e');//"CONNECT-DATA";
 std::string RELEASE_DATA = "RELEASE-DATA";
