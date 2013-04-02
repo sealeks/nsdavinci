@@ -608,24 +608,28 @@ namespace boost {
             std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(AC_SPDU_ID);
-                tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
-                tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
-                tmp.setPI(PI_SES_USERREQ, FU_WORK);
-                if (!opt.ssap_calling().empty())
-                    tmp.setPI(PI_CALLING, opt.ssap_calling());
-                if (!opt.ssap_called().empty())
-                    tmp.setPI(PI_CALLED, opt.ssap_called());
+                if (first) {                
+                    tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
+                    tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
+                    tmp.setPI(PI_SES_USERREQ, FU_WORK);
+                    if (!opt.ssap_calling().empty())
+                        tmp.setPI(PI_CALLING, opt.ssap_calling());
+                    if (!opt.ssap_called().empty())
+                        tmp.setPI(PI_CALLED, opt.ssap_called());
+                }
                 tmp.sequence(data, constraints, first);
                 return data->out()->size() - before;
             }
 
             std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
-                data->out()->clear(); // no user data *ref X225 Tab 15                               
+                data->out()->clear(); // no user data *ref X225 Tab 15                       
                 spdudata tmp(RF_SPDU_ID);
-                tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
-                tmp.setPI(PI_SES_USERREQ, FU_WORK);
-                tmp.setPI(PI_VERSION, opt.reject_version());
-                tmp.setPI(PI_REASON, opt.refuse_reason());
+                if (first) {
+                    tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
+                    tmp.setPI(PI_SES_USERREQ, FU_WORK);
+                    tmp.setPI(PI_VERSION, opt.reject_version());
+                    tmp.setPI(PI_REASON, opt.refuse_reason());
+                }
                 tmp.sequence(data, constraints, first);
                 return data->out()->size();
             }
@@ -633,7 +637,9 @@ namespace boost {
             std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(FN_SPDU_ID);
-                tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
+                if (first) {
+                    tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
+                }
                 tmp.sequence(data, constraints, first);
                 return data->out()->size() - before;
             }
@@ -648,7 +654,9 @@ namespace boost {
             std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(AB_SPDU_ID);
-                tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
+                if (first) {
+                    tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
+                }
                 tmp.sequence(data, constraints, first);
                 return data->out()->size() - before;
             }
