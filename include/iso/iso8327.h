@@ -518,7 +518,6 @@ namespace boost {
             //   x225 sender  //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////              
 
-
             class sender {
             public:
 
@@ -531,31 +530,29 @@ namespace boost {
                 }
 
                 bool ready() const {
-                    if (segment_size) 
-                        return (buf_->ready() && !buf_->overflowed()  && eofsegment);
+                    if (segment_size)
+                        return (buf_->ready() && !buf_->overflowed());
                     return buf_->ready();
                 }
 
                 const const_sequences& pop() {
-                    if (segment_size) {
-                        if (buf_->ready()) {
-                            if (buf_->overflowed()) {
-                                construct();
-                                return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
-                            }
-                            if (!eofsegment) {
-                                generate_end_segment(type_, coder);
-                                buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
-                                eofsegment=true;
-                                return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
-                            }
-                        }
-                    }
                     return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
                 }
 
                 std::size_t size(std::size_t sz) {
-                    return ready() ? 0 : buf_->size(sz);
+                    if (!segment_size)
+                        return ready() ? 0 : buf_->size(sz);
+                    std::size_t rslt = 0;
+                    if (!buf_->ready())
+                        rslt = buf_->size(sz);
+                    if (!buf_->ready())
+                        return rslt;
+                    else {
+                        if (buf_->overflowed()) {
+                            construct();
+                        }
+                    }
+                    return rslt;
                 }
 
                 spdu_type type() const {
@@ -572,14 +569,12 @@ namespace boost {
                 void construct(bool first = false);
 
                 void constructCN(bool first) {
-                    eofsegment = true; // no segmentation , but size control
                     std::size_t inc_size = generate_header_CN(option, coder, segment_size, first);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size ? segment_size : (EXTEDED_USERDATA_LIMIT + inc_size)));
                     segment_size = 0; // no segmentation
                 }
 
                 void constructOA(bool first) {
-                    eofsegment = true;
                     segment_size = 0; // no segmentation
                     generate_header_OA(option, coder, segment_size, first);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
@@ -616,7 +611,6 @@ namespace boost {
                 }
 
                 void constructAA(bool first) {
-                    eofsegment = true;
                     segment_size = 0; // no segmentation
                     generate_header_AA(option, coder, segment_size, first);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
@@ -633,7 +627,6 @@ namespace boost {
                 std::size_t segment_size;
                 asn_coder_ptr coder;
                 const protocol_options& option;
-                bool eofsegment;
 
             };
 
