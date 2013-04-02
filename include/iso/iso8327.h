@@ -292,8 +292,8 @@ namespace boost {
 
 
                 const octet_sequnce& getPGI(varid_type cod1, varid_type cod2) const;
-                
-                octet_sequnce& getPGI(varid_type cod1, varid_type cod2);                
+
+                octet_sequnce& getPGI(varid_type cod1, varid_type cod2);
 
                 bool getPGI(varid_type cod1, varid_type cod2, int8_t& val, int8_t def = 0) const;
 
@@ -304,8 +304,8 @@ namespace boost {
                 bool getPGI(varid_type cod1, varid_type cod2, uint16_t& val, uint16_t def = 0) const;
 
                 const octet_sequnce& getPI(varid_type cod) const;
-                
-                octet_sequnce& getPI(varid_type cod);               
+
+                octet_sequnce& getPI(varid_type cod);
 
                 bool getPI(varid_type cod, int8_t& val, int8_t def = 0) const;
 
@@ -351,7 +351,6 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
             struct protocol_options {
-                
                 typedef boost::shared_ptr<spdudata> spdudata_ptr;
 
                 protocol_options() : vars_(new spdudata()) {
@@ -373,8 +372,8 @@ namespace boost {
                 void ssap_called(const octet_sequnce & val);
 
                 const octet_sequnce & data() const;
-                
-                octet_sequnce & data();                
+
+                octet_sequnce & data();
 
                 octet_type accept_version() const;
 
@@ -517,38 +516,36 @@ namespace boost {
             //   x225 sender  //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////              
 
-            const octet_type END_OF_SEGMENTarr[] = {'\x4', PI_ENCLOSURE , '\x2', ENCLOSURE_END};
+            const octet_type END_OF_SEGMENTarr[] = {'\x3', PI_ENCLOSURE, '\x1', ENCLOSURE_END};
             const octet_sequnce END_OF_SEGMENT = octet_sequnce(END_OF_SEGMENTarr, END_OF_SEGMENTarr + 4);
-            
-            
-            class sender { 
+
+            class sender {
             public:
 
-                sender(spdu_type type) : type_(type), constraints_(0), option(NULL_PROTOCOL_OPTION) {
+                sender(spdu_type type) : type_(type), segment_size(0), option(NULL_PROTOCOL_OPTION) {
                 }
 
-                sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t constraintstpdu = 0);
+                sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t segmentsize = 0);
 
                 virtual ~sender() {
                 }
 
-                bool ready() const {
-                    return (!buf_) ||
-                            ((constraints_ && !ended_)? ((buf_->ready() &&  (!buf_->overflowed() && !ended_))) :
-                            (buf_->ready()));
+                bool ready() {
+                    if (segment_size) {
+                        if (buf_->ready()) {
+                            if (buf_->overflowed() && !eofsegment)
+                                construct();
+                            else {
+                                if (!eofsegment)
+                                    constructEND();
+                            }
+                        }
+                        return ((buf_->ready() && (eofsegment)));
+                    }
+                    return buf_->ready();
                 }
 
                 const const_sequences& pop() {
-                    if (constraints_ && !ended_) {
-                        if (buf_->ready()) {
-                            if (buf_->overflowed())
-                                construct();
-                            else {
-                                if (!ended_)
-                                    constructENDCL();
-                            }         
-                        }
-                    }
                     return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
                 }
 
@@ -564,80 +561,82 @@ namespace boost {
                     return buf_ ? buf_->constraint() : 0;
                 }
 
+
             protected:
 
                 void construct(bool first = false);
 
                 void constructCN(bool first) {
-                    ended_ = true;
-                    std::size_t inc_size = generate_header_CN(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_ ? constraints_ : (EXTEDED_USERDATA_LIMIT + inc_size)));
-                    constraints_=0;
+                    eofsegment = true; // no segmentation , but size control
+                    std::size_t inc_size = generate_header_CN(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size ? segment_size : (EXTEDED_USERDATA_LIMIT + inc_size)));
+                    segment_size = 0; // no segmentation
                 }
 
                 void constructOA(bool first) {
-                    ended_=true;
-                    constraints_=0;
-                    generate_header_OA(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
+                    eofsegment = true;
+                    segment_size = 0; // no segmentation
+                    generate_header_OA(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
 
                 void constructCDO(bool first) {
-                    generate_header_CDO(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
+                    generate_header_CDO(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
 
                 void constructAC(bool first) {
-                    generate_header_AC(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
+                    generate_header_AC(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
 
                 void constructRF(bool first) {
-                    ended_=true;
-                    generate_header_RF(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
+                    generate_header_RF(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
 
                 void constructFN(bool first) {
-                    generate_header_FN(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
+                    generate_header_FN(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
 
                 void constructAB(bool first) {
-                    generate_header_AB(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
+                    generate_header_AB(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
 
                 void constructDN(bool first) {
-                    generate_header_DN(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
+                    generate_header_DN(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
 
                 void constructAA(bool first) {
-                    constraints_=0;
-                    generate_header_AA(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
+                    eofsegment = true;
+                    segment_size = 0; // no segmentation
+                    generate_header_AA(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
 
                 void constructDT(bool first) {
-                    generate_header_DT(option, coder, constraints_, first);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
+                    generate_header_DT(option, coder, segment_size, first);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, segment_size));
                 }
-                
-                void constructENDCL() {
+
+                void constructEND() {
                     coder->out()->clear();
                     coder->out()->add(octet_sequnce(1, type_));
-                    coder->out()->add( END_OF_SEGMENT);
-                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
-                    ended_ = true;
-                }                
+                    coder->out()->add(END_OF_SEGMENT);
+                    buf_ = sender_sequnces_ptr(new basic_sender_sequences(coder->out()->buffers_ptr()));
+                    segment_size = 0;
+                    eofsegment = true;
+                }
 
                 spdu_type type_;
                 sender_sequnces_ptr buf_;
-                std::size_t constraints_;
+                std::size_t segment_size;
                 asn_coder_ptr coder;
                 const protocol_options& option;
-                bool ended_;
+                bool eofsegment;
 
             };
 
@@ -727,7 +726,7 @@ namespace boost {
 
                 const protocol_options& options() const {
                     return options_ ? *options_ : NULL_PROTOCOL_OPTION;
-                }                
+                }
 
                 error_code errcode() const {
                     return errcode_;

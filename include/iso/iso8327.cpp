@@ -675,8 +675,8 @@ namespace boost {
 
             //sender
 
-            sender::sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t constr) :
-            type_(type), constraints_(constr), coder(data), option(opt), ended_(constr ? false : true) {
+            sender::sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t segmentsize ) :
+            type_(type), segment_size(segmentsize), coder(data), option(opt), eofsegment(segmentsize ? false : true) {
                 construct(true);
             }
 
