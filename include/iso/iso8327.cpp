@@ -903,13 +903,27 @@ namespace boost {
                 if (overflowed_) {
                     protocol_options_ptr tmp = protocol_options_ptr(new protocol_options(header_buff_));
                     options_->data().insert(options_->data().end(), tmp->data().begin(), tmp->data().end());
-                    overflowed_ = tmp->overflow();
+                    overflowed_ = !tmp->endSPDU();
                 }
                 else {
                     options_ = protocol_options_ptr(new protocol_options(header_buff_));
-                    overflowed_ = options_->overflow();
+                    overflowed_ = !options_->endSPDU();
                 }
-                state(first_in_seq_ ? waittype : complete);
+
+                if (overflowed_) {
+                    size_ = 0;
+                    estimatesize_ = SI_WITH_LI;
+                    datasize_ = 0;
+                    type_ = 0;
+                    first_in_seq_ = false;
+                    class_option_ = 0;
+                    reject_reason_ = 0;
+                    errcode_ = error_code();
+                    type_data = octet_sequnce_ptr(new octet_sequnce(SI_WITH_LI));
+                    type_buff_ = boost::asio::buffer(*type_data);
+                }
+                        
+				state(first_in_seq_ ? waittype : (overflowed_ ?  waittype: complete));
                 return error_code();
             }
 
