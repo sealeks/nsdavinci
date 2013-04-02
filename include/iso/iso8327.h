@@ -1469,30 +1469,20 @@ namespace boost {
 
                                         socket.rootcoder()->in()->add(receiver_->options().data());
 
-                                        if (!receiver_->options().endSPDU()) {
-                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder()));
-                                            receiver_ = receiver_ptr(new receiver());
-                                            state(overflow);
-                                            operator()(ec, 0);
-                                            return;
-                                        }
-                                        else {
-                                            if (!socket.negotiate_session_accept()) {
-                                                protocol_options options_ = socket.session_option();
-                                                options_.refuse_reason(DR_REASON_USER);
+                                        if (!socket.negotiate_session_accept()) {
+                                            protocol_options options_ = socket.session_option();
+                                            options_.refuse_reason(DR_REASON_USER);
 
-                                                sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder()));
-                                                state(reject);
-                                                errorrefuse_ = ER_PROTOPT;
-                                                operator()(ec, 0);
-                                                return;
-                                            }
-                                            sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder()));
-                                            state(request);
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder()));
+                                            state(reject);
+                                            errorrefuse_ = ER_PROTOPT;
                                             operator()(ec, 0);
                                             return;
                                         }
-                                        break;
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                        state(request);
+                                        operator()(ec, 0);
+                                        return;
                                     }
                                 }
                                 break;
@@ -2522,37 +2512,24 @@ namespace boost {
 
                                         rootcoder()->in()->add(receiver_->options().data());
 
-                                        if (!receiver_->options().endSPDU()) {
-                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
+                                        if (!negotiate_session_accept()) {
+                                            protocol_options options_ = session_option();
+                                            options_.refuse_reason(DR_REASON_USER);
+
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder(), maxTPDU_dist()));
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                             if (ec)
                                                 break;
-                                            receiver_ = receiver_ptr(new receiver());
-                                            while (!ec && !receiver_->ready())
-                                                receiver_->put(super_type::receive(boost::asio::buffer(receiver_->buffer()), 0, ec));
+                                            ec = ER_PROTOPT;
                                             break;
                                         }
-                                        else {
-                                            if (!negotiate_session_accept()) {
-                                                protocol_options options_ = session_option();
-                                                options_.refuse_reason(DR_REASON_USER);
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
+                                        while (!ec && !sender_->ready())
+                                            sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
+                                        if (!ec)
+                                            return check_accept_imp_exit(ec);
 
-                                                sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder(), maxTPDU_dist()));
-                                                while (!ec && !sender_->ready())
-                                                    sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
-                                                if (ec)
-                                                    break;
-                                                ec = ER_PROTOPT;
-                                                break;
-                                            }
-                                            sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder(), maxTPDU_dist()));
-                                            while (!ec && !sender_->ready())
-                                                sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
-                                            if (!ec)
-                                                return check_accept_imp_exit(ec);
-                                            break;
-                                        }
                                         break;
                                     }
                                     default:
