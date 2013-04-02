@@ -928,15 +928,22 @@ namespace boost {
             }
 
             error_code receiver::check_header() {
-                if (overflowed_) {
+                if (overflowed_) {                   
                     protocol_options_ptr tmp = protocol_options_ptr(new protocol_options(header_buff_));
-                    options_->data().insert(options_->data().end(), tmp->data().begin(), tmp->data().end());
+                    if (type_ != DT_SPDU_ID)
+                        options_->data().insert(options_->data().end(), tmp->data().begin(), tmp->data().end());
                     overflowed_ = !tmp->endSPDU();
                 }
                 else {
                     options_ = protocol_options_ptr(new protocol_options(header_buff_));
                     overflowed_ = !options_->endSPDU();
                 }
+                
+                if (type_ == DT_SPDU_ID) {
+                    state(waitdata);
+                    return errcode();
+                }
+                    
 
                 if (overflowed_) {
                     size_ = 0;

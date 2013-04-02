@@ -733,6 +733,10 @@ namespace boost {
 
                 error_code errcode(const error_code& err);
 
+                bool overflowed() const {
+                    return overflowed_;
+                }
+
             private:
 
                 operation_state state(operation_state val);
