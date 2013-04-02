@@ -43,7 +43,7 @@
 
 std::size_t MULTIFACTOR = 0;
 
-std::string CONNECT_DATA = std::string(500, 'e');//"CONNECT-DATA";
+std::string CONNECT_DATA = std::string(12000, 'e');//"CONNECT-DATA";
 std::string RELEASE_DATA = "RELEASE-DATA";
 std::string ABORT_DATA = "ABORT-DATA";
 
