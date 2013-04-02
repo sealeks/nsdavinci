@@ -214,7 +214,7 @@ namespace boost {
                 return nullPGI(0, cod);
             }
 
-            asn_coder_ptr spdudata::sequence(asn_coder_ptr coder, std::size_t& constraints, bool first) const {
+            asn_coder_ptr spdudata::sequence(asn_coder_ptr coder, std::size_t& segment_size, bool first) const {
 
                 std::size_t codersize = coder->out()->size();
                 octet_sequnce tmp;
@@ -250,14 +250,14 @@ namespace boost {
 
                 std::size_t datasize = codersize;
 
-                if (constraints && datasize) {
+                if (segment_size && datasize) {
 
                     bool connect_spdu = (type_ == CN_SPDU_ID);
 
-                    if (constraints < (tmp.size() + (connect_spdu ? 9 : 12) /*(4 -main header + 3 - ENCLOSURE + 4 - data val + 1 data)*/))
-                        constraints += (connect_spdu ? 9 : 12); // ??? 
+                    if (segment_size < (tmp.size() + (connect_spdu ? 9 : 12) /*(4 -main header + 3 - ENCLOSURE + 4 - data val + 1 data)*/))
+                        segment_size += (connect_spdu ? 9 : 12); // ??? 
 
-                    std::size_t max_datasize_with_header = constraints - (tmp.size() +((constraints > 0x100) ? 4 : 2/* main header*/) +
+                    std::size_t max_datasize_with_header = segment_size - (tmp.size() +((segment_size > 0x100) ? 4 : 2/* main header*/) +
                             (connect_spdu ? 0 : 3) /*ENCLOSURE*/);
 
                     std::size_t max_datasize = (max_datasize_with_header > 0x100) ? (max_datasize_with_header - 4) : (max_datasize_with_header - 2);
@@ -570,7 +570,7 @@ namespace boost {
                 return true;
             }
 
-            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(CN_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
@@ -586,26 +586,26 @@ namespace boost {
                 if (opt.maxTPDU_dist() || opt.maxTPDU_src()) {
 
                 }
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
             }
 
-            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 data->out()->clear(); // no user data *ref X225 Tab 12
                 spdudata tmp(OA_SPDU_ID);
                 tmp.setPI(PI_VERSION, VERSION2);
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size();
             }
 
-            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(CDO_SPDU_ID);
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
             }
 
-            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(AC_SPDU_ID);
                 if (first) {                
@@ -617,11 +617,11 @@ namespace boost {
                     if (!opt.ssap_called().empty())
                         tmp.setPI(PI_CALLED, opt.ssap_called());
                 }
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
             }
 
-            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 data->out()->clear(); // no user data *ref X225 Tab 15                       
                 spdudata tmp(RF_SPDU_ID);
                 if (first) {
@@ -630,52 +630,71 @@ namespace boost {
                     tmp.setPI(PI_VERSION, opt.reject_version());
                     tmp.setPI(PI_REASON, opt.refuse_reason());
                 }
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size();
             }
 
-            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(FN_SPDU_ID);
                 if (first) {
                     tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 }
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
             }
 
-            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(DN_SPDU_ID);
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
             }
 
-            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(AB_SPDU_ID);
                 if (first) {
                     tmp.setPI(PI_TRANSPORT_DC, RELEASE_TRANSPORT);
                 }
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
             }
 
-            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 data->out()->clear(); // no user data *ref X225  8.3.10.2                              
                 spdudata tmp(AA_SPDU_ID);
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size();
             }
 
-            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(NF_SPDU_ID);
-                tmp.sequence(data, constraints, first);
+                tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
             }
 
-            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t& constraints, bool first) {
+            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+                if (segment_size) {
+                    std::size_t before = data->out()->size();
+                    if (segment_size < (before + 4)) {
+                        if (first) {
+                            data->out()->add(SEND_HEADER_F, data->out()->buffers().begin());
+                            return SEND_HEADER_F.size();
+                        }
+                        else {
+                            data->out()->add(SEND_HEADER_M, data->out()->buffers().begin());
+                            return SEND_HEADER_M.size();
+                        }
+                    }
+                    else {
+                        if (!first) {
+                            data->out()->add(SEND_HEADER_E, data->out()->buffers().begin());
+                            return SEND_HEADER_E.size();
+                        }
+                    }
+                }
                 data->out()->add(SEND_HEADER, data->out()->buffers().begin());
                 return SEND_HEADER.size();
             }
