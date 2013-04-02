@@ -249,11 +249,11 @@ namespace boost {
                 }
 
                 std::size_t datasize = codersize;
-                
+
                 if (constraints && datasize) {
 
                     bool connect_spdu = (type_ == CN_SPDU_ID);
-                    
+
                     if (constraints < (tmp.size() + (connect_spdu ? 9 : 12) /*(4 -main header + 3 - ENCLOSURE + 4 - data val + 1 data)*/))
                         constraints += (connect_spdu ? 9 : 12); // ??? 
 
@@ -275,7 +275,7 @@ namespace boost {
                         if (!first && !connect_spdu) {
                             raw_back_insert(tmp, inttype_to_raw(PI_ENCLOSURE));
                             raw_back_insert(tmp, to_triple_size(1));
-                            raw_back_insert(tmp, inttype_to_raw(ENCLOSURE_MIDLE));
+                            raw_back_insert(tmp, inttype_to_raw(ENCLOSURE_END));
                         }
                     }
                 }
@@ -672,21 +672,12 @@ namespace boost {
                 return SEND_HEADER.size();
             }
 
-            const octet_type END_OF_SEGMENTarr[] = {'\x3', PI_ENCLOSURE, '\x1', ENCLOSURE_END};
-            const octet_sequnce END_OF_SEGMENT = octet_sequnce(END_OF_SEGMENTarr, END_OF_SEGMENTarr + 4);
-
-            std::size_t generate_end_segment(spdu_type type, asn_coder_ptr data) {
-                data->out()->clear();
-                data->out()->add(octet_sequnce(1, type));
-                data->out()->add(END_OF_SEGMENT);
-                return 5;
-            }            
 
 
             //sender
 
-            sender::sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t segmentsize ) :
-            type_(type), segment_size(segmentsize), coder(data), option(opt), eofsegment(segmentsize ? false : true) {
+            sender::sender(spdu_type type, const protocol_options& opt, asn_coder_ptr data, std::size_t segmentsize) :
+            type_(type), segment_size(segmentsize), coder(data), option(opt) {
                 construct(true);
             }
 
@@ -932,8 +923,8 @@ namespace boost {
                     type_data = octet_sequnce_ptr(new octet_sequnce(SI_WITH_LI));
                     type_buff_ = boost::asio::buffer(*type_data);
                 }
-                        
-				state(first_in_seq_ ? waittype : (overflowed_ ?  waittype: complete));
+
+                state(first_in_seq_ ? waittype : (overflowed_ ? waittype : complete));
                 return error_code();
             }
 
