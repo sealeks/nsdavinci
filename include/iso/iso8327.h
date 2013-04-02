@@ -396,7 +396,7 @@ namespace boost {
 
                 bool endSPDU() const;
 
-                void endSPDU(bool end = true, bool beg = true);
+                void endSPDU(bool end, bool beg);
 
                 bool overflow() const;
 
