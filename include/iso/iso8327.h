@@ -28,7 +28,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
 
 
-            // SPDU identifier  *ref X225 5.6  Table 3 вЂ“ Functional units (only kernel and half-duplex implemented here)
+            // SPDU identifier  *ref X225 5.6  Table 3 РІР‚вЂњ Functional units (only kernel and half-duplex implemented here)
             // Kernel FU
             const spdu_type CN_SPDU_ID = 13; //CONNECT SPDU *ref X225 8.3.1.1
             const spdu_type OA_SPDU_ID = 16; //OVERFLOW ACCEPT *ref X225 8.3.2.1
@@ -178,8 +178,10 @@ namespace boost {
 
             // PI Enclosure Item *ref X225 Tab 13 .. 46 and 8.3.3.3            
             const varid_type PI_ENCLOSURE = 25;
+            const octet_type ENCLOSURE_MIDLE = 0;
             const octet_type ENCLOSURE_BEGIN = 1;
             const octet_type ENCLOSURE_END = 2;
+            const octet_type ENCLOSURE_SINGLE = 3;
 
 
             // PI Transport Disconnect *ref X225 Tab 15, 16, 19  and 8.3.5.6            
@@ -290,6 +292,8 @@ namespace boost {
 
 
                 const octet_sequnce& getPGI(varid_type cod1, varid_type cod2) const;
+                
+                octet_sequnce& getPGI(varid_type cod1, varid_type cod2);                
 
                 bool getPGI(varid_type cod1, varid_type cod2, int8_t& val, int8_t def = 0) const;
 
@@ -300,6 +304,8 @@ namespace boost {
                 bool getPGI(varid_type cod1, varid_type cod2, uint16_t& val, uint16_t def = 0) const;
 
                 const octet_sequnce& getPI(varid_type cod) const;
+                
+                octet_sequnce& getPI(varid_type cod);               
 
                 bool getPI(varid_type cod, int8_t& val, int8_t def = 0) const;
 
@@ -345,6 +351,7 @@ namespace boost {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
 
             struct protocol_options {
+                
                 typedef boost::shared_ptr<spdudata> spdudata_ptr;
 
                 protocol_options() : vars_(new spdudata()) {
@@ -366,6 +373,8 @@ namespace boost {
                 void ssap_called(const octet_sequnce & val);
 
                 const octet_sequnce & data() const;
+                
+                octet_sequnce & data();                
 
                 octet_type accept_version() const;
 
@@ -508,7 +517,11 @@ namespace boost {
             //   x225 sender  //
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////              
 
-            class sender {
+            const octet_type END_OF_SEGMENTarr[] = {'\x4', PI_ENCLOSURE , '\x2', ENCLOSURE_END};
+            const octet_sequnce END_OF_SEGMENT = octet_sequnce(END_OF_SEGMENTarr, END_OF_SEGMENTarr + 4);
+            
+            
+            class sender { 
             public:
 
                 sender(spdu_type type) : type_(type), constraints_(0), option(NULL_PROTOCOL_OPTION) {
@@ -520,13 +533,20 @@ namespace boost {
                 }
 
                 bool ready() const {
-                    return (!buf_) || (constraints_ ? ((buf_->ready() && !buf_->overflowed())) : (buf_->ready()));
+                    return (!buf_) ||
+                            ((constraints_ && !ended_)? ((buf_->ready() &&  (!buf_->overflowed() && !ended_))) :
+                            (buf_->ready()));
                 }
 
                 const const_sequences& pop() {
-                    if (constraints_){
-                        if (buf_->ready() && buf_->overflowed()){
-                            construct();              
+                    if (constraints_ && !ended_) {
+                        if (buf_->ready()) {
+                            if (buf_->overflowed())
+                                construct();
+                            else {
+                                if (!ended_)
+                                    constructENDCL();
+                            }         
                         }
                     }
                     return buf_ ? buf_->pop() : NULL_CONST_SEQUENCE;
@@ -549,12 +569,15 @@ namespace boost {
                 void construct(bool first = false);
 
                 void constructCN(bool first) {
+                    ended_ = true;
                     std::size_t inc_size = generate_header_CN(option, coder, constraints_, first);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_ ? constraints_ : (EXTEDED_USERDATA_LIMIT + inc_size)));
                     constraints_=0;
                 }
 
                 void constructOA(bool first) {
+                    ended_=true;
+                    constraints_=0;
                     generate_header_OA(option, coder, constraints_, first);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
@@ -570,6 +593,7 @@ namespace boost {
                 }
 
                 void constructRF(bool first) {
+                    ended_=true;
                     generate_header_RF(option, coder, constraints_, first);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
@@ -590,6 +614,7 @@ namespace boost {
                 }
 
                 void constructAA(bool first) {
+                    constraints_=0;
                     generate_header_AA(option, coder, constraints_, first);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
@@ -598,12 +623,21 @@ namespace boost {
                     generate_header_DT(option, coder, constraints_, first);
                     buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder, constraints_));
                 }
+                
+                void constructENDCL() {
+                    coder->out()->clear();
+                    coder->out()->add(octet_sequnce(1, type_));
+                    coder->out()->add( END_OF_SEGMENT);
+                    buf_ = sender_sequnces_ptr(new basic_itu_sequences(coder));
+                    ended_ = true;
+                }                
 
                 spdu_type type_;
                 sender_sequnces_ptr buf_;
                 std::size_t constraints_;
                 asn_coder_ptr coder;
                 const protocol_options& option;
+                bool ended_;
 
             };
 
@@ -693,7 +727,7 @@ namespace boost {
 
                 const protocol_options& options() const {
                     return options_ ? *options_ : NULL_PROTOCOL_OPTION;
-                }
+                }                
 
                 error_code errcode() const {
                     return errcode_;
@@ -732,6 +766,7 @@ namespace boost {
                 octet_sequnce_ptr header_data;
                 mutable_buffer header_buff_;
                 mutable_buffer userbuff_;
+                bool overflowed_;
             };
 
 
@@ -817,14 +852,14 @@ namespace boost {
                 explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(),
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
-                session_version_(VERSION2), user_requirement_(FU_WORK), maxTPDU_src_(0), maxTPDU_dist_(0) {
+                session_version_(VERSION2), user_requirement_(FU_WORK), maxTPDU_src_(512), maxTPDU_dist_(512) {
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const session_selector& ssel = session_selector(),
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
-                session_version_(VERSION2), user_requirement_(FU_WORK), maxTPDU_src_(0), maxTPDU_dist_(0) {
+                session_version_(VERSION2), user_requirement_(FU_WORK), maxTPDU_src_(512), maxTPDU_dist_(512) {
                 }
 
 
