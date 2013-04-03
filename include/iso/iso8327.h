@@ -857,7 +857,9 @@ namespace boost {
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
                 session_version_(VERSION2), user_requirement_(FU_WORK), segmentsize_to_(0), segmentsize_from_(0), eof_state_(true) {
-#warning "Segmentation test"                     
+#ifndef _MSC_VER                    
+#warning "Segmentation test"     
+#endif                  
                     segmentation_set(512, 512);
                     option_.maxTPDU(segmentsize_to_, segmentsize_from_);
                 }
@@ -867,7 +869,10 @@ namespace boost {
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
                 session_version_(VERSION2), user_requirement_(FU_WORK), segmentsize_to_(0), segmentsize_from_(0), eof_state_(true) {
-#warning "Segmentation test"                    
+                    
+#ifndef _MSC_VER                    
+#warning "Segmentation test"     
+#endif                       
                     segmentation_set(512, 512);
                     option_.maxTPDU(segmentsize_to_, segmentsize_from_);
                 }
