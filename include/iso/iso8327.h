@@ -2266,7 +2266,8 @@ namespace boost {
                 }
 
                 void session_option(const session_selector& ssel) {
-                    option_ = protocol_options(ssel);
+                    option_.ssap_called(ssel.called());
+                    option_.ssap_calling(ssel.calling());
                 }
 
                 octet_type session_version() const {
