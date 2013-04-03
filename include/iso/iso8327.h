@@ -868,7 +868,7 @@ namespace boost {
 #ifndef _MSC_VER                    
 #warning "Segmentation test"     
 #endif                  
-                   segmentation_set(512, 512);
+                   segmentation_set(SEGMENTATION_TEST_TO, SEGMENTATION_TEST_FROM);
                    option_.maxTPDU(segmentsize_to_, segmentsize_from_);
 #endif                   
                 }
@@ -883,7 +883,7 @@ namespace boost {
 #ifndef _MSC_VER                    
 #warning "Segmentation test"     
 #endif                  
-                   segmentation_set(512, 512);
+                   segmentation_set(SEGMENTATION_TEST_TO, SEGMENTATION_TEST_FROM);
                    option_.maxTPDU(segmentsize_to_, segmentsize_from_);
 #endif  
                 }
