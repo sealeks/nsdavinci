@@ -589,20 +589,21 @@ namespace boost {
                     tmp.setPI(PI_CALLING, opt.ssap_calling());
                 if (!opt.ssap_called().empty())
                     tmp.setPI(PI_CALLED, opt.ssap_called());
-                if (before > EXTEDED_USERDATA_LIMIT) {
+                //  segmenation are not  initiated here = PI_DATAOVERFLOW is only when before > EXTEDED_USERDATA_LIMIT( !!! except SEGMENTATION_TEST)
+                if (before > EXTEDED_USERDATA_LIMIT) 
                     tmp.setPI(PI_DATAOVERFLOW, MORE_DATA);
-                }
 #ifdef  SEGMENTATION_TEST                
 #ifndef _MSC_VER                    
 #warning "Segmentation test"     
 #endif     
-#endif                  
+              
                 if (opt.maxTPDU_to() || opt.maxTPDU_from()) {
                     octet_sequnce tmpself(inttype_to_raw(endiancnv_copy(opt.maxTPDU_to())));
                     octet_sequnce tmpdist(inttype_to_raw(endiancnv_copy(opt.maxTPDU_from())));
                     tmpself.insert(tmpself.begin(), tmpdist.begin(), tmpdist.end());
                     tmp.setPGI(PGI_CONN_ACC, PI_TSDUMAX, tmpself);
                 }
+#endif                    
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
                 //MAX header NO DATA = hdr(1) + (1/3)  + Poption( (1 + 1 + 1) = 3) + TSDUmax( (1 + 1 + 2) = 4) + version ( (1 + 1 + 1) = 3) + SUR( (1 + 1 + 2) = 4) + (

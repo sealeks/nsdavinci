@@ -12,7 +12,7 @@ namespace boost {
     namespace itu {
         namespace x225impl {
 
-            //#define SEGMENTATION_TEST            
+//#define SEGMENTATION_TEST            
 
 #ifdef  SEGMENTATION_TEST           
 #define SEGMENTATION_TEST_TO 128
@@ -120,7 +120,8 @@ namespace boost {
             //  User data limitation  *ref X225 8.3.1.19
             const std::size_t SIMPLE_USERDATA_LIMIT = 512;
             const std::size_t EXTEDED_USERDATA_LIMIT = 10240;
-            const std::size_t SERVICE_SPDU_CONSTRAINTS = 65539 - 100; //(SI LI reserved);
+            const std::size_t MINAVAIL_MAX_TPDU = 64;            
+            const std::size_t SERVICE_SPDU_CONSTRAINTS = 65539 - MINAVAIL_MAX_TPDU; //( reserved);
 
 
 
@@ -204,7 +205,6 @@ namespace boost {
 
             // see Disconnection  REASON CODE  iso.h
 
-            const std::size_t MINAVAIL_MAX_TPDU = 64;
 
 
 
