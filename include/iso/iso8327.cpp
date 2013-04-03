@@ -583,10 +583,12 @@ namespace boost {
                     tmp.setPI(PI_CALLED, opt.ssap_called());
                 if (before > EXTEDED_USERDATA_LIMIT) {
                     tmp.setPI(PI_DATAOVERFLOW, MORE_DATA);
-                }            
+                }          
+#ifdef  SEGMENTATION_TEST                
 #ifndef _MSC_VER                    
 #warning "Segmentation test"     
-#endif                     
+#endif     
+#endif                  
                 if (opt.maxTPDU_to() || opt.maxTPDU_from()) {
                     octet_sequnce tmpself(inttype_to_raw(endiancnv_copy(opt.maxTPDU_to())));
                     octet_sequnce tmpdist(inttype_to_raw(endiancnv_copy(opt.maxTPDU_from())));

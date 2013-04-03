@@ -12,7 +12,14 @@ namespace boost {
     namespace itu {
         namespace x225impl {
 
-
+#define SEGMENTATION_TEST            
+            
+#ifdef  SEGMENTATION_TEST           
+#define SEGMENTATION_TEST_TO 128
+#define SEGMENTATION_TEST_FROM 128
+#endif
+            
+            
             // ref X225 = ITU-T Rec. X.225(1995 E)           
 
             using boost::asio::basic_socket;
@@ -857,11 +864,13 @@ namespace boost {
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
                 session_version_(VERSION2), user_requirement_(FU_WORK), segmentsize_to_(0), segmentsize_from_(0), eof_state_(true) {
+#ifdef  SEGMENTATION_TEST
 #ifndef _MSC_VER                    
 #warning "Segmentation test"     
 #endif                  
-                    segmentation_set(512, 512);
-                    option_.maxTPDU(segmentsize_to_, segmentsize_from_);
+                   segmentation_set(512, 512);
+                   option_.maxTPDU(segmentsize_to_, segmentsize_from_);
+#endif                   
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
@@ -870,11 +879,13 @@ namespace boost {
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
                 session_version_(VERSION2), user_requirement_(FU_WORK), segmentsize_to_(0), segmentsize_from_(0), eof_state_(true) {
                     
+#ifdef  SEGMENTATION_TEST
 #ifndef _MSC_VER                    
 #warning "Segmentation test"     
-#endif                       
-                    segmentation_set(512, 512);
-                    option_.maxTPDU(segmentsize_to_, segmentsize_from_);
+#endif                  
+                   segmentation_set(512, 512);
+                   option_.maxTPDU(segmentsize_to_, segmentsize_from_);
+#endif  
                 }
 
 
