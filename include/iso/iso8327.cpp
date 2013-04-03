@@ -214,7 +214,7 @@ namespace boost {
                 return nullPGI(0, cod);
             }
 
-            asn_coder_ptr spdudata::sequence(asn_coder_ptr coder, std::size_t& segment_size, bool first) const {
+            asn_coder_ptr spdudata::sequence(asn_coder_ptr coder, std::size_t segment_size, bool first) const {
 
                 std::size_t codersize = coder->out()->size();
                 octet_sequnce tmp;
@@ -254,8 +254,6 @@ namespace boost {
 
                     bool connect_spdu = (type_ == CN_SPDU_ID);
 
-                    if (segment_size < (tmp.size() + (connect_spdu ? 9 : 12) /*(4 -main header + 3 - ENCLOSURE + 4 - data val + 1 data)*/))
-                        segment_size += (connect_spdu ? 9 : 12); // ??? 
 
                     std::size_t max_datasize_with_header = segment_size - (tmp.size() +((segment_size > 0x100) ? 4 : 2/* main header*/) +
                             (connect_spdu ? 0 : 3) /*ENCLOSURE*/);
@@ -524,7 +522,7 @@ namespace boost {
                 }
             }
 
-            uint16_t protocol_options::maxTPDU_src() const {
+            uint16_t protocol_options::maxTPDU_to() const {
                 const octet_sequnce& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
                 if (tmp.size() == 4) {
                     return endiancnv_copy<uint16_t > (octet_sequnce(tmp.begin(), tmp.begin() + 2));
@@ -532,7 +530,7 @@ namespace boost {
                 return 0;
             }
 
-            uint16_t protocol_options::maxTPDU_dist() const {
+            uint16_t protocol_options::maxTPDU_from() const {
                 const octet_sequnce& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
                 if (tmp.size() == 4) {
                     return endiancnv_copy<uint16_t > (octet_sequnce(tmp.begin() + 2, tmp.end()));
@@ -556,7 +554,10 @@ namespace boost {
 #if defined(ITUX200_DEBUG)                 
                 std::cout << "Negotiate session level: LOCAL =" << self << " DISTANCE =" << dist << std::endl;
 #endif                
-                if (!(dist.user_requirement() & FU_WORK) || dist.extendedSPDU()) {
+                if (!(dist.user_requirement() & FU_WORK) || 
+                        //dist.extendedSPDU() ||
+                        (dist.maxTPDU_from() && (dist.maxTPDU_from()<MINAVAIL_MAX_TPDU)) ||
+                        (dist.maxTPDU_to() && (dist.maxTPDU_to()<MINAVAIL_MAX_TPDU)) ) {
                     errorreason = DR_REASON_NEGOT;
                     return false;
                 }
@@ -570,7 +571,7 @@ namespace boost {
                 return true;
             }
 
-            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_CN(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(CN_SPDU_ID);
                 tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
@@ -583,32 +584,40 @@ namespace boost {
                 if (before > EXTEDED_USERDATA_LIMIT) {
                     tmp.setPI(PI_DATAOVERFLOW, MORE_DATA);
                 }
-                if (opt.maxTPDU_dist() || opt.maxTPDU_src()) {
-
+                #warning "Segmentation test"                 
+                if (opt.maxTPDU_to() || opt.maxTPDU_from()) {
+                    octet_sequnce tmpself(inttype_to_raw(endiancnv_copy(opt.maxTPDU_to())));
+                    octet_sequnce tmpdist(inttype_to_raw(endiancnv_copy(opt.maxTPDU_from())));
+                    tmpself.insert(tmpself.begin(), tmpdist.begin(), tmpdist.end());
+                    tmp.setPGI(PGI_CONN_ACC, PI_TSDUMAX, tmpself);
                 }
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
+                //MAX header NO DATA = hdr(1) + (1/3)  + Poption( (1 + 1 + 1) = 3) + TSDUmax( (1 + 1 + 2) = 4) + version ( (1 + 1 + 1) = 3) + SUR( (1 + 1 + 2) = 4) + (
+                //CngSS + CdSS)( (1 + 1 + 16) * 2 = 36) + DO((1 + 1 +1) =3) = 51/53; + UDataPI = 52/54 + max Li 3 = extrem 57 => min aval maxTPDU = 64;
             }
 
-            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 data->out()->clear(); // no user data *ref X225 Tab 12
                 spdudata tmp(OA_SPDU_ID);
                 tmp.setPI(PI_VERSION, VERSION2);
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size();
+                //MAX header NO DATA = hdr(1) + (1/3)  + TSDUmax( (1 + 1 + 2) = 4) + version ( (1 + 1 + 1) = 3) = 9/11; no UData
             }
 
-            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_CDO(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(CDO_SPDU_ID);
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
+                //MAX header NO DATA = hdr(1) + (1/3)  + Enclosure ( (1 + 1 + 1) = 4/6;  + UDataPI = 5/7
             }
 
-            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_AC(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(AC_SPDU_ID);
-                if (first) {                
+                if (first) {
                     tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
                     tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
                     tmp.setPI(PI_SES_USERREQ, FU_WORK);
@@ -619,9 +628,11 @@ namespace boost {
                 }
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
+                //MAX header NO DATA = hdr(1) + (1/3)  + Poption( (1 + 1 + 1) = 3) + TSDUmax( (1 + 1 + 2) = 4) + version ( (1 + 1 + 1) = 3) + SUR( (1 + 1 + 2) = 4) + (
+                //CngSS + CdSS)( (1 + 1 + 16) * 2 = 36) + Enclosure((1 + 1 +1) =3) = 51/53; + UDataPI = 52/54 + max Li 3 = extrem 57 => min aval maxTPDU = 64;
             }
 
-            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_RF(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 data->out()->clear(); // no user data *ref X225 Tab 15                       
                 spdudata tmp(RF_SPDU_ID);
                 if (first) {
@@ -632,9 +643,11 @@ namespace boost {
                 }
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size();
+                //MAX header NO DATA = hdr(1) + (1/3)  +  TranspDisconnect( (1 + 1 + 1) = 3)  + version ( (1 + 1 + 1) = 3) + SUR( (1 + 1 + 2) = 4) 
+                //+ Enclosure((1 + 1 +1) =3) + Reasoncode((1 + 1 +2) =4) = 17/19; no UData        
             }
 
-            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_FN(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(FN_SPDU_ID);
                 if (first) {
@@ -642,16 +655,18 @@ namespace boost {
                 }
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
+                //MAX header NO DATA = hdr(1) + (1/3)  + TranspDisconnect( (1 + 1 + 1) = 3)  + Enclosure((1 + 1 +1) =3) = 8/10; + UDataPI = 9/11;              
             }
 
-            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_DN(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(DN_SPDU_ID);
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
+                //MAX header NO DATA = hdr(1) + (1/3)  +   + Enclosure((1 + 1 +1) =3) = 5/7; + UDataPI = 6/8
             }
 
-            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_AB(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(AB_SPDU_ID);
                 if (first) {
@@ -659,23 +674,26 @@ namespace boost {
                 }
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
+                //MAX header NO DATA = hdr(1) + (1/3)  +  TranspDisconnect( (1 + 1 + 1) = 3)  + Enclosure((1 + 1 +1) =3)  + reflect( (1 + 1 +9) =3) = 19/21; + UDataPI = 20/22; 
             }
 
-            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_AA(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 data->out()->clear(); // no user data *ref X225  8.3.10.2                              
                 spdudata tmp(AA_SPDU_ID);
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size();
+                //MAX header NO DATA = hdr(1)  = 1 no UData
             }
 
-            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_NF(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 std::size_t before = data->out()->size();
                 spdudata tmp(NF_SPDU_ID);
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
+                //MAX header NO DATA = hdr(1) +  (1/3)  ++ Enclosure((1 + 1 +1) =3) = 5/7; + UDataPI = 6/8
             }
 
-            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t& segment_size, bool first) {
+            std::size_t generate_header_DT(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 if (segment_size) {
                     std::size_t before = data->out()->size();
                     if (segment_size < (before + 4)) {
@@ -697,6 +715,7 @@ namespace boost {
                 }
                 data->out()->add(SEND_HEADER, data->out()->buffers().begin());
                 return SEND_HEADER.size();
+                //MAX header NO DATA = hdr(1) +  + Enclosure((1 + 1 +1) =3) = 4; + UDataPI = 5
             }
 
 
@@ -784,7 +803,7 @@ namespace boost {
             type_buff_(boost::asio::buffer(*type_data)),
             header_buff_(),
             userbuff_(buff),
-            overflowed_(false) {
+            has_next_(false) {
             }
 
             receiver::receiver() :
@@ -801,7 +820,7 @@ namespace boost {
             type_buff_(boost::asio::buffer(*type_data)),
             header_buff_(),
             userbuff_(),
-            overflowed_(false) {
+            has_next_(false) {
 
             }
 
@@ -928,24 +947,25 @@ namespace boost {
             }
 
             error_code receiver::check_header() {
-                if (overflowed_) {                   
+
+                if (has_next_) {
                     protocol_options_ptr tmp = protocol_options_ptr(new protocol_options(header_buff_));
                     if (type_ != DT_SPDU_ID)
                         options_->data().insert(options_->data().end(), tmp->data().begin(), tmp->data().end());
-                    overflowed_ = !tmp->endSPDU();
+                    has_next_ = !tmp->endSPDU();
                 }
                 else {
                     options_ = protocol_options_ptr(new protocol_options(header_buff_));
-                    overflowed_ = !options_->endSPDU();
+                    has_next_ = !options_->endSPDU();
                 }
-                
+
                 if (type_ == DT_SPDU_ID) {
                     state(waitdata);
                     return errcode();
                 }
-                    
 
-                if (overflowed_) {
+
+                if (has_next_) {
                     size_ = 0;
                     estimatesize_ = SI_WITH_LI;
                     datasize_ = 0;
@@ -958,7 +978,7 @@ namespace boost {
                     type_buff_ = boost::asio::buffer(*type_data);
                 }
 
-                state(first_in_seq_ ? waittype : (overflowed_ ? waittype : complete));
+                state(first_in_seq_ ? waittype : (has_next_ ? waittype : complete));
                 return error_code();
             }
 
