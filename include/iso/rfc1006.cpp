@@ -50,7 +50,7 @@ namespace boost {
                     else {
                         uint16_t tmp;
                         if (raw_to_inttype(octet_sequnce(pref.begin() + (pref.size() < 3 ? 0 : (pref.size() - 2)), pref.end()), tmp)) {
-                            preferred(endiancnv_copy(tmp), bas);
+                            preferred(tmp, bas);
                         }
                         else {
                             basic(bas);
@@ -63,7 +63,7 @@ namespace boost {
             void tpdu_size::preferred(uint16_t val, octet_type bas) {
                 if (val) {
                     preferred_ = val > PREFFERED_TPDU_SIZE ? PREFFERED_TPDU_SIZE : val;
-                    size_ = val * 128;
+                    size_ = preferred_ * 128;
                 }
                 else {
                     preferred_ = 0;
