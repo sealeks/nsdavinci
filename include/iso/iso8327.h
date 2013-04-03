@@ -856,20 +856,20 @@ namespace boost {
                 explicit stream_socket(boost::asio::io_service& io_service, const session_selector& ssel = session_selector(),
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
-                session_version_(VERSION2), user_requirement_(FU_WORK), maxTPDU_to_(0), maxTPDU_from_(0), eof_state_(true) {
+                session_version_(VERSION2), user_requirement_(FU_WORK), segmentsize_to_(0), segmentsize_from_(0), eof_state_(true) {
 #warning "Segmentation test"                     
-                    maxTPDU_to_=maxTPDU_from_=512;
-                    option_.maxTPDU(maxTPDU_to_, maxTPDU_from_);
+                    segmentation_set(512, 512);
+                    option_.maxTPDU(segmentsize_to_, segmentsize_from_);
                 }
 
                 stream_socket(boost::asio::io_service& io_service,
                         const endpoint_type& endpoint, const session_selector& ssel = session_selector(),
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
-                session_version_(VERSION2), user_requirement_(FU_WORK), maxTPDU_to_(0), maxTPDU_from_(0), eof_state_(true) {
+                session_version_(VERSION2), user_requirement_(FU_WORK), segmentsize_to_(0), segmentsize_from_(0), eof_state_(true) {
 #warning "Segmentation test"                    
-                    maxTPDU_to_=maxTPDU_from_=512;
-                    option_.maxTPDU(maxTPDU_to_, maxTPDU_from_);
+                    segmentation_set(512, 512);
+                    option_.maxTPDU(segmentsize_to_, segmentsize_from_);
                 }
 
 
@@ -912,7 +912,7 @@ namespace boost {
                     socket(sock),
                     handler(handlr),
                     state_(request),
-                    sender_(sender_ptr(new sender(CN_SPDU_ID, sock.session_option(), sock.rootcoder(), sock.maxTPDU_from()))),
+                    sender_(sender_ptr(new sender(CN_SPDU_ID, sock.session_option(), sock.rootcoder(), sock.segmentsize_to()))),
                     receiver_(new receiver()) {
 
                     }
@@ -983,8 +983,8 @@ namespace boost {
                                     {
                                         // Accepted. Negotiate options *ref X225 7.4.3
                                         socket.session_version(receiver_->options().accept_version());
-                                        /*if (receiver_->options().maxTPDU_from() || receiver_->options().maxTPDU_to()){
-                                            socket.maxTPDU(receiver_->options().maxTPDU_to(), receiver_->options().maxTPDU_from());
+                                        /*if (receiver_->options().segmentsize_to() || receiver_->options().segmentsize_to()){
+                                            socket.segmentation_set(receiver_->options().segmentsize_to(), receiver_->options().segmentsize_to());
                                         }     
                                         socket.user_requirement(receiver_->options().user_requirement());*/
                                         socket.rootcoder()->in()->add(receiver_->options().data());
@@ -1003,7 +1003,7 @@ namespace boost {
                                     }
                                     case OA_SPDU_ID:
                                     {
-                                        sender_ = sender_ptr(new sender(CDO_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_from()));
+                                        sender_ = sender_ptr(new sender(CDO_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.segmentsize_to()));
                                         receiver_ = receiver_ptr(new receiver());
                                         state(request);
                                         operator()(ec, 0);
@@ -1105,7 +1105,7 @@ namespace boost {
                     release_operation(stream_socket& sock, ReleaseHandler handlr, release_type type) :
                     socket(sock),
                     handler(handlr),
-                    sender_(sender_ptr(new sender(release_type_to_spdu(type), sock.session_option(), sock.rootcoder(), sock.maxTPDU_from()))),
+                    sender_(sender_ptr(new sender(release_type_to_spdu(type), sock.session_option(), sock.rootcoder(), sock.segmentsize_to()))),
                     receiver_(new receiver()),
                     type_(type),
                     state_(request),
@@ -1199,7 +1199,7 @@ namespace boost {
                                                 socket.rootcoder()->in()->clear();
                                                 socket.rootcoder()->in()->add(receiver_->options().data());
                                                 socket.negotiate_session_release();
-                                                sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_from()));
+                                                sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.segmentsize_to()));
                                                 state(request);
                                                 operator()(ec, 0);
                                                 collision_ = true;
@@ -1446,7 +1446,7 @@ namespace boost {
                                                 options_.refuse_reason(DR_REASON_USER);
                                             else
                                                 options_.refuse_reason(errorreason);
-                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder(), socket.maxTPDU_from()));
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder(), socket.segmentsize_to()));
                                             state(reject);
                                             errorrefuse_ = ER_PROTOPT;
                                             operator()(ec, 0);
@@ -1455,13 +1455,13 @@ namespace boost {
 
                                         // Netotiation success send AC
                                         socket.session_version(receiver_->options().accept_version());
-                                        /*if (receiver_->options().maxTPDU_from() || receiver_->options().maxTPDU_to()){
-                                            socket.maxTPDU(receiver_->options().maxTPDU_to(), receiver_->options().maxTPDU_from());
+                                        /*if (receiver_->options().segmentsize_to() || receiver_->options().segmentsize_to()){
+                                            socket.segmentation_set(receiver_->options().segmentsize_to(), receiver_->options().segmentsize_to());
                                         }     
                                         socket.user_requirement(receiver_->options().user_requirement());*/
 
                                         if (receiver_->options().overflow()) {
-                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_from()));
+                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.segmentsize_to()));
                                             receiver_ = receiver_ptr(new receiver());
                                             state(overflow);
 
@@ -1469,7 +1469,7 @@ namespace boost {
                                             return;
                                         }
 
-                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_from()));
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.segmentsize_to()));
                                         state(request);
                                         operator()(ec, 0);
                                         return;
@@ -1686,7 +1686,7 @@ namespace boost {
 
                     typedef send_operation<WriteHandler, ConstBufferSequence> send_operation_type;
 
-                    if (segmentation()) {
+                    if (segmentation_to()) {
 
                         std::size_t rslt = buffer_to_coder(buffers);
                         async_request(boost::bind(&send_operation_type::execute,
@@ -1714,7 +1714,7 @@ namespace boost {
                     std::size_t sendsize = rootcoder()->out()->size();
                     if (!sendsize)
                         return ec;
-                    sender_ptr sender_(new sender(DT_SPDU_ID, session_option(), rootcoder(), maxTPDU_from()));
+                    sender_ptr sender_(new sender(DT_SPDU_ID, session_option(), rootcoder(), segmentsize_to()));
                     sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
@@ -1734,7 +1734,7 @@ namespace boost {
                     request_operation(stream_socket& sock, RequestHandler handlr) :
                     socket(sock),
                     handler(handlr),
-                    sender_(sender_ptr(new sender(DT_SPDU_ID, sock.session_option(), sock.rootcoder(), sock.maxTPDU_from()))),
+                    sender_(sender_ptr(new sender(DT_SPDU_ID, sock.session_option(), sock.rootcoder(), sock.segmentsize_to()))),
                     sendsize(sock.rootcoder()->out()->size()) {
                     }
 
@@ -1923,7 +1923,7 @@ namespace boost {
                                 switch (receiver_->type()) {
                                     case DT_SPDU_ID:
                                     {
-                                        socket.eof_state_ = socket.segmentation() ? !receiver_->has_next() : true;
+                                        socket.eof_state_ = socket.segmentation_from() ? !receiver_->has_next() : true;
                                         return true;
                                     }
                                     case FN_SPDU_ID:
@@ -1931,7 +1931,7 @@ namespace boost {
                                         socket.rootcoder()->in()->clear();
                                         socket.rootcoder()->in()->add(receiver_->options().data());
                                         socket.negotiate_session_release();
-                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.maxTPDU_from()));
+                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.segmentsize_to()));
                                         state(request);
                                         errorrefuse_ = ER_RELEASE;
                                         operator()(ec, 0);
@@ -2210,7 +2210,7 @@ namespace boost {
                 }
 
                 bool ready() const {
-                    return segmentation() ? (super_type::ready() && eof_state_) : (super_type::ready());
+                    return segmentation_from() ? (super_type::ready() && eof_state_) : (super_type::ready());
                 }
 
 
@@ -2271,31 +2271,33 @@ namespace boost {
                     option_.user_requirement(user_requirement_);
                 }
 
-                std::size_t maxTPDU_to() const {
-                    return static_cast<std::size_t> (maxTPDU_to_ ?
-                            ((maxTPDU_to_ < MINAVAIL_MAX_TPDU) ? MINAVAIL_MAX_TPDU : maxTPDU_to_) : 0);
+                std::size_t segmentsize_to() const {
+                    return static_cast<std::size_t> (segmentsize_to_ ?
+                            ((segmentsize_to_ < MINAVAIL_MAX_TPDU) ? MINAVAIL_MAX_TPDU : segmentsize_to_) : 0);
                 }
 
-                std::size_t maxTPDU_from() const {
-                    return static_cast<std::size_t> (maxTPDU_from_ ?
-                            ((maxTPDU_from_ < MINAVAIL_MAX_TPDU) ? MINAVAIL_MAX_TPDU : maxTPDU_from_) : 0);
+                std::size_t segmentsize_from() const {
+                    return static_cast<std::size_t> (segmentsize_from_ ?
+                            ((segmentsize_from_ < MINAVAIL_MAX_TPDU) ? MINAVAIL_MAX_TPDU : segmentsize_from_) : 0);
                 }
 
-                void maxTPDU(uint16_t self, uint16_t dist) {
-                    if (self && self < MINAVAIL_MAX_TPDU)
-                        self = MINAVAIL_MAX_TPDU;
-                    if (dist && dist < MINAVAIL_MAX_TPDU)
-                        dist = MINAVAIL_MAX_TPDU;
-                    maxTPDU_to_ = self;
-                    maxTPDU_from_ = dist;
-                    option_.maxTPDU(maxTPDU_to_, maxTPDU_from_);
+                void segmentation_set(uint16_t to_, uint16_t from_) {
+                    if (to_ && to_ < MINAVAIL_MAX_TPDU)
+                        to_ = MINAVAIL_MAX_TPDU;
+                    if (from_ && from_ < MINAVAIL_MAX_TPDU)
+                        from_ = MINAVAIL_MAX_TPDU;
+                    segmentsize_to_ = to_;
+                    segmentsize_from_ = from_;
+                    option_.maxTPDU(segmentsize_to_, segmentsize_from_);
                 }
 
-
-                bool segmentation() const {
-                    return maxTPDU_from_;
+                bool segmentation_from() const {
+                    return segmentsize_from_;
                 }
 
+                bool segmentation_to() const {
+                    return segmentsize_to_;
+                }
 
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2328,7 +2330,7 @@ namespace boost {
                     if (super_type::connect(peer_endpoint, ec))
                         return connect_impl_exit(ec);
 
-                    sender_ptr sender_(sender_ptr(new sender(CN_SPDU_ID, session_option(), rootcoder(), maxTPDU_from())));
+                    sender_ptr sender_(sender_ptr(new sender(CN_SPDU_ID, session_option(), rootcoder(), segmentsize_to())));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
 
@@ -2346,8 +2348,8 @@ namespace boost {
                                         {
                                             // Accepted. Negotiate options *ref X225 7.4.3
                                             session_version(receiver_->options().accept_version());
-                                            /*if (receiver_->options().maxTPDU_from() || receiver_->options().maxTPDU_to()){
-                                                socket.maxTPDU(receiver_->options().maxTPDU_to(), receiver_->options().maxTPDU_from());
+                                            /*if (receiver_->options().segmentsize_to() || receiver_->options().segmentsize_to()){
+                                                socket.segmentation_set(receiver_->options().segmentsize_to(), receiver_->options().segmentsize_to());
                                             }     
                                             socket.user_requirement(receiver_->options().user_requirement());*/
                                             rootcoder()->in()->add(receiver_->options().data());
@@ -2362,7 +2364,7 @@ namespace boost {
                                         }
                                         case OA_SPDU_ID:
                                         {
-                                            sender_ = sender_ptr(new sender(CDO_SPDU_ID, session_option(), rootcoder(), maxTPDU_from()));
+                                            sender_ = sender_ptr(new sender(CDO_SPDU_ID, session_option(), rootcoder(), segmentsize_to()));
                                             receiver_ = receiver_ptr(new receiver());
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
@@ -2396,7 +2398,7 @@ namespace boost {
 
                 error_code release_impl(release_type type, error_code& ec) {
 
-                    sender_ptr sender_(new sender(release_type_to_spdu(type), session_option(), rootcoder(), maxTPDU_from()));
+                    sender_ptr sender_(new sender(release_type_to_spdu(type), session_option(), rootcoder(), segmentsize_to()));
                     while (!ec && !sender_->ready())
                         sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                     // no keep transport  it dont wait AA *ref X225 7.9.2
@@ -2439,7 +2441,7 @@ namespace boost {
                                                     rootcoder()->in()->clear();
                                                     rootcoder()->in()->add(receiver_->options().data());
                                                     negotiate_session_release();
-                                                    sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder(), maxTPDU_from()));
+                                                    sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder(), segmentsize_to()));
                                                     while (!ec && !sender_->ready())
                                                         sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                                 }
@@ -2526,7 +2528,7 @@ namespace boost {
                                                 options_.refuse_reason(DR_REASON_USER);
                                             else
                                                 options_.refuse_reason(errorreason);
-                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder(), maxTPDU_from()));
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder(), segmentsize_to()));
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                             ec = ER_PROTOPT;
@@ -2535,13 +2537,13 @@ namespace boost {
 
                                         // Netotiation success send AC
                                         session_version(receiver_->options().accept_version());
-                                        /*if (receiver_->options().maxTPDU_from() || receiver_->options().maxTPDU_to()){
-                                            maxTPDU(receiver_->options().maxTPDU_to(), receiver_->options().maxTPDU_from());
+                                        /*if (receiver_->options().segmentsize_to() || receiver_->options().segmentsize_to()){
+                                            segmentation_set(receiver_->options().segmentsize_to(), receiver_->options().segmentsize_to());
                                         }     
                                         user_requirement(receiver_->options().user_requirement());*/
 
                                         if (receiver_->options().overflow()) {
-                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder(), maxTPDU_from()));
+                                            sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder(), segmentsize_to()));
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                             if (ec)
@@ -2553,7 +2555,7 @@ namespace boost {
                                         }
 
 
-                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder(), maxTPDU_from()));
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder(), segmentsize_to()));
                                         while (!ec && !sender_->ready())
                                             sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                         if (!ec)
@@ -2569,7 +2571,7 @@ namespace boost {
                                             protocol_options options_ = session_option();
                                             options_.refuse_reason(DR_REASON_USER);
 
-                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder(), maxTPDU_from()));
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, rootcoder(), segmentsize_to()));
                                             while (!ec && !sender_->ready())
                                                 sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                             if (ec)
@@ -2577,7 +2579,7 @@ namespace boost {
                                             ec = ER_PROTOPT;
                                             break;
                                         }
-                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder(), maxTPDU_from()));
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, session_option(), rootcoder(), segmentsize_to()));
                                         while (!ec && !sender_->ready())
                                             sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                         if (!ec)
@@ -2612,7 +2614,7 @@ namespace boost {
                 std::size_t send_impl(const ConstBufferSequence& buffers,
                         message_flags flags, error_code& ec) {
 
-                    if (segmentation()) {
+                    if (segmentation_to()) {
 
                         std::size_t rslt = buffer_to_coder(buffers);
                         if (request(ec))
@@ -2648,7 +2650,7 @@ namespace boost {
                                 switch (receiver_->type()) {
                                     case DT_SPDU_ID:
                                     {
-                                        eof_state_ = segmentation() ? !receiver_->has_next() : true;
+                                        eof_state_ = segmentation_from() ? !receiver_->has_next() : true;
                                         return receiver_->datasize();
                                     }
                                     case FN_SPDU_ID:
@@ -2657,7 +2659,7 @@ namespace boost {
                                         rootcoder()->in()->clear();
                                         rootcoder()->in()->add(receiver_->options().data());
                                         negotiate_session_release();
-                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder(), maxTPDU_from()));
+                                        sender_ = sender_ptr(new sender(DN_SPDU_ID, session_option(), rootcoder(), segmentsize_to()));
                                         while (!ec && !sender_->ready())
                                             sender_->size(super_type::send(sender_->pop(), 0, ec, sender_->constraint()));
                                         ec = ER_RELEASE;
@@ -2709,8 +2711,8 @@ namespace boost {
                 asn_coder_ptr rootcoder_;
                 octet_type session_version_;
                 int16_t user_requirement_;
-                uint16_t maxTPDU_to_;
-                uint16_t maxTPDU_from_;
+                uint16_t segmentsize_to_;
+                uint16_t segmentsize_from_;
                 octet_sequnce_ptr response_buffer_;
                 bool eof_state_;
 
