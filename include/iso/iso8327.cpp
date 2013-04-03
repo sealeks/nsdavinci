@@ -42,7 +42,7 @@ namespace boost {
                     value_->insert(pgis_type(cod1, pgi));
                 }
                 else
-                    it->second.insert(pi_type(cod2, val));
+                    it->second[cod2] = val ;
             }
 
             void spdudata::setPGI(varid_type cod1, varid_type cod2, int8_t val) {
@@ -604,7 +604,15 @@ namespace boost {
             std::size_t generate_header_OA(const protocol_options& opt, asn_coder_ptr data, std::size_t segment_size, bool first) {
                 data->out()->clear(); // no user data *ref X225 Tab 12
                 spdudata tmp(OA_SPDU_ID);
-                tmp.setPI(PI_VERSION, VERSION2);
+                if (first) {
+                    tmp.setPI(PI_VERSION, VERSION2);
+                    if (opt.maxTPDU_to() || opt.maxTPDU_from()) {
+                        octet_sequnce tmpself(inttype_to_raw(endiancnv_copy(opt.maxTPDU_from())));
+                        octet_sequnce tmpdist(inttype_to_raw(endiancnv_copy(opt.maxTPDU_to())));
+                        tmpself.insert(tmpself.begin(), tmpdist.begin(), tmpdist.end());
+                        tmp.setPGI(PGI_CONN_ACC, PI_TSDUMAX, tmpself);
+                    }
+                }
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size();
                 //MAX header NO DATA = hdr(1) + (1/3)  + TSDUmax( (1 + 1 + 2) = 4) + version ( (1 + 1 + 1) = 3) = 9/11; no UData
@@ -623,13 +631,20 @@ namespace boost {
                 spdudata tmp(AC_SPDU_ID);
                 if (first) {
                     tmp.setPGI(PGI_CONN_ACC, PI_PROTOCOL_OPTION, NOEXTENDED_SPDU);
-                    tmp.setPGI(PGI_CONN_ACC, WORK_PROT_VERSION, opt.accept_version());
+                    tmp.setPGI(PGI_CONN_ACC, PI_VERSION, opt.accept_version());
                     tmp.setPI(PI_SES_USERREQ, FU_WORK);
                     if (!opt.ssap_calling().empty())
                         tmp.setPI(PI_CALLING, opt.ssap_calling());
                     if (!opt.ssap_called().empty())
                         tmp.setPI(PI_CALLED, opt.ssap_called());
-                }
+
+                    if (opt.maxTPDU_to() || opt.maxTPDU_from()) {
+                        octet_sequnce tmpself(inttype_to_raw(endiancnv_copy(opt.maxTPDU_from())));
+                        octet_sequnce tmpdist(inttype_to_raw(endiancnv_copy(opt.maxTPDU_to())));
+                        tmpself.insert(tmpself.begin(), tmpdist.begin(), tmpdist.end());
+                        tmp.setPGI(PGI_CONN_ACC, PI_TSDUMAX, tmpself);
+                    }
+                }                       
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
                 //MAX header NO DATA = hdr(1) + (1/3)  + Poption( (1 + 1 + 1) = 3) + TSDUmax( (1 + 1 + 2) = 4) + version ( (1 + 1 + 1) = 3) + SUR( (1 + 1 + 2) = 4) + (

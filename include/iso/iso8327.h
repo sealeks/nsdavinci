@@ -1471,10 +1471,10 @@ namespace boost {
 
                                         // Netotiation success send AC
                                         socket.session_version(receiver_->options().accept_version());
-                                        /*if (receiver_->options().segmentsize_to() || receiver_->options().segmentsize_to()){
-                                            socket.segmentation_set(receiver_->options().segmentsize_to(), receiver_->options().segmentsize_to());
+                                        if (receiver_->options().maxTPDU_from() || receiver_->options().maxTPDU_to()){
+                                            socket.segmentation_set(receiver_->options().maxTPDU_from(), receiver_->options().maxTPDU_to());
                                         }     
-                                        socket.user_requirement(receiver_->options().user_requirement());*/
+                                        socket.user_requirement(receiver_->options().user_requirement());
 
                                         if (receiver_->options().overflow()) {
                                             sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.segmentsize_to()));
@@ -1500,13 +1500,13 @@ namespace boost {
                                             protocol_options options_ = socket.session_option();
                                             options_.refuse_reason(DR_REASON_USER);
 
-                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder()));
+                                            sender_ = sender_ptr(new sender(RF_SPDU_ID, options_, socket.rootcoder(), socket.segmentsize_to()));
                                             state(reject);
                                             errorrefuse_ = ER_PROTOPT;
                                             operator()(ec, 0);
                                             return;
                                         }
-                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder()));
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder(),  socket.segmentsize_to()));
                                         state(request);
                                         operator()(ec, 0);
                                         return;
