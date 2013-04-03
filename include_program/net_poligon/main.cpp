@@ -90,7 +90,7 @@ const selector_type SELECTOR = selector_type(selectorvalue_type("SERVER-TSEL"));
 int port = 102;
 
 #define SESSION_CODER
-//#define NET_BLOCKING
+#define NET_BLOCKING
 
 #ifndef NET_BLOCKING
 
@@ -121,8 +121,9 @@ public:
                 boost::asio::placeholders::error));
 #else       
         socket_.async_read_some(boost::asio::buffer(data_, max_length),
-                boost::bind(&session::handle_request, this,
-                boost::asio::placeholders::error));
+                boost::bind(&session::handle_read, this,
+                boost::asio::placeholders::error,
+                boost::asio::placeholders::bytes_transferred));
 #endif                
     }
 
@@ -132,7 +133,7 @@ private:
             size_t bytes_transferred) {
         if (!error) {
             if (!socket_.ready()) {
-                std::cout << "Server read: " << std::string(data_, bytes_transferred) << " size: " << bytes_transferred << std::endl;
+                std::cout << "Server read: " << std::string(data_, bytes_transferred) << " size: " << bytes_transferred  << std::endl;
                 std::cout << "Server read continiue" << std::endl;
                 socket_.async_read_some(boost::asio::buffer(data_, max_length),
                         boost::bind(&session::handle_read, this,
@@ -424,7 +425,7 @@ private:
     void do_write() {
         if (socket_.is_open()) {
             if (!(message == "release" || message == "abort")) {
-                std::cout << "Client write:" << message << " size: " << message.size() << std::endl;
+                std::cout << "Client write message:" << " size: " << message.size() << std::endl;
 #if defined(SESSION_PROT)  &&   defined(SESSION_CODER) 
                 socket_.rootcoder()->request_str(message);
                 socket_.async_conversation(boost::bind(&client::handle_conversation, this,
