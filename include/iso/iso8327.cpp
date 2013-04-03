@@ -610,7 +610,7 @@ namespace boost {
                         octet_sequnce tmpself(inttype_to_raw(endiancnv_copy(opt.maxTPDU_from())));
                         octet_sequnce tmpdist(inttype_to_raw(endiancnv_copy(opt.maxTPDU_to())));
                         tmpself.insert(tmpself.begin(), tmpdist.begin(), tmpdist.end());
-                        tmp.setPGI(PGI_CONN_ACC, PI_TSDUMAX, tmpself);
+                        tmp.setPI( PI_TSDUMAX, tmpself);
                     }
                 }
                 tmp.sequence(data, segment_size, first);
