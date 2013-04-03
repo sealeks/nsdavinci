@@ -12,14 +12,14 @@ namespace boost {
     namespace itu {
         namespace x225impl {
 
-#define SEGMENTATION_TEST            
-            
+            //#define SEGMENTATION_TEST            
+
 #ifdef  SEGMENTATION_TEST           
 #define SEGMENTATION_TEST_TO 128
 #define SEGMENTATION_TEST_FROM 128
 #endif
-            
-            
+
+
             // ref X225 = ITU-T Rec. X.225(1995 E)           
 
             using boost::asio::basic_socket;
@@ -868,8 +868,8 @@ namespace boost {
 #ifndef _MSC_VER                    
 #warning "Segmentation test"     
 #endif                  
-                   segmentation_set(SEGMENTATION_TEST_TO, SEGMENTATION_TEST_FROM);
-                   option_.maxTPDU(segmentsize_to_, segmentsize_from_);
+                    segmentation_set(SEGMENTATION_TEST_TO, SEGMENTATION_TEST_FROM);
+                    option_.maxTPDU(segmentsize_to_, segmentsize_from_);
 #endif                   
                 }
 
@@ -878,13 +878,13 @@ namespace boost {
                         asn_coder_ptr coder = asn_coder_ptr(new default_coder_type()))
                 : boost::itu::rfc1006::socket(io_service, ssel.tselector()), option_(ssel.called(), ssel.calling()), rootcoder_(coder),
                 session_version_(VERSION2), user_requirement_(FU_WORK), segmentsize_to_(0), segmentsize_from_(0), eof_state_(true) {
-                    
+
 #ifdef  SEGMENTATION_TEST
 #ifndef _MSC_VER                    
 #warning "Segmentation test"     
 #endif                  
-                   segmentation_set(SEGMENTATION_TEST_TO, SEGMENTATION_TEST_FROM);
-                   option_.maxTPDU(segmentsize_to_, segmentsize_from_);
+                    segmentation_set(SEGMENTATION_TEST_TO, SEGMENTATION_TEST_FROM);
+                    option_.maxTPDU(segmentsize_to_, segmentsize_from_);
 #endif  
                 }
 
@@ -999,10 +999,9 @@ namespace boost {
                                     {
                                         // Accepted. Negotiate options *ref X225 7.4.3
                                         socket.session_version(receiver_->options().accept_version());
-                                        /*if (receiver_->options().segmentsize_to() || receiver_->options().segmentsize_to()){
-                                            socket.segmentation_set(receiver_->options().segmentsize_to(), receiver_->options().segmentsize_to());
-                                        }     
-                                        socket.user_requirement(receiver_->options().user_requirement());*/
+                                        //if (receiver_->options().maxTPDU_to() || receiver_->options().maxTPDU_from())
+                                        //    socket.segmentation_set( receiver_->options().maxTPDU_to(), receiver_->options().maxTPDU_from());  
+                                        //socket.user_requirement(receiver_->options().user_requirement());
                                         socket.rootcoder()->in()->add(receiver_->options().data());
                                         exit_handler(ec);
                                         return;
@@ -1019,6 +1018,8 @@ namespace boost {
                                     }
                                     case OA_SPDU_ID:
                                     {
+                                        //if (receiver_->options().maxTPDU_to() || receiver_->options().maxTPDU_from())
+                                        //    socket.segmentation_set(receiver_->options().maxTPDU_to(), receiver_->options().maxTPDU_from()); 
                                         sender_ = sender_ptr(new sender(CDO_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.segmentsize_to()));
                                         receiver_ = receiver_ptr(new receiver());
                                         state(request);
@@ -1471,10 +1472,10 @@ namespace boost {
 
                                         // Netotiation success send AC
                                         socket.session_version(receiver_->options().accept_version());
-                                        if (receiver_->options().maxTPDU_from() || receiver_->options().maxTPDU_to()){
+                                        if (receiver_->options().maxTPDU_from() || receiver_->options().maxTPDU_to())
                                             socket.segmentation_set(receiver_->options().maxTPDU_from(), receiver_->options().maxTPDU_to());
-                                        }     
-                                        socket.user_requirement(receiver_->options().user_requirement());
+
+                                        //socket.user_requirement(receiver_->options().user_requirement());
 
                                         if (receiver_->options().overflow()) {
                                             sender_ = sender_ptr(new sender(OA_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.segmentsize_to()));
@@ -1506,7 +1507,7 @@ namespace boost {
                                             operator()(ec, 0);
                                             return;
                                         }
-                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder(),  socket.segmentsize_to()));
+                                        sender_ = sender_ptr(new sender(AC_SPDU_ID, socket.session_option(), socket.rootcoder(), socket.segmentsize_to()));
                                         state(request);
                                         operator()(ec, 0);
                                         return;
@@ -2365,10 +2366,9 @@ namespace boost {
                                         {
                                             // Accepted. Negotiate options *ref X225 7.4.3
                                             session_version(receiver_->options().accept_version());
-                                            /*if (receiver_->options().segmentsize_to() || receiver_->options().segmentsize_to()){
-                                                socket.segmentation_set(receiver_->options().segmentsize_to(), receiver_->options().segmentsize_to());
-                                            }     
-                                            socket.user_requirement(receiver_->options().user_requirement());*/
+                                            //if (receiver_->options().maxTPDU_to() || receiver_->options().maxTPDU_from())
+                                            //segmentation_set(receiver_->options().maxTPDU_to(), receiver_->options().maxTPDU_from())
+                                            //socket.user_requirement(receiver_->options().user_requirement());
                                             rootcoder()->in()->add(receiver_->options().data());
                                             return connect_impl_exit(ec);
                                         }
@@ -2381,6 +2381,8 @@ namespace boost {
                                         }
                                         case OA_SPDU_ID:
                                         {
+                                            //if (receiver_->options().maxTPDU_to() || receiver_->options().maxTPDU_from())
+                                            //segmentation_set(receiver_->options().maxTPDU_to(), receiver_->options().maxTPDU_from())
                                             sender_ = sender_ptr(new sender(CDO_SPDU_ID, session_option(), rootcoder(), segmentsize_to()));
                                             receiver_ = receiver_ptr(new receiver());
                                             while (!ec && !sender_->ready())
@@ -2554,10 +2556,9 @@ namespace boost {
 
                                         // Netotiation success send AC
                                         session_version(receiver_->options().accept_version());
-                                        /*if (receiver_->options().segmentsize_to() || receiver_->options().segmentsize_to()){
-                                            segmentation_set(receiver_->options().segmentsize_to(), receiver_->options().segmentsize_to());
-                                        }     
-                                        user_requirement(receiver_->options().user_requirement());*/
+                                        if (receiver_->options().maxTPDU_from() || receiver_->options().maxTPDU_to())
+                                            segmentation_set(receiver_->options().maxTPDU_from(), receiver_->options().maxTPDU_to());
+                                        //user_requirement(receiver_->options().user_requirement());
 
                                         if (receiver_->options().overflow()) {
                                             sender_ = sender_ptr(new sender(OA_SPDU_ID, session_option(), rootcoder(), segmentsize_to()));
