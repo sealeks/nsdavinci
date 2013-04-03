@@ -42,7 +42,7 @@ namespace boost {
                     value_->insert(pgis_type(cod1, pgi));
                 }
                 else
-                    it->second[cod2] = val ;
+                    it->second[cod2] = val;
             }
 
             void spdudata::setPGI(varid_type cod1, varid_type cod2, int8_t val) {
@@ -527,6 +527,10 @@ namespace boost {
                 if (tmp.size() == 4) {
                     return endiancnv_copy<uint16_t > (octet_sequnce(tmp.begin(), tmp.begin() + 2));
                 }
+                const octet_sequnce& tmp2 = vars_->getPI(PI_TSDUMAX);
+                if (tmp2.size() == 4) {
+                    return endiancnv_copy<uint16_t > (octet_sequnce(tmp2.begin(), tmp2.begin() + 2));
+                }
                 return 0;
             }
 
@@ -534,6 +538,10 @@ namespace boost {
                 const octet_sequnce& tmp = vars_->getPGI(PGI_CONN_ACC, PI_TSDUMAX);
                 if (tmp.size() == 4) {
                     return endiancnv_copy<uint16_t > (octet_sequnce(tmp.begin() + 2, tmp.end()));
+                }
+                const octet_sequnce& tmp2 = vars_->getPI(PI_TSDUMAX);
+                if (tmp2.size() == 4) {
+                    return endiancnv_copy<uint16_t > (octet_sequnce(tmp2.begin() + 2, tmp2.end()));
                 }
                 return 0;
             }
@@ -554,10 +562,10 @@ namespace boost {
 #if defined(ITUX200_DEBUG)                 
                 std::cout << "Negotiate session level: LOCAL =" << self << " DISTANCE =" << dist << std::endl;
 #endif                
-                if (!(dist.user_requirement() & FU_WORK) || 
+                if (!(dist.user_requirement() & FU_WORK) ||
                         //dist.extendedSPDU() ||
-                        (dist.maxTPDU_from() && (dist.maxTPDU_from()<MINAVAIL_MAX_TPDU)) ||
-                        (dist.maxTPDU_to() && (dist.maxTPDU_to()<MINAVAIL_MAX_TPDU)) ) {
+                        (dist.maxTPDU_from() && (dist.maxTPDU_from() < MINAVAIL_MAX_TPDU)) ||
+                        (dist.maxTPDU_to() && (dist.maxTPDU_to() < MINAVAIL_MAX_TPDU))) {
                     errorreason = DR_REASON_NEGOT;
                     return false;
                 }
@@ -583,7 +591,7 @@ namespace boost {
                     tmp.setPI(PI_CALLED, opt.ssap_called());
                 if (before > EXTEDED_USERDATA_LIMIT) {
                     tmp.setPI(PI_DATAOVERFLOW, MORE_DATA);
-                }          
+                }
 #ifdef  SEGMENTATION_TEST                
 #ifndef _MSC_VER                    
 #warning "Segmentation test"     
@@ -610,7 +618,7 @@ namespace boost {
                         octet_sequnce tmpself(inttype_to_raw(endiancnv_copy(opt.maxTPDU_from())));
                         octet_sequnce tmpdist(inttype_to_raw(endiancnv_copy(opt.maxTPDU_to())));
                         tmpself.insert(tmpself.begin(), tmpdist.begin(), tmpdist.end());
-                        tmp.setPI( PI_TSDUMAX, tmpself);
+                        tmp.setPI(PI_TSDUMAX, tmpself);
                     }
                 }
                 tmp.sequence(data, segment_size, first);
@@ -644,7 +652,7 @@ namespace boost {
                         tmpself.insert(tmpself.begin(), tmpdist.begin(), tmpdist.end());
                         tmp.setPGI(PGI_CONN_ACC, PI_TSDUMAX, tmpself);
                     }
-                }                       
+                }
                 tmp.sequence(data, segment_size, first);
                 return data->out()->size() - before;
                 //MAX header NO DATA = hdr(1) + (1/3)  + Poption( (1 + 1 + 1) = 3) + TSDUmax( (1 + 1 + 2) = 4) + version ( (1 + 1 + 1) = 3) + SUR( (1 + 1 + 2) = 4) + (
