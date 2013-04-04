@@ -363,7 +363,7 @@ namespace boost {
             tkpt_data(new octet_sequnce(TKPT_WITH_LI)),
             tkpt_buff_(boost::asio::buffer(*tkpt_data)),
             header_buff_(),
-            userbuff_(buff) {
+            userbuff_(waitingsize ? boost::asio::buffer(buff, waitingsize) : buff) {
             }
 
             receiver::receiver() :
@@ -481,6 +481,8 @@ namespace boost {
                         estimatesize_ = (boost::asio::buffer_size(userbuff_ + datasize_) < waitdatasize_) ?
                                 boost::asio::buffer_size(userbuff_ + datasize_) : waitdatasize_;
                         eof_ = (eof == TPDU_ENDED);
+                        if (boost::asio::buffer_size(userbuff_) > waitdatasize_)
+                            userbuff_ = boost::asio::buffer(userbuff_, waitdatasize_);
                         state(boost::asio::buffer_size(userbuff_) ? waitdata : complete);
                         return error_code();
                     }
