@@ -22,6 +22,7 @@ AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -51,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lboost_date_time -lboost_filesystem -lboost_prg_exec_monitor -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_test_exec_monitor -lboost_thread -lboost_unit_test_framework -lboost_wserialization -lrt
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lboost_date_time -lboost_filesystem -lboost_prg_exec_monitor -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_unit_test_framework -lboost_wserialization -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -59,12 +60,12 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 ../../bin/${CND_CONF}/app_test: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	g++ -o ../../bin/${CND_CONF}/app_test ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	g++ -o ../../bin/${CND_CONF}/app_test ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/550875278/main.o: ../../include_program/app_test/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/550875278
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/550875278/main.o ../../include_program/app_test/main.cpp
+	$(COMPILE.cc) -O2 -Wall -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/550875278/main.o ../../include_program/app_test/main.cpp
 
 # Subprojects
 .build-subprojects:

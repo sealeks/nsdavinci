@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_setvalue.ui'
 **
-** Created: Wed 6. Jul 19:52:56 2011
+** Created: Wed 10. Oct 20:33:02 2012
 **      by: Qt User Interface Compiler version 4.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

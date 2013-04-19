@@ -15,13 +15,14 @@ NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc.exe
-CCC=g++.exe
-CXX=g++.exe
+CCC=g++
+CXX=g++
 FC=gfortran
-AS=as.exe
+AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=MinGW-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_rl_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -51,20 +52,20 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_wserialization -lole32 -loleaut32 -luuid -lws2_32 -lwsock32
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_wserialization -lboost_chrono -lole32 -loleaut32 -luuid -lws2_32 -lwsock32
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/app_test.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/app_test
 
-../../bin/${CND_CONF}/app_test.exe: ${OBJECTFILES}
+../../bin/${CND_CONF}/app_test: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	g++.exe -o ../../bin/${CND_CONF}/app_test ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	g++.exe -o ../../bin/${CND_CONF}/app_test ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/550875278/main.o: ../../include_program/app_test/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/550875278
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/550875278/main.o ../../include_program/app_test/main.cpp
+	$(COMPILE.cc) -O2 -Wall -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/550875278/main.o ../../include_program/app_test/main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -72,7 +73,7 @@ ${OBJECTDIR}/_ext/550875278/main.o: ../../include_program/app_test/main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/app_test.exe
+	${RM} ../../bin/${CND_CONF}/app_test
 
 # Subprojects
 .clean-subprojects:
