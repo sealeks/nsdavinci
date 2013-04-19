@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="79">
+<configurationDescriptor version="88">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="TestFiles"
                    displayName="Файлы тестов"
@@ -50,8 +50,8 @@
             <pElem>../../include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_WIN32_WINNT=0x0501</Elem>
             <Elem>DVNCI_DEDUG</Elem>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
           </preprocessorList>
         </ccTool>
         <asmTool>
@@ -61,6 +61,58 @@
           <output>../../lib/${CND_CONF}/libcustom.a</output>
         </archiverTool>
       </compileType>
+      <item path="../../include/custom/extnetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/extnetintf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/gui_executor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/gui_executor.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/localnetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/localnetintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/netfactory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netintf.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/custom/netintf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netsession.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/netsession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netstruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/remotenetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/remotenetintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_rl_WIN32" type="3">
       <toolsSet>
@@ -92,6 +144,58 @@
           <output>../../lib/${CND_CONF}/libcustom.a</output>
         </archiverTool>
       </compileType>
+      <item path="../../include/custom/extnetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/extnetintf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/gui_executor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/gui_executor.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/localnetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/localnetintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/netfactory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netintf.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/custom/netintf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netsession.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/netsession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netstruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/remotenetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/remotenetintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_db_LIN64" type="3">
       <toolsSet>
@@ -113,8 +217,8 @@
             <pElem>../../include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>_WIN32_WINNT=0x0501</Elem>
             <Elem>DVNCI_DEDUG</Elem>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
           </preprocessorList>
         </ccTool>
         <asmTool>
@@ -124,6 +228,58 @@
           <output>../../lib/${CND_CONF}/libcustom.a</output>
         </archiverTool>
       </compileType>
+      <item path="../../include/custom/extnetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/extnetintf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/gui_executor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/gui_executor.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/localnetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/localnetintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/netfactory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netintf.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/custom/netintf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netsession.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/netsession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netstruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/remotenetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/remotenetintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_rl_LIN64" type="3">
       <toolsSet>
@@ -155,6 +311,58 @@
           <output>../../lib/${CND_CONF}/libcustom.a</output>
         </archiverTool>
       </compileType>
+      <item path="../../include/custom/extnetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/extnetintf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/gui_executor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/gui_executor.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/localnetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/localnetintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/netfactory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netintf.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/custom/netintf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netsession.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/netsession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/netstruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/custom/remotenetintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/custom/remotenetintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
