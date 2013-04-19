@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="79">
+<configurationDescriptor version="88">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -26,8 +26,8 @@
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
-            <Elem>_WIN32_WINNT=0x0501</Elem>
             <Elem>DVNCI_DEDUG</Elem>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -38,6 +38,7 @@
           </linkerAddLib>
           <commandlineTool>g++.exe</commandlineTool>
           <linkerLibItems>
+            <linkerLibLibItem>boost_thread</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
@@ -48,7 +49,7 @@
             <linkerLibLibItem>boost_serialization</linkerLibLibItem>
             <linkerLibLibItem>boost_signals</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
-            <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>ole32</linkerLibLibItem>
             <linkerLibLibItem>oleaut32</linkerLibLibItem>
@@ -70,6 +71,11 @@
           </makeArtifact>
         </requiredProjects>
       </compileType>
+      <item path="../../include_program/app_test/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_rl_WIN32" type="1">
       <toolsSet>
@@ -109,6 +115,7 @@
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>ole32</linkerLibLibItem>
             <linkerLibLibItem>oleaut32</linkerLibLibItem>
             <linkerLibLibItem>uuid</linkerLibLibItem>
@@ -117,6 +124,11 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="../../include_program/app_test/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_db_LIN64" type="1">
       <toolsSet>
@@ -157,6 +169,7 @@
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_test_exec_monitor</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_unit_test_framework</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>rt</linkerLibLibItem>
@@ -175,6 +188,11 @@
           </makeArtifact>
         </requiredProjects>
       </compileType>
+      <item path="../../include_program/app_test/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_rl_LIN64" type="1">
       <toolsSet>
@@ -212,8 +230,8 @@
             <linkerLibLibItem>boost_serialization</linkerLibLibItem>
             <linkerLibLibItem>boost_signals</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
-            <linkerLibLibItem>boost_test_exec_monitor</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_unit_test_framework</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>rt</linkerLibLibItem>
@@ -232,6 +250,11 @@
           </makeArtifact>
         </requiredProjects>
       </compileType>
+      <item path="../../include_program/app_test/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
