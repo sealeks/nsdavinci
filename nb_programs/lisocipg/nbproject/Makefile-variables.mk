@@ -7,37 +7,37 @@ CND_BASEDIR=`pwd`
 CND_BUILDDIR=build
 CND_DISTDIR=dist
 # nb_gcc_db_WIN32 configuration
-CND_PLATFORM_nb_gcc_db_WIN32=MinGW-Windows
+CND_PLATFORM_nb_gcc_db_WIN32=MinGW-Linux-x86
 CND_ARTIFACT_DIR_nb_gcc_db_WIN32=../../bin/nb_gcc_db_WIN32
 CND_ARTIFACT_NAME_nb_gcc_db_WIN32=libsoci_postgresql.dll
 CND_ARTIFACT_PATH_nb_gcc_db_WIN32=../../bin/nb_gcc_db_WIN32/libsoci_postgresql.dll
-CND_PACKAGE_DIR_nb_gcc_db_WIN32=dist/nb_gcc_db_WIN32/MinGW-Windows/package
-CND_PACKAGE_NAME_nb_gcc_db_WIN32=liblisocipg.dll.tar
-CND_PACKAGE_PATH_nb_gcc_db_WIN32=dist/nb_gcc_db_WIN32/MinGW-Windows/package/liblisocipg.dll.tar
+CND_PACKAGE_DIR_nb_gcc_db_WIN32=dist/nb_gcc_db_WIN32/MinGW-Linux-x86/package
+CND_PACKAGE_NAME_nb_gcc_db_WIN32=liblisocipg.so.tar
+CND_PACKAGE_PATH_nb_gcc_db_WIN32=dist/nb_gcc_db_WIN32/MinGW-Linux-x86/package/liblisocipg.so.tar
 # nb_gcc_rl_WIN32 configuration
-CND_PLATFORM_nb_gcc_rl_WIN32=MinGW-Windows
+CND_PLATFORM_nb_gcc_rl_WIN32=MinGW-Linux-x86
 CND_ARTIFACT_DIR_nb_gcc_rl_WIN32=../../bin/nb_gcc_rl_WIN32
 CND_ARTIFACT_NAME_nb_gcc_rl_WIN32=libsoci_postgresql.dll
 CND_ARTIFACT_PATH_nb_gcc_rl_WIN32=../../bin/nb_gcc_rl_WIN32/libsoci_postgresql.dll
-CND_PACKAGE_DIR_nb_gcc_rl_WIN32=dist/nb_gcc_rl_WIN32/MinGW-Windows/package
-CND_PACKAGE_NAME_nb_gcc_rl_WIN32=liblisocipg.dll.tar
-CND_PACKAGE_PATH_nb_gcc_rl_WIN32=dist/nb_gcc_rl_WIN32/MinGW-Windows/package/liblisocipg.dll.tar
+CND_PACKAGE_DIR_nb_gcc_rl_WIN32=dist/nb_gcc_rl_WIN32/MinGW-Linux-x86/package
+CND_PACKAGE_NAME_nb_gcc_rl_WIN32=liblisocipg.so.tar
+CND_PACKAGE_PATH_nb_gcc_rl_WIN32=dist/nb_gcc_rl_WIN32/MinGW-Linux-x86/package/liblisocipg.so.tar
 # nb_gcc_db_LIN64 configuration
-CND_PLATFORM_nb_gcc_db_LIN64=
+CND_PLATFORM_nb_gcc_db_LIN64=GNU-Linux-x86
 CND_ARTIFACT_DIR_nb_gcc_db_LIN64=../../bin/nb_gcc_db_LIN64
 CND_ARTIFACT_NAME_nb_gcc_db_LIN64=libsoci_postgresql.so
 CND_ARTIFACT_PATH_nb_gcc_db_LIN64=../../bin/nb_gcc_db_LIN64/libsoci_postgresql.so
-CND_PACKAGE_DIR_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64//package
+CND_PACKAGE_DIR_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64/GNU-Linux-x86/package
 CND_PACKAGE_NAME_nb_gcc_db_LIN64=liblisocipg.so.tar
-CND_PACKAGE_PATH_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64//package/liblisocipg.so.tar
+CND_PACKAGE_PATH_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64/GNU-Linux-x86/package/liblisocipg.so.tar
 # nb_gcc_rl_LIN64 configuration
-CND_PLATFORM_nb_gcc_rl_LIN64=
+CND_PLATFORM_nb_gcc_rl_LIN64=GNU-Linux-x86
 CND_ARTIFACT_DIR_nb_gcc_rl_LIN64=../../bin/nb_gcc_rl_LIN64
 CND_ARTIFACT_NAME_nb_gcc_rl_LIN64=libsoci_postgresql.so
 CND_ARTIFACT_PATH_nb_gcc_rl_LIN64=../../bin/nb_gcc_rl_LIN64/libsoci_postgresql.so
-CND_PACKAGE_DIR_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64//package
+CND_PACKAGE_DIR_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64/GNU-Linux-x86/package
 CND_PACKAGE_NAME_nb_gcc_rl_LIN64=liblisocipg.so.tar
-CND_PACKAGE_PATH_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64//package/liblisocipg.so.tar
+CND_PACKAGE_PATH_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64/GNU-Linux-x86/package/liblisocipg.so.tar
 #
 # include compiler specific variables
 #

@@ -22,6 +22,7 @@ AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_db_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -51,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -lnskernel -lnsadmin -lmeta -lboost_date_time -lboost_filesystem -lboost_prg_exec_monitor -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_test_exec_monitor -lboost_thread -lboost_unit_test_framework -lboost_wserialization -lrt
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -lnskernel -lnsadmin -lmeta -lboost_date_time -lboost_filesystem -lboost_prg_exec_monitor -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_test_exec_monitor -lboost_thread -lboost_chrono -lboost_unit_test_framework -lboost_wserialization -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -59,12 +60,12 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -l
 
 ../../bin/${CND_CONF}/service_dvnciadmin_db: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvnciadmin_db ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvnciadmin_db ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/450115111/main.o: ../../include_program/service_dvnciadmin/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/450115111
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I../../include -I../../include/pugixml -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/450115111/main.o ../../include_program/service_dvnciadmin/main.cpp
+	$(COMPILE.cc) -O2 -I../../include -I../../include/pugixml -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/450115111/main.o ../../include_program/service_dvnciadmin/main.cpp
 
 # Subprojects
 .build-subprojects:

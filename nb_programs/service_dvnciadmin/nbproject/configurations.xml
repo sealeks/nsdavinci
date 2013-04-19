@@ -55,6 +55,7 @@
             <linkerLibLibItem>boost_signals</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
@@ -122,6 +123,7 @@
             <linkerLibLibItem>boost_signals</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
@@ -187,6 +189,7 @@
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_test_exec_monitor</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_unit_test_framework</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>rt</linkerLibLibItem>
@@ -248,6 +251,7 @@
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_test_exec_monitor</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_unit_test_framework</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>rt</linkerLibLibItem>
