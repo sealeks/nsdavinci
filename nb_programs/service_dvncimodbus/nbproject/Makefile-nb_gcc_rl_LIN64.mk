@@ -22,6 +22,7 @@ AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -34,9 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/715232524/modbus_detail.o \
+	${OBJECTDIR}/_ext/1232915786/modbus_protocol.o \
 	${OBJECTDIR}/_ext/715232524/main.o \
-	${OBJECTDIR}/_ext/1232915786/modbus_protocol.o
+	${OBJECTDIR}/_ext/715232524/modbus_detail.o
 
 
 # C Compiler Flags
@@ -53,7 +54,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_wserialization -lrt
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -61,22 +62,22 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 ../../bin/${CND_CONF}/service_dvncimodbus: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncimodbus ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/_ext/715232524/modbus_detail.o: ../../include_program/service_dvncimodbus/modbus_detail.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -s -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/modbus_detail.o ../../include_program/service_dvncimodbus/modbus_detail.cpp
-
-${OBJECTDIR}/_ext/715232524/main.o: ../../include_program/service_dvncimodbus/main.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -s -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/main.o ../../include_program/service_dvncimodbus/main.cpp
+	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncimodbus ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o: ../../include/driverspec/modbus_protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1232915786
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -s -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
+	$(COMPILE.cc) -O2 -Wall -s -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
+
+${OBJECTDIR}/_ext/715232524/main.o: ../../include_program/service_dvncimodbus/main.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -Wall -s -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/main.o ../../include_program/service_dvncimodbus/main.cpp
+
+${OBJECTDIR}/_ext/715232524/modbus_detail.o: ../../include_program/service_dvncimodbus/modbus_detail.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -Wall -s -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/modbus_detail.o ../../include_program/service_dvncimodbus/modbus_detail.cpp
 
 # Subprojects
 .build-subprojects:

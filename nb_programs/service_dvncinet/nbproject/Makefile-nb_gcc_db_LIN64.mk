@@ -22,6 +22,7 @@ AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_db_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -34,8 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/513510055/netserver.o \
-	${OBJECTDIR}/_ext/513510055/main.o
+	${OBJECTDIR}/_ext/513510055/main.o \
+	${OBJECTDIR}/_ext/513510055/netserver.o
 
 
 # C Compiler Flags
@@ -52,7 +53,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lcustom -lnskernel -ldbaccess -lsoci -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_wserialization -lrt
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lcustom -lnskernel -ldbaccess -lsoci -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -60,17 +61,17 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lcustom -ln
 
 ../../bin/${CND_CONF}/service_dvncinet_db: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncinet_db ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/_ext/513510055/netserver.o: ../../include_program/service_dvncinet/netserver.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/513510055
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/netserver.o ../../include_program/service_dvncinet/netserver.cpp
+	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncinet_db ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/513510055/main.o: ../../include_program/service_dvncinet/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513510055
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/main.o ../../include_program/service_dvncinet/main.cpp
+	$(COMPILE.cc) -O2 -Wall -DDVNCI_DEDUG -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/main.o ../../include_program/service_dvncinet/main.cpp
+
+${OBJECTDIR}/_ext/513510055/netserver.o: ../../include_program/service_dvncinet/netserver.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/513510055
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -Wall -DDVNCI_DEDUG -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/netserver.o ../../include_program/service_dvncinet/netserver.cpp
 
 # Subprojects
 .build-subprojects:
