@@ -52,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lboost_thread -ldbaccess -lsoci -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_wserialization -lnskernel -loleaut32 -lole32 -lws2_32 -lwsock32
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lboost_thread -lboost_chrono -ldbaccess -lsoci -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_wserialization -lnskernel -loleaut32 -lole32 -lws2_32 -lwsock32
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
