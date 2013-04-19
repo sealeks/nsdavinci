@@ -14,14 +14,15 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc.exe
-CCC=g++.exe
-CXX=g++.exe
+CC=gcc
+CCC=g++
+CXX=g++
 FC=gfortran
-AS=as.exe
+AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=MinGW-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_rl_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -34,8 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/513515479/main.o \
-	${OBJECTDIR}/_ext/513515479/expr_executor.o
+	${OBJECTDIR}/_ext/513515479/expr_executor.o \
+	${OBJECTDIR}/_ext/513515479/main.o
 
 
 # C Compiler Flags
@@ -56,21 +57,21 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncisys.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncisys
 
-../../bin/${CND_CONF}/service_dvncisys.exe: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvncisys: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncisys ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/_ext/513515479/main.o: ../../include_program/service_dvncisys/main.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/513515479
-	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513515479/main.o ../../include_program/service_dvncisys/main.cpp
+	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncisys ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/513515479/expr_executor.o: ../../include_program/service_dvncisys/expr_executor.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513515479
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513515479/expr_executor.o ../../include_program/service_dvncisys/expr_executor.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513515479/expr_executor.o ../../include_program/service_dvncisys/expr_executor.cpp
+
+${OBJECTDIR}/_ext/513515479/main.o: ../../include_program/service_dvncisys/main.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/513515479
+	${RM} $@.d
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513515479/main.o ../../include_program/service_dvncisys/main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -78,7 +79,7 @@ ${OBJECTDIR}/_ext/513515479/expr_executor.o: ../../include_program/service_dvnci
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvncisys.exe
+	${RM} ../../bin/${CND_CONF}/service_dvncisys
 
 # Subprojects
 .clean-subprojects:
