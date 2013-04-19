@@ -14,14 +14,15 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc.exe
+CC=gcc
 CCC=g++
 CXX=g++
 FC=gfortran
-AS=as.exe
+AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=MinGW-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_db_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -34,13 +35,13 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1901903102/iso.o \
 	${OBJECTDIR}/_ext/894376469/asnbase.o \
 	${OBJECTDIR}/_ext/894376469/itu_X690.o \
-	${OBJECTDIR}/_ext/1901903102/iso8327.o \
-	${OBJECTDIR}/_ext/1901903102/base_coder.o \
-	${OBJECTDIR}/_ext/1901903102/iso8823.o \
 	${OBJECTDIR}/_ext/894376469/utf8.o \
+	${OBJECTDIR}/_ext/1901903102/base_coder.o \
+	${OBJECTDIR}/_ext/1901903102/iso.o \
+	${OBJECTDIR}/_ext/1901903102/iso8327.o \
+	${OBJECTDIR}/_ext/1901903102/iso8823.o \
 	${OBJECTDIR}/_ext/1901903102/rfc1006.o
 
 
@@ -70,45 +71,45 @@ LDLIBSOPTIONS=
 	${AR} -rv ../../lib/${CND_CONF}/libisostack.a ${OBJECTFILES} 
 	$(RANLIB) ../../lib/${CND_CONF}/libisostack.a
 
-${OBJECTDIR}/_ext/1901903102/iso.o: ../../include/iso/iso.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso.o ../../include/iso/iso.cpp
-
 ${OBJECTDIR}/_ext/894376469/asnbase.o: ../../include/iso/asn/asnbase.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/894376469
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/asnbase.o ../../include/iso/asn/asnbase.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/asnbase.o ../../include/iso/asn/asnbase.cpp
 
 ${OBJECTDIR}/_ext/894376469/itu_X690.o: ../../include/iso/asn/itu_X690.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/894376469
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/itu_X690.o ../../include/iso/asn/itu_X690.cpp
-
-${OBJECTDIR}/_ext/1901903102/iso8327.o: ../../include/iso/iso8327.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso8327.o ../../include/iso/iso8327.cpp
-
-${OBJECTDIR}/_ext/1901903102/base_coder.o: ../../include/iso/base_coder.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/base_coder.o ../../include/iso/base_coder.cpp
-
-${OBJECTDIR}/_ext/1901903102/iso8823.o: ../../include/iso/iso8823.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso8823.o ../../include/iso/iso8823.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/itu_X690.o ../../include/iso/asn/itu_X690.cpp
 
 ${OBJECTDIR}/_ext/894376469/utf8.o: ../../include/iso/asn/utf8.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/894376469
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/utf8.o ../../include/iso/asn/utf8.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/894376469/utf8.o ../../include/iso/asn/utf8.cpp
+
+${OBJECTDIR}/_ext/1901903102/base_coder.o: ../../include/iso/base_coder.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/base_coder.o ../../include/iso/base_coder.cpp
+
+${OBJECTDIR}/_ext/1901903102/iso.o: ../../include/iso/iso.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso.o ../../include/iso/iso.cpp
+
+${OBJECTDIR}/_ext/1901903102/iso8327.o: ../../include/iso/iso8327.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso8327.o ../../include/iso/iso8327.cpp
+
+${OBJECTDIR}/_ext/1901903102/iso8823.o: ../../include/iso/iso8823.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/iso8823.o ../../include/iso/iso8823.cpp
 
 ${OBJECTDIR}/_ext/1901903102/rfc1006.o: ../../include/iso/rfc1006.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1901903102
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/rfc1006.o ../../include/iso/rfc1006.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DITUX200_DEBUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1901903102/rfc1006.o ../../include/iso/rfc1006.cpp
 
 # Subprojects
 .build-subprojects:
