@@ -22,6 +22,7 @@ AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -51,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-Wl,-rpath ../../lib/boost/${CND_CONF} -Wl,-rpath ../../lib/${CND_CONF} -lnskernel -ldbaccess -lsoci -lsocipg -lboost_date_time -lboost_filesystem -lboost_prg_exec_monitor -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_test_exec_monitor -lboost_thread -lboost_unit_test_framework -lboost_wserialization -lpg -lpgport -lrt
+LDLIBSOPTIONS=-Wl,-rpath,../../lib/boost/${CND_CONF} -Wl,-rpath,../../lib/${CND_CONF} -lnskernel -ldbaccess -lsoci -lsocipg -lboost_date_time -lboost_filesystem -lboost_prg_exec_monitor -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_test_exec_monitor -lboost_thread -lboost_chrono -lboost_unit_test_framework -lboost_wserialization -lpg -lpgport -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -59,12 +60,12 @@ LDLIBSOPTIONS=-Wl,-rpath ../../lib/boost/${CND_CONF} -Wl,-rpath ../../lib/${CND_
 
 ../../bin/${CND_CONF}/app_writetrenddef: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/app_writetrenddef ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -o ../../bin/${CND_CONF}/app_writetrenddef ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/863468359/writebase.o: ../../include_program/app_writetrenddef/writebase.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/863468359
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/863468359/writebase.o ../../include_program/app_writetrenddef/writebase.cpp
+	$(COMPILE.cc) -O2 -Wall -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/863468359/writebase.o ../../include_program/app_writetrenddef/writebase.cpp
 
 # Subprojects
 .build-subprojects:
