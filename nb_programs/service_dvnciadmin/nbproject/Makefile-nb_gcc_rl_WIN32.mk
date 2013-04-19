@@ -14,14 +14,15 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc.exe
+CC=gcc
 CCC=g++
 CXX=g++
 FC=gfortran
-AS=as.exe
+AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=MinGW-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_rl_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -51,20 +52,20 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -lnskernel -lmeta -lnsadmin -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_wserialization -lwsock32 -lws2_32 -lole32 -loleaut32 -luuid
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -lnskernel -lmeta -lnsadmin -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lwsock32 -lws2_32 -lole32 -loleaut32 -luuid
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvnciadmin.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvnciadmin
 
-../../bin/${CND_CONF}/service_dvnciadmin.exe: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvnciadmin: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvnciadmin ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvnciadmin ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/450115111/main.o: ../../include_program/service_dvnciadmin/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/450115111
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -D_WIN32_WINNT=0x0501 -I../../include -I../../include/pugixml -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/450115111/main.o ../../include_program/service_dvnciadmin/main.cpp
+	$(COMPILE.cc) -g -Wall -D_WIN32_WINNT=0x0501 -I../../include -I../../include/pugixml -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/450115111/main.o ../../include_program/service_dvnciadmin/main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -72,7 +73,7 @@ ${OBJECTDIR}/_ext/450115111/main.o: ../../include_program/service_dvnciadmin/mai
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvnciadmin.exe
+	${RM} ../../bin/${CND_CONF}/service_dvnciadmin
 
 # Subprojects
 .clean-subprojects:

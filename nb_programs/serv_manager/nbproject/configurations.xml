@@ -45,6 +45,7 @@
             <linkerLibLibItem>boost_regex</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -85,6 +86,7 @@
             <linkerLibLibItem>boost_regex</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
