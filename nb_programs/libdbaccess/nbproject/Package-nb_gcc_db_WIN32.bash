@@ -6,7 +6,7 @@
 
 # Macros
 TOP=`pwd`
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=MinGW-Linux-x86
 CND_CONF=nb_gcc_db_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build

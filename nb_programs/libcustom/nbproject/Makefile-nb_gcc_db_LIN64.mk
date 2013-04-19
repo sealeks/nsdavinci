@@ -22,6 +22,7 @@ AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_db_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -34,12 +35,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/217049176/netintf.o \
-	${OBJECTDIR}/_ext/217049176/gui_executor.o \
 	${OBJECTDIR}/_ext/217049176/extnetintf.o \
-	${OBJECTDIR}/_ext/217049176/remotenetintf.o \
+	${OBJECTDIR}/_ext/217049176/gui_executor.o \
+	${OBJECTDIR}/_ext/217049176/localnetintf.o \
+	${OBJECTDIR}/_ext/217049176/netintf.o \
 	${OBJECTDIR}/_ext/217049176/netsession.o \
-	${OBJECTDIR}/_ext/217049176/localnetintf.o
+	${OBJECTDIR}/_ext/217049176/remotenetintf.o
 
 
 # C Compiler Flags
@@ -68,35 +69,35 @@ LDLIBSOPTIONS=
 	${AR} -rv ../../lib/${CND_CONF}/libcustom.a ${OBJECTFILES} 
 	$(RANLIB) ../../lib/${CND_CONF}/libcustom.a
 
-${OBJECTDIR}/_ext/217049176/netintf.o: ../../include/custom/netintf.cpp 
+${OBJECTDIR}/_ext/217049176/extnetintf.o: ../../include/custom/extnetintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netintf.o ../../include/custom/netintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/extnetintf.o ../../include/custom/extnetintf.cpp
 
 ${OBJECTDIR}/_ext/217049176/gui_executor.o: ../../include/custom/gui_executor.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
 	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/gui_executor.o ../../include/custom/gui_executor.cpp
 
-${OBJECTDIR}/_ext/217049176/extnetintf.o: ../../include/custom/extnetintf.cpp 
+${OBJECTDIR}/_ext/217049176/localnetintf.o: ../../include/custom/localnetintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/extnetintf.o ../../include/custom/extnetintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/localnetintf.o ../../include/custom/localnetintf.cpp
 
-${OBJECTDIR}/_ext/217049176/remotenetintf.o: ../../include/custom/remotenetintf.cpp 
+${OBJECTDIR}/_ext/217049176/netintf.o: ../../include/custom/netintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/remotenetintf.o ../../include/custom/remotenetintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netintf.o ../../include/custom/netintf.cpp
 
 ${OBJECTDIR}/_ext/217049176/netsession.o: ../../include/custom/netsession.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
 	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netsession.o ../../include/custom/netsession.cpp
 
-${OBJECTDIR}/_ext/217049176/localnetintf.o: ../../include/custom/localnetintf.cpp 
+${OBJECTDIR}/_ext/217049176/remotenetintf.o: ../../include/custom/remotenetintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/localnetintf.o ../../include/custom/localnetintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/remotenetintf.o ../../include/custom/remotenetintf.cpp
 
 # Subprojects
 .build-subprojects:
