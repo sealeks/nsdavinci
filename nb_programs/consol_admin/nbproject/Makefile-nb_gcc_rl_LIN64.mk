@@ -22,6 +22,7 @@ AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -34,8 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/148756256/main.o \
-	${OBJECTDIR}/_ext/148756256/adminconsol.o
+	${OBJECTDIR}/_ext/148756256/adminconsol.o \
+	${OBJECTDIR}/_ext/148756256/main.o
 
 
 # C Compiler Flags
@@ -52,7 +53,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -lmeta -lnskernel -lnsadmin -lboost_thread -lboost_wserialization -lboost_system -lboost_serialization -lboost_regex -lboost_program_options -lboost_filesystem -lboost_date_time -lrt
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -lmeta -lnskernel -lnsadmin -lboost_thread -lboost_chrono -lboost_wserialization -lboost_system -lboost_serialization -lboost_regex -lboost_program_options -lboost_filesystem -lboost_date_time -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -60,17 +61,17 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnsadmin -l
 
 ../../bin/${CND_CONF}/consol_admin: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/consol_admin ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/_ext/148756256/main.o: ../../include_program/consol_admin/main.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/148756256
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/main.o ../../include_program/consol_admin/main.cpp
+	${LINK.cc} -o ../../bin/${CND_CONF}/consol_admin ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/148756256/adminconsol.o: ../../include_program/consol_admin/adminconsol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/148756256
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/adminconsol.o ../../include_program/consol_admin/adminconsol.cpp
+
+${OBJECTDIR}/_ext/148756256/main.o: ../../include_program/consol_admin/main.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/148756256
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/148756256/main.o ../../include_program/consol_admin/main.cpp
 
 # Subprojects
 .build-subprojects:
