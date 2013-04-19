@@ -14,14 +14,15 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc.exe
-CCC=g++.exe
-CXX=g++.exe
+CC=gcc
+CCC=g++
+CXX=g++
 FC=gfortran
-AS=as.exe
+AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=MinGW-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_rl_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -55,11 +56,11 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/test_poligon.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/test_poligon
 
-../../bin/${CND_CONF}/test_poligon.exe: ${OBJECTFILES}
+../../bin/${CND_CONF}/test_poligon: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/test_poligon ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -o ../../bin/${CND_CONF}/test_poligon ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/2048960737/main.o: ../../include_program/test_poligon/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2048960737
@@ -72,7 +73,7 @@ ${OBJECTDIR}/_ext/2048960737/main.o: ../../include_program/test_poligon/main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/test_poligon.exe
+	${RM} ../../bin/${CND_CONF}/test_poligon
 
 # Subprojects
 .clean-subprojects:
