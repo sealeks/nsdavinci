@@ -23,21 +23,21 @@ CND_PACKAGE_DIR_nb_gcc_rl_WIN32=dist/nb_gcc_rl_WIN32/MinGW-Windows/package
 CND_PACKAGE_NAME_nb_gcc_rl_WIN32=servicedvncilgk.tar
 CND_PACKAGE_PATH_nb_gcc_rl_WIN32=dist/nb_gcc_rl_WIN32/MinGW-Windows/package/servicedvncilgk.tar
 # nb_gcc_db_LIN64 configuration
-CND_PLATFORM_nb_gcc_db_LIN64=
+CND_PLATFORM_nb_gcc_db_LIN64=GNU-Linux-x86
 CND_ARTIFACT_DIR_nb_gcc_db_LIN64=../../bin/nb_gcc_db_LIN64
 CND_ARTIFACT_NAME_nb_gcc_db_LIN64=service_dvncilgk_db
 CND_ARTIFACT_PATH_nb_gcc_db_LIN64=../../bin/nb_gcc_db_LIN64/service_dvncilgk_db
-CND_PACKAGE_DIR_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64//package
+CND_PACKAGE_DIR_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64/GNU-Linux-x86/package
 CND_PACKAGE_NAME_nb_gcc_db_LIN64=servicedvncilgk.tar
-CND_PACKAGE_PATH_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64//package/servicedvncilgk.tar
+CND_PACKAGE_PATH_nb_gcc_db_LIN64=dist/nb_gcc_db_LIN64/GNU-Linux-x86/package/servicedvncilgk.tar
 # nb_gcc_rl_LIN64 configuration
-CND_PLATFORM_nb_gcc_rl_LIN64=
+CND_PLATFORM_nb_gcc_rl_LIN64=GNU-Linux-x86
 CND_ARTIFACT_DIR_nb_gcc_rl_LIN64=../../bin/nb_gcc_rl_LIN64
 CND_ARTIFACT_NAME_nb_gcc_rl_LIN64=service_dvncilgk
 CND_ARTIFACT_PATH_nb_gcc_rl_LIN64=../../bin/nb_gcc_rl_LIN64/service_dvncilgk
-CND_PACKAGE_DIR_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64//package
+CND_PACKAGE_DIR_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64/GNU-Linux-x86/package
 CND_PACKAGE_NAME_nb_gcc_rl_LIN64=servicedvncilgk.tar
-CND_PACKAGE_PATH_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64//package/servicedvncilgk.tar
+CND_PACKAGE_PATH_nb_gcc_rl_LIN64=dist/nb_gcc_rl_LIN64/GNU-Linux-x86/package/servicedvncilgk.tar
 #
 # include compiler specific variables
 #

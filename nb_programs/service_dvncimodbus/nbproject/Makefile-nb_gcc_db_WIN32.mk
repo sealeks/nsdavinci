@@ -53,7 +53,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lwsock32 -lws2_32 -lole32 -loleaut32 -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_wserialization
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lwsock32 -lws2_32 -lole32 -loleaut32 -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -66,17 +66,17 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 ${OBJECTDIR}/_ext/715232524/modbus_detail.o: ../../include_program/service_dvncimodbus/modbus_detail.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -s -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/modbus_detail.o ../../include_program/service_dvncimodbus/modbus_detail.cpp
+	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/modbus_detail.o ../../include_program/service_dvncimodbus/modbus_detail.cpp
 
 ${OBJECTDIR}/_ext/715232524/main.o: ../../include_program/service_dvncimodbus/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -s -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/main.o ../../include_program/service_dvncimodbus/main.cpp
+	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/main.o ../../include_program/service_dvncimodbus/main.cpp
 
 ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o: ../../include/driverspec/modbus_protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1232915786
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -s -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
+	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
 
 # Subprojects
 .build-subprojects:

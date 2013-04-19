@@ -27,7 +27,6 @@
       </toolsSet>
       <compileType>
         <ccTool>
-          <developmentMode>5</developmentMode>
           <stripSymbols>true</stripSymbols>
           <incDir>
             <pElem>../../include</pElem>
@@ -62,6 +61,7 @@
             <linkerLibLibItem>boost_signals</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
           </linkerLibItems>
           <commandLine>-mthreads</commandLine>
@@ -115,6 +115,7 @@
             <linkerLibLibItem>boost_signals</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
           </linkerLibItems>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
@@ -157,6 +158,7 @@
             <linkerLibLibItem>boost_signals</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>rt</linkerLibLibItem>
           </linkerLibItems>
@@ -198,6 +200,7 @@
             <linkerLibLibItem>boost_signals</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>rt</linkerLibLibItem>
           </linkerLibItems>
