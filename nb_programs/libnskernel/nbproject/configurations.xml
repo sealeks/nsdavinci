@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="79">
+<configurationDescriptor version="88">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -63,7 +63,7 @@
     <conf name="nb_gcc_db_WIN32" type="3">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>MinGW|MinGW</compilerSet>
+        <compilerSet>default</compilerSet>
       </toolsSet>
       <compileType>
         <cTool>
@@ -101,12 +101,203 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include/kernel/appath.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/appath_lin.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/appath_win.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/basis_iostream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/basis_iostream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/bufferbase_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/constdef.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/constdef.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/cyclic_table_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_blockmodel.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_blockmodel.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_detail.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_detail.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/error.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/expression.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/expression.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/extintf_wraper.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/factory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/filebase_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/index_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/index_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/interface_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/mainstruct.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/mainstruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/memfile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/memfile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/prb_binary_archive.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/prb_binary_archive.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/proccesstmpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/rpcioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/rpcioclient.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/service.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/service.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/serviceapp.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/serviceapp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/short_value.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/short_value.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/static_table_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/string_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/string_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/stringvalue_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/stringvalue_base.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/system_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/systemutil.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/systemutil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/templ.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utf8.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utils.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_rl_WIN32" type="3">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
-        <dependencyChecking>false</dependencyChecking>
       </toolsSet>
       <compileType>
         <cTool>
@@ -143,6 +334,198 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include/kernel/appath.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/appath_lin.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/appath_win.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/basis_iostream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/basis_iostream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/bufferbase_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/constdef.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/constdef.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/cyclic_table_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_blockmodel.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_blockmodel.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_detail.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_detail.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/error.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/expression.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/expression.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/extintf_wraper.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/factory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/filebase_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/index_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/index_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/interface_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/mainstruct.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/mainstruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/memfile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/memfile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/prb_binary_archive.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/prb_binary_archive.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/proccesstmpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/rpcioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/rpcioclient.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/service.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/service.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/serviceapp.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/serviceapp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/short_value.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/short_value.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/static_table_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/string_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/string_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/stringvalue_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/stringvalue_base.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/system_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/systemutil.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/systemutil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/templ.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utf8.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utils.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_db_LIN64" type="3">
       <toolsSet>
@@ -182,6 +565,198 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include/kernel/appath.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/appath_lin.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/appath_win.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/basis_iostream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/basis_iostream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/bufferbase_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/constdef.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/constdef.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/cyclic_table_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_blockmodel.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_blockmodel.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_detail.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_detail.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/error.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/expression.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/expression.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/extintf_wraper.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/factory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/filebase_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/index_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/index_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/interface_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/mainstruct.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/mainstruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/memfile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/memfile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/prb_binary_archive.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/prb_binary_archive.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/proccesstmpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/rpcioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/rpcioclient.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/service.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/service.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/serviceapp.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/serviceapp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/short_value.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/short_value.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/static_table_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/string_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/string_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/stringvalue_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/stringvalue_base.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/system_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/systemutil.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/systemutil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/templ.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utf8.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utils.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_rl_LIN64" type="3">
       <toolsSet>
@@ -220,6 +795,198 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include/kernel/appath.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/appath_lin.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/appath_win.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/basis_iostream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/basis_iostream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/bufferbase_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/constdef.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/constdef.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/cyclic_table_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_blockmodel.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_blockmodel.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_detail.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_detail.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/driver_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/error.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/expression.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/expression.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/extintf_wraper.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/factory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/filebase_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/index_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/index_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/interface_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/mainstruct.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/mainstruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/memfile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/memfile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/prb_binary_archive.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/prb_binary_archive.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/proccesstmpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/rpcioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/rpcioclient.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/service.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/service.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/serviceapp.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/serviceapp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/short_value.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/short_value.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/static_table_templ.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/string_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/string_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/stringvalue_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/stringvalue_base.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/system_proccesstmpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/systemutil.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/kernel/systemutil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/templ.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utf8.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../include/kernel/utils.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
