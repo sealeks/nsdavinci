@@ -14,14 +14,15 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc.exe
-CCC=g++.exe
-CXX=g++.exe
+CC=gcc
+CCC=g++
+CXX=g++
 FC=gfortran
-AS=as.exe
+AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=MinGW-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_rl_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -34,9 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1261432692/reporttype_executor.o \
 	${OBJECTDIR}/_ext/1261432692/dbwriter.o \
-	${OBJECTDIR}/_ext/1261432692/main.o
+	${OBJECTDIR}/_ext/1261432692/main.o \
+	${OBJECTDIR}/_ext/1261432692/reporttype_executor.o
 
 
 # C Compiler Flags
@@ -57,26 +58,26 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvnciarch.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvnciarch
 
-../../bin/${CND_CONF}/service_dvnciarch.exe: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvnciarch: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	g++ -o ../../bin/${CND_CONF}/service_dvnciarch ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/_ext/1261432692/reporttype_executor.o: ../../include_program/service_dvnciarch/reporttype_executor.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1261432692
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261432692/reporttype_executor.o ../../include_program/service_dvnciarch/reporttype_executor.cpp
+	g++ -o ../../bin/${CND_CONF}/service_dvnciarch ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/1261432692/dbwriter.o: ../../include_program/service_dvnciarch/dbwriter.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1261432692
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261432692/dbwriter.o ../../include_program/service_dvnciarch/dbwriter.cpp
+	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261432692/dbwriter.o ../../include_program/service_dvnciarch/dbwriter.cpp
 
 ${OBJECTDIR}/_ext/1261432692/main.o: ../../include_program/service_dvnciarch/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1261432692
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261432692/main.o ../../include_program/service_dvnciarch/main.cpp
+	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261432692/main.o ../../include_program/service_dvnciarch/main.cpp
+
+${OBJECTDIR}/_ext/1261432692/reporttype_executor.o: ../../include_program/service_dvnciarch/reporttype_executor.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1261432692
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -Wall -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261432692/reporttype_executor.o ../../include_program/service_dvnciarch/reporttype_executor.cpp
 
 # Subprojects
 .build-subprojects:
@@ -84,7 +85,7 @@ ${OBJECTDIR}/_ext/1261432692/main.o: ../../include_program/service_dvnciarch/mai
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvnciarch.exe
+	${RM} ../../bin/${CND_CONF}/service_dvnciarch
 
 # Subprojects
 .clean-subprojects:

@@ -14,14 +14,15 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc.exe
-CCC=g++.exe
-CXX=g++.exe
+CC=gcc
+CCC=g++
+CXX=g++
 FC=gfortran
-AS=as.exe
+AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=MinGW-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=nb_gcc_db_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -34,8 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/513510055/netserver.o \
-	${OBJECTDIR}/_ext/513510055/main.o
+	${OBJECTDIR}/_ext/513510055/main.o \
+	${OBJECTDIR}/_ext/513510055/netserver.o
 
 
 # C Compiler Flags
@@ -56,21 +57,21 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lcustom -ln
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncinet_db.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncinet_db
 
-../../bin/${CND_CONF}/service_dvncinet_db.exe: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvncinet_db: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
-	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncinet_db ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/_ext/513510055/netserver.o: ../../include_program/service_dvncinet/netserver.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/513510055
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/netserver.o ../../include_program/service_dvncinet/netserver.cpp
+	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncinet_db ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/513510055/main.o: ../../include_program/service_dvncinet/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/513510055
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/main.o ../../include_program/service_dvncinet/main.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/main.o ../../include_program/service_dvncinet/main.cpp
+
+${OBJECTDIR}/_ext/513510055/netserver.o: ../../include_program/service_dvncinet/netserver.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/513510055
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/513510055/netserver.o ../../include_program/service_dvncinet/netserver.cpp
 
 # Subprojects
 .build-subprojects:
@@ -78,7 +79,7 @@ ${OBJECTDIR}/_ext/513510055/main.o: ../../include_program/service_dvncinet/main.
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvncinet_db.exe
+	${RM} ../../bin/${CND_CONF}/service_dvncinet_db
 
 # Subprojects
 .clean-subprojects:
