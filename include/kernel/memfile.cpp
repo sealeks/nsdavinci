@@ -238,7 +238,7 @@ namespace dvnci {
                 return acQueuedCommand;}}
         if ((queue==acImpulseCommand) && !((tp==TYPE_DISCRET) || (tp==TYPE_NODEF)))
                 return acNullCommand;
-        if (queue=!acImpulseCommand){
+        if (queue!=acImpulseCommand){
         if (count() == maxcount()) pop_begin();  
         size_type newid = inc();
         if (( tgbs_ptr->exists(id)) && ((newid != npos))) {
@@ -272,7 +272,7 @@ namespace dvnci {
                 return acQueuedCommand;}}
         if ((queue==acImpulseCommand) && !((tp==TYPE_DISCRET) || (tp==TYPE_NODEF)))
                 return acNullCommand;
-        if (queue=!acImpulseCommand){
+        if (queue!=acImpulseCommand){
         if (count() == maxcount()) pop_begin();
             size_type newid = inc();
             if (( tgbs_ptr->exists(id)) && ((newid != npos))) {
