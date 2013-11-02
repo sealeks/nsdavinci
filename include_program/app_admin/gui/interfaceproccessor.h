@@ -16,10 +16,10 @@
 #include <admin/propertymanager.h>
 #include <admin/entitywraper.h>
 
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMainWindow>
-#include <QCustomEvent>
+#include <QtWidgets/QTreeWidgetItem>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMainWindow>
+//#include <QCustomEvent>
 
 #include "interfacetransaction.h"
 #include "uiwidgetitem.h"

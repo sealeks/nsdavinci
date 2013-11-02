@@ -127,7 +127,7 @@ namespace dvnci {
             connect(widget.btnmerge,   SIGNAL(clicked()),                                       this, SLOT(proc_mergeclick()));
             connect(widget.btnkindview,   SIGNAL(clicked()),                                    this, SLOT(proc_changeviewkindclick()));
             connect(widget.tableproperty,  SIGNAL(itemChanged(QTableWidgetItem* )),             this, SLOT(proc_itchange (QTableWidgetItem* )));
-            connect(widget.tableview->verticalScrollBar() , SIGNAL( proc_valuechange ( int)),       this, SLOT(proc_valuechange ( int )  ));
+            connect(widget.tableview ,SIGNAL( form_admin::proc_valuechange ( int)),       this, SLOT(form_admin::proc_valuechange ( int )  ));
             connect(widget.btnlogtype , SIGNAL( clicked()),                                     this, SLOT(proc_logclick()));
             connect(widget.btnclearlog , SIGNAL( clicked()),                                    this, SLOT(proc_error()));
             connect(widget.btninccnt , SIGNAL( clicked()),                                      this, SLOT(proc_incallcount()));
@@ -166,7 +166,7 @@ namespace dvnci {
             currentmediator = def_mediator;
 
 
-            widget.treeWidget->header()->setClickable(true);
+            widget.treeWidget->header()->setSectionsClickable(true);
             widget.viewframe->setVisible(false);
             widget.treeframe1->setVisible(false);
             widget.treeframe2->setVisible(false);
@@ -193,7 +193,7 @@ namespace dvnci {
             widget.treeWidget->clear();
             widget.treeWidget1->clear();
             widget.treeWidget2->clear();
-			intf_vect.clear();
+            intf_vect.clear();
 
             thmain.join();
             thview.join();
@@ -201,9 +201,9 @@ namespace dvnci {
             delete filterIcon;
             delete mainTreeMenue;
             delete treeMenuList;
-			viewproccess.reset();
-			treewidgetsmap.clear();
-			mediators.clear();
+            viewproccess.reset();
+            treewidgetsmap.clear();
+            mediators.clear();
             delete icons;}
 
         guiaction_action_map* form_admin::getactionregistry(nodetype val) {
@@ -253,10 +253,10 @@ namespace dvnci {
             logscreenclose();}
 
         void form_admin::readserverfromconfigurator() {
-            serverinfo_vector serverstmp;
+           /* serverinfo_vector serverstmp;
             configurator.servers(serverstmp);
             for (serverinfo_vector::iterator it = serverstmp.begin(); it != serverstmp.end(); ++it) {
-                addserver(*it);}}
+                addserver(*it);}*/}
 
         indx_widgit_map* form_admin::curitems() const {
             curitems_.clear();

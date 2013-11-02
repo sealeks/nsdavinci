@@ -16,10 +16,10 @@
 
 #include "uiuitil.h"
 
-#include <QtGui/QAbstractItemView>
-#include <QtGui/QSortFilterProxyModel>
-#include <QtGui/QItemDelegate>
-#include <QtGui/QPainter>
+#include <QtWidgets/QAbstractItemView>
+#include <QSortFilterProxyModel>
+#include <QtWidgets/QItemDelegate>
+#include <QPainter>
 
 namespace dvnci {
     namespace admin {
@@ -44,7 +44,9 @@ namespace dvnci {
                 return mainintf;}
 
             void resetview() {
-                reset();}
+                beginResetModel();
+                endResetModel();
+            }
 
             Qt::ItemFlags flags(const QModelIndex &index) const {
                 if (!index.isValid())  return 0;
@@ -72,8 +74,11 @@ namespace dvnci {
             virtual void setindex(iteminfo_map& map_) {
                 if ( map_.size() != count_) {
                     count_ = map_.size();
-                    reset();}
+                beginResetModel();
                 vect_.clear();
+                endResetModel();
+                }
+                
                 for (iteminfo_map::iterator it = map_.begin(); it != map_.end(); ++it) {
                     vect_.push_back(it->first);}}
 
