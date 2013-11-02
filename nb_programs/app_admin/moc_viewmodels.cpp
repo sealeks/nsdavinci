@@ -1,26 +1,44 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'viewmodels.h'
 **
-** Created: Wed 10. Oct 20:41:11 2012
-**      by: The Qt Meta Object Compiler version 62 (Qt 4.6.3)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.1.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #include "../../include_program/app_admin/gui/viewmodels.h"
+#include <QtCore/qbytearray.h>
+#include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'viewmodels.h' doesn't include <QObject>."
-#elif Q_MOC_OUTPUT_REVISION != 62
-#error "This file was generated using the moc from 4.6.3. It"
+#elif Q_MOC_OUTPUT_REVISION != 67
+#error "This file was generated using the moc from 5.1.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
+struct qt_meta_stringdata_dvnci__admin__basetable_t {
+    QByteArrayData data[1];
+    char stringdata[25];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__basetable_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__basetable_t qt_meta_stringdata_dvnci__admin__basetable = {
+    {
+QT_MOC_LITERAL(0, 0, 23)
+    },
+    "dvnci::admin::basetable\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__basetable[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -33,28 +51,29 @@ static const uint qt_meta_data_dvnci__admin__basetable[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__basetable[] = {
-    "dvnci::admin::basetable\0"
-};
+void dvnci::admin::basetable::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::basetable::staticMetaObject = {
-    { &baseviewmodel::staticMetaObject, qt_meta_stringdata_dvnci__admin__basetable,
-      qt_meta_data_dvnci__admin__basetable, 0 }
+    { &baseviewmodel::staticMetaObject, qt_meta_stringdata_dvnci__admin__basetable.data,
+      qt_meta_data_dvnci__admin__basetable,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::basetable::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::basetable::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::basetable::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__basetable))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__basetable.stringdata))
         return static_cast<void*>(const_cast< basetable*>(this));
     return baseviewmodel::qt_metacast(_clname);
 }
@@ -66,10 +85,27 @@ int dvnci::admin::basetable::qt_metacall(QMetaObject::Call _c, int _id, void **_
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__tagsviewmodel_t {
+    QByteArrayData data[1];
+    char stringdata[29];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__tagsviewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__tagsviewmodel_t qt_meta_stringdata_dvnci__admin__tagsviewmodel = {
+    {
+QT_MOC_LITERAL(0, 0, 27)
+    },
+    "dvnci::admin::tagsviewmodel\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__tagsviewmodel[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -82,28 +118,29 @@ static const uint qt_meta_data_dvnci__admin__tagsviewmodel[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__tagsviewmodel[] = {
-    "dvnci::admin::tagsviewmodel\0"
-};
+void dvnci::admin::tagsviewmodel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::tagsviewmodel::staticMetaObject = {
-    { &basetable::staticMetaObject, qt_meta_stringdata_dvnci__admin__tagsviewmodel,
-      qt_meta_data_dvnci__admin__tagsviewmodel, 0 }
+    { &basetable::staticMetaObject, qt_meta_stringdata_dvnci__admin__tagsviewmodel.data,
+      qt_meta_data_dvnci__admin__tagsviewmodel,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::tagsviewmodel::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::tagsviewmodel::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::tagsviewmodel::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__tagsviewmodel))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__tagsviewmodel.stringdata))
         return static_cast<void*>(const_cast< tagsviewmodel*>(this));
     return basetable::qt_metacast(_clname);
 }
@@ -115,10 +152,27 @@ int dvnci::admin::tagsviewmodel::qt_metacall(QMetaObject::Call _c, int _id, void
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__groupsviewmodel_t {
+    QByteArrayData data[1];
+    char stringdata[31];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__groupsviewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__groupsviewmodel_t qt_meta_stringdata_dvnci__admin__groupsviewmodel = {
+    {
+QT_MOC_LITERAL(0, 0, 29)
+    },
+    "dvnci::admin::groupsviewmodel\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__groupsviewmodel[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -131,28 +185,29 @@ static const uint qt_meta_data_dvnci__admin__groupsviewmodel[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__groupsviewmodel[] = {
-    "dvnci::admin::groupsviewmodel\0"
-};
+void dvnci::admin::groupsviewmodel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::groupsviewmodel::staticMetaObject = {
-    { &basetable::staticMetaObject, qt_meta_stringdata_dvnci__admin__groupsviewmodel,
-      qt_meta_data_dvnci__admin__groupsviewmodel, 0 }
+    { &basetable::staticMetaObject, qt_meta_stringdata_dvnci__admin__groupsviewmodel.data,
+      qt_meta_data_dvnci__admin__groupsviewmodel,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::groupsviewmodel::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::groupsviewmodel::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::groupsviewmodel::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__groupsviewmodel))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__groupsviewmodel.stringdata))
         return static_cast<void*>(const_cast< groupsviewmodel*>(this));
     return basetable::qt_metacast(_clname);
 }
@@ -164,10 +219,27 @@ int dvnci::admin::groupsviewmodel::qt_metacall(QMetaObject::Call _c, int _id, vo
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__accessrulesviewmodel_t {
+    QByteArrayData data[1];
+    char stringdata[36];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__accessrulesviewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__accessrulesviewmodel_t qt_meta_stringdata_dvnci__admin__accessrulesviewmodel = {
+    {
+QT_MOC_LITERAL(0, 0, 34)
+    },
+    "dvnci::admin::accessrulesviewmodel\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__accessrulesviewmodel[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -180,28 +252,29 @@ static const uint qt_meta_data_dvnci__admin__accessrulesviewmodel[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__accessrulesviewmodel[] = {
-    "dvnci::admin::accessrulesviewmodel\0"
-};
+void dvnci::admin::accessrulesviewmodel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::accessrulesviewmodel::staticMetaObject = {
-    { &basetable::staticMetaObject, qt_meta_stringdata_dvnci__admin__accessrulesviewmodel,
-      qt_meta_data_dvnci__admin__accessrulesviewmodel, 0 }
+    { &basetable::staticMetaObject, qt_meta_stringdata_dvnci__admin__accessrulesviewmodel.data,
+      qt_meta_data_dvnci__admin__accessrulesviewmodel,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::accessrulesviewmodel::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::accessrulesviewmodel::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::accessrulesviewmodel::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__accessrulesviewmodel))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__accessrulesviewmodel.stringdata))
         return static_cast<void*>(const_cast< accessrulesviewmodel*>(this));
     return basetable::qt_metacast(_clname);
 }
@@ -213,10 +286,27 @@ int dvnci::admin::accessrulesviewmodel::qt_metacall(QMetaObject::Call _c, int _i
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__livetableview_t {
+    QByteArrayData data[1];
+    char stringdata[29];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__livetableview_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__livetableview_t qt_meta_stringdata_dvnci__admin__livetableview = {
+    {
+QT_MOC_LITERAL(0, 0, 27)
+    },
+    "dvnci::admin::livetableview\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__livetableview[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -229,28 +319,29 @@ static const uint qt_meta_data_dvnci__admin__livetableview[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__livetableview[] = {
-    "dvnci::admin::livetableview\0"
-};
+void dvnci::admin::livetableview::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::livetableview::staticMetaObject = {
-    { &baseviewmodel::staticMetaObject, qt_meta_stringdata_dvnci__admin__livetableview,
-      qt_meta_data_dvnci__admin__livetableview, 0 }
+    { &baseviewmodel::staticMetaObject, qt_meta_stringdata_dvnci__admin__livetableview.data,
+      qt_meta_data_dvnci__admin__livetableview,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::livetableview::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::livetableview::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::livetableview::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__livetableview))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__livetableview.stringdata))
         return static_cast<void*>(const_cast< livetableview*>(this));
     return baseviewmodel::qt_metacast(_clname);
 }
@@ -262,10 +353,27 @@ int dvnci::admin::livetableview::qt_metacall(QMetaObject::Call _c, int _id, void
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__debug_viewmodel_t {
+    QByteArrayData data[1];
+    char stringdata[31];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__debug_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__debug_viewmodel_t qt_meta_stringdata_dvnci__admin__debug_viewmodel = {
+    {
+QT_MOC_LITERAL(0, 0, 29)
+    },
+    "dvnci::admin::debug_viewmodel\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__debug_viewmodel[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -278,28 +386,29 @@ static const uint qt_meta_data_dvnci__admin__debug_viewmodel[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__debug_viewmodel[] = {
-    "dvnci::admin::debug_viewmodel\0"
-};
+void dvnci::admin::debug_viewmodel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::debug_viewmodel::staticMetaObject = {
-    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__debug_viewmodel,
-      qt_meta_data_dvnci__admin__debug_viewmodel, 0 }
+    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__debug_viewmodel.data,
+      qt_meta_data_dvnci__admin__debug_viewmodel,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::debug_viewmodel::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::debug_viewmodel::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::debug_viewmodel::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__debug_viewmodel))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__debug_viewmodel.stringdata))
         return static_cast<void*>(const_cast< debug_viewmodel*>(this));
     return livetableview::qt_metacast(_clname);
 }
@@ -311,10 +420,27 @@ int dvnci::admin::debug_viewmodel::qt_metacall(QMetaObject::Call _c, int _id, vo
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__journal_viewmodel_t {
+    QByteArrayData data[1];
+    char stringdata[33];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__journal_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__journal_viewmodel_t qt_meta_stringdata_dvnci__admin__journal_viewmodel = {
+    {
+QT_MOC_LITERAL(0, 0, 31)
+    },
+    "dvnci::admin::journal_viewmodel\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__journal_viewmodel[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -327,28 +453,29 @@ static const uint qt_meta_data_dvnci__admin__journal_viewmodel[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__journal_viewmodel[] = {
-    "dvnci::admin::journal_viewmodel\0"
-};
+void dvnci::admin::journal_viewmodel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::journal_viewmodel::staticMetaObject = {
-    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__journal_viewmodel,
-      qt_meta_data_dvnci__admin__journal_viewmodel, 0 }
+    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__journal_viewmodel.data,
+      qt_meta_data_dvnci__admin__journal_viewmodel,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::journal_viewmodel::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::journal_viewmodel::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::journal_viewmodel::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__journal_viewmodel))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__journal_viewmodel.stringdata))
         return static_cast<void*>(const_cast< journal_viewmodel*>(this));
     return livetableview::qt_metacast(_clname);
 }
@@ -360,10 +487,27 @@ int dvnci::admin::journal_viewmodel::qt_metacall(QMetaObject::Call _c, int _id, 
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__command_viewmodel_t {
+    QByteArrayData data[1];
+    char stringdata[33];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__command_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__command_viewmodel_t qt_meta_stringdata_dvnci__admin__command_viewmodel = {
+    {
+QT_MOC_LITERAL(0, 0, 31)
+    },
+    "dvnci::admin::command_viewmodel\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__command_viewmodel[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -376,28 +520,29 @@ static const uint qt_meta_data_dvnci__admin__command_viewmodel[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__command_viewmodel[] = {
-    "dvnci::admin::command_viewmodel\0"
-};
+void dvnci::admin::command_viewmodel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::command_viewmodel::staticMetaObject = {
-    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__command_viewmodel,
-      qt_meta_data_dvnci__admin__command_viewmodel, 0 }
+    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__command_viewmodel.data,
+      qt_meta_data_dvnci__admin__command_viewmodel,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::command_viewmodel::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::command_viewmodel::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::command_viewmodel::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__command_viewmodel))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__command_viewmodel.stringdata))
         return static_cast<void*>(const_cast< command_viewmodel*>(this));
     return livetableview::qt_metacast(_clname);
 }
@@ -409,10 +554,27 @@ int dvnci::admin::command_viewmodel::qt_metacall(QMetaObject::Call _c, int _id, 
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__alarm_viewmodel_t {
+    QByteArrayData data[1];
+    char stringdata[31];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__alarm_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__alarm_viewmodel_t qt_meta_stringdata_dvnci__admin__alarm_viewmodel = {
+    {
+QT_MOC_LITERAL(0, 0, 29)
+    },
+    "dvnci::admin::alarm_viewmodel\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__alarm_viewmodel[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -425,28 +587,29 @@ static const uint qt_meta_data_dvnci__admin__alarm_viewmodel[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__alarm_viewmodel[] = {
-    "dvnci::admin::alarm_viewmodel\0"
-};
+void dvnci::admin::alarm_viewmodel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::alarm_viewmodel::staticMetaObject = {
-    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__alarm_viewmodel,
-      qt_meta_data_dvnci__admin__alarm_viewmodel, 0 }
+    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__alarm_viewmodel.data,
+      qt_meta_data_dvnci__admin__alarm_viewmodel,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::alarm_viewmodel::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::alarm_viewmodel::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::alarm_viewmodel::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__alarm_viewmodel))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__alarm_viewmodel.stringdata))
         return static_cast<void*>(const_cast< alarm_viewmodel*>(this));
     return livetableview::qt_metacast(_clname);
 }
@@ -458,10 +621,27 @@ int dvnci::admin::alarm_viewmodel::qt_metacall(QMetaObject::Call _c, int _id, vo
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__regystry_viewmodel_t {
+    QByteArrayData data[1];
+    char stringdata[34];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__regystry_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__regystry_viewmodel_t qt_meta_stringdata_dvnci__admin__regystry_viewmodel = {
+    {
+QT_MOC_LITERAL(0, 0, 32)
+    },
+    "dvnci::admin::regystry_viewmodel\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__regystry_viewmodel[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -474,28 +654,29 @@ static const uint qt_meta_data_dvnci__admin__regystry_viewmodel[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__regystry_viewmodel[] = {
-    "dvnci::admin::regystry_viewmodel\0"
-};
+void dvnci::admin::regystry_viewmodel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::regystry_viewmodel::staticMetaObject = {
-    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__regystry_viewmodel,
-      qt_meta_data_dvnci__admin__regystry_viewmodel, 0 }
+    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__regystry_viewmodel.data,
+      qt_meta_data_dvnci__admin__regystry_viewmodel,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::regystry_viewmodel::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::regystry_viewmodel::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::regystry_viewmodel::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__regystry_viewmodel))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__regystry_viewmodel.stringdata))
         return static_cast<void*>(const_cast< regystry_viewmodel*>(this));
     return livetableview::qt_metacast(_clname);
 }
@@ -507,10 +688,27 @@ int dvnci::admin::regystry_viewmodel::qt_metacall(QMetaObject::Call _c, int _id,
         return _id;
     return _id;
 }
+struct qt_meta_stringdata_dvnci__admin__client_viewmodel_t {
+    QByteArrayData data[1];
+    char stringdata[32];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__client_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__client_viewmodel_t qt_meta_stringdata_dvnci__admin__client_viewmodel = {
+    {
+QT_MOC_LITERAL(0, 0, 30)
+    },
+    "dvnci::admin::client_viewmodel\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__client_viewmodel[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -523,28 +721,29 @@ static const uint qt_meta_data_dvnci__admin__client_viewmodel[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__client_viewmodel[] = {
-    "dvnci::admin::client_viewmodel\0"
-};
+void dvnci::admin::client_viewmodel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::client_viewmodel::staticMetaObject = {
-    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__client_viewmodel,
-      qt_meta_data_dvnci__admin__client_viewmodel, 0 }
+    { &livetableview::staticMetaObject, qt_meta_stringdata_dvnci__admin__client_viewmodel.data,
+      qt_meta_data_dvnci__admin__client_viewmodel,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::client_viewmodel::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::client_viewmodel::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::client_viewmodel::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__client_viewmodel))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__client_viewmodel.stringdata))
         return static_cast<void*>(const_cast< client_viewmodel*>(this));
     return livetableview::qt_metacast(_clname);
 }

@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_admin.ui'
 **
-** Created: Wed 10. Oct 20:33:02 2012
-**      by: Qt User Interface Compiler version 4.6.3
+** Created by: Qt User Interface Compiler version 5.1.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -11,25 +10,25 @@
 #define UI_FORM_ADMIN_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QFrame>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QListWidget>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMenuBar>
-#include <QtGui/QSpacerItem>
-#include <QtGui/QSplitter>
-#include <QtGui/QStatusBar>
-#include <QtGui/QTableView>
-#include <QtGui/QTableWidget>
-#include <QtGui/QToolBar>
-#include <QtGui/QToolButton>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QWidget>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSplitter>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QTableWidget>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QToolButton>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
 
@@ -128,7 +127,7 @@ public:
     void setupUi(QMainWindow *form_admin)
     {
         if (form_admin->objectName().isEmpty())
-            form_admin->setObjectName(QString::fromUtf8("form_admin"));
+            form_admin->setObjectName(QStringLiteral("form_admin"));
         form_admin->resize(1098, 706);
         QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
         sizePolicy.setHorizontalStretch(0);
@@ -136,28 +135,28 @@ public:
         sizePolicy.setHeightForWidth(form_admin->sizePolicy().hasHeightForWidth());
         form_admin->setSizePolicy(sizePolicy);
         centralwidget = new QWidget(form_admin);
-        centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
+        centralwidget->setObjectName(QStringLiteral("centralwidget"));
         QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(centralwidget->sizePolicy().hasHeightForWidth());
         centralwidget->setSizePolicy(sizePolicy1);
         verticalLayout_8 = new QVBoxLayout(centralwidget);
-        verticalLayout_8->setObjectName(QString::fromUtf8("verticalLayout_8"));
+        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
         verticalLayout_8->setSizeConstraint(QLayout::SetMaximumSize);
         verticalLayout_8->setContentsMargins(1, 1, 2, 2);
         splitter_2 = new QSplitter(centralwidget);
-        splitter_2->setObjectName(QString::fromUtf8("splitter_2"));
+        splitter_2->setObjectName(QStringLiteral("splitter_2"));
         sizePolicy1.setHeightForWidth(splitter_2->sizePolicy().hasHeightForWidth());
         splitter_2->setSizePolicy(sizePolicy1);
         splitter_2->setOrientation(Qt::Vertical);
         splitter = new QSplitter(splitter_2);
-        splitter->setObjectName(QString::fromUtf8("splitter"));
+        splitter->setObjectName(QStringLiteral("splitter"));
         sizePolicy1.setHeightForWidth(splitter->sizePolicy().hasHeightForWidth());
         splitter->setSizePolicy(sizePolicy1);
         splitter->setOrientation(Qt::Horizontal);
         treeframe0 = new QFrame(splitter);
-        treeframe0->setObjectName(QString::fromUtf8("treeframe0"));
+        treeframe0->setObjectName(QStringLiteral("treeframe0"));
         QSizePolicy sizePolicy2(QSizePolicy::Maximum, QSizePolicy::Expanding);
         sizePolicy2.setHorizontalStretch(0);
         sizePolicy2.setVerticalStretch(0);
@@ -168,18 +167,18 @@ public:
         treeframe0->setAutoFillBackground(true);
         verticalLayout = new QVBoxLayout(treeframe0);
         verticalLayout->setContentsMargins(1, 1, 1, 1);
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         horizontalLayout_6 = new QHBoxLayout();
-        horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
+        horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         btnkindview = new QToolButton(treeframe0);
-        btnkindview->setObjectName(QString::fromUtf8("btnkindview"));
+        btnkindview->setObjectName(QStringLiteral("btnkindview"));
         btnkindview->setMaximumSize(QSize(20, 20));
         btnkindview->setBaseSize(QSize(20, 20));
         btnkindview->setFocusPolicy(Qt::StrongFocus);
         btnkindview->setAcceptDrops(false);
         btnkindview->setAutoFillBackground(true);
         QIcon icon;
-        icon.addFile(QString::fromUtf8(":/icon/icon/linekind.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QStringLiteral(":/icon/icon/linekind.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnkindview->setIcon(icon);
         btnkindview->setIconSize(QSize(20, 20));
         btnkindview->setCheckable(false);
@@ -192,180 +191,180 @@ public:
         horizontalLayout_6->addWidget(btnkindview);
 
         btnaddserver = new QToolButton(treeframe0);
-        btnaddserver->setObjectName(QString::fromUtf8("btnaddserver"));
+        btnaddserver->setObjectName(QStringLiteral("btnaddserver"));
         btnaddserver->setMaximumSize(QSize(20, 20));
         QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/icon/icon/addserver.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon1.addFile(QStringLiteral(":/icon/icon/addserver.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnaddserver->setIcon(icon1);
         btnaddserver->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnaddserver);
 
         btnremoveserver = new QToolButton(treeframe0);
-        btnremoveserver->setObjectName(QString::fromUtf8("btnremoveserver"));
+        btnremoveserver->setObjectName(QStringLiteral("btnremoveserver"));
         btnremoveserver->setMaximumSize(QSize(20, 20));
         QIcon icon2;
-        icon2.addFile(QString::fromUtf8(":/icon/icon/removeserver.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon2.addFile(QStringLiteral(":/icon/icon/removeserver.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnremoveserver->setIcon(icon2);
         btnremoveserver->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnremoveserver);
 
         btnconnectserver = new QToolButton(treeframe0);
-        btnconnectserver->setObjectName(QString::fromUtf8("btnconnectserver"));
+        btnconnectserver->setObjectName(QStringLiteral("btnconnectserver"));
         btnconnectserver->setMaximumSize(QSize(20, 20));
         QIcon icon3;
-        icon3.addFile(QString::fromUtf8(":/icon/icon/connectserver.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon3.addFile(QStringLiteral(":/icon/icon/connectserver.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnconnectserver->setIcon(icon3);
         btnconnectserver->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnconnectserver);
 
         btndisconnectserver = new QToolButton(treeframe0);
-        btndisconnectserver->setObjectName(QString::fromUtf8("btndisconnectserver"));
+        btndisconnectserver->setObjectName(QStringLiteral("btndisconnectserver"));
         btndisconnectserver->setMaximumSize(QSize(20, 20));
         QIcon icon4;
-        icon4.addFile(QString::fromUtf8(":/icon/icon/disconnectserver.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon4.addFile(QStringLiteral(":/icon/icon/disconnectserver.png"), QSize(), QIcon::Normal, QIcon::Off);
         btndisconnectserver->setIcon(icon4);
         btndisconnectserver->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btndisconnectserver);
 
         btnmapproject = new QToolButton(treeframe0);
-        btnmapproject->setObjectName(QString::fromUtf8("btnmapproject"));
+        btnmapproject->setObjectName(QStringLiteral("btnmapproject"));
         btnmapproject->setMaximumSize(QSize(20, 20));
         QIcon icon5;
-        icon5.addFile(QString::fromUtf8(":/icon/icon/maproject.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon5.addFile(QStringLiteral(":/icon/icon/maproject.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnmapproject->setIcon(icon5);
         btnmapproject->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnmapproject);
 
         btnnewproject = new QToolButton(treeframe0);
-        btnnewproject->setObjectName(QString::fromUtf8("btnnewproject"));
+        btnnewproject->setObjectName(QStringLiteral("btnnewproject"));
         btnnewproject->setMaximumSize(QSize(20, 20));
         QIcon icon6;
-        icon6.addFile(QString::fromUtf8(":/icon/icon/newproject.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon6.addFile(QStringLiteral(":/icon/icon/newproject.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnnewproject->setIcon(icon6);
         btnnewproject->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnnewproject);
 
         btnunmapproject = new QToolButton(treeframe0);
-        btnunmapproject->setObjectName(QString::fromUtf8("btnunmapproject"));
+        btnunmapproject->setObjectName(QStringLiteral("btnunmapproject"));
         btnunmapproject->setMaximumSize(QSize(20, 20));
         QIcon icon7;
-        icon7.addFile(QString::fromUtf8(":/icon/icon/unmaproject.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon7.addFile(QStringLiteral(":/icon/icon/unmaproject.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnunmapproject->setIcon(icon7);
         btnunmapproject->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnunmapproject);
 
         btnsetfilter = new QToolButton(treeframe0);
-        btnsetfilter->setObjectName(QString::fromUtf8("btnsetfilter"));
+        btnsetfilter->setObjectName(QStringLiteral("btnsetfilter"));
         btnsetfilter->setMaximumSize(QSize(20, 20));
         QIcon icon8;
-        icon8.addFile(QString::fromUtf8(":/icon/icon/addfilter.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon8.addFile(QStringLiteral(":/icon/icon/addfilter.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnsetfilter->setIcon(icon8);
         btnsetfilter->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnsetfilter);
 
         btnresetfilter = new QToolButton(treeframe0);
-        btnresetfilter->setObjectName(QString::fromUtf8("btnresetfilter"));
+        btnresetfilter->setObjectName(QStringLiteral("btnresetfilter"));
         btnresetfilter->setMaximumSize(QSize(20, 20));
         QIcon icon9;
-        icon9.addFile(QString::fromUtf8(":/icon/icon/removefilter.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon9.addFile(QStringLiteral(":/icon/icon/removefilter.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnresetfilter->setIcon(icon9);
         btnresetfilter->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnresetfilter);
 
         btnadditem = new QToolButton(treeframe0);
-        btnadditem->setObjectName(QString::fromUtf8("btnadditem"));
+        btnadditem->setObjectName(QStringLiteral("btnadditem"));
         btnadditem->setMaximumSize(QSize(20, 20));
         QIcon icon10;
-        icon10.addFile(QString::fromUtf8(":/icon/icon/new.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon10.addFile(QStringLiteral(":/icon/icon/new.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnadditem->setIcon(icon10);
         btnadditem->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnadditem);
 
         btndeleteitem = new QToolButton(treeframe0);
-        btndeleteitem->setObjectName(QString::fromUtf8("btndeleteitem"));
+        btndeleteitem->setObjectName(QStringLiteral("btndeleteitem"));
         btndeleteitem->setMaximumSize(QSize(20, 20));
         QIcon icon11;
-        icon11.addFile(QString::fromUtf8(":/icon/icon/delete.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon11.addFile(QStringLiteral(":/icon/icon/delete.png"), QSize(), QIcon::Normal, QIcon::Off);
         btndeleteitem->setIcon(icon11);
         btndeleteitem->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btndeleteitem);
 
         btnimport = new QToolButton(treeframe0);
-        btnimport->setObjectName(QString::fromUtf8("btnimport"));
+        btnimport->setObjectName(QStringLiteral("btnimport"));
         btnimport->setMaximumSize(QSize(20, 20));
         QIcon icon12;
-        icon12.addFile(QString::fromUtf8(":/icon/icon/import.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon12.addFile(QStringLiteral(":/icon/icon/import.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnimport->setIcon(icon12);
         btnimport->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnimport);
 
         btnexport = new QToolButton(treeframe0);
-        btnexport->setObjectName(QString::fromUtf8("btnexport"));
+        btnexport->setObjectName(QStringLiteral("btnexport"));
         btnexport->setMaximumSize(QSize(20, 20));
         QIcon icon13;
-        icon13.addFile(QString::fromUtf8(":/icon/icon/export.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon13.addFile(QStringLiteral(":/icon/icon/export.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnexport->setIcon(icon13);
         btnexport->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnexport);
 
         btnchangegroup = new QToolButton(treeframe0);
-        btnchangegroup->setObjectName(QString::fromUtf8("btnchangegroup"));
+        btnchangegroup->setObjectName(QStringLiteral("btnchangegroup"));
         btnchangegroup->setMaximumSize(QSize(20, 20));
         QIcon icon14;
-        icon14.addFile(QString::fromUtf8(":/icon/icon/changegroup.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon14.addFile(QStringLiteral(":/icon/icon/changegroup.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnchangegroup->setIcon(icon14);
         btnchangegroup->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnchangegroup);
 
         btnchangeagroup = new QToolButton(treeframe0);
-        btnchangeagroup->setObjectName(QString::fromUtf8("btnchangeagroup"));
+        btnchangeagroup->setObjectName(QStringLiteral("btnchangeagroup"));
         btnchangeagroup->setMaximumSize(QSize(20, 20));
         QIcon icon15;
-        icon15.addFile(QString::fromUtf8(":/icon/icon/changeagroup.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon15.addFile(QStringLiteral(":/icon/icon/changeagroup.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnchangeagroup->setIcon(icon15);
         btnchangeagroup->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnchangeagroup);
 
         btnstartservice = new QToolButton(treeframe0);
-        btnstartservice->setObjectName(QString::fromUtf8("btnstartservice"));
+        btnstartservice->setObjectName(QStringLiteral("btnstartservice"));
         btnstartservice->setMaximumSize(QSize(20, 20));
         QIcon icon16;
-        icon16.addFile(QString::fromUtf8(":/icon/icon/startservice.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon16.addFile(QStringLiteral(":/icon/icon/startservice.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnstartservice->setIcon(icon16);
         btnstartservice->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnstartservice);
 
         btnstopservice = new QToolButton(treeframe0);
-        btnstopservice->setObjectName(QString::fromUtf8("btnstopservice"));
+        btnstopservice->setObjectName(QStringLiteral("btnstopservice"));
         btnstopservice->setMaximumSize(QSize(20, 20));
         QIcon icon17;
-        icon17.addFile(QString::fromUtf8(":/icon/icon/stopservice.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon17.addFile(QStringLiteral(":/icon/icon/stopservice.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnstopservice->setIcon(icon17);
         btnstopservice->setAutoRaise(true);
 
         horizontalLayout_6->addWidget(btnstopservice);
 
         btnclone = new QToolButton(treeframe0);
-        btnclone->setObjectName(QString::fromUtf8("btnclone"));
+        btnclone->setObjectName(QStringLiteral("btnclone"));
         btnclone->setMaximumSize(QSize(20, 20));
         QIcon icon18;
-        icon18.addFile(QString::fromUtf8(":/icon/icon/operation_clone.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon18.addFile(QStringLiteral(":/icon/icon/operation_clone.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnclone->setIcon(icon18);
         btnclone->setAutoRaise(true);
 
@@ -380,9 +379,9 @@ public:
 
         treeWidget = new QTreeWidget(treeframe0);
         QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
-        __qtreewidgetitem->setText(0, QString::fromUtf8("1"));
+        __qtreewidgetitem->setText(0, QStringLiteral("1"));
         treeWidget->setHeaderItem(__qtreewidgetitem);
-        treeWidget->setObjectName(QString::fromUtf8("treeWidget"));
+        treeWidget->setObjectName(QStringLiteral("treeWidget"));
         sizePolicy1.setHeightForWidth(treeWidget->sizePolicy().hasHeightForWidth());
         treeWidget->setSizePolicy(sizePolicy1);
         treeWidget->setMinimumSize(QSize(200, 0));
@@ -397,25 +396,25 @@ public:
 
         splitter->addWidget(treeframe0);
         treeframe1 = new QFrame(splitter);
-        treeframe1->setObjectName(QString::fromUtf8("treeframe1"));
+        treeframe1->setObjectName(QStringLiteral("treeframe1"));
         sizePolicy2.setHeightForWidth(treeframe1->sizePolicy().hasHeightForWidth());
         treeframe1->setSizePolicy(sizePolicy2);
         treeframe1->setMinimumSize(QSize(200, 0));
         verticalLayout_6 = new QVBoxLayout(treeframe1);
         verticalLayout_6->setContentsMargins(1, 1, 1, 1);
-        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
         horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setSpacing(1);
-        horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         btnsetfilter1 = new QToolButton(treeframe1);
-        btnsetfilter1->setObjectName(QString::fromUtf8("btnsetfilter1"));
+        btnsetfilter1->setObjectName(QStringLiteral("btnsetfilter1"));
         btnsetfilter1->setMaximumSize(QSize(20, 20));
         btnsetfilter1->setBaseSize(QSize(18, 18));
         btnsetfilter1->setAcceptDrops(false);
         btnsetfilter1->setAutoFillBackground(true);
         btnsetfilter1->setIcon(icon8);
         btnsetfilter1->setIconSize(QSize(20, 20));
-        btnsetfilter1->setShortcut(QString::fromUtf8(""));
+        btnsetfilter1->setShortcut(QStringLiteral(""));
         btnsetfilter1->setCheckable(false);
         btnsetfilter1->setAutoExclusive(false);
         btnsetfilter1->setPopupMode(QToolButton::InstantPopup);
@@ -425,14 +424,14 @@ public:
         horizontalLayout_4->addWidget(btnsetfilter1);
 
         btnresetfilter1 = new QToolButton(treeframe1);
-        btnresetfilter1->setObjectName(QString::fromUtf8("btnresetfilter1"));
+        btnresetfilter1->setObjectName(QStringLiteral("btnresetfilter1"));
         btnresetfilter1->setMaximumSize(QSize(20, 20));
         btnresetfilter1->setBaseSize(QSize(20, 20));
         btnresetfilter1->setAcceptDrops(false);
         btnresetfilter1->setAutoFillBackground(true);
         btnresetfilter1->setIcon(icon9);
         btnresetfilter1->setIconSize(QSize(20, 20));
-        btnresetfilter1->setShortcut(QString::fromUtf8(""));
+        btnresetfilter1->setShortcut(QStringLiteral(""));
         btnresetfilter1->setCheckable(false);
         btnresetfilter1->setAutoExclusive(false);
         btnresetfilter1->setPopupMode(QToolButton::InstantPopup);
@@ -442,7 +441,7 @@ public:
         horizontalLayout_4->addWidget(btnresetfilter1);
 
         btnadditem1 = new QToolButton(treeframe1);
-        btnadditem1->setObjectName(QString::fromUtf8("btnadditem1"));
+        btnadditem1->setObjectName(QStringLiteral("btnadditem1"));
         btnadditem1->setMaximumSize(QSize(20, 20));
         btnadditem1->setBaseSize(QSize(20, 20));
         btnadditem1->setIcon(icon10);
@@ -451,7 +450,7 @@ public:
         horizontalLayout_4->addWidget(btnadditem1);
 
         btndeleteitem1 = new QToolButton(treeframe1);
-        btndeleteitem1->setObjectName(QString::fromUtf8("btndeleteitem1"));
+        btndeleteitem1->setObjectName(QStringLiteral("btndeleteitem1"));
         btndeleteitem1->setMaximumSize(QSize(20, 20));
         btndeleteitem1->setBaseSize(QSize(20, 20));
         btndeleteitem1->setIcon(icon11);
@@ -460,7 +459,7 @@ public:
         horizontalLayout_4->addWidget(btndeleteitem1);
 
         btnimport1 = new QToolButton(treeframe1);
-        btnimport1->setObjectName(QString::fromUtf8("btnimport1"));
+        btnimport1->setObjectName(QStringLiteral("btnimport1"));
         btnimport1->setMaximumSize(QSize(20, 20));
         btnimport1->setIcon(icon12);
         btnimport1->setAutoRaise(true);
@@ -468,7 +467,7 @@ public:
         horizontalLayout_4->addWidget(btnimport1);
 
         btnexport1 = new QToolButton(treeframe1);
-        btnexport1->setObjectName(QString::fromUtf8("btnexport1"));
+        btnexport1->setObjectName(QStringLiteral("btnexport1"));
         btnexport1->setMaximumSize(QSize(20, 20));
         btnexport1->setIcon(icon13);
         btnexport1->setAutoRaise(true);
@@ -476,7 +475,7 @@ public:
         horizontalLayout_4->addWidget(btnexport1);
 
         btnstartservice1 = new QToolButton(treeframe1);
-        btnstartservice1->setObjectName(QString::fromUtf8("btnstartservice1"));
+        btnstartservice1->setObjectName(QStringLiteral("btnstartservice1"));
         btnstartservice1->setMaximumSize(QSize(20, 20));
         btnstartservice1->setIcon(icon16);
         btnstartservice1->setAutoRaise(true);
@@ -484,7 +483,7 @@ public:
         horizontalLayout_4->addWidget(btnstartservice1);
 
         btnstopservice1 = new QToolButton(treeframe1);
-        btnstopservice1->setObjectName(QString::fromUtf8("btnstopservice1"));
+        btnstopservice1->setObjectName(QStringLiteral("btnstopservice1"));
         btnstopservice1->setMaximumSize(QSize(20, 20));
         btnstopservice1->setIcon(icon17);
         btnstopservice1->setAutoRaise(true);
@@ -492,7 +491,7 @@ public:
         horizontalLayout_4->addWidget(btnstopservice1);
 
         btnclone1 = new QToolButton(treeframe1);
-        btnclone1->setObjectName(QString::fromUtf8("btnclone1"));
+        btnclone1->setObjectName(QStringLiteral("btnclone1"));
         btnclone1->setMaximumSize(QSize(20, 20));
         btnclone1->setIcon(icon18);
         btnclone1->setAutoRaise(true);
@@ -508,9 +507,9 @@ public:
 
         treeWidget1 = new QTreeWidget(treeframe1);
         QTreeWidgetItem *__qtreewidgetitem1 = new QTreeWidgetItem();
-        __qtreewidgetitem1->setText(0, QString::fromUtf8("1"));
+        __qtreewidgetitem1->setText(0, QStringLiteral("1"));
         treeWidget1->setHeaderItem(__qtreewidgetitem1);
-        treeWidget1->setObjectName(QString::fromUtf8("treeWidget1"));
+        treeWidget1->setObjectName(QStringLiteral("treeWidget1"));
         sizePolicy1.setHeightForWidth(treeWidget1->sizePolicy().hasHeightForWidth());
         treeWidget1->setSizePolicy(sizePolicy1);
         treeWidget1->setMinimumSize(QSize(200, 0));
@@ -525,26 +524,26 @@ public:
 
         splitter->addWidget(treeframe1);
         treeframe2 = new QFrame(splitter);
-        treeframe2->setObjectName(QString::fromUtf8("treeframe2"));
+        treeframe2->setObjectName(QStringLiteral("treeframe2"));
         sizePolicy2.setHeightForWidth(treeframe2->sizePolicy().hasHeightForWidth());
         treeframe2->setSizePolicy(sizePolicy2);
         treeframe2->setMinimumSize(QSize(200, 0));
         treeframe2->setProperty("flat", QVariant(true));
         verticalLayout_7 = new QVBoxLayout(treeframe2);
         verticalLayout_7->setContentsMargins(1, 1, 1, 1);
-        verticalLayout_7->setObjectName(QString::fromUtf8("verticalLayout_7"));
+        verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setSpacing(1);
-        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         btnsetfilter2 = new QToolButton(treeframe2);
-        btnsetfilter2->setObjectName(QString::fromUtf8("btnsetfilter2"));
+        btnsetfilter2->setObjectName(QStringLiteral("btnsetfilter2"));
         btnsetfilter2->setMaximumSize(QSize(20, 20));
         btnsetfilter2->setBaseSize(QSize(18, 18));
         btnsetfilter2->setAcceptDrops(false);
         btnsetfilter2->setAutoFillBackground(true);
         btnsetfilter2->setIcon(icon8);
         btnsetfilter2->setIconSize(QSize(20, 20));
-        btnsetfilter2->setShortcut(QString::fromUtf8(""));
+        btnsetfilter2->setShortcut(QStringLiteral(""));
         btnsetfilter2->setCheckable(false);
         btnsetfilter2->setPopupMode(QToolButton::InstantPopup);
         btnsetfilter2->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -553,14 +552,14 @@ public:
         horizontalLayout_3->addWidget(btnsetfilter2);
 
         btnresetfilter2 = new QToolButton(treeframe2);
-        btnresetfilter2->setObjectName(QString::fromUtf8("btnresetfilter2"));
+        btnresetfilter2->setObjectName(QStringLiteral("btnresetfilter2"));
         btnresetfilter2->setMaximumSize(QSize(20, 20));
         btnresetfilter2->setBaseSize(QSize(18, 18));
         btnresetfilter2->setAcceptDrops(false);
         btnresetfilter2->setAutoFillBackground(true);
         btnresetfilter2->setIcon(icon9);
         btnresetfilter2->setIconSize(QSize(20, 20));
-        btnresetfilter2->setShortcut(QString::fromUtf8(""));
+        btnresetfilter2->setShortcut(QStringLiteral(""));
         btnresetfilter2->setCheckable(false);
         btnresetfilter2->setAutoExclusive(false);
         btnresetfilter2->setPopupMode(QToolButton::InstantPopup);
@@ -570,7 +569,7 @@ public:
         horizontalLayout_3->addWidget(btnresetfilter2);
 
         btnadditem2 = new QToolButton(treeframe2);
-        btnadditem2->setObjectName(QString::fromUtf8("btnadditem2"));
+        btnadditem2->setObjectName(QStringLiteral("btnadditem2"));
         btnadditem2->setMaximumSize(QSize(20, 20));
         btnadditem2->setBaseSize(QSize(20, 20));
         btnadditem2->setIcon(icon10);
@@ -579,7 +578,7 @@ public:
         horizontalLayout_3->addWidget(btnadditem2);
 
         btndeleteitem2 = new QToolButton(treeframe2);
-        btndeleteitem2->setObjectName(QString::fromUtf8("btndeleteitem2"));
+        btndeleteitem2->setObjectName(QStringLiteral("btndeleteitem2"));
         btndeleteitem2->setMaximumSize(QSize(20, 20));
         btndeleteitem2->setBaseSize(QSize(20, 20));
         btndeleteitem2->setIcon(icon11);
@@ -588,7 +587,7 @@ public:
         horizontalLayout_3->addWidget(btndeleteitem2);
 
         btnimport2 = new QToolButton(treeframe2);
-        btnimport2->setObjectName(QString::fromUtf8("btnimport2"));
+        btnimport2->setObjectName(QStringLiteral("btnimport2"));
         btnimport2->setMaximumSize(QSize(20, 20));
         btnimport2->setIcon(icon12);
         btnimport2->setAutoRaise(true);
@@ -596,7 +595,7 @@ public:
         horizontalLayout_3->addWidget(btnimport2);
 
         btnexport2 = new QToolButton(treeframe2);
-        btnexport2->setObjectName(QString::fromUtf8("btnexport2"));
+        btnexport2->setObjectName(QStringLiteral("btnexport2"));
         btnexport2->setMaximumSize(QSize(20, 20));
         btnexport2->setIcon(icon13);
         btnexport2->setAutoRaise(true);
@@ -604,7 +603,7 @@ public:
         horizontalLayout_3->addWidget(btnexport2);
 
         btnchangegroup2 = new QToolButton(treeframe2);
-        btnchangegroup2->setObjectName(QString::fromUtf8("btnchangegroup2"));
+        btnchangegroup2->setObjectName(QStringLiteral("btnchangegroup2"));
         btnchangegroup2->setMaximumSize(QSize(20, 20));
         btnchangegroup2->setIcon(icon14);
         btnchangegroup2->setAutoRaise(true);
@@ -612,7 +611,7 @@ public:
         horizontalLayout_3->addWidget(btnchangegroup2);
 
         btnchangeagroup2 = new QToolButton(treeframe2);
-        btnchangeagroup2->setObjectName(QString::fromUtf8("btnchangeagroup2"));
+        btnchangeagroup2->setObjectName(QStringLiteral("btnchangeagroup2"));
         btnchangeagroup2->setMaximumSize(QSize(20, 20));
         btnchangeagroup2->setIcon(icon15);
         btnchangeagroup2->setAutoRaise(true);
@@ -628,9 +627,9 @@ public:
 
         treeWidget2 = new QTreeWidget(treeframe2);
         QTreeWidgetItem *__qtreewidgetitem2 = new QTreeWidgetItem();
-        __qtreewidgetitem2->setText(0, QString::fromUtf8("1"));
+        __qtreewidgetitem2->setText(0, QStringLiteral("1"));
         treeWidget2->setHeaderItem(__qtreewidgetitem2);
-        treeWidget2->setObjectName(QString::fromUtf8("treeWidget2"));
+        treeWidget2->setObjectName(QStringLiteral("treeWidget2"));
         sizePolicy1.setHeightForWidth(treeWidget2->sizePolicy().hasHeightForWidth());
         treeWidget2->setSizePolicy(sizePolicy1);
         treeWidget2->setMinimumSize(QSize(200, 0));
@@ -645,13 +644,13 @@ public:
 
         splitter->addWidget(treeframe2);
         layoutWidget = new QWidget(splitter);
-        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
         verticalLayout_4 = new QVBoxLayout(layoutWidget);
-        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         verticalLayout_4->setSizeConstraint(QLayout::SetNoConstraint);
         verticalLayout_4->setContentsMargins(0, 0, 0, 0);
         nillframe = new QFrame(layoutWidget);
-        nillframe->setObjectName(QString::fromUtf8("nillframe"));
+        nillframe->setObjectName(QStringLiteral("nillframe"));
         sizePolicy1.setHeightForWidth(nillframe->sizePolicy().hasHeightForWidth());
         nillframe->setSizePolicy(sizePolicy1);
         nillframe->setMinimumSize(QSize(340, 0));
@@ -660,22 +659,22 @@ public:
         verticalLayout_4->addWidget(nillframe);
 
         propertyframe = new QFrame(layoutWidget);
-        propertyframe->setObjectName(QString::fromUtf8("propertyframe"));
+        propertyframe->setObjectName(QStringLiteral("propertyframe"));
         sizePolicy1.setHeightForWidth(propertyframe->sizePolicy().hasHeightForWidth());
         propertyframe->setSizePolicy(sizePolicy1);
         propertyframe->setMinimumSize(QSize(340, 0));
         verticalLayout_2 = new QVBoxLayout(propertyframe);
         verticalLayout_2->setContentsMargins(1, 1, 1, 1);
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(1);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         btnmerge = new QToolButton(propertyframe);
-        btnmerge->setObjectName(QString::fromUtf8("btnmerge"));
+        btnmerge->setObjectName(QStringLiteral("btnmerge"));
         btnmerge->setMaximumSize(QSize(30, 30));
         btnmerge->setBaseSize(QSize(22, 22));
         QIcon icon19;
-        icon19.addFile(QString::fromUtf8(":/icon/icon/merge.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon19.addFile(QStringLiteral(":/icon/icon/merge.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnmerge->setIcon(icon19);
         btnmerge->setIconSize(QSize(20, 20));
         btnmerge->setCheckable(false);
@@ -706,7 +705,7 @@ public:
         tableproperty->setItem(0, 0, __qtablewidgetitem3);
         QTableWidgetItem *__qtablewidgetitem4 = new QTableWidgetItem();
         tableproperty->setItem(0, 1, __qtablewidgetitem4);
-        tableproperty->setObjectName(QString::fromUtf8("tableproperty"));
+        tableproperty->setObjectName(QStringLiteral("tableproperty"));
         sizePolicy1.setHeightForWidth(tableproperty->sizePolicy().hasHeightForWidth());
         tableproperty->setSizePolicy(sizePolicy1);
         tableproperty->setMinimumSize(QSize(340, 0));
@@ -745,7 +744,7 @@ public:
         verticalLayout_4->addWidget(propertyframe);
 
         viewframe = new QFrame(layoutWidget);
-        viewframe->setObjectName(QString::fromUtf8("viewframe"));
+        viewframe->setObjectName(QStringLiteral("viewframe"));
         QSizePolicy sizePolicy3(QSizePolicy::Minimum, QSizePolicy::Expanding);
         sizePolicy3.setHorizontalStretch(0);
         sizePolicy3.setVerticalStretch(0);
@@ -754,11 +753,11 @@ public:
         viewframe->setMinimumSize(QSize(340, 0));
         verticalLayout_3 = new QVBoxLayout(viewframe);
         verticalLayout_3->setContentsMargins(1, 1, 1, 1);
-        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         btnsetfilterview = new QToolButton(viewframe);
-        btnsetfilterview->setObjectName(QString::fromUtf8("btnsetfilterview"));
+        btnsetfilterview->setObjectName(QStringLiteral("btnsetfilterview"));
         btnsetfilterview->setMaximumSize(QSize(20, 20));
         btnsetfilterview->setIcon(icon8);
         btnsetfilterview->setAutoRaise(true);
@@ -766,70 +765,70 @@ public:
         horizontalLayout_2->addWidget(btnsetfilterview);
 
         btninccnt = new QToolButton(viewframe);
-        btninccnt->setObjectName(QString::fromUtf8("btninccnt"));
+        btninccnt->setObjectName(QStringLiteral("btninccnt"));
         btninccnt->setMaximumSize(QSize(20, 20));
         QIcon icon20;
-        icon20.addFile(QString::fromUtf8(":/icon/icon/inccounter.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon20.addFile(QStringLiteral(":/icon/icon/inccounter.png"), QSize(), QIcon::Normal, QIcon::Off);
         btninccnt->setIcon(icon20);
         btninccnt->setAutoRaise(true);
 
         horizontalLayout_2->addWidget(btninccnt);
 
         btndeccnt = new QToolButton(viewframe);
-        btndeccnt->setObjectName(QString::fromUtf8("btndeccnt"));
+        btndeccnt->setObjectName(QStringLiteral("btndeccnt"));
         btndeccnt->setMaximumSize(QSize(20, 20));
         QIcon icon21;
-        icon21.addFile(QString::fromUtf8(":/icon/icon/deccounter.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon21.addFile(QStringLiteral(":/icon/icon/deccounter.png"), QSize(), QIcon::Normal, QIcon::Off);
         btndeccnt->setIcon(icon21);
         btndeccnt->setAutoRaise(true);
 
         horizontalLayout_2->addWidget(btndeccnt);
 
         btnsetallvalid = new QToolButton(viewframe);
-        btnsetallvalid->setObjectName(QString::fromUtf8("btnsetallvalid"));
+        btnsetallvalid->setObjectName(QStringLiteral("btnsetallvalid"));
         btnsetallvalid->setMaximumSize(QSize(20, 20));
         QIcon icon22;
-        icon22.addFile(QString::fromUtf8(":/icon/icon/setvalidall.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon22.addFile(QStringLiteral(":/icon/icon/setvalidall.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnsetallvalid->setIcon(icon22);
         btnsetallvalid->setAutoRaise(true);
 
         horizontalLayout_2->addWidget(btnsetallvalid);
 
         btnsetallinvalid = new QToolButton(viewframe);
-        btnsetallinvalid->setObjectName(QString::fromUtf8("btnsetallinvalid"));
+        btnsetallinvalid->setObjectName(QStringLiteral("btnsetallinvalid"));
         btnsetallinvalid->setMaximumSize(QSize(20, 20));
         QIcon icon23;
-        icon23.addFile(QString::fromUtf8(":/icon/icon/setinvalidall.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon23.addFile(QStringLiteral(":/icon/icon/setinvalidall.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnsetallinvalid->setIcon(icon23);
         btnsetallinvalid->setAutoRaise(true);
 
         horizontalLayout_2->addWidget(btnsetallinvalid);
 
         btnkvit = new QToolButton(viewframe);
-        btnkvit->setObjectName(QString::fromUtf8("btnkvit"));
+        btnkvit->setObjectName(QStringLiteral("btnkvit"));
         btnkvit->setMaximumSize(QSize(20, 20));
         QIcon icon24;
-        icon24.addFile(QString::fromUtf8(":/icon/icon/kvit.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon24.addFile(QStringLiteral(":/icon/icon/kvit.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnkvit->setIcon(icon24);
         btnkvit->setAutoRaise(true);
 
         horizontalLayout_2->addWidget(btnkvit);
 
         btngroupkvit = new QToolButton(viewframe);
-        btngroupkvit->setObjectName(QString::fromUtf8("btngroupkvit"));
+        btngroupkvit->setObjectName(QStringLiteral("btngroupkvit"));
         btngroupkvit->setMaximumSize(QSize(20, 20));
         QIcon icon25;
-        icon25.addFile(QString::fromUtf8(":/icon/icon/group_kvit.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon25.addFile(QStringLiteral(":/icon/icon/group_kvit.png"), QSize(), QIcon::Normal, QIcon::Off);
         btngroupkvit->setIcon(icon25);
         btngroupkvit->setAutoRaise(true);
 
         horizontalLayout_2->addWidget(btngroupkvit);
 
         btnagroupkvit = new QToolButton(viewframe);
-        btnagroupkvit->setObjectName(QString::fromUtf8("btnagroupkvit"));
+        btnagroupkvit->setObjectName(QStringLiteral("btnagroupkvit"));
         btnagroupkvit->setMaximumSize(QSize(20, 20));
         QIcon icon26;
-        icon26.addFile(QString::fromUtf8(":/icon/icon/agroup_kvit.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon26.addFile(QStringLiteral(":/icon/icon/agroup_kvit.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnagroupkvit->setIcon(icon26);
         btnagroupkvit->setAutoRaise(true);
 
@@ -843,7 +842,7 @@ public:
         verticalLayout_3->addLayout(horizontalLayout_2);
 
         tableview = new QTableView(viewframe);
-        tableview->setObjectName(QString::fromUtf8("tableview"));
+        tableview->setObjectName(QStringLiteral("tableview"));
         tableview->setMinimumSize(QSize(340, 0));
         QPalette palette1;
         QBrush brush4(QColor(250, 250, 250, 255));
@@ -882,17 +881,17 @@ public:
         splitter->addWidget(layoutWidget);
         splitter_2->addWidget(splitter);
         layoutWidget1 = new QWidget(splitter_2);
-        layoutWidget1->setObjectName(QString::fromUtf8("layoutWidget1"));
+        layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
         verticalLayout_5 = new QVBoxLayout(layoutWidget1);
         verticalLayout_5->setSpacing(1);
-        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
+        verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
         verticalLayout_5->setSizeConstraint(QLayout::SetMaximumSize);
         verticalLayout_5->setContentsMargins(0, 0, 0, 0);
         verticalLayout_9 = new QVBoxLayout();
         verticalLayout_9->setSpacing(0);
-        verticalLayout_9->setObjectName(QString::fromUtf8("verticalLayout_9"));
+        verticalLayout_9->setObjectName(QStringLiteral("verticalLayout_9"));
         ErrorWidget = new QListWidget(layoutWidget1);
-        ErrorWidget->setObjectName(QString::fromUtf8("ErrorWidget"));
+        ErrorWidget->setObjectName(QStringLiteral("ErrorWidget"));
         QSizePolicy sizePolicy4(QSizePolicy::Expanding, QSizePolicy::Maximum);
         sizePolicy4.setHorizontalStretch(0);
         sizePolicy4.setVerticalStretch(0);
@@ -909,13 +908,13 @@ public:
 
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setSpacing(0);
-        horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
+        horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
         horizontalLayout_5->setSizeConstraint(QLayout::SetMaximumSize);
         btnlogtype = new QToolButton(layoutWidget1);
-        btnlogtype->setObjectName(QString::fromUtf8("btnlogtype"));
+        btnlogtype->setObjectName(QStringLiteral("btnlogtype"));
         btnlogtype->setMaximumSize(QSize(20, 20));
         QIcon icon27;
-        icon27.addFile(QString::fromUtf8(":/icon/icon/logscreanall.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon27.addFile(QStringLiteral(":/icon/icon/logscreanall.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnlogtype->setIcon(icon27);
         btnlogtype->setIconSize(QSize(16, 16));
         btnlogtype->setAutoRaise(true);
@@ -927,10 +926,10 @@ public:
         horizontalLayout_5->addItem(horizontalSpacer_5);
 
         btnclearlog = new QToolButton(layoutWidget1);
-        btnclearlog->setObjectName(QString::fromUtf8("btnclearlog"));
+        btnclearlog->setObjectName(QStringLiteral("btnclearlog"));
         btnclearlog->setMaximumSize(QSize(20, 20));
         QIcon icon28;
-        icon28.addFile(QString::fromUtf8(":/icon/icon/logscreanclear.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon28.addFile(QStringLiteral(":/icon/icon/logscreanclear.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnclearlog->setIcon(icon28);
         btnclearlog->setIconSize(QSize(16, 16));
 
@@ -948,14 +947,14 @@ public:
 
         form_admin->setCentralWidget(centralwidget);
         menubar = new QMenuBar(form_admin);
-        menubar->setObjectName(QString::fromUtf8("menubar"));
+        menubar->setObjectName(QStringLiteral("menubar"));
         menubar->setGeometry(QRect(0, 0, 1098, 20));
         form_admin->setMenuBar(menubar);
         statusbar = new QStatusBar(form_admin);
-        statusbar->setObjectName(QString::fromUtf8("statusbar"));
+        statusbar->setObjectName(QStringLiteral("statusbar"));
         form_admin->setStatusBar(statusbar);
         toolBar = new QToolBar(form_admin);
-        toolBar->setObjectName(QString::fromUtf8("toolBar"));
+        toolBar->setObjectName(QStringLiteral("toolBar"));
         form_admin->addToolBar(Qt::TopToolBarArea, toolBar);
 
         toolBar->addSeparator();
@@ -970,79 +969,79 @@ public:
 
     void retranslateUi(QMainWindow *form_admin)
     {
-        form_admin->setWindowTitle(QApplication::translate("form_admin", "MainWindow", 0, QApplication::UnicodeUTF8));
+        form_admin->setWindowTitle(QApplication::translate("form_admin", "MainWindow", 0));
         treeframe0->setProperty("title", QVariant(QString()));
-        btnkindview->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnaddserver->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnremoveserver->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnconnectserver->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btndisconnectserver->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnmapproject->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnnewproject->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnunmapproject->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnsetfilter->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnresetfilter->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnadditem->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btndeleteitem->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnimport->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnexport->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnchangegroup->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnchangeagroup->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnstartservice->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnstopservice->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnclone->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
+        btnkindview->setText(QApplication::translate("form_admin", "...", 0));
+        btnaddserver->setText(QApplication::translate("form_admin", "...", 0));
+        btnremoveserver->setText(QApplication::translate("form_admin", "...", 0));
+        btnconnectserver->setText(QApplication::translate("form_admin", "...", 0));
+        btndisconnectserver->setText(QApplication::translate("form_admin", "...", 0));
+        btnmapproject->setText(QApplication::translate("form_admin", "...", 0));
+        btnnewproject->setText(QApplication::translate("form_admin", "...", 0));
+        btnunmapproject->setText(QApplication::translate("form_admin", "...", 0));
+        btnsetfilter->setText(QApplication::translate("form_admin", "...", 0));
+        btnresetfilter->setText(QApplication::translate("form_admin", "...", 0));
+        btnadditem->setText(QApplication::translate("form_admin", "...", 0));
+        btndeleteitem->setText(QApplication::translate("form_admin", "...", 0));
+        btnimport->setText(QApplication::translate("form_admin", "...", 0));
+        btnexport->setText(QApplication::translate("form_admin", "...", 0));
+        btnchangegroup->setText(QApplication::translate("form_admin", "...", 0));
+        btnchangeagroup->setText(QApplication::translate("form_admin", "...", 0));
+        btnstartservice->setText(QApplication::translate("form_admin", "...", 0));
+        btnstopservice->setText(QApplication::translate("form_admin", "...", 0));
+        btnclone->setText(QApplication::translate("form_admin", "...", 0));
         treeframe1->setProperty("title", QVariant(QString()));
-        btnsetfilter1->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnresetfilter1->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnadditem1->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btndeleteitem1->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnimport1->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnexport1->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnstartservice1->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnstopservice1->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnclone1->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
+        btnsetfilter1->setText(QApplication::translate("form_admin", "...", 0));
+        btnresetfilter1->setText(QApplication::translate("form_admin", "...", 0));
+        btnadditem1->setText(QApplication::translate("form_admin", "...", 0));
+        btndeleteitem1->setText(QApplication::translate("form_admin", "...", 0));
+        btnimport1->setText(QApplication::translate("form_admin", "...", 0));
+        btnexport1->setText(QApplication::translate("form_admin", "...", 0));
+        btnstartservice1->setText(QApplication::translate("form_admin", "...", 0));
+        btnstopservice1->setText(QApplication::translate("form_admin", "...", 0));
+        btnclone1->setText(QApplication::translate("form_admin", "...", 0));
         treeframe2->setProperty("title", QVariant(QString()));
-        btnsetfilter2->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnresetfilter2->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnadditem2->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btndeleteitem2->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnimport2->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnexport2->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnchangegroup2->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnchangeagroup2->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
+        btnsetfilter2->setText(QApplication::translate("form_admin", "...", 0));
+        btnresetfilter2->setText(QApplication::translate("form_admin", "...", 0));
+        btnadditem2->setText(QApplication::translate("form_admin", "...", 0));
+        btndeleteitem2->setText(QApplication::translate("form_admin", "...", 0));
+        btnimport2->setText(QApplication::translate("form_admin", "...", 0));
+        btnexport2->setText(QApplication::translate("form_admin", "...", 0));
+        btnchangegroup2->setText(QApplication::translate("form_admin", "...", 0));
+        btnchangeagroup2->setText(QApplication::translate("form_admin", "...", 0));
         nillframe->setProperty("title", QVariant(QString()));
         propertyframe->setProperty("title", QVariant(QString()));
-        btnmerge->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
+        btnmerge->setText(QApplication::translate("form_admin", "...", 0));
         QTableWidgetItem *___qtablewidgetitem = tableproperty->horizontalHeaderItem(0);
-        ___qtablewidgetitem->setText(QApplication::translate("form_admin", "New Column", 0, QApplication::UnicodeUTF8));
+        ___qtablewidgetitem->setText(QApplication::translate("form_admin", "New Column", 0));
         QTableWidgetItem *___qtablewidgetitem1 = tableproperty->horizontalHeaderItem(1);
-        ___qtablewidgetitem1->setText(QApplication::translate("form_admin", "New Column", 0, QApplication::UnicodeUTF8));
+        ___qtablewidgetitem1->setText(QApplication::translate("form_admin", "New Column", 0));
         QTableWidgetItem *___qtablewidgetitem2 = tableproperty->verticalHeaderItem(0);
-        ___qtablewidgetitem2->setText(QApplication::translate("form_admin", "New Row", 0, QApplication::UnicodeUTF8));
+        ___qtablewidgetitem2->setText(QApplication::translate("form_admin", "New Row", 0));
 
         const bool __sortingEnabled = tableproperty->isSortingEnabled();
         tableproperty->setSortingEnabled(false);
         QTableWidgetItem *___qtablewidgetitem3 = tableproperty->item(0, 0);
-        ___qtablewidgetitem3->setText(QApplication::translate("form_admin", "bbb", 0, QApplication::UnicodeUTF8));
+        ___qtablewidgetitem3->setText(QApplication::translate("form_admin", "bbb", 0));
         QTableWidgetItem *___qtablewidgetitem4 = tableproperty->item(0, 1);
-        ___qtablewidgetitem4->setText(QApplication::translate("form_admin", "ccc", 0, QApplication::UnicodeUTF8));
+        ___qtablewidgetitem4->setText(QApplication::translate("form_admin", "ccc", 0));
         tableproperty->setSortingEnabled(__sortingEnabled);
 
         viewframe->setProperty("title", QVariant(QString()));
-        btnsetfilterview->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btninccnt->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btndeccnt->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnsetallvalid->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnsetallinvalid->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnkvit->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btngroupkvit->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnagroupkvit->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
+        btnsetfilterview->setText(QApplication::translate("form_admin", "...", 0));
+        btninccnt->setText(QApplication::translate("form_admin", "...", 0));
+        btndeccnt->setText(QApplication::translate("form_admin", "...", 0));
+        btnsetallvalid->setText(QApplication::translate("form_admin", "...", 0));
+        btnsetallinvalid->setText(QApplication::translate("form_admin", "...", 0));
+        btnkvit->setText(QApplication::translate("form_admin", "...", 0));
+        btngroupkvit->setText(QApplication::translate("form_admin", "...", 0));
+        btnagroupkvit->setText(QApplication::translate("form_admin", "...", 0));
 #ifndef QT_NO_WHATSTHIS
         tableview->setWhatsThis(QString());
 #endif // QT_NO_WHATSTHIS
-        btnlogtype->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        btnclearlog->setText(QApplication::translate("form_admin", "...", 0, QApplication::UnicodeUTF8));
-        toolBar->setWindowTitle(QApplication::translate("form_admin", "toolBar", 0, QApplication::UnicodeUTF8));
+        btnlogtype->setText(QApplication::translate("form_admin", "...", 0));
+        btnclearlog->setText(QApplication::translate("form_admin", "...", 0));
+        toolBar->setWindowTitle(QApplication::translate("form_admin", "toolBar", 0));
     } // retranslateUi
 
 };

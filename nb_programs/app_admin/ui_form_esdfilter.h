@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_esdfilter.ui'
 **
-** Created: Wed 10. Oct 20:33:02 2012
-**      by: Qt User Interface Compiler version 4.6.3
+** Created by: Qt User Interface Compiler version 5.1.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -11,17 +10,17 @@
 #define UI_FORM_ESDFILTER_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QComboBox>
-#include <QtGui/QDialog>
-#include <QtGui/QDialogButtonBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QVBoxLayout>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 
@@ -44,15 +43,15 @@ public:
     void setupUi(QDialog *form_esdfilter)
     {
         if (form_esdfilter->objectName().isEmpty())
-            form_esdfilter->setObjectName(QString::fromUtf8("form_esdfilter"));
+            form_esdfilter->setObjectName(QStringLiteral("form_esdfilter"));
         form_esdfilter->resize(285, 165);
         form_esdfilter->setModal(true);
         verticalLayout_2 = new QVBoxLayout(form_esdfilter);
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         verticalLayout = new QVBoxLayout();
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         label = new QLabel(form_esdfilter);
-        label->setObjectName(QString::fromUtf8("label"));
+        label->setObjectName(QStringLiteral("label"));
         QFont font;
         font.setPointSize(12);
         label->setFont(font);
@@ -60,39 +59,39 @@ public:
         verticalLayout->addWidget(label);
 
         labeltype = new QLabel(form_esdfilter);
-        labeltype->setObjectName(QString::fromUtf8("labeltype"));
+        labeltype->setObjectName(QStringLiteral("labeltype"));
 
         verticalLayout->addWidget(labeltype);
 
         comboBoxtype = new QComboBox(form_esdfilter);
-        comboBoxtype->setObjectName(QString::fromUtf8("comboBoxtype"));
+        comboBoxtype->setObjectName(QStringLiteral("comboBoxtype"));
 
         verticalLayout->addWidget(comboBoxtype);
 
         labelrange = new QLabel(form_esdfilter);
-        labelrange->setObjectName(QString::fromUtf8("labelrange"));
+        labelrange->setObjectName(QStringLiteral("labelrange"));
 
         verticalLayout->addWidget(labelrange);
 
         horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         labelstart = new QLabel(form_esdfilter);
-        labelstart->setObjectName(QString::fromUtf8("labelstart"));
+        labelstart->setObjectName(QStringLiteral("labelstart"));
 
         horizontalLayout->addWidget(labelstart);
 
         lineEditmin = new QLineEdit(form_esdfilter);
-        lineEditmin->setObjectName(QString::fromUtf8("lineEditmin"));
+        lineEditmin->setObjectName(QStringLiteral("lineEditmin"));
 
         horizontalLayout->addWidget(lineEditmin);
 
         labelstop = new QLabel(form_esdfilter);
-        labelstop->setObjectName(QString::fromUtf8("labelstop"));
+        labelstop->setObjectName(QStringLiteral("labelstop"));
 
         horizontalLayout->addWidget(labelstop);
 
         lineEditmax = new QLineEdit(form_esdfilter);
-        lineEditmax->setObjectName(QString::fromUtf8("lineEditmax"));
+        lineEditmax->setObjectName(QStringLiteral("lineEditmax"));
 
         horizontalLayout->addWidget(lineEditmax);
 
@@ -100,7 +99,7 @@ public:
         verticalLayout->addLayout(horizontalLayout);
 
         buttonBox = new QDialogButtonBox(form_esdfilter);
-        buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
+        buttonBox->setObjectName(QStringLiteral("buttonBox"));
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
 
@@ -119,26 +118,26 @@ public:
 
     void retranslateUi(QDialog *form_esdfilter)
     {
-        form_esdfilter->setWindowTitle(QApplication::translate("form_esdfilter", "form_esdfilter", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("form_esdfilter", "Filter", 0, QApplication::UnicodeUTF8));
-        labeltype->setText(QApplication::translate("form_esdfilter", "typefilter", 0, QApplication::UnicodeUTF8));
+        form_esdfilter->setWindowTitle(QApplication::translate("form_esdfilter", "form_esdfilter", 0));
+        label->setText(QApplication::translate("form_esdfilter", "Filter", 0));
+        labeltype->setText(QApplication::translate("form_esdfilter", "typefilter", 0));
         comboBoxtype->clear();
         comboBoxtype->insertItems(0, QStringList()
-         << QApplication::translate("form_esdfilter", "All", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "V", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "X", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "Y", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "C", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "S", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "GX", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "GY", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "T", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "SP", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("form_esdfilter", "B", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("form_esdfilter", "All", 0)
+         << QApplication::translate("form_esdfilter", "V", 0)
+         << QApplication::translate("form_esdfilter", "X", 0)
+         << QApplication::translate("form_esdfilter", "Y", 0)
+         << QApplication::translate("form_esdfilter", "C", 0)
+         << QApplication::translate("form_esdfilter", "S", 0)
+         << QApplication::translate("form_esdfilter", "GX", 0)
+         << QApplication::translate("form_esdfilter", "GY", 0)
+         << QApplication::translate("form_esdfilter", "T", 0)
+         << QApplication::translate("form_esdfilter", "SP", 0)
+         << QApplication::translate("form_esdfilter", "B", 0)
         );
-        labelrange->setText(QApplication::translate("form_esdfilter", "rangel", 0, QApplication::UnicodeUTF8));
-        labelstart->setText(QApplication::translate("form_esdfilter", "start", 0, QApplication::UnicodeUTF8));
-        labelstop->setText(QApplication::translate("form_esdfilter", "stop", 0, QApplication::UnicodeUTF8));
+        labelrange->setText(QApplication::translate("form_esdfilter", "rangel", 0));
+        labelstart->setText(QApplication::translate("form_esdfilter", "start", 0));
+        labelstop->setText(QApplication::translate("form_esdfilter", "stop", 0));
     } // retranslateUi
 
 };

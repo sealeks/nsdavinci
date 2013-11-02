@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_import.ui'
 **
-** Created: Wed 10. Oct 20:33:01 2012
-**      by: Qt User Interface Compiler version 4.6.3
+** Created by: Qt User Interface Compiler version 5.1.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -12,21 +11,21 @@
 
 #include <QtCore/QLocale>
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QCheckBox>
-#include <QtGui/QDialog>
-#include <QtGui/QDialogButtonBox>
-#include <QtGui/QFrame>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QSpacerItem>
-#include <QtGui/QSplitter>
-#include <QtGui/QTableView>
-#include <QtGui/QToolButton>
-#include <QtGui/QVBoxLayout>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSplitter>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QToolButton>
+#include <QtWidgets/QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 
@@ -75,19 +74,19 @@ public:
     void setupUi(QDialog *form_import)
     {
         if (form_import->objectName().isEmpty())
-            form_import->setObjectName(QString::fromUtf8("form_import"));
+            form_import->setObjectName(QStringLiteral("form_import"));
         form_import->setWindowModality(Qt::ApplicationModal);
         form_import->resize(969, 627);
         form_import->setModal(true);
         verticalLayout_6 = new QVBoxLayout(form_import);
-        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
         verticalLayout = new QVBoxLayout();
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         splitter = new QSplitter(form_import);
-        splitter->setObjectName(QString::fromUtf8("splitter"));
+        splitter->setObjectName(QStringLiteral("splitter"));
         splitter->setOrientation(Qt::Vertical);
         taglayout = new QFrame(splitter);
-        taglayout->setObjectName(QString::fromUtf8("taglayout"));
+        taglayout->setObjectName(QStringLiteral("taglayout"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -98,17 +97,17 @@ public:
         verticalLayout_2 = new QVBoxLayout(taglayout);
         verticalLayout_2->setSpacing(0);
         verticalLayout_2->setContentsMargins(0, 0, 0, 0);
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         taglayout_ = new QVBoxLayout();
-        taglayout_->setObjectName(QString::fromUtf8("taglayout_"));
+        taglayout_->setObjectName(QStringLiteral("taglayout_"));
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(0);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         btndeletetags = new QToolButton(taglayout);
-        btndeletetags->setObjectName(QString::fromUtf8("btndeletetags"));
+        btndeletetags->setObjectName(QStringLiteral("btndeletetags"));
         btndeletetags->setMaximumSize(QSize(20, 20));
         QIcon icon;
-        icon.addFile(QString::fromUtf8(":/icon/icon/deleteuncheck.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QStringLiteral(":/icon/icon/deleteuncheck.png"), QSize(), QIcon::Normal, QIcon::Off);
         btndeletetags->setIcon(icon);
         btndeletetags->setIconSize(QSize(20, 20));
         btndeletetags->setAutoRaise(true);
@@ -116,10 +115,10 @@ public:
         horizontalLayout->addWidget(btndeletetags);
 
         btnprefixtag = new QToolButton(taglayout);
-        btnprefixtag->setObjectName(QString::fromUtf8("btnprefixtag"));
+        btnprefixtag->setObjectName(QStringLiteral("btnprefixtag"));
         btnprefixtag->setMaximumSize(QSize(20, 20));
         QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/icon/icon/addpr.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon1.addFile(QStringLiteral(":/icon/icon/addpr.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnprefixtag->setIcon(icon1);
         btnprefixtag->setIconSize(QSize(20, 20));
         btnprefixtag->setAutoRaise(true);
@@ -134,7 +133,7 @@ public:
         taglayout_->addLayout(horizontalLayout);
 
         labeltag = new QLabel(taglayout);
-        labeltag->setObjectName(QString::fromUtf8("labeltag"));
+        labeltag->setObjectName(QStringLiteral("labeltag"));
         QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
@@ -144,7 +143,7 @@ public:
         taglayout_->addWidget(labeltag);
 
         tagtable = new QTableView(taglayout);
-        tagtable->setObjectName(QString::fromUtf8("tagtable"));
+        tagtable->setObjectName(QStringLiteral("tagtable"));
         sizePolicy.setHeightForWidth(tagtable->sizePolicy().hasHeightForWidth());
         tagtable->setSizePolicy(sizePolicy);
         tagtable->setLocale(QLocale(QLocale::Russian, QLocale::RussianFederation));
@@ -174,7 +173,7 @@ public:
 
         splitter->addWidget(taglayout);
         grouplayout = new QFrame(splitter);
-        grouplayout->setObjectName(QString::fromUtf8("grouplayout"));
+        grouplayout->setObjectName(QStringLiteral("grouplayout"));
         sizePolicy.setHeightForWidth(grouplayout->sizePolicy().hasHeightForWidth());
         grouplayout->setSizePolicy(sizePolicy);
         grouplayout->setFrameShape(QFrame::StyledPanel);
@@ -182,13 +181,13 @@ public:
         verticalLayout_3 = new QVBoxLayout(grouplayout);
         verticalLayout_3->setSpacing(0);
         verticalLayout_3->setContentsMargins(0, 0, 0, 0);
-        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         grouplayout_ = new QVBoxLayout();
-        grouplayout_->setObjectName(QString::fromUtf8("grouplayout_"));
+        grouplayout_->setObjectName(QStringLiteral("grouplayout_"));
         horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         btndeletegroups = new QToolButton(grouplayout);
-        btndeletegroups->setObjectName(QString::fromUtf8("btndeletegroups"));
+        btndeletegroups->setObjectName(QStringLiteral("btndeletegroups"));
         btndeletegroups->setMaximumSize(QSize(20, 20));
         btndeletegroups->setIcon(icon);
         btndeletegroups->setIconSize(QSize(20, 20));
@@ -204,14 +203,14 @@ public:
         grouplayout_->addLayout(horizontalLayout_2);
 
         labelgroup = new QLabel(grouplayout);
-        labelgroup->setObjectName(QString::fromUtf8("labelgroup"));
+        labelgroup->setObjectName(QStringLiteral("labelgroup"));
         sizePolicy1.setHeightForWidth(labelgroup->sizePolicy().hasHeightForWidth());
         labelgroup->setSizePolicy(sizePolicy1);
 
         grouplayout_->addWidget(labelgroup);
 
         grouptable = new QTableView(grouplayout);
-        grouptable->setObjectName(QString::fromUtf8("grouptable"));
+        grouptable->setObjectName(QStringLiteral("grouptable"));
         sizePolicy.setHeightForWidth(grouptable->sizePolicy().hasHeightForWidth());
         grouptable->setSizePolicy(sizePolicy);
         grouptable->setLocale(QLocale(QLocale::Russian, QLocale::RussianFederation));
@@ -240,7 +239,7 @@ public:
 
         splitter->addWidget(grouplayout);
         agrouplayout = new QFrame(splitter);
-        agrouplayout->setObjectName(QString::fromUtf8("agrouplayout"));
+        agrouplayout->setObjectName(QStringLiteral("agrouplayout"));
         sizePolicy.setHeightForWidth(agrouplayout->sizePolicy().hasHeightForWidth());
         agrouplayout->setSizePolicy(sizePolicy);
         agrouplayout->setFrameShape(QFrame::StyledPanel);
@@ -248,13 +247,13 @@ public:
         verticalLayout_4 = new QVBoxLayout(agrouplayout);
         verticalLayout_4->setSpacing(0);
         verticalLayout_4->setContentsMargins(0, 0, 0, 0);
-        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         agrouplayout_ = new QVBoxLayout();
-        agrouplayout_->setObjectName(QString::fromUtf8("agrouplayout_"));
+        agrouplayout_->setObjectName(QStringLiteral("agrouplayout_"));
         horizontalLayout_3 = new QHBoxLayout();
-        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         btndeleteagroups = new QToolButton(agrouplayout);
-        btndeleteagroups->setObjectName(QString::fromUtf8("btndeleteagroups"));
+        btndeleteagroups->setObjectName(QStringLiteral("btndeleteagroups"));
         btndeleteagroups->setMaximumSize(QSize(20, 20));
         btndeleteagroups->setIcon(icon);
         btndeleteagroups->setIconSize(QSize(20, 20));
@@ -270,14 +269,14 @@ public:
         agrouplayout_->addLayout(horizontalLayout_3);
 
         labelagroup = new QLabel(agrouplayout);
-        labelagroup->setObjectName(QString::fromUtf8("labelagroup"));
+        labelagroup->setObjectName(QStringLiteral("labelagroup"));
         sizePolicy1.setHeightForWidth(labelagroup->sizePolicy().hasHeightForWidth());
         labelagroup->setSizePolicy(sizePolicy1);
 
         agrouplayout_->addWidget(labelagroup);
 
         agrouptable = new QTableView(agrouplayout);
-        agrouptable->setObjectName(QString::fromUtf8("agrouptable"));
+        agrouptable->setObjectName(QStringLiteral("agrouptable"));
         sizePolicy.setHeightForWidth(agrouptable->sizePolicy().hasHeightForWidth());
         agrouptable->setSizePolicy(sizePolicy);
         agrouptable->setLocale(QLocale(QLocale::Russian, QLocale::RussianFederation));
@@ -306,7 +305,7 @@ public:
 
         splitter->addWidget(agrouplayout);
         userlayout = new QFrame(splitter);
-        userlayout->setObjectName(QString::fromUtf8("userlayout"));
+        userlayout->setObjectName(QStringLiteral("userlayout"));
         sizePolicy.setHeightForWidth(userlayout->sizePolicy().hasHeightForWidth());
         userlayout->setSizePolicy(sizePolicy);
         userlayout->setFrameShape(QFrame::StyledPanel);
@@ -314,13 +313,13 @@ public:
         verticalLayout_5 = new QVBoxLayout(userlayout);
         verticalLayout_5->setSpacing(0);
         verticalLayout_5->setContentsMargins(0, 0, 0, 0);
-        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
+        verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
         userlayout_ = new QVBoxLayout();
-        userlayout_->setObjectName(QString::fromUtf8("userlayout_"));
+        userlayout_->setObjectName(QStringLiteral("userlayout_"));
         horizontalLayout_4 = new QHBoxLayout();
-        horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         btndeleteusers = new QToolButton(userlayout);
-        btndeleteusers->setObjectName(QString::fromUtf8("btndeleteusers"));
+        btndeleteusers->setObjectName(QStringLiteral("btndeleteusers"));
         btndeleteusers->setMaximumSize(QSize(20, 20));
         btndeleteusers->setIcon(icon);
         btndeleteusers->setIconSize(QSize(20, 20));
@@ -336,14 +335,14 @@ public:
         userlayout_->addLayout(horizontalLayout_4);
 
         labeluser = new QLabel(userlayout);
-        labeluser->setObjectName(QString::fromUtf8("labeluser"));
+        labeluser->setObjectName(QStringLiteral("labeluser"));
         sizePolicy1.setHeightForWidth(labeluser->sizePolicy().hasHeightForWidth());
         labeluser->setSizePolicy(sizePolicy1);
 
         userlayout_->addWidget(labeluser);
 
         usertable = new QTableView(userlayout);
-        usertable->setObjectName(QString::fromUtf8("usertable"));
+        usertable->setObjectName(QStringLiteral("usertable"));
         sizePolicy.setHeightForWidth(usertable->sizePolicy().hasHeightForWidth());
         usertable->setSizePolicy(sizePolicy);
         usertable->setLocale(QLocale(QLocale::Russian, QLocale::RussianFederation));
@@ -375,12 +374,12 @@ public:
         verticalLayout->addWidget(splitter);
 
         revwritecheckbox = new QCheckBox(form_import);
-        revwritecheckbox->setObjectName(QString::fromUtf8("revwritecheckbox"));
+        revwritecheckbox->setObjectName(QStringLiteral("revwritecheckbox"));
 
         verticalLayout->addWidget(revwritecheckbox);
 
         buttonBox = new QDialogButtonBox(form_import);
-        buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
+        buttonBox->setObjectName(QStringLiteral("buttonBox"));
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
 
@@ -399,17 +398,17 @@ public:
 
     void retranslateUi(QDialog *form_import)
     {
-        form_import->setWindowTitle(QApplication::translate("form_import", "form_import", 0, QApplication::UnicodeUTF8));
-        btndeletetags->setText(QApplication::translate("form_import", "...", 0, QApplication::UnicodeUTF8));
-        btnprefixtag->setText(QApplication::translate("form_import", "...", 0, QApplication::UnicodeUTF8));
-        labeltag->setText(QApplication::translate("form_import", "TextLabel", 0, QApplication::UnicodeUTF8));
-        btndeletegroups->setText(QApplication::translate("form_import", "...", 0, QApplication::UnicodeUTF8));
-        labelgroup->setText(QApplication::translate("form_import", "TextLabel", 0, QApplication::UnicodeUTF8));
-        btndeleteagroups->setText(QApplication::translate("form_import", "...", 0, QApplication::UnicodeUTF8));
-        labelagroup->setText(QApplication::translate("form_import", "TextLabel", 0, QApplication::UnicodeUTF8));
-        btndeleteusers->setText(QApplication::translate("form_import", "...", 0, QApplication::UnicodeUTF8));
-        labeluser->setText(QApplication::translate("form_import", "TextLabel", 0, QApplication::UnicodeUTF8));
-        revwritecheckbox->setText(QApplication::translate("form_import", "rewrite", 0, QApplication::UnicodeUTF8));
+        form_import->setWindowTitle(QApplication::translate("form_import", "form_import", 0));
+        btndeletetags->setText(QApplication::translate("form_import", "...", 0));
+        btnprefixtag->setText(QApplication::translate("form_import", "...", 0));
+        labeltag->setText(QApplication::translate("form_import", "TextLabel", 0));
+        btndeletegroups->setText(QApplication::translate("form_import", "...", 0));
+        labelgroup->setText(QApplication::translate("form_import", "TextLabel", 0));
+        btndeleteagroups->setText(QApplication::translate("form_import", "...", 0));
+        labelagroup->setText(QApplication::translate("form_import", "TextLabel", 0));
+        btndeleteusers->setText(QApplication::translate("form_import", "...", 0));
+        labeluser->setText(QApplication::translate("form_import", "TextLabel", 0));
+        revwritecheckbox->setText(QApplication::translate("form_import", "rewrite", 0));
     } // retranslateUi
 
 };
