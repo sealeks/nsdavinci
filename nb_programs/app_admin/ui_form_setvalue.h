@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_setvalue.ui'
 **
-** Created: Wed 10. Oct 20:33:02 2012
-**      by: Qt User Interface Compiler version 4.6.3
+** Created by: Qt User Interface Compiler version 5.1.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -11,17 +10,17 @@
 #define UI_FORM_SETVALUE_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QDialog>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
-#include <QtGui/QRadioButton>
-#include <QtGui/QVBoxLayout>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 
@@ -46,54 +45,54 @@ public:
     void setupUi(QDialog *form_setvalue)
     {
         if (form_setvalue->objectName().isEmpty())
-            form_setvalue->setObjectName(QString::fromUtf8("form_setvalue"));
+            form_setvalue->setObjectName(QStringLiteral("form_setvalue"));
         form_setvalue->setWindowModality(Qt::WindowModal);
         form_setvalue->resize(298, 225);
         horizontalLayout_3 = new QHBoxLayout(form_setvalue);
         horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
-        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         verticalLayout = new QVBoxLayout();
         verticalLayout->setContentsMargins(3, 3, 3, 3);
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         labelHeader = new QLabel(form_setvalue);
-        labelHeader->setObjectName(QString::fromUtf8("labelHeader"));
+        labelHeader->setObjectName(QStringLiteral("labelHeader"));
 
         verticalLayout->addWidget(labelHeader);
 
         rbsetvalue = new QRadioButton(form_setvalue);
-        rbsetvalue->setObjectName(QString::fromUtf8("rbsetvalue"));
+        rbsetvalue->setObjectName(QStringLiteral("rbsetvalue"));
 
         verticalLayout->addWidget(rbsetvalue);
 
         rbcommand = new QRadioButton(form_setvalue);
-        rbcommand->setObjectName(QString::fromUtf8("rbcommand"));
+        rbcommand->setObjectName(QStringLiteral("rbcommand"));
 
         verticalLayout->addWidget(rbcommand);
 
         rbincvnt = new QRadioButton(form_setvalue);
-        rbincvnt->setObjectName(QString::fromUtf8("rbincvnt"));
+        rbincvnt->setObjectName(QStringLiteral("rbincvnt"));
 
         verticalLayout->addWidget(rbincvnt);
 
         rbdeccnt = new QRadioButton(form_setvalue);
-        rbdeccnt->setObjectName(QString::fromUtf8("rbdeccnt"));
+        rbdeccnt->setObjectName(QStringLiteral("rbdeccnt"));
 
         verticalLayout->addWidget(rbdeccnt);
 
         rbvalid = new QRadioButton(form_setvalue);
-        rbvalid->setObjectName(QString::fromUtf8("rbvalid"));
+        rbvalid->setObjectName(QStringLiteral("rbvalid"));
 
         verticalLayout->addWidget(rbvalid);
 
         rbinvalid = new QRadioButton(form_setvalue);
-        rbinvalid->setObjectName(QString::fromUtf8("rbinvalid"));
+        rbinvalid->setObjectName(QStringLiteral("rbinvalid"));
 
         verticalLayout->addWidget(rbinvalid);
 
         horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         valueedit = new QLineEdit(form_setvalue);
-        valueedit->setObjectName(QString::fromUtf8("valueedit"));
+        valueedit->setObjectName(QStringLiteral("valueedit"));
 
         horizontalLayout->addWidget(valueedit);
 
@@ -101,14 +100,14 @@ public:
         verticalLayout->addLayout(horizontalLayout);
 
         horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         btncancel = new QPushButton(form_setvalue);
-        btncancel->setObjectName(QString::fromUtf8("btncancel"));
+        btncancel->setObjectName(QStringLiteral("btncancel"));
 
         horizontalLayout_2->addWidget(btncancel);
 
         btnok = new QPushButton(form_setvalue);
-        btnok->setObjectName(QString::fromUtf8("btnok"));
+        btnok->setObjectName(QStringLiteral("btnok"));
 
         horizontalLayout_2->addWidget(btnok);
 
@@ -126,16 +125,16 @@ public:
 
     void retranslateUi(QDialog *form_setvalue)
     {
-        form_setvalue->setWindowTitle(QApplication::translate("form_setvalue", "form_setvalue", 0, QApplication::UnicodeUTF8));
-        labelHeader->setText(QApplication::translate("form_setvalue", "Header", 0, QApplication::UnicodeUTF8));
-        rbsetvalue->setText(QApplication::translate("form_setvalue", "rbsetvalue", 0, QApplication::UnicodeUTF8));
-        rbcommand->setText(QApplication::translate("form_setvalue", "rbcommand", 0, QApplication::UnicodeUTF8));
-        rbincvnt->setText(QApplication::translate("form_setvalue", "rbincvnt", 0, QApplication::UnicodeUTF8));
-        rbdeccnt->setText(QApplication::translate("form_setvalue", "rbdecvnt", 0, QApplication::UnicodeUTF8));
-        rbvalid->setText(QApplication::translate("form_setvalue", "rbvalid", 0, QApplication::UnicodeUTF8));
-        rbinvalid->setText(QApplication::translate("form_setvalue", "rbinvalid", 0, QApplication::UnicodeUTF8));
-        btncancel->setText(QApplication::translate("form_setvalue", "Cancel", 0, QApplication::UnicodeUTF8));
-        btnok->setText(QApplication::translate("form_setvalue", "OK", 0, QApplication::UnicodeUTF8));
+        form_setvalue->setWindowTitle(QApplication::translate("form_setvalue", "form_setvalue", 0));
+        labelHeader->setText(QApplication::translate("form_setvalue", "Header", 0));
+        rbsetvalue->setText(QApplication::translate("form_setvalue", "rbsetvalue", 0));
+        rbcommand->setText(QApplication::translate("form_setvalue", "rbcommand", 0));
+        rbincvnt->setText(QApplication::translate("form_setvalue", "rbincvnt", 0));
+        rbdeccnt->setText(QApplication::translate("form_setvalue", "rbdecvnt", 0));
+        rbvalid->setText(QApplication::translate("form_setvalue", "rbvalid", 0));
+        rbinvalid->setText(QApplication::translate("form_setvalue", "rbinvalid", 0));
+        btncancel->setText(QApplication::translate("form_setvalue", "Cancel", 0));
+        btnok->setText(QApplication::translate("form_setvalue", "OK", 0));
     } // retranslateUi
 
 };

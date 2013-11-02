@@ -1,26 +1,57 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'form_setvalue.h'
 **
-** Created: Wed 10. Oct 20:40:36 2012
-**      by: The Qt Meta Object Compiler version 62 (Qt 4.6.3)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.1.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
 #include "../../include_program/app_admin/gui/form_setvalue.h"
+#include <QtCore/qbytearray.h>
+#include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'form_setvalue.h' doesn't include <QObject>."
-#elif Q_MOC_OUTPUT_REVISION != 62
-#error "This file was generated using the moc from 4.6.3. It"
+#elif Q_MOC_OUTPUT_REVISION != 67
+#error "This file was generated using the moc from 5.1.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
+struct qt_meta_stringdata_dvnci__admin__form_setvalue_t {
+    QByteArrayData data[10];
+    char stringdata[183];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    offsetof(qt_meta_stringdata_dvnci__admin__form_setvalue_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    )
+static const qt_meta_stringdata_dvnci__admin__form_setvalue_t qt_meta_stringdata_dvnci__admin__form_setvalue = {
+    {
+QT_MOC_LITERAL(0, 0, 27),
+QT_MOC_LITERAL(1, 28, 15),
+QT_MOC_LITERAL(2, 44, 0),
+QT_MOC_LITERAL(3, 45, 19),
+QT_MOC_LITERAL(4, 65, 20),
+QT_MOC_LITERAL(5, 86, 19),
+QT_MOC_LITERAL(6, 106, 18),
+QT_MOC_LITERAL(7, 125, 18),
+QT_MOC_LITERAL(8, 144, 17),
+QT_MOC_LITERAL(9, 162, 19)
+    },
+    "dvnci::admin::form_setvalue\0proc_btnOkclick\0"
+    "\0proc_btnCancelclick\0proc_rbsetvalueclick\0"
+    "proc_rbcommandclick\0proc_rbincvntclick\0"
+    "proc_rbdeccntclick\0proc_rbvalidclick\0"
+    "proc_rbinvalidclick\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_dvnci__admin__form_setvalue[] = {
 
  // content:
-       4,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
        8,   14, // methods
@@ -30,45 +61,63 @@ static const uint qt_meta_data_dvnci__admin__form_setvalue[] = {
        0,       // flags
        0,       // signalCount
 
- // slots: signature, parameters, type, tag, flags
-      29,   28,   28,   28, 0x0a,
-      47,   28,   28,   28, 0x0a,
-      69,   28,   28,   28, 0x0a,
-      92,   28,   28,   28, 0x0a,
-     114,   28,   28,   28, 0x0a,
-     135,   28,   28,   28, 0x0a,
-     156,   28,   28,   28, 0x0a,
-     176,   28,   28,   28, 0x0a,
+ // slots: name, argc, parameters, tag, flags
+       1,    0,   54,    2, 0x0a,
+       3,    0,   55,    2, 0x0a,
+       4,    0,   56,    2, 0x0a,
+       5,    0,   57,    2, 0x0a,
+       6,    0,   58,    2, 0x0a,
+       7,    0,   59,    2, 0x0a,
+       8,    0,   60,    2, 0x0a,
+       9,    0,   61,    2, 0x0a,
+
+ // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
 
        0        // eod
 };
 
-static const char qt_meta_stringdata_dvnci__admin__form_setvalue[] = {
-    "dvnci::admin::form_setvalue\0\0"
-    "proc_btnOkclick()\0proc_btnCancelclick()\0"
-    "proc_rbsetvalueclick()\0proc_rbcommandclick()\0"
-    "proc_rbincvntclick()\0proc_rbdeccntclick()\0"
-    "proc_rbvalidclick()\0proc_rbinvalidclick()\0"
-};
+void dvnci::admin::form_setvalue::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        form_setvalue *_t = static_cast<form_setvalue *>(_o);
+        switch (_id) {
+        case 0: _t->proc_btnOkclick(); break;
+        case 1: _t->proc_btnCancelclick(); break;
+        case 2: _t->proc_rbsetvalueclick(); break;
+        case 3: _t->proc_rbcommandclick(); break;
+        case 4: _t->proc_rbincvntclick(); break;
+        case 5: _t->proc_rbdeccntclick(); break;
+        case 6: _t->proc_rbvalidclick(); break;
+        case 7: _t->proc_rbinvalidclick(); break;
+        default: ;
+        }
+    }
+    Q_UNUSED(_a);
+}
 
 const QMetaObject dvnci::admin::form_setvalue::staticMetaObject = {
-    { &QDialog::staticMetaObject, qt_meta_stringdata_dvnci__admin__form_setvalue,
-      qt_meta_data_dvnci__admin__form_setvalue, 0 }
+    { &QDialog::staticMetaObject, qt_meta_stringdata_dvnci__admin__form_setvalue.data,
+      qt_meta_data_dvnci__admin__form_setvalue,  qt_static_metacall, 0, 0}
 };
 
-#ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &dvnci::admin::form_setvalue::getStaticMetaObject() { return staticMetaObject; }
-#endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *dvnci::admin::form_setvalue::metaObject() const
 {
-    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
 void *dvnci::admin::form_setvalue::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__form_setvalue))
+    if (!strcmp(_clname, qt_meta_stringdata_dvnci__admin__form_setvalue.stringdata))
         return static_cast<void*>(const_cast< form_setvalue*>(this));
     return QDialog::qt_metacast(_clname);
 }
@@ -79,17 +128,12 @@ int dvnci::admin::form_setvalue::qt_metacall(QMetaObject::Call _c, int _id, void
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        switch (_id) {
-        case 0: proc_btnOkclick(); break;
-        case 1: proc_btnCancelclick(); break;
-        case 2: proc_rbsetvalueclick(); break;
-        case 3: proc_rbcommandclick(); break;
-        case 4: proc_rbincvntclick(); break;
-        case 5: proc_rbdeccntclick(); break;
-        case 6: proc_rbvalidclick(); break;
-        case 7: proc_rbinvalidclick(); break;
-        default: ;
-        }
+        if (_id < 8)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 8;
+    } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 8)
+            *reinterpret_cast<int*>(_a[0]) = -1;
         _id -= 8;
     }
     return _id;

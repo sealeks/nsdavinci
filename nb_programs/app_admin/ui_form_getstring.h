@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_getstring.ui'
 **
-** Created: Wed 10. Oct 20:33:02 2012
-**      by: Qt User Interface Compiler version 4.6.3
+** Created by: Qt User Interface Compiler version 5.1.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -11,15 +10,15 @@
 #define UI_FORM_GETSTRING_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QDialog>
-#include <QtGui/QDialogButtonBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QVBoxLayout>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 
@@ -35,15 +34,15 @@ public:
     void setupUi(QDialog *form_getstring)
     {
         if (form_getstring->objectName().isEmpty())
-            form_getstring->setObjectName(QString::fromUtf8("form_getstring"));
+            form_getstring->setObjectName(QStringLiteral("form_getstring"));
         form_getstring->resize(262, 100);
         form_getstring->setModal(true);
         verticalLayout_2 = new QVBoxLayout(form_getstring);
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         verticalLayout = new QVBoxLayout();
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         label = new QLabel(form_getstring);
-        label->setObjectName(QString::fromUtf8("label"));
+        label->setObjectName(QStringLiteral("label"));
         QFont font;
         font.setPointSize(10);
         label->setFont(font);
@@ -51,12 +50,12 @@ public:
         verticalLayout->addWidget(label);
 
         lineEdit = new QLineEdit(form_getstring);
-        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+        lineEdit->setObjectName(QStringLiteral("lineEdit"));
 
         verticalLayout->addWidget(lineEdit);
 
         buttonBox = new QDialogButtonBox(form_getstring);
-        buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
+        buttonBox->setObjectName(QStringLiteral("buttonBox"));
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
 
@@ -75,8 +74,8 @@ public:
 
     void retranslateUi(QDialog *form_getstring)
     {
-        form_getstring->setWindowTitle(QApplication::translate("form_getstring", "form_getstring", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("form_getstring", "TextInput", 0, QApplication::UnicodeUTF8));
+        form_getstring->setWindowTitle(QApplication::translate("form_getstring", "form_getstring", 0));
+        label->setText(QApplication::translate("form_getstring", "TextInput", 0));
     } // retranslateUi
 
 };

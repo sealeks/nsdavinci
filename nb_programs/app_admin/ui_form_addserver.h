@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_addserver.ui'
 **
-** Created: Wed 10. Oct 20:33:02 2012
-**      by: Qt User Interface Compiler version 4.6.3
+** Created by: Qt User Interface Compiler version 5.1.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -11,17 +10,17 @@
 #define UI_FORM_ADDSERVER_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QCheckBox>
-#include <QtGui/QDialog>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
-#include <QtGui/QVBoxLayout>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 
@@ -48,7 +47,7 @@ public:
     void setupUi(QDialog *form_addserver)
     {
         if (form_addserver->objectName().isEmpty())
-            form_addserver->setObjectName(QString::fromUtf8("form_addserver"));
+            form_addserver->setObjectName(QStringLiteral("form_addserver"));
         form_addserver->setWindowModality(Qt::ApplicationModal);
         form_addserver->resize(380, 260);
         form_addserver->setMinimumSize(QSize(380, 260));
@@ -57,11 +56,11 @@ public:
         verticalLayout_5 = new QVBoxLayout(form_addserver);
         verticalLayout_5->setSpacing(1);
         verticalLayout_5->setContentsMargins(1, 1, 1, 1);
-        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
+        verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
         verticalLayout_4 = new QVBoxLayout();
-        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         labelheader = new QLabel(form_addserver);
-        labelheader->setObjectName(QString::fromUtf8("labelheader"));
+        labelheader->setObjectName(QStringLiteral("labelheader"));
         QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -76,20 +75,20 @@ public:
         verticalLayout_4->addWidget(labelheader);
 
         checkboxlocal = new QCheckBox(form_addserver);
-        checkboxlocal->setObjectName(QString::fromUtf8("checkboxlocal"));
+        checkboxlocal->setObjectName(QStringLiteral("checkboxlocal"));
         checkboxlocal->setEnabled(true);
 
         verticalLayout_4->addWidget(checkboxlocal);
 
         verticallayoutconstr = new QVBoxLayout();
-        verticallayoutconstr->setObjectName(QString::fromUtf8("verticallayoutconstr"));
+        verticallayoutconstr->setObjectName(QStringLiteral("verticallayoutconstr"));
         labelconstr = new QLabel(form_addserver);
-        labelconstr->setObjectName(QString::fromUtf8("labelconstr"));
+        labelconstr->setObjectName(QStringLiteral("labelconstr"));
 
         verticallayoutconstr->addWidget(labelconstr);
 
         lineeditconstr = new QLineEdit(form_addserver);
-        lineeditconstr->setObjectName(QString::fromUtf8("lineeditconstr"));
+        lineeditconstr->setObjectName(QStringLiteral("lineeditconstr"));
 
         verticallayoutconstr->addWidget(lineeditconstr);
 
@@ -97,14 +96,14 @@ public:
         verticalLayout_4->addLayout(verticallayoutconstr);
 
         verticalLayoutadmin = new QVBoxLayout();
-        verticalLayoutadmin->setObjectName(QString::fromUtf8("verticalLayoutadmin"));
+        verticalLayoutadmin->setObjectName(QStringLiteral("verticalLayoutadmin"));
         labeladmin = new QLabel(form_addserver);
-        labeladmin->setObjectName(QString::fromUtf8("labeladmin"));
+        labeladmin->setObjectName(QStringLiteral("labeladmin"));
 
         verticalLayoutadmin->addWidget(labeladmin);
 
         lineeditadmin = new QLineEdit(form_addserver);
-        lineeditadmin->setObjectName(QString::fromUtf8("lineeditadmin"));
+        lineeditadmin->setObjectName(QStringLiteral("lineeditadmin"));
 
         verticalLayoutadmin->addWidget(lineeditadmin);
 
@@ -112,14 +111,14 @@ public:
         verticalLayout_4->addLayout(verticalLayoutadmin);
 
         verticallayoutpassword = new QVBoxLayout();
-        verticallayoutpassword->setObjectName(QString::fromUtf8("verticallayoutpassword"));
+        verticallayoutpassword->setObjectName(QStringLiteral("verticallayoutpassword"));
         labelpassword = new QLabel(form_addserver);
-        labelpassword->setObjectName(QString::fromUtf8("labelpassword"));
+        labelpassword->setObjectName(QStringLiteral("labelpassword"));
 
         verticallayoutpassword->addWidget(labelpassword);
 
         lineditpassword = new QLineEdit(form_addserver);
-        lineditpassword->setObjectName(QString::fromUtf8("lineditpassword"));
+        lineditpassword->setObjectName(QStringLiteral("lineditpassword"));
 
         verticallayoutpassword->addWidget(lineditpassword);
 
@@ -127,15 +126,15 @@ public:
         verticalLayout_4->addLayout(verticallayoutpassword);
 
         horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(10, -1, 10, -1);
         CancelButton = new QPushButton(form_addserver);
-        CancelButton->setObjectName(QString::fromUtf8("CancelButton"));
+        CancelButton->setObjectName(QStringLiteral("CancelButton"));
 
         horizontalLayout->addWidget(CancelButton);
 
         OKButton = new QPushButton(form_addserver);
-        OKButton->setObjectName(QString::fromUtf8("OKButton"));
+        OKButton->setObjectName(QStringLiteral("OKButton"));
 
         horizontalLayout->addWidget(OKButton);
 
@@ -153,14 +152,14 @@ public:
 
     void retranslateUi(QDialog *form_addserver)
     {
-        form_addserver->setWindowTitle(QApplication::translate("form_addserver", "form_addserver", 0, QApplication::UnicodeUTF8));
-        labelheader->setText(QApplication::translate("form_addserver", "TextLabel", 0, QApplication::UnicodeUTF8));
-        checkboxlocal->setText(QApplication::translate("form_addserver", ".local", 0, QApplication::UnicodeUTF8));
-        labelconstr->setText(QApplication::translate("form_addserver", "labelconstr", 0, QApplication::UnicodeUTF8));
-        labeladmin->setText(QApplication::translate("form_addserver", "labeladmin", 0, QApplication::UnicodeUTF8));
-        labelpassword->setText(QApplication::translate("form_addserver", "TextLabel", 0, QApplication::UnicodeUTF8));
-        CancelButton->setText(QApplication::translate("form_addserver", "Cancel", 0, QApplication::UnicodeUTF8));
-        OKButton->setText(QApplication::translate("form_addserver", "OK", 0, QApplication::UnicodeUTF8));
+        form_addserver->setWindowTitle(QApplication::translate("form_addserver", "form_addserver", 0));
+        labelheader->setText(QApplication::translate("form_addserver", "TextLabel", 0));
+        checkboxlocal->setText(QApplication::translate("form_addserver", ".local", 0));
+        labelconstr->setText(QApplication::translate("form_addserver", "labelconstr", 0));
+        labeladmin->setText(QApplication::translate("form_addserver", "labeladmin", 0));
+        labelpassword->setText(QApplication::translate("form_addserver", "TextLabel", 0));
+        CancelButton->setText(QApplication::translate("form_addserver", "Cancel", 0));
+        OKButton->setText(QApplication::translate("form_addserver", "OK", 0));
     } // retranslateUi
 
 };

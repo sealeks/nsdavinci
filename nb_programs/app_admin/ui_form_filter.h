@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'form_filter.ui'
 **
-** Created: Wed 10. Oct 20:33:02 2012
-**      by: Qt User Interface Compiler version 4.6.3
+** Created by: Qt User Interface Compiler version 5.1.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -11,19 +10,19 @@
 #define UI_FORM_FILTER_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QComboBox>
-#include <QtGui/QDialog>
-#include <QtGui/QFrame>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QListWidget>
-#include <QtGui/QPushButton>
-#include <QtGui/QVBoxLayout>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 
@@ -72,7 +71,7 @@ public:
     void setupUi(QDialog *form_filter)
     {
         if (form_filter->objectName().isEmpty())
-            form_filter->setObjectName(QString::fromUtf8("form_filter"));
+            form_filter->setObjectName(QStringLiteral("form_filter"));
         form_filter->setWindowModality(Qt::ApplicationModal);
         form_filter->resize(378, 1010);
         QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -86,14 +85,14 @@ public:
         verticalLayout_6 = new QVBoxLayout(form_filter);
         verticalLayout_6->setSpacing(0);
         verticalLayout_6->setContentsMargins(0, 0, 0, 0);
-        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
         verticalLayout_6->setSizeConstraint(QLayout::SetMinAndMaxSize);
         verticalLayout = new QVBoxLayout();
         verticalLayout->setSpacing(0);
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
         frameHeader = new QFrame(form_filter);
-        frameHeader->setObjectName(QString::fromUtf8("frameHeader"));
+        frameHeader->setObjectName(QStringLiteral("frameHeader"));
         QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
@@ -105,10 +104,10 @@ public:
         frameHeader->setFrameShape(QFrame::StyledPanel);
         frameHeader->setFrameShadow(QFrame::Raised);
         verticalLayout_5 = new QVBoxLayout(frameHeader);
-        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
+        verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
         verticalLayout_5->setSizeConstraint(QLayout::SetDefaultConstraint);
         HeadLineLable = new QLabel(frameHeader);
-        HeadLineLable->setObjectName(QString::fromUtf8("HeadLineLable"));
+        HeadLineLable->setObjectName(QStringLiteral("HeadLineLable"));
 
         verticalLayout_5->addWidget(HeadLineLable);
 
@@ -116,7 +115,7 @@ public:
         verticalLayout->addWidget(frameHeader);
 
         framebynodetype = new QFrame(form_filter);
-        framebynodetype->setObjectName(QString::fromUtf8("framebynodetype"));
+        framebynodetype->setObjectName(QStringLiteral("framebynodetype"));
         QSizePolicy sizePolicy2(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
         sizePolicy2.setHorizontalStretch(0);
         sizePolicy2.setVerticalStretch(0);
@@ -128,30 +127,30 @@ public:
         framebynodetype->setFrameShape(QFrame::StyledPanel);
         framebynodetype->setFrameShadow(QFrame::Raised);
         verticalLayout_9 = new QVBoxLayout(framebynodetype);
-        verticalLayout_9->setObjectName(QString::fromUtf8("verticalLayout_9"));
+        verticalLayout_9->setObjectName(QStringLiteral("verticalLayout_9"));
         labelbynodetype = new QLabel(framebynodetype);
-        labelbynodetype->setObjectName(QString::fromUtf8("labelbynodetype"));
+        labelbynodetype->setObjectName(QStringLiteral("labelbynodetype"));
 
         verticalLayout_9->addWidget(labelbynodetype);
 
         comboBoxbynodetype = new QComboBox(framebynodetype);
         comboBoxbynodetype->addItem(QString());
         QIcon icon;
-        icon.addFile(QString::fromUtf8(":/icon/icon/ntGT.bmp"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QStringLiteral(":/icon/icon/ntGT.bmp"), QSize(), QIcon::Normal, QIcon::Off);
         comboBoxbynodetype->addItem(icon, QString());
         QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/icon/icon/ntEvent.bmp"), QSize(), QIcon::Normal, QIcon::Off);
+        icon1.addFile(QStringLiteral(":/icon/icon/ntEvent.bmp"), QSize(), QIcon::Normal, QIcon::Off);
         comboBoxbynodetype->addItem(icon1, QString());
         QIcon icon2;
-        icon2.addFile(QString::fromUtf8(":/icon/icon/ntOBase.bmp"), QSize(), QIcon::Normal, QIcon::Off);
+        icon2.addFile(QStringLiteral(":/icon/icon/ntOBase.bmp"), QSize(), QIcon::Normal, QIcon::Off);
         comboBoxbynodetype->addItem(icon2, QString());
         QIcon icon3;
-        icon3.addFile(QString::fromUtf8(":/icon/icon/cdtGroup.bmp"), QSize(), QIcon::Normal, QIcon::Off);
+        icon3.addFile(QStringLiteral(":/icon/icon/cdtGroup.bmp"), QSize(), QIcon::Normal, QIcon::Off);
         comboBoxbynodetype->addItem(icon3, QString());
         QIcon icon4;
-        icon4.addFile(QString::fromUtf8(":/icon/icon/ntA.bmp"), QSize(), QIcon::Normal, QIcon::Off);
+        icon4.addFile(QStringLiteral(":/icon/icon/ntA.bmp"), QSize(), QIcon::Normal, QIcon::Off);
         comboBoxbynodetype->addItem(icon4, QString());
-        comboBoxbynodetype->setObjectName(QString::fromUtf8("comboBoxbynodetype"));
+        comboBoxbynodetype->setObjectName(QStringLiteral("comboBoxbynodetype"));
         comboBoxbynodetype->setMinimumSize(QSize(0, 20));
         comboBoxbynodetype->setMaximumSize(QSize(16777215, 20));
 
@@ -161,7 +160,7 @@ public:
         verticalLayout->addWidget(framebynodetype);
 
         framebyName = new QFrame(form_filter);
-        framebyName->setObjectName(QString::fromUtf8("framebyName"));
+        framebyName->setObjectName(QStringLiteral("framebyName"));
         sizePolicy2.setHeightForWidth(framebyName->sizePolicy().hasHeightForWidth());
         framebyName->setSizePolicy(sizePolicy2);
         framebyName->setMinimumSize(QSize(350, 58));
@@ -170,14 +169,14 @@ public:
         framebyName->setFrameShape(QFrame::StyledPanel);
         framebyName->setFrameShadow(QFrame::Raised);
         verticalLayout_2 = new QVBoxLayout(framebyName);
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         labelbyName = new QLabel(framebyName);
-        labelbyName->setObjectName(QString::fromUtf8("labelbyName"));
+        labelbyName->setObjectName(QStringLiteral("labelbyName"));
 
         verticalLayout_2->addWidget(labelbyName);
 
         lineEditbyName = new QLineEdit(framebyName);
-        lineEditbyName->setObjectName(QString::fromUtf8("lineEditbyName"));
+        lineEditbyName->setObjectName(QStringLiteral("lineEditbyName"));
         lineEditbyName->setMinimumSize(QSize(0, 20));
         lineEditbyName->setMaximumSize(QSize(16777215, 20));
 
@@ -187,7 +186,7 @@ public:
         verticalLayout->addWidget(framebyName);
 
         framebyBind = new QFrame(form_filter);
-        framebyBind->setObjectName(QString::fromUtf8("framebyBind"));
+        framebyBind->setObjectName(QStringLiteral("framebyBind"));
         sizePolicy2.setHeightForWidth(framebyBind->sizePolicy().hasHeightForWidth());
         framebyBind->setSizePolicy(sizePolicy2);
         framebyBind->setMinimumSize(QSize(350, 58));
@@ -196,14 +195,14 @@ public:
         framebyBind->setFrameShape(QFrame::StyledPanel);
         framebyBind->setFrameShadow(QFrame::Raised);
         verticalLayout_3 = new QVBoxLayout(framebyBind);
-        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         labelbyBind = new QLabel(framebyBind);
-        labelbyBind->setObjectName(QString::fromUtf8("labelbyBind"));
+        labelbyBind->setObjectName(QStringLiteral("labelbyBind"));
 
         verticalLayout_3->addWidget(labelbyBind);
 
         lineEditbyBind = new QLineEdit(framebyBind);
-        lineEditbyBind->setObjectName(QString::fromUtf8("lineEditbyBind"));
+        lineEditbyBind->setObjectName(QStringLiteral("lineEditbyBind"));
         lineEditbyBind->setMinimumSize(QSize(0, 20));
         lineEditbyBind->setMaximumSize(QSize(16777215, 20));
 
@@ -213,7 +212,7 @@ public:
         verticalLayout->addWidget(framebyBind);
 
         framebyComment = new QFrame(form_filter);
-        framebyComment->setObjectName(QString::fromUtf8("framebyComment"));
+        framebyComment->setObjectName(QStringLiteral("framebyComment"));
         sizePolicy2.setHeightForWidth(framebyComment->sizePolicy().hasHeightForWidth());
         framebyComment->setSizePolicy(sizePolicy2);
         framebyComment->setMinimumSize(QSize(350, 58));
@@ -222,14 +221,14 @@ public:
         framebyComment->setFrameShape(QFrame::StyledPanel);
         framebyComment->setFrameShadow(QFrame::Raised);
         verticalLayout_4 = new QVBoxLayout(framebyComment);
-        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         labelbyComment = new QLabel(framebyComment);
-        labelbyComment->setObjectName(QString::fromUtf8("labelbyComment"));
+        labelbyComment->setObjectName(QStringLiteral("labelbyComment"));
 
         verticalLayout_4->addWidget(labelbyComment);
 
         lineEditbyComment = new QLineEdit(framebyComment);
-        lineEditbyComment->setObjectName(QString::fromUtf8("lineEditbyComment"));
+        lineEditbyComment->setObjectName(QStringLiteral("lineEditbyComment"));
         lineEditbyComment->setMinimumSize(QSize(0, 20));
         lineEditbyComment->setMaximumSize(QSize(16777215, 20));
 
@@ -239,7 +238,7 @@ public:
         verticalLayout->addWidget(framebyComment);
 
         framebyGroup = new QFrame(form_filter);
-        framebyGroup->setObjectName(QString::fromUtf8("framebyGroup"));
+        framebyGroup->setObjectName(QStringLiteral("framebyGroup"));
         sizePolicy2.setHeightForWidth(framebyGroup->sizePolicy().hasHeightForWidth());
         framebyGroup->setSizePolicy(sizePolicy2);
         framebyGroup->setMinimumSize(QSize(350, 100));
@@ -248,14 +247,14 @@ public:
         framebyGroup->setFrameShape(QFrame::StyledPanel);
         framebyGroup->setFrameShadow(QFrame::Raised);
         verticalLayout_11 = new QVBoxLayout(framebyGroup);
-        verticalLayout_11->setObjectName(QString::fromUtf8("verticalLayout_11"));
+        verticalLayout_11->setObjectName(QStringLiteral("verticalLayout_11"));
         labelbyGroup = new QLabel(framebyGroup);
-        labelbyGroup->setObjectName(QString::fromUtf8("labelbyGroup"));
+        labelbyGroup->setObjectName(QStringLiteral("labelbyGroup"));
 
         verticalLayout_11->addWidget(labelbyGroup);
 
         listWidgetbyGroup = new QListWidget(framebyGroup);
-        listWidgetbyGroup->setObjectName(QString::fromUtf8("listWidgetbyGroup"));
+        listWidgetbyGroup->setObjectName(QStringLiteral("listWidgetbyGroup"));
 
         verticalLayout_11->addWidget(listWidgetbyGroup);
 
@@ -263,7 +262,7 @@ public:
         verticalLayout->addWidget(framebyGroup);
 
         framebyGroupType = new QFrame(form_filter);
-        framebyGroupType->setObjectName(QString::fromUtf8("framebyGroupType"));
+        framebyGroupType->setObjectName(QStringLiteral("framebyGroupType"));
         sizePolicy2.setHeightForWidth(framebyGroupType->sizePolicy().hasHeightForWidth());
         framebyGroupType->setSizePolicy(sizePolicy2);
         framebyGroupType->setMinimumSize(QSize(350, 100));
@@ -272,14 +271,14 @@ public:
         framebyGroupType->setFrameShape(QFrame::StyledPanel);
         framebyGroupType->setFrameShadow(QFrame::Raised);
         verticalLayout_12 = new QVBoxLayout(framebyGroupType);
-        verticalLayout_12->setObjectName(QString::fromUtf8("verticalLayout_12"));
+        verticalLayout_12->setObjectName(QStringLiteral("verticalLayout_12"));
         labelbyGroupType = new QLabel(framebyGroupType);
-        labelbyGroupType->setObjectName(QString::fromUtf8("labelbyGroupType"));
+        labelbyGroupType->setObjectName(QStringLiteral("labelbyGroupType"));
 
         verticalLayout_12->addWidget(labelbyGroupType);
 
         listWidgetbyGroupType = new QListWidget(framebyGroupType);
-        listWidgetbyGroupType->setObjectName(QString::fromUtf8("listWidgetbyGroupType"));
+        listWidgetbyGroupType->setObjectName(QStringLiteral("listWidgetbyGroupType"));
 
         verticalLayout_12->addWidget(listWidgetbyGroupType);
 
@@ -287,7 +286,7 @@ public:
         verticalLayout->addWidget(framebyGroupType);
 
         framebyRtType = new QFrame(form_filter);
-        framebyRtType->setObjectName(QString::fromUtf8("framebyRtType"));
+        framebyRtType->setObjectName(QStringLiteral("framebyRtType"));
         sizePolicy2.setHeightForWidth(framebyRtType->sizePolicy().hasHeightForWidth());
         framebyRtType->setSizePolicy(sizePolicy2);
         framebyRtType->setMinimumSize(QSize(350, 100));
@@ -296,14 +295,14 @@ public:
         framebyRtType->setFrameShape(QFrame::StyledPanel);
         framebyRtType->setFrameShadow(QFrame::Raised);
         verticalLayout_13 = new QVBoxLayout(framebyRtType);
-        verticalLayout_13->setObjectName(QString::fromUtf8("verticalLayout_13"));
+        verticalLayout_13->setObjectName(QStringLiteral("verticalLayout_13"));
         labelbyRtType = new QLabel(framebyRtType);
-        labelbyRtType->setObjectName(QString::fromUtf8("labelbyRtType"));
+        labelbyRtType->setObjectName(QStringLiteral("labelbyRtType"));
 
         verticalLayout_13->addWidget(labelbyRtType);
 
         listWidgetbyRtType = new QListWidget(framebyRtType);
-        listWidgetbyRtType->setObjectName(QString::fromUtf8("listWidgetbyRtType"));
+        listWidgetbyRtType->setObjectName(QStringLiteral("listWidgetbyRtType"));
 
         verticalLayout_13->addWidget(listWidgetbyRtType);
 
@@ -311,7 +310,7 @@ public:
         verticalLayout->addWidget(framebyRtType);
 
         frameButton = new QFrame(form_filter);
-        frameButton->setObjectName(QString::fromUtf8("frameButton"));
+        frameButton->setObjectName(QStringLiteral("frameButton"));
         sizePolicy2.setHeightForWidth(frameButton->sizePolicy().hasHeightForWidth());
         frameButton->setSizePolicy(sizePolicy2);
         frameButton->setMinimumSize(QSize(350, 50));
@@ -320,22 +319,22 @@ public:
         frameButton->setFrameShape(QFrame::StyledPanel);
         frameButton->setFrameShadow(QFrame::Raised);
         horizontalLayout = new QHBoxLayout(frameButton);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         BtnClear = new QPushButton(frameButton);
-        BtnClear->setObjectName(QString::fromUtf8("BtnClear"));
+        BtnClear->setObjectName(QStringLiteral("BtnClear"));
         BtnClear->setMaximumSize(QSize(80, 16777215));
 
         horizontalLayout->addWidget(BtnClear);
 
         BtnCancel = new QPushButton(frameButton);
-        BtnCancel->setObjectName(QString::fromUtf8("BtnCancel"));
+        BtnCancel->setObjectName(QStringLiteral("BtnCancel"));
         BtnCancel->setMaximumSize(QSize(80, 16777215));
         BtnCancel->setAutoExclusive(false);
 
         horizontalLayout->addWidget(BtnCancel);
 
         BntOk = new QPushButton(frameButton);
-        BntOk->setObjectName(QString::fromUtf8("BntOk"));
+        BntOk->setObjectName(QStringLiteral("BntOk"));
         BntOk->setMaximumSize(QSize(80, 16777215));
         BntOk->setDefault(false);
         BntOk->setFlat(false);
@@ -356,42 +355,42 @@ public:
 
     void retranslateUi(QDialog *form_filter)
     {
-        form_filter->setWindowTitle(QApplication::translate("form_filter", "form_filter", 0, QApplication::UnicodeUTF8));
-        frameHeader->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0, QApplication::UnicodeUTF8));
-        HeadLineLable->setText(QApplication::translate("form_filter", ".Finder", 0, QApplication::UnicodeUTF8));
-        framebynodetype->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 252, 236);", 0, QApplication::UnicodeUTF8));
-        labelbynodetype->setText(QApplication::translate("form_filter", "labelbynodetype", 0, QApplication::UnicodeUTF8));
+        form_filter->setWindowTitle(QApplication::translate("form_filter", "form_filter", 0));
+        frameHeader->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0));
+        HeadLineLable->setText(QApplication::translate("form_filter", ".Finder", 0));
+        framebynodetype->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 252, 236);", 0));
+        labelbynodetype->setText(QApplication::translate("form_filter", "labelbynodetype", 0));
         comboBoxbynodetype->setItemText(0, QString());
-        comboBoxbynodetype->setItemText(1, QApplication::translate("form_filter", ".tag", 0, QApplication::UnicodeUTF8));
-        comboBoxbynodetype->setItemText(2, QApplication::translate("form_filter", ".atag", 0, QApplication::UnicodeUTF8));
-        comboBoxbynodetype->setItemText(3, QApplication::translate("form_filter", ".group", 0, QApplication::UnicodeUTF8));
-        comboBoxbynodetype->setItemText(4, QApplication::translate("form_filter", ".agroup", 0, QApplication::UnicodeUTF8));
-        comboBoxbynodetype->setItemText(5, QApplication::translate("form_filter", ".user", 0, QApplication::UnicodeUTF8));
+        comboBoxbynodetype->setItemText(1, QApplication::translate("form_filter", ".tag", 0));
+        comboBoxbynodetype->setItemText(2, QApplication::translate("form_filter", ".atag", 0));
+        comboBoxbynodetype->setItemText(3, QApplication::translate("form_filter", ".group", 0));
+        comboBoxbynodetype->setItemText(4, QApplication::translate("form_filter", ".agroup", 0));
+        comboBoxbynodetype->setItemText(5, QApplication::translate("form_filter", ".user", 0));
 
         comboBoxbynodetype->setStyleSheet(QApplication::translate("form_filter", "border-color: rgb(221, 221, 221);\n"
-"background-color: rgb(255, 255, 255);", 0, QApplication::UnicodeUTF8));
-        framebyName->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0, QApplication::UnicodeUTF8));
-        labelbyName->setText(QApplication::translate("form_filter", "labelbyName", 0, QApplication::UnicodeUTF8));
+"background-color: rgb(255, 255, 255);", 0));
+        framebyName->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0));
+        labelbyName->setText(QApplication::translate("form_filter", "labelbyName", 0));
         lineEditbyName->setStyleSheet(QApplication::translate("form_filter", "border-color: rgb(221, 221, 221);\n"
-"background-color: rgb(230, 230, 230);", 0, QApplication::UnicodeUTF8));
-        framebyBind->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 252, 236);", 0, QApplication::UnicodeUTF8));
-        labelbyBind->setText(QApplication::translate("form_filter", "labelbyBind", 0, QApplication::UnicodeUTF8));
+"background-color: rgb(230, 230, 230);", 0));
+        framebyBind->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 252, 236);", 0));
+        labelbyBind->setText(QApplication::translate("form_filter", "labelbyBind", 0));
         lineEditbyBind->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(255, 255, 255);\n"
-"border-color: rgb(74, 255, 46);", 0, QApplication::UnicodeUTF8));
-        framebyComment->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0, QApplication::UnicodeUTF8));
-        labelbyComment->setText(QApplication::translate("form_filter", "labelbyComment", 0, QApplication::UnicodeUTF8));
+"border-color: rgb(74, 255, 46);", 0));
+        framebyComment->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0));
+        labelbyComment->setText(QApplication::translate("form_filter", "labelbyComment", 0));
         lineEditbyComment->setStyleSheet(QApplication::translate("form_filter", "border-color: rgb(221, 221, 221);\n"
-"background-color: rgb(255, 255, 255);", 0, QApplication::UnicodeUTF8));
-        framebyGroup->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0, QApplication::UnicodeUTF8));
-        labelbyGroup->setText(QApplication::translate("form_filter", "labelbyGroup", 0, QApplication::UnicodeUTF8));
-        framebyGroupType->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0, QApplication::UnicodeUTF8));
-        labelbyGroupType->setText(QApplication::translate("form_filter", "labelbyGroupType", 0, QApplication::UnicodeUTF8));
-        framebyRtType->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0, QApplication::UnicodeUTF8));
-        labelbyRtType->setText(QApplication::translate("form_filter", "labelbyRtType", 0, QApplication::UnicodeUTF8));
-        frameButton->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0, QApplication::UnicodeUTF8));
-        BtnClear->setText(QApplication::translate("form_filter", "Clear", 0, QApplication::UnicodeUTF8));
-        BtnCancel->setText(QApplication::translate("form_filter", "Cancel", 0, QApplication::UnicodeUTF8));
-        BntOk->setText(QApplication::translate("form_filter", "Ok", 0, QApplication::UnicodeUTF8));
+"background-color: rgb(255, 255, 255);", 0));
+        framebyGroup->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0));
+        labelbyGroup->setText(QApplication::translate("form_filter", "labelbyGroup", 0));
+        framebyGroupType->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0));
+        labelbyGroupType->setText(QApplication::translate("form_filter", "labelbyGroupType", 0));
+        framebyRtType->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0));
+        labelbyRtType->setText(QApplication::translate("form_filter", "labelbyRtType", 0));
+        frameButton->setStyleSheet(QApplication::translate("form_filter", "background-color: rgb(236, 236, 236);", 0));
+        BtnClear->setText(QApplication::translate("form_filter", "Clear", 0));
+        BtnCancel->setText(QApplication::translate("form_filter", "Cancel", 0));
+        BntOk->setText(QApplication::translate("form_filter", "Ok", 0));
     } // retranslateUi
 
 };
