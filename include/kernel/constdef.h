@@ -57,14 +57,17 @@
 #pragma warning(disable: 4101  4146 )
 #endif
 
-//#if defined(_DVN_WIN_) 
-//#include <winsock2.h>
-//#endif
+#if defined(_DVN_WIN_) 
+#if defined(__GNUC__) && (__GNUC__ >= 4)
+#define BOOST_USE_WINDOWS_H
+#include <winsock2.h>
+#endif
+#endif
 
 // set python styling
 // set formating Netbeans
-// except Otherparenthesis = true;  Другая круглая скобка
-//        Keep Extra Sp    = true;  Сохранять дополненин
+// except Otherparenthesis = true;
+//        Keep Extra Sp    = true; 
 //        new line  = else , while , catch
 // replace  regex   (?<!/)\n *\}    ->    }
 // replace  regex   \n *\{          ->    {
