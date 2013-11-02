@@ -141,9 +141,10 @@ namespace dvnci {
             reg_ = registryintf_ptr(new localregistryintf(this));
             clients_ = clientsintf_ptr(new localclientsintf(this));
             command_ = commandintf_ptr(new localcommandintf(this));
-            debug_ = debugintf_ptr(new localdebugintf(this));
-            clientmeta_ = metaintf_ptr(new localmetaintf(this));
-            serviceintf_ = serviceintf_ptr(new localserviceintf());}
+            debug_ = debugintf_ptr(new localdebugintf(this)); 
+            clientmeta_ = metaintf_ptr(new localmetaintf(this)); 
+            //serviceintf_ = serviceintf_ptr(new localserviceintf()); std::cout  << "Start local5"  << std::endl;
+            ;};
         
         localadminintf::localadminintf(tagsbase_ptr inf) : adminintf(), intf(inf),  
                 appid(0), events(0),  regclid(0){
