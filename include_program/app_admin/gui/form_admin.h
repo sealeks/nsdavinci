@@ -21,19 +21,19 @@
 #include "viewmodels.h"
 #include "uiuitil.h"
 
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QIcon>
-#include <QtGui/QFormLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QMenu>
+#include <QtWidgets/QTreeWidgetItem>
+#include <QIcon>
+#include <QtWidgets/QFormLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QMenu>
 #include <QList>
 #include <QTime>
 #include <QSize>
 #include <QPixmap>
 #include <QPainter>
-#include <QListWidgetItem>
-#include <QCustomEvent>
-#include <QAbstractSlider>
+#include <QtWidgets/QListWidgetItem>
+#include <QtWidgets/QAbstractSlider>
+#include <QMessageBox>
 
 #include "interfaceproccessor.h"
 #include "interfacetransaction.h"
@@ -377,7 +377,7 @@ namespace dvnci {
                 mw->mainwidget()->viewframe->setVisible(true);
                 mw->mainwidget()->treeframe1->setVisible(false);
                 mw->mainwidget()->treeframe2->setVisible(false);
-                mw->mainwidget()->tableview->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+                mw->mainwidget()->tableview->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
                 mod->interfs(mw->curitem()->intf());
                 if (mod->mbDelegate)
                     mw->mainwidget()->tableview->setItemDelegate(mod->mbDelegate);

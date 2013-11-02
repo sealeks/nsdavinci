@@ -16,13 +16,15 @@
 
 #include <admin/adminintf.h>
 
-#include <QItemDelegate>
+#include <QtWidgets/QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
 #include <QSize>
-#include <QSpinBox>
-#include <QCheckBox>
-#include <QRadioButton>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QToolButton>
+#include <QtWidgets/QComboBox>
 #include <QtGui>
 #include <QString>
 

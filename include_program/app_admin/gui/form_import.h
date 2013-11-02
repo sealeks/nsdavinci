@@ -15,9 +15,9 @@
 #include <admin/importutil.h>
 
 
-#include <QFileDialog>
-#include <QtGui/QItemDelegate>
-#include <QtGui/QTableWidgetItem>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QItemDelegate>
+#include <QtWidgets/QTableWidgetItem>
 
 #include "form_esdfilter.h"
 #include "ui_form_import.h"

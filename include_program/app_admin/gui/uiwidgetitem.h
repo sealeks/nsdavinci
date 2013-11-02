@@ -16,13 +16,13 @@
 
 #include "uiuitil.h"
 
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QIcon>
+#include <QtWidgets/QTreeWidgetItem>
+#include <QIcon>
 #include <QColor>
 #include <QSize>
 #include <QPixmap>
 #include <QPainter>
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QTreeWidget>
 
 
 /*Класс итемса для представления дерева проекта,
