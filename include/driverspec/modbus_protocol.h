@@ -285,7 +285,7 @@ namespace dvnci {
                 basetype::ios->char_silence(3.5);
                 if (!basetype::error(basetype::ios->write(req))) {
                     basetype::ios->char_silence(3.5);
-                    if (!error(basetype::ios->read(resp, echo ? req.size() : 3))) {
+                    if (!basetype::error(basetype::ios->read(resp, echo ? req.size() : 3))) {
                         if (echo) return basetype::error(req == resp ? 0 : ERROR_IO_PARSERESP);
                         size_t cntbt = ((basetype::byte_from_str(resp, 1) & 0x80) == 0) ?
                                 static_cast<size_t> (basetype::byte_from_str(resp, 2) + 2) : 2;
@@ -321,7 +321,7 @@ namespace dvnci {
                 resp = "";
                 if (!basetype::error(basetype::ios->write(req))) {
                     if (echo) {
-                        if (!error(basetype::ios->read(resp, req.size()))) {
+                        if (!basetype::error(basetype::ios->read(resp, req.size()))) {
                             return basetype::error((req == resp) ? 0 : ERROR_IO_PARSERESP);}
                         return basetype::error();}
                     if (!basetype::error(basetype::ios->read_until(resp, boost::regex(ASCII_MDB_RESPONSE_REGEX_TMPL)))) {
@@ -366,7 +366,7 @@ namespace dvnci {
                     num16 cntenv = tcp_reaqust_env_bytecount(resp);
                     if (!basetype::error()) {
                         if (echo) return basetype::error(req == resp ? 0 : ERROR_IO_PARSERESP);
-                        if (!error(basetype::ios->read(resp, cntenv))) {
+                        if (!basetype::error(basetype::ios->read(resp, cntenv))) {
                             std::string stopresp = resp;
                             if (resp.size() < 6) return basetype::error(ERROR_IO_PARSERESP);
                             resp = resp.substr(6);
