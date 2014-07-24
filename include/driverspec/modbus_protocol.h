@@ -164,7 +164,7 @@ namespace dvnci {
                 num32 strtaddr = cmd->addr();
                 size_t bitnum = cmd->indx();
                 if ((bitnum > 15) && (bitnum != NULL_BIT_NUM)) return basetype::error(ERROR_IO_NO_GENERATE_REQ);
-                if (!error(generate_body_write(req, dvnum, write_fnc_by_type(tp, vl.size(), bitnum), strtaddr, vl, bitnum))) {
+                if (!basetype::error(generate_body_write(req, dvnum, write_fnc_by_type(tp, vl.size(), bitnum), strtaddr, vl, bitnum))) {
                     std::string resp = "";
                     bool echo = (bitnum != NULL_BIT_NUM) || (tp == COIL_MODBUS_TYPE);
                     if (!request(req, resp, echo)) {
@@ -206,7 +206,7 @@ namespace dvnci {
                 return basetype::error();}
 
             ns_error parse_envelope(std::string& resp, mdbdevn dvnum, const std::string& fnc, size_t cnt = 0) {
-                if (!error(check_envelope(resp, dvnum, fnc.empty() ? 0 : fnc.at(0)))) {
+                if (!basetype::error(check_envelope(resp, dvnum, fnc.empty() ? 0 : fnc.at(0)))) {
                     if ((cnt == resp.size()) || (cnt == 0)) {
                         basetype::readdata = resp;
                         return basetype::error(0);}}
