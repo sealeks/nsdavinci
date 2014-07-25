@@ -698,7 +698,8 @@ namespace dvnci {
     const appidtype NS_GROUP_MODBUS   = 0x4020;
     const appidtype NS_GROUP_KOYO   = 0x4120;
     const appidtype NS_GROUP_LGKA   = 0x4150;
-    
+    const appidtype NS_GROUP_MMS      = 0x4200;   
+    const appidtype NS_GROUP_IEC60870      = 0x4300;
     
     //  role type
     
