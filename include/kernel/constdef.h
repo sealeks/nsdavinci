@@ -672,6 +672,12 @@ namespace dvnci {
 
     const appidtype NS_LGKA_SERVICE      = 0x4150;
     const std::string NS_LGKA_SERVICE_NAME = "service_dvncilgk";
+    
+    const appidtype NS_MMS_SERVICE      = 0x4200;
+    const std::string NS_MMS_SERVICE_NAME = "service_mms";    
+    
+    const appidtype NS_IEC60870_SERVICE      = 0x4300;
+    const std::string NS_IEC60870_SERVICE_NAME = "service_iec60870";        
 
     const appidtype NS_TEST_SERVICE      = 10000; //[0x1080-0x10FF]
     const std::string NS_TEST_SERVICE_NAME = "service_dvncitest";
