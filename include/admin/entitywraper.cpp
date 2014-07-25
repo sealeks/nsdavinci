@@ -125,7 +125,9 @@ namespace dvnci {
             addpropertylist(NS_GROUP_DDE);
             addpropertylist(NS_GROUP_MODBUS);
             addpropertylist(NS_GROUP_KOYO);
-            addpropertylist(NS_GROUP_LGKA);}
+            addpropertylist(NS_GROUP_LGKA);
+            addpropertylist(NS_GROUP_MMS);
+            addpropertylist(NS_GROUP_IEC60870);}
 
         typeservicestartpropertyeditor::typeservicestartpropertyeditor() : abstractpropertyeditor(TYPE_PE_LIST, "Sevicestarttype") {
             addpropertylist(SERVICE_RUNSTATE_NODEF);
