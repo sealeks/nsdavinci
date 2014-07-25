@@ -728,6 +728,15 @@ namespace dvnci {
             return stringbase_src(operator[](id)->topicpos());}
 
         void topic(size_type id, const std::string& val);
+        
+        
+        // topic property   
+
+        std::string mmsdomain(size_type id) const {
+            return topic(id);}
+
+        void mmsdomain(size_type id, const std::string& val){
+           topic(id, val);}      
 
 
         // appid property        
