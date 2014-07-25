@@ -65,6 +65,7 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.1140", "Версия протокола"));
             map_.insert(wstringtranslate_pair("properties.1142", "Метод опроса"));
             map_.insert(wstringtranslate_pair("properties.1144", "Поддержка HDA"));
+            map_.insert(wstringtranslate_pair("properties.1145", "Domain"));
             map_.insert(wstringtranslate_pair("properties.1154", "Скорость общения"));
             map_.insert(wstringtranslate_pair("properties.1156", "Databit"));
             map_.insert(wstringtranslate_pair("properties.1158", "Stopbit"));
@@ -230,6 +231,8 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("TypeGroup.8224", "DDE"));
             map_.insert(wstringtranslate_pair("TypeGroup.16416", "MODBUS"));
             map_.insert(wstringtranslate_pair("TypeGroup.16672", "KOYO"));
+            map_.insert(wstringtranslate_pair("TypeGroup.16896", "MMS"));
+            map_.insert(wstringtranslate_pair("TypeGroup.17152", "IEC60870"));
             map_.insert(wstringtranslate_pair("TypeGroup.16720", "Логика"));
             map_.insert(wstringtranslate_pair("RSBoundratetype.", ""));
             map_.insert(wstringtranslate_pair("RSBoundratetype.110", "110"));

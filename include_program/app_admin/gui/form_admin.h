@@ -33,7 +33,7 @@
 #include <QPainter>
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QAbstractSlider>
-#include <QMessageBox>
+#include <QtWidgets/QMessageBox>
 
 #include "interfaceproccessor.h"
 #include "interfacetransaction.h"
