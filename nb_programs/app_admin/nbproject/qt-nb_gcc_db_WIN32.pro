@@ -21,4 +21,4 @@ QMAKE_CC = gcc
 QMAKE_CXX = i686-w64-mingw32-gcc-4.8.0
 DEFINES += DVNCI_DEDUG _WIN32_WINNT=0x0501 fno-strict-aliasing 
 INCLUDEPATH += ../../include ${BOOST_DIR} 
-LIBS += -lnsadmin -lnskernel -lmeta -lboost_chrono -lboost_coroutine -lboost_date_time -lboost_exception -lboost_filesystem -lboost_iostreams -lboost_log_setup -lboost_prg_exec_monitor -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_timer -lboost_unit_test_framework -loleaut32 -lws2_32 -lwsock32 -lole32  
+LIBS += -lstdc++ -lnsadmin -lnskernel -lmeta -lboost_chrono -lboost_coroutine -lboost_date_time -lboost_exception -lboost_filesystem -lboost_iostreams -lboost_log_setup -lboost_prg_exec_monitor -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_timer -lboost_unit_test_framework -loleaut32 -lws2_32 -lwsock32 -lole32  

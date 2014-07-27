@@ -85,6 +85,7 @@
         </ccTool>
         <linkerTool>
           <linkerLibItems>
+            <linkerLibLibItem>stdc++</linkerLibLibItem>
             <linkerLibLibItem>nsadmin</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>meta</linkerLibLibItem>
