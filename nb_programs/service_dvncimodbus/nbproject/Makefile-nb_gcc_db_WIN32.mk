@@ -15,14 +15,14 @@ NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
-CCC=g++
-CXX=g++
+CCC=i686-w64-mingw32-gcc-4.8.0
+CXX=i686-w64-mingw32-gcc-4.8.0
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=MinGW-Windows
+CND_DLIB_EXT=dll
 CND_CONF=nb_gcc_db_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -54,30 +54,30 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lwsock32 -lws2_32 -lole32 -loleaut32 -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lwsock32 -lws2_32 -lole32 -loleaut32 -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lstdc++
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncimodbus_db
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncimodbus_db.exe
 
-../../bin/${CND_CONF}/service_dvncimodbus_db: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvncimodbus_db.exe: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncimodbus_db ${OBJECTFILES} ${LDLIBSOPTIONS} -mthreads
 
 ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o: ../../include/driverspec/modbus_protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1232915786
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
 
 ${OBJECTDIR}/_ext/715232524/main.o: ../../include_program/service_dvncimodbus/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/main.o ../../include_program/service_dvncimodbus/main.cpp
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/main.o ../../include_program/service_dvncimodbus/main.cpp
 
 ${OBJECTDIR}/_ext/715232524/modbus_detail.o: ../../include_program/service_dvncimodbus/modbus_detail.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/modbus_detail.o ../../include_program/service_dvncimodbus/modbus_detail.cpp
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/modbus_detail.o ../../include_program/service_dvncimodbus/modbus_detail.cpp
 
 # Subprojects
 .build-subprojects:
@@ -85,7 +85,7 @@ ${OBJECTDIR}/_ext/715232524/modbus_detail.o: ../../include_program/service_dvnci
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvncimodbus_db
+	${RM} ../../bin/${CND_CONF}/service_dvncimodbus_db.exe
 
 # Subprojects
 .clean-subprojects:

@@ -21,8 +21,8 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=GNU-Windows
+CND_DLIB_EXT=dll
 CND_CONF=nb_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -58,9 +58,9 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncimodbus
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncimodbus.exe
 
-../../bin/${CND_CONF}/service_dvncimodbus: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvncimodbus.exe: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncimodbus ${OBJECTFILES} ${LDLIBSOPTIONS}
 
@@ -85,7 +85,7 @@ ${OBJECTDIR}/_ext/715232524/modbus_detail.o: ../../include_program/service_dvnci
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvncimodbus
+	${RM} ../../bin/${CND_CONF}/service_dvncimodbus.exe
 
 # Subprojects
 .clean-subprojects:
