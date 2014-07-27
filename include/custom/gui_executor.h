@@ -558,14 +558,14 @@ namespace dvnci {
                   updatemap.erase(val);}
             
             bool unregist(root_listener_ptr val) {
-                if (expressions_map.right.lower_bound(boost::shared_static_cast<listener_type>(val))!=
-                        expressions_map.right.upper_bound(boost::shared_static_cast<listener_type>(val))) {
-                    return internal_unregist_expr_listener(boost::shared_static_cast<listener_type>(val));}
-                if (entety_set.find(boost::shared_static_cast<entety_listener>(val))!=entety_set.end()) {
-                    entety_set.erase(boost::shared_static_cast<entety_listener>(val));
+                if (expressions_map.right.lower_bound(boost::static_pointer_cast<listener_type>(val))!=
+                        expressions_map.right.upper_bound(boost::static_pointer_cast<listener_type>(val))) {
+                    return internal_unregist_expr_listener(boost::static_pointer_cast<listener_type>(val));}
+                if (entety_set.find(boost::static_pointer_cast<entety_listener>(val))!=entety_set.end()) {
+                    entety_set.erase(boost::static_pointer_cast<entety_listener>(val));
                     return true;} 
-                if (registrate_set.find(boost::shared_static_cast<registrate_listener>(val))!=registrate_set.end()) {
-                    registrate_set.erase(boost::shared_static_cast<registrate_listener>(val));
+                if (registrate_set.find(boost::static_pointer_cast<registrate_listener>(val))!=registrate_set.end()) {
+                    registrate_set.erase(boost::static_pointer_cast<registrate_listener>(val));
                     return true;}                               
                 return false;}
             
