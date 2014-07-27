@@ -52,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lnsadmin -lnskernel -lmeta -lboost_chrono -lboost_coroutine -lboost_date_time -lboost_exception -lboost_filesystem -lboost_iostreams -lboost_log_setup -lboost_prg_exec_monitor -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_timer -lboost_unit_test_framework -loleaut32 -lws2_32 -lwsock32 -lole32
+LDLIBSOPTIONS=-lstdc++ -lnsadmin -lnskernel -lmeta -lboost_chrono -lboost_coroutine -lboost_date_time -lboost_exception -lboost_filesystem -lboost_iostreams -lboost_log_setup -lboost_prg_exec_monitor -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_timer -lboost_unit_test_framework -loleaut32 -lws2_32 -lwsock32 -lole32
 
 nbproject/qt-${CND_CONF}.mk: nbproject/qt-${CND_CONF}.pro FORCE
 	${QMAKE} VPATH=. -spec win32-g++ -o qttmp-${CND_CONF}.mk nbproject/qt-${CND_CONF}.pro
