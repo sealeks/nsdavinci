@@ -15,14 +15,14 @@ NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
-CCC=g++
-CXX=g++
+CCC=i686-w64-mingw32-gcc-4.8.0
+CXX=i686-w64-mingw32-gcc-4.8.0
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=MinGW-Windows
+CND_DLIB_EXT=dll
 CND_CONF=nb_gcc_db_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -59,31 +59,31 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncikoyo_db
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncikoyo_db.exe
 
-../../bin/${CND_CONF}/service_dvncikoyo_db: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvncikoyo_db.exe: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncikoyo_db ${OBJECTFILES} ${LDLIBSOPTIONS} -mthreads
 
 ${OBJECTDIR}/_ext/1232915786/directnet_protocol.o: ../../include/driverspec/directnet_protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1232915786
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/directnet_protocol.o ../../include/driverspec/directnet_protocol.cpp
+	$(COMPILE.cc) -O2 -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/directnet_protocol.o ../../include/driverspec/directnet_protocol.cpp
 
 ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o: ../../include/driverspec/modbus_protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1232915786
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
+	$(COMPILE.cc) -O2 -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
 
 ${OBJECTDIR}/_ext/1261136976/koyo_detail.o: ../../include_program/service_dvncikoyo/koyo_detail.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1261136976
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261136976/koyo_detail.o ../../include_program/service_dvncikoyo/koyo_detail.cpp
+	$(COMPILE.cc) -O2 -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261136976/koyo_detail.o ../../include_program/service_dvncikoyo/koyo_detail.cpp
 
 ${OBJECTDIR}/_ext/1261136976/main.o: ../../include_program/service_dvncikoyo/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1261136976
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -DDVNCI_DEDUG -DBOOST_ASIO_ENABLE_CANCELIO -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261136976/main.o ../../include_program/service_dvncikoyo/main.cpp
+	$(COMPILE.cc) -O2 -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1261136976/main.o ../../include_program/service_dvncikoyo/main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -91,7 +91,7 @@ ${OBJECTDIR}/_ext/1261136976/main.o: ../../include_program/service_dvncikoyo/mai
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvncikoyo_db
+	${RM} ../../bin/${CND_CONF}/service_dvncikoyo_db.exe
 
 # Subprojects
 .clean-subprojects:
