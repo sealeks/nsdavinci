@@ -21,8 +21,8 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=GNU-Windows
+CND_DLIB_EXT=dll
 CND_CONF=nb_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -56,9 +56,9 @@ LDLIBSOPTIONS=-Wl,-rpath,../../lib/boost/${CND_CONF} -Wl,-rpath,../../lib/${CND_
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/app_writetrenddef
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/app_writetrenddef.exe
 
-../../bin/${CND_CONF}/app_writetrenddef: ${OBJECTFILES}
+../../bin/${CND_CONF}/app_writetrenddef.exe: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/app_writetrenddef ${OBJECTFILES} ${LDLIBSOPTIONS}
 
@@ -73,7 +73,7 @@ ${OBJECTDIR}/_ext/863468359/writebase.o: ../../include_program/app_writetrenddef
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/app_writetrenddef
+	${RM} ../../bin/${CND_CONF}/app_writetrenddef.exe
 
 # Subprojects
 .clean-subprojects:
