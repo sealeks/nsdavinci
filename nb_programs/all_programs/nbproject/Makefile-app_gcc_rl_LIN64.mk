@@ -21,8 +21,8 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=GNU-Windows
+CND_DLIB_EXT=dll
 CND_CONF=app_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -56,9 +56,9 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/all_programs
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/all_programs.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/all_programs: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/all_programs.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/all_programs ${OBJECTFILES} ${LDLIBSOPTIONS}
 
@@ -83,7 +83,7 @@ ${OBJECTDIR}/main.o: main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/all_programs
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/all_programs.exe
 
 # Subprojects
 .clean-subprojects:
