@@ -15,14 +15,14 @@ NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
-CCC=g++
-CXX=g++
+CCC=i686-w64-mingw32-gcc-4.8.0
+CXX=i686-w64-mingw32-gcc-4.8.0
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=MinGW-Windows
+CND_DLIB_EXT=dll
 CND_CONF=nb_gcc_db_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -70,22 +70,22 @@ LDLIBSOPTIONS=
 ${OBJECTDIR}/_ext/340415863/db_task_executor.o: ../../include/dbaccess/db_task_executor.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/340415863
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I../../include/soci -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/340415863/db_task_executor.o ../../include/dbaccess/db_task_executor.cpp
+	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -I../../include/soci -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/340415863/db_task_executor.o ../../include/dbaccess/db_task_executor.cpp
 
 ${OBJECTDIR}/_ext/340415863/dbconnectionfactory.o: ../../include/dbaccess/dbconnectionfactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/340415863
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I../../include/soci -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/340415863/dbconnectionfactory.o ../../include/dbaccess/dbconnectionfactory.cpp
+	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -I../../include/soci -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/340415863/dbconnectionfactory.o ../../include/dbaccess/dbconnectionfactory.cpp
 
 ${OBJECTDIR}/_ext/340415863/dbdriver.o: ../../include/dbaccess/dbdriver.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/340415863
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I../../include/soci -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/340415863/dbdriver.o ../../include/dbaccess/dbdriver.cpp
+	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -I../../include/soci -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/340415863/dbdriver.o ../../include/dbaccess/dbdriver.cpp
 
 ${OBJECTDIR}/_ext/340415863/dbpsgrdriver.o: ../../include/dbaccess/dbpsgrdriver.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/340415863
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I../../include/soci -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/340415863/dbpsgrdriver.o ../../include/dbaccess/dbpsgrdriver.cpp
+	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -I../../include/soci -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/340415863/dbpsgrdriver.o ../../include/dbaccess/dbpsgrdriver.cpp
 
 # Subprojects
 .build-subprojects:
