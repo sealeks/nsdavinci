@@ -143,7 +143,7 @@ namespace dvnci {
             command_ = commandintf_ptr(new localcommandintf(this));
             debug_ = debugintf_ptr(new localdebugintf(this)); 
             clientmeta_ = metaintf_ptr(new localmetaintf(this)); 
-            //serviceintf_ = serviceintf_ptr(new localserviceintf()); std::cout  << "Start local5"  << std::endl;
+            serviceintf_ = serviceintf_ptr(new localserviceintf()); std::cout  << "Start local5"  << std::endl;
             ;};
         
         localadminintf::localadminintf(tagsbase_ptr inf) : adminintf(), intf(inf),  
@@ -266,6 +266,10 @@ namespace dvnci {
 
                     case NT_ROOT_SERVICES:{
                         mappack.clear();
+                        if (!svm())
+                            std::cout << "SVM: !!!!!!!!!!!!!!!!"  << std::endl;
+                        else
+                            std::cout << "SVM: "  << std::endl;
                         if (svm()){ 
                              svm()->signature(mappack);
                              return 0;}
