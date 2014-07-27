@@ -21,8 +21,8 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=GNU-Windows
+CND_DLIB_EXT=dll
 CND_CONF=nb_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -59,9 +59,9 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncilgk
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/service_dvncilgk.exe
 
-../../bin/${CND_CONF}/service_dvncilgk: ${OBJECTFILES}
+../../bin/${CND_CONF}/service_dvncilgk.exe: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/service_dvncilgk ${OBJECTFILES} ${LDLIBSOPTIONS}
 
@@ -91,7 +91,7 @@ ${OBJECTDIR}/_ext/513508186/main.o: ../../include_program/service_dvncilgk/main.
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/service_dvncilgk
+	${RM} ../../bin/${CND_CONF}/service_dvncilgk.exe
 
 # Subprojects
 .clean-subprojects:
