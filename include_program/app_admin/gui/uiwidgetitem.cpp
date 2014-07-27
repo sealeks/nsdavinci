@@ -97,6 +97,8 @@ namespace dvnci {
             iconmap.insert(icon_pair(nodeinfotype(NT_GROUP, NS_GROUP_MODBUS), QIcon(":icon/icon/ntOModbus.bmp")));
             iconmap.insert(icon_pair(nodeinfotype(NT_GROUP, NS_GROUP_KOYO), QIcon(":icon/icon/ntODKoy.bmp")));
             iconmap.insert(icon_pair(nodeinfotype(NT_GROUP, NS_GROUP_LGKA), QIcon(":icon/icon/ntOLogika.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_GROUP, NS_GROUP_MMS), QIcon(":icon/icon/ntMMS.bmp")));
+            iconmap.insert(icon_pair(nodeinfotype(NT_GROUP, NS_GROUP_IEC60870), QIcon(":icon/icon/ntIEC60870.bmp")));           
 
 
             iconmap.insert(icon_pair(nodeinfotype(NT_ATAG, 0), QIcon(":icon/icon/ntTT.bmp")));
