@@ -15,14 +15,14 @@ NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
-CCC=g++
-CXX=g++
+CCC=i686-w64-mingw32-gcc-4.8.0
+CXX=i686-w64-mingw32-gcc-4.8.0
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=MinGW-Windows
+CND_DLIB_EXT=dll
 CND_CONF=nb_gcc_db_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -56,9 +56,9 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -ldbaccess -
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/app_writetrenddef
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../../bin/${CND_CONF}/app_writetrenddef.exe
 
-../../bin/${CND_CONF}/app_writetrenddef: ${OBJECTFILES}
+../../bin/${CND_CONF}/app_writetrenddef.exe: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/app_writetrenddef ${OBJECTFILES} ${LDLIBSOPTIONS}
 
@@ -73,7 +73,7 @@ ${OBJECTDIR}/_ext/863468359/writebase.o: ../../include_program/app_writetrenddef
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ../../bin/${CND_CONF}/app_writetrenddef
+	${RM} ../../bin/${CND_CONF}/app_writetrenddef.exe
 
 # Subprojects
 .clean-subprojects:
