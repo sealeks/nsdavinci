@@ -109,7 +109,7 @@ namespace dvnci {
                 st_disconnected} ;
 
             dbdriver(const std::string& conf, bool ex_write_ = false, bool trdefld = false) : ex_write(ex_write_), tablesset_init(false), state_(st_disconnected),
-                   server_(""), user_(""), password_(""), schema_(""), database_(""), port_(""), prop_(""), host_(""), finit(false), trenfdefld(trdefld) {
+                   server_(""), user_(""), password_(""), schema_(""), database_(""), port_(""), prop_(""), host_(""), finit(false), trenfdefld(trdefld), error_(0) {
                 property(conf);};
 
             virtual ~dbdriver() {};
@@ -259,6 +259,13 @@ namespace dvnci {
             bool select_trend_statistic(num32 id, const datetime& starttime, const datetime& stoptime, num32 stat, double& val);
 
             bool drop_archive(int val);
+            
+            dvncierror error() const {
+                return error_;}
+       
+            void error(const dvncierror& val){
+                error_=val;}
+            
 
         protected:
 
@@ -268,6 +275,10 @@ namespace dvnci {
             soci::session    sql;
             dbtableset_set   tables_;
             indx_vect        res;
+            
+            
+            void clearerror(){
+                error_=dvncierror(0);}             
 
             virtual bool getmeta() = 0;
 
@@ -399,6 +410,7 @@ namespace dvnci {
             std::string      host_;
             bool             finit;
             bool             trenfdefld;
+            dvncierror       error_;
             str_trenddef_map trenddefmap;} ;}}
 
 #endif	/* _DBDRIVER_H */

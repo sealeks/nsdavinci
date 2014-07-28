@@ -50,6 +50,8 @@ namespace database {
 
             bool dbpsgrdriver::metaexists(const std::string& tn) {
                 try {
+                
+                    clearerror();
                     std::string const& req = "select tablename from pg_tables where tablename=\'" + tn + "\'";
                     soci::indicator ind;
                     std::string tn_;
@@ -69,12 +71,15 @@ namespace database {
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);
                     return false;}
                 return true;}
 
             bool dbpsgrdriver::createreptable(std::string tn) {
                 if (tableexist(tn)) return true;
                 try {
+                
+                    clearerror();
                     //set client_min_messages = warning;
                     std::string const& req = "create table " + tn + " (cod integer not null, tm bigint not null, val float null, constraint " + tn + "_pkey "
                             " primary key(cod, tm)); create index cod_" + tn + " on " + tn + " (cod)";
@@ -89,11 +94,14 @@ namespace database {
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);
                     return false;}}
 
             bool dbpsgrdriver::createtrtable(std::string tn) {
                 if (tableexist(tn)) return true;
                 try {
+                
+                    clearerror();
                     //set client_min_messages = warning;
                     std::string const& req = "create table " + tn + " (cod integer not null, tm bigint not null, val float null)  "
                             "; create index cod_" + tn + " on " + tn + " (cod)";
@@ -108,11 +116,14 @@ namespace database {
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);
                     return false;}}
 
             bool dbpsgrdriver::createjrnltable(std::string tn) {
                 if (tableexist(tn)) return true;
                 try {
+                
+                    clearerror();
                     std::string const& req = "create table " + tn + " (tm bigint, itag char(150), icomment char(350), iagroup char(150) ,"
                             "itype integer, ilevel integer, ival char(250), iuser char(150) , ihost char(150)); create index tm_" + tn + " on " + tn + " (tm)";
                     sql << req;
@@ -126,11 +137,14 @@ namespace database {
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);
                     return false;}}
 
            bool dbpsgrdriver::createdbgtable(std::string tn) {
                 if (tableexist(tn)) return true;
                 try {
+                
+                    clearerror();
                     std::string const& req = "create table " + tn + " (tm bigint, imessage char(350), app integer, ilevel integer); create index tm_" + tn + " on " + tn + " (tm)";
                     sql << req;
                     dvnci::lower_and_trim(tn);
@@ -148,6 +162,8 @@ namespace database {
             bool dbpsgrdriver::createtrenddef() {
                 if (tableexist("trenddef")) return true;
                 try {
+                
+                    clearerror();
                     std::string tn = TRENDDEF_TABLE;
                     std::string const& req = "create table " + tn + " (cod integer, iname char(150), icomment text, eu text, mineu float, maxeu float, "
                             "type integer, onmsg integer, offmsg integer , almsg integer, logged integer,  primary key(cod))";
@@ -162,11 +178,14 @@ namespace database {
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);
                     return false;}}
 
             bool dbpsgrdriver::insert_journal_impl(const datetime& tm, const std::string& tg, const std::string& comment, const std::string& agroup,  num32 type,
                     num32 alevel, const std::string& val , const std::string& user, const std::string& host) {
                 try {
+                
+                    clearerror();
                     std::string tn = dt_to_journaltabelname(tm);
                     if ((tn != lastalarm) && (!tableexist(tn))) {
                         if (createjrnltable(tn)) lastalarm = tn;}
@@ -183,7 +202,8 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
             bool dbpsgrdriver::insert_journal_by_one_impl(const journal_item_vect& vctval){
@@ -196,7 +216,9 @@ namespace database {
              bool dbpsgrdriver::insert_journal_impl(const journal_item_vect& vctval){
                  if (vctval.empty()) return true;
                  datetime tm = vctval[0].time;
-                 try {
+                try {
+                
+                    clearerror();
                     std::string tn = dt_to_journaltabelname(tm);
                     if ((tn != lastalarm) && (!tableexist(tn))) {
                         if (createjrnltable(tn)) lastalarm = tn;}
@@ -220,7 +242,7 @@ namespace database {
                          agroup = it->agroup;
                          type = static_cast<num32>(it->type);
                          val = it->value;
-                         alevel = 0;
+                         alevel = it->level;
                          user = it->user;
                          host = "";
                          stmnt.execute(true);}
@@ -233,11 +255,14 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
              bool dbpsgrdriver::insert_debug_impl(const datetime& tm, const std::string& message, num32 app, num32 lev) {
                 try {
+                
+                    clearerror();
                     std::string tn = dt_to_debugtabelname(tm);
                     if ((tn != lastalarm) && (!tableexist(tn))) {
                         if (createdbgtable(tn)) lastalarm = tn;}
@@ -254,7 +279,8 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
             bool dbpsgrdriver::insert_debug_by_one_imp(const debug_item_vect& vctval){
@@ -268,6 +294,8 @@ namespace database {
                  if (vctval.empty()) return true;
                  datetime tm = vctval[0].time;
                  try {
+                
+                    clearerror();
                     std::string tn = dt_to_debugtabelname(tm);
                     if ((tn != lastalarm) && (!tableexist(tn))) {
                         if (createdbgtable(tn)) lastalarm = tn;}
@@ -294,11 +322,14 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
             bool dbpsgrdriver::insert_trend_impl(num32 id, datetime tm, double data) {
                 try {
+                
+                    clearerror();
                     std::string tn = dt_to_trendtabelname(tm);
                     if ((tn != lasttrend) && (!tableexist(tn))) {
                         if (createtrtable(tn)) lasttrend = tn;}
@@ -317,11 +348,14 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
             bool dbpsgrdriver::insert_trend_impl(const dt_val_deque& vctval) {
                 try {
+                
+                    clearerror();
                     if (vctval.empty()) return true;
                     datetime tm = vctval[0].second.first;
                     std::string tn = dt_to_trendtabelname(tm);
@@ -347,11 +381,14 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
             bool dbpsgrdriver::insert_report_impl(num32 id, num32 type, double data, const dvnci::datetime& tm) {
                 try {
+                
+                    clearerror();
                     std::string tn = dt_to_reporttabelname(tm, type);
                     if ((tn != select_lastreporttime) && (!tableexist(tn))) {
                         if (createreptable(tn)) select_lastreporttime = tn;}
@@ -368,7 +405,8 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
             bool dbpsgrdriver::insert_report_by_one_imp(num32 id, num32 type, const dt_val_map& values){
@@ -381,6 +419,8 @@ namespace database {
             bool dbpsgrdriver::insert_report_impl(num32 id, num32 type, const dt_val_map& values){
                 if (values.empty()) return true;
                 try {
+                
+                    clearerror();
                     datetime tm = values.begin()->first;
                     std::string tn = dt_to_reporttabelname(tm, type);
                     if ((tn != select_lastreporttime) && (!tableexist(tn))) {
@@ -404,12 +444,13 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
             
             bool dbpsgrdriver::select_impl(const std::string& req_, sql_result& result) {
             try {
-
+                clearerror();
                 std::string const& req = req_;
 
                 soci::rowset<soci::row> rs = (sql.prepare << req);
@@ -445,12 +486,17 @@ namespace database {
             
             catch (soci::soci_error const & e) {
                 DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
-                if (e.code() == LOOSING_CONNECTEON) raisdisconnect();
+                if (e.code()==LOOSING_CONNECTEON){ 
+                    error(dvncierror(ERROR_DB_REFUSECONNECTION, e.what()));
+                    raisdisconnect();}
+                else
+                    error(dvncierror(ERROR_DB_SQLREQ, e.what()));
                 result.first.clear();
                 result.second.clear();
                 return false;}
             catch (...) {
                 DEBUG_STR_DVNCI(UNDEFDBERROR);
+                error(ERROR_DB_NODEF);
                 result.first.clear();
                 result.second.clear();}
             return false;}    
@@ -458,6 +504,8 @@ namespace database {
             
             bool dbpsgrdriver::select_journal_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_journal_row& result){
             try {
+                
+                    clearerror();
                               
                     str_set tabnameset;
                     datetime tmptime = stop;
@@ -476,20 +524,24 @@ namespace database {
 
                     std::string req_ = "select * from ";
                     str_set::const_iterator it = tabnameset.begin();
-                    if (it != tabnameset.end()) {
-                        req_ = req_ + *it;
-                        ++it;
-                        while (it != tabnameset.end()) {
-                            req_ = req_ + " " + *it;
-                            ++it;}}
+                    if (tabnameset.size() <= 1) {
+                    if (it != tabnameset.end()) 
+                        req_ = req_ + *it + " where  tm>=" + to_str<num64 > (castnum64_from_datetime(start)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stop));
                     else {
-                        result.clear();
-                        return true;}   
+                            result.clear();
+                            return true;}}
+                    else {
+
+                    bool first = true;
+                    for (str_set::const_iterator it = tabnameset.begin(); it != tabnameset.end() ; ++it) {
+                        if (first) {
+                            req_ = req_ + "  " + *it;
+                            first = false;}
+                        else
+                            req_ = req_ + " union select * from " + *it;
+                        req_ = req_ + " where  tm>=" + to_str<num64 > (castnum64_from_datetime(start)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stop));}}
                     
-                    req_ =req_ + " where  tm>=" + to_str<num64 > (castnum64_from_datetime(start)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stop));
-                    if (trim_copy(filter)!="") 
-                        req_ =req_ + " and (" +  trim_copy(filter) + ")";
-                    
+                    req_=req_+ " order by tm asc ";
                     DEBUG_STR_DVNCI(req_);
 
                     std::string const& req = req_;
@@ -517,16 +569,23 @@ namespace database {
             
             catch (soci::soci_error const & e) {
                 DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
-                if (e.code() == LOOSING_CONNECTEON) raisdisconnect();
+                if (e.code()==LOOSING_CONNECTEON){ 
+                    error(dvncierror(ERROR_DB_REFUSECONNECTION, e.what()));
+                    raisdisconnect();}
+                else
+                    error(dvncierror(ERROR_DB_SQLREQ, e.what()));
                 result.clear();
                 return false;}
             catch (...) {
                 DEBUG_STR_DVNCI(UNDEFDBERROR);
+                error(ERROR_DB_NODEF);
                 result.clear();}
             return false;}
             
             bool dbpsgrdriver::select_debug_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_debug_row& result){
             try {
+                
+                    clearerror();
                 
                     str_set tabnameset;
                     datetime tmptime = stop;
@@ -545,17 +604,25 @@ namespace database {
 
                     std::string req_ = "select * from ";
                     str_set::const_iterator it = tabnameset.begin();
-                    if (it != tabnameset.end()) {
-                        req_ = req_ + *it;
-                        ++it;
-                        while (it != tabnameset.end()) {
-                            req_ = req_ + " " + *it;
-                            ++it;}}
+                    if (tabnameset.size() <= 1) {
+                    if (it != tabnameset.end()) 
+                        req_ = req_ + *it + " where  tm>=" + to_str<num64 > (castnum64_from_datetime(start)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stop));
                     else {
-                        result.clear();
-                        return true;} 
+                            result.clear();
+                            return true;}}
+                    else {
+
+                    bool first = true;
+                    for (str_set::const_iterator it = tabnameset.begin(); it != tabnameset.end() ; ++it) {
+                        if (first) {
+                            req_ = req_ + "  " + *it;
+                            first = false;}
+                        else
+                            req_ = req_ + " union select * from " + *it;
+                        req_ = req_ + " where  tm>=" + to_str<num64 > (castnum64_from_datetime(start)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stop));}}
                     
-                    req_ =req_ + " where  tm>=" + to_str<num64 > (castnum64_from_datetime(start)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stop));
+                    //req_ =req_ + " where  tm>=" + to_str<num64 > (castnum64_from_datetime(start)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stop)) + " order by tm asc";
+                    req_=req_+ " order by tm asc ";                    
                     DEBUG_STR_DVNCI(req_);
                     
                     std::string const& req = req_;
@@ -579,16 +646,23 @@ namespace database {
             
             catch (soci::soci_error const & e) {
                 DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
-                if (e.code() == LOOSING_CONNECTEON) raisdisconnect();
+                if (e.code()==LOOSING_CONNECTEON){ 
+                    error(dvncierror(ERROR_DB_REFUSECONNECTION, e.what()));
+                    raisdisconnect();}
+                else
+                    error(dvncierror(ERROR_DB_SQLREQ, e.what()));
                 result.clear();
                 return false;}
             catch (...) {
                 DEBUG_STR_DVNCI(UNDEFDBERROR);
+                error(ERROR_DB_NODEF);
                 result.clear();}
             return false;}          
 
             bool dbpsgrdriver::select_lastreporttime_impl(num32 id, num32 type, dvnci::datetime& tm) {
-                try {
+            try {
+                
+                    clearerror();
                     soci::indicator ind;
                     num64           tmptm;
                     std::string tn = dt_to_reporttabelname(tm, type);
@@ -604,14 +678,21 @@ namespace database {
                     return false;}
                 catch (soci::soci_error const & e) {
                     DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
-                    if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
+                    if (e.code()==LOOSING_CONNECTEON){ 
+                        error(dvncierror(ERROR_DB_REFUSECONNECTION, e.what()));
+                        raisdisconnect();}
+                    else
+                        error(dvncierror(ERROR_DB_SQLREQ, e.what()));
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
             bool dbpsgrdriver::select_trend_statistic_impl(num32 id, const datetime& starttime, const datetime& stoptime, num32 stat, double& val) {
-                try {
+            try {
+                
+                    clearerror();
                     str_set tabnameset;
                     datetime tmptime = stoptime;
                     while (tmptime > starttime) {
@@ -663,16 +744,22 @@ namespace database {
                     return true;}
                 catch (soci::soci_error const & e) {
                     DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
-                    if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
+                    if (e.code()==LOOSING_CONNECTEON){ 
+                        error(dvncierror(ERROR_DB_REFUSECONNECTION, e.what()));
+                        raisdisconnect();}
+                    else
+                        error(dvncierror(ERROR_DB_SQLREQ, e.what()));
                     val = NULL_DOUBLE;
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
-                    val = NULL_DOUBLE;}
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
             bool dbpsgrdriver::select_trend_impl(num32 id, const datetime& starttime, const datetime& stoptime, dvnci::dt_val_map& datamap) {
-                try {
+            try {
+                
+                    clearerror();
                     str_set tabnameset;
                     datetime tmptime = stoptime;
                     while (tmptime > starttime) {
@@ -689,27 +776,23 @@ namespace database {
                     
                     std::string req_ = "select tm, val from ";
 
-                if (tabnameset.size() < 3) {
+                if (tabnameset.size() <= 1 ) {
 
                     str_set::const_iterator it = tabnameset.begin();
+                    
                     if (it != tabnameset.end()) {
-                        req_ = req_ + *it;
-                        ++it;
-                        while (it != tabnameset.end()) {
-                            req_ = req_ + " " + *it;
-                            ++it;}}
+                        req_ = req_ + *it;}
                     else {
                         datamap.clear();
                         return true;}
-
                     req_ = req_ + " where cod=" + to_str<num32 > (id) + " and tm>" + to_str<num64 > (castnum64_from_datetime(starttime)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stoptime));}
                 else {
                     bool first = true;
 
                     for (str_set::const_iterator it = tabnameset.begin(); it != tabnameset.end() ; ++it) {
-						if (first){
-							req_ = req_ + "  " + *it;
-							first = false;}
+                        if (first) {
+                            req_ = req_ + "  " + *it;
+                            first = false;}
                         else
                             req_ = req_ + " union select tm, val from " + *it;
                         req_ = req_ + " where cod=" + to_str<num32 > (id) + " and tm>" + to_str<num64 > (castnum64_from_datetime(starttime)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stoptime));}}
@@ -718,7 +801,7 @@ namespace database {
 
                     DEBUG_VAL_DVNCI(req)
 
-                    const int MAX_FETCH = 100;
+                    const int MAX_FETCH = 10000;
 
                     std::vector<num64> timevect(MAX_FETCH);
                     std::vector<double> valvect(MAX_FETCH);
@@ -746,16 +829,22 @@ namespace database {
                     return true;}
                 catch (soci::soci_error const & e) {
                     DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
-                    if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
+                    if (e.code()==LOOSING_CONNECTEON){ 
+                        error(dvncierror(ERROR_DB_REFUSECONNECTION, e.what()));
+                        raisdisconnect();}
+                    else
+                        error(dvncierror(ERROR_DB_SQLREQ, e.what()));
                     datamap.clear();
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
-                    datamap.clear();}
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
             bool dbpsgrdriver::select_report_statistic_impl(num32 id, num32 type, const datetime& starttime, const datetime& stoptime, num32 stat, double& val) {
-                try {
+            try {
+                
+                    clearerror();
                     str_set tabnameset;
                     datetime tmptime = stoptime;
                     while (tmptime > starttime) {
@@ -806,16 +895,23 @@ namespace database {
                     return true;}
                 catch (soci::soci_error const & e) {
                     DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
-                    if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
+                    if (e.code()==LOOSING_CONNECTEON){ 
+                        error(dvncierror(ERROR_DB_REFUSECONNECTION, e.what()));
+                        raisdisconnect();}
+                    else
+                        error(dvncierror(ERROR_DB_SQLREQ, e.what()));
                     val = NULL_DOUBLE;
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);
                     val = NULL_DOUBLE;}
                     return false;}
 
             bool dbpsgrdriver::select_report_impl(num32 id, num32 type, const datetime& starttime, const datetime& stoptime, dt_val_map& datamap, size_t cnt) {
-                try {
+            try {
+                
+                    clearerror();
                     str_set tabnameset;
                     datetime tmptime = stoptime;
 
@@ -833,24 +929,36 @@ namespace database {
                         return true;}
 
                     std::string req_ = "select tm, val from ";
+                    
+                    
+
+                if (tabnameset.size() <= 1 ) {
+
                     str_set::const_iterator it = tabnameset.begin();
+
                     if (it != tabnameset.end()) {
-                        req_ = req_ + *it;
-                        ++it;
-                        while (it != tabnameset.end()) {
-                            req_ = req_ + " " + *it;
-                            ++it;}}
+                        req_ = req_ + *it;}
                     else {
                         datamap.clear();
                         return true;}
+                    req_ = req_ + " where cod=" + dvnci::to_str<num32 > (id) + " and tm>" + to_str<num64 > (castnum64_from_datetime(starttime)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stoptime));}
+                else {
+                    bool first = true;
 
-                    req_ = req_ + " where cod=" + dvnci::to_str<num32 > (id) + " and tm>" + to_str<num64 > (castnum64_from_datetime(starttime)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stoptime));
-                    if (cnt) req_ = req_ + " order by tm desc limit " + to_str(cnt);
+                    for (str_set::const_iterator it = tabnameset.begin(); it != tabnameset.end() ; ++it) {
+                        if (first) {
+                            req_ = req_ + "  " + *it;
+                            first = false;}
+                        else
+                            req_ = req_ + " union select tm, val from " + *it;
+                        req_ = req_ +  " where cod=" + dvnci::to_str<num32 > (id) + " and tm>" + to_str<num64 > (castnum64_from_datetime(starttime)) + " and tm<=" + to_str<num64 > (castnum64_from_datetime(stoptime)) + " ";}}                    
+                    
+                    if (cnt) req_ = req_ + " order by tm desc limit " + to_str(cnt) + " ";                   
                     std::string const& req = req_;
 
                     DEBUG_VAL_DVNCI(req)
 
-                     const int MAX_FETCH = 100;
+                     const int MAX_FETCH = 10000;
 
                     std::vector<num64> timevect(MAX_FETCH);
                     std::vector<double> valvect(MAX_FETCH);
@@ -877,16 +985,23 @@ namespace database {
                     return true;}
                 catch (soci::soci_error const & e) {
                     DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());
-                    if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
+                    if (e.code()==LOOSING_CONNECTEON){ 
+                        error(dvncierror(ERROR_DB_REFUSECONNECTION, e.what()));
+                        raisdisconnect();}
+                    else
+                        error(dvncierror(ERROR_DB_SQLREQ, e.what()));
                     datamap.clear();
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);
                     datamap.clear();}
                     return false;}
 
             bool dbpsgrdriver::select_reports_impl(tagtype type, const datetime& tm, indx_double_map& vlmap){
-                try {
+            try {
+                
+                    clearerror();
 
                     if (vlmap.empty()) return true;
                     for (indx_double_map::iterator it = vlmap.begin(); it!=vlmap.end(); it++){
@@ -929,7 +1044,8 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();           
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
            /* bool dbpsgrdriver::select_exprassion_impl(num32 id, num32 type, const std::string& krn_st, const std::string& case_st, const str_indx_map& stringidset, const dvnci::datetime& tm, double& val) {
@@ -998,7 +1114,9 @@ namespace database {
                     return false;}*/
 
           bool dbpsgrdriver::insert_trendef_impl(const str_trenddef_map& vl) {
-              try {
+                try {
+                
+                    clearerror();
                     if (!tableexist(TRENDDEF_TABLE))
                         createtrenddef();
                     num32 cod = 0;
@@ -1036,13 +1154,16 @@ namespace database {
                     return false;}
                 catch (...) {
                     DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);
                     return false;}}
 
 
             bool dbpsgrdriver::connect() {
                 if (isconnected()) disconnect();
-                try {
-                    std::cout << connection_string() << std::endl;
+            try {
+                
+                    clearerror();
+                    DEBUG_STR_DVNCI(connection_string())
 #ifdef _MSC_VER
                     sql.open(postgresql, connection_string());
 #else
@@ -1052,8 +1173,10 @@ namespace database {
                     init();
                     return true;}
                 catch (soci::soci_error const & e) {
+                    error(dvncierror(ERROR_DB_NOCONNECTION, e.what()));
                     DEBUG_STR_VAL_DVNCI(ERRORRR, e.what());}
                 catch (...) {
+                    error(ERROR_DB_NODEF);
                     state_ = st_disconnected;
                     return false;}
                 return true;}
@@ -1061,6 +1184,8 @@ namespace database {
             bool dbpsgrdriver::disconnect() {
                 if (!isconnected()) return true;
                 try {
+                
+                    clearerror();
                     sql.close();
                     state_ = st_disconnected;
                     return true;}
@@ -1087,7 +1212,8 @@ namespace database {
                     if (e.code()==LOOSING_CONNECTEON) raisdisconnect();
                     return false;}
                 catch (...) {
-                    DEBUG_STR_DVNCI(UNDEFDBERROR);}
+                    DEBUG_STR_DVNCI(UNDEFDBERROR);
+                    error(ERROR_DB_NODEF);}
                     return false;}
 
 }}
