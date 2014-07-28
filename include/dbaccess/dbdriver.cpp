@@ -209,6 +209,13 @@ namespace database {
                         else {
                             server_=lstr;
                             port_=rstr;}}
+                    if (read_property_by_name(*it, "host=", tmp)) {
+                        std::string lstr, rstr;
+                        split_2str(tmp, ":", lstr, rstr);
+                        if (rstr == "") server_=tmp;
+                        else {
+                            server_=lstr;
+                            port_=rstr;}}                    
                     if (read_property_by_name(*it, "database=", tmp)) database_=tmp;
                     if (read_property_by_name(*it, "user=", tmp)) user_=tmp;
                     if (read_property_by_name(*it, "password=", tmp)) password_=tmp;}

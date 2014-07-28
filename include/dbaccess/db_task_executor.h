@@ -26,14 +26,14 @@ namespace dvnci {
             ~root_db_task() {};
             virtual bool execute() = 0;
 
-            dvnci::ns_error error() const {
+            dvnci::dvncierror error() const {
                 return error_;}
 
-            void error(dvnci::ns_error val) {
+            void error(const dvnci::dvncierror& val) {
                 error_ = val;}
 
         protected:
-            dvnci::ns_error error_;} ;
+            dvnci::dvncierror error_;} ;
 
         typedef boost::shared_ptr<root_db_task>          root_db_task_ptr;
 
@@ -45,7 +45,7 @@ namespace dvnci {
 
             template_db_task() : root_db_task() {}
 
-            virtual void event(const valuetype& val, dvnci::ns_error error) = 0;
+            virtual void event(const valuetype& val, const dvnci::dvncierror& error) = 0;
 
             virtual bool execute() {
                 event(value_, error_);
@@ -231,9 +231,9 @@ namespace dvnci {
         public:
 
             static const dvnci::ns_error SUCCESS = 0;
-            static const dvnci::ns_error NOCONNECT = 100;
-            static const dvnci::ns_error NOTRENDEF = 200;
-            static const dvnci::ns_error NOINDEX = 300;
+            static const dvnci::ns_error NOCONNECT = ERROR_DB_NOCONNECTION;
+            static const dvnci::ns_error NOTRENDEF = ERROR_DB_NOTRENDDEF;
+            static const dvnci::ns_error NOINDEX = ERROR_DB_NOINDEX;
 
             db_task_executor(connect_db_task_ptr conntask) : dvnci::executable(),
             conntask_(conntask), createtime_(now()), connecting_(true)  {}
