@@ -37,6 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/692605831/main.o \
 	${OBJECTDIR}/_ext/692605831/mmsintf.o \
+	${OBJECTDIR}/_ext/692605831/mmsioclient.o \
 	${OBJECTDIR}/_ext/692605831/mmsserver.o
 
 
@@ -54,7 +55,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lcustom -lnskernel -ldbaccess -lsoci -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lole32 -loleaut32 -luuid -lwsock32 -lws2_32 -lcustom -lstdc++
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -L../../../itu-t/lib/${CND_CONF} -lboost_itu_t -lmms -lboost_itu_t -lcustom -lnskernel -ldbaccess -lsoci -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lole32 -loleaut32 -luuid -lwsock32 -lws2_32 -lcustom -lstdc++
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -67,17 +68,22 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lcustom -ln
 ${OBJECTDIR}/_ext/692605831/main.o: ../../include_program/service_mms/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/692605831
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/main.o ../../include_program/service_mms/main.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -I../../../itu-t/include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/main.o ../../include_program/service_mms/main.cpp
 
 ${OBJECTDIR}/_ext/692605831/mmsintf.o: ../../include_program/service_mms/mmsintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/692605831
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/mmsintf.o ../../include_program/service_mms/mmsintf.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -I../../../itu-t/include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/mmsintf.o ../../include_program/service_mms/mmsintf.cpp
+
+${OBJECTDIR}/_ext/692605831/mmsioclient.o: ../../include_program/service_mms/mmsioclient.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/692605831
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -I../../../itu-t/include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/mmsioclient.o ../../include_program/service_mms/mmsioclient.cpp
 
 ${OBJECTDIR}/_ext/692605831/mmsserver.o: ../../include_program/service_mms/mmsserver.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/692605831
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/mmsserver.o ../../include_program/service_mms/mmsserver.cpp
+	$(COMPILE.cc) -O2 -D_WIN32_WINNT=0x0501 -I../../include -I../../../itu-t/include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/mmsserver.o ../../include_program/service_mms/mmsserver.cpp
 
 # Subprojects
 .build-subprojects:
