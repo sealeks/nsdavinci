@@ -9,7 +9,7 @@
 #define	_DVNCI_MMSSERVER_H
 
 
-#include <custom/netfactory.h>
+/*#include <custom/netfactory.h>
 #include <custom/netsession.h>
 
 #include <kernel/constdef.h>
@@ -106,7 +106,7 @@ private:
     dvnci::tagsbase_ptr     intf;};
     
     
-}}}
+}}}*/
 
 
 
