@@ -9,6 +9,8 @@
     <itemPath>../../include_program/service_mms/main.cpp</itemPath>
     <itemPath>../../include_program/service_mms/mmsintf.cpp</itemPath>
     <itemPath>../../include_program/service_mms/mmsintf.h</itemPath>
+    <itemPath>../../include_program/service_mms/mmsioclient.cpp</itemPath>
+    <itemPath>../../include_program/service_mms/mmsioclient.h</itemPath>
     <itemPath>../../include_program/service_mms/mmsserver.cpp</itemPath>
     <itemPath>../../include_program/service_mms/mmsserver.h</itemPath>
   </logicalFolder>
@@ -32,6 +34,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>../../../itu-t/include</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -43,8 +46,12 @@
           <linkerAddLib>
             <pElem>../../lib/boost/${CND_CONF}</pElem>
             <pElem>../../lib/${CND_CONF}</pElem>
+            <pElem>../../../itu-t/lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
+            <linkerLibLibItem>boost_itu_t</linkerLibLibItem>
+            <linkerLibLibItem>mms</linkerLibLibItem>
+            <linkerLibLibItem>boost_itu_t</linkerLibLibItem>
             <linkerLibLibItem>custom</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>dbaccess</linkerLibLibItem>
@@ -93,6 +100,16 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_mms/mmsintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/mmsioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/mmsioclient.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -126,11 +143,12 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>../../../itu-t/include</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
             <Elem>DVNCI_DEDUG</Elem>
-            <Elem>_WIN32_WINNT=0x0501</Elem>
+            <Elem>_WIN32_WINNT=0x0601</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -138,8 +156,12 @@
           <linkerAddLib>
             <pElem>../../lib/boost/${CND_CONF}</pElem>
             <pElem>../../lib/${CND_CONF}</pElem>
+            <pElem>../../../itu-t/lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
+            <linkerLibLibItem>boost_itu_t</linkerLibLibItem>
+            <linkerLibLibItem>mms</linkerLibLibItem>
+            <linkerLibLibItem>boost_itu_t</linkerLibLibItem>
             <linkerLibLibItem>custom</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>dbaccess</linkerLibLibItem>
@@ -187,6 +209,16 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_mms/mmsintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/mmsioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/mmsioclient.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -281,6 +313,16 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../include_program/service_mms/mmsioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/mmsioclient.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../include_program/service_mms/mmsserver.cpp"
             ex="false"
             tool="1"
@@ -362,6 +404,16 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_mms/mmsintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/mmsioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/mmsioclient.h"
             ex="false"
             tool="3"
             flavor2="0">
