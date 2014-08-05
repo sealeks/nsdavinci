@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/692605831/main.o \
+	${OBJECTDIR}/_ext/692605831/mmsintf.o \
 	${OBJECTDIR}/_ext/692605831/mmsserver.o
 
 
@@ -67,6 +68,11 @@ ${OBJECTDIR}/_ext/692605831/main.o: ../../include_program/service_mms/main.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/692605831
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/main.o ../../include_program/service_mms/main.cpp
+
+${OBJECTDIR}/_ext/692605831/mmsintf.o: ../../include_program/service_mms/mmsintf.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/692605831
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/mmsintf.o ../../include_program/service_mms/mmsintf.cpp
 
 ${OBJECTDIR}/_ext/692605831/mmsserver.o: ../../include_program/service_mms/mmsserver.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/692605831
