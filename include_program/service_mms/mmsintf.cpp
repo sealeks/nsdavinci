@@ -11,7 +11,7 @@ namespace dvnci {
     namespace external {
 
         mmsintf::mmsintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
-        extintf_wraper<num64>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
+        extintf_wraper<std::string>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
             ;
         }
 

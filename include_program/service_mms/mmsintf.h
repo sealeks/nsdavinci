@@ -24,7 +24,7 @@ namespace dvnci {
         
         
 
-        class mmsintf : public extintf_wraper<num64> {
+        class mmsintf : public extintf_wraper<std::string> {
 
 
         public:

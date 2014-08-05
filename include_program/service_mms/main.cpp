@@ -11,45 +11,45 @@
 #include <kernel/service.h>
 #include <kernel/interface_proccesstmpl.h>
 
-#include <custom/extnetintf.h>
-#include "mmsserver.h"
+//#include <custom/extnetintf.h>
+//#include "mmsserver.h"
+#include "mmsintf.h"
 
 
 using namespace std;
 using namespace dvnci;
 using namespace dvnci::external;
-using namespace dvnci::external::net;
 
 
 
-dvnci::executable_ptr         dvnci::mainserv;
-std::string                   dvnci::DVNCI_SERVICE_NAME=NS_NET_SERVICE_NAME;
-dvnci::appidtype              dvnci::DVNCI_SERVICE_APPID= NS_NET_SERVICE;
+dvnci::executable_ptr     dvnci::mainserv;
+std::string                   dvnci::DVNCI_SERVICE_NAME=NS_MMS_SERVICE_NAME;
+dvnci::appidtype      dvnci::DVNCI_SERVICE_APPID= NS_MMS_SERVICE;
 fspath                        basepath;
 
 
-typedef externalintf_executor<extnetintf>                                              netexecutor;
-typedef group_proccessor_templ<netexecutor , TYPE_SIMPL | TYPE_REPORT | TYPE_TEXT >    groupnet;
+typedef externalintf_executor<mmsintf>                                             mmsexecutor;
+typedef group_proccessor_templ<mmsexecutor , TYPE_SIMPL | TYPE_REPORT | TYPE_TEXT >    groupmms;
 
 
-class net_service : public uniintfservice < groupnet > {
+class net_service : public uniintfservice < groupmms > {
 
 public:
-    net_service() : uniintfservice<groupnet>(basepath,
-            NS_NET_SERVICE){}
+    net_service() : uniintfservice<groupmms>(basepath,
+            NS_MMS_SERVICE){}
 
 protected:
 
     virtual bool initialize_impl() {
-      server = executable_ptr(new dvnci::custom::net::mms_server_service(intf));
-      th_server=boost::thread(server);
-      uniintfservice<groupnet>::initialize_impl();
+      //server = executable_ptr(new dvnci::custom::net::mms_server_service(intf));
+      //th_server=boost::thread(server);
+      uniintfservice<groupmms>::initialize_impl();
       return true;}
 
     virtual bool uninitialize_impl() {
-        uniintfservice<groupnet>::uninitialize_impl();
+        uniintfservice<groupmms>::uninitialize_impl();
         if (server) server->terminate();
-        th_server.join();
+        //th_server.join();
         return true;}
 
 private:
