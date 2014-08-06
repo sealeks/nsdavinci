@@ -18,7 +18,7 @@
 #include <mms/mmssocket.h>
 
 
-namespace mms {
+namespace prot9506 {
 
     using dvnci::DEFAULT_DVNCI_TIMOUT;
     using dvnci::timeouttype;
@@ -31,7 +31,6 @@ namespace mms {
     public:
 
         enum connectionState {
-
             connected, disconnected
         };
 
@@ -70,11 +69,6 @@ namespace mms {
         connectionState state_;
         boost::asio::deadline_timer tmout_timer;
         timeouttype timout;
-
-
-        //rpcmessage respmsg;
-        //boost::asio::streambuf response_body;
-        //boost::array<char, 10 > buf;
 
         volatile bool is_data_ready;
         volatile bool is_timout;

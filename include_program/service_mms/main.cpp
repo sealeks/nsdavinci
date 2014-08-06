@@ -28,7 +28,7 @@ dvnci::appidtype      dvnci::DVNCI_SERVICE_APPID= NS_MMS_SERVICE;
 fspath                        basepath;
 
 
-typedef externalintf_executor<mmsintf>                                             mmsexecutor;
+typedef externalintf_executor<exmmsintf>                                             mmsexecutor;
 typedef group_proccessor_templ<mmsexecutor , TYPE_SIMPL | TYPE_REPORT | TYPE_TEXT >    groupmms;
 
 
