@@ -8,24 +8,25 @@
 #include "mmsintf.h"
 
 namespace dvnci {
+    
     namespace external {
 
-        mmsintf::mmsintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
+        exmmsintf::exmmsintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
         extintf_wraper<std::string>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
             ;
         }
 
-        mmsintf::~mmsintf() {
+        exmmsintf::~exmmsintf() {
             disconnect();
         };
 
-        ns_error mmsintf::checkserverstatus() {
+        ns_error exmmsintf::checkserverstatus() {
             /*  if ((!netintf->isconnected()))
                   throw dvncierror(ERROR_FAILNET_CONNECTED);*/
             return error(0);
         }
 
-        ns_error mmsintf::connect_impl() {
+        ns_error exmmsintf::connect_impl() {
             /* try{
                  if (!netintf) {
                         netintf= dvnci::custom::net::netintf_ptr( dvnci::custom::net::factory::build(intf->groups()->host(group()),
@@ -49,7 +50,7 @@ namespace dvnci {
             return error(0/*netintf->error()*/);
         }
 
-        ns_error mmsintf::disconnect_impl() {
+        ns_error exmmsintf::disconnect_impl() {
             /* try{
              disconnect_util();
              real_repval_map.clear();;
@@ -64,7 +65,7 @@ namespace dvnci {
             return error(0);
         }
 
-        ns_error mmsintf::add_request_impl() {
+        ns_error exmmsintf::add_request_impl() {
             /*error(0); 
             if (need_add().empty()) 
                 return error();
@@ -105,7 +106,7 @@ namespace dvnci {
             return error();
         }
 
-        ns_error mmsintf::remove_request_impl() {
+        ns_error exmmsintf::remove_request_impl() {
 
             /*error(0); 
             if (need_remove().empty())  
@@ -132,7 +133,7 @@ namespace dvnci {
             return error();
         }
 
-        ns_error mmsintf::value_request_impl() {
+        ns_error exmmsintf::value_request_impl() {
 
 
             /*error(0); 
@@ -170,7 +171,7 @@ namespace dvnci {
             return error();
         }
 
-        ns_error mmsintf::command_request_impl(const sidcmd_map& cmds) {
+        ns_error exmmsintf::command_request_impl(const sidcmd_map& cmds) {
 
             /*error(0);
             if (cmds.empty())  
@@ -193,7 +194,7 @@ namespace dvnci {
             return error(netintf->send_commands(reqcmds, errors));}
                        
 
-        ns_error mmsintf::report_request_impl() {
+        ns_error exmmsintf::report_request_impl() {
                 
             error(0);                
             serverkey_const_iterator it=report_next();
@@ -240,11 +241,11 @@ namespace dvnci {
             return error();
         }
 
-        ns_error mmsintf::report_request_impl() {
+        ns_error exmmsintf::report_request_impl() {
             return error();
         }
 
-        ns_error mmsintf::event_request_impl() {
+        ns_error exmmsintf::event_request_impl() {
             return error();
         }
 

@@ -18,21 +18,16 @@
 #include <kernel/extintf_wraper.h>
 
 namespace dvnci {
-
+    
     namespace external {
-        
-        
-        
 
-        class mmsintf : public extintf_wraper<std::string> {
-
+        class exmmsintf : public extintf_wraper<std::string> {
 
         public:
 
+            exmmsintf(tagsbase_ptr intf_, executor* exctr, indx grp);
 
-            mmsintf(tagsbase_ptr intf_, executor* exctr, indx grp);
-
-            virtual ~mmsintf();
+            virtual ~exmmsintf();
 
 
         protected:
@@ -40,12 +35,9 @@ namespace dvnci {
 
             virtual ns_error checkserverstatus();
 
-
             virtual ns_error connect_impl();
 
             virtual ns_error disconnect_impl();
-
-
 
             virtual ns_error add_request_impl();
 
@@ -58,7 +50,6 @@ namespace dvnci {
             virtual ns_error report_request_impl();
 
             virtual ns_error event_request_impl();
-
 
         };
     }

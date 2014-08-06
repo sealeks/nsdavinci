@@ -2,7 +2,7 @@
 #include "mmsioclient.h"
 
 
-namespace mms {
+namespace prot9506 {
 
         mmsioclient::mmsioclient() : io_service_(), socket_(io_service_,prot9506::protocol_option()), tmout_timer(io_service_), error_cod(0) {
             state_ = disconnected;}
