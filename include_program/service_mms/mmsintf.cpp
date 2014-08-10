@@ -8,11 +8,115 @@
 #include "mmsintf.h"
 
 namespace dvnci {
+
+
+    objectname::objectname() : internal_(new objectname_type()){}  
+
+    objectname::objectname( const std::string& id, const std::string& domain) :
+    internal_(domain.size() ? new objectname_type(MMS::ObjectName::Domain_specific_type(mmsidentifier_type(domain),
+    mmsidentifier_type(id)), MMS::ObjectName_domain_specific) : new objectname_type(mmsidentifier_type(id), MMS::ObjectName_vmd_specific)) {
+    }
+
+    objectname objectname::create(const std::string& id, const std::string& domain) {
+        return objectname(id, domain);
+    }
+
+    objectname  objectname::create_aa(const std::string& id) {
+        objectname obj;
+        obj.internal_=objectname_ptr(new objectname_type(mmsidentifier_type(id), MMS::ObjectName_aa_specific));
+        return obj;
+    }
+
+        // 1 @bind and @domain  =>  domainspesific : @domain | @bind
+        // 2 only @bind a) "xxxx" => vmdspesific
+        //                         b) "xxxx : yyyy" domain specific @xxxx | @yyyy !!!! high prior,  defdomain ignore if exists
+        //                         c) "@xxxx" application spesific @xxxx    
+    objectname objectname::create_from_bind(const std::string& id, const std::string& defdomain) {
+        std::string tstid =fulltrim_copy(id);
+        std::string tstdom =fulltrim_copy(defdomain);
+        std::string::size_type it=tstid.find(':');
+        std::string::size_type ita=tstid.find('@');
+        if (ita == 0) {
+            if (tstid.size() > 0)
+                return create_aa(tstid.substr(1));
+        }
+        else if ((it!=std::string::npos) && (it!=(tstid.size()-1))){
+            tstdom = tstid.substr(0,it);
+            tstid = tstid.substr(it+1);
+        }
+        if (tstid.size())
+            return objectname(tstid, tstdom);
+        return objectname();
+    }
+
+    objectname::operator bool() const {
+        return (internal_ && (internal_->type() != MMS::ObjectName_null));
+    }   
     
+
+
+    bool operator==(const objectname& ls, const objectname& rs) {
+        if (ls.internal_ && rs.internal_) {
+            if (ls.internal_->type() == rs.internal_->type()) {
+                switch (ls.internal_->type()) {
+                    case MMS::ObjectName_vmd_specific:
+                        return *(ls.internal_->vmd_specific()) == *(rs.internal_->vmd_specific());
+                    case MMS::ObjectName_domain_specific:
+                        return ((ls.internal_->domain_specific()->domainID() == rs.internal_->domain_specific()->domainID()) &&
+                                (ls.internal_->domain_specific()->itemID() == rs.internal_->domain_specific()->itemID()));
+                    case MMS::ObjectName_aa_specific:
+                        return *(ls.internal_->aa_specific()) == *(rs.internal_->aa_specific());
+                    default:
+                    {
+                    }
+                        return true;
+                }
+            }
+            return false;
+        } else if (!ls.internal_ && !rs.internal_)
+            return true;
+        return false;
+    }
+
+    bool operator<(const objectname& ls, const objectname& rs) {
+        if (ls.internal_ && rs.internal_) {
+            if (ls.internal_->type() == rs.internal_->type()) {
+                switch (ls.internal_->type()) {
+                    case MMS::ObjectName_vmd_specific:
+                        return *(ls.internal_->vmd_specific()) < *(rs.internal_->vmd_specific());
+                    case MMS::ObjectName_domain_specific:
+                    {
+                        if (ls.internal_->domain_specific()->domainID() == rs.internal_->domain_specific()->domainID())
+                            return (ls.internal_->domain_specific()->itemID() < rs.internal_->domain_specific()->itemID());
+                        return (ls.internal_->domain_specific()->domainID() < rs.internal_->domain_specific()->domainID());
+                    }
+                    case MMS::ObjectName_aa_specific:
+                        return *(ls.internal_->aa_specific()) < *(rs.internal_->aa_specific());
+                    default:
+                    {
+                    }
+                        return false;
+                }
+            } else if (ls.internal_->type() == MMS::ObjectName_null)
+                return true;
+            else if (rs.internal_->type() == MMS::ObjectName_null)
+                return false;
+            return (int) ls.internal_->type() < (int) rs.internal_->type();
+        } else if (ls.internal_ && !rs.internal_)
+            return false;
+        else if (ls.internal_ && !rs.internal_)
+            return false;
+        else if (!ls.internal_ && !rs.internal_)
+            return true;
+        return false;
+    }
+    
+
+
     namespace external {
 
         exmmsintf::exmmsintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
-        extintf_wraper<std::string>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
+        extintf_wraper<objectname>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
             ;
         }
 
