@@ -9,51 +9,49 @@
 
 namespace dvnci {
 
-
-    objectname::objectname() : internal_(new objectname_type()){}  
-
-    objectname::objectname( const std::string& id, const std::string& domain) :
-    internal_(domain.size() ? new objectname_type(MMS::ObjectName::Domain_specific_type(mmsidentifier_type(domain),
-    mmsidentifier_type(id)), MMS::ObjectName_domain_specific) : new objectname_type(mmsidentifier_type(id), MMS::ObjectName_vmd_specific)) {
+    objectname::objectname() : internal_(new mmsobject_type()) {
     }
 
-    objectname objectname::create(const std::string& id, const std::string& domain) {
-        return objectname(id, domain);
+    objectname::objectname(const std::string& id, const std::string& domain) :
+    internal_(domain.size() ? new mmsobject_type(MMS::ObjectName::Domain_specific_type(mmsidentifier_type(domain),
+    mmsidentifier_type(id)), MMS::ObjectName_domain_specific) : new mmsobject_type(mmsidentifier_type(id), MMS::ObjectName_vmd_specific)) {
     }
 
-    objectname  objectname::create_aa(const std::string& id) {
-        objectname obj;
-        obj.internal_=objectname_ptr(new objectname_type(mmsidentifier_type(id), MMS::ObjectName_aa_specific));
+    objectname_ptr objectname::create(const std::string& id, const std::string& domain) {
+        return objectname_ptr(new objectname(id, domain));
+    }
+
+    objectname_ptr objectname::create_aa(const std::string& id) {
+        objectname_ptr obj(new objectname());
+        obj->internal_ = mmsobject_ptr(new mmsobject_type(mmsidentifier_type(id), MMS::ObjectName_aa_specific));
         return obj;
     }
 
-        // 1 @bind and @domain  =>  domainspesific : @domain | @bind
-        // 2 only @bind a) "xxxx" => vmdspesific
-        //                         b) "xxxx : yyyy" domain specific @xxxx | @yyyy !!!! high prior,  defdomain ignore if exists
-        //                         c) "@xxxx" application spesific @xxxx    
-    objectname objectname::create_from_bind(const std::string& id, const std::string& defdomain) {
-        std::string tstid =fulltrim_copy(id);
-        std::string tstdom =fulltrim_copy(defdomain);
-        std::string::size_type it=tstid.find(':');
-        std::string::size_type ita=tstid.find('@');
+    // 1 @bind and @domain  =>  domainspesific : @domain | @bind
+    // 2 only @bind a) "xxxx" => vmdspesific
+    //                         b) "xxxx : yyyy" domain specific @xxxx | @yyyy !!!! high prior,  defdomain ignore if exists
+    //                         c) "@xxxx" application spesific @xxxx    
+
+    objectname_ptr objectname::create_from_bind(const std::string& id, const std::string& defdomain) {
+        std::string tstid = fulltrim_copy(id);
+        std::string tstdom = fulltrim_copy(defdomain);
+        std::string::size_type it = tstid.find('/');
+        std::string::size_type ita = tstid.find('@');
         if (ita == 0) {
             if (tstid.size() > 0)
                 return create_aa(tstid.substr(1));
-        }
-        else if ((it!=std::string::npos) && (it!=(tstid.size()-1))){
-            tstdom = tstid.substr(0,it);
-            tstid = tstid.substr(it+1);
+        } else if ((it != std::string::npos) && (it != (tstid.size() - 1))) {
+            tstdom = tstid.substr(0, it);
+            tstid = tstid.substr(it + 1);
         }
         if (tstid.size())
-            return objectname(tstid, tstdom);
-        return objectname();
+            return create(tstid, tstdom);
+        return objectname_ptr();
     }
 
     objectname::operator bool() const {
         return (internal_ && (internal_->type() != MMS::ObjectName_null));
-    }   
-    
-
+    }
 
     bool operator==(const objectname& ls, const objectname& rs) {
         if (ls.internal_ && rs.internal_) {
@@ -110,13 +108,165 @@ namespace dvnci {
             return true;
         return false;
     }
-    
 
+    bool operator==(const objectname_ptr& ls, const objectname_ptr& rs) {
+        if (ls && rs)
+            return *ls == *rs;
+        if (!ls && !rs)
+            return true;
+        return false;
+    }
+
+    bool operator<(const objectname_ptr& ls, const objectname_ptr& rs) {
+        if (ls && rs)
+            return *ls < *rs;
+        if ((!ls && !rs) || (!rs))
+            return false;
+        return true;
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// mmsintf
+    /////////////////////////////////////////////////////////////////////////////////////////////////  
+
+    mmsintf::mmsintf(const std::string hst, const std::string prt, const std::string opt, 
+        timeouttype tmo) :  client_io(new prot9506::mmsioclient()),
+        host(hst), port(prt), option(opt), tmout(tmo) {
+        }
+    
+    mmsintf_ptr mmsintf::build(const std::string host, const std::string port, const std::string opt,  timeouttype tmout) {
+        mmsintf_ptr tmpintf = mmsintf_ptr(new mmsintf(host, port, opt, tmout));
+        return tmpintf;
+    }       
+
+    ns_error mmsintf::connect_impl() {
+        try {
+            if (!client_io) return error(ERROR_IO_DEVICE_CHANAL_NOT_DEF);
+            if (client_io->state() == client_io->connected) {
+                state_ = connected;
+                return error(0);
+            }
+            client_io->connect(host, port, option, tmout);
+            state_ = (client_io->state() == client_io->connected) ? connected : disconnected;
+            if (state_ == connected) {
+                return error(0);
+            } else {
+                state_ = disconnected;
+                return error(ERROR_IO_LINK_NOT_CONNECTION);
+            }
+        } catch (...) {
+        }
+        state_ = disconnected;
+        return error(ERROR_BASENOTFOUND);
+    }
+
+    ns_error mmsintf::disconnect_impl() {
+        try {
+            if ((client_io) && (client_io->state() == client_io->connected)) {
+                client_io->disconnect();
+            }
+        } catch (...) {
+        }
+        state_ = disconnected;
+        return error(0);
+    }
+
+    ns_error mmsintf::add_items(const objectname_vct& cids, accessresult_map& result, accesserror_map& errors) {
+        /*try {
+            error(0);
+            req_add_items req;
+            resp_add_items resp;
+            assign_req_items(req, cids);
+            if (querytmpl<req_add_items, resp_add_items, RPC_OPERATION_REQ_ADD_ITEMS, RPC_OPERATION_RESP_ADD_ITEMS > (req, resp)) {
+                error(assign_resp_items(resp, sids, errors));
+            } else
+                error(ERROR_IO_NO_DATA);
+        } catch (dvncierror& err_) {
+            error(err_.code());
+            if ((err_.code() == ERROR_FAILNET_CONNECTED) ||
+                    (err_.code() == ERROR_NONET_CONNECTED))
+                throw err_;
+            ;
+        } catch (...) {
+            error(NS_ERROR_ERRRESP);
+        }*/
+        return error();
+    }
+
+    ns_error mmsintf::remove_items(const objectname_vct& cids, accessresult_map& errors) {
+        /*try {
+            error(0);
+            req_remove_items req;
+            resp_remove_items resp;
+            assign_req_remitems(req, sids);
+            if (querytmpl<req_remove_items, resp_remove_items, RPC_OPERATION_REQ_REMOVE_ITEMS, RPC_OPERATION_RESP_REMOVE_ITEMS > (req, resp)) {
+                error(assign_resp_remitems(resp, succ_sids, errors));
+            } else
+                error(ERROR_IO_NO_DATA);
+        } catch (dvncierror& err_) {
+            error(err_.code());
+            if ((err_.code() == ERROR_FAILNET_CONNECTED) ||
+                    (err_.code() == ERROR_NONET_CONNECTED))
+                throw err_;
+        } catch (...) {
+            error(NS_ERROR_ERRRESP);
+        }*/
+        return error();
+    }
+
+    ns_error mmsintf::read_values(accessresult_map& sids) {
+        /*try {
+            error(0);
+            req_data_item1 req;
+            resp_data_item resp;
+            assign_req_values(req, sids);
+            if (querytmpl<req_data_item1, resp_data_item, RPC_OPERATION_REQ_DATA_ITEM1, RPC_OPERATION_RESP_DATA_ITEM > (req, resp)) {
+                error(assign_resp_values(resp, lines, linesstr, errors));
+            } else
+                error(ERROR_IO_NO_DATA);
+        } catch (dvncierror& err_) {
+            error(err_.code());
+            if ((err_.code() == ERROR_FAILNET_CONNECTED) ||
+                    (err_.code() == ERROR_NONET_CONNECTED))
+                throw err_;
+        } catch (...) {
+            error(NS_ERROR_ERRRESP);
+        }*/
+        return error();
+    }
+
+    /*ns_error mmsintf::send_commands(const vect_command_data& cmds, vect_error_item& errors) {
+        try {
+            error(0);
+            req_send_commands req;
+            resp_send_commands resp;
+            assign_req_commands(req, cmds);
+            if (querytmpl<req_send_commands, resp_send_commands, RPC_OPERATION_REQ_SEND_COMMANDS, RPC_OPERATION_RESP_SEND_COMMANDS > (req, resp)) {
+                assign_resp_commands(resp, errors);
+            } else
+                error(ERROR_IO_NO_DATA);
+        } catch (dvncierror& err_) {
+            error(err_.code());
+            if ((err_.code() == ERROR_FAILNET_CONNECTED) ||
+                    (err_.code() == ERROR_NONET_CONNECTED))
+                throw err_;
+        } catch (...) {
+            error(NS_ERROR_ERRRESP);
+        }
+        return error();
+    }*/
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// external::exmmsintf
+    /////////////////////////////////////////////////////////////////////////////////////////////////
 
     namespace external {
 
         exmmsintf::exmmsintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
-        extintf_wraper<objectname>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
+        extintf_wraper<objectname_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
             ;
         }
 
@@ -131,27 +281,27 @@ namespace dvnci {
         }
 
         ns_error exmmsintf::connect_impl() {
-            /* try{
-                 if (!netintf) {
-                        netintf= dvnci::custom::net::netintf_ptr( dvnci::custom::net::factory::build(intf->groups()->host(group()),
-                                                                                         intf->groups()->port(group()).empty() ? "9050" : intf->groups()->port(group()),
-                                                                                         intf->groups()->user(group()),intf->groups()->password(group()),
-                                                                                         intf->groups()->timeout(group())));}
-                 if (!netintf) {
+             try{
+                 if (!remintf) {
+                        remintf= dvnci::mmsintf::build(intf->groups()->host(group()), 
+                                intf->groups()->port(group()).empty() ? "102" : intf->groups()->port(group()),
+                                "",
+                                 intf->groups()->timeout(group()));}
+                 if (!remintf) {
                      state_=disconnected;
                      return error(ERROR_NOINTF_CONNECTED);}
                     
-                 if (!netintf->isconnected()){
+                 if (!remintf->isconnected()){
                      state_=disconnected;
-                     return error(netintf->error());}
+                     return error(remintf->error());}
                  else{
                      state_=connected;
                      return error(0);}}
              catch(...){
                  state_=disconnected;
                  return error(ERROR_NOINTF_CONNECTED);}
-         state_=disconnected;*/
-            return error(0/*netintf->error()*/);
+         state_=disconnected;
+            return error(remintf->error());
         }
 
         ns_error exmmsintf::disconnect_impl() {
@@ -170,27 +320,25 @@ namespace dvnci {
         }
 
         ns_error exmmsintf::add_request_impl() {
-            /*error(0); 
+            error(0); 
             if (need_add().empty()) 
                 return error();
-            vect_cid_key cids;
+            objectname_vct cids;
             for (indx_set::const_iterator it = need_add().begin(); it != need_add().end(); ++it) {
                  if (intf->exists(*it)) {
-                     cid_key tmp ={static_cast<num64>(*it),intf->binding(*it), 
-                         static_cast<num64>(intf->type(*it)),  
-                         intf->devdb(*it)};
+                     objectname_ptr tmp=objectname::create_from_bind(intf->binding(*it),  intf->groups()->topic(group()));
                      cids.push_back(tmp);}
                  else{
                      req_error(*it, ERROR_ENTNOEXIST);}}
             if (cids.empty()) return error(0);
+
+            accessresult_map results;
+            accesserror_map errors;
                
-            vect_sid_key sids;  
-            vect_error_item errors;
                
+            error(remintf->add_items(cids,results,errors));
                
-            error(netintf->add_items(cids,sids,errors));
-               
-            for (vect_sid_key::const_iterator it = sids.begin(); it != sids.end(); ++it) {
+            /*for (vect_sid_key::const_iterator it = sids.begin(); it != sids.end(); ++it) {
                   switch (SUPER_TYPE(intf->type(static_cast<indx> (it->cid)))){
                           case TYPE_EVENT:{
                               add_event(static_cast<indx> (it->cid), it->sid);

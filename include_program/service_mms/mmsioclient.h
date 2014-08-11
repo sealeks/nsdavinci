@@ -20,6 +20,13 @@
 
 namespace prot9506 {
 
+    typedef iso9506 protocol_type;
+    typedef protocol_type::socket socket_type;
+    typedef protocol_type::acceptor acceptor_type;
+    typedef protocol_type::endpoint endpoint_type;
+    typedef protocol_type::resolver resolver_type;
+    typedef protocol_type::application_selector application_selector;   
+
     using dvnci::DEFAULT_DVNCI_TIMOUT;
     using dvnci::timeouttype;
 
@@ -42,7 +49,8 @@ namespace prot9506 {
             return state_;
         }
 
-        void connect(std::string host, std::string port, timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
+        void connect(const std::string hst, const std::string prt, const std::string opt, 
+        timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
         void disconnect();
         //bool req(rpcmessage& msg, rpcmessage& resp);
 
@@ -75,6 +83,7 @@ namespace prot9506 {
         volatile bool is_connect;
         volatile bool is_error;
         volatile int error_cod;
+    
     };
 }
 
