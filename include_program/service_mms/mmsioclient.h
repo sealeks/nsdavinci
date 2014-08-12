@@ -52,8 +52,76 @@ namespace prot9506 {
         void connect(const std::string hst, const std::string prt, const std::string opt, 
         timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
         void disconnect();
-        //bool req(rpcmessage& msg, rpcmessage& resp);
 
+        template<typename T>
+        bool req(boost::shared_ptr<T> operation) {
+            
+            if (state_ == connected) {
+
+                is_timout = false;
+                is_data_ready = false;
+                is_error = false;
+                is_connect = true;
+                error_cod = 0;
+
+                io_service_.reset();
+
+                DEBUG_STR_DVNCI(SET ASYNCWRITE)
+
+                socket_.async_confirm_request(operation,
+                        boost::bind(&mmsioclient::handle_cofirmreq_end<T>, this, operation));
+
+                DEBUG_STR_DVNCI(SET ASYNCTIME)
+
+                tmout_timer.expires_from_now(boost::posix_time::milliseconds(timout));
+                tmout_timer.async_wait(boost::bind(
+                        &mmsioclient::handle_timout_expire, shared_from_this(),
+                        boost::asio::placeholders::error));
+
+                DEBUG_STR_DVNCI(SET RUN)
+
+                io_service_.run();
+
+                DEBUG_STR_DVNCI(SET RESULT)
+
+                if (is_timout) {
+                    state_ = disconnected;
+                    try {
+                        socket_.close();
+                        io_service_.stop();
+                    } catch (...) {
+                    };
+                    DEBUG_STR_DVNCI(ERROR_FAILNET_CONNECTED THROWING)
+                            throw dvnci::dvncierror(dvnci::ERROR_FAILNET_CONNECTED);
+                }
+
+                if (is_error) {
+                    if ((error_cod == 10054) || (error_cod == 10053)) {
+                        state_ = disconnected;
+                        try {
+                            socket_.close();
+                            io_service_.stop();
+                        } catch (...) {
+                        };
+                        DEBUG_STR_DVNCI(ERROR_FAILNET_CONNECTED THROWING BY ERROR)
+                                throw dvnci::dvncierror(dvnci::ERROR_FAILNET_CONNECTED);
+                    } else DEBUG_STR_VAL_DVNCI(reqerr, error_cod)
+                    }
+                return true;
+            } else {
+                
+            };
+            return false;           
+        }
+        
+        template<typename T>
+        void handle_cofirmreq_end(boost::shared_ptr<T> operation){
+            io_service_.stop();
+            tmout_timer.cancel();
+            is_timout      = false;
+            is_data_ready  = true;
+            is_error       = false;
+        }        
 
     private:
 
@@ -63,9 +131,7 @@ namespace prot9506 {
         void handle_connect(const boost::system::error_code& err,
                 boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
 
-        void handle_write(const boost::system::error_code& err);
 
-        void handle_readheader(const boost::system::error_code& err);
 
         void handle_endreq(const boost::system::error_code& err);
 

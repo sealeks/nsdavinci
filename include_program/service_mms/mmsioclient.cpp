@@ -32,10 +32,18 @@ namespace prot9506 {
 
         DEBUG_STR_DVNCI(START ASYNC RESOLVER)
 
-        resolver.async_resolve(query,
+        boost::asio::ip::tcp::resolver::iterator itr(resolver.resolve(query));   
+        endpoint_type endpoint = * itr;
+                
+        /*resolver.async_resolve(query,
                 boost::bind(&mmsioclient::handle_resolve, shared_from_this(),
                 boost::asio::placeholders::error,
-                boost::asio::placeholders::iterator));
+                boost::asio::placeholders::iterator));*/
+        
+             socket_.async_connect(endpoint,
+                boost::bind(&mmsioclient::handle_connect, shared_from_this(),
+                boost::asio::placeholders::error,
+                ++itr));        
 
         DEBUG_STR_DVNCI(START ASYNC CONNECTTIMER)
 
@@ -169,39 +177,7 @@ namespace prot9506 {
         else {}
     }
 
-    void mmsioclient::handle_write(const boost::system::error_code& err) {
 
-        /*if (!err) {
-
-            boost::asio::async_read(socket_, boost::asio::buffer(buf), boost::asio::transfer_at_least(10), boost::bind(&mmsioclient::handle_readheader, shared_from_this(),
-                    boost::asio::placeholders::error));}
-
-        else {
-            io_service_.stop();
-            tmout_timer.cancel();
-            is_timout      = false;
-            is_data_ready  = false;
-            error_cod      = err.value();
-            is_error       = true;
-            DEBUG_STR_DVNCI(is errror handle_write!!!)
-            DEBUG_VAL_DVNCI(err.message())
-            DEBUG_VAL_DVNCI(err.value())}}
-
-    void mmsioclient::handle_readheader(const boost::system::error_code& err) {
-        if (!err) {
-            respmsg.header(buf.c_array());
-            DEBUG_VAL_DVNCI(respmsg.body_length())
-            boost::asio::async_read(socket_, response_body, boost::asio::transfer_at_least(respmsg.body_length()), boost::bind(&mmsioclient::handle_endreq, shared_from_this(),
-                    boost::asio::placeholders::error));}
-        else {
-            io_service_.stop();
-            tmout_timer.cancel();
-            is_timout      = false;
-            is_data_ready  = false;
-            error_cod      = err.value();
-            is_error       = true;
-            DEBUG_STR_DVNCI(is errror readheader!!!)}*/
-    }
 
     void mmsioclient::handle_endreq(const boost::system::error_code& err) {
         /*if (!err) {
@@ -223,7 +199,7 @@ namespace prot9506 {
 
     void mmsioclient::handle_timout_expire(const boost::system::error_code& err) {
 
-        /*if (!err ) {
+        if (!err ) {
             io_service_.stop();
             socket_.close();
             is_timout      = true;
@@ -231,7 +207,7 @@ namespace prot9506 {
             is_error       = false;
             is_connect     = false;
             DEBUG_STR_DVNCI(TIMEOUT EXPIRE NEED EXCEPTION)}
-        else {}*/
+        else {}
     }
 }
 
