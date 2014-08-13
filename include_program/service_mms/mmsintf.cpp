@@ -228,12 +228,6 @@ namespace dvnci {
             typedef prot9506::read_operation_type read_operation_type;
             typedef prot9506::identify_operation_type identify_operation_type;
 
-            boost::shared_ptr<identify_operation_type> operationI(new identify_operation_type());
-            operationI->request_new();
-            if (client_io->req<identify_operation_type>(operationI)) {
-
-            }
-
             objectname_vct actuals;
 
             error(0);

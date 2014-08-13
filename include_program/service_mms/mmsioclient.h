@@ -122,6 +122,17 @@ namespace prot9506 {
             is_data_ready  = true;
             is_error       = false;
         }        
+        
+              
+        const protocol_option & mmsoption() const;
+        
+        bool can_identyfy() const;        
+        
+        bool can_read() const;  
+
+        bool can_write() const; 
+
+       bool can_namedlist() const;        
 
     private:
 
@@ -130,10 +141,6 @@ namespace prot9506 {
 
         void handle_connect(const boost::system::error_code& err,
                 boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
-
-
-
-        void handle_endreq(const boost::system::error_code& err);
 
         void handle_timout_expire(const boost::system::error_code& err);
 
