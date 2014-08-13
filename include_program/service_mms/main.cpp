@@ -13,7 +13,7 @@
 
 //#include <custom/extnetintf.h>
 //#include "mmsserver.h"
-#include "mmsintf.h"
+#include "extmmsintf.h"
 
 
 using namespace std;
