@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/692605831/extmmsintf.o \
 	${OBJECTDIR}/_ext/692605831/main.o \
 	${OBJECTDIR}/_ext/692605831/mmsintf.o \
 	${OBJECTDIR}/_ext/692605831/mmsioclient.o \
@@ -64,6 +65,11 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lcustom -ln
 ../../bin/${CND_CONF}/service_mms.exe: ${OBJECTFILES}
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/service_mms ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/_ext/692605831/extmmsintf.o: ../../include_program/service_mms/extmmsintf.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/692605831
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/692605831/extmmsintf.o ../../include_program/service_mms/extmmsintf.cpp
 
 ${OBJECTDIR}/_ext/692605831/main.o: ../../include_program/service_mms/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/692605831
