@@ -6,6 +6,8 @@
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>../../include_program/service_mms/extmmsintf.cpp</itemPath>
+    <itemPath>../../include_program/service_mms/extmmsintf.h</itemPath>
     <itemPath>../../include_program/service_mms/main.cpp</itemPath>
     <itemPath>../../include_program/service_mms/mmsintf.cpp</itemPath>
     <itemPath>../../include_program/service_mms/mmsintf.h</itemPath>
@@ -89,6 +91,16 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include_program/service_mms/extmmsintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/extmmsintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../include_program/service_mms/main.cpp"
             ex="false"
             tool="1"
@@ -198,6 +210,16 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include_program/service_mms/extmmsintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/extmmsintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../include_program/service_mms/main.cpp"
             ex="false"
             tool="1"
@@ -298,6 +320,16 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include_program/service_mms/extmmsintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/extmmsintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../include_program/service_mms/main.cpp"
             ex="false"
             tool="1"
@@ -393,6 +425,16 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include_program/service_mms/extmmsintf.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_mms/extmmsintf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../include_program/service_mms/main.cpp"
             ex="false"
             tool="1"
