@@ -8,6 +8,92 @@
 #include "mmsintf.h"
 
 namespace dvnci {
+    
+    short_value from_mms_result(accessresult_ptr val) {
+        if (val) {
+            if (val->success()) {
+                switch (val->success()->type()) {
+                    case MMS::Data_boolean:
+                    {
+                        return short_value(*(val->success()->boolean()));
+                    }
+                    case MMS::Data_bit_string:
+                    {
+                        const MMS::bitstring_type& tmp = *(val->success()->bit_string());
+                        if (tmp.sizebits() <= 8)
+                            return short_value(tmp. operator uint8_t());
+                        else if (tmp.sizebits() <= 16)
+                            return short_value(tmp. operator uint16_t());
+                        else  if (tmp.sizebits() <= 32)
+                            return short_value(tmp. operator uint32_t());
+                        else      
+                            return short_value(tmp. operator uint64_t());
+                        break;
+                    }
+                    case MMS::Data_integer:
+                    {
+                        return short_value(*(val->success()->integer()));
+                    }
+                    case MMS::Data_unsignedV:
+                    {
+                        return short_value(*(val->success()->unsignedV()));
+                    }
+                        /*case MMS::Data_floating_point:
+                        {
+                            std::cout << *(val.success()->floating_point()) << std::endl;
+                            break;
+                        }
+                        case MMS::Data_octet_string:
+                        {
+                            std::cout << *(val.success()->octet_string()) << std::endl;
+                            break;
+                        }
+                        case MMS::Data_visible_string:
+                        {
+                            std::cout << *(val.success()->visible_string()) << std::endl;
+                            break;
+                        }
+                        case MMS::Data_generalized_time:
+                        {
+                            std::cout << *(val.success()->generalized_time()) << std::endl;
+                            break;
+                        }
+                            case Data_binary_time:
+                            {
+                                ITU_T_IMPLICIT_TAG(value<TimeOfDay > (false, Data_binary_time), 12);
+                                break;
+                            }
+                        case MMS::Data_bcd:
+                        {
+                            std::cout << *(val.success()->bcd()) << std::endl;
+                            break;
+                        }
+                            case Data_booleanArray:
+                            {
+                                ITU_T_IMPLICIT_TAG(value<bitstring_type > (false, Data_booleanArray), 14);
+                                break;
+                            }
+                        case MMS::Data_objId:
+                        {
+                            std::cout << *(val.success()->objId()) << std::endl;
+                            break;
+                        }
+                        case MMS::Data_mMSString:
+                        {
+                            std::cout << *(val.success()->mMSString()) << std::endl;
+                            break;
+                        }*/
+                    default:
+                    {
+                        return short_value();
+                    }
+                }
+            } else {
+                return short_value();
+            }
+        }
+        return short_value();
+    }
 
     objectname::objectname() : internal_(new mmsobject_type()) {
     }
@@ -15,6 +101,9 @@ namespace dvnci {
     objectname::objectname(const std::string& id, const std::string& domain) :
     internal_(domain.size() ? new mmsobject_type(MMS::ObjectName::Domain_specific_type(mmsidentifier_type(domain),
     mmsidentifier_type(id)), MMS::ObjectName_domain_specific) : new mmsobject_type(mmsidentifier_type(id), MMS::ObjectName_vmd_specific)) {
+    }
+
+    objectname::~objectname() {
     }
 
     objectname_ptr objectname::create(const std::string& id, const std::string& domain) {
@@ -248,38 +337,46 @@ namespace dvnci {
                 }
             }
 
-            for (accessresult_map::iterator it = results.begin(); it != results.end(); ++it) {
-                boost::shared_ptr<read_operation_type> operationR(new read_operation_type());
-                operationR->request_new();
-                operationR->request()->variableAccessSpecification().listOfVariable__new();
+            if (client_io->can_namedlist()) {
 
-                MMS::VariableAccessSpecification::ListOfVariable_type_sequence_of vacs;
+                for (accessresult_map::iterator it = results.begin(); it != results.end(); ++it) {
+                    boost::shared_ptr<read_operation_type> operationR(new read_operation_type());
+                    operationR->request_new();
+                    operationR->request()->variableAccessSpecification().listOfVariable__new();
 
-                vacs.variableSpecification().name(new mmsobject_type(it->first->internal()));
+                    MMS::VariableAccessSpecification::ListOfVariable_type_sequence_of vacs;
 
-                operationR->request()->variableAccessSpecification().listOfVariable()->push_back(vacs);
+                    vacs.variableSpecification().name(new mmsobject_type(it->first->internal()));
 
-                if (client_io->req<read_operation_type>(operationR)) {
-                    if (operationR->response()) {
-                        const resultslist_type& lst = operationR->response()->listOfAccessResult();
-                        if (lst.size() == 1) {
-                            it->second = accessresult_ptr(new accessresult_type(lst[0]));
+                    operationR->request()->variableAccessSpecification().listOfVariable()->push_back(vacs);
+
+                    if (client_io->req<read_operation_type>(operationR)) {
+                        if (operationR->response()) {
+                            const resultslist_type& lst = operationR->response()->listOfAccessResult();
+                            if (lst.size() == 1) {
+                                it->second = accessresult_ptr(new accessresult_type(lst[0]));
+                            }
+                        } else if (operationR->serviceerror()) {
+                            //errors.insert(accesserror_pair((*it),operationA->serviceerror()));
+                        } else {
+
                         }
-                    } else if (operationR->serviceerror()) {
-                        //errors.insert(accesserror_pair((*it),operationA->serviceerror()));
-                    } else {
+                    }
+                }
 
+                if (!actuals.empty()) {
+                    bool needcreate = list_.empty();
+                    if (list_.insert(actuals)) {
+                        if (updatenamedlist(list_))
+                            list_.remove(actuals);
                     }
                 }
             }
-
-            if (!actuals.empty()) {
-                bool needcreate = list_.empty();
-                if (list_.insert(actuals)) {
-                    if (updatenamedlist(list_))
-                        list_.remove(actuals);
-                }
+            else{
+                simplelist_.insert(results.begin(), results.end());
             }
+
+
 
         } catch (dvncierror& err_) {
             error(err_.code());
@@ -298,17 +395,29 @@ namespace dvnci {
         if (list_.remove(cids)) {
             removenamedlist(list_);
         }
+        for (objectname_set::const_iterator it = cids.begin(); it != cids.end(); ++it) {
+            accessresult_map::iterator fit=simplelist_.find(*it);
+            if (simplelist_.find(*it)!=simplelist_.end()){
+                simplelist_.erase(fit);
+            }
+        }
         return error();
     }
 
     ns_error mmsintf::read_values(accessresult_map& sids) {
-        readnamedlist(list_);
-        for (accessresult_map::iterator it = sids.begin(); it != sids.end(); ++it) {
-            accessresult_map::const_iterator fit = list_.values().find(it->first);
-            if (fit != list_.values().end()) {
-                it->second = fit->second;
-            } else {
-                it->second = accessresult_ptr();
+        if (list_.empty()) {
+            readnamedlist(list_);
+            readsimlelist();
+            for (accessresult_map::iterator it = sids.begin(); it != sids.end(); ++it) {
+                accessresult_map::const_iterator sfit = simplelist_.find(it->first);
+                accessresult_map::const_iterator fit = list_.values().find(it->first);
+                if (sfit != simplelist_.end()) {
+                    it->second = sfit->second;
+                } else if (fit != list_.values().end()) {
+                    it->second = fit->second;
+                } else {
+                    it->second = accessresult_ptr();
+                }
             }
         }
         return error();
@@ -437,6 +546,56 @@ namespace dvnci {
                         for (resultslist_type::const_iterator it = vlst.begin(); it != vlst.end(); ++it) {
                             if (vit != lst.values().end())
                                 vit->second = accessresult_ptr(new accessresult_type(*it));
+                            else break;
+                            ++vit;
+                        }
+                    }
+                } else if (operationR->serviceerror()) {
+                    return error(NS_ERROR_ERRRESP);
+                } else {
+                    return error(NS_ERROR_ERRRESP);
+                }
+            } catch (dvncierror& err_) {
+                error(err_.code());
+                if ((err_.code() == ERROR_FAILNET_CONNECTED) ||
+                        (err_.code() == ERROR_NONET_CONNECTED))
+                    throw err_;
+            } catch (...) {
+                error(NS_ERROR_ERRRESP);
+            }
+        }
+        return error();
+    }
+
+    ns_error mmsintf::readsimlelist() {
+        error(0);
+        if (!simplelist_.empty()) {
+            try {
+
+                typedef prot9506::read_operation_type read_operation_type;
+
+                boost::shared_ptr<read_operation_type> operationR =
+                        boost::shared_ptr<read_operation_type > (new read_operation_type());
+
+                operationR->request_new();
+                operationR->request()->variableAccessSpecification().listOfVariable__new();
+                
+                for (accessresult_map::iterator it = simplelist_.begin(); it != simplelist_.end(); ++it) {
+
+                    MMS::VariableAccessSpecification::ListOfVariable_type_sequence_of vacs;
+                    vacs.variableSpecification().name(new mmsobject_type(it->first->internal()));
+
+                    operationR->request()->variableAccessSpecification().listOfVariable()->push_back(vacs);
+                }
+                if (client_io->req<read_operation_type>(operationR)) {
+                    if (operationR->response()) {
+                        const resultslist_type& vlst = operationR->response()->listOfAccessResult();
+                        accessresult_map::iterator vit = simplelist_.begin();
+                        for (resultslist_type::const_iterator it = vlst.begin(); it != vlst.end(); ++it) {
+                            if (vit != simplelist_.end())
+                                vit->second = accessresult_ptr(new accessresult_type(*it));
+                            else
+                                break;
                             ++vit;
                         }
                     }

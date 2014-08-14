@@ -141,12 +141,10 @@ namespace dvnci {
             //this->
 
             for (accessresult_map::const_iterator it = sids.begin(); it != sids.end(); ++it) {
-                //serverkey_const_iterator fit = simpreq.left.find(it->first);
-                //if (fit != simpreq.left.end()) {
-                if (it->second) {
+                if (it->second) 
+                    write_val_sid(it->first, from_mms_result(it->second));
+                else 
                     write_val_sid(it->first, short_value());
-                }
-                //}
             }
 
             return error();
