@@ -58,7 +58,7 @@ public:
         THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx );
         for (indx_set::const_iterator it=idset.begin();it!=idset.end();++it){
             if ((error_set.find(*it)==error_set.end()) &&
-                (need_remove_set.find(*it)==need_remove_set.end()) &&
+                /*(need_remove_set.find(*it)==need_remove_set.end()) &&*/
                 (simple_req_map.right.find(*it)==simple_req_map.right.end()) &&
                 (report_req_map.right.find(*it)==report_req_map.right.end()) &&
                 (event_req_map.right.find(*it)==event_req_map.right.end())){
@@ -76,31 +76,31 @@ public:
                    tag_const_iterator beg = simple_req_map.right.lower_bound(*it);
                    tag_const_iterator end = simple_req_map.right.upper_bound(*it);
                    tag_iterator_diff diff=dvnci::abs(std::distance(beg,end));
-                   if (diff){
-                       simple_req_map.right.erase(*it);
+                   if (diff){                      
                        next_simple_iterator=simple_req_map.left.end();
                        serverkey_type  deleted = beg->second;   
-                       if (diff==1){
-                            need_remove_set.insert(deleted);}}}
+                       if (diff==1)
+                            need_remove_set.insert(deleted);
+                       simple_req_map.right.erase(*it);}}
                if (report_req_map.right.find(*it)!=report_req_map.right.end()){
                    tag_const_iterator beg = report_req_map.right.lower_bound(*it);
                    tag_const_iterator end = report_req_map.right.upper_bound(*it);
                    tag_iterator_diff diff=dvnci::abs(std::distance(beg,end));     
                    if (diff){
-                       serverkey_type  deleted = beg->second;  
-                       report_req_map.right.erase(*it);
+                       serverkey_type  deleted = beg->second;                         
                        next_report_iterator=report_req_map.left.end();
-                       if (diff==1){
-                            need_remove_set.insert(deleted);}}}
+                       if (diff==1)
+                            need_remove_set.insert(deleted);
+                       report_req_map.right.erase(*it);}}
                if (event_req_map.right.find(*it)!=event_req_map.right.end()){
                    tag_const_iterator beg = event_req_map.right.lower_bound(*it);
                    tag_const_iterator end = event_req_map.right.upper_bound(*it);
                    tag_iterator_diff diff=dvnci::abs(std::distance(beg,end));
-                       serverkey_type  deleted = beg->second;
-                       event_req_map.right.erase(*it);
+                       serverkey_type  deleted = beg->second;                       
                        next_event_iterator=event_req_map.left.end();
-                       if (diff==1){
-                            need_remove_set.insert(deleted);}}}}}
+                       if (diff==1)
+                            need_remove_set.insert(deleted);
+                       event_req_map.right.erase(*it);}}}}
     
     
     virtual bool operator()(){
@@ -242,6 +242,10 @@ protected:
           THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
           if (need_remove_set.find(sid)!=need_remove_set.end())
               need_remove_set.erase(sid);}
+    
+    void remove_clear(){
+          THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
+          need_remove_set.clear();}    
 
     void req_error(indx id, ns_error err){
           THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
