@@ -117,12 +117,9 @@ namespace dvnci {
             accesserror_map errors;
 
             if (!error(remintf->remove_items(sids, errors))) {
-
-                for (objectname_set::const_iterator it = sids.begin(); it != sids.end(); ++it) {
-                    remove_custom(*it);
+                    remove_clear();
                 }
-
-            }
+            
             return error();
         }
 

@@ -43,6 +43,10 @@ namespace dvnci {
 
     typedef boost::shared_ptr<mmsobject_type> mmsobject_ptr;
     typedef boost::shared_ptr<objectname> objectname_ptr;
+    
+    
+    
+    short_value from_mms_result(accessresult_ptr val);    
 
     class objectname {
 
@@ -51,8 +55,7 @@ namespace dvnci {
         objectname();
         objectname(const std::string& id, const std::string& domain = "");
 
-        ~objectname() {
-        }
+        ~objectname();
 
         static objectname_ptr create(const std::string& id, const std::string& domain = "");
         static objectname_ptr create_aa(const std::string& id);
@@ -189,6 +192,7 @@ namespace dvnci {
         ns_error updatenamedlist(const list_of_variable& lst);
         ns_error removenamedlist(const list_of_variable& lst);
         ns_error readnamedlist(list_of_variable& lst);
+        ns_error readsimlelist();
 
         ns_error error(ns_error err) {
             return error_ = err;
@@ -205,6 +209,7 @@ namespace dvnci {
         std::string option;
         timeouttype tmout;
         list_of_variable list_;
+        accessresult_map simplelist_;
     };
 
 

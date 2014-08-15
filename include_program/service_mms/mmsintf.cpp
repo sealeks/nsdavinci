@@ -8,7 +8,7 @@
 #include "mmsintf.h"
 
 namespace dvnci {
-    
+
     short_value from_mms_result(accessresult_ptr val) {
         if (val) {
             if (val->success()) {
@@ -18,15 +18,17 @@ namespace dvnci {
                         return short_value(*(val->success()->boolean()));
                     }
                     case MMS::Data_bit_string:
+                    case MMS::Data_booleanArray:   
                     {
-                        const MMS::bitstring_type& tmp = *(val->success()->bit_string());
+                        const MMS::bitstring_type& tmp = val->success()->type()==MMS::Data_bit_string ? 
+                            (*(val->success()->bit_string())) : (*(val->success()->booleanArray()));
                         if (tmp.sizebits() <= 8)
                             return short_value(tmp. operator uint8_t());
                         else if (tmp.sizebits() <= 16)
                             return short_value(tmp. operator uint16_t());
-                        else  if (tmp.sizebits() <= 32)
+                        else if (tmp.sizebits() <= 32)
                             return short_value(tmp. operator uint32_t());
-                        else      
+                        else
                             return short_value(tmp. operator uint64_t());
                         break;
                     }
@@ -38,58 +40,60 @@ namespace dvnci {
                     {
                         return short_value(*(val->success()->unsignedV()));
                     }
-                        /*case MMS::Data_floating_point:
-                        {
-                            std::cout << *(val.success()->floating_point()) << std::endl;
-                            break;
-                        }
-                        case MMS::Data_octet_string:
-                        {
-                            std::cout << *(val.success()->octet_string()) << std::endl;
-                            break;
-                        }
-                        case MMS::Data_visible_string:
-                        {
-                            std::cout << *(val.success()->visible_string()) << std::endl;
-                            break;
-                        }
-                        case MMS::Data_generalized_time:
-                        {
-                            std::cout << *(val.success()->generalized_time()) << std::endl;
-                            break;
-                        }
-                            case Data_binary_time:
-                            {
-                                ITU_T_IMPLICIT_TAG(value<TimeOfDay > (false, Data_binary_time), 12);
-                                break;
-                            }
-                        case MMS::Data_bcd:
-                        {
-                            std::cout << *(val.success()->bcd()) << std::endl;
-                            break;
-                        }
-                            case Data_booleanArray:
-                            {
-                                ITU_T_IMPLICIT_TAG(value<bitstring_type > (false, Data_booleanArray), 14);
-                                break;
-                            }
-                        case MMS::Data_objId:
-                        {
-                            std::cout << *(val.success()->objId()) << std::endl;
-                            break;
-                        }
-                        case MMS::Data_mMSString:
-                        {
-                            std::cout << *(val.success()->mMSString()) << std::endl;
-                            break;
-                        }*/
+                    case MMS::Data_floating_point:
+                    {
+                        return short_value(prot9506::from_mmsfloat(*(val->success()->floating_point())));
+                    }
+                    case MMS::Data_octet_string:
+                    {
+                        const boost::asn1::octetstring_type& tmp = *(val->success()->octet_string());
+                        std::string tmps(tmp.begin(), tmp.end());
+                        return short_value(tmps);
+                    }
+                    case MMS::Data_visible_string:
+                    {
+                        const boost::asn1::visiblestring_type& tmp = *(val->success()->visible_string());
+                        std::string tmps(tmp.begin(), tmp.end());
+                        return short_value(tmps);
+                    }
+                    case MMS::Data_generalized_time:
+                    {
+                        return short_value(val->success()->generalized_time()->value());
+                    }
+                    case MMS::Data_binary_time:
+                    {
+                        return short_value(prot9506::from_mms_datetime(*(val->success()->binary_time())));
+                    }
+                    case MMS::Data_bcd:
+                    {
+                        int tmp;
+                        if (bcd_to_dec(*(val->success()->bcd()), tmp))
+                            return short_value(tmp);
+                        else
+                            return short_value(0, TYPE_NUM32, FULL_VALID, ERROR_TYPENOCAST);
+                    }
+                    case MMS::Data_mMSString:
+                    {
+                        const MMS::MMSString& tmp = *(val->success()->mMSString());
+                        std::string tmps(tmp.begin(), tmp.end());
+                        return short_value(tmps);
+                    }
+                    case MMS::Data_utcTime:
+                    {
+                        return short_value(*(val->success()->utcTime()));
+                    }
+                     /*case MMS::Data_objId:
+                     {
+                         std::cout << *(val.success()->objId()) << std::endl;
+                         break;
+                     }*/                    
                     default:
                     {
-                        return short_value();
+                        return short_value(0, TYPE_NUM32, FULL_VALID, ERROR_TYPENOCAST);
                     }
                 }
             } else {
-                return short_value();
+                return short_value(0, 0, NULL_VALID, ERROR_TYPENOCAST);
             }
         }
         return short_value();
@@ -371,8 +375,7 @@ namespace dvnci {
                             list_.remove(actuals);
                     }
                 }
-            }
-            else{
+            } else {
                 simplelist_.insert(results.begin(), results.end());
             }
 
@@ -396,8 +399,8 @@ namespace dvnci {
             removenamedlist(list_);
         }
         for (objectname_set::const_iterator it = cids.begin(); it != cids.end(); ++it) {
-            accessresult_map::iterator fit=simplelist_.find(*it);
-            if (simplelist_.find(*it)!=simplelist_.end()){
+            accessresult_map::iterator fit = simplelist_.find(*it);
+            if (simplelist_.find(*it) != simplelist_.end()) {
                 simplelist_.erase(fit);
             }
         }
@@ -579,7 +582,7 @@ namespace dvnci {
 
                 operationR->request_new();
                 operationR->request()->variableAccessSpecification().listOfVariable__new();
-                
+
                 for (accessresult_map::iterator it = simplelist_.begin(); it != simplelist_.end(); ++it) {
 
                     MMS::VariableAccessSpecification::ListOfVariable_type_sequence_of vacs;
