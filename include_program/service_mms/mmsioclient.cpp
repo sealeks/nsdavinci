@@ -142,15 +142,17 @@ namespace prot9506 {
     }
 
     bool mmsioclient::can_read() const {
-        return !((protocol_option().service() | MMSO::serviceSupportOptions_identify).dynamic_bitset().none());
+        return !((protocol_option().service() | MMSO::serviceSupportOptions_read).dynamic_bitset().none());
     }
 
     bool mmsioclient::can_write() const {
-        return !((protocol_option().service() | MMSO::serviceSupportOptions_identify).dynamic_bitset().none());
+        return !((protocol_option().service() | MMSO::serviceSupportOptions_write).dynamic_bitset().none());
     }
 
     bool mmsioclient::can_namedlist() const {
-        return !((protocol_option().service() | MMSO::serviceSupportOptions_identify).dynamic_bitset().none());
+        return false;
+        //return( !((protocol_option().service() | MMSO::serviceSupportOptions_defineNamedVariableList).dynamic_bitset().none()) && (
+       //         protocol_option().service() | MMSO::deleteNamedVariableList).dynamic_bitset().none()));
     }             
     
 }
