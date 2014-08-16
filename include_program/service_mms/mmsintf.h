@@ -22,6 +22,11 @@
 #include "mmsioclient.h"
 
 namespace dvnci {
+    
+    const std::size_t  BLOCK_SZ_DFLT = 10;
+    const std::string  VARLIST_TEMPLNAME = "dvnciappvar";
+    
+
 
     namespace MMS = ISO_9506_MMS_1;
     namespace MMSO = MMS_Object_Module_1;
@@ -47,6 +52,12 @@ namespace dvnci {
     
     
     short_value from_mms_result(accessresult_ptr val);    
+    
+    
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// objectname
+    /////////////////////////////////////////////////////////////////////////////////////////////////    
 
     class objectname {
 
@@ -102,6 +113,16 @@ namespace dvnci {
 
     typedef std::pair<objectname_ptr, accessresult_ptr> accessresult_pair;
     typedef std::map<objectname_ptr, accessresult_ptr> accessresult_map;
+    
+    
+    
+    
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// list_of_variable
+    /////////////////////////////////////////////////////////////////////////////////////////////////        
+    
 
     class list_of_variable {
 
@@ -133,6 +154,9 @@ namespace dvnci {
         bool insert(const objectname_set& vls);
         bool remove(const objectname_vct& vls);
         bool remove(const objectname_set& vls);
+        
+        friend bool operator==(const list_of_variable& ls, const list_of_variable& rs);
+        friend bool operator<(const list_of_variable& ls, const list_of_variable& rs);        
 
     private:
 
@@ -141,6 +165,12 @@ namespace dvnci {
     };
 
 
+    typedef std::set<list_of_variable> list_of_variable_set;    
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// mmsintf
+    /////////////////////////////////////////////////////////////////////////////////////////////////        
 
 
     class mmsintf;

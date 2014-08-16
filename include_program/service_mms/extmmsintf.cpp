@@ -32,10 +32,25 @@ namespace dvnci {
 
         ns_error exmmsintf::connect_impl() {
             try {
+                //  port : aselector
+                std::string port =   intf->groups()->port(group());
+                std::string asel;
+                if (!port.empty()) {
+                    std::string::size_type  it= port.find_first_of(':', 0);
+                    if (it!=std::string::npos){
+                        if ((it+1)<port.size())
+                            asel = port.substr(it + 1);
+                        else
+                            asel = "";
+                        port=port.substr(0,it);
+                    }
+                }
+                if (port.empty())
+                    port="102";
                 if (!remintf) {
                     remintf = dvnci::mmsintf::build(intf->groups()->host(group()),
-                            intf->groups()->port(group()).empty() ? "102" : intf->groups()->port(group()),
-                            "",
+                            fulltrim_copy(port),
+                            fulltrim_copy(asel),
                             intf->groups()->timeout(group()));
                 }
                 if (!remintf) {
