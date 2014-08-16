@@ -623,7 +623,7 @@ namespace dvnci {
             case TYPE_UNUM16: return to_str(*reinterpret_cast<unum16*> (val_));
             case TYPE_NUM8: return to_str((num16) (*reinterpret_cast<num8*> (val_)));
             case TYPE_UNUM8: return to_str((unum16) (*reinterpret_cast<unum8*> (val_)));
-            case TYPE_TM: return datetime_to_string(val);
+            case TYPE_TM: return datetime_to_string(val, true);
             case TYPE_TEXT: return "";
             default: return to_str(*reinterpret_cast<double*> (val_));}
         return to_str(*reinterpret_cast<double*> (val_));
