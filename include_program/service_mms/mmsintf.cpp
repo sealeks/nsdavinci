@@ -18,10 +18,10 @@ namespace dvnci {
                         return short_value(*(val->success()->boolean()));
                     }
                     case MMS::Data_bit_string:
-                    case MMS::Data_booleanArray:   
+                    case MMS::Data_booleanArray:
                     {
-                        const MMS::bitstring_type& tmp = val->success()->type()==MMS::Data_bit_string ? 
-                            (*(val->success()->bit_string())) : (*(val->success()->booleanArray()));
+                        const MMS::bitstring_type& tmp = val->success()->type() == MMS::Data_bit_string ?
+                                (*(val->success()->bit_string())) : (*(val->success()->booleanArray()));
                         if (tmp.sizebits() <= 8)
                             return short_value(tmp. operator uint8_t());
                         else if (tmp.sizebits() <= 16)
@@ -80,13 +80,13 @@ namespace dvnci {
                     }
                     case MMS::Data_utcTime:
                     {
-                        return short_value(*(val->success()->utcTime()));
+                        return short_value(prot9506::from_mms_utctime(*(val->success()->utcTime())));
                     }
-                     /*case MMS::Data_objId:
-                     {
-                         std::cout << *(val.success()->objId()) << std::endl;
-                         break;
-                     }*/                    
+                        /*case MMS::Data_objId:
+                        {
+                            std::cout << *(val.success()->objId()) << std::endl;
+                            break;
+                        }*/
                     default:
                     {
                         return short_value(0, TYPE_NUM32, FULL_VALID, ERROR_TYPENOCAST);
