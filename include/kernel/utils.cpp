@@ -1017,7 +1017,7 @@ namespace dvnci {
             std::string tmp = boost::gregorian::to_iso_extended_string(val.date()) + " ";
             if (withmsec) {
                 boost::format frmt("%02.2d:%02.2d:%02.2d.%03.3d");
-                frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds() % val.time_of_day().total_milliseconds();
+                frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds() % val.time_of_day().fractional_seconds();
                 tmp += frmt.str();} else {
                 boost::format frmt("%02.2d:%02.2d:%02.2d");
                 frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds();
@@ -1031,7 +1031,7 @@ namespace dvnci {
             std::wstring tmp = boost::gregorian::to_iso_extended_wstring(val.date()) + L" ";
             if (withmsec) {
                 boost::wformat frmt(L"%02.2d:%02.2d:%02.2d.%03.3d");
-                frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds() % val.time_of_day().total_milliseconds();
+                frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds() % val.time_of_day().fractional_seconds();
                 tmp += frmt.str();} else {
                 boost::wformat frmt(L"%02.2d:%02.2d:%02.2d");
                 frmt % val.time_of_day().hours() % val.time_of_day().minutes() % val.time_of_day().seconds();
