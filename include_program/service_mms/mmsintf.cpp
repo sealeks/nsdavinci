@@ -98,6 +98,15 @@ namespace dvnci {
         }
         return short_value();
     }
+    
+    
+    
+    
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //////// objectname
+    /////////////////////////////////////////////////////////////////////////////////////////////////        
 
     objectname::objectname() : internal_(new mmsobject_type()) {
     }
@@ -219,6 +228,9 @@ namespace dvnci {
     }
 
 
+    
+    
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// list_of_variable
     /////////////////////////////////////////////////////////////////////////////////////////////////    
@@ -267,14 +279,32 @@ namespace dvnci {
         return finded;
     }
 
+    bool operator==(const list_of_variable& ls, const list_of_variable& rs) {
+        if ((ls.key()) && (rs.key()))
+            return ls.key() == rs.key();
+        else if ((!ls.key()) && (!rs.key()))
+            return true;
+        return false;
+    }
 
+    bool operator<(const list_of_variable& ls, const list_of_variable& rs) {
+        if ((ls.key()) && (rs.key()))
+            return ls.key() < rs.key();
+        else if ((!ls.key()) && (!rs.key()))
+            return false;
+        else if ((!ls.key()) && (rs.key()))
+            return true;
+        return false;
+    }  
+    
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// mmsintf
     /////////////////////////////////////////////////////////////////////////////////////////////////  
 
     mmsintf::mmsintf(const std::string hst, const std::string prt, const std::string opt,
             timeouttype tmo) : client_io(new prot9506::mmsioclient()),
-    host(hst), port(prt), option(opt), tmout(tmo), list_("@test") {
+    host(hst), port(prt), option(opt), tmout(tmo), list_(VARLIST_TEMPLNAME) {
     }
 
     mmsintf_ptr mmsintf::build(const std::string host, const std::string port, const std::string opt, timeouttype tmout) {

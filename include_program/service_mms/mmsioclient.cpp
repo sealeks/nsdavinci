@@ -5,11 +5,12 @@
 namespace prot9506 {
 
     const service_option_type MMS_SERVICE_OPTOION_CLNT = MMSO::serviceSupportOptions_status | MMSO::serviceSupportOptions_getNameList | MMSO::serviceSupportOptions_identify | MMSO::serviceSupportOptions_read | MMSO::serviceSupportOptions_write |
-            MMSO::serviceSupportOptions_rename | MMSO::serviceSupportOptions_deleteNamedVariableList | MMSO::serviceSupportOptions_getVariableAccessAttributes | MMSO::serviceSupportOptions_informationReport;
+             MMSO::serviceSupportOptions_defineNamedVariableList | MMSO::serviceSupportOptions_deleteNamedVariableList | MMSO::serviceSupportOptions_getVariableAccessAttributes | MMSO::serviceSupportOptions_informationReport;
     const parameter_option_type MMS_CBB_OPTION_CLNT = MMSO::parameterSupportOptions_str1 | MMSO::parameterSupportOptions_str2 | MMSO::parameterSupportOptions_valt | MMSO::parameterSupportOptions_valt |
             MMSO::parameterSupportOptions_vnam | MMSO::parameterSupportOptions_vadr | MMSO::parameterSupportOptions_tpy | MMSO::parameterSupportOptions_vlis;
 
-    mmsioclient::mmsioclient() : io_service_(), socket_(io_service_, prot9506::protocol_option()), state_(disconnected), 
+    mmsioclient::mmsioclient() : io_service_(), socket_(io_service_, 
+            prot9506::protocol_option(MMS_SERVICE_OPTOION_CLNT, MMS_CBB_OPTION_CLNT)), state_(disconnected), 
             tmout_timer(io_service_), timout(),  is_data_ready(false), is_timout(false), 
             is_connect(false), is_error(false), error_cod(0) {
     }
@@ -24,7 +25,9 @@ namespace prot9506 {
         DEBUG_STR_DVNCI(ioclient connect)
         DEBUG_VAL_DVNCI(hst)
         DEBUG_VAL_DVNCI(prt)
+        DEBUG_VAL_DVNCI(opt)                
         DEBUG_VAL_DVNCI(timout)
+        socket_.aselector(opt);        
         boost::asio::ip::tcp::resolver resolver(io_service_);
         boost::asio::ip::tcp::resolver::query query(hst.c_str(), prt.c_str());
 
