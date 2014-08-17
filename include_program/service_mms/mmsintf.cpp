@@ -314,8 +314,8 @@ namespace dvnci {
     }
 
     mmsintf_ptr mmsintf::build(const std::string host, const std::string port, const std::string opt, std::size_t blocksz, timeouttype tmout) {
-        blocksize = (blocksz < 2) ? BLOCK_SZ_DFLT : ((blocksz > BLOCK_SZ_MAX) ? BLOCK_SZ_MAX : blocksz);
-        mmsintf_ptr tmpintf = mmsintf_ptr(new mmsintf(host, port, opt, tmout));
+        blocksz = (blocksz < 2) ? BLOCK_SZ_DFLT : ((blocksz > BLOCK_SZ_MAX) ? BLOCK_SZ_MAX : blocksz);
+        mmsintf_ptr tmpintf = mmsintf_ptr(new mmsintf(host, port, opt, blocksz, tmout));
         return tmpintf;
     }
 
