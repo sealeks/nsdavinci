@@ -212,7 +212,7 @@ namespace dvnci {
     }
 
     bool operator==(const objectname_ptr& ls, const objectname_ptr& rs) {
-        if (ls && rs)/
+        if (ls && rs)
             return *ls == *rs;
         if (!ls && !rs)
             return true;
@@ -309,12 +309,12 @@ namespace dvnci {
     //////// mmsintf
     /////////////////////////////////////////////////////////////////////////////////////////////////  
 
-    mmsintf::mmsintf(const std::string hst, const std::string prt, const std::string opt,
-            timeouttype tmo) : client_io(new prot9506::mmsioclient()),
-    host(hst), port(prt), option(opt), tmout(tmo) {
+    mmsintf::mmsintf(const std::string hst, const std::string prt, const std::string opt, std::size_t blocksz, timeouttype tmo) :
+    client_io(new prot9506::mmsioclient()), host(hst), port(prt), option(opt), tmout(tmo), blocksize(blocksz ? blocksz : BLOCK_SZ_DFLT) {
     }
 
-    mmsintf_ptr mmsintf::build(const std::string host, const std::string port, const std::string opt, timeouttype tmout) {
+    mmsintf_ptr mmsintf::build(const std::string host, const std::string port, const std::string opt, std::size_t blocksz, timeouttype tmout) {
+        blocksize = (blocksz < 2) ? BLOCK_SZ_DFLT : ((blocksz > BLOCK_SZ_MAX) ? BLOCK_SZ_MAX : blocksz);
         mmsintf_ptr tmpintf = mmsintf_ptr(new mmsintf(host, port, opt, tmout));
         return tmpintf;
     }
@@ -503,7 +503,7 @@ namespace dvnci {
             return lists_.front();
         } else {
             for (list_of_variable_vct::iterator it = lists_.begin(); it != lists_.end(); ++it) {
-                if (it->values().size() < BLOCK_SZ_DFLT)
+                if (it->values().size() < blocksize)
                     return *it;
             }
         }
@@ -521,7 +521,7 @@ namespace dvnci {
             list_of_variable& next = nextlist();
             while (it != vls.end()) {
                 next.insert(*it);
-                if ((next.values().size()) && (next.values().size() >= BLOCK_SZ_DFLT)) {
+                if ((next.values().size()) && (next.values().size() >= blocksize)) {
                     if (error(update_namedlist(next)))
                         return error();
                     next = nextlist();
@@ -713,7 +713,7 @@ namespace dvnci {
                         vacs.variableSpecification().name(new mmsobject_type(it->first->internal()));
 
                         operationR->request()->variableAccessSpecification().listOfVariable()->push_back(vacs);
-                        if (++currentcnt >= BLOCK_SZ_DFLT) {
+                        if (++currentcnt >= blocksize) {
                             sit = ++it;
                             currentcnt = 0;
                             break;

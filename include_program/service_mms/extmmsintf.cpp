@@ -33,24 +33,25 @@ namespace dvnci {
         ns_error exmmsintf::connect_impl() {
             try {
                 //  port : aselector
-                std::string port =   intf->groups()->port(group());
+                std::string port = intf->groups()->port(group());
                 std::string asel;
                 if (!port.empty()) {
-                    std::string::size_type  it= port.find_first_of(':', 0);
-                    if (it!=std::string::npos){
-                        if ((it+1)<port.size())
+                    std::string::size_type it = port.find_first_of(':', 0);
+                    if (it != std::string::npos) {
+                        if ((it + 1) < port.size())
                             asel = port.substr(it + 1);
                         else
                             asel = "";
-                        port=port.substr(0,it);
+                        port = port.substr(0, it);
                     }
                 }
                 if (port.empty())
-                    port="102";
+                    port = "102";
                 if (!remintf) {
                     remintf = dvnci::mmsintf::build(intf->groups()->host(group()),
                             fulltrim_copy(port),
                             fulltrim_copy(asel),
+                            2,
                             intf->groups()->timeout(group()));
                 }
                 if (!remintf) {
@@ -132,9 +133,9 @@ namespace dvnci {
             accesserror_map errors;
 
             if (!error(remintf->remove_items(sids, errors))) {
-                    remove_clear();
-                }
-            
+                remove_clear();
+            }
+
             return error();
         }
 
@@ -153,9 +154,9 @@ namespace dvnci {
             //this->
 
             for (accessresult_map::const_iterator it = sids.begin(); it != sids.end(); ++it) {
-                if (it->second) 
+                if (it->second)
                     write_val_sid(it->first, from_mms_result(it->second));
-                else 
+                else
                     write_val_sid(it->first, short_value());
             }
 
