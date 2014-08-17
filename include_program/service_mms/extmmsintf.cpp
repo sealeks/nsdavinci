@@ -51,7 +51,7 @@ namespace dvnci {
                     remintf = dvnci::mmsintf::build(intf->groups()->host(group()),
                             fulltrim_copy(port),
                             fulltrim_copy(asel),
-                            2,
+                            intf->groups()->blocksize(group()),
                             intf->groups()->timeout(group()));
                 }
                 if (!remintf) {
