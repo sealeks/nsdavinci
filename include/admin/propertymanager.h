@@ -16,6 +16,8 @@
 #include <admin/lgk_entitywraper.h>
 #include <admin/mdb_entitywraper.h>
 #include <admin/koyo_entitywraper.h>
+#include <admin/mms_entitywraper.h>
+#include <admin/iec60870_entitywraper.h>
 #include <admin/metawraper.h>
 #include <admin/adminintf.h>
 
