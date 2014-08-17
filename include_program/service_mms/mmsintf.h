@@ -23,7 +23,7 @@
 
 namespace dvnci {
     
-    const std::size_t  BLOCK_SZ_DFLT = 10;
+    const std::size_t  BLOCK_SZ_DFLT = 2;
     const std::string  VARLIST_TEMPLNAME = "dvnciappvar";
     
 
@@ -150,8 +150,10 @@ namespace dvnci {
             return values_.empty();
         };
 
+        bool insert(const objectname_ptr& vls);        
         bool insert(const objectname_vct& vls);
         bool insert(const objectname_set& vls);
+        bool remove(const objectname_ptr& vls);        
         bool remove(const objectname_vct& vls);
         bool remove(const objectname_set& vls);
         
@@ -165,7 +167,7 @@ namespace dvnci {
     };
 
 
-    typedef std::set<list_of_variable> list_of_variable_set;    
+    typedef std::vector<list_of_variable> list_of_variable_vct;    
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,10 +221,14 @@ namespace dvnci {
 
         virtual ns_error disconnect_impl();
 
-        ns_error updatenamedlist(const list_of_variable& lst);
-        ns_error removenamedlist(const list_of_variable& lst);
-        ns_error readnamedlist(list_of_variable& lst);
-        ns_error readsimlelist();
+        list_of_variable& nextlist();        
+        ns_error insert_in_namedlist(const objectname_vct& vls);
+        ns_error remove_from_namedlist(const objectname_set& vls);        
+        ns_error update_namedlist(const list_of_variable& lst);
+        ns_error remove_namedlist(const list_of_variable& lst);  
+        ns_error read_all_namedlist();
+        ns_error read_namedlist(list_of_variable& lst);
+        ns_error read_simlelist();
 
         ns_error error(ns_error err) {
             return error_ = err;
@@ -238,7 +244,7 @@ namespace dvnci {
         std::string port;
         std::string option;
         timeouttype tmout;
-        list_of_variable list_;
+        list_of_variable_vct lists_;
         accessresult_map simplelist_;
     };
 

@@ -98,12 +98,12 @@ namespace dvnci {
         }
         return short_value();
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// objectname
     /////////////////////////////////////////////////////////////////////////////////////////////////        
@@ -212,7 +212,7 @@ namespace dvnci {
     }
 
     bool operator==(const objectname_ptr& ls, const objectname_ptr& rs) {
-        if (ls && rs)
+        if (ls && rs)/
             return *ls == *rs;
         if (!ls && !rs)
             return true;
@@ -228,20 +228,18 @@ namespace dvnci {
     }
 
 
-    
-    
-    
+
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// list_of_variable
-    /////////////////////////////////////////////////////////////////////////////////////////////////    
+    ///////////////////////////////////////////////////////////////////////////////////////////////// 
 
-    bool list_of_variable::insert(const objectname_vct& vls) {
+    bool list_of_variable::insert(const objectname_ptr& vls) {
         bool inserted = false;
-        for (objectname_vct::const_iterator it = vls.begin(); it != vls.end(); ++it) {
-            if (values_.find(*it) == values_.end()) {
-                values_.insert(accessresult_pair((*it), accessresult_ptr()));
-                inserted = true;
-            }
+        if (values_.find(vls) == values_.end()) {
+            values_.insert(accessresult_pair((vls), accessresult_ptr()));
+            inserted = true;
         }
         return inserted;
     }
@@ -255,6 +253,15 @@ namespace dvnci {
             }
         }
         return inserted;
+    }
+
+    bool list_of_variable::remove(const objectname_ptr& vls) {
+        bool finded = false;
+        if (values_.find(vls) != values_.end()) {
+            values_.erase(vls);
+            finded = true;
+        }
+        return finded;
     }
 
     bool list_of_variable::remove(const objectname_vct& vls) {
@@ -295,16 +302,16 @@ namespace dvnci {
         else if ((!ls.key()) && (rs.key()))
             return true;
         return false;
-    }  
-    
-    
+    }
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// mmsintf
     /////////////////////////////////////////////////////////////////////////////////////////////////  
 
     mmsintf::mmsintf(const std::string hst, const std::string prt, const std::string opt,
             timeouttype tmo) : client_io(new prot9506::mmsioclient()),
-    host(hst), port(prt), option(opt), tmout(tmo), list_(VARLIST_TEMPLNAME) {
+    host(hst), port(prt), option(opt), tmout(tmo) {
     }
 
     mmsintf_ptr mmsintf::build(const std::string host, const std::string port, const std::string opt, timeouttype tmout) {
@@ -399,11 +406,10 @@ namespace dvnci {
                 }
 
                 if (!actuals.empty()) {
-                    bool needcreate = list_.empty();
-                    if (list_.insert(actuals)) {
-                        if (updatenamedlist(list_))
-                            list_.remove(actuals);
-                    }
+                    //if (list_.insert(actuals)) {
+                    ///  if (update_namedlist(list_))
+                    //    list_.remove(actuals);
+                    //}
                 }
             } else {
                 simplelist_.insert(results.begin(), results.end());
@@ -425,8 +431,9 @@ namespace dvnci {
 
     ns_error mmsintf::remove_items(const objectname_set& cids, accesserror_map& errors) {
         error(0);
-        if (list_.remove(cids)) {
-            removenamedlist(list_);
+        if (!lists_.empty()) {
+            if (error(remove_from_namedlist(cids)))
+                return error();
         }
         for (objectname_set::const_iterator it = cids.begin(); it != cids.end(); ++it) {
             accessresult_map::iterator fit = simplelist_.find(*it);
@@ -438,19 +445,31 @@ namespace dvnci {
     }
 
     ns_error mmsintf::read_values(accessresult_map& sids) {
-        if (list_.empty()) {
-            readnamedlist(list_);
-            readsimlelist();
+        if ((!simplelist_.empty()) || !(lists_.empty())) {
+            if (!simplelist_.empty())
+                if (error(read_simlelist()))
+                    return error();
+            if (!lists_.empty())
+                if (error(read_all_namedlist()))
+                    return error();
+
             for (accessresult_map::iterator it = sids.begin(); it != sids.end(); ++it) {
+
+                accessresult_ptr locrslt;
                 accessresult_map::const_iterator sfit = simplelist_.find(it->first);
-                accessresult_map::const_iterator fit = list_.values().find(it->first);
                 if (sfit != simplelist_.end()) {
-                    it->second = sfit->second;
-                } else if (fit != list_.values().end()) {
-                    it->second = fit->second;
+                    locrslt = sfit->second;
                 } else {
-                    it->second = accessresult_ptr();
+                    for (list_of_variable_vct::const_iterator lit = lists_.begin(); lit != lists_.end(); ++lit) {
+                        accessresult_map::const_iterator fit = lit->values().find(it->first);
+                        if (fit != lit->values().end()) {
+                            locrslt = fit->second;
+                            break;
+                        }
+                    }
+                    locrslt = accessresult_ptr();
                 }
+                it->second = locrslt;
             }
         }
         return error();
@@ -477,37 +496,93 @@ namespace dvnci {
         return error();
     }*/
 
+    list_of_variable& mmsintf::nextlist() {
+        std::size_t newindx = 1;
+        if (lists_.empty()) {
+            lists_.push_back(list_of_variable(VARLIST_TEMPLNAME + dvnci::to_str(newindx)));
+            return lists_.front();
+        } else {
+            for (list_of_variable_vct::iterator it = lists_.begin(); it != lists_.end(); ++it) {
+                if (it->values().size() < BLOCK_SZ_DFLT)
+                    return *it;
+            }
+        }
+        while (std::find(lists_.begin(), lists_.end(),
+                list_of_variable(VARLIST_TEMPLNAME + dvnci::to_str(++newindx))) != lists_.end());
+        lists_.push_back(list_of_variable(VARLIST_TEMPLNAME + dvnci::to_str(newindx)));
+        return lists_.back();
+    }
 
-    ns_error mmsintf::updatenamedlist(const list_of_variable& lst) {
+    ns_error mmsintf::insert_in_namedlist(const objectname_vct& vls) {
+        error(0);
+        if (vls.empty()) {
+            std::size_t ncnt = 0;
+            objectname_vct::const_iterator it = vls.begin();
+            list_of_variable& next = nextlist();
+            while (it != vls.end()) {
+                next.insert(*it);
+                if ((next.values().size()) && (next.values().size() >= BLOCK_SZ_DFLT)) {
+                    if (error(update_namedlist(next)))
+                        return error();
+                    next = nextlist();
+                    ncnt = 0;
+                }
+                ++it;
+            }
+            if (ncnt) {
+                if (error(update_namedlist(next)))
+                    return error();
+            }
+        }
+        return error();
+    }
+
+    ns_error mmsintf::remove_from_namedlist(const objectname_set& vls) {
+        error(0);
+        if (!lists_.empty()) {
+            for (list_of_variable_vct::iterator it = lists_.begin(); it != lists_.end(); ++it) {
+                if (it->remove(vls)) {
+                    if (error(update_namedlist(*it)))
+                        return error();
+                }
+            }
+        }
+        return error();
+    }
+
+    ns_error mmsintf::update_namedlist(const list_of_variable& lst) {
         try {
 
             typedef prot9506::definelist_operation_type definelist_operation_type;
 
             error(0);
 
-            removenamedlist(lst);
+            remove_namedlist(lst);
 
-            boost::shared_ptr<definelist_operation_type> operationDF =
-                    boost::shared_ptr<definelist_operation_type > (new definelist_operation_type());
+            if (!lst.empty()) {
 
-            operationDF->request_new();
+                boost::shared_ptr<definelist_operation_type> operationDF =
+                        boost::shared_ptr<definelist_operation_type > (new definelist_operation_type());
 
-            operationDF->request()->variableListName(lst.key()->internal());
+                operationDF->request_new();
 
-            for (accessresult_map::const_iterator it = lst.values().begin(); it != lst.values().end(); ++it) {
-                operationDF->request()->listOfVariable().push_back(MMS::DefineNamedVariableList_Request::ListOfVariable_type_sequence_of(
-                        MMS::VariableSpecification(it->first->internal(),
-                        MMS::VariableSpecification_name)));
-            }
+                operationDF->request()->variableListName(lst.key()->internal());
 
-            if (client_io->req<definelist_operation_type>(operationDF)) {
-                if (operationDF->response()) {
-
+                for (accessresult_map::const_iterator it = lst.values().begin(); it != lst.values().end(); ++it) {
+                    operationDF->request()->listOfVariable().push_back(MMS::DefineNamedVariableList_Request::ListOfVariable_type_sequence_of(
+                            MMS::VariableSpecification(it->first->internal(),
+                            MMS::VariableSpecification_name)));
                 }
-            } else if (operationDF->serviceerror()) {
-                return error(NS_ERROR_ERRRESP);
-            } else {
-                return error(NS_ERROR_ERRRESP);
+
+                if (client_io->req<definelist_operation_type>(operationDF)) {
+                    if (operationDF->response()) {
+
+                    }
+                } else if (operationDF->serviceerror()) {
+                    return error(NS_ERROR_ERRRESP);
+                } else {
+                    return error(NS_ERROR_ERRRESP);
+                }
             }
         } catch (dvncierror& err_) {
             error(err_.code());
@@ -520,7 +595,7 @@ namespace dvnci {
         return error();
     }
 
-    ns_error mmsintf::removenamedlist(const list_of_variable& lst) {
+    ns_error mmsintf::remove_namedlist(const list_of_variable& lst) {
         try {
 
             typedef prot9506::deletelist_operation_type deletelist_operation_type;
@@ -557,13 +632,23 @@ namespace dvnci {
         return error();
     }
 
-    ns_error mmsintf::readnamedlist(list_of_variable& lst) {
+    ns_error mmsintf::read_all_namedlist() {
         error(0);
-        if (!list_.empty()) {
+        if (!lists_.empty()) {
+            for (list_of_variable_vct::iterator it = lists_.begin(); it != lists_.end(); ++it) {
+                if (error(read_namedlist(*it)))
+                    return error();
+            }
+        }
+        return error();
+    }
+
+    ns_error mmsintf::read_namedlist(list_of_variable& lst) {
+        error(0);
+        if (!lst.empty()) {
             try {
 
                 typedef prot9506::read_operation_type read_operation_type;
-
 
                 boost::shared_ptr<read_operation_type> operationR =
                         boost::shared_ptr<read_operation_type > (new read_operation_type());
@@ -600,7 +685,7 @@ namespace dvnci {
         return error();
     }
 
-    ns_error mmsintf::readsimlelist() {
+    ns_error mmsintf::read_simlelist() {
         error(0);
         if (!simplelist_.empty()) {
             try {
@@ -613,30 +698,49 @@ namespace dvnci {
                 operationR->request_new();
                 operationR->request()->variableAccessSpecification().listOfVariable__new();
 
-                for (accessresult_map::iterator it = simplelist_.begin(); it != simplelist_.end(); ++it) {
+                std::size_t currentcnt = 0;
 
-                    MMS::VariableAccessSpecification::ListOfVariable_type_sequence_of vacs;
-                    vacs.variableSpecification().name(new mmsobject_type(it->first->internal()));
+                accessresult_map::iterator sit = simplelist_.begin();
+                accessresult_map::iterator it = sit;
 
-                    operationR->request()->variableAccessSpecification().listOfVariable()->push_back(vacs);
-                }
-                if (client_io->req<read_operation_type>(operationR)) {
-                    if (operationR->response()) {
-                        const resultslist_type& vlst = operationR->response()->listOfAccessResult();
-                        accessresult_map::iterator vit = simplelist_.begin();
-                        for (resultslist_type::const_iterator it = vlst.begin(); it != vlst.end(); ++it) {
-                            if (vit != simplelist_.end())
-                                vit->second = accessresult_ptr(new accessresult_type(*it));
-                            else
-                                break;
-                            ++vit;
+                while (it != simplelist_.end()) {
+
+                    accessresult_map::iterator lsit = sit;
+
+                    for (; it != simplelist_.end(); ++it) {
+
+                        MMS::VariableAccessSpecification::ListOfVariable_type_sequence_of vacs;
+                        vacs.variableSpecification().name(new mmsobject_type(it->first->internal()));
+
+                        operationR->request()->variableAccessSpecification().listOfVariable()->push_back(vacs);
+                        if (++currentcnt >= BLOCK_SZ_DFLT) {
+                            sit = ++it;
+                            currentcnt = 0;
+                            break;
                         }
                     }
-                } else if (operationR->serviceerror()) {
-                    return error(NS_ERROR_ERRRESP);
-                } else {
-                    return error(NS_ERROR_ERRRESP);
+                    if (client_io->req<read_operation_type>(operationR)) {
+                        if (operationR->response()) {
+                            const resultslist_type& vlst = operationR->response()->listOfAccessResult();
+                            accessresult_map::iterator vit = lsit;
+                            for (resultslist_type::const_iterator rit = vlst.begin(); rit != vlst.end(); ++rit) {
+                                if (vit != simplelist_.end())
+                                    vit->second = accessresult_ptr(new accessresult_type(*rit));
+                                else
+                                    break;
+                                ++vit;
+                            }
+                        }
+                    } else if (operationR->serviceerror()) {
+                        return error(NS_ERROR_ERRRESP);
+                    } else {
+                        return error(NS_ERROR_ERRRESP);
+                    }
+
+                    operationR->request_new();
+                    operationR->request()->variableAccessSpecification().listOfVariable__new();
                 }
+
             } catch (dvncierror& err_) {
                 error(err_.code());
                 if ((err_.code() == ERROR_FAILNET_CONNECTED) ||
