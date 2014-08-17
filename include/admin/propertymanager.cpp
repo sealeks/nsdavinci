@@ -73,6 +73,8 @@ namespace dvnci {
             registwraper( NS_GROUP_MODBUS, NT_GROUP, new modbusgroupwraper());
             registwraper( NS_GROUP_KOYO, NT_GROUP, new koyogroupwraper());
             registwraper( NS_GROUP_LGKA, NT_GROUP, new lgkgroupwraper());
+            registwraper( NS_GROUP_MMS, NT_GROUP, new mmsgroupwraper());
+            registwraper( NS_GROUP_IEC60870, NT_GROUP, new iec60870groupwraper());
 
 
             registwraper( NT_GROUP, new defaultgroupwraper());
