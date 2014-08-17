@@ -22,17 +22,18 @@
 #include "mmsioclient.h"
 
 namespace dvnci {
-    
-    const std::size_t  BLOCK_SZ_DFLT = 2;
-    const std::string  VARLIST_TEMPLNAME = "dvnciappvar";
-    
+
+    const std::size_t BLOCK_SZ_DFLT = 20;
+    const std::size_t BLOCK_SZ_MAX = 255;
+    const std::string VARLIST_TEMPLNAME = "dvnciappvar";
+
 
 
     namespace MMS = ISO_9506_MMS_1;
     namespace MMSO = MMS_Object_Module_1;
 
 
-    
+
     class objectname;
 
     typedef MMSO::Identifier mmsidentifier_type;
@@ -48,12 +49,12 @@ namespace dvnci {
 
     typedef boost::shared_ptr<mmsobject_type> mmsobject_ptr;
     typedef boost::shared_ptr<objectname> objectname_ptr;
-    
-    
-    
-    short_value from_mms_result(accessresult_ptr val);    
-    
-    
+
+
+
+    short_value from_mms_result(accessresult_ptr val);
+
+
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// objectname
@@ -113,16 +114,15 @@ namespace dvnci {
 
     typedef std::pair<objectname_ptr, accessresult_ptr> accessresult_pair;
     typedef std::map<objectname_ptr, accessresult_ptr> accessresult_map;
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// list_of_variable
     /////////////////////////////////////////////////////////////////////////////////////////////////        
-    
 
     class list_of_variable {
 
@@ -150,15 +150,15 @@ namespace dvnci {
             return values_.empty();
         };
 
-        bool insert(const objectname_ptr& vls);        
+        bool insert(const objectname_ptr& vls);
         bool insert(const objectname_vct& vls);
         bool insert(const objectname_set& vls);
-        bool remove(const objectname_ptr& vls);        
+        bool remove(const objectname_ptr& vls);
         bool remove(const objectname_vct& vls);
         bool remove(const objectname_set& vls);
-        
+
         friend bool operator==(const list_of_variable& ls, const list_of_variable& rs);
-        friend bool operator<(const list_of_variable& ls, const list_of_variable& rs);        
+        friend bool operator<(const list_of_variable& ls, const list_of_variable& rs);
 
     private:
 
@@ -167,9 +167,9 @@ namespace dvnci {
     };
 
 
-    typedef std::vector<list_of_variable> list_of_variable_vct;    
-    
-    
+    typedef std::vector<list_of_variable> list_of_variable_vct;
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// mmsintf
     /////////////////////////////////////////////////////////////////////////////////////////////////        
@@ -188,10 +188,13 @@ namespace dvnci {
         };
 
         mmsintf(const std::string hst, const std::string prt, const std::string opt,
+                std::size_t blocksz = BLOCK_SZ_DFLT,
                 timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
 
         virtual ~mmsintf() {
         };
+
+        static mmsintf_ptr build(const std::string host, const std::string port, const std::string opt, std::size_t blocksz = BLOCK_SZ_DFLT, timeouttype tmout = DEFAULT_DVNCI_TIMOUT);
 
         bool isconnected() {
             return ((state_ == connected) || (!error(connect_impl())));
@@ -213,7 +216,6 @@ namespace dvnci {
         virtual void setaddress(const boost::asio::ip::address& adr) {
         }
 
-        static mmsintf_ptr build(const std::string host, const std::string port, const std::string opt, timeouttype tmout = DEFAULT_DVNCI_TIMOUT);
 
     protected:
 
@@ -221,11 +223,11 @@ namespace dvnci {
 
         virtual ns_error disconnect_impl();
 
-        list_of_variable& nextlist();        
+        list_of_variable& nextlist();
         ns_error insert_in_namedlist(const objectname_vct& vls);
-        ns_error remove_from_namedlist(const objectname_set& vls);        
+        ns_error remove_from_namedlist(const objectname_set& vls);
         ns_error update_namedlist(const list_of_variable& lst);
-        ns_error remove_namedlist(const list_of_variable& lst);  
+        ns_error remove_namedlist(const list_of_variable& lst);
         ns_error read_all_namedlist();
         ns_error read_namedlist(list_of_variable& lst);
         ns_error read_simlelist();
@@ -244,6 +246,7 @@ namespace dvnci {
         std::string port;
         std::string option;
         timeouttype tmout;
+        std::size_t blocksize;
         list_of_variable_vct lists_;
         accessresult_map simplelist_;
     };
