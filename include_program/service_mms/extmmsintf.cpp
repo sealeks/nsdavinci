@@ -76,15 +76,15 @@ namespace dvnci {
 
         ns_error exmmsintf::disconnect_impl() {
             try {
-                //disconnect_util();
-                /*real_repval_map.clear();;
-                rep_tasks_set.clear();
-                evnt_tasks_set.clear();
+                disconnect_util();
                 state_ = disconnected;
-                if (netintf->isconnected()){
-                  netintf->disconnect();
-                  return error(0);}*/
+                if (remintf->isconnected()) {
+                    remintf->disconnect();
+                    remintf.reset();
+                    return error(0);
+                }
             } catch (...) {
+                remintf.reset();
                 state_ = disconnected;
             }
             return error(0);

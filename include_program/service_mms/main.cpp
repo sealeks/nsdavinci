@@ -11,8 +11,6 @@
 #include <kernel/service.h>
 #include <kernel/interface_proccesstmpl.h>
 
-//#include <custom/extnetintf.h>
-//#include "mmsserver.h"
 #include "extmmsintf.h"
 
 
@@ -23,13 +21,13 @@ using namespace dvnci::external;
 
 
 dvnci::executable_ptr     dvnci::mainserv;
-std::string                   dvnci::DVNCI_SERVICE_NAME=NS_MMS_SERVICE_NAME;
+std::string                  dvnci::DVNCI_SERVICE_NAME=NS_MMS_SERVICE_NAME;
 dvnci::appidtype      dvnci::DVNCI_SERVICE_APPID= NS_MMS_SERVICE;
 fspath                        basepath;
 
 
 typedef externalintf_executor<exmmsintf>                                             mmsexecutor;
-typedef group_proccessor_templ<mmsexecutor , TYPE_SIMPL | TYPE_REPORT | TYPE_TEXT >    groupmms;
+typedef group_proccessor_templ<mmsexecutor , TYPE_SIMPL | TYPE_TEXT | TYPE_TIME >    groupmms;
 
 
 class net_service : public uniintfservice < groupmms > {
