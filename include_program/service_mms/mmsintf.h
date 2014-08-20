@@ -261,6 +261,7 @@ namespace dvnci {
     private:
 
         void parse_error(dvncierror& err_);
+        void check_connecton_state();
 
         prot9506::mmsioclient_ptr client_io;
         std::string host;
