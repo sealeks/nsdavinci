@@ -495,55 +495,51 @@ namespace dvnci {
     }
 
     ns_error mmsintf::add_items(const bindobject_map& cids, accessresult_map& results, accesserror_map& errors) {
-        if (isconnected()) {
-            try {
-                typedef prot9506::getvaraccess_operation_type getvaraccess_operation_type;
-                typedef prot9506::read_operation_type read_operation_type;
-                typedef prot9506::identify_operation_type identify_operation_type;
 
-                objectname_vct actuals;
+        check_connecton_state();
 
-                error(0);
+        try {
+            typedef prot9506::getvaraccess_operation_type getvaraccess_operation_type;
+            typedef prot9506::read_operation_type read_operation_type;
+            typedef prot9506::identify_operation_type identify_operation_type;
 
-                for (bindobject_map::const_iterator it = cids.begin(); it != cids.end(); ++it) {
-                    boost::shared_ptr<getvaraccess_operation_type> operationA(new getvaraccess_operation_type());
-                    operationA->request_new();
-                    operationA->request()->name(new mmsobject_type(it->second->internal()));
-                    if (client_io->req<getvaraccess_operation_type>(operationA)) {
-                        if ((operationA->response())) {
-                            if ((operationA->response()->typeDescription().type() != MMSO::TypeDescription_array) &&
-                                    (operationA->response()->typeDescription().type() != MMSO::TypeDescription_structure) &&
-                                    (operationA->response()->typeDescription().type() != MMSO::TypeDescription_objId)) {
-                                results.insert(accessresult_pair(it->second, accessresult_ptr()));
-                                actuals.push_back(it->second);
-                                actuals.back()->access(operationA->response());
-                            } else
-                                errors.insert(accesserror_pair(it->second, serviceerror_ptr()));
-                        } else if (operationA->serviceerror()) {
-                            errors.insert(accesserror_pair(it->second, operationA->serviceerror()));
-                        } else {
+            objectname_vct actuals;
+
+            for (bindobject_map::const_iterator it = cids.begin(); it != cids.end(); ++it) {
+                boost::shared_ptr<getvaraccess_operation_type> operationA(new getvaraccess_operation_type());
+                operationA->request_new();
+                operationA->request()->name(new mmsobject_type(it->second->internal()));
+                if (client_io->req<getvaraccess_operation_type>(operationA)) {
+                    if ((operationA->response())) {
+                        if ((operationA->response()->typeDescription().type() != MMSO::TypeDescription_array) &&
+                                (operationA->response()->typeDescription().type() != MMSO::TypeDescription_structure) &&
+                                (operationA->response()->typeDescription().type() != MMSO::TypeDescription_objId)) {
+                            results.insert(accessresult_pair(it->second, accessresult_ptr()));
+                            actuals.push_back(it->second);
+                            actuals.back()->access(operationA->response());
+                        } else
                             errors.insert(accesserror_pair(it->second, serviceerror_ptr()));
-                        }
-                    }
-                }
-
-                if (!actuals.empty()) {
-                    if (client_io->can_namedlist()) {
-                        if (error(insert_in_namedlist(actuals)))
-                            return error();
+                    } else if (operationA->serviceerror()) {
+                        errors.insert(accesserror_pair(it->second, operationA->serviceerror()));
                     } else {
-                        simplelist_.insert(results.begin(), results.end());
+                        errors.insert(accesserror_pair(it->second, serviceerror_ptr()));
                     }
                 }
-
-            } catch (dvncierror& err_) {
-                parse_error(err_);
-            } catch (...) {
-                error(NS_ERROR_ERRRESP);
             }
-        } else {
-            error(ERROR_IO_LINK_NOT_CONNECTION);
-            throw dvncierror(ERROR_IO_LINK_NOT_CONNECTION);
+
+            if (!actuals.empty()) {
+                if (client_io->can_namedlist()) {
+                    if (error(insert_in_namedlist(actuals)))
+                        return error();
+                } else {
+                    simplelist_.insert(results.begin(), results.end());
+                }
+            }
+
+        } catch (dvncierror& err_) {
+            parse_error(err_);
+        } catch (...) {
+            error(NS_ERROR_ERRRESP);
         }
         return error();
     }
@@ -596,7 +592,6 @@ namespace dvnci {
     ns_error mmsintf::send_commands(const mmscommand_vct& cmds, accesserror_map& errors) {
 
         check_connecton_state();
-        error(0);
 
         try {
 
@@ -733,7 +728,6 @@ namespace dvnci {
     ns_error mmsintf::update_namedlist(list_of_variable_ptr lst) {
 
         check_connecton_state();
-        error(0);
 
         try {
 
@@ -826,7 +820,6 @@ namespace dvnci {
     ns_error mmsintf::read_namedlist(list_of_variable_ptr lst) {
 
         check_connecton_state();
-        error(0);
 
         if (!lst->empty()) {
             try {
@@ -866,7 +859,6 @@ namespace dvnci {
 
         check_connecton_state();
 
-        error(0);
         if (!simplelist_.empty()) {
             try {
 
@@ -947,6 +939,7 @@ namespace dvnci {
             error(ERROR_IO_LINK_NOT_CONNECTION);
             throw dvncierror(ERROR_IO_LINK_NOT_CONNECTION);
         }
+        error(0);
     }
 
 
