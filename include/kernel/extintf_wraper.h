@@ -116,7 +116,9 @@ public:
             if ((errd.code()==ERROR_IO_LINK_NOT_CONNECTION) || 
                 (errd.code()==ERROR_FAILNET_CONNECTED) || 
                 (errd.code()==ERROR_NONET_CONNECTED) ||
-                (errd.code()==ERROR_IO_SERVICE_LOCK)){
+                (errd.code()==ERROR_IO_SERVICE_LOCK)) ||
+                (errd.code()==ERROR_PROTOCOL_SEQ) ||
+                (errd.code()==ERROR_PROTOCOL_ERROR)){
                 try{
                     disconnect();}
                 catch(...){}}

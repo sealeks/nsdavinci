@@ -138,7 +138,10 @@ namespace dvnci {
     const ns_error ERROR_NO_DATABASE_CONN = 0x440;
     // ошибка при выполнении запроса с базой данных
     const ns_error ERROR_DATABASE_EXEC = 0x441;
-    
+    // ошибка при выполнении запроса с базой данных
+    const ns_error ERROR_PROTOCOL_SEQ = 0x442;    
+    // ошибка при выполнении запроса с базой данных
+    const ns_error ERROR_PROTOCOL_ERROR = 0x443;      
     
     // DATABASE error
     
