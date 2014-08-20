@@ -562,9 +562,11 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("error.520", "Тип не поддерживается сервисом"));
             map_.insert(wstringtranslate_pair("error.521", "Ошибка привязки"));
             map_.insert(wstringtranslate_pair("error.525", "Невозможно свести тип к требуемому"));
-			map_.insert(wstringtranslate_pair("error.1060", "Cвязь установлена, но протокол не инициализирован"));
-			map_.insert(wstringtranslate_pair("error.1060", "Тип канала не поддерживается серером или пуст"));
-			map_.insert(wstringtranslate_pair("error.1062", "Нет соединения с устройством"));
+            map_.insert(wstringtranslate_pair("error.1060", "Cвязь установлена, но протокол не инициализирован"));
+            map_.insert(wstringtranslate_pair("error.1060", "Тип канала не поддерживается серером или пуст"));
+            map_.insert(wstringtranslate_pair("error.1062", "Нет соединения с устройством"));
+            map_.insert(wstringtranslate_pair("error.1090", "Протокольная ошибка"));
+            map_.insert(wstringtranslate_pair("error.1091", "Ошибка декодирования потока"));
             map_.insert(wstringtranslate_pair("error.3", "Не удалось связаться с базой в каталоге:"));
             map_.insert(wstringtranslate_pair("trasaction.1006", "Содинение с базой"));
             map_.insert(wstringtranslate_pair("trasaction.1017", "Запрос к базе    "));
