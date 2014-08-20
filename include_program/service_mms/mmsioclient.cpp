@@ -4,13 +4,19 @@
 
 namespace prot9506 {
 
-    const service_option_type MMS_SERVICE_OPTOION_CLNT = MMSO::serviceSupportOptions_status | MMSO::serviceSupportOptions_getNameList | MMSO::serviceSupportOptions_identify | MMSO::serviceSupportOptions_read | MMSO::serviceSupportOptions_write |
-             MMSO::serviceSupportOptions_defineNamedVariableList | MMSO::serviceSupportOptions_deleteNamedVariableList | MMSO::serviceSupportOptions_getVariableAccessAttributes | MMSO::serviceSupportOptions_informationReport;
-    const parameter_option_type MMS_CBB_OPTION_CLNT = MMSO::parameterSupportOptions_str1 | MMSO::parameterSupportOptions_str2 | MMSO::parameterSupportOptions_valt | MMSO::parameterSupportOptions_valt |
+    const service_option_type& MMS_SERVICE_OPTOION_CLNT() {
+        static service_option_type vl = MMSO::serviceSupportOptions_status | MMSO::serviceSupportOptions_getNameList | MMSO::serviceSupportOptions_identify | MMSO::serviceSupportOptions_read | MMSO::serviceSupportOptions_write |
+                MMSO::serviceSupportOptions_defineNamedVariableList | MMSO::serviceSupportOptions_deleteNamedVariableList | MMSO::serviceSupportOptions_getVariableAccessAttributes | MMSO::serviceSupportOptions_informationReport;
+        return vl;
+    }
+    
+    const parameter_option_type& MMS_CBB_OPTION_CLNT(){
+        static parameter_option_type vl = MMSO::parameterSupportOptions_str1 | MMSO::parameterSupportOptions_str2 | MMSO::parameterSupportOptions_valt | MMSO::parameterSupportOptions_valt |
             MMSO::parameterSupportOptions_vnam | MMSO::parameterSupportOptions_vadr | MMSO::parameterSupportOptions_tpy | MMSO::parameterSupportOptions_vlis;
+        return vl;}
 
     mmsioclient::mmsioclient() : io_service_(), socket_(io_service_, 
-            prot9506::protocol_option(MMS_SERVICE_OPTOION_CLNT, MMS_CBB_OPTION_CLNT)), state_(disconnected), 
+            prot9506::protocol_option(MMS_SERVICE_OPTOION_CLNT(), MMS_CBB_OPTION_CLNT())), state_(disconnected), 
             tmout_timer(io_service_), timout(),  is_data_ready(false), is_timout(false), 
             is_connect(false), is_error(false), error_cod(0) {
     }
@@ -141,21 +147,21 @@ namespace prot9506 {
     }
 
     bool mmsioclient::can_identyfy() const {
-        return !((protocol_option().service() | MMSO::serviceSupportOptions_identify).dynamic_bitset().none());
+        return (mmsoption().service() & MMSO::serviceSupportOptions_identify);
     }
 
     bool mmsioclient::can_read() const {
-        return !((protocol_option().service() | MMSO::serviceSupportOptions_read).dynamic_bitset().none());
+        return (mmsoption().service() & MMSO::serviceSupportOptions_read);
     }
 
     bool mmsioclient::can_write() const {
-        return !((protocol_option().service() | MMSO::serviceSupportOptions_write).dynamic_bitset().none());
+        return (mmsoption().service() & MMSO::serviceSupportOptions_write);
     }
 
     bool mmsioclient::can_namedlist() const {
-        return false;
-        //return( !((protocol_option().service() | MMSO::serviceSupportOptions_defineNamedVariableList).dynamic_bitset().none()) && (
-       //         protocol_option().service() | MMSO::deleteNamedVariableList).dynamic_bitset().none()));
+        //return false;
+        return ((mmsoption().service() & MMSO::serviceSupportOptions_defineNamedVariableList) && 
+                (mmsoption().service() & MMSO::serviceSupportOptions_deleteNamedVariableList));
     }             
     
 }

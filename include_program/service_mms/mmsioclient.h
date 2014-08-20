@@ -66,23 +66,15 @@ namespace prot9506 {
 
                 io_service_.reset();
 
-                DEBUG_STR_DVNCI(SET ASYNCWRITE)
-
                 socket_.async_confirm_request(operation,
                         boost::bind(&mmsioclient::handle_cofirmreq_end<T>, this, operation));
-
-                DEBUG_STR_DVNCI(SET ASYNCTIME)
 
                 tmout_timer.expires_from_now(boost::posix_time::milliseconds(timout));
                 tmout_timer.async_wait(boost::bind(
                         &mmsioclient::handle_timout_expire, shared_from_this(),
                         boost::asio::placeholders::error));
 
-                DEBUG_STR_DVNCI(SET RUN)
-
                 io_service_.run();
-
-                DEBUG_STR_DVNCI(SET RESULT)
 
                 if (is_timout) {
                     state_ = disconnected;
@@ -96,15 +88,24 @@ namespace prot9506 {
                 }
 
                 if (is_error) {
-                    if ((error_cod == 10054) || (error_cod == 10053)) {
+                    if ((error_cod == 10054) || (error_cod == 10053) ||
+                            (error_cod==boost::itu::ER_BEDSEQ.value()) || (error_cod==boost::itu::ER_PROTOCOL.value())) {
                         state_ = disconnected;
                         try {
                             socket_.close();
                             io_service_.stop();
                         } catch (...) {
                         };
-                        DEBUG_STR_DVNCI(ERROR_FAILNET_CONNECTED THROWING BY ERROR)
-                                throw dvnci::dvncierror(dvnci::ERROR_FAILNET_CONNECTED);
+                        if (error_cod == boost::itu::ER_BEDSEQ.value()) {
+                            DEBUG_STR_DVNCI(ERROR_FAILNET_CONNECTED THROWING BY ER_BEDSEQ)
+                                    throw dvnci::dvncierror(dvnci::ERROR_PROTOCOL_SEQ);
+                        } else if (error_cod == boost::itu::ER_PROTOCOL.value()) {
+                            DEBUG_STR_DVNCI(ERROR_FAILNET_CONNECTED THROWING BY ER_PROTOCOL)
+                                    throw dvnci::dvncierror(dvnci::ERROR_PROTOCOL_ERROR);                            
+                        } else {
+                            DEBUG_STR_DVNCI(ERROR_FAILNET_CONNECTED THROWING BY ERROR)
+                                    throw dvnci::dvncierror(dvnci::ERROR_FAILNET_CONNECTED);
+                        }
                     } else DEBUG_STR_VAL_DVNCI(reqerr, error_cod)
                     }
                 return true;
@@ -120,7 +121,13 @@ namespace prot9506 {
             tmout_timer.cancel();
             is_timout      = false;
             is_data_ready  = true;
-            is_error       = false;
+            if (operation->error()){
+                is_error       = true;
+                error_cod=(operation->error()==boost::itu::ER_BEDSEQ) ? 
+                    boost::itu::ER_BEDSEQ.value() : boost::itu::ER_PROTOCOL.value();                   
+            }
+            else
+               is_error       = false;
         }        
         
               

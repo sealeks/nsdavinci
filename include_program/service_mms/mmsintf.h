@@ -122,7 +122,10 @@ namespace dvnci {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// list_of_variable
-    /////////////////////////////////////////////////////////////////////////////////////////////////        
+    /////////////////////////////////////////////////////////////////////////////////////////////////  
+
+    class list_of_variable;
+    typedef boost::shared_ptr<list_of_variable> list_of_variable_ptr;
 
     class list_of_variable {
 
@@ -159,6 +162,8 @@ namespace dvnci {
 
         friend bool operator==(const list_of_variable& ls, const list_of_variable& rs);
         friend bool operator<(const list_of_variable& ls, const list_of_variable& rs);
+        friend bool operator==(const list_of_variable_ptr& ls, const list_of_variable_ptr& rs);
+        friend bool operator<(const list_of_variable_ptr& ls, const list_of_variable_ptr& rs);
 
     private:
 
@@ -166,8 +171,7 @@ namespace dvnci {
         accessresult_map values_;
     };
 
-
-    typedef std::vector<list_of_variable> list_of_variable_vct;
+    typedef std::vector<list_of_variable_ptr> list_of_variable_vct;
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,13 +227,13 @@ namespace dvnci {
 
         virtual ns_error disconnect_impl();
 
-        list_of_variable& nextlist();
+        list_of_variable_ptr nextlist();
         ns_error insert_in_namedlist(const objectname_vct& vls);
         ns_error remove_from_namedlist(const objectname_set& vls);
-        ns_error update_namedlist(const list_of_variable& lst);
-        ns_error remove_namedlist(const list_of_variable& lst);
+        ns_error update_namedlist(list_of_variable_ptr lst);
+        ns_error remove_namedlist(list_of_variable_ptr lst);
         ns_error read_all_namedlist();
-        ns_error read_namedlist(list_of_variable& lst);
+        ns_error read_namedlist(list_of_variable_ptr lst);
         ns_error read_simlelist();
 
         ns_error error(ns_error err) {
@@ -240,6 +244,8 @@ namespace dvnci {
         ns_error error_;
 
     private:
+        
+        void parse_error(dvncierror& err_);
 
         prot9506::mmsioclient_ptr client_io;
         std::string host;
