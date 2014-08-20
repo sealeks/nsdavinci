@@ -165,73 +165,22 @@ namespace dvnci {
 
         ns_error exmmsintf::command_request_impl(const sidcmd_map& cmds) {
 
-            /*error(0);
+            error(0);
             if (cmds.empty())  
                 return error();
                            
-            vect_command_data reqcmds; 
-            vect_error_item   errors;
-                
+            mmscommand_vct reqcmds; 
+            accesserror_map   errors;
+
             for (sidcmd_map::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
-                if (it->second.type()!=TYPE_TEXT){
-                     command_data cmd = { it->first, it->second.value64(), static_cast<num64>(it->second.type()), 0, "" };
-                     reqcmds.push_back(cmd);}
-                else {
-                     command_data cmd = { it->first, 0, static_cast<num64>(TYPE_TEXT), 0, it->second.value<std::string>() };
-                     reqcmds.push_back(cmd);}}
+                mmscommand_pair cmd = mmscommand_pair(it->first, it->second);
+                reqcmds.push_back(cmd);
+            }
                 
             if (reqcmds.empty())
                 return error(ERROR_NODATA);
                 
-            return error(netintf->send_commands(reqcmds, errors));}
-                       
-
-        ns_error exmmsintf::report_request_impl() {
-                
-            error(0);                
-            serverkey_const_iterator it=report_next();
-            if (it==report_end()) 
-                return  error(ERROR_NODATA);
-            indx cid=it->second;
-            num64 sid=it->first;
-                
-            if ((report_requested(cid)) && (!is_report_task(cid))){
-                sid_rl_report_val_map::iterator rit=real_repval_map.find(sid);
-                if (rit!=real_repval_map.end()){
-                    if ((rit->second.vld==FULL_VALID)){
-                        if ((rit->second.tm<intf->time_log(cid)))
-                            return error();
-                        if ((rit->second.tm==intf->time_log(cid))){
-                            dt_val_map repval;
-                            repval.insert(dt_val_pair(rit->second.tm,rit->second.value));
-                            write_val_report_id(cid,repval);
-                            return error();}
-                        else{
-                            vect_report_value_data dt;
-                            vect_error_item errors;
-                                
-                            datetime starttm = intf->time(cid);
-                            normalizereporttime(starttm, intf->type(cid));
-                            datetime stoptm = starttm;
-                            increporttime(stoptm, intf->type(cid), 20);
-                            starttm = incsecond(starttm);                          
-                                
-                            reporttask tsk = { sid, static_cast<num64>(cid) , starttm, stoptm };
-                            vect_reporttask tasks;
-                            tasks.push_back(tsk);
-                            error(netintf->read_report(tasks , dt, errors));
-                            add_report_task(cid);
-                                
-                            for (vect_report_value_data::const_iterator rit=dt.begin(); rit!=dt.end(); ++rit){
-                                remove_report_task(static_cast<indx>(rit->cid));
-                                dt_val_map repval;
-                                for (vect_report_value_item::const_iterator vit=rit->data.begin(); vit!=rit->data.end(); ++vit){
-                                     repval.insert(dt_val_pair(vit->time,vit->val));}
-                                write_val_report_id(static_cast<indx>(rit->cid),repval);}
-                            for (vect_error_item::const_iterator eit=errors.begin(); eit!=errors.end(); ++eit){
-                                remove_report_task(static_cast<indx>(eit->id));}}}}}*/
-            return error();
-        }
+            return error(remintf->send_commands(reqcmds, errors));}
 
         ns_error exmmsintf::report_request_impl() {
             return error(0);

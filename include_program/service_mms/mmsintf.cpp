@@ -8,15 +8,14 @@
 #include "mmsintf.h"
 
 namespace dvnci {
-    
-    
-    static void func_listtest(const list_of_variable_vct& vl){
-        std::cout << "LIsts report: cnt=" << vl.size()  << std::endl;
+
+    static void func_listtest(const list_of_variable_vct& vl) {
+        std::cout << "LIsts report: cnt=" << vl.size() << std::endl;
         for (list_of_variable_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
             if (!(*it)->empty())
-            std::cout << "    "  /* << (*it)->key()->internal()->aa_specific() */<< " cnt=" << (*it)->values().size()  << std::endl;
+                std::cout << "    " /* << (*it)->key()->internal()->aa_specific() */ << " cnt=" << (*it)->values().size() << std::endl;
         }
-        std::cout << "_______________________" <<  std::endl;
+        std::cout << "_______________________" << std::endl;
     }
 
     short_value from_mms_result(accessresult_ptr val) {
@@ -92,11 +91,7 @@ namespace dvnci {
                     {
                         return short_value(prot9506::from_mms_utctime(*(val->success()->utcTime())));
                     }
-                        /*case MMS::Data_objId:
-                        {
-                            std::cout << *(val.success()->objId()) << std::endl;
-                            break;
-                        }*/
+                        /*case MMS::Data_objId:*/
                     default:
                     {
                         return short_value(0, TYPE_NUM32, FULL_VALID, ERROR_TYPENOCAST);
@@ -106,7 +101,126 @@ namespace dvnci {
                 return short_value(0, 0, NULL_VALID, ERROR_TYPENOCAST);
             }
         }
-        return short_value();
+        return short_value(0, 0, NULL_VALID, ERROR_TYPENOCAST);
+    }
+
+    bool to_mms_command(const short_value& vl, access_attribute_ptr acc, mmsdata_type& dt) {
+        if (acc) {
+            switch (acc->typeDescription().type()) {
+                case MMSO::TypeDescription_boolean:
+                {
+                    if (vl.type() <= TYPE_DISCRET) {
+                        dt.integer(vl.value<bool>());
+                        return true;
+                    } else
+                        break;
+                }
+                case MMSO::TypeDescription_bit_string:
+                {
+                    std::size_t bs = static_cast<std::size_t> (*(acc->typeDescription().bit_string()));
+                    if ((vl.type() >= TYPE_FLOAT) && (vl.type() <= TYPE_DISCRET) && (bs < 64)) {
+                        dt.bit_string(boost::asn1::bitstring_type(vl.value<boost::uint64_t>(), 64 - bs));
+                        return true;
+                    } else
+                        break;
+                }
+                case MMSO::TypeDescription_integer:
+                {
+                    if (vl.type() <= TYPE_DISCRET) {
+                        dt.integer(vl.value<boost::int32_t>());
+                        return true;
+                    } else
+                        break;
+                }
+                case MMSO::TypeDescription_unsignedV:
+                {
+                    if (vl.type() <= TYPE_DISCRET) {
+                        dt.unsignedV(vl.value<boost::uint32_t>());
+                        return true;
+                    } else
+                        break;
+                }
+                case MMSO::TypeDescription_floating_point:
+                {
+                    if (vl.type() <= TYPE_DISCRET) {
+                        std::size_t sz = static_cast<std::size_t> (acc->typeDescription().floating_point()->format_width());
+                        std::size_t esz = static_cast<std::size_t> (acc->typeDescription().floating_point()->exponent_width());
+                        if ((sz == 5) && (esz == 8)) {
+                            dt.floating_point(prot9506::to_mmsfloat(vl.value<float>()));
+                            return true;
+                        } else if ((sz == 9) && (esz == 11)) {
+                            dt.floating_point(prot9506::to_mmsfloat(vl.value<double>()));
+                            return true;
+                        } else if ((sz == 17) && (esz == 15)) {
+                            dt.floating_point(prot9506::to_mmsfloat(vl.value<long double>()));
+                            return true;
+                        }
+                    }
+                    break;
+                }
+                case MMSO::TypeDescription_octet_string:
+                {
+                    if (vl.type() == TYPE_TEXT) {
+                        const std::string& tmpml = vl.value<std::string>();
+                        dt.octet_string(boost::asn1::octetstring_type(tmpml));
+                        return true;
+                    }
+                    break;
+                }
+                case MMSO::TypeDescription_visible_string:
+                {
+                    if (vl.type() == TYPE_TEXT) {
+                        const std::string& tmpml = vl.value<std::string>();
+                        dt.visible_string(boost::asn1::visiblestring_type(tmpml));
+                        return true;
+                    }
+                    break;
+                }
+                case MMSO::TypeDescription_generalized_time:
+                {
+                    if (vl.type() == TYPE_TIME) {
+                        const datetime& tmpml = vl.value<datetime>();
+                        dt.generalized_time(boost::asn1::gentime_type(tmpml));
+                        return true;
+                    }
+                    break;
+                }
+                case MMSO::TypeDescription_binary_time:
+                {
+                    if (vl.type() == TYPE_TIME) {
+                        const datetime& tmpml = vl.value<datetime>();
+                        dt.binary_time(prot9506::to_mms_datetime(tmpml));
+                        return true;
+                    }
+                    break;
+                }
+                case MMSO::TypeDescription_bcd:
+                {
+                    short_value vltmp = vl;
+
+                    if ((vl.type() <= TYPE_DISCRET) && (vltmp.covert_to_bcd())) {
+                        dt.bcd(vltmp.value<boost::int32_t>());
+                        return true;
+                    } else
+                        break;
+                }
+                case MMSO::TypeDescription_mMSString:
+                {
+                    if (vl.type() == TYPE_TEXT) {
+                        const std::string& tmpml = vl.value<std::string>();
+                        dt.mMSString(MMS::MMSString(tmpml));
+                        return true;
+                    }
+                    break;
+                }
+                    //case MMSO::TypeDescription_objId:
+                default:
+                {
+                    break;
+                }
+            }
+        }
+        return false;
     }
 
 
@@ -399,6 +513,7 @@ namespace dvnci {
                     if (operationA->response()) {
                         results.insert(accessresult_pair(it->second, accessresult_ptr()));
                         actuals.push_back(it->second);
+                        actuals.back()->access(operationA->response());
                     } else if (operationA->serviceerror()) {
                         errors.insert(accesserror_pair(it->second, operationA->serviceerror()));
                     } else {
@@ -445,7 +560,7 @@ namespace dvnci {
 
 
         } catch (dvncierror& err_) {
-                parse_error(err_);
+            parse_error(err_);
         } catch (...) {
             error(NS_ERROR_ERRRESP);
         }
@@ -497,26 +612,82 @@ namespace dvnci {
         return error();
     }
 
-    /*ns_error mmsintf::send_commands(const vect_command_data& cmds, vect_error_item& errors) {
+    ns_error mmsintf::send_commands(const mmscommand_vct& cmds, accesserror_map& errors) {
+        error(0);
         try {
-            error(0);
-            req_send_commands req;
-            resp_send_commands resp;
-            assign_req_commands(req, cmds);
-            if (querytmpl<req_send_commands, resp_send_commands, RPC_OPERATION_REQ_SEND_COMMANDS, RPC_OPERATION_RESP_SEND_COMMANDS > (req, resp)) {
-                assign_resp_commands(resp, errors);
-            } else
-                error(ERROR_IO_NO_DATA);
+
+            typedef prot9506::write_operation_type write_operation_type;
+
+            boost::shared_ptr<write_operation_type > operationW =
+                    boost::shared_ptr<write_operation_type > (new write_operation_type());
+
+            operationW->request_new();
+            operationW->request()->variableAccessSpecification().listOfVariable__new();
+
+            std::size_t currentcnt = 0;
+
+            mmscommand_vct::const_iterator sit = cmds.begin();
+            mmscommand_vct::const_iterator it = sit;
+
+            while (it != cmds.end()) {
+
+                mmscommand_vct::const_iterator lsit = sit;
+
+                for (; it != cmds.end(); ++it) {
+
+                    MMS::Data dt;
+
+                    if (to_mms_command(it->second, find_access(it->first), dt)) {
+
+                        MMS::VariableAccessSpecification::ListOfVariable_type_sequence_of vacs;
+                        vacs.variableSpecification().name(new mmsobject_type(it->first->internal()));
+
+                        operationW->request()->variableAccessSpecification().listOfVariable()->push_back(vacs);
+                        operationW->request()->listOfData().push_back(dt);
+
+                        if (++currentcnt >= blocksize) {
+                            sit = ++it;
+                            currentcnt = 0;
+                            break;
+                        }
+                    }
+
+                    if (client_io->req<write_operation_type>(operationW)) {
+                        if (operationW->response()) {
+
+                        }
+                    } else if (operationW->serviceerror()) {
+                        return error(NS_ERROR_ERRRESP);
+                    } else {
+                        return error(NS_ERROR_ERRRESP);
+                    }
+
+                    operationW->request_new();
+                    operationW->request()->variableAccessSpecification().listOfVariable__new();
+                }
+            }
         } catch (dvncierror& err_) {
-            error(err_.code());
-            if ((err_.code() == ERROR_FAILNET_CONNECTED) ||
-                    (err_.code() == ERROR_NONET_CONNECTED))
-                throw err_;
+            parse_error(err_);
         } catch (...) {
             error(NS_ERROR_ERRRESP);
         }
         return error();
-    }*/
+    }
+
+    access_attribute_ptr mmsintf::find_access(objectname_ptr vl) {
+        if (!lists_.empty()) {
+            for (list_of_variable_vct::const_iterator it = lists_.begin(); it != lists_.end(); ++it) {
+                accessresult_map::const_iterator fit = (*it)->values().find(vl);
+                if (fit != (*it)->values().end())
+                    return fit->first->access();
+            }
+        } else if (!simplelist_.empty()) {
+            accessresult_map::iterator fit = simplelist_.find(vl);
+            if (fit != simplelist_.end())
+                return fit->first->access();
+        }
+        return access_attribute_ptr();
+    }
 
     list_of_variable_ptr mmsintf::nextlist() {
         std::size_t newindx = 1;
@@ -607,7 +778,7 @@ namespace dvnci {
                 }
             }
         } catch (dvncierror& err_) {
-                parse_error(err_);
+            parse_error(err_);
         } catch (...) {
             error(NS_ERROR_ERRRESP);
         }
@@ -641,7 +812,7 @@ namespace dvnci {
                 return error(NS_ERROR_ERRRESP);
             }
         } catch (dvncierror& err_) {
-                parse_error(err_);
+            parse_error(err_);
         } catch (...) {
             error(NS_ERROR_ERRRESP);
         }

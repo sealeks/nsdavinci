@@ -159,7 +159,7 @@ namespace prot9506 {
     }
 
     bool mmsioclient::can_namedlist() const {
-        //return false;
+        return false;
         return ((mmsoption().service() & MMSO::serviceSupportOptions_defineNamedVariableList) && 
                 (mmsoption().service() & MMSO::serviceSupportOptions_deleteNamedVariableList));
     }             

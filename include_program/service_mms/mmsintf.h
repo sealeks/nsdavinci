@@ -38,6 +38,9 @@ namespace dvnci {
 
     typedef MMSO::Identifier mmsidentifier_type;
     typedef MMS::ObjectName mmsobject_type;
+    typedef MMS::Data mmsdata_type;
+    typedef MMS::GetVariableAccessAttributes_Response access_attribute_type;
+    typedef boost::shared_ptr<access_attribute_type> access_attribute_ptr;
 
     typedef MMS::Read_Response::ListOfAccessResult_type resultslist_type;
 
@@ -53,6 +56,7 @@ namespace dvnci {
 
 
     short_value from_mms_result(accessresult_ptr val);
+    bool to_mms_command(const short_value& vl, access_attribute_ptr val, mmsdata_type& dt);
 
 
 
@@ -86,6 +90,14 @@ namespace dvnci {
             return internal_;
         }
 
+        access_attribute_ptr access() const {
+            return access_;
+        }
+
+        void access(access_attribute_ptr vl) {
+            access_ = vl;
+        }
+
 
         operator bool() const;
 
@@ -99,6 +111,7 @@ namespace dvnci {
     private:
 
         mmsobject_ptr internal_;
+        access_attribute_ptr access_;
     };
 
     typedef boost::shared_ptr<objectname> objectname_ptr;
@@ -114,6 +127,9 @@ namespace dvnci {
 
     typedef std::pair<objectname_ptr, accessresult_ptr> accessresult_pair;
     typedef std::map<objectname_ptr, accessresult_ptr> accessresult_map;
+
+    typedef std::pair<objectname_ptr, dvnci::short_value> mmscommand_pair;
+    typedef std::vector<mmscommand_pair> mmscommand_vct;
 
 
 
@@ -215,10 +231,8 @@ namespace dvnci {
         ns_error add_items(const bindobject_map& cids, accessresult_map& results, accesserror_map& errors);
         ns_error remove_items(const objectname_set& cids, accesserror_map& errors);
         ns_error read_values(accessresult_map& sids);
-        //ns_error send_commands(const vect_command_data& cmds, vect_error_item& errors);
+        ns_error send_commands(const mmscommand_vct& cmds, accesserror_map& errors);
 
-        virtual void setaddress(const boost::asio::ip::address& adr) {
-        }
 
 
     protected:
@@ -227,6 +241,7 @@ namespace dvnci {
 
         virtual ns_error disconnect_impl();
 
+        access_attribute_ptr find_access(objectname_ptr vl);
         list_of_variable_ptr nextlist();
         ns_error insert_in_namedlist(const objectname_vct& vls);
         ns_error remove_from_namedlist(const objectname_set& vls);
@@ -244,7 +259,7 @@ namespace dvnci {
         ns_error error_;
 
     private:
-        
+
         void parse_error(dvncierror& err_);
 
         prot9506::mmsioclient_ptr client_io;
