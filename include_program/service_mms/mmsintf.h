@@ -19,7 +19,7 @@
 #include <mms/mmssocket.h>
 #include <mms/MMS-Object-Module-1.hpp>
 #include <mms/ISO-9506-MMS-1.hpp>
-#include "mmsioclient.h"
+#include <mms/mmsioclient.h>
 
 namespace dvnci {
 
@@ -214,7 +214,8 @@ namespace dvnci {
         virtual ~mmsintf() {
         };
 
-        static mmsintf_ptr build(const std::string host, const std::string port, const std::string opt, std::size_t blocksz = BLOCK_SZ_DFLT, timeouttype tmout = DEFAULT_DVNCI_TIMOUT);
+        static mmsintf_ptr build(const std::string host, const std::string port, const std::string opt,
+        std::size_t blocksz = BLOCK_SZ_DFLT, timeouttype tmout = DEFAULT_DVNCI_TIMOUT);
 
         bool isconnected() {
             return ((state_ == connected) || (!error(connect_impl())));
@@ -260,7 +261,7 @@ namespace dvnci {
 
     private:
 
-        void parse_error(dvncierror& err_);
+        void parse_error(const boost::itu::error_code& errcode);
         void check_connecton_state();
 
         prot9506::mmsioclient_ptr client_io;

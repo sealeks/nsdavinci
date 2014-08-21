@@ -110,7 +110,7 @@ namespace dvnci {
                 case MMSO::TypeDescription_boolean:
                 {
                     if (vl.type() <= TYPE_DISCRET) {
-                        dt.integer(vl.value<bool>());
+                        dt.boolean(vl.value<bool>());
                         return true;
                     } else
                         break;
@@ -145,13 +145,13 @@ namespace dvnci {
                     if (vl.type() <= TYPE_DISCRET) {
                         std::size_t sz = static_cast<std::size_t> (acc->typeDescription().floating_point()->format_width());
                         std::size_t esz = static_cast<std::size_t> (acc->typeDescription().floating_point()->exponent_width());
-                        if ((sz == 5) && (esz == 8)) {
+                        if ((sz == 32) && (esz == 8)) {
                             dt.floating_point(prot9506::to_mmsfloat(vl.value<float>()));
                             return true;
-                        } else if ((sz == 9) && (esz == 11)) {
+                        } else if ((sz == 64) && (esz == 11)) {
                             dt.floating_point(prot9506::to_mmsfloat(vl.value<double>()));
                             return true;
-                        } else if ((sz == 17) && (esz == 15)) {
+                        } else if ((sz == 128) && (esz == 15)) {
                             dt.floating_point(prot9506::to_mmsfloat(vl.value<long double>()));
                             return true;
                         }
@@ -469,7 +469,7 @@ namespace dvnci {
                 state_ = connected;
                 return error(0);
             }
-            client_io->connect(host, port, option, tmout);
+            client_io->connect(host, port, option, static_cast<std::size_t>(tmout));
             state_ = (client_io->state() == client_io->connected) ? connected : disconnected;
             if (state_ == connected) {
                 return error(0);
@@ -536,10 +536,10 @@ namespace dvnci {
                 }
             }
 
-        } catch (dvncierror& err_) {
-            parse_error(err_);
+        } catch (const boost::itu::error_code& errcode) {
+            parse_error(errcode);
         } catch (...) {
-            error(NS_ERROR_ERRRESP);
+            parse_error(boost::itu::ER_PROTOCOL);
         }
         return error();
     }
@@ -635,6 +635,17 @@ namespace dvnci {
 
                     if (client_io->req<write_operation_type>(operationW)) {
                         if (operationW->response()) {
+                            
+                            mmscommand_vct::const_iterator vit = lsit;           
+                            for (MMS::Write_Response::const_iterator rit=operationW->response()->begin();rit!=operationW->response()->end();++rit) {
+                                if (vit != cmds.end())
+                                    if (rit->failure()){
+                                        errors.insert(accesserror_pair(vit->first,  serviceerror_ptr()));
+                                    }
+                                    else
+                                        break;
+                                    
+                            }
 
                         }
                     } else if (operationW->serviceerror()) {
@@ -647,11 +658,11 @@ namespace dvnci {
                     operationW->request()->variableAccessSpecification().listOfVariable__new();
                 }
             }
-        } catch (dvncierror& err_) {
-            parse_error(err_);
-        } catch (...) {
-            error(NS_ERROR_ERRRESP);
-        }
+            } catch (const boost::itu::error_code& errcode) {
+                parse_error(errcode);
+            } catch (...) {
+                parse_error(boost::itu::ER_PROTOCOL);
+            }
 
         return error();
     }
@@ -761,11 +772,11 @@ namespace dvnci {
                     return error(NS_ERROR_ERRRESP);
                 }
             }
-        } catch (dvncierror& err_) {
-            parse_error(err_);
-        } catch (...) {
-            error(NS_ERROR_ERRRESP);
-        }
+            } catch (const boost::itu::error_code& errcode) {
+                parse_error(errcode);
+            } catch (...) {
+                parse_error(boost::itu::ER_PROTOCOL);
+            }
 
         return error();
     }
@@ -773,7 +784,6 @@ namespace dvnci {
     ns_error mmsintf::remove_namedlist(list_of_variable_ptr lst) {
 
         check_connecton_state();
-        error(0);
 
         try {
 
@@ -798,10 +808,10 @@ namespace dvnci {
             } else {
                 return error(NS_ERROR_ERRRESP);
             }
-        } catch (dvncierror& err_) {
-            parse_error(err_);
+        } catch (const boost::itu::error_code& errcode) {
+            parse_error(errcode);
         } catch (...) {
-            error(NS_ERROR_ERRRESP);
+            parse_error(boost::itu::ER_PROTOCOL);
         }
         return error();
     }
@@ -846,10 +856,10 @@ namespace dvnci {
                     for (accessresult_map::iterator it = lst->values().begin(); it != lst->values().end(); ++it)
                         it->second = accessresult_ptr();
                 }
-            } catch (dvncierror& err_) {
-                parse_error(err_);
+            } catch (const boost::itu::error_code& errcode) {
+                parse_error(errcode);
             } catch (...) {
-                error(NS_ERROR_ERRRESP);
+                parse_error(boost::itu::ER_PROTOCOL);
             }
         }
         return error();
@@ -916,22 +926,28 @@ namespace dvnci {
                     operationR->request()->variableAccessSpecification().listOfVariable__new();
                 }
 
-            } catch (dvncierror& err_) {
-                parse_error(err_);
+            } catch (const boost::itu::error_code& errcode) {
+                parse_error(errcode);
             } catch (...) {
-                error(NS_ERROR_ERRRESP);
+                parse_error(boost::itu::ER_PROTOCOL);
             }
         }
         return error();
     }
 
-    void mmsintf::parse_error(dvncierror& err_) {
-        error(err_.code());
-        if ((err_.code() == ERROR_FAILNET_CONNECTED) ||
-                (err_.code() == ERROR_NONET_CONNECTED) ||
-                (err_.code() == ERROR_PROTOCOL_ERROR) ||
-                (err_.code() == ERROR_PROTOCOL_SEQ))
-            throw err_;
+    void mmsintf::parse_error(const boost::itu::error_code& errcode) {
+        if (errcode == boost::itu::ER_NOLINK) {
+            error(ERROR_NONET_CONNECTED);
+            throw dvnci::dvncierror(ERROR_NONET_CONNECTED);
+        } else if (errcode == boost::itu::ER_BEDSEQ) {
+            error(ERROR_PROTOCOL_SEQ);
+            throw dvnci::dvncierror(ERROR_PROTOCOL_SEQ);
+        } else if (errcode == boost::itu::ER_TIMEOUT) {
+            error(ERROR_FAILNET_CONNECTED);
+            throw dvnci::dvncierror(ERROR_FAILNET_CONNECTED);
+        }
+        error(ERROR_FAILNET_CONNECTED);
+        throw dvnci::dvncierror(ERROR_PROTOCOL_ERROR);
     }
 
     void mmsintf::check_connecton_state() {
