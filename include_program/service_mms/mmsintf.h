@@ -20,120 +20,60 @@
 #include <mms/MMS-Object-Module-1.hpp>
 #include <mms/ISO-9506-MMS-1.hpp>
 #include <mms/mmsioclient.h>
+#include <mms/mmsmodel.h>
 
 namespace dvnci {
+
+    namespace MMS = ISO_9506_MMS_1;
+    namespace MMSO = MMS_Object_Module_1;
+    
+    
+
+    using prot9506::objectname;
+
+    using prot9506::mmsidentifier_type;
+    using prot9506::mmsobject_type;
+    using prot9506::mmsdata_type;
+    using prot9506::access_attribute_type;
+    using prot9506::mmsresult_type;
+    using prot9506::resultslist_type;
+    using prot9506::serviceerror_type;
+    
+    
+    using prot9506::mmsobject_ptr;
+    using prot9506::access_attribute_ptr;
+    using prot9506::mmsresult_ptr; 
+    using prot9506::serviceerror_ptr;
+
+
+    using prot9506::objectname_ptr; 
+    using prot9506::objectname_wptr;
+    
+    using prot9506::objectname_vct;
+    using prot9506::objectname_set; 
+    
+    
+    
 
     const std::size_t BLOCK_SZ_DFLT = 20;
     const std::size_t BLOCK_SZ_MAX = 255;
     const std::string VARLIST_TEMPLNAME = "dvnciappvar";
 
 
-
-    namespace MMS = ISO_9506_MMS_1;
-    namespace MMSO = MMS_Object_Module_1;
-
-
-
-    class objectname;
-
-    typedef MMSO::Identifier mmsidentifier_type;
-    typedef MMS::ObjectName mmsobject_type;
-    typedef MMS::Data mmsdata_type;
-    typedef MMS::GetVariableAccessAttributes_Response access_attribute_type;
-    typedef boost::shared_ptr<access_attribute_type> access_attribute_ptr;
-
-    typedef MMS::Read_Response::ListOfAccessResult_type resultslist_type;
-
-    typedef MMS::AccessResult accessresult_type;
-    typedef boost::shared_ptr<accessresult_type> accessresult_ptr;
-
-    typedef MMS::ServiceError serviceerror_type;
-    typedef boost::shared_ptr< serviceerror_type> serviceerror_ptr;
-
-    typedef boost::shared_ptr<mmsobject_type> mmsobject_ptr;
-    typedef boost::shared_ptr<objectname> objectname_ptr;
-
-
-
-    short_value from_mms_result(accessresult_ptr val);
+    short_value from_mms_result(mmsresult_ptr val);
     bool to_mms_command(const short_value& vl, access_attribute_ptr val, mmsdata_type& dt);
-
-
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    //////// objectname
-    /////////////////////////////////////////////////////////////////////////////////////////////////    
-
-    class objectname {
-
-    public:
-
-        objectname();
-        objectname(const std::string& id, const std::string& domain = "");
-
-        ~objectname();
-
-        static objectname_ptr create(const std::string& id, const std::string& domain = "");
-        static objectname_ptr create_aa(const std::string& id);
-
-        // 1 @bind and @domain  =>  domainspesific : @domain | @bind
-        // 2 only @bind a) "xxxx" => vmdspesific
-        //                         b) "xxxx : yyyy" domain specific @xxxx | @yyyy !!!! high prior  defdomain ignore if exists
-        //                         c) "@xxxx" application spesific @xxxx
-        static objectname_ptr create_from_bind(const std::string& id, const std::string& defdomain = "");
-
-        mmsobject_type internal() const {
-            return internal_ ? (*internal_) : mmsobject_type();
-        }
-
-        mmsobject_ptr internal_ptr() const {
-            return internal_;
-        }
-
-        access_attribute_ptr access() const {
-            return access_;
-        }
-
-        void access(access_attribute_ptr vl) {
-            access_ = vl;
-        }
-
-
-        operator bool() const;
-
-        friend bool operator==(const objectname& ls, const objectname& rs);
-        friend bool operator<(const objectname& ls, const objectname& rs);
-        friend bool operator==(const objectname_ptr& ls, const objectname_ptr& rs);
-        friend bool operator<(const objectname_ptr& ls, const objectname_ptr& rs);
-
-
-
-    private:
-
-        mmsobject_ptr internal_;
-        access_attribute_ptr access_;
-    };
-
-    typedef boost::shared_ptr<objectname> objectname_ptr;
-
-    typedef std::vector<objectname_ptr> objectname_vct;
-    typedef std::set<objectname_ptr> objectname_set;
-
-    typedef std::pair<dvnci::indx, objectname_ptr> bindobject_pair;
-    typedef std::map<dvnci::indx, objectname_ptr> bindobject_map;
 
     typedef std::pair<objectname_ptr, serviceerror_ptr> accesserror_pair;
     typedef std::map<objectname_ptr, serviceerror_ptr> accesserror_map;
 
-    typedef std::pair<objectname_ptr, accessresult_ptr> accessresult_pair;
-    typedef std::map<objectname_ptr, accessresult_ptr> accessresult_map;
+    typedef std::pair<objectname_ptr, mmsresult_ptr> accessresult_pair;
+    typedef std::map<objectname_ptr, mmsresult_ptr> accessresult_map;   
+    
+    typedef std::pair<dvnci::indx, objectname_ptr> bindobject_pair;
+    typedef std::map<dvnci::indx, objectname_ptr> bindobject_map;
 
     typedef std::pair<objectname_ptr, dvnci::short_value> mmscommand_pair;
     typedef std::vector<mmscommand_pair> mmscommand_vct;
-
-
-
-
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
