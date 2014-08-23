@@ -147,7 +147,7 @@ namespace dvnci {
             accessresult_map sids;
 
             for (serverkey_const_iterator it = simpreq.left.begin(); it != simpreq.left.end(); ++it) {
-                sids.insert(accessresult_pair(it->first, accessresult_ptr()));
+                sids.insert(accessresult_pair(it->first, mmsresult_ptr()));
             }
 
             error(remintf->read_values(sids));

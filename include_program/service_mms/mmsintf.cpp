@@ -13,12 +13,12 @@ namespace dvnci {
         std::cout << "LIsts report: cnt=" << vl.size() << std::endl;
         for (list_of_variable_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
             if (!(*it)->empty())
-                std::cout << "    " /* << (*it)->key()->internal()->aa_specific() */ << " cnt=" << (*it)->values().size() << std::endl;
+                std::cout << "    " /* << (*it)->key()->obj()->aa_specific() */ << " cnt=" << (*it)->values().size() << std::endl;
         }
         std::cout << "_______________________" << std::endl;
     }
 
-    short_value from_mms_result(accessresult_ptr val) {
+    short_value from_mms_result(mmsresult_ptr val) {
         if (val) {
             if (val->success()) {
                 switch (val->success()->type()) {
@@ -226,135 +226,6 @@ namespace dvnci {
 
 
 
-
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    //////// objectname
-    /////////////////////////////////////////////////////////////////////////////////////////////////        
-
-    objectname::objectname() : internal_(new mmsobject_type()) {
-    }
-
-    objectname::objectname(const std::string& id, const std::string& domain) :
-    internal_(domain.size() ? new mmsobject_type(MMS::ObjectName::Domain_specific_type(mmsidentifier_type(domain),
-    mmsidentifier_type(id)), MMS::ObjectName_domain_specific) : new mmsobject_type(mmsidentifier_type(id), MMS::ObjectName_vmd_specific)) {
-    }
-
-    objectname::~objectname() {
-    }
-
-    objectname_ptr objectname::create(const std::string& id, const std::string& domain) {
-        return objectname_ptr(new objectname(id, domain));
-    }
-
-    objectname_ptr objectname::create_aa(const std::string& id) {
-        objectname_ptr obj(new objectname());
-        obj->internal_ = mmsobject_ptr(new mmsobject_type(mmsidentifier_type(id), MMS::ObjectName_aa_specific));
-        return obj;
-    }
-
-    // 1 @bind and @domain  =>  domainspesific : @domain | @bind
-    // 2 only @bind a) "xxxx" => vmdspesific
-    //                         b) "xxxx : yyyy" domain specific @xxxx | @yyyy !!!! high prior,  defdomain ignore if exists
-    //                         c) "@xxxx" application spesific @xxxx    
-
-    objectname_ptr objectname::create_from_bind(const std::string& id, const std::string& defdomain) {
-        std::string tstid = fulltrim_copy(id);
-        std::string tstdom = fulltrim_copy(defdomain);
-        std::string::size_type it = tstid.find('/');
-        std::string::size_type ita = tstid.find('@');
-        if (ita == 0) {
-            if (tstid.size() > 0)
-                return create_aa(tstid.substr(1));
-        } else if ((it != std::string::npos) && (it != (tstid.size() - 1))) {
-            tstdom = tstid.substr(0, it);
-            tstid = tstid.substr(it + 1);
-        }
-        if (tstid.size())
-            return create(tstid, tstdom);
-        return objectname_ptr();
-    }
-
-    objectname::operator bool() const {
-        return (internal_ && (internal_->type() != MMS::ObjectName_null));
-    }
-
-    bool operator==(const objectname& ls, const objectname& rs) {
-        if (ls.internal_ && rs.internal_) {
-            if (ls.internal_->type() == rs.internal_->type()) {
-                switch (ls.internal_->type()) {
-                    case MMS::ObjectName_vmd_specific:
-                        return *(ls.internal_->vmd_specific()) == *(rs.internal_->vmd_specific());
-                    case MMS::ObjectName_domain_specific:
-                        return ((ls.internal_->domain_specific()->domainID() == rs.internal_->domain_specific()->domainID()) &&
-                                (ls.internal_->domain_specific()->itemID() == rs.internal_->domain_specific()->itemID()));
-                    case MMS::ObjectName_aa_specific:
-                        return *(ls.internal_->aa_specific()) == *(rs.internal_->aa_specific());
-                    default:
-                    {
-                    }
-                        return true;
-                }
-            }
-            return false;
-        } else if (!ls.internal_ && !rs.internal_)
-            return true;
-        return false;
-    }
-
-    bool operator<(const objectname& ls, const objectname& rs) {
-        if (ls.internal_ && rs.internal_) {
-            if (ls.internal_->type() == rs.internal_->type()) {
-                switch (ls.internal_->type()) {
-                    case MMS::ObjectName_vmd_specific:
-                        return *(ls.internal_->vmd_specific()) < *(rs.internal_->vmd_specific());
-                    case MMS::ObjectName_domain_specific:
-                    {
-                        if (ls.internal_->domain_specific()->domainID() == rs.internal_->domain_specific()->domainID())
-                            return (ls.internal_->domain_specific()->itemID() < rs.internal_->domain_specific()->itemID());
-                        return (ls.internal_->domain_specific()->domainID() < rs.internal_->domain_specific()->domainID());
-                    }
-                    case MMS::ObjectName_aa_specific:
-                        return *(ls.internal_->aa_specific()) < *(rs.internal_->aa_specific());
-                    default:
-                    {
-                    }
-                        return false;
-                }
-            } else if (ls.internal_->type() == MMS::ObjectName_null)
-                return true;
-            else if (rs.internal_->type() == MMS::ObjectName_null)
-                return false;
-            return (int) ls.internal_->type() < (int) rs.internal_->type();
-        } else if (ls.internal_ && !rs.internal_)
-            return false;
-        else if (ls.internal_ && !rs.internal_)
-            return false;
-        else if (!ls.internal_ && !rs.internal_)
-            return true;
-        return false;
-    }
-
-    bool operator==(const objectname_ptr& ls, const objectname_ptr& rs) {
-        if (ls && rs)
-            return *ls == *rs;
-        if (!ls && !rs)
-            return true;
-        return false;
-    }
-
-    bool operator<(const objectname_ptr& ls, const objectname_ptr& rs) {
-        if (ls && rs)
-            return *ls < *rs;
-        if ((!ls && !rs) || (!rs))
-            return false;
-        return true;
-    }
-
-
-
-
-
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //////// list_of_variable
     ///////////////////////////////////////////////////////////////////////////////////////////////// 
@@ -362,7 +233,7 @@ namespace dvnci {
     bool list_of_variable::insert(const objectname_ptr& vls) {
         bool inserted = false;
         if (values_.find(vls) == values_.end()) {
-            values_.insert(accessresult_pair((vls), accessresult_ptr()));
+            values_.insert(accessresult_pair((vls), mmsresult_ptr()));
             inserted = true;
         }
         return inserted;
@@ -372,7 +243,7 @@ namespace dvnci {
         bool inserted = false;
         for (objectname_set::const_iterator it = vls.begin(); it != vls.end(); ++it) {
             if (values_.find(*it) == values_.end()) {
-                values_.insert(accessresult_pair((*it), accessresult_ptr()));
+                values_.insert(accessresult_pair((*it), mmsresult_ptr()));
                 inserted = true;
             }
         }
@@ -472,6 +343,10 @@ namespace dvnci {
             client_io->connect(host, port, option, static_cast<std::size_t>(tmout));
             state_ = (client_io->state() == client_io->connected) ? connected : disconnected;
             if (state_ == connected) {
+                DEBUG_VAL_DVNCI(host)
+                DEBUG_VAL_DVNCI(port)
+                DEBUG_VAL_DVNCI(option)                        
+                DEBUG_VAL_DVNCI(tmout)
                 return error(0);
             } else {
                 state_ = disconnected;
@@ -508,13 +383,13 @@ namespace dvnci {
             for (bindobject_map::const_iterator it = cids.begin(); it != cids.end(); ++it) {
                 boost::shared_ptr<getvaraccess_operation_type> operationA(new getvaraccess_operation_type());
                 operationA->request_new();
-                operationA->request()->name(new mmsobject_type(it->second->internal()));
+                operationA->request()->name(new mmsobject_type(it->second->obj()));
                 if (client_io->req<getvaraccess_operation_type>(operationA)) {
                     if ((operationA->response())) {
                         if ((operationA->response()->typeDescription().type() != MMSO::TypeDescription_array) &&
                                 (operationA->response()->typeDescription().type() != MMSO::TypeDescription_structure) &&
                                 (operationA->response()->typeDescription().type() != MMSO::TypeDescription_objId)) {
-                            results.insert(accessresult_pair(it->second, accessresult_ptr()));
+                            results.insert(accessresult_pair(it->second, mmsresult_ptr()));
                             actuals.push_back(it->second);
                             actuals.back()->access(operationA->response());
                         } else
@@ -570,7 +445,7 @@ namespace dvnci {
 
             for (accessresult_map::iterator it = sids.begin(); it != sids.end(); ++it) {
 
-                accessresult_ptr locrslt;
+                mmsresult_ptr locrslt;
                 accessresult_map::const_iterator sfit = simplelist_.find(it->first);
                 if (sfit != simplelist_.end()) {
                     locrslt = sfit->second;
@@ -620,7 +495,7 @@ namespace dvnci {
                     if (to_mms_command(it->second, find_access(it->first), dt)) {
 
                         MMS::VariableAccessSpecification::ListOfVariable_type_sequence_of vacs;
-                        vacs.variableSpecification().name(new mmsobject_type(it->first->internal()));
+                        vacs.variableSpecification().name(new mmsobject_type(it->first->obj()));
 
                         operationW->request()->variableAccessSpecification().listOfVariable()->push_back(vacs);
                         operationW->request()->listOfData().push_back(dt);
@@ -754,11 +629,11 @@ namespace dvnci {
 
                 operationDF->request_new();
 
-                operationDF->request()->variableListName(lst->key()->internal());
+                operationDF->request()->variableListName(lst->key()->obj());
 
                 for (accessresult_map::const_iterator it = lst->values().begin(); it != lst->values().end(); ++it) {
                     operationDF->request()->listOfVariable().push_back(MMS::DefineNamedVariableList_Request::ListOfVariable_type_sequence_of(
-                            MMS::VariableSpecification(it->first->internal(),
+                            MMS::VariableSpecification(it->first->obj(),
                             MMS::VariableSpecification_name)));
                 }
 
@@ -795,7 +670,7 @@ namespace dvnci {
             operationDL->request_new();
 
             MMS::DeleteNamedVariableList_Request::ListOfVariableListName_type lstv;
-            lstv.push_back(lst->key()->internal());
+            lstv.push_back(lst->key()->obj());
 
             operationDL->request()->listOfVariableListName(lstv);
 
@@ -841,20 +716,20 @@ namespace dvnci {
 
                 operationR->request_new();
                 operationR->request()->variableAccessSpecification(
-                        MMS::VariableAccessSpecification(lst->key()->internal(), MMS::VariableAccessSpecification_variableListName));
+                        MMS::VariableAccessSpecification(lst->key()->obj(), MMS::VariableAccessSpecification_variableListName));
 
                 if ((client_io->req<read_operation_type>(operationR)) && (operationR->response())) {
                     const resultslist_type& vlst = operationR->response()->listOfAccessResult();
                     accessresult_map::iterator vit = lst->values().begin();
                     for (resultslist_type::const_iterator it = vlst.begin(); it != vlst.end(); ++it) {
                         if (vit != lst->values().end())
-                            vit->second = accessresult_ptr(new accessresult_type(*it));
+                            vit->second = mmsresult_ptr(new mmsresult_type(*it));
                         else break;
                         ++vit;
                     }
                 } else {
                     for (accessresult_map::iterator it = lst->values().begin(); it != lst->values().end(); ++it)
-                        it->second = accessresult_ptr();
+                        it->second = mmsresult_ptr();
                 }
             } catch (const boost::itu::error_code& errcode) {
                 parse_error(errcode);
@@ -893,7 +768,7 @@ namespace dvnci {
                     for (; it != simplelist_.end(); ++it) {
 
                         MMS::VariableAccessSpecification::ListOfVariable_type_sequence_of vacs;
-                        vacs.variableSpecification().name(new mmsobject_type(it->first->internal()));
+                        vacs.variableSpecification().name(new mmsobject_type(it->first->obj()));
 
                         operationR->request()->variableAccessSpecification().listOfVariable()->push_back(vacs);
                         if (++currentcnt >= blocksize) {
@@ -908,7 +783,7 @@ namespace dvnci {
                         accessresult_map::iterator vit = lsit;
                         for (resultslist_type::const_iterator rit = vlst.begin(); rit != vlst.end(); ++rit) {
                             if (vit != simplelist_.end())
-                                vit->second = accessresult_ptr(new accessresult_type(*rit));
+                                vit->second = mmsresult_ptr(new mmsresult_type(*rit));
                             else
                                 break;
                             ++vit;
@@ -917,7 +792,7 @@ namespace dvnci {
                         if (reqsize) {
                             accessresult_map::iterator vit = lsit;
                             while ((reqsize--) && (vit != simplelist_.end())) {
-                                vit->second = accessresult_ptr();
+                                vit->second = mmsresult_ptr();
                                 ++vit;
                             }
                         }
