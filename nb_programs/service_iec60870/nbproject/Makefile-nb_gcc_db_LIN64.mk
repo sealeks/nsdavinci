@@ -35,9 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1232915786/modbus_protocol.o \
-	${OBJECTDIR}/_ext/1923264132/main.o \
-	${OBJECTDIR}/_ext/1923264132/modbus_detail.o
+	${OBJECTDIR}/_ext/1923264132/iec60870_detail.o \
+	${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o \
+	${OBJECTDIR}/_ext/1923264132/main.o
 
 
 # C Compiler Flags
@@ -64,20 +64,20 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/service_iec60870_db ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/_ext/1232915786/modbus_protocol.o: ../../include/driverspec/modbus_protocol.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1232915786
+${OBJECTDIR}/_ext/1923264132/iec60870_detail.o: ../../include_program/service_iec60870/iec60870_detail.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
+	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_detail.o ../../include_program/service_iec60870/iec60870_detail.cpp
+
+${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o: ../../include_program/service_iec60870/iec60870_protocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
+	${RM} $@.d
+	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o ../../include_program/service_iec60870/iec60870_protocol.cpp
 
 ${OBJECTDIR}/_ext/1923264132/main.o: ../../include_program/service_iec60870/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
 	${RM} $@.d
 	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/main.o ../../include_program/service_iec60870/main.cpp
-
-${OBJECTDIR}/_ext/1923264132/modbus_detail.o: ../../include_program/service_iec60870/modbus_detail.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
-	${RM} $@.d
-	$(COMPILE.cc) -g -s -DDVNCI_DEDUG -I../../include -fno-strict-aliasing -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/modbus_detail.o ../../include_program/service_iec60870/modbus_detail.cpp
 
 # Subprojects
 .build-subprojects:
