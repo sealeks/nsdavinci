@@ -12,11 +12,11 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>../../include_program/service_iec60870/iec60870_detail.cpp</itemPath>
+    <itemPath>../../include_program/service_iec60870/iec60870_detail.h</itemPath>
+    <itemPath>../../include_program/service_iec60870/iec60870_protocol.cpp</itemPath>
+    <itemPath>../../include_program/service_iec60870/iec60870_protocol.h</itemPath>
     <itemPath>../../include_program/service_iec60870/main.cpp</itemPath>
-    <itemPath>../../include_program/service_iec60870/modbus_detail.cpp</itemPath>
-    <itemPath>../../include_program/service_iec60870/modbus_detail.h</itemPath>
-    <itemPath>../../include/driverspec/modbus_protocol.cpp</itemPath>
-    <itemPath>../../include/driverspec/modbus_protocol.h</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -70,12 +70,22 @@
           <commandLine>-mthreads</commandLine>
         </linkerTool>
       </compileType>
-      <item path="../../include/driverspec/modbus_protocol.cpp"
+      <item path="../../include_program/service_iec60870/iec60870_detail.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="../../include/driverspec/modbus_protocol.h"
+      <item path="../../include_program/service_iec60870/iec60870_detail.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870_protocol.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870_protocol.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -83,16 +93,6 @@
       <item path="../../include_program/service_iec60870/main.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/modbus_detail.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/modbus_detail.h"
-            ex="false"
-            tool="3"
             flavor2="0">
       </item>
     </conf>
@@ -152,12 +152,22 @@
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
         </linkerTool>
       </compileType>
-      <item path="../../include/driverspec/modbus_protocol.cpp"
+      <item path="../../include_program/service_iec60870/iec60870_detail.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="../../include/driverspec/modbus_protocol.h"
+      <item path="../../include_program/service_iec60870/iec60870_detail.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870_protocol.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870_protocol.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -165,16 +175,6 @@
       <item path="../../include_program/service_iec60870/main.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/modbus_detail.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/modbus_detail.h"
-            ex="false"
-            tool="3"
             flavor2="0">
       </item>
     </conf>
@@ -222,12 +222,22 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="../../include/driverspec/modbus_protocol.cpp"
+      <item path="../../include_program/service_iec60870/iec60870_detail.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="../../include/driverspec/modbus_protocol.h"
+      <item path="../../include_program/service_iec60870/iec60870_detail.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870_protocol.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870_protocol.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -235,16 +245,6 @@
       <item path="../../include_program/service_iec60870/main.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/modbus_detail.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/modbus_detail.h"
-            ex="false"
-            tool="3"
             flavor2="0">
       </item>
     </conf>
@@ -291,12 +291,22 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="../../include/driverspec/modbus_protocol.cpp"
+      <item path="../../include_program/service_iec60870/iec60870_detail.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="../../include/driverspec/modbus_protocol.h"
+      <item path="../../include_program/service_iec60870/iec60870_detail.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870_protocol.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870_protocol.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -304,16 +314,6 @@
       <item path="../../include_program/service_iec60870/main.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/modbus_detail.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/modbus_detail.h"
-            ex="false"
-            tool="3"
             flavor2="0">
       </item>
     </conf>
