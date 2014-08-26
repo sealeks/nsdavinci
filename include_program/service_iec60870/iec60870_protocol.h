@@ -1,5 +1,5 @@
 /* 
- * File:   modbus_protocol.h
+ * File:   iec60870_protocol.h
  * Author: Serg
  *
  * Created on 18 ?????? 2010 ?., 17:22
@@ -75,13 +75,13 @@ namespace dvnci {
         
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*modbus_value_manager*/
+        /*iec60870_value_manager*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        class modbus_value_manager : public flatmemory_value_manager {
+        class iec60870_value_manager : public flatmemory_value_manager {
         public:
 
-            modbus_value_manager() : flatmemory_value_manager() {}
+            iec60870_value_manager() : flatmemory_value_manager() {}
 
         protected:
 
@@ -101,11 +101,11 @@ namespace dvnci {
             virtual ns_error preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*basis_modbus_protocol*/
+        /*basis_iec60870_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        template <typename VALUEMANAGER = modbus_value_manager>
-                class basis_modbus_protocol : public templ_protocol<VALUEMANAGER> {
+        template <typename VALUEMANAGER = iec60870_value_manager>
+                class basis_iec60870_protocol : public templ_protocol<VALUEMANAGER> {
         private:
 
             typedef templ_protocol<VALUEMANAGER> basetype;
@@ -117,7 +117,7 @@ namespace dvnci {
             static const mdbdevn MAX_MODBUS_DEV_NUM = 247;
             static const mdbdevn NO_MODBUS_DEV_NUM = 0xFF;
 
-            basis_modbus_protocol(basis_iostream_ptr io) : templ_protocol<modbus_value_manager>(io) {}
+            basis_iec60870_protocol(basis_iostream_ptr io) : templ_protocol<iec60870_value_manager>(io) {}
 
         protected:
             
@@ -265,18 +265,18 @@ namespace dvnci {
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*rtu_modbus_protocol*/
+        /*rtu_iec60870_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        template <typename VALUEMANAGER = modbus_value_manager>
-                class rtu_modbus_protocol : public basis_modbus_protocol<VALUEMANAGER> {
+        template <typename VALUEMANAGER = iec60870_value_manager>
+                class rtu_iec60870_protocol : public basis_iec60870_protocol<VALUEMANAGER> {
         private:
 
-            typedef basis_modbus_protocol<VALUEMANAGER> basetype;
+            typedef basis_iec60870_protocol<VALUEMANAGER> basetype;
 
         public:
 
-            rtu_modbus_protocol(basis_iostream_ptr io) : basis_modbus_protocol<VALUEMANAGER>(io) {}
+            rtu_iec60870_protocol(basis_iostream_ptr io) : basis_iec60870_protocol<VALUEMANAGER>(io) {}
 
         protected:
 
@@ -301,19 +301,19 @@ namespace dvnci {
                 return basetype::error(ERROR_IO_NO_GENERATE_REQ);}};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*class ascii_modbus_protocol*/
+        /*class ascii_iec60870_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        template <typename VALUEMANAGER = modbus_value_manager>
-                class ascii_modbus_protocol : public basis_modbus_protocol<VALUEMANAGER> {
+        template <typename VALUEMANAGER = iec60870_value_manager>
+                class ascii_iec60870_protocol : public basis_iec60870_protocol<VALUEMANAGER> {
         private:
 
-            typedef basis_modbus_protocol<VALUEMANAGER> basetype;
+            typedef basis_iec60870_protocol<VALUEMANAGER> basetype;
 
         public:
 
-            ascii_modbus_protocol(basis_iostream_ptr io) :
-            basis_modbus_protocol<VALUEMANAGER>(io) {}
+            ascii_iec60870_protocol(basis_iostream_ptr io) :
+            basis_iec60870_protocol<VALUEMANAGER>(io) {}
 
         protected:
 
@@ -343,19 +343,19 @@ namespace dvnci {
                 return basetype::error(ERROR_IO_NO_GENERATE_REQ);}};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*tcp_modbus_protocol*/
+        /*tcp_iec60870_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        template <typename VALUEMANAGER = modbus_value_manager>
-                class tcp_modbus_protocol : public basis_modbus_protocol<VALUEMANAGER> {
+        template <typename VALUEMANAGER = iec60870_value_manager>
+                class tcp_iec60870_protocol : public basis_iec60870_protocol<VALUEMANAGER> {
         private:
 
-            typedef basis_modbus_protocol<VALUEMANAGER> basetype;
+            typedef basis_iec60870_protocol<VALUEMANAGER> basetype;
 
         public:
 
-            tcp_modbus_protocol(basis_iostream_ptr io) :
-            basis_modbus_protocol<VALUEMANAGER>(io), trasactcnt(0) {}
+            tcp_iec60870_protocol(basis_iostream_ptr io) :
+            basis_iec60870_protocol<VALUEMANAGER>(io), trasactcnt(0) {}
 
         protected:
 

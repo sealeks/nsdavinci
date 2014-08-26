@@ -1,11 +1,11 @@
 /* 
- * File:   modbus_protocol.cpp
+ * File:   iec60870_protocol.cpp
  * Author: Serg
  * 
  * Created on 18 ?????? 2010 ?., 17:22
  */
 
-#include <driverspec/modbus_protocol.h>
+#include "iec60870_protocol.h"
 
 namespace dvnci {
     namespace driver {
@@ -45,10 +45,10 @@ namespace dvnci {
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*modbus_value_manager*/
+        /*iec60870_value_manager*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ns_error modbus_value_manager::parse_response_impl(std::string& val, parcel_ptr prcl, size_t bitn) {
+        ns_error iec60870_value_manager::parse_response_impl(std::string& val, parcel_ptr prcl, size_t bitn) {
             switch (prcl->kind()) {
                 case DISCRET_INPUT_MODBUS_TYPE:
                 case COIL_MODBUS_TYPE:{
@@ -77,7 +77,7 @@ namespace dvnci {
                                 return flatmemory_value_manager::parse_response_impl(val, prcl);}}}}}
             return error(0);}
 
-        ns_error modbus_value_manager::preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn) {
+        ns_error iec60870_value_manager::preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn) {
             switch (cmd->kind()) {
                 case DISCRET_INPUT_MODBUS_TYPE:
                 case COIL_MODBUS_TYPE:{

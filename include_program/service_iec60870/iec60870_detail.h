@@ -1,5 +1,5 @@
 /* 
- * File:   modbus_detail.h
+ * File:   iec60870_detail.h
  * Author: Alexeev
  */
 
@@ -14,15 +14,15 @@ namespace dvnci {
     namespace driver {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*modbus_req_parcel*/
+        /*iec60870_req_parcel*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        struct modbus_req_parcel : public basis_req_parcel {
+        struct iec60870_req_parcel : public basis_req_parcel {
             
         public:
 
-            modbus_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk);
+            iec60870_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk);
 
             virtual size_t operator-(const basis_req_parcel & rs) const;
 
@@ -34,16 +34,16 @@ namespace dvnci {
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*modbus_block_model*/
+        /*iec60870_block_model*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-        class modbus_block_model : public flatmemory_block_model<modbus_req_parcel> {
+        class iec60870_block_model : public flatmemory_block_model<iec60870_req_parcel> {
         public:
 
-            modbus_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
-            flatmemory_block_model<modbus_req_parcel>(exectr, inf, mlnk) {
+            iec60870_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
+            flatmemory_block_model<iec60870_req_parcel>(exectr, inf, mlnk) {
                 
                 blocksize = ((mlnk.protocol() == NT_MODBUS_ASCII) && (mlnk.chanaltype() != NT_CHTP_TCP_IP)) ?
                         in_bounded<size_t > (8, MAX_MODBUS_BLOCK_SIZE / 2, static_cast<size_t> (mlnk.blocksize())) :
@@ -55,9 +55,9 @@ namespace dvnci {
        /*com_option_setter*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        struct modbus_com_option_setter : public com_option_setter {
+        struct iec60870_com_option_setter : public com_option_setter {
 
-            modbus_com_option_setter(const metalink & lnk) : com_option_setter(lnk) {};
+            iec60870_com_option_setter(const metalink & lnk) : com_option_setter(lnk) {};
 
             virtual boost::system::error_code store(com_port_option&  opt, boost::system::error_code & ec) const;
 
@@ -66,33 +66,33 @@ namespace dvnci {
 
 
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-       /*modbus_metalink_checker*/
+       /*iec60870_metalink_checker*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-     struct modbus_metalink_checker : public metalink_checker {
+     struct iec60870_metalink_checker : public metalink_checker {
 
             virtual ns_error compare(const metalink& rs, const metalink& ls){
                 return ((ls.inf().cominf.boundrate!=rs.inf().cominf.boundrate)) ?  ERROR_IO_NOSYNC_LINK : 0;}};
 
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-       /*modbus_protocol_factory*/
+       /*iec60870_protocol_factory*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-     struct modbus_protocol_factory : public protocol_factory {
+     struct iec60870_protocol_factory : public protocol_factory {
 
             virtual ioprotocol_ptr build(const metalink& lnk, ns_error & err);};
             
 
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-       /*modbus_device_service*/
+       /*iec60870_device_service*/
        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-     class modbus_device_service : public templ_device_service<modbus_protocol_factory> {
+     class iec60870_device_service : public templ_device_service<iec60870_protocol_factory> {
         public:
-            modbus_device_service(const metalink& lnk) : 
-            templ_device_service<modbus_protocol_factory>(lnk) {};};
+            iec60870_device_service(const metalink& lnk) : 
+            templ_device_service<iec60870_protocol_factory>(lnk) {};};
 
 
 
