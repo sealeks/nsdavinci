@@ -8,19 +8,19 @@
 #ifndef EXTIEC60850INTF_H
 #define	EXTIEC60850INTF_H
 
-#include "mmsintf.h"
+#include "iec60870intf.h"
 
 namespace dvnci {
 
     namespace external {
 
-        class exmmsintf : public extintf_wraper<objectname_ptr> {
+        class extiec60870intf : public extintf_wraper<dvnci::prot80670::dataobject_ptr> {
 
         public:
 
-            exmmsintf(tagsbase_ptr intf_, executor* exctr, indx grp);
+            extiec60870intf(tagsbase_ptr intf_, executor* exctr, indx grp);
 
-            virtual ~exmmsintf();
+            virtual ~extiec60870intf();
 
 
         protected:
@@ -46,7 +46,7 @@ namespace dvnci {
 
         private:
 
-            mmsintf_ptr remintf;
+            dvnci::prot80670::iec69870intf_ptr remintf;
 
         };
     }
