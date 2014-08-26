@@ -1,5 +1,5 @@
 /* 
- * File:   modbus_detail.cpp
+ * File:   iec60870_detail.cpp
  * Author: Alexeev
  */
 
@@ -10,7 +10,7 @@ namespace dvnci{
 
 
 
-        modbus_req_parcel::modbus_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_req_parcel(vl, tgtp, mlnk) {
+        iec60870_req_parcel::iec60870_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk) : basis_req_parcel(vl, tgtp, mlnk) {
                 protocol_ = (mlnk.chanaltype() == NT_CHTP_RS232_4XX) ?
                         ((mlnk.protocol() == NT_MODBUS_ASCII) ? 
                             INTPR_RS_MODBUS_ASCII : INTPR_RS_MODBUS_RTU) : INTPR_TCP_MODBUS;
@@ -18,7 +18,7 @@ namespace dvnci{
                 getspecificator(vl);
                 iscorrect_ = parse(vl);}
 
-        size_t modbus_req_parcel::operator-(const basis_req_parcel & rs) const  {
+        size_t iec60870_req_parcel::operator-(const basis_req_parcel & rs) const  {
             
                 if ((devnum() != rs.devnum()) || (kind() != rs.kind())) return BLOCKMAXDISTANCE;
                 switch (kind()) {
@@ -29,7 +29,7 @@ namespace dvnci{
                 return BLOCKMAXDISTANCE;};
 
 
-        bool modbus_req_parcel::parse(std::string vl) {
+        bool iec60870_req_parcel::parse(std::string vl) {
 
                 /*DNNNN  discret intut
                   CNNNN  coils
@@ -84,7 +84,7 @@ namespace dvnci{
                 error(ERROR_BINDING);
                 return false;}
 
-        bool modbus_req_parcel::conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr) {
+        bool iec60870_req_parcel::conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr) {
                 bitnum = NULL_BIT_NUM;
                 boost::smatch rslt;
                 boost::regex rgx(rgxstr);
@@ -110,9 +110,9 @@ namespace dvnci{
 				return false;}
         
         
-        //modbus_com_option_setter
+        //iec60870_com_option_setter
         
-        boost::system::error_code modbus_com_option_setter::store(com_port_option&  opt, boost::system::error_code & ec) const {
+        boost::system::error_code iec60870_com_option_setter::store(com_port_option&  opt, boost::system::error_code & ec) const {
                 reset_default_nill(opt);
 		switch (link.protocol()){
 		    case NT_MODBUS_ASCII: {
@@ -132,11 +132,11 @@ namespace dvnci{
 			return boost::system::error_code();}
         
         
-        //modbus_protocol_factory        
+        //iec60870_protocol_factory        
         
-       ioprotocol_ptr modbus_protocol_factory::build(const metalink& lnk, ns_error & err) {
+       ioprotocol_ptr iec60870_protocol_factory::build(const metalink& lnk, ns_error & err) {
 
-                typedef rs_iostream<modbus_com_option_setter> modbus_rs_iostream;
+                typedef rs_iostream<iec60870_com_option_setter> iec60870_rs_iostream;
 
                 switch(lnk.chanaltype()){
                     case NT_CHTP_TCP_IP: {
@@ -144,19 +144,19 @@ namespace dvnci{
                         basis_iostream_ptr tmp_stream = basis_iostream_ptr( 
                                 new tcpip_iostream( lnk.timeout(), lnk.host(), MODBUS_TCP_PORT));                
                         return ioprotocol_ptr(
-                                new tcp_modbus_protocol<modbus_value_manager>(tmp_stream));}
+                                new tcp_iec60870_protocol<iec60870_value_manager>(tmp_stream));}
 
                     case NT_CHTP_RS232_4XX:{                      
                         basis_iostream_ptr tmp_stream = basis_iostream_ptr(
-                                new modbus_rs_iostream(lnk,  lnk.timeout(), lnk.chanalnum(), false));
+                                new iec60870_rs_iostream(lnk,  lnk.timeout(), lnk.chanalnum(), false));
 
                         switch (lnk.protocol()){
                             
                             case NT_MODBUS_ASCII: { return ioprotocol_ptr(
-                                    new ascii_modbus_protocol<modbus_value_manager>(tmp_stream));}
+                                    new ascii_iec60870_protocol<iec60870_value_manager>(tmp_stream));}
                             
                             default : {return ioprotocol_ptr(
-                                    new rtu_modbus_protocol<modbus_value_manager>(tmp_stream));}}}
+                                    new rtu_iec60870_protocol<iec60870_value_manager>(tmp_stream));}}}
 
                     default: {}}
 

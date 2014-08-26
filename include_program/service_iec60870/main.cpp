@@ -15,47 +15,50 @@
 #include <kernel/service.h>
 #include <kernel/driver_proccesstmpl.h>
 #include <kernel/error.h>
-#include "modbus_detail.h"
+#include "iec60870_detail.h"
 
 using namespace std;
 using namespace dvnci;
 using namespace dvnci::driver;
 
 
-dvnci::executable_ptr         dvnci::mainserv;
-std::string                   dvnci::DVNCI_SERVICE_NAME=NS_MODBUS_SERVICE_NAME;
-dvnci::appidtype              dvnci::DVNCI_SERVICE_APPID= NS_MODBUS_SERVICE;
-fspath                        basepath;
+dvnci::executable_ptr dvnci::mainserv;
+std::string dvnci::DVNCI_SERVICE_NAME = NS_IEC60870_SERVICE_NAME;
+dvnci::appidtype dvnci::DVNCI_SERVICE_APPID = NS_IEC60870_SERVICE;
+fspath basepath;
 
 
-typedef device_link_executor < modbus_device_service, modbus_block_model, modbus_metalink_checker >      modbus_executor;
-typedef group_proccessor_templ< modbus_executor, TYPE_SIMPL >                                            groupmodbus;
+typedef device_link_executor < iec60870_device_service, iec60870_block_model, iec60870_metalink_checker > iec60870_executor;
+typedef group_proccessor_templ< iec60870_executor, TYPE_SIMPL > groupiec60870;
 
-class modbus_service : public linkdriverservice<groupmodbus> {
-
+class iec60870_service : public linkdriverservice<groupiec60870> {
 public:
-    modbus_service() : linkdriverservice<groupmodbus>(basepath,
-            NS_MODBUS_SERVICE){};};
 
+    iec60870_service() : linkdriverservice<groupiec60870>(basepath,
+    NS_IEC60870_SERVICE) {
+    };
+};
 
-int main(int argc, char* argv[]){
-  std::string quit_in;
-  basepath=dvnci::getlocalbasepath();
-  dvnci::mainserv= executable_ptr(new modbus_service());
-  #ifndef DVNCI_DEDUG
-  if (serviceargumentparser(argc,argv)==SERVICE_OPEATION_APP){
-  #endif
-  try {
-       DEBUG_STR_DVNCI(start app)
-       boost::thread th = boost::thread(mainserv);
-       while ((std::cin >> quit_in)  && ((quit_in!="q") && (quit_in!="Q")));
-       mainserv.terminate();
-       th.join();}
-  catch(std::exception& err){
-       DEBUG_VAL_DVNCI(err.what());}
-  #ifndef DVNCI_DEDUG
+int main(int argc, char* argv[]) {
+    std::string quit_in;
+    basepath = dvnci::getlocalbasepath();
+    dvnci::mainserv = executable_ptr(new iec60870_service());
+#ifndef DVNCI_DEDUG
+    if (serviceargumentparser(argc, argv) == SERVICE_OPEATION_APP) {
+#endif
+        try {
+            DEBUG_STR_DVNCI(start app)
+            boost::thread th = boost::thread(mainserv);
+            while ((std::cin >> quit_in) && ((quit_in != "q") && (quit_in != "Q")));
+            mainserv.terminate();
+            th.join();
+        } catch (std::exception& err) {
+            DEBUG_VAL_DVNCI(err.what());
+        }
+#ifndef DVNCI_DEDUG
     }
-  #endif
-  DEBUG_STR_DVNCI(FIN)
-  return (EXIT_SUCCESS);}
+#endif
+    DEBUG_STR_DVNCI(FIN)
+    return (EXIT_SUCCESS);
+}
 
