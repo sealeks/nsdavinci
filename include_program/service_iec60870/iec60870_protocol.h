@@ -19,7 +19,85 @@
 namespace dvnci {
     namespace driver {
 
+       
+        const parcelkind M_SP_NA_1 = 1; //Single-point information
+        const parcelkind M_SP_TA_1 = 2; //Single-point information with time-tag
+        const parcelkind M_DP_NA_1 = 3; //Double-point information
+        const parcelkind M_DP_TA_1 = 4; //Double-point information with time-tag
+        const parcelkind M_ST_NA_1 = 5; //Step position information
+        const parcelkind M_ST_TA_1 = 6; //Step position information with time-tag
+        const parcelkind M_BO_NA_1 = 7; //Bitstring of 32 bits
+        const parcelkind M_BO_TA_1 = 8; //Bitstring of 32 bits with time-tag
+        const parcelkind M_ME_NA_1 = 9; //Measured value, normalized value
+        const parcelkind M_ME_TA_1 = 10; //Measured value, normalized value with time-tag
+        const parcelkind M_ME_NB_1 = 11; //Measured value, scaled value
+        const parcelkind M_ME_TB_1 = 12; //Measured value, scaled value with time-tag
+        const parcelkind M_ME_NC_1 = 13; //Measured value, short floating point value
+        const parcelkind M_ME_TC_1 = 14; //Measured value, short floating point value with time-tag
+        const parcelkind M_IT_NA_1 = 15; //Integrated totals
+        const parcelkind M_IT_TA_1 = 16; //Integrated totals with time-tag
+        const parcelkind M_EP_TA_1 = 17; //Event of protection equipment with time-tag
+        const parcelkind M_EP_TB_1 = 18; //Packed start events of protection equipment with time-tag
+        const parcelkind M_EP_TC_1 = 19; //Packed output circuit information of protection equipment with timetag
+        const parcelkind M_PS_NA_1 = 20; //Packed single point information with status change detection
+        const parcelkind M_ME_ND_1 = 21; //Measured value, normalized value without quality descriptor
+        const parcelkind M_SP_TB_1 = 30; //Single-point information with time tag CP56Time2a
+        const parcelkind M_DP_TB_1 = 31; //Double-point information with time tag CP56Time2a
+        const parcelkind M_ST_TB_1 = 32; //Step position information with time tag CP56Time2a
+        const parcelkind M_BO_TB_1 = 33; //Bitstring of 32 bit with time tag CP56Time2a
+        const parcelkind M_ME_TD_1 = 34; //Measured value, normalized value with time tag CP56Time2a
+        const parcelkind M_ME_TE_1 = 35; //Measured value, scaled value with time tag CP56Time2a
+        const parcelkind M_ME_TF_1 = 36; //Measured value, short floating point value with time tag CP56Time2a
+        const parcelkind M_IT_TB_1 = 37; //Integrated totals with time tag CP56Time2a
+        const parcelkind M_EP_TD_1 = 38; //Event of protection equipment with time-tag CP56Time2a
+        const parcelkind M_EP_TE_1 = 39; //Packed start events of protection equipment with time-tag CP56Time2a
+        const parcelkind M_EP_TF_1 = 40; //Packed output circuit information of protection equipment with timetag CP56Time2a
 
+        const parcelkind C_SC_NA_1 = 45; // Single command 
+        const parcelkind C_DC_NA_1 = 46; // Double command
+        const parcelkind C_RC_NA_1 = 47; // Regulating step command
+        const parcelkind C_SE_NA_1 = 48; // Set point command, normalized value
+        const parcelkind C_SE_NB_1 = 49; // Set point command, scaled value
+        const parcelkind C_SE_NC_1 = 50; // Set point command, short floating point value
+        const parcelkind C_BO_NA_1 = 51; // Bitstring of 32 bit
+        const parcelkind C_SC_TA_1 = 58; // Single command with time tag CP56Time 2a 
+        const parcelkind C_DC_TA_1 = 59; // Double command with time tag CP56Time 2a
+        const parcelkind C_RC_TA_1 = 60; // Regulating step command with time tag CP56Time 2a
+        const parcelkind C_SE_TA_1 = 61; // Set point command, normalized value with time tag CP56Time 2a
+        const parcelkind C_SE_TB_1 = 62; // Set point command, scaled value with time tag CP56Time 2a
+        const parcelkind C_SE_TC_1 = 63; // Set point command, short floating point value with time tag CP56Time 2a
+        const parcelkind C_BO_TA_1 = 64; // Bitstring of 32 bit with time tag CP56Time 2a      
+
+        const parcelkind M_EI_NA_1 = 70;   //End of initialization
+
+       const parcelkind C_IC_NA_1 =100;     // Interrogation command 100
+       const parcelkind C_CI_NA_1 =101;     // Counter interrogation command
+       const parcelkind C_RD_NA_1 =102;     // Read command
+       const parcelkind C_CS_NA_1 =103;     // Clock synchronization command
+       const parcelkind C_TS_NA_1 =104;     // Test command
+       const parcelkind C_RP_NA_1 =105;     // Reset process command
+       const parcelkind C_CD_NA_1 =106;     // Delay acquisition command
+       const parcelkind C_TS_TA_1  =107;     // Test command with time tag CP56time2a      
+        
+       const parcelkind P_ME_NA_1 =110;     // Parameter of measured value, normalized value 110
+       const parcelkind P_ME_NB_1 =111;     // Parameter of measured value, scaled value
+       const parcelkind P_ME_NC_1 =112;     // Parameter of measured value, short floating point value
+       const parcelkind P_AC_NA_1=113;     // Parameter activation
+
+       const parcelkind F_FR_NA_1=120;     // File ready 120
+       const parcelkind F_SR_NA_1=121;     // Section ready
+       const parcelkind F_SC_NA_1=122;     // Call directory, select file, call file, call section
+       const parcelkind F_LS_NA_1=123;     // Last section, last segment
+       const parcelkind F_AF_NA_1=124;     // Ack file, ack section
+       const parcelkind F_SG_NA_1=125;     // Segment
+       const parcelkind F_DR_TA_1=126;     // Directory {blank or X, only available in monitor (standard) direction}
+       const parcelkind F_SC_NB_1=127;     // Query log – Request archive file
+       
+       typedef std::pair<std::string, parcelkind> string_parcelkind_pair;
+       typedef std::map<std::string, parcelkind> string_parcelkind_map;    
+       
+       parcelkind find_parcelkind(const std::string& val);
+        
         const parcelkind  DISCRET_INPUT_MODBUS_TYPE    = 1;
         const parcelkind  COIL_MODBUS_TYPE             = 2;
         const parcelkind  INPUT_REGISTER_MODBUS_TYPE   = 3;
