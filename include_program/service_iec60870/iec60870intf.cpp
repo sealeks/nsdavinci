@@ -14,19 +14,19 @@ namespace dvnci {
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// iec69870intf
+        //////// iec60870intf
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
-        iec69870intf::iec69870intf(const std::string hst, const std::string prt, timeouttype tmo) :
-        client_io(/*iec60870ioclient_ptr(new iec69870ioclient())*/), host(hst), port(prt), tmout(tmo) {
+        iec60870intf::iec60870intf(const std::string hst, const std::string prt, timeouttype tmo) :
+        client_io(new iec60870ioclient()), host(hst), port(prt), tmout(tmo) {
         }
 
-        iec69870intf_ptr iec69870intf::build(const std::string host, const std::string port, timeouttype tmout) {
-            iec69870intf_ptr tmpintf = iec69870intf_ptr(new iec69870intf(host, port, tmout));
+        iec60870intf_ptr iec60870intf::build(const std::string host, const std::string port, timeouttype tmout) {
+            iec60870intf_ptr tmpintf = iec60870intf_ptr(new iec60870intf(host, port, tmout));
             return tmpintf;
         }
 
-        ns_error iec69870intf::connect_impl() {
+        ns_error iec60870intf::connect_impl() {
             try {
                 if (!client_io) return error(ERROR_IO_DEVICE_CHANAL_NOT_DEF);
                 if (client_io->state() == client_io->connected) {
@@ -50,7 +50,7 @@ namespace dvnci {
             return error(ERROR_BASENOTFOUND);
         }
 
-        ns_error iec69870intf::disconnect_impl() {
+        ns_error iec60870intf::disconnect_impl() {
             try {
                 if ((client_io) && (client_io->state() == client_io->connected)) {
                     client_io->disconnect();
@@ -61,7 +61,7 @@ namespace dvnci {
             return error(0);
         }
 
-        ns_error iec69870intf::add_items(const dataobject_set& cids, dataobject_set& errors) {
+        ns_error iec60870intf::add_items(const dataobject_set& cids, dataobject_set& errors) {
 
             check_connecton_state();
 
@@ -111,7 +111,7 @@ namespace dvnci {
             return error();
         }
 
-        ns_error iec69870intf::remove_items(const dataobject_set& cids, dataobject_set& errors) {
+        ns_error iec60870intf::remove_items(const dataobject_set& cids, dataobject_set& errors) {
             /*error(0);
             if (!lists_.empty()) {
                 if (error(remove_from_namedlist(cids)))
@@ -126,7 +126,7 @@ namespace dvnci {
             return error();
         }
 
-        ns_error iec69870intf::read_values(const dataobject_set& cids, dataobject_set& errors) {
+        ns_error iec60870intf::read_values(const dataobject_set& cids, dataobject_set& errors) {
             /*if ((!simplelist_.empty()) || !(lists_.empty())) {
                 if (!simplelist_.empty())
                     if (error(read_simlelist()))
@@ -156,7 +156,7 @@ namespace dvnci {
             return error();
         }
 
-        ns_error iec69870intf::send_commands(/*const mmscommand_vct& cmds, accesserror_map& errors*/) {
+        ns_error iec60870intf::send_commands(/*const mmscommand_vct& cmds, accesserror_map& errors*/) {
 
             check_connecton_state();
 
@@ -234,7 +234,7 @@ namespace dvnci {
             return error();
         }
 
-        /*void iec69870intf::parse_error(const boost::itu::error_code& errcode) {
+        /*void iec60870intf::parse_error(const boost::itu::error_code& errcode) {
             if (errcode == boost::itu::ER_NOLINK) {
                 error(ERROR_NONET_CONNECTED);
                 throw dvnci::dvncierror(ERROR_NONET_CONNECTED);
@@ -249,7 +249,7 @@ namespace dvnci {
             throw dvnci::dvncierror(ERROR_PROTOCOL_ERROR);
         }*/
 
-        void iec69870intf::check_connecton_state() {
+        void iec60870intf::check_connecton_state() {
             if (!isconnected()) {
                 error(ERROR_IO_LINK_NOT_CONNECTION);
                 throw dvncierror(ERROR_IO_LINK_NOT_CONNECTION);

@@ -46,7 +46,7 @@ namespace dvnci {
 
         private:
 
-            dvnci::prot80670::iec69870intf_ptr remintf;
+            dvnci::prot80670::iec60870intf_ptr remintf;
 
         };
     }
