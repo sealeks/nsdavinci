@@ -112,7 +112,7 @@ namespace dvnci {
         const num16 ON_COIL_MODBUS_NM                  = 0x00FF;
         const num16 OFF_COIL_MODBUS_NM                 = 0x0000;
 
-        const std::string MODBUS_TCP_PORT              = "502";
+        const std::string MODBUS_TCP_PORT              = "2404";
 
         /* RTU Version*/
 
