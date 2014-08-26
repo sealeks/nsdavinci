@@ -32,7 +32,7 @@ namespace dvnci{
             if (vl.size() > 7) {
                 upper_and_trim(vl);
                 std::string typedata = vl.substr(0, 7);
-                std::string addrdata = vl.substr(8);
+                std::string addrdata = vl.substr(7);
                 parcelkind kind_ = find_parcelkind(typedata);
                 if (kind_) {
                     std::string::size_type bitit = addrdata.find('.', 0);
