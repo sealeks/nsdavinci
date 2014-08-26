@@ -26,11 +26,7 @@ namespace dvnci {
 
             virtual size_t operator-(const basis_req_parcel & rs) const;
 
-            bool parse(std::string vl);
-     
-        protected:             
-
-            bool conformaddr(const std::string& vl, std::string rgxstr, num32& addr, size_t& bitnum, num32 maxadr, num32 minadr = 1);} ;
+            bool parse(std::string vl);} ;
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
