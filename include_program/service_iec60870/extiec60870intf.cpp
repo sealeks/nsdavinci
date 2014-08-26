@@ -15,7 +15,7 @@ namespace dvnci {
         using dvnci::prot80670::dataobject;
         using dvnci::prot80670::dataobject_ptr;
         using dvnci::prot80670::dataobject_set;
-        using dvnci::prot80670::iec69870intf_ptr;
+        using dvnci::prot80670::iec60870intf_ptr;
 
 
 
@@ -32,7 +32,7 @@ namespace dvnci {
         }
 
         ns_error extiec60870intf::checkserverstatus() {
-            /* if ((!iec69870intf->isconnected()))
+            /* if ((!iec60870intf->isconnected()))
                    throw dvncierror(ERROR_FAILNET_CONNECTED);*/
             return error(0);
         }
@@ -55,7 +55,7 @@ namespace dvnci {
                 if (port.empty())
                     port = "102";
                 if (!remintf) {
-                    remintf = dvnci::prot80670::iec69870intf::build(intf->groups()->host(group()),
+                    remintf = dvnci::prot80670::iec60870intf::build(intf->groups()->host(group()),
                             fulltrim_copy(port),
                             intf->groups()->timeout(group()));
                 }

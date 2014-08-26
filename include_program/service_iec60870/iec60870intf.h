@@ -28,14 +28,14 @@ namespace dvnci {
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// iec69870intf
+        //////// iec60870intf
         /////////////////////////////////////////////////////////////////////////////////////////////////        
 
 
-        class iec69870intf;
-        typedef boost::shared_ptr<iec69870intf> iec69870intf_ptr;
+        class iec60870intf;
+        typedef boost::shared_ptr<iec60870intf> iec60870intf_ptr;
 
-        class iec69870intf {
+        class iec60870intf {
 
         public:
 
@@ -44,12 +44,12 @@ namespace dvnci {
                 disconnected, connected
             };
 
-            iec69870intf(const std::string hst, const std::string prt, timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
+            iec60870intf(const std::string hst, const std::string prt, timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
 
-            virtual ~iec69870intf() {
+            virtual ~iec60870intf() {
             };
 
-            static iec69870intf_ptr build(const std::string host, const std::string port, timeouttype tmout = DEFAULT_DVNCI_TIMOUT);
+            static iec60870intf_ptr build(const std::string host, const std::string port, timeouttype tmout = DEFAULT_DVNCI_TIMOUT);
 
             bool isconnected() {
                 return ((state_ == connected) || (!error(connect_impl())));
