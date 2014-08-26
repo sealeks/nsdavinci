@@ -1,64 +1,71 @@
-/* 
- * File:   main.cpp
- * Author: Serg Alexeev sealeks@mail.ru
- *
- * Created on 9 Январь 2010 г., 1:20
- */
-
-
-
-
-
 #include <kernel/constdef.h>
 #include <kernel/systemutil.h>
 #include <kernel/serviceapp.h>
 #include <kernel/service.h>
-#include <kernel/driver_proccesstmpl.h>
-#include <kernel/error.h>
-#include "iec60870_detail.h"
+#include <kernel/interface_proccesstmpl.h>
+
+#include "extiec60850intf.h"
+
 
 using namespace std;
 using namespace dvnci;
-using namespace dvnci::driver;
+using namespace dvnci::external;
 
 
-dvnci::executable_ptr dvnci::mainserv;
-std::string dvnci::DVNCI_SERVICE_NAME = NS_IEC60870_SERVICE_NAME;
-dvnci::appidtype dvnci::DVNCI_SERVICE_APPID = NS_IEC60870_SERVICE;
-fspath basepath;
+
+dvnci::executable_ptr     dvnci::mainserv;
+std::string                  dvnci::DVNCI_SERVICE_NAME=NS_IEC60850_SERVICE_NAME;
+dvnci::appidtype      dvnci::DVNCI_SERVICE_APPID= NS_IEC60850_SERVICE;
+fspath                        basepath;
 
 
-typedef device_link_executor < iec60870_device_service, iec60870_block_model, iec60870_metalink_checker > iec60870_executor;
-typedef group_proccessor_templ< iec60870_executor, TYPE_SIMPL > groupiec60870;
+typedef externalintf_executor<exiec60850intf>                                             iec60850executor;
+typedef group_proccessor_templ<iec60850executor , TYPE_SIMPL | TYPE_TEXT >    groupiec60850;
 
-class iec60870_service : public linkdriverservice<groupiec60870> {
+
+class net_service : public uniintfservice < groupiec60850 > {
+
 public:
+    net_service() : uniintfservice<groupiec60850>(basepath,
+            NS_IEC60850_SERVICE){}
 
-    iec60870_service() : linkdriverservice<groupiec60870>(basepath,
-    NS_IEC60870_SERVICE) {
-    };
-};
+protected:
 
-int main(int argc, char* argv[]) {
-    std::string quit_in;
-    basepath = dvnci::getlocalbasepath();
-    dvnci::mainserv = executable_ptr(new iec60870_service());
-#ifndef DVNCI_DEDUG
-    if (serviceargumentparser(argc, argv) == SERVICE_OPEATION_APP) {
-#endif
-        try {
-            DEBUG_STR_DVNCI(start app)
-            boost::thread th = boost::thread(mainserv);
-            while ((std::cin >> quit_in) && ((quit_in != "q") && (quit_in != "Q")));
-            mainserv.terminate();
-            th.join();
-        } catch (std::exception& err) {
-            DEBUG_VAL_DVNCI(err.what());
-        }
-#ifndef DVNCI_DEDUG
+    virtual bool initialize_impl() {
+      uniintfservice<groupiec60850>::initialize_impl();
+      return true;}
+
+    virtual bool uninitialize_impl() {
+        uniintfservice<groupiec60850>::uninitialize_impl();
+        if (server) server->terminate();
+        //th_server.join();
+        return true;}
+
+private:
+
+   boost::thread_group                threads;
+   boost::thread                      th_server;
+   executable_ptr                     server;};
+
+
+int main(int argc, char* argv[]){
+  std::string quit_in;
+  basepath=dvnci::getlocalbasepath();
+  dvnci::mainserv= executable_ptr(new net_service());
+  #ifndef DVNCI_DEDUG
+  if (serviceargumentparser(argc,argv)==SERVICE_OPEATION_APP){
+  #endif
+  try {
+       DEBUG_STR_DVNCI(start app)
+       boost::thread th = boost::thread(mainserv);
+       while ((std::cin >> quit_in)  && ((quit_in!="q") && (quit_in!="Q")));
+       mainserv.terminate();
+       th.join();}
+  catch(std::exception& err){
+       DEBUG_VAL_DVNCI(err.what());}
+  #ifndef DVNCI_DEDUG
     }
-#endif
-    DEBUG_STR_DVNCI(FIN)
-    return (EXIT_SUCCESS);
-}
+  #endif
+  DEBUG_STR_DVNCI(FIN)
+  return (EXIT_SUCCESS);}
 
