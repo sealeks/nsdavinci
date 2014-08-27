@@ -21,6 +21,7 @@ namespace dvnci {
         typedef boost::uint32_t data_address;
         typedef boost::uint16_t device_address;
         typedef boost::uint8_t bit_number;
+        typedef boost::uint16_t tcpcounter_type;        
 
         const bit_number NULL_BITNUMBER = '\xFF';
 
@@ -177,25 +178,58 @@ namespace dvnci {
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// class iec60870tcp_message
+        //////// class message_104
         /////////////////////////////////////////////////////////////////////////////////////////////////           
 
 
 
-        /* class iec60870tcp_message {
+        const std::string::value_type FC_START104 = '\x68';
+        const unum32 HD104_STARTDTact = 0x0003 | 0x0004;       
+        const unum32 HD104_STARTDTcon = 0x0003 | 0x0008;  
+        const unum32 HD104_STOPDTact = 0x0003 | 0x0010;       
+        const unum32 HD104_STOPDTcon = 0x0003 | 0x0020; 
+        const unum32 HD104_TESTFRact = 0x0003 | 0x0040;       
+        const unum32 HD104_TESTFRcon = 0x0003 | 0x0080;      
+        const unum16 HD104_U_IND = 0x01;         
+        
+        class message_104 {
 
          public:
 
              enum {
-
-                 header_length = 10
+                 apci_length = 6
              };
 
-             iec60870tcp_message(const std::string& vl = "", iec60870tcp_msgtype tp = 0) : body_(vl), body_length_(0), type_(tp) {
+            enum apcitype {
+                Null_type, S_type, U_type, I_type
+            };   
+            
+            enum apcitypeU {
+                NULLu, TESTFRact , TESTFRcon, STARTDTact , STARTDTcon, STOPDTact , STOPDTcon
+            };                        
+             
+             //
+             message_104() : type_(Null_type), typeU_(NULLu),
+             tx_(0), rx_(0), body_(), body_length_(0), error_(false) {
+             }                   
+            
+             message_104(apcitypeU u) : type_(U_type), typeU_(u),
+             tx_(0), rx_(0), body_(), body_length_(0), error_(false) {
+                 encode_header();
+             }             
+             
+             message_104(tcpcounter_type rx) : type_(S_type), typeU_(NULLu),
+             tx_(0), rx_(rx), body_(), body_length_(0), error_(false) {
                  encode_header();
              }
 
-             iec60870tcp_message(const boost::asio::streambuf& val) : body_(boost::asio::buffer_cast<const num8*>(val.data()), val.size()), body_length_(0), type_(0) {
+             message_104(tcpcounter_type tx,tcpcounter_type rx, const std::string& vl) : type_(I_type), typeU_(NULLu),
+             tx_(tx), rx_(rx), body_(vl), body_length_(0), error_(false) {
+                 encode_header();
+             }
+
+             message_104(tcpcounter_type tx,tcpcounter_type rx, const boost::asio::streambuf& val) :  type_(I_type), typeU_(NULLu), 
+             tx_(tx), rx_(rx), body_(boost::asio::buffer_cast<const num8*>(val.data()), val.size()), body_length_(0) {
                  encode_header();
              }
 
@@ -205,19 +239,54 @@ namespace dvnci {
 
              void message(const boost::asio::streambuf& vl) {
                  body_ = std::string(boost::asio::buffer_cast<const num8*>(vl.data()), vl.size() < body_length() ? vl.size() : body_length());
-             }
+            }
 
-             const size_t body_length() const {
-                 return header().size() < header_length ? 0 : static_cast<size_t> (*((unum64*) (header().c_str())));
-             }
+            size_t body_length() const {
+                size_t bl = 0;
+                if (header_.size() == apci_length) {
+                    if (header_[0] == FC_START104) {
+                        bl = static_cast<size_t> (*((unum8*) &header_[1]));
+                        if (bl >= 4) {
+                            bl -= 4;
+                            return bl;
+                        }
+                    }
+                }
+                return 0;
+            }
 
-             const iec60870tcp_msgtype type() const {
-                 return header().size() < header_length ? 0 : *((iec60870tcp_msgtype*) ((num8*) header().c_str() + 8));
+             apcitype type() const {
+                if (header_.size() < apci_length)
+                    return Null_type;
+                std::string::value_type mk = header_[2];
+                 if (!(header_[2]&1))
+                     return I_type;
+                 else if (header_[2]&3)
+                     return U_type;
+                 return S_type;
              }
+             
+             apcitypeU typeU() const {
+                if (header_.size() < apci_length)
+                    return NULLu;
+                std::string::value_type mk = header_[2];
+                if (mk&3){
+                    switch(0x3F & ((mk & 0xFC) >> 2)){
+                        case 1: return STARTDTact;
+                        case 2: return STARTDTcon;      
+                        case 4: return STOPDTact;       
+                        case 8: return STOPDTcon;
+                        case 16: return TESTFRact;      
+                        case 32: return TESTFRcon;          
+                        default:{}
+                    }
+                }
+                 return NULLu;
+             }             
 
              void header(const char* val) {
                  header_.clear();
-                 header_.append(val, 10);
+                 header_.append(val, apci_length);
                  decode_header();
              }
 
@@ -230,23 +299,96 @@ namespace dvnci {
 
              void encode_header() {
                  header_.clear();
-                 unum64 tmp_length = body_.size();
+                 unum8 tmp_length = body_.size()+4;
                  body_length_ = body_.size();
-                 header_.append((char*) &tmp_length, 8);
-                 header_.append((char*) &type_, 2);
-             }
+                 header_.append((const char*)&FC_START104,1);
+                 header_.append((const char*) &tmp_length,1);
+                 switch(type_){
+                     case S_type:{
+                         unum16 tmprx = (rx_ << 1) & 0xFFFE;
+                         header_.append((const char*) &HD104_U_IND, 2);
+                         header_.append((const char*) &tmprx, 2);
+                         break;
+                    }
+                    case U_type:
+                    {
+                        switch (typeU_) {
+                            case TESTFRact:
+                            {
+                                header_.append((const char*) &HD104_TESTFRact, 4);
+                                break;
+                            }
+                            case TESTFRcon:
+                            {
+                                header_.append((const char*) &HD104_TESTFRcon, 4);
+                                break;
+                            }
+                            case STARTDTact:
+                            {
+                                header_.append((const char*) &HD104_STARTDTact, 4);
+                                break;
+                            }
+                            case STARTDTcon:
+                            {
+                                header_.append((const char*) &HD104_STARTDTcon, 4);
+                                break;
+                            }
+                            case STOPDTact:
+                            {
+                                header_.append((const char*) &HD104_STOPDTact, 4);
+                                break;
+                            }
+                            case STOPDTcon:
+                            {
+                                header_.append((const char*) &HD104_STOPDTcon, 4);
+                                break;
+                            }
+                            default:{
+                                error_=true;
+                            }
+                        }
+                        break;
+                    }
+                     case I_type: {
+                          unum16 tmptx = (tx_ << 1) & 0xFFFE;
+                          unum16 tmprx = (rx_ << 1) & 0xFFFE;
+                         header_.append((const char*) &tmprx, 2);
+                         header_.append((const char*) &tmprx, 2);
+                         break;                        
+                     }
+                     default:{
+                         error_=true;
+                     }
+                 }
+            }
 
-             bool decode_header() {
-                 body_length_ = static_cast<size_t> (*((unum64*) header().c_str()));
-                 type_ = *((iec60870tcp_msgtype*) ((num8*) header().c_str() + 8));
-                 return true;
-             }
+            bool decode_header() {
+                if (header_.size() == apci_length) {
+                    if (header_[0] == FC_START104) {
+                        body_length_ = static_cast<size_t> (*((unum8*) &header_[1]));
+                        if (body_length_ >= 4) {
+                            body_length_ -= 4;
+                            return true;
+                        } else
+                            error_ = true;
+                    } else
+                        error_ = true;
+                } else
+                    error_ = true;
+                body_length_ = 0;
+                return false;
+            }
 
+             apcitype type_;
+             apcitypeU typeU_;
+             tcpcounter_type tx_;
+             tcpcounter_type rx_;             
              std::string body_;
              std::string header_;
              size_t body_length_;
-             iec60870tcp_msgtype type_;
-         };*/
+             bool error_;
+             
+         };
 
 
 
@@ -277,7 +419,7 @@ namespace dvnci {
 
             void connect(std::string host, std::string port, timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
             void disconnect();
-            //bool req(iec60870tcp_message& msg, iec60870tcp_message& resp);
+            bool req(message_104& msg, message_104& resp);
 
 
         private:
@@ -304,9 +446,9 @@ namespace dvnci {
             timeouttype timout;
 
 
-            //iec60870tcp_message respmsg;
-            //boost::asio::streambuf response_body;
-            //boost::array<char, 10 > buf;
+            message_104 respmsg;
+            boost::asio::streambuf response_body;
+            boost::array<char, message_104::apci_length > buf;
 
             volatile bool is_data_ready;
             volatile bool is_timout;

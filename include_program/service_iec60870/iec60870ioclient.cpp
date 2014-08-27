@@ -145,7 +145,7 @@ namespace dvnci {
         //////// iec60870ioclient
         /////////////////////////////////////////////////////////////////////////////////////////////////           
 
-        iec60870ioclient::iec60870ioclient() : io_service_(), socket_(io_service_), tmout_timer(io_service_)/*, respmsg("")*/, error_cod(0) {
+        iec60870ioclient::iec60870ioclient() : io_service_(), socket_(io_service_), tmout_timer(io_service_), respmsg(0,0,""), error_cod(0) {
             state_ = disconnected;
         }
 
@@ -198,6 +198,9 @@ namespace dvnci {
                 throw dvncierror(ERROR_NONET_CONNECTED);
             }
             state_ = connected;
+                message_104 reqm(message_104::STARTDTcon);
+                message_104 respm;
+                req(reqm,respm);
         }
 
         void iec60870ioclient::disconnect() {
@@ -206,7 +209,7 @@ namespace dvnci {
             io_service_.stop();
         }
 
-        /*bool iec60870ioclient::req(rpcmessage& msg, rpcmessage& resp) {
+        bool iec60870ioclient::req(message_104& msg, message_104& resp) {
 
             if (state_ == connected) {
 
@@ -269,10 +272,10 @@ namespace dvnci {
                 resp = respmsg;
                 return true;
             } else {
-                resp = rpcmessage("");
+                resp = message_104();
             };
             return false;
-        }*/
+        }
 
         void iec60870ioclient::handle_resolve(const boost::system::error_code& err,
                 boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
@@ -302,7 +305,7 @@ namespace dvnci {
                 is_timout = false;
                 is_connect = true;
                 is_error = false;
-                DEBUG_STR_DVNCI(isConnected!!!)
+                DEBUG_STR_DVNCI(isConnected!!!) 
             } else
                 if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
                 socket_.close();
@@ -316,9 +319,9 @@ namespace dvnci {
 
         void iec60870ioclient::handle_write(const boost::system::error_code& err) {
 
-            /*  if (!err) {
+              if (!err) {
 
-                  boost::asio::async_read(socket_, boost::asio::buffer(buf), boost::asio::transfer_at_least(10), boost::bind(&iec60870ioclient::handle_readheader, shared_from_this(),
+                  boost::asio::async_read(socket_, boost::asio::buffer(buf), boost::asio::transfer_at_least(6), boost::bind(&iec60870ioclient::handle_readheader, shared_from_this(),
                           boost::asio::placeholders::error));
               }
               else {
@@ -331,15 +334,24 @@ namespace dvnci {
                   DEBUG_STR_DVNCI(is errror handle_write!!!)
                   DEBUG_VAL_DVNCI(err.message())
                   DEBUG_VAL_DVNCI(err.value())
-              }*/
+              }
         }
 
         void iec60870ioclient::handle_readheader(const boost::system::error_code& err) {
-            /* if (!err) {
+             if (!err) {
                  respmsg.header(buf.c_array());
                  DEBUG_VAL_DVNCI(respmsg.body_length())
-                 boost::asio::async_read(socket_, response_body, boost::asio::transfer_at_least(respmsg.body_length()), boost::bind(&iec60870ioclient::handle_endreq, shared_from_this(),
-                         boost::asio::placeholders::error));
+                if (respmsg.body_length())
+                    boost::asio::async_read(socket_, response_body, boost::asio::transfer_at_least(respmsg.body_length()), boost::bind(&iec60870ioclient::handle_endreq, shared_from_this(),
+                        boost::asio::placeholders::error));
+                else{
+                 io_service_.stop();
+                 tmout_timer.cancel();
+                 is_timout = false;
+                 is_data_ready = true;
+                 error_cod = err.value();
+                 is_error = false;                    
+                }
              } else {
                  io_service_.stop();
                  tmout_timer.cancel();
@@ -348,11 +360,11 @@ namespace dvnci {
                  error_cod = err.value();
                  is_error = true;
                  DEBUG_STR_DVNCI(is errror readheader!!!)
-             }*/
+             }
         }
 
         void iec60870ioclient::handle_endreq(const boost::system::error_code& err) {
-            /* if (!err) {
+             if (!err) {
                  io_service_.stop();
                  tmout_timer.cancel();
                  respmsg.message(response_body);
@@ -367,7 +379,7 @@ namespace dvnci {
                  error_cod = err.value();
                  is_error = true;
                  DEBUG_STR_DVNCI(is errror handle_endreq!!!)
-             }*/
+             }
         }
 
         void iec60870ioclient::handle_timout_expire(const boost::system::error_code& err) {
