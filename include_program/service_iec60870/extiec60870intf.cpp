@@ -40,20 +40,9 @@ namespace dvnci {
         ns_error extiec60870intf::connect_impl() {
             try {
                 //  port : aselector
-                std::string port = intf->groups()->port(group());
-                std::string asel;
-                if (!port.empty()) {
-                    std::string::size_type it = port.find_first_of(':', 0);
-                    if (it != std::string::npos) {
-                        if ((it + 1) < port.size())
-                            asel = port.substr(it + 1);
-                        else
-                            asel = "";
-                        port = port.substr(0, it);
-                    }
-                }
+                std::string port = "2404";//intf->groups()->port(group());
                 if (port.empty())
-                    port = "102";
+                    port = "2404";
                 if (!remintf) {
                     remintf = dvnci::prot80670::iec60870intf::build(intf->groups()->host(group()),
                             fulltrim_copy(port),
@@ -97,33 +86,34 @@ namespace dvnci {
 
         ns_error extiec60870intf::add_request_impl() {
             error(0);
-            /*   if (need_add().empty())
+               if (need_add().empty())
                    return error();
                dataobject_set cids;
-               for (indx_set::const_iterator it = need_add().begin(); it != need_add().end(); ++it) {
+               indx_set tmpadd=need_add();
+               for (indx_set::const_iterator it = tmpadd.begin(); it != tmpadd.end(); ++it) {
                    if (intf->exists(*it)) {
-                       objectname_ptr tmp = dataobject::create_from_bind(intf->binding(*it), intf->groups()->topic(group()));
-                       cids.insert(bindobject_pair(*it, tmp));
+                       dataobject_ptr tmp = dataobject::build_from_bind(intf->groups()->devnum(group()), intf->binding(*it));
+                    if (tmp)
+                        cids.insert(tmp);
+                    else
+                        req_error(*it, ERROR_BINDING);
                    } else {
                        req_error(*it, ERROR_ENTNOEXIST);
                    }
                }
                if (cids.empty()) return error(0);
 
-               accessresult_map results;
-               accesserror_map errors;
+               dataobject_set errors;
 
-               if (!error(remintf->add_items(cids, results, errors))) {
+               if (!error(remintf->add_items(cids, errors))) {
 
-                   for (bindobject_map::const_iterator it = cids.begin(); it != cids.end(); ++it) {
-                       if (results.find(it->second) != results.end()) {
-                           add_simple(it->first, it->second);
-                       } else if (errors.find(it->second) != errors.end()) {
-                           req_error(it->first, ERROR_BINDING);
-                       } else
-                           req_error(it->first, ERROR_BINDING);
+                   for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it) {
+                       if (errors.find(*it) == errors.end()) {
+                           //add_simple(it->first, it->second);
+                       } else {}
+                           //req_error(it->first, ERROR_BINDING);
                    }
-               }*/
+               }
 
             return error();
         }
@@ -197,6 +187,14 @@ namespace dvnci {
 
             return error();
         }
+
+        ns_error extiec60870intf::report_request_impl() {
+            return error();
+        };
+
+        ns_error extiec60870intf::event_request_impl() {
+            return error();
+        };
 
     }
 }
