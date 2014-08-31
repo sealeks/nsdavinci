@@ -11,6 +11,7 @@
 #include <boost/asio/read_at.hpp>
 
 #include <kernel/utils.h>
+#include <kernel/systemutil.h>
 #include <kernel/error.h>
 #include <kernel/constdef.h>
 
@@ -19,86 +20,36 @@
 namespace dvnci {
     namespace prot80670 {
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// iec60870_executable
-        /////////////////////////////////////////////////////////////////////////////////////////////////    
-
-
-        class iec60870ioclient;
-        typedef boost::shared_ptr<iec60870ioclient> iec60870ioclient_ptr;
-
-        class iec60870_executable : public executable {
-
-        public:
-
-            enum pmState {
-
-                noinit, activated, deactivated
-            };
-
-            iec60870_executable(iec60870ioclient_ptr clnt);
-
-            virtual ~iec60870_executable() {
-            }
-
-            pmState state() {
-                return state_;
-            }
-
-            virtual bool operator()();
-
-            void handle_startdt_act(const boost::system::error_code& err);
-            void handle_startdt_conf(message_104_ptr req, const boost::system::error_code& err);
-
-        protected:
-
-
-
-            virtual bool initialize();
-            virtual bool uninitialize();
-
-            iec60870ioclient_ptr clnt_;
-            bool inuse_;
-            pmState state_;
-        };
-
-
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// iec60870ioclient
+        //////// iec60870pm
         /////////////////////////////////////////////////////////////////////////////////////////////////        
 
-        class iec60870ioclient : public boost::enable_shared_from_this<iec60870ioclient> {
+        class iec60870pm : public executable {
 
-            friend class iec60870_executable;
 
         public:
 
-            enum connectionState {
-
-                connected, disconnected
+            enum PMState {
+                connectedCh, started , connected ,disconnected
             };
 
-            iec60870ioclient();
+            iec60870pm(std::string hst, std::string prt, timeouttype tmo);
 
-            virtual ~iec60870ioclient();
+            virtual ~iec60870pm();
 
-            connectionState state() {
+            PMState state() const {
                 return state_;
             }
+            
+            virtual bool operator()();            
 
-            void connect(std::string host, std::string port, timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
-            void disconnect();
 
         private:
+            
 
-            void start_thread();
-            void stop_thread();
-
-
-            bool blocked_request(const message_104& msg, message_104& resp);
-
-            bool request(const message_104& msg);
+            void connect();
+            void disconnect();            
 
 
             void handle_resolve(const boost::system::error_code& err,
@@ -106,6 +57,13 @@ namespace dvnci {
 
             void handle_connect(const boost::system::error_code& err,
                     boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
+            
+            void handle_request(const boost::system::error_code& error);    
+            
+            void handle_response(const boost::system::error_code& error, message_104_ptr resp);             
+            
+            
+            
 
             template< typename handler>
             struct req_operation {
@@ -117,14 +75,14 @@ namespace dvnci {
                     if (!error) {
                         headersz_ += bytes_transferred;
                         if (headersz_ < req_->header().size())
-                            boost::asio::async_write(socket_, boost::asio::buffer(req_->header().c_str() + headersz_, req_->header().size() - headersz_),
+                            socket_.async_send(boost::asio::buffer(&(req_->header()[0]) + headersz_, req_->header().size() - headersz_),
                                 boost::bind(&req_operation::header, this,
-                                boost::asio::placeholders::error));
+                                boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else {
                             if (!req_->message().empty())
-                                boost::asio::async_write(socket_, boost::asio::buffer(req_->message().c_str(), req_->message().size()),
+                                socket_.async_send(boost::asio::buffer(&(req_->message()[0]), req_->message().size()),
                                     boost::bind(&req_operation::body, this,
-                                    boost::asio::placeholders::error));
+                                    boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                             else
                                 hndl(error);
                         }
@@ -136,9 +94,9 @@ namespace dvnci {
                     if (!error) {
                         bodysz_ += bytes_transferred;
                         if (bodysz_ < req_->message().size())
-                            boost::asio::async_write(socket_, boost::asio::buffer(req_->message().c_str(), req_->message().size()),
+                            socket_.async_send(boost::asio::buffer(&(req_->message()[0]), req_->message().size()),
                                 boost::bind(&req_operation::body, this,
-                                boost::asio::placeholders::error));
+                                boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else
                             hndl(error);
                     } else
@@ -156,13 +114,14 @@ namespace dvnci {
             };
 
             template< typename handler>
-            void handle_request(handler hnd, message_104_ptr req) {
+            void async_request(handler hnd, message_104_ptr req) {
 
                 typedef req_operation< handler> req_operation_type;
 
-                boost::asio::async_write(socket_, boost::asio::buffer(req->header().c_str(), req->header().size()),
+                boost::asio::async_write(socket_, boost::asio::buffer(&(req->header()[0]), req->header().size()),
                         boost::bind(&req_operation_type::header, req_operation_type(hnd, socket_, req),
                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                io_service_.run();
 
             }
 
@@ -176,33 +135,35 @@ namespace dvnci {
                     if (!error) {
                         headersz_ += bytes_transferred;
                         if (headersz_ < message_104::apci_length)
-                            boost::asio::async_read(socket_, boost::asio::buffer(resp_->header().c_str() + headersz_, resp_->header().size() - headersz_),
+                            boost::asio::async_read(socket_, boost::asio::buffer(&(resp_->header()[0]) + headersz_, resp_->header().size() - headersz_),
                                 boost::bind(&resp_operation::header, this,
-                                boost::asio::placeholders::error));
+                                boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else {
                             if (resp_->body_length())
-                                boost::asio::async_read(socket_, boost::asio::buffer(resp_->message().c_str(), resp_->message().size()),
+                                boost::asio::async_read(socket_, boost::asio::buffer(&(resp_->header()[0]), resp_->message().size()),
                                     boost::bind(&resp_operation::body, this,
-                                    boost::asio::placeholders::error));
+                                    boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                             else
-                                hndl(error);
+                                hndl(error, resp_);
                         }
                     } else
-                        hndl(error);
+                        hndl(error, resp_);
                 }
 
                 void body(const boost::system::error_code& error, std::size_t bytes_transferred) {
                     if (!error) {
                         bodysz_ += bytes_transferred;
                         if (bodysz_ < resp_->message().size())
-                            boost::asio::async_write(socket_, boost::asio::buffer(resp_->message().c_str(), resp_->message().size()),
+                            boost::asio::async_write(socket_, boost::asio::buffer(&(resp_->message()[0]), resp_->message().size()),
                                 boost::bind(&resp_operation::body, this,
-                                boost::asio::placeholders::error));
+                                boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else
-                            hndl(error);
+                            hndl(error, resp_);
                     } else
-                        hndl(error);
+                        hndl(error, resp_);
                 }
+
+           
 
 
             private:
@@ -215,51 +176,71 @@ namespace dvnci {
             };
 
             template< typename handler>
-            void handle_response(handler hnd, const boost::system::error_code& err) {
+            void async_response(handler hnd, const boost::system::error_code& err) {
 
                 typedef resp_operation< handler> resp_operation_type;
 
                 message_104_ptr resp(new message_104());
+                resp->header_prepare(); 
 
-                boost::asio::async_read(socket_, boost::asio::buffer(resp->header().c_str(), resp->header().size()),
+                boost::asio::async_read(socket_, boost::asio::buffer(resp->header().data(), resp->header().size()),
                         boost::bind(&resp_operation_type::header, resp_operation_type(hnd, socket_, resp),
                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
             }
 
 
-            void handle_response(message_104_ptr req, const boost::system::error_code& err);
-
-            void handle_write(const boost::system::error_code& err);
-
-            void handle_readheader(const boost::system::error_code& err);
-
-            void handle_endreq(const boost::system::error_code& err);
-
             void handle_timout_expire(const boost::system::error_code& err);
 
 
+     
             boost::asio::io_service io_service_;
             boost::asio::ip::tcp::socket socket_;
-            connectionState state_;
             boost::asio::deadline_timer tmout_timer;
-            timeouttype timout;
-
-
-            message_104 respmsg;
-            boost::asio::streambuf response_body;
-            boost::array<char, message_104::apci_length > buf;
-
-            volatile bool is_data_ready;
-            volatile bool is_timout;
-            volatile bool is_connect;
-            volatile bool is_error;
+            std::string host;
+            std::string port;
+            timeouttype timout;       
+            volatile PMState state_;            
             volatile int error_cod;
             tcpcounter_type tx_;
             tcpcounter_type rx_;
             dataobject_set data_;
-            executable_ptr executable_;
-            boost::shared_ptr<boost::thread> ioth;
+            
+
+        protected:
+
+            bool initialize();
+
+            bool uninitialize();   
+       
         };
+        
+        
+        typedef boost::shared_ptr<iec60870pm> iec60870pm_ptr;
+        
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870ioclient
+        /////////////////////////////////////////////////////////////////////////////////////////////////        
+
+        class iec60870ioclient : public boost::enable_shared_from_this<iec60870ioclient> {
+            
+        public:
+            
+            iec60870ioclient(std::string host, std::string port, timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
+            ~iec60870ioclient(){}
+            
+            iec60870pm::PMState state() const;
+            
+            
+            
+        private:     
+            
+            callable_shared_ptr<iec60870pm> iooclnt;
+            boost::shared_ptr<boost::thread> ioth;
+        };     
+        
+        
+        typedef boost::shared_ptr< iec60870ioclient>  iec60870ioclient_ptr;        
 
     }
 }

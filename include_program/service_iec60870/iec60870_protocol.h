@@ -140,6 +140,8 @@ namespace dvnci {
         typedef std::map<std::string, type_id> string_type_id_map;
 
         type_id find_type_id(const std::string& val);
+        
+        typedef std::vector<boost::uint8_t> octet_sequence;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,11 +158,11 @@ namespace dvnci {
             dataobject() : devnum_(0), address_(0), type_(0), bit_(NULL_BITNUMBER) {
             };
 
-            dataobject(device_address dev, type_id tp, data_address addr, const std::string& dt = "") :
+            dataobject(device_address dev, type_id tp, data_address addr, const octet_sequence& dt = octet_sequence()) :
             devnum_(dev), address_(addr), type_(tp), data_(dt), bit_(NULL_BITNUMBER) {
             };
 
-            dataobject(device_address dev, type_id tp, data_address addr, bit_number bt, const std::string& dt = "") :
+            dataobject(device_address dev, type_id tp, data_address addr, bit_number bt, const octet_sequence& dt = octet_sequence()) :
             devnum_(dev), address_(addr), type_(tp), data_(dt), bit_(bt) {
             };
 
@@ -189,7 +191,7 @@ namespace dvnci {
                 return bit_ != NULL_BITNUMBER;
             }
 
-            const std::string& data() const {
+            const octet_sequence& data() const {
                 return data_;
             }
 
@@ -205,7 +207,7 @@ namespace dvnci {
             data_address address_;
             type_id type_;
             bit_number bit_;
-            std::string data_;
+            octet_sequence data_;
         };
 
         bool operator==(dataobject_ptr ls, dataobject_ptr rs);
@@ -219,7 +221,7 @@ namespace dvnci {
         //////// class message_104
         /////////////////////////////////////////////////////////////////////////////////////////////////           
 
-        const std::string::value_type FC_START104 = '\x68';
+        const octet_sequence::value_type FC_START104 = '\x68';
         const unum32 HD104_STARTDTact = 0x0003 | 0x0004;
         const unum32 HD104_STARTDTcon = 0x0003 | 0x0008;
         const unum32 HD104_STOPDTact = 0x0003 | 0x0010;
@@ -227,6 +229,8 @@ namespace dvnci {
         const unum32 HD104_TESTFRact = 0x0003 | 0x0040;
         const unum32 HD104_TESTFRcon = 0x0003 | 0x0080;
         const unum16 HD104_U_IND = 0x01;
+        
+
 
         class message_104 {
 
@@ -255,15 +259,11 @@ namespace dvnci {
             message_104(tcpcounter_type rx);
 
             message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
-
-            message_104(tcpcounter_type tx, tcpcounter_type rx, const std::string& vl);
-
-            message_104(tcpcounter_type tx, tcpcounter_type rx, const boost::asio::streambuf& val);
-
-            const std::string& message() const {
+            
+            octet_sequence& message()  {
                 return body_;
             }
-
+            
             void message(const boost::asio::streambuf& vl);
 
             size_t body_length() const;
@@ -272,9 +272,14 @@ namespace dvnci {
 
             apcitypeU typeU() const;
 
-            const std::string& header() const {
+            octet_sequence& header()  {
                 return header_;
             }
+            
+            octet_sequence& header_prepare() {
+                header_=octet_sequence(0,6);
+                return header_;
+            }            
 
             void header(const char* val);
 
@@ -304,8 +309,8 @@ namespace dvnci {
             apcitypeU typeU_;
             tcpcounter_type tx_;
             tcpcounter_type rx_;
-            std::string body_;
-            std::string header_;
+            octet_sequence body_;
+            octet_sequence header_;
             bool error_;
 
         };

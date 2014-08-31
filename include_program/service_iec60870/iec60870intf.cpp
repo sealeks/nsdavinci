@@ -18,7 +18,7 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
         iec60870intf::iec60870intf(const std::string hst, const std::string prt, timeouttype tmo) :
-        client_io(new iec60870ioclient()), host(hst), port(prt), tmout(tmo) {
+        client_io(new iec60870ioclient(hst,prt,tmo)), host(hst), port(prt), tmout(tmo) {
         }
 
         iec60870intf_ptr iec60870intf::build(const std::string host, const std::string port, timeouttype tmout) {
@@ -29,12 +29,12 @@ namespace dvnci {
         ns_error iec60870intf::connect_impl() {
             try {
                 if (!client_io) return error(ERROR_IO_DEVICE_CHANAL_NOT_DEF);
-                if (client_io->state() == client_io->connected) {
+                if (client_io->state() == iec60870pm::connected) {
                     state_ = connected;
                     return error(0);
                 }
-                client_io->connect(host, port, static_cast<std::size_t> (tmout));
-                state_ = (client_io->state() == client_io->connected) ? connected : disconnected;
+               //client_io->connect(host, port, static_cast<std::size_t> (tmout));
+                state_ = (client_io->state() == iec60870pm::connected) ? connected : disconnected;
                 if (state_ == connected) {
                     DEBUG_VAL_DVNCI(host)
                     DEBUG_VAL_DVNCI(port)
@@ -52,8 +52,8 @@ namespace dvnci {
 
         ns_error iec60870intf::disconnect_impl() {
             try {
-                if ((client_io) && (client_io->state() == client_io->connected)) {
-                    client_io->disconnect();
+                if ((client_io) && (client_io->state() == iec60870pm::connected)) {
+                    //client_io->disconnect();
                 }
             } catch (...) {
             }
