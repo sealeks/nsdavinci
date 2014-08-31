@@ -173,12 +173,9 @@ namespace dvnci {
             };
 
             template< typename handler>
-            void async_response(handler hnd) {
+            void async_response(handler hnd, message_104_ptr resp) {
 
                 typedef resp_operation< handler> resp_operation_type;
-
-                message_104_ptr resp(new message_104());
-                resp->header_prepare();
 
                 boost::asio::async_read(socket_, boost::asio::buffer(resp->header().data(), resp->header().size()),
                         boost::bind(&resp_operation_type::header, resp_operation_type(hnd, socket_, resp),

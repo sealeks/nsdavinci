@@ -141,29 +141,48 @@ namespace dvnci {
             return !ls;
         }
 
-        message_104::message_104() : type_(Null_type), typeU_(NULLu),
-        tx_(0), rx_(0), body_(), error_(false) {
+
+        
+        
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// class message_104
+        /////////////////////////////////////////////////////////////////////////////////////////////////              
+        
+        
+        message_104::message_104()  {
+            header_prepare();
         }
 
-        message_104::message_104(apcitypeU u) : type_(U_type), typeU_(u),
-        tx_(0), rx_(0), body_(), error_(false) {
-            encode_header();
+        message_104::message_104(apcitypeU u) :  body_() {
+            encode_header(U_type, u);
         }
 
-        message_104::message_104(tcpcounter_type rx) : type_(S_type), typeU_(NULLu),
-        tx_(0), rx_(rx), body_(), error_(false) {
-            encode_header();
+        message_104::message_104(tcpcounter_type rx) :  body_() {
+            encode_header(S_type, NULLu, 0,rx);
         }
 
 
-
-        message_104::message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) : type_(I_type), typeU_(NULLu),
-        tx_(tx), rx_(rx), error_(false) {
+        message_104::message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs)  {
             encode_body(vl, cs);
-            encode_header();
+            encode_header(I_type,NULLu,tx, rx);
         }
 
+        message_104_ptr message_104::create() {
+            return message_104_ptr(new message_104());
+        }
 
+        message_104_ptr message_104::create(apcitypeU u) {
+            return message_104_ptr(new message_104(u));
+        }
+
+        message_104_ptr message_104::create(tcpcounter_type rx) {
+            return message_104_ptr(new message_104(rx));
+        }
+
+        message_104_ptr message_104::create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) {
+            return message_104_ptr(new message_104(tx, rx, vl, cs));
+        }   
 
         void message_104::message(const boost::asio::streambuf& vl) {
             body_ = octet_sequence(boost::asio::buffer_cast<const num8*>(vl.data()), 
@@ -215,23 +234,35 @@ namespace dvnci {
             return NULLu;
         }
 
+        tcpcounter_type message_104::tx() const {
+            if (header_.size() < apci_length)
+                return 0;
+            return (((* reinterpret_cast<const tcpcounter_type*>(&header_[2])) >> 1) & 0x7FFF);
+        }
 
-        void message_104::encode_header() {
+        tcpcounter_type message_104::rx() const {
+            if (header_.size() < apci_length)
+                return 0;
+            return (((* reinterpret_cast<const tcpcounter_type*>(&header_[4])) >> 1) & 0x7FFF);
+        }           
+
+
+        void message_104::encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx, tcpcounter_type rx) {
             header_.clear();
             unum8 tmp_length = body_.size() + 4;
             header_.push_back(FC_START104);
             header_.push_back(tmp_length);
-            switch (type_) {
+            switch (tp) {
                 case S_type:
                 {
-                    unum16 tmprx = (rx_ << 1) & 0xFFFE;
+                    unum16 tmprx = (rx << 1) & 0xFFFE;
                     header_.insert(header_.end(), (const char*) &HD104_U_IND, (const char*) &HD104_U_IND + 2);
                     header_.insert(header_.end(), (const char*) &tmprx,  (const char*) &tmprx + 2);
                     break;
                 }
                 case U_type:
                 {
-                    switch (typeU_) {
+                    switch (tpu) {
                         case TESTFRact:
                         {
                             header_.insert(header_.end(),(const char*) &HD104_TESTFRact,(const char*) &HD104_TESTFRact+ 4);
@@ -264,22 +295,22 @@ namespace dvnci {
                         }
                         default:
                         {
-                            error_ = true;
+                            
                         }
                     }
                     break;
                 }
                 case I_type:
                 {
-                    unum16 tmptx = (tx_ << 1) & 0xFFFE;
-                    unum16 tmprx = (rx_ << 1) & 0xFFFE;
-                    header_.insert(header_.end(),(const char*) &tmprx, (const char*) &tmprx + 2);
+                    unum16 tmptx = (tx << 1) & 0xFFFE;
+                    unum16 tmprx = (rx << 1) & 0xFFFE;
+                    header_.insert(header_.end(),(const char*) &tmptx, (const char*) &tmptx + 2);
                     header_.insert(header_.end(),(const char*) &tmprx, (const char*) &tmprx + 2);
                     break;
                 }
                 default:
                 {
-                    error_ = true;
+                    
                 }
             }
         }
