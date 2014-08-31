@@ -215,11 +215,6 @@ namespace dvnci {
             return NULLu;
         }
 
-        void message_104::header(const char* val) {
-            header_.clear();
-            header_.insert(header_.end(),val, val +apci_length);
-            //decode_header();
-        }
 
         void message_104::encode_header() {
             header_.clear();

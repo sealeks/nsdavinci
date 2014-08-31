@@ -83,8 +83,9 @@ namespace dvnci {
             if (!err) {
                 state_ = connectedCh;
                 tmout_timer.cancel();
+                message_104_ptr msgtmp(new message_104(message_104::STARTDTact));
                 async_request(
-                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error), message_104_ptr(new message_104(message_104::STARTDTact)));
+                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, msgtmp), msgtmp);
             } else
                 if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
                 socket_.close();
@@ -96,13 +97,14 @@ namespace dvnci {
             }
         }
 
-        void iec60870pm::handle_request(const boost::system::error_code& error) {
-                async_response(
-                        boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, message_104_ptr()), error);
+        void iec60870pm::handle_request(const boost::system::error_code& error, message_104_ptr req) {
+            message_104_ptr tmpmsg(new message_104());
+            async_response(
+                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, tmpmsg));
         }
 
         void iec60870pm::handle_response(const boost::system::error_code& error, message_104_ptr resp) {
-
+            message_104_ptr rsl = resp;
         }
 
         void iec60870pm::handle_timout_expire(const boost::system::error_code& err) {
