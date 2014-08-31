@@ -140,7 +140,7 @@ namespace dvnci {
         typedef std::map<std::string, type_id> string_type_id_map;
 
         type_id find_type_id(const std::string& val);
-        
+
         typedef std::vector<boost::uint8_t> octet_sequence;
 
 
@@ -229,8 +229,6 @@ namespace dvnci {
         const unum32 HD104_TESTFRact = 0x0003 | 0x0040;
         const unum32 HD104_TESTFRcon = 0x0003 | 0x0080;
         const unum16 HD104_U_IND = 0x01;
-        
-
 
         class message_104 {
 
@@ -259,11 +257,11 @@ namespace dvnci {
             message_104(tcpcounter_type rx);
 
             message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
-            
-            octet_sequence& message()  {
+
+            octet_sequence& message() {
                 return body_;
             }
-            
+
             void message(const boost::asio::streambuf& vl);
 
             size_t body_length() const;
@@ -272,16 +270,16 @@ namespace dvnci {
 
             apcitypeU typeU() const;
 
-            octet_sequence& header()  {
+            octet_sequence& header() {
+                return header_;
+            }
+
+            octet_sequence& header_prepare() {
+                header_.clear();
+                header_.assign(apci_length, 0);
                 return header_;
             }
             
-            octet_sequence& header_prepare() {
-                header_=octet_sequence(0,6);
-                return header_;
-            }            
-
-            void header(const char* val);
 
             bool complete() const {
                 return (body_length() == body_.size());
