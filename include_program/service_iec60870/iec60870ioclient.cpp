@@ -98,9 +98,9 @@ namespace dvnci {
         }
 
         void iec60870pm::handle_request(const boost::system::error_code& error, message_104_ptr req) {  
-            message_104_ptr msgtmp =message_104::create();
+            //message_104_ptr msgtmp =message_104::create();
             async_response(
-                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
+                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
         }
 
         void iec60870pm::handle_response(const boost::system::error_code& error, message_104_ptr resp) {
@@ -111,21 +111,22 @@ namespace dvnci {
                         break;
                     }
                     case message_104::U_type:{
+                        message_104::apcitypeU tput=resp->typeU();
                         switch (resp->typeU()) {
                             case message_104::TESTFRact:
                             {
-                                message_104_ptr msgtmp = message_104::create(message_104::TESTFRcon);
                                 async_request(
-                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
+                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
+                                        message_104::create(message_104::TESTFRcon));
                                 return;
                             }
                             case message_104::TESTFRcon:{
                                 break;
                             }
                             case message_104::STARTDTact:{
-                                message_104_ptr msgtmp = message_104::create(message_104::STARTDTcon);
                                 async_request(
-                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
+                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), 
+                                        message_104::create(message_104::STARTDTcon));
                                 return;
                             }
                             case message_104::STARTDTcon:{
@@ -147,9 +148,8 @@ namespace dvnci {
                             break;
                         }
                         else{
-                                message_104_ptr msgtmp = message_104::create(rx_);
                                 async_request(
-                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
+                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), message_104::create(rx_));
                                 return;                            
                         }
                         break;
@@ -157,9 +157,8 @@ namespace dvnci {
                     default:{}
                 }
             }
-            message_104_ptr msgtmp = message_104::create();
             async_response(
-                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
+                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
         }
 
         void iec60870pm::handle_timout_expire(const boost::system::error_code& err) {
