@@ -284,18 +284,15 @@ namespace dvnci {
             
             tcpcounter_type tx() const;            
             
-            tcpcounter_type rx() const;             
+            tcpcounter_type rx() const;     
+            
+            octet_sequence& header_prepare();
+            
+            octet_sequence& body_prepare();            
 
             octet_sequence& header() {
                 return header_;
-            }
-
-            octet_sequence& header_prepare() {
-                header_.clear();
-                header_.assign(apci_length, 0);
-                return header_;
-            }
-            
+            }  
 
             bool complete() const {
                 return (body_length() == body_.size());

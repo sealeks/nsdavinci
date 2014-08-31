@@ -63,7 +63,7 @@ namespace dvnci {
             void handle_response(const boost::system::error_code& error, message_104_ptr resp);
 
             template< typename handler>
-            struct req_operation {
+            struct req_operation : public boost::enable_shared_from_this< req_operation<handler> >  {
 
                 req_operation(handler hnd, boost::asio::ip::tcp::socket& sock, message_104_ptr rq) : hndl(hnd), socket_(sock), req_(rq), headersz_(0), bodysz_(0) {
                 }
@@ -73,12 +73,12 @@ namespace dvnci {
                         headersz_ += bytes_transferred;
                         if (headersz_ < req_->header().size())
                             socket_.async_send(boost::asio::buffer(&(req_->header()[0]) + headersz_, req_->header().size() - headersz_),
-                                boost::bind(&req_operation::header, this,
+                                boost::bind(&req_operation::header, req_operation<handler>::shared_from_this(),
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else {
                             if (!req_->message().empty())
                                 socket_.async_send(boost::asio::buffer(&(req_->message()[0]), req_->message().size()),
-                                    boost::bind(&req_operation::body, this,
+                                    boost::bind(&req_operation::body,  req_operation<handler>::shared_from_this(),
                                     boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                             else
                                 hndl(error, req_);
@@ -92,7 +92,7 @@ namespace dvnci {
                         bodysz_ += bytes_transferred;
                         if (bodysz_ < req_->message().size())
                             socket_.async_send(boost::asio::buffer(&(req_->message()[0]), req_->message().size()),
-                                boost::bind(&req_operation::body, this,
+                                boost::bind(&req_operation::body,  req_operation<handler>::shared_from_this(),
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else
                             hndl(error, req_);
@@ -123,7 +123,7 @@ namespace dvnci {
             }
 
             template< typename handler>
-            struct resp_operation {
+            struct resp_operation  : public boost::enable_shared_from_this< resp_operation<handler> >  {
 
                 resp_operation(handler hnd, boost::asio::ip::tcp::socket& sock, message_104_ptr rsp) : hndl(hnd), socket_(sock), resp_(rsp), headersz_(0), bodysz_(0) {
                 }
@@ -133,13 +133,14 @@ namespace dvnci {
                         headersz_ += bytes_transferred;
                         if (headersz_ < message_104::apci_length)
                             boost::asio::async_read(socket_, boost::asio::buffer(&(resp_->header()[0]) + headersz_, resp_->header().size() - headersz_),
-                                boost::bind(&resp_operation::header, this,
+                                boost::bind(&resp_operation::header,  resp_operation<handler>::shared_from_this(),
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else {
-                            if (resp_->body_length())
-                                boost::asio::async_read(socket_, boost::asio::buffer(&(resp_->header()[0]), resp_->message().size()),
-                                    boost::bind(&resp_operation::body, this,
-                                    boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                            if (resp_->body_length()){
+                                resp_->body_prepare();
+                                boost::asio::async_read(socket_, boost::asio::buffer(&(resp_->message()[0]), resp_->message().size()),
+                                    boost::bind(&resp_operation::body,  resp_operation<handler>::shared_from_this(),
+                                    boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));}
                             else
                                 hndl(error, resp_);
                         }
@@ -152,7 +153,7 @@ namespace dvnci {
                         bodysz_ += bytes_transferred;
                         if (bodysz_ < resp_->message().size())
                             boost::asio::async_write(socket_, boost::asio::buffer(&(resp_->message()[0]), resp_->message().size()),
-                                boost::bind(&resp_operation::body, this,
+                                boost::bind(&resp_operation::body,  resp_operation<handler>::shared_from_this(),
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else
                             hndl(error, resp_);
@@ -173,9 +174,11 @@ namespace dvnci {
             };
 
             template< typename handler>
-            void async_response(handler hnd, message_104_ptr resp) {
+            void async_response(handler hnd) {
 
                 typedef resp_operation< handler> resp_operation_type;
+                
+                message_104_ptr resp=message_104::create();
 
                 boost::asio::async_read(socket_, boost::asio::buffer(resp->header().data(), resp->header().size()),
                         boost::bind(&resp_operation_type::header, resp_operation_type(hnd, socket_, resp),

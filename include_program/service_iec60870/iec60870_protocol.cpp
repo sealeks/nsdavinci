@@ -244,8 +244,20 @@ namespace dvnci {
             if (header_.size() < apci_length)
                 return 0;
             return (((* reinterpret_cast<const tcpcounter_type*>(&header_[4])) >> 1) & 0x7FFF);
-        }           
+        }
 
+        octet_sequence& message_104::header_prepare() {
+            header_.clear();
+            header_.assign(apci_length, 0);
+            return header_;
+        }
+
+        octet_sequence& message_104::body_prepare() {
+            body_.clear();
+            if (body_length())
+                body_.assign(body_length(), 0);
+            return body_;
+        }
 
         void message_104::encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx, tcpcounter_type rx) {
             header_.clear();
