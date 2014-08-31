@@ -83,9 +83,9 @@ namespace dvnci {
             if (!err) {
                 state_ = connectedCh;
                 tmout_timer.cancel();
-                message_104_ptr msgtmp(new message_104(message_104::STARTDTact));
+                message_104_ptr msgtmp =message_104::create(message_104::STARTDTact);
                 async_request(
-                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, msgtmp), msgtmp);
+                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
             } else
                 if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
                 socket_.close();
@@ -97,14 +97,69 @@ namespace dvnci {
             }
         }
 
-        void iec60870pm::handle_request(const boost::system::error_code& error, message_104_ptr req) {
-            message_104_ptr tmpmsg(new message_104());
+        void iec60870pm::handle_request(const boost::system::error_code& error, message_104_ptr req) {  
+            message_104_ptr msgtmp =message_104::create();
             async_response(
-                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, tmpmsg));
+                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
         }
 
         void iec60870pm::handle_response(const boost::system::error_code& error, message_104_ptr resp) {
-            message_104_ptr rsl = resp;
+            if (resp){
+                switch(resp->type()){
+                    case message_104::S_type:{
+                        rx_=resp->rx();
+                        break;
+                    }
+                    case message_104::U_type:{
+                        switch (resp->typeU()) {
+                            case message_104::TESTFRact:
+                            {
+                                message_104_ptr msgtmp = message_104::create(message_104::TESTFRcon);
+                                async_request(
+                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
+                                return;
+                            }
+                            case message_104::TESTFRcon:{
+                                break;
+                            }
+                            case message_104::STARTDTact:{
+                                message_104_ptr msgtmp = message_104::create(message_104::STARTDTcon);
+                                async_request(
+                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
+                                return;
+                            }
+                            case message_104::STARTDTcon:{
+                                break;
+                            }
+                            case message_104::STOPDTact:{
+                                break;
+                            }
+                            case message_104::STOPDTcon:{
+                                break;
+                            }
+                            default:{}
+                        }                        
+                        break;
+                    }
+                    case message_104::I_type:{
+                        rx_=resp->rx();
+                        if (socket_.available()) {
+                            break;
+                        }
+                        else{
+                                message_104_ptr msgtmp = message_104::create(rx_);
+                                async_request(
+                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
+                                return;                            
+                        }
+                        break;
+                    }
+                    default:{}
+                }
+            }
+            message_104_ptr msgtmp = message_104::create();
+            async_response(
+                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
         }
 
         void iec60870pm::handle_timout_expire(const boost::system::error_code& err) {

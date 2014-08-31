@@ -229,6 +229,9 @@ namespace dvnci {
         const unum32 HD104_TESTFRact = 0x0003 | 0x0040;
         const unum32 HD104_TESTFRcon = 0x0003 | 0x0080;
         const unum16 HD104_U_IND = 0x01;
+        
+        class message_104;
+        typedef boost::shared_ptr<message_104> message_104_ptr;        
 
         class message_104 {
 
@@ -257,10 +260,19 @@ namespace dvnci {
             message_104(tcpcounter_type rx);
 
             message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
+            
+            static message_104_ptr create();
+
+            static message_104_ptr create(apcitypeU u);
+
+            static message_104_ptr create(tcpcounter_type rx);
+
+            static message_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);            
 
             octet_sequence& message() {
                 return body_;
             }
+
 
             void message(const boost::asio::streambuf& vl);
 
@@ -269,6 +281,10 @@ namespace dvnci {
             apcitype type() const;
 
             apcitypeU typeU() const;
+            
+            tcpcounter_type tx() const;            
+            
+            tcpcounter_type rx() const;             
 
             octet_sequence& header() {
                 return header_;
@@ -297,23 +313,18 @@ namespace dvnci {
 
         private:
 
-            void encode_header();
+            void encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx=0, tcpcounter_type rx=0);
 
             void encode_body(const dataobject& vl, cause_type cs);
 
             /*bool decode_header();*/
 
-            apcitype type_;
-            apcitypeU typeU_;
-            tcpcounter_type tx_;
-            tcpcounter_type rx_;
             octet_sequence body_;
             octet_sequence header_;
-            bool error_;
 
         };
 
-        typedef boost::shared_ptr<message_104> message_104_ptr;
+
         typedef std::deque<message_104_ptr> message_104_deq;
         typedef std::set<message_104_ptr> message_104_set;
     }
