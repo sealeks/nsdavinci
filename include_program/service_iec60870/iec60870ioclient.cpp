@@ -4,7 +4,7 @@
 
 namespace dvnci {
     namespace prot80670 {
-        
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// class message_104
@@ -130,14 +130,14 @@ namespace dvnci {
                 body().assign(body_length(), 0);
             return body();
         }
-        
-        bool message_104::get(dataobject_vct& rslt){
-            if (body_){
+
+        bool message_104::get(dataobject_vct& rslt) {
+            if (body_) {
                 asdu_body asdu(body_);
                 return asdu.get(rslt);
             }
             return false;
-        }       
+        }
 
         void message_104::encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx, tcpcounter_type rx) {
             header().clear();
@@ -223,7 +223,7 @@ namespace dvnci {
 
         void message_104::encode_body(const asdu_body& vl) {
             body_ = vl.body_ptr();
-        }         
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,6 +285,27 @@ namespace dvnci {
             io_service_.stop();
         }
 
+        void iec60870pm::send(const asdu_body& asdu) {
+            send(message_104::create(tx_++, rx_, asdu));
+        }
+
+        void iec60870pm::send(message_104_ptr msg) {
+            async_request(
+                    boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
+                    msg);
+        }
+
+        void iec60870pm::send(message_104::apcitypeU u) {
+            async_request(
+                    boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
+                    message_104::create(u));
+        }
+
+        void iec60870pm::send(tcpcounter_type cnt) {
+            async_request(
+                    boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), message_104::create(cnt));
+        }
+
         void iec60870pm::handle_resolve(const boost::system::error_code& err,
                 boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
             if (!err) {
@@ -303,7 +324,7 @@ namespace dvnci {
             if (!err) {
                 state_ = connectedCh;
                 tmout_timer.cancel();
-                message_104_ptr msgtmp =message_104::create(message_104::STARTDTact);
+                message_104_ptr msgtmp = message_104::create(message_104::STARTDTact);
                 async_request(
                         boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
             } else
@@ -317,67 +338,75 @@ namespace dvnci {
             }
         }
 
-        void iec60870pm::handle_request(const boost::system::error_code& error, message_104_ptr req) {  
+        void iec60870pm::handle_request(const boost::system::error_code& error, message_104_ptr req) {
             //message_104_ptr msgtmp =message_104::create();
             async_response(
                     boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
         }
 
         void iec60870pm::handle_response(const boost::system::error_code& error, message_104_ptr resp) {
-            if (resp){
-                switch(resp->type()){
-                    case message_104::S_type:{
-                        rx_=resp->rx();
+            if (resp) {
+                switch (resp->type()) {
+                    case message_104::S_type:
+                    {
+                        rx_ = resp->rx();
                         break;
                     }
-                    case message_104::U_type:{
-                        message_104::apcitypeU tput=resp->typeU();
+                    case message_104::U_type:
+                    {
+                        message_104::apcitypeU tput = resp->typeU();
                         switch (resp->typeU()) {
                             case message_104::TESTFRact:
                             {
-                                async_request(
-                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
-                                        message_104::create(message_104::TESTFRcon));
+                                send(message_104::TESTFRcon);
                                 return;
                             }
-                            case message_104::TESTFRcon:{
+                            case message_104::TESTFRcon:
+                            {
+
                                 break;
                             }
-                            case message_104::STARTDTact:{
-                                async_request(
-                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), 
-                                        message_104::create(message_104::STARTDTcon));
+                            case message_104::STARTDTact:
+                            {
+                                send(message_104::STARTDTcon);
                                 return;
                             }
-                            case message_104::STARTDTcon:{
+                            case message_104::STARTDTcon:
+                            {
+                                send(asdu_body::create_activation());
+                                return;
+                            }
+                            case message_104::STOPDTact:
+                            {
                                 break;
                             }
-                            case message_104::STOPDTact:{
+                            case message_104::STOPDTcon:
+                            {
                                 break;
                             }
-                            case message_104::STOPDTcon:{
-                                break;
+                            default:
+                            {
                             }
-                            default:{}
-                        }                        
+                        }
                         break;
                     }
-                    case message_104::I_type:{
-                        rx_=resp->tx();
+                    case message_104::I_type:
+                    {
+                        rx_ = resp->tx();
                         dataobject_vct rslt;
                         if (resp->get(rslt))
-                            data_.insert(rslt.begin(),rslt.end());
+                            data_.insert(rslt.begin(), rslt.end());
                         if (socket_.available()) {
                             break;
-                        }
-                        else{
-                                async_request(
-                                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), message_104::create(rx_));
-                                return;                            
+                        } else {
+                            send(rx_);
+                            return;
                         }
                         break;
                     }
-                    default:{}
+                    default:
+                    {
+                    }
                 }
             }
             async_response(

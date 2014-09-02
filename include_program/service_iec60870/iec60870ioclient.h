@@ -181,6 +181,14 @@ namespace dvnci {
 
             void connect();
             void disconnect();
+            
+            void send(const asdu_body& asdu);
+            
+            void send(message_104_ptr msg);  
+            
+            void send(message_104::apcitypeU u);   
+            
+            void send(tcpcounter_type cnt);
 
 
             void handle_resolve(const boost::system::error_code& err,

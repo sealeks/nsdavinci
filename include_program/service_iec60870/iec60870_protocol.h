@@ -20,7 +20,8 @@ namespace dvnci {
         typedef boost::shared_ptr<octet_sequence> octet_sequence_ptr;         
         
         typedef boost::uint8_t type_id;
-        typedef boost::uint8_t cause_type;        
+        typedef boost::uint8_t cause_type;    
+        typedef boost::uint8_t interrogation_type;
         typedef boost::uint32_t data_address;
         typedef boost::uint16_t device_address;
         typedef boost::uint8_t bit_number;
@@ -138,6 +139,8 @@ namespace dvnci {
         const type_id F_SG_NA_1 = 125; // Segment
         const type_id F_DR_TA_1 = 126; // Directory {blank or X, only available in monitor (standard) direction}
         const type_id F_SC_NB_1 = 127; // Query log ? Request archive file
+        
+        const interrogation_type INTERROG_GLOBAL = 20; // station interrogation (global)
 
         typedef std::pair<std::string, type_id> string_type_id_pair;
         typedef std::map<std::string, type_id> string_type_id_map;
@@ -240,6 +243,8 @@ namespace dvnci {
             asdu_body(const dataobject_vct& vl, cause_type cs, bool sq=false, bool ngt=false, bool tst=false); // sq = 0  each information object has its own information object address in the message         
             asdu_body(octet_sequence_ptr dt);
             ~asdu_body(){}
+            
+            static asdu_body create_activation(interrogation_type tp=INTERROG_GLOBAL, cause_type cs = CS_ACT);
             
             octet_sequence& body() {
                 return *body_;
