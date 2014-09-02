@@ -203,6 +203,8 @@ namespace dvnci {
             void settx(tcpcounter_type vl);           
 
             void parse_data(message_104_ptr resp); 
+
+            bool parse_U(message_104_ptr resp);            
             
             iec60870_data_listener_ptr listener() {
                 return !listener_._empty() ? listener_.lock() : iec60870_data_listener_ptr();
@@ -380,7 +382,7 @@ namespace dvnci {
 
         public:
 
-            iec60870ioclient(std::string host, std::string port, timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
+            iec60870ioclient(std::string host, std::string port, timeouttype tmo,iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             ~iec60870ioclient() {
             }

@@ -17,12 +17,12 @@ namespace dvnci {
         //////// iec60870intf
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
-        iec60870intf::iec60870intf(const std::string hst, const std::string prt, timeouttype tmo) :
-        client_io(new iec60870ioclient(hst,prt,tmo)), host(hst), port(prt), tmout(tmo) {
+        iec60870intf::iec60870intf(const std::string hst, const std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr) :
+        client_io(new iec60870ioclient(hst,prt,tmo,listr)), host(hst), port(prt), tmout(tmo)  {
         }
 
-        iec60870intf_ptr iec60870intf::build(const std::string host, const std::string port, timeouttype tmout) {
-            iec60870intf_ptr tmpintf = iec60870intf_ptr(new iec60870intf(host, port, tmout));
+        iec60870intf_ptr iec60870intf::build(const std::string host, const std::string port, timeouttype tmout, iec60870_data_listener_ptr listr) {
+            iec60870intf_ptr tmpintf = iec60870intf_ptr(new iec60870intf(host, port, tmout, listr));
             return tmpintf;
         }
 

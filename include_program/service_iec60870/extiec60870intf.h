@@ -13,14 +13,24 @@
 namespace dvnci {
 
     namespace external {
+        
+        using dvnci::prot80670::iec60870_data_listener;
+        using dvnci::prot80670::dataobject_ptr;
+        
 
-        class extiec60870intf : public extintf_wraper<dvnci::prot80670::dataobject_ptr> {
+
+        class extiec60870intf :  public extintf_wraper<dvnci::prot80670::dataobject_ptr>,
+                public virtual iec60870_data_listener{
 
         public:
 
             extiec60870intf(tagsbase_ptr intf_, executor* exctr, indx grp);
 
             virtual ~extiec60870intf();
+            
+           virtual void execute60870(dataobject_ptr vl);
+           
+           virtual void execute60870(const boost::system::error_code& error);            
 
 
         protected:

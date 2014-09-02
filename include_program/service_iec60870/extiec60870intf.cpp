@@ -24,12 +24,20 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////
 
         extiec60870intf::extiec60870intf(tagsbase_ptr intf_, executor* exctr, indx grp) :
-        extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
+        extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC), iec60870_data_listener() {
         }
 
         extiec60870intf::~extiec60870intf() {
             disconnect();
         }
+
+        void extiec60870intf::execute60870(dataobject_ptr vl) {
+            dataobject_ptr vlf = vl;
+        };
+
+        void extiec60870intf::execute60870(const boost::system::error_code& error) {
+
+        };        
 
         ns_error extiec60870intf::checkserverstatus() {
             /* if ((!iec60870intf->isconnected()))
@@ -46,7 +54,9 @@ namespace dvnci {
                 if (!remintf) {
                     remintf = dvnci::prot80670::iec60870intf::build(intf->groups()->host(group()),
                             fulltrim_copy(port),
-                            intf->groups()->timeout(group()));
+                            intf->groups()->timeout(group()),
+                            iec60870_data_listener::shared_from_this()
+                            );
                 }
                 if (!remintf) {
                     state_ = disconnected;

@@ -323,12 +323,12 @@ namespace dvnci {
         //////// iec60870_data_listener
         /////////////////////////////////////////////////////////////////////////////////////////////////       
 
-        class iec60870_data_listener {
+        class iec60870_data_listener : public boost::enable_shared_from_this<iec60870_data_listener> {
 
         public:
 
-            virtual void operator()(dataobject_ptr vl) = 0;
-            virtual void operator()(const boost::system::error_code& error) = 0;
+            virtual void execute60870(dataobject_ptr vl) = 0;
+            virtual void execute60870(const boost::system::error_code& error) = 0;
 
         };
 
