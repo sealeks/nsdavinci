@@ -143,7 +143,7 @@ namespace dvnci {
                         break;
                     }
                     case message_104::I_type:{
-                        rx_=resp->rx();
+                        rx_=resp->tx();
                         if (socket_.available()) {
                             break;
                         }

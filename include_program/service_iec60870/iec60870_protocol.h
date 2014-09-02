@@ -16,12 +16,15 @@
 namespace dvnci {
     namespace prot80670 {
 
-        typedef boost::uint16_t type_id;
+        typedef std::vector<boost::uint8_t> octet_sequence;
+        typedef boost::shared_ptr<octet_sequence> octet_sequence_ptr;         
+        
+        typedef boost::uint8_t type_id;
+        typedef boost::uint8_t cause_type;        
         typedef boost::uint32_t data_address;
         typedef boost::uint16_t device_address;
         typedef boost::uint8_t bit_number;
         typedef boost::uint16_t tcpcounter_type;
-        typedef boost::uint8_t cause_type;
         const bit_number NULL_BITNUMBER = '\xFF';
 
 
@@ -141,7 +144,8 @@ namespace dvnci {
 
         type_id find_type_id(const std::string& val);
 
-        typedef std::vector<boost::uint8_t> octet_sequence;
+      
+        
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,6 +219,83 @@ namespace dvnci {
 
 
         typedef std::set<dataobject_ptr> dataobject_set;
+        typedef std::vector<dataobject_ptr> dataobject_vct;        
+        
+        
+        
+         /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// asdu_body
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        const std::size_t MAX_ASDU_SIZE = 249;        
+        
+        class asdu_body{
+        public:
+            
+            asdu_body(dataobject_ptr vl, cause_type cs, bool sq=false, bool ngt=false, bool tst=false);
+            asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq=false, bool ngt=false, bool tst=false); // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
+            asdu_body(const dataobject_vct& vl, cause_type cs, bool sq=false, bool ngt=false, bool tst=false); // sq = 0  each information object has its own information object address in the message         
+            asdu_body(octet_sequence_ptr dt);
+            ~asdu_body(){}
+            
+            octet_sequence& body() {
+                return *body_;
+            }   
+            
+            const octet_sequence& body() const {
+                return *body_;
+            }  
+ 
+            octet_sequence_ptr body_ptr() {
+                return body_;
+            }        
+            
+            
+            type_id type() const {
+                if (!body().empty())
+                    return body()[0];
+                return 0;
+            }
+            
+            bool sq() const {
+                if (body().size()>1)
+                    return body()[1] & '\x80';
+                return false;
+            }          
+            
+            std::size_t count() const {
+                if (body().size()>1)
+                    return static_cast<std::size_t>(body()[1] & '\x7F');
+                return 0;
+            }       
+            
+            bool test() const {
+                if (body().size()>2)
+                    return body()[2] & '\x80';
+                return false;
+            }             
+            
+            bool negative() const {
+                if (body().size()>2)
+                    return body()[2] & '\x40';
+                return false;
+            }               
+            
+            cause_type cause() const {
+                if (body().size()>2)
+                    return static_cast<cause_type>(body()[2] & '\x3F');
+                return 0;
+            }               
+            
+        private:
+            
+            void encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst);
+            
+            
+            octet_sequence_ptr body_;
+        };
+        
+        
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,6 +341,8 @@ namespace dvnci {
             message_104(tcpcounter_type rx);
 
             message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
+
+            ~message_104();            
             
             static message_104_ptr create();
 
@@ -267,14 +350,26 @@ namespace dvnci {
 
             static message_104_ptr create(tcpcounter_type rx);
 
-            static message_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);            
+            static message_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);     
+            
+            octet_sequence& header() {
+                return *header_;
+            }            
 
-            octet_sequence& message() {
-                return body_;
+            octet_sequence& body() {
+                return *body_;
             }
+            
+            const octet_sequence& header() const {
+                return *header_;
+            }            
+
+            const octet_sequence& body() const {
+                return *body_;
+            }            
 
 
-            void message(const boost::asio::streambuf& vl);
+            void body(const boost::asio::streambuf& vl);
 
             size_t body_length() const;
 
@@ -290,12 +385,9 @@ namespace dvnci {
             
             octet_sequence& body_prepare();            
 
-            octet_sequence& header() {
-                return header_;
-            }  
 
             bool complete() const {
-                return (body_length() == body_.size());
+                return (body_length() == body().size());
             }
 
             bool valid() const {
@@ -316,8 +408,9 @@ namespace dvnci {
 
             /*bool decode_header();*/
 
-            octet_sequence body_;
-            octet_sequence header_;
+
+            octet_sequence_ptr header_;            
+            octet_sequence_ptr body_;
 
         };
 

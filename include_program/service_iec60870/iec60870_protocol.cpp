@@ -5,6 +5,8 @@
  * Created on 18 ?????? 2010 ?., 17:22
  */
 
+#include <cstddef>
+
 #include "iec60870_protocol.h"
 
 namespace dvnci {
@@ -143,29 +145,92 @@ namespace dvnci {
 
 
         
+         /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// asdu_body
+        /////////////////////////////////////////////////////////////////////////////////////////////////
         
+
+        asdu_body::asdu_body(dataobject_ptr vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()){
+            body_->reserve(MAX_ASDU_SIZE);
+            dataobject_vct tmp;
+            tmp.push_back(vl);
+            encode(tmp,cs,sq,ngt,tst);
+        };      
+        
+        asdu_body::asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) { // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
+            body_->reserve(MAX_ASDU_SIZE);
+            encode(vl,cs,sq,ngt,tst);
+        }
+
+        asdu_body::asdu_body(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) {// sq = 0  each information object has its own information object address in the message       
+            body_->reserve(MAX_ASDU_SIZE);
+            encode(vl,cs,sq,ngt,tst);            
+        }               
+        
+        asdu_body::asdu_body(octet_sequence_ptr dt) : body_(dt){
+        }
+
+        void asdu_body::encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst) {
+            body().clear();
+            if (!vl.empty()) {
+                dataobject_ptr hdrelm = vl[0];
+                body().push_back(hdrelm->type());
+                boost::uint8_t szobj = static_cast<boost::uint8_t> (vl.size());
+                if (sq)
+                    szobj |= '\x80';
+                body().push_back(szobj);
+                if (tst)
+                    cs |= '\x80';
+                if (ngt)
+                    cs |= '\x40';
+                body().push_back(cs);
+                device_address tmpdev = hdrelm->devnum();
+                body().insert(body().end(), (const char*) &tmpdev, (const char*) &tmpdev + 2);
+                if (sq) {
+                    for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                        data_address tmpaddr = (*it)->address();
+                        body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
+                        body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
+                    }
+                } else {
+                    data_address tmpaddr = hdrelm->address();
+                    body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
+                    for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                        body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
+                    }
+                }
+            }
+        }   
         
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// class message_104
         /////////////////////////////////////////////////////////////////////////////////////////////////              
         
         
-        message_104::message_104()  {
+        message_104::message_104() : 
+        header_(new octet_sequence()), body_(new octet_sequence())  {
             header_prepare();
         }
 
-        message_104::message_104(apcitypeU u) :  body_() {
+        message_104::message_104(apcitypeU u)  : 
+        header_(new octet_sequence()), body_(new octet_sequence())  {
             encode_header(U_type, u);
         }
 
-        message_104::message_104(tcpcounter_type rx) :  body_() {
+        message_104::message_104(tcpcounter_type rx)  : 
+        header_(new octet_sequence()), body_(new octet_sequence())  {
             encode_header(S_type, NULLu, 0,rx);
         }
 
 
-        message_104::message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs)  {
+        message_104::message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs)  : 
+        header_(new octet_sequence()), body_(new octet_sequence())  {
             encode_body(vl, cs);
             encode_header(I_type,NULLu,tx, rx);
+        }
+
+        message_104::~message_104() {
+            std::cout << "message_104 dstr"  << std::endl;
         }
 
         message_104_ptr message_104::create() {
@@ -184,16 +249,16 @@ namespace dvnci {
             return message_104_ptr(new message_104(tx, rx, vl, cs));
         }   
 
-        void message_104::message(const boost::asio::streambuf& vl) {
-            body_ = octet_sequence(boost::asio::buffer_cast<const num8*>(vl.data()), 
-                    boost::asio::buffer_cast<const num8*>(vl.data()) + (vl.size() < body_length() ? vl.size() : body_length()));
+        void message_104::body(const boost::asio::streambuf& vl) {
+            body_ = octet_sequence_ptr( new octet_sequence(boost::asio::buffer_cast<const num8*>(vl.data()), 
+                    boost::asio::buffer_cast<const num8*>(vl.data()) + (vl.size() < body_length() ? vl.size() : body_length())));
         }
 
         size_t message_104::body_length() const {
             size_t bl = 0;
-            if (header_.size() == apci_length) {
-                if (header_[0] == FC_START104) {
-                    bl = static_cast<size_t> (*((unum8*) & header_[1]));
+            if (header().size() == apci_length) {
+                if (header()[0] == FC_START104) {
+                    bl = static_cast<size_t> (*((unum8*) & header()[1]));
                     if (bl >= 4) {
                         bl -= 4;
                         return bl;
@@ -204,20 +269,20 @@ namespace dvnci {
         }
 
         message_104::apcitype message_104::type() const {
-            if (header_.size() < apci_length)
+            if (header().size() < apci_length)
                 return Null_type;
-            octet_sequence::value_type mk = header_[2];
-            if (!(header_[2]&1))
+            octet_sequence::value_type mk = header()[2];
+            if (!(header()[2]&1))
                 return I_type;
-            else if (header_[2]&3)
+            else if (header()[2]&3)
                 return U_type;
             return S_type;
         }
 
         message_104::apcitypeU message_104::typeU() const {
-            if (header_.size() < apci_length)
+            if (header().size() < apci_length)
                 return NULLu;
-            octet_sequence::value_type mk = header_[2];
+            octet_sequence::value_type mk = header()[2];
             if (mk & 3) {
                 switch (0x3F & ((mk & 0xFC) >> 2)) {
                     case 1: return STARTDTact;
@@ -235,41 +300,41 @@ namespace dvnci {
         }
 
         tcpcounter_type message_104::tx() const {
-            if (header_.size() < apci_length)
+            if (header().size() < apci_length)
                 return 0;
-            return (((* reinterpret_cast<const tcpcounter_type*>(&header_[2])) >> 1) & 0x7FFF);
+            return (((* reinterpret_cast<const tcpcounter_type*>(&header()[2])) >> 1) & 0x7FFF);
         }
 
         tcpcounter_type message_104::rx() const {
-            if (header_.size() < apci_length)
+            if (header().size() < apci_length)
                 return 0;
-            return (((* reinterpret_cast<const tcpcounter_type*>(&header_[4])) >> 1) & 0x7FFF);
+            return (((* reinterpret_cast<const tcpcounter_type*>(&header()[4])) >> 1) & 0x7FFF);
         }
 
         octet_sequence& message_104::header_prepare() {
-            header_.clear();
-            header_.assign(apci_length, 0);
-            return header_;
+            header().clear();
+            header().assign(apci_length, 0);
+            return header();
         }
 
         octet_sequence& message_104::body_prepare() {
-            body_.clear();
+            body().clear();
             if (body_length())
-                body_.assign(body_length(), 0);
-            return body_;
+                body().assign(body_length(), 0);
+            return body();
         }
 
         void message_104::encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx, tcpcounter_type rx) {
-            header_.clear();
-            unum8 tmp_length = body_.size() + 4;
-            header_.push_back(FC_START104);
-            header_.push_back(tmp_length);
+            header().clear();
+            unum8 tmp_length = body().size() + 4;
+            header().push_back(FC_START104);
+            header().push_back(tmp_length);
             switch (tp) {
                 case S_type:
                 {
                     unum16 tmprx = (rx << 1) & 0xFFFE;
-                    header_.insert(header_.end(), (const char*) &HD104_U_IND, (const char*) &HD104_U_IND + 2);
-                    header_.insert(header_.end(), (const char*) &tmprx,  (const char*) &tmprx + 2);
+                    header().insert(header().end(), (const char*) &HD104_U_IND, (const char*) &HD104_U_IND + 2);
+                    header().insert(header().end(), (const char*) &tmprx,  (const char*) &tmprx + 2);
                     break;
                 }
                 case U_type:
@@ -277,32 +342,32 @@ namespace dvnci {
                     switch (tpu) {
                         case TESTFRact:
                         {
-                            header_.insert(header_.end(),(const char*) &HD104_TESTFRact,(const char*) &HD104_TESTFRact+ 4);
+                            header().insert(header().end(),(const char*) &HD104_TESTFRact,(const char*) &HD104_TESTFRact+ 4);
                             break;
                         }
                         case TESTFRcon:
                         {
-                            header_.insert(header_.end(),(const char*) &HD104_TESTFRcon, (const char*) &HD104_TESTFRcon+ 4);
+                            header().insert(header().end(),(const char*) &HD104_TESTFRcon, (const char*) &HD104_TESTFRcon+ 4);
                             break;
                         }
                         case STARTDTact:
                         {
-                            header_.insert(header_.end(),(const char*) &HD104_STARTDTact, (const char*) &HD104_STARTDTact + 4);
+                            header().insert(header().end(),(const char*) &HD104_STARTDTact, (const char*) &HD104_STARTDTact + 4);
                             break;
                         }
                         case STARTDTcon:
                         {
-                            header_.insert(header_.end(),(const char*) &HD104_STARTDTcon, (const char*) &HD104_STARTDTcon+  4);
+                            header().insert(header().end(),(const char*) &HD104_STARTDTcon, (const char*) &HD104_STARTDTcon+  4);
                             break;
                         }
                         case STOPDTact:
                         {
-                            header_.insert(header_.end(),(const char*) &HD104_STOPDTact,(const char*) &HD104_STOPDTact + 4);
+                            header().insert(header().end(),(const char*) &HD104_STOPDTact,(const char*) &HD104_STOPDTact + 4);
                             break;
                         }
                         case STOPDTcon:
                         {
-                            header_.insert(header_.end(),(const char*) &HD104_STOPDTcon, (const char*) &HD104_STOPDTcon + 4);
+                            header().insert(header().end(),(const char*) &HD104_STOPDTcon, (const char*) &HD104_STOPDTcon + 4);
                             break;
                         }
                         default:
@@ -316,8 +381,8 @@ namespace dvnci {
                 {
                     unum16 tmptx = (tx << 1) & 0xFFFE;
                     unum16 tmprx = (rx << 1) & 0xFFFE;
-                    header_.insert(header_.end(),(const char*) &tmptx, (const char*) &tmptx + 2);
-                    header_.insert(header_.end(),(const char*) &tmprx, (const char*) &tmprx + 2);
+                    header().insert(header().end(),(const char*) &tmptx, (const char*) &tmptx + 2);
+                    header().insert(header().end(),(const char*) &tmprx, (const char*) &tmprx + 2);
                     break;
                 }
                 default:
@@ -328,25 +393,25 @@ namespace dvnci {
         }
 
         void message_104::encode_body(const dataobject& vl, cause_type cs) {
-            body_.clear();
+            body().clear();
             type_id tmptype = vl.type();
-            body_.push_back(tmptype);
-            body_.insert(body_.end(), '\x1');
-            body_.push_back(cs);
-            body_.insert(body_.end(), '\x0');
+            body().push_back(tmptype);
+            body().insert(body().end(), '\x1');
+            body().push_back(cs);
+            body().insert(body().end(), '\x0');
             device_address tmpdev = vl.devnum();
-            body_.insert(body_.end(), (const char*) &tmpdev,  (const char*) &tmpdev + 2);
+            body().insert(body().end(), (const char*) &tmpdev,  (const char*) &tmpdev + 2);
             data_address tmpaddr = vl.address();
-            body_.insert(body_.end(), (const char*) &tmpaddr,  (const char*) &tmpaddr +3);
-            body_.insert(body_.end(), vl.data().begin(), vl.data().end());
+            body().insert(body().end(), (const char*) &tmpaddr,  (const char*) &tmpaddr +3);
+            body().insert(body().end(), vl.data().begin(), vl.data().end());
         }
 
         /*bool message_104::decode_header() {
-            if (header_.size() == apci_length) {
-                if (header_[0] == FC_START104) {
-                    body_length_ = static_cast<size_t> (*((unum8*) & header_[1]));
-                    if (body_length_ >= 4) {
-                        body_length_ -= 4;
+            if (header().size() == apci_length) {
+                if (header()[0] == FC_START104) {
+                    body()length_ = static_cast<size_t> (*((unum8*) & header()[1]));
+                    if (body()length_ >= 4) {
+                        body()length_ -= 4;
                         return true;
                     } else
                         error_ = true;
@@ -354,7 +419,7 @@ namespace dvnci {
                     error_ = true;
             } else
                 error_ = true;
-            body_length_ = 0;
+            body()length_ = 0;
             return false;
             
         }*/
