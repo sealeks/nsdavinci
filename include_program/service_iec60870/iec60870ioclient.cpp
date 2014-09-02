@@ -317,6 +317,42 @@ namespace dvnci {
             }
         }     
         
+        bool iec60870pm::parse_U(message_104_ptr resp) {
+            switch (resp->typeU()) {
+                case message_104::TESTFRact:
+                {
+                    send(message_104::TESTFRcon);
+                    return true;
+                }
+                case message_104::TESTFRcon:
+                {
+                    return false;
+                }
+                case message_104::STARTDTact:
+                {
+                    send(message_104::STARTDTcon);
+                    return true;
+                }
+                case message_104::STARTDTcon:
+                {
+                    send(asdu_body::create_activation());
+                    return true;
+                }
+                case message_104::STOPDTact:
+                {
+                    break;
+                }
+                case message_104::STOPDTcon:
+                {
+                    break;
+                }
+                default:
+                {
+                }
+            }
+            return false;
+        }      
+        
         void iec60870pm::parse_data(message_104_ptr resp) {
             rx_ = resp->tx();
             settx(resp->rx());
@@ -326,7 +362,7 @@ namespace dvnci {
                 iec60870_data_listener_ptr lstnr = listener();
                 if (lstnr) {
                     for (dataobject_vct::const_iterator it = rslt.begin(); it != rslt.end(); ++it) {
-                        lstnr->operator ()(*it);
+                        lstnr->execute60870(*it);
                     }
                 }
             }
@@ -351,9 +387,7 @@ namespace dvnci {
             if (!err) {
                 state_ = connectedCh;
                 tmout_timer.cancel();
-                message_104_ptr msgtmp = message_104::create(message_104::STARTDTact);
-                async_request(
-                        boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), msgtmp);
+                send(message_104::STARTDTact);
             } else
                 if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
                 socket_.close();
@@ -381,49 +415,13 @@ namespace dvnci {
                     }
                     case message_104::U_type:
                     {
-                        message_104::apcitypeU tput = resp->typeU();
-                        switch (resp->typeU()) {
-                            case message_104::TESTFRact:
-                            {
-                                send(message_104::TESTFRcon);
-                                return;
-                            }
-                            case message_104::TESTFRcon:
-                            {
-
-                                break;
-                            }
-                            case message_104::STARTDTact:
-                            {
-                                send(message_104::STARTDTcon);
-                                return;
-                            }
-                            case message_104::STARTDTcon:
-                            {
-                                send(asdu_body::create_activation());
-                                return;
-                            }
-                            case message_104::STOPDTact:
-                            {
-                                break;
-                            }
-                            case message_104::STOPDTcon:
-                            {
-                                break;
-                            }
-                            default:
-                            {
-                            }
-                        }
-                        break;
+                        if (parse_U(resp))
+                            return;
+                        break;                            
                     }
                     case message_104::I_type:
                     {
-                        rx_ = resp->tx();
-                        settx(resp->rx());
-                        dataobject_vct rslt;
-                        if (resp->get(rslt))
-                            data_.insert(rslt.begin(), rslt.end());
+                        parse_data(resp);
                         if (socket_.available()) {
                             break;
                         } else {
@@ -451,8 +449,8 @@ namespace dvnci {
             }
         }
 
-        iec60870ioclient::iec60870ioclient(std::string host, std::string port, timeouttype tmo) {
-            iooclnt = callable_shared_ptr<iec60870pm>(new iec60870pm(host, port, tmo));
+        iec60870ioclient::iec60870ioclient(std::string host, std::string port, timeouttype tmo, iec60870_data_listener_ptr listr) {
+            iooclnt = callable_shared_ptr<iec60870pm>(new iec60870pm(host, port, tmo,listr));
             ioth = boost::shared_ptr<boost::thread>(new boost::thread(iooclnt));
         }
 

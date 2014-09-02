@@ -44,12 +44,12 @@ namespace dvnci {
                 disconnected, connected
             };
 
-            iec60870intf(const std::string hst, const std::string prt, timeouttype tmo = DEFAULT_DVNCI_TIMOUT);
+            iec60870intf(const std::string hst, const std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr);
 
             virtual ~iec60870intf() {
             };
 
-            static iec60870intf_ptr build(const std::string host, const std::string port, timeouttype tmout = DEFAULT_DVNCI_TIMOUT);
+            static iec60870intf_ptr build(const std::string host, const std::string port, timeouttype tmout, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             bool isconnected() {
                 return ((state_ == connected) || (!error(connect_impl())));
@@ -71,6 +71,7 @@ namespace dvnci {
 
 
         protected:
+                     
 
             virtual ns_error connect_impl();
 
