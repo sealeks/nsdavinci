@@ -79,6 +79,74 @@ namespace dvnci {
                 return fit->second;
             return 0;
         }
+        
+        static type_id_size_map size_type_id_load() {
+            type_id_size_map mp;
+            mp.insert(type_id_size_pair(1, 1)); // Single-point information 1
+            mp.insert(type_id_size_pair(2,4)); //Single-point information with time-tag 1 + 3(ta)
+            mp.insert(type_id_size_pair(3, 1)); //Double-point information 1 
+            mp.insert(type_id_size_pair(4, 4)); //Double-point information with time-tag  1 + 3(ta)
+            mp.insert(type_id_size_pair(5, 3)); //Step position information 2 + 1(q)
+            mp.insert(type_id_size_pair(6, 6)); //Step position information with time-tag 2 + 1(q) + 3(ta)
+            mp.insert(type_id_size_pair(7, 5)); //Bitstring of 32 bits 4 + 1(q)
+            mp.insert(type_id_size_pair(8, 8)); //Bitstring of 32 bits with time-tag  4 + 1(q) + 3(ta)
+            mp.insert(type_id_size_pair(9, 3)); //Measured value, normalized value 2 + 1(q)
+            mp.insert(type_id_size_pair(10, 6)); //Measured value, normalized value with time-tag 2 + 1(q) + 3(ta)
+            mp.insert(type_id_size_pair(11,3)); //Measured value, scaled value 2 + 1(q)
+            mp.insert(type_id_size_pair(12, 6)); //Measured value, scaled value with time-tag 2 + 1(q) + 3(ta)
+            mp.insert(type_id_size_pair(13, 5)); //Measured value, short floating point value 4 + 1(q)
+            mp.insert(type_id_size_pair(14, 8)); //Measured value, short floating point value with time-tag 4 + 1(q) + 3(ta)
+            mp.insert(type_id_size_pair(15, 5)); //Integrated totals 4 + 1(q)
+            mp.insert(type_id_size_pair(16,8)); //Integrated totals with time-tag 4 + 1(q) + 2(tm) + 3(ta)
+            mp.insert(type_id_size_pair(17, 6)); //Event of protection equipment with time-tag 1 + 2(tm) + 3(ta)
+            mp.insert(type_id_size_pair(18, 7)); //Packed start events of protection equipment with time-tag 1 + 1(q) + 2(tm) + 3(ta)
+            mp.insert(type_id_size_pair(19, 7)); //Packed output circuit information of protection equipment with timetag 1 + 1(q) + 2(tm) + 3(ta)
+            mp.insert(type_id_size_pair(20, 5)); //Packed single point information with status change detection 2 + 2 + 1(q)
+            mp.insert(type_id_size_pair(21, 2)); //Measured value, normalized value without quality descriptor 2
+            mp.insert(type_id_size_pair(30, 8)); //Single-point information with time tag CP56Time2a 1 + 7(tb)
+            mp.insert(type_id_size_pair(31, 8)); //Double-point information with time tag CP56Time2a 1 + 7(tb)
+            mp.insert(type_id_size_pair(32, 10)); //Step position information with time tag CP56Time2a 2 + 1(q) + 7(tb)
+            mp.insert(type_id_size_pair(33, 12)); //Bitstring of 32 bit with time tag CP56Time2a 4 + 1(q) + 7(tb)
+            mp.insert(type_id_size_pair(34, 10)); //Measured value, normalized value with time tag CP56Time2a  2 + 1(q) + 7(tb)
+            mp.insert(type_id_size_pair(35, 10)); //Measured value, scaled value with time tag CP56Time2a 2 + 1(q) + 7(tb)
+            mp.insert(type_id_size_pair(36,12)); //Measured value, short floating point value with time tag CP56Time2a  4 + 1(q) + 7(tb)
+            mp.insert(type_id_size_pair(37, 14)); //Integrated totals with time tag CP56Time2a  4 + 1(q) + 2(tm) + 7(tb)
+            mp.insert(type_id_size_pair(38, 10)); //Event of protection equipment with time-tag CP56Time2a 1 + 2(tm) + 7(ta)
+            mp.insert(type_id_size_pair(39, 11)); //Packed start events of protection equipment with time-tag CP56Time2a 1 + 1(q) + 2(tm) + 7(tb)
+            mp.insert(type_id_size_pair(40, 11)); //Packed output circuit information of protection equipment with timetag CP56Time2a  1 + 1(q) + 2(tm) + 7(tb)
+            mp.insert(type_id_size_pair(45, 1)); // Single command 1
+            mp.insert(type_id_size_pair(46, 1)); // Double command 1
+            mp.insert(type_id_size_pair(47, 1)); // Regulating step command 1
+            mp.insert(type_id_size_pair(48, 3)); // Set point command, normalized value 2 + 1
+            mp.insert(type_id_size_pair(49, 3)); // Set point command, scaled value 2 + 1
+            mp.insert(type_id_size_pair(50, 5)); // Set point command, short floating point value 4 + 1
+            mp.insert(type_id_size_pair(51, 5)); // Bitstring of 32 bit 4 + 1
+            mp.insert(type_id_size_pair(58, 8)); // Single command with time tag CP56Time 2a 1 + 7(tb)
+            mp.insert(type_id_size_pair(59, 8)); // Double command with time tag CP56Time 2a 1 + 7(tb)
+            mp.insert(type_id_size_pair(60, 8)); // Regulating step command with time tag CP56Time 2a 1 + 7(tb)
+            mp.insert(type_id_size_pair(61, 10)); // Set point command, normalized value with time tag CP56Time 2a 2 + 1 + 7(tb)
+            mp.insert(type_id_size_pair(62, 10)); // Set point command, scaled value with time tag CP56Time 2a 2 + 1 + 7(tb)
+            mp.insert(type_id_size_pair(63,12)); // Set point command, short floating point value with time tag CP56Time 2a 4 + 1 + 7(tb)
+            mp.insert(type_id_size_pair(64, 12)); // Bitstring of 32 bit with time tag CP56Time 2a 4 + 1 + 7(tb)     
+            mp.insert(type_id_size_pair(110, 3)); // Parameter of measured value, normalized value 110 2 + 1
+            mp.insert(type_id_size_pair(111, 3)); // Parameter of measured value, scaled value 2 + 1
+            mp.insert(type_id_size_pair(112, 5)); // Parameter of measured value, short floating point value 4 + 1
+            mp.insert(type_id_size_pair(113, 1)); // Parameter activation  1          
+            return mp;
+        }        
+        
+         static const  type_id_size_map& get_size_type_id_map() {
+            static  type_id_size_map mp = size_type_id_load();
+            return mp;
+        }
+         
+        std::size_t find_type_size(type_id val) {
+            const type_id_size_map& mp = get_size_type_id_map();
+            type_id_size_map::const_iterator fit = mp.find(val);
+            if (fit != mp.end())
+                return fit->second;
+            return 0;
+        }
 
 
 
@@ -170,6 +238,45 @@ namespace dvnci {
         asdu_body::asdu_body(octet_sequence_ptr dt) : body_(dt){
         }
 
+        bool asdu_body::get(dataobject_vct& rslt) {
+            rslt.clear();
+            if (body().size() > 6) {
+                type_id tp=type();
+                device_address devaddr = address();
+                std::size_t szdata = find_type_size(tp);
+                std::size_t datacnt = count();
+                std::size_t it=7;
+                if (!datacnt)
+                    return true;
+                if (szdata) {
+                    if (sq()) {
+                        if ((it+3+szdata)<=body().size()){
+                            data_address addr=*reinterpret_cast<const data_address*>(&(body()[it]));
+                            octet_sequence data(&body()[it+3],&body()[it+3] + szdata);
+                            rslt.push_back(dataobject_ptr( new dataobject(devaddr, tp, addr, data)));
+                            it=it+3+szdata;
+                            datacnt--;
+                            while ((datacnt--) && ((it+szdata)<=body().size())){
+                                octet_sequence data(&body()[it],&body()[it] + szdata);
+                                rslt.push_back(dataobject_ptr( new dataobject(devaddr, tp, ++addr, data)));
+                                it=it+3+szdata;
+                            }
+                            return !datacnt;
+                        }
+                    } else {
+                        while ((datacnt--) && ((it+3+szdata)<=body().size())){
+                            data_address addr=*reinterpret_cast<const data_address*>(&(body()[it]));
+                            octet_sequence data(&body()[it+3],&body()[it+3] + szdata);
+                            rslt.push_back(dataobject_ptr( new dataobject(devaddr, tp, addr, data)));
+                            it=it+3+szdata;
+                        }
+                        return !datacnt;
+                    }
+                }
+            }
+            return false;
+        }
+
         void asdu_body::encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst) {
             body().clear();
             if (!vl.empty()) {
@@ -184,6 +291,7 @@ namespace dvnci {
                 if (ngt)
                     cs |= '\x40';
                 body().push_back(cs);
+                body().push_back(0);
                 device_address tmpdev = hdrelm->devnum();
                 body().insert(body().end(), (const char*) &tmpdev, (const char*) &tmpdev + 2);
                 if (sq) {
@@ -202,226 +310,8 @@ namespace dvnci {
             }
         }   
         
-        /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// class message_104
-        /////////////////////////////////////////////////////////////////////////////////////////////////              
-        
-        
-        message_104::message_104() : 
-        header_(new octet_sequence()), body_(new octet_sequence())  {
-            header_prepare();
-        }
-
-        message_104::message_104(apcitypeU u)  : 
-        header_(new octet_sequence()), body_(new octet_sequence())  {
-            encode_header(U_type, u);
-        }
-
-        message_104::message_104(tcpcounter_type rx)  : 
-        header_(new octet_sequence()), body_(new octet_sequence())  {
-            encode_header(S_type, NULLu, 0,rx);
-        }
+         
 
 
-        message_104::message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs)  : 
-        header_(new octet_sequence()), body_(new octet_sequence())  {
-            encode_body(vl, cs);
-            encode_header(I_type,NULLu,tx, rx);
-        }
-
-        message_104::~message_104() {
-            std::cout << "message_104 dstr"  << std::endl;
-        }
-
-        message_104_ptr message_104::create() {
-            return message_104_ptr(new message_104());
-        }
-
-        message_104_ptr message_104::create(apcitypeU u) {
-            return message_104_ptr(new message_104(u));
-        }
-
-        message_104_ptr message_104::create(tcpcounter_type rx) {
-            return message_104_ptr(new message_104(rx));
-        }
-
-        message_104_ptr message_104::create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) {
-            return message_104_ptr(new message_104(tx, rx, vl, cs));
-        }   
-
-        void message_104::body(const boost::asio::streambuf& vl) {
-            body_ = octet_sequence_ptr( new octet_sequence(boost::asio::buffer_cast<const num8*>(vl.data()), 
-                    boost::asio::buffer_cast<const num8*>(vl.data()) + (vl.size() < body_length() ? vl.size() : body_length())));
-        }
-
-        size_t message_104::body_length() const {
-            size_t bl = 0;
-            if (header().size() == apci_length) {
-                if (header()[0] == FC_START104) {
-                    bl = static_cast<size_t> (*((unum8*) & header()[1]));
-                    if (bl >= 4) {
-                        bl -= 4;
-                        return bl;
-                    }
-                }
-            }
-            return 0;
-        }
-
-        message_104::apcitype message_104::type() const {
-            if (header().size() < apci_length)
-                return Null_type;
-            octet_sequence::value_type mk = header()[2];
-            if (!(header()[2]&1))
-                return I_type;
-            else if (header()[2]&3)
-                return U_type;
-            return S_type;
-        }
-
-        message_104::apcitypeU message_104::typeU() const {
-            if (header().size() < apci_length)
-                return NULLu;
-            octet_sequence::value_type mk = header()[2];
-            if (mk & 3) {
-                switch (0x3F & ((mk & 0xFC) >> 2)) {
-                    case 1: return STARTDTact;
-                    case 2: return STARTDTcon;
-                    case 4: return STOPDTact;
-                    case 8: return STOPDTcon;
-                    case 16: return TESTFRact;
-                    case 32: return TESTFRcon;
-                    default:
-                    {
-                    }
-                }
-            }
-            return NULLu;
-        }
-
-        tcpcounter_type message_104::tx() const {
-            if (header().size() < apci_length)
-                return 0;
-            return (((* reinterpret_cast<const tcpcounter_type*>(&header()[2])) >> 1) & 0x7FFF);
-        }
-
-        tcpcounter_type message_104::rx() const {
-            if (header().size() < apci_length)
-                return 0;
-            return (((* reinterpret_cast<const tcpcounter_type*>(&header()[4])) >> 1) & 0x7FFF);
-        }
-
-        octet_sequence& message_104::header_prepare() {
-            header().clear();
-            header().assign(apci_length, 0);
-            return header();
-        }
-
-        octet_sequence& message_104::body_prepare() {
-            body().clear();
-            if (body_length())
-                body().assign(body_length(), 0);
-            return body();
-        }
-
-        void message_104::encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx, tcpcounter_type rx) {
-            header().clear();
-            unum8 tmp_length = body().size() + 4;
-            header().push_back(FC_START104);
-            header().push_back(tmp_length);
-            switch (tp) {
-                case S_type:
-                {
-                    unum16 tmprx = (rx << 1) & 0xFFFE;
-                    header().insert(header().end(), (const char*) &HD104_U_IND, (const char*) &HD104_U_IND + 2);
-                    header().insert(header().end(), (const char*) &tmprx,  (const char*) &tmprx + 2);
-                    break;
-                }
-                case U_type:
-                {
-                    switch (tpu) {
-                        case TESTFRact:
-                        {
-                            header().insert(header().end(),(const char*) &HD104_TESTFRact,(const char*) &HD104_TESTFRact+ 4);
-                            break;
-                        }
-                        case TESTFRcon:
-                        {
-                            header().insert(header().end(),(const char*) &HD104_TESTFRcon, (const char*) &HD104_TESTFRcon+ 4);
-                            break;
-                        }
-                        case STARTDTact:
-                        {
-                            header().insert(header().end(),(const char*) &HD104_STARTDTact, (const char*) &HD104_STARTDTact + 4);
-                            break;
-                        }
-                        case STARTDTcon:
-                        {
-                            header().insert(header().end(),(const char*) &HD104_STARTDTcon, (const char*) &HD104_STARTDTcon+  4);
-                            break;
-                        }
-                        case STOPDTact:
-                        {
-                            header().insert(header().end(),(const char*) &HD104_STOPDTact,(const char*) &HD104_STOPDTact + 4);
-                            break;
-                        }
-                        case STOPDTcon:
-                        {
-                            header().insert(header().end(),(const char*) &HD104_STOPDTcon, (const char*) &HD104_STOPDTcon + 4);
-                            break;
-                        }
-                        default:
-                        {
-                            
-                        }
-                    }
-                    break;
-                }
-                case I_type:
-                {
-                    unum16 tmptx = (tx << 1) & 0xFFFE;
-                    unum16 tmprx = (rx << 1) & 0xFFFE;
-                    header().insert(header().end(),(const char*) &tmptx, (const char*) &tmptx + 2);
-                    header().insert(header().end(),(const char*) &tmprx, (const char*) &tmprx + 2);
-                    break;
-                }
-                default:
-                {
-                    
-                }
-            }
-        }
-
-        void message_104::encode_body(const dataobject& vl, cause_type cs) {
-            body().clear();
-            type_id tmptype = vl.type();
-            body().push_back(tmptype);
-            body().insert(body().end(), '\x1');
-            body().push_back(cs);
-            body().insert(body().end(), '\x0');
-            device_address tmpdev = vl.devnum();
-            body().insert(body().end(), (const char*) &tmpdev,  (const char*) &tmpdev + 2);
-            data_address tmpaddr = vl.address();
-            body().insert(body().end(), (const char*) &tmpaddr,  (const char*) &tmpaddr +3);
-            body().insert(body().end(), vl.data().begin(), vl.data().end());
-        }
-
-        /*bool message_104::decode_header() {
-            if (header().size() == apci_length) {
-                if (header()[0] == FC_START104) {
-                    body()length_ = static_cast<size_t> (*((unum8*) & header()[1]));
-                    if (body()length_ >= 4) {
-                        body()length_ -= 4;
-                        return true;
-                    } else
-                        error_ = true;
-                } else
-                    error_ = true;
-            } else
-                error_ = true;
-            body()length_ = 0;
-            return false;
-            
-        }*/
     }
 }
