@@ -127,7 +127,9 @@ namespace dvnci {
             mp.insert(type_id_size_pair(61, 10)); // Set point command, normalized value with time tag CP56Time 2a 2 + 1 + 7(tb)
             mp.insert(type_id_size_pair(62, 10)); // Set point command, scaled value with time tag CP56Time 2a 2 + 1 + 7(tb)
             mp.insert(type_id_size_pair(63,12)); // Set point command, short floating point value with time tag CP56Time 2a 4 + 1 + 7(tb)
-            mp.insert(type_id_size_pair(64, 12)); // Bitstring of 32 bit with time tag CP56Time 2a 4 + 1 + 7(tb)     
+            mp.insert(type_id_size_pair(64, 12)); // Bitstring of 32 bit with time tag CP56Time 2a 4 + 1 + 7(tb)              
+            mp.insert(type_id_size_pair(100, 1)); // Activation     C_IC_NA
+            mp.insert(type_id_size_pair(101, 1)); // Counter reequest     C_CI_NA            
             mp.insert(type_id_size_pair(110, 3)); // Parameter of measured value, normalized value 110 2 + 1
             mp.insert(type_id_size_pair(111, 3)); // Parameter of measured value, scaled value 2 + 1
             mp.insert(type_id_size_pair(112, 5)); // Parameter of measured value, short floating point value 4 + 1
@@ -237,6 +239,11 @@ namespace dvnci {
         
         asdu_body::asdu_body(octet_sequence_ptr dt) : body_(dt){
         }
+        
+        asdu_body asdu_body::create_activation(interrogation_type tp,cause_type cs){
+            dataobject_ptr vl( new dataobject(0, C_IC_NA_1, 1, octet_sequence(1, tp)));
+            return asdu_body(vl, cs, false, false, false);          
+        }
 
         bool asdu_body::get(dataobject_vct& rslt) {
             rslt.clear();
@@ -245,13 +252,13 @@ namespace dvnci {
                 device_address devaddr = address();
                 std::size_t szdata = find_type_size(tp);
                 std::size_t datacnt = count();
-                std::size_t it=7;
+                std::size_t it=6;
                 if (!datacnt)
                     return true;
                 if (szdata) {
                     if (sq()) {
                         if ((it+3+szdata)<=body().size()){
-                            data_address addr=*reinterpret_cast<const data_address*>(&(body()[it]));
+                            data_address addr=*reinterpret_cast<const data_address*>(&(body()[it])) & 0xFFFFFF;
                             octet_sequence data(&body()[it+3],&body()[it+3] + szdata);
                             rslt.push_back(dataobject_ptr( new dataobject(devaddr, tp, addr, data)));
                             it=it+3+szdata;
@@ -261,16 +268,16 @@ namespace dvnci {
                                 rslt.push_back(dataobject_ptr( new dataobject(devaddr, tp, ++addr, data)));
                                 it=it+3+szdata;
                             }
-                            return !datacnt;
+                            return !(rslt.empty());
                         }
                     } else {
                         while ((datacnt--) && ((it+3+szdata)<=body().size())){
-                            data_address addr=*reinterpret_cast<const data_address*>(&(body()[it]));
+                            data_address addr=(*reinterpret_cast<const data_address*>(&(body()[it]))) & 0xFFFFFF;
                             octet_sequence data(&body()[it+3],&body()[it+3] + szdata);
                             rslt.push_back(dataobject_ptr( new dataobject(devaddr, tp, addr, data)));
                             it=it+3+szdata;
                         }
-                        return !datacnt;
+                        return !(rslt.empty());
                     }
                 }
             }
