@@ -98,6 +98,14 @@ namespace dvnci {
             }            
 
 
+            void inprogress(bool vl) {
+               inprogress_=vl;
+            }
+            
+            bool inprogress() const {
+                return inprogress_;
+            }              
+
             void body(const boost::asio::streambuf& vl);
 
             size_t body_length() const;
@@ -142,6 +150,7 @@ namespace dvnci {
             /*bool decode_header();*/
 
 
+            bool inprogress_;
             octet_sequence_ptr header_;            
             octet_sequence_ptr body_;
 
@@ -165,7 +174,7 @@ namespace dvnci {
                 connectedCh, started, connected, disconnected
             };
 
-            iec60870pm(std::string hst, std::string prt, timeouttype tmo);
+            iec60870pm(std::string hst, std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             virtual ~iec60870pm();
 
@@ -180,6 +189,7 @@ namespace dvnci {
 
 
             void connect();
+            
             void disconnect();
             
             void send(const asdu_body& asdu);
@@ -189,7 +199,14 @@ namespace dvnci {
             void send(message_104::apcitypeU u);   
             
             void send(tcpcounter_type cnt);
+            
+            void settx(tcpcounter_type vl);           
 
+            void parse_data(message_104_ptr resp); 
+            
+            iec60870_data_listener_ptr listener() {
+                return !listener_._empty() ? listener_.lock() : iec60870_data_listener_ptr();
+            }            
 
             void handle_resolve(const boost::system::error_code& err,
                     boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
@@ -328,7 +345,6 @@ namespace dvnci {
             void handle_timout_expire(const boost::system::error_code& err);
 
 
-
             boost::asio::io_service io_service_;
             boost::asio::ip::tcp::socket socket_;
             boost::asio::deadline_timer tmout_timer;
@@ -340,6 +356,8 @@ namespace dvnci {
             tcpcounter_type tx_;
             tcpcounter_type rx_;
             dataobject_set data_;
+            message_104_deq sendmsg_;
+            iec60870_data_listener_wptr listener_;
 
 
         protected:
@@ -377,7 +395,7 @@ namespace dvnci {
             boost::shared_ptr<boost::thread> ioth;
         };
 
-
+        typedef boost::weak_ptr< iec60870ioclient> iec60870ioclient_wptr;
         typedef boost::shared_ptr< iec60870ioclient> iec60870ioclient_ptr;
 
     }
