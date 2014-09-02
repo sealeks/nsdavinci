@@ -318,8 +318,23 @@ namespace dvnci {
             octet_sequence_ptr body_;
         };
         
-        
+     
+         /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_data_listener
+        /////////////////////////////////////////////////////////////////////////////////////////////////       
 
+        class iec60870_data_listener {
+
+        public:
+
+            virtual void operator()(dataobject_ptr vl) = 0;
+            virtual void operator()(const boost::system::error_code& error) = 0;
+
+        };
+
+        typedef boost::shared_ptr<iec60870_data_listener> iec60870_data_listener_ptr;
+        typedef boost::weak_ptr<iec60870_data_listener> iec60870_data_listener_wptr;        
+        
 
        
     }
