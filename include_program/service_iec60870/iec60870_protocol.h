@@ -141,8 +141,11 @@ namespace dvnci {
 
         typedef std::pair<std::string, type_id> string_type_id_pair;
         typedef std::map<std::string, type_id> string_type_id_map;
+        typedef std::pair<type_id, std::size_t> type_id_size_pair;
+        typedef std::map<type_id, std::size_t> type_id_size_map;        
 
         type_id find_type_id(const std::string& val);
+        std::size_t find_type_size(type_id val);        
 
       
         
@@ -246,7 +249,7 @@ namespace dvnci {
                 return *body_;
             }  
  
-            octet_sequence_ptr body_ptr() {
+            octet_sequence_ptr body_ptr() const {
                 return body_;
             }        
             
@@ -285,7 +288,22 @@ namespace dvnci {
                 if (body().size()>2)
                     return static_cast<cause_type>(body()[2] & '\x3F');
                 return 0;
-            }               
+            }         
+            
+            boost::uint8_t oa() const {
+                if (body().size()>3)
+                    return static_cast<boost::uint8_t>(body()[3]);
+                return 0;
+            }     
+            
+            
+            device_address address() const {
+                if (body().size()>5)
+                    return *reinterpret_cast<const device_address*>(&(body()[4]));
+                return 0;
+            } 
+            
+            bool get(dataobject_vct& rslt);
             
         private:
             
@@ -298,125 +316,7 @@ namespace dvnci {
         
 
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// class message_104
-        /////////////////////////////////////////////////////////////////////////////////////////////////           
-
-        const octet_sequence::value_type FC_START104 = '\x68';
-        const unum32 HD104_STARTDTact = 0x0003 | 0x0004;
-        const unum32 HD104_STARTDTcon = 0x0003 | 0x0008;
-        const unum32 HD104_STOPDTact = 0x0003 | 0x0010;
-        const unum32 HD104_STOPDTcon = 0x0003 | 0x0020;
-        const unum32 HD104_TESTFRact = 0x0003 | 0x0040;
-        const unum32 HD104_TESTFRcon = 0x0003 | 0x0080;
-        const unum16 HD104_U_IND = 0x01;
-        
-        class message_104;
-        typedef boost::shared_ptr<message_104> message_104_ptr;        
-
-        class message_104 {
-
-        public:
-
-            enum {
-
-                apci_length = 6
-            };
-
-            enum apcitype {
-
-                Null_type, S_type, U_type, I_type
-            };
-
-            enum apcitypeU {
-
-                NULLu, TESTFRact, TESTFRcon, STARTDTact, STARTDTcon, STOPDTact, STOPDTcon
-            };
-
-            //
-            message_104();
-
-            message_104(apcitypeU u);
-
-            message_104(tcpcounter_type rx);
-
-            message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
-
-            ~message_104();            
-            
-            static message_104_ptr create();
-
-            static message_104_ptr create(apcitypeU u);
-
-            static message_104_ptr create(tcpcounter_type rx);
-
-            static message_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);     
-            
-            octet_sequence& header() {
-                return *header_;
-            }            
-
-            octet_sequence& body() {
-                return *body_;
-            }
-            
-            const octet_sequence& header() const {
-                return *header_;
-            }            
-
-            const octet_sequence& body() const {
-                return *body_;
-            }            
-
-
-            void body(const boost::asio::streambuf& vl);
-
-            size_t body_length() const;
-
-            apcitype type() const;
-
-            apcitypeU typeU() const;
-            
-            tcpcounter_type tx() const;            
-            
-            tcpcounter_type rx() const;     
-            
-            octet_sequence& header_prepare();
-            
-            octet_sequence& body_prepare();            
-
-
-            bool complete() const {
-                return (body_length() == body().size());
-            }
-
-            bool valid() const {
-                return ((complete()) && (type() != Null_type));
-            }
-
-            bool countered() const {
-                apcitype tmp = type();
-                return ((tmp != U_type) && (tmp != Null_type));
-            }
-
-
-        private:
-
-            void encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx=0, tcpcounter_type rx=0);
-
-            void encode_body(const dataobject& vl, cause_type cs);
-
-            /*bool decode_header();*/
-
-
-            octet_sequence_ptr header_;            
-            octet_sequence_ptr body_;
-
-        };
-
-
-        typedef std::deque<message_104_ptr> message_104_deq;
-        typedef std::set<message_104_ptr> message_104_set;
+       
     }
 }
 

@@ -4,6 +4,226 @@
 
 namespace dvnci {
     namespace prot80670 {
+        
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// class message_104
+        /////////////////////////////////////////////////////////////////////////////////////////////////              
+
+        message_104::message_104() :
+        header_(new octet_sequence()), body_(new octet_sequence()) {
+            header_prepare();
+        }
+
+        message_104::message_104(apcitypeU u) :
+        header_(new octet_sequence()), body_(new octet_sequence()) {
+            encode_header(U_type, u);
+        }
+
+        message_104::message_104(tcpcounter_type rx) :
+        header_(new octet_sequence()), body_(new octet_sequence()) {
+            encode_header(S_type, NULLu, 0, rx);
+        }
+
+        message_104::message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) :
+        header_(new octet_sequence()), body_(new octet_sequence()) {
+            encode_body(vl, cs);
+            encode_header(I_type, NULLu, tx, rx);
+        }
+
+        message_104::message_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) :
+        header_(new octet_sequence()), body_(new octet_sequence()) {
+            encode_body(vl);
+            encode_header(I_type, NULLu, tx, rx);
+        }
+
+        message_104::~message_104() {
+            std::cout << "message_104 dstr" << std::endl;
+        }
+
+        message_104_ptr message_104::create() {
+            return message_104_ptr(new message_104());
+        }
+
+        message_104_ptr message_104::create(apcitypeU u) {
+            return message_104_ptr(new message_104(u));
+        }
+
+        message_104_ptr message_104::create(tcpcounter_type rx) {
+            return message_104_ptr(new message_104(rx));
+        }
+
+        message_104_ptr message_104::create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) {
+            return message_104_ptr(new message_104(tx, rx, vl, cs));
+        }
+
+        message_104_ptr message_104::create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) {
+            return message_104_ptr(new message_104(tx, rx, vl));
+        }
+
+        size_t message_104::body_length() const {
+            size_t bl = 0;
+            if (header().size() == apci_length) {
+                if (header()[0] == FC_START104) {
+                    bl = static_cast<size_t> (*((unum8*) & header()[1]));
+                    if (bl >= 4) {
+                        bl -= 4;
+                        return bl;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        message_104::apcitype message_104::type() const {
+            if (header().size() < apci_length)
+                return Null_type;
+            octet_sequence::value_type mk = header()[2];
+            if (!(header()[2]&1))
+                return I_type;
+            else if (header()[2]&3)
+                return U_type;
+            return S_type;
+        }
+
+        message_104::apcitypeU message_104::typeU() const {
+            if (header().size() < apci_length)
+                return NULLu;
+            octet_sequence::value_type mk = header()[2];
+            if (mk & 3) {
+                switch (0x3F & ((mk & 0xFC) >> 2)) {
+                    case 1: return STARTDTact;
+                    case 2: return STARTDTcon;
+                    case 4: return STOPDTact;
+                    case 8: return STOPDTcon;
+                    case 16: return TESTFRact;
+                    case 32: return TESTFRcon;
+                    default:
+                    {
+                    }
+                }
+            }
+            return NULLu;
+        }
+
+        tcpcounter_type message_104::tx() const {
+            if (header().size() < apci_length)
+                return 0;
+            return (((* reinterpret_cast<const tcpcounter_type*> (&header()[2])) >> 1) & 0x7FFF);
+        }
+
+        tcpcounter_type message_104::rx() const {
+            if (header().size() < apci_length)
+                return 0;
+            return (((* reinterpret_cast<const tcpcounter_type*> (&header()[4])) >> 1) & 0x7FFF);
+        }
+
+        octet_sequence& message_104::header_prepare() {
+            header().clear();
+            header().assign(apci_length, 0);
+            return header();
+        }
+
+        octet_sequence& message_104::body_prepare() {
+            body().clear();
+            if (body_length())
+                body().assign(body_length(), 0);
+            return body();
+        }
+        
+        bool message_104::get(dataobject_vct& rslt){
+            if (body_){
+                asdu_body asdu(body_);
+                return asdu.get(rslt);
+            }
+            return false;
+        }       
+
+        void message_104::encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx, tcpcounter_type rx) {
+            header().clear();
+            unum8 tmp_length = body().size() + 4;
+            header().push_back(FC_START104);
+            header().push_back(tmp_length);
+            switch (tp) {
+                case S_type:
+                {
+                    unum16 tmprx = (rx << 1) & 0xFFFE;
+                    header().insert(header().end(), (const char*) &HD104_U_IND, (const char*) &HD104_U_IND + 2);
+                    header().insert(header().end(), (const char*) &tmprx, (const char*) &tmprx + 2);
+                    break;
+                }
+                case U_type:
+                {
+                    switch (tpu) {
+                        case TESTFRact:
+                        {
+                            header().insert(header().end(), (const char*) &HD104_TESTFRact, (const char*) &HD104_TESTFRact + 4);
+                            break;
+                        }
+                        case TESTFRcon:
+                        {
+                            header().insert(header().end(), (const char*) &HD104_TESTFRcon, (const char*) &HD104_TESTFRcon + 4);
+                            break;
+                        }
+                        case STARTDTact:
+                        {
+                            header().insert(header().end(), (const char*) &HD104_STARTDTact, (const char*) &HD104_STARTDTact + 4);
+                            break;
+                        }
+                        case STARTDTcon:
+                        {
+                            header().insert(header().end(), (const char*) &HD104_STARTDTcon, (const char*) &HD104_STARTDTcon + 4);
+                            break;
+                        }
+                        case STOPDTact:
+                        {
+                            header().insert(header().end(), (const char*) &HD104_STOPDTact, (const char*) &HD104_STOPDTact + 4);
+                            break;
+                        }
+                        case STOPDTcon:
+                        {
+                            header().insert(header().end(), (const char*) &HD104_STOPDTcon, (const char*) &HD104_STOPDTcon + 4);
+                            break;
+                        }
+                        default:
+                        {
+
+                        }
+                    }
+                    break;
+                }
+                case I_type:
+                {
+                    unum16 tmptx = (tx << 1) & 0xFFFE;
+                    unum16 tmprx = (rx << 1) & 0xFFFE;
+                    header().insert(header().end(), (const char*) &tmptx, (const char*) &tmptx + 2);
+                    header().insert(header().end(), (const char*) &tmprx, (const char*) &tmprx + 2);
+                    break;
+                }
+                default:
+                {
+
+                }
+            }
+        }
+
+        void message_104::encode_body(const dataobject& vl, cause_type cs) {
+            body().clear();
+            type_id tmptype = vl.type();
+            body().push_back(tmptype);
+            body().insert(body().end(), '\x1');
+            body().push_back(cs);
+            body().insert(body().end(), '\x0');
+            device_address tmpdev = vl.devnum();
+            body().insert(body().end(), (const char*) &tmpdev, (const char*) &tmpdev + 2);
+            data_address tmpaddr = vl.address();
+            body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
+            body().insert(body().end(), vl.data().begin(), vl.data().end());
+        }
+
+        void message_104::encode_body(const asdu_body& vl) {
+            body_ = vl.body_ptr();
+        }         
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,6 +364,9 @@ namespace dvnci {
                     }
                     case message_104::I_type:{
                         rx_=resp->tx();
+                        dataobject_vct rslt;
+                        if (resp->get(rslt))
+                            data_.insert(rslt.begin(),rslt.end());
                         if (socket_.available()) {
                             break;
                         }
