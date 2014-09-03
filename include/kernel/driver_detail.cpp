@@ -11,35 +11,42 @@ namespace dvnci {
     namespace driver {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        
-       bool calculate_ccitt_crc (const std::string& src, num16& crc, std::string::size_type strt) {
-            if (src.size() > strt) {
-                for (std::string::size_type it = strt; it < src.size(); ++it ) {
-                    crc = crc ^ (num16) src.at(it) << 8;
-                    for ( num16 j = 0; j < 8; j++ ) {
-                        if (crc & 0x8000) crc = (crc << 1) ^ 0x1021;
-                        else crc <<= 1;}}
-                return true;}
-            return false;}
 
-        bool insert_ccitt_crc (std::string& src, std::string::size_type strt) {
+        bool calculate_ccitt_crc(const std::string& src, num16& crc, std::string::size_type strt) {
+            if (src.size() > strt) {
+                for (std::string::size_type it = strt; it < src.size(); ++it) {
+                    crc = crc ^ (num16) src.at(it) << 8;
+                    for (num16 j = 0; j < 8; j++) {
+                        if (crc & 0x8000) crc = (crc << 1) ^ 0x1021;
+                        else crc <<= 1;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        bool insert_ccitt_crc(std::string& src, std::string::size_type strt) {
             num16 crc = 0;
             if (calculate_ccitt_crc(src, crc, strt)) {
                 char Lcrc = static_cast<char> ((crc & 0xFF));
                 crc = (crc & 0xFF00) >> 8;
                 char Hcrc = static_cast<char> (crc);
                 src = src + std::string((char*) &Hcrc, 1) + std::string((char*) &Lcrc, 1);
-                return true;}
-            return false;}
+                return true;
+            }
+            return false;
+        }
 
-        bool check_and_clear_ccitt_crc (std::string& src, std::string::size_type strt) {
+        bool check_and_clear_ccitt_crc(std::string& src, std::string::size_type strt) {
             if (src.size()<(3 + strt)) return false;
             num16 crc = 0;
             if (calculate_ccitt_crc(src, crc, strt)) {
-                src = src.substr(0 , src.size() - 2);
-                return (crc == 0);}
-            return false;}
+                src = src.substr(0, src.size() - 2);
+                return (crc == 0);
+            }
+            return false;
+        }
 
 
 
@@ -68,10 +75,11 @@ Table of CRC values for high–order byte */
             0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01,
             0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
             0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81,
-            0x40} ;
+            0x40
+        };
         /*Low-Order Byte Table
        Table of CRC values for low–order byte */
-        const unum8  auchCRCLo[] = {
+        const unum8 auchCRCLo[] = {
             0x00, 0xC0, 0xC1, 0x01, 0xC3, 0x03, 0x02, 0xC2, 0xC6, 0x06, 0x07, 0xC7, 0x05, 0xC5, 0xC4,
             0x04, 0xCC, 0x0C, 0x0D, 0xCD, 0x0F, 0xCF, 0xCE, 0x0E, 0x0A, 0xCA, 0xCB, 0x0B, 0xC9, 0x09,
             0x08, 0xC8, 0xD8, 0x18, 0x19, 0xD9, 0x1B, 0xDB, 0xDA, 0x1A, 0x1E, 0xDE, 0xDF, 0x1F, 0xDD,
@@ -89,66 +97,78 @@ Table of CRC values for high–order byte */
             0x5D, 0x9D, 0x5F, 0x9F, 0x9E, 0x5E, 0x5A, 0x9A, 0x9B, 0x5B, 0x99, 0x59, 0x58, 0x98, 0x88,
             0x48, 0x49, 0x89, 0x4B, 0x8B, 0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C,
             0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80,
-            0x40};
-        
-        
+            0x40
+        };
+
         bool calculate_ibm_crc16(const std::string& src, num16& crc, std::string::size_type strt) {
             if (src.size() <= strt) return false;
-            unum8 uchCRCHi = 0xFF ;
-            unum8 uchCRCLo = 0xFF ;
+            unum8 uchCRCHi = 0xFF;
+            unum8 uchCRCLo = 0xFF;
             unum8 uIndex = 0;
             std::string::size_type it = strt;
             while (it < src.size()) {
-                uIndex = uchCRCLo ^ src.at(it++) ;
-                uchCRCLo = uchCRCHi ^ auchCRCHi[uIndex] ;
-                uchCRCHi = auchCRCLo[uIndex] ;}
+                uIndex = uchCRCLo ^ src.at(it++);
+                uchCRCLo = uchCRCHi ^ auchCRCHi[uIndex];
+                uchCRCHi = auchCRCLo[uIndex];
+            }
             crc = uchCRCLo;
-            crc = (crc << 8) | (uchCRCHi) ;
-            return true;}
+            crc = (crc << 8) | (uchCRCHi);
+            return true;
+        }
 
-        bool insert_ibm_crc16 (std::string& src, std::string::size_type strt) {
+        bool insert_ibm_crc16(std::string& src, std::string::size_type strt) {
             num16 crc = 0;
             if (calculate_ibm_crc16(src, crc, strt)) {
                 char Lcrc = static_cast<char> ((crc & 0xFF));
                 crc = (crc & 0xFF00) >> 8;
                 char Hcrc = static_cast<char> (crc);
                 src = src + std::string((char*) &Hcrc, 1) + std::string((char*) &Lcrc, 1);
-                return true;}
-            return false;}
+                return true;
+            }
+            return false;
+        }
 
-        bool check_and_clear_ibm_crc16 (std::string& src, std::string::size_type strt) {
+        bool check_and_clear_ibm_crc16(std::string& src, std::string::size_type strt) {
             if (src.size()<(3 + strt)) return false;
             num16 crc = 0;
             if (calculate_ibm_crc16(src, crc, strt)) {
-                src = src.substr(0 , src.size() - 2);
-                return (crc == 0);}
-            return false;}
-        
-        
-        
-        //////////////////////////////////////////////////////////////
-        
-         ns_error abstract_protocol::operator<<(block& blk) {
-                if (!ios) return error(ERROR_IO_NOLINKSTREAM);
-                error(0);
-                if (!error(readblock(blk)))
-                    parse_response(rdata(), blk);
-                else
-                    clearbuff();
-                return error();}
+                src = src.substr(0, src.size() - 2);
+                return (crc == 0);
+            }
+            return false;
+        }
 
-         ns_error abstract_protocol::operator<<(commands_vect& comds) {
-                if (!ios) return error(ERROR_IO_NOLINKSTREAM);
+
+
+        //////////////////////////////////////////////////////////////
+
+        ns_error abstract_protocol::operator<<(block& blk) {
+            if (!ios) return error(ERROR_IO_NOLINKSTREAM);
+            error(0);
+            if (!error(readblock(blk)))
+                parse_response(rdata(), blk);
+            else
+                clearbuff();
+            return error();
+        }
+
+        ns_error abstract_protocol::operator<<(commands_vect& comds) {
+            if (!ios) return error(ERROR_IO_NOLINKSTREAM);
+            error(0);
+            for (commands_vect::const_iterator it = comds.begin(); it != comds.end(); ++it) {
                 error(0);
-                for (commands_vect::const_iterator it = comds.begin(); it != comds.end(); ++it) {
-                    error(0);
-                    std::string tmpvl;
-                    if (!preapare_cmd_request(tmpvl, *it)) {
-                        DEBUG_VAL_DVNCI(tmpvl)
-                        if (!tmpvl.empty()) {
-                            if (error(writecmd(tmpvl, *it))) {
-                                clearbuff();};}}}
-                return error(0);}
+                std::string tmpvl;
+                if (!preapare_cmd_request(tmpvl, *it)) {
+                    DEBUG_VAL_DVNCI(tmpvl)
+                    if (!tmpvl.empty()) {
+                        if (error(writecmd(tmpvl, *it))) {
+                            clearbuff();
+                        };
+                    }
+                }
+            }
+            return error(0);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,146 +189,192 @@ Table of CRC values for high–order byte */
                 dt_size = it->first->size();
                 bitnm = getbitnum(strtit, it);
                 if (get_data_block(dbk, vl, adr_offset, dt_size)) {
-                    parse_response_impl(vl, it->first, bitnm);}
-                else {
-                    it->first->error(ERROR_IO_NO_DATA);}}
-            return error(0);}
+                    parse_response_impl(vl, it->first, bitnm);
+                } else {
+                    it->first->error(ERROR_IO_NO_DATA);
+                }
+            }
+            return error(0);
+        }
 
         ns_error flatmemory_value_manager::preapare_cmd_request(std::string& val, parcel_ptr cmd) {
             error(0);
             size_t bitnm = cmd->indx();
-            preapare_cmd_request_impl(val, cmd, bitnm );
-            return error(0);}
+            preapare_cmd_request_impl(val, cmd, bitnm);
+            return error(0);
+        }
 
         ns_error flatmemory_value_manager::parse_response_impl(std::string& val, parcel_ptr prcl, size_t bitn) {
 
             if (!spec_protocol_convertion_out(val, bitn)) {
-                return error(0);}
+                return error(0);
+            }
             if (bitn != NULL_BIT_NUM) {
                 if (!val.empty()) {
-                    prcl->value(static_cast<bool> ((val.at(0) & (0x01 << bitn))));}
-                else {
-                    prcl->error(ERROR_IO_NO_DATA);}}
-            else {
-                prcl->value_byte_seq(val);}
-            return error(0);}
+                    prcl->value(static_cast<bool> ((val.at(0) & (0x01 << bitn))));
+                } else {
+                    prcl->error(ERROR_IO_NO_DATA);
+                }
+            } else {
+                prcl->value_byte_seq(val);
+            }
+            return error(0);
+        }
 
         bool flatmemory_value_manager::get_data_block(const std::string& dbk, std::string& vl, std::string::size_type offset, std::string::size_type dtsize) {
             if ((offset + dtsize) > dbk.size()) return false;
             vl = dbk.substr(offset, dtsize);
-            return true;}
+            return true;
+        }
 
         ns_error flatmemory_value_manager::preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn) {
-            if (cmd->isvalue()){
-            short_value tmp = cmd->value();
-            switch (cmd->type()) {
-                case TYPE_NUM64:{
+            if (cmd->isvalue()) {
+                short_value tmp = cmd->value();
+                switch (cmd->type()) {
+                    case TYPE_NUM64:
+                    {
                         val = primtype_to_string<num64 > (tmp.value<num64>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                case TYPE_UNUM64:{
+                        return error(0);
+                    }
+                    case TYPE_UNUM64:
+                    {
                         val = primtype_to_string<unum64 > (tmp.value<unum64>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                case TYPE_NUM32:{
+                        return error(0);
+                    }
+                    case TYPE_NUM32:
+                    {
                         val = primtype_to_string<num64 > (tmp.value<num32>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                case TYPE_UNUM32:{
+                        return error(0);
+                    }
+                    case TYPE_UNUM32:
+                    {
                         val = primtype_to_string<unum32 > (tmp.value<unum32>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                case TYPE_NUM16:{
+                        return error(0);
+                    }
+                    case TYPE_NUM16:
+                    {
                         val = primtype_to_string<unum16 > (tmp.value<num16>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                case TYPE_UNUM16:{
+                        return error(0);
+                    }
+                    case TYPE_UNUM16:
+                    {
                         val = primtype_to_string<unum16 > (tmp.value<unum16>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                case TYPE_NUM8:{
+                        return error(0);
+                    }
+                    case TYPE_NUM8:
+                    {
                         val = primtype_to_string<num8 > (tmp.value<num8>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                case TYPE_UNUM8:{
+                        return error(0);
+                    }
+                    case TYPE_UNUM8:
+                    {
                         val = primtype_to_string<unum8 > (tmp.value<unum8>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                case TYPE_NODEF:
-                case TYPE_DOUBLE:{
+                        return error(0);
+                    }
+                    case TYPE_NODEF:
+                    case TYPE_DOUBLE:
+                    {
                         val = primtype_to_string<double > (tmp.value<double>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                case TYPE_FLOAT:{
+                        return error(0);
+                    }
+                    case TYPE_FLOAT:
+                    {
                         val = primtype_to_string<float > (tmp.value<float>());
                         spec_protocol_convertion_in(val);
-                        return error(0);}
-                default:{}}}
-            return error(ERROR_IO_NO_GENERATE_REQ);}
-        
-     ///////////////////////////////////////////////////////////////////////////////////////////////////
-        
-            bool base_device_service::init() {
-                if (init_) return true;
-                if (!io_protocolbuilder) return false;
-                if (!io_protocol) io_protocol = io_protocolbuilder->build(link, lasterror);
+                        return error(0);
+                    }
+                    default:
+                    {
+                    }
+                }
+            }
+            return error(ERROR_IO_NO_GENERATE_REQ);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        bool base_device_service::init() {
+            if (init_) return true;
+            if (!io_protocolbuilder) return false;
+            if (!io_protocol) io_protocol = io_protocolbuilder->build(link, lasterror);
+            if (!io_protocol) return false;
+            init_ = true;
+            connected();
+            return true;
+        };
+
+        bool base_device_service::connected() {
+            if (init_) {
+                if ((connectred_) && (connectredinit_)) return true;
                 if (!io_protocol) return false;
-                init_ = true;
-                connected();
-                return true;};
-
-            bool base_device_service::connected() {
-                if (init_) {
-                  if ((connectred_) && (connectredinit_))  return true;
-                  if (!io_protocol) return false;
-                  if ((!connectred_) && (io_protocol->connect())) {
+                if ((!connectred_) && (io_protocol->connect())) {
                     error(io_protocol->error());
-                    return false;}
-                  connectred_=true;
-                  if (!afterinit()) {
+                    return false;
+                }
+                connectred_ = true;
+                if (!afterinit()) {
                     lasterror = ERROR_IO_NOINIT_PROTOCOL;
-                    return false;}
-                  connectredinit_=true;}
-                return true;};
+                    return false;
+                }
+                connectredinit_ = true;
+            }
+            return true;
+        };
 
-            bool base_device_service::afterinit() {
-                return ((io_protocol) && (io_protocol->init()));};
+        bool base_device_service::afterinit() {
+            return ((io_protocol) && (io_protocol->init()));
+        };
 
-            bool base_device_service::uninit() {
-                if (!init_) return true;
-                if (!io_protocolbuilder) return true;
-                if (!io_protocol) return true;
-                beforeuninit();
-                connectred_=false;
-                connectredinit_=false;
-                error(io_protocol->disconnect());
-                init_ = false;
-                return true;};
+        bool base_device_service::uninit() {
+            if (!init_) return true;
+            if (!io_protocolbuilder) return true;
+            if (!io_protocol) return true;
+            beforeuninit();
+            connectred_ = false;
+            connectredinit_ = false;
+            error(io_protocol->disconnect());
+            init_ = false;
+            return true;
+        };
 
-            bool base_device_service::beforeuninit() {
-                return ((io_protocol) && (io_protocol->uninit()));};
-                
-            ns_error base_device_service::read(block& blk) {
-                check_need_util();
-                if (io_protocol) return error((*io_protocol) << blk);
-                return error(ERROR_IO_NOINIT_PROTOCOL);};
-                
+        bool base_device_service::beforeuninit() {
+            return ((io_protocol) && (io_protocol->uninit()));
+        };
 
-            ns_error base_device_service::write(commands_vect& comds) {
-                if (io_protocol) return error((*io_protocol) << comds);
-                return error(ERROR_IO_NOINIT_PROTOCOL);};
+        ns_error base_device_service::read(block& blk) {
+            check_need_util();
+            if (io_protocol) return error((*io_protocol) << blk);
+            return error(ERROR_IO_NOINIT_PROTOCOL);
+        };
+
+        ns_error base_device_service::write(commands_vect& comds) {
+            if (io_protocol) return error((*io_protocol) << comds);
+            return error(ERROR_IO_NOINIT_PROTOCOL);
+        };
+
+        bool base_device_service::is_need_util() {
+            if (util_interval_ <= 0) return false;
+            return secondsbetween(util_time(), now()) > util_interval_;
+        }
+
+        void base_device_service::check_need_util() {
+            if (io_protocol) {
+                if (is_need_util()) {
+                    if (io_protocol->utiloperation(util_device_set_))
+                        util_time_ = now();
+                }
+            }
+        }
 
 
-
-            bool base_device_service::is_need_util(){
-                if (util_interval_<=0) return false;
-                return secondsbetween(util_time(),now())>util_interval_;}
-
-            void base_device_service::check_need_util(){
-                if (io_protocol){
-                   if (is_need_util()){
-                       if (io_protocol->utiloperation(util_device_set_))
-                          util_time_= now();}}}
-        
-
-}}
+    }
+}

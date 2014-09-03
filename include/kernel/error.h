@@ -11,8 +11,8 @@
 #include <kernel/constdef.h>
 
 namespace dvnci {
-    
-    
+
+
     //  < 0x100  предупреждения и уведомления
 
 
@@ -27,7 +27,7 @@ namespace dvnci {
     // некорректный ответ
     const ns_error NS_ERROR_ERRRESP = 0x400;
     // ошибочная операция 
-    const ns_error NS_ERROR_ENTITY_OPERATE = 0x10E;    
+    const ns_error NS_ERROR_ENTITY_OPERATE = 0x10E;
     // новый объект не может быть размещен в разделяемой памяти, необходим ремапинг объектов памяти
     const ns_error RESERV_MEMSHARE_EXTEND = 0x10F;
     // строка слишком длинна
@@ -91,7 +91,7 @@ namespace dvnci {
     // источник занят, необходимо подождать
     const ns_error ERROR_SOURSEBUSY = 0x20F;
     // задание удалено по таймауту
-    const ns_error ERROR_TASKTIMEOUT = 0x210;    
+    const ns_error ERROR_TASKTIMEOUT = 0x210;
     // канал не определен
     const ns_error ERROR_IO_DEVICE_CHANAL_NOT_DEF = 0x420;
     // таймут истек
@@ -139,37 +139,37 @@ namespace dvnci {
     // ошибка при выполнении запроса с базой данных
     const ns_error ERROR_DATABASE_EXEC = 0x441;
     // ошибка при выполнении запроса с базой данных
-    const ns_error ERROR_PROTOCOL_SEQ = 0x442;    
+    const ns_error ERROR_PROTOCOL_SEQ = 0x442;
     // ошибка при выполнении запроса с базой данных
-    const ns_error ERROR_PROTOCOL_ERROR = 0x443;      
-    
+    const ns_error ERROR_PROTOCOL_ERROR = 0x443;
+
     // DATABASE error
-    
+
     // нет соединения
-    const ns_error ERROR_DB_NOCONNECTION = 0x801; 
+    const ns_error ERROR_DB_NOCONNECTION = 0x801;
     // разрыв соединения
-    const ns_error ERROR_DB_REFUSECONNECTION = 0x802;    
+    const ns_error ERROR_DB_REFUSECONNECTION = 0x802;
     // неизвестная ошибка
-    const ns_error ERROR_DB_NODEF = 0x803;  
+    const ns_error ERROR_DB_NODEF = 0x803;
     // провайдер не опредеолен или не поддерживается
-    const ns_error ERROR_DB_NOPROVIDER = 0x804;    
+    const ns_error ERROR_DB_NOPROVIDER = 0x804;
     // ошибка авторизации
     const ns_error ERROR_DB_AUTH = 0x806;
     // неверный запрос
     const ns_error ERROR_DB_SQLREQ = 0x808;
     // нет файла описания
-    const ns_error ERROR_DB_NOTRENDDEF = 0x809; 
+    const ns_error ERROR_DB_NOTRENDDEF = 0x809;
     // не  найденн индекс для тега
-    const ns_error ERROR_DB_NOINDEX = 0x80A;     
-    
-    
-    
+    const ns_error ERROR_DB_NOINDEX = 0x80A;
+
     inline ns_error dvn_error(const ns_error& val) {
-        return val > 0xFF ? val : 0;}
-    
+        return val > 0xFF ? val : 0;
+    }
+
     inline ns_error dvn_warning(const ns_error& val) {
-        return val < 0x100 ? val : 0;}
-    
+        return val < 0x100 ? val : 0;
+    }
+
 
     class dvncierror;
 
@@ -177,39 +177,50 @@ namespace dvnci {
     typedef std::map<int, dvncierror, std::less<int>, std::allocator<int_dvncierror_pair > > int_dvncierror_map;
 
     class dvncierror {
+
     public:
 
-        dvncierror(ns_error cod = 0 , std::string _str_ = "", indx  _key_ = 0 ) {
+        dvncierror(ns_error cod = 0, std::string _str_ = "", indx _key_ = 0) {
             str_ = _str_;
             key_ = _key_;
-            code_ = cod;}
+            code_ = cod;
+        }
 
-        ~dvncierror() {}
+        ~dvncierror() {
+        }
 
         std::string str() const {
-            return str_;}
+            return str_;
+        }
 
         void str(const std::string& val) {
-            str_ = val;}
+            str_ = val;
+        }
 
         ns_error code() const {
-            return code_;}
+            return code_;
+        }
 
         indx key() const {
-            return key_;}
-        
+            return key_;
+        }
+
         operator bool() const {
-            return code_;}
+            return code_;
+        }
 
-        std::ostream & operator<< (std::ostream& os) {
-            return os << "code=" << code_ << " , str=" << str_ << ", key=" << key_ << std::endl;}
+        std::ostream & operator<<(std::ostream& os) {
+            return os << "code=" << code_ << " , str=" << str_ << ", key=" << key_ << std::endl;
+        }
 
-        friend std::ostream & operator<< (std::ostream& os, dvncierror& ns) {
-            return os << "code=" << ns.code_ << " , str=" << ns.str_ << ", key=" << ns.key_ << std::endl;}
+        friend std::ostream & operator<<(std::ostream& os, dvncierror& ns) {
+            return os << "code=" << ns.code_ << " , str=" << ns.str_ << ", key=" << ns.key_ << std::endl;
+        }
     private:
-        std::string   str_;
-        indx  key_;
-        ns_error     code_;} ;
+        std::string str_;
+        indx key_;
+        ns_error code_;
+    };
 }
 
 #endif	/* _NS_ERROR_H */

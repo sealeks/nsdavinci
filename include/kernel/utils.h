@@ -37,13 +37,13 @@ namespace dvnci {
 
 
     bool check_utf8(const std::string& val);
-    
+
     std::wstring utf8_to_wstr(const std::string& val);
-    bool utf8_to_wstr(const std::string& val, std::wstring& rslt); 
+    bool utf8_to_wstr(const std::string& val, std::wstring& rslt);
     std::string wstr_to_utf8(const std::wstring& val);
     bool wstr_to_utf8(const std::wstring& val, std::string& rslt);
-    
-    
+
+
 
     void string_to_pascalstr(void* val, const std::string& source, size_t len);
     std::string pascalstr_to_string(void* dest);
@@ -84,11 +84,11 @@ namespace dvnci {
     std::wstring retremoved_namespace_delimit(const std::wstring& vl);
     std::string get_namespace_delimit(std::string& vl);
     std::wstring get_namespace_delimit(std::wstring& vl);
-    
-    
+
+
     std::string attribute_expression(std::string val);
     std::wstring attribute_expression(std::wstring val);
-    
+
     std::string attribute_default_expression(std::string val);
     std::wstring attribute_default_expression(std::wstring val);
 
@@ -105,19 +105,24 @@ namespace dvnci {
     template <typename T> bool string_to_primtype(const std::string& dblk, T& vl) {
         if (sizeof (vl) > dblk.size()) return false;
         vl = *(reinterpret_cast<T*> (const_cast<char*> (dblk.data())));
-        return true;}
+        return true;
+    }
 
     template <typename T> std::string primtype_to_string(T vl) {
-        return std::string(((const char*) &vl), sizeof (T));}
+        return std::string(((const char*) &vl), sizeof (T));
+    }
 
     inline static num16 be_le_convert_num16(num16 vl) {
-        return (((vl >> 8) & 0xFF) | (0xFF00 & (vl << 8)));}
+        return (((vl >> 8) & 0xFF) | (0xFF00 & (vl << 8)));
+    }
 
     inline static num32 be_le_convert_num32(num32 vl) {
-        return (((vl >> 16) & 0xFFFF) | (0xFFFF0000 & (vl << 16)));}
+        return (((vl >> 16) & 0xFFFF) | (0xFFFF0000 & (vl << 16)));
+    }
 
     inline static num64 be_le_convert_num64(num64 vl) {
-        return (((vl >> 32) & 0xFFFFFFFFLL) | (0xFFFFFFFF00000000LL & (vl << 32)));}
+        return (((vl >> 32) & 0xFFFFFFFFLL) | (0xFFFFFFFF00000000LL & (vl << 32)));
+    }
 
     bool be_le16_convert_string(std::string& vl);
 
@@ -157,22 +162,27 @@ namespace dvnci {
     template <typename T>
     inline T cycl_btlft(T vl, size_t n) {
         n %= (sizeof (T) * 8);
-        return ((vl << n) | (vl >> ((sizeof (T)* 8) - n)));}
+        return ((vl << n) | (vl >> ((sizeof (T)* 8) - n)));
+    }
 
     template <typename T>
     inline T cycl_btrgt(T vl, size_t n) {
         n %= (sizeof (T) * 8);
-        return ((vl >> n) | (vl << ((sizeof (T)* 8) - n)));}
+        return ((vl >> n) | (vl << ((sizeof (T)* 8) - n)));
+    }
 
     static inline char hexchar_to_char(char vl) {
         return ((vl >= 0x30) && (vl <= 0x39)) ? (vl - 0x30) :
-                ((vl >= 0x41) && (vl <= 0x46)) ? (vl - 0x37) : bad_hex_char;}
+                ((vl >= 0x41) && (vl <= 0x46)) ? (vl - 0x37) : bad_hex_char;
+    }
 
     static inline char octchar_to_char(char vl) {
-        return ((vl >= 0x30) && (vl <= 0x37)) ? (vl - 0x30) : bad_oct_char;}
+        return ((vl >= 0x30) && (vl <= 0x37)) ? (vl - 0x30) : bad_oct_char;
+    }
 
     static inline char binchar_to_char(char vl) {
-        return ((vl >= 0x30) && (vl <= 0x31)) ? (vl - 0x30) : bad_bin_char;}
+        return ((vl >= 0x30) && (vl <= 0x31)) ? (vl - 0x30) : bad_bin_char;
+    }
 
     template <typename T> bool hexstr_to(std::string val, T& result) {
         upper_and_trim(val);
@@ -183,8 +193,10 @@ namespace dvnci {
         for (std::string::size_type it = 0; it < val.size(); ++it) {
             tmpch = hexchar_to_char(val.at(it));
             if (tmpch == bad_hex_char) return false;
-            result = ((result << 4) | (tmpch & 0xF));}
-        return true;}
+            result = ((result << 4) | (tmpch & 0xF));
+        }
+        return true;
+    }
 
     template <typename T> bool octstr_to(std::string val, T& result) {
         upper_and_trim(val);
@@ -195,8 +207,10 @@ namespace dvnci {
         for (std::string::size_type it = 0; it < val.size(); ++it) {
             tmpch = octchar_to_char(val.at(it));
             if (tmpch == bad_oct_char) return false;
-            result = ((result << 3) | (tmpch & 0x7));}
-        return true;}
+            result = ((result << 3) | (tmpch & 0x7));
+        }
+        return true;
+    }
 
     template <typename T> bool binstr_to(std::string val, T& result) {
         upper_and_trim(val);
@@ -207,78 +221,95 @@ namespace dvnci {
         for (std::string::size_type it = 0; it < val.size(); ++it) {
             tmpch = binchar_to_char(val.at(it));
             if (tmpch == bad_bin_char) return false;
-            result = ((result << 1) | (tmpch & 0x1));}
-        return true;}
+            result = ((result << 1) | (tmpch & 0x1));
+        }
+        return true;
+    }
 
     template <typename T> bool bcd_to_dec(const T& src, T& vl) {
         vl = 0;
         for (size_t i = sizeof (T) * 2; i > 0; --i) {
             num8 tmp8 = (src >> ((i - 1) * 4)) & 0xF;
             if (tmp8 > 9) return false;
-            else vl = vl * 10 + tmp8;}
-        return true;}
+            else vl = vl * 10 + tmp8;
+        }
+        return true;
+    }
 
     template <typename T> bool bcd_to_dec(T& vl) {
         T tmp = 0;
         bool rslt = bcd_to_dec<T > (vl, tmp);
         vl = tmp;
-        return rslt;}
+        return rslt;
+    }
 
     template <typename T> bool dec_to_bcd(const T& src, T& vl) {
         vl = 1;
         size_t i = sizeof (T);
         while (i--) {
-            vl *= 100;}
+            vl *= 100;
+        }
         if (src >= vl) return false;
         vl = 0;
         T tmp = src;
         i = 0;
         while (tmp) {
             vl |= ((tmp % 10) << (4 * i++));
-            tmp /= 10;}
-        return true;}
+            tmp /= 10;
+        }
+        return true;
+    }
 
     template <typename T> bool dec_to_bcd(T& vl) {
         T tmp = 0;
         bool rslt = dec_to_bcd<T > (vl, tmp);
         vl = tmp;
-        return rslt;}
+        return rslt;
+    }
 
     template <typename T> std::string to_str(const T& val) {
 
         std::string result = "";
         try {
-            result = boost::lexical_cast<std::string > (val);}
-        catch (boost::bad_lexical_cast) {
-            return "";}
-        return result;}
+            result = boost::lexical_cast<std::string > (val);
+        }        catch (boost::bad_lexical_cast) {
+            return "";
+        }
+        return result;
+    }
 
     template <typename T> std::wstring to_wstr(const T& val) {
 
         std::wstring result = L"";
         try {
-            result = boost::lexical_cast<std::wstring > (val);}
-        catch (boost::bad_lexical_cast) {
-            return L"";}
-        return result;}
+            result = boost::lexical_cast<std::wstring > (val);
+        }        catch (boost::bad_lexical_cast) {
+            return L"";
+        }
+        return result;
+    }
 
     template<typename T> std::string to_str(const T& vl, const std::string& frmt) {
         if (frmt.empty()) return to_str<T > (vl);
         try {
             boost::format f(frmt.c_str());
             f % vl;
-            return f.str();}
-        catch (...) {}
-        return to_str<T > (vl);}
+            return f.str();
+        }        catch (...) {
+        }
+        return to_str<T > (vl);
+    }
 
     template<typename T> std::wstring to_wstr(const T& vl, const std::wstring& frmt) {
         if (frmt.empty()) return to_str<T > (vl);
         try {
             boost::format f(frmt.c_str());
             f % vl;
-            return f.str();}
-        catch (...) {}
-        return to_str<T > (vl);}
+            return f.str();
+        }        catch (...) {
+        }
+        return to_str<T > (vl);
+    }
 
     std::string to_str(const datetime& val);
     std::wstring to_wstr(const datetime& val);
@@ -286,18 +317,22 @@ namespace dvnci {
     template <typename T> bool str_to(const std::string& val, T& result) {
 
         try {
-            result = boost::lexical_cast<T > (val);}
-        catch (boost::bad_lexical_cast) {
-            return false;}
-        return true;}
+            result = boost::lexical_cast<T > (val);
+        }        catch (boost::bad_lexical_cast) {
+            return false;
+        }
+        return true;
+    }
 
     template <typename T> bool str_to(const std::wstring& val, T& result) {
 
         try {
-            result = boost::lexical_cast<T > (val);}
-        catch (boost::bad_lexical_cast) {
-            return false;}
-        return true;}
+            result = boost::lexical_cast<T > (val);
+        }        catch (boost::bad_lexical_cast) {
+            return false;
+        }
+        return true;
+    }
 
     bool str_to(const std::string& val, datetime& result);
     bool str_to(const std::wstring& val, datetime& result);
@@ -305,16 +340,20 @@ namespace dvnci {
     template <typename T> T str_to(const std::string& val, const T& def = 0) {
 
         try {
-            return boost::lexical_cast<T > (val);}
-        catch (boost::bad_lexical_cast) {
-            return def;}}
+            return boost::lexical_cast<T > (val);
+        }        catch (boost::bad_lexical_cast) {
+            return def;
+        }
+    }
 
     template <typename T> T str_to(const std::wstring& val, const T& def = 0) {
 
         try {
-            return boost::lexical_cast<T > (val);}
-        catch (boost::bad_lexical_cast) {
-            return def;}}
+            return boost::lexical_cast<T > (val);
+        }        catch (boost::bad_lexical_cast) {
+            return def;
+        }
+    }
 
 
     datetime str_to(const std::string& val, const datetime& def = nill_time);
@@ -324,23 +363,28 @@ namespace dvnci {
 
         result = def;
         try {
-            result = boost::lexical_cast<T > (val);}
-        catch (boost::bad_lexical_cast) {
-            result = def;}}
+            result = boost::lexical_cast<T > (val);
+        }        catch (boost::bad_lexical_cast) {
+            result = def;
+        }
+    }
 
     template <typename T> void str_to(const std::wstring& val, const T& def, T& result) {
 
         result = def;
         try {
-            result = boost::lexical_cast<T > (val);}
-        catch (boost::bad_lexical_cast) {
-            result = def;}}
+            result = boost::lexical_cast<T > (val);
+        }        catch (boost::bad_lexical_cast) {
+            result = def;
+        }
+    }
 
     void str_to(const std::string& val, const datetime& def, datetime& result);
     void str_to(const std::wstring& val, const datetime& def, datetime& result);
 
     template <typename T> T abs(const T& v) {
-        return v >= 0 ? v : -v;}
+        return v >= 0 ? v : -v;
+    }
 
     template <> bool abs<bool>(const bool& v);
 
@@ -357,43 +401,47 @@ namespace dvnci {
     template <> std::string abs<std::string>(const std::string& v);
 
     template <typename T> void in_bound(const T& min, const T& max, T& val) {
-        val = max < val ? max : min > val ? min : val;}
+        val = max < val ? max : min > val ? min : val;
+    }
 
     template <typename T> T in_bounded(const T& min, const T& max, T val) {
         val = max < val ? max : min > val ? min : val;
-        return val;}
+        return val;
+    }
 
-    template<typename T>  const T& from_num64_cast(const num64& val) {
-        return ((ptype_punned) (&val))->n64;}
+    template<typename T> const T& from_num64_cast(const num64& val) {
+        return ((ptype_punned) (&val))->n64;
+    }
 
-    template<>  const bool& from_num64_cast<bool>(const num64& val);
+    template<> const bool& from_num64_cast<bool>(const num64& val);
 
-    template<>  const num64& from_num64_cast<num64>(const num64& val);
+    template<> const num64& from_num64_cast<num64>(const num64& val);
 
-    template<>  const unum64& from_num64_cast<unum64>(const num64& val);
+    template<> const unum64& from_num64_cast<unum64>(const num64& val);
 
-    template<>  const num32& from_num64_cast<num32>(const num64& val);
+    template<> const num32& from_num64_cast<num32>(const num64& val);
 
-    template<>  const unum32& from_num64_cast<unum32>(const num64& val);
+    template<> const unum32& from_num64_cast<unum32>(const num64& val);
 
-    template<>  const num16& from_num64_cast<num16>(const num64& val);
+    template<> const num16& from_num64_cast<num16>(const num64& val);
 
-    template<>  const unum16& from_num64_cast<unum16>(const num64& val);
+    template<> const unum16& from_num64_cast<unum16>(const num64& val);
 
-    template<>  const num8& from_num64_cast<num8>(const num64& val);
+    template<> const num8& from_num64_cast<num8>(const num64& val);
 
-    template<>  const unum8& from_num64_cast<unum8>(const num64& val);
+    template<> const unum8& from_num64_cast<unum8>(const num64& val);
 
-    template<>  const float& from_num64_cast<float>(const num64& val);
+    template<> const float& from_num64_cast<float>(const num64& val);
 
-    template<>  const double& from_num64_cast<double>(const num64& val);
+    template<> const double& from_num64_cast<double>(const num64& val);
 
-    template<>  const datetime& from_num64_cast<datetime>(const num64& val);
+    template<> const datetime& from_num64_cast<datetime>(const num64& val);
 
     //template<>  const std::string& from_num64_cast<std::string>(const num64& val);
 
     template<typename T> num64 num64_cast(const T& val) {
-        return type_punned(val).n64;}
+        return type_punned(val).n64;
+    }
 
     template<> num64 num64_cast<datetime>(const datetime& val);
 
@@ -402,39 +450,67 @@ namespace dvnci {
     template<typename T> T num64_and_type_cast(const num64& value, tagtype type) {
 
         switch (type) {
-            case TYPE_DISCRET:{
-                return static_cast<T> (from_num64_cast<bool>(value));}
-            case TYPE_NUM64:{
-                return static_cast<T> (value);}
-            case TYPE_UNUM64:{
-                return static_cast<T> (from_num64_cast<unum64 > (value));}
-            case TYPE_NUM32:{
-                return static_cast<T> (from_num64_cast<num32 > (value));}
-            case TYPE_UNUM32:{
-                return static_cast<T> (from_num64_cast<unum32 > (value));}
-            case TYPE_NUM16:{
-                return static_cast<T> (from_num64_cast<num16 > (value));}
-            case TYPE_UNUM16:{
-                return static_cast<T> (from_num64_cast<unum16 > (value));}
-            case TYPE_NUM8:{
-                return static_cast<T> (from_num64_cast<num8 > (value));}
-            case TYPE_UNUM8:{
-                return static_cast<T> (from_num64_cast<unum8 > (value));}
-            case TYPE_DOUBLE:{
-                return static_cast<T> (from_num64_cast<double>(value));}
-            case TYPE_FLOAT:{
-                return static_cast<T> (from_num64_cast<float>(value));}
-            case TYPE_TEXT:{
-                return static_cast<T> (from_num64_cast<unum64 > (value));}
-            case TYPE_TM:{
-                return 0;}}
-        return static_cast<T> (from_num64_cast<double>(value));}
+            case TYPE_DISCRET:
+            {
+                return static_cast<T> (from_num64_cast<bool>(value));
+            }
+            case TYPE_NUM64:
+            {
+                return static_cast<T> (value);
+            }
+            case TYPE_UNUM64:
+            {
+                return static_cast<T> (from_num64_cast<unum64 > (value));
+            }
+            case TYPE_NUM32:
+            {
+                return static_cast<T> (from_num64_cast<num32 > (value));
+            }
+            case TYPE_UNUM32:
+            {
+                return static_cast<T> (from_num64_cast<unum32 > (value));
+            }
+            case TYPE_NUM16:
+            {
+                return static_cast<T> (from_num64_cast<num16 > (value));
+            }
+            case TYPE_UNUM16:
+            {
+                return static_cast<T> (from_num64_cast<unum16 > (value));
+            }
+            case TYPE_NUM8:
+            {
+                return static_cast<T> (from_num64_cast<num8 > (value));
+            }
+            case TYPE_UNUM8:
+            {
+                return static_cast<T> (from_num64_cast<unum8 > (value));
+            }
+            case TYPE_DOUBLE:
+            {
+                return static_cast<T> (from_num64_cast<double>(value));
+            }
+            case TYPE_FLOAT:
+            {
+                return static_cast<T> (from_num64_cast<float>(value));
+            }
+            case TYPE_TEXT:
+            {
+                return static_cast<T> (from_num64_cast<unum64 > (value));
+            }
+            case TYPE_TM:
+            {
+                return 0;
+            }
+        }
+        return static_cast<T> (from_num64_cast<double>(value));
+    }
 
 
     template<> datetime num64_and_type_cast<datetime>(const num64& val, tagtype type);
 
     template<> std::string num64_and_type_cast<std::string>(const num64& val, tagtype type);
-    
+
     template<> std::wstring num64_and_type_cast<std::wstring>(const num64& val, tagtype type);
 
     std::string num64_and_type_cast(const num64& val, tagtype type, const std::string& format);
@@ -444,33 +520,61 @@ namespace dvnci {
     template<typename T> num64 num64_from_vt_cast(const T& value, tagtype type) {
 
         switch (type) {
-            case TYPE_DISCRET:{
-                return num64_cast<bool>(static_cast<bool> (value));}
-            case TYPE_NUM64:{
-                return num64_cast<num64 > (static_cast<num64> (value));}
-            case TYPE_UNUM64:{
-                return num64_cast<unum64 > (static_cast<unum64> (value));}
-            case TYPE_NUM32:{
-                return num64_cast<num32 > (static_cast<num32> (value));}
-            case TYPE_UNUM32:{
-                return num64_cast<unum32 > (static_cast<unum32> (value));}
-            case TYPE_NUM16:{
-                return num64_cast<num16 > (static_cast<num16> (value));}
-            case TYPE_UNUM16:{
-                return num64_cast<unum16 > (static_cast<unum16> (value));}
-            case TYPE_NUM8:{
-                return num64_cast<num8 > (static_cast<num8> (value));}
-            case TYPE_UNUM8:{
-                return num64_cast<unum8 > (static_cast<unum8> (value));}
-            case TYPE_DOUBLE:{
-                return num64_cast<double>(static_cast<double> (value));};
-            case TYPE_FLOAT:{
-                return num64_cast<float>(static_cast<float> (value));}
-            case TYPE_TEXT:{
-                return num64_cast<unum64 > (static_cast<size_t> (value));}
-            case TYPE_TM:{
-                return 0;}}
-        return num64_cast<double>(static_cast<double> (value));}
+            case TYPE_DISCRET:
+            {
+                return num64_cast<bool>(static_cast<bool> (value));
+            }
+            case TYPE_NUM64:
+            {
+                return num64_cast<num64 > (static_cast<num64> (value));
+            }
+            case TYPE_UNUM64:
+            {
+                return num64_cast<unum64 > (static_cast<unum64> (value));
+            }
+            case TYPE_NUM32:
+            {
+                return num64_cast<num32 > (static_cast<num32> (value));
+            }
+            case TYPE_UNUM32:
+            {
+                return num64_cast<unum32 > (static_cast<unum32> (value));
+            }
+            case TYPE_NUM16:
+            {
+                return num64_cast<num16 > (static_cast<num16> (value));
+            }
+            case TYPE_UNUM16:
+            {
+                return num64_cast<unum16 > (static_cast<unum16> (value));
+            }
+            case TYPE_NUM8:
+            {
+                return num64_cast<num8 > (static_cast<num8> (value));
+            }
+            case TYPE_UNUM8:
+            {
+                return num64_cast<unum8 > (static_cast<unum8> (value));
+            }
+            case TYPE_DOUBLE:
+            {
+                return num64_cast<double>(static_cast<double> (value));
+            };
+            case TYPE_FLOAT:
+            {
+                return num64_cast<float>(static_cast<float> (value));
+            }
+            case TYPE_TEXT:
+            {
+                return num64_cast<unum64 > (static_cast<size_t> (value));
+            }
+            case TYPE_TM:
+            {
+                return 0;
+            }
+        }
+        return num64_cast<double>(static_cast<double> (value));
+    }
 
     template<> num64 num64_from_vt_cast<datetime>(const datetime& val, tagtype type);
 
@@ -491,10 +595,10 @@ namespace dvnci {
     datetime local_to_utc(const datetime& val);
     datetime utc_to_local(const datetime& val);
     boost::posix_time::time_duration time_zone_offset(const datetime& val);
-    double time_zone_hour_offset(const datetime& val);     
+    double time_zone_hour_offset(const datetime& val);
     num64 nownum64();
-    num64 nownum64_local();    
-    
+    num64 nownum64_local();
+
     boost::xtime utc_now();
 
     boost::xtime utc_now_plus_millsec(timeouttype tmout);
@@ -553,8 +657,8 @@ namespace dvnci {
     bool increporttime(datetime& val, reporttype tp, reporthisttype n = 1);
 
     // нормализация периода предыстории
-    void normilize_history_bound(vlvtype  type, reporthisttype& val);
-    void normilize_report_subperiod(vlvtype  type, reporthistdelt& val);
+    void normilize_history_bound(vlvtype type, reporthisttype& val);
+    void normilize_report_subperiod(vlvtype type, reporthistdelt& val);
 
 
     std::string role_to_str(rolesettype vl);
@@ -563,9 +667,11 @@ namespace dvnci {
 
     struct statistic_functor {
 
-        statistic_functor(repstattype tp) : type(tp), cnt(0), value(NULL_DOUBLE) {}
+        statistic_functor(repstattype tp) : type(tp), cnt(0), value(NULL_DOUBLE) {
+        }
 
-        ~statistic_functor() {}
+        ~statistic_functor() {
+        }
 
         void operator()(const dt_val_pair & vl);
         double countedvalue();
@@ -573,13 +679,16 @@ namespace dvnci {
     private:
         repstattype type;
         size_t cnt;
-        double value;} ;
+        double value;
+    };
 
     struct integr_statistic_functor {
 
-        integr_statistic_functor(const dt_val_pair & initvl) : lstpoint(initvl), cnt(0), value(NULL_DOUBLE) {}
+        integr_statistic_functor(const dt_val_pair & initvl) : lstpoint(initvl), cnt(0), value(NULL_DOUBLE) {
+        }
 
-        ~integr_statistic_functor() {}
+        ~integr_statistic_functor() {
+        }
 
         void operator()(const dt_val_pair & vl);
         double countedvalue();
@@ -587,7 +696,9 @@ namespace dvnci {
     private:
         dt_val_pair lstpoint;
         size_t cnt;
-        double value;} ;}
+        double value;
+    };
+}
 
 #endif	/* _NS_STRINGUTILS_H */
 

@@ -14,33 +14,35 @@ namespace dvnci {
 
     tagstruct::tagstruct(indx mid, indx grp) : id_(mid) {
         type(TYPE_NODEF);
-        minraw_=0;
-        maxraw_=0;
-        mineu_=num64_cast<double>(0);;
-        maxeu_=num64_cast<double>(100);
+        minraw_ = 0;
+        maxraw_ = 0;
+        mineu_ = num64_cast<double>(0);
+        ;
+        maxeu_ = num64_cast<double>(100);
         logdb(0.2);
         devdb(0.0);
-        alarmconst_=num64_cast<double>(0);
-        posname_=static_cast<num64>(0);
-        poscomment_=static_cast<num64>(0);
-        posbinding_=static_cast<num64>(0);
-        posonmsg_=static_cast<num64>(0);
-        posoffmsg_=static_cast<num64>(0);
-        posalarmmsg_=static_cast<num64>(0);
-        poseu_=static_cast<num64>(0);
-        alwactive_=static_cast<bool>(0);
+        alarmconst_ = num64_cast<double>(0);
+        posname_ = static_cast<num64> (0);
+        poscomment_ = static_cast<num64> (0);
+        posbinding_ = static_cast<num64> (0);
+        posonmsg_ = static_cast<num64> (0);
+        posoffmsg_ = static_cast<num64> (0);
+        posalarmmsg_ = static_cast<num64> (0);
+        poseu_ = static_cast<num64> (0);
+        alwactive_ = static_cast<bool> (0);
         unusepos1_ = 0;
         unusepos2_ = 0;
         util_helper_ = 0;
-        logged_=static_cast<num64>(false);
-        onmsged_=static_cast<num64>(false);
-        offmsged_=static_cast<num64>(false);
+        logged_ = static_cast<num64> (false);
+        onmsged_ = static_cast<num64> (false);
+        offmsged_ = static_cast<num64> (false);
         group(grp);
         agroup(npos);
         logkey(npos);
         reporthistory(1000);
         reportsubdelt(0);
-        reportstatistic(REPORT_STATISTIC_AVER);}
+        reportstatistic(REPORT_STATISTIC_AVER);
+    }
 
     void tagstruct::reportstatistic(repstattype val) {
         if (!IN_REPORTSET(type())) return;
@@ -51,10 +53,14 @@ namespace dvnci {
             case REPORT_STATISTIC_SUM:
             case REPORT_STATISTIC_MIN:
             case REPORT_STATISTIC_MAX:
-            case REPORT_STATISTIC_MOD:{
+            case REPORT_STATISTIC_MOD:
+            {
                 reportstatistic_ = tmp;
-                break;}
-            default: reportstatistic_ = 0;}}
+                break;
+            }
+            default: reportstatistic_ = 0;
+        }
+    }
 
     repstattype tagstruct::reportstatistic() const {
         if (!IN_REPORTSET(type())) return 0;
@@ -65,21 +71,26 @@ namespace dvnci {
             case REPORT_STATISTIC_SUM:
             case REPORT_STATISTIC_MIN:
             case REPORT_STATISTIC_MAX:
-            case REPORT_STATISTIC_MOD:{
+            case REPORT_STATISTIC_MOD:
+            {
                 return tmp;
-                break;}}
-        return 0;}
+                break;
+            }
+        }
+        return 0;
+    }
 
     onum tagstruct::landscape_range() const {
         if (IN_REPORTSET(static_cast<tagtype> (type_))) return 3;
         if (!IN_FLOATINGSET(static_cast<tagtype> (type_))) return 0;
         double tmp = std::abs(maxeu<double>() - mineu<double>());
-        if (tmp==0) return 0;
-        tmp = - std::log10(tmp) + 5;
-        tmp = (tmp<0) ? 
-            0 :  (tmp> 10) ? 
+        if (tmp == 0) return 0;
+        tmp = -std::log10(tmp) + 5;
+        tmp = (tmp < 0) ?
+                0 : (tmp > 10) ?
                 10 : tmp;
-        return static_cast<onum> (tmp);}
+        return static_cast<onum> (tmp);
+    }
 
     void tagstruct::clone(tagstruct& dst, const tagstruct& src) {
 
@@ -103,7 +114,8 @@ namespace dvnci {
         dst.reportsubdelt_ = src.reportsubdelt_;
         dst.reportstatistic_ = src.reportstatistic_;
         dst.accesslevel_ = src.accesslevel_;
-        dst.rwtype_ = src.rwtype_;}
+        dst.rwtype_ = src.rwtype_;
+    }
 
     tagstruct tagstruct::get_for_write_to_file(bool firstcriteria) {
         tagstruct dst = *this;
@@ -118,37 +130,53 @@ namespace dvnci {
         dst.logkey(npos);
         if (!firstcriteria) {
             switch (alarmcase()) {
-                case alarmEqual:{
+                case alarmEqual:
+                {
                     if (alarmconst<num64 > () == 0) {
-                        dst.value<num64 > (1);} else {
-                        dst.value<num64 > (0);}
-                    break;}
-                default:{
+                        dst.value<num64 > (1);
+                    } else {
+                        dst.value<num64 > (0);
+                    }
+                    break;
+                }
+                default:
+                {
                     dst.value<num64 > (alarmconst<num64 > ());
-                    break;}}
+                    break;
+                }
+            }
             dst.time_n64(0);
-            dst.valid(NULL_VALID);} 
+            dst.valid(NULL_VALID);
+        }
         else {
-            dst.valid(FULL_VALID);}
-        monitor_=0;
-        return dst;}
-    
-    
+            dst.valid(FULL_VALID);
+        }
+        monitor_ = 0;
+        return dst;
+    }
+
     void tagstruct::helper_util() {
-            num64 allwaysactiv_helper_tmp =  ((logged()) || (alarmlevel()) ||
-                    (onmsged()) || (offmsged()) || (alwactive()) || (IN_ALWACTSET(type()))) ? ALLWAYSACTIVE : 0;
-            num64 rangeble_helper_tmp = ((IN_RANGESET(type())) && (minraw_!=maxraw_) && (mineu_!=maxeu_)) ? RANGABLE : 0;
-            if ((rangeble_helper_tmp) && (IN_FLOATINGSET(type()))){
-                switch (type()){
-                        case TYPE_FLOAT:{
-                            rangeble_helper_tmp = ((mineu<float>()!=mineu<float>()) || (maxeu<float>()!=maxeu<float>()) ||
-                                    (minraw<float>()!=minraw<float>()) || (maxraw<float>()!=maxraw<float>())) ? 0 :rangeble_helper_tmp;
-                            break;}
-                        default: {
-                            rangeble_helper_tmp = ((mineu<double>()!=mineu<double>()) || (maxeu<double>()!=maxeu<double>()) ||
-                                    (minraw<double>()!=minraw<double>()) || (maxraw<double>()!=maxraw<double>())) ? 0 :rangeble_helper_tmp;}}}
-            
-            util_helper_= rangeble_helper_tmp | allwaysactiv_helper_tmp;}
+        num64 allwaysactiv_helper_tmp = ((logged()) || (alarmlevel()) ||
+                (onmsged()) || (offmsged()) || (alwactive()) || (IN_ALWACTSET(type()))) ? ALLWAYSACTIVE : 0;
+        num64 rangeble_helper_tmp = ((IN_RANGESET(type())) && (minraw_ != maxraw_) && (mineu_ != maxeu_)) ? RANGABLE : 0;
+        if ((rangeble_helper_tmp) && (IN_FLOATINGSET(type()))) {
+            switch (type()) {
+                case TYPE_FLOAT:
+                {
+                    rangeble_helper_tmp = ((mineu<float>() != mineu<float>()) || (maxeu<float>() != maxeu<float>()) ||
+                            (minraw<float>() != minraw<float>()) || (maxraw<float>() != maxraw<float>())) ? 0 : rangeble_helper_tmp;
+                    break;
+                }
+                default:
+                {
+                    rangeble_helper_tmp = ((mineu<double>() != mineu<double>()) || (maxeu<double>() != maxeu<double>()) ||
+                            (minraw<double>() != minraw<double>()) || (maxraw<double>() != maxraw<double>())) ? 0 : rangeble_helper_tmp;
+                }
+            }
+        }
+
+        util_helper_ = rangeble_helper_tmp | allwaysactiv_helper_tmp;
+    }
 
 
     ///////////////////////////////////////////////////////////////// 
@@ -179,7 +207,8 @@ namespace dvnci {
         reporttagcnt_ = 0;
         n_use1 = 0;
         n_use2 = 0;
-        n_use3 = 0;}
+        n_use3 = 0;
+    }
 
     tagsstruct_hdr::tagsstruct_hdr(const tagsstruct_hdr & src) {
         version_ = src.version_;
@@ -207,7 +236,8 @@ namespace dvnci {
         os_type_ = 0;
         n_use1 = 0;
         n_use2 = 0;
-        n_use3 = 0;}
+        n_use3 = 0;
+    }
 
     tagsstruct_hdr& tagsstruct_hdr::operator=(const tagsstruct_hdr & src) {
         version_ = src.version_;
@@ -236,13 +266,15 @@ namespace dvnci {
         n_use1 = 0;
         n_use2 = 0;
         n_use3 = 0;
-        return *this;}
+        return *this;
+    }
 
     void tagsstruct_hdr::count(size_t val) {
         if (val < 0) return;
         count_ = static_cast<num64> (val);
         datasize_ = static_cast<num64> (sizeof (tagsstruct_hdr)) + count_ * static_cast<num64> (sizeof (tagstruct));
-        monitor_++;}
+        monitor_++;
+    }
 
 
 
@@ -252,15 +284,15 @@ namespace dvnci {
         trycount(3);
         namepos(0);
         unusetype_ = static_cast<num64> (TYPE_DISCRET);
-        blocksize_=10;
-        archblocksize_=10;
-        trycount_=3;
-        devnum_=1;
-        protocol_=0;
-        timeout_=1000;
-        indicateto_=1000;
-        chanaltype_=0;
-        chanalnum_=0;
+        blocksize_ = 10;
+        archblocksize_ = 10;
+        trycount_ = 3;
+        devnum_ = 1;
+        protocol_ = 0;
+        timeout_ = 1000;
+        indicateto_ = 1000;
+        chanaltype_ = 0;
+        chanalnum_ = 0;
         time_n64(0);
         hostpos(0);
         serverpos(0);
@@ -275,27 +307,31 @@ namespace dvnci {
         strpos3(0);
         strpos4(0);
         strpos5(0);
-        strpos6(0);}
+        strpos6(0);
+    }
 
     tagsstruct_hdr & tagsstruct_hdr::operator++() {
         count_++;
         datasize_ = static_cast<unum64> (sizeof (tagsstruct_hdr)) + count_ * static_cast<unum64> (sizeof (tagstruct));
         monitor_++;
-        return *this;}
+        return *this;
+    }
 
     tagsstruct_hdr & tagsstruct_hdr::operator++(int) {
         count_++;
         datasize_ = static_cast<unum64> (sizeof (tagsstruct_hdr)) + count_ * static_cast<unum64> (sizeof (tagstruct));
         monitor_++;
-        return *this;}
+        return *this;
+    }
 
     groupstruct groupstruct::get_for_write_to_file(bool firstcriteria) {
         groupstruct dst = *this;
         dst.error(0);
         dst.active(firstcriteria ? 1 : 0);
         dst.valid(firstcriteria ? FULL_VALID : 0);
-        monitor_=0;
-        return dst;}
+        monitor_ = 0;
+        return dst;
+    }
 
     void groupstruct::clone(groupstruct& dst, const groupstruct& src) {
         dst.appid_ = src.appid_;
@@ -320,7 +356,8 @@ namespace dvnci {
         dst.synctype_ = src.synctype_;
         dst.ver_ = src.ver_;
         dst.supporttype_ = src.supporttype_;
-        memcpy(dst.config_, src.config_, GROP_CONFIG_SIZE);}
+        memcpy(dst.config_, src.config_, GROP_CONFIG_SIZE);
+    }
 
     bool baudratevalid(baudratetype vl) {
         switch (vl) {
@@ -338,8 +375,10 @@ namespace dvnci {
             case NT_RS_DOUNDRATE_57600:
             case NT_RS_DOUNDRATE_115200:
             case NT_RS_DOUNDRATE_128000:
-            case NT_RS_DOUNDRATE_256000: return true;}
-        return false;}
+            case NT_RS_DOUNDRATE_256000: return true;
+        }
+        return false;
+    }
 
 
     //metalink
@@ -364,7 +403,8 @@ namespace dvnci {
         chanalnum_ = src.chanalnum();
         devnum_ = src.devnum();
         switch (chanaltype_) {
-            case NT_CHTP_RS232_4XX:{
+            case NT_CHTP_RS232_4XX:
+            {
                 inf_.cominf.boundrate = static_cast<const rs232_property*> (src.config())->baudrate();
                 inf_.cominf.parity = static_cast<const rs232_property*> (src.config())->parity();
                 inf_.cominf.stopbit = static_cast<const rs232_property*> (src.config())->stopbit();
@@ -376,29 +416,41 @@ namespace dvnci {
                 inf_.cominf.rtc = static_cast<const rs232_property*> (src.config())->rtc();
                 inf_.cominf.wtm = static_cast<const rs232_property*> (src.config())->wtm();
                 inf_.cominf.wtc = static_cast<const rs232_property*> (src.config())->wtc();
-                break;}
+                break;
+            }
             case NT_CHTP_UDP_IP:
-            case NT_CHTP_TCP_IP:{
-                break;}
-            default:{}}}
+            case NT_CHTP_TCP_IP:
+            {
+                break;
+            }
+            default:
+            {
+            }
+        }
+    }
 
     bool operator==(const metalink& ls, const metalink & rs) {
         if (ls.appid() != rs.appid()) return false;
         if (ls.chanaltype_ != rs.chanaltype_) return false;
         if (ls.chanaltype_ == NT_CHTP_RS232_4XX) {
-            return (ls.chanalnum_ == rs.chanalnum_);}
+            return (ls.chanalnum_ == rs.chanalnum_);
+        }
         if (ls.id_ == rs.id_) {
-            return true;}
-        return false;}
+            return true;
+        }
+        return false;
+    }
 
     bool operator!=(const metalink& ls, const metalink & rs) {
-        return (!operator==(ls, rs));}
+        return (!operator==(ls, rs));
+    }
 
     bool operator<(const metalink& ls, const metalink & rs) {
         if (ls.appid() != rs.appid()) return ls.appid() < rs.appid();
         if (ls.chanaltype_ != rs.chanaltype_) return ls.chanaltype_ < rs.chanaltype_;
         if (ls.chanaltype_ == NT_CHTP_RS232_4XX) return ls.chanalnum_ < rs.chanalnum_;
-        return (ls.id_ < rs.id_);}
+        return (ls.id_ < rs.id_);
+    }
 
     ns_error metalink_checker::operator()(const metalink_vect & mlvect) {
         ns_error rslt = 0;
@@ -407,8 +459,10 @@ namespace dvnci {
         for (metalink_vect::const_iterator it = mlvect.begin(); it != mlvect.end();) {
             itnext = it;
             if ((++it) != mlvect.end()) rslt = compare(*it, *itnext);
-            if (rslt) return rslt;}
-        return 0;}
+            if (rslt) return rslt;
+        }
+        return 0;
+    }
 
     //agroupstruct
 
@@ -421,26 +475,33 @@ namespace dvnci {
         notuse1 = 0;
         notuse2 = 0;
         namepos(0);
-        headernamepos(0);}
+        headernamepos(0);
+    }
 
     agroupstruct agroupstruct::get_for_write_to_file(bool firstcriteria) {
-        return *this;}
+        return *this;
+    }
 
 
     // userstruct
 
-    userstruct::userstruct(indx mid) : id_(mid),  namepos_(0), passpos_(0), accesslevel_(0), role_(NS_BASE_USER_ROLE), filter_()  {}
+    userstruct::userstruct(indx mid) : id_(mid), namepos_(0), passpos_(0), accesslevel_(0), role_(NS_BASE_USER_ROLE), filter_() {
+    }
 
     userstruct userstruct::get_for_write_to_file(bool firstcriteria) {
-        return *this;}
+        return *this;
+    }
 
 
     // userstruct
 
-    accessrulestruct::accessrulestruct(indx mid) : id_(mid), namepos_(0), userpos_(0), hostpos_(0), protocol_(0) , appid_(0), role_(NS_BASE_USER_ROLE), accesslevel_(0),  filter_(), accessrule_(0) {;}
+    accessrulestruct::accessrulestruct(indx mid) : id_(mid), namepos_(0), userpos_(0), hostpos_(0), protocol_(0), appid_(0), role_(NS_BASE_USER_ROLE), accesslevel_(0), filter_(), accessrule_(0) {
+        ;
+    }
 
     accessrulestruct accessrulestruct::get_for_write_to_file(bool firstcriteria) {
-        return *this;}
+        return *this;
+    }
 
 
     // journalstruct
@@ -453,7 +514,8 @@ namespace dvnci {
         type_ = static_cast<num64> (tp & 7);
         level_ = static_cast<num32> (lev & 3);
         user_ = num64_cast<num64> (userid);
-        value_ = num64_cast<double> (val);}
+        value_ = num64_cast<double> (val);
+    }
 
 
 
@@ -465,7 +527,8 @@ namespace dvnci {
         time_ = castnum64_from_datetime(tm);
         level_ = static_cast<num64> (lev & 3);
         appid_ = static_cast<num64> (app);
-        string_to_pascalstr((void*) &debugmessage_, msg, LOGMESSAGE_STRINGSIZE);}
+        string_to_pascalstr((void*) &debugmessage_, msg, LOGMESSAGE_STRINGSIZE);
+    }
 
 
 
@@ -482,7 +545,8 @@ namespace dvnci {
         off(false);
         level(lev);
         type(tp);
-        value_ = static_cast<num64> (val);}
+        value_ = static_cast<num64> (val);
+    }
 
 
 
@@ -492,7 +556,8 @@ namespace dvnci {
         guid_ = static_cast<unum64> (gid);
         eventsset_ = static_cast<num64> (evs);
         appid_ = static_cast<num64> (app);
-        handle_ = static_cast<unum64> (hndl);}
+        handle_ = static_cast<unum64> (hndl);
+    }
 
 
 
@@ -509,7 +574,8 @@ namespace dvnci {
         group(grp);
         value_before<num64 > (val_b);
         value_set<num64 > (val_s);
-        istext(false);}
+        istext(false);
+    }
 
     commandstruct::commandstruct(guidtype gid, indx tgid, indx grp, const std::string& vl,
             guidtype clid) {
@@ -522,19 +588,22 @@ namespace dvnci {
         value_before<num64 > (0);
         value_set<num64 > (0);
         strvalue(vl);
-        istext(true);}
+        istext(true);
+    }
 
     void commandstruct::reset_commandstruct(num64 val_s, guidtype clid) {
         value_set<num64 > (val_s);
         istext(false);
         if (clid != NULL_CLIENT) clientid(clid);
-        executed(false);}
+        executed(false);
+    }
 
     void commandstruct::reset_commandstruct(const std::string& vl, guidtype clid) {
         istext(true);
         strvalue(vl);
         if (clid != NULL_CLIENT) clientid(clid);
-        executed(false);}
+        executed(false);
+    }
 
 
 
@@ -549,7 +618,8 @@ namespace dvnci {
         host(hst);
         user(clid);
         username(usernm_);
-        ip(ip_);}
+        ip(ip_);
+    }
 
 }
 

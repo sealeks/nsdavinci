@@ -53,8 +53,10 @@
 namespace dvnci {
 
     enum prb_binary_archive_flags {
-        endian_big        = 0x4000,
-        endian_little     = 0x8000} ;
+
+        endian_big = 0x4000,
+        endian_little = 0x8000
+    };
 
     //#if ( endian_big <= boost::archive::flags_last )
     //#error archive flags conflict
@@ -67,7 +69,9 @@ namespace dvnci {
         for (; first < last; ++first, --last) {
             char x = *last;
             *last = *first;
-            *first = x;}}
+            *first = x;
+        }
+    }
 
 
 
@@ -82,15 +86,19 @@ namespace dvnci {
 
     class prb_binary_iarchive_exception :
     public virtual boost::archive::archive_exception {
+
     public:
 
         typedef enum {
-            incompatible_integer_size} exception_code;
 
-        prb_binary_iarchive_exception(exception_code c = incompatible_integer_size ) :
-        boost::archive::archive_exception(boost::archive::archive_exception::other_exception) {}
+            incompatible_integer_size
+        } exception_code;
 
-        virtual const char *what( ) const throw ( ) {
+        prb_binary_iarchive_exception(exception_code c = incompatible_integer_size) :
+        boost::archive::archive_exception(boost::archive::archive_exception::other_exception) {
+        }
+
+        virtual const char *what() const throw () {
             const char *msg = "programmer error";
             switch (code) {
                 case incompatible_integer_size:
@@ -99,8 +107,11 @@ namespace dvnci {
                 default:
                     msg = boost::archive::archive_exception::what();
                     assert(false);
-                    break;}
-            return msg;}} ;
+                    break;
+            }
+            return msg;
+        }
+    };
 
     /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
     // "Portable" input binary archive.  It addresses integer size and endienness so 
@@ -115,6 +126,7 @@ namespace dvnci {
     public boost::archive::detail::common_iarchive<prb_binary_iarchive>
     ,
     public boost::archive::detail::shared_ptr_helper {
+
         typedef boost::archive::basic_binary_iprimitive<
         prb_binary_iarchive,
         std::istream::char_type,
@@ -141,71 +153,86 @@ namespace dvnci {
         void load(T & t) {
             boost::intmax_t l;
             load_impl(l, sizeof (T));
-            t = T(l);}
+            t = T(l);
+        }
 
         void load(boost::serialization::item_version_type & t) {
             boost::intmax_t l;
             load_impl(l, sizeof (boost::serialization::item_version_type));
             // use cast to avoid compile time warning
-            t = boost::serialization::item_version_type(l);}
+            t = boost::serialization::item_version_type(l);
+        }
 
         void load(boost::archive::version_type & t) {
             boost::intmax_t l;
             load_impl(l, sizeof (boost::archive::version_type));
             // use cast to avoid compile time warning
-            t = boost::archive::version_type(l);}
+            t = boost::archive::version_type(l);
+        }
 
         void load(boost::archive::class_id_type & t) {
             boost::intmax_t l;
             load_impl(l, sizeof (boost::archive::class_id_type));
             // use cast to avoid compile time warning
-            t = boost::archive::class_id_type(static_cast<int> (l));}
+            t = boost::archive::class_id_type(static_cast<int> (l));
+        }
 
         void load(std::string & t) {
-            this->primitive_base_t::load(t);}
+            this->primitive_base_t::load(t);
+        }
 #ifndef BOOST_NO_STD_WSTRING
 
         void load(std::wstring & t) {
-            this->primitive_base_t::load(t);}
+            this->primitive_base_t::load(t);
+        }
 #endif
 
         void load(float & t) {
-            this->primitive_base_t::load(t);}
+            this->primitive_base_t::load(t);
+        }
 
         void load(double & t) {
-            this->primitive_base_t::load(t);}
+            this->primitive_base_t::load(t);
+        }
 
         void load(char & t) {
-            this->primitive_base_t::load(t);}
+            this->primitive_base_t::load(t);
+        }
 
         void load(unsigned char & t) {
-            this->primitive_base_t::load(t);}
+            this->primitive_base_t::load(t);
+        }
 
         void load(datetime & t) {
-            num64 tmp=0;
+            num64 tmp = 0;
             this->primitive_base_t::load(tmp);
-            t = from_num64_cast<datetime>(tmp);}
-        
+            t = from_num64_cast<datetime>(tmp);
+        }
+
         void load(num64 & t) {
-            this->primitive_base_t::load(t);}
-        
+            this->primitive_base_t::load(t);
+        }
+
         void load(unum64 & t) {
-            this->primitive_base_t::load(t);}           
-        
+            this->primitive_base_t::load(t);
+        }
+
 
         typedef boost::archive::detail::common_iarchive<prb_binary_iarchive>
         detail_common_iarchive;
 
         template<class T>
         void load_override(T & t, BOOST_PFTO int) {
-            this->detail_common_iarchive::load_override(t, 0);}
+            this->detail_common_iarchive::load_override(t, 0);
+        }
         void load_override(boost::archive::class_name_type & t, int);
         // binary files don't include the optional information 
 
         void load_override(
                 boost::archive::class_id_optional_type & /* t */,
                 int
-                ) {}
+                ) {
+        }
 
         void init(unsigned int flags);
     public:
@@ -217,7 +244,8 @@ namespace dvnci {
         ),
         archive_base_t(flags),
         m_flags(0) {
-            init(flags);}
+            init(flags);
+        }
 
         prb_binary_iarchive(
                 std::basic_streambuf<
@@ -232,13 +260,15 @@ namespace dvnci {
         ),
         archive_base_t(flags),
         m_flags(0) {
-            init(flags);}} ;
+            init(flags);
+        }
+    };
 
 
 
 
-        //template<>
-        //void prb_binary_iarchive::load<datetime>(datetime & t);
+    //template<>
+    //void prb_binary_iarchive::load<datetime>(datetime & t);
 
 
 
@@ -250,21 +280,28 @@ namespace dvnci {
 
     class prb_binary_oarchive_exception :
     public virtual boost::archive::archive_exception {
+
     public:
 
         typedef enum {
-            invalid_flags} exception_code;
 
-        prb_binary_oarchive_exception(exception_code c = invalid_flags ) {}
+            invalid_flags
+        } exception_code;
 
-        virtual const char *what( ) const throw ( ) {
+        prb_binary_oarchive_exception(exception_code c = invalid_flags) {
+        }
+
+        virtual const char *what() const throw () {
             const char *msg = "programmer error";
             switch (code) {
                 case invalid_flags:
                     msg = "cannot be both big and little endian";
                 default:
-                    boost::archive::archive_exception::what();}
-            return msg;}} ;
+                    boost::archive::archive_exception::what();
+            }
+            return msg;
+        }
+    };
 
     /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
     // "Portable" output binary archive.  This is a variation of the native binary 
@@ -280,6 +317,7 @@ namespace dvnci {
     public boost::archive::detail::common_oarchive<
     prb_binary_oarchive
     > {
+
         typedef boost::archive::basic_binary_oprimitive<
         prb_binary_oarchive,
         std::ostream::char_type,
@@ -310,56 +348,69 @@ namespace dvnci {
 
         template<class T>
         void save(const T & t) {
-            save_impl(t, sizeof (T));}
+            save_impl(t, sizeof (T));
+        }
 
         void save(const std::string & t) {
-            this->primitive_base_t::save(t);}
+            this->primitive_base_t::save(t);
+        }
 #ifndef BOOST_NO_STD_WSTRING
 
         void save(const std::wstring & t) {
-            this->primitive_base_t::save(t);}
+            this->primitive_base_t::save(t);
+        }
 #endif
 
         void save(const float & t) {
-            this->primitive_base_t::save(t);}
+            this->primitive_base_t::save(t);
+        }
 
         void save(const double & t) {
-            this->primitive_base_t::save(t);}
+            this->primitive_base_t::save(t);
+        }
 
         void save(const char & t) {
-            this->primitive_base_t::save(t);}
+            this->primitive_base_t::save(t);
+        }
 
         void save(const unsigned char & t) {
-            this->primitive_base_t::save(t);}
-        
-        void save(const datetime & t) {
-            num64 tmp=num64_cast<datetime>(t);
-            this->primitive_base_t::save(tmp);}
-        
-        void save(const num64 & t) {
-            this->primitive_base_t::save(t);}
-        
-        void save(const unum64 & t) {
-            this->primitive_base_t::save(t);}         
+            this->primitive_base_t::save(t);
+        }
 
-        
+        void save(const datetime & t) {
+            num64 tmp = num64_cast<datetime>(t);
+            this->primitive_base_t::save(tmp);
+        }
+
+        void save(const num64 & t) {
+            this->primitive_base_t::save(t);
+        }
+
+        void save(const unum64 & t) {
+            this->primitive_base_t::save(t);
+        }
+
+
         typedef boost::archive::detail::common_oarchive<prb_binary_oarchive>
         detail_common_oarchive;
 
         template<class T>
         void save_override(T & t, BOOST_PFTO int) {
-            this->detail_common_oarchive::save_override(t, 0);}
+            this->detail_common_oarchive::save_override(t, 0);
+        }
         // explicitly convert to char * to avoid compile ambiguities
 
         void save_override(const boost::archive::class_name_type & t, int) {
             const std::string s(t);
-            * this << s;}
+            * this << s;
+        }
         // binary files don't include the optional information 
 
         void save_override(
                 const boost::archive::class_id_optional_type & /* t */,
                 int
-                ) {}
+                ) {
+        }
 
         void init(unsigned int flags);
     public:
@@ -371,7 +422,8 @@ namespace dvnci {
         ),
         archive_base_t(flags),
         m_flags(flags & (endian_big | endian_little)) {
-            init(flags);}
+            init(flags);
+        }
 
         prb_binary_oarchive(
                 std::basic_streambuf<
@@ -386,23 +438,28 @@ namespace dvnci {
         ),
         archive_base_t(flags),
         m_flags(0) {
-            init(flags);}} ;
+            init(flags);
+        }
+    };
 
-        //template<>
-        //void prb_binary_oarchive::save<datetime>(const datetime & t);
+    //template<>
+    //void prb_binary_oarchive::save<datetime>(const datetime & t);
 }
 
 namespace boost {
-namespace serialization {
+    namespace serialization {
 
 
-   using namespace dvnci;
+        using namespace dvnci;
 
-   template<class Archive>
-   void serialize(Archive& ar, datetime& g, const unsigned int version) {
-        num64 tmp=num64_cast<datetime>(g);
-        ar & tmp;
-        g = from_num64_cast<datetime>(tmp);}}}
+        template<class Archive>
+        void serialize(Archive& ar, datetime& g, const unsigned int version) {
+            num64 tmp = num64_cast<datetime>(g);
+            ar & tmp;
+            g = from_num64_cast<datetime>(tmp);
+        }
+    }
+}
 
 // required by export in boost version > 1.34
 #ifdef BOOST_SERIALIZATION_REGISTER_ARCHIVE

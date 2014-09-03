@@ -14,92 +14,101 @@
 namespace dvnci {
     namespace external {
 
-    const blksizetype DEFAULT_ARCHIVEBS = 15;
+        const blksizetype DEFAULT_ARCHIVEBS = 15;
 
-    
-    class externalintf {
-        
-        typedef boost::shared_ptr<boost::mutex>    mutex_ptr;
-        
-    public:
-  
-        enum intfstate {
-            disconnected, connected};
+        class externalintf {
 
-        externalintf(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) : 
-             state_(disconnected), intf(inf), exectr(exctr), group_(grp),
-             provide_(provide_man), subsrcript_(subsrcr), error_(0), mtx(new boost::mutex())  {};
+            typedef boost::shared_ptr<boost::mutex> mutex_ptr;
 
-        virtual ~externalintf() {};
+        public:
 
-        bool isconnected(){
-            return ((state_ == connected) || (!error(connect_impl())));};
-   
-        bool disconnect(){
-            return ((state_ != connected) || (!error(disconnect_impl())));}
+            enum intfstate {
 
-        
-        indx group() const {
-            return group_;}
-        
-        tagtype provide() const {
-            return provide_;}
-        
-        subcripttype  subsrcript() const {
-            return subsrcript_;}
+                disconnected, connected
+            };
 
-         ns_error  error() const {
-                return error_;}
-  
-        virtual bool operator()(){
-            return true;}
-        
-        virtual void insert(const indx_set& idset)= 0;
-    
-        virtual void remove(const indx_set& idset)= 0;
-        
-        boost::mutex* mtx_internal() const{
-            return mtx.get();}
-        
-        bool needsync() const{
-            return (subsrcript_!=CONTYPE_SYNC);}
+            externalintf(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
+            state_(disconnected), intf(inf), exectr(exctr), group_(grp),
+            provide_(provide_man), subsrcript_(subsrcr), error_(0), mtx(new boost::mutex()) {
+            };
 
-    protected:
+            virtual ~externalintf() {
+            };
 
-        virtual ns_error connect_impl() = 0;
-        
-        virtual ns_error disconnect_impl() = 0;
-        
-        ns_error  error(ns_error err){
-                return error_=err;}
-        
-        void  subsrcript(subcripttype val) {
-            subsrcript_=val;}
-        
-        volatile intfstate state_;
-        tagsbase_ptr       intf;
-        executor*          exectr;
-        indx               group_;
-        tagtype            provide_;
-        subcripttype       subsrcript_;
-        ns_error           error_;
-        mutex_ptr          mtx;};
-        
-        
-        
-        
-        
-        
-        
+            bool isconnected() {
+                return ((state_ == connected) || (!error(connect_impl())));
+            };
+
+            bool disconnect() {
+                return ((state_ != connected) || (!error(disconnect_impl())));
+            }
+
+            indx group() const {
+                return group_;
+            }
+
+            tagtype provide() const {
+                return provide_;
+            }
+
+            subcripttype subsrcript() const {
+                return subsrcript_;
+            }
+
+            ns_error error() const {
+                return error_;
+            }
+
+            virtual bool operator()() {
+                return true;
+            }
+
+            virtual void insert(const indx_set& idset) = 0;
+
+            virtual void remove(const indx_set& idset) = 0;
+
+            boost::mutex* mtx_internal() const {
+                return mtx.get();
+            }
+
+            bool needsync() const {
+                return (subsrcript_ != CONTYPE_SYNC);
+            }
+
+        protected:
+
+            virtual ns_error connect_impl() = 0;
+
+            virtual ns_error disconnect_impl() = 0;
+
+            ns_error error(ns_error err) {
+                return error_ = err;
+            }
+
+            void subsrcript(subcripttype val) {
+                subsrcript_ = val;
+            }
+
+            volatile intfstate state_;
+            tagsbase_ptr intf;
+            executor* exectr;
+            indx group_;
+            tagtype provide_;
+            subcripttype subsrcript_;
+            ns_error error_;
+            mutex_ptr mtx;
+        };
+
         template < typename EXTERNALINTF>
-                class externalintf_executor : public executor {
-            
-            typedef boost::shared_ptr<EXTERNALINTF>    externintf_ptr;
+        class externalintf_executor : public executor {
+
+            typedef boost::shared_ptr<EXTERNALINTF> externintf_ptr;
 
         public:
 
             externalintf_executor(tagsbase_ptr inf, indx groupind, metalink lnk, tagtype provide_man = TYPE_SIMPL) :
-            executor(inf, provide_man) {};
+            executor(inf, provide_man) {
+            };
 
             virtual bool operator()() {
                 if (init()) {
@@ -107,50 +116,61 @@ namespace dvnci {
                         try {
                             externmanager->operator()();
                             set_group_state(npos, externmanager->error(), FULL_VALID);
-                           return true;}
-                        catch (dvncierror& errd) {
-                            error (errd.code());
+                            return true;
+                        }                        catch (dvncierror& errd) {
+                            error(errd.code());
                             intf->debugerror("externalintf_executor mainloop dvnci_error");
                             set_group_state(npos, externmanager->error(), FULL_VALID);
-                            return false;}
-                        catch (...) {
-                            if (intf )
+                            return false;
+                        }                        catch (...) {
+                            if (intf)
                                 intf->debugerror("externalintf_executor mainloop undef error");
                             set_group_state(npos, externmanager->error(), FULL_VALID);
-                            return false;}}
-                    else {
-                        set_group_state(npos, externmanager->error(), FULL_VALID);}}
-                return true;}
-                    
+                            return false;
+                        }
+                    } else {
+                        set_group_state(npos, externmanager->error(), FULL_VALID);
+                    }
+                }
+                return true;
+            }
+
         protected:
-            
-                      
 
             virtual void add_tags_impl(const indx_set& idset) {
                 if (init()) {
-                    externmanager->insert(idset);}}
+                    externmanager->insert(idset);
+                }
+            }
 
             virtual void remove_tags_impl(const indx_set& idset) {
                 if (init()) {
-                    externmanager->remove(idset);}}
+                    externmanager->remove(idset);
+                }
+            }
 
             virtual bool initialize() {
                 if (!externmanager)
                     externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, group()));
-                return externmanager;}
+                return externmanager;
+            }
 
             virtual bool uninitialize() {
                 if (externmanager) {
-                    externmanager->disconnect();}
+                    externmanager->disconnect();
+                }
                 group_state_off();
-                return true;}
-            
-            externintf_ptr               externmanager;} ;        
+                return true;
+            }
+
+            externintf_ptr externmanager;
+        };
 
 
 
 
-    }}
+    }
+}
 
 #endif	/* SUBSCRIPTGROUP_PROCCESSOR_TEMPL_H */
 

@@ -6,12 +6,14 @@ namespace dvnci {
     namespace rpc {
 
         rpcioclient::rpcioclient() : io_service_(), socket_(io_service_), tmout_timer(io_service_), respmsg(""), error_cod(0) {
-            state_ = disconnected;}
+            state_ = disconnected;
+        }
 
         rpcioclient::~rpcioclient() {
-            if (state_ == connected) disconnect();}
+            if (state_ == connected) disconnect();
+        }
 
-        void rpcioclient::connect(std::string host, std::string port, timeouttype tmo ) {
+        void rpcioclient::connect(std::string host, std::string port, timeouttype tmo) {
             timout = in_bounded<timeouttype>(50, 600000, tmo);
             DEBUG_STR_DVNCI(ioclient connect)
             DEBUG_VAL_DVNCI(host)
@@ -20,10 +22,10 @@ namespace dvnci {
             boost::asio::ip::tcp::resolver resolver(io_service_);
             boost::asio::ip::tcp::resolver::query query(host.c_str(), port.c_str());
 
-            is_timout     = false;
-            is_connect    = false;
-            is_error      = false;
-            error_cod     = 0;
+            is_timout = false;
+            is_connect = false;
+            is_error = false;
+            error_cod = 0;
 
             io_service_.reset();
 
@@ -50,15 +52,19 @@ namespace dvnci {
                 state_ = disconnected;
                 try {
                     socket_.close();
-                    io_service_.stop();}
-                catch (...) {};
-                throw dvncierror(ERROR_NONET_CONNECTED);}
-            state_ = connected;}
+                    io_service_.stop();
+                }                catch (...) {
+                };
+                throw dvncierror(ERROR_NONET_CONNECTED);
+            }
+            state_ = connected;
+        }
 
         void rpcioclient::disconnect() {
             state_ = disconnected;
             socket_.close();
-            io_service_.stop();}
+            io_service_.stop();
+        }
 
         bool rpcioclient::req(rpcmessage& msg, rpcmessage& resp) {
 
@@ -69,11 +75,11 @@ namespace dvnci {
                 request_stream << msg.header();
                 request_stream << msg.message();
 
-                is_timout       = false;
-                is_data_ready   = false;
-                is_error        = false;
-                is_connect      = true;
-                error_cod       = 0;
+                is_timout = false;
+                is_data_ready = false;
+                is_error = false;
+                is_connect = true;
+                error_cod = 0;
                 response_body.consume(response_body.size());
 
                 io_service_.reset();
@@ -101,26 +107,32 @@ namespace dvnci {
                     state_ = disconnected;
                     try {
                         socket_.close();
-                        io_service_.stop();}
-                    catch (...) {};
+                        io_service_.stop();
+                    }                    catch (...) {
+                    };
                     DEBUG_STR_DVNCI(ERROR_FAILNET_CONNECTED THROWING)
-                            throw dvncierror(ERROR_FAILNET_CONNECTED);}
+                            throw dvncierror(ERROR_FAILNET_CONNECTED);
+                }
 
                 if (is_error) {
                     if ((error_cod == 10054) || (error_cod == 10053)) {
                         state_ = disconnected;
                         try {
                             socket_.close();
-                            io_service_.stop();}
-                        catch (...) {};
+                            io_service_.stop();
+                        }                        catch (...) {
+                        };
                         DEBUG_STR_DVNCI(ERROR_FAILNET_CONNECTED THROWING BY ERROR)
-                                throw dvncierror(ERROR_FAILNET_CONNECTED);}
-                    else  DEBUG_STR_VAL_DVNCI(reqerr, error_cod)}
+                                throw dvncierror(ERROR_FAILNET_CONNECTED);
+                    } else DEBUG_STR_VAL_DVNCI(reqerr, error_cod)
+                    }
                 resp = respmsg;
-                return true;}
-            else {
-                resp=rpcmessage("");};
-            return false;}
+                return true;
+            } else {
+                resp = rpcmessage("");
+            };
+            return false;
+        }
 
         void rpcioclient::handle_resolve(const boost::system::error_code& err,
                 boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
@@ -129,15 +141,17 @@ namespace dvnci {
                 boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
                 socket_.async_connect(endpoint,
                         boost::bind(&rpcioclient::handle_connect, shared_from_this(),
-                        boost::asio::placeholders::error, ++endpoint_iterator));}
-            else {
+                        boost::asio::placeholders::error, ++endpoint_iterator));
+            } else {
                 io_service_.stop();
                 tmout_timer.cancel();
-                is_timout   = false;
-                is_connect  = false;
-                error_cod      = err.value();
-                is_error       = true;
-                DEBUG_STR_DVNCI(isErrorReesolve!!!)}}
+                is_timout = false;
+                is_connect = false;
+                error_cod = err.value();
+                is_error = true;
+                DEBUG_STR_DVNCI(isErrorReesolve!!!)
+            }
+        }
 
         void rpcioclient::handle_connect(const boost::system::error_code& err,
                 boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
@@ -145,81 +159,92 @@ namespace dvnci {
             if (!err) {
                 io_service_.stop();
                 tmout_timer.cancel();
-                is_timout   = false;
-                is_connect  = true;
-                is_error       = false;
-                DEBUG_STR_DVNCI(isConnected!!!)}
-            else
+                is_timout = false;
+                is_connect = true;
+                is_error = false;
+                DEBUG_STR_DVNCI(isConnected!!!)
+            } else
                 if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
                 socket_.close();
                 boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
                 socket_.async_connect(endpoint,
                         boost::bind(&rpcioclient::handle_connect, shared_from_this(),
-                        boost::asio::placeholders::error, ++endpoint_iterator));}
-            else {}}
+                        boost::asio::placeholders::error, ++endpoint_iterator));
+            } else {
+            }
+        }
 
         void rpcioclient::handle_write(const boost::system::error_code& err) {
 
             if (!err) {
 
                 boost::asio::async_read(socket_, boost::asio::buffer(buf), boost::asio::transfer_at_least(10), boost::bind(&rpcioclient::handle_readheader, shared_from_this(),
-                        boost::asio::placeholders::error));}
-
+                        boost::asio::placeholders::error));
+            }
             else {
                 io_service_.stop();
                 tmout_timer.cancel();
-                is_timout      = false;
-                is_data_ready  = false;
-                error_cod      = err.value();
-                is_error       = true;
+                is_timout = false;
+                is_data_ready = false;
+                error_cod = err.value();
+                is_error = true;
                 DEBUG_STR_DVNCI(is errror handle_write!!!)
                 DEBUG_VAL_DVNCI(err.message())
-                DEBUG_VAL_DVNCI(err.value())}}
+                DEBUG_VAL_DVNCI(err.value())
+            }
+        }
 
         void rpcioclient::handle_readheader(const boost::system::error_code& err) {
             if (!err) {
                 respmsg.header(buf.c_array());
                 DEBUG_VAL_DVNCI(respmsg.body_length())
                 boost::asio::async_read(socket_, response_body, boost::asio::transfer_at_least(respmsg.body_length()), boost::bind(&rpcioclient::handle_endreq, shared_from_this(),
-                        boost::asio::placeholders::error));}
-            else {
+                        boost::asio::placeholders::error));
+            } else {
                 io_service_.stop();
                 tmout_timer.cancel();
-                is_timout      = false;
-                is_data_ready  = false;
-                error_cod      = err.value();
-                is_error       = true;
-                DEBUG_STR_DVNCI(is errror readheader!!!)}}
+                is_timout = false;
+                is_data_ready = false;
+                error_cod = err.value();
+                is_error = true;
+                DEBUG_STR_DVNCI(is errror readheader!!!)
+            }
+        }
 
         void rpcioclient::handle_endreq(const boost::system::error_code& err) {
             if (!err) {
                 io_service_.stop();
                 tmout_timer.cancel();
                 respmsg.message(response_body);
-                is_timout      = false;
-                is_data_ready  = true;
-                is_error       = false;}
-            else {
+                is_timout = false;
+                is_data_ready = true;
+                is_error = false;
+            } else {
                 io_service_.stop();
                 tmout_timer.cancel();
-                is_timout      = false;
-                is_data_ready  = false;
-                error_cod      = err.value();
-                is_error       = true;
-                DEBUG_STR_DVNCI(is errror handle_endreq!!!)}}
+                is_timout = false;
+                is_data_ready = false;
+                error_cod = err.value();
+                is_error = true;
+                DEBUG_STR_DVNCI(is errror handle_endreq!!!)
+            }
+        }
 
         void rpcioclient::handle_timout_expire(const boost::system::error_code& err) {
 
-            if (!err ) {
+            if (!err) {
                 io_service_.stop();
                 socket_.close();
-                is_timout      = true;
-                is_data_ready  = false;
-                is_error       = false;
-                is_connect     = false;
-                DEBUG_STR_DVNCI(TIMEOUT EXPIRE NEED EXCEPTION)}
-            else {}}
-}}
+                is_timout = true;
+                is_data_ready = false;
+                is_error = false;
+                is_connect = false;
+                DEBUG_STR_DVNCI(TIMEOUT EXPIRE NEED EXCEPTION)
+            } else {
+            }
+        }
+    }
+}
 
 
 
