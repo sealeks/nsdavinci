@@ -35,8 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1923264132/iec60870_detail.o \
+	${OBJECTDIR}/_ext/1923264132/extiec60870intf.o \
 	${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o \
+	${OBJECTDIR}/_ext/1923264132/iec60870ioclient.o \
 	${OBJECTDIR}/_ext/1923264132/main.o
 
 
@@ -64,15 +65,20 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 	${MKDIR} -p ../../bin/${CND_CONF}
 	${LINK.cc} -o ../../bin/${CND_CONF}/service_iec60870_db ${OBJECTFILES} ${LDLIBSOPTIONS} -mthreads
 
-${OBJECTDIR}/_ext/1923264132/iec60870_detail.o: ../../include_program/service_iec60870/iec60870_detail.cpp 
+${OBJECTDIR}/_ext/1923264132/extiec60870intf.o: ../../include_program/service_iec60870/extiec60870intf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_detail.o ../../include_program/service_iec60870/iec60870_detail.cpp
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/extiec60870intf.o ../../include_program/service_iec60870/extiec60870intf.cpp
 
 ${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o: ../../include_program/service_iec60870/iec60870_protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
 	${RM} $@.d
 	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o ../../include_program/service_iec60870/iec60870_protocol.cpp
+
+${OBJECTDIR}/_ext/1923264132/iec60870ioclient.o: ../../include_program/service_iec60870/iec60870ioclient.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
+	${RM} $@.d
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870ioclient.o ../../include_program/service_iec60870/iec60870ioclient.cpp
 
 ${OBJECTDIR}/_ext/1923264132/main.o: ../../include_program/service_iec60870/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
