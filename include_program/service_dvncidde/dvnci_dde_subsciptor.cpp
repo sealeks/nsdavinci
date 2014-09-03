@@ -10,8 +10,9 @@
 namespace dvnci {
     namespace dde {
 
-short_value& operator<<(short_value& lv, const ddevalue_item&  rv){
-    return ls/*short_value(rv.val,rv.type, rv.valid)*/;}
+        short_value& operator<<(short_value& lv, const ddevalue_item& rv) {
+            return ls/*short_value(rv.val,rv.type, rv.valid)*/;
+        }
 
     }
 }

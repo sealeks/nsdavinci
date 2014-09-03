@@ -18,22 +18,22 @@
 namespace dvnci {
     namespace dde {
 
-short_value& operator<<(short_value& lv, const ddevalue_item&  rv);
+        short_value& operator<<(short_value& lv, const ddevalue_item& rv);
 
         class dvnci_dde_subsciptor : public abstract_subscriptor<ddeintf> {
+
         public:
 
-
             dvnci_dde_subsciptor(tagsbase_ptr inf, indx grp, const metalink& lnk, tagtype provide_man = TYPE_SIMPL) :
-            abstract_subscriptor<ddeintf>(inf, grp, metalink()) {}
+            abstract_subscriptor<ddeintf>(inf, grp, metalink()) {
+            }
 
         protected:
 
             virtual bool initialize_impl() {
                 extinf = ddeintf_ptr(new ddeintf(intf, group));
-                return extinf;}
-
-
+                return extinf;
+            }
 
             /*virtual bool invokereq() {
 
@@ -121,13 +121,18 @@ short_value& operator<<(short_value& lv, const ddevalue_item&  rv);
                     tmp.key = *it;
                     tmp.name = intf->binding(*it);
                     tmp.tpitem = intf->type(*it);
-                    clientitems.push_back(tmp);}
-                return (!add_req_items.empty());}
+                    clientitems.push_back(tmp);
+                }
+                return (!add_req_items.empty());
+            }
 
+            virtual std::string nill_server_key() const {
+                return "";
+            }
 
-            virtual std::string nill_server_key() const {return "";}
-
-            };}}
+        };
+    }
+}
 
 #endif	/* DVNCI_NET_SUBSCIPTOR_H */
 
