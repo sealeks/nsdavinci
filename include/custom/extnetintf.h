@@ -23,75 +23,81 @@ namespace dvnci {
     namespace external {
         namespace net {
 
-    class extnetintf  :  public extintf_wraper<num64>{
-        
-        struct real_report_value{
-            double   value;
-            vlvtype  vld;
-            datetime tm;};
-            
-        typedef std::pair<serverkey_type, real_report_value >                          sid_rl_report_val_pair;
-        typedef std::map<serverkey_type, real_report_value ,
-                std::less<serverkey_type>, std::allocator<sid_rl_report_val_pair > >   sid_rl_report_val_map; 
-        
-        
-        
-    public:
-        
-        
-        extnetintf(tagsbase_ptr intf_, executor* exctr, indx grp);
+            class extnetintf : public extintf_wraper<num64> {
 
-        virtual ~extnetintf();
+                struct real_report_value {
+
+                    double value;
+                    vlvtype vld;
+                    datetime tm;
+                };
+
+                typedef std::pair<serverkey_type, real_report_value > sid_rl_report_val_pair;
+                typedef std::map<serverkey_type, real_report_value,
+                std::less<serverkey_type>, std::allocator<sid_rl_report_val_pair > > sid_rl_report_val_map;
 
 
 
-    protected:
-                
-
-        virtual ns_error checkserverstatus(); 
-                
-
-        virtual ns_error connect_impl();
-
-        virtual ns_error disconnect_impl();
-        
+            public:
 
 
-        virtual ns_error add_request_impl();
+                extnetintf(tagsbase_ptr intf_, executor* exctr, indx grp);
 
-        virtual ns_error remove_request_impl();
+                virtual ~extnetintf();
 
-        virtual ns_error value_request_impl();
-        
-        virtual ns_error command_request_impl(const sidcmd_map& cmds); 
 
-        virtual ns_error report_request_impl();
 
-        virtual ns_error event_request_impl();
-        
-        
+            protected:
 
-    
-    private:
-        
-        
-        void add_report_task(indx cid);
-        
-        void remove_report_task(indx cid);
-        
-        bool is_report_task(indx cid) const;
-        
-        
-        void add_event_task(indx cid);
-        
-        void remove_event_task(indx cid);
-        
-        bool is_event_task(indx cid) const;        
-        
-        dvnci::custom::net::netintf_ptr   netintf;
-        sid_rl_report_val_map             real_repval_map;
-        indx_set                          rep_tasks_set;
-        indx_set                          evnt_tasks_set;};}}}
+
+                virtual ns_error checkserverstatus();
+
+
+                virtual ns_error connect_impl();
+
+                virtual ns_error disconnect_impl();
+
+
+
+                virtual ns_error add_request_impl();
+
+                virtual ns_error remove_request_impl();
+
+                virtual ns_error value_request_impl();
+
+                virtual ns_error command_request_impl(const sidcmd_map& cmds);
+
+                virtual ns_error report_request_impl();
+
+                virtual ns_error event_request_impl();
+
+
+
+
+            private:
+
+
+                void add_report_task(indx cid);
+
+                void remove_report_task(indx cid);
+
+                bool is_report_task(indx cid) const;
+
+
+                void add_event_task(indx cid);
+
+                void remove_event_task(indx cid);
+
+                bool is_event_task(indx cid) const;
+
+                dvnci::custom::net::netintf_ptr netintf;
+                sid_rl_report_val_map real_repval_map;
+                indx_set rep_tasks_set;
+                indx_set evnt_tasks_set;
+            };
+        }
+    }
+}
 
 #endif	/* EXTNETINTF_H */
 
