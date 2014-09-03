@@ -8,15 +8,19 @@ namespace dvnci {
     namespace admin {
 
         class modbuslinkpropertyeditor : public abstractpropertyeditor {
+
         public:
-            modbuslinkpropertyeditor();};
+            modbuslinkpropertyeditor();
+        };
 
         class modbusprotocolpropertyeditor : public abstractpropertyeditor {
-        public:
-            modbusprotocolpropertyeditor();} ;
 
+        public:
+            modbusprotocolpropertyeditor();
+        };
 
         class modbusgroupwraper : public linkgroupwraper {
+
         public:
             modbusgroupwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
@@ -24,11 +28,12 @@ namespace dvnci {
             virtual void setids(const entity_map& vl);
         protected:
             modbuslinkpropertyeditor ModBLPrEdit;
-            modbusprotocolpropertyeditor  ModBPPrEdit;
+            modbusprotocolpropertyeditor ModBPPrEdit;
             virtual void addproprtyeditors_internal(abstractpropertymanager* mangr);
-            void setchaneltp_and_prtcl(chnltype tp, num32 prtcl);};
+            void setchaneltp_and_prtcl(chnltype tp, num32 prtcl);
+        };
 
     }
-    }
+}
 
 #endif

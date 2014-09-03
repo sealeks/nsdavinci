@@ -28,19 +28,22 @@ namespace dvnci {
     namespace admin {
 
         struct propertyinfo {
+
             std::string value;
-            lcltype     local;
-            num64_set   set;
-            propidtype  type;
-            bool        inChange;
-            bool        isDiff;
+            lcltype local;
+            num64_set set;
+            propidtype type;
+            bool inChange;
+            bool isDiff;
             std::string name;
 
             bool operator==(const propertyinfo & val) {
-                return ((type == val.type) && (value == val.value));};
+                return ((type == val.type) && (value == val.value));
+            };
 
             bool operator!=(const propertyinfo & val) {
-                return (!operator==(val));};
+                return (!operator==(val));
+            };
 
             const propertyinfo & operator=(const propertyinfo & val) {
                 set = val.set;
@@ -50,7 +53,8 @@ namespace dvnci {
                 inChange = val.inChange;
                 isDiff = val.isDiff;
                 name = val.name;
-                return (*this);};
+                return (*this);
+            };
 
             propertyinfo(const propertyinfo & val) {
                 set = val.set;
@@ -59,7 +63,8 @@ namespace dvnci {
                 type = val.type;
                 inChange = val.inChange;
                 isDiff = val.isDiff;
-                name = val.name;};
+                name = val.name;
+            };
 
             propertyinfo() {
                 value = "";
@@ -67,10 +72,12 @@ namespace dvnci {
                 type = 0;
                 inChange = false;
                 isDiff = false;
-                name = "";};} ;
+                name = "";
+            };
+        };
 
         typedef std::pair<propidtype, propertyinfo> propertytable_pair;
-        typedef std::map<propidtype , propertyinfo, std::less<propidtype>, std::allocator<propertytable_pair > > propertytable_map;
+        typedef std::map<propidtype, propertyinfo, std::less<propidtype>, std::allocator<propertytable_pair > > propertytable_map;
 
 
 
@@ -79,10 +86,11 @@ namespace dvnci {
         // через метод parsenodes(entity_map& pair)
         // делегирует обработку нода конкретному наследнику AbstractItemWraper
 
-        class propertymanager  : public abstractpropertymanager {
+        class propertymanager : public abstractpropertymanager {
+
         public:
 
-            typedef std::set <propidtype , std::less<propidtype>, std::allocator<propidtype> > property_set;
+            typedef std::set <propidtype, std::less<propidtype>, std::allocator<propidtype> > property_set;
 
             typedef std::pair<propidtype, std::string > prop_str_pair;
             typedef std::map <propidtype, std::string, std::less<propidtype>, std::allocator<prop_str_pair > > prop_str_map;
@@ -90,22 +98,25 @@ namespace dvnci {
             typedef std::vector<property_set> list_of_mapentity;
 
             typedef std::pair<nodeinfotype, abstractwraper_ptr> ninfotp_wrapers_pair;
-            typedef std::map<nodeinfotype , abstractwraper_ptr, std::less<nodeinfotype>, std::allocator<ninfotp_wrapers_pair > > ninfotp_wrapers_map;
+            typedef std::map<nodeinfotype, abstractwraper_ptr, std::less<nodeinfotype>, std::allocator<ninfotp_wrapers_pair > > ninfotp_wrapers_map;
 
             typedef std::pair<indx, abstractwraper_ptr> indx_wrapers_pair;
-            typedef std::map<indx , abstractwraper_ptr, std::less<indx>, std::allocator<indx_wrapers_pair > > indx_wrapers_map;
+            typedef std::map<indx, abstractwraper_ptr, std::less<indx>, std::allocator<indx_wrapers_pair > > indx_wrapers_map;
 
             propertymanager(lcltype loc = NS_CODPAGE_UTF8);
 
-            virtual ~propertymanager() {};
+            virtual ~propertymanager() {
+            };
             void intf(adminintf_ptr _interface_);
             // установка локали
 
             void locale(lcltype val) {
-                locale_ = val;}
+                locale_ = val;
+            }
 
-            lcltype locale() const  {
-                return locale_;}
+            lcltype locale() const {
+                return locale_;
+            }
             // регистрация обработчиков свойств айтемов
             void registwraper(nodeinfotype type, abstractwraper* wraper);
             void registwraper(nodetype type, abstractwraper* wraper);
@@ -119,7 +130,7 @@ namespace dvnci {
             void parsenodes(entity_map& nodes, propertytable_map& map);
 
             //есть ли ключ в диапазоне списка словарей?
-            bool findKeyinList(list_of_mapentity::iterator from, list_of_mapentity::iterator t , propidtype propid);
+            bool findKeyinList(list_of_mapentity::iterator from, list_of_mapentity::iterator t, propidtype propid);
             // заполняет общий словарь значениеми из списка словарей по ключам properties
             void fillValueProperties();
 
@@ -132,22 +143,22 @@ namespace dvnci {
 
         private:
 
-            lcltype              locale_;
-            adminintf_ptr        _interface;
+            lcltype locale_;
+            adminintf_ptr _interface;
 
-            propertytable_map    table;
-            ninfotp_wrapers_map  wrapers;               // реестр обработчиков айтемов
-            indx_wrapers_map     wrapersitems;          // карта id - wraper
+            propertytable_map table;
+            ninfotp_wrapers_map wrapers; // реестр обработчиков айтемов
+            indx_wrapers_map wrapersitems; // карта id - wraper
 
-            property_set         excl_groupeditset;         // множество исключенных на групповое редактирование свойств
-            property_set         diff_prop;                 // множество свойств с различными значениями для разных итемов
+            property_set excl_groupeditset; // множество исключенных на групповое редактирование свойств
+            property_set diff_prop; // множество свойств с различными значениями для разных итемов
 
-            propertyeditor_map   propeditors;       // реестр редакторов свойств
-            list_of_mapentity    list_propertymap; // список карт свойств для всех айтемов
+            propertyeditor_map propeditors; // реестр редакторов свойств
+            list_of_mapentity list_propertymap; // список карт свойств для всех айтемов
 
-            prop_str_map         properties;             // карта общих свойств для всех айтемов
-            prop_str_map         update_prop;       // карта свойств обновлены, но ожидают закрепления
-            entity_map           entity_inproccess;         // карта ссылок обрабатываемых тегов
+            prop_str_map properties; // карта общих свойств для всех айтемов
+            prop_str_map update_prop; // карта свойств обновлены, но ожидают закрепления
+            entity_map entity_inproccess; // карта ссылок обрабатываемых тегов
 
 
 
@@ -158,7 +169,10 @@ namespace dvnci {
             void merge_innode(propidtype prid, abstractwraper* wraper);
             //находит совпадения ключей в списке словарей
             //общие ключи сует в properties
-            void removeunical(list_of_mapentity& val);} ;}}
+            void removeunical(list_of_mapentity& val);
+        };
+    }
+}
 
 #endif	/* _IMMIPROPERTYMANAGER_H */
 

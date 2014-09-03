@@ -17,41 +17,44 @@
 
 
 
-namespace dvnci{
-namespace admin{
+namespace dvnci {
+    namespace admin {
 
-class factory {
-public:
+        class factory {
 
-    static adminintf_ptr build(const fspath& path, appidtype appid_=0 ,
-            eventtypeset events_ = 0, bool needconnect = true){
-        adminintf* tmpintf= new localadminintf(path, appid_, events_);
-        if (needconnect) tmpintf->connect();
-         return adminintf_ptr(tmpintf);}
-    
-    static adminintf_ptr build(tagsbase_ptr inf){
-        adminintf* tmpintf= new localadminintf(inf);
-         return adminintf_ptr(tmpintf);}    
+        public:
 
-    
-    static adminintf_ptr build(const char* host_, bool needconnect = false){
-        std::string tmp=host_;
-        std::string host="";
-        std::string port="";
-        unsigned int tout;
-        std::string admin="";
-        std::string password="";
-        parse_servinfo(tmp, host, port, tout, admin, password);
-        adminintf* tmpintf= new remoteadminintf(host,port,tout);
-        tmpintf->fullnamed(host_);
-        if (needconnect) tmpintf->connect(admin,password);
-         return adminintf_ptr(tmpintf);}
+            static adminintf_ptr build(const fspath& path, appidtype appid_ = 0,
+                    eventtypeset events_ = 0, bool needconnect = true) {
+                adminintf* tmpintf = new localadminintf(path, appid_, events_);
+                if (needconnect) tmpintf->connect();
+                return adminintf_ptr(tmpintf);
+            }
+
+            static adminintf_ptr build(tagsbase_ptr inf) {
+                adminintf* tmpintf = new localadminintf(inf);
+                return adminintf_ptr(tmpintf);
+            }
+
+            static adminintf_ptr build(const char* host_, bool needconnect = false) {
+                std::string tmp = host_;
+                std::string host = "";
+                std::string port = "";
+                unsigned int tout;
+                std::string admin = "";
+                std::string password = "";
+                parse_servinfo(tmp, host, port, tout, admin, password);
+                adminintf* tmpintf = new remoteadminintf(host, port, tout);
+                tmpintf->fullnamed(host_);
+                if (needconnect) tmpintf->connect(admin, password);
+                return adminintf_ptr(tmpintf);
+            }
 
 
-};
+        };
 
 
-}
+    }
 }
 
 #endif	/* _BUILDER_NSADMININTERFACE_H */

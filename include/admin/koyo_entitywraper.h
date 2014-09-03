@@ -10,15 +10,19 @@ namespace dvnci {
     namespace admin {
 
         class koyolinkpropertyeditor : public abstractpropertyeditor {
+
         public:
-            koyolinkpropertyeditor();};
+            koyolinkpropertyeditor();
+        };
 
         class koyoprotocolpropertyeditor : public abstractpropertyeditor {
-        public:
-            koyoprotocolpropertyeditor();} ;
 
+        public:
+            koyoprotocolpropertyeditor();
+        };
 
         class koyogroupwraper : public linkgroupwraper {
+
         public:
             koyogroupwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
@@ -26,11 +30,12 @@ namespace dvnci {
             virtual void setids(const entity_map& vl);
         protected:
             koyolinkpropertyeditor KoyoLPrEdit;
-            koyoprotocolpropertyeditor  KoyoPPrEdit;
+            koyoprotocolpropertyeditor KoyoPPrEdit;
             virtual void addproprtyeditors_internal(abstractpropertymanager* mangr);
-            void setchaneltp_and_prtcl(chnltype tp, num32 prtcl);};
+            void setchaneltp_and_prtcl(chnltype tp, num32 prtcl);
+        };
 
     }
-    }
+}
 
 #endif
