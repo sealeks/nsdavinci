@@ -12,6 +12,7 @@
 #include <kernel/systemutil.h>
 #include <kernel/error.h>
 #include <kernel/constdef.h>
+#include <kernel/short_value.h>
 
 namespace dvnci {
     namespace prot80670 {
@@ -149,6 +150,9 @@ namespace dvnci {
 
         type_id find_type_id(const std::string& val);
         std::size_t find_type_size(type_id val);        
+        
+        
+        
 
       
         
@@ -225,7 +229,12 @@ namespace dvnci {
 
 
         typedef std::set<dataobject_ptr> dataobject_set;
-        typedef std::vector<dataobject_ptr> dataobject_vct;        
+        typedef std::vector<dataobject_ptr> dataobject_vct;   
+        
+         typedef std::pair<dvnci::indx, dataobject_ptr> indx_dataobject_pair;
+         typedef std::vector<indx_dataobject_pair> indx_dataobject_vct;        
+        
+        dvnci::short_value to_short_value(dataobject_ptr v);
         
         
         

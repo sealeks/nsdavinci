@@ -213,6 +213,25 @@ namespace dvnci {
             return !ls;
         }
 
+        dvnci::short_value to_short_value(dataobject_ptr vl) {
+            if (vl) {
+                type_id tp=vl->type();
+                if ((tp) && (find_type_size(tp)==vl->data().size())){
+                    const octet_sequence& dt=vl->data();
+                    switch(tp) {
+                        case M_SP_TB_1: /*30*/
+                        {
+                            dvnci::short_value tmp(dt[0]);
+                            tmp.time(now());
+                            return tmp;
+                        }
+                        default:{}
+                    }
+                }
+            }
+            return dvnci::short_value();
+        }       
+
 
         
          /////////////////////////////////////////////////////////////////////////////////////////////////
