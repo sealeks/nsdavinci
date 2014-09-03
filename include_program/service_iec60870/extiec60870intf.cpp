@@ -15,7 +15,6 @@ namespace dvnci {
         using dvnci::prot80670::dataobject;
         using dvnci::prot80670::dataobject_ptr;
         using dvnci::prot80670::dataobject_set;
-        using dvnci::prot80670::iec60870intf_ptr;
 
 
 
@@ -37,7 +36,7 @@ namespace dvnci {
 
         void extiec60870intf::execute60870(const boost::system::error_code& error) {
 
-        };        
+        };
 
         ns_error extiec60870intf::checkserverstatus() {
             /* if ((!iec60870intf->isconnected()))
@@ -47,75 +46,79 @@ namespace dvnci {
 
         ns_error extiec60870intf::connect_impl() {
             try {
-                std::string port = "2404";//intf->groups()->port(group());
+                std::string port = "2404"; //intf->groups()->port(group());
                 if (port.empty())
                     port = "2404";
-                if (!remintf) {
-                    remintf = dvnci::prot80670::iec60870intf::build(intf->groups()->host(group()),
-                            fulltrim_copy(port),
-                            intf->groups()->timeout(group()),
-                            iec60870_data_listener::shared_from_this()
-                            );
+                if (!thread_io) {
+                    thread_io = create_pm(intf->groups()->host(group()),
+                            fulltrim_copy(port), intf->groups()->timeout(group()),
+                            iec60870_data_listener::shared_from_this());
                 }
-                if (!remintf) {
+                state_ = (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected) ? connected : disconnected;
+                if (state_ == connected) {
+                    return error(0);
+                } else {
                     state_ = disconnected;
-                    return error(ERROR_NOINTF_CONNECTED);
+                    return error(ERROR_IO_LINK_NOT_CONNECTION);
                 }
             } catch (...) {
-                state_ = disconnected;
-                return error(ERROR_NOINTF_CONNECTED);
             }
             state_ = disconnected;
-            return error(remintf->error());
+            return error(ERROR_BASENOTFOUND);
         }
 
         ns_error extiec60870intf::disconnect_impl() {
             try {
                 disconnect_util();
-                state_ = disconnected;
-                if (remintf->isconnected()) {
-                    remintf->disconnect();
-                    remintf.reset();
-                    return error(0);
+                if ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected)) {
+                    //thread_io->disconnect();                
+                    state_ = disconnected;
+                    /*if (remintf->isconnected()) {
+                        remintf->disconnect();
+                        remintf.reset();
+                        return error(0);
+                    }*/
                 }
             } catch (...) {
-                remintf.reset();
+                thread_io.reset();
                 state_ = disconnected;
             }
+            state_ = disconnected;
             return error(0);
         }
 
         ns_error extiec60870intf::add_request_impl() {
             error(0);
-               if (need_add().empty())
-                   return error();
-               dataobject_set cids;
-               indx_set tmpadd=need_add();
-               for (indx_set::const_iterator it = tmpadd.begin(); it != tmpadd.end(); ++it) {
-                   if (intf->exists(*it)) {
-                       dataobject_ptr tmp = dataobject::build_from_bind(intf->groups()->devnum(group()), intf->binding(*it));
-                    if (tmp)
-                        cids.insert(tmp);
-                    else
-                        req_error(*it, ERROR_BINDING);
-                   } else {
-                       req_error(*it, ERROR_ENTNOEXIST);
-                   }
-               }
-               if (cids.empty()) return error(0);
+            if (state_ == connected) {
+                if (need_add().empty())
+                    return error();
+                dataobject_set cids;
+                indx_set tmpadd = need_add();
+                for (indx_set::const_iterator it = tmpadd.begin(); it != tmpadd.end(); ++it) {
+                    if (intf->exists(*it)) {
+                        dataobject_ptr tmp = dataobject::build_from_bind(intf->groups()->devnum(group()), intf->binding(*it));
+                        if (tmp)
+                            cids.insert(tmp);
+                        else
+                            req_error(*it, ERROR_BINDING);
+                    } else {
+                        req_error(*it, ERROR_ENTNOEXIST);
+                    }
+                }
+                if (cids.empty()) return error(0);
 
-               dataobject_set errors;
+                /*dataobject_set errors;
 
-               if (!error(remintf->add_items(cids, errors))) {
+                if (!error(remintf->add_items(cids, errors))) {
 
-                   for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it) {
-                       if (errors.find(*it) == errors.end()) {
-                           //add_simple(it->first, it->second);
-                       } else {}
-                           //req_error(it->first, ERROR_BINDING);
-                   }
-               }
-
+                    for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it) {
+                        if (errors.find(*it) == errors.end()) {
+                            //add_simple(it->first, it->second);
+                        } else {}
+                            //req_error(it->first, ERROR_BINDING);
+                    }
+                }*/
+            }
             return error();
         }
 
@@ -162,29 +165,29 @@ namespace dvnci {
         ns_error extiec60870intf::command_request_impl(const sidcmd_map& cmds) {
 
             /*   error(0);
-               if (cmds.empty())  
-                   return error();
+                   if (cmds.empty())  
+                       return error();
                            
-               mmscommand_vct reqcmds; 
-               accesserror_map   errors;
+                   mmscommand_vct reqcmds; 
+                   accesserror_map   errors;
 
-               for (sidcmd_map::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
-                   mmscommand_pair cmd = mmscommand_pair(it->first, it->second);
-                   reqcmds.push_back(cmd);
+                   for (sidcmd_map::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
+                       mmscommand_pair cmd = mmscommand_pair(it->first, it->second);
+                       reqcmds.push_back(cmd);
+                   }
+                
+                   if (reqcmds.empty())
+                       return error(ERROR_NODATA);
+                
+                   return error(remintf->send_commands(reqcmds, errors));}
+
+               ns_error extiec60870intf::report_request_impl() {
+                   return error(0);
                }
-                
-               if (reqcmds.empty())
-                   return error(ERROR_NODATA);
-                
-               return error(remintf->send_commands(reqcmds, errors));}
 
-           ns_error extiec60870intf::report_request_impl() {
-               return error(0);
-           }
-
-           ns_error extiec60870intf::event_request_impl() {
-               return error(0);
-           }*/
+               ns_error extiec60870intf::event_request_impl() {
+                   return error(0);
+               }*/
 
             return error();
         }
@@ -196,7 +199,14 @@ namespace dvnci {
         ns_error extiec60870intf::event_request_impl() {
             return error();
         };
-        
+
+        iec60870_thread_ptr extiec60870intf::create_pm(std::string host, std::string port, timeouttype tmo, dvnci::prot80670::iec60870_data_listener_ptr listr) {
+            return iec60870_thread::create(host, port, tmo, listr);
+        }
+
+        void extiec60870intf::kill_pm() {
+
+        }
 
     }
 }
