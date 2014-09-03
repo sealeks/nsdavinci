@@ -89,7 +89,7 @@ namespace dvnci {
             //void parse_error(const boost::itu::error_code& errcode);
             void check_connecton_state();
 
-            iec60870ioclient_ptr client_io;
+            iec60870_thread_ptr thread_io;
             std::string host;
             std::string port;
             timeouttype tmout;

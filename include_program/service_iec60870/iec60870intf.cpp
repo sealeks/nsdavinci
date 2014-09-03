@@ -18,7 +18,7 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
         iec60870intf::iec60870intf(const std::string hst, const std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr) :
-        client_io(new iec60870ioclient(hst,prt,tmo,listr)), host(hst), port(prt), tmout(tmo)  {
+        thread_io(new iec60870_thread(hst,prt,tmo,listr)), host(hst), port(prt), tmout(tmo)  {
         }
 
         iec60870intf_ptr iec60870intf::build(const std::string host, const std::string port, timeouttype tmout, iec60870_data_listener_ptr listr) {
@@ -28,13 +28,13 @@ namespace dvnci {
 
         ns_error iec60870intf::connect_impl() {
             try {
-                if (!client_io) return error(ERROR_IO_DEVICE_CHANAL_NOT_DEF);
-                if (client_io->state() == iec60870pm::connected) {
+                if (!thread_io) return error(ERROR_IO_DEVICE_CHANAL_NOT_DEF);
+                if (thread_io->pm()->state() == iec60870pm::connected) {
                     state_ = connected;
                     return error(0);
                 }
-               //client_io->connect(host, port, static_cast<std::size_t> (tmout));
-                state_ = (client_io->state() == iec60870pm::connected) ? connected : disconnected;
+               //thread_io->connect(host, port, static_cast<std::size_t> (tmout));
+                state_ = (thread_io->pm()->state() == iec60870pm::connected) ? connected : disconnected;
                 if (state_ == connected) {
                     DEBUG_VAL_DVNCI(host)
                     DEBUG_VAL_DVNCI(port)
@@ -52,8 +52,8 @@ namespace dvnci {
 
         ns_error iec60870intf::disconnect_impl() {
             try {
-                if ((client_io) && (client_io->state() == iec60870pm::connected)) {
-                    //client_io->disconnect();
+                if ((thread_io) && (thread_io->pm()->state() == iec60870pm::connected)) {
+                    //thread_io->disconnect();
                 }
             } catch (...) {
             }
@@ -76,7 +76,7 @@ namespace dvnci {
                     boost::shared_ptr<getvaraccess_operation_type> operationA(new getvaraccess_operation_type());
                     operationA->request_new();
                     operationA->request()->name(new mmsobject_type(it->second->obj()));
-                    if (client_io->req<getvaraccess_operation_type>(operationA)) {
+                    if (thread_io->req<getvaraccess_operation_type>(operationA)) {
                         if ((operationA->response())) {
                             if ((operationA->response()->typeDescription().type() != MMSO::TypeDescription_array) &&
                                     (operationA->response()->typeDescription().type() != MMSO::TypeDescription_structure) &&
@@ -95,7 +95,7 @@ namespace dvnci {
                 }
 
                 if (!actuals.empty()) {
-                    if (client_io->can_namedlist()) {
+                    if (thread_io->can_namedlist()) {
                         if (error(insert_in_namedlist(actuals)))
                             return error();
                     } else {
@@ -200,7 +200,7 @@ namespace dvnci {
                         } else
                             errors.insert(accesserror_pair(it->first, serviceerror_ptr()));
 
-                        if (client_io->req<write_operation_type>(operationW)) {
+                        if (thread_io->req<write_operation_type>(operationW)) {
                             if (operationW->response()) {
                             
                                 mmscommand_vct::const_iterator vit = lsit;           

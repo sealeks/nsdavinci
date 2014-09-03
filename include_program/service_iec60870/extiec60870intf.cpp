@@ -47,7 +47,6 @@ namespace dvnci {
 
         ns_error extiec60870intf::connect_impl() {
             try {
-                //  port : aselector
                 std::string port = "2404";//intf->groups()->port(group());
                 if (port.empty())
                     port = "2404";
@@ -61,14 +60,6 @@ namespace dvnci {
                 if (!remintf) {
                     state_ = disconnected;
                     return error(ERROR_NOINTF_CONNECTED);
-                }
-
-                if (!remintf->isconnected()) {
-                    state_ = disconnected;
-                    return error(remintf->error());
-                } else {
-                    state_ = connected;
-                    return error(0);
                 }
             } catch (...) {
                 state_ = disconnected;
@@ -205,6 +196,7 @@ namespace dvnci {
         ns_error extiec60870intf::event_request_impl() {
             return error();
         };
+        
 
     }
 }
