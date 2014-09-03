@@ -17,9 +17,13 @@ namespace dvnci {
         typedef sync_share_ptr_tmpl<dbdriver> dbdriver_ptr;
 
         class bdconnectionfactory {
+
         public:
 
-            static dbdriver_ptr build(num32 provider, std::string constr, bool ex_write = false);} ;}}
+            static dbdriver_ptr build(num32 provider, std::string constr, bool ex_write = false);
+        };
+    }
+}
 
 
 

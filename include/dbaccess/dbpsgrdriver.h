@@ -13,11 +13,10 @@
 namespace dvnci {
     namespace database {
 
-
         class dbpsgrdriver : public dbdriver {
 
-        static const int UNIQUE_VIOLATION = 23505;
-        static const int LOOSING_CONNECTEON = 0x8000;
+            static const int UNIQUE_VIOLATION = 23505;
+            static const int LOOSING_CONNECTEON = 0x8000;
 
         private:
             std::string lasttrend;
@@ -44,7 +43,7 @@ namespace dvnci {
 
             virtual bool createtrenddef();
 
-            virtual bool insert_journal_impl(const datetime& tm, const std::string& tg, const std::string& comment, const std::string& agroup,  num32 type,
+            virtual bool insert_journal_impl(const datetime& tm, const std::string& tg, const std::string& comment, const std::string& agroup, num32 type,
                     num32 alevel, const std::string& val = 0, const std::string& user = "", const std::string& host = "");
 
             bool insert_journal_by_one_impl(const journal_item_vect& vctval);
@@ -66,12 +65,12 @@ namespace dvnci {
             bool insert_report_by_one_imp(num32 id, num32 type, const dt_val_map& values);
 
             virtual bool insert_report_impl(num32 id, num32 type, const dt_val_map& values);
-            
+
             virtual bool select_impl(const std::string& req, sql_result& result);
-            
-            virtual bool select_journal_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_journal_row& result); 
-            
-            virtual bool select_debug_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_debug_row& result);             
+
+            virtual bool select_journal_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_journal_row& result);
+
+            virtual bool select_debug_impl(dvnci::datetime start, dvnci::datetime stop, const std::string& filter, vect_debug_row& result);
 
             virtual bool select_lastreporttime_impl(num32 id, num32 type, dvnci::datetime& tm);
 
@@ -94,16 +93,19 @@ namespace dvnci {
 
         public:
 
-            dbpsgrdriver(std::string conf, bool ex_write_ = false) : dbdriver(conf, ex_write_) {};
+            dbpsgrdriver(std::string conf, bool ex_write_ = false) : dbdriver(conf, ex_write_) {
+            };
 
             virtual bool connect();
 
             virtual bool disconnect();
-            
-            virtual bool insert_trendef_item(num32 id, const std::string& tg, const std::string& comment, const std::string& eu, double mineu, double maxeu, 
-                              num32 type, bool onmsg, bool offmsg, bool almsg, bool logged);
 
-        } ;}}
+            virtual bool insert_trendef_item(num32 id, const std::string& tg, const std::string& comment, const std::string& eu, double mineu, double maxeu,
+                    num32 type, bool onmsg, bool offmsg, bool almsg, bool logged);
+
+        };
+    }
+}
 
 #endif	/* _DBPSGRDRIVER_H */
 

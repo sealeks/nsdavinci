@@ -14,4 +14,7 @@ namespace dvnci {
                     // case PROPERTY_DB_PROVIDER_ORACLE:
                     /* case PROPERTY_DB_PROVIDER_MYSQL:*/
             }
-            return dbdriver_ptr();}}}
+            return dbdriver_ptr();
+        }
+    }
+}
