@@ -15,6 +15,9 @@ namespace dvnci {
         using dvnci::prot80670::dataobject;
         using dvnci::prot80670::dataobject_ptr;
         using dvnci::prot80670::dataobject_set;
+        using dvnci::prot80670::indx_dataobject_pair;
+        using dvnci::prot80670::indx_dataobject_vct;
+        
 
 
 
@@ -31,6 +34,7 @@ namespace dvnci {
         }
 
         void extiec60870intf::execute60870(dataobject_ptr vl) {
+            write_val_sid(vl, dvnci::prot80670::to_short_value(vl));
             dataobject_ptr vlf = vl;
         };
 
@@ -92,13 +96,13 @@ namespace dvnci {
             if (state_ == connected) {
                 if (need_add().empty())
                     return error();
-                dataobject_set cids;
+                indx_dataobject_vct cids;
                 indx_set tmpadd = need_add();
                 for (indx_set::const_iterator it = tmpadd.begin(); it != tmpadd.end(); ++it) {
                     if (intf->exists(*it)) {
                         dataobject_ptr tmp = dataobject::build_from_bind(intf->groups()->devnum(group()), intf->binding(*it));
                         if (tmp)
-                            cids.insert(tmp);
+                            cids.push_back(indx_dataobject_pair(*it,tmp));
                         else
                             req_error(*it, ERROR_BINDING);
                     } else {
@@ -109,15 +113,15 @@ namespace dvnci {
 
                 /*dataobject_set errors;
 
-                if (!error(remintf->add_items(cids, errors))) {
+                if (!error(remintf->add_items(cids, errors))) {*/
 
-                    for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it) {
-                        if (errors.find(*it) == errors.end()) {
-                            //add_simple(it->first, it->second);
-                        } else {}
+                    for (indx_dataobject_vct::const_iterator it = cids.begin(); it != cids.end(); ++it) {
+                        //if (errors.find(*it) == errors.end()) {
+                            add_simple(it->first, it->second);
+                        //} else {}
                             //req_error(it->first, ERROR_BINDING);
                     }
-                }*/
+               /* }*/
             }
             return error();
         }
