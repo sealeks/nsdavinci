@@ -160,6 +160,14 @@ namespace dvnci {
         typedef std::deque<message_104_ptr> message_104_deq;
         typedef std::set<message_104_ptr> message_104_set;        
 
+        
+        
+        
+        
+        
+        
+        
+        
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870pm
@@ -169,18 +177,27 @@ namespace dvnci {
 
         public:
 
-            enum PMState {
-
-                connectedCh, started, connected, disconnected
+            enum State {
+                connected,  disconnected
             };
+            
+            enum PMState {
+                noconnected, noaciveted, activated
+            };            
 
             iec60870pm(std::string hst, std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             virtual ~iec60870pm();
 
-            PMState state() const {
+            State state() const {
                 return state_;
             }
+            
+            PMState pmstate() const {
+                return pmstate_;
+            }       
+            
+            void pmstate(PMState vl);          
 
             virtual bool operator()();
 
@@ -200,7 +217,9 @@ namespace dvnci {
             
             void send(tcpcounter_type cnt);
             
-            void settx(tcpcounter_type vl);           
+            void ack_tx(tcpcounter_type vl);          
+            
+            void set_rx(tcpcounter_type vl);             
 
             void parse_data(message_104_ptr resp); 
 
@@ -208,8 +227,11 @@ namespace dvnci {
             
             iec60870_data_listener_ptr listener() {
                 return !listener_._empty() ? listener_.lock() : iec60870_data_listener_ptr();
-            }            
-
+            }          
+            
+            
+            
+           
             void handle_resolve(const boost::system::error_code& err,
                     boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
 
@@ -219,7 +241,15 @@ namespace dvnci {
             void handle_request(const boost::system::error_code& error, message_104_ptr req);
 
             void handle_response(const boost::system::error_code& error, message_104_ptr resp);
+            
+            void handle_timout_expire(const boost::system::error_code& err);
 
+
+            
+            
+
+        //////// request_operation 
+            
             template< typename handler>
             struct req_operation {
 
@@ -267,7 +297,7 @@ namespace dvnci {
                 std::size_t headersz_;
                 std::size_t bodysz_;
             };
-
+            
             template< typename handler>
             void async_request(handler hnd, message_104_ptr req) {
 
@@ -279,6 +309,10 @@ namespace dvnci {
                 
 
             }
+            
+            
+
+        //////// response_operation           
 
             template< typename handler>
             struct resp_operation {
@@ -330,6 +364,10 @@ namespace dvnci {
                 std::size_t headersz_;
                 std::size_t bodysz_;
             };
+            
+            
+            
+            
 
             template< typename handler>
             void async_response(handler hnd) {
@@ -344,16 +382,14 @@ namespace dvnci {
             }
 
 
-            void handle_timout_expire(const boost::system::error_code& err);
-
-
             boost::asio::io_service io_service_;
             boost::asio::ip::tcp::socket socket_;
             boost::asio::deadline_timer tmout_timer;
             std::string host;
             std::string port;
             timeouttype timout;
-            volatile PMState state_;
+            volatile State state_;
+            volatile PMState pmstate_;            
             volatile int error_cod;
             tcpcounter_type tx_;
             tcpcounter_type rx_;
@@ -375,30 +411,30 @@ namespace dvnci {
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// iec60870ioclient
+        //////// iec60870_thread
         /////////////////////////////////////////////////////////////////////////////////////////////////        
 
-        class iec60870ioclient : public boost::enable_shared_from_this<iec60870ioclient> {
+        class iec60870_thread : public boost::enable_shared_from_this<iec60870_thread> {
 
         public:
 
-            iec60870ioclient(std::string host, std::string port, timeouttype tmo,iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+            iec60870_thread(std::string host, std::string port, timeouttype tmo,
+                    iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
-            ~iec60870ioclient() {
-            }
-
-            iec60870pm::PMState state() const;
-
-
+            //~iec60870_thread();
+            
+            callable_shared_ptr<iec60870pm> pm() const;
+            
+            callable_shared_ptr<iec60870pm> pm();            
 
         private:
 
-            callable_shared_ptr<iec60870pm> iooclnt;
+            callable_shared_ptr<iec60870pm> pm_;
             boost::shared_ptr<boost::thread> ioth;
         };
 
-        typedef boost::weak_ptr< iec60870ioclient> iec60870ioclient_wptr;
-        typedef boost::shared_ptr< iec60870ioclient> iec60870ioclient_ptr;
+        typedef boost::weak_ptr< iec60870_thread> iec60870_thread_wptr;
+        typedef boost::shared_ptr< iec60870_thread> iec60870_thread_ptr;
 
     }
 }
