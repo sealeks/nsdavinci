@@ -27,7 +27,8 @@ namespace dvnci {
         this->primitive_base_t::load(size);
 
         if (0 == size) {
-            return;}
+            return;
+        }
 
         bool negative = (size < 0);
         if (negative)
@@ -52,7 +53,8 @@ namespace dvnci {
             reverse_bytes(size, cptr);
 
         if (negative)
-            l = -l;}
+            l = -l;
+    }
 
     void
     prb_binary_iarchive::load_override(
@@ -68,13 +70,15 @@ namespace dvnci {
                 );
         std::memcpy(t, cn.data(), cn.size());
         // borland tweak
-        t.t[cn.size()] = '\0';}
+        t.t[cn.size()] = '\0';
+    }
 
     void
     prb_binary_iarchive::init(unsigned int flags) {
         unsigned char x;
         load(x);
-        m_flags = x << CHAR_BIT;}
+        m_flags = x << CHAR_BIT;
+    }
 
     void
     prb_binary_oarchive::save_impl(
@@ -85,7 +89,8 @@ namespace dvnci {
 
         if (l == 0) {
             this->primitive_base_t::save(size);
-            return;}
+            return;
+        }
 
         boost::intmax_t ll;
         bool negative = (l < 0);
@@ -96,8 +101,8 @@ namespace dvnci {
 
         do {
             ll >>= CHAR_BIT;
-            ++size;}
-        while (ll != 0);
+            ++size;
+        }        while (ll != 0);
 
         this->primitive_base_t::save(
                 static_cast<char> (negative ? -size : size)
@@ -116,27 +121,30 @@ namespace dvnci {
         if (m_flags & endian_big)
             reverse_bytes(size, cptr);
 #endif
-        this->primitive_base_t::save_binary(cptr, size);}
+        this->primitive_base_t::save_binary(cptr, size);
+    }
 
     void
     prb_binary_oarchive::init(unsigned int flags) {
         if (m_flags == (endian_big | endian_little)) {
             boost::serialization::throw_exception(
                     prb_binary_oarchive_exception()
-                    );}
-        save(static_cast<unsigned char> (m_flags >> CHAR_BIT));}
-    
+                    );
+        }
+        save(static_cast<unsigned char> (m_flags >> CHAR_BIT));
+    }
 
-/*        template<>
-        void prb_binary_iarchive::load<datetime>(datetime & t) {
-            num64 tmp=0;
-            this->primitive_base_t::load(tmp);
-            t=(*(datetime*)((char*)(&tmp)));}
+
+    /*        template<>
+            void prb_binary_iarchive::load<datetime>(datetime & t) {
+                num64 tmp=0;
+                this->primitive_base_t::load(tmp);
+                t=(*(datetime*)((char*)(&tmp)));}
         
-        template<>
-        void prb_binary_oarchive::save<datetime>(const datetime & t) {
-            num64 tmp=num64_cast<datetime>(t);
-            this->primitive_base_t::save(tmp);}*/
+            template<>
+            void prb_binary_oarchive::save<datetime>(const datetime & t) {
+                num64 tmp=num64_cast<datetime>(t);
+                this->primitive_base_t::save(tmp);}*/
 }
 
 
@@ -156,13 +164,14 @@ namespace boost {
             using namespace dvnci;
 
             template class archive_serializer_map<prb_binary_iarchive>;
-            template class archive_serializer_map<prb_binary_oarchive>;}
+            template class archive_serializer_map<prb_binary_oarchive>;
+        }
 
         template class basic_binary_iprimitive<
         prb_binary_iarchive,
         std::istream::char_type,
         std::istream::traits_type
-        > ;
+        >;
 
 
 
@@ -171,7 +180,9 @@ namespace boost {
         prb_binary_oarchive,
         std::ostream::char_type,
         std::ostream::traits_type
-        > ;}}
+        >;
+    }
+}
 
 
 

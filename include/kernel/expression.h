@@ -84,6 +84,7 @@ namespace dvnci {
          */
 
         enum calc_operation {
+
             notoperation = 0,
             expr = 1,
             constant = 2,
@@ -122,7 +123,7 @@ namespace dvnci {
             const_now = 1061,
             const_null = 1063,
             const_user = 1065,
-            const_access = 1067,            
+            const_access = 1067,
             oprt_selector = 1052, // .  1
             oprt_caseleftgroup = 1058, // [
             oprt_caserightgroup = 1060, // ]
@@ -223,255 +224,340 @@ namespace dvnci {
             oprt_postinc = 15000, /* ++*/
             oprt_comma = 15002, //1004,             //,            
             oprt_postdec = 15020, /* --*/
-        } ;
+        };
 
         enum const_type {
+
             hex_const,
             dec_const,
             oct_const,
             bin_const,
             real_const,
-            none_const} ;
+            none_const
+        };
 
         class exprintf_stub {
+
         public:
 
             typedef num32 struct_type;
             typedef struct_type *struct_type_ptr;
 
-            exprintf_stub() {}
+            exprintf_stub() {
+            }
 
-            ~exprintf_stub() {}
+            ~exprintf_stub() {
+            }
 
             indx operator()(std::string vl) const {
-                return npos;}
+                return npos;
+            }
 
             struct_type_ptr operator[](indx vl) const {
-                return 0;}
+                return 0;
+            }
 
             bool operator[] (std::string vl) {
-                return false;}
+                return false;
+            }
 
             std::string name(indx id) const {
-                return "";}
+                return "";
+            }
 
             datetime time(indx id) const {
-                return nill_time;}
+                return nill_time;
+            }
 
             datetime time_log(indx id) const {
-                return nill_time;}
+                return nill_time;
+            }
 
             short_value value_shv(indx id) const {
-                return short_value();}
+                return short_value();
+            }
 
             short_value value_log_shv(indx id) const {
-                return short_value();}
+                return short_value();
+            }
 
             tagtype type(indx id) const {
-                return 0;}
+                return 0;
+            }
 
             ns_error error(indx id) const {
-                return ERROR_NILLINF;}
+                return ERROR_NILLINF;
+            }
 
             vlvtype valid(indx id) const {
-                return 0;}
+                return 0;
+            }
 
             short_value mineu_shv(indx id) const {
-                return short_value();}
+                return short_value();
+            }
 
             short_value maxeu_shv(indx id) const {
-                return short_value();}
+                return short_value();
+            }
 
             bool alarmon(indx id) const {
-                return false;}
+                return false;
+            }
 
             bool alarmkvit(indx id) const {
-                return false;}
+                return false;
+            }
 
             bool kvit(indx id = npos) {
-                return false;}
+                return false;
+            }
 
             altype alarmlevel(indx id) const {
-                return 0;};
+                return 0;
+            };
 
-            void send_command(indx id, const short_value& vl, addcmdtype queue = acQueuedCommand, indx clid = npos) {};
-                       
-            std::string user() const{ return "";}
-            
-            acclevtype accesslevel() const{ return 0;}
+            void send_command(indx id, const short_value& vl, addcmdtype queue = acQueuedCommand, indx clid = npos) {
+            };
 
-            void incref(indx id) {}
-            
-            void decref(indx id) {}} ;
+            std::string user() const {
+                return "";
+            }
+
+            acclevtype accesslevel() const {
+                return 0;
+            }
+
+            void incref(indx id) {
+            }
+
+            void decref(indx id) {
+            }
+        };
 
 
 
         std::ostream & operator<<(std::ostream& os, calc_operation oper);
 
         class calc_token {
+
         public:
 
-            calc_token() : shv_(), id_(npos), operation_(notoperation) {};
+            calc_token() : shv_(), id_(npos), operation_(notoperation) {
+            };
 
-            calc_token(bool val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(bool val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(num64 val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(num64 val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(unum64 val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(unum64 val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(num32 val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(num32 val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(unum32 val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(unum32 val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(num16 val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(num16 val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(unum16 val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(unum16 val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(num8 val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(num8 val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(unum8 val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(unum8 val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(float val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(float val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(double val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(double val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(const datetime& val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(const datetime& val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(const short_value& val, indx idx = npos) : shv_(val), id_(idx), operation_(constant) {};
+            calc_token(const short_value& val, indx idx = npos) : shv_(val), id_(idx), operation_(constant) {
+            };
 
-            calc_token(const std::string& val) : shv_(val), id_(npos), operation_(constant) {};
+            calc_token(const std::string& val) : shv_(val), id_(npos), operation_(constant) {
+            };
 
-            calc_token(const calc_operation& val) : shv_(), id_(npos), operation_(val) {};
+            calc_token(const calc_operation& val) : shv_(), id_(npos), operation_(val) {
+            };
 
             calc_token(indx idtag, tagtype type, ns_error err) : shv_(0, type, 0, err),
-            id_(idtag), operation_(expr) {};
+            id_(idtag), operation_(expr) {
+            };
 
             num64 value() const {
-                return shv_.value64();}
+                return shv_.value64();
+            }
 
             void value(num64 val) {
-                shv_.value64(val);}
+                shv_.value64(val);
+            }
 
             short_value value_shv() {
-                return shv_;}
+                return shv_;
+            }
 
             tagtype type() const {
-                return shv_.type();}
+                return shv_.type();
+            }
 
             void type(tagtype val) {
-                shv_.type(val);}
+                shv_.type(val);
+            }
 
             vlvtype valid() const {
                 return shv_.valid();
-                ;}
+                ;
+            }
 
             void valid(vlvtype val) {
-                shv_.valid(val);}
+                shv_.valid(val);
+            }
 
             datetime time() const {
-                return shv_.time();}
+                return shv_.time();
+            }
 
             void time(datetime val) {
-                shv_.time(val);}
+                shv_.time(val);
+            }
 
             ns_error error() const {
-                return shv_.error();}
+                return shv_.error();
+            }
 
             void error(ns_error val) {
-                shv_.error(val);}
+                shv_.error(val);
+            }
 
             indx id() const {
-                return id_;}
+                return id_;
+            }
 
             void id(indx val) {
-                id_ = val;}
+                id_ = val;
+            }
 
             calc_operation operation() const {
-                return operation_;}
+                return operation_;
+            }
 
             void operation(calc_operation val) {
-                operation_ = val;}
+                operation_ = val;
+            }
 
             calc_token getnum() const {
                 if (operation() != constant) return NULL_DOUBLE;
-                return value<num64 > ();}
+                return value<num64 > ();
+            }
 
             calc_token getreal() const {
                 if (operation() != constant) return NULL_DOUBLE;
-                return value<double>();}
+                return value<double>();
+            }
 
             calc_token getbool() const {
                 if (operation() != constant) return NULL_DOUBLE;
-                return value<bool>();}
+                return value<bool>();
+            }
 
             calc_token gettypedval(calc_operation oper);
 
             template <typename T>
             T value() const {
-                return shv_.value<T > ();}
+                return shv_.value<T > ();
+            }
 
             bool needassign() const {
-                return ((operation() == expr) && (id() != npos));}
+                return ((operation() == expr) && (id() != npos));
+            }
 
             bool isoperation() const {
                 return ((operation_ != notoperation) &&
-                        (operation_ != expr) && (operation_ != constant));}
+                        (operation_ != expr) && (operation_ != constant));
+            }
 
             bool isnan() const {
                 return (((operation_ == constant) && (num64_and_type_cast<double>(value(), type()) !=
-                        num64_and_type_cast<double>(value(), type()))));}
-            
+                        num64_and_type_cast<double>(value(), type()))));
+            }
+
             bool isnull() const {
-                return ((operation_ == constant) && (!iserror()) && (!valid()));}            
+                return ((operation_ == constant) && (!iserror()) && (!valid()));
+            }
 
             bool isnumber() const {
-                return ((operation_ == expr) && (operation_ == constant));}
+                return ((operation_ == expr) && (operation_ == constant));
+            }
 
             bool iserror() const {
-                return ((!isoperation()) && (error()));}
+                return ((!isoperation()) && (error()));
+            }
 
             std::string to_string() const {
                 if (isoperation()) return "op" + to_str<int>(static_cast<int> (operation())) + " ";
-                return operation() == expr ? to_str(id_) : shv_.value<std::string > ();}
+                return operation() == expr ? to_str(id_) : shv_.value<std::string > ();
+            }
 
             short_value to_valuetype() {
-                return shv_;}
+                return shv_;
+            }
 
             void set_unary() {
                 if (operation_ == oprt_add) operation_ = oprt_add_unary;
                 if (operation_ == oprt_sub) operation_ = oprt_sub_unary;
-                if (operation_ == oprt_bitand) operation_ = oprt_allvalid_unary;}
+                if (operation_ == oprt_bitand) operation_ = oprt_allvalid_unary;
+            }
 
             void set_postfix() {
                 if (operation_ == oprt_prefinc) operation_ = oprt_postinc;
-                if (operation_ == oprt_prefdec) operation_ = oprt_postdec;}
+                if (operation_ == oprt_prefdec) operation_ = oprt_postdec;
+            }
 
             static int operationpriority(calc_operation val) {
-                return ((static_cast<int> (val)) / 1000);}
+                return ((static_cast<int> (val)) / 1000);
+            }
 
             static bool find_unaryoperator(calc_operation val) {
-                return (((static_cast<int> (val)) >= 2000) || (static_cast<int> (val) == oprt_leftgroup) || (static_cast<int> (val) == oprt_comma));}
+                return (((static_cast<int> (val)) >= 2000) || (static_cast<int> (val) == oprt_leftgroup) || (static_cast<int> (val) == oprt_comma));
+            }
 
             static bool find_post_pref_operator(calc_operation val) {
                 return ((static_cast<int> (val) == oprt_prefinc) || (static_cast<int> (val) == oprt_prefdec) ||
-                        (static_cast<int> (val) == oprt_postinc) || (static_cast<int> (val) == oprt_postdec));}
+                        (static_cast<int> (val) == oprt_postinc) || (static_cast<int> (val) == oprt_postdec));
+            }
 
             static bool is_rightside_operation(calc_operation val) {
-                return (((static_cast<int> (val)) % 2) != 0);}
+                return (((static_cast<int> (val)) % 2) != 0);
+            }
 
             static bool can_unary(calc_operation val) {
-                return ((val == oprt_add) || (val == oprt_sub) || (val == oprt_bitand));}
+                return ((val == oprt_add) || (val == oprt_sub) || (val == oprt_bitand));
+            }
 
             static bool can_post_pref(calc_operation val) {
                 return ((static_cast<int> (val) == oprt_prefinc) || (static_cast<int> (val) == oprt_prefdec) ||
-                        (static_cast<int> (val) == oprt_postinc) || (static_cast<int> (val) == oprt_postdec));}
+                        (static_cast<int> (val) == oprt_postinc) || (static_cast<int> (val) == oprt_postdec));
+            }
 
             static bool is_group(calc_operation val) {
-                return ((val == oprt_leftgroup) || (val == oprt_rightgroup) || (val == oprt_caseleftgroup));}
+                return ((val == oprt_leftgroup) || (val == oprt_rightgroup) || (val == oprt_caseleftgroup));
+            }
 
             static bool is_need_popstack(calc_operation ls, calc_operation rs) {
                 return ((operationpriority(ls) < operationpriority(rs)) ||
-                        ((operationpriority(ls) == operationpriority(rs) && (!is_rightside_operation(rs)))));}
+                        ((operationpriority(ls) == operationpriority(rs) && (!is_rightside_operation(rs)))));
+            }
 
             friend tagtype type_cast(const calc_token& v1, const calc_token& v2);
 
@@ -484,17 +570,20 @@ namespace dvnci {
             friend bool operator==(const calc_token& lside, const calc_token& rside);
 
             friend bool operator!=(const calc_token& lside, const calc_token& rside) {
-                return !(operator==(lside, rside));}
+                return !(operator==(lside, rside));
+            }
 
             friend bool operator<(const calc_token& lside, const calc_token& rside);
 
             friend bool operator>=(const calc_token& lside, const calc_token& rside) {
-                return !(operator<(lside, rside));}
+                return !(operator<(lside, rside));
+            }
 
             friend bool operator>(const calc_token& lside, const calc_token& rside);
 
             friend bool operator<=(const calc_token& lside, const calc_token& rside) {
-                return !(operator>(lside, rside));}
+                return !(operator>(lside, rside));
+            }
 
             friend bool operator!(calc_token& nval);
             friend calc_token operator~(calc_token& nval);
@@ -518,7 +607,8 @@ namespace dvnci {
 
             short_value shv_;
             indx id_;
-            calc_operation operation_;} ;
+            calc_operation operation_;
+        };
 
 
 
@@ -527,7 +617,8 @@ namespace dvnci {
         calc_token test_stringtype_token(const std::string& val);
 
         template<typename BASEINTF, typename REFCOUNTER = refcounter_templ<BASEINTF> >
-                class expression_templ {
+        class expression_templ {
+
             typedef BASEINTF interface_type;
             typedef membase_sync_ptr_tmpl<interface_type> interface_type_ptr;
             typedef REFCOUNTER refcounter_type;
@@ -544,79 +635,99 @@ namespace dvnci {
             expression_templ(const std::string& val, interface_type_ptr inf, bool tested = false) : changepoll(false), intf(inf), error_(ERROR_EXPRNOINIT), expression_(""), testmode_(tested) {
                 refcntr = refcounter_type_ptr(new refcounter_type(intf));
                 refcntr->active(true);
-                expressionstr(val);};
+                expressionstr(val);
+            };
 
             expression_templ(const std::string& val = "", bool tested = false) : changepoll(false), intf(), error_(ERROR_EXPRNOINIT), expression_(""), testmode_(tested) {
                 refcntr = refcounter_type_ptr();
-                expressionstr(val);};
+                expressionstr(val);
+            };
 
             expression_templ(const std::wstring& val, interface_type_ptr inf, bool tested = false) : changepoll(false), intf(inf), error_(ERROR_EXPRNOINIT), expression_(""), testmode_(tested) {
                 refcntr = refcounter_type_ptr(new refcounter_type(intf));
                 refcntr->active(true);
-                expressionstr(val);};
+                expressionstr(val);
+            };
 
-            virtual ~expression_templ() {}
+            virtual ~expression_templ() {
+            }
 
             short_value value() {
                 calculate();
-                return  /*error() ? short_value() :*/ rslt.value_shv();}
+                return /*error() ? short_value() :*/ rslt.value_shv();
+            }
 
             vlvtype valid() const {
-                return (error_) ? 0 : rslt.valid();}
+                return (error_) ? 0 : rslt.valid();
+            }
 
             friend std::ostream & operator<<(std::ostream& os, expression_templ& ns) {
                 ns.calculate();
                 if (ns.error()) {
-                    return os << "error calculate expassion";}
-                return os << "value=" << ns.rslt.to_string() << " valid=" << ns.rslt.valid();}
+                    return os << "error calculate expassion";
+                }
+                return os << "value=" << ns.rslt.to_string() << " valid=" << ns.rslt.valid();
+            }
 
             friend std::string & operator>>(std::string& str, expression_templ& ns) {
                 ns.calculate();
                 if (error()) {
-                    return str = "error";}
-                return str = ns.rslt.to_string();}
+                    return str = "error";
+                }
+                return str = ns.rslt.to_string();
+            }
 
             template<typename T>
             T value_cast() {
                 calculate();
-                return error() ? 0 : num64_and_type_cast<T > (rslt.value(), rslt.type());}
+                return error() ? 0 : num64_and_type_cast<T > (rslt.value(), rslt.type());
+            }
 
             std::string expressionstr() const {
-                return expression_;}
+                return expression_;
+            }
 
             bool active() const {
-                return (refcntr) ? refcntr->active() : false;}
+                return (refcntr) ? refcntr->active() : false;
+            }
 
             void active(bool val) {
-                if (refcntr) refcntr->active(val);}
+                if (refcntr) refcntr->active(val);
+            }
 
             ns_error error() const {
-                return error_;}
+                return error_;
+            }
 
             ns_error testerror() {
                 calculate();
-                return error();}
+                return error();
+            }
 
             bool rebuild_if_need(indx id = npos);
 
             const indx_set& indexes() const {
-                return refcntr ? refcntr->indexes() : indexes_;}
+                return refcntr ? refcntr->indexes() : indexes_;
+            }
 
 
         protected:
 
             ns_error error(ns_error er) {
-                return error_ = er;}
+                return error_ = er;
+            }
 
             void expressionstr(std::string val) {
                 lower_and_fulltrim(val);
                 parse(val);
-                expression_ = val;}
+                expression_ = val;
+            }
 
             void expressionstr(std::wstring val) {
                 lower_and_fulltrim(val);
                 parse(val);
-                expression_ = wstr_to_utf8(val);}
+                expression_ = wstr_to_utf8(val);
+            }
 
             calc_token parse_token(std::string val);
 
@@ -647,10 +758,10 @@ namespace dvnci {
             virtual calc_token geteu(const calc_token& it);
 
             virtual calc_token getalarmmsg(const calc_token& it);
-            
+
             virtual calc_token getuser();
-            
-            virtual calc_token getaccess();            
+
+            virtual calc_token getaccess();
 
             virtual calc_token getalarmlevel(const calc_token& it);
 
@@ -674,22 +785,27 @@ namespace dvnci {
 
             calc_token prepareitem(calc_token& val) {
                 if (!val.needassign()) return val;
-                else return assignexpr(val);}
+                else return assignexpr(val);
+            }
 
             calc_token preparelastitem(calc_token& val) {
                 if (!val.needassign()) return val;
-                else return assignlastexpr(val);}
+                else return assignlastexpr(val);
+            }
 
             void clearstack() {
-                while (!calcstack.empty()) calcstack.pop();}
+                while (!calcstack.empty()) calcstack.pop();
+            }
 
             void clearall() {
                 clearstack();
                 polline.clear();
-                stringvector.clear();}
+                stringvector.clear();
+            }
 
             bool testmode() const {
-                return testmode_;}
+                return testmode_;
+            }
 
             polishstack calcstack;
             polishline polline;
@@ -702,7 +818,8 @@ namespace dvnci {
             ns_error error_;
             std::string expression_;
             bool testmode_;
-            indx_set indexes_;} ;
+            indx_set indexes_;
+        };
 
         template<typename BASEINTF, typename REFCOUNTER>
         bool expression_templ<BASEINTF, REFCOUNTER>::rebuild_if_need(indx id) {
@@ -712,8 +829,10 @@ namespace dvnci {
                 if (refcntr) refcntr.swap(refcntrtmp);
                 else refcntr = refcntrtmp;
                 expressionstr(expression_);
-                return true;}
-            return false;}
+                return true;
+            }
+            return false;
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::parse_token(std::string val) {
@@ -728,7 +847,8 @@ namespace dvnci {
             calc_token string_token = test_stringtype_token(val);
             if (string_token.operation() != notoperation)
                 return string_token;
-            return parse_tag(val);};
+            return parse_tag(val);
+        };
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::parse_tag(std::string val) {
@@ -736,49 +856,62 @@ namespace dvnci {
             if ((idtag != npos) && (refcntr)) refcntr->add(idtag);
             return calc_token(idtag,
                     ((intf) && (idtag != npos) && (!IN_REPORTSET(intf->type(idtag)))) ? intf->type(idtag) : 0,
-                    (idtag == npos) ? ERROR_TAGNOEXIST : 0);};
+                    (idtag == npos) ? ERROR_TAGNOEXIST : 0);
+        };
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getmineu(calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->mineu_shv(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->mineu_shv(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getmaxeu(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->maxeu_shv(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->maxeu_shv(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::gettime(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->time(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->time(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getlogtime(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->time_log(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->time_log(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getvalid(const calc_token& it) {
             if (it.operation() != expr) return it.valid();
             if (intf) {
-                return intf->valid(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->valid(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::geterror(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->error(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->error(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getalarm(const calc_token& it) {
@@ -786,8 +919,10 @@ namespace dvnci {
             if (intf) {
                 calc_token tmp(static_cast<bool> (intf->alarmon(it.id())));
                 tmp.valid(intf->valid(it.id()));
-                return tmp;}
-            throw dvncierror(ERROR_NILLINF);}
+                return tmp;
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getack(const calc_token& it) {
@@ -795,8 +930,10 @@ namespace dvnci {
             if (intf) {
                 calc_token tmp(static_cast<bool> (intf->alarmkvit(it.id())));
                 tmp.valid(intf->valid(it.id()));
-                return tmp;}
-            throw dvncierror(ERROR_NILLINF);}
+                return tmp;
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getnack(const calc_token& it) {
@@ -804,71 +941,92 @@ namespace dvnci {
             if (intf) {
                 calc_token tmp(static_cast<bool> (!(intf->alarmkvit(it.id())) && (intf->alarmon(it.id()))));
                 tmp.valid(intf->valid(it.id()));
-                return tmp;}
-            throw dvncierror(ERROR_NILLINF);}
+                return tmp;
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getcomment(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->comment(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->comment(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::geteu(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->eu(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->eu(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getbinding(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->binding(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->binding(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getalarmmsg(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->alarmmsg(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->alarmmsg(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getalarmlevel(const calc_token& it) {
             if (it.operation() != expr) throw dvncierror(ERROR_EXPROPERATOR);
             if (intf) {
-                return intf->alarmlevel(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
-        
+                return intf->alarmlevel(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
+
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getuser() {
             if (intf) {
-                return intf->user();}
-            return "";} 
-        
+                return intf->user();
+            }
+            return "";
+        }
+
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::getaccess() {
             if (intf) {
-                return intf->accesslevel();}
-            return 0;}          
+                return intf->accesslevel();
+            }
+            return 0;
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::calc_token_factory(const std::string& val) {
-            return parse_token(trim_copy(val));}
+            return parse_token(trim_copy(val));
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::assignexpr(const calc_token& it) {
             if (intf) {
-                return intf->value_shv(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->value_shv(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::assignlastexpr(const calc_token& it) {
             if (intf) {
-                return intf->value_log_shv(it.id());}
-            throw dvncierror(ERROR_NILLINF);}
+                return intf->value_log_shv(it.id());
+            }
+            throw dvncierror(ERROR_NILLINF);
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         ns_error expression_templ<BASEINTF, REFCOUNTER>::calculate() {
@@ -878,7 +1036,8 @@ namespace dvnci {
             try {
                 if (changepoll) {
                     changepoll = false;
-                    polline = savedpolline;}
+                    polline = savedpolline;
+                }
                 polishline_iterator it = polline.begin();
                 polishline_iterator endit = polline.end();
                 while (it != endit) {
@@ -889,45 +1048,65 @@ namespace dvnci {
                             if (caseswitch(it, nmidit)) {
                                 clearall();
                                 changepoll = true;
-                                return error();};}
-                        else {
+                                return error();
+                            };
+                        } else {
                             clearall();
-                            return error(ERROR_EXPRPARSE);}
+                            return error(ERROR_EXPRPARSE);
+                        }
                         it = polline.begin();
                         endit = polline.end();
-                        changepoll = true;}
-                    else {
+                        changepoll = true;
+                    } else {
                         switch (it->operation()) {
                             case notoperation: break;
-                            case expr:{
+                            case expr:
+                            {
                                 calcstack.push(*it);
-                                break;}
-                            case constant:{
+                                break;
+                            }
+                            case constant:
+                            {
                                 calcstack.push(*it);
-                                break;}
-                            case const_e:{
+                                break;
+                            }
+                            case const_e:
+                            {
                                 calcstack.push(calc_token(DV_E_CONST));
-                                break;}
-                            case const_nan:{
+                                break;
+                            }
+                            case const_nan:
+                            {
                                 calcstack.push(calc_token(NULL_DOUBLE));
-                                break;}
-                            case const_null:{
+                                break;
+                            }
+                            case const_null:
+                            {
                                 calc_token tmp = calc_token(0);
                                 tmp.valid(0);
                                 calcstack.push(tmp);
-                                break;}                                                         
-                            case const_pi:{
+                                break;
+                            }
+                            case const_pi:
+                            {
                                 calcstack.push(calc_token(DV_PI_CONST));
-                                break;}
-                            case const_now:{
+                                break;
+                            }
+                            case const_now:
+                            {
                                 calcstack.push(calc_token(now()));
-                                break;}
-                            case const_user:{
+                                break;
+                            }
+                            case const_user:
+                            {
                                 calcstack.push(getuser());
-                                break;}
-                            case const_access:{
+                                break;
+                            }
+                            case const_access:
+                            {
                                 calcstack.push(getaccess());
-                                break;}                              
+                                break;
+                            }
                             case select_msc:
                             case select_sec:
                             case select_minute:
@@ -942,7 +1121,8 @@ namespace dvnci {
                             case select_epochminute:
                             case select_epochday:
                             case select_epochhour:
-                            case select_epochmsc:{
+                            case select_epochmsc:
+                            {
                                 if (!calcstack.empty()) {
                                     calc_token rsideit = prepareitem(calcstack.top());
                                     calcstack.pop();
@@ -950,66 +1130,102 @@ namespace dvnci {
                                         datetime tmtmp = cast_datetime_fromnum64(rsideit.value());
                                         if (!tmtmp.is_special()) {
                                             switch (it->operation()) {
-                                                case select_msc:{
+                                                case select_msc:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.time_of_day().total_milliseconds())));
-                                                    break;}
-                                                case select_sec:{
+                                                    break;
+                                                }
+                                                case select_sec:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.time_of_day().seconds())));
-                                                    break;}
-                                                case select_minute:{
+                                                    break;
+                                                }
+                                                case select_minute:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.time_of_day().minutes())));
-                                                    break;}
-                                                case select_hour:{
+                                                    break;
+                                                }
+                                                case select_hour:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.time_of_day().hours())));
-                                                    break;}
-                                                case select_day:{
+                                                    break;
+                                                }
+                                                case select_day:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.date().day())));
-                                                    break;}
-                                                case select_dayweek:{
+                                                    break;
+                                                }
+                                                case select_dayweek:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.date().day_of_week())));
-                                                    break;}
-                                                case select_dayyear:{
+                                                    break;
+                                                }
+                                                case select_dayyear:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.date().day_of_year())));
-                                                    break;}
-                                                case select_month:{
+                                                    break;
+                                                }
+                                                case select_month:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.date().month())));
-                                                    break;}
-                                                case select_monthdays:{
+                                                    break;
+                                                }
+                                                case select_monthdays:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.date().end_of_month().day())));
-                                                    break;}
-                                                case select_year:{
+                                                    break;
+                                                }
+                                                case select_year:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (tmtmp.date().year())));
-                                                    break;}
-                                                case select_epochminute:{
+                                                    break;
+                                                }
+                                                case select_epochminute:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (datetime_to_epoch_minute(tmtmp))));
-                                                    break;}
-                                                case select_epochhour:{
+                                                    break;
+                                                }
+                                                case select_epochhour:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (datetime_to_epoch_hour(tmtmp))));
-                                                    break;}
-                                                case select_epochday:{
+                                                    break;
+                                                }
+                                                case select_epochday:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (datetime_to_epoch_day(tmtmp))));
-                                                    break;}
-                                                case select_epoch:{
+                                                    break;
+                                                }
+                                                case select_epoch:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (datetime_to_epoch(tmtmp))));
-                                                    break;}
-                                                case select_epochmsc:{
+                                                    break;
+                                                }
+                                                case select_epochmsc:
+                                                {
                                                     calcstack.push(calc_token(static_cast<num64> (datetime_to_epoch_msc(tmtmp))));
-                                                    break;}}}
-                                        else {
-                                            calcstack.push(calc_token(tmtmp));}
-                                        break;}
-                                    else {
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            calcstack.push(calc_token(tmtmp));
+                                        }
+                                        break;
+                                    } else {
                                         clearall();
-                                        return error(ERROR_EXPROPERATOR);}}
+                                        return error(ERROR_EXPROPERATOR);
+                                    }
+                                }
                                 clearall();
                                 return error(ERROR_EXPRPARSE);
-                                break;}
+                                break;
+                            }
 
                             case func_incmsc:
                             case func_incsec:
                             case func_incminute:
                             case func_inchour:
-                            case func_incday:{
+                            case func_incday:
+                            {
                                 if (calcstack.size() > 1) {
                                     calc_token incit = prepareitem(calcstack.top()).gettypedval(oper_cast_num64);
                                     calcstack.pop();
@@ -1019,97 +1235,128 @@ namespace dvnci {
                                     if (tmit.type() == TYPE_TM) {
                                         try {
                                             switch (it->operation()) {
-                                                case func_incmsc:{
+                                                case func_incmsc:
+                                                {
                                                     tmit.value(castnum64_from_datetime(incmillisecond(tmit.tm(), incnum)));
-                                                    break;}
-                                                case func_incsec:{
+                                                    break;
+                                                }
+                                                case func_incsec:
+                                                {
                                                     tmit.value(castnum64_from_datetime(incsecond(tmit.tm(), incnum)));
-                                                    break;}
-                                                case func_incminute:{
+                                                    break;
+                                                }
+                                                case func_incminute:
+                                                {
                                                     tmit.value(castnum64_from_datetime(incminute(tmit.tm(), incnum)));
-                                                    break;}
-                                                case func_inchour:{
+                                                    break;
+                                                }
+                                                case func_inchour:
+                                                {
                                                     tmit.value(castnum64_from_datetime(inchour(tmit.tm(), incnum)));
-                                                    break;}
-                                                case func_incday:{
+                                                    break;
+                                                }
+                                                case func_incday:
+                                                {
                                                     tmit.value(castnum64_from_datetime(incday(tmit.tm(), incnum)));
-                                                    break;}}
-                                            calcstack.push(calc_token(tmit));}
-                                        catch (...) {}}
-                                    else {
+                                                    break;
+                                                }
+                                            }
+                                            calcstack.push(calc_token(tmit));
+                                        }                                        catch (...) {
+                                        }
+                                    } else {
                                         clearall();
-                                        return error(ERROR_EXPROPERATOR);}}
-                                else {
+                                        return error(ERROR_EXPROPERATOR);
+                                    }
+                                } else {
                                     clearall();
-                                    return error(ERROR_EXPROPERATOR);}
+                                    return error(ERROR_EXPROPERATOR);
+                                }
 
-                                break;}
+                                break;
+                            }
 
 
-                            case func_rnd:{
+                            case func_rnd:
+                            {
                                 calcstack.push(calc_token((1.0 * rand()) / RAND_MAX));
-                                break;}
+                                break;
+                            }
                             case oprt_commandset:
                             case oprt_commandset1:
                             case oprt_command:
                             case oprt_command1:
-                            case oprt_assign:{
+                            case oprt_assign:
+                            {
                                 if (calcstack.size() >= 2) {
                                     if ((calcstack.top().operation() == constant) && (calcstack.top().isnan())) {
                                         //calcstack.pop();
                                         calcstack.pop();
-                                        break;}
+                                        break;
+                                    }
                                     calc_token rsideit = prepareitem(calcstack.top());
                                     if (rsideit.error()) {
                                         calcstack.pop();
                                         calcstack.pop();
-                                        break;}
+                                        break;
+                                    }
                                     calcstack.pop();
                                     if ((intf) && (!calcstack.top().isnan()) && (calcstack.top().id() != npos)) {
                                         if (!testmode()) {
                                             intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), rsideit.valid(), rsideit.error()),
-                                                    ((it->operation() == oprt_command) || (it->operation() == oprt_commandset))  ? acQueuedCommand :
-                                                    (((it->operation() == oprt_command1) || (it->operation() == oprt_commandset1))  ? acNewCommand : acNullCommand),
-                                                    ((it->operation() == oprt_commandset) || (it->operation() == oprt_commandset1) || (it->operation() ==  acNullCommand)));}
+                                                    ((it->operation() == oprt_command) || (it->operation() == oprt_commandset)) ? acQueuedCommand :
+                                                    (((it->operation() == oprt_command1) || (it->operation() == oprt_commandset1)) ? acNewCommand : acNullCommand),
+                                                    ((it->operation() == oprt_commandset) || (it->operation() == oprt_commandset1) || (it->operation() == acNullCommand)));
+                                        }
                                         //calcstack.pop();
                                         /*calcstack.push(rsideit);*/
-                                    }
-                                    else {
+                                    } else {
                                         if (calcstack.top().id() == npos) {
                                             calcstack.pop();
                                             calc_token errtoken;
                                             errtoken.error(ERROR_EXPRMATH);
-                                            calcstack.push(errtoken);}
+                                            calcstack.push(errtoken);
+                                        }
                                         /*calcstack.push(rsideit);*/
-                                    }}
-                                else {
+                                    }
+                                } else {
                                     clearall();
-                                    return error(ERROR_EXPRPARSE);}
-                                break;}
-                            case oprt_kvit:{
+                                    return error(ERROR_EXPRPARSE);
+                                }
+                                break;
+                            }
+                            case oprt_kvit:
+                            {
                                 if (!testmode()) {
                                     if (!calcstack.empty()) {
                                         if (calcstack.top().id() != npos) {
-                                            intf->kvit(calcstack.top().id());}
-                                        else {
-                                            intf->kvit(calcstack.top().id());}}
-                                    else {
+                                            intf->kvit(calcstack.top().id());
+                                        } else {
+                                            intf->kvit(calcstack.top().id());
+                                        }
+                                    } else {
                                         intf->kvit();
-                                        calcstack.push(true);}
-                                    break;}}
-                            default:{
+                                        calcstack.push(true);
+                                    }
+                                    break;
+                                }
+                            }
+                            default:
+                            {
                                 switch (it->operation()) {
                                     case oprt_add:
                                     case oprt_sub:
                                     case oprt_mult:
                                     case oprt_div:
-                                    case oprt_modulo:{
+                                    case oprt_modulo:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}
+                                                return error(ERROR_EXPRPARSE);
+                                            }
                                             calc_token lsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = (it->operation() == oprt_add) ? lsideit + rsideit :
@@ -1117,48 +1364,58 @@ namespace dvnci {
                                                     (it->operation() == oprt_mult) ? lsideit * rsideit :
                                                     (it->operation() == oprt_div) ? lsideit / rsideit : lsideit % rsideit;
                                             resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case oprt_prefinc:
-                                    case oprt_postinc:{
+                                    case oprt_postinc:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             rsideit = rsideit + calc_token(1);
-                                            calcstack.push(rsideit);}
-                                        else {
+                                            calcstack.push(rsideit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case oprt_prefdec:
-                                    case oprt_postdec:{
+                                    case oprt_postdec:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             rsideit = rsideit - calc_token(1);
-                                            calcstack.push(rsideit);}
-                                        else {
+                                            calcstack.push(rsideit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case oprt_compless:
                                     case oprt_complessoreq:
                                     case oprt_compmore:
                                     case oprt_compmoreoreq:
                                     case oprt_compeq:
-                                    case oprt_compnoteq:{
+                                    case oprt_compnoteq:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}
+                                                return error(ERROR_EXPRPARSE);
+                                            }
                                             calc_token lsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = (it->operation() == oprt_compless) ? (lsideit < rsideit) :
@@ -1168,15 +1425,18 @@ namespace dvnci {
                                                     (it->operation() == oprt_compeq) ? (lsideit == rsideit) :
                                                     (lsideit != rsideit);
                                             resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case oprt_opnot:
                                     case oprt_opexnot:
-                                    case oprt_sub_unary:{
+                                    case oprt_sub_unary:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token nmidit = prepareitem(calcstack.top());
                                             calcstack.pop();
@@ -1184,99 +1444,120 @@ namespace dvnci {
                                                     (it->operation() == oprt_opexnot) ? (~nmidit) :
                                                     (-nmidit);
                                             resultit.valid(nmidit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
-                                    case oprt_allvalid_unary:{
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
+                                    case oprt_allvalid_unary:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token resultit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             resultit.valid(FULL_VALID);
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
                                     case oprt_bitand:
                                     case oprt_bitor:
-                                    case oprt_bitexor:{
+                                    case oprt_bitexor:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}
+                                                return error(ERROR_EXPRPARSE);
+                                            }
                                             calc_token lsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = (it->operation() == oprt_bitand) ? (lsideit & rsideit) :
                                                     (it->operation() == oprt_bitor) ? (lsideit | rsideit) :
                                                     (lsideit ^ rsideit);
                                             resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
 
                                     case oprt_logicand:
-                                    case oprt_logicor:{
+                                    case oprt_logicor:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}
+                                                return error(ERROR_EXPRPARSE);
+                                            }
                                             calc_token lsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = (it->operation() == oprt_logicand) ? (lsideit && rsideit) :
                                                     (lsideit || rsideit);
                                             resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case oprt_bitleft:
-                                    case oprt_bitright:{
+                                    case oprt_bitright:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}
+                                                return error(ERROR_EXPRPARSE);
+                                            }
                                             calc_token lsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = (it->operation() == oprt_bitleft) ? (lsideit << rsideit) :
                                                     (lsideit >> rsideit);
                                             resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case oprt_cyclbitleft:
-                                    case oprt_cyclbitright:{
+                                    case oprt_cyclbitright:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}
+                                                return error(ERROR_EXPRPARSE);
+                                            }
                                             calc_token lsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = (it->operation() == oprt_cyclbitleft) ? (cycl_operator_btlft(lsideit, rsideit)) :
                                                     (cycl_operator_btrgt(lsideit, rsideit));
                                             resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
 
 
@@ -1284,7 +1565,8 @@ namespace dvnci {
                                     case select_maxeu:
                                     case select_ack:
                                     case select_alarm:
-                                    case select_nack:{
+                                    case select_nack:
+                                    {
                                         if (!calcstack.empty() && (calcstack.top().id() != npos)) {
                                             calc_token nmidit = calcstack.top();
                                             calcstack.pop();
@@ -1293,13 +1575,16 @@ namespace dvnci {
                                                     (it->operation() == select_ack) ? getack(nmidit) :
                                                     (it->operation() == select_alarm) ? getalarm(nmidit) :
                                                     getnack(nmidit);
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
-                                    case func_alarm:{
+                                    case func_alarm:
+                                    {
                                         bool rslt = false;
                                         do {
                                             if (!calcstack.empty() && (calcstack.top().id() != npos)) {
@@ -1308,15 +1593,19 @@ namespace dvnci {
                                                 calc_token resultit = getalarm(nmidit);
                                                 if (resultit.valid() && (resultit.value<bool>())) {
                                                     rslt = true;
-                                                    break;}}
-                                            else {
+                                                    break;
+                                                }
+                                            } else {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}}
-                                        while (calcstack.size());
+                                                return error(ERROR_EXPRPARSE);
+                                            }
+                                        }                                        while (calcstack.size());
                                         calcstack.push(calc_token(rslt));
-                                        break;}
+                                        break;
+                                    }
 
-                                    case func_ack:{
+                                    case func_ack:
+                                    {
                                         bool rslt = false;
                                         do {
                                             if (!calcstack.empty() && (calcstack.top().id() != npos)) {
@@ -1328,15 +1617,20 @@ namespace dvnci {
                                                     rslt = true;
                                                     if (resultack.valid() && (!resultack.value<bool>())) {
                                                         rslt = false;
-                                                        break;}}}
-                                            else {
+                                                        break;
+                                                    }
+                                                }
+                                            } else {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}}
-                                        while (calcstack.size());
+                                                return error(ERROR_EXPRPARSE);
+                                            }
+                                        }                                        while (calcstack.size());
                                         calcstack.push(calc_token(rslt));
-                                        break;}
+                                        break;
+                                    }
 
-                                    case func_nack:{
+                                    case func_nack:
+                                    {
                                         bool rslt = false;
                                         do {
                                             if (!calcstack.empty() && (calcstack.top().id() != npos)) {
@@ -1347,15 +1641,19 @@ namespace dvnci {
                                                 if (resultal.valid() && (resultal.value<bool>()) &&
                                                         resultnack.valid() && (resultnack.value<bool>())) {
                                                     rslt = true;
-                                                    break;}}
-                                            else {
+                                                    break;
+                                                }
+                                            } else {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}}
-                                        while (calcstack.size());
+                                                return error(ERROR_EXPRPARSE);
+                                            }
+                                        }                                        while (calcstack.size());
                                         calcstack.push(calc_token(rslt));
-                                        break;}
+                                        break;
+                                    }
 
-                                    case func_alarmlevel:{
+                                    case func_alarmlevel:
+                                    {
                                         altype rslt = 0;
                                         do {
                                             if (!calcstack.empty() && (calcstack.top().id() != npos)) {
@@ -1364,114 +1662,141 @@ namespace dvnci {
                                                 calc_token resultit = getalarmlevel(nmidit);
                                                 calc_token resultal = getalarm(nmidit);
                                                 if (resultal.valid() && (resultal.value<bool>()) && (resultit.value<altype > () > rslt)) {
-                                                    rslt = resultit.value<altype > ();}}
-                                            else {
+                                                    rslt = resultit.value<altype > ();
+                                                }
+                                            } else {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}}
-                                        while (calcstack.size());
+                                                return error(ERROR_EXPRPARSE);
+                                            }
+                                        }                                        while (calcstack.size());
                                         calcstack.push(calc_token(rslt));
-                                        break;}
+                                        break;
+                                    }
 
-                                    case func_tags:{
+                                    case func_tags:
+                                    {
                                         altype rslt = false;
                                         do {
                                             if (!calcstack.empty() && (calcstack.top().id() != npos)) {
                                                 calc_token nmidit = calcstack.top();
                                                 calcstack.pop();
-                                                rslt = true;}
-                                            else {
+                                                rslt = true;
+                                            } else {
                                                 while (calcstack.size())
                                                     calcstack.pop();
                                                 rslt = false;
-                                                ;}}
-                                        while (calcstack.size());
+                                                ;
+                                            }
+                                        }                                        while (calcstack.size());
                                         calcstack.push(calc_token(rslt));
-                                        break;}
+                                        break;
+                                    }
 
 
 
                                     case select_time:
-                                    case select_logtime:{
+                                    case select_logtime:
+                                    {
                                         if ((!calcstack.empty()) && (calcstack.top().id() != npos)) {
                                             calc_token nmidit = calcstack.top();
                                             calc_token resultit = (it->operation() == select_time) ? gettime(nmidit) : getlogtime(nmidit);
                                             calcstack.pop();
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
-                                    case select_lastvalue:{
+                                    case select_lastvalue:
+                                    {
                                         if ((!calcstack.empty()) && (calcstack.top().id() != npos)) {
                                             calc_token resultit = preparelastitem(calcstack.top());
                                             calcstack.pop();
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
-                                    case select_error:{
+                                    case select_error:
+                                    {
                                         if ((!calcstack.empty()) && (calcstack.top().id() != npos)) {
                                             calc_token nmidit = calcstack.top();
                                             calc_token resultit = geterror(nmidit);
                                             calcstack.pop();
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
-                                    case select_valid:{
+                                    case select_valid:
+                                    {
                                         if ((!calcstack.empty())) {
                                             calc_token nmidit = calcstack.top();
                                             calc_token resultit = getvalid(nmidit);
                                             calcstack.pop();
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case func_num:
-                                    case select_num:{
+                                    case select_num:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token nmidit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = nmidit.getnum();
                                             resultit.valid(nmidit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case func_real:
-                                    case select_real:{
+                                    case select_real:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token nmidit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = nmidit.getreal();
                                             resultit.valid(nmidit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case func_bool:
-                                    case select_bool:{
+                                    case select_bool:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token nmidit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = nmidit.getbool();
                                             resultit.valid(nmidit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case oper_cast_basetype:
                                     case oper_cast_num64:
@@ -1484,38 +1809,46 @@ namespace dvnci {
                                     case oper_cast_unum8:
                                     case oper_cast_float:
                                     case oper_cast_double:
-                                    case oper_cast_bool:{
+                                    case oper_cast_bool:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token nmidit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = nmidit.gettypedval(it->operation());
                                             resultit.valid(nmidit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
-                                    case oper_cast_vbool:{
+                                    case oper_cast_vbool:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token nmidit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = nmidit.gettypedval(it->operation());
                                             resultit = resultit.value<bool>() && nmidit.valid();
                                             resultit.valid(FULL_VALID);
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
-                                    case func_format:{
+                                    case func_format:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token lsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}
+                                                return error(ERROR_EXPRPARSE);
+                                            }
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             vlvtype vld = rsideit.valid();
                                             datetime tm = rsideit.time();
@@ -1524,14 +1857,17 @@ namespace dvnci {
                                             lsideit.valid(vld);
                                             lsideit.time(tm);
                                             calcstack.pop();
-                                            calcstack.push(lsideit);}
-                                        break;}
+                                            calcstack.push(lsideit);
+                                        }
+                                        break;
+                                    }
 
                                     case select_comment:
                                     case select_eu:
                                     case select_binding:
                                     case select_alarmmsg:
-                                    case select_alarmlevel:{
+                                    case select_alarmlevel:
+                                    {
                                         if (!calcstack.empty() && (calcstack.top().id() != npos)) {
                                             calc_token nmidit = calcstack.top();
                                             calcstack.pop();
@@ -1540,29 +1876,36 @@ namespace dvnci {
                                                     (it->operation() == select_binding) ? getbinding(nmidit) :
                                                     (it->operation() == select_alarmmsg) ? getalarmmsg(nmidit) :
                                                     getalarmlevel(nmidit);
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
 
                                     case oper_cast_time:
-                                    case oper_cast_text:{
+                                    case oper_cast_text:
+                                    {
                                         clearall();
-                                        return error(ERROR_EXPRPARSE);}
+                                        return error(ERROR_EXPRPARSE);
+                                    }
 
-                                    case func_abs:{
+                                    case func_abs:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token nmidit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = nmidit.getabs();
                                             resultit.valid(nmidit.valid());
                                             calcstack.push(resultit);
-                                            break;}
-                                        else {
+                                            break;
+                                        } else {
                                             clearall();
                                             return error(ERROR_EXPRPARSE);
-                                            break;}}
+                                            break;
+                                        }
+                                    }
 
                                     case func_sin:
                                     case func_cos:
@@ -1580,71 +1923,93 @@ namespace dvnci {
                                     case func_ln:
                                     case func_floor:
                                     case func_ceiling:
-                                    case func_round:{
+                                    case func_round:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token nmidit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = nmidit.math_func1(it->operation());
                                             resultit.valid(nmidit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
-                                    case func_pow:{
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
+                                    case func_pow:
+                                    {
                                         if (!calcstack.empty()) {
                                             calc_token rsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             if ((calcstack.empty())) {
                                                 clearall();
-                                                return error(ERROR_EXPRPARSE);}
+                                                return error(ERROR_EXPRPARSE);
+                                            }
                                             calc_token lsideit = prepareitem(calcstack.top());
                                             calcstack.pop();
                                             calc_token resultit = math_pow(lsideit, rsideit);
                                             resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
-                                            calcstack.push(resultit);}
-                                        else {
+                                            calcstack.push(resultit);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
                                     case func_min:
-                                    case func_max:{
+                                    case func_max:
+                                    {
                                         if (!calcstack.empty()) {
                                             do {
                                                 calc_token rsideit = prepareitem(calcstack.top());
                                                 calcstack.pop();
                                                 if ((calcstack.empty())) {
                                                     clearall();
-                                                    return error(ERROR_EXPRPARSE);}
+                                                    return error(ERROR_EXPRPARSE);
+                                                }
                                                 calc_token lsideit = prepareitem(calcstack.top());
                                                 calcstack.pop();
                                                 calc_token resultit = (it->operation() == func_min) ? minim(lsideit, rsideit) : maxim(lsideit, rsideit);
                                                 resultit.valid(lsideit.valid() < rsideit.valid() ? lsideit.valid() : rsideit.valid());
-                                                calcstack.push(resultit);}
-                                            while (calcstack.size() > 1);}
-                                        else {
+                                                calcstack.push(resultit);
+                                            }                                            while (calcstack.size() > 1);
+                                        } else {
                                             clearall();
-                                            return error(ERROR_EXPRPARSE);}
-                                        break;}
-                                    default:{}}}}
-                        ++it;}}}
-            catch (dvncierror& er) {
+                                            return error(ERROR_EXPRPARSE);
+                                        }
+                                        break;
+                                    }
+                                    default:
+                                    {
+                                    }
+                                }
+                            }
+                        }
+                        ++it;
+                    }
+                }
+            }            catch (dvncierror& er) {
 
                 calc_token tmp;
                 rslt = tmp;
-                return error(er.code());}
+                return error(er.code());
+            }
             if (calcstack.size() < 1) {
                 clearall();
-                return error(ERROR_EXPRPARSE);}
+                return error(ERROR_EXPRPARSE);
+            }
             if (calcstack.top().needassign()) {
                 try {
-                    rslt = prepareitem(calcstack.top());}
-                catch (dvncierror& er) {
+                    rslt = prepareitem(calcstack.top());
+                }                catch (dvncierror& er) {
                     calc_token tmp;
                     rslt = tmp;
-                    return error(er.code());}}
-            else rslt = calcstack.top();
-            return error();}
+                    return error(er.code());
+                }
+            } else rslt = calcstack.top();
+            return error();
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         ns_error expression_templ<BASEINTF, REFCOUNTER>::caseswitch(polishline_iterator& iter, const calc_token& tkn) {
@@ -1662,30 +2027,44 @@ namespace dvnci {
             while ((!fnd) && (it != polline.end())) {
                 it++;
                 switch (it->operation()) {
-                    case oprt_caseleftgroup:{
+                    case oprt_caseleftgroup:
+                    {
                         cntr++;
-                        break;}
-                    case oprt_casedelim:{
+                        break;
+                    }
+                    case oprt_casedelim:
+                    {
                         if (cntr == 0) {
                             if (cs) {
-                                stpit = it;}
-                            else {
-                                strtit = it;}}
-                        break;}
-                    case oprt_caserightgroup:{
+                                stpit = it;
+                            } else {
+                                strtit = it;
+                            }
+                        }
+                        break;
+                    }
+                    case oprt_caserightgroup:
+                    {
                         if (cntr > 0) {
-                            cntr--;}
-                        else {
+                            cntr--;
+                        } else {
                             if (!cs) {
                                 stpit = it;
                                 externalit = it + 1;
-                                fnd = true;}
-                            else {
+                                fnd = true;
+                            } else {
                                 externalit = it + 1;
-                                fnd = true;}}
-                        break;}
-                    default:{
-                        break;}}}
+                                fnd = true;
+                            }
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
+                }
+            }
             if ((!fnd) || (strtit == polline.end()) || (stpit == polline.end()))
                 return error(ERROR_EXPRPARSE);
             strtit++;
@@ -1695,7 +2074,8 @@ namespace dvnci {
             polline.swap(newln);
             iter = polline.begin();
             //print_line(polline);
-            return error();}
+            return error();
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         ns_error expression_templ<BASEINTF, REFCOUNTER>::parse(std::string val) {
@@ -1715,10 +2095,12 @@ namespace dvnci {
             if (tokencount) {
                 clearstack();
                 polline.clear();
-                parsetoken();}
+                parsetoken();
+            }
             //print_line(polline);
             savedpolline = polline;
-            return error();}
+            return error();
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         ns_error expression_templ<BASEINTF, REFCOUNTER>::parse(std::wstring val) {
@@ -1738,10 +2120,12 @@ namespace dvnci {
             if (tokencount) {
                 clearstack();
                 polline.clear();
-                parsetoken();}
+                parsetoken();
+            }
             //print_line(polline);
             savedpolline = polline;
-            return error();}
+            return error();
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         ns_error expression_templ<BASEINTF, REFCOUNTER>::parsetoken() {
@@ -1756,52 +2140,71 @@ namespace dvnci {
                     if (tmpit.error() == ERROR_TAGNOEXIST) { // возможно появится
                         if (refcntr)
                             refcntr->clear();
-                        error(ERROR_TAGNOEXIST);}
-                    else {
+                        error(ERROR_TAGNOEXIST);
+                    } else {
                         if (refcntr)
                             refcntr->clear();
                         clearall();
-                        return error(tmpit.error());}}
+                        return error(tmpit.error());
+                    }
+                }
                 switch (tmpit.operation()) {
-                    case notoperation:{
+                    case notoperation:
+                    {
                         clearall();
-                        return error(ERROR_EXPRPARSE);}
-                    case expr:{
-                        if (last_oper==expr){
+                        return error(ERROR_EXPRPARSE);
+                    }
+                    case expr:
+                    {
+                        if (last_oper == expr) {
                             clearall();
-                            return error(ERROR_EXPRPARSE);}
+                            return error(ERROR_EXPRPARSE);
+                        }
                         polline.push_back(tmpit);
-                        break;}
-                    case constant:{
+                        break;
+                    }
+                    case constant:
+                    {
                         polline.push_back(tmpit);
-                        break;}
-                    case oprt_leftgroup:{
+                        break;
+                    }
+                    case oprt_leftgroup:
+                    {
                         calcstack.push(tmpit);
-                        break;}
+                        break;
+                    }
                     case oprt_comma:
                     case oprt_rightgroup:
-                    case oprt_casedelim:{
+                    case oprt_casedelim:
+                    {
                         if (!calcstack.empty()) {
                             while ((!calcstack.empty()) && (calcstack.top().operation() != oprt_leftgroup) && (calcstack.top().operation() != oprt_caseleftgroup)) {
                                 if (calcstack.top().operation() == oprt_condit) {
                                     calc_token tmpitcond = calc_token_factory("]");
-                                    polline.push_back(tmpitcond);}
-                                else
+                                    polline.push_back(tmpitcond);
+                                } else
                                     polline.push_back(calcstack.top());
-                                calcstack.pop();}
+                                calcstack.pop();
+                            }
                             if ((!calcstack.empty()) && ((calcstack.top().operation() == oprt_leftgroup) || (calcstack.top().operation() == oprt_caseleftgroup))) {
-                                if (tmpit.operation() != oprt_comma) calcstack.pop();}
-                            else {
+                                if (tmpit.operation() != oprt_comma) calcstack.pop();
+                            } else {
                                 if (tmpit.operation() != oprt_comma) {
                                     clearall();
-                                    return error(ERROR_EXPRPARSE);}}}
-                        else {
+                                    return error(ERROR_EXPRPARSE);
+                                }
+                            }
+                        } else {
                             if (tmpit.operation() != oprt_comma) {
                                 clearall();
-                                return error(ERROR_EXPRPARSE);}}
+                                return error(ERROR_EXPRPARSE);
+                            }
+                        }
                         if (tmpit.operation() == oprt_casedelim) polline.push_back(tmpit);
-                        break;}
-                    default:{
+                        break;
+                    }
+                    default:
+                    {
                         if (!calcstack.empty()) {
                             if ((calc_token::can_unary(tmpit.operation())) && (calc_token::find_unaryoperator(last_oper)))
                                 tmpit.set_unary();
@@ -1814,56 +2217,72 @@ namespace dvnci {
                                         && (calcstack.top().operation() != oprt_leftgroup)) {
                                     if (calcstack.top().operation() == oprt_condit) {
                                         calc_token tmpitcond = calc_token_factory("]");
-                                        polline.push_back(tmpitcond);}
-                                    else
+                                        polline.push_back(tmpitcond);
+                                    } else
                                         polline.push_back(calcstack.top());
-                                    calcstack.pop();}}
-                        else {
+                                    calcstack.pop();
+                                }
+                        } else {
                             if (polline.empty()) {
-                                tmpit.set_unary();}
+                                tmpit.set_unary();
+                            }
                             if (calc_token::can_post_pref(tmpit.operation()))
                                 if (!((polline.empty()) || ((counter) && ((last_oper != oprt_rightgroup) && (last_oper >= 1000)))))
-                                    tmpit.set_postfix();}
+                                    tmpit.set_postfix();
+                        }
                         calcstack.push(tmpit);
                         if (tmpit.operation() == oprt_condit) {
                             calc_token tmpitcond = calc_token_factory("[");
                             polline.push_back(tmpitcond);
                             casecounter++;
                             tmpitcond = calc_token_factory("[");
-                            calcstack.push(tmpitcond);}}}
+                            calcstack.push(tmpitcond);
+                        }
+                    }
+                }
                 counter++;
-                last_oper = tmpit.operation();}
+                last_oper = tmpit.operation();
+            }
 
             if ((calcstack.empty()) && (polline.empty())) {
-                return error(ERROR_EXPRNOINIT);}
+                return error(ERROR_EXPRNOINIT);
+            }
 
             while (!calcstack.empty()) {
                 if (calc_token::is_group(calcstack.top().operation())) {
                     clearall();
-                    return error(ERROR_EXPRPARSE);}
+                    return error(ERROR_EXPRPARSE);
+                }
                 if (calcstack.top().operation() == oprt_condit) {
                     calc_token tmpitcond = calc_token_factory("]");
-                    polline.push_back(tmpitcond);}
-                else
+                    polline.push_back(tmpitcond);
+                } else
                     polline.push_back(calcstack.top());
-                calcstack.pop();}
-            return error();}
+                calcstack.pop();
+            }
+            return error();
+        }
 
         template<typename BASEINTF, typename REFCOUNTER>
         void expression_templ<BASEINTF, REFCOUNTER>::print_line(const polishline& ln) {
             for (polishline_constiterator it = ln.begin(); it != ln.end(); ++it) {
                 if (it->operation() == 1) {
                     if (intf) {
-                        std::cout << ((intf->name(it->id()) == "") ? "noexisttag" : intf->name(it->id())) << "   ";}
-                    else {
-                        std::cout << "const" << "   ";}}
-                else
-                    std::cout << it->operation() << "   ";}
-            std::cout << std::endl;}
+                        std::cout << ((intf->name(it->id()) == "") ? "noexisttag" : intf->name(it->id())) << "   ";
+                    } else {
+                        std::cout << "const" << "   ";
+                    }
+                } else
+                    std::cout << it->operation() << "   ";
+            }
+            std::cout << std::endl;
+        }
 
 
 
-        typedef dvnci::expr::expression_templ<exprintf_stub> expression_calculator;}}
+        typedef dvnci::expr::expression_templ<exprintf_stub> expression_calculator;
+    }
+}
 
 #endif	/* _EXPRESSION_H */
 
