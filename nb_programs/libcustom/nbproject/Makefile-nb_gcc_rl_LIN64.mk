@@ -15,14 +15,14 @@ NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
-CCC=g++
-CXX=g++
+CCC=i686-w64-mingw32-gcc-4.8.0
+CXX=i686-w64-mingw32-gcc-4.8.0
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=MinGW-Windows
+CND_DLIB_EXT=dll
 CND_CONF=nb_gcc_rl_LIN64
 CND_DISTDIR=dist
 CND_BUILDDIR=build

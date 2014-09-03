@@ -15,14 +15,14 @@ NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
-CCC=g++
-CXX=g++
+CCC=i686-w64-mingw32-gcc-4.8.0
+CXX=i686-w64-mingw32-gcc-4.8.0
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
-CND_DLIB_EXT=so
+CND_PLATFORM=MinGW-Windows
+CND_DLIB_EXT=dll
 CND_CONF=nb_gcc_rl_WIN32
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -72,32 +72,32 @@ LDLIBSOPTIONS=
 ${OBJECTDIR}/_ext/217049176/extnetintf.o: ../../include/custom/extnetintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/extnetintf.o ../../include/custom/extnetintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/extnetintf.o ../../include/custom/extnetintf.cpp
 
 ${OBJECTDIR}/_ext/217049176/gui_executor.o: ../../include/custom/gui_executor.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/gui_executor.o ../../include/custom/gui_executor.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/gui_executor.o ../../include/custom/gui_executor.cpp
 
 ${OBJECTDIR}/_ext/217049176/localnetintf.o: ../../include/custom/localnetintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/localnetintf.o ../../include/custom/localnetintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/localnetintf.o ../../include/custom/localnetintf.cpp
 
 ${OBJECTDIR}/_ext/217049176/netintf.o: ../../include/custom/netintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netintf.o ../../include/custom/netintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netintf.o ../../include/custom/netintf.cpp
 
 ${OBJECTDIR}/_ext/217049176/netsession.o: ../../include/custom/netsession.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netsession.o ../../include/custom/netsession.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/netsession.o ../../include/custom/netsession.cpp
 
 ${OBJECTDIR}/_ext/217049176/remotenetintf.o: ../../include/custom/remotenetintf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/217049176
 	${RM} $@.d
-	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/remotenetintf.o ../../include/custom/remotenetintf.cpp
+	$(COMPILE.cc) -g -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/217049176/remotenetintf.o ../../include/custom/remotenetintf.cpp
 
 # Subprojects
 .build-subprojects:
