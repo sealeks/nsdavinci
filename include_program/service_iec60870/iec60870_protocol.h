@@ -234,6 +234,10 @@ namespace dvnci {
          typedef std::pair<dvnci::indx, dataobject_ptr> indx_dataobject_pair;
          typedef std::vector<indx_dataobject_pair> indx_dataobject_vct;        
         
+        datetime to_datetime_7(const octet_sequence& v);     
+        datetime to_datetime_3(const octet_sequence& vl);
+        float to_float_4(const octet_sequence& vl);
+        
         dvnci::short_value to_short_value(dataobject_ptr v);
         
         
@@ -337,7 +341,9 @@ namespace dvnci {
         public:
 
             virtual void execute60870(dataobject_ptr vl) = 0;
+            virtual void execute60870(const dataobject_vct& vl) = 0;            
             virtual void execute60870(const boost::system::error_code& error) = 0;
+            virtual void terminate60870() = 0;
 
         };
 

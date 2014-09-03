@@ -82,11 +82,11 @@ namespace dvnci {
         
         static type_id_size_map size_type_id_load() {
             type_id_size_map mp;
-            mp.insert(type_id_size_pair(1, 1)); // Single-point information 1
-            mp.insert(type_id_size_pair(2,4)); //Single-point information with time-tag 1 + 3(ta)
-            mp.insert(type_id_size_pair(3, 1)); //Double-point information 1 
-            mp.insert(type_id_size_pair(4, 4)); //Double-point information with time-tag  1 + 3(ta)
-            mp.insert(type_id_size_pair(5, 3)); //Step position information 2 + 1(q)
+            mp.insert(type_id_size_pair(M_SP_NA_1, 1)); // Single-point information 1
+            mp.insert(type_id_size_pair(M_SP_TA_1, 4)); //Single-point information with time-tag 1 + 3(ta)
+            mp.insert(type_id_size_pair(M_DP_NA_1, 1)); //Double-point information 1 
+            mp.insert(type_id_size_pair(M_DP_TA_1, 4)); //Double-point information with time-tag  1 + 3(ta)
+            mp.insert(type_id_size_pair(M_ST_NA_1, 3)); //Step position information 2 + 1(q)
             mp.insert(type_id_size_pair(6, 6)); //Step position information with time-tag 2 + 1(q) + 3(ta)
             mp.insert(type_id_size_pair(7, 5)); //Bitstring of 32 bits 4 + 1(q)
             mp.insert(type_id_size_pair(8, 8)); //Bitstring of 32 bits with time-tag  4 + 1(q) + 3(ta)
@@ -213,17 +213,69 @@ namespace dvnci {
             return !ls;
         }
 
+        datetime to_datetime_7(const octet_sequence& vl) {
+            try {
+                if (vl.size() == 7) {
+                    boost::uint16_t ms = *reinterpret_cast<const uint16_t *> (&vl[0]);
+                    boost::uint8_t min = (*reinterpret_cast<const uint8_t *> (&vl[2])) & '\x3F';
+                    boost::uint8_t hour = *reinterpret_cast<const uint8_t *> (&vl[3]) & '\x1F';
+                    boost::uint8_t day = *reinterpret_cast<const uint8_t *> (&vl[4]) & '\x1F';
+                    boost::uint8_t month = *reinterpret_cast<const uint8_t *> (&vl[5])& '\xF';
+                    boost::uint8_t year = *reinterpret_cast<const uint8_t *> (&vl[6]) & '\x2F';
+                    return boost::posix_time::ptime(boost::gregorian::date(2000 + year, month, day)) +
+                            boost::posix_time::time_duration( hour, min, ms / 1000) + boost::posix_time::millisec(ms % 1000);
+                }
+            } catch (...) {
+
+            }
+            return datetime();
+        }
+        
+        datetime to_datetime_3(const octet_sequence& vl) {
+            try {
+                if (vl.size() == 3) {
+                    boost::uint16_t ms = *reinterpret_cast<const uint16_t *> (&vl[0]);
+                    boost::uint8_t min = (*reinterpret_cast<const uint8_t *> (&vl[2])) & '\x3F';       
+                    datetime n=now();
+                    datetime f1=boost::posix_time::ptime(boost::gregorian::date(n.date()))+
+                            boost::posix_time::time_duration(n.time_of_day().hours(), min, ms / 1000) + boost::posix_time::millisec(ms % 1000);
+                    datetime f2 = f1 - boost::posix_time::hours(1);
+                    return ((f2-n)>(n-f1)) ? f1 : f2;
+                }
+            } catch (...) {
+            }
+            return datetime();
+        }        
+        
+        float to_float_4(const octet_sequence& vl) {   
+            if (vl.size() == 4) {
+                return  *reinterpret_cast<const float *> (&vl[0]);
+            }
+            return std::numeric_limits<float>::quiet_NaN();
+        }     
+
         dvnci::short_value to_short_value(dataobject_ptr vl) {
             if (vl) {
                 type_id tp=vl->type();
                 if ((tp) && (find_type_size(tp)==vl->data().size())){
                     const octet_sequence& dt=vl->data();
                     switch(tp) {
+                        case M_SP_NA_1: /*1*/ //=1
+                        {
+                            return dvnci::short_value(dt[0]);
+                        }
+                        case M_SP_TA_1: /*2*/ //= 1 + 3(ta)
+                        {
+                            return dvnci::short_value::create_timed<boost::uint8_t>(dt[0], to_datetime_3(octet_sequence(dt.begin()+1, dt.end())));
+                        }                        
                         case M_SP_TB_1: /*30*/
                         {
-                            dvnci::short_value tmp(dt[0]);
-                            tmp.time(now());
-                            return tmp;
+                            return dvnci::short_value::create_timed<boost::uint8_t>(dt[0], to_datetime_7(octet_sequence(dt.begin()+1, dt.end())));
+                        }
+                        case M_ME_TF_1: /*36*/
+                        {
+                            return dvnci::short_value::create_timed<float>(to_float_4(octet_sequence(dt.begin(), dt.begin()+ 4)),
+                                    to_datetime_7(octet_sequence(dt.begin()+5, dt.end())));
                         }
                         default:{}
                     }

@@ -232,7 +232,7 @@ namespace dvnci {
         iec60870pm::iec60870pm(std::string hst, std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr) :
         io_service_(), socket_(io_service_), tmout_timer(io_service_),
         host(hst), port(prt), timout(tmo), state_(disconnected), pmstate_(noconnected),
-        error_cod(0), tx_(0), rx_(0), listener_(listr) {
+         tx_(0), rx_(0), listener_(listr) {
         }
 
         iec60870pm::~iec60870pm() {
@@ -245,6 +245,9 @@ namespace dvnci {
 
         bool iec60870pm::operator()() {
             connect();
+            iec60870_data_listener_ptr lstnr = listener();
+            if (lstnr)
+                lstnr->terminate60870();            
             return true;
         }
 
@@ -255,6 +258,29 @@ namespace dvnci {
         bool iec60870pm::uninitialize() {
             return true;
         }
+                 
+        
+        
+        bool iec60870pm::add_items(const indx_dataobject_vct& cids, indx_dataobject_vct& rslt){
+            THD_EXCLUSIVE_LOCK(mtx)
+            for (indx_dataobject_vct::const_iterator it=cids.begin();it!=cids.begin();++it){
+                dataobject_set::const_iterator fnd=data_.find(it->second);
+                if (fnd!=data_.end()){
+                    rslt.push_back(indx_dataobject_pair(it->first,*fnd));
+                }
+                else{
+                    // add in request
+                }
+            }
+            return !rslt.empty();
+        }
+        
+        
+        void iec60870pm::error(boost::system::error_code& err) {
+                iec60870_data_listener_ptr lstnr = listener();
+                if (lstnr)
+                    lstnr->execute60870(err);
+        }              
 
         void iec60870pm::connect() {
             timout = in_bounded<timeouttype>(50, 600000, timout);
@@ -290,13 +316,110 @@ namespace dvnci {
             io_service_.stop();
         }
 
+        void iec60870pm::terminate() {
+            state_ = disconnected;
+            socket_.close();
+            io_service_.stop();
+        }             
+        
+        
+        void iec60870pm::handle_resolve(const boost::system::error_code& err,
+                boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
+            if (!err) {
+                boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
+                socket_.async_connect(endpoint,
+                        boost::bind(&iec60870pm::handle_connect, this,
+                        boost::asio::placeholders::error, ++endpoint_iterator));
+            } else {
+                //terminate();
+            }
+        }
+
+        void iec60870pm::handle_connect(const boost::system::error_code& err,
+                boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
+
+            if (!err) {
+                tmout_timer.cancel();
+                pmstate(activated);
+                send(message_104::STARTDTact);
+            } else
+                if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
+                socket_.close();
+                boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
+                socket_.async_connect(endpoint,
+                        boost::bind(&iec60870pm::handle_connect, this,
+                        boost::asio::placeholders::error, ++endpoint_iterator));
+            } else {
+                 //terminate();               
+            }
+        }
+
+        void iec60870pm::handle_request(const boost::system::error_code& error, message_104_ptr req) {
+            if (!error)
+                async_response(
+                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+            else
+                terminate();
+        }
+
+        void iec60870pm::handle_response(const boost::system::error_code& error, message_104_ptr resp) {
+            if (!error) {
+                if (resp) {
+                    switch (resp->type()) {
+                        case message_104::S_type:
+                        {
+                            ack_tx(resp->rx());
+                            break;
+                        }
+                        case message_104::U_type:
+                        {
+                            if (parse_U(resp))
+                                return;
+                            break;
+                        }
+                        case message_104::I_type:
+                        {
+                            parse_data(resp);
+                            if (socket_.available()) {
+                                break;
+                            } else {
+                                send((rx_ + 1) % 32767);
+                                return;
+                            }
+                            break;
+                        }
+                        default:
+                        {
+                        }
+                    }
+                }
+                async_response(
+                        boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+            } else
+                terminate();
+        }
+
+        void iec60870pm::handle_timout_expire(const boost::system::error_code& err) {
+
+            if (!err) {
+                /*error(err);
+                connect();*/
+                terminate();
+            } else {
+                //terminate();
+            }
+        }
+
+
+        
+
         void iec60870pm::send(const asdu_body& asdu) {
             send(message_104::create(tx_++, rx_, asdu));
         }
 
         void iec60870pm::send(message_104_ptr msg) {
             if (msg->type() == message_104::I_type)
-                sendmsg_.push_back(msg);
+                sended_.push_back(msg);
             async_request(
                     boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     msg);
@@ -320,9 +443,9 @@ namespace dvnci {
 
         void iec60870pm::ack_tx(tcpcounter_type vl) {
             std::cout << " ack Tx = " << vl << std::endl;
-            if (!sendmsg_.empty()) {
-                while ((!sendmsg_.empty()) && (sendmsg_.front()->tx() < vl)) {
-                    sendmsg_.pop_front();
+            if (!sended_.empty()) {
+                while ((!sended_.empty()) && (sended_.front()->tx() < vl)) {
+                    sended_.pop_front();
                 }
             }
         }
@@ -371,100 +494,30 @@ namespace dvnci {
             ack_tx(resp->rx());
             dataobject_vct rslt;
             if (resp->get(rslt)) {
-                data_.insert(rslt.begin(), rslt.end());
+                {
+                    THD_EXCLUSIVE_LOCK(mtx)
+                    data_.insert(rslt.begin(), rslt.end());
+                }
                 iec60870_data_listener_ptr lstnr = listener();
-                if (lstnr) {
-                    for (dataobject_vct::const_iterator it = rslt.begin(); it != rslt.end(); ++it) {
-                        lstnr->execute60870(*it);
-                    }
-                }
+                if (lstnr)
+                    lstnr->execute60870(rslt);
             }
         }
 
-        void iec60870pm::handle_resolve(const boost::system::error_code& err,
-                boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
-            if (!err) {
-                boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-                socket_.async_connect(endpoint,
-                        boost::bind(&iec60870pm::handle_connect, this,
-                        boost::asio::placeholders::error, ++endpoint_iterator));
-            } else {
 
-            }
-        }
+        
 
-        void iec60870pm::handle_connect(const boost::system::error_code& err,
-                boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
-
-            if (!err) {
-                tmout_timer.cancel();
-                pmstate(activated);
-                send(message_104::STARTDTact);
-            } else
-                if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
-                socket_.close();
-                boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-                socket_.async_connect(endpoint,
-                        boost::bind(&iec60870pm::handle_connect, this,
-                        boost::asio::placeholders::error, ++endpoint_iterator));
-            } else {
-            }
-        }
-
-        void iec60870pm::handle_request(const boost::system::error_code& error, message_104_ptr req) {
-            async_response(
-                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-        }
-
-        void iec60870pm::handle_response(const boost::system::error_code& error, message_104_ptr resp) {
-            if (resp) {
-                switch (resp->type()) {
-                    case message_104::S_type:
-                    {
-                        ack_tx(resp->rx());
-                        break;
-                    }
-                    case message_104::U_type:
-                    {
-                        if (parse_U(resp))
-                            return;
-                        break;
-                    }
-                    case message_104::I_type:
-                    {
-                        parse_data(resp);
-                        if (socket_.available()) {
-                            break;
-                        } else {
-                            send((rx_ + 1) % 32767);
-                            return;
-                        }
-                        break;
-                    }
-                    default:
-                    {
-                    }
-                }
-            }
-            async_response(
-                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-        }
-
-        void iec60870pm::handle_timout_expire(const boost::system::error_code& err) {
-
-            if (!err) {
-                DEBUG_STR_DVNCI(TIMEOUT EXPIRE NEED EXCEPTION)
-            } else {
-            }
-        }
+        
 
         iec60870_thread::iec60870_thread(std::string host, std::string port, timeouttype tmo, iec60870_data_listener_ptr listr) {
             pm_ = callable_shared_ptr<iec60870pm>(new iec60870pm(host, port, tmo, listr));
             ioth = boost::shared_ptr<boost::thread>(new boost::thread(pm_));
         }
 
-        // iec60870_thread::~iec60870_thread() {
-        //}
+         iec60870_thread::~iec60870_thread() {
+             /*if (ioth)
+                 ioth->join();*/
+        }
 
         iec60870_thread_ptr iec60870_thread::create(std::string host, std::string port, timeouttype tmo,
                 iec60870_data_listener_ptr listr) {
